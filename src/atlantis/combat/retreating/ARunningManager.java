@@ -307,7 +307,7 @@ public class ARunningManager {
         APosition runTo;
         runAwayFrom = runAwayFrom.position();
         double vectorLength = unit.distTo(runAwayFrom);
-        double runDistInPixels = unit.isVulture() ? (4 * 32) : 82;
+        double runDistInPixels = showBackRunPixelRadius(unit, runAwayFrom);
 
         if (vectorLength < 0.01) {
 //            CameraManager.centerCameraOn(unit);
@@ -356,6 +356,17 @@ public class ARunningManager {
 //            System.err.println("Not possible to show back");
             return null;
         }
+    }
+
+    private double showBackRunPixelRadius(AUnit unit, HasPosition runAwayFrom) {
+        if (unit.isVulture()) {
+            return 4 * 32;
+        }
+        if (unit.isDragoon()) {
+            return 4 * 32;
+        }
+
+        return (4 * 32);
     }
 
     /**
@@ -442,6 +453,9 @@ public class ARunningManager {
 
     private int runAnyDirectionInitialRadius(AUnit unit) {
         if (unit.isVulture()) {
+            return 5;
+        }
+        if (unit.isDragoon()) {
             return 5;
         }
 

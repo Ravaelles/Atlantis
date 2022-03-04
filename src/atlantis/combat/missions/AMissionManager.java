@@ -5,7 +5,7 @@ import atlantis.game.AGame;
 public class AMissionManager {
 
     public static void updateGlobalMission() {
-        if (AGame.everyNthGameFrame(30 * 10)) {
+        if (AGame.everyNthGameFrame(59)) {
             MissionChanger.evaluateGlobalMission();
         }
     }

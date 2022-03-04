@@ -68,10 +68,10 @@ public class AAttackEnemyUnit {
     // =========================================================
 
     private static boolean allowedToAttack(AUnit unit) {
-        if (unit.hasNoWeaponAtAll()) {
-            reasonNotToAttack = "NoWeapon";
-            return false;
-        }
+//        if (unit.hasNoWeaponAtAll()) {
+//            reasonNotToAttack = "NoWeapon";
+//            return false;
+//        }
 
         if (unit.isTerranInfantry() && Count.medics() >= 2) {
             if (!unit.medicInHealRange() && (unit.isWounded() || unit.combatEvalRelative() < 1.5)) {
@@ -88,7 +88,7 @@ public class AAttackEnemyUnit {
 //            return false;
 //        }
 
-        if (unit.hasSquad() && unit.squad().cohesionPercent() <= 80 && !unit.isStopped()) {
+        if (unit.hasSquad() && unit.squad().cohesionPercent() <= 80 && unit.isAttackingOrMovingToAttack()) {
             if (unit.enemiesNear().ranged().notEmpty() && unit.lastStartedAttackMoreThanAgo(90)) {
                 reasonNotToAttack = "Cautious";
                 return false;

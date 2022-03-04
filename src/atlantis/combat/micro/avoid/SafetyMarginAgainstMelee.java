@@ -18,14 +18,14 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 3.0;
 
     public static double calculate(AUnit defender, AUnit attacker) {
-        double criticalDist;
+        double criticalDist = -1;
 
         // === Protoss ===============================================
 
         if ((criticalDist = forDragoon(defender, attacker)) >= 0) {
             return criticalDist;
         }
-        else if (defender.isDT()) {
+        if (defender.isDT()) {
             return 0;
         }
 
@@ -64,46 +64,54 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             return -1;
         }
 
+        if (defender.shieldDamageAtMost(5) && defender.cooldownRemaining() <= 5) {
+            return 0;
+        }
+
         if (attacker.isZergling()) {
             return (0.2 + defender.woundPercent() / 40);
         }
 
-        double base = woundedAgainstMeleeBonus(defender, attacker)
-            + beastBonus(defender);
-        boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
+        return -1;
 
-        if (attacker.isWorker() && attacker.hp() >= 30) {
-            base += 0.5;
-        }
-
-        else if (!enemyFacingUs && defender.shieldDamageAtMost(40)) {
-            base -= 1.5;
-        }
-
-        else if (
-                (attacker.hp() <= 16 || defender.shieldDamageAtMost(38))
-                        && (
-                        !enemyFacingUs
-                                || defender.lastAttackFrameMoreThanAgo(130)
-                                || (defender.lastAttackFrameMoreThanAgo(90) && attacker.hpPercent(30))
-                                || (defender.lastAttackFrameMoreThanAgo(40) && defender.lastUnderAttackMoreThanAgo(150))
-                )
-        ) {
-            defender.addLog("CoolDragoon_" + defender.lastAttackFrameAgo());
-            base += (defender.isHealthy() ? 0 : 0.3);
-            //            criticalDist = handleDragoon(defender, attacker);
-        }
-
-        // =========================================================
-
-        base = Math.min(defender.isMissionDefend() ? (1 + defender.woundPercent() / 100) : 2.4, base);
-        return base;
-
-//        if (Missions.isGlobalMissionDefend()) {
-//            return base;
+//        double base = woundedAgainstMeleeBonus(defender, attacker)
+//            + beastBonus(defender);
+//        boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
+//
+//        if (attacker.isWorker() && attacker.hp() >= 30) {
+//            base += 0.5;
 //        }
 //
-//        return -1;
+//        else if (!enemyFacingUs && defender.shieldDamageAtMost(40)) {
+//            base -= 1.5;
+//        }
+//
+//        else if (
+//                (attacker.hp() <= 16 || defender.shieldDamageAtMost(38))
+//                        && (
+//                        !enemyFacingUs
+//                                || defender.lastAttackFrameMoreThanAgo(130)
+//                                || (defender.lastAttackFrameMoreThanAgo(90) && attacker.hpPercent(30))
+//                                || (defender.lastAttackFrameMoreThanAgo(40) && defender.lastUnderAttackMoreThanAgo(150))
+//                )
+//        ) {
+//            defender.addLog("CoolDragoon_" + defender.lastAttackFrameAgo());
+//            base += (defender.isHealthy() ? 0 : 0.3);
+//            //            criticalDist = handleDragoon(defender, attacker);
+//        }
+//
+//
+//        // =========================================================
+//
+//        base = Math.max(0, base);
+//        base = Math.min(defender.isMissionDefend() ? (1 + defender.woundPercent() / 100) : 2.4, base);
+//        return base;
+//
+////        if (Missions.isGlobalMissionDefend()) {
+////            return base;
+////        }
+////
+////        return -1;
     }
 
     // =========================================================

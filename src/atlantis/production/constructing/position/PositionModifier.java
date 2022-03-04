@@ -61,7 +61,7 @@ public class PositionModifier {
             constructionOrder.setMaxDistance(6);
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
-                return APosition.create(mainChoke.center()).translateTilesTowards(Select.main(), 3.5);
+                return APosition.create(mainChoke.center()).translateTilesTowards(Select.main(), 2.8);
             }
         }
         else if (modifier.equals(NATURAL_CHOKE)) {

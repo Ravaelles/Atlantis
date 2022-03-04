@@ -88,7 +88,6 @@ public abstract class AbstractPositionFinder {
      * could be stacked.
      */
     protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
-
 //        System.out.println("============================");
 //        System.out.println("position = " + position + ", not started = " + ConstructionRequests.notStarted().size()
 //                + " // all = " + ConstructionRequests.all().size());
@@ -109,6 +108,10 @@ public abstract class AbstractPositionFinder {
 //                System.out.println("------------");
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
 //                        && (distance <= 5 && !We.zerg());
+
+                if (building.isCannon() && order.buildingType().isCannon() && distance < 2) {
+                    return false;
+                }
 
                 // Look for two bases that would be built too close one to another
                 if (distance <= 4) {

@@ -2,6 +2,7 @@ package atlantis.units;
 
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.CohesionAssurance;
@@ -22,6 +23,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
@@ -1857,11 +1859,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isSquadScout() {
-        if (A.isUms()) {
+        if (squad() == null || A.isUms() || Count.ourCombatUnits() <= 7) {
             return false;
         }
 
-        return squad() != null && equals(squad().getSquadScout());
+        return equals(squad().getSquadScout()) && Missions.CONTAIN.equals(squadMission());
+    }
+
+    private Mission squadMission() {
+        if (squad() == null) {
+            return null;
+        }
+
+        return squad.mission();
     }
 
     public boolean isNotAttackableByRangedDueToSpell() {

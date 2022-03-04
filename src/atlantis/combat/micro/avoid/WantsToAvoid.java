@@ -56,7 +56,7 @@ public class WantsToAvoid {
             return true;
         }
 
-        if (unit.isSquadScout() && unit.friendsNear().inRadius(3, unit).isEmpty()) {
+        if (unit.isSquadScout() && unit.isWounded() && unit.friendsNear().inRadius(3, unit).isEmpty()) {
             unit.addLog("SquadScoutAvoid");
             return true;
         }

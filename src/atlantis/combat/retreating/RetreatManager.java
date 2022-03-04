@@ -109,6 +109,10 @@ public class RetreatManager {
     }
 
     private static boolean applyZealotVsZealotFix(AUnit unit, Selection enemies) {
+        if (unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).inRadius(3.8, unit).notEmpty()) {
+            return false;
+        }
+
         int ourZealots = unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(1.4, unit).count();
         int enemyZealots = enemies.ofType(AUnitType.Protoss_Zealot).inRadius(1.4, unit).count();
 

@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
+import atlantis.combat.missions.contain.ProtossMissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
@@ -10,7 +11,7 @@ import atlantis.units.select.Select;
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToContain()) {
+        if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.CONTAIN);
         }
     }
@@ -18,13 +19,18 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
-        if (ArmyStrength.weAreStronger()) {
+        if (!ArmyStrength.weAreWeaker()) {
             if (DEBUG) debugReason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
-        if (A.resourcesBalance() >= 300) {
+        if ((GamePhase.isEarlyGame() && A.resourcesBalance() >= 300)) {
             if (DEBUG) debugReason = "resources balance is good";
+            return true;
+        }
+
+        if (A.supplyUsed(90)) {
+            if (DEBUG) debugReason = "Supply quite big";
             return true;
         }
 

@@ -32,7 +32,7 @@ public abstract class MoveToFocusPoint {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     protected static boolean wrongSideOfFocus() {
-        if (fromSide == null) {
+        if (fromSide == null || (focusPoint != null && focusPoint.isAroundChoke())) {
             return false;
         }
 

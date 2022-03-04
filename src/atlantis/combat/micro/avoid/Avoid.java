@@ -15,7 +15,7 @@ public class Avoid {
         APainter.paintCircle(enemy, 16, Color.Orange);
 
         if (enemy.position() == null) {
-            System.err.println("enemy.position() is NULL for " + enemy);
+//            System.err.println("enemy.position() is NULL for " + enemy);
             return false;
         }
 
@@ -50,7 +50,10 @@ public class Avoid {
         if (enemiesDangerouslyClose.size() >= takeOnly) {
             Units nearestEnemies = new Units();
             for (int i = 0; i < takeOnly; i++) {
-                nearestEnemies.addUnit(enemiesDangerouslyClose.get(i));
+                AUnit enemy = enemiesDangerouslyClose.get(i);
+                if (enemy.hasPosition()) {
+                    nearestEnemies.addUnit(enemy);
+                }
             }
             return nearestEnemies.average();
         }

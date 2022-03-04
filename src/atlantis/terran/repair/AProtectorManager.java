@@ -225,6 +225,11 @@ public class AProtectorManager {
     }
 
     public static boolean updateProtector(AUnit protector) {
+        if (protector.hpLessThan(10)) {
+            ARepairAssignments.removeRepairerOrProtector(protector);
+            return false;
+        }
+
         AUnit target = ARepairAssignments.getUnitToProtectFor(protector);
         if (target != null && target.isAlive()) {
             if (A.everyNthGameFrame(47)) {

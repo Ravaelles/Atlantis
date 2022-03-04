@@ -15,7 +15,7 @@ public class UseMap {
 
     public static String activeMap() {
 //        if (true) return "sscai/(2)Destination.scx";
-        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
@@ -62,7 +62,7 @@ public class UseMap {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
@@ -104,7 +104,7 @@ public class UseMap {
 //        if (true) return "ums/ControlFighterTZ-Easy.scx"; // Tanks & Marines v. Zerg
 //        if (true) return "ums/protoss_micro.scx"; // Huge parallel map, bad performance wise
 
-        return null;
+        return "sscai/(?)*.sc?";
     }
 
     // =========================================================
@@ -160,12 +160,16 @@ public class UseMap {
                 GameSpeed.changeFrameSkipTo(initFrameSkip);
             }
 
-            if (GameSpeed.frameSkip == initFrameSkip && A.everyNthGameFrame(50)) {
+            if (
+                GameSpeed.frameSkip == initFrameSkip
+                    && GameSpeed.gameSpeed == 0
+                    && A.everyNthGameFrame(50)
+            ) {
                 if (
                         EnemyUnits.visibleAndFogged().atLeast(4)
-                        && Have.dragoon()
+                        && (Have.dragoon() || Have.cannon())
                 ) {
-                    GameSpeed.changeSpeedTo(1);
+                    GameSpeed.changeSpeedTo(10);
                     GameSpeed.changeFrameSkipTo(0);
                 }
             }

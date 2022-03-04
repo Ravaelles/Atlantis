@@ -52,14 +52,14 @@ Dragoon
 Dragoon
 Dragoon
 Dragoon Range
-39 - Robotics Facility
-40 - Robotics Support Bay
-42 - Shuttle
 43 - Observatory
 44 - Reaver
 47 - Observer
-48 - Reaver
+48 - Robotics Facility
 50 - MISSION=ATTACK
+52 - Robotics Support Bay
+55 - Shuttle
+58 - Reaver
 60 - Nexus
 Observer
 Zealot

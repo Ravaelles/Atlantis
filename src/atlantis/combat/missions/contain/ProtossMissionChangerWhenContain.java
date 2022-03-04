@@ -21,7 +21,19 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 
     // === DEFEND ==============================================
 
-    private static boolean shouldChangeMissionToDefend() {
+    public static boolean shouldChangeMissionToDefend() {
+        if (ArmyStrength.weAreWeaker()) {
+            if (RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
+                if (DEBUG) debugReason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                return true;
+            }
+
+            if (GamePhase.isEarlyGame()) {
+                if (DEBUG) debugReason = "Eh, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                return true;
+            }
+        }
+
         if (defendAgainstMassZerglings()) {
             if (DEBUG) debugReason = "Mass zerglings";
             return true;
@@ -32,13 +44,8 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
             return true;
         }
 
-        if (ArmyStrength.weAreWeaker() && RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
-            if (DEBUG) debugReason = "weAreWeaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
-            return true;
-        }
-
         if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130 && !GamePhase.isLateGame()) {
-            if (DEBUG) debugReason = "too many resources lost";
+            if (DEBUG) debugReason = "Too many resources lost";
             return true;
         }
 

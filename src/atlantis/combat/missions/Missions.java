@@ -118,7 +118,10 @@ public class Missions {
 //            }
 
             if (MissionChanger.DEBUG) {
-                System.err.println("CHANGED MISSION TO: " + mission.name() + ", reason: " + MissionChanger.debugReason);
+                System.err.println(
+                    "CHANGED MISSION AT " + A.seconds() + " TO: " + mission.name()
+                    + ", reason: " + MissionChanger.debugReason
+                );
             }
             MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         }

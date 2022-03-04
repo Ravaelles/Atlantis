@@ -7,11 +7,16 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class ComeCloser extends ASquadCohesionManager {
 
     public static boolean handleComeCloser(AUnit unit) {
+        if (Enemy.terran() && !We.terran()) {
+            return false;
+        }
+
         if (shouldSkip(unit)) {
             return false;
         }
@@ -149,7 +154,7 @@ public class ComeCloser extends ASquadCohesionManager {
     // =========================================================
 
     public static boolean isTooFarFromSquadCenter(AUnit unit) {
-        if (unit.squad() == null) {
+        if (unit.squad() == null || unit.isTank()) {
             return false;
         }
 

@@ -91,22 +91,28 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         }
 
         if (GamePhase.isEarlyGame() && EnemyStrategy.get().isRushOrCheese() && Count.zealots() < minZealotsInRush()) {
-            return;
+            if (!A.hasMinerals(225)) {
+                return;
+            }
         }
 
-        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
-            return;
-        }
+//        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
+//            return;
+//        }
 
         trainIfPossible(AUnitType.Protoss_Dragoon);
     }
 
     private static int minZealotsInRush() {
-        return 3;
+        return 2;
     }
 
     private static void zealots() {
         if (Have.no(AUnitType.Protoss_Gateway)) {
+            return;
+        }
+
+        if (A.hasGas(50) && !A.hasMinerals(225) && Count.dragoons() <= 1 && Count.zealots() >= 1) {
             return;
         }
 
