@@ -153,8 +153,8 @@ public class ACombatEvaluator {
 
         // Our eval
         if (unit.isOur()) {
-            theseUnits = Select.ourCombatUnits().ranged().inRadius(RANGED_RADIUS, unit);
-            theseUnits.add(Select.ourCombatUnits().melee().inRadius(MELEE_RADIUS, unit));
+            theseUnits = unit.ourCombatUnitsNear().ranged().inRadius(RANGED_RADIUS, unit);
+            theseUnits.add(unit.ourCombatUnitsNear().melee().inRadius(MELEE_RADIUS, unit));
         }
 
         // Enemy eval

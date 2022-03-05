@@ -109,7 +109,7 @@ public abstract class AbstractPositionFinder {
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
 //                        && (distance <= 5 && !We.zerg());
 
-                if (building.isCannon() && order.buildingType().isCannon() && distance < 2) {
+                if (building.isCannon() && order.buildingType().isCannon() && distance >= 2) {
                     return false;
                 }
 

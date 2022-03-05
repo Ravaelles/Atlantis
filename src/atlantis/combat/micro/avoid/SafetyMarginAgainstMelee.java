@@ -64,8 +64,14 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             return -1;
         }
 
-        if (defender.shieldDamageAtMost(5) && defender.cooldownRemaining() <= 5) {
-            return 0;
+        if (defender.shieldDamageAtMost(25) && !attacker.isDT()) {
+            if (defender.cooldownRemaining() <= 5) {
+                return 0;
+            }
+
+            if (defender.lastUnderAttackMoreThanAgo(150) && defender.shieldDamageAtMost(16)) {
+                return 0;
+            }
         }
 
         if (attacker.isZergling()) {

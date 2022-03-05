@@ -73,7 +73,7 @@ public class Selection {
      */
     public Selection inRadius(double maxDist, AUnit unit) {
         return Select.cache.get(
-                addToCachePath("inRadius:" + maxDist + ":" + unit.id()),
+                addToCachePath("inRadius:" + maxDist + ":#" + unit.id()),
                 0,
                 () -> {
                     return cloneByRemovingIf((u -> u.distTo(unit) > maxDist));
@@ -828,6 +828,7 @@ public class Selection {
         System.out.println("=== " + (message != null ? message : currentCachePath) + " (" + size() + ") ===");
         for (AUnit unit : data) {
             System.out.println(unit.toString());
+//            System.out.println(unit.toString() + " / " + unit.getClass());
         }
         System.out.println();
         return this;

@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.We;
 
 public abstract class MoveToFocusPoint {
 
@@ -32,7 +33,7 @@ public abstract class MoveToFocusPoint {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     protected static boolean wrongSideOfFocus() {
-        if (fromSide == null || (focusPoint != null && focusPoint.isAroundChoke())) {
+        if (!isAroundChoke() || fromSide == null) {
             return false;
         }
 
@@ -56,6 +57,18 @@ public abstract class MoveToFocusPoint {
      * Unit is too close to its focus point.
      */
     protected static boolean tooCloseToFocusPoint() {
+        if (!isAroundChoke()) {
+            return false;
+        }
+
+        if (unit.enemiesNear().inRadius(2, unit).isNotEmpty()) {
+            return false;
+        }
+
+        if (unit.isZealot() && unit.enemiesNear().inRadius(6, unit).notEmpty()) {
+            return false;
+        }
+
         if (distUnitToFocus <= (optimalDist - MARGIN)) {
             String dist = A.dist(distUnitToFocus);
 
@@ -67,6 +80,10 @@ public abstract class MoveToFocusPoint {
         }
 
         return false;
+    }
+
+    private static boolean isAroundChoke() {
+        return focusPoint != null && focusPoint.isAroundChoke();
     }
 
 }

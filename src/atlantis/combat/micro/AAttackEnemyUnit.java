@@ -1,7 +1,6 @@
 package atlantis.combat.micro;
 
 import atlantis.combat.targeting.ATargeting;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -9,11 +8,11 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Cache;
-import bwapi.Color;
 
 public class AAttackEnemyUnit {
 
-    private static final double MAX_DIST_TO_ATTACK = 40;
+    public static final double MAX_DIST_TO_ATTACK = 30;
+//    public static final double MAX_DIST_TO_ATTACK = 500;
 
     public static String reasonNotToAttack;
 
@@ -32,22 +31,22 @@ public class AAttackEnemyUnit {
      */
     public static boolean handleAttackNearEnemyUnits(AUnit unit) {
 //        if (!unit.isStopped()) {
-        if (unit.lastActionLessThanAgo(5)) {
-//            AAdvancedPainter.paintCircleFilled(unit, 6, Color.Orange);
-//            System.out.println("u.getLastCommand().getType().name() = " + unit.getLastCommand().getType().name());
-            return false;
-        }
+
+//        if (unit.lastActionLessThanAgo(5) && !unit.isStopped()) {
+////            AAdvancedPainter.paintCircleFilled(unit, 12, Color.Orange);
+////            System.out.println("u.getLastCommand().getType().name() = " + unit.getLastCommand().getType().name());
+//            unit.addLog("ContinueAttack");
+//            return false;
+//        }
 
         AUnit enemy = defineEnemyToAttackFor(unit);
         if (enemy == null) {
-            AAdvancedPainter.paintCircleFilled(unit, 4, Color.Brown);
-//            if (unit.isAttackingOrMovingToAttack()) {
-//                unit.stop("Dont", false);
-//            }
+//            AAdvancedPainter.paintCircleFilled(unit, 7, Color.White);
+            unit.addLog("NothingToAttack");
             return false;
         }
 
-        return processAttackUnit(unit, enemy);
+        return ProcessAttackUnit.processAttackUnit(unit, enemy);
     }
 
     public static boolean canAttackEnemiesNow(AUnit unit) {
@@ -105,9 +104,9 @@ public class AAttackEnemyUnit {
             () -> {
                 reasonNotToAttack = null;
 
-                if (!allowedToAttack(unit)) {
-                    return null;
-                }
+//                if (!allowedToAttack(unit)) {
+//                    return null;
+//                }
 
                 AUnit enemy = ATargeting.defineBestEnemyToAttackFor(unit, MAX_DIST_TO_ATTACK);
 //                System.out.println("enemy = " + enemy);
@@ -142,13 +141,16 @@ public class AAttackEnemyUnit {
     private static boolean isValidTargetAndAllowedToAttackUnit(AUnit unit, AUnit target) {
         if (!missionAllowsToAttack(unit, target)) {
             reasonNotToAttack = "MissionForbids";
+            unit.setTooltipTactical(reasonNotToAttack);
+            unit.addLog(reasonNotToAttack);
             return false;
         }
 
         if (!unit.canAttackTarget(target, false, true)) {
             reasonNotToAttack = "InvalidTarget";
-            unit.setTooltipTactical("Invalid target");
-            System.err.println("Invalid target for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
+            unit.setTooltipTactical(reasonNotToAttack);
+            unit.addLog(reasonNotToAttack);
+            System.err.println(reasonNotToAttack + " for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
             return false;
         }
 
@@ -156,54 +158,12 @@ public class AAttackEnemyUnit {
         if (unit.target() != null && unit.isMelee() && unit.target().isTank() && unit.isAttackingOrMovingToAttack()) {
             if (unit.distToLessThan(unit.target(), 3)) {
                 reasonNotToAttack = "DontSwitch";
+                unit.addLog(reasonNotToAttack);
                 return false;
             }
         }
 
         return true;
-    }
-
-    private static boolean processAttackUnit(AUnit unit, AUnit target) {
-        if (handleMoveNextToTanksWhenAttackingThem(unit, target)) {
-            return true;
-        }
-
-        if (target.isBase() && unit.distToMoreThan(target, 4)) {
-            return unit.move(target, Actions.MOVE_ATTACK, "BaseAttack", false);
-        }
-
-//        unit.setTooltip("@" + target.name());
-        return unit.attackUnit(target);
-    }
-
-    private static boolean handleMoveNextToTanksWhenAttackingThem(AUnit unit, AUnit enemy) {
-        if (!enemy.isTank()) {
-            return false;
-        }
-
-        int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
-        if (
-            !unit.isAir()
-                && !unit.is(
-                AUnitType.Terran_Siege_Tank_Siege_Mode,
-                AUnitType.Terran_Siege_Tank_Tank_Mode,
-                AUnitType.Protoss_Archon,
-                AUnitType.Protoss_Reaver
-            )
-                && (enemy.distToMoreThan(unit, unit.isMelee() ? 0.8 : 1.15))
-                && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
-                && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
-        ) {
-            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) {
-                return false;
-            }
-
-            if (unit.move(enemy, Actions.MOVE_ATTACK, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {

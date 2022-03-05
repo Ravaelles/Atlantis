@@ -2057,7 +2057,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public Selection friendsNear() {
         return ((Selection) cache.get(
-            "friends",
+            "friendsNear",
             5,
             () -> {
                 if (unit().isOur()) {
@@ -2074,6 +2074,26 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                     return Select.from(new Units());
                 }
             }
+        ));
+    }
+
+    public Selection ourCombatUnitsNear() {
+        return ((Selection) cache.get(
+            "ourCombatUnitsNear",
+            5,
+            () -> Select.ourCombatUnits()
+                .inRadius(15, this)
+                .exclude(this)
+        ));
+    }
+
+    public Selection allUnitsNear() {
+        return ((Selection) cache.get(
+            "allUnitsNear",
+            5,
+            () -> Select.all()
+                .inRadius(15, this)
+                .exclude(this)
         ));
     }
 

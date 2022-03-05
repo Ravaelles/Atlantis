@@ -282,32 +282,41 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightBecauseWayTooManyUnitsNear(AUnit unit) {
-        int unitsNear = Select.all().exclude(unit).inRadius(0.3, unit).count();
-        int ourNear = Select.our().exclude(unit).inRadius(0.3, unit).count();
+        Selection our = unit.friendsNear().combatUnits();
+        int allCount = unit.allUnitsNear().inRadius(0.3, unit).count();
+        int ourCount = our.inRadius(0.4, unit).count();
 
-        if (unit.mission() != null && unit.mission().isMissionAttack()) {
-            if (We.terran()) {
-                return unitsNear >= 6 || (invisibleDT != null && unitsNear >= 4)
-                        || Select.ourCombatUnits().inRadius(10, unit).atLeast(25);
-            }
-            if (We.protoss()) {
-                return unitsNear >= 6 || (invisibleDT != null && unitsNear >= 4)
-                        || Select.ourCombatUnits().inRadius(10, unit).atLeast(10);
-            }
-            if (We.zerg()) {
-                return unitsNear >= 6 || (invisibleDT != null && unitsNear >= 4)
-                        || Select.ourCombatUnits().inRadius(10, unit).atLeast(20);
-            }
+//        if (unit.mission() != null && unit.mission().isMissionAttack()) {
+        boolean isStacked = false;
+        if (We.terran()) {
+            isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
+                    || our.inRadius(1.3, unit).atLeast(25);
         }
+        else if (We.protoss()) {
+            isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
+                    || our.inRadius(1.3, unit).atLeast(5);
+        }
+        else if (We.zerg()) {
+            isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
+                    || our.inRadius(1.3, unit).atLeast(5);
+        }
+//        }
 
         if (combatBuilding != null) {
             return unit.mission().isMissionAttack()
-                    && Select.ourCombatUnits().inRadius(6, unit).atLeast(10)
+                    && unit.ourCombatUnitsNear().inRadius(6, unit).atLeast(10)
                     && ACombatEvaluator.advantagePercent(unit, 50)
                     && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
         }
 
-        return ourNear >= 5 || unitsNear >= 6;
+//        boolean isStacked = ourCount >= 5 || allCount >= 6;
+//        boolean isStacked = ourCount >= 5 || allCount >= 6;
+
+        if (isStacked) {
+            unit.addLog("Stacked:" + ourCount + "/" + allCount);
+        }
+
+        return isStacked;
     }
 
     protected boolean fightAsWorker(AUnit unit, Units enemies) {

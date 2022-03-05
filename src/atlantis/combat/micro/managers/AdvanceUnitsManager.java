@@ -42,18 +42,20 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
         if (focusPoint == null) {
+            unit.addLog("NoFocusPoint");
             return false;
         }
 
-        if (unit.enemiesNear().notEmpty()) {
+        if (unit.friendsNearCount() <= 10 && unit.enemiesNear().combatUnits().notEmpty()) {
             if (
                 unit.isMoving()
                     && !unit.isUnitAction(Actions.MOVE_FORMATION)
                     && !unit.isRunning()
-                    && unit.lastActionMoreThanAgo(15)
+//                    && unit.lastActionMoreThanAgo(15)
                     && unit.distToSquadCenter() >= 5
             ) {
-                unit.stop("TooFast", false);
+                unit.addLog("TooFast");
+                return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "TooFast", false);
             }
             return false;
         }

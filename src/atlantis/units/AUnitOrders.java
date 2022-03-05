@@ -52,7 +52,8 @@ public interface AUnitOrders {
 //        System.out.println("                  ------> ATTACK #" + target);
 
         // Do NOT issue double orders
-        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
+//        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
+        if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
             unit().setTooltipTactical("Attacking...");
             return true;
         }
@@ -67,8 +68,8 @@ public interface AUnitOrders {
 
         unit().setTooltipTactical("ATTACK-UNIT");
         unit().setAction(Actions.ATTACK_UNIT);
-        u().attack(target.u());
-        return true;
+        return u().attack(target.u());
+//        return true;
     }
 
     // To avoid confusion: NEVER UE IT.

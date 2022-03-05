@@ -103,7 +103,7 @@ public class TerranBunkerPositionFinder {
         else if (locationModifier.equals(PositionModifier.MAIN_CHOKE)) {
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
-                return APosition.create(mainChoke.center()).translateTilesTowards(mainBase, 3.5);
+                return APosition.create(mainChoke.center()).translateTilesTowards(mainBase, 2.5);
             }
         }
 

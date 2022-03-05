@@ -30,7 +30,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     // =========================================================
 
     private static void roboticsSupportBay() {
-        if (!A.supplyUsed(45)) {
+        if (!A.supplyUsed(60)) {
             return;
         }
 
@@ -59,6 +59,9 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     private static void roboticsFacility() {
         if (!A.supplyUsed(37)) {
+            return;
+        }
+        if (!A.supplyUsed(46) && Have.cannon()) {
             return;
         }
 

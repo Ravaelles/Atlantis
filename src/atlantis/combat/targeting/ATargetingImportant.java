@@ -18,7 +18,7 @@ public class ATargetingImportant extends ATargeting {
         AUnit target;
 
         if (unit.isAir() && (target = ATargetingForAir.targetForAirUnits(unit)) != null) {
-            if (ATargeting.debug(unit)) System.out.println("CA = " + target);
+            if (ATargeting.DEBUG) System.out.println("CA = " + target);
             return target;
         }
 
@@ -41,13 +41,13 @@ public class ATargetingImportant extends ATargeting {
         // =========================================================
         // Target AIR UNITS IN RANGE
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .air()
                 .excludeTypes(AUnitType.Zerg_Overlord)
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (ATargeting.debug(unit)) System.out.println("C1a = " + target);
+            if (ATargeting.DEBUG) System.out.println("C1a = " + target);
             return target;
         }
 
@@ -82,23 +82,23 @@ public class ATargetingImportant extends ATargeting {
         // Target COMBAT UNITS IN RANGE
 
         // Ignore MEDICS
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .combatUnits()
                 .excludeTypes(AUnitType.Terran_Medic)
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (ATargeting.debug(unit)) System.out.println("C1b = " + target);
+            if (ATargeting.DEBUG) System.out.println("C1b = " + target);
             return target;
         }
 
         // Take into account excluded units above e.g. MEDICS
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(AUnitType.Terran_Medic)
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (ATargeting.debug(unit)) System.out.println("C1c = " + target);
+            if (ATargeting.DEBUG) System.out.println("C1c = " + target);
             return target;
         }
 
@@ -107,7 +107,7 @@ public class ATargetingImportant extends ATargeting {
 
     private static AUnit combatBuildingOrScvRepairingIt(AUnit unit) {
         if (!unit.isBunker()) {
-            if (ATargeting.debug(unit)) System.out.println("C0c = " + unit);
+            if (ATargeting.DEBUG) System.out.println("C0c = " + unit);
             return unit;
         }
 
@@ -115,11 +115,11 @@ public class ATargetingImportant extends ATargeting {
         AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, unit)
                 .canBeAttackedBy(unit, 1.7).nearestTo(unit);
         if (repairer != null) {
-            if (ATargeting.debug(unit)) System.out.println("C0a = " + repairer);
+            if (ATargeting.DEBUG) System.out.println("C0a = " + repairer);
             return repairer;
         }
 
-        if (ATargeting.debug(unit)) System.out.println("C0b = " + unit);
+        if (ATargeting.DEBUG) System.out.println("C0b = " + unit);
         return unit;
     }
 
@@ -129,13 +129,13 @@ public class ATargetingImportant extends ATargeting {
         // =========================================================
         // Target COMBAT UNITS IN RANGE
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .combatUnits()
                 .inShootRangeOf(unit)
 //                .inRadius(13, unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (ATargeting.debug(unit)) System.out.println("C4 = " + target);
+            if (ATargeting.DEBUG) System.out.println("C4 = " + target);
             return target;
         }
 
@@ -147,7 +147,7 @@ public class ATargetingImportant extends ATargeting {
                         AUnitType.Protoss_Photon_Cannon,
                         AUnitType.Zerg_Sunken_Colony,
                         AUnitType.Zerg_Creep_Colony,
-                        AUnitType.Zerg_Spore_Colony,
+//                        AUnitType.Zerg_Spore_Colony,
                         AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret
                 )
@@ -155,7 +155,7 @@ public class ATargetingImportant extends ATargeting {
                 .canBeAttackedBy(unit, 4)
                 .nearestTo(unit);
 
-        if (ATargeting.debug(unit)) System.out.println("C5 = " + target);
+        if (target != null && ATargeting.DEBUG) System.out.println("C5 = " + target);
         return target;
     }
 

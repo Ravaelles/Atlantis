@@ -1,5 +1,6 @@
 package atlantis.combat.targeting;
 
+import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -7,6 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
+import static atlantis.combat.micro.AAttackEnemyUnit.MAX_DIST_TO_ATTACK;
 import static atlantis.combat.micro.AAttackEnemyUnit.reasonNotToAttack;
 
 public class ATargeting {
@@ -39,18 +41,14 @@ public class ATargeting {
     }
 
     public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
-        return defineBestEnemyToAttackFor(unit, 15);
-    }
-
-    public static boolean debug(AUnit unit) {
-//        return DEBUG && unit.isFirstCombatUnit();
-        return DEBUG;
+        return defineBestEnemyToAttackFor(unit, AAttackEnemyUnit.MAX_DIST_TO_ATTACK);
     }
 
     // =========================================================
 
     private static AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
+
         if (enemy == null) {
             return null;
         }
@@ -138,9 +136,9 @@ public class ATargeting {
             unit.enemiesNear()
                 .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, 15)
                 .isEmpty()
         ) {
+//            System.out.println("No enemies near for " + unit + " in dist=" + maxDistFromEnemy);
             return null;
         }
 
@@ -148,44 +146,58 @@ public class ATargeting {
 
         AUnit target;
 //        enemyBuildings = unit.enemiesNear()
-        enemyBuildings = Select.enemyRealUnits()
+        enemyBuildings = Select.enemyRealUnits(true, false, true)
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, 14);
+                .canBeAttackedBy(unit, maxDistFromEnemy);
         enemyUnits = Select.enemyRealUnits()
                 .nonBuildings()
-                .effVisible()
-                .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, 14);
+                .effVisible();
+//                .inRadius(maxDistFromEnemy, unit);
 
+//        Select.enemyRealUnits().print();
 //        enemyBuildings.print();
 //        enemyUnits.print();
+
+//        if (unit.isDragoon()) {
+//            System.out.println("--- Enemy units near " + unit.idWithHash() + " (" + enemyUnits.size() + ") ---");
+//            for (AUnit enemy : enemyUnits.list()) {
+//                System.out.println(enemy.getClass() + " " + enemy.toString() + " / " + A.dist(unit, enemy));
+//            }
+//        }
+
+//        System.out.println("@@@@@@@@@@ size = " + enemyUnits.size());
+//        System.out.println("@@@@@@@@@@a " + Select.enemyRealUnits().size());
+//        System.out.println("@@@@@@@@@@b " + Select.enemyRealUnits().nonBuildings().size());
+//        System.out.println("@@@@@@@@@@c " + Select.enemyRealUnits().nonBuildings().effVisible().size());
+//        System.out.println("@@@@@@@@@@d " + Select.enemyRealUnits().nonBuildings().effVisible().inRadius(maxDistFromEnemy, unit).size());
+//        System.out.println("@@@@@@@@@@e " + Select.enemyRealUnits().nonBuildings().effVisible().inRadius(500, unit).size());
 
         // =========================================================
 
         if ((target = ATargetingForSpecificUnits.target(unit)) != null) {
-            if (ATargeting.debug(unit)) System.out.println("A = "+ target);
+            if (ATargeting.DEBUG) System.out.println("A = "+ target);
             return target;
         }
 
         // === Crucial units =======================================
 
         if ((target = ATargetingCrucial.target(unit)) != null) {
-            if (ATargeting.debug(unit)) System.out.println("B = "+ target);
+            if (ATargeting.DEBUG) System.out.println("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
         if ((target = ATargetingImportant.target(unit)) != null) {
-            if (ATargeting.debug(unit)) System.out.println("C = "+ target);
+            if (ATargeting.DEBUG) System.out.println("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
         if ((target = ATargetingStandard.target(unit)) != null) {
-            if (ATargeting.debug(unit)) System.out.println("D = "+ target);
+            if (ATargeting.DEBUG) System.out.println("D = "+ target);
             return target;
         }
 
