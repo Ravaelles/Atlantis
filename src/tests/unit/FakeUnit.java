@@ -237,6 +237,11 @@ public class FakeUnit extends AUnit {
         return Math.sqrt(dx * dx + dy * dy) / 32.0;
     }
 
+    @Override
+    public double groundDist(HasPosition other) {
+        return distTo(other);
+    }
+
     // =========================================================
     // Orders
 

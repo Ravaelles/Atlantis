@@ -5,6 +5,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.game.A;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 
 public class MissionContain extends Mission {
@@ -48,10 +49,14 @@ public class MissionContain extends Mission {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-//        AFocusPoint focusPoint = focusPoint();
+        AFocusPoint focusPoint = focusPoint();
 
-        if (enemy.hasWeaponRangeToAttack(unit, 0.2) || unit.hasWeaponRangeToAttack(enemy, 0)) {
+        if (enemy.hasWeaponRangeToAttack(unit, 0.2)) {
             return true;
+        }
+
+        if (wouldCrossChokeToAttack(unit, enemy, focusPoint)) {
+            return false;
         }
 
         // Allow to defend bases
@@ -59,22 +64,28 @@ public class MissionContain extends Mission {
             return true;
         }
 
-//        if (focusPoint != null && unit.distTo(enemy) > (unit.distTo(focusPoint) + 0.2)) {
-//            return false;
-//        }
-
         if (unit.isStimmed()) {
             return true;
         }
 
-//        if (!unit.isWounded() || unit.lastStartedAttackMoreThanAgo(30 * 5)) {
-//            return true;
-//        }
-
         // Attack enemies near squad center
-//        if (enemy.distTo(unit.squad().median()) <= (Enemy.zerg() ? 5.1 : 6.3)) {
         if (enemy.distTo(unit.squad().center()) <= 12) {
             return true;
+        }
+
+        return false;
+    }
+
+
+    private boolean wouldCrossChokeToAttack(AUnit unit, AUnit enemy, AFocusPoint focusPoint) {
+        if (focusPoint.isAroundChoke()) {
+            HasPosition squad = unit.squadCenter();
+            double squadToEnemy = squad.distTo(enemy);
+            double squadToFocus = squad.distTo(focusPoint);
+
+            if (squadToEnemy > 0.8 + squadToFocus) {
+                return false;
+            }
         }
 
         return false;

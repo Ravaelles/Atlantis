@@ -1004,7 +1004,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int maxHp() {
         return (int) cache.get(
-            "getMaxHitPoints",
+            "maxHp",
             -1,
             () -> {
                 int hp = type().maxHp() + maxShields();
@@ -2023,8 +2023,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             3,
             () -> {
                 if (unit().isOur()) {
-//                        return Select.enemyRealUnits(true, true, true)
-
                     return EnemyUnits.discovered()
                         .inRadius(15, this)
                         .exclude(this);
@@ -2084,13 +2082,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         ));
     }
 
-    public Selection ourCombatUnitsNear() {
+    public Selection ourCombatUnitsNear(boolean excludeThisUnit) {
         return ((Selection) cache.get(
-            "ourCombatUnitsNear",
+            "ourCombatUnitsNear:" + A.trueFalse(excludeThisUnit),
             5,
             () -> Select.ourCombatUnits()
                 .inRadius(15, this)
-                .exclude(this)
+                .exclude(excludeThisUnit ? this : null)
         ));
     }
 

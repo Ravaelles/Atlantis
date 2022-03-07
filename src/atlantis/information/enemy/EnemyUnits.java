@@ -33,10 +33,6 @@ public class EnemyUnits {
 
     // =========================================================
 
-    // =========================================================
-
-    // =========================================================
-
     public static void clearCache() {
         cache.clear();
         enemyUnitsDiscovered.clear();
@@ -113,29 +109,29 @@ public class EnemyUnits {
 //        );
 //    }
 
-    public static Selection combatUnitsToBetterAvoid() {
-        return (Selection) cache.get(
-                "combatUnitsToBetterAvoid:",
-                30,
-                () -> {
-                    Selection foggedCombatnits = foggedUnits()
-                            .combatUnits()
-                            .havingPosition();
-
-                    return foggedCombatnits
-                            .clone()
-                            .combatBuildings(false)
-                            .add(
-                                foggedCombatnits.clone().ofType(
-                                    AUnitType.Protoss_Photon_Cannon,
-                                    AUnitType.Terran_Siege_Tank_Siege_Mode,
-                                    AUnitType.Zerg_Lurker,
-                                    AUnitType.Zerg_Sunken_Colony
-                                )
-                            )
-                            .havingPosition();
-                }
-        );
-    }
+//    public static Selection combatUnitsToBetterAvoid() {
+//        return (Selection) cache.get(
+//                "combatUnitsToBetterAvoid:",
+//                30,
+//                () -> {
+//                    Selection foggedCombatnits = foggedUnits()
+//                            .combatUnits()
+//                            .havingPosition();
+//
+//                    return foggedCombatnits
+//                            .clone()
+//                            .combatBuildings(false)
+//                            .add(
+//                                foggedCombatnits.clone().ofType(
+//                                    AUnitType.Protoss_Photon_Cannon,
+//                                    AUnitType.Terran_Siege_Tank_Siege_Mode,
+//                                    AUnitType.Zerg_Lurker,
+//                                    AUnitType.Zerg_Sunken_Colony
+//                                )
+//                            )
+//                            .havingPosition();
+//                }
+//        );
+//    }
 
 }

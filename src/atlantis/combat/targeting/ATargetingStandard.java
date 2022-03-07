@@ -42,6 +42,7 @@ public class ATargetingStandard extends ATargeting {
                 .inRadius(unit.isMelee() ? 6 : 10, unit)
                 .nearestTo(unit);
 
+//        System.out.println("target wrk = " + target);
 //        if (unit.isDragoon()) {
 //            System.err.println("### workers = "
 //                + "A = " + enemyUnits.count()

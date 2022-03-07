@@ -644,7 +644,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static AUnit main() {
         String cachePath;
         AUnit base = cacheUnit.get(
-                cachePath = "mainBase",
+                cachePath = "main",
                 30,
                 () -> {
                     List<AUnit> bases = ourBases().list();
@@ -670,7 +670,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
 
         return cacheUnit.get(
-                cachePath = "naturalOrMainIfNoSecond",
+                cachePath = "naturalOrMain",
                 0,
                 () -> {
                     List<? extends AUnit> bases = Select.ourBases().list();

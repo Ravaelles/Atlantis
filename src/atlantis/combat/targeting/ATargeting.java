@@ -48,6 +48,7 @@ public class ATargeting {
 
     private static AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
+//        System.out.println("defineTarget = " + enemy);
 
         if (enemy == null) {
             return null;
@@ -138,7 +139,7 @@ public class ATargeting {
                 .inRadius(maxDistFromEnemy, unit)
                 .isEmpty()
         ) {
-//            System.out.println("No enemies near for " + unit + " in dist=" + maxDistFromEnemy);
+            System.out.println("No enemies near for " + unit + " in dist=" + maxDistFromEnemy);
             return null;
         }
 
@@ -176,10 +177,10 @@ public class ATargeting {
 
         // =========================================================
 
-        if ((target = ATargetingForSpecificUnits.target(unit)) != null) {
-            if (ATargeting.DEBUG) System.out.println("A = "+ target);
-            return target;
-        }
+//        if ((target = ATargetingForSpecificUnits.target(unit)) != null) {
+//            if (ATargeting.DEBUG) System.out.println("A = "+ target);
+//            return target;
+//        }
 
         // === Crucial units =======================================
 

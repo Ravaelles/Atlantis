@@ -1,8 +1,10 @@
 package tests.acceptance;
 
 import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -53,6 +55,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon = fakeEnemy(Protoss_Photon_Cannon, 92));
             EnemyUnitsUpdater.weDiscoveredEnemyUnit(fakeEnemy(Protoss_Gateway, 93));
 
+//            Select.our().print("Our");
 //            System.out.println("wraith = " + wraith);
 //            System.out.println("cannon = " + cannon);
 

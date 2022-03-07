@@ -161,7 +161,7 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyBuildings
             .bases()
-//            .notHavingHp(1000)
+            .notHavingHp(200)
             .inRadius(15, unit)
             .nearestTo(unit);
         if (target != null) {

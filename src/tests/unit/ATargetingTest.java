@@ -39,10 +39,8 @@ public class ATargetingTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Spore_Colony, 12),
                 fake(AUnitType.Zerg_Drone, 13),
                 fake(AUnitType.Zerg_Drone, 14),
-                fake(AUnitType.Zerg_Zergling, 15),
-                fake(AUnitType.Zerg_Zergling, 16),
-                fake(AUnitType.Zerg_Zergling, 17),
                 fake(AUnitType.Zerg_Hydralisk, 18),
+                fake(AUnitType.Zerg_Zergling, 19),
                 fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
@@ -98,13 +96,15 @@ public class ATargetingTest extends AbstractTestWithUnits {
             fake(AUnitType.Zerg_Cocoon, 11),
             fake(AUnitType.Zerg_Spore_Colony, 12),
             fake(AUnitType.Zerg_Greater_Spire, 17),
-            fake(AUnitType.Zerg_Hydralisk, 18),
-            templar = fake(AUnitType.Protoss_High_Templar, 19),
+            fake(AUnitType.Zerg_Zergling, 16),
+            fake(AUnitType.Zerg_Hydralisk, 17),
+            templar = fake(AUnitType.Protoss_High_Templar, 17.5),
             fake(AUnitType.Protoss_Dragoon, 28),
             fake(AUnitType.Zerg_Sunken_Colony, 29)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
+//            System.out.println("defineBestEnemyToAttackFor = " + ATargeting.defineBestEnemyToAttackFor(our));
             assertEquals(templar, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }

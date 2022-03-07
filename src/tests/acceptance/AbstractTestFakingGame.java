@@ -53,7 +53,6 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     protected void createWorld(
             int proceedUntilFrameReached, Runnable onFrame, Callable generateOur, Callable generateEnemies
     ) {
-
         // === Create fake units ==========================================
 
         try {

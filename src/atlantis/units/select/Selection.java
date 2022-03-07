@@ -73,11 +73,9 @@ public class Selection {
      */
     public Selection inRadius(double maxDist, AUnit unit) {
         return Select.cache.get(
-                addToCachePath("inRadius:" + maxDist + ":#" + unit.id()),
+                addToCachePath("inRadius:" + maxDist + ":" + unit.idWithHash()),
                 0,
-                () -> {
-                    return cloneByRemovingIf((u -> u.distTo(unit) > maxDist));
-                }
+                () -> cloneByRemovingIf((u -> u.distTo(unit) > maxDist))
         );
     }
 
@@ -609,7 +607,9 @@ public class Selection {
      * @return all units except for the given one
      */
     public Selection exclude(AUnit unitToExclude) {
-        data.remove(unitToExclude);
+        if (unitToExclude != null) {
+            data.remove(unitToExclude);
+        }
         return clone();
     }
 

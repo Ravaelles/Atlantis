@@ -46,6 +46,7 @@ public class ATargetingCrucial extends ATargeting {
                     .inShootRangeOf(groundRange + 4, unit)
                     .randomWithSeed(700 + unit.id());
             if (target != null) {
+                if (ATargeting.DEBUG) System.out.println("CR1 = " + target);
                 return target;
             }
         }
@@ -59,6 +60,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(unit.isAir() ? 40 : 13, unit)
                 .mostWounded();
         if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, target).atLeast(1)) {
+            if (ATargeting.DEBUG) System.out.println("CR2 = " + target);
             return target;
         }
 
@@ -71,6 +73,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(15, unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR3 = " + target);
             return target;
         }
 
@@ -79,6 +82,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR3 = " + target);
             return target;
         }
 
@@ -87,6 +91,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(10, unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR4 = " + target);
             return target;
         }
 
@@ -95,9 +100,11 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits
                 .ofType(AUnitType.Protoss_High_Templar)
-                .inRadius(15, unit)
+                .inRadius(8, unit)
                 .nearestTo(unit);
+//        System.out.println("target = " + target + " // " + (target != null ? unit.distTo(target) : ""));
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR5 = " + target);
             return target;
         }
 
@@ -107,6 +114,7 @@ public class ATargetingCrucial extends ATargeting {
         if (unit.isMelee()) {
             Selection NearEnemies = enemyUnits.inRadius(0.9, unit);
             if (NearEnemies.atLeast(2)) {
+                if (ATargeting.DEBUG) System.out.println("CR6 = " + target);
                 return NearEnemies.mostWounded();
             }
         }
@@ -132,6 +140,7 @@ public class ATargetingCrucial extends ATargeting {
                     .inRadius(5, unit)
                     .nearestTo(unit);
             if (target != null) {
+                if (ATargeting.DEBUG) System.out.println("CR7 = " + target);
                 return target;
             }
         }
@@ -145,6 +154,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(9, unit)
                 .randomWithSeed(unit.id());
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR8 = " + target);
             return target;
         }
 
@@ -158,6 +168,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(8, unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR9 = " + target);
             return target;
         }
 
@@ -173,6 +184,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(groundRange + 2, unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR10 = " + target);
             return target;
         }
 
@@ -189,6 +201,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR11 = " + target);
             return target;
         }
 
@@ -196,7 +209,7 @@ public class ATargetingCrucial extends ATargeting {
         // Special case - SHUTTLE
 
         if ((target = ATransportTargeting.target(unit)) != null) {
-            if (ATargeting.DEBUG) System.out.println("C3 = " + target);
+            if (ATargeting.DEBUG) System.out.println("CR12 = " + target);
             return target;
         }
 
@@ -211,6 +224,10 @@ public class ATargetingCrucial extends ATargeting {
                 )
                 .inRadius(groundRange + 0.7, unit)
                 .nearestTo(unit);
+        if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR13 = " + target);
+            return target;
+        }
 
         return target;
     }
