@@ -567,6 +567,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return !type().isNotRealUnit();
     }
 
+    public boolean isRealUnitOrBuilding() {
+        return type().isRealUnitOrBuilding();
+    }
+
     // =========================================================
     // Auxiliary
 
@@ -2024,6 +2028,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             () -> {
                 if (unit().isOur()) {
                     return EnemyUnits.discovered()
+                        .realUnitsButAllowBuildings()
                         .inRadius(15, this)
                         .exclude(this);
                 }

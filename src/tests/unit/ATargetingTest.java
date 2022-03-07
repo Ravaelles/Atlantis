@@ -110,6 +110,24 @@ public class ATargetingTest extends AbstractTestWithUnits {
     }
 
     @Test
+    public void doesNotTargetLarvas() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit building;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Larva, 11),
+            fake(AUnitType.Zerg_Egg, 11),
+            fake(AUnitType.Zerg_Lurker_Egg, 11),
+            fake(AUnitType.Zerg_Cocoon, 11),
+            building = fake(AUnitType.Zerg_Hydralisk_Den, 17)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(building, ATargeting.defineBestEnemyToAttackFor(our));
+        });
+    }
+
+    @Test
     public void targetsDoesNotTargetTooFarHighTemplars() {
         FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
         FakeUnit drone, ling1, hydra, sunken, ling2;

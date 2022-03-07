@@ -232,6 +232,14 @@ public class Selection {
         return cloneByRemovingIf((unit -> !unit.isWorker()));
     }
 
+    public Selection realUnits() {
+        return cloneByRemovingIf((unit -> !unit.isRealUnit()));
+    }
+
+    public Selection realUnitsButAllowBuildings() {
+        return cloneByRemovingIf((unit -> !unit.isRealUnitOrBuilding()));
+    }
+
     public Selection air() {
         return cloneByRemovingIf((unit -> !unit.isAir()));
     }

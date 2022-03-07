@@ -151,6 +151,7 @@ public class ATargeting {
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, maxDistFromEnemy);
+//        enemyBuildings.print("BBBB");
         enemyUnits = Select.enemyRealUnits()
                 .nonBuildings()
                 .inRadius(maxDistFromEnemy, unit)
