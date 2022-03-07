@@ -68,11 +68,6 @@ public class MissionDefend extends Mission {
             return false;
         }
 
-        // Zealots vs Zealot fix
-        if (ProtossMissionAdjustments.allowsToAttackEnemyUnits(unit, enemy)) {
-            return true;
-        }
-
         if (
 //                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
                 (unit.isMelee() && unit.distToLessThan(enemy, 1.02))
@@ -99,6 +94,11 @@ public class MissionDefend extends Mission {
 
         if (unit.isMelee() && enemyDistToBase > unitDistToBase) {
             return false;
+        }
+
+        // Zealots vs Zealot fix
+        if (ProtossMissionAdjustments.allowsToAttackEnemyUnits(unit, enemy)) {
+            return true;
         }
 
         if (Have.main()) {
