@@ -90,7 +90,7 @@ public class ComeCloser extends ASquadCohesionManager {
 //            return false;
 //        }
 
-        if (unit.distToSquadCenter() <= 4) {
+        if (unit.distToSquadCenter() <= 4 || unit.distToSquadCenter() >= 15) {
             return false;
         }
 
@@ -155,6 +155,10 @@ public class ComeCloser extends ASquadCohesionManager {
 
     public static boolean isTooFarFromSquadCenter(AUnit unit) {
         if (unit.squad() == null || unit.isTank()) {
+            return false;
+        }
+
+        if (unit.distToSquadCenter() >= 15) {
             return false;
         }
 

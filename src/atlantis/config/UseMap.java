@@ -36,6 +36,7 @@ public class UseMap {
 //        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
 //        if (true) return "ums/rav/Dragoons_v_Zealots.scm";
 //        if (true) return "ums/rav/P_v_Buildings.scx";
+//        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 
         // === Terran ==============================================
 
@@ -63,8 +64,8 @@ public class UseMap {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
-//        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
+//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush

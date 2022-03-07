@@ -1,6 +1,7 @@
 package atlantis.combat.squad;
 
 import atlantis.information.strategy.GamePhase;
+import atlantis.map.AMap;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -13,6 +14,10 @@ public class CohesionAssurance {
      * We want to make sure that at least N percent of units are inside X radius of squad center.
      */
     public static boolean handleTooLowCohesion(AUnit unit) {
+        if (AMap.distToNearestChokeLessThan(unit.position(), 4)) {
+            return false;
+        }
+
         if (!isSquadCohesionTooLow(unit)) {
             return false;
         }

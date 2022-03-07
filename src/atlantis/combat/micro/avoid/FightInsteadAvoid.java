@@ -305,8 +305,8 @@ public class FightInsteadAvoid {
         if (combatBuilding != null) {
             return unit.mission().isMissionAttack()
                     && unit.ourCombatUnitsNear().inRadius(6, unit).atLeast(10)
-                    && ACombatEvaluator.advantagePercent(unit, 50)
-                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
+                    && ACombatEvaluator.advantagePercent(unit, 50);
+//                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
         }
 
 //        boolean isStacked = ourCount >= 5 || allCount >= 6;

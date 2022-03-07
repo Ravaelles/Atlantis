@@ -10,6 +10,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 public class TerranMissionChangerWhenDefend extends MissionChanger {
 
@@ -25,6 +26,12 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
         if (ArmyStrength.weAreMuchWeaker()) {
             if (DEBUG) debugReason = "We are much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return false;
+        }
+
+        if (We.terran() && Enemy.protoss()) {
+            if (Missions.counter() >= 2 && A.supplyUsed() <= 90 && A.seconds() <= 60 * 7) {
+                return false;
+            }
         }
 
         if (Enemy.zerg()) {

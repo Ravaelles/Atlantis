@@ -179,8 +179,8 @@ public class AWorkerDefenceManager {
                 AUnitType.Zerg_Lurker,
                 AUnitType.Zerg_Ultralisk,
                 AUnitType.Protoss_Archon,
-                AUnitType.Protoss_Reaver,
-                AUnitType.Protoss_Zealot
+                AUnitType.Protoss_Reaver
+//                AUnitType.Protoss_Zealot
         ).inRadius(8, worker).isNotEmpty()) {
             return false;
         }

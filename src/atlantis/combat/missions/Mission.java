@@ -50,7 +50,7 @@ public abstract class Mission {
 
     // Template method
     public boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
-        return false;
+        return unit.friendsNearCount() >= 7;
     }
 
     // Template method

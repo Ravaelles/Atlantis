@@ -15,6 +15,8 @@ import atlantis.units.select.Have;
 import atlantis.util.Cache;
 import atlantis.util.Enemy;
 
+import static atlantis.units.AUnitType.Protoss_Zealot;
+
 public class Decisions {
 
     private static Cache<Boolean> cache = new Cache<>();
@@ -77,10 +79,20 @@ public class Decisions {
         return cache.get(
             "dontProduceVultures",
             100,
-            () -> (maxFocusOnTanks() && Count.vultures() >= 1)
-                || (Enemy.terran() && Count.vultures() >= 1)
-                || (Count.vultures() >= 2 && Count.tanks() < 2)
-                || Count.vultures() >= 15
+            () -> {
+                if (
+                    GamePhase.isEarlyGame()
+                        && Count.vultures() <= 3
+                        && EnemyUnits.visibleAndFogged().ofType(Protoss_Zealot).atLeast(5)
+                ) {
+                    return false;
+                }
+
+                return (maxFocusOnTanks() && Count.vultures() >= 1)
+                    || (Enemy.terran() && Count.vultures() >= 1)
+                    || (Count.vultures() >= 2 && Count.tanks() < 2)
+                    || Count.vultures() >= 15;
+            }
 //                () -> Count.vultures() >= 1
 //                () -> maxFocusOnTanks() || (shouldBuildBio() && Count.vultures() <= 1)
         );

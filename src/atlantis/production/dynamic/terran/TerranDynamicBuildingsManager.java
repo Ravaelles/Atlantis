@@ -5,7 +5,9 @@ import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.micro.terran.TerranMissileTurretsForNonMain;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.EnemyStrategy;
+import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.decisions.Decisions;
 import atlantis.production.constructing.ConstructionRequests;
@@ -18,6 +20,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
+import static atlantis.units.AUnitType.Protoss_Zealot;
 import static atlantis.units.AUnitType.Terran_Barracks;
 
 
@@ -143,6 +146,14 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
 
         if (
+            GamePhase.isEarlyGame()
+                && Count.vultures() <= 3
+                && EnemyUnits.visibleAndFogged().ofType(Protoss_Zealot).atLeast(5)
+        ) {
+            return;
+        }
+
+        if (
                 Decisions.wantsToBeAbleToProduceTanksSoon()
                         || (A.supplyUsed(45) && !Have.machineShop())
                         || AGame.canAffordWithReserved(150, 150)
@@ -167,6 +178,14 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     private static boolean barracks() {
         if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
+            return false;
+        }
+
+        if (Count.barracks() >= 2 && A.supplyUsed() <= 40) {
+            return false;
+        }
+
+        if (Count.barracks() >= 3 && A.supplyUsed() <= 70) {
             return false;
         }
 

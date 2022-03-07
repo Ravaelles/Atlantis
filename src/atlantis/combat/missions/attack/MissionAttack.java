@@ -73,16 +73,16 @@ public class MissionAttack extends Mission {
             return true;
         }
 
-        if (unit.friendsNearCount() <= 7) {
+        if (unit.friendsNearCount() <= 6) {
             return false;
         }
 
         // Standard infantry attack
 //        boolean notStrongEnough = Select.ourCombatUnits().inRadius(6, unit).atMost(8);
 //        if (notStrongEnough || unit.lastStoppedRunningLessThanAgo(30 * 10)) {
-        if (unit.lastStoppedRunningLessThanAgo(30 * 10)) {
-            return false;
-        }
+//        if (unit.lastStoppedRunningLessThanAgo(30 * 10)) {
+//            return false;
+//        }
 
         int buildings = Select.enemy().combatBuildings(false).inRadius(7, combatBuilding).count();
 

@@ -56,9 +56,9 @@ public class TerranBunker {
         }
 
         int existingBunkers = Count.existingOrInProductionOrInQueue(bunker);
-        int desiredBunkers = 2;
-        if (existingBunkers < desiredBunkers) {
-            int neededBunkers = desiredBunkers - existingBunkers;
+        int expectedBunkers = expectedBunkers();
+        if (existingBunkers < expectedBunkers) {
+            int neededBunkers = expectedBunkers - existingBunkers;
             for (int i = 0; i < neededBunkers; i++) {
                 addToQueueToMaxAtATime(bunker, neededBunkers);
 //                System.err.println("Requested BUNKER");
@@ -67,6 +67,10 @@ public class TerranBunker {
         }
 
         return false;
+    }
+
+    private static int expectedBunkers() {
+        return 1;
     }
 
     // =========================================================

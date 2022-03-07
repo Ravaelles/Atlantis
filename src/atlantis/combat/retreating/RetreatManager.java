@@ -1,6 +1,7 @@
 package atlantis.combat.retreating;
 
 import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -188,6 +189,24 @@ public class RetreatManager {
             return true;
         }
 
+        if (
+            unit.isAttacking()
+                && unit.hpMoreThan(20)
+                && unit.lastActionLessThanAgo(5)
+                && unit.lastAttackFrameMoreThanAgo(20)
+        ) {
+            return true;
+        }
+
+        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(80) && unit.lastUnderAttackLessThanAgo(80)) {
+            return true;
+        }
+
+        if (unit.isMissionDefend()) {
+            AFocusPoint focusPoint = unit.squad().mission().focusPoint();
+            return focusPoint != null && unit.distTo(focusPoint) <= 3;
+        }
+
         if (unit.isMissionDefend() &&
             (
                 (Have.main() && unit.distToLessThan(Select.main(), 14))
@@ -200,8 +219,6 @@ public class RetreatManager {
         if (unit.type().isReaver()) {
             return unit.enemiesNear().isEmpty() && unit.cooldownRemaining() <= 7;
         }
-
-
 
         return false;
     }

@@ -44,7 +44,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     private static void shuttles() {
         if (
                 Have.no(AUnitType.Protoss_Robotics_Facility)
-                || Count.ofType(AUnitType.Protoss_Reaver) > Count.ofType(AUnitType.Protoss_Shuttle)
+                || Count.ofType(AUnitType.Protoss_Reaver) >= Count.ofType(AUnitType.Protoss_Shuttle)
         ) {
             return;
         }

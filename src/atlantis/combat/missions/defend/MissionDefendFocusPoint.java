@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.GamePhase;
@@ -14,6 +15,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
+import atlantis.util.We;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
 
@@ -33,10 +35,12 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit mainBase = Select.main();
 
-                if (GamePhase.isEarlyGame() && mainBase != null) {
+                if (We.terran() && A.supplyUsed() <= 50) {
                     AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
-                    if (bunker != null) {
-                        return new AFocusPoint(bunker);
+                    if (GamePhase.isEarlyGame() && mainBase != null) {
+                        if (bunker != null) {
+                            return new AFocusPoint(bunker);
+                        }
                     }
                 }
 

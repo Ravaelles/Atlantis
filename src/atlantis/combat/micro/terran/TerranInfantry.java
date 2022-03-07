@@ -108,6 +108,10 @@ public class TerranInfantry {
     }
 
     public static boolean tryLoadingInfantryIntoBunkerIfNeeded(AUnit unit) {
+        if (unit.lastActionLessThanAgo(10, Actions.LOAD)) {
+            unit.addLog("Loading");
+            return true;
+        }
 
         // Only Terran infantry get inside
         if (unit.isLoaded() || !unit.isMarine()) {
@@ -122,7 +126,7 @@ public class TerranInfantry {
         // =========================================================
 
         AUnit nearestBunker = defineBunkerToLoadTo(unit);
-        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 8.2 : 6.2;
+        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
 
         if (
             nearestBunker != null

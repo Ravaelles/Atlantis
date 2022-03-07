@@ -118,6 +118,10 @@ public class EnemyUnits {
 
     // =========================================================
 
+    public static int count(AUnitType type) {
+        return visibleAndFogged().ofType(type).count();
+    }
+
     public static Selection foggedUnits() {
         return (Selection) cache.get(
             "foggedUnits",
@@ -199,4 +203,5 @@ public class EnemyUnits {
                 }
         );
     }
+
 }

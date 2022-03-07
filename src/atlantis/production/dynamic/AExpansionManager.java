@@ -3,7 +3,11 @@ package atlantis.production.dynamic;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
+import atlantis.information.strategy.GamePhase;
 import atlantis.map.Bases;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
@@ -11,8 +15,12 @@ import atlantis.production.dynamic.zerg.ZergExpansionManager;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 import atlantis.util.We;
+
+import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class AExpansionManager {
 
@@ -21,6 +29,18 @@ public class AExpansionManager {
 
         if (ZergExpansionManager.handleNoZergLarvas()) {
             return true;
+        }
+
+        if (
+            We.terran()
+                && GamePhase.isEarlyGame()
+                && (
+                    ArmyStrength.ourArmyRelativeStrength() <= 80
+                        || EnemyUnits.count(Protoss_Zealot) >= 5
+                        || !Have.factory()
+            )
+        ) {
+            return false;
         }
 
         int bases = Count.bases();
