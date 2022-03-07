@@ -94,12 +94,12 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             GamePhase.isEarlyGame()
                 && EnemyStrategy.get().isRushOrCheese()
                 && !A.hasGas(70)
-                && !A.hasMinerals(225)
+                && !A.hasMinerals(175)
                 && Count.zealots() < minZealotsInRush()) {
                 return;
         }
 
-        if (A.supplyUsed() <= 44 && A.hasGas(50) && A.hasMinerals(175)) {
+        if (A.supplyUsed() <= 55 && A.hasGas(50) && A.hasMinerals(175)) {
             trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
             return;
         }

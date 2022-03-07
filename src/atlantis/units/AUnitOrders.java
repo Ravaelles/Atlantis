@@ -124,9 +124,9 @@ public interface AUnitOrders {
         return u().research(tech);
     }
 
-    default boolean move(AUnit target, Action unitAction, String tooltip, boolean strategicLevel) {
-        return move(target.position(), unitAction, tooltip, strategicLevel);
-    }
+//    default boolean move(AUnit target, Action unitAction, String tooltip, boolean strategicLevel) {
+//        return move(target.position(), unitAction, tooltip, strategicLevel);
+//    }
 
     default boolean moveStrategic(HasPosition target, Action unitAction, String tooltip) {
         return move(target, unitAction, tooltip, true);

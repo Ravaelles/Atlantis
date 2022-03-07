@@ -152,8 +152,9 @@ public class ATargeting {
                 .canBeAttackedBy(unit, maxDistFromEnemy);
         enemyUnits = Select.enemyRealUnits()
                 .nonBuildings()
+                .inRadius(maxDistFromEnemy, unit)
+                .maxGroundDist(maxDistFromEnemy, unit)
                 .effVisible();
-//                .inRadius(maxDistFromEnemy, unit);
 
 //        Select.enemyRealUnits().print();
 //        enemyBuildings.print();

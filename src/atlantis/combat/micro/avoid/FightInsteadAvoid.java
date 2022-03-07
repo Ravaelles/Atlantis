@@ -161,6 +161,14 @@ public class FightInsteadAvoid {
             System.err.println("Worker in fightInImportantCases");
         }
 
+        if (
+            unit.isMelee()
+                && unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).inRadius(2.8, unit).notEmpty()
+        ) {
+            unit.addLog("DefendCannon");
+            return true;
+        }
+
         // Attacking critically important unit
         if (ATargetingCrucial.isCrucialUnit(unit.target())) {
             unit.setTooltipTactical("Crucial!");

@@ -88,17 +88,22 @@ public class Selection {
         return Select.cache.get(
                 addToCachePath("inRadius:" + maxDist + ":" + unitOrPosition),
                 0,
-                () -> {
-                    return cloneByRemovingIf((u -> u.distTo(unitOrPosition) > maxDist));
-//                    Iterator unitsIterator = data.iterator();// units.iterator();
-//                    while (unitsIterator.hasNext()) {
-//                        AUnit unit = (AUnit) unitsIterator.next();
-//                        if (unit.distTo(unitOrPosition) > maxDist) {
-//                            unitsIterator.remove();
-//                        }
-//                    }
-//                    return clone();
-                }
+                () -> cloneByRemovingIf((u -> u.distTo(unitOrPosition) > maxDist))
+        );
+    }
+
+    /**
+     * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
+     */
+    public Selection maxGroundDist(double maxDist, AUnit unit) {
+        if (unit.isAir()) {
+            return this;
+        }
+
+        return Select.cache.get(
+                addToCachePath("maxGroundDist:" + maxDist + ":" + unit.idWithHash()),
+                0,
+                () -> cloneByRemovingIf((u -> u.groundDist(unit) > maxDist))
         );
     }
 

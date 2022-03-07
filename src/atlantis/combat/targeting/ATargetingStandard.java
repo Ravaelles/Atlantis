@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class ATargetingStandard extends ATargeting {
 
@@ -21,10 +22,13 @@ public class ATargetingStandard extends ATargeting {
         // =========================================================
         // WORKERS IN RANGE
 
-        target = enemyUnits
-                .workers()
-                .inShootRangeOf(unit)
-                .nearestTo(unit);
+        Selection workersInRnage = enemyUnits.workers().inShootRangeOf(unit);
+        if (unit.isMelee()) {
+            target = workersInRnage.nearestTo(unit);
+        } else {
+            target = workersInRnage.randomWithSeed(unit.id());
+        }
+
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("D1 = " + target);
             return target;

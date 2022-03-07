@@ -131,8 +131,8 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyUnits
                 .combatUnits()
-                .inShootRangeOf(unit)
-//                .inRadius(13, unit)
+//                .inShootRangeOf(unit)
+                .inRadius(7, unit)
                 .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C4 = " + target);
@@ -156,6 +156,21 @@ public class ATargetingImportant extends ATargeting {
                 .nearestTo(unit);
 
         if (target != null && ATargeting.DEBUG) System.out.println("C5 = " + target);
+
+        // === Damaged bases ======================================================
+
+        target = enemyBuildings
+            .bases()
+//            .notHavingHp(1000)
+            .inRadius(15, unit)
+            .nearestTo(unit);
+        if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("C6 = " + target);
+            return target;
+        }
+
+        // =========================================================
+
         return target;
     }
 

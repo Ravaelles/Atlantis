@@ -4,6 +4,7 @@ import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -67,6 +68,18 @@ public class MissionDefend extends Mission {
             return false;
         }
 
+        // Zealots vs Zealot fix
+        if (unit.isZealot() && enemy.isZealot()) {
+            if (unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).inRadius(2.8, unit).notEmpty()) {
+                return true;
+            }
+
+            int ourZealots = unit.zealotsNearCount(0.4);
+            if (ourZealots < unit.enemiesNear().inRadius(0.5, unit).count()) {
+                return false;
+            }
+        }
+
         if (
 //                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
                 (unit.isMelee() && unit.distToLessThan(enemy, 1.02))
@@ -90,14 +103,6 @@ public class MissionDefend extends Mission {
 //            return unit.distTo(enemy) <= 1;
 ////            return false; // 300 mode - stand in line, default to SC auto attacks
 //        }
-
-        // Zealots vs Zealot fix
-        if (unit.isZealot() && enemy.isZealot()) {
-            int ourZealots = unit.zealotsNearCount(0.4);
-            if (ourZealots < unit.enemiesNear().inRadius(0.5, unit).count()) {
-                return false;
-            }
-        }
 
         if (unit.isMelee() && enemyDistToBase > unitDistToBase) {
             return false;

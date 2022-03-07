@@ -6,6 +6,8 @@ import atlantis.combat.micro.zerg.ZergOverlordManager;
 import atlantis.protoss.ProtossHighTemplar;
 import atlantis.protoss.ProtossObserver;
 import atlantis.protoss.ProtossReaver;
+import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ASpecialUnitManager {
@@ -34,6 +36,16 @@ public class ASpecialUnitManager {
         }
 
         // === Protoss ========================================
+
+        if (unit.isProtoss() && unit.shields() <= 5 && unit.hpLessThan(34)) {
+            AUnit battery = Select.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Shield_Battery)
+                .havingEnergy(40)
+                .nearestTo(unit);
+            if (battery != null && battery.distToMoreThan(unit, 6)) {
+                unit.move(battery, Actions.MOVE_SPECIAL, "ToBattery", false);
+                return true;
+            }
+        }
 
         // === Zerg ========================================
 

@@ -12,6 +12,8 @@
 
 package bwem;
 
+import atlantis.map.position.APosition;
+import atlantis.units.select.Select;
 import bwapi.*;
 import bwem.util.BwemExt;
 import bwem.util.CheckMode;
@@ -27,7 +29,7 @@ import static bwem.AreaId.UNINITIALIZED;
  */
 public abstract class BWMap {
     final List<Pair<Pair<AreaId, AreaId>, WalkPosition>> rawFrontier =
-            new ArrayList<>();
+        new ArrayList<>();
     final Game game;
     final List<Unit> mineralPatches;
     final List<Player> players;
@@ -82,8 +84,13 @@ public abstract class BWMap {
             boolean isAssigned = false;
 
             for (final Base base : getBases()) {
-                if (BwemExt.queenWiseDist(base.getLocation(), startingLocation)
-                        <= BwemExt.MAX_TILES_BETWEEN_STARTING_LOCATION_AND_ITS_ASSIGNED_BASE) {
+                if (
+                    BwemExt.queenWiseDist(base.getLocation(), startingLocation)
+                        <= BwemExt.MAX_TILES_BETWEEN_STARTING_LOCATION_AND_ITS_ASSIGNED_BASE
+                        && Select.geysers()
+                        .inRadius(8, APosition.create(base.getLocation().toPosition()))
+                        .isNotEmpty()
+                ) {
                     base.assignStartingLocation(startingLocation);
                     isAssigned = true;
                 }
@@ -102,13 +109,14 @@ public abstract class BWMap {
 
     public List<TilePosition> getUnassignedStartingLocations() {
         final List<TilePosition> remainingStartingLocations =
-                new ArrayList<>(getData().getMapData().getStartingLocations());
+            new ArrayList<>(getData().getMapData().getStartingLocations());
 
         for (final Base base : getBases()) {
             if (remainingStartingLocations.isEmpty()) {
                 break;
-            } else if (base.isStartingLocation()
-                    && base.getLocation().equals(remainingStartingLocations.get(0))) {
+            }
+            else if (base.isStartingLocation()
+                && base.getLocation().equals(remainingStartingLocations.get(0))) {
                 remainingStartingLocations.remove(0);
             }
         }
@@ -135,7 +143,8 @@ public abstract class BWMap {
     public void onUnitDestroyed(Unit u) {
         if (u.getType().isMineralField()) {
             onMineralDestroyed(u);
-        } else {
+        }
+        else {
             onStaticBuildingDestroyed(u);
         }
     }
@@ -168,7 +177,7 @@ public abstract class BWMap {
             StaticBuilding building = getNeutralData().getStaticBuildings().get(i);
             if (building.getUnit().equals(u)) {
                 building
-                        .simulateCPPObjectDestructor(); /* IMPORTANT! These actions are performed in the "~Neutral" dtor in BWEM 1.4.1 C++. */
+                    .simulateCPPObjectDestructor(); /* IMPORTANT! These actions are performed in the "~Neutral" dtor in BWEM 1.4.1 C++. */
                 getNeutralData().getStaticBuildings().remove(i);
                 return;
             }
@@ -234,29 +243,29 @@ public abstract class BWMap {
         }
 
         final Set<TilePosition> visited =
-                new TreeSet<>(
-                        Comparator.comparing((TilePosition tilePosition) -> tilePosition.x)
-                            .thenComparing((TilePosition tilePosition) -> tilePosition.y));
+            new TreeSet<>(
+                Comparator.comparing((TilePosition tilePosition) -> tilePosition.x)
+                    .thenComparing((TilePosition tilePosition) -> tilePosition.y));
         Queue<TilePosition> toVisit = new ArrayDeque<>();
 
         toVisit.add(start);
         visited.add(start);
 
         TilePosition[] dir8 = {
-                new TilePosition(-1, -1),
-                new TilePosition(0, -1),
-                new TilePosition(1, -1),
-                new TilePosition(-1, 0),
-                new TilePosition(1, 0),
-                new TilePosition(-1, 1),
-                new TilePosition(0, 1),
-                new TilePosition(1, 1)
+            new TilePosition(-1, -1),
+            new TilePosition(0, -1),
+            new TilePosition(1, -1),
+            new TilePosition(-1, 0),
+            new TilePosition(1, 0),
+            new TilePosition(-1, 1),
+            new TilePosition(0, 1),
+            new TilePosition(1, 1)
         };
         TilePosition[] dir4 = {
-                new TilePosition(0, -1),
-                new TilePosition(-1, 0),
-                new TilePosition(+1, 0),
-                new TilePosition(0, +1)
+            new TilePosition(0, -1),
+            new TilePosition(-1, 0),
+            new TilePosition(+1, 0),
+            new TilePosition(0, +1)
         };
         TilePosition[] directions = connect8 ? dir8 : dir4;
 
@@ -293,29 +302,29 @@ public abstract class BWMap {
         }
 
         final Set<WalkPosition> visited =
-                new TreeSet<>(
-                    Comparator.comparing((WalkPosition pos) -> pos.x)
-                        .thenComparing((WalkPosition pos) -> pos.y));
+            new TreeSet<>(
+                Comparator.comparing((WalkPosition pos) -> pos.x)
+                    .thenComparing((WalkPosition pos) -> pos.y));
         final Queue<WalkPosition> toVisit = new ArrayDeque<>();
 
         toVisit.add(start);
         visited.add(start);
 
         final WalkPosition[] dir8 = {
-                new WalkPosition(-1, -1),
-                new WalkPosition(0, -1),
-                new WalkPosition(1, -1),
-                new WalkPosition(-1, 0),
-                new WalkPosition(1, 0),
-                new WalkPosition(-1, 1),
-                new WalkPosition(0, 1),
-                new WalkPosition(1, 1)
+            new WalkPosition(-1, -1),
+            new WalkPosition(0, -1),
+            new WalkPosition(1, -1),
+            new WalkPosition(-1, 0),
+            new WalkPosition(1, 0),
+            new WalkPosition(-1, 1),
+            new WalkPosition(0, 1),
+            new WalkPosition(1, 1)
         };
         final WalkPosition[] dir4 = {
-                new WalkPosition(0, -1),
-                new WalkPosition(-1, 0),
-                new WalkPosition(1, 0),
-                new WalkPosition(0, 1)
+            new WalkPosition(0, -1),
+            new WalkPosition(-1, 0),
+            new WalkPosition(1, 0),
+            new WalkPosition(0, 1)
         };
         final WalkPosition[] directions = connect8 ? dir8 : dir4;
 
@@ -342,7 +351,7 @@ public abstract class BWMap {
     }
 
     public WalkPosition breadthFirstSearch(
-            final WalkPosition start, Pred<MiniTile, WalkPosition> findCond, Pred<MiniTile, WalkPosition> visitCond) {
+        final WalkPosition start, Pred<MiniTile, WalkPosition> findCond, Pred<MiniTile, WalkPosition> visitCond) {
         return breadthFirstSearch(start, findCond, visitCond, true);
     }
 
@@ -392,13 +401,14 @@ public abstract class BWMap {
         for (int dy = 0; dy < 4; ++dy) {
             for (int dx = 0; dx < 4; ++dx) {
                 final AreaId id =
-                        getData()
-                                .getMiniTile(t.toWalkPosition().add(new WalkPosition(dx, dy)), CheckMode.NO_CHECK)
-                                .getAreaId();
+                    getData()
+                        .getMiniTile(t.toWalkPosition().add(new WalkPosition(dx, dy)), CheckMode.NO_CHECK)
+                        .getAreaId();
                 if (id.intValue() != 0) {
                     if (tile.getAreaId().intValue() == 0) {
                         tile.setAreaId(id);
-                    } else if (!tile.getAreaId().equals(id)) {
+                    }
+                    else if (!tile.getAreaId().equals(id)) {
                         tile.setAreaId(UNINITIALIZED);
                         return;
                     }
@@ -411,10 +421,10 @@ public abstract class BWMap {
         final Pair<AreaId, AreaId> result = new Pair<>(null, null);
 
         final WalkPosition[] deltas = {
-                new WalkPosition(0, -1),
-                new WalkPosition(-1, 0),
-                new WalkPosition(+1, 0),
-                new WalkPosition(0, +1)
+            new WalkPosition(0, -1),
+            new WalkPosition(-1, 0),
+            new WalkPosition(+1, 0),
+            new WalkPosition(0, +1)
         };
         for (final WalkPosition delta : deltas) {
             if (getData().getMapData().isValid(p.add(delta))) {
@@ -422,7 +432,8 @@ public abstract class BWMap {
                 if (areaId.intValue() > 0) {
                     if (result.getLeft() == null) {
                         result.setLeft(areaId);
-                    } else if (!result.getLeft().equals(areaId)) {
+                    }
+                    else if (!result.getLeft().equals(areaId)) {
                         if (result.getRight() == null ||
                             areaId.intValue() < result.getRight().intValue()) {
                             result.setRight(areaId);
@@ -449,7 +460,8 @@ public abstract class BWMap {
             int cantor = (aId + bId) * (aId + bId + 1);
             if (aId > bId) {
                 cantor += bId;
-            } else {
+            }
+            else {
                 cantor += aId;
             }
 

@@ -18,15 +18,15 @@ public class MobileDetector {
     // =========================================================
 
     public static boolean update(AUnit unit) {
+        if (handleSpreadOut(unit)) {
+            return true;
+        }
+
         if (followArmy(unit, false)) {
             return true;
         }
 
         if (detectInvisibleUnitsClosestToBase(unit)) {
-            return true;
-        }
-
-        if (handleSpreadOut(unit)) {
             return true;
         }
 

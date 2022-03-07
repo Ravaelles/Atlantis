@@ -11,7 +11,7 @@ import atlantis.util.Cache;
 
 public class AAttackEnemyUnit {
 
-    public static final double MAX_DIST_TO_ATTACK = 20;
+    public static final double MAX_DIST_TO_ATTACK = 17;
 //    public static final double MAX_DIST_TO_ATTACK = 500;
 
     public static String reasonNotToAttack;

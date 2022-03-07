@@ -76,11 +76,11 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
                 && EnemyStrategy.get().isRushOrCheese()
                 && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) < 2
         ) {
-            buildIfCanAfford(AUnitType.Protoss_Gateway);
+            buildIfHaveMineralsAndGas(AUnitType.Protoss_Gateway);
             return;
         }
 
-        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway, 70, 0);
+        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway, 90, 0);
     }
 
     private static void forge() {

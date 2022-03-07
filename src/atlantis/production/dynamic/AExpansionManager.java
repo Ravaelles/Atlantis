@@ -27,9 +27,12 @@ public class AExpansionManager {
     public static boolean shouldBuildNewBase() {
 //        if (true) return false;
 
+        // Zerg
         if (ZergExpansionManager.handleNoZergLarvas()) {
             return true;
         }
+
+        // =========================================================
 
         if (
             We.terran()
@@ -46,13 +49,6 @@ public class AExpansionManager {
         int bases = Count.bases();
         int basesInProduction = Count.inProductionOrInQueue(AtlantisConfig.BASE);
 
-        if (bases == 0 && basesInProduction == 0) {
-            if (We.terran() && EnemyStrategy.get().isRushOrCheese()) {
-                return false;
-            }
-            return true;
-        }
-
         if (bases >= 5 || basesInProduction >= 1) {
             return false;
         }
@@ -64,19 +60,6 @@ public class AExpansionManager {
 //        if (ProductionQueue.size() >= 3) {
 //            return false;
 //        }
-
-        if (
-            bases <= 1
-                && basesInProduction == 0
-                && (
-                (AGame.canAfford(370, 0))
-                    || (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)
-                    || (A.seconds() >= 600 && Count.ourCombatUnits() >= 8)
-                    || (A.seconds() >= 700)
-            )
-        ) {
-            return true;
-        }
 
         if (Count.workers() <= 17 * (bases + basesInProduction)) {
             return false;
@@ -90,7 +73,30 @@ public class AExpansionManager {
             return false;
         }
 
-        // If we have lenty of minerals, then every new base is a hazard
+        // === True ===========================================
+
+        if (bases == 0 && basesInProduction == 0) {
+            if (We.terran() && EnemyStrategy.get().isRushOrCheese()) {
+                return false;
+            }
+            return true;
+        }
+
+        if (bases <= 1 && basesInProduction == 0) {
+            boolean secondsAllow =
+                AGame.canAfford(250, 0) && (
+                    (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)
+                    || (A.seconds() >= 650 && Count.ourCombatUnits() >= 8)
+                    || (A.seconds() >= 800)
+                );
+            if (AGame.canAfford(420, 0) || secondsAllow) {
+                return true;
+            }
+        }
+
+        // === False again ===========================================
+
+        // If we have plenty of minerals, then every new base is only a hazard
         if (!AGame.canAffordWithReserved(minMinerals, 1200)) {
             return false;
         }
