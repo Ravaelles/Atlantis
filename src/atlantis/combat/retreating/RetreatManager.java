@@ -191,6 +191,11 @@ public class RetreatManager {
             return true;
         }
 
+        if (unit.enemiesNear().tanks().inRadius(5, unit).notEmpty()) {
+            unit.addLog("EngageTanks");
+            return true;
+        }
+
         if (unit.isMissionDefend()) {
             AFocusPoint focusPoint = unit.squad().mission().focusPoint();
             return focusPoint != null && unit.distTo(focusPoint) <= 3;

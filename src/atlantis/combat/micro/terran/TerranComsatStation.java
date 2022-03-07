@@ -10,7 +10,7 @@ import tests.unit.FakeUnit;
 public class TerranComsatStation {
 
     public static boolean update(AUnit comsat) {
-        if (AGame.notNthGameFrame(15)) {
+        if (AGame.notNthGameFrame(13)) {
             return false;
         }
 

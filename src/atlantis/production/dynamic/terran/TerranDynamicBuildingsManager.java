@@ -27,7 +27,7 @@ import static atlantis.units.AUnitType.Terran_Barracks;
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
-        if (A.everyNthGameFrame(60)) {
+        if (A.everyNthGameFrame(61)) {
             TerranMissileTurretsForMain.buildIfNeeded();
             TerranMissileTurretsForNonMain.buildIfNeeded();
 //            OffensiveTerranMissileTurrets.buildIfNeeded();

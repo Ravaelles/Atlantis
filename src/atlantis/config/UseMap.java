@@ -15,7 +15,7 @@ public class UseMap {
 
     public static String activeMap() {
 //        if (true) return "sscai/(2)Destination.scx";
-        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
@@ -89,7 +89,7 @@ public class UseMap {
 //        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
 //        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
 //        if (true) return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
-//        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
+        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
 //        if (true) return "ums/marines_v_zerglings.scm"; // 12 marines v. 24 zerglings
 //        if (true) return "ums/ConTrol2.scx"; // More minigames
 //        if (true) return "ums/micro challenge.scx"; // Even more minigames
@@ -165,7 +165,7 @@ public class UseMap {
             if (
                 GameSpeed.frameSkip == initFrameSkip
                     && GameSpeed.gameSpeed == 0
-                    && A.everyNthGameFrame(50)
+                    && A.everyNthGameFrame(51)
             ) {
                 if (
                         EnemyUnits.discovered().atLeast(4)

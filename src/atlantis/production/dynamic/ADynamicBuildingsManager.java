@@ -36,7 +36,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
             return;
         }
 
-        if (AGame.everyNthGameFrame(35)) {
+        if (AGame.everyNthGameFrame(37)) {
             return;
         }
         

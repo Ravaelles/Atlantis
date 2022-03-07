@@ -16,7 +16,7 @@ import bwapi.UpgradeType;
 public class TerranDynamicTech extends ADynamicTech {
 
     public static void update() {
-        if (A.notNthGameFrame(50)) {
+        if (A.notNthGameFrame(46)) {
             return;
         }
 

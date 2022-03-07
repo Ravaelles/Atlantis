@@ -16,7 +16,7 @@ public class ABuilderManager {
     public static boolean update(AUnit builder) {
 
         // Sometimes an ugly thing like this may happen
-        if (We.terran() && builder.isConstructing() && builder.buildUnit() != null && A.everyNthGameFrame(32)) {
+        if (We.terran() && builder.isConstructing() && builder.buildUnit() != null && A.everyNthGameFrame(29)) {
             builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(builder.buildUnit());
             return true;
         }

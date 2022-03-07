@@ -17,7 +17,7 @@ public class AStrategyCommander {
     public static void update() {
 
         // If we don't know enemy strategy, try to guess it based on enemy buildings/units we know
-        if (GamePhase.isEarlyGame() && A.everyNthGameFrame(12)) {
+        if (GamePhase.isEarlyGame() && A.everyNthGameFrame(13)) {
             if (Enemy.protoss()) {
                 guessEnemyStrategyWhenEnemyIsProtoss();
             }

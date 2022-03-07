@@ -10,7 +10,7 @@ import java.util.Iterator;
 public class ARepairCommander {
 
     public static void update() {
-        if (AGame.everyNthGameFrame(13)) {
+        if (AGame.everyNthGameFrame(11)) {
             RepairerAssigner.assignRepairersToWoundedUnits();
         }
 

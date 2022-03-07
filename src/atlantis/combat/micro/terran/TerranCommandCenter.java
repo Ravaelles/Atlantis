@@ -16,7 +16,7 @@ import java.util.List;
 public class TerranCommandCenter {
 
     public static boolean update(AUnit building) {
-        if (A.seconds() <= 600 || AGame.notNthGameFrame(30)) {
+        if (A.seconds() <= 600 || AGame.notNthGameFrame(39)) {
             return false;
         }
 
@@ -43,7 +43,7 @@ public class TerranCommandCenter {
                     if (!building.isLifted()) {
                         building.lift();
                     } else {
-                        if (A.everyNthGameFrame(30)) {
+                        if (A.everyNthGameFrame(31)) {
                             APosition landable = building.makeLandable();
                             if (landable != null) {
                                 building.land(landable.toTilePosition());
