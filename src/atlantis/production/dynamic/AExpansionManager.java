@@ -84,7 +84,7 @@ public class AExpansionManager {
 
         if (bases <= 1 && basesInProduction == 0) {
             boolean secondsAllow =
-                AGame.canAfford(250, 0) && (
+                AGame.canAfford(290, 0) && (
                     (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)
                     || (A.seconds() >= 650 && Count.ourCombatUnits() >= 8)
                     || (A.seconds() >= 800)

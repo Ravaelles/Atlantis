@@ -1280,9 +1280,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isAttackingOrMovingToAttack() {
-        return isAttacking() || (
-            action() != null && action().isAttacking() && target() != null && target().isAlive()
+        return hasValidTarget() && (
+            isAttacking() || (action() != null && action().isAttacking())
         );
+    }
+
+    public boolean hasValidTarget() {
+//        if (unit().isCombatUnit()) {
+//            System.out.println(target() + " // alive=" + (target() != null ? target().isAlive() : 0));
+//        }
+        return target() != null && target().isAlive();
     }
 
     /**
@@ -2238,8 +2245,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return log;
     }
 
-    public int zealotsNearCount(double maxDist) {
+    public int friendlyZealotsNearCount(double maxDist) {
         return friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(maxDist, this).count();
+    }
+
+    public int enemyZealotsNearCount(double maxDist) {
+        return enemiesNear().ofType(AUnitType.Protoss_Zealot).inRadius(maxDist, this).count();
     }
 
     public boolean isNearEnemyBuilding() {

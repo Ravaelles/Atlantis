@@ -74,7 +74,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
         if (
                 GamePhase.isEarlyGame()
                 && EnemyStrategy.get().isRushOrCheese()
-                && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) < 2
+                && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) <= (A.hasMinerals(300) ? 2 : 1)
         ) {
             buildIfHaveMineralsAndGas(AUnitType.Protoss_Gateway);
             return;

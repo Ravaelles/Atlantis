@@ -95,7 +95,8 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
                 && EnemyStrategy.get().isRushOrCheese()
                 && !A.hasGas(70)
                 && !A.hasMinerals(175)
-                && Count.zealots() < minZealotsInRush()) {
+                && Count.zealots() < minZealotsInRush()
+        ) {
                 return;
         }
 

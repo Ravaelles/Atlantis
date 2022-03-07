@@ -4,8 +4,10 @@ import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.ProtossMissionFix;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.game.A;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -36,6 +38,17 @@ public class MissionAttack extends Mission {
         unit.setTooltipTactical("#MA");
 
         return handleAdvance(unit);
+    }
+
+    public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (A.supplyUsed() <= 40) {
+            // Zealots vs Zealot fix
+            if (ProtossMissionFix.handle(unit, enemy)) {
+                return true;
+            }
+        }
+
+        return true;
     }
 
     private boolean handleAdvance(AUnit unit) {

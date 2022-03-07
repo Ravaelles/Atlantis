@@ -130,6 +130,10 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             return false;
         }
 
+        if (isTooCloseToRegionBoundaries(position)) {
+            return false;
+        }
+
         // All conditions are fullfilled, return this position
         if (DEBUG) APainter.paintCircle(position, 5, Color.Green);
         if (DEBUG) {

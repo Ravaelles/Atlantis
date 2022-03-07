@@ -2,10 +2,7 @@ package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
-import atlantis.map.ABaseLocation;
-import atlantis.map.AChoke;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.*;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
@@ -225,6 +222,20 @@ public abstract class AbstractPositionFinder {
         }
 
         return false;
+    }
+
+    public static boolean isTooCloseToRegionBoundaries(APosition position) {
+        ARegion region = position.region();
+        if (region == null) {
+            return false;
+        }
+
+        ARegionBoundary nearestBoundary = region.nearestBoundary(position);
+        if (nearestBoundary == null) {
+            return false;
+        }
+
+        return nearestBoundary.distTo(position) <= 2.5;
     }
 
 }

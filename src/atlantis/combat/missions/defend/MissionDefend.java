@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.ProtossMissionFix;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -69,15 +70,8 @@ public class MissionDefend extends Mission {
         }
 
         // Zealots vs Zealot fix
-        if (unit.isZealot() && enemy.isZealot()) {
-            if (unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).inRadius(2.8, unit).notEmpty()) {
-                return true;
-            }
-
-            int ourZealots = unit.zealotsNearCount(0.4);
-            if (ourZealots < unit.enemiesNear().inRadius(0.5, unit).count()) {
-                return false;
-            }
+        if (ProtossMissionFix.handle(unit, enemy)) {
+            return true;
         }
 
         if (

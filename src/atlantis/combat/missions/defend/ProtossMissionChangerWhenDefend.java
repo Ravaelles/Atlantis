@@ -1,6 +1,8 @@
 package atlantis.combat.missions.defend;
 
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.attack.ProtossMissionChangerWhenAttack;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.contain.ProtossMissionChangerWhenContain;
 import atlantis.game.A;
@@ -11,12 +13,23 @@ import atlantis.units.select.Select;
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
+        if (shouldChangeMissionToAttack() && !ProtossMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
+            MissionChanger.changeMissionTo(Missions.ATTACK);
+        } else if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.CONTAIN);
         }
     }
 
     // === CONTAIN =============================================
+
+    private static boolean shouldChangeMissionToAttack() {
+        if (ArmyStrength.ourArmyRelativeStrength() >= 200) {
+            if (DEBUG) debugReason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return true;
+        }
+
+        return false;
+    }
 
     private static boolean shouldChangeMissionToContain() {
         if (!ArmyStrength.weAreWeaker()) {

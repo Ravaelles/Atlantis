@@ -5,6 +5,7 @@ import atlantis.combat.missions.MoveToFocusPoint;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
@@ -15,8 +16,13 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
     public static boolean move(AUnit unit, AFocusPoint focusPoint) {
         MoveToDefendFocusPoint.unit = unit;
         MoveToDefendFocusPoint.focusPoint = focusPoint;
-        fromSide = focusPoint.fromSide();
 
+        if (unit.distToSquadCenter() >= 8) {
+            unit.addLog("JoinSquad");
+            return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
+        }
+
+        fromSide = focusPoint.fromSide();
         optimalDist = optimalDist();
         distUnitToFocus = unit.distTo(focusPoint);
         distUnitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());

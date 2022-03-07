@@ -24,7 +24,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === DEFEND ==============================================
 
-    private static boolean shouldChangeMissionToDefend() {
+    public static boolean shouldChangeMissionToDefend() {
         if (defendAgainstMassZerglings()) {
             if (DEBUG) debugReason = "Mass zerglings";
             return true;

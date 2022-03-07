@@ -71,7 +71,7 @@ public class TerranFlyingBuildingManager {
 //                flyingBuilding.moveStrategic(median, Actions.MOVE_SAFETY, "UnderFire");
 //                return true;
 //            }
-            AUnit enemy = flyingBuilding.enemiesNear().canAttack(flyingBuilding, 1).nearestTo(flyingBuilding);
+            AUnit enemy = flyingBuilding.enemiesNear().canAttack(flyingBuilding, 3).nearestTo(flyingBuilding);
             if (enemy != null) {
                 return flyingBuilding.moveAwayFrom(flyingBuilding, 3, "UnderFire", Actions.MOVE_SAFETY);
             }
