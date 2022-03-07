@@ -30,8 +30,8 @@ public class AtlantisConfig {
     /**
      * Single player enemy race.
      */
-    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Terran";
+    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Zerg";
     
     /**
