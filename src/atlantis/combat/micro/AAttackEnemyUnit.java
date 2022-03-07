@@ -11,7 +11,7 @@ import atlantis.util.Cache;
 
 public class AAttackEnemyUnit {
 
-    public static final double MAX_DIST_TO_ATTACK = 30;
+    public static final double MAX_DIST_TO_ATTACK = 20;
 //    public static final double MAX_DIST_TO_ATTACK = 500;
 
     public static String reasonNotToAttack;
@@ -67,10 +67,10 @@ public class AAttackEnemyUnit {
     // =========================================================
 
     private static boolean allowedToAttack(AUnit unit) {
-//        if (unit.hasNoWeaponAtAll()) {
-//            reasonNotToAttack = "NoWeapon";
-//            return false;
-//        }
+        if (unit.hasNoWeaponAtAll()) {
+            reasonNotToAttack = "NoWeapon";
+            return false;
+        }
 
         if (unit.isTerranInfantry() && Count.medics() >= 2) {
             if (!unit.medicInHealRange() && (unit.isWounded() || unit.combatEvalRelative() < 1.5)) {
