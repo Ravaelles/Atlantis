@@ -139,7 +139,7 @@ public class ATargeting {
                 .inRadius(maxDistFromEnemy, unit)
                 .isEmpty()
         ) {
-            System.out.println("No enemies near for " + unit + " in dist=" + maxDistFromEnemy);
+//            System.out.println("No enemies near for " + unit + " in dist=" + maxDistFromEnemy);
             return null;
         }
 
