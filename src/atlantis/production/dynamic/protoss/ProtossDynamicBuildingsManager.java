@@ -30,7 +30,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     // =========================================================
 
     private static void roboticsSupportBay() {
-        if (!A.supplyUsed(45)) {
+        if (!A.supplyUsed(60)) {
             return;
         }
 
@@ -61,6 +61,9 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
         if (!A.supplyUsed(37)) {
             return;
         }
+        if (!A.supplyUsed(46) && Have.cannon()) {
+            return;
+        }
 
         if (Count.includingPlanned(AUnitType.Protoss_Robotics_Facility) == 0) {
             buildNow(AUnitType.Protoss_Robotics_Facility);
@@ -71,13 +74,13 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
         if (
                 GamePhase.isEarlyGame()
                 && EnemyStrategy.get().isRushOrCheese()
-                && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) < 2
+                && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) <= (A.hasMinerals(300) ? 2 : 1)
         ) {
-            buildIfCanAfford(AUnitType.Protoss_Gateway);
+            buildIfHaveMineralsAndGas(AUnitType.Protoss_Gateway);
             return;
         }
 
-        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway, 70, 0);
+        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway, 90, 0);
     }
 
     private static void forge() {

@@ -2,7 +2,6 @@ package atlantis.combat.eval;
 
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
 
@@ -153,14 +152,17 @@ public class ACombatEvaluator {
 
         // Our eval
         if (unit.isOur()) {
-            theseUnits = Select.ourCombatUnits().ranged().inRadius(RANGED_RADIUS, unit);
-            theseUnits.add(Select.ourCombatUnits().melee().inRadius(MELEE_RADIUS, unit));
+//            System.out.println("unit = " + unit);
+            theseUnits = unit.ourCombatUnitsNear(false).ranged().inRadius(RANGED_RADIUS, unit);
+//            theseUnits.print("theseUnits A");
+            theseUnits.add(unit.ourCombatUnitsNear(false).melee().inRadius(MELEE_RADIUS, unit));
+//            theseUnits.print("theseUnits B");
         }
 
         // Enemy eval
         else if (unit.isEnemy()) {
-            theseUnits = EnemyUnits.visibleAndFogged().ranged().inRadius(RANGED_RADIUS, unit);
-            theseUnits.add(EnemyUnits.visibleAndFogged().melee().inRadius(MELEE_RADIUS, unit));
+            theseUnits = EnemyUnits.discovered().ranged().inRadius(RANGED_RADIUS, unit);
+            theseUnits.add(EnemyUnits.discovered().melee().inRadius(MELEE_RADIUS, unit));
             theseUnits.removeDuplicates();
         }
 

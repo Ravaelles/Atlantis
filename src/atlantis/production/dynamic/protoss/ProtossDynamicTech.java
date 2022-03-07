@@ -15,7 +15,7 @@ import static bwapi.UpgradeType.Singularity_Charge;
 public class ProtossDynamicTech extends ADynamicTech {
 
     public static boolean update() {
-        if (A.notNthGameFrame(120) || !AGame.canAffordWithReserved(430, 260)) {
+        if (A.notNthGameFrame(121)) {
             return false;
         }
 

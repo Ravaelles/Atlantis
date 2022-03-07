@@ -14,17 +14,17 @@ import atlantis.util.Enemy;
 public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToContain()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
-        else if (shouldChangeMissionToDefend()) {
+        if (shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.DEFEND);
+        }
+        else if (shouldChangeMissionToContain()) {
+            changeMissionTo(Missions.CONTAIN);
         }
     }
 
     // === DEFEND ==============================================
 
-    private static boolean shouldChangeMissionToDefend() {
+    public static boolean shouldChangeMissionToDefend() {
         if (defendAgainstMassZerglings()) {
             if (DEBUG) debugReason = "Mass zerglings";
             return true;
@@ -32,6 +32,11 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
         if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
             if (DEBUG) debugReason = "Enemy near our building";
+            return true;
+        }
+
+        if (ArmyStrength.weAreWeaker()) {
+            if (DEBUG) debugReason = "Hmm, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 

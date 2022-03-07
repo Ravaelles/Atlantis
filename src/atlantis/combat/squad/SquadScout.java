@@ -13,7 +13,6 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import bwapi.Color;
 
 public class SquadScout {
@@ -62,7 +61,7 @@ public class SquadScout {
         AAttackEnemyUnit.handleAttackNearEnemyUnits(squadScout);
         squadScout.setTooltipTactical("MadeContact");
 
-        if (EnemyUnits.visibleAndFogged().atMost(2)) {
+        if (EnemyUnits.discovered().atMost(2)) {
             GameLog.get().addMessage("Squad scout forced GLOBAL ATTACK");
             if (!Missions.isGlobalMissionAttack()) {
                 MissionChanger.forceMissionAttack();

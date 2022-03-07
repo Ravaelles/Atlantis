@@ -11,7 +11,8 @@ import atlantis.util.Cache;
 
 public class AAttackEnemyUnit {
 
-    private static final double MAX_DIST_TO_ATTACK = 40;
+    public static final double MAX_DIST_TO_ATTACK = 17;
+//    public static final double MAX_DIST_TO_ATTACK = 500;
 
     public static String reasonNotToAttack;
 
@@ -29,18 +30,30 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearEnemyUnits(AUnit unit) {
+//        if (!unit.isStopped()) {
+
+//        if (unit.lastActionLessThanAgo(5) && !unit.isStopped()) {
+////            AAdvancedPainter.paintCircleFilled(unit, 12, Color.Orange);
+////            System.out.println("u.getLastCommand().getType().name() = " + unit.getLastCommand().getType().name());
+//            unit.addLog("ContinueAttack");
+//            return false;
+//        }
+
         AUnit enemy = defineEnemyToAttackFor(unit);
         if (enemy == null) {
-            if (unit.isAttackingOrMovingToAttack()) {
-                unit.stop("Dont", false);
-            }
+//            AAdvancedPainter.paintCircleFilled(unit, 7, Color.White);
+            unit.addLog("NothingToAttack");
             return false;
         }
 
-        return processAttackUnit(unit, enemy);
+        return ProcessAttackUnit.processAttackUnit(unit, enemy);
     }
 
     public static boolean canAttackEnemiesNow(AUnit unit) {
+        if (AAttackEnemyUnit.reasonNotToAttack == null) {
+            return true;
+        }
+
         return defineEnemyToAttackFor(unit) != null;
     }
 
@@ -55,33 +68,33 @@ public class AAttackEnemyUnit {
 
     private static boolean allowedToAttack(AUnit unit) {
         if (unit.hasNoWeaponAtAll()) {
-//            reasonNotToAttack = "NoWeapon";
-            return true;
+            reasonNotToAttack = "NoWeapon";
+            return false;
         }
 
         if (unit.isTerranInfantry() && Count.medics() >= 2) {
             if (!unit.medicInHealRange() && (unit.isWounded() || unit.combatEvalRelative() < 1.5)) {
 //                if (unit.cooldownRemaining() >= 2) {
                     reasonNotToAttack = "NoMedics";
-                    return true;
+                    return false;
 //                }
             }
         }
 
-//        if (unit.outsideSquadRadius() && unit.enemiesNear().canAttack(unit, 2.3).notEmpty()) {
-        if (unit.outsideSquadRadius()) {
-            reasonNotToAttack = "Outside";
-            return true;
-        }
+        // @Problematic - Vultures dont attack from far
+//        if (Count.ourCombatUnits() >= 5 && unit.outsideSquadRadius()) {
+//            reasonNotToAttack = "Outside";
+//            return false;
+//        }
 
-        if (unit.hasSquad() && unit.squad().cohesionPercent() <= 80) {
-            if (unit.enemiesNear().ranged().notEmpty()) {
+        if (unit.hasSquad() && unit.squad().cohesionPercent() <= 80 && unit.isAttackingOrMovingToAttack()) {
+            if (unit.enemiesNear().ranged().notEmpty() && unit.lastStartedAttackMoreThanAgo(90)) {
                 reasonNotToAttack = "Cautious";
-                return true;
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     private static AUnit defineEnemyToAttackFor(AUnit unit) {
@@ -91,16 +104,18 @@ public class AAttackEnemyUnit {
             () -> {
                 reasonNotToAttack = null;
 
-                if (allowedToAttack(unit)) {
-                    return null;
-                }
+//                if (!allowedToAttack(unit)) {
+//                    return null;
+//                }
 
                 AUnit enemy = ATargeting.defineBestEnemyToAttackFor(unit, MAX_DIST_TO_ATTACK);
+//                System.out.println("enemy = " + enemy);
 
                 if (enemy == null) {
                     return null;
                 }
                 if (!isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
+//                    System.out.println("Not allowed to attack: " + enemy + " (" + AAttackEnemyUnit.reasonNotToAttack + ")");
                     return null;
                 }
 
@@ -127,13 +142,16 @@ public class AAttackEnemyUnit {
     private static boolean isValidTargetAndAllowedToAttackUnit(AUnit unit, AUnit target) {
         if (!missionAllowsToAttack(unit, target)) {
             reasonNotToAttack = "MissionForbids";
+            unit.setTooltipTactical(reasonNotToAttack);
+            unit.addLog(reasonNotToAttack);
             return false;
         }
 
         if (!unit.canAttackTarget(target, false, true)) {
             reasonNotToAttack = "InvalidTarget";
-            unit.setTooltipTactical("Invalid target");
-            System.err.println("Invalid target for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
+            unit.setTooltipTactical(reasonNotToAttack);
+            unit.addLog(reasonNotToAttack);
+            System.err.println(reasonNotToAttack + " for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
             return false;
         }
 
@@ -141,58 +159,22 @@ public class AAttackEnemyUnit {
         if (unit.target() != null && unit.isMelee() && unit.target().isTank() && unit.isAttackingOrMovingToAttack()) {
             if (unit.distToLessThan(unit.target(), 3)) {
                 reasonNotToAttack = "DontSwitch";
+                unit.addLog(reasonNotToAttack);
                 return false;
             }
+        }
+
+        if (!target.effVisible()) {
+            System.err.println(unit + " got not visible target to attack: " + target);
+            return false;
         }
 
         return true;
     }
 
-    private static boolean processAttackUnit(AUnit unit, AUnit target) {
-        if (handleMoveNextToTanksWhenAttackingThem(unit, target)) {
-            return true;
-        }
-
-        if (target.isBase() && unit.distToMoreThan(target, 4)) {
-            return unit.move(target, Actions.MOVE_ATTACK, "BaseAttack", false);
-        }
-
-//        unit.setTooltip("@" + target.name());
-        return unit.attackUnit(target);
-    }
-
-    private static boolean handleMoveNextToTanksWhenAttackingThem(AUnit unit, AUnit enemy) {
-        if (!enemy.isTank()) {
-            return false;
-        }
-
-        int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
-        if (
-            !unit.isAir()
-                && !unit.is(
-                AUnitType.Terran_Siege_Tank_Siege_Mode,
-                AUnitType.Terran_Siege_Tank_Tank_Mode,
-                AUnitType.Protoss_Archon,
-                AUnitType.Protoss_Reaver
-            )
-                && (enemy.distToMoreThan(unit, unit.isMelee() ? 0.8 : 1.15))
-                && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
-                && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
-        ) {
-            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) {
-                return false;
-            }
-
-            if (unit.move(enemy, Actions.MOVE_ATTACK, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
         return unit.mission() == null
+            || unit.isTank()
             || unit.mission().allowsToAttackEnemyUnit(unit, enemy)
             || (unit.isRanged() && enemy.isMelee());
     }

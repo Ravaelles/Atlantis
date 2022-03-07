@@ -4,7 +4,7 @@ import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.config.AtlantisConfig;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
@@ -24,7 +24,7 @@ public class OnUnitMorph {
             return;
         }
 
-        EnemyUnits.removeFoggedUnit(unit);
+        EnemyUnitsUpdater.removeFoggedUnit(unit);
         unit.refreshType();
         unit.removeTooltip();
 

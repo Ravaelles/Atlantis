@@ -1,6 +1,5 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
@@ -12,10 +11,8 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
 public class TerranMissionChangerWhenContain extends MissionChanger {
@@ -34,7 +31,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
 
     public static boolean shouldChangeMissionToDefend() {
         if (GamePhase.isEarlyGame()) {
-            if (Enemy.protoss() && EnemyUnits.visibleAndFogged().ofType(AUnitType.Protoss_Zealot).atLeast(4)) {
+            if (Enemy.protoss() && EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(4)) {
                 if (Count.medics() <= 4) {
                     if (DEBUG) debugReason = "Enemy rush (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
                     return true;

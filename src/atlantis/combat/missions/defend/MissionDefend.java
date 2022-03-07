@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.ProtossMissionAdjustments;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
@@ -91,16 +92,13 @@ public class MissionDefend extends Mission {
 ////            return false; // 300 mode - stand in line, default to SC auto attacks
 //        }
 
-        // Zealots vs Zealot fix
-        if (unit.isZealot() && enemy.isZealot()) {
-            int ourZealots = unit.zealotsNearCount(0.4);
-            if (ourZealots < unit.enemiesNear().inRadius(0.5, unit).count()) {
-                return false;
-            }
-        }
-
         if (unit.isMelee() && enemyDistToBase > unitDistToBase) {
             return false;
+        }
+
+        // Zealots vs Zealot fix
+        if (ProtossMissionAdjustments.allowsToAttackEnemyUnits(unit, enemy)) {
+            return true;
         }
 
         if (Have.main()) {

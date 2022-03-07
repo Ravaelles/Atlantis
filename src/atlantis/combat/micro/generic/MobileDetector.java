@@ -18,11 +18,15 @@ public class MobileDetector {
     // =========================================================
 
     public static boolean update(AUnit unit) {
-        if (detectInvisibleUnitsClosestToBase(unit)) {
+        if (handleSpreadOut(unit)) {
             return true;
         }
 
-        if (handleSpreadOut(unit)) {
+        if (followArmy(unit, false)) {
+            return true;
+        }
+
+        if (detectInvisibleUnitsClosestToBase(unit)) {
             return true;
         }
 
@@ -30,7 +34,7 @@ public class MobileDetector {
             return true;
         }
 
-        return followArmy(unit);
+        return followArmy(unit, true);
     }
 
     // =========================================================
@@ -70,8 +74,8 @@ public class MobileDetector {
         return false;
     }
 
-    protected static boolean followArmy(AUnit unit) {
-        if (!unit.is(unitForArmy)) {
+    protected static boolean followArmy(AUnit unit, boolean defaultBehavior) {
+        if (!defaultBehavior && !unit.is(unitForArmy)) {
             return false;
         }
 

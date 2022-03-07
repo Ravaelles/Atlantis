@@ -82,9 +82,9 @@ public class APositionFinder {
         // =========================================================
         // BUNKER
 
-//        else if (building.isBunker()) {
-//            return TerranBunkerPositionFinder.findPosition(building, builder, constructionOrder);
-//        }
+        else if (building.isBunker()) {
+            return TerranBunkerPositionFinder.findPosition(builder, constructionOrder);
+        }
 
         // =========================================================
         // Creep colony
@@ -139,11 +139,9 @@ public class APositionFinder {
      */
     public static APosition findStandardPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         return cache.get(
-                "findStandardPosition",
+                "findStandardPosition:" + building + "," + nearTo + "," + builder,
                 40,
                 () -> {
-
-
                     // ===========================================================
                     // = Handle standard building position according to the race =
                     // = as every race uses completely different approach        =

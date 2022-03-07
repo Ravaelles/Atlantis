@@ -13,7 +13,9 @@ public class Unfreezer {
      * This is my ugly way of fixing this.
      */
     public static boolean handleUnfreeze(AUnit unit) {
-        if (unit.isRunning() && unit.lastActionFramesAgo() >= (AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES + 1)) {
+        if (true) return false;
+
+        if (unit.isRunning() && unit.lastActionFramesAgo() >= (AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES + 20)) {
             if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
 //                System.err.println("UNFREEZE #1!");
 //                unit.setTooltip("UNFREEZE!");
@@ -54,20 +56,20 @@ public class Unfreezer {
 //        GameSpeed.changeSpeedTo(70);
 //        GameSpeed.pauseGame();
 
-        if (Select.main() != null && unit.moveTactical(Select.main(), Actions.MOVE_SPECIAL, "Unfreeze")) {
+        if (Select.main() != null && unit.moveTactical(Select.main(), Actions.MOVE_UNFREEZE, "Unfreeze")) {
             return true;
         }
 
-        if (unit.moveTactical(unit.translateByPixels(8, 0), Actions.MOVE_SPECIAL, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) {
             return true;
         }
-        if (unit.moveTactical(unit.translateByPixels(-8, 0), Actions.MOVE_SPECIAL, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(-8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) {
             return true;
         }
-        if (unit.moveTactical(unit.translateByPixels(0, 8), Actions.MOVE_SPECIAL, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(0, 8), Actions.MOVE_UNFREEZE, "Unfreeze")) {
             return true;
         }
-        if (unit.moveTactical(unit.translateByPixels(0, -8), Actions.MOVE_SPECIAL, "Unfreeze")) {
+        if (unit.moveTactical(unit.translateByPixels(0, -8), Actions.MOVE_UNFREEZE, "Unfreeze")) {
             return true;
         }
 //        } else {

@@ -73,11 +73,9 @@ public class Selection {
      */
     public Selection inRadius(double maxDist, AUnit unit) {
         return Select.cache.get(
-                addToCachePath("inRadius:" + maxDist + ":" + unit.id()),
+                addToCachePath("inRadius:" + maxDist + ":" + unit.idWithHash()),
                 0,
-                () -> {
-                    return cloneByRemovingIf((u -> u.distTo(unit) > maxDist));
-                }
+                () -> cloneByRemovingIf((u -> u.distTo(unit) > maxDist))
         );
     }
 
@@ -88,17 +86,22 @@ public class Selection {
         return Select.cache.get(
                 addToCachePath("inRadius:" + maxDist + ":" + unitOrPosition),
                 0,
-                () -> {
-                    return cloneByRemovingIf((u -> u.distTo(unitOrPosition) > maxDist));
-//                    Iterator unitsIterator = data.iterator();// units.iterator();
-//                    while (unitsIterator.hasNext()) {
-//                        AUnit unit = (AUnit) unitsIterator.next();
-//                        if (unit.distTo(unitOrPosition) > maxDist) {
-//                            unitsIterator.remove();
-//                        }
-//                    }
-//                    return clone();
-                }
+                () -> cloneByRemovingIf((u -> u.distTo(unitOrPosition) > maxDist))
+        );
+    }
+
+    /**
+     * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
+     */
+    public Selection maxGroundDist(double maxDist, AUnit unit) {
+        if (unit.isAir()) {
+            return this;
+        }
+
+        return Select.cache.get(
+                addToCachePath("maxGroundDist:" + maxDist + ":" + unit.idWithHash()),
+                0,
+                () -> cloneByRemovingIf((u -> u.groundDist(unit) > maxDist))
         );
     }
 
@@ -188,6 +191,10 @@ public class Selection {
         return cloneByRemovingIf((unit -> unit.isBuilding()));
     }
 
+    public Selection nonWorkers() {
+        return cloneByRemovingIf((unit -> unit.isWorker()));
+    }
+
     /**
      * Selects units that are gathering minerals.
      */
@@ -223,6 +230,14 @@ public class Selection {
 
     public Selection workers() {
         return cloneByRemovingIf((unit -> !unit.isWorker()));
+    }
+
+    public Selection realUnits() {
+        return cloneByRemovingIf((unit -> !unit.isRealUnit()));
+    }
+
+    public Selection realUnitsButAllowBuildings() {
+        return cloneByRemovingIf((unit -> !unit.isRealUnitOrBuilding()));
     }
 
     public Selection air() {
@@ -270,6 +285,10 @@ public class Selection {
         return cloneByRemovingIf(u -> !u.hasPosition());
     }
 
+    public Selection havingWeapon() {
+        return cloneByRemovingIf(u -> !u.hasAnyWeapon());
+    }
+
     public int totalHp() {
         return data.stream()
                 .map(AUnit::hp)
@@ -298,6 +317,14 @@ public class Selection {
      */
     public Selection repairable(boolean checkIfWounded) {
         return cloneByRemovingIf((unit -> !unit.isCompleted() || !unit.type().isMechanical() || (checkIfWounded && !unit.isWounded())));
+    }
+
+    public boolean onlyMelee() {
+        return units().onlyMelee();
+    }
+
+    public boolean onlyAir() {
+        return units().onlyAir();
     }
 
     public Selection burrowed() {
@@ -588,7 +615,9 @@ public class Selection {
      * @return all units except for the given one
      */
     public Selection exclude(AUnit unitToExclude) {
-        data.remove(unitToExclude);
+        if (unitToExclude != null) {
+            data.remove(unitToExclude);
+        }
         return clone();
     }
 
@@ -812,6 +841,7 @@ public class Selection {
         System.out.println("=== " + (message != null ? message : currentCachePath) + " (" + size() + ") ===");
         for (AUnit unit : data) {
             System.out.println(unit.toString());
+//            System.out.println(unit.toString() + " / " + unit.getClass());
         }
         System.out.println();
         return this;

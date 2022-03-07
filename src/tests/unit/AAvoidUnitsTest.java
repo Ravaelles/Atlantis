@@ -4,6 +4,7 @@ import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.FakeFoggedUnit;
@@ -189,7 +190,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
             };
 
             for (FakeFoggedUnit unit : fogged) {
-                EnemyUnits.weDiscoveredEnemyUnit(unit);
+                EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
             }
 
 //            enemyInformation = Mockito.mockStatic(EnemyInfo.class);

@@ -9,9 +9,9 @@ public class ProtossRequests extends ARequests {
         
     }
 
-    @Override
-    public void requestAntiAirQuick(APosition where) {
-        
-    }
+//    @Override
+//    public void requestAntiAirQuick(APosition where) {
+//
+//    }
     
 }

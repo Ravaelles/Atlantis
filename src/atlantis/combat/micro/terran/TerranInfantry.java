@@ -108,6 +108,10 @@ public class TerranInfantry {
     }
 
     public static boolean tryLoadingInfantryIntoBunkerIfNeeded(AUnit unit) {
+        if (unit.lastActionLessThanAgo(10, Actions.LOAD)) {
+            unit.addLog("Loading");
+            return true;
+        }
 
         // Only Terran infantry get inside
         if (unit.isLoaded() || !unit.isMarine()) {
@@ -115,23 +119,21 @@ public class TerranInfantry {
         }
 
         // Without enemies around, don't do anything
-        if (unit.enemiesNear().empty()) {
+        if (unit.enemiesNear().excludeMedics().empty()) {
             return false;
         }
 
         // =========================================================
 
         AUnit nearestBunker = defineBunkerToLoadTo(unit);
-        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 8.2 : 6.2;
+        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
 
         if (
             nearestBunker != null
                 && nearestBunker.hasFreeSpaceFor(unit)
                 && nearestBunker.distTo(unit) < maxDistanceToLoad
                 && (
-                unit.hp() >= 38 || (
-                    unit.hp() >= 22 && unit.enemiesNear().inRadius(1.6, unit).atMost(1)
-                )
+                unit.hp() >= 38 || unit.enemiesNear().inRadius(1.6, unit).atMost(1)
             )
         ) {
             unit.load(nearestBunker);
@@ -146,9 +148,10 @@ public class TerranInfantry {
     // =========================================================
 
     private static AUnit defineBunkerToLoadTo(AUnit unit) {
-        Selection bunkers = Select.ourBuildings().ofType(AUnitType.Terran_Bunker)
-            .inRadius(15, unit).havingSpaceFree(unit.spaceRequired());
-        AUnit bunker = bunkers.nearestTo(unit);
+        return Select.ourOfType(AUnitType.Terran_Bunker)
+            .inRadius(15, unit)
+            .havingSpaceFree(unit.spaceRequired())
+            .nearestTo(unit);
 
 //        System.out.println("bunker = " + bunker);
 //        if (bunker != null) {
@@ -167,7 +170,7 @@ public class TerranInfantry {
 //            }
 //        }
 
-        return bunker;
+//        return bunker;
     }
 
     private static TechType stim() {

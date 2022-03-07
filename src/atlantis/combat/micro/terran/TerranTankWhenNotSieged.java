@@ -70,7 +70,7 @@ public class TerranTankWhenNotSieged extends TerranTank {
     }
 
     private static boolean shouldSiegeBecauseSpecificEnemiesNear(AUnit unit) {
-        Selection enemies = unit.enemiesNear().groundUnits().nonBuildings();
+        Selection enemies = unit.enemiesNear().groundUnits().nonBuildings().nonWorkers();
 
         if (
             enemies

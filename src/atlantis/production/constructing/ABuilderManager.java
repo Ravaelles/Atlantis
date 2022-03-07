@@ -84,6 +84,10 @@ public class ABuilderManager {
             }
 
             if (!builder.isMoving()) {
+//                if (A.everyNthGameFrame(20)) {
+//                    constructionOrder.setPositionToBuild(newPosition);
+//                }
+
 //                    GameSpeed.changeSpeedTo(60);
                 builder.move(
                     constructionOrder.positionToBuildCenter(),
@@ -103,36 +107,48 @@ public class ABuilderManager {
         // be immediate as unit is standing just right there
 
         else {
-            if (We.protoss()) {
-                AUnit newBuilding = Select.ourUnfinished()
-                        .ofType(constructionOrder.buildingType())
-                        .inRadius(1.1, builder).first();
-                if (newBuilding != null) {
-                    constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
-                    constructionOrder.setBuilder(null);
-                    builder.stop("Finished!", true);
-                    return false;
+            return issueBuildOrder(builder, buildingType, buildPosition, constructionOrder);
+        }
+    }
+
+    private static boolean issueBuildOrder(
+        AUnit builder, AUnitType buildingType, APosition buildPosition, ConstructionOrder constructionOrder
+    ) {
+        if (We.protoss()) {
+            AUnit newBuilding = Select.ourUnfinished()
+                .ofType(constructionOrder.buildingType())
+                .inRadius(1.1, builder).first();
+            if (newBuilding != null) {
+                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+                constructionOrder.setBuilder(null);
+                builder.stop("Finished!", true);
+                return false;
+            }
+        }
+
+        if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
+            moveOtherUnitsOutOfConstructionPlace(builder, buildPosition.translateByTiles(1, 1));
+
+            // If place is ok, builder isn't constructing and we can afford it, issue the build command.
+            if (AGame.canAfford(buildingType)) {
+                buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
+                TilePosition buildTilePosition = new TilePosition(
+                    buildPosition.tx(), buildPosition.ty()
+                );
+
+                if (!builder.isConstructing() || builder.isIdle() || AGame.now() % 7 == 0) {
+                    builder.build(buildingType, buildTilePosition);
+                    return true;
                 }
             }
+        }
 
-            if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
+        return true;
+    }
 
-                // If place is ok, builder isn't constructing and we can afford it, issue the build command.
-                if (AGame.canAfford(buildingType)) {
-                    buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
-                    TilePosition buildTilePosition = new TilePosition(
-                            buildPosition.tx(), buildPosition.ty()
-                    );
-
-                    if (buildTilePosition != null && (!builder.isConstructing() || builder.isIdle() ||
-                            AGame.now() % 30 == 0)) {
-                        builder.build(buildingType, buildTilePosition);
-                        return true;
-                    }
-                }
-            }
-
-            return true;
+    private static void moveOtherUnitsOutOfConstructionPlace(AUnit builder, APosition buildPosition) {
+        for (AUnit unit : builder.friendsNear().inRadius(2.3, buildPosition).exclude(builder).list()) {
+            unit.moveAwayFrom(buildPosition, 1, "Construction!", Actions.MOVE_SPECIAL);
         }
     }
 

@@ -44,7 +44,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     private static void shuttles() {
         if (
                 Have.no(AUnitType.Protoss_Robotics_Facility)
-                || Count.ofType(AUnitType.Protoss_Reaver) > Count.ofType(AUnitType.Protoss_Shuttle)
+                || Count.ofType(AUnitType.Protoss_Reaver) >= Count.ofType(AUnitType.Protoss_Shuttle)
         ) {
             return;
         }
@@ -62,7 +62,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
         int limit = Math.max(
                 1 + (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT ? 2 : 0),
-                A.supplyTotal() / 42
+                A.supplyTotal() / 30
         );
         buildToHave(AUnitType.Protoss_Observer, limit);
     }
@@ -86,23 +86,34 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void dragoons() {
-        if (Have.no(AUnitType.Protoss_Gateway)) {
+        if (Have.no(AUnitType.Protoss_Gateway) || Have.no(AUnitType.Protoss_Cybernetics_Core)) {
             return;
         }
 
-        if (GamePhase.isEarlyGame() && EnemyStrategy.get().isRushOrCheese() && Count.zealots() < minZealotsInRush()) {
+        if (
+            GamePhase.isEarlyGame()
+                && EnemyStrategy.get().isRushOrCheese()
+                && !A.hasGas(70)
+                && !A.hasMinerals(175)
+                && Count.zealots() < minZealotsInRush()
+        ) {
+                return;
+        }
+
+        if (A.supplyUsed() <= 55 && A.hasGas(50) && A.hasMinerals(175)) {
+            trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
             return;
         }
 
-        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
-            return;
-        }
+//        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
+//            return;
+//        }
 
         trainIfPossible(AUnitType.Protoss_Dragoon);
     }
 
     private static int minZealotsInRush() {
-        return 3;
+        return 2;
     }
 
     private static void zealots() {
@@ -111,6 +122,10 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         }
 
         if (!AGame.canAffordWithReserved(125, 0)) {
+            return;
+        }
+
+        if (dragoonInsteadOfZealot()) {
             return;
         }
 
@@ -137,6 +152,14 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             trainIfPossible(AUnitType.Protoss_Zealot);
             return;
         }
+    }
+
+    private static boolean dragoonInsteadOfZealot() {
+        if (A.hasGas(50) && !A.hasMinerals(225) && Have.cyberneticsCore() && Count.dragoons() <= 2 && Count.zealots() >= 1) {
+            return true;
+        }
+
+        return false;
     }
 
     private static void scarabs() {

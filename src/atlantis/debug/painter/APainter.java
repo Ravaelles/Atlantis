@@ -112,7 +112,7 @@ public class APainter {
     public static void paintCircle(HasPosition position, int radius, Color color) {
         if (isDisabled()) { return; }
 
-        if (position == null) {
+        if (position == null || position.position() == null) {
             return;
         }
         bwapi.drawCircleMap(position.position(), radius, color, false);
@@ -121,7 +121,7 @@ public class APainter {
     public static void paintCircleFilled(HasPosition position, int radius, Color color) {
         if (isDisabled()) { return; }
 
-        if (position == null) {
+        if (position == null || position.position() == null) {
             return;
         }
         bwapi.drawCircleMap(position.position(), radius, color, true);

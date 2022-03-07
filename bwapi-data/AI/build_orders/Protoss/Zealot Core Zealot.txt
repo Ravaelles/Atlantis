@@ -29,11 +29,12 @@ https://liquipedia.net/starcraft/1_Gate_Core_(vs._Protoss)
 16 - Pylon - @MAIN_CHOKE
 16 - Zealot
 18 - Photon Cannon - @MAIN_CHOKE
-18 - Photon Cannon - @MAIN_CHOKE
 18 - Zealot
+19 - Cybernetics Core
 20 - Zealot
-20 - Cybernetics Core
-20 - Assimilator
-23 - Dragoon
-23 - MISSION=ATTACK
-24 - Shield Battery - @MAIN_CHOKE
+22 - Assimilator
+//23 - MISSION=ATTACK
+26 - Dragoon
+27 - Shield Battery - @MAIN_CHOKE
+//40 - Photon Cannon - @NATURAL_CHOKE
+//55 - Photon Cannon - @MAIN_MINERALS

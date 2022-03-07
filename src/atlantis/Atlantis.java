@@ -2,7 +2,7 @@ package atlantis;
 
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.game.*;
-import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.constructing.ProtossConstructionManager;
 import atlantis.production.orders.build.CurrentBuildOrder;
@@ -213,7 +213,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitEvade(Unit u) {
         AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
-            EnemyUnits.updateUnitTypeAndPosition(unit);
+            EnemyUnitsUpdater.updateUnitTypeAndPosition(unit);
         }
     }
 
@@ -224,7 +224,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitHide(Unit u) {
         AUnit unit = AUnit.getById(u);
         if (unit.isEnemy()) {
-            EnemyUnits.updateUnitTypeAndPosition(unit);
+            EnemyUnitsUpdater.updateUnitTypeAndPosition(unit);
         }
     }
 
@@ -262,7 +262,7 @@ public class Atlantis implements BWEventListener {
     }
 
     public static void enemyNewUnit(AUnit unit) {
-        EnemyUnits.weDiscoveredEnemyUnit(unit);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
     }
 
     public static void ourNewUnit(AUnit unit) {

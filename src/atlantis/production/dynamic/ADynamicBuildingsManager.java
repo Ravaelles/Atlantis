@@ -1,7 +1,6 @@
 package atlantis.production.dynamic;
 
 import atlantis.config.AtlantisConfig;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.build.AddToQueue;
@@ -83,8 +82,8 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         buildNow(type, true);
     }
 
-    protected static void buildIfCanAfford(AUnitType type) {
-        buildIfCanAfford(type, true, type.getMineralPrice(), type.getGasPrice());
+    protected static void buildIfHaveMineralsAndGas(AUnitType type) {
+        buildIfHaveMineralsAndGas(type, true, type.getMineralPrice(), type.getGasPrice());
     }
 
     protected static void buildIfCanAffordWithReserved(AUnitType type) {
@@ -93,11 +92,11 @@ public abstract class ADynamicBuildingsManager extends Helpers {
 
     protected static void buildIfAllBusyButCanAfford(AUnitType type, int extraMinerals, int extraGas) {
         if (Select.ourOfType(type).areAllBusy()) {
-            buildIfCanAfford(type, true, type.getMineralPrice() + extraMinerals, type.getGasPrice() + extraGas);
+            buildIfHaveMineralsAndGas(type, true, type.getMineralPrice() + extraMinerals, type.getGasPrice() + extraGas);
         }
     }
 
-    protected static void buildIfCanAfford(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
+    protected static void buildIfHaveMineralsAndGas(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
         if (!AGame.canAfford(hasMinerals, hasGas)) {
             return;
         }

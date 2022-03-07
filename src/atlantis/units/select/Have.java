@@ -69,12 +69,20 @@ public class Have {
         return Count.ofType(AUnitType.Protoss_Dragoon) > 0;
     }
 
+    public static boolean cannon() {
+        return Count.ofType(AUnitType.Protoss_Photon_Cannon) > 0;
+    }
+
     public static boolean barracks() {
         return Count.ofType(AUnitType.Terran_Barracks) > 0;
     }
 
     public static boolean academy() {
         return Count.ofType(AUnitType.Terran_Academy) > 0;
+    }
+
+    public static boolean cyberneticsCore() {
+        return Count.ofType(AUnitType.Protoss_Cybernetics_Core) > 0;
     }
 
     public static boolean main() {

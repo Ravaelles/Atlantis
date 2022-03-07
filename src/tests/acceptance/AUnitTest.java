@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
@@ -43,7 +43,7 @@ public class AUnitTest extends AbstractTestFakingGame {
     @Test
     public void ourOrEnemy() {
         createWorld(1, () -> {
-            EnemyUnits.weDiscoveredEnemyUnit(cannon = fakeEnemy(Protoss_Photon_Cannon, 18));
+            EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon = fakeEnemy(Protoss_Photon_Cannon, 18));
             
             assertTrue(fake(AUnitType.Terran_Marine).isOur());
             assertFalse(fake(AUnitType.Terran_Marine).isEnemy());

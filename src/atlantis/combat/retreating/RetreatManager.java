@@ -1,6 +1,7 @@
 package atlantis.combat.retreating;
 
 import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -81,9 +82,11 @@ public class RetreatManager {
         if (ourCount <= enemiesNear && unit.friendsNear().inRadius(5, unit).atLeast(2)) {
 //        Selection enemiesAroundEnemy = enemy.friendsNear().inRadius(radius, unit);
 //        if (oursAroundEnemy.count() > enemiesAroundEnemy.count()) {
-            unit.setTooltip("RetreatingB", false);
-            unit.addLog("RetreatingB");
-            return true;
+            if (unit.enemiesNear().inRadius(7, unit).onlyMelee()) {
+                unit.setTooltip("RetreatingB", false);
+                unit.addLog("RetreatingB");
+                return true;
+            }
         }
 
         if (Enemy.protoss() && applyZealotVsZealotFix(unit, enemies)) {
@@ -109,6 +112,10 @@ public class RetreatManager {
     }
 
     private static boolean applyZealotVsZealotFix(AUnit unit, Selection enemies) {
+        if (unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).inRadius(3.8, unit).notEmpty()) {
+            return false;
+        }
+
         int ourZealots = unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(1.4, unit).count();
         int enemyZealots = enemies.ofType(AUnitType.Protoss_Zealot).inRadius(1.4, unit).count();
 
@@ -184,6 +191,28 @@ public class RetreatManager {
             return true;
         }
 
+        if (unit.isMissionDefend()) {
+            AFocusPoint focusPoint = unit.squad().mission().focusPoint();
+            return focusPoint != null && unit.distTo(focusPoint) <= 3;
+        }
+
+        if (unit.hpLessThan(Enemy.protoss() ? 33 : 16)) {
+            return false;
+        }
+
+        if (
+            unit.isAttacking()
+//                && unit.hpMoreThan(32)
+                && unit.lastActionLessThanAgo(5)
+                && unit.lastAttackFrameMoreThanAgo(20)
+        ) {
+            return true;
+        }
+
+        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(80) && unit.lastUnderAttackLessThanAgo(80)) {
+            return true;
+        }
+
         if (unit.isMissionDefend() &&
             (
                 (Have.main() && unit.distToLessThan(Select.main(), 14))
@@ -196,8 +225,6 @@ public class RetreatManager {
         if (unit.type().isReaver()) {
             return unit.enemiesNear().isEmpty() && unit.cooldownRemaining() <= 7;
         }
-
-
 
         return false;
     }

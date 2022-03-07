@@ -1,14 +1,10 @@
 package atlantis.information.enemy;
 
-import atlantis.debug.painter.APainter;
-import atlantis.game.A;
-import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.map.position.APosition;
 import atlantis.units.*;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Cache;
-import bwapi.Color;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,66 +13,22 @@ import java.util.Map;
 public class EnemyUnits {
 
     protected static Map<Integer, AbstractFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
-    private static Cache<Object> cache = new Cache<>();
-
-    // =========================================================
-
-    public static void updateFoggedUnits() {
-//        System.out.println("--- UPDATE at " + A.now());
-        for (AUnit enemy : Select.enemy().list()) {
-//            System.out.println("update fogged from real = " + enemy);
-            updateUnitTypeAndPosition(enemy);
-        }
-
-        for (AbstractFoggedUnit foggedUnit : enemyUnitsDiscovered.values()) {
-//            System.out.println("update fogged = " + foggedUnit);
-            updatedFogged(foggedUnit);
-        }
-    }
-
-    public static boolean updateUnitTypeAndPosition(AUnit enemy) {
-        if (enemy.type().isGasBuildingOrGeyser()) {
-            return true;
-        }
-
-        AbstractFoggedUnit foggedUnit = getFoggedUnit(enemy);
-        if (foggedUnit != null) {
-            foggedUnit.update(enemy);
-        }
-        return false;
-    }
-
-    /**
-     * Check if the position of fogged unit is visible and there is no unit there.
-     * If so, change it, because it means we don't know where it is.
-     */
-    private static void updatedFogged(AbstractFoggedUnit foggedUnit) {
-        AUnit aUnit = foggedUnit.innerAUnit();
-//        System.out.println(aUnit + " // visible: " + (aUnit != null ? aUnit.isVisibleUnitOnMap() : "---"));
-        if (aUnit == null || !aUnit.isVisibleUnitOnMap()) {
-//            if (foggedUnit.hasPosition()) {
-//                APainter.paintCircleFilled(
-//                    foggedUnit,
-//                    8,
-//                    foggedUnit.position().isPositionVisible() ? Color.Green : Color.Red
-//                );
-//            }
-
-            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible()) {
-//                System.out.println(">> Fogged unit is no longer visible, remove position " + foggedUnit);
-                foggedUnit.removeKnownPosition();
-            }
-        }
-    }
+    protected static Cache<Object> cache = new Cache<>();
 
     // =========================================================
 
     /**
-     * Saves information about enemy unit that we see for the first time.
+     * Both visible units and those behind fog of war.
      */
-    public static void weDiscoveredEnemyUnit(AUnit enemyUnit) {
-        addFoggedUnit(enemyUnit);
-        EnemyUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
+    public static Selection discovered() {
+        return Select.from(unitsDiscovered(), "")
+//            .print("visibleAndFogged")
+            .add(Select.enemy())
+//            .print("now with enemy")
+            .removeDuplicates()
+//            .print("now after removal")
+            .havingPosition();
+//            .print("and having position?");
     }
 
     // =========================================================
@@ -90,33 +42,15 @@ public class EnemyUnits {
         return enemyUnitsDiscovered.values();
     }
 
-    public static void addFoggedUnit(AUnit enemyUnit) {
-        AbstractFoggedUnit foggedUnit = AbstractFoggedUnit.from(enemyUnit);
-
-        enemyUnitsDiscovered.put(enemyUnit.id(), foggedUnit);
-    }
-
-    public static void removeFoggedUnit(AUnit enemyUnit) {
-        enemyUnitsDiscovered.remove(enemyUnit.id());
-        cache.clear();
-    }
-
     public static AbstractFoggedUnit getFoggedUnit(AUnit enemyUnit) {
         return enemyUnitsDiscovered.get(enemyUnit.id());
     }
 
-    public static Selection visibleAndFogged() {
-        return Select.from(unitsDiscovered(), "")
-//            .print("visibleAndFogged")
-            .add(Select.enemy())
-//            .print("now with enemy")
-            .removeDuplicates()
-//            .print("now after removal")
-            .havingPosition();
-//            .print("and having position?");
-    }
-
     // =========================================================
+
+    public static int count(AUnitType type) {
+        return discovered().ofType(type).count();
+    }
 
     public static Selection foggedUnits() {
         return (Selection) cache.get(
@@ -175,28 +109,29 @@ public class EnemyUnits {
 //        );
 //    }
 
-    public static Selection combatUnitsToBetterAvoid() {
-        return (Selection) cache.get(
-                "combatUnitsToBetterAvoid:",
-                30,
-                () -> {
-                    Selection foggedCombatnits = foggedUnits()
-                            .combatUnits()
-                            .havingPosition();
+//    public static Selection combatUnitsToBetterAvoid() {
+//        return (Selection) cache.get(
+//                "combatUnitsToBetterAvoid:",
+//                30,
+//                () -> {
+//                    Selection foggedCombatnits = foggedUnits()
+//                            .combatUnits()
+//                            .havingPosition();
+//
+//                    return foggedCombatnits
+//                            .clone()
+//                            .combatBuildings(false)
+//                            .add(
+//                                foggedCombatnits.clone().ofType(
+//                                    AUnitType.Protoss_Photon_Cannon,
+//                                    AUnitType.Terran_Siege_Tank_Siege_Mode,
+//                                    AUnitType.Zerg_Lurker,
+//                                    AUnitType.Zerg_Sunken_Colony
+//                                )
+//                            )
+//                            .havingPosition();
+//                }
+//        );
+//    }
 
-                    return foggedCombatnits
-                            .clone()
-                            .combatBuildings(false)
-                            .add(
-                                foggedCombatnits.clone().ofType(
-                                    AUnitType.Protoss_Photon_Cannon,
-                                    AUnitType.Terran_Siege_Tank_Siege_Mode,
-                                    AUnitType.Zerg_Lurker,
-                                    AUnitType.Zerg_Sunken_Colony
-                                )
-                            )
-                            .havingPosition();
-                }
-        );
-    }
 }

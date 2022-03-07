@@ -10,6 +10,8 @@ import bwapi.TilePosition;
 import bwem.BWEM;
 import bwem.BWMap;
 
+import java.util.ArrayList;
+
 /**
  * This class provides information about high-abstraction level map operations like returning place for the
  * next base or returning important choke point near the main base.
@@ -167,6 +169,29 @@ public class AMap {
 
     public static String getMapName() {
         return Atlantis.game().mapName();
+    }
+
+    public static ArrayList<APosition> allChokeCenters() {
+        return (ArrayList<APosition>) cache.get(
+            "allChokeCenters",
+            -1,
+            () -> {
+                ArrayList<APosition> centers = new ArrayList<>();
+                for (AChoke choke : Chokes.chokes()) {
+                    centers.add(choke.center());
+                }
+                return centers;
+            }
+        );
+    }
+
+    public static boolean distToNearestChokeLessThan(APosition position, double dist) {
+        for (APosition center : allChokeCenters()) {
+            if (center.distTo(position) <= dist) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // =========================================================

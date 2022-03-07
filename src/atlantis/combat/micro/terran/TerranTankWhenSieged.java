@@ -40,11 +40,16 @@ public class TerranTankWhenSieged extends TerranTank {
             return false;
         }
 
-        if (tooLonely(unit) && !hasJustSiegedRecently(unit)) {
-//            System.out.println("LAST SIEGE = " + unit.lastActionAgo(Actions.SIEGE));
-//            System.out.println("LAST UNSIEGE = " + unit.lastActionAgo(Actions.UNSIEGE));
-            return wantsToUnsiege(unit, "TooLonely");
-        }
+//        if (
+//            tooLonely(unit)
+//                && !hasJustSiegedRecently(unit)
+//                && unit.noCooldown()
+//                && unit.lastStartedAttackMoreThanAgo(140)
+//        ) {
+////            System.out.println("LAST SIEGE = " + unit.lastActionAgo(Actions.SIEGE));
+////            System.out.println("LAST UNSIEGE = " + unit.lastActionAgo(Actions.UNSIEGE));
+//            return wantsToUnsiege(unit, "TooLonely");
+//        }
 
         return false;
     }
@@ -66,7 +71,8 @@ public class TerranTankWhenSieged extends TerranTank {
     private static boolean wantsToUnsiege(AUnit unit, String log) {
         if (
             hasJustSiegedRecently(unit)
-                || unit.lastAttackFrameLessThanAgo(30 * 9)) {
+                || unit.lastAttackFrameLessThanAgo(30 * (1 + unit.id() % 5))
+        ) {
             return false;
         }
 
@@ -87,15 +93,23 @@ public class TerranTankWhenSieged extends TerranTank {
     }
 
     private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
-        List<AUnit> cloaked = EnemyUnits.visibleAndFogged()
+        if (tank.lastActionLessThanAgo(55, Actions.ATTACK_POSITION)) {
+            tank.setTooltipTactical("SmashInvisible!");
+            tank.addLog("SmashInvisible!");
+            return true;
+        }
+
+        List<AUnit> cloaked = EnemyUnits.discovered()
             .effCloaked()
             .groundUnits()
             .inRadius(11.9, tank)
             .list();
         for (AUnit cloakedUnit : cloaked) {
+//            System.out.println(cloakedUnit + " // " + cloakedUnit.position());
             if (cloakedUnit.distTo(tank) >= tank.groundWeaponMinRange()) {
 //                if (tank.lastActionMoreThanAgo(30, Actions.ATTACK_POSITION)) {
 //                }
+//                System.out.println("SHOOT AT " + cloakedUnit.position());
                 tank.attackPosition(cloakedUnit.position());
                 tank.setTooltipTactical("SmashInvisible");
                 tank.addLog("SmashInvisible");

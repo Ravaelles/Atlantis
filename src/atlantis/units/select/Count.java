@@ -246,6 +246,10 @@ public class Count {
         return Select.countOurOfType(AUnitType.Terran_Bunker);
     }
 
+    public static int cannons() {
+        return Select.countOurOfType(AUnitType.Protoss_Photon_Cannon);
+    }
+
     public static int barracks() {
         return Select.countOurOfType(AUnitType.Terran_Barracks);
     }

@@ -4,6 +4,7 @@ import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.AAvoidSpells;
 import atlantis.combat.micro.Unfreezer;
 import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.managers.DanceAfterShoot;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
@@ -134,15 +135,20 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (ARunningManager.shouldStopRunning(unit)) {
+        if (DanceAfterShoot.handle(unit)) {
             return true;
         }
 
-//        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {
-        if (unit.isRunning() && A.everyNthGameFrame(3)) {
-//            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
-//            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded(unit) : true;
-            return AAvoidUnits.avoidEnemiesIfNeeded(unit);
+        if (unit.isRunning()) {
+            if (ARunningManager.shouldStopRunning(unit)) {
+                unit.runningManager().stopRunning();
+            }
+    //        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {
+            else if (A.everyNthGameFrame(3)) {
+    //            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
+    //            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded(unit) : true;
+                return AAvoidUnits.avoidEnemiesIfNeeded(unit);
+            }
         }
 
         // Useful for testing and debugging of shooting/running
@@ -201,11 +207,11 @@ public class ACombatUnitManager {
     /**
      * Can be used for testing.
      */
-    private static boolean testUnitBehaviorShootAtOwnUnit(AUnit unit) {
-        if (Select.our().first().id() != unit.id()) {
-            unit.attackUnit(Select.our().first());
-        }
-        return true;
-    }
+//    private static boolean testUnitBehaviorShootAtOwnUnit(AUnit unit) {
+//        if (Select.our().first().id() != unit.id()) {
+//            unit.attackUnit(Select.our().first());
+//        }
+//        return true;
+//    }
 
 }

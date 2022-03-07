@@ -10,9 +10,9 @@ public class ZergRequests extends ARequests {
         super.requestDetectorQuick(where);
     }
 
-    @Override
-    public void requestAntiAirQuick(APosition where) {
-        
-    }
+//    @Override
+//    public void requestAntiAirQuick(APosition where) {
+//
+//    }
     
 }

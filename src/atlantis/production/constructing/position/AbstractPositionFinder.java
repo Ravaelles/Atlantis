@@ -2,10 +2,7 @@ package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
-import atlantis.map.ABaseLocation;
-import atlantis.map.AChoke;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.*;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
@@ -88,7 +85,6 @@ public abstract class AbstractPositionFinder {
      * could be stacked.
      */
     protected static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
-
 //        System.out.println("============================");
 //        System.out.println("position = " + position + ", not started = " + ConstructionRequests.notStarted().size()
 //                + " // all = " + ConstructionRequests.all().size());
@@ -109,6 +105,10 @@ public abstract class AbstractPositionFinder {
 //                System.out.println("------------");
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
 //                        && (distance <= 5 && !We.zerg());
+
+                if (building.isCannon() && order.buildingType().isCannon() && distance >= 2) {
+                    return false;
+                }
 
                 // Look for two bases that would be built too close one to another
                 if (distance <= 4) {
@@ -222,6 +222,20 @@ public abstract class AbstractPositionFinder {
         }
 
         return false;
+    }
+
+    public static boolean isTooCloseToRegionBoundaries(APosition position) {
+        ARegion region = position.region();
+        if (region == null) {
+            return false;
+        }
+
+        ARegionBoundary nearestBoundary = region.nearestBoundary(position);
+        if (nearestBoundary == null) {
+            return false;
+        }
+
+        return nearestBoundary.distTo(position) <= 2.5;
     }
 
 }

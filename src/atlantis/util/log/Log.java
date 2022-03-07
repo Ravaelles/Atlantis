@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class Log {
 
+//    public static final int UNIT_LOG_SIZE = 10;
+//    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 50;
     public static final int UNIT_LOG_SIZE = 4;
     public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 30;
 
@@ -24,6 +26,8 @@ public class Log {
 
     public void addMessage(String message) {
         messages.add(new LogMessage(message, expireAfterFrames));
+
+//        System.out.println("LOG: " + message);
 
         if (messages.size() > limit) {
             messages.remove(0);

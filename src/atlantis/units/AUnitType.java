@@ -1147,10 +1147,21 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
                 "isNotRealUnit",
                 -1,
-                () -> isBuilding() || isNeutral() || isLarvaOrEgg() || isMineralField()
-                        || isInvincible() || isGeyser() || isSpell() || isMine() || isFlagOrBeacon()
-//                        || isGasBuilding()
+                () -> isNotRealUnitButCanBeABuilding()
         );
+    }
+
+    public boolean isRealUnitOrBuilding() {
+        return (boolean) cache.get(
+                "isRealUnitOrBuilding",
+                -1,
+                () -> !isNeutral() && (isBuilding() || !isNotRealUnitButCanBeABuilding())
+        );
+    }
+
+    private boolean isNotRealUnitButCanBeABuilding() {
+        return isLarvaOrEgg() || isMineralField() || isInvincible()
+            || isGeyser() || isSpell() || isMine() || isFlagOrBeacon();
     }
 
     private boolean isFlagOrBeacon() {

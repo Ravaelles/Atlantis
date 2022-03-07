@@ -10,6 +10,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 public class TerranMissionChangerWhenDefend extends MissionChanger {
 
@@ -27,6 +28,12 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
             return false;
         }
 
+        if (We.terran() && Enemy.protoss()) {
+            if (Missions.counter() >= 2 && A.supplyUsed() <= 90 && A.seconds() <= 60 * 7) {
+                return false;
+            }
+        }
+
         if (Enemy.zerg()) {
             if (Count.ourCombatUnits() <= 6) {
                 return false;
@@ -34,7 +41,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
         }
 
         if (Enemy.protoss()) {
-            if (GamePhase.isEarlyGame() && EnemyUnits.visibleAndFogged().combatUnits().count() >= 6) {
+            if (GamePhase.isEarlyGame() && EnemyUnits.discovered().combatUnits().count() >= 6) {
                 return Count.ourCombatUnits() >= 13;
             }
         }

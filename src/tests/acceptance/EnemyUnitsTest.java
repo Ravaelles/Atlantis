@@ -5,6 +5,7 @@ import atlantis.game.AGameCommander;
 import atlantis.game.OnUnitMorph;
 import atlantis.game.OnUnitRenegade;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
@@ -53,11 +54,11 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
     }
 
     private void firstFrame() {
-        EnemyUnits.weDiscoveredEnemyUnit(drone1);
-        EnemyUnits.weDiscoveredEnemyUnit(drone2);
-        EnemyUnits.weDiscoveredEnemyUnit(drone3);
-        EnemyUnits.weDiscoveredEnemyUnit(lurkerEgg);
-        EnemyUnits.weDiscoveredEnemyUnit(larva);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone1);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone2);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone3);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(lurkerEgg);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(larva);
     }
 
     private void secondFrame() {
@@ -104,9 +105,9 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
         drone5.changeRawUnitType(AUnitType.Zerg_Sunken_Colony);
         drone6.changeRawUnitType(AUnitType.Zerg_Lurker);
 
-        EnemyUnits.weDiscoveredEnemyUnit(drone4);
-        EnemyUnits.weDiscoveredEnemyUnit(drone5);
-        EnemyUnits.weDiscoveredEnemyUnit(drone6);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone4);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone5);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone6);
     }
 
     private void fifthFrame() {

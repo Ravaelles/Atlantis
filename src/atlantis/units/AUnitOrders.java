@@ -52,22 +52,24 @@ public interface AUnitOrders {
 //        System.out.println("                  ------> ATTACK #" + target);
 
         // Do NOT issue double orders
+//        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
         if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
-            unit().setTooltipTactical("Attack");
+            unit().setTooltipTactical("Attacking...");
             return true;
         }
 
-//        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-//            System.out.println("                  ------> ATTACK #" + target);
-//        }
+        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println("@ " + A.now() + " ------> ATTACK UNIT #" + target);
+        }
 
 //        if (unit().outsideSquadRadius()) {
 //            A.printStackTrace("hmmm " + unit().distToSquadCenter() + " / " + unit().squadRadius());
 //        }
 
-        unit().setTooltipTactical("ATTACK");
+        unit().setTooltipTactical("ATTACK-UNIT");
         unit().setAction(Actions.ATTACK_UNIT);
         return u().attack(target.u());
+//        return true;
     }
 
     // To avoid confusion: NEVER UE IT.
@@ -78,8 +80,10 @@ public interface AUnitOrders {
      */
     default boolean attackPosition(APosition target) {
         if (u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
-            u().attack(target);
+            u().attack(target.position());
             unit().setAction(Actions.ATTACK_POSITION);
+
+//            System.out.println("--------- SHOOT AT POSITION " + target.position());
             return true;
         }
 
@@ -120,9 +124,9 @@ public interface AUnitOrders {
         return u().research(tech);
     }
 
-    default boolean move(AUnit target, Action unitAction, String tooltip, boolean strategicLevel) {
-        return move(target.position(), unitAction, tooltip, strategicLevel);
-    }
+//    default boolean move(AUnit target, Action unitAction, String tooltip, boolean strategicLevel) {
+//        return move(target.position(), unitAction, tooltip, strategicLevel);
+//    }
 
     default boolean moveStrategic(HasPosition target, Action unitAction, String tooltip) {
         return move(target, unitAction, tooltip, true);
@@ -134,7 +138,7 @@ public interface AUnitOrders {
 
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("MOVE @" + A.now() + " / unit#" + unit().id() + " // " + tooltip);
+            System.out.println("MOVE @" + A.now() + " / " + unit().nameWithId() + " // " + tooltip);
         }
         if (target == null) {
             System.err.println("Null move position for " + this);
@@ -321,9 +325,6 @@ public interface AUnitOrders {
      * canRepair
      */
     default boolean repair(AUnit target, String tooltip, boolean strategicLevel) {
-        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("REPAIR @" + A.now() + " / unit#" + unit().id() + " // " + tooltip);
-        }
 
         if (target == null) {
             return false;
@@ -331,12 +332,17 @@ public interface AUnitOrders {
 
         unit().setTooltip(tooltip, strategicLevel);
 
-        if (unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
+        if (unit().isRepairing() && unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
+//            System.err.println(this + " avoid double command / " + unit().getLastCommand() + " // " + unit().target());
             return true;
         }
 
         unit().setAction(Actions.REPAIR);
         u().repair(target.u());
+
+        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("REPAIR @" + A.now() + " / " + this + " repair " + target + " (" + target.hp() + ")");
+        }
 
         return true;
 

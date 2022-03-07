@@ -61,8 +61,13 @@ public class RepairerAssigner {
 
         if (unit.isBunker()) {
             int shouldHaveThisManyRepairers = ARepairCommander.defineOptimalRepairersForBunker(unit);
-            unit.setTooltipTactical(shouldHaveThisManyRepairers + "RepNeed");
-            ARepairCommander.assignProtectorsFor(unit, shouldHaveThisManyRepairers - repairersNeeded);
+            if (shouldHaveThisManyRepairers > 0) {
+                unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
+                AProtectorManager.assignProtectorsFor(unit, shouldHaveThisManyRepairers - repairersNeeded);
+            }
+            else {
+                unit.removeTooltip();
+            }
         }
         else if (unit.isMissileTurret()) {
             int enemies = unit.enemiesNear().air().inRadius(11, unit).count();

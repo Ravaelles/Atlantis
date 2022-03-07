@@ -65,11 +65,15 @@ public class TerranFlyingBuildingManager {
             return true;
         }
 
-        if (flyingBuilding.lastUnderAttackLessThanAgo(60)) {
-            APosition median = Alpha.get().median();
-            if (median != null) {
-                flyingBuilding.moveStrategic(median, Actions.MOVE_SAFETY, "UnderFire");
-                return true;
+        if (flyingBuilding.lastUnderAttackLessThanAgo(70)) {
+//            APosition median = Alpha.get().median();
+//            if (median != null) {
+//                flyingBuilding.moveStrategic(median, Actions.MOVE_SAFETY, "UnderFire");
+//                return true;
+//            }
+            AUnit enemy = flyingBuilding.enemiesNear().canAttack(flyingBuilding, 3).nearestTo(flyingBuilding);
+            if (enemy != null) {
+                return flyingBuilding.moveAwayFrom(flyingBuilding, 3, "UnderFire", Actions.MOVE_SAFETY);
             }
         }
 

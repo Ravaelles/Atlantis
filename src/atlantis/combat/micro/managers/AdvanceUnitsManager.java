@@ -42,23 +42,36 @@ public class AdvanceUnitsManager extends MissionUnitManager {
             AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
         if (focusPoint == null) {
+            unit.addLog("NoFocusPoint");
             return false;
         }
 
-        if (unit.enemiesNear().notEmpty()) {
-            if (unit.isMoving() && !unit.isRunning() && unit.lastActionMoreThanAgo(15)) {
-                unit.stop("TooFast", false);
+        if (unit.friendsNearCount() <= 10 && unit.enemiesNear().combatUnits().notEmpty()) {
+            if (
+                unit.isMoving()
+                    && !unit.isUnitAction(Actions.MOVE_FORMATION)
+                    && !unit.isRunning()
+//                    && unit.lastActionMoreThanAgo(15)
+                    && unit.distToSquadCenter() >= 5
+            ) {
+                unit.addLog("TooFast");
+                return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "TooFast", false);
             }
             return false;
         }
 
         // =========================================================
 
-        if (unit.isMoving() && !unit.isRunning() && unit.lastActionMoreThanAgo(10, Actions.MOVE_ENGAGE)) {
-//        if (!unit.isStopped() && unit.lastActionMoreThanAgo(7, Actions.MOVE_ENGAGE)) {
-            unit.stop("TooFast", false);
-            return true;
-        }
+//        if (
+//            unit.isMoving()
+//                && !unit.isUnitAction(Actions.MOVE_FORMATION)
+//                && !unit.isRunning()
+//                && unit.lastActionMoreThanAgo(10, Actions.MOVE_ENGAGE)
+//        ) {
+////        if (!unit.isStopped() && unit.lastActionMoreThanAgo(7, Actions.MOVE_ENGAGE)) {
+//            unit.stop("TooFast", false);
+//            return true;
+//        }
 
         double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
         double distToFocusPoint = unit.distTo(focusPoint);

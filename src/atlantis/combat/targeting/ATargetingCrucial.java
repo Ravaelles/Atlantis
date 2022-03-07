@@ -41,11 +41,12 @@ public class ATargetingCrucial extends ATargeting {
         // Attack MINES
 
         if (unit.isRanged()) {
-            target = enemyUnits.clone()
+            target = enemyUnits
                     .ofType(AUnitType.Terran_Vulture_Spider_Mine)
                     .inShootRangeOf(groundRange + 4, unit)
                     .randomWithSeed(700 + unit.id());
             if (target != null) {
+                if (ATargeting.DEBUG) System.out.println("CR1 = " + target);
                 return target;
             }
         }
@@ -53,51 +54,57 @@ public class ATargetingCrucial extends ATargeting {
         // =========================================================
         // Targetable OBSERVERS near CARRIERS
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(AUnitType.Protoss_Observer)
                 .effVisible()
                 .inRadius(unit.isAir() ? 40 : 13, unit)
                 .mostWounded();
         if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, target).atLeast(1)) {
+            if (ATargeting.DEBUG) System.out.println("CR2 = " + target);
             return target;
         }
 
         // =========================================================
         // DEFILER / LURKER in range
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(AUnitType.Zerg_Defiler)
                 .effVisible()
-                .inShootRangeOf(unit)
+                .inRadius(15, unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR3 = " + target);
             return target;
         }
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(AUnitType.Zerg_Lurker)
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR3 = " + target);
             return target;
         }
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(AUnitType.Zerg_Lurker)
-                .inShootRangeOf(1.4, unit)
+                .inRadius(10, unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR4 = " + target);
             return target;
         }
 
         // =========================================================
         // HIGH TEMPLARS
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(AUnitType.Protoss_High_Templar)
-                .inShootRangeOf(unit)
+                .inRadius(8, unit)
                 .nearestTo(unit);
+//        System.out.println("target = " + target + " // " + (target != null ? unit.distTo(target) : ""));
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR5 = " + target);
             return target;
         }
 
@@ -105,8 +112,9 @@ public class ATargetingCrucial extends ATargeting {
         // MELEE should attack CLOSE targets if too clustered
 
         if (unit.isMelee()) {
-            Selection NearEnemies = enemyUnits.clone().inRadius(0.9, unit);
+            Selection NearEnemies = enemyUnits.inRadius(0.9, unit);
             if (NearEnemies.atLeast(2)) {
+                if (ATargeting.DEBUG) System.out.println("CR6 = " + target);
                 return NearEnemies.mostWounded();
             }
         }
@@ -123,7 +131,7 @@ public class ATargetingCrucial extends ATargeting {
         // Move to attack it WAY NOT IN RANGE
 
         if (unit.isRanged()) {
-            target = enemyUnits.clone()
+            target = enemyUnits
                     .ofType(
                             AUnitType.Protoss_Observer,
                             AUnitType.Terran_Siege_Tank_Siege_Mode
@@ -132,11 +140,12 @@ public class ATargetingCrucial extends ATargeting {
                     .inRadius(5, unit)
                     .nearestTo(unit);
             if (target != null) {
+                if (ATargeting.DEBUG) System.out.println("CR7 = " + target);
                 return target;
             }
         }
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(
                         AUnitType.Protoss_Reaver,
                         AUnitType.Terran_Siege_Tank_Tank_Mode,
@@ -145,10 +154,11 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(9, unit)
                 .randomWithSeed(unit.id());
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR8 = " + target);
             return target;
         }
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(
                         AUnitType.Zerg_Defiler,
                         AUnitType.Protoss_Carrier,
@@ -158,13 +168,14 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(8, unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR9 = " + target);
             return target;
         }
 
         // =========================================================
         // DEADLY, but ALLOW SMALL OUT OF RANGE bonus
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(
                         AUnitType.Protoss_High_Templar,
                         AUnitType.Protoss_Reaver,
@@ -173,13 +184,14 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(groundRange + 2, unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR10 = " + target);
             return target;
         }
 
         // =========================================================
         // DEADLY units, but can wait to BE IN RANGE
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(
                         AUnitType.Protoss_Dark_Templar,
                         AUnitType.Zerg_Scourge,
@@ -189,6 +201,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR11 = " + target);
             return target;
         }
 
@@ -196,14 +209,14 @@ public class ATargetingCrucial extends ATargeting {
         // Special case - SHUTTLE
 
         if ((target = ATransportTargeting.target(unit)) != null) {
-            if (ATargeting.debug(unit)) System.out.println("C3 = " + target);
+            if (ATargeting.DEBUG) System.out.println("CR12 = " + target);
             return target;
         }
 
         // =========================================================
         // DEADLY but attack in last order
 
-        target = enemyUnits.clone()
+        target = enemyUnits
                 .ofType(
                         AUnitType.Protoss_Archon,
                         AUnitType.Protoss_Observer,
@@ -211,6 +224,10 @@ public class ATargetingCrucial extends ATargeting {
                 )
                 .inRadius(groundRange + 0.7, unit)
                 .nearestTo(unit);
+        if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR13 = " + target);
+            return target;
+        }
 
         return target;
     }

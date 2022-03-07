@@ -28,7 +28,7 @@ public class ATargetingForAir {
         // =========================================================
         // Target AIR units
 
-        target = ATargeting.enemyUnits.clone()
+        target = ATargeting.enemyUnits
                 .air()
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
@@ -39,7 +39,7 @@ public class ATargetingForAir {
         // =========================================================
         // Target REAVERS
 
-        target = ATargeting.enemyUnits.clone()
+        target = ATargeting.enemyUnits
                 .ofType(AUnitType.Protoss_Reaver)
                 .inRadius(10, unit)
                 .nearestTo(unit);
@@ -50,7 +50,7 @@ public class ATargetingForAir {
         // =========================================================
         // Target TRANSPORT
 
-        target = ATargeting.enemyUnits.clone()
+        target = ATargeting.enemyUnits
                 .transports(true)
                 .inRadius(10, unit)
                 .nearestTo(unit);
@@ -61,7 +61,7 @@ public class ATargetingForAir {
         // =========================================================
         // Target WORKERS
 
-        target = ATargeting.enemyUnits.clone()
+        target = ATargeting.enemyUnits
                 .workers()
                 .inShootRangeOf(unit)
                 .mostWounded();
@@ -78,13 +78,13 @@ public class ATargetingForAir {
         // =========================================================
         // Target DEFENSIVE BUILDINGS
 
-        target = ATargeting.enemyUnits.clone()
+        target = ATargeting.enemyUnits
                 .add(EnemyUnits.foggedUnits())
                 .ofType(AUnitType.Zerg_Sunken_Colony)
                 .removeDuplicates()
                 .inRadius(50, unit)
                 .nearestTo(unit);
-        if (ATargeting.debug(unit)) System.out.println("target = " + target + " // " + unit);
+        if (ATargeting.DEBUG) System.out.println("target = " + target + " // " + unit);
 
         if (target != null) {
             return target;
@@ -93,7 +93,7 @@ public class ATargetingForAir {
         // =========================================================
         // Target WORKERS
 
-        target = ATargeting.enemyUnits.clone()
+        target = ATargeting.enemyUnits
                 .workers()
                 .inRadius(30, unit)
                 .nearestTo(unit);

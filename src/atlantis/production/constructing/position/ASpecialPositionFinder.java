@@ -60,7 +60,9 @@ public class ASpecialPositionFinder {
         );
     }
 
-    public static APosition positionModifierToPosition(String modifier, AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
+    public static APosition positionModifierToPosition(
+        String modifier, AUnitType building, AUnit builder, ConstructionOrder constructionOrder
+    ) {
         if (modifier.equals(PositionModifier.MAIN) || modifier.equals("MAIN")) {
             if (constructionOrder.maxDistance() < 0) {
                 constructionOrder.setMaxDistance(40);
@@ -81,7 +83,7 @@ public class ASpecialPositionFinder {
         if (modifier.equals(PositionModifier.MAIN_CHOKE)) {
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
-                return APosition.create(mainChoke.center()).translateTilesTowards(Select.main(), 3.5);
+                return APosition.create(mainChoke.center()).translateTilesTowards(Select.main(), 3.3);
             }
         }
         else if (modifier.equals(PositionModifier.NATURAL_CHOKE)) {

@@ -6,11 +6,17 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class ComeCloser extends ASquadCohesionManager {
 
     public static boolean handleComeCloser(AUnit unit) {
+        if (Enemy.terran() && !We.terran()) {
+            return false;
+        }
+
         if (shouldSkip(unit)) {
             return false;
         }
@@ -67,8 +73,8 @@ public class ComeCloser extends ASquadCohesionManager {
 
         if (Count.tanks() >= 2) {
             AUnit tank = Select.ourTanks().nearestTo(unit);
-            if (tank != null && tank.distToMoreThan(unit, 4.6)) {
-                unit.move(tank, Actions.MOVE_FORMATION, "HugTanks", true);
+            if (tank != null && tank.distToMoreThan(unit, 4.9)) {
+                unit.move(unit.translateTilesTowards(2, tank), Actions.MOVE_FORMATION, "HugTanks", true);
                 unit.addLog("HugTanks");
                 return true;
             }
@@ -84,13 +90,15 @@ public class ComeCloser extends ASquadCohesionManager {
 //            return false;
 //        }
 
-        if (unit.distToSquadCenter() <= 4) {
+        if (unit.distToSquadCenter() <= 4 || unit.distToSquadCenter() >= 15) {
             return false;
         }
 
         if (unit.groundDist(focusPoint(unit)) + 3 <= unit.squad().groundDistToFocusPoint()) {
-            unit.addLog("TooAhead");
-            return true;
+            if (unit.friendsNear().inRadius(4, unit).atMost(6)) {
+                unit.addLog("TooAhead");
+                return true;
+            }
         }
 
         return false;
@@ -132,6 +140,10 @@ public class ComeCloser extends ASquadCohesionManager {
             return true;
         }
 
+        if (unit.isVulture()) {
+            return true;
+        }
+
 //        if (unit.squad().mission().isMissionAttack()) {
 //            return false;
 //        }
@@ -142,11 +154,19 @@ public class ComeCloser extends ASquadCohesionManager {
     // =========================================================
 
     public static boolean isTooFarFromSquadCenter(AUnit unit) {
-        if (unit.squad() == null) {
+        if (unit.squad() == null || unit.isTank()) {
+            return false;
+        }
+
+        if (unit.distToSquadCenter() >= 15) {
             return false;
         }
 
         APosition center = unit.squad().center();
+        if (center == null) {
+            return false;
+        }
+
         double maxDistToSquadCenter = CohesionAssurance.squadMaxRadius(unit.squad());
 
         if (unit.distTo(center) > maxDistToSquadCenter) {
@@ -155,9 +175,14 @@ public class ComeCloser extends ASquadCohesionManager {
                 return false;
             }
 
+            Selection enemiesNear = unit.enemiesNear();
+            if ((unit.isVulture() || unit.isDragoon()) && (enemiesNear.isEmpty() || enemiesNear.onlyMelee())) {
+                return false;
+            }
+
 //            if (!unit.recentlyMoved()) {
             unit.move(
-                unit.translatePercentTowards(center, 20),
+                unit.translateTilesTowards(center, 2).makeWalkable(5),
                 Actions.MOVE_FOCUS,
                 "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
                 false

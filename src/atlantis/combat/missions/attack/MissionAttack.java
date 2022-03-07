@@ -4,7 +4,9 @@ import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.ProtossMissionAdjustments;
 import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -22,9 +24,30 @@ public class MissionAttack extends Mission {
 
     @Override
     public boolean update(AUnit unit) {
+        if (
+            unit.lastActionLessThanAgo(30)
+                && !unit.isStopped()
+                && (A.notNthGameFrame(3) || unit.lastActionLessThanAgo(10))) {
+            return false;
+        }
+//        if (!unit.isStopped()) {
+//            return false;
+//        }
+
         unit.setTooltipTactical("#MA");
 
         return handleAdvance(unit);
+    }
+
+    public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (A.supplyUsed() <= 40) {
+            // Zealots vs Zealot fix
+            if (ProtossMissionAdjustments.allowsToAttackEnemyUnits(unit, enemy)) {
+                return true;
+            }
+        }
+
+        return true;
     }
 
     private boolean handleAdvance(AUnit unit) {
@@ -62,16 +85,16 @@ public class MissionAttack extends Mission {
             return true;
         }
 
-        if (unit.friendsNearCount() <= 7) {
+        if (unit.friendsNearCount() <= 6) {
             return false;
         }
 
         // Standard infantry attack
 //        boolean notStrongEnough = Select.ourCombatUnits().inRadius(6, unit).atMost(8);
 //        if (notStrongEnough || unit.lastStoppedRunningLessThanAgo(30 * 10)) {
-        if (unit.lastStoppedRunningLessThanAgo(30 * 10)) {
-            return false;
-        }
+//        if (unit.lastStoppedRunningLessThanAgo(30 * 10)) {
+//            return false;
+//        }
 
         int buildings = Select.enemy().combatBuildings(false).inRadius(7, combatBuilding).count();
 

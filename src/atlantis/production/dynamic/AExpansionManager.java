@@ -3,7 +3,11 @@ package atlantis.production.dynamic;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
+import atlantis.information.strategy.GamePhase;
 import atlantis.map.Bases;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
@@ -11,27 +15,39 @@ import atlantis.production.dynamic.zerg.ZergExpansionManager;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 import atlantis.util.We;
+
+import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class AExpansionManager {
 
     public static boolean shouldBuildNewBase() {
 //        if (true) return false;
 
+        // Zerg
         if (ZergExpansionManager.handleNoZergLarvas()) {
             return true;
         }
 
+        // =========================================================
+
+        if (
+            We.terran()
+                && GamePhase.isEarlyGame()
+                && (
+                    ArmyStrength.ourArmyRelativeStrength() <= 80
+                        || EnemyUnits.count(Protoss_Zealot) >= 5
+                        || !Have.factory()
+            )
+        ) {
+            return false;
+        }
+
         int bases = Count.bases();
         int basesInProduction = Count.inProductionOrInQueue(AtlantisConfig.BASE);
-
-        if (bases == 0 && basesInProduction == 0) {
-            if (We.terran() && EnemyStrategy.get().isRushOrCheese()) {
-                return false;
-            }
-            return true;
-        }
 
         if (bases >= 5 || basesInProduction >= 1) {
             return false;
@@ -45,19 +61,6 @@ public class AExpansionManager {
 //            return false;
 //        }
 
-        if (
-            bases <= 1
-                && basesInProduction == 0
-                && (
-                (AGame.canAfford(370, 0))
-                    || (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)
-                    || (A.seconds() >= 600 && Count.ourCombatUnits() >= 8)
-                    || (A.seconds() >= 700)
-            )
-        ) {
-            return true;
-        }
-
         if (Count.workers() <= 17 * (bases + basesInProduction)) {
             return false;
         }
@@ -70,7 +73,30 @@ public class AExpansionManager {
             return false;
         }
 
-        // If we have lenty of minerals, then every new base is a hazard
+        // === True ===========================================
+
+        if (bases == 0 && basesInProduction == 0) {
+            if (We.terran() && EnemyStrategy.get().isRushOrCheese()) {
+                return false;
+            }
+            return true;
+        }
+
+        if (bases <= 1 && basesInProduction == 0) {
+            boolean secondsAllow =
+                (
+                    (A.seconds() >= 500 && Count.ourCombatUnits() >= 20)
+                    || (A.seconds() >= 600 && Count.ourCombatUnits() >= 8)
+                    || (A.seconds() >= 700)
+                );
+            if (AGame.canAfford(420, 0) || secondsAllow) {
+                return true;
+            }
+        }
+
+        // === False again ===========================================
+
+        // If we have plenty of minerals, then every new base is only a hazard
         if (!AGame.canAffordWithReserved(minMinerals, 1200)) {
             return false;
         }
