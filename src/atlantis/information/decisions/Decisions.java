@@ -67,7 +67,7 @@ public class Decisions {
                         )
                             || !GamePhase.isEarlyGame()
                     )
-            || (A.hasMinerals(290) && OurStrategy.get().goingBio() && Count.infantry() <= 12)
+            || (A.hasMinerals(290) && OurStrategy.get().goingBio() && Count.infantry() <= 19)
 //                () -> (OurStrategy.get().goingBio() || Count.ourCombatUnits() <= 30)
 //                        (!EnemyInformation.enemyStartedWithCombatBuilding || Select.ourTerranInfantry().atMost(13))
         );

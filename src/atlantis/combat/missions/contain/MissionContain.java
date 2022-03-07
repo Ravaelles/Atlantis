@@ -78,7 +78,7 @@ public class MissionContain extends Mission {
 
 
     private boolean wouldCrossChokeToAttack(AUnit unit, AUnit enemy, AFocusPoint focusPoint) {
-        if (focusPoint.isAroundChoke()) {
+        if (focusPoint != null && focusPoint.isAroundChoke()) {
             HasPosition squad = unit.squadCenter();
             double squadToEnemy = squad.distTo(enemy);
             double squadToFocus = squad.distTo(focusPoint);

@@ -40,16 +40,16 @@ public class TerranTankWhenSieged extends TerranTank {
             return false;
         }
 
-        if (
-            tooLonely(unit)
-                && !hasJustSiegedRecently(unit)
-                && unit.noCooldown()
-                && unit.lastStartedAttackMoreThanAgo(140)
-        ) {
-//            System.out.println("LAST SIEGE = " + unit.lastActionAgo(Actions.SIEGE));
-//            System.out.println("LAST UNSIEGE = " + unit.lastActionAgo(Actions.UNSIEGE));
-            return wantsToUnsiege(unit, "TooLonely");
-        }
+//        if (
+//            tooLonely(unit)
+//                && !hasJustSiegedRecently(unit)
+//                && unit.noCooldown()
+//                && unit.lastStartedAttackMoreThanAgo(140)
+//        ) {
+////            System.out.println("LAST SIEGE = " + unit.lastActionAgo(Actions.SIEGE));
+////            System.out.println("LAST UNSIEGE = " + unit.lastActionAgo(Actions.UNSIEGE));
+//            return wantsToUnsiege(unit, "TooLonely");
+//        }
 
         return false;
     }

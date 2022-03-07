@@ -84,6 +84,10 @@ public class ABuilderManager {
             }
 
             if (!builder.isMoving()) {
+//                if (A.everyNthGameFrame(20)) {
+//                    constructionOrder.setPositionToBuild(newPosition);
+//                }
+
 //                    GameSpeed.changeSpeedTo(60);
                 builder.move(
                     constructionOrder.positionToBuildCenter(),
