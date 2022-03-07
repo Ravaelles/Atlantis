@@ -99,7 +99,7 @@ public class TerranTankWhenSieged extends TerranTank {
             return true;
         }
 
-        List<AUnit> cloaked = EnemyUnits.visibleAndFogged()
+        List<AUnit> cloaked = EnemyUnits.discovered()
             .effCloaked()
             .groundUnits()
             .inRadius(11.9, tank)

@@ -11,7 +11,6 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.util.Cache;
 import atlantis.util.Enemy;
 
@@ -83,7 +82,7 @@ public class Decisions {
                 if (
                     GamePhase.isEarlyGame()
                         && Count.vultures() <= 3
-                        && EnemyUnits.visibleAndFogged().ofType(Protoss_Zealot).atLeast(5)
+                        && EnemyUnits.discovered().ofType(Protoss_Zealot).atLeast(5)
                 ) {
                     return false;
                 }
@@ -106,7 +105,7 @@ public class Decisions {
 //                    GamePhase.isEarlyGame()
                 (
                     EnemyInfo.startedWithCombatBuilding
-                        || EnemyUnits.visibleAndFogged().combatBuildings(true).atLeast(2)
+                        || EnemyUnits.discovered().combatBuildings(true).atLeast(2)
                 )
 //                        && Have.factory() && Have.machineShop()
         );
@@ -130,7 +129,7 @@ public class Decisions {
     public static boolean weHaveBunkerAndDontHaveToDefendAnyLonger() {
         if (Enemy.zerg()) {
             if (GamePhase.isEarlyGame()) {
-                if (EnemyUnits.visibleAndFogged().countOfType(AUnitType.Zerg_Zergling) >= 9) {
+                if (EnemyUnits.discovered().countOfType(AUnitType.Zerg_Zergling) >= 9) {
                     return Count.ourCombatUnits() >= 13;
                 }
 

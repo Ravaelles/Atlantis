@@ -82,9 +82,11 @@ public class RetreatManager {
         if (ourCount <= enemiesNear && unit.friendsNear().inRadius(5, unit).atLeast(2)) {
 //        Selection enemiesAroundEnemy = enemy.friendsNear().inRadius(radius, unit);
 //        if (oursAroundEnemy.count() > enemiesAroundEnemy.count()) {
-            unit.setTooltip("RetreatingB", false);
-            unit.addLog("RetreatingB");
-            return true;
+            if (unit.enemiesNear().inRadius(7, unit).onlyMelee()) {
+                unit.setTooltip("RetreatingB", false);
+                unit.addLog("RetreatingB");
+                return true;
+            }
         }
 
         if (Enemy.protoss() && applyZealotVsZealotFix(unit, enemies)) {
@@ -189,9 +191,18 @@ public class RetreatManager {
             return true;
         }
 
+        if (unit.isMissionDefend()) {
+            AFocusPoint focusPoint = unit.squad().mission().focusPoint();
+            return focusPoint != null && unit.distTo(focusPoint) <= 3;
+        }
+
+        if (unit.hpLessThan(Enemy.protoss() ? 33 : 16)) {
+            return false;
+        }
+
         if (
             unit.isAttacking()
-                && unit.hpMoreThan(20)
+//                && unit.hpMoreThan(32)
                 && unit.lastActionLessThanAgo(5)
                 && unit.lastAttackFrameMoreThanAgo(20)
         ) {
@@ -200,11 +211,6 @@ public class RetreatManager {
 
         if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(80) && unit.lastUnderAttackLessThanAgo(80)) {
             return true;
-        }
-
-        if (unit.isMissionDefend()) {
-            AFocusPoint focusPoint = unit.squad().mission().focusPoint();
-            return focusPoint != null && unit.distTo(focusPoint) <= 3;
         }
 
         if (unit.isMissionDefend() &&

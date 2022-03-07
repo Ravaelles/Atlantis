@@ -116,7 +116,7 @@ public class TransportUnits {
     // =========================================================
 
     private static boolean handleGoToSafety(AUnit transport, AUnit baby) {
-        AUnit nearEnemy = EnemyUnits.visibleAndFogged().canAttack(baby, 5).nearestTo(transport);
+        AUnit nearEnemy = EnemyUnits.discovered().canAttack(baby, 5).nearestTo(transport);
         if (nearEnemy != null) {
             transport.moveAwayFrom(nearEnemy, 8, "ToSafety", Actions.MOVE_SAFETY);
             APainter.paintLine(transport, transport.targetPosition(), Color.White);

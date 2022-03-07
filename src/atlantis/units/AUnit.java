@@ -2025,7 +2025,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 if (unit().isOur()) {
 //                        return Select.enemyRealUnits(true, true, true)
 
-                    return EnemyUnits.visibleAndFogged()
+                    return EnemyUnits.discovered()
                         .inRadius(15, this)
                         .exclude(this);
                 }
@@ -2073,7 +2073,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                         .exclude(this);
                 }
                 else if (unit().isEnemy()) {
-                    return EnemyUnits.visibleAndFogged()
+                    return EnemyUnits.discovered()
                         .inRadius(15, this)
                         .exclude(this);
                 }

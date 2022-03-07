@@ -8,7 +8,6 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.PositionUtil;
 import atlantis.units.select.BaseSelect;
-import atlantis.units.select.Select;
 import bwapi.Game;
 import bwapi.Position;
 import bwapi.WalkPosition;
@@ -159,7 +158,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     // =========================================================
 
     protected FakeUnit nearestEnemy(FakeUnit unit) {
-        return (FakeUnit) EnemyUnits.visibleAndFogged().nearestTo(unit);
+        return (FakeUnit) EnemyUnits.discovered().nearestTo(unit);
     }
 
     protected String distToNearestEnemy(FakeUnit unit) {

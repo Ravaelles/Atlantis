@@ -17,8 +17,6 @@ import atlantis.util.Cache;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-import java.util.Collection;
-
 public class EnemyInfo {
 
     public static boolean startedWithCombatBuilding = false;
@@ -115,15 +113,15 @@ public class EnemyInfo {
      * Saves information about given unit being destroyed, so counting units works properly.
      */
     public static void removeDiscoveredUnit(AUnit enemyUnit) {
-        EnemyUnits.removeFoggedUnit(enemyUnit);
+        EnemyUnitsUpdater.removeFoggedUnit(enemyUnit);
     }
 
     /**
      * Forgets and refreshes info about given unit
      */
     public static void refreshEnemyUnit(AUnit enemyUnit) {
-        EnemyUnits.removeFoggedUnit(enemyUnit);
-        EnemyUnits.weDiscoveredEnemyUnit(enemyUnit);
+        EnemyUnitsUpdater.removeFoggedUnit(enemyUnit);
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(enemyUnit);
     }
 
     public static APosition enemyLocationOrGuess() {
@@ -192,13 +190,13 @@ public class EnemyInfo {
                 }
 
                 if (Enemy.protoss()) {
-                    return EnemyUnits.visibleAndFogged().ofType(AUnitType.Protoss_Zealot).atLeast(6);
+                    return EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(6);
                 }
                 else if (Enemy.terran()) {
-                    return EnemyUnits.visibleAndFogged().ofType(AUnitType.Terran_Marine).atLeast(6);
+                    return EnemyUnits.discovered().ofType(AUnitType.Terran_Marine).atLeast(6);
                 }
                 else {
-                    return EnemyUnits.visibleAndFogged().ofType(AUnitType.Zerg_Zergling).atLeast(9);
+                    return EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(9);
                 }
             }
         );

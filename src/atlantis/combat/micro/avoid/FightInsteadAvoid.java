@@ -291,7 +291,7 @@ public class FightInsteadAvoid {
 
     protected boolean fightBecauseWayTooManyUnitsNear(AUnit unit) {
         Selection our = unit.friendsNear().combatUnits();
-        int allCount = unit.allUnitsNear().inRadius(0.3, unit).count();
+        int allCount = unit.allUnitsNear().inRadius(0.3, unit).effVisible().count();
         int ourCount = our.inRadius(0.4, unit).count();
 
 //        if (unit.mission() != null && unit.mission().isMissionAttack()) {

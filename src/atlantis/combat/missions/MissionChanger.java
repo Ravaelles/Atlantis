@@ -90,7 +90,7 @@ public class MissionChanger {
 //    }
 
     protected static boolean defendAgainstMassZerglings() {
-        if (Enemy.zerg() && A.seconds() <= 260 && EnemyUnits.visibleAndFogged().ofType(AUnitType.Zerg_Zergling).atLeast(9)) {
+        if (Enemy.zerg() && A.seconds() <= 260 && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(9)) {
             if (DEBUG) debugReason = "Mass zerglings";
             return true;
         }

@@ -46,13 +46,13 @@ public class PositionModifier {
         // === Bases ===========================================
 
         if (modifier.equals(MAIN) ) {
-            if (constructionOrder.maxDistance() < 0) {
+            if (constructionOrder == null || constructionOrder.maxDistance() < 0) {
                 constructionOrder.setMaxDistance(40);
             }
             return ASpecialPositionFinder.findPositionForBase_nearMainBase(building, builder, constructionOrder);
         }
         else if (modifier.equals(NATURAL)) {
-            if (constructionOrder.maxDistance() < 0) {
+            if (constructionOrder == null || constructionOrder.maxDistance() < 0) {
                 constructionOrder.setMaxDistance(30);
             }
             return ASpecialPositionFinder.findPositionForBase_natural(building, builder, constructionOrder);
@@ -68,14 +68,18 @@ public class PositionModifier {
         // === Chokes ===========================================
 
         if (modifier.equals(MAIN_CHOKE)) {
-            constructionOrder.setMaxDistance(6);
+            if (constructionOrder != null) {
+                constructionOrder.setMaxDistance(6);
+            }
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
                 return APosition.create(mainChoke.center()).translateTilesTowards(main, 2.8);
             }
         }
         else if (modifier.equals(NATURAL_CHOKE)) {
-            constructionOrder.setMaxDistance(6);
+            if (constructionOrder != null) {
+                constructionOrder.setMaxDistance(6);
+            }
             AChoke chokepointForNatural = Chokes.natural(main.position());
             if (chokepointForNatural != null && main != null) {
                 ABaseLocation natural = Bases.natural(main.position());

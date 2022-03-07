@@ -4,7 +4,7 @@ import atlantis.combat.ACombatCommander;
 import atlantis.combat.missions.AMissionManager;
 import atlantis.config.UseMap;
 import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.strategy.AStrategyCommander;
 import atlantis.map.scout.AScoutManager;
 import atlantis.production.ABuildingManager;
@@ -65,7 +65,7 @@ public class AGameCommander {
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_OTHER);
         ABuildingManager.update();
         AMissionManager.updateGlobalMission();
-        EnemyUnits.updateFoggedUnits();
+        EnemyUnitsUpdater.updateFoggedUnits();
         UmsSpecialActionsManager.update();
         AUnitStateManager.update();
         CameraManager.update();

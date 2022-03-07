@@ -168,7 +168,7 @@ public class UseMap {
                     && A.everyNthGameFrame(50)
             ) {
                 if (
-                        EnemyUnits.visibleAndFogged().atLeast(4)
+                        EnemyUnits.discovered().atLeast(4)
                         && (Have.dragoon() || Have.cannon())
                 ) {
                     GameSpeed.changeSpeedTo(10);

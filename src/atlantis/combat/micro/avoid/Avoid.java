@@ -29,6 +29,11 @@ public class Avoid {
 
     public static boolean groupOfUnits(AUnit unit, Units enemiesDangerouslyClose) {
         HasPosition runFrom = defineRunFromForGroupOfUnits(unit, enemiesDangerouslyClose);
+
+        if (runFrom == null) {
+            return false;
+        }
+
         APainter.paintCircle(runFrom, 6, Color.Orange);
         APainter.paintCircle(runFrom, 4, Color.Orange);
         APainter.paintCircle(runFrom, 2, Color.Orange);

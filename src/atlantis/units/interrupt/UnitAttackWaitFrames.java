@@ -20,7 +20,7 @@ public class UnitAttackWaitFrames {
 
     public static boolean unitAlreadyStartedAttackAnimation(AUnit unit) {
         return unit.isAttackingOrMovingToAttack()
-                && unit.target() != null
+                && unit.hasValidTarget()
                 && unit.lastFrameOfStartingAttackAgo() < (unit.cooldownAbsolute() / 3)
                 && (unit.lastFrameOfStartingAttackAgo() + stopFrames(unit.type())) > A.now();
     }

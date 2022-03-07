@@ -29,20 +29,20 @@ public abstract class ARequests {
         ADetectorRequest.requestDetectorImmediately(where);
     }
 
-    public void requestAntiAirQuick(APosition where) {
-        AAntiAirBuildingRequests.requestAntiAirQuick(where);
-    }
-
-    public void requestDefBuildingAntiAir(APosition where) {
-        AAntiAirBuildingRequests.requestCombatBuildingAntiAir(where);
-    }
-
-    public void requestCombatBuildingAntiAir(APosition where) {
-        requestCombatBuildingAntiAir(where);
-    }
-    
-    public void requestCombatBuildingAntiLand(APosition where) {
-        AAntiLandBuildingRequests.requestCombatBuildingAntiLand(where);
-    }
+//    public void requestAntiAirQuick(APosition where) {
+//        AAntiAirBuildingRequests.requestAntiAirQuick(where);
+//    }
+//
+//    public void requestDefBuildingAntiAir(APosition where) {
+//        AAntiAirBuildingRequests.requestCombatBuildingAntiAir(where);
+//    }
+//
+//    public void requestCombatBuildingAntiAir(APosition where) {
+//        requestCombatBuildingAntiAir(where);
+//    }
+//
+//    public void requestCombatBuildingAntiLand(APosition where) {
+//        AAntiLandBuildingRequests.requestCombatBuildingAntiLand(where);
+//    }
 
 }

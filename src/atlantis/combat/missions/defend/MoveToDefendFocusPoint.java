@@ -48,9 +48,9 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
     // =========================================================
 
     private static boolean holdOnPerpendicularLine() {
-        if (!Enemy.zerg()) {
-            return false;
-        }
+//        if (!Enemy.zerg()) {
+//            return false;
+//        }
 
         if (unit.enemiesNear().inRadius(1.2, unit).isNotEmpty()) {
             return false;

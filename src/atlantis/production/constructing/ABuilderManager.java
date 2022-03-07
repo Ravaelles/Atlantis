@@ -123,7 +123,7 @@ public class ABuilderManager {
         }
 
         if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
-            moveOtherUnitsOutOfConstructionPlace(builder, buildPosition);
+            moveOtherUnitsOutOfConstructionPlace(builder, buildPosition.translateByTiles(1, 1));
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.
             if (AGame.canAfford(buildingType)) {
@@ -143,7 +143,7 @@ public class ABuilderManager {
     }
 
     private static void moveOtherUnitsOutOfConstructionPlace(AUnit builder, APosition buildPosition) {
-        for (AUnit unit : builder.friendsNear().inRadius(2.1, buildPosition).exclude(builder).list()) {
+        for (AUnit unit : builder.friendsNear().inRadius(2.3, buildPosition).exclude(builder).list()) {
             unit.moveAwayFrom(buildPosition, 1, "Construction!", Actions.MOVE_SPECIAL);
         }
     }

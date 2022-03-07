@@ -2,11 +2,13 @@ package atlantis.production.requests;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.information.decisions.OurStrategicBuildings;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.Requirements;
+import atlantis.production.constructing.position.PositionModifier;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnit;
@@ -59,6 +61,10 @@ public class AAntiLandBuildingRequests {
         }
 
         if (We.protoss()) {
+            if (Count.cannons() >= 1 && EnemyInfo.isDoingEarlyGamePush()) {
+                return 2;
+            }
+
             return 0;
         }
 
@@ -73,7 +79,7 @@ public class AAntiLandBuildingRequests {
 
     public static boolean requestCombatBuildingAntiLand(HasPosition nearTo) {
         if (nearTo == null) {
-            nearTo = positionForNextBuilding();
+            nearTo = positionForNext();
         }
 
         if (nearTo != null) {
@@ -94,7 +100,13 @@ public class AAntiLandBuildingRequests {
         return false;
     }
 
-    public static APosition positionForNextBuilding() {
+    public static APosition positionForNext() {
+        if (Count.bases() <= 1) {
+            return PositionModifier.toPosition(
+                PositionModifier.MAIN_CHOKE, AUnitType.Protoss_Photon_Cannon, null, null
+            );
+        }
+
         AUnitType building = building();
         APosition nearTo = null;
 

@@ -41,7 +41,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
         }
 
         if (Enemy.protoss()) {
-            if (GamePhase.isEarlyGame() && EnemyUnits.visibleAndFogged().combatUnits().count() >= 6) {
+            if (GamePhase.isEarlyGame() && EnemyUnits.discovered().combatUnits().count() >= 6) {
                 return Count.ourCombatUnits() >= 13;
             }
         }

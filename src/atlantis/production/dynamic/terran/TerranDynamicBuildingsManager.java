@@ -148,7 +148,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         if (
             GamePhase.isEarlyGame()
                 && Count.vultures() <= 3
-                && EnemyUnits.visibleAndFogged().ofType(Protoss_Zealot).atLeast(5)
+                && EnemyUnits.discovered().ofType(Protoss_Zealot).atLeast(5)
         ) {
             return;
         }

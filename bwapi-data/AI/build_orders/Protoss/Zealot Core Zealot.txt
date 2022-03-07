@@ -35,6 +35,6 @@ https://liquipedia.net/starcraft/1_Gate_Core_(vs._Protoss)
 22 - Assimilator
 //23 - MISSION=ATTACK
 26 - Dragoon
-30 - Shield Battery - @MAIN_CHOKE
-40 - Photon Cannon - @NATURAL_CHOKE
-55 - Photon Cannon - @MAIN_MINERALS
+27 - Shield Battery - @MAIN_CHOKE
+//40 - Photon Cannon - @NATURAL_CHOKE
+//55 - Photon Cannon - @MAIN_MINERALS

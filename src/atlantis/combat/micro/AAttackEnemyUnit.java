@@ -163,6 +163,11 @@ public class AAttackEnemyUnit {
             }
         }
 
+        if (!target.effVisible()) {
+            System.err.println(unit + " got not visible target to attack: " + target);
+            return false;
+        }
+
         return true;
     }
 

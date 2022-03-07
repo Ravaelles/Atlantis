@@ -2,10 +2,9 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.ProtossMissionFix;
+import atlantis.combat.missions.ProtossMissionAdjustments;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -70,7 +69,7 @@ public class MissionDefend extends Mission {
         }
 
         // Zealots vs Zealot fix
-        if (ProtossMissionFix.handle(unit, enemy)) {
+        if (ProtossMissionAdjustments.allowsToAttackEnemyUnits(unit, enemy)) {
             return true;
         }
 

@@ -79,7 +79,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Try going to any known enemy unit
-        AUnit anyEnemyUnit = EnemyUnits.visibleAndFogged().groundUnits().effVisible().first();
+        AUnit anyEnemyUnit = EnemyUnits.discovered().groundUnits().effVisible().first();
 //        AUnit anyEnemyUnit = EnemyUnits.visibleAndFogged().combatUnits().groundUnits().first();
         if (anyEnemyUnit != null) {
             return new AFocusPoint(
