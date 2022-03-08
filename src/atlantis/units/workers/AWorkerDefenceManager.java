@@ -20,6 +20,10 @@ public class AWorkerDefenceManager {
      * Attack other workers, run from enemies etc.
      */
     public static boolean handleDefenceIfNeeded(AUnit worker) {
+        if (worker.isRepairing()) {
+            return false;
+        }
+
         if (worker.enemiesNear().combatUnits().isEmpty()) {
             return false;
         }

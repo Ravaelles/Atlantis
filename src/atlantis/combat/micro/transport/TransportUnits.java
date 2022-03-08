@@ -13,7 +13,28 @@ import static atlantis.units.AUnitType.Terran_Siege_Tank_Tank_Mode;
 
 public class TransportUnits {
 
+    public static boolean unloadFromTransport(AUnit unit) {
+//        System.out.println("unit.isLoaded() = " + unit.isLoaded());
+//        System.out.println("isBabyInDanger(unit, true) = " + isBabyInDanger(unit, true));
+        if (
+            unit.isLoaded()
+                && !unit.loadedInto().isBunker()
+                && unit.lastActionMoreThanAgo(30 * 3, Actions.LOAD)
+                && !isBabyInDanger(unit, true)
+        ) {
+            unit.loadedInto().unload(unit);
+            unit.setTooltipTactical("Disembark");
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean handleTransporting(AUnit transport, AUnit baby) {
+        if (transport.isBunker()) {
+            return false;
+        }
+
         if (shouldLoadTheBaby(transport, baby)) {
             return loadTheBaby(transport, baby);
         }
@@ -34,21 +55,7 @@ public class TransportUnits {
         return false;
     }
 
-    public static boolean unloadFromTransport(AUnit unit) {
-//        System.out.println("unit.isLoaded() = " + unit.isLoaded());
-//        System.out.println("isBabyInDanger(unit, true) = " + isBabyInDanger(unit, true));
-        if (
-                unit.isLoaded()
-                        && unit.lastActionMoreThanAgo(30 * 3, Actions.LOAD)
-                        && !isBabyInDanger(unit, true)
-        ) {
-            unit.loadedInto().unload(unit);
-            unit.setTooltipTactical("Disembark");
-            return true;
-        }
-
-        return false;
-    }
+    // =========================================================
 
     public static boolean handleLoad(AUnit unit) {
 //        if (unit.cooldownRemaining() == 0) {

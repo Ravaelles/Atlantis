@@ -1,5 +1,6 @@
 package atlantis.production.requests;
 
+import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.config.AtlantisConfig;
 import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.enemy.EnemyInfo;
@@ -57,11 +58,7 @@ public class AAntiLandBuildingRequests {
 
     public static int expectedUnits() {
         if (We.terran()) {
-            if (EnemyInfo.isDoingEarlyGamePush()) {
-                return 2;
-            }
-
-            return 0;
+            return TerranBunker.expectedBunkers();
         }
 
         if (We.protoss()) {

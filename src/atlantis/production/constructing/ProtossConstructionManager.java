@@ -19,10 +19,10 @@ public class ProtossConstructionManager {
         // Find a Probe-builder closest to the constructions of given type and cancel this construction
         Units closestBuilders = new Units();
         for (ConstructionOrder order : notStartedConstructions) {
-            if (order.builder() == null || order.positionToBuild() == null) {
+            if (order.builder() == null || order.buildPosition() == null) {
                 continue;
             }
-            int distBuilderToConstruction = (int) (order.builder().distTo(order.positionToBuild())) * 10;
+            int distBuilderToConstruction = (int) (order.builder().distTo(order.buildPosition())) * 10;
             closestBuilders.changeValueBy(order.builder(), distBuilderToConstruction);
         }
         

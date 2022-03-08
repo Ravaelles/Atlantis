@@ -25,7 +25,6 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.position.TerranBunkerPositionFinder;
 import atlantis.production.constructing.position.TerranPositionFinder;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionQueue;
@@ -630,12 +629,12 @@ public class AAdvancedPainter extends APainter {
                 }
 
                 String status = constructionOrder.status().toString().replace("CONSTRUCTION_", "");
-                String builderDist = A.dist(constructionOrder.builder(), constructionOrder.positionToBuild());
+                String builderDist = A.dist(constructionOrder.builder(), constructionOrder.buildPosition());
                 if (constructionOrder.builder() != null) {
                     String builder = (constructionOrder.builder().idWithHash() + " " + builderDist);
                     paintSideMessage(
                             constructionOrder.buildingType().name()
-                            + ", " + constructionOrder.positionToBuild()
+                            + ", " + constructionOrder.buildPosition()
                             + ", " + status + ", " + builder,
                             color,
                             yOffset
@@ -653,7 +652,7 @@ public class AAdvancedPainter extends APainter {
         for (ConstructionOrder order : ConstructionRequests.all()) {
             if (order.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
 //            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
-                APosition positionToBuild = order.positionToBuild();
+                APosition positionToBuild = order.buildPosition();
                 AUnitType buildingType = order.buildingType();
                 if (positionToBuild == null || buildingType == null) {
                     continue;

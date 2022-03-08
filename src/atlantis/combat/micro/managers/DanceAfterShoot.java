@@ -9,6 +9,10 @@ public class DanceAfterShoot {
      * For ranged unit, once shoot is fired, move slightly away or move towards the target when still have cooldown.
      */
     public static boolean handle(AUnit unit) {
+        if (unit.target() == null || !unit.target().isRealUnit()) {
+            return false;
+        }
+
         if (unit.isDragoon() && unit.isHealthy()) {
             return false;
         }

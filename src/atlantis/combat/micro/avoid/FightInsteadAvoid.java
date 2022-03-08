@@ -4,9 +4,13 @@ import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.game.A;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -147,6 +151,10 @@ public class FightInsteadAvoid {
     }
 
     protected boolean dontFightInTopImportantCases() {
+        if (unit.isMarine() && GamePhase.isEarlyGame() && (!ArmyStrength.weAreMuchStronger() || Count.medics() <= 1)) {
+            unit.addLog("OhLord");
+            return true;
+        }
 
         // Always avoid invisible combat units
 //        if (invisibleDT != null || invisibleCombatUnit != null) {

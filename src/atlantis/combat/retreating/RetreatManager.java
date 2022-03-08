@@ -4,6 +4,7 @@ import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.game.AGame;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

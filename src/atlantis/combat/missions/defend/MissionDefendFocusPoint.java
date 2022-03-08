@@ -58,8 +58,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 if (Have.base()) {
                     AUnit enemyNear = EnemyInfo.enemyNearAnyOurBuilding();
-//                    AUnit enemyInBase = Select.enemy().combatUnits().effVisible().inRadius(10, Select.main()).first();
-                    if (enemyNear != null) {
+                    if (enemyNear != null && enemyNear.isAlive()) {
                         AUnit building = Select.ourBuildings().nearestTo(enemyNear);
                         if (building != null) {
                             return new AFocusPoint(

@@ -11,7 +11,11 @@ public class ARepairCommander {
 
     public static void update() {
         if (AGame.everyNthGameFrame(11)) {
-            RepairerAssigner.assignRepairersToWoundedUnits();
+            RepairerAssigner.removeExcessiveRepairersIfNeeded();
+
+            if (!MaxRepairers.usingMoreRepairersThanAllowed()) {
+                RepairerAssigner.assignRepairersToWoundedUnits();
+            }
         }
 
         // === Handle bunker or tank protectors =================================

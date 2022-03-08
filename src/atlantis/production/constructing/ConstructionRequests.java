@@ -1,6 +1,5 @@
 package atlantis.production.constructing;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -336,7 +335,7 @@ public class ConstructionRequests {
 
     public static boolean hasNotStartedNear(AUnitType building, HasPosition position, double inRadius) {
         for (ConstructionOrder order : notStartedOfType(building)) {
-            if (order.positionToBuild() != null && position.distToLessThan(position, inRadius)) {
+            if (order.buildPosition() != null && position.distToLessThan(position, inRadius)) {
                 return true;
             }
         }

@@ -87,11 +87,14 @@ public class TerranInfantry {
             return false;
         }
 
-        if (unit.hasTargetPosition() && unit.targetPositionAtLeastAway(12)) {
-            Select.ourOfType(AUnitType.Terran_Bunker).inRadius(1, unit).first().unloadAll();
+        if (
+            unit.hasTargetPosition()
+                && unit.targetPositionAtLeastAway(6.1)
+                && unit.enemiesNear().inRadius(4, unit).empty()
+        ) {
             unit.setTooltipTactical("Unload");
             unit.addLog("UnloadToMove");
-            return true;
+            return unloadFromBunker(unit);
         }
 
 //        if (Select.enemyRealUnits().inRadius(6, unit).isEmpty()) {
@@ -99,9 +102,8 @@ public class TerranInfantry {
             unit.enemiesNear().isEmpty()
                 && unit.lastActionMoreThanAgo(15)
         ) {
-            Select.ourOfType(AUnitType.Terran_Bunker).inRadius(0.5, unit).first().unloadAll();
             unit.setTooltipTactical("Unload");
-            return true;
+            return unloadFromBunker(unit);
         }
 
         return false;
@@ -133,16 +135,31 @@ public class TerranInfantry {
                 && nearestBunker.hasFreeSpaceFor(unit)
                 && nearestBunker.distTo(unit) < maxDistanceToLoad
                 && (
-                unit.hp() >= 38 || unit.enemiesNear().inRadius(1.6, unit).atMost(1)
-            )
+                    nearestBunker.spaceRemaining() >= 2
+                    || (
+                        unit.enemiesNear().inRadius(1.6, unit).atMost(1)
+                        && (!unit.enemiesNear().onlyMelee() || unit.nearestEnemyDist() < 5)
+                    )
+                )
         ) {
             unit.load(nearestBunker);
-            unit.setTooltipTactical("GetToDaChoppa");
-            unit.addLog("GetToDaChoppa");
+
+            String t = "GetToDaChoppa";
+            unit.setTooltipTactical(t);
+            unit.addLog(t);
             return true;
         }
 
         return false;
+    }
+
+    // =========================================================
+
+    private static boolean unloadFromBunker(AUnit unit) {
+        unit.loadedInto().addLog("UnloadCrew");
+        unit.loadedInto().unloadAll();
+        return true;
+//        Select.ourOfType(AUnitType.Terran_Bunker).inRadius(0.5, unit).first().unloadAll();
     }
 
     // =========================================================

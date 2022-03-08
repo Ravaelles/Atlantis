@@ -1,11 +1,7 @@
 package atlantis.terran.repair;
 
-import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.strategy.EnemyStrategy;
-import atlantis.map.AChoke;
-import atlantis.map.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -13,6 +9,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,16 +27,14 @@ public class AProtectorManager {
     public static void handleProtectors() {
         if (AGame.everyNthGameFrame(13)) {
             assignBunkerProtectorsIfNeeded();
-            assignUnitsProtectorsIfNeeded();
+
+            if (!removeProtectorsIfNeeded()) {
+                assignUnitsProtectorsIfNeeded();
+            }
         }
 
         for (Iterator<AUnit> iterator = ARepairAssignments.getProtectors().iterator(); iterator.hasNext(); ) {
             AUnit protector = iterator.next();
-            AUnit target = ARepairAssignments.getUnitToProtectFor(protector);
-            if (shouldRemoveProtector(protector, target)) {
-                ARepairAssignments.removeRepairerOrProtector(protector);
-                iterator.remove();
-            }
             AProtectorManager.updateProtector(protector);
         }
     }
@@ -64,43 +59,26 @@ public class AProtectorManager {
 
         for (AUnit bunker : Select.ourOfType(AUnitType.Terran_Bunker).list()) {
             Selection enemies = bunker.enemiesNear().havingWeapon();
-            if (enemies.isEmpty()) {
+            if (enemies.isEmpty() && bunker.isHealthy()) {
+                ArrayList<AUnit> protectors = ARepairAssignments.getProtectorsFor(bunker);
+                for (Iterator<AUnit> it = protectors.iterator(); it.hasNext(); ) {
+                    AUnit repairer = it.next();
+                    ARepairAssignments.removeRepairerOrProtector(repairer);
+                }
                 continue;
             }
 
-//            int countTotalProtectors = ARepairAssignments.countTotalProtectors();
             int desiredProtectorsForThisBunker = Math.min(MAX_BUNKER_PROTECTORS, enemies.count() - 1);
-//            System.out.println("desiredProtectorsForThisBunker = " + desiredProtectorsForThisBunker);
             assignProtectorsFor(bunker, desiredProtectorsForThisBunker);
         }
 
-//        int bunkersCounter = bunkers.count();
-        // Assign two repairers to a bunker if it's not surrounded by many of our combat units
-//        if (bunkersCounter == 1) {
-//        for (AUnit bunker : bunkers.list()) {
-//        AChoke chokepointForNatural = Chokes.natural(mainBase.position());
-//        if (chokepointForNatural != null) {
-//            AUnit bunker = bunkers.nearestTo(chokepointForNatural.center());
-//            if (bunker == null) {
-//                return false;
-//            }
-//
-//            int numberOfCombatUnitsNear = Select.ourCombatUnits().inRadius(6, bunker).count();
-//            if (numberOfCombatUnitsNear <= 7) {
-//                int numberOfRepairersAssigned = ARepairAssignments.countProtectorsFor(bunker);
-//                assignProtectorsFor(
-//                    bunker, defineOptimalNumberOfBunkerProtectors() - numberOfRepairersAssigned
-//                );
-//            }
-//        }
-//        }
-//        }
         return true;
     }
 
     protected static boolean assignUnitsProtectorsIfNeeded() {
-        if (removeProtectorsIfNeeded()) {
-            return true;
+        int totalProtectors = ARepairAssignments.countTotalProtectors();
+        if (totalProtectors >= MAX_PROTECTORS) {
+            return false;
         }
 
         List<AUnit> tanks = Select.ourTanks().list();
@@ -108,8 +86,7 @@ public class AProtectorManager {
             return false;
         }
 
-        int totalNow = ARepairAssignments.countTotalProtectors();
-        for (int i = 0; i < MAX_PROTECTORS - totalNow; i++) {
+        for (int i = 0; i < MAX_PROTECTORS - totalProtectors; i++) {
             assignProtectorsFor(tanks.get(i % tanks.size()), 1);
         }
 
@@ -152,11 +129,12 @@ public class AProtectorManager {
     private static boolean removeProtectorsIfNeeded() {
 //        System.out.println("PROT = " + ARepairAssignments.countTotalProtectors() + " // " + MAX_PROTECTORS);
 
-        if (ARepairAssignments.countTotalProtectors() >= MAX_PROTECTORS) {
+        if (ARepairAssignments.countTotalProtectors() > MAX_PROTECTORS) {
             for (int i = 0; i < ARepairAssignments.countTotalProtectors() - MAX_PROTECTORS; i++) {
-                ARepairAssignments.removeRepairerOrProtector(
-                    ARepairAssignments.getProtectors().get(ARepairAssignments.getProtectors().size() - 1)
-                );
+                AUnit protector = ARepairAssignments.getProtectors().get(ARepairAssignments.getProtectors().size() - 1);
+                if (ARepairerManager.canSafelyAbandonRepairTarget(protector)) {
+                    ARepairAssignments.removeRepairerOrProtector(protector);
+                }
             }
             return true;
         }
@@ -180,67 +158,64 @@ public class AProtectorManager {
 
     // =========================================================
 
-    protected static int defineOptimalNumberOfBunkerProtectors() {
-
-        // === Mission DEFEND  =================================
-        if (Missions.isGlobalMissionDefend()) {
-            if (AGame.isPlayingAsTerran()) {
-
-                // === We know enemy strategy ========================================
-                if (EnemyStrategy.isEnemyStrategyKnown()) {
-                    int repairersWhenRush = 1
-                        + (AGame.timeSeconds() > 180 ? 1 : 0)
-                        + (AGame.timeSeconds() > 200 ? 1 : 0);
-
-                    if (EnemyStrategy.get().isGoingCheese()) {
-                        return repairersWhenRush
-                            + 2
-                            + (AGame.timeSeconds() > 210 ? 1 : 0);
-                    }
-                    if (EnemyStrategy.get().isRush()) {
-                        return repairersWhenRush;
-                    }
-                }
-
-                // === We don't know enemy strategy ==================================
-                else {
-                    int enemyRaceBonus = !AGame.isEnemyTerran() && AGame.timeSeconds() > 175 ? 1 : 0;
-                    return 1 + (AGame.timeSeconds() > 280 ? 1 : 0) + enemyRaceBonus;
-                }
-            }
-
-            // === Only Terran can repair buildings ==================================
-            else {
-                return 0;
-            }
-        }
-
-        return 0;
-    }
+//    protected static int defineOptimalNumberOfBunkerProtectors() {
+//
+//        // === Mission DEFEND  =================================
+//        if (Missions.isGlobalMissionDefend()) {
+//            if (AGame.isPlayingAsTerran()) {
+//
+//                // === We know enemy strategy ========================================
+//                if (EnemyStrategy.isEnemyStrategyKnown()) {
+//                    int repairersWhenRush = 1
+//                        + (AGame.timeSeconds() > 180 ? 1 : 0)
+//                        + (AGame.timeSeconds() > 200 ? 1 : 0);
+//
+//                    if (EnemyStrategy.get().isGoingCheese()) {
+//                        return repairersWhenRush
+//                            + 2
+//                            + (AGame.timeSeconds() > 210 ? 1 : 0);
+//                    }
+//                    if (EnemyStrategy.get().isRush()) {
+//                        return repairersWhenRush;
+//                    }
+//                }
+//
+//                // === We don't know enemy strategy ==================================
+//                else {
+//                    int enemyRaceBonus = !AGame.isEnemyTerran() && AGame.timeSeconds() > 175 ? 1 : 0;
+//                    return 1 + (AGame.timeSeconds() > 280 ? 1 : 0) + enemyRaceBonus;
+//                }
+//            }
+//
+//            // === Only Terran can repair buildings ==================================
+//            else {
+//                return 0;
+//            }
+//        }
+//
+//        return 0;
+//    }
 
     // =========================================================
 
-    private static boolean shouldRemoveProtector(AUnit protector, AUnit target) {
-        return !protector.isAlive() || !target.isAlive();
-    }
-
     public static boolean updateProtector(AUnit protector) {
-        if (protector.hpLessThan(10)) {
-            ARepairAssignments.removeRepairerOrProtector(protector);
-            return false;
-        }
+//        if (protector.hpLessThan(10)) {
+//            ARepairAssignments.removeRepairerOrProtector(protector);
+//            return false;
+//        }
 
         AUnit target = ARepairAssignments.getUnitToProtectFor(protector);
         if (target != null && target.isAlive()) {
-            if (A.everyNthGameFrame(47)) {
-                if (target.enemiesNear().havingWeapon().isEmpty()) {
-                    ARepairAssignments.removeRepairerOrProtector(protector);
-                    return false;
-                }
-            }
+//            if (A.everyNthGameFrame(39)) {
+//                if (target.enemiesNear().havingWeapon().isEmpty()) {
+//                    ARepairAssignments.removeRepairerOrProtector(protector);
+//                    return false;
+//                }
+//            }
 
             // WOUNDED
-            if (target.isWounded() && A.hasMinerals(2)) {
+//            if (target.isWounded() && A.hasMinerals(1)) {
+            if (A.hasMinerals(1)) {
                 return protector.repair(target, "Protect" + target.name(), true);
 //                return true;
             }

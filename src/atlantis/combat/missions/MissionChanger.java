@@ -27,6 +27,9 @@ public class MissionChanger {
      * Takes care of current strategy.
      */
     public static void evaluateGlobalMission() {
+        if (A.notNthGameFrame(26)) {
+            return;
+        }
 
         // === Handle UMS ==========================================
 

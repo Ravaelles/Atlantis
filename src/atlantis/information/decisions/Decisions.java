@@ -2,6 +2,7 @@ package atlantis.information.decisions;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.terran.ShouldBuildBio;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
@@ -53,23 +54,7 @@ public class Decisions {
         return cache.get(
             "buildBio",
             100,
-            () ->
-                (EnemyInfo.isDoingEarlyGamePush())
-                    ||
-                    (
-                        (
-                            !maxFocusOnTanks()
-                                &&
-                                (
-                                    (OurStrategy.get().goingBio() || EnemyStrategy.get().isAirUnits())
-                                        && (Count.infantry() <= 18 || AGame.canAffordWithReserved(50, 0))
-                                )
-                        )
-                            || !GamePhase.isEarlyGame()
-                    )
-            || (A.hasMinerals(290) && OurStrategy.get().goingBio() && Count.infantry() <= 19)
-//                () -> (OurStrategy.get().goingBio() || Count.ourCombatUnits() <= 30)
-//                        (!EnemyInformation.enemyStartedWithCombatBuilding || Select.ourTerranInfantry().atMost(13))
+            () -> ShouldBuildBio.should()
         );
     }
 
@@ -97,7 +82,7 @@ public class Decisions {
         );
     }
 
-    private static boolean maxFocusOnTanks() {
+    public static boolean maxFocusOnTanks() {
         return cache.get(
             "maxFocusOnTanks",
             100,

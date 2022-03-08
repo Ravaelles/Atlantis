@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -172,4 +173,24 @@ public class ARepairerManager {
         }
     }
 
+    public static boolean canSafelyAbandonRepairTarget(AUnit repairer) {
+        AUnit target = repairer.target();
+
+        if (target == null || target.isNeutral() || !target.isAlive()) {
+            return false;
+        }
+
+        // Fix: Sometimes minerals are returned
+        if (!target.isBuilding()) {
+            return false;
+        }
+
+        if (target.isWounded()) {
+            return false;
+        }
+
+        Selection enemies = target.enemiesNear().havingWeapon();
+
+        return enemies.isEmpty() || enemies.count() <= target.friendsNear().workers().inRadius(1, target).count();
+    }
 }

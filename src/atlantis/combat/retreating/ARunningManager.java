@@ -29,10 +29,10 @@ public class ARunningManager {
     public static double Near_UNIT_MAKE_SPACE = 0.75;
     //    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
     private static final double SHOW_BACK_DIST_DEFAULT = 3;
-    private static final double SHOW_BACK_DIST_VULTURE = 4;
+    private static final double SHOW_BACK_DIST_VULTURE = 5;
     private static final double SHOW_BACK_DIST_DRAGOON = 3;
     public static int ANY_DIRECTION_RADIUS_DEFAULT = 3;
-    public static int ANY_DIRECTION_RADIUS_VULTURE = 5;
+    public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 4;
     public static int ANY_DIRECTION_RADIUS_INFANTRY = 3;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.65;

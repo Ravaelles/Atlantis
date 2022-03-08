@@ -26,8 +26,12 @@ public class ASupplyManager {
             return;
         }
 
+        if (requestedConstructionsOfSupply() >= 1 && A.supplyTotal() <= 50) {
+            return;
+        }
+
         // Fix for UMS maps
-        if (A.isUms() && AGame.supplyFree() <= 1 && requestedConstructionsOfSupply() == 0) {
+        if (A.isUms() && AGame.supplyFree() <= 1) {
             requestAdditionalSupply();
             return;
         }
@@ -66,6 +70,7 @@ public class ASupplyManager {
     // =========================================================
     
     private static void requestAdditionalSupply() {
+//        A.printStackTrace("Supply request: " + A.supplyUsed() + " // " + A.supplyTotal());
 
         // Zerg handles supply a bit differently
         if (AGame.isPlayingAsZerg()) {

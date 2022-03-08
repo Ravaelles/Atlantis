@@ -145,8 +145,8 @@ public abstract class AAvoidUnits {
         return unit.enemiesNear()
                 .removeDuplicates()
                 .onlyCompleted()
-                .havingPosition()
                 .canAttack(unit, true, true, 4.5)
+                .havingPosition()
                 .list();
     }
 

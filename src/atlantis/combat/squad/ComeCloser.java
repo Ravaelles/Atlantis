@@ -144,6 +144,10 @@ public class ComeCloser extends ASquadCohesionManager {
             return true;
         }
 
+        if (unit.enemiesNear().inRadius(6, unit).count() >= 5) {
+            return true;
+        }
+
 //        if (unit.squad().mission().isMissionAttack()) {
 //            return false;
 //        }

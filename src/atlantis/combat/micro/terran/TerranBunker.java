@@ -50,6 +50,14 @@ public class TerranBunker {
 //        return false;
 //    }
 
+    public static int expectedBunkers() {
+        if (EnemyInfo.isDoingEarlyGamePush()) {
+            return Enemy.zerg() ? 2 : 1;
+        }
+
+        return 1;
+    }
+
     public static boolean handleDefensiveBunkers() {
         if (!EnemyInfo.isDoingEarlyGamePush()) {
             return false;
@@ -67,10 +75,6 @@ public class TerranBunker {
         }
 
         return false;
-    }
-
-    private static int expectedBunkers() {
-        return 1;
     }
 
     // =========================================================
