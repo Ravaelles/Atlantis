@@ -28,7 +28,7 @@ public class RetreatManager {
     public static boolean shouldRetreat(AUnit unit) {
         return cache.get(
                 "shouldRetreat:" + unit.id(),
-                25,
+                11,
                 () -> {
                     if (shouldNotConsiderRetreatingNow(unit)) {
                         return false;
@@ -149,7 +149,7 @@ public class RetreatManager {
                 return false;
             }
 
-            return unit.runningManager().runFrom(averageEnemyPosition, 3.5, Actions.RUN_RETREAT);
+            return unit.runningManager().runFrom(averageEnemyPosition, 5, Actions.RUN_RETREAT);
         }
 
         if ("Retreat".equals(unit.tooltip())) {
@@ -185,7 +185,7 @@ public class RetreatManager {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
-        if (unit.isRanged() && unit.isHealthy()) {
+        if (unit.kitingUnit() && unit.isHealthy()) {
             return true;
         }
 
@@ -203,22 +203,23 @@ public class RetreatManager {
             return focusPoint != null && unit.distTo(focusPoint) <= 3;
         }
 
-        if (unit.hpLessThan(Enemy.protoss() ? 33 : 16)) {
-            return false;
-        }
+//        if (unit.hpLessThan(Enemy.protoss() ? 33 : 16)) {
+//            return false;
+//        }
 
-        if (
-            unit.isAttacking()
-//                && unit.hpMoreThan(32)
-                && unit.lastActionLessThanAgo(5)
-                && unit.lastAttackFrameMoreThanAgo(20)
-        ) {
-            return true;
-        }
 
-        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(80) && unit.lastUnderAttackLessThanAgo(80)) {
-            return true;
-        }
+//        if (
+//            unit.isAttacking()
+////                && unit.hpMoreThan(32)
+//                && unit.lastActionLessThanAgo(5)
+//                && unit.lastAttackFrameMoreThanAgo(20)
+//        ) {
+//            return true;
+//        }
+//
+//        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(80) && unit.lastUnderAttackLessThanAgo(80)) {
+//            return true;
+//        }
 
         if (unit.isMissionDefend() &&
             (

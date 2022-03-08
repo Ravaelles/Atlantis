@@ -41,6 +41,11 @@ public class AProtectorManager {
 
     // =========================================================
 
+    private static int desiredBunkerProtectors(AUnit bunker, Selection enemies) {
+        int relativeToEnemies = (int) (enemies.count() * 0.67);
+        return Math.min(MAX_BUNKER_PROTECTORS, Math.max(1, relativeToEnemies));
+    }
+
     protected static boolean assignBunkerProtectorsIfNeeded() {
 //        if (Missions.isGlobalMissionAttack()) {
 //            return;
@@ -64,11 +69,12 @@ public class AProtectorManager {
                 for (Iterator<AUnit> it = protectors.iterator(); it.hasNext(); ) {
                     AUnit repairer = it.next();
                     ARepairAssignments.removeRepairerOrProtector(repairer);
+                    it.remove();
                 }
                 continue;
             }
 
-            int desiredProtectorsForThisBunker = Math.min(MAX_BUNKER_PROTECTORS, enemies.count() - 1);
+            int desiredProtectorsForThisBunker = desiredBunkerProtectors(bunker, enemies);
             assignProtectorsFor(bunker, desiredProtectorsForThisBunker);
         }
 

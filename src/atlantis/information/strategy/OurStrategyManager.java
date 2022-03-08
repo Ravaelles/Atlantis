@@ -48,7 +48,7 @@ public class OurStrategyManager {
 //            return TerranStrategies.TERRAN_Nada_2_Fac;
         }
         else if (Enemy.terran()) {
-            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
+            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
         }
         else {
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;

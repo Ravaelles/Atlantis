@@ -105,8 +105,8 @@ public class FightInsteadAvoid {
                 return true;
             }
 
-            if (unit.isRanged() && ranged == null) {
-                unit.addLog("FightRanged");
+            if (unit.isRanged() && ranged == null && unit.enemiesNear().ranged().isEmpty()) {
+                unit.addLog("FightAsRanged");
                 return false;
             } else {
                 unit.setTooltip("Retreat", true);
@@ -265,7 +265,7 @@ public class FightInsteadAvoid {
         }
 
         AUnit target = unit.target();
-        if (target != null && target.type().totalCost() >= 70 && target.hp() <= (unit.damageAgainst(target) + 4)) {
+        if (target != null && target.type().totalCost() >= 70 && target.hp() <= (unit.damageAgainst(target) - 1)) {
             return true;
         }
 

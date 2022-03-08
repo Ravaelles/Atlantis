@@ -2357,4 +2357,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isProtector() {
         return ARepairAssignments.isProtector(this);
     }
+
+    public boolean kitingUnit() {
+        return isDragoon() || isVulture();
+    }
 }
