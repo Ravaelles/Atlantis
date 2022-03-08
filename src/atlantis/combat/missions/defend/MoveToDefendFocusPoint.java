@@ -11,13 +11,13 @@ import atlantis.util.Enemy;
 
 public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
-    protected static final double MARGIN = 0.1;
+    private static final double _300_MODE_DIST_FROM_FOCUS = 0.55;
 
     public static boolean move(AUnit unit, AFocusPoint focusPoint) {
         MoveToDefendFocusPoint.unit = unit;
         MoveToDefendFocusPoint.focusPoint = focusPoint;
 
-        if (unit.distToSquadCenter() >= 8) {
+        if (unit.distToSquadCenter() >= 8 && unit.meleeEnemiesNearCount() == 0) {
             unit.addLog("JoinSquad");
             return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
         }
@@ -56,7 +56,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
             return false;
         }
 
-        if (unit.enemiesNear().inRadius(1.2, unit).isNotEmpty()) {
+        if (unit.enemiesNear().inRadius(1.1, unit).isNotEmpty()) {
             return false;
         }
 
@@ -70,13 +70,9 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         }
 
         HasPosition nearestPoint = (new Positions(focusPoint.choke().perpendicularLine())).nearestTo(unit);
-//        System.out.println("nearestPoint = " + nearestPoint + " // " + focusPoint.choke().perpendicularLine().size());
-//        if (nearestPoint != null) {
-//            System.out.println("dist = " +  nearestPoint.distTo(unit));
-//        }
         if (nearestPoint != null) {
             double dist = nearestPoint.distTo(unit);
-            double baseDist = 0.5;
+            double baseDist = _300_MODE_DIST_FROM_FOCUS;
             if (baseDist <= dist && dist <= baseDist + 0.08 && !unit.isAttacking()) {
                 String tooltip = "300";
                 unit.holdPosition(tooltip, true);
@@ -85,42 +81,31 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
             }
         }
 
-//        double preferedDist = 0.8;
-//        double margin = 0.1;
-//        double distToFirstPoint = focusPoint.choke().firstPoint().distTo(unit);
-//        double distToLastPoint = focusPoint.choke().lastPoint().distTo(unit);
-//        if (
-//                Math.abs(distToFirstPoint - preferedDist) <= margin
-//                || Math.abs(distToLastPoint - preferedDist) <= margin
-//        ) {
-//            if (Math.abs(distToFirstPoint - distToLastPoint) >= 1) {
-//                unit.holdPosition("300", true);
-//                unit.addLog("300");
-//                return true;
-//            }
-//        }
-
         return false;
     }
 
     protected static double optimalDist() {
-        double base = Enemy.protoss() ? 1.6 : 0.0;
+        if (unit.isZealot()) {
+            return _300_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
+        }
+
+        double base = Enemy.protoss() ? 0.6 : 0.0;
 
         if (unit.isTerran()) {
             base += (unit.isTank() ? 3 : 0)
-                    + (unit.isMedic() ? -2.5 : 0)
-                    + (unit.isMarine() ? 2 : 0)
-                    + (Select.our().inRadius(2, unit).count() / 20.0);
+                + (unit.isMedic() ? -2.5 : 0)
+                + (unit.isMarine() ? 2 : 0)
+                + (Select.our().inRadius(2, unit).count() / 25.0);
         }
 
         return base
-                + letWorkersComeThroughBonus()
-                + rangedDistBonus();
+            + letWorkersComeThroughBonus()
+            + rangedDistBonus();
     }
 
     private static double letWorkersComeThroughBonus() {
         return unit.enemiesNear().combatUnits().isEmpty()
-                && Select.ourWorkers().inRadius(6, unit).atLeast(1)
+                && Select.ourWorkers().inRadius(7, unit).atLeast(1)
                 ? 3 : 0;
     }
 

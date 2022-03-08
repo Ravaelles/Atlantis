@@ -269,7 +269,7 @@ public class ARunningManager {
         if (main != null) {
 
             // If already close to the base, don't run towards it, no point
-            if (unit.distTo(main) < 35) {
+            if (unit.distTo(main) < 45) {
                 return false;
             }
 

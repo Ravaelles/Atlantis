@@ -39,7 +39,7 @@ public class ATargetingStandard extends ATargeting {
 
         target = enemyUnits
                 .workers()
-                .inRadius(unit.isMelee() ? 6 : 10, unit)
+                .inRadius(unit.isMelee() ? 8 : 12, unit)
                 .nearestTo(unit);
 
 //        System.out.println("target wrk = " + target);
@@ -66,7 +66,7 @@ public class ATargetingStandard extends ATargeting {
                 .excludeMedics()
                 .nearestTo(unit);
 
-        if (target != null) {
+        if (target != null && (!target.isAir() || unit.isOtherUnitFacingThisUnit(target))) {
             if (ATargeting.DEBUG) System.out.println("D3 = " + target);
             return target;
         }

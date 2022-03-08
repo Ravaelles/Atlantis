@@ -189,6 +189,20 @@ public class ATargetingCrucial extends ATargeting {
         }
 
         // =========================================================
+        // DEADLY
+
+        target = enemyUnits
+                .ofType(
+                        AUnitType.Protoss_Archon
+                )
+                .inRadius(groundRange + 1, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("CR10b = " + target);
+            return target;
+        }
+
+        // =========================================================
         // DEADLY units, but can wait to BE IN RANGE
 
         target = enemyUnits

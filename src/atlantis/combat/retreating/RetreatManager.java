@@ -198,7 +198,7 @@ public class RetreatManager {
             return true;
         }
 
-        if (unit.isMissionDefend()) {
+        if (unit.isMissionDefend() && (unit.isMelee() || unit.woundPercent() <= 10)) {
             AFocusPoint focusPoint = unit.squad().mission().focusPoint();
             return focusPoint != null && unit.distTo(focusPoint) <= 3;
         }
@@ -227,7 +227,7 @@ public class RetreatManager {
                 || Select.ourOfType(AUnitType.Zerg_Sunken_Colony).inRadius(4.9, unit).isNotEmpty()
             )
         ) {
-            return unit.hp() >= 12;
+            return unit.hp() >= 17;
         }
 
         if (unit.type().isReaver()) {

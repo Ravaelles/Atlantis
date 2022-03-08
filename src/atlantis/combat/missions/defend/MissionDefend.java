@@ -122,13 +122,19 @@ public class MissionDefend extends Mission {
     }
 
     private boolean notAllowedToAttackTooFar(AUnit unit, AUnit enemy) {
-        if (enemy.isMelee() && unit.isMelee() && unitDistToEnemy >= 1.01) {
-            return false;
+        if (
+            unit.isZealot()
+                && enemy.isMelee()
+                && (unitDistToEnemy >= 1.09 && enemyDistToBase >= focusPointDistToBase)
+                && focusPoint != null
+                && focusPoint.isAroundChoke()
+        ) {
+            return true;
         }
 
         if (
             unit.isMelee()
-                && enemyDistToFocus >= 1.02
+                && enemyDistToFocus >= 1.2
                 && enemyDistToBase > focusPointDistToBase
         ) {
             return true;
@@ -136,8 +142,8 @@ public class MissionDefend extends Mission {
 
         else if (
             unit.isRanged()
-                && enemyDistToFocus >= 1
-                && enemyDistToBase > focusPointDistToBase
+                && (enemyDistToFocus <= 2.1 || unitDistToEnemy <= 5)
+//                && enemyDistToBase > focusPointDistToBase
         ) {
             return true;
         }
@@ -152,8 +158,9 @@ public class MissionDefend extends Mission {
         }
 
         if (
-            (unit.isMelee() || unit.hpMoreThan(40))
+            unit.isMelee()
             && unit.friendsNear().combatBuildings(false).inRadius(5, unit).notEmpty()
+            && !"300".equals(unit.tooltip())
         ) {
             unit.addLog("ProtectBuilding");
             return true;
@@ -163,7 +170,12 @@ public class MissionDefend extends Mission {
             return false;
         }
 
-        if (unit.isDragoon() && enemies.onlyMelee() && unit.hp() >= 40 && unit.lastAttackFrameMoreThanAgo(30 * 4)) {
+        if (
+            unit.isDragoon()
+                && enemies.onlyMelee() && unit.hp() >= 40
+                && unit.lastAttackFrameMoreThanAgo(30 * 4)
+                && unit.nearestEnemyDist() >= 2.8
+        ) {
             return true;
         }
 

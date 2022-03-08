@@ -37,7 +37,7 @@ public abstract class MoveToFocusPoint {
             return false;
         }
 
-        if (distUnitToFromSide >= distFocusToFromSide) {
+        if (distUnitToFromSide + 0.1 >= distFocusToFromSide) {
             return unit.move(fromSide, Actions.MOVE_FOCUS, "WithDraw" + A.dist(distUnitToFocus), true);
         }
 

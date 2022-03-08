@@ -170,6 +170,15 @@ public class FightInsteadAvoid {
         }
 
         if (
+            unit.isDragoon()
+                && unit.shieldDamageAtMost(30)
+                && (unit.lastStartedAttackMoreThanAgo(30 * 4) || unit.lastUnderAttackMoreThanAgo(30 * 10))
+        ) {
+            unit.addLog("ForAiur");
+            return true;
+        }
+
+        if (
             unit.isMelee()
                 && unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).inRadius(2.8, unit).notEmpty()
         ) {
