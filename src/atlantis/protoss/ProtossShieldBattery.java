@@ -10,7 +10,7 @@ public class ProtossShieldBattery {
     private static final double MAX_DIST = 7.98;
 
     public static boolean update(AUnit shieldBattery) {
-        if (shieldBattery.energy() >= 32) {
+        if (shieldBattery.energy() >= 40 && shieldBattery.isPowered()) {
             shieldBattery.removeTooltip();
             for (AUnit unit : Select.ourRealUnits().inRadius(MAX_DIST, shieldBattery).list()) {
                 if (unit.shieldDamageAtLeast(25) || (unit.isWorker() && unit.shieldDamageAtLeast(10))) {
@@ -18,7 +18,7 @@ public class ProtossShieldBattery {
 //                        return false;
 //                    }
 
-                    if (unit.enemiesNear().inRadius(2.2, unit).notEmpty()) {
+                    if (unit.enemiesNear().inRadius(3, unit).notEmpty()) {
                         continue;
                     }
 
@@ -26,8 +26,10 @@ public class ProtossShieldBattery {
                     if (!shieldBattery.equals(unit.target())) {
                         unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
                     }
-                    shieldBattery.setTooltipTactical("RECHARGE " + unit.name());
-                    unit.addLog("Recharge");
+
+                    String t = "Recharge";
+                    shieldBattery.setTooltipTactical(t + ":" + unit.name());
+                    unit.addLog(t);
                     return true;
                 }
             }

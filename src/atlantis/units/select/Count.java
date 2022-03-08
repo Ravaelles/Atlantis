@@ -258,6 +258,10 @@ public class Count {
         return Count.ofType(AUnitType.Terran_Ghost);
     }
 
+    public static int observers() {
+        return Count.ofType(AUnitType.Protoss_Observer);
+    }
+
 //    public static int () {
 //        return ofType(AUnitType.);
 //    }

@@ -104,7 +104,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
                 return;
         }
 
-        if (A.supplyUsed() <= 55 && A.hasGas(50) && A.hasMinerals(175)) {
+        if ((A.supplyUsed() <= 38 || Count.observers() >= 1) && A.hasGas(50) && A.hasMinerals(175)) {
             trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
             return;
         }

@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.tech.ATechRequests;
@@ -44,11 +45,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void observatory() {
-        if (!A.supplyUsed(40)) {
-            return;
-        }
-
-        if (Have.no(AUnitType.Protoss_Robotics_Facility) || Have.a(AUnitType.Protoss_Observatory)) {
+        if (!Have.no(AUnitType.Protoss_Observatory)) {
             return;
         }
 
@@ -58,10 +55,10 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void roboticsFacility() {
-        if (!A.supplyUsed(37)) {
+        if (!A.supplyUsed(37) && !EnemyInfo.hasHiddenUnits()) {
             return;
         }
-        if (!A.supplyUsed(46) && Have.cannon()) {
+        if (!A.supplyUsed(44) && Have.cannon()) {
             return;
         }
 
@@ -74,7 +71,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
         if (
                 GamePhase.isEarlyGame()
                 && EnemyStrategy.get().isRushOrCheese()
-                && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) <= (A.hasMinerals(300) ? 2 : 1)
+                && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) <= (A.hasMinerals(250) ? 2 : 1)
         ) {
             buildIfHaveMineralsAndGas(AUnitType.Protoss_Gateway);
             return;
@@ -88,7 +85,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void stargate() {
-        buildToHaveOne(70, AUnitType.Protoss_Stargate);
+        buildToHaveOne(80, AUnitType.Protoss_Stargate);
     }
 
     private static void arbiterTribunal() {
