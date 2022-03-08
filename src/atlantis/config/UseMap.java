@@ -64,7 +64,7 @@ public class UseMap {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
@@ -74,7 +74,7 @@ public class UseMap {
         // =========================================================
 
 //        if (true) return "ums/gol_v_zeals.scx";
-//        if (true) return "ums/aaa (1).scx"; // Nice mini maps for terran
+//        if (true) return "ums/aaa (1).scx";
 //        if (true) return "ums/aaa (2).scx";
 //        if (true) return "ums/aaa (3).scx";
 //        if (true) return "ums/aaa (4).scx";
@@ -89,7 +89,7 @@ public class UseMap {
 //        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
 //        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
 //        if (true) return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
-        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
+//        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
 //        if (true) return "ums/marines_v_zerglings.scm"; // 12 marines v. 24 zerglings
 //        if (true) return "ums/ConTrol2.scx"; // More minigames
 //        if (true) return "ums/micro challenge.scx"; // Even more minigames

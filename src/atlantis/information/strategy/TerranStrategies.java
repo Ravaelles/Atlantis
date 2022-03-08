@@ -12,6 +12,7 @@ public class TerranStrategies {
     public static final AStrategy TERRAN_3_Rax_MnM = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vZ = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vP = new AStrategy();
+    public static final AStrategy TERRAN_3_Rax_Academy_vP = new AStrategy();
 
     // Cheese
     public static final AStrategy TERRAN_BBS = new AStrategy();
@@ -44,6 +45,9 @@ public class TerranStrategies {
                 .setGoingRush()
                 .setGoingBio()
                 .setUrl("https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)");
+        TERRAN_3_Rax_Academy_vP.setTerran().setName("3 Rax Academy vP")
+                .setGoingRush()
+                .setGoingBio();
 
         // === Cheese =================================
         

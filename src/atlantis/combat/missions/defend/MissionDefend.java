@@ -12,7 +12,9 @@ import atlantis.util.We;
 
 public class MissionDefend extends Mission {
 
+    private AFocusPoint focusPoint;
     private double focusPointDistToBase;
+    private double unitDistToEnemy;
     private double unitDistToBase;
     private double enemyDistToBase;
     private double enemyDistToFocus;
@@ -51,7 +53,7 @@ public class MissionDefend extends Mission {
     // =========================================================
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        AFocusPoint focusPoint = focusPoint();
+        focusPoint = focusPoint();
         AUnit base = Select.main();
         if (focusPoint == null || base == null) {
             return true;
@@ -60,6 +62,7 @@ public class MissionDefend extends Mission {
         // =========================================================
 
         focusPointDistToBase = focusPoint.distTo(base);
+        unitDistToEnemy = unit.distTo(enemy);
         unitDistToBase = unit.groundDist(base);
         enemyDistToBase = enemy.groundDist(base);
         enemyDistToFocus = enemy.groundDist(focusPoint);
@@ -70,7 +73,7 @@ public class MissionDefend extends Mission {
 
         if (
 //                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
-                (unit.isMelee() && unit.distToLessThan(enemy, 1.02))
+                (unit.isMelee() && unitDistToEnemy <= 1.01)
                 || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 0.6))
         ) {
             if (unit.cooldownRemaining() == 0 || unit.lastAttackFrameMoreThanAgo(40)) {
@@ -119,6 +122,10 @@ public class MissionDefend extends Mission {
     }
 
     private boolean notAllowedToAttackTooFar(AUnit unit, AUnit enemy) {
+        if (enemy.isMelee() && unit.isMelee() && unitDistToEnemy >= 1.01) {
+            return false;
+        }
+
         if (
             unit.isMelee()
                 && enemyDistToFocus >= 1

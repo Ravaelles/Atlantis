@@ -3,7 +3,7 @@ package atlantis.units.select;
 import atlantis.Atlantis;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 import bwapi.Player;
 import bwapi.Unit;

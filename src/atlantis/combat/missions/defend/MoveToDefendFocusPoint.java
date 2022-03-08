@@ -72,10 +72,11 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 //        }
         if (nearestPoint != null) {
             double dist = nearestPoint.distTo(unit);
-            double baseDist = 0.3;
-            if (baseDist <= dist && dist <= baseDist + 0.04) {
-                unit.holdPosition("300", true);
-                unit.addLog("300");
+            double baseDist = 0.5;
+            if (baseDist <= dist && dist <= baseDist + 0.08 && !unit.isAttacking()) {
+                String tooltip = "300";
+                unit.holdPosition(tooltip, true);
+                unit.addLog(tooltip);
                 return true;
             }
         }

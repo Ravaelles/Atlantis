@@ -8,7 +8,7 @@ import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 
 import java.util.ArrayList;
 import java.util.List;

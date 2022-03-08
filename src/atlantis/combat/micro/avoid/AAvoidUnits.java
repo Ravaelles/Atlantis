@@ -1,11 +1,10 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -144,7 +143,6 @@ public abstract class AAvoidUnits {
 
     protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
         return unit.enemiesNear()
-//                .add(EnemyUnits.combatUnitsToBetterAvoid())
                 .removeDuplicates()
                 .onlyCompleted()
                 .havingPosition()

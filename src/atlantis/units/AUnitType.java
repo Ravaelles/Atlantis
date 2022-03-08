@@ -1,6 +1,6 @@
 package atlantis.units;
 
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.MappingCounter;
 import bwapi.*;
 
@@ -1140,14 +1140,10 @@ public class AUnitType implements Comparable<Object> {
     }
 
     public boolean isRealUnit() {
-        return !isNotRealUnit();
-    }
-
-    public boolean isNotRealUnit() {
         return (boolean) cache.get(
                 "isNotRealUnit",
                 -1,
-                () -> isNotRealUnitButCanBeABuilding()
+                () -> !isNeutral() && !isNotRealUnit()
         );
     }
 
@@ -1155,11 +1151,14 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
                 "isRealUnitOrBuilding",
                 -1,
-                () -> !isNeutral() && (isBuilding() || !isNotRealUnitButCanBeABuilding())
+                () -> !isNeutral() && (isBuilding() || !isNotRealUnit())
         );
     }
 
-    private boolean isNotRealUnitButCanBeABuilding() {
+    /**
+     * Not that we're racist, but spider mines and larvas aren't really units...
+     */
+    private boolean isNotRealUnit() {
         return isLarvaOrEgg() || isMineralField() || isInvincible()
             || isGeyser() || isSpell() || isMine() || isFlagOrBeacon();
     }

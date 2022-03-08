@@ -94,7 +94,7 @@ public class ACombatUnitManager {
 //            GameSpeed.activateDynamicSlowdown();
 //        }
 
-        if (unit.isNotRealUnit()) {
+        if (!unit.isRealUnit()) {
             System.err.println("Not real unit: " + unit.name());
             return true;
         }

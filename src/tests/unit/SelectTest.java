@@ -1,7 +1,9 @@
 package tests.unit;
 
+import atlantis.units.AUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -20,7 +22,11 @@ public class SelectTest extends AbstractTestWithUnits {
     @Test
     public void ourRealUnits() {
         usingFakeOurs(() -> {
-            assertEquals(GROUND_UNITS + AIR_UNITS, Select.ourRealUnits().size());
+//            Select.our().print();
+//            Select.ourRealUnits().print();
+//            Select.our().minus(Select.ourRealUnits()).print("Our units that are not real units");
+
+            assertEquals(GROUND_UNITS + AIR_UNITS + COMBAT_BUILDINGS, Select.ourRealUnits().size());
         });
     }
 
@@ -39,33 +45,33 @@ public class SelectTest extends AbstractTestWithUnits {
             assertEquals(enemyUnits.length, Select.enemyUnits().size());
 
             assertEquals(
-                    0,
-                    Select.enemyRealUnits(false, false, false).size()
+                0,
+                Select.enemyRealUnits(false, false, false).size()
             );
 
             assertEquals(
-                    GROUND_UNITS,
-                    Select.enemyRealUnits(true, false, false).size()
+                GROUND_UNITS,
+                Select.enemyRealUnits(true, false, false).size()
             );
 
             assertEquals(
-                    GROUND_UNITS + BUILDINGS,
-                    Select.enemyRealUnits(true, false, true).size()
+                GROUND_UNITS + BUILDINGS,
+                Select.enemyRealUnits(true, false, true).size()
             );
 
             assertEquals(
-                    AIR_UNITS,
-                    Select.enemyRealUnits(false, true, false).size()
+                AIR_UNITS,
+                Select.enemyRealUnits(false, true, false).size()
             );
 
             assertEquals(
-                    REAL_UNITS,
-                    Select.enemyRealUnits(true, true, false).size()
+                REAL_UNITS,
+                Select.enemyRealUnits(true, true, false).size()
             );
 
             assertEquals(
-                    REAL_UNITS + BUILDINGS,
-                    Select.enemyRealUnits(true, true, true).size()
+                REAL_UNITS + BUILDINGS,
+                Select.enemyRealUnits(true, true, true).size()
             );
         });
     }
@@ -82,6 +88,49 @@ public class SelectTest extends AbstractTestWithUnits {
 
             assertEquals(MINERAL_COUNT, Select.minerals().size());
             assertEquals(GEYSER_COUNT, Select.geysers().size());
+        });
+    }
+
+    // === Adding/removing =============================================
+
+    @Test
+    public void addsUnitsAndRemovesDuplicates() {
+        usingFakeOurs(() -> {
+            AUnit unit1 = Select.our().first();
+            AUnit unit2 = Select.our().last();
+
+            Selection selection = Select.from(new AUnit[]{unit1});
+            Selection selectionB = Select.from(new AUnit[]{unit2, unit2});
+
+            assertEquals(1, selection.size());
+
+            selection = selection.add(selectionB);
+
+            assertEquals(3, selection.size());
+
+            selection = selection.removeDuplicates();
+
+            assertEquals(2, selection.size());
+        });
+    }
+
+    // === Caching =====================================================
+
+    @Test
+    public void createsCacheKeysAsExpected() {
+        usingFakeOurs(() -> {
+            assertEquals(0, Select.cache().size());
+
+            Select.our();
+
+            assertEquals(1, Select.cache().size());
+            assertEquals("[our]", Select.cache().rawCacheData().keySet().toString());
+
+            Select.our().melee();
+//            Select.cache().printKeys();
+
+            assertEquals(2, Select.cache().size());
+            assertEquals("[our, our:melee]", Select.cache().rawCacheData().keySet().toString());
         });
     }
 

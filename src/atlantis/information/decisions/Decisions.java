@@ -11,7 +11,7 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;

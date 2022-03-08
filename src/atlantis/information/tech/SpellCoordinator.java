@@ -1,7 +1,7 @@
 package atlantis.information.tech;
 
 import atlantis.map.position.APosition;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import bwapi.TechType;
 
 public class SpellCoordinator {

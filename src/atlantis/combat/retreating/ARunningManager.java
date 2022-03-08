@@ -92,7 +92,7 @@ public class ARunningManager {
 
     //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runAwayFrom, double dist, Action action) {
-        if (runAwayFrom == null) {
+        if (runAwayFrom == null || runAwayFrom.position() == null) {
             System.err.println("Null unit to run from");
             stopRunning();
             throw new RuntimeException("Null unit to run from");

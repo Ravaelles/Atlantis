@@ -177,11 +177,12 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static boolean barracks() {
-        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
+//        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
+        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 4) {
             return false;
         }
 
-        if (Count.barracks() >= 2 && A.supplyUsed() <= 40) {
+        if (Count.barracks() >= 3 && A.supplyUsed() <= 40) {
             return false;
         }
 

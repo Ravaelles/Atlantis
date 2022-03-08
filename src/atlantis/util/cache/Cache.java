@@ -1,9 +1,10 @@
-package atlantis.util;
+package atlantis.util.cache;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import atlantis.util.Callback;
 
 import java.util.Collection;
 import java.util.TreeMap;
@@ -22,7 +23,7 @@ public class Cache<V> {
      * Get cached value or return null.
      */
     public V get(String cacheKey) {
-        if (data.containsKey(cacheKey) && isCacheStillValid(cacheKey)) {
+        if (cacheKey != null && data.containsKey(cacheKey) && isCacheStillValid(cacheKey)) {
             return data.get(cacheKey);
         }
 
@@ -32,7 +33,7 @@ public class Cache<V> {
      * Get cached value or return null.
      */
     public boolean has(String cacheKey) {
-        return data.containsKey(cacheKey) && isCacheStillValid(cacheKey);
+        return cacheKey != null && data.containsKey(cacheKey) && isCacheStillValid(cacheKey);
     }
 
     /**
@@ -78,6 +79,10 @@ public class Cache<V> {
     }
 
     public void set(String cacheKey, int cacheForFrames, V value) {
+        if (cacheKey == null) {
+            return;
+        }
+
         data.put(cacheKey, value);
         if (cacheForFrames != -1) {
             addCachedUntilEntry(cacheKey, cacheForFrames);
@@ -94,6 +99,30 @@ public class Cache<V> {
         cachedUntil.clear();
     }
 
+    public boolean isEmpty() {
+        return data.isEmpty();
+    }
+
+    // =========================================================
+
+    protected boolean isCacheStillValid(String cacheKey) {
+        return cacheKey != null && (
+            !cachedUntil.containsKey(cacheKey)
+                || cachedUntil.get(cacheKey) == -1
+                || cachedUntil.get(cacheKey) >= A.now()
+        );
+    }
+
+    protected void addCachedUntilEntry(String cacheKey, int cacheForFrames) {
+        if (cacheForFrames > -1) {
+            cachedUntil.put(cacheKey, A.now() + cacheForFrames);
+        } else {
+            cachedUntil.remove(cacheKey);
+        }
+    }
+
+    // =========================================================
+
     public void print(String message, boolean includeExpired) {
         if (message != null) {
             System.out.println("--- " + message + ":");
@@ -105,23 +134,14 @@ public class Cache<V> {
         }
     }
 
-    public boolean isEmpty() {
-        return data.isEmpty();
+    public void printKeys() {
+        System.out.println("--- Cache keys ---");
+        for (String key : data.keySet()) {
+            System.out.println(key);
+        }
     }
 
     // =========================================================
-
-    protected boolean isCacheStillValid(String cacheKey) {
-        return !cachedUntil.containsKey(cacheKey) || cachedUntil.get(cacheKey) == -1 || cachedUntil.get(cacheKey) >= A.now();
-    }
-
-    protected void addCachedUntilEntry(String cacheKey, int cacheForFrames) {
-        if (cacheForFrames > -1) {
-            cachedUntil.put(cacheKey, A.now() + cacheForFrames);
-        } else {
-            cachedUntil.remove(cacheKey);
-        }
-    }
 
     public Collection<V> values() {
         return data.values();
@@ -131,4 +151,11 @@ public class Cache<V> {
         return data.size();
     }
 
+    public TreeMap<String, V> rawCacheData() {
+        return data;
+    }
+
+    public TreeMap<String, Integer> rawCachedUntil() {
+        return cachedUntil;
+    }
 }

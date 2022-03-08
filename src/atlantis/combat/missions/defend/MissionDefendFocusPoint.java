@@ -14,7 +14,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.We;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {

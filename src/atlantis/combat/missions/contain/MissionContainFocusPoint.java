@@ -11,7 +11,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.select.Select;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.We;
 
 public class MissionContainFocusPoint extends MissionFocusPoint {

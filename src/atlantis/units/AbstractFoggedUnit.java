@@ -2,7 +2,7 @@ package atlantis.units;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import tests.unit.FakeUnit;
 
 import java.util.TreeMap;

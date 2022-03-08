@@ -60,10 +60,9 @@ public class ATargeting {
     // =========================================================
 
     private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
-        double MOST_WOUNDED_EXTRA = 0;
 
         // Most wounded enemy IN RANGE
-        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, unit.isRanged() ? MOST_WOUNDED_EXTRA : 0);
+        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, 0);
         if (enemy != null) {
 //            unit.addLog("AttackClose");
             return enemy;
@@ -80,7 +79,7 @@ public class ATargeting {
         // Couldn't find enemy of given type in/near weapon range. Change target
 
         // Most wounded enemy OF DIFFERENT TYPE, but IN RANGE
-        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, MOST_WOUNDED_EXTRA).mostWounded();
+        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0).mostWounded();
         if (enemy != null) {
 //            unit.addLog("AttackMostWounded");
             return enemy;

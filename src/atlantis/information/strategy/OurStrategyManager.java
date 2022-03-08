@@ -43,7 +43,8 @@ public class OurStrategyManager {
 //        return TerranStrategies.TERRAN_1_Base_Vultures;
 
         if (Enemy.protoss()) {
-            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
+            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_Nada_2_Fac;
         }
         else if (Enemy.terran()) {

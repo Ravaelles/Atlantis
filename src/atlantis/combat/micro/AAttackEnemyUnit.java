@@ -1,13 +1,9 @@
 package atlantis.combat.micro;
 
 import atlantis.combat.targeting.ATargeting;
-import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 
 public class AAttackEnemyUnit {
 

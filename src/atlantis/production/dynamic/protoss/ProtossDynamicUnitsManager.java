@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyFlags;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.EnemyStrategy;
@@ -72,7 +73,10 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
-        buildToHave(AUnitType.Protoss_Corsair, 4);
+        int mutas = EnemyUnits.count(AUnitType.Zerg_Mutalisk);
+        if (mutas >= 1) {
+            buildToHave(AUnitType.Protoss_Corsair, (int) (mutas / 2) + 1);
+        }
     }
 
     private static void reavers() {
@@ -155,6 +159,17 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static boolean dragoonInsteadOfZealot() {
+        int mutas = EnemyUnits.count(AUnitType.Zerg_Mutalisk);
+        if (mutas >= 3) {
+            if (GamePhase.isEarlyGame()) {
+                return true;
+            }
+
+            if (mutas >= 8) {
+                return true;
+            }
+        }
+
         if (A.hasGas(50) && !A.hasMinerals(225) && Have.cyberneticsCore() && Count.dragoons() <= 2 && Count.zealots() >= 1) {
             return true;
         }

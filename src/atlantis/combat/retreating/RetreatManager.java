@@ -11,7 +11,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 
 public class RetreatManager {
@@ -36,9 +36,11 @@ public class RetreatManager {
                     Selection enemies = enemies(unit);
 
                     if (shouldSmallScaleRetreat(unit, enemies)) {
+                        GLOBAL_RETREAT_COUNTER++;
                         return true;
                     }
                     if (shouldLargeScaleRetreat(unit, enemies)) {
+                        GLOBAL_RETREAT_COUNTER++;
                         return true;
                     }
 
@@ -134,7 +136,6 @@ public class RetreatManager {
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
         if (!isSituationFavorable) {
             unit._lastRetreat = AGame.now();
-            GLOBAL_RETREAT_COUNTER++;
             unit.setTooltipTactical("Retreat");
             MissionChanger.notifyThatUnitRetreated(unit);
             APosition averageEnemyPosition = enemies.units().average();

@@ -1,17 +1,9 @@
 package atlantis.information.enemy;
 
 import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import atlantis.util.Cache;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class EnemyUnitsUpdater extends EnemyUnits {
 

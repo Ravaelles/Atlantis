@@ -32,7 +32,7 @@ public class AFocusPoint extends APosition {
         super(position.position());
         this.fromSide = fromSide.position();
 
-        if (position.position().equals(this.fromSide)) {
+        if (A.notUms() && position.position().equals(this.fromSide)) {
             System.err.println("AFocusPoint got fromSide being the same point.");
             A.printStackTrace();
             this.fromSide = null;

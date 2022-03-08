@@ -1,13 +1,12 @@
 package atlantis.units.select;
 
 import atlantis.config.AtlantisConfig;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -40,6 +39,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         cacheList.clear();
         cacheInt.clear();
         cacheUnit.clear();
+    }
+
+    public static Cache cache() {
+        return cache;
     }
 
     // Constructor is private, use our(), enemy() or neutral() methods

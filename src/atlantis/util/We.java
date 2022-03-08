@@ -2,6 +2,7 @@ package atlantis.util;
 
 import atlantis.game.AGame;
 import atlantis.units.select.Count;
+import atlantis.util.cache.Cache;
 import bwapi.Race;
 
 public class We {

@@ -2,7 +2,7 @@ package atlantis.information.tech;
 
 import atlantis.game.AGame;
 import atlantis.production.ProductionOrder;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

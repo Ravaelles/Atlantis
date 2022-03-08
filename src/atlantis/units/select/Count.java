@@ -4,7 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.We;
 
 /**

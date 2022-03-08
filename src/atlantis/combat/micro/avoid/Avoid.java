@@ -31,6 +31,8 @@ public class Avoid {
         HasPosition runFrom = defineRunFromForGroupOfUnits(unit, enemiesDangerouslyClose);
 
         if (runFrom == null) {
+            System.err.println("Run from group is null for " + unit);
+            enemiesDangerouslyClose.print("Group of units to run from");
             return false;
         }
 

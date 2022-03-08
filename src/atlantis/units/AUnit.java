@@ -26,7 +26,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.CappedList;
 import atlantis.util.Vector;
 import atlantis.util.Vectors;
@@ -554,17 +554,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     /**
-     * Not that we're racists, but spider mines and larvas aren't really units...
-     */
-    public boolean isNotRealUnit() {
-        return type().isNotRealUnit();
-    }
-
-    /**
      * Not that we're racists, but buildings, spider mines and larvas aren't really units...
      */
     public boolean isRealUnit() {
-        return !type().isNotRealUnit();
+        return type().isRealUnit();
     }
 
     public boolean isRealUnitOrBuilding() {
