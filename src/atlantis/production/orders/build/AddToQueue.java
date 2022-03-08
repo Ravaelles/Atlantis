@@ -1,5 +1,6 @@
 package atlantis.production.orders.build;
 
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionOrderPriority;
@@ -40,7 +41,9 @@ public class AddToQueue {
         assert type != null;
 
         if (We.protoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
-            System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
+            if (A.seconds() < 200) {
+                System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
+            }
             return null;
         }
 

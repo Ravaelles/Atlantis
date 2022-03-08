@@ -189,6 +189,14 @@ public class FightInsteadAvoid {
 
     // RANGED
     protected boolean fightAsRangedUnit() {
+        if (unit.isRanged() && melee != null && ranged == null) {
+//            if (unit.hp() >= 40 && unit.lastAttackFrameMoreThanAgo(30 * 5)) {
+            if (unit.hp() >= 40 && unit.lastAttackFrameMoreThanAgo(30 * 4) && unit.nearestEnemyDist() >= 2.9) {
+                unit.addLog("Courage");
+                return true;
+            }
+        }
+
         if (melee != null && melee.hasPosition()) {
             unit.addLog("RunMelee" + A.dist(unit, melee));
 //            unit.addLog("RunMelee");

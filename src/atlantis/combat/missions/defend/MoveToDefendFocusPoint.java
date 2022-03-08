@@ -52,6 +52,10 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 //            return false;
 //        }
 
+        if (!unit.isMelee()) {
+            return false;
+        }
+
         if (unit.enemiesNear().inRadius(1.2, unit).isNotEmpty()) {
             return false;
         }

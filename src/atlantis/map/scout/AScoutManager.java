@@ -250,7 +250,7 @@ public class AScoutManager {
             for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(Bases.natural(), true)) {
                 if (!scout.isBuilder() && !scout.isRepairerOfAnyKind()) {
                     if (scouts.isEmpty()) {
-                        System.out.println("Add scout " + scout);
+//                        System.out.println("Add scout " + scout);
                         scouts.add(scout);
                         return;
                     }
@@ -271,7 +271,7 @@ public class AScoutManager {
         for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
             AUnit scout = iterator.next();
             if (!scout.isAlive()) {
-                System.out.println("Remove dead scout " + scout);
+//                System.out.println("Remove dead scout " + scout);
                 iterator.remove();
                 anyScoutBeenKilled = true;
             }

@@ -128,7 +128,7 @@ public class MissionDefend extends Mission {
 
         if (
             unit.isMelee()
-                && enemyDistToFocus >= 1
+                && enemyDistToFocus >= 1.02
                 && enemyDistToBase > focusPointDistToBase
         ) {
             return true;
@@ -159,11 +159,11 @@ public class MissionDefend extends Mission {
             return true;
         }
 
-        if (unit.hpLessThan(36) && unit.friendsNearCount() <= 2) {
+        if (unit.hpLessThan(36) && unit.friendsNearCount() <= 2 && unit.lastAttackFrameMoreThanAgo(30 * 4)) {
             return false;
         }
 
-        if (unit.isDragoon() && enemies.onlyMelee() && unit.hp() >= 30 && unit.lastAttackFrameMoreThanAgo(35)) {
+        if (unit.isDragoon() && enemies.onlyMelee() && unit.hp() >= 40 && unit.lastAttackFrameMoreThanAgo(30 * 4)) {
             return true;
         }
 

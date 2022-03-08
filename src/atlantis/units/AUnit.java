@@ -2297,7 +2297,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit nearestEnemy() {
-        return enemiesNear().nearestTo(this);
+        return (AUnit) cache.get(
+            "nearestEnemy",
+            2,
+            () -> enemiesNear().canAttack(this, 5).nearestTo(this)
+        );
+    }
+
+    public double nearestEnemyDist() {
+        AUnit nearestEnemy = nearestEnemy();
+
+        if (nearestEnemy != null) {
+            return distTo(nearestEnemy);
+        }
+
+        return 999;
     }
 
     public Selection friendsInRadius(double radius) {
