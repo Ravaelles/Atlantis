@@ -94,6 +94,10 @@ public class Have {
     }
 
     public static boolean machineShop() {
-        return have(AUnitType.Terran_Factory);
+        return have(AUnitType.Terran_Machine_Shop);
+    }
+
+    public static boolean roboticsFacility() {
+        return have(AUnitType.Protoss_Robotics_Facility);
     }
 }

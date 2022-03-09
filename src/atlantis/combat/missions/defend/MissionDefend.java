@@ -43,7 +43,7 @@ public class MissionDefend extends Mission {
         }
 
         // Don't reposition if enemies Near
-        if (unit.enemiesNear().inRadius(7, unit).atLeast(3)) {
+        if (unit.enemiesNear().inRadius(7, unit).atLeast(1)) {
             return false;
         }
 
@@ -54,7 +54,8 @@ public class MissionDefend extends Mission {
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         focusPoint = focusPoint();
-        AUnit base = Select.main();
+        AUnit main = Select.main();
+        AUnit base = main;
         if (focusPoint == null || base == null) {
             return true;
         }
@@ -67,18 +68,12 @@ public class MissionDefend extends Mission {
         enemyDistToBase = enemy.groundDist(base);
         enemyDistToFocus = enemy.groundDist(focusPoint);
 
-        if (notAllowedToAttackTooFar(unit, enemy)) {
+        if (unitDistToEnemy <= 3 && unit.isDragoon() && enemy.isZealot() && unit.hp() <= 18) {
             return false;
         }
 
-        if (
-//                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
-                (unit.isMelee() && unitDistToEnemy <= 1.01)
-                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 0.6))
-        ) {
-            if (unit.cooldownRemaining() == 0 || unit.lastAttackFrameMoreThanAgo(40)) {
-                return true;
-            }
+        if (notAllowedToAttackTooFar(unit, enemy)) {
+            return false;
         }
 
         if (focusPoint.isAroundChoke()) {
@@ -87,6 +82,16 @@ public class MissionDefend extends Mission {
             }
             else if (enemyDistToBase > (focusPointDistToBase + 0.5)) {
                 return false;
+            }
+        }
+
+        if (
+//                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
+                (unit.isMelee() && unitDistToEnemy <= 1.09)
+                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 2))
+        ) {
+            if (unit.cooldownRemaining() <= 3 || unit.lastAttackFrameMoreThanAgo(40)) {
+                return true;
             }
         }
 
@@ -104,8 +109,8 @@ public class MissionDefend extends Mission {
             return true;
         }
 
-        if (Have.main()) {
-            if (Select.enemy().inRadius(18, Select.main()).atLeast(1)) {
+        if (main != null) {
+            if (Select.enemy().inRadius(18, main).atLeast(1)) {
                 return true;
             }
 

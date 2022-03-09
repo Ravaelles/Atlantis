@@ -129,6 +129,20 @@ public class Selection extends BaseSelection {
         return total;
     }
 
+    public Selection limit(int limit) {
+        if (data.isEmpty()) {
+            return this;
+        }
+
+        List<AUnit> newData = new ArrayList<>();
+        int max = Math.min(limit, data.size());
+        for (int i = 0; i < max; i++) {
+            newData.add(data.get(i));
+        }
+
+        return new Selection(newData, null);
+    }
+
     /**
      * Selects only those units which are VISIBLE ON MAP (not behind fog of war).
      */

@@ -21,6 +21,11 @@ public abstract class MoveToFocusPoint {
     // =========================================================
 
     protected static boolean advance() {
+        if (unit.enemiesNear().inRadius(5, unit).notEmpty()) {
+            unit.addLog("DontWithdraw");
+            return false;
+        }
+
         if (distUnitToFocus > (optimalDist + MARGIN)) {
             String dist = A.dist(distUnitToFocus);
             return unit.move(focusPoint, Actions.MOVE_FOCUS, "ToFocus" + dist, true);

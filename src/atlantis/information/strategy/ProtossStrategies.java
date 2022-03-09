@@ -1,6 +1,7 @@
 package atlantis.information.strategy;
 
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
@@ -89,19 +90,19 @@ public class ProtossStrategies extends AStrategy {
     
     public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
-        int gateways = Select.enemy().countOfType(AUnitType.Protoss_Gateway);
-        int nexus = Select.enemy().countOfType(AUnitType.Protoss_Nexus);
-        int citadel = Select.enemy().countOfType(AUnitType.Protoss_Citadel_of_Adun);
+        int gateways = count(AUnitType.Protoss_Gateway);
+        int nexus = count(AUnitType.Protoss_Nexus);
+        int citadel = count(AUnitType.Protoss_Citadel_of_Adun);
 
         // === Dark Templar ========================================
         
-        if (citadel >= 1 && seconds < 320) {
+        if (seconds < 400 && (citadel >= 1 || has(AUnitType.Protoss_Templar_Archives))) {
             return ProtossStrategies.PROTOSS_2_Gate_DT;
         }
 
         // === Three Gateway =======================================
         
-        if (gateways >= 3 && seconds < 300) {
+        if (gateways >= 3 && seconds < 400) {
             return ProtossStrategies.PROTOSS_3_Gate;
         }
 
@@ -119,7 +120,7 @@ public class ProtossStrategies extends AStrategy {
         
         // === Carrier Push ========================================
         
-        int cannons = Select.enemy().countOfType(AUnitType.Protoss_Photon_Cannon);
+        int cannons = count(AUnitType.Protoss_Photon_Cannon);
         if (cannons >= 1 && nexus >= 2) {
             return PROTOSS_Carrier_Push;
         }
@@ -128,5 +129,5 @@ public class ProtossStrategies extends AStrategy {
         
         return null;
     }
-    
+
 }

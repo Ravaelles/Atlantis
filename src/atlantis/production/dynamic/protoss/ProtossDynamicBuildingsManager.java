@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -24,6 +25,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
         observatory();
         roboticsSupportBay();
         roboticsFacility();
+        shieldBattery();
         forge();
         gateways();
     }
@@ -45,7 +47,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void observatory() {
-        if (!Have.no(AUnitType.Protoss_Observatory)) {
+        if (Have.a(AUnitType.Protoss_Observatory) || Have.no(AUnitType.Protoss_Robotics_Facility)) {
             return;
         }
 
@@ -55,16 +57,17 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void roboticsFacility() {
-        if (!A.supplyUsed(37) && !EnemyInfo.hasHiddenUnits()) {
-            return;
-        }
-        if (!A.supplyUsed(44) && Have.cannon()) {
+        if (!Decisions.buildRoboticsFacility()) {
             return;
         }
 
         if (Count.includingPlanned(AUnitType.Protoss_Robotics_Facility) == 0) {
             buildNow(AUnitType.Protoss_Robotics_Facility);
         }
+    }
+
+    private static void shieldBattery() {
+        buildToHaveOne(40, AUnitType.Protoss_Shield_Battery);
     }
 
     private static void gateways() {
@@ -81,7 +84,9 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void forge() {
-        buildToHaveOne(36, AUnitType.Protoss_Forge);
+        int buildAtSupply = EnemyStrategy.get().isRushOrCheese() ? 46 : 36;
+
+        buildToHaveOne(buildAtSupply, AUnitType.Protoss_Forge);
     }
 
     private static void stargate() {

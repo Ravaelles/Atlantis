@@ -12,9 +12,11 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 
+import static atlantis.units.AUnitType.Protoss_Forge;
 import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class Decisions {
@@ -125,5 +127,28 @@ public class Decisions {
         }
 
         return Count.ourCombatUnits() >= 8;
+    }
+
+    public static boolean buildRoboticsFacility() {
+        if (Have.roboticsFacility() || Have.no(Protoss_Forge)) {
+            return false;
+        }
+
+        if (EnemyInfo.hasHiddenUnits()) {
+            System.err.println("roboticsFacility because hasHiddenUnits");
+            return true;
+        }
+        if (A.supplyUsed() <= 44 && EnemyStrategy.get().isRushOrCheese()) {
+            return false;
+        }
+        if (A.supplyUsed() <= 46 && Have.cannon()) {
+            return false;
+        }
+
+//        System.err.println("----- buildRoboticsFacility OK" );
+//        System.err.println("EnemyStrategy.get().isRushOrCheese() = " + EnemyStrategy.get().isRushOrCheese());
+//        System.err.println("EnemyStrategy.get().isRush() = " + EnemyStrategy.get().isRush());
+
+        return true;
     }
 }

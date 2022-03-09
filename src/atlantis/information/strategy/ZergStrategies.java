@@ -1,9 +1,8 @@
 package atlantis.information.strategy;
 
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
-
 
 public class ZergStrategies extends AStrategy {
     
@@ -83,15 +82,15 @@ public class ZergStrategies extends AStrategy {
     
     public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
-        int bases = Select.enemy().bases().count();
-        int lair = Select.enemy().countOfType(AUnitType.Zerg_Lair);
-        int pool = Select.enemy().countOfType(AUnitType.Zerg_Spawning_Pool);
-        int extractor = Select.enemy().countOfType(AUnitType.Zerg_Extractor);
-        int spires = Select.enemy().countOfType(AUnitType.Zerg_Spire);
-        int mutalisks = Select.enemy().countOfType(AUnitType.Zerg_Mutalisk);
-        int hydraliskDen = Select.enemy().countOfType(AUnitType.Zerg_Hydralisk_Den);
-        int drones = Select.enemy().countOfType(AUnitType.Zerg_Drone);
-        int lings = Select.enemy().countOfType(AUnitType.Zerg_Zergling);
+        int bases = EnemyUnits.discovered().bases().count();
+        int lair = count(AUnitType.Zerg_Lair);
+        int pool = count(AUnitType.Zerg_Spawning_Pool);
+        int extractor = count(AUnitType.Zerg_Extractor);
+        int spires = count(AUnitType.Zerg_Spire);
+        int mutalisks = count(AUnitType.Zerg_Mutalisk);
+        int hydraliskDen = count(AUnitType.Zerg_Hydralisk_Den);
+        int drones = count(AUnitType.Zerg_Drone);
+        int lings = count(AUnitType.Zerg_Zergling);
         
         // === Expansion ===========================================
         

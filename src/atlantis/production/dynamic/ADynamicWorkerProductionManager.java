@@ -35,9 +35,9 @@ public class ADynamicWorkerProductionManager {
             return false;
         }
 
-        if ((A.supplyUsed() <= 154 && !AGame.canAffordWithReserved(50, 0))) {
-            return false;
-        }
+//        if ((A.supplyUsed() <= 154 && !AGame.canAffordWithReserved(50, 0))) {
+//            return false;
+//        }
 
         if (We.terran()) {
             ProductionOrder order = ProductionQueue.nextOrderFor(AUnitType.Terran_Comsat_Station, 1);

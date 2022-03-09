@@ -61,7 +61,7 @@ public class AStrategyCommander {
 
     private static void changeEnemyStrategyTo(AStrategy strategy) {
         if (!EnemyStrategy.get().equals(strategy)) {
-            AGame.sendMessage("Enemy strategy detected: " + strategy);
+            AGame.sendMessage("Enemy strategy detected at " + A.seconds() + "s: " + strategy);
         }
         EnemyStrategy.setEnemyStrategy(strategy);
         AStrategyResponseFactory.forOurRace().updateEnemyStrategyChanged();

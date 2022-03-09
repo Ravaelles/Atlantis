@@ -105,7 +105,12 @@ public class FightInsteadAvoid {
                 return true;
             }
 
-            if (unit.isRanged() && ranged == null && unit.enemiesNear().ranged().isEmpty()) {
+            if (
+                unit.isRanged()
+                    && ranged == null
+                    && unit.enemiesNear().ranged().isEmpty()
+                    && (unit.hp() >= 21 || unit.lastStartedAttackMoreThanAgo(30 * 7))
+            ) {
                 unit.addLog("FightAsRanged");
                 return false;
             } else {
@@ -326,12 +331,12 @@ public class FightInsteadAvoid {
                     || our.inRadius(1.3, unit).atLeast(25);
         }
         else if (We.protoss()) {
-            isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
-                    || our.inRadius(1.3, unit).atLeast(5);
+            isStacked = allCount >= 7 || (invisibleDT != null && allCount >= 4)
+                    || our.inRadius(1.3, unit).atLeast(7);
         }
         else if (We.zerg()) {
             isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
-                    || our.inRadius(1.3, unit).atLeast(5);
+                    || our.inRadius(1.3, unit).atLeast(7);
         }
 //        }
 

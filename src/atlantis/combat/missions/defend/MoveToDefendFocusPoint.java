@@ -17,7 +17,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         MoveToDefendFocusPoint.unit = unit;
         MoveToDefendFocusPoint.focusPoint = focusPoint;
 
-        if (unit.distToSquadCenter() >= 8 && unit.meleeEnemiesNearCount() == 0) {
+        if (unit.distToSquadCenter() >= 8) {
             unit.addLog("JoinSquad");
             return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
         }

@@ -13,20 +13,20 @@ public class ProtossReaver {
             return AAvoidUnits.avoidEnemiesIfNeeded(reaver);
         }
 
-        Selection enemiesInRange = Select.enemyRealUnits().inRadius(8, reaver);
+        Selection enemiesInRange = reaver.enemiesNear();
         AUnit enemy;
 
         // First attack very close enemies
-        if ((enemy = enemiesInRange.clone().inRadius(5, reaver).nearestTo(reaver)) != null) {
+        if ((enemy = enemiesInRange.canBeAttackedBy(reaver, 0).nearestTo(reaver)) != null) {
             reaver.attackUnit(enemy);
-            reaver.setTooltipTactical("Near" + enemy.name());
+            reaver.setTooltipTactical("Tasty" + enemy.name());
             return true;
         }
 
         // If no very close enemy, then attack the one most distant
-        if ((enemy = enemiesInRange.clone().nearestTo(reaver)) != null) {
+        if ((enemy = enemiesInRange.canBeAttackedBy(reaver, 7).nearestTo(reaver)) != null) {
             reaver.attackUnit(enemy);
-            reaver.setTooltipTactical("Far" + enemy.name());
+            reaver.setTooltipTactical("Nice" + enemy.name());
             return true;
         }
 

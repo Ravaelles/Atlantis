@@ -6,7 +6,6 @@ import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -57,8 +56,16 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         if (Have.no(AUnitType.Protoss_Observatory)) {
             if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
                 AddToQueue.withTopPriority(AUnitType.Protoss_Observatory);
+                AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
             }
             return;
+        }
+
+        if (Have.no(AUnitType.Protoss_Observer)) {
+            if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
+                AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
+                return;
+            }
         }
 
         int limit = Math.max(
@@ -99,7 +106,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
                 && EnemyStrategy.get().isRushOrCheese()
                 && !A.hasGas(70)
                 && !A.hasMinerals(175)
-                && Count.zealots() < minZealotsInRush()
+                && Count.zealots() < minZealotsAganstEnemyRush()
         ) {
                 return;
         }
@@ -116,8 +123,8 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         trainIfPossible(AUnitType.Protoss_Dragoon);
     }
 
-    private static int minZealotsInRush() {
-        return 2;
+    private static int minZealotsAganstEnemyRush() {
+        return 5;
     }
 
     private static void zealots() {
@@ -125,7 +132,16 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
-        if (!AGame.canAffordWithReserved(125, 0)) {
+//        if (!AGame.canAffordWithReserved(125, 0)) {
+//            return;
+//        }
+
+        if (
+                GamePhase.isEarlyGame()
+                    && EnemyStrategy.get().isRushOrCheese()
+                    && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Zealot) < minZealotsAganstEnemyRush()
+        ) {
+            trainIfPossible(AUnitType.Protoss_Zealot);
             return;
         }
 
@@ -139,15 +155,6 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         }
 
         if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
-            trainIfPossible(AUnitType.Protoss_Zealot);
-            return;
-        }
-
-        if (
-                GamePhase.isEarlyGame()
-                        && EnemyStrategy.get().isRushOrCheese()
-                        && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Zealot) <= minZealotsInRush()
-        ) {
             trainIfPossible(AUnitType.Protoss_Zealot);
             return;
         }

@@ -48,6 +48,10 @@ public class EnemyUnits {
 
     // =========================================================
 
+    public static boolean has(AUnitType unit) {
+        return EnemyUnits.discovered().countOfType(unit) > 0;
+    }
+
     public static int count(AUnitType type) {
         return discovered().ofType(type).count();
     }

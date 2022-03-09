@@ -259,6 +259,9 @@ public class ARunningManager {
      * Running behavior which will make unit run toward main base.
      */
     private boolean shouldRunTowardsBase() {
+        if (unit.isScout()) {
+            return false;
+        }
 
         // Only run towards our main if our army isn't too numerous, otherwise units gonna bump upon each other
         if (Count.ourCombatUnits() > 10) {

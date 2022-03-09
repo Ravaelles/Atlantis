@@ -30,7 +30,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     private static boolean canChange() {
         if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {
-            if (true) return false;
+//            if (true) return false;
 
             if (Count.cannons() >= 1 && Count.ourCombatUnits() <= 8) {
                 return false;
