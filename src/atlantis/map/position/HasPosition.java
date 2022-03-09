@@ -1,6 +1,7 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
+import atlantis.map.AMap;
 import atlantis.util.Vector;
 
 /**
@@ -165,6 +166,15 @@ public interface HasPosition {
 
     default boolean nearMapEdge(double maxTilesAwayFromMapEdges) {
         return !position().makeValidFarFromBounds((int) (maxTilesAwayFromMapEdges * 32)).equals(position());
+    }
+
+    default boolean distToNearestChokeLessThan(double dist) {
+        for (APosition center : AMap.allChokeCenters()) {
+            if (center.distTo(this) <= dist) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

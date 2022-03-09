@@ -16,10 +16,11 @@ public class AddToQueue {
     }
 
     public static ProductionOrder withTopPriority(AUnitType type, HasPosition position) {
-        System.out.println("TOP type = " + type + " at " + A.seconds());
-        if (type.is(AUnitType.Protoss_Robotics_Facility)) {
-            A.printStackTrace("Why top priority " + type + "???");
-        }
+//        System.out.println("TOP type = " + type + " at " + A.seconds());
+//        if (type.is(AUnitType.Protoss_Robotics_Facility)) {
+//            A.printStackTrace("Why top priority " + type + "???");
+//        }
+
         return addToQueue(type, position, indexForPriority(ProductionOrderPriority.TOP));
     }
 

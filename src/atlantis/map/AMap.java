@@ -185,15 +185,6 @@ public class AMap {
         );
     }
 
-    public static boolean distToNearestChokeLessThan(APosition position, double dist) {
-        for (APosition center : allChokeCenters()) {
-            if (center.distTo(position) <= dist) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // =========================================================
     // Special methods
 

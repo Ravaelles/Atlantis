@@ -1083,7 +1083,7 @@ public class AAdvancedPainter extends APainter {
     static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().list()) {
             if (unit.isBuilding() || !unit.isCompleted() || unit.isLoaded()) {
-                return;
+                continue;
             }
 
             if (unit.hasTooltip() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
