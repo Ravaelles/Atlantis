@@ -3,6 +3,7 @@ package atlantis.combat.missions;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;
+import atlantis.combat.missions.other.Sparta;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
@@ -22,7 +23,7 @@ public class Missions {
     public static final Mission ATTACK = new MissionAttack();
     public static final Mission CONTAIN = new MissionContain();
     public static final Mission DEFEND = new MissionDefend();
-//    public static final Mission UMS = new MissionUms();
+    public static final Mission SPARTA = new Sparta();
 
     // =========================================================
 
@@ -85,7 +86,7 @@ public class Missions {
 //            return Missions.DEFEND;
 //        }
 
-        return Missions.DEFEND;
+        return MissionChanger.defend();
 //        return Missions.ATTACK;
 //        return Missions.CONTAIN;
     }

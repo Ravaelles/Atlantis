@@ -24,12 +24,15 @@ public class MissionAttack extends Mission {
 
     @Override
     public boolean update(AUnit unit) {
-        if (
-            unit.lastActionLessThanAgo(30)
-                && !unit.isStopped()
-                && (A.notNthGameFrame(3) || unit.lastActionLessThanAgo(10))) {
-            return false;
-        }
+
+        // @todo
+//        if (
+//            unit.lastActionLessThanAgo(30)
+//                && !unit.isStopped()
+//                && (A.notNthGameFrame(3) || unit.lastActionLessThanAgo(10))) {
+//            return false;
+//        }
+
 //        if (!unit.isStopped()) {
 //            return false;
 //        }

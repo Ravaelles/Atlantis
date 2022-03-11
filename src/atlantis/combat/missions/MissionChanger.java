@@ -8,8 +8,10 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 import java.util.ArrayList;
 
@@ -57,6 +59,14 @@ public class MissionChanger {
 
     // =========================================================
 
+    public static Mission defend() {
+        if (We.protoss() || We.terran()) {
+            return Missions.SPARTA;
+        }
+
+        return Missions.DEFEND;
+    }
+
     public static void notifyThatUnitRetreated(AUnit unit) {
         if (A.isUms()) {
             return;
@@ -100,5 +110,4 @@ public class MissionChanger {
 
         return false;
     }
-
 }

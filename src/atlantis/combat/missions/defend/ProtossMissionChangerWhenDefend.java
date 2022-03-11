@@ -21,7 +21,8 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
         if (shouldChangeMissionToAttack() && !ProtossMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
             MissionChanger.changeMissionTo(Missions.ATTACK);
-        } else if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
+        }
+        else if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.CONTAIN);
         }
     }

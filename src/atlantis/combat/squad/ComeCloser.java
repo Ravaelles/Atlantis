@@ -148,10 +148,6 @@ public class ComeCloser extends ASquadCohesionManager {
             return true;
         }
 
-//        if (unit.squad().mission().isMissionAttack()) {
-//            return false;
-//        }
-
         return false;
     }
 

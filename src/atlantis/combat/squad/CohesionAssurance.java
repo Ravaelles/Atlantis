@@ -1,7 +1,6 @@
 package atlantis.combat.squad;
 
 import atlantis.information.strategy.GamePhase;
-import atlantis.map.AMap;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -18,11 +17,7 @@ public class CohesionAssurance {
             return false;
         }
 
-        if (AMap.distToNearestChokeLessThan(unit.position(), 4)) {
-            return false;
-        }
-
-        if (!isSquadCohesionTooLow(unit)) {
+        if (isSquadCohesionOkay(unit)) {
             return false;
         }
 
@@ -47,11 +42,11 @@ public class CohesionAssurance {
         return false;
     }
 
-    private static boolean isSquadCohesionTooLow(AUnit unit) {
+    private static boolean isSquadCohesionOkay(AUnit unit) {
         Squad squad = unit.squad();
         HasPosition squadCenter = unit.squadCenter();
         if (squad == null || squadCenter == null) {
-            return false;
+            return true;
         }
 
         int cohesionPercent = squad.cohesionPercent();
@@ -60,10 +55,10 @@ public class CohesionAssurance {
 
     private static int minCohesion() {
         if (GamePhase.isEarlyGame()) {
-            return 90;
+            return 85;
         }
 
-        return 75;
+        return 72;
     }
 
     public static double squadMaxRadius(Squad squad) {

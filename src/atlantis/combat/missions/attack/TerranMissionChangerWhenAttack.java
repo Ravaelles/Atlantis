@@ -1,14 +1,9 @@
 package atlantis.combat.missions.attack;
 
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
-import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.OurStrategy;
-import atlantis.units.AUnit;
-import atlantis.units.select.Count;
-import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
 
@@ -17,7 +12,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
             changeMissionTo(Missions.CONTAIN);
         }
         else if (shouldChangeMissionToDefend()) {
-            changeMissionTo(Missions.DEFEND);
+            changeMissionTo(MissionChanger.defend());
         }
     }
 

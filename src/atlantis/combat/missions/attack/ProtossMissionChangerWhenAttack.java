@@ -1,21 +1,18 @@
 package atlantis.combat.missions.attack;
 
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
-import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.units.AUnitType;
-import atlantis.util.Enemy;
 
 public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
-            changeMissionTo(Missions.DEFEND);
+            changeMissionTo(MissionChanger.defend());
         }
         else if (shouldChangeMissionToContain()) {
             changeMissionTo(Missions.CONTAIN);

@@ -2,25 +2,24 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MoveToFocusPoint;
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 public class MoveToDefendFocusPoint extends MoveToFocusPoint {
-
-    private static final double _300_MODE_DIST_FROM_FOCUS = 0.55;
 
     public static boolean move(AUnit unit, AFocusPoint focusPoint) {
         MoveToDefendFocusPoint.unit = unit;
         MoveToDefendFocusPoint.focusPoint = focusPoint;
 
-        if (unit.distToSquadCenter() >= 8) {
-            unit.addLog("JoinSquad");
-            return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
-        }
+//        if (holdOnPerpendicularLine()) {
+//            return true;
+//        }
 
         fromSide = focusPoint.fromSide();
         optimalDist = optimalDist();
@@ -32,62 +31,28 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 //            return true;
 //        }
 
-        if (wrongSideOfFocus() || holdOnPerpendicularLine() || tooCloseToFocusPoint() || advance()) {
+        if (wrongSideOfFocus() || tooCloseToFocusPoint() || joinSquad(unit) || advance()) {
             return true;
         }
 
-//        if () {
-//            return true;
-//        }
+        return false;
+    }
 
-//        unit.holdPosition("Sparta", true);
-//        unit.addLog("Sparta");
+    private static boolean joinSquad(AUnit unit) {
+        if (unit.distToSquadCenter() >= 8 && unit.enemiesNear().isEmpty()) {
+            unit.addLog("JoinSquad");
+            return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
+        }
         return false;
     }
 
     // =========================================================
 
-    private static boolean holdOnPerpendicularLine() {
-//        if (!Enemy.zerg()) {
-//            return false;
-//        }
-
-        if (!unit.isMelee()) {
-            return false;
-        }
-
-        if (unit.enemiesNear().inRadius(1.1, unit).isNotEmpty()) {
-            return false;
-        }
-
-        if (focusPoint.choke() == null) {
-            return false;
-        }
-
-        if (focusPoint.choke().perpendicularLine().isEmpty()) {
-            System.err.println("Undefined focusPoint choke perpendicularLine");
-            return false;
-        }
-
-        HasPosition nearestPoint = (new Positions(focusPoint.choke().perpendicularLine())).nearestTo(unit);
-        if (nearestPoint != null) {
-            double dist = nearestPoint.distTo(unit);
-            double baseDist = _300_MODE_DIST_FROM_FOCUS;
-            if (baseDist <= dist && dist <= baseDist + 0.08 && !unit.isAttacking()) {
-                String tooltip = "300";
-                unit.holdPosition(tooltip, true);
-                unit.addLog(tooltip);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     protected static double optimalDist() {
-        if (unit.isZealot()) {
-            return _300_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
-        }
+//        if (unit.isZealot()) {
+//            private static final double SPARTA_MODE_DIST_FROM_FOCUS = 0.55;
+//            return SPARTA_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
+//        }
 
         double base = Enemy.protoss() ? 0.6 : 0.0;
 
@@ -104,6 +69,10 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
     }
 
     private static double letWorkersComeThroughBonus() {
+        if (We.protoss() && A.seconds() >= 150) {
+            return 0;
+        }
+
         return unit.enemiesNear().combatUnits().isEmpty()
                 && Select.ourWorkers().inRadius(7, unit).atLeast(1)
                 ? 3 : 0;

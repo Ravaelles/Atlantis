@@ -7,13 +7,12 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.units.select.Count;
 
 public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
-            MissionChanger.changeMissionTo(Missions.DEFEND);
+            MissionChanger.changeMissionTo(MissionChanger.defend());
         } else if (shouldChangeMissionToAttack()) {
             MissionChanger.changeMissionTo(Missions.ATTACK);
         }

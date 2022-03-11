@@ -14,6 +14,8 @@ public abstract class MissionChangerWhenContain extends MissionChanger {
             return;
         }
 
+        debugReason = null;
+
         if (AGame.isPlayingAsTerran()) {
             TerranMissionChangerWhenContain.changeMissionIfNeeded();
             return;

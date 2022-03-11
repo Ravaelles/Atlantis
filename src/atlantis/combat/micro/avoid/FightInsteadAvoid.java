@@ -309,6 +309,7 @@ public class FightInsteadAvoid {
                     || (unit.hp() <= 30 && unit.enemiesNear().ranged().inRadius(6, unit).notEmpty())
                     || (unit.enemiesNear().ranged().inRadius(1, unit).isNotEmpty())
                     || (unit.enemiesNear().combatBuildings(false).inRadius(3, unit).isNotEmpty())
+                    || (unit.enemiesNear().ofType(AUnitType.Protoss_Reaver).inRadius(3, unit).isNotEmpty())
                 );
     }
 
