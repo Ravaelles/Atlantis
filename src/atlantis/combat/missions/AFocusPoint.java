@@ -17,37 +17,66 @@ public class AFocusPoint extends APosition {
     private APosition fromSide = null;
     private AChoke choke = null;
     private AUnit unit = null;
+    private String name = null;
 
     // =========================================================
 
-    public AFocusPoint(HasPosition position) {
-        super(position.position());
-    }
+//    public AFocusPoint(HasPosition position) {
+//        super(position.position());
+//    }
+//
+//    public AFocusPoint(HasPosition position, String name) {
+//        super(position.position());
+//        this.name = name;
+//    }
 
-    public AFocusPoint(AUnit unit, HasPosition fromSide) {
-        this(unit.position(), fromSide);
-    }
-
-    public AFocusPoint(HasPosition position, HasPosition fromSide) {
-        super(position.position());
-        this.fromSide = fromSide.position();
-
-        if (A.notUms() && position.position().equals(this.fromSide)) {
-            System.err.println("AFocusPoint got fromSide being the same point.");
-            A.printStackTrace();
-            this.fromSide = null;
-        }
+    public AFocusPoint(AUnit unit, String name) {
+        this(unit.position(), null, null);
     }
 
     public AFocusPoint(AChoke choke, HasPosition fromSide) {
-        this(choke.center(), fromSide);
-        this.choke = choke;
+        this(choke, fromSide, null);
     }
+
+    public AFocusPoint(AChoke choke, HasPosition fromSide, String name) {
+        super(choke.center());
+        this.choke = choke;
+        this.fromSide = fromSide.position();
+        this.name = name;
+    }
+
+    public AFocusPoint(HasPosition position, HasPosition fromSide, String name) {
+        super(position.position());
+        this.fromSide = fromSide != null ? fromSide.position() : null;
+        this.name = name;
+    }
+
+//    public AFocusPoint(HasPosition position, HasPosition fromSide) {
+//        super(position.position());
+//        this.fromSide = fromSide.position();
+//
+//        if (A.notUms() && position.position().equals(this.fromSide)) {
+//            System.err.println("AFocusPoint got fromSide being the same point.");
+//            A.printStackTrace();
+//            this.fromSide = null;
+//        }
+//    }
 
     // =========================================================
 
     public boolean isValid() {
         return unit == null || unit.isAlive();
+    }
+
+    // =========================================================
+
+    @Override
+    public String toString() {
+        return "Focus{" +
+            "from=" + fromSide +
+            ",choke=" + choke +
+            ",name='" + name + '\'' +
+            '}';
     }
 
     // =========================================================
@@ -66,5 +95,9 @@ public class AFocusPoint extends APosition {
 
     public boolean isAroundChoke() {
         return choke != null;
+    }
+
+    public String getName() {
+        return name;
     }
 }

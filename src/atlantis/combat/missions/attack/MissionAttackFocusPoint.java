@@ -43,7 +43,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
             return new AFocusPoint(
                     enemy,
-                    our
+                    our,
+                "FirstEnemy"
             );
         }
 
@@ -55,7 +56,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (enemyBase != null) {
                 return new AFocusPoint(
                         enemyBase,
-                        Select.main()
+                        Select.main(),
+                    "EnemyBase"
                 );
             }
         }
@@ -65,7 +67,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (enemyBuilding != null && enemyBuilding.position() != null) {
             return new AFocusPoint(
                     enemyBuilding,
-                    Select.main()
+                    Select.main(),
+                "EnemyBuilding"
             );
         }
 
@@ -74,7 +77,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (visibleEnemyBuilding != null) {
             return new AFocusPoint(
                     visibleEnemyBuilding,
-                    Select.main()
+                    Select.main(),
+                "VisibleEnemyBuilding"
             );
         }
 
@@ -84,7 +88,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (anyEnemyUnit != null) {
             return new AFocusPoint(
                     anyEnemyUnit,
-                    Select.main()
+                    Select.main(),
+                "AnyEnemyUnit"
             );
         }
 
@@ -93,7 +98,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (mainChoke != null) {
                 return new AFocusPoint(
                         mainChoke,
-                        Select.main()
+                        Select.main(),
+                    "EnemyMainChoke"
                 );
             }
         }
@@ -105,7 +111,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (startLocation != null) {
                 return new AFocusPoint(
                         startLocation,
-                        Select.main()
+                        Select.main(),
+                    "NearStartLocation"
                 );
             }
         }

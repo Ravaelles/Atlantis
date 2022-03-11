@@ -61,7 +61,7 @@ public abstract class Mission {
     // =========================================================
 
     protected boolean enemyIsNearAnyOurBuilding(AUnit enemy) {
-        return EnemyInfo.isEnemyNearAnyOurBuilding();
+        return EnemyInfo.isEnemyNearAnyOurBase();
     }
 
 //    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
@@ -137,6 +137,10 @@ public abstract class Mission {
 
     public boolean isMissionDefend() {
         return this.equals(Missions.DEFEND);
+    }
+
+    public boolean isMissionSparta() {
+        return this.equals(Missions.SPARTA);
     }
 
     public boolean isMissionAttack() {

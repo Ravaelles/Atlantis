@@ -4,7 +4,6 @@ import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.game.AGame;
-import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -135,6 +134,7 @@ public class RetreatManager {
 
     private static boolean shouldLargeScaleRetreat(AUnit unit, Selection enemies) {
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
+
         if (!isSituationFavorable) {
             unit._lastRetreat = AGame.now();
             unit.setTooltipTactical("Retreat");
@@ -198,10 +198,18 @@ public class RetreatManager {
             return true;
         }
 
-        if (unit.isMissionDefend() && (unit.isMelee() || unit.woundPercent() <= 10)) {
-            AFocusPoint focusPoint = unit.squad().mission().focusPoint();
-            return focusPoint != null && unit.distTo(focusPoint) <= 3;
+        if (unit.isMelee() && unit.isMissionSparta()) {
+            return AGame.timeSeconds() > 300
+                || (
+                    unit.hp() > 32
+//                        && unit.friendsNear().melee().inRadius(1.5, unit).count() <= 1
+            );
         }
+
+//        if (unit.isMissionDefend() && (unit.isMelee() || unit.woundPercent() <= 10)) {
+//            AFocusPoint focusPoint = unit.squad().mission().focusPoint();
+//            return focusPoint != null && unit.distTo(focusPoint) <= 3;
+//        }
 
 //        if (unit.hpLessThan(Enemy.protoss() ? 33 : 16)) {
 //            return false;

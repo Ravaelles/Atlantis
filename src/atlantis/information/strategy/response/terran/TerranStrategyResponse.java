@@ -10,7 +10,7 @@ public class TerranStrategyResponse extends AStrategyResponse {
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
         if (GamePhase.isEarlyGame()) {
-            Missions.setGlobalMissionDefend();
+            Missions.forceGlobalMissionDefend("Rush defence");
         }
 
         if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {

@@ -105,10 +105,10 @@ public class ComeCloser extends ASquadCohesionManager {
     }
 
 //    private static boolean tooFarForward(AUnit unit, AFocusPoint focusPoint, APosition squadCenter) {
-//        double unitDistToFocus = unit.groundDist(focusPoint);
+//        double unitToFocus = unit.groundDist(focusPoint);
 //        double centerDistToFocus = squadCenter.groundDist(focusPoint);
 //
-//        return unitDistToFocus - centerDistToFocus <= -5.8;
+//        return unitToFocus - centerDistToFocus <= -5.8;
 //    }
 
     // =========================================================

@@ -124,7 +124,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static int minZealotsAganstEnemyRush() {
-        return 5;
+        return 4;
     }
 
     private static void zealots() {

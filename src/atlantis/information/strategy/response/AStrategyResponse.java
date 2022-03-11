@@ -48,14 +48,14 @@ public abstract class AStrategyResponse {
         // === Expansion ===================================
 
         if (enemyStrategy.isExpansion()) {
-            Missions.setGlobalMissionContain();
+            Missions.setGlobalMissionContain("Enemy is expanding, engage him");
         }
 
         // === Tech ========================================
 
         if (enemyStrategy.isHiddenUnits()) {
             if (!Enemy.terran()) {
-                Missions.setGlobalMissionDefend();
+                Missions.forceGlobalMissionDefend("Enemy goes hidden units");
             }
 
             OurStrategicBuildings.setAntiLandBuildingsNeeded(1);
@@ -74,8 +74,9 @@ public abstract class AStrategyResponse {
     // =========================================================
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
-        System.out.println("GENERIC RUSH - shouldn't be called");
-        Missions.setGlobalMissionDefend();
+        System.out.println("GENERIC RUSH - shouldn't be called, use race-specific");
+        
+        Missions.forceGlobalMissionDefend("Rush defence");
 
         if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
             return false;

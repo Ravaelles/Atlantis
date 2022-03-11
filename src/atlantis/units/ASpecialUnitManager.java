@@ -38,7 +38,7 @@ public class ASpecialUnitManager {
         // === Protoss ========================================
 
         if (unit.isProtoss() && unit.shields() <= 5 && unit.hpLessThan(34)) {
-            if ("Sparta".equals(unit.tooltip())) {
+            if (unit.isMissionSparta()) {
                 return false;
             }
 

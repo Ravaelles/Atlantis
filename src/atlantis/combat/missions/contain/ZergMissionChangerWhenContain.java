@@ -1,13 +1,15 @@
 package atlantis.combat.missions.contain;
 
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.attack.ZergMissionChangerWhenAttack;
 import atlantis.units.select.Select;
 
-public class ZergMissionChangerWhenContain {
+public class ZergMissionChangerWhenContain extends MissionChanger {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToAttack()) {
-            Missions.setGlobalMissionAttack();
+        if (shouldChangeMissionToAttack() && !ZergMissionChangerWhenAttack.shouldChangeMissionToContain()) {
+            Missions.forceGlobalMissionAttack(reason);
         }
     }
 

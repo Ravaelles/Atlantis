@@ -12,7 +12,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
-            MissionChanger.changeMissionTo(MissionChanger.defend());
+            MissionChanger.changeMissionTo(MissionChanger.defendOrSpartaMission());
         } else if (shouldChangeMissionToAttack()) {
             MissionChanger.changeMissionTo(Missions.ATTACK);
         }
@@ -23,28 +23,28 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     public static boolean shouldChangeMissionToDefend() {
         if (ArmyStrength.weAreWeaker()) {
             if (RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
-                if (DEBUG) debugReason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                if (DEBUG) reason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
                 return true;
             }
 
             if (GamePhase.isEarlyGame()) {
-                if (DEBUG) debugReason = "Eh, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                if (DEBUG) reason = "Eh, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
                 return true;
             }
         }
 
         if (defendAgainstMassZerglings()) {
-            if (DEBUG) debugReason = "Mass zerglings";
+            if (DEBUG) reason = "Mass zerglings";
             return true;
         }
 
-        if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
-            if (DEBUG) debugReason = "Enemy near our building";
+        if (EnemyInfo.isEnemyNearAnyOurBase() && A.supplyUsed() <= 70) {
+            if (DEBUG) reason = "Enemy near our building";
             return true;
         }
 
         if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130 && !GamePhase.isLateGame()) {
-            if (DEBUG) debugReason = "Too many resources lost";
+            if (DEBUG) reason = "Too many resources lost";
             return true;
         }
 
@@ -55,17 +55,17 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 
     private static boolean shouldChangeMissionToAttack() {
         if (A.supplyUsed() >= 194) {
-            if (DEBUG) debugReason = "Supply blocked";
+            if (DEBUG) reason = "Supply blocked";
             return true;
         }
 
         if (ArmyStrength.weAreMuchStronger() && !EnemyInfo.hasDefensiveLandBuilding(true)) {
-            if (DEBUG) debugReason = "Much stronger";
+            if (DEBUG) reason = "Much stronger";
             return true;
         }
 
         if (A.resourcesBalance() >= 410 && ArmyStrength.weAreStronger()) {
-            if (DEBUG) debugReason = "Resources balance good";
+            if (DEBUG) reason = "Resources balance good";
             return true;
         }
 

@@ -7,6 +7,7 @@ import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 
 public class MissionContain extends Mission {
 
@@ -42,7 +43,7 @@ public class MissionContain extends Mission {
         }
 
         // Focus point is well known
-        return MoveToContainFocusPoint.move(unit, focusPoint);
+        return (new MoveToContainFocusPoint()).move(unit, focusPoint);
 
         // =========================================================
     }
@@ -76,6 +77,7 @@ public class MissionContain extends Mission {
         return false;
     }
 
+    // =========================================================
 
     private boolean wouldCrossChokeToAttack(AUnit unit, AUnit enemy, AFocusPoint focusPoint) {
         if (focusPoint != null && focusPoint.isAroundChoke()) {

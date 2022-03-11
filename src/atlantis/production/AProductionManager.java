@@ -72,7 +72,7 @@ public class AProductionManager {
         // Mission CHANGE
 
         else if (order.mission() != null) {
-            Missions.setGlobalMissionTo(order.mission());
+            Missions.setGlobalMissionTo(order.mission(), "Build Order enforced: " + order.mission());
         }
 
         // === Nothing! ============================================

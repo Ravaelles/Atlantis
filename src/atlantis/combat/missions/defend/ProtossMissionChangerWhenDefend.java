@@ -30,7 +30,11 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean canChange() {
-        if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {
+//        if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {
+        if (GamePhase.isEarlyGame()) {
+            if (ArmyStrength.weAreMuchStronger()) {
+                return true;
+            }
 //            if (true) return false;
 
             if (Count.cannons() >= 1 && Count.ourCombatUnits() <= 8) {
@@ -47,7 +51,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     private static boolean shouldChangeMissionToAttack() {
         if (ArmyStrength.ourArmyRelativeStrength() >= 200) {
-            if (DEBUG) debugReason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
@@ -55,18 +59,18 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     }
 
     private static boolean shouldChangeMissionToContain() {
-        if (!ArmyStrength.weAreWeaker()) {
-            if (DEBUG) debugReason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+        if (ArmyStrength.weAreStronger()) {
+            if (DEBUG) reason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
         if ((GamePhase.isEarlyGame() && A.resourcesBalance() >= 300)) {
-            if (DEBUG) debugReason = "resources balance is good";
+            if (DEBUG) reason = "resources balance is good";
             return true;
         }
 
         if (A.supplyUsed(90)) {
-            if (DEBUG) debugReason = "Supply quite big";
+            if (DEBUG) reason = "Supply quite big";
             return true;
         }
 

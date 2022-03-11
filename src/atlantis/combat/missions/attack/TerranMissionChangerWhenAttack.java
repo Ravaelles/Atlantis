@@ -12,7 +12,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
             changeMissionTo(Missions.CONTAIN);
         }
         else if (shouldChangeMissionToDefend()) {
-            changeMissionTo(MissionChanger.defend());
+            changeMissionTo(MissionChanger.defendOrSpartaMission());
         }
     }
 
@@ -21,7 +21,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
     public static boolean shouldChangeMissionToContain() {
 //        if (OurStrategy.get().goingBio()) {
         if (!ArmyStrength.weAreStronger()) {
-            if (DEBUG) debugReason = "We aren't stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) reason = "We aren't stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
@@ -30,7 +30,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     public static boolean shouldChangeMissionToDefend() {
         if (baseUnderSeriousAttack()) {
-            if (DEBUG) debugReason = "Protect base";
+            if (DEBUG) reason = "Protect base";
             return true;
         }
 

@@ -23,10 +23,10 @@ public class EnemyUnitDiscoveredResponse {
             if (GamePhase.isEarlyGame()) {
                 EnemyInfo.startedWithCombatBuilding = true;
             }
-            if (Missions.isFirstMission()) {
-                MissionChanger.forceMissionContain();
-//                CurrentBuildOrder.set(TerranStrategies.TERRAN_Mech.buildOrder());
-            }
+//            if (Missions.isFirstMission()) {
+//                MissionChanger.forceMissionContain();
+////                CurrentBuildOrder.set(TerranStrategies.TERRAN_Mech.buildOrder());
+//            }
         }
     }
 

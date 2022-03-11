@@ -16,9 +16,9 @@ public class MissionDefend extends Mission {
     protected AUnit main;
     protected AFocusPoint focusPoint;
     protected double focusPointDistToBase;
-    protected double unitDistToEnemy;
-    protected double unitDistToFocus;
-    protected double unitDistToBase;
+    protected double unitToEnemy;
+    protected double unitToFocus;
+    protected double unitToBase;
     protected double enemyDistToBase;
     protected double enemyDistToFocus;
 
@@ -51,7 +51,7 @@ public class MissionDefend extends Mission {
             return false;
         }
 
-        return MoveToDefendFocusPoint.move(unit, focusPoint);
+        return (new MoveToDefendFocusPoint()).move(unit, focusPoint);
     }
 
     // =========================================================
@@ -66,18 +66,18 @@ public class MissionDefend extends Mission {
         main = Select.main();
         focusPoint = focusPoint();
         focusPointDistToBase = focusPoint.distTo(main);
-        unitDistToEnemy = unit.distTo(enemy);
-        unitDistToBase = unit.groundDist(main);
+        unitToEnemy = unit.distTo(enemy);
+        unitToBase = unit.groundDist(main);
         enemyDistToBase = enemy.groundDist(main);
         enemyDistToFocus = enemy.groundDist(focusPoint);
 
-        if (unitDistToEnemy <= 3 && unit.isDragoon() && enemy.isZealot() && unit.hp() <= 18) {
+        if (unitToEnemy <= 3 && unit.isDragoon() && enemy.isZealot() && unit.hp() <= 18) {
             return false;
         }
 
 //        if (
 ////                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
-//                (unit.isMelee() && unitDistToEnemy <= 1.09)
+//                (unit.isMelee() && unitToEnemy <= 1.09)
 //                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 2))
 //        ) {
 //            if (unit.cooldownRemaining() <= 3 || unit.lastAttackFrameMoreThanAgo(40)) {
@@ -89,7 +89,7 @@ public class MissionDefend extends Mission {
 //            return false;
 //        }
 //
-//        if (unit.isMelee() && enemyDistToBase > unitDistToBase) {
+//        if (unit.isMelee() && enemyDistToBase > unitToBase) {
 //            return false;
 //        }
 
@@ -108,7 +108,7 @@ public class MissionDefend extends Mission {
             }
         }
 
-//        if (focusPointDistToBase < enemyDistToBase || enemyDistToBase < unitDistToBase) {
+//        if (focusPointDistToBase < enemyDistToBase || enemyDistToBase < unitToBase) {
 //            return true;
 //        }
 

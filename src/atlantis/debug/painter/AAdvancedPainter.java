@@ -3,6 +3,7 @@ package atlantis.debug.painter;
 import atlantis.Atlantis;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.MissionAttack;
@@ -308,19 +309,26 @@ public class AAdvancedPainter extends APainter {
         }
         paintSideMessage("Mission: " + mission.name() + " (" + Missions.counter() + ")", color);
 
-        paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
+        AFocusPoint focus = mission.focusPoint();
+//        String focusPointString = focus != null
+//            ? (focus.getName() != null ? focus.getName() : focus.toString())
+//            : "NONE";
+//        paintSideMessage("Focus: " + focusPointString, Color.White);
         paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.White);
 
         // =========================================================
         // Focus point
 
-        APosition focusPoint = MissionAttack.getInstance().focusPoint();
+        AFocusPoint focusPoint = MissionAttack.getInstance().focusPoint();
         AUnit mainBase = Select.main();
         String desc = "";
+        String focusPointString = focusPoint != null
+            ? (focusPoint.getName() != null ? focusPoint.getName() : focusPoint.toString())
+            : "NONE";
         if (focusPoint != null && mainBase != null) {
             desc = "(" + ((int) mainBase.distTo(focusPoint)) + " tiles)";
         }
-        paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
+        paintSideMessage("Focus point: " + focusPointString + desc, Color.Blue, 0);
 
         // =========================================================
 

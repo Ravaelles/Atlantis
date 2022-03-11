@@ -268,6 +268,10 @@ public class ARunningManager {
             return false;
         }
 
+        if (unit.lastStartedRunningLessThanAgo(30) && unit.lastStoppedRunningLessThanAgo(30)) {
+            return false;
+        }
+
         AUnit main = Select.main();
         if (main != null) {
 

@@ -2260,11 +2260,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return false;
     }
 
+    public boolean isMissionSparta() {
+        if (mission() == null) {
+            return false;
+        }
+        return mission().equals(Missions.SPARTA);
+    }
+
     public boolean isMissionDefend() {
         if (mission() == null) {
             return false;
         }
-        return mission().isMissionDefend();
+        return mission().equals(Missions.DEFEND);
     }
 
     public boolean isMissionAttack() {

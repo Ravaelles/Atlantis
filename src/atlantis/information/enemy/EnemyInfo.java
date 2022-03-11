@@ -32,11 +32,11 @@ public class EnemyInfo {
         startedWithCombatBuilding = false;
     }
 
-    public static boolean isEnemyNearAnyOurBuilding() {
-        return enemyNearAnyOurBuilding() != null;
+    public static boolean isEnemyNearAnyOurBase() {
+        return enemyNearAnyOurBase() != null;
     }
 
-    public static AUnit enemyNearAnyOurBuilding() {
+    public static AUnit enemyNearAnyOurBase() {
         return (AUnit) cache.get(
                 "enemyNearAnyOurBuilding",
                 50,
@@ -53,10 +53,9 @@ public class EnemyInfo {
                             AUnitType.Zerg_Scourge
                     ).nearestTo(Select.main());
                     if (nearestEnemy != null) {
-                        return Select.ourBuildings()
-                                .excludeTypes(AUnitType.Terran_Missile_Turret)
-                                .inRadius(Enemy.terran() ? 13 : 7, nearestEnemy)
-                                .atLeast(1)
+//                        return Select.ourBuildings()
+                        return Select.ourBases()
+                                .inRadius(Enemy.terran() ? 30 : 25, nearestEnemy).atLeast(2)
                                 ? nearestEnemy : null;
                     }
 

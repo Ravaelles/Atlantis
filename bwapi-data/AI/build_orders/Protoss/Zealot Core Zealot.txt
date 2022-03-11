@@ -30,7 +30,7 @@ https://liquipedia.net/starcraft/1_Gate_Core_(vs._Protoss)
 19 - Cybernetics Core
 20 - Zealot
 23 - Gateway
-23 - Assimilator
+25 - Assimilator
 //23 - MISSION=ATTACK
 26 - Dragoon
 28 - Gateway

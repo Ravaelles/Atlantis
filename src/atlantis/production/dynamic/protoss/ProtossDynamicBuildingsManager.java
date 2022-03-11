@@ -67,7 +67,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void shieldBattery() {
-        buildToHaveOne(40, AUnitType.Protoss_Shield_Battery);
+//        buildToHaveOne(40, AUnitType.Protoss_Shield_Battery);
     }
 
     private static void gateways() {

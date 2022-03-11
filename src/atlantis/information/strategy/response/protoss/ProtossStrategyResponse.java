@@ -11,7 +11,7 @@ public class ProtossStrategyResponse extends AStrategyResponse {
 
     @Override
     protected boolean rushDefence(AStrategy enemyStrategy) {
-        Missions.setGlobalMissionDefend();
+        Missions.forceGlobalMissionDefend("Rush defence");
 
         if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
             return false;

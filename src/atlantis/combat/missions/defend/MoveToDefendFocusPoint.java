@@ -3,8 +3,6 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MoveToFocusPoint;
 import atlantis.game.A;
-import atlantis.map.position.HasPosition;
-import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -13,32 +11,63 @@ import atlantis.util.We;
 
 public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
-    public static boolean move(AUnit unit, AFocusPoint focusPoint) {
-        MoveToDefendFocusPoint.unit = unit;
-        MoveToDefendFocusPoint.focusPoint = focusPoint;
+    public boolean move(AUnit unit, AFocusPoint focusPoint) {
+        this.unit = unit;
+        this.focus = focusPoint;
 
 //        if (holdOnPerpendicularLine()) {
 //            return true;
 //        }
 
         fromSide = focusPoint.fromSide();
-        optimalDist = optimalDist();
-        distUnitToFocus = unit.distTo(focusPoint);
-        distUnitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
-        distFocusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
+        optimalDist = optimalDist(unit);
+        unitToFocus = unit.distTo(focusPoint);
+        unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
+        focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 //
 //        if (tooFar() || tooClose()) {
 //            return true;
 //        }
 
-        if (wrongSideOfFocus() || tooCloseToFocusPoint() || joinSquad(unit) || advance()) {
+        if (handleWrongSideOfFocus(unit, focusPoint) || tooCloseToFocusPoint() || joinSquad(unit) || advance()) {
             return true;
         }
 
         return false;
     }
 
-    private static boolean joinSquad(AUnit unit) {
+    protected boolean advance() {
+        focus = unit.mission().focusPoint();
+
+        if (focus == null) {
+//            System.err.println("Null focus point for " + unit + " in MoveToFocusPoint");
+            System.err.println("unit.mission() = " + unit.mission());
+            A.printStackTrace("Null focus point for " + unit + " in MoveToFocusPoint");
+            return false;
+        }
+
+        unitToFocus = unit.distTo(focus);
+        optimalDist = optimalDist(unit);
+
+        if (unit.enemiesNear().inRadius(5, unit).notEmpty()) {
+            unit.addLog("DontWithdraw");
+            return false;
+        }
+
+        if (unitToFocus > (optimalDist + MARGIN)) {
+            String dist = A.dist(unitToFocus);
+            return unit.move(
+                focus.translatePercentTowards(unit, 40),
+                Actions.MOVE_FOCUS,
+                "ToFocus" + dist,
+                true
+            );
+        }
+
+        return false;
+    }
+
+    private boolean joinSquad(AUnit unit) {
         if (unit.distToSquadCenter() >= 8 && unit.enemiesNear().isEmpty()) {
             unit.addLog("JoinSquad");
             return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
@@ -48,9 +77,9 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
     // =========================================================
 
-    protected static double optimalDist() {
+    public double optimalDist(AUnit unit) {
 //        if (unit.isZealot()) {
-//            private static final double SPARTA_MODE_DIST_FROM_FOCUS = 0.55;
+//            private final double SPARTA_MODE_DIST_FROM_FOCUS = 0.55;
 //            return SPARTA_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
 //        }
 
@@ -68,7 +97,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
             + rangedDistBonus();
     }
 
-    private static double letWorkersComeThroughBonus() {
+    private double letWorkersComeThroughBonus() {
         if (We.protoss() && A.seconds() >= 150) {
             return 0;
         }
@@ -78,7 +107,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
                 ? 3 : 0;
     }
 
-    private static double rangedDistBonus() {
+    private double rangedDistBonus() {
         if (unit.isDragoon()) {
             return 1.7;
         }

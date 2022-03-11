@@ -21,65 +21,70 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
     @Override
     public AFocusPoint focusPoint() {
         return cache.get(
-                "focusPoint",
-                30,
-                () -> {
-                    if (We.terran() && We.haveBase()) {
+            "focusPoint",
+            30,
+            () -> {
+                if (We.terran() && We.haveBase()) {
 //                        if (!EnemyInformation.hasDefensiveLandBuilding()) {
-                        AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
-                        if (
-                                enemyBuilding != null
-                                        && enemyBuilding.position() != null
-                                        && EnemyInfo.isProxyBuilding(enemyBuilding)
-                        ) {
-                            return new AFocusPoint(
-                                    enemyBuilding,
-                                    Select.main()
-                            );
-                        }
+                    AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+                    if (
+                        enemyBuilding != null
+                            && enemyBuilding.position() != null
+                            && EnemyInfo.isProxyBuilding(enemyBuilding)
+                    ) {
+                        return new AFocusPoint(
+                            enemyBuilding,
+                            Select.main(),
+                            "NearestEnemyBuilding"
+                        );
+                    }
 //                        }
-                    }
+                }
 
-                    if (EnemyInfo.hasDefensiveLandBuilding(true) && We.haveBase()) {
-                        AUnit nearestCombatBuilding = EnemyUnits.foggedUnits()
-                                .combatBuildings(false)
-                                .nearestTo(Select.main());
-                        if (nearestCombatBuilding != null) {
-                            AChoke choke = Chokes.nearestChoke(nearestCombatBuilding);
-                            if (choke != null) {
-                                return new AFocusPoint(
-                                    choke.position(),
-                                    Select.main()
-                                );
-                            }
-                        }
-                    }
-
-                    AChoke mainChoke = Chokes.enemyMainChoke();
-                    APosition enemyNatural = Bases.enemyNatural();
-                    if (enemyNatural != null) {
-                        if (mainChoke != null) {
+                if (EnemyInfo.hasDefensiveLandBuilding(true) && We.haveBase()) {
+                    AUnit nearestCombatBuilding = EnemyUnits.foggedUnits()
+                        .combatBuildings(false)
+                        .nearestTo(Select.main());
+                    if (nearestCombatBuilding != null) {
+                        AChoke choke = Chokes.nearestChoke(nearestCombatBuilding);
+                        if (choke != null) {
                             return new AFocusPoint(
-                                    enemyNatural.translatePercentTowards(mainChoke, 40),
-                                    enemyNatural
+                                choke.position(),
+                                Select.main(),
+                                "DefensiveBuilding"
                             );
                         }
+                    }
+                }
+
+                AChoke enemyMainChoke = Chokes.enemyMainChoke();
+                APosition enemyNatural = Bases.enemyNatural();
+                if (enemyNatural != null) {
+                    if (enemyMainChoke != null) {
                         return new AFocusPoint(
-                                enemyNatural,
-                                Select.main()
+                            enemyNatural.translatePercentTowards(enemyMainChoke, 40),
+                            enemyNatural,
+                            "EnemyMainChoke"
                         );
                     }
+                    return new AFocusPoint(
+                        enemyNatural,
+                        Select.main(),
+                        "EnemyNatural"
+                    );
+                }
 
-                    AChoke naturalChoke = Chokes.enemyNaturalChoke();
-                    if (naturalChoke != null && naturalChoke.width() <= 4) {
-                        return new AFocusPoint(
-                                naturalChoke,
-                                Select.main()
-                        );
-                    }
+                AChoke naturalChoke = Chokes.enemyNaturalChoke();
+                if (naturalChoke != null && naturalChoke.width() <= 4) {
+                    return new AFocusPoint(
+                        naturalChoke,
+                        Select.main(),
+                        "EnemyNaturalChoke"
+                    );
+                }
 
-//                    if (mainChoke != null && mainChoke.getWidth() <= 4) {
-//                        return mainChoke.position();
+//                    if (enemyMainChoke != null && enemyMainChoke.getWidth() <= 4) {
+//                        return enemyMainChoke.position();
 //                    }
 
 //                    FoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
@@ -92,38 +97,40 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //            return nearestEnemy.position();
 //        }
 
-                    APosition enemyBase = EnemyUnits.enemyBase();
-                    if (enemyBase != null && enemyBase.position() != null) {
-                        return new AFocusPoint(
-                                enemyBase,
-                                Select.main()
-                        );
+                APosition enemyBase = EnemyUnits.enemyBase();
+                if (enemyBase != null && enemyBase.position() != null) {
+                    return new AFocusPoint(
+                        enemyBase,
+                        Select.main(),
+                        "EnemyBase"
+                    );
 //                        return containPointIfEnemyBaseIsKnown(enemyBase);
-                    }
+                }
 
-//                    AChoke mainChoke = Chokes.enemyMainChoke();
-//        if (mainChoke != null) {
-//            return mainChoke.position();
+//                    AChoke enemyMainChoke = Chokes.enemyMainChoke();
+//        if (enemyMainChoke != null) {
+//            return enemyMainChoke.position();
 //        }
 
-                    // Try to go to some starting location, hoping to find enemy there.
-                    if (Select.main() != null) {
-                        AChoke choke = Chokes.nearestChoke(
-                                Bases.nearestUnexploredStartingLocation(Select.main().position())
-                        );
+                // Try to go to some starting location, hoping to find enemy there.
+                if (Select.main() != null) {
+                    AChoke choke = Chokes.nearestChoke(
+                        Bases.nearestUnexploredStartingLocation(Select.main().position())
+                    );
 
-                        if (choke == null) {
-                            return null;
-                        }
-
-                        return new AFocusPoint(
-                                choke,
-                                Select.main()
-                        );
+                    if (choke == null) {
+                        return null;
                     }
 
-                    return null;
+                    return new AFocusPoint(
+                        choke,
+                        Select.main(),
+                        "UnexploredStartLocation"
+                    );
                 }
+
+                return null;
+            }
         );
     }
 

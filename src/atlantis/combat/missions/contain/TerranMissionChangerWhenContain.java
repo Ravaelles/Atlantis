@@ -19,11 +19,11 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
 
     public static void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend() && !TerranMissionChangerWhenDefend.shouldChangeMissionToContain()) {
-            Missions.setGlobalMissionDefend();
+            Missions.forceGlobalMissionDefend(reason);
         }
 
         else if (shouldChangeMissionToAttack() && !TerranMissionChangerWhenAttack.shouldChangeMissionToContain()) {
-            Missions.setGlobalMissionAttack();
+            Missions.forceGlobalMissionAttack(reason);
         }
     }
 
@@ -33,29 +33,29 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
         if (GamePhase.isEarlyGame()) {
             if (Enemy.protoss() && EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(4)) {
                 if (Count.medics() <= 4) {
-                    if (DEBUG) debugReason = "Enemy rush (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                    if (DEBUG) reason = "Enemy rush (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
                     return true;
                 }
             }
         }
 
         if (ArmyStrength.weAreMuchWeaker()) {
-            if (DEBUG) debugReason = "Much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) reason = "Much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
-        if (EnemyInfo.isEnemyNearAnyOurBuilding() && A.supplyUsed() <= 70) {
-            if (DEBUG) debugReason = "Enemy near our building";
+        if (EnemyInfo.isEnemyNearAnyOurBase() && A.supplyUsed() <= 70) {
+            if (DEBUG) reason = "Enemy near our building";
             return true;
         }
 
         if (ArmyStrength.weAreWeaker() && RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
-            if (DEBUG) debugReason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) reason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
         if (A.resourcesBalance() <= -400 && A.supplyUsed() <= 130 && !GamePhase.isLateGame()) {
-            if (DEBUG) debugReason = "Too many resources lost";
+            if (DEBUG) reason = "Too many resources lost";
             return true;
         }
 
@@ -64,17 +64,17 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
 
     protected static boolean shouldChangeMissionToAttack() {
         if (A.supplyUsed() >= 180) {
-            if (DEBUG) debugReason = "Supply blocked";
+            if (DEBUG) reason = "Supply blocked";
             return true;
         }
 
         if (ArmyStrength.weAreMuchStronger()) {
-            if (DEBUG) debugReason = "Much stronger";
+            if (DEBUG) reason = "Much stronger";
             return true;
         }
 
         if (A.resourcesBalance() >= 410 && ArmyStrength.weAreStronger()) {
-            if (DEBUG) debugReason = "Resources balance good";
+            if (DEBUG) reason = "Resources balance good";
             return true;
         }
 

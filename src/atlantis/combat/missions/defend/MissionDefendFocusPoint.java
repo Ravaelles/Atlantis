@@ -39,7 +39,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
                     if (GamePhase.isEarlyGame() && mainBase != null) {
                         if (bunker != null) {
-                            return new AFocusPoint(bunker);
+                            return new AFocusPoint(bunker, "Bunker");
                         }
                     }
                 }
@@ -51,19 +51,20 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                         return null;
                     }
 
-                    return new AFocusPoint(selection.first());
+                    return new AFocusPoint(selection.first(), "AnyBuilding");
                 }
 
                 // === Enemies that breached into base =============
 
                 if (Have.base()) {
-                    AUnit enemyNear = EnemyInfo.enemyNearAnyOurBuilding();
+                    AUnit enemyNear = EnemyInfo.enemyNearAnyOurBase();
                     if (enemyNear != null && enemyNear.isAlive()) {
                         AUnit building = Select.ourBuildings().nearestTo(enemyNear);
                         if (building != null) {
                             return new AFocusPoint(
                                 enemyNear,
-                                building
+                                building,
+                                "EnemyInBase"
                             );
                         }
                     }
@@ -76,7 +77,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     if (natural != null) {
                         return new AFocusPoint(
                             natural,
-                            Select.main()
+                            Select.main(),
+                            "NaturalChoke"
                         );
                     }
                 }
@@ -87,24 +89,25 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if (mainChoke != null) {
                     return new AFocusPoint(
                         mainChoke,
-                        Select.main()
+                        Select.main(),
+                        "MainChoke"
                     );
                 }
 
                 // === Focus enemy attacking the main base =================
 
-                AUnit nearEnemy = Select.enemy()
-                    .combatUnits()
-                    .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Zerg_Overlord)
-                    .effVisible()
-                    .inRadius(12, mainBase)
-                    .nearestTo(mainBase);
-                if (nearEnemy != null) {
-                    return new AFocusPoint(
-                        nearEnemy,
-                        Select.main()
-                    );
-                }
+//                AUnit nearEnemy = Select.enemy()
+//                    .combatUnits()
+//                    .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Zerg_Overlord)
+//                    .effVisible()
+//                    .inRadius(12, mainBase)
+//                    .nearestTo(mainBase);
+//                if (nearEnemy != null) {
+//                    return new AFocusPoint(
+//                        nearEnemy,
+//                        Select.main()
+//                    );
+//                }
 //
 //                // === Gather around defensive buildings ===================
 //
@@ -126,7 +129,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if (building != null) {
                     return new AFocusPoint(
                         Chokes.nearestChoke(building.position()),
-                        building
+                        building,
+                        "FirstBuilding"
                     );
                 }
 
