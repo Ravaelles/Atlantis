@@ -76,9 +76,9 @@ public abstract class MoveToFocusPoint {
     public boolean handleWrongSideOfFocus(AUnit unit, AFocusPoint focus) {
         if (!focus.isAroundChoke() || focus.fromSide() == null) {
 //            System.out.println("fromSide = " + fromSide);
-            System.out.println("FOCUS POINT = " + focus.toString());
-            System.out.println("isAroundChoke = " + focus.isAroundChoke());
-            System.out.println("focus.fromSide() = " + focus.fromSide());
+//            System.out.println("FOCUS POINT = " + focus.toString());
+//            System.out.println("isAroundChoke = " + focus.isAroundChoke());
+//            System.out.println("focus.fromSide() = " + focus.fromSide());
             return false;
         }
 

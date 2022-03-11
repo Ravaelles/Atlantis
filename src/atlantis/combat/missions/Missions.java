@@ -79,6 +79,11 @@ public class Missions {
         setGlobalMissionTo(CONTAIN, reason);
     }
 
+    public static void setGlobalMissionSparta(String reason) {
+        lastMissionEnforcedAt = A.now();
+        setGlobalMissionTo(SPARTA, reason);
+    }
+
     public static Mission initialMission() {
 
         // === Handle UMS ==========================================
@@ -94,8 +99,8 @@ public class Missions {
 //            return Missions.DEFEND;
 //        }
 
-        return MissionChanger.defendOrSpartaMission();
-//        return Missions.ATTACK;
+//        return MissionChanger.defendOrSpartaMission();
+        return Missions.ATTACK;
 //        return Missions.CONTAIN;
     }
 

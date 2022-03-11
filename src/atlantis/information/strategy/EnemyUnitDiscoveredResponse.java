@@ -5,10 +5,12 @@ import atlantis.combat.missions.Missions;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.decisions.OurStrategicBuildings;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.FakeFoggedUnit;
+import atlantis.units.select.Count;
 import tests.unit.FakeUnit;
 
 public class EnemyUnitDiscoveredResponse {
@@ -27,6 +29,20 @@ public class EnemyUnitDiscoveredResponse {
 //                MissionChanger.forceMissionContain();
 ////                CurrentBuildOrder.set(TerranStrategies.TERRAN_Mech.buildOrder());
 //            }
+        }
+
+        if (GamePhase.isEarlyGame()) {
+            if (enemyUnit.isZergling()) {
+                if (EnemyUnits.count(AUnitType.Zerg_Zergling) >= 6) {
+                    MissionChanger.forceMissionSparta("LotsOfZerglings");
+                }
+            }
+
+            else if (enemyUnit.isZealot()) {
+                if (Count.ourCombatUnits() <= 4) {
+                    MissionChanger.forceMissionSparta("MoreCautiouslyWithZealot");
+                }
+            }
         }
     }
 

@@ -120,10 +120,12 @@ public class ATargeting {
 //                .hasPathFrom(ourUnit);
 
         // It makes sense to focus fire on units that have lot of HP
-        if (ourUnit.friendsNearCount() <= 8 || (type.maxHp() > 35 && !type.isWorker())) {
+        boolean shouldFocusFire = ourUnit.friendsNearCount() <= 7
+            || (type.maxHp() > 35 && !type.isWorker());
+        if (shouldFocusFire) {
 //            .inShootRangeOf(extraRange, ourUnit)
             AUnit mostWounded = targets.mostWounded();
-            if (mostWounded != null && mostWounded.isWounded()) {
+            if (mostWounded != null && mostWounded.isWounded() && mostWounded.hp() >= 21) {
                 return mostWounded;
             }
         }

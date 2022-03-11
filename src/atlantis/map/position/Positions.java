@@ -243,4 +243,7 @@ public class Positions<T extends HasPosition> {
         return _lastIndex;
     }
 
+    public APosition average() {
+        return PositionHelper.getPositionAverage((Collection<HasPosition>) positions);
+    }
 }

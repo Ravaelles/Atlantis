@@ -200,10 +200,9 @@ public class RetreatManager {
 
         if (unit.isMelee() && unit.isMissionSparta()) {
             return AGame.timeSeconds() > 300
-                || (
-                    unit.hp() > 32
-//                        && unit.friendsNear().melee().inRadius(1.5, unit).count() <= 1
-            );
+//                || unit.hp() > (unit.meleeEnemiesNearCount(2) >= 2 ? 33 : 17);
+                || unit.hp() > 17
+                || unit.friendsInRadiusCount(1) >= 4;
         }
 
 //        if (unit.isMissionDefend() && (unit.isMelee() || unit.woundPercent() <= 10)) {

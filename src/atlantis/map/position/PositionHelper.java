@@ -48,17 +48,17 @@ public class PositionHelper {
         );
     }
     
-    public static APosition getPositionAverage(Units units) {
+    public static APosition getPositionAverage(Collection<? extends HasPosition> units) {
         int totalX = 0;
         int totalY = 0;
         
-        for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext();) {
-            AUnit unit = iterator.next();
-            if (!unit.hasPosition()) {
+        for (Iterator<HasPosition> iterator = (Iterator<HasPosition>) units.iterator(); iterator.hasNext();) {
+            HasPosition position = iterator.next();
+            if (!position.hasPosition()) {
                 continue;
             }
-            totalX += unit.x();
-            totalY += unit.y();
+            totalX += position.x();
+            totalY += position.y();
         }
 
         return new APosition(totalX / units.size(), totalY / units.size());

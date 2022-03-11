@@ -6,6 +6,7 @@ import atlantis.combat.missions.defend.MissionChangerWhenDefend;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 
 public class MissionChanger {
 
-    public static final int MISSIONS_ENFORCED_FOR_SECONDS = 30;
+    public static final int MISSIONS_ENFORCED_FOR_SECONDS = 20;
 
     public static final boolean DEBUG = true;
 //    public static final boolean DEBUG = false;
@@ -37,13 +38,16 @@ public class MissionChanger {
         // === Handle UMS ==========================================
 
         if (AGame.isUms()) {
-            forceMissionAttack();
+            forceMissionAttack("UmsAlwaysAttack");
             return;
         }
 
         // =========================================================
 
-        if (!Have.main() || Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS) {
+        if (
+            !Have.main()
+                || (Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS && !ArmyStrength.weAreMuchStronger()
+        )) {
             return;
         }
 
@@ -75,7 +79,7 @@ public class MissionChanger {
 
         if (Missions.isFirstMission()) {
             if (Missions.isGlobalMissionAttack() && unit.friendsNear().atLeast(3)) {
-                forceMissionContain();
+                forceMissionContain("BetterContainRatherThanAttacking");
             }
         }
     }
@@ -89,12 +93,16 @@ public class MissionChanger {
 //        A.printStackTrace("Change to " + newMission);
     }
 
-    public static void forceMissionAttack() {
+    public static void forceMissionAttack(String reason) {
         Missions.forceGlobalMissionAttack(reason);
     }
 
-    public static void forceMissionContain() {
+    public static void forceMissionContain(String reason) {
         Missions.setGlobalMissionContain(reason);
+    }
+
+    public static void forceMissionSparta(String reason) {
+        Missions.setGlobalMissionSparta(reason);
     }
 
     protected static boolean defendAgainstMassZerglings() {

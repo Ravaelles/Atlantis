@@ -22,6 +22,7 @@ public class Sparta extends MissionDefend {
 //    public static final double HOLD_DIST_FOR_MELEE = 0.6;
     public static final double HOLD_DIST_FOR_MELEE = 0;
     public static final double HOLD_DIST_FOR_MELEE_MARGIN = 0.08;
+    private static final double MAX_MELEE_DIST_TO_ATTACK = 1.1;
 
     // =========================================================
 
@@ -80,7 +81,7 @@ public class Sparta extends MissionDefend {
 
         // Ranged
         if (unit.isRanged()) {
-            return unit.translatePercentTowards(focusPoint, 30)
+            return focusPoint.translatePercentTowards(unit, 30)
                 .makeFreeOfOurUnits(2, 0.12, unit);
         }
 
@@ -95,25 +96,34 @@ public class Sparta extends MissionDefend {
         return spartanPoint != null ? spartanPoint : focusPoint;
     }
 
-//    public static double optimalDist(AUnit unit) {
-//        return unit.isMelee() ? 0.5 : 2.5;
-//    }
-
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (unit.isRanged()) {
-            return enemyDistToBase - 1 <= focusPointDistToBase;
+        if (!unit.mission().focusPoint().isAroundChoke()) {
+            System.err.println("Invalid Sparta not around choke");
+            return super.allowsToAttackEnemyUnit(unit, enemy);
         }
 
-        if (enemy.isWorker() && unitToEnemy <= 3 && enemyDistToFocus <= 3 && unit.enemiesNear().count() <= 2) {
+        if (unit.isRanged()) {
+            return enemyDistToBase - 2.1 <= focusPointDistToBase;
+        }
+
+        if (enemy.isRanged()) {
+            return enemyDistToFocus <= 2.1 || enemyDistToBase < unitToBase;
+        }
+
+        if (enemy.isWorker() && unitToEnemy <= 3 && enemyDistToFocus <= 3 && A.seconds() <= 250) {
             return true;
         }
+
+        if (unitToBase >= 40) {
+            return false;
+        }
+
+        // =========================================================
 
         focusPoint = focusPoint();
         if (!focusPoint.isAroundChoke()) {
             return super.allowsToAttackEnemyUnit(unit, enemy);
         }
-
-        // =========================================================
 
         main = Select.main();
         focusPointDistToBase = focusPoint.distTo(main);
@@ -124,23 +134,21 @@ public class Sparta extends MissionDefend {
 
         // =========================================================
 
-//        if (notAllowedToAttackTooFar(unit, enemy)) {
-//            return false;
-//        }
+        if ((enemy.isZealot() || enemy.isZergling()) && unit.isZealot()) {
+            return unitToEnemy <= MAX_MELEE_DIST_TO_ATTACK
+                || (isEnemyBehindLineOfDefence() && enemy.isZergling())
+                || (enemyDistToFocus <= 1.2 && unit.enemiesNear().count() == 0);
+        }
 
-//        if (unit.isMelee() && enemyDistToBase > unitToBase) {
-//            return false;
-//        }
-
-        if (enemyDistToBase > focusPointDistToBase && unit.distTo(enemy) >= 1.1) {
+        if (!isEnemyBehindLineOfDefence() && unitToEnemy > MAX_MELEE_DIST_TO_ATTACK) {
             return false;
         }
 
-        if (unitToBase > enemyDistToBase) {
+        if (isEnemyBehindLineOfDefence()) {
             return true;
         }
 
-        return unit.distTo(enemy) <= (unit.isMelee() ? 1.3 : unit.weaponRangeAgainst(enemy));
+        return unit.distTo(enemy) <= (unit.isMelee() ? MAX_MELEE_DIST_TO_ATTACK : unit.weaponRangeAgainst(enemy));
 
 //        return unit.isMelee() ? forMelee(unit, enemy);
 
@@ -154,6 +162,10 @@ public class Sparta extends MissionDefend {
 //        else if (enemyDistToBase > (focusPointDistToBase + 0.5)) {
 //            return false;
 //        }
+    }
+
+    private boolean isEnemyBehindLineOfDefence() {
+        return unitToBase + 5 > enemyDistToBase;
     }
 
     private boolean holdOnPerpendicularLine() {
@@ -214,7 +226,10 @@ public class Sparta extends MissionDefend {
     }
 
     private boolean shouldHold(AUnit unit) {
-        return !unit.isAttacking() && !"HelpWithdraw".equals(unit.tooltip());
+        return !unit.isAttacking()
+            && !unit.isHoldingPosition()
+            && !"HelpWithdraw".equals(unit.tooltip())
+            && unit.lastActionMoreThanAgo(3);
     }
 
 }

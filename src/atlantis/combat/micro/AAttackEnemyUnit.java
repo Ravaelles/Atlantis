@@ -152,8 +152,9 @@ public class AAttackEnemyUnit {
         }
 
         // Prevent units from switching attack of the same unit, to another unit of the same type
-        if (unit.target() != null && unit.isMelee() && unit.target().isTank() && unit.isAttackingOrMovingToAttack()) {
-            if (unit.distToLessThan(unit.target(), 3)) {
+//        unit.target().isTank() &&
+        if (unit.isMelee() && unit.target() != null && !unit.target().equals(target) && unit.isAttackingOrMovingToAttack()) {
+            if (unit.distToLessThan(unit.target(), 1.03)) {
                 reasonNotToAttack = "DontSwitch";
                 unit.addLog(reasonNotToAttack);
                 return false;

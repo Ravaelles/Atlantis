@@ -24,7 +24,7 @@ public class MissionContain extends Mission {
         // =========================================================
 
         if (focusPoint == null) {
-            MissionChanger.forceMissionAttack();
+            MissionChanger.forceMissionAttack("InvalidFocusPoint");
             return false;
         }
 

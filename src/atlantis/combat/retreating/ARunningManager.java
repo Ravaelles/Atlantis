@@ -259,6 +259,10 @@ public class ARunningManager {
      * Running behavior which will make unit run toward main base.
      */
     private boolean shouldRunTowardsBase() {
+        if (A.seconds() >= 380) {
+            return false;
+        }
+
         if (unit.isScout()) {
             return false;
         }
@@ -281,7 +285,9 @@ public class ARunningManager {
             }
 
             if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
-                return true;
+                if (unit.meleeEnemiesNearCount(3) == 0) {
+                    return true;
+                }
             }
         }
 

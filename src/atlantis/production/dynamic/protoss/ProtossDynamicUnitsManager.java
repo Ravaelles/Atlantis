@@ -17,6 +17,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 
 import java.util.List;
 
@@ -124,7 +125,9 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static int minZealotsAganstEnemyRush() {
-        return 4;
+        if (Enemy.protoss()) return 4;
+        if (Enemy.terran()) return 1;
+        return 5;
     }
 
     private static void zealots() {

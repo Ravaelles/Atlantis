@@ -39,7 +39,7 @@ public class EnemyInfo {
     public static AUnit enemyNearAnyOurBase() {
         return (AUnit) cache.get(
                 "enemyNearAnyOurBuilding",
-                50,
+                45,
                 () -> {
                     if (!Have.base()) {
                         return null;
@@ -53,9 +53,8 @@ public class EnemyInfo {
                             AUnitType.Zerg_Scourge
                     ).nearestTo(Select.main());
                     if (nearestEnemy != null) {
-//                        return Select.ourBuildings()
                         return Select.ourBases()
-                                .inRadius(Enemy.terran() ? 30 : 25, nearestEnemy).atLeast(2)
+                                .inRadius(Enemy.terran() ? 22 : 17, nearestEnemy).atLeast(1)
                                 ? nearestEnemy : null;
                     }
 

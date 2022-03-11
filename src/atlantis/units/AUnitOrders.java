@@ -468,7 +468,7 @@ public interface AUnitOrders {
      * Broodwar. See also load, unloadAll, getLoadedUnits, isLoaded, canUnload, canUnloadAtPosition
      */
     default boolean unload(AUnit target) {
-        A.printStackTrace("Unloaded...");
+//        A.printStackTrace("Unloaded...");
         unit().setAction(Actions.UNLOAD);
         target.setAction(Actions.UNLOAD);
         return u().unload(target.u());

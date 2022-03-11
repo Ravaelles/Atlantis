@@ -348,33 +348,15 @@ public class AScoutManager {
     }
 
     private static void initializeEnemyRegionPolygonPoints(AUnit scout) {
-//        Position centerOfRegion = enemyBaseRegion.center();
-
-//        scoutingAroundBasePoints.addPosition(APosition.create(centerOfRegion));
-//
-//        return;
+        APosition center = (new Positions(enemyBaseRegion.boundaries())).average();
 
         for (ARegionBoundary position : enemyBaseRegion.boundaries()) {
-//            APosition position = APosition.create(point);
+            double groundDistance = center.distTo(position);
 
-            // Calculate actual ground distance to this position
-//            double groundDistance = AMap.getGroundDistance(scout, position);
-            double groundDistance = scout.groundDist(position);
-
-            // Fix problem with some points being unwalkable despite isWalkable being true
-//            if (groundDistance < 2) {
-//                continue;
-//            }
-//            position = PositionOperationsWrapper.getPositionMovedPercentTowards(position, centerOfRegion, 3.5);
-
-            // If positions is walkable, not in different region and has path to it, it should be ok
-//            if (position.isWalkable() && regionToRoam.getPolygon().isInside(position)
             if (
                     position.isWalkable()
-//                    && scout.hasPathTo(position) && groundDistance >= 4
                     && groundDistance >= 2
-                    && groundDistance <= 20
-//                    && groundDistance <= 1.7 * scout.distanceTo(position)
+                    && groundDistance <= 17
             ) {
                 scoutingAroundBasePoints.addPosition(position);
             }

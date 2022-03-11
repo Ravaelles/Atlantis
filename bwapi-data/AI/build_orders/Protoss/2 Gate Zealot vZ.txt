@@ -41,10 +41,9 @@ Probe x2
 16 - Zealot
 18 - Zealot
 20 - Zealot
-22 - Shield Battery - MAIN
-24 - Zealot
-26 - Cybernetics Core
-30 - Assimilator
+//22 - Shield Battery - MAIN
+23 - Cybernetics Core
+26 - Assimilator
 30 - Zealot
 35 - Dragoon
 39 - Dragoon

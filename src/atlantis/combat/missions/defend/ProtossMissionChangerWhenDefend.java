@@ -8,6 +8,7 @@ import atlantis.combat.missions.contain.ProtossMissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -32,10 +33,12 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     private static boolean canChange() {
 //        if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {
         if (GamePhase.isEarlyGame()) {
-            if (ArmyStrength.weAreMuchStronger()) {
-                return true;
+            if (
+                EnemyStrategy.get().isRushOrCheese()
+                && (A.resourcesBalance() < 350 || !ArmyStrength.weAreMuchStronger())
+            ) {
+                return false;
             }
-//            if (true) return false;
 
             if (Count.cannons() >= 1 && Count.ourCombatUnits() <= 8) {
                 return false;

@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
+import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
@@ -27,7 +28,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     public AFocusPoint focusPoint() {
         return cache.get(
             "focusPoint",
-            30,
+            29,
             () -> {
                 if (AGame.isUms()) {
                     return null;
@@ -59,14 +60,21 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if (Have.base()) {
                     AUnit enemyNear = EnemyInfo.enemyNearAnyOurBase();
                     if (enemyNear != null && enemyNear.isAlive()) {
-                        AUnit building = Select.ourBuildings().nearestTo(enemyNear);
-                        if (building != null) {
-                            return new AFocusPoint(
-                                enemyNear,
-                                building,
-                                "EnemyInBase"
-                            );
-                        }
+                        return new AFocusPoint(
+                            enemyNear,
+                            "EnemyInBase"
+                        );
+                    }
+                }
+
+                if (Missions.isGlobalMissionSparta()) {
+                    AChoke mainChoke = Chokes.mainChoke();
+                    if (mainChoke != null) {
+                        return new AFocusPoint(
+                            mainChoke,
+                            Select.main(),
+                            "Choke300"
+                        );
                     }
                 }
 
