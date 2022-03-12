@@ -6,7 +6,6 @@ import atlantis.combat.micro.terran.TerranMissileTurretsForNonMain;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.decisions.Decisions;
@@ -20,9 +19,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-import static atlantis.units.AUnitType.Protoss_Zealot;
-import static atlantis.units.AUnitType.Terran_Barracks;
-
+import static atlantis.units.AUnitType.*;
 
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
@@ -35,6 +32,9 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             TerranBunker.handleDefensiveBunkers();
         }
 
+        comsats();
+        scienceFacilities();
+
         factoryIfBioOnly();
 
         armory();
@@ -42,20 +42,37 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         factories();
         starport();
 
-        comsats();
-
         barracks();
     }
 
     // =========================================================
 
-    private static boolean armory() {
-        if (Have.no(AUnitType.Terran_Armory)) {
+    private static void scienceFacilities() {
+        if (Have.a(Terran_Science_Facility)) {
+            return;
+        }
+
+        if (A.supplyUsed() >= 50 || enemyStrategy().goingHiddenUnits()) {
+            if (haveNotExistingOrPlanned(Terran_Starport)) {
+                AddToQueue.withHighPriority(Terran_Starport);
+            }
+            AddToQueue.withHighPriority(Terran_Science_Facility);
+            AddToQueue.withHighPriority(Terran_Control_Tower);
+        }
+    }
+
+    private static boolean haveNotExistingOrPlanned(AUnitType type) {
+        if (Count.ofType(type) > 0) {
             return false;
         }
 
-        if (EnemyStrategy.get().isAirUnits()) {
-            AddToQueue.withTopPriority(AUnitType.Terran_Armory);
+        return Count.inQueueOrUnfinished(type, 4) == 0;
+    }
+
+    private static boolean armory() {
+
+        if (enemyStrategy().isAirUnits()) {
+            AddToQueue.withTopPriority(Terran_Armory);
             return true;
         }
 
@@ -63,8 +80,8 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void starport() {
-        if (A.supplyUsed() >= 90 && Have.factory() && Have.no(AUnitType.Terran_Starport)) {
-            AddToQueue.withStandardPriority(AUnitType.Terran_Starport);
+        if (A.supplyUsed() >= 90 && Have.factory() && Have.no(Terran_Starport)) {
+            AddToQueue.withStandardPriority(Terran_Starport);
         }
     }
 
@@ -74,20 +91,20 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
 
 //        if (OurDecisions.haveFactories() && Count.factories() < 2) {
-//            AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+//            AddToQueue.withHighPriority(Terran_Factory);
 //        }
         if (
                 OurStrategy.get().goingBio()
                 && (
-//                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.WithPlanned(AUnitType.Terran_Factory) == 0)
-                        (Count.WithPlanned(AUnitType.Terran_Factory) == 0)
-                        || (A.supplyUsed() >= 30 && Count.WithPlanned(AUnitType.Terran_Factory) == 0)
+//                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.WithPlanned(Terran_Factory) == 0)
+                        (Count.WithPlanned(Terran_Factory) == 0)
+                        || (A.supplyUsed() >= 30 && Count.WithPlanned(Terran_Factory) == 0)
                 )
         ) {
-//            System.err.println("Change from BIO to TANKS (" + Count.WithPlanned(AUnitType.Terran_Factory) + ")");
-//            System.err.println("A = " + Count.inProduction(AUnitType.Terran_Factory));
-//            System.err.println("B = " + Count.inQueue(AUnitType.Terran_Factory, 5));
-            AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+//            System.err.println("Change from BIO to TANKS (" + Count.WithPlanned(Terran_Factory) + ")");
+//            System.err.println("A = " + Count.inProduction(Terran_Factory));
+//            System.err.println("B = " + Count.inQueue(Terran_Factory, 5));
+            AddToQueue.withHighPriority(Terran_Factory);
             return true;
         }
 
@@ -99,23 +116,23 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
      */
     private static boolean factories() {
         if (AGame.canAffordWithReserved(160, 120)) {
-            Selection factories = Select.ourOfType(AUnitType.Terran_Factory);
+            Selection factories = Select.ourOfType(Terran_Factory);
             
             int unfinishedFactories = 
-                    ConstructionRequests.countNotFinishedOfType(AUnitType.Terran_Factory);
+                    ConstructionRequests.countNotFinishedOfType(Terran_Factory);
             int numberOfFactories = factories.size() + unfinishedFactories;
             
             // Proceed only if all factories are busy
             if (numberOfFactories >= 1 && factories.areAllBusy()) {
                 
                 if (unfinishedFactories == 0) {
-                    AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+                    AddToQueue.withHighPriority(Terran_Factory);
                     return true;
                 }
                 else if (unfinishedFactories >= 1 && AGame.canAfford(
                         100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
                 )) {
-                    AddToQueue.withHighPriority(AUnitType.Terran_Factory);
+                    AddToQueue.withHighPriority(Terran_Factory);
                     return true;
                 }
             }
@@ -130,10 +147,10 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
 
         if (
-                Count.bases() > Count.WithPlanned(AUnitType.Terran_Comsat_Station)
-                && Count.inQueueOrUnfinished(AUnitType.Terran_Comsat_Station, 5) <= 0
+                Count.bases() > Count.WithPlanned(Terran_Comsat_Station)
+                && Count.inQueueOrUnfinished(Terran_Comsat_Station, 5) <= 0
         ) {
-            AddToQueue.withStandardPriority(AUnitType.Terran_Comsat_Station);
+            AddToQueue.withStandardPriority(Terran_Comsat_Station);
         }
     }
 
@@ -177,16 +194,22 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static boolean barracks() {
+        int barracks = Count.barracks();
+
+        if (barracks >= 3) {
+            return false;
+        }
+
 //        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
         if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 4) {
             return false;
         }
 
-        if (Count.barracks() >= 3 && A.supplyUsed() <= 40) {
+        if (barracks >= 3 && A.supplyUsed() <= 40) {
             return false;
         }
 
-        if (Count.barracks() >= 3 && A.supplyUsed() <= 70) {
+        if (barracks >= 3 && A.supplyUsed() <= 70) {
             return false;
         }
 

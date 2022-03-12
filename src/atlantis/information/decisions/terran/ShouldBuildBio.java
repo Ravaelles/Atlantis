@@ -12,25 +12,41 @@ import atlantis.units.select.Count;
 public class ShouldBuildBio {
 
     public static boolean should() {
+        int infantry = Count.infantry();
+
         if (EnemyInfo.isDoingEarlyGamePush()) {
-            return true;
+            return wantsToReturnTrue();
         }
 
-        if (OurStrategy.get().goingBio() && Count.infantry() <= 30) {
-            return true;
+        if (OurStrategy.get().goingBio() && infantry <= 30) {
+            return wantsToReturnTrue();
         }
 
-        return (
+        if (
             (
                 !Decisions.maxFocusOnTanks()
                     &&
                     (
                         (OurStrategy.get().goingBio() || EnemyStrategy.get().isAirUnits())
-                            && (Count.infantry() <= 18 || AGame.canAffordWithReserved(50, 0))
+                            && (infantry <= 18 || AGame.canAffordWithReserved(50, 0))
                     )
             )
                 || !GamePhase.isEarlyGame()
-        );
+        ) {
+            return wantsToReturnTrue();
+        }
+
+        return false;
+    }
+
+    private static boolean wantsToReturnTrue() {
+        int infantry = Count.infantry();
+
+        if (infantry <= 12) {
+            return true;
+        }
+
+        return AGame.canAffordWithReserved(60, 0);
     }
 
 }

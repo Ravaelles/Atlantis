@@ -5,18 +5,19 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 import java.util.List;
 
 public class TerranTankWhenSieged extends TerranTank {
 
     protected static boolean updateSieged(AUnit unit) {
+//        if (handleShootingAtInvisibleUnits(unit)) {
+//            return true;
+//        }
+
         if (shouldNotThinkAboutUnsieging(unit)) {
             return false;
-        }
-
-        if (handleShootingAtInvisibleUnits(unit)) {
-            return true;
         }
 
         if (
@@ -95,43 +96,61 @@ public class TerranTankWhenSieged extends TerranTank {
         return false;
     }
 
-    private static boolean handleShootingAtInvisibleUnits(AUnit tank) {
-        if (tank.lastActionLessThanAgo(55, Actions.ATTACK_POSITION)) {
-            tank.setTooltipTactical("SmashInvisible!");
-            tank.addLog("SmashInvisible!");
-            return true;
-        }
-
-        List<AUnit> cloaked = EnemyUnits.discovered()
-            .effCloaked()
-            .groundUnits()
-            .inRadius(11.9, tank)
-            .list();
-        for (AUnit cloakedUnit : cloaked) {
-//            System.out.println(cloakedUnit + " // " + cloakedUnit.position());
-            if (cloakedUnit.distTo(tank) >= tank.groundWeaponMinRange()) {
-//                if (tank.lastActionMoreThanAgo(30, Actions.ATTACK_POSITION)) {
-//                }
-//                System.out.println("SHOOT AT " + cloakedUnit.position());
-                tank.attackPosition(cloakedUnit.position());
-                tank.setTooltipTactical("SmashInvisible");
-                tank.addLog("SmashInvisible");
-                return true;
-            }
-        }
-
-//        for (AUnit enemy : Select.enemy().effCloaked().groundUnits().inRadius(12, tank).list()) {
-//            if (enemy.distTo(tank) >= tank.groundWeaponMinRange()) {
-//                if (tank.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
-//                    tank.setTooltip("SMASH invisible!");
-//                    tank.attackPosition(enemy.position());
-//                }
-//                tank.setTooltip("SmashInvisible");
+//    private static boolean handleShootingAtInvisibleUnits(AUnit unit) {
+//        if (unit.lastActionLessThanAgo(55, Actions.ATTACK_POSITION)) {
+//            unit.setTooltipTactical("SmashingHidden");
+//            unit.addLog("SmashingHidden");
+////            System.out.println(A.now() + " waiting " + unit.idWithHash());
+//            return true;
+//        }
+//
+//        List<AUnit> cloaked = Select.enemy()
+//            .effCloaked()
+//            .groundUnits()
+//            .inRadius(11.9, unit)
+//            .list();
+//
+//        AUnit enemy = Select.enemy().first();
+////        System.out.println("enemy = " + enemy);
+////        System.out.println("enemy position = " + enemy.position() + " // " + unit.distTo(enemy));
+////        System.out.println("enemy isDetected = " + enemy.isDetected());
+////        System.out.println("enemy hp = " + enemy.hp());
+////        System.out.println("enemy type = " + enemy.type());
+//
+////        System.out.println("-----");
+////        System.out.println("EnemyUnits.discovered() A = " + Select.enemy().size());
+////        System.out.println("EnemyUnits.discovered() B = " + Select.enemy().effCloaked().size());
+////        System.out.println("EnemyUnits.discovered() C = " + Select.enemy().effCloaked() .inRadius(11.9, unit).size());
+//
+//        for (AUnit cloakedUnit : cloaked) {
+////            System.out.println(cloakedUnit + " // " + cloakedUnit.position());
+//            double dist = cloakedUnit.position().distTo(unit);
+//            if (4 <= dist && dist <= 12) {
+////                System.err.println("Dist ok, can fire! dist=" + dist + " // cooldown=" + unit.cooldownRemaining());
+////                if (unit.lastActionMoreThanAgo(30, Actions.ATTACK_POSITION)) {
+////                }
+////                System.out.println("SHOOT AT " + cloakedUnit.position());
+//                unit.attackPosition(cloakedUnit.position());
+//                unit.setTooltipTactical("SMASH!");
+//                unit.addLog("SMASH!");
+//
+////                System.out.println(A.now() + " FIRED " + unit.idWithHash());
 //                return true;
 //            }
 //        }
-
-        return false;
-    }
+//
+////        for (AUnit enemy : Select.enemy().effCloaked().groundUnits().inRadius(12, unit).list()) {
+////            if (enemy.distTo(unit) >= unit.groundWeaponMinRange()) {
+////                if (unit.lastActionMoreThanAgo(30, UnitActions.ATTACK_POSITION)) {
+////                    unit.setTooltip("SMASH invisible!");
+////                    unit.attackPosition(enemy.position());
+////                }
+////                unit.setTooltip("SmashInvisible");
+////                return true;
+////            }
+////        }
+//
+//        return false;
+//    }
 
 }

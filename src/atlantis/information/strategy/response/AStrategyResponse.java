@@ -8,7 +8,6 @@ import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.map.scout.AScoutManager;
 import atlantis.production.requests.AAntiAirBuildingRequests;
 import atlantis.production.requests.AAntiLandBuildingRequests;
-import atlantis.util.Enemy;
 
 public abstract class AStrategyResponse {
 
@@ -53,7 +52,7 @@ public abstract class AStrategyResponse {
 
         // === Tech ========================================
 
-        if (enemyStrategy.isHiddenUnits()) {
+        if (enemyStrategy.goingHiddenUnits()) {
 //            if (!Enemy.terran()) {
 //                Missions.forceGlobalMissionDefend("Enemy goes hidden units");
 //            }

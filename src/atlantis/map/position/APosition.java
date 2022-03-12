@@ -10,8 +10,6 @@ import bwapi.Point;
 import bwapi.Position;
 import bwapi.WalkPosition;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -105,7 +103,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     /**
      * APosition class should be used always instead of Position when possible.
      */
-    protected Position p() {
+    public Position rawP() {
         return p;
     }
 

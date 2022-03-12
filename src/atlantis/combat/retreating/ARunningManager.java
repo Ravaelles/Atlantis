@@ -35,7 +35,7 @@ public class ARunningManager {
     public static int ANY_DIRECTION_RADIUS_DEFAULT = 3;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 4;
-    public static int ANY_DIRECTION_RADIUS_INFANTRY = 3;
+    public static int ANY_DIRECTION_RADIUS_INFANTRY = 2;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.65;
 
     private final AUnit unit;

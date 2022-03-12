@@ -72,18 +72,17 @@ public interface AUnitOrders {
 //        return true;
     }
 
-    // To avoid confusion: NEVER UE IT.
+    // To avoid confusion: NEVER USE IT.
     // When moving units always use "Move" mission.
     // Use "Attack" only for targeting actual units.
-    /**
-     * ONLY TANKS ARE ALLOWED TO USE IT!!!
-     */
     default boolean attackPosition(APosition target) {
+        if (true) throw new RuntimeException("DO NOT USE IT, PLEASE");
+
         if (u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
-            u().attack(target.position());
+            u().attack(target.rawP());
             unit().setAction(Actions.ATTACK_POSITION);
 
-//            System.out.println("--------- SHOOT AT POSITION " + target.position());
+//            System.out.println("--------- SHOOT AT POSITION " + target.position() + " // #" + u().getID());
             return true;
         }
 

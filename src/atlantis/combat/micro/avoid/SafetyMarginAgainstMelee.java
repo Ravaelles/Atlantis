@@ -267,7 +267,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
 //        if (true) return 3;
 
-        if (defender.hasMedicInRange()) {
+        // === MEDIC in range ===========================================
+
+        boolean medicInRange = defender.hasMedicInRange();
+        if (medicInRange) {
             if (defender.isHealthy()) {
                 defender.setTooltipTactical("Healthy");
                 return enemyUnitsNearBonus(defender);
@@ -278,31 +281,20 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //                    + enemyMovementBonus(defender, attacker)
                     + woundedAgainstMeleeBonus(defender, attacker);
 
-//            if (defender.hp() >= 21) {
-//                criticalDist = Math.min(criticalDist, 2.5);
-//            }
             defender.setTooltipTactical("HasMedic");
         }
 
-        // No medic Near
+        // === No medic Near ===========================================
+
         else {
             criticalDist = INFANTRY_BASE_IF_NO_MEDIC
 //                    + ourMovementBonus(defender)
+                    + enemyMovementBonus(defender, attacker)
                     + (defender.hasCooldown() ? enemyMovementBonus(defender, attacker) : 0)
                     + workerBonus(defender, attacker)
                     + woundedAgainstMeleeBonus(defender, attacker);
 
-//            if (
-//                    defender.hp() >= 24
-//                            && defender.friendsNearCount() >= 5
-//                            && 4 * defender.friendsNearCount() >= defender.meleeEnemiesNearCount()
-//            ) {
-//                criticalDist = 1.7;
-//            }
-
-//                System.out.println("criticalDist = " + criticalDist + " (hp = " + defender.hp() + ")");
-
-            criticalDist = Math.min(criticalDist, defender.isWounded() ? 2.9 : 2.5);
+//            criticalDist = Math.min(criticalDist, defender.isWounded() ? 2.9 : 2.8);
 
             String log = "NoMedic" + A.digit(criticalDist);
             defender.setTooltipTactical(log);
@@ -310,9 +302,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         }
 
         criticalDist += enemyUnitsNearBonus(defender);
-        criticalDist = Math.min(criticalDist, 3.5);
 
-//        System.err.println("criticalDist against " + attacker + ": " + criticalDist + " // " + attacker.distTo(defender));
+        if (medicInRange) {
+            criticalDist = Math.min(criticalDist, 2.1);
+        } else {
+            criticalDist = Math.min(criticalDist, 3.0);
+        }
+
 //        defender.addTooltip(A.digit(criticalDist));
 
         return criticalDist;

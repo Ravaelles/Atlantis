@@ -1096,7 +1096,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isDetected() {
-        return u().isDetected();
+        return u.isDetected() && hp() > 0;
     }
 
     public boolean notVisible() {

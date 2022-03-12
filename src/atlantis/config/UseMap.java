@@ -17,7 +17,7 @@ public class UseMap {
 
     public static String activeMap() {
 //        if (true) return "sscai/(2)Destination.scx";
-        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
@@ -56,6 +56,8 @@ public class UseMap {
 //        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
 //        if (true) return "ums/rav/Tanks_v_DT.scx";
+//        if (true) return "ums/rav/Tanks_v_DT_2.scx";
+//        if (true) return "ums/rav/4M_v_2Zealots.scm";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
@@ -68,7 +70,7 @@ public class UseMap {
         // === Gosu bots - advanced single player cheating bots ====
 
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
-//        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
+        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush

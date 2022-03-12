@@ -2,6 +2,8 @@ package atlantis.production.dynamic;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.game.AGame;
+import atlantis.information.strategy.AStrategy;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
@@ -27,6 +29,10 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     }
     
     // =========================================================
+
+    protected static AStrategy enemyStrategy() {
+        return EnemyStrategy.get();
+    }
 
     /**
      * Build Refineries/Assimilators/Extractors when it makes sense.

@@ -76,7 +76,7 @@ public class AExpansionManager {
         // === True ===========================================
 
         if (bases == 0 && basesInProduction == 0) {
-            if (We.terran() && EnemyStrategy.get().isRushOrCheese()) {
+            if (We.terran() && EnemyStrategy.get().isRushOrCheese() && A.seconds() <= 450) {
                 return false;
             }
             return true;

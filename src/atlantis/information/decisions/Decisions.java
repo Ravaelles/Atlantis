@@ -65,6 +65,8 @@ public class Decisions {
             "dontProduceVultures",
             100,
             () -> {
+                if (true) return true;
+
                 if (
                     GamePhase.isEarlyGame()
                         && Count.vultures() <= 3

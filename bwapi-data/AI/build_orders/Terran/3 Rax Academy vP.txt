@@ -43,21 +43,3 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 40 - Machine Shop
 41 - U 238 Shells
 42 - Tank
-42 - Engineering Bay
-44 - Factory
-54 - Tank Siege Mode
-54 - Missile Turret
-55 - Tank
-55 - Factory
-62 - Starport
-64 - Wraith
-66 - Science Facility
-68 - Factory
-69 - Physics Lab
-72 - Control Tower
-73 - Science Vessel
-78 - Science Vessel
-82 - Irradiate
-81 - Wraith
-84 - Science Vessel
-
