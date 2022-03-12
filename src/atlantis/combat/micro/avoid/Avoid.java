@@ -7,6 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class Avoid {
@@ -31,6 +32,8 @@ public class Avoid {
         HasPosition runFrom = defineRunFromForGroupOfUnits(unit, enemiesDangerouslyClose);
 
         if (runFrom == null) {
+            System.err.println("Run from group is null for " + unit);
+            enemiesDangerouslyClose.print("Group of units to run from");
             return false;
         }
 
@@ -51,23 +54,18 @@ public class Avoid {
     // =========================================================
 
     private static HasPosition defineRunFromForGroupOfUnits(AUnit unit, Units enemiesDangerouslyClose) {
+        Selection enemies = enemiesDangerouslyClose.selection().havingPosition();
+
         int takeOnly = unit.isDragoon() ? 2 : 3;
-        if (enemiesDangerouslyClose.size() >= takeOnly) {
-            Units nearestEnemies = new Units();
-            for (int i = 0; i < takeOnly; i++) {
-                AUnit enemy = enemiesDangerouslyClose.get(i);
-                if (enemy.hasPosition()) {
-                    nearestEnemies.addUnit(enemy);
-                }
-            }
-            return nearestEnemies.average();
+        if (enemies.size() >= takeOnly) {
+            return enemies.limit(takeOnly).units().average();
         }
 
         for (AUnit enemy : enemiesDangerouslyClose.list()) {
             APainter.paintCircle(enemy, 16, Color.Orange);
         }
 
-        return enemiesDangerouslyClose.first();
+        return enemies.first();
     }
 
     protected static double getRunDistance(AUnit unit) {

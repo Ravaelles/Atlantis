@@ -12,7 +12,7 @@ public class OurStrategyManager {
         AStrategy strategy;
 
         if (We.protoss()) {
-            strategy = initForProtoss();
+            strategy = ProtossStrategies.initForProtoss();
         } else if (We.terran()) {
             strategy = initForTerran();
         } else {
@@ -24,30 +24,18 @@ public class OurStrategyManager {
 
     // =========================================================
 
-    private static AStrategy initForProtoss() {
-        if (Enemy.zerg()) {
-            return ProtossStrategies.PROTOSS_2_Gate_Zealot_vZ;
-//            return ProtossStrategies.PROTOSS_Speedzealot;
-//            return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
-        }
-
-//        return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
-//        return ProtossStrategies.PROTOSS_2_Gate_Zealot_vP;
-        return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
-//        return ProtossStrategies.PROTOSS_Fast_DT;
-    }
-
     private static AStrategy initForTerran() {
 //        return TerranStrategies.TERRAN_3_Rax_MnM;
 //        return TerranStrategies.TERRAN_Nada_2_Fac;
 //        return TerranStrategies.TERRAN_1_Base_Vultures;
 
         if (Enemy.protoss()) {
-            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
+            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_Nada_2_Fac;
         }
         else if (Enemy.terran()) {
-            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
+            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
         }
         else {
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;

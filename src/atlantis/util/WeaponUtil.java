@@ -1,6 +1,7 @@
 package atlantis.util;
 
 import atlantis.units.AUnitType;
+import atlantis.util.cache.Cache;
 import bwapi.DamageType;
 import bwapi.WeaponType;
 

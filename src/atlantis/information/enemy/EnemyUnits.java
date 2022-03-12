@@ -4,7 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.*;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,6 +47,10 @@ public class EnemyUnits {
     }
 
     // =========================================================
+
+    public static boolean has(AUnitType unit) {
+        return EnemyUnits.discovered().countOfType(unit) > 0;
+    }
 
     public static int count(AUnitType type) {
         return discovered().ofType(type).count();

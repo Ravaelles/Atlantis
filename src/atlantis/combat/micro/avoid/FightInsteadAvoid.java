@@ -4,9 +4,13 @@ import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.game.A;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -101,8 +105,13 @@ public class FightInsteadAvoid {
                 return true;
             }
 
-            if (unit.isRanged() && ranged == null) {
-                unit.addLog("FightRanged");
+            if (
+                unit.isRanged()
+                    && ranged == null
+                    && unit.enemiesNear().ranged().isEmpty()
+                    && (unit.hp() >= 21 || unit.lastStartedAttackMoreThanAgo(30 * 7))
+            ) {
+                unit.addLog("FightAsRanged");
                 return false;
             } else {
                 unit.setTooltip("Retreat", true);
@@ -147,6 +156,10 @@ public class FightInsteadAvoid {
     }
 
     protected boolean dontFightInTopImportantCases() {
+        if (unit.isMarine() && GamePhase.isEarlyGame() && (!ArmyStrength.weAreMuchStronger() || Count.medics() <= 1)) {
+            unit.addLog("OhLord");
+            return true;
+        }
 
         // Always avoid invisible combat units
 //        if (invisibleDT != null || invisibleCombatUnit != null) {
@@ -159,6 +172,15 @@ public class FightInsteadAvoid {
     protected boolean fightInImportantCases() {
         if (unit.isWorker()) {
             System.err.println("Worker in fightInImportantCases");
+        }
+
+        if (
+            unit.isDragoon()
+                && unit.shieldDamageAtMost(30)
+                && (unit.lastStartedAttackMoreThanAgo(30 * 4) || unit.lastUnderAttackMoreThanAgo(30 * 10))
+        ) {
+            unit.addLog("ForAiur");
+            return true;
         }
 
         if (
@@ -189,6 +211,14 @@ public class FightInsteadAvoid {
 
     // RANGED
     protected boolean fightAsRangedUnit() {
+        if (unit.isRanged() && melee != null && ranged == null) {
+//            if (unit.hp() >= 40 && unit.lastAttackFrameMoreThanAgo(30 * 5)) {
+            if (unit.hp() >= 40 && unit.lastAttackFrameMoreThanAgo(30 * 4) && unit.nearestEnemyDist() >= 2.9) {
+                unit.addLog("Courage");
+                return true;
+            }
+        }
+
         if (melee != null && melee.hasPosition()) {
             unit.addLog("RunMelee" + A.dist(unit, melee));
 //            unit.addLog("RunMelee");
@@ -249,7 +279,7 @@ public class FightInsteadAvoid {
         }
 
         AUnit target = unit.target();
-        if (target != null && target.type().totalCost() >= 70 && target.hp() <= (unit.damageAgainst(target) + 4)) {
+        if (target != null && target.type().totalCost() >= 70 && target.hp() <= (unit.damageAgainst(target) - 1)) {
             return true;
         }
 
@@ -279,6 +309,7 @@ public class FightInsteadAvoid {
                     || (unit.hp() <= 30 && unit.enemiesNear().ranged().inRadius(6, unit).notEmpty())
                     || (unit.enemiesNear().ranged().inRadius(1, unit).isNotEmpty())
                     || (unit.enemiesNear().combatBuildings(false).inRadius(3, unit).isNotEmpty())
+                    || (unit.enemiesNear().ofType(AUnitType.Protoss_Reaver).inRadius(3, unit).isNotEmpty())
                 );
     }
 
@@ -301,12 +332,12 @@ public class FightInsteadAvoid {
                     || our.inRadius(1.3, unit).atLeast(25);
         }
         else if (We.protoss()) {
-            isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
-                    || our.inRadius(1.3, unit).atLeast(5);
+            isStacked = allCount >= 7 || (invisibleDT != null && allCount >= 4)
+                    || our.inRadius(1.3, unit).atLeast(7);
         }
         else if (We.zerg()) {
             isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
-                    || our.inRadius(1.3, unit).atLeast(5);
+                    || our.inRadius(1.3, unit).atLeast(7);
         }
 //        }
 

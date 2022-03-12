@@ -40,6 +40,11 @@ public abstract class Mission {
     }
 
     // Template method
+    public boolean allowsToRetreat(AUnit unit) {
+        return true;
+    }
+
+    // Template method
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         if (enemy.isCombatBuilding()) {
             return allowsToAttackCombatBuildings(unit, enemy);
@@ -61,7 +66,7 @@ public abstract class Mission {
     // =========================================================
 
     protected boolean enemyIsNearAnyOurBuilding(AUnit enemy) {
-        return EnemyInfo.isEnemyNearAnyOurBuilding();
+        return EnemyInfo.isEnemyNearAnyOurBase();
     }
 
 //    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
@@ -103,9 +108,9 @@ public abstract class Mission {
             return true;
         }
         else {
-            if (!AGame.isUms()) {
-                System.err.println("No invisible position found");
-            }
+//            if (!AGame.isUms()) {
+//                System.err.println("No invisible position found");
+//            }
             return false;
         }
     }
@@ -139,6 +144,10 @@ public abstract class Mission {
         return this.equals(Missions.DEFEND);
     }
 
+    public boolean isMissionSparta() {
+        return this.equals(Missions.SPARTA);
+    }
+
     public boolean isMissionAttack() {
         return this.equals(Missions.ATTACK);
     }
@@ -147,5 +156,4 @@ public abstract class Mission {
         return false;
 //        return this.equals(Missions.UMS);
     }
-
 }

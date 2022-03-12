@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ARunningManager;
@@ -26,7 +27,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.CappedList;
 import atlantis.util.Vector;
 import atlantis.util.Vectors;
@@ -489,6 +490,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this;
     }
 
+    public AUnit setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+//        System.out.println(A.now() + " - " + this.tooltip);
+        return this;
+    }
+
 //    public AUnit addTooltip(String tooltip) {
 //        this.tooltip = tooltip() + tooltip;
 //        return this;
@@ -554,17 +561,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     /**
-     * Not that we're racists, but spider mines and larvas aren't really units...
-     */
-    public boolean isNotRealUnit() {
-        return type().isNotRealUnit();
-    }
-
-    /**
      * Not that we're racists, but buildings, spider mines and larvas aren't really units...
      */
     public boolean isRealUnit() {
-        return !type().isNotRealUnit();
+        return type().isRealUnit();
     }
 
     public boolean isRealUnitOrBuilding() {
@@ -2042,7 +2042,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 }
                 else {
                     System.err.println("This is weird, should not be here");
-                    System.err.println(this);
+                    System.err.println("This = " + this);
+                    A.printStackTrace("This is weird, should not be here");
                     return Select.from(new Units());
                 }
             }
@@ -2266,11 +2267,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return false;
     }
 
+    public boolean isMissionSparta() {
+        if (mission() == null) {
+            return false;
+        }
+        return mission().equals(Missions.SPARTA);
+    }
+
     public boolean isMissionDefend() {
         if (mission() == null) {
             return false;
         }
-        return mission().isMissionDefend();
+        return mission().equals(Missions.DEFEND);
     }
 
     public boolean isMissionAttack() {
@@ -2304,7 +2312,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit nearestEnemy() {
-        return enemiesNear().nearestTo(this);
+        return (AUnit) cache.get(
+            "nearestEnemy",
+            2,
+            () -> enemiesNear().canAttack(this, 5).nearestTo(this)
+        );
+    }
+
+    public double nearestEnemyDist() {
+        AUnit nearestEnemy = nearestEnemy();
+
+        if (nearestEnemy != null) {
+            return distTo(nearestEnemy);
+        }
+
+        return 999;
     }
 
     public Selection friendsInRadius(double radius) {
@@ -2348,5 +2370,23 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isProtector() {
         return ARepairAssignments.isProtector(this);
+    }
+
+    public boolean kitingUnit() {
+        return isDragoon() || isVulture();
+    }
+
+    public double distToFocusPoint() {
+        Mission mission = mission();
+        if (mission == null) {
+            return 0;
+        }
+
+        AFocusPoint focusPoint = mission.focusPoint();
+        if (focusPoint == null) {
+            return 0;
+        }
+
+        return focusPoint.distTo(this);
     }
 }

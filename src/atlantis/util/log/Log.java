@@ -8,8 +8,8 @@ public class Log {
 
 //    public static final int UNIT_LOG_SIZE = 10;
 //    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 50;
-    public static final int UNIT_LOG_SIZE = 4;
-    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 30;
+    public static final int UNIT_LOG_SIZE = 6;
+    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 18;
 
     private ArrayList<LogMessage> messages = new ArrayList<>();
     private int expireAfterFrames;

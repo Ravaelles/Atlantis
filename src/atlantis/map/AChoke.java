@@ -1,5 +1,6 @@
 package atlantis.map;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import bwapi.Color;
@@ -74,9 +75,9 @@ public class AChoke implements HasPosition {
 
     @Override
     public String toString() {
-        return "AChoke{" +
-                "width=" + width +
-                ", center=" + center +
+        return "Choke{" +
+                "width=" + A.digit(width) +
+//                ",center=" + center +
                 '}';
     }
 

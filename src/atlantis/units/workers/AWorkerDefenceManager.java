@@ -20,6 +20,10 @@ public class AWorkerDefenceManager {
      * Attack other workers, run from enemies etc.
      */
     public static boolean handleDefenceIfNeeded(AUnit worker) {
+        if (worker.isRepairing()) {
+            return false;
+        }
+
         if (worker.enemiesNear().combatUnits().isEmpty()) {
             return false;
         }
@@ -107,9 +111,9 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean shouldNotFight(AUnit worker) {
-        if (worker.idIsOdd()) {
-            return true;
-        }
+//        if (worker.idIsOdd()) {
+//            return true;
+//        }
 
         if (Enemy.protoss() && worker.hp() <= 22) {
             return true;
@@ -122,10 +126,10 @@ public class AWorkerDefenceManager {
             return true;
         }
 
-        boolean isNearBase = Select.ourBases().inRadius(20, worker).atLeast(1);
-        if (!isNearBase) {
-            return true;
-        }
+//        boolean isNearBase = Select.ourBases().inRadius(20, worker).atLeast(1);
+//        if (!isNearBase) {
+//            return true;
+//        }
 
         return false;
     }
@@ -165,11 +169,12 @@ public class AWorkerDefenceManager {
             return attackNearestEnemy(worker);
         }
 
-        if (worker.distToMoreThan(Select.main(), 8)) {
+        if (worker.distToMoreThan(Select.main(), 9)) {
             return false;
         }
 
-        if (Count.workers() <= 12 || Select.our().inRadius(4, worker).atMost(2)) {
+//        if (Count.workers() <= 8 || Select.our().inRadius(4, worker).atMost(2)) {
+        if (Count.workers() <= 8) {
             return false;
         }
 
@@ -181,7 +186,7 @@ public class AWorkerDefenceManager {
                 AUnitType.Protoss_Archon,
                 AUnitType.Protoss_Reaver
 //                AUnitType.Protoss_Zealot
-        ).inRadius(8, worker).isNotEmpty()) {
+        ).inRadius(8, worker).count() >= 1) {
             return false;
         }
 
@@ -200,8 +205,7 @@ public class AWorkerDefenceManager {
 
         // FIGHT against COMBAT UNITS
         List<AUnit> enemies = worker.enemiesNear()
-                .inRadius(3, worker)
-                .canBeAttackedBy(worker, 1)
+                .canBeAttackedBy(worker, 4)
                 .list();
         for (AUnit enemy : enemies) {
             worker.attackUnit(enemy);

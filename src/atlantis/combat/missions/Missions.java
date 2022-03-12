@@ -3,6 +3,7 @@ package atlantis.combat.missions;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;
+import atlantis.combat.missions.other.Sparta;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
@@ -12,17 +13,18 @@ import atlantis.units.select.Select;
  */
 public class Missions {
 
+    public static final Mission ATTACK = new MissionAttack();
+    public static final Mission CONTAIN = new MissionContain();
+    public static final Mission DEFEND = new MissionDefend();
+    public static final Mission SPARTA = new Sparta();
+
     /**
      * This is the mission for main battle squad forces. E.g. initially it will be DEFEND, then it should be
      * PREPARE (go near enemy) and then ATTACK.
      */
     private static Mission currentGlobalMission = null;
     private static int lastMissionChanged = 0;
-
-    public static final Mission ATTACK = new MissionAttack();
-    public static final Mission CONTAIN = new MissionContain();
-    public static final Mission DEFEND = new MissionDefend();
-//    public static final Mission UMS = new MissionUms();
+    private static int lastMissionEnforcedAt = -1;
 
     // =========================================================
 
@@ -36,7 +38,7 @@ public class Missions {
         }
 
         if (currentGlobalMission == null) {
-            setGlobalMissionTo(initialMission());
+            setGlobalMissionTo(initialMission(), "Initial mission");
         }
 
         return currentGlobalMission;
@@ -44,6 +46,10 @@ public class Missions {
 
     public static boolean isGlobalMissionDefend() {
         return globalMission().isMissionDefend();
+    }
+
+    public static boolean isGlobalMissionSparta() {
+        return globalMission().isMissionSparta();
     }
 
     public static boolean isGlobalMissionContain() {
@@ -58,16 +64,24 @@ public class Missions {
         return globalMission().isMissionAttack();
     }
 
-    public static void setGlobalMissionAttack() {
-        setGlobalMissionTo(ATTACK);
+    public static void forceGlobalMissionAttack(String reason) {
+        lastMissionEnforcedAt = A.now();
+        setGlobalMissionTo(ATTACK, reason);
     }
 
-    public static void setGlobalMissionDefend() {
-        setGlobalMissionTo(DEFEND);
+    public static void forceGlobalMissionDefend(String reason) {
+        lastMissionEnforcedAt = A.now();
+        setGlobalMissionTo(DEFEND, reason);
     }
 
-    public static void setGlobalMissionContain() {
-        setGlobalMissionTo(CONTAIN);
+    public static void setGlobalMissionContain(String reason) {
+        lastMissionEnforcedAt = A.now();
+        setGlobalMissionTo(CONTAIN, reason);
+    }
+
+    public static void setGlobalMissionSparta(String reason) {
+        lastMissionEnforcedAt = A.now();
+        setGlobalMissionTo(SPARTA, reason);
     }
 
     public static Mission initialMission() {
@@ -85,8 +99,8 @@ public class Missions {
 //            return Missions.DEFEND;
 //        }
 
-        return Missions.DEFEND;
-//        return Missions.ATTACK;
+//        return MissionChanger.defendOrSpartaMission();
+        return Missions.ATTACK;
 //        return Missions.CONTAIN;
     }
 
@@ -101,7 +115,11 @@ public class Missions {
         }
     }
 
-    public static void setGlobalMissionTo(Mission mission) {
+    public static void setGlobalMissionTo(Mission mission, String reason) {
+        if (mission.isMissionDefend()) {
+            mission = MissionChanger.defendOrSpartaMission();
+        }
+
         if (mission.equals(currentGlobalMission)) {
             return;
         }
@@ -120,8 +138,10 @@ public class Missions {
             if (MissionChanger.DEBUG) {
                 System.err.println(
                     "CHANGED MISSION AT " + A.seconds() + " TO: " + mission.name()
-                    + ", reason: " + MissionChanger.debugReason
+                    + ", reason: " + reason
                 );
+
+//                A.printStackTrace("Changing mission to " + mission);
             }
             MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         }
@@ -150,4 +170,9 @@ public class Missions {
     public static boolean isFirstMission() {
         return MissionChanger.missionHistory.size() == 1;
     }
+
+    public static int lastMissionEnforcedAgo() {
+        return A.ago(lastMissionEnforcedAt);
+    }
+
 }

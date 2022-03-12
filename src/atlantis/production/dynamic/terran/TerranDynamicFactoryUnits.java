@@ -65,7 +65,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
             return false;
         }
 
-        if (EnemyStrategy.get().isAirUnits() && Count.includingPlanned(AUnitType.Terran_Goliath) <= 20) {
+        if (EnemyStrategy.get().isAirUnits() && Count.WithPlanned(AUnitType.Terran_Goliath) <= 20) {
             if (AGame.canAffordWithReserved(150, 100)) {
                 return addToQueueIfNotAlreadyThere(AUnitType.Terran_Goliath);
             }

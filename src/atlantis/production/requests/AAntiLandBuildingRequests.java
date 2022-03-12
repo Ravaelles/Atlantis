@@ -1,5 +1,6 @@
 package atlantis.production.requests;
 
+import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.config.AtlantisConfig;
 import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.enemy.EnemyInfo;
@@ -15,7 +16,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.We;
 
 public class AAntiLandBuildingRequests {
@@ -57,11 +58,7 @@ public class AAntiLandBuildingRequests {
 
     public static int expectedUnits() {
         if (We.terran()) {
-            if (EnemyInfo.isDoingEarlyGamePush()) {
-                return 2;
-            }
-
-            return 0;
+            return TerranBunker.expectedBunkers();
         }
 
         if (We.protoss()) {
@@ -116,7 +113,7 @@ public class AAntiLandBuildingRequests {
 
 //        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
 
-        AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
+        AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
         if (previousBuilding != null) {
             nearTo = previousBuilding.position();
         }

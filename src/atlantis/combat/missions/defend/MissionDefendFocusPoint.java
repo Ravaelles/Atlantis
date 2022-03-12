@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
+import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
@@ -14,7 +15,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.We;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
@@ -27,7 +28,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     public AFocusPoint focusPoint() {
         return cache.get(
             "focusPoint",
-            30,
+            29,
             () -> {
                 if (AGame.isUms()) {
                     return null;
@@ -39,34 +40,41 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
                     if (GamePhase.isEarlyGame() && mainBase != null) {
                         if (bunker != null) {
-                            return new AFocusPoint(bunker);
+                            return new AFocusPoint(bunker, "Bunker");
                         }
                     }
                 }
 
                 // If NO BASE exists, return any building
                 if (mainBase == null) {
-                    Selection selection = Select.ourBuildingsIncludingUnfinished();
+                    Selection selection = Select.ourBuildingsWithUnfinished();
                     if (selection == null || selection.first() == null) {
                         return null;
                     }
 
-                    return new AFocusPoint(selection.first());
+                    return new AFocusPoint(selection.first(), "AnyBuilding");
                 }
 
                 // === Enemies that breached into base =============
 
                 if (Have.base()) {
-                    AUnit enemyNear = EnemyInfo.enemyNearAnyOurBuilding();
-//                    AUnit enemyInBase = Select.enemy().combatUnits().effVisible().inRadius(10, Select.main()).first();
-                    if (enemyNear != null) {
-                        AUnit building = Select.ourBuildings().nearestTo(enemyNear);
-                        if (building != null) {
-                            return new AFocusPoint(
-                                enemyNear,
-                                building
-                            );
-                        }
+                    AUnit enemyNear = EnemyInfo.enemyNearAnyOurBase();
+                    if (enemyNear != null && enemyNear.isAlive()) {
+                        return new AFocusPoint(
+                            enemyNear,
+                            "EnemyInBase"
+                        );
+                    }
+                }
+
+                if (Missions.isGlobalMissionSparta()) {
+                    AChoke mainChoke = Chokes.mainChoke();
+                    if (mainChoke != null) {
+                        return new AFocusPoint(
+                            mainChoke,
+                            Select.main(),
+                            "Choke300"
+                        );
                     }
                 }
 
@@ -77,7 +85,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     if (natural != null) {
                         return new AFocusPoint(
                             natural,
-                            Select.main()
+                            Select.main(),
+                            "NaturalChoke"
                         );
                     }
                 }
@@ -88,28 +97,29 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if (mainChoke != null) {
                     return new AFocusPoint(
                         mainChoke,
-                        Select.main()
+                        Select.main(),
+                        "MainChoke"
                     );
                 }
 
                 // === Focus enemy attacking the main base =================
 
-                AUnit nearEnemy = Select.enemy()
-                    .combatUnits()
-                    .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Zerg_Overlord)
-                    .effVisible()
-                    .inRadius(12, mainBase)
-                    .nearestTo(mainBase);
-                if (nearEnemy != null) {
-                    return new AFocusPoint(
-                        nearEnemy,
-                        Select.main()
-                    );
-                }
+//                AUnit nearEnemy = Select.enemy()
+//                    .combatUnits()
+//                    .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Zerg_Overlord)
+//                    .effVisible()
+//                    .inRadius(12, mainBase)
+//                    .nearestTo(mainBase);
+//                if (nearEnemy != null) {
+//                    return new AFocusPoint(
+//                        nearEnemy,
+//                        Select.main()
+//                    );
+//                }
 //
 //                // === Gather around defensive buildings ===================
 //
-//                AUnit defBuilding = Select.ourOfTypeIncludingUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
+//                AUnit defBuilding = Select.ourOfTypeWithUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
 //                if (defBuilding != null) {
 //                    return defBuilding.translateTilesTowards(mainBase.position(), 5);
 //                }
@@ -127,7 +137,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if (building != null) {
                     return new AFocusPoint(
                         Chokes.nearestChoke(building.position()),
-                        building
+                        building,
+                        "FirstBuilding"
                     );
                 }
 

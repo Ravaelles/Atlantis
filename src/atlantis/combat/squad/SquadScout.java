@@ -64,7 +64,7 @@ public class SquadScout {
         if (EnemyUnits.discovered().atMost(2)) {
             GameLog.get().addMessage("Squad scout forced GLOBAL ATTACK");
             if (!Missions.isGlobalMissionAttack()) {
-                MissionChanger.forceMissionAttack();
+                MissionChanger.forceMissionAttack("EngageWorkersNow");
             }
         }
     }

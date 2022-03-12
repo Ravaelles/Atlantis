@@ -3,6 +3,7 @@ package atlantis.combat.retreating;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
+import atlantis.game.GameSpeed;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -28,8 +29,13 @@ public class ARunningManager {
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
     public static double Near_UNIT_MAKE_SPACE = 0.75;
     //    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
-    private static final double SHOW_BACK_TO_ENEMY_DIST = 3;
-    public static int ANY_DIRECTION_INIT_RADIUS_INFANTRY = 3;
+    private static final double SHOW_BACK_DIST_DEFAULT = 3;
+    private static final double SHOW_BACK_DIST_VULTURE = 5;
+    private static final double SHOW_BACK_DIST_DRAGOON = 3;
+    public static int ANY_DIRECTION_RADIUS_DEFAULT = 3;
+    public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
+    public static int ANY_DIRECTION_RADIUS_DRAGOON = 4;
+    public static int ANY_DIRECTION_RADIUS_INFANTRY = 3;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.65;
 
     private final AUnit unit;
@@ -92,7 +98,7 @@ public class ARunningManager {
 
     //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runAwayFrom, double dist, Action action) {
-        if (runAwayFrom == null) {
+        if (runAwayFrom == null || runAwayFrom.position() == null) {
             System.err.println("Null unit to run from");
             stopRunning();
             throw new RuntimeException("Null unit to run from");
@@ -120,7 +126,7 @@ public class ARunningManager {
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
 //        System.err.println("_lastPosition = " + _lastPosition);
-//        System.err.println("Our count = " + Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
+//        System.err.println("Our count = " + Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
 //        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
 
         unit.setTooltip("Cant run", false);
@@ -190,7 +196,7 @@ public class ARunningManager {
             return runTo;
         }
 
-        if (shouldRunTowardsMainBase()) {
+        if (shouldRunTowardsBase()) {
             return Select.main().position();
         }
 
@@ -209,17 +215,19 @@ public class ARunningManager {
 //        System.out.println("runTo = " + runTo + " // " + unit);
         if (
             runTo != null
-                && unit.distTo(runTo) < 0.002
+                && unit.distTo(runTo) <= 0.02
 //                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
-//            System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
-//            APainter.paintLine(unit, runTo, Color.Purple);
-//            APainter.paintLine(
-//                    unit.translateByPixels(0, 1),
-//                    runTo.translateByPixels(0, 1),
-//                    Color.Purple
-//            );
+            System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
+            APainter.paintLine(unit, runTo, Color.Purple);
+            APainter.paintLine(
+                    unit.translateByPixels(0, 1),
+                    runTo.translateByPixels(0, 1),
+                    Color.Purple
+            );
+            runTo = findRunPositionInAnyDirection(runAwayFrom);
             APainter.paintCircleFilled(runTo, 8, Color.Red);
+            GameSpeed.pauseGame();
         }
 
         // === Run to base as a fallback ===========================
@@ -253,22 +261,40 @@ public class ARunningManager {
     /**
      * Running behavior which will make unit run toward main base.
      */
-    private boolean shouldRunTowardsMainBase() {
+    private boolean shouldRunTowardsBase() {
+        if (A.seconds() >= 380) {
+            return false;
+        }
+
+        if (unit.isScout()) {
+            return false;
+        }
+
+        AUnit main = Select.main();
+        if (main == null) {
+            return false;
+        }
+
+        // If already close to the base, don't run towards it, no point
+        if (unit.distTo(main) < 50) {
+            return false;
+        }
+
+        if (unit.meleeEnemiesNearCount(4) >= 1) {
+            return false;
+        }
 
         // Only run towards our main if our army isn't too numerous, otherwise units gonna bump upon each other
         if (Count.ourCombatUnits() > 10) {
             return false;
         }
 
-        AUnit main = Select.main();
-        if (main != null) {
+        if (unit.lastStartedRunningLessThanAgo(30) && unit.lastStoppedRunningLessThanAgo(30)) {
+            return false;
+        }
 
-            // If already close to the base, don't run towards it, no point
-            if (unit.distTo(main) < 15) {
-                return false;
-            }
-
-            if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
+        if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
+            if (unit.meleeEnemiesNearCount(3) == 0) {
                 return true;
             }
         }
@@ -280,25 +306,11 @@ public class ARunningManager {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     private APosition findRunPositionShowYourBackToEnemy(HasPosition runAwayFrom, double dist) {
-//        double minDist = SHOW_BACK_TO_ENEMY_DIST_MIN;
-//        double maxDist = (dist > 0 ? dist : SHOW_BACK_TO_ENEMY_DIST);
-//
-//        if (unit.isVulture()) {
-//            minDist = maxDist;
-//        }
-//
-//        double currentDist = maxDist;
-//
-//        do {
-
         APosition runTo = showBackToEnemyIfPossible(runAwayFrom);
 
         if (runTo != null && unit.distToMoreThan(runTo, 0.002)) {
             return runTo;
         }
-
-//            currentDist -= 0.9;
-//        } while (currentDist >= minDist);
 
         return null;
     }
@@ -360,13 +372,13 @@ public class ARunningManager {
 
     private double showBackRunPixelRadius(AUnit unit, HasPosition runAwayFrom) {
         if (unit.isVulture()) {
-            return 4 * 32;
+            return SHOW_BACK_DIST_VULTURE * 32;
         }
         if (unit.isDragoon()) {
-            return 4 * 32;
+            return SHOW_BACK_DIST_DRAGOON * 32;
         }
 
-        return (4 * 32);
+        return (SHOW_BACK_DIST_DEFAULT * 32);
     }
 
     /**
@@ -423,7 +435,8 @@ public class ARunningManager {
                 }
 
                 // Create position, Make sure it's inbounds
-                APosition potentialPosition = unit.translateByTiles(dtx, dty).makeValidFarFromBounds();
+//                APosition potentialPosition = unit.translateByTiles(dtx, dty).makeValidFarFromBounds();
+                APosition potentialPosition = unit.translateByTiles(dtx, dty);
 
                 // If has path to given point, add it to the list of potential points
 //                APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
@@ -453,31 +466,25 @@ public class ARunningManager {
 
     private int runAnyDirectionInitialRadius(AUnit unit) {
         if (unit.isVulture()) {
-            return 5;
+            return ANY_DIRECTION_RADIUS_VULTURE;
         }
         if (unit.isDragoon()) {
-            return 5;
+            return ANY_DIRECTION_RADIUS_DRAGOON;
         }
 
         if (unit.isInfantry()) {
-            return ANY_DIRECTION_INIT_RADIUS_INFANTRY;
+            return ANY_DIRECTION_RADIUS_INFANTRY;
         }
 
-        return 4;
+        return ANY_DIRECTION_RADIUS_DEFAULT;
     }
 
     /**
      * Tell other units that might be blocking our escape route to move.
      */
     private boolean notifyNearUnitsToMakeSpace(AUnit unit) {
-        if (We.protoss()) {
+        if (We.protoss() && unit.friendsNear().inRadius(0.3, unit).atMost(1)) {
             return false;
-//            if (
-//                    unit.shieldDamageAtLeast(20)
-//                    || unit.friendsNear().inRadius(0.7, unit).atLeast(3)
-//            ) {
-//                return false;
-//            }
         }
 
         if (unit.isAir() || unit.isLoaded()) {
@@ -546,18 +553,21 @@ public class ARunningManager {
 //        System.out.println("unit.position().groundDistanceTo(position) = " + unit.position().groundDistanceTo(position));
         int walkRadius = 32;
 
-        boolean isOkay = position.isWalkable()
-//                && (
-//                    !includeNearWalkability
-            && (
+        boolean nearbyWalkable = position.isCloseToMapBounds() || (
             position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
                 && position.translateByPixels(walkRadius, walkRadius).isWalkable()
                 && position.translateByPixels(walkRadius, -walkRadius).isWalkable()
                 && position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
-        )
+        );
+        boolean isWalkable = position.isWalkable() && nearbyWalkable;
+//                && (
+//                    !includeNearWalkability
+
+
+        boolean isOkay = isWalkable
 //                )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
-//                && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
+//                && Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
             && Select.all().inRadius(unit.size() * 1.7, position).exclude(unit).isEmpty()
 //                && distToNearestRegionBoundaryIsOkay(position)
             && unit.hasPathTo(position)

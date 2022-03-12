@@ -1,6 +1,7 @@
 package atlantis.information.strategy.response.zerg;
 
 import atlantis.combat.missions.Missions;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.decisions.OurStrategicBuildings;
@@ -10,7 +11,10 @@ public class ZergStrategyResponse extends AStrategyResponse {
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
         if (GamePhase.isEarlyGame()) {
-            Missions.setGlobalMissionDefend();
+            if (!ArmyStrength.weAreMuchStronger()) {
+                Missions.forceGlobalMissionDefend("Rush defence");
+                return true;
+            }
         }
 
         if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {

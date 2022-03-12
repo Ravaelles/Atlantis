@@ -35,9 +35,9 @@ public class ADynamicWorkerProductionManager {
             return false;
         }
 
-        if ((A.supplyUsed() <= 154 && !AGame.canAffordWithReserved(50, 0))) {
-            return false;
-        }
+//        if ((A.supplyUsed() <= 154 && !AGame.canAffordWithReserved(50, 0))) {
+//            return false;
+//        }
 
         if (We.terran()) {
             ProductionOrder order = ProductionQueue.nextOrderFor(AUnitType.Terran_Comsat_Station, 1);
@@ -48,7 +48,7 @@ public class ADynamicWorkerProductionManager {
 
         // Check if not TOO MANY WORKERS
         int workers = Select.ourWorkers().count();
-        if (workers >= (25 * Select.ourBuildingsIncludingUnfinished().bases().count())) {
+        if (workers >= (25 * Select.ourBuildingsWithUnfinished().bases().count())) {
             return false;
         }
 

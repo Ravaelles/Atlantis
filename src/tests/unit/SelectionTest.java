@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -31,9 +32,26 @@ public class SelectionTest extends AbstractTestWithUnits {
     }
 
     @Test
+    public void cloneByRemovingIf() {
+        usingFakeOurs(() -> {
+            Selection our = Select.our();
+//            Select.our().print();
+
+            assertEquals(22, our.size());
+
+//            our.print("Pre");
+
+            assertEquals(19, our.cloneByRemovingIf(AUnit::isMelee, "isMelee").size());
+
+//            our.print("Post");
+
+            assertEquals(22, our.size());
+        });
+    }
+
+    @Test
     public void ranged() {
         usingFakeOurs(() -> {
-//            Select.our().print();
             assertEquals(9, Select.our().ranged().size());
         });
     }
@@ -41,8 +59,21 @@ public class SelectionTest extends AbstractTestWithUnits {
     @Test
     public void melee() {
         usingFakeOurs(() -> {
-//            Select.our().melee().print();
             assertEquals(3, Select.our().melee().size());
+        });
+    }
+
+    @Test
+    public void tanks() {
+        usingFakeOurs(() -> {
+//            Select.our().print();
+
+            Selection our = Select.our();
+
+            assertEquals(22, our.size());
+            assertEquals(2, our.tanks().size());
+//            assertEquals(2, Select.our().tanks().size());
+            assertEquals(22, our.size());
         });
     }
 

@@ -37,7 +37,7 @@ public class ARepairAssignments {
 
     public static AUnit getClosestRepairerAssignedTo(AUnit wounded) {
         if (
-                unitsToRepairers.size() > RepairerAssigner.MAX_REPAIRERS_AT_ONCE
+                unitsToRepairers.size() > MaxRepairers.MAX_REPAIRERS_AT_ONCE
                 || unitsToRepairers.size() >= (0.5 * Select.ourWorkers().count())
         ) {
             return null;
@@ -59,6 +59,10 @@ public class ARepairAssignments {
     }
 
     public static void removeRepairerOrProtector(AUnit repairer) {
+//        if (repairer.target() != null && repairer.target().isAlive()) {
+//            A.printStackTrace(A.now() + " REMOVED REPAIRER");
+//        }
+
         AUnit unitToRepair = repairersToUnit.get(repairer);
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
             unitsToRepairers.get(unitToRepair).remove(repairer);
@@ -141,5 +145,9 @@ public class ARepairAssignments {
 
     public static int countTotalRepairers() {
         return repairersToUnit.keySet().size();
+    }
+
+    public static ArrayList<AUnit> getProtectorsFor(AUnit unit) {
+        return unitsToRepairers.containsKey(unit) ? unitsToRepairers.get(unit) : new ArrayList<>();
     }
 }

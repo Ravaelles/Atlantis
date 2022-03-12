@@ -14,7 +14,7 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private static boolean shouldChangeMissionToContain() {
+    public static boolean shouldChangeMissionToContain() {
         int ourCount = Select.ourCombatUnits().count();
 
         return ourCount <= 20 || Select.enemyRealUnits().count() >= ourCount + 2;

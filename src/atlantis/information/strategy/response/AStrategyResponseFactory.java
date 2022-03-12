@@ -3,7 +3,7 @@ package atlantis.information.strategy.response;
 import atlantis.information.strategy.response.protoss.ProtossStrategyResponse;
 import atlantis.information.strategy.response.terran.TerranStrategyResponse;
 import atlantis.information.strategy.response.zerg.ZergStrategyResponse;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.We;
 import bwapi.Race;
 

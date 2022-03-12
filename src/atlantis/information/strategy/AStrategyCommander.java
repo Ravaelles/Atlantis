@@ -17,7 +17,7 @@ public class AStrategyCommander {
     public static void update() {
 
         // If we don't know enemy strategy, try to guess it based on enemy buildings/units we know
-        if (GamePhase.isEarlyGame() && A.everyNthGameFrame(12)) {
+        if (GamePhase.isEarlyGame() && A.everyNthGameFrame(13)) {
             if (Enemy.protoss()) {
                 guessEnemyStrategyWhenEnemyIsProtoss();
             }
@@ -61,7 +61,7 @@ public class AStrategyCommander {
 
     private static void changeEnemyStrategyTo(AStrategy strategy) {
         if (!EnemyStrategy.get().equals(strategy)) {
-            AGame.sendMessage("Enemy strategy detected: " + strategy);
+            AGame.sendMessage("Enemy strategy detected at " + A.seconds() + "s: " + strategy);
         }
         EnemyStrategy.setEnemyStrategy(strategy);
         AStrategyResponseFactory.forOurRace().updateEnemyStrategyChanged();

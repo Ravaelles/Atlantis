@@ -94,7 +94,7 @@ public class ACombatUnitManager {
 //            GameSpeed.activateDynamicSlowdown();
 //        }
 
-        if (unit.isNotRealUnit()) {
+        if (!unit.isRealUnit()) {
             System.err.println("Not real unit: " + unit.name());
             return true;
         }
@@ -118,6 +118,10 @@ public class ACombatUnitManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
+        if (DanceAfterShoot.handle(unit)) {
+            return true;
+        }
+
         if (DontDisturbInterrupt.dontInterruptImportantActions(unit)) {
             return true;
         }
@@ -131,13 +135,9 @@ public class ACombatUnitManager {
         }
 
         // Handle units getting bugged by Starcraft
-        if (Unfreezer.handleUnfreeze(unit)) {
-            return true;
-        }
-
-        if (DanceAfterShoot.handle(unit)) {
-            return true;
-        }
+//        if (Unfreezer.handleUnfreeze(unit)) {
+//            return true;
+//        }
 
         if (unit.isRunning()) {
             if (ARunningManager.shouldStopRunning(unit)) {

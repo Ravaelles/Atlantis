@@ -15,8 +15,8 @@ import atlantis.util.We;
 public abstract class AbstractPositionFinder {
     
     public static String _CONDITION_THAT_FAILED = null;
-    public static boolean DEBUG = true;
-//    public static boolean DEBUG = false;
+//    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     // =========================================================
     // Hi-level methods
@@ -25,7 +25,10 @@ public abstract class AbstractPositionFinder {
      * Returns true if game says it's possible to build given building at this position.
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
-        
+        if (We.protoss() && A.supplyTotal() <= 10) {
+            return false;
+        }
+
         // Special buildings can be build anywhere
         if (building.isBase() || building.isGasBuilding() || building.isCombatBuilding()) {
             return false;
@@ -94,7 +97,7 @@ public abstract class AbstractPositionFinder {
         // Compare against planned construction places
 //        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
         for (ConstructionOrder order : ConstructionRequests.all()) {
-            HasPosition constructionPosition = order.positionToBuild();
+            HasPosition constructionPosition = order.buildPosition();
 //            System.out.println("another = " + constructionPosition + " // " + order.buildingType());
             if (
                     position != null && constructionPosition != null
@@ -123,6 +126,10 @@ public abstract class AbstractPositionFinder {
     }
 
     protected static boolean isTooCloseToMainBase(AUnitType building, APosition position) {
+        if (We.protoss() && A.supplyTotal() <= 10) {
+            return false;
+        }
+
         if (building.isCombatBuilding()) {
             return false;
         }
@@ -141,7 +148,7 @@ public abstract class AbstractPositionFinder {
 
     protected static boolean isOverlappingBaseLocation(AUnitType building, APosition position) {
         if (building.isBase()) {
-            if (Select.ourBuildingsIncludingUnfinished().bases().inRadius(10, position).isNotEmpty()) {
+            if (Select.ourBuildingsWithUnfinished().bases().inRadius(10, position).isNotEmpty()) {
                 _CONDITION_THAT_FAILED = "Base already exists here";
                 return true;
             }
@@ -208,14 +215,13 @@ public abstract class AbstractPositionFinder {
 
             AUnit geyser = Select.geysers().nearestTo(position);
 //            System.out.println("Select.geysers() = " + Select.geysers().count());
-            if (geyser != null && geyser.distTo(position) <= (building.isPylon() ? 7 : (building.isSupplyUnit() ? 10 : 6))) {
+            if (geyser != null && geyser.distTo(position) <= (building.isPylon() ? 5 : (building.isSupplyUnit() ? 8 : 6))) {
                 _CONDITION_THAT_FAILED = "Too close to geyser";
                 return true;
             }
 
             AUnit gasBuilding = Select.geyserBuildings().nearestTo(position);
-//            System.out.println("Select.geyserBuildings() = " + Select.geyserBuildings().count());
-            if (gasBuilding != null && gasBuilding.distTo(position) <= 4 && distToBase <= 7.5) {
+            if (gasBuilding != null && gasBuilding.distTo(position) <= 4 && distToBase <= 5.5) {
                 _CONDITION_THAT_FAILED = "Too close to gas building";
                 return true;
             }

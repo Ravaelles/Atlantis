@@ -1,7 +1,9 @@
 package atlantis.information.strategy;
 
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.build.ABuildOrderLoader;
+import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,19 @@ public class AStrategy {
         allStrategies.add(this);
     }
 
+    protected static AStrategy protossStrategy() {
+        return (new AStrategy()).setProtoss();
+    }
+
     // =========================================================
+
+    protected static boolean has(AUnitType type) {
+        return EnemyUnits.has(type);
+    }
+
+    protected static int count(AUnitType type) {
+        return EnemyUnits.count(type);
+    }
 
     /**
      * Assigns build order for this strategy from build orders directory. Uses corresponding strategy/build order name.

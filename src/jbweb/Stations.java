@@ -6,9 +6,22 @@ import bwem.*;
 import java.util.*;
 
 public class Stations {
+    private static List<Station> allBases = new ArrayList<>();
     private static List<Station> stations = new ArrayList<>();
     private static List<Station> mains = new ArrayList<>();
     private static List<Station> naturals = new ArrayList<>();
+
+    public static List<Station> mainBases() {
+        return mains;
+    }
+
+    public static List<Station> naturalBases() {
+        return naturals;
+    }
+
+    public static List<Station> allBases() {
+        return allBases;
+    }
 
     private static List<TilePosition> stationDefenses(Base base, boolean placeRight, boolean placeBelow, boolean isMain, boolean isNatural) {
         List<TilePosition> defenses = new ArrayList<>();
@@ -196,10 +209,14 @@ public class Stations {
         List<Base> natBases = new ArrayList<>();
         for (Area area : JBWEB.mapBWEM.getMap().getAreas()) {
             for (Base base : area.getBases()) {
-                if (base.isStartingLocation())
+                if (base.isStartingLocation()) {
+                    //System.err.println("Add base " + base);
                     mainBases.add(base);
+                }
             }
         }
+
+        //System.out.println("A");
 
         // Find all natural bases
         for (Base main : mainBases) {
@@ -216,6 +233,7 @@ public class Stations {
 
                     double dist = JBWEB.getGroundDistance(base.getCenter(), main.getCenter());
                     if (dist < distBest) {
+                        //System.out.println("B");
                         distBest = dist;
                         baseBest = base;
                     }
@@ -228,14 +246,17 @@ public class Stations {
             }
         }
 
+        //System.out.println("C");
         for (Area area : JBWEB.mapBWEM.getMap().getAreas()) {
             for (Base base : area.getBases()) {
+                //System.out.println("D " + base);
                 Position resourceCentroid = new Position(0, 0);
                 Position defenseCentroid = new Position(0, 0);
                 int cnt = 0;
 
                 // Resource and defense centroids
                 for (Mineral mineral : base.getMinerals()) {
+                    //System.out.println("D1");
                     resourceCentroid = new Position(resourceCentroid.x + mineral.getCenter().x, resourceCentroid.y + mineral.getCenter().y);
                     cnt++;
                 }
@@ -245,9 +266,16 @@ public class Stations {
                 }
 
                 for (Geyser gas : base.getGeysers()) {
+                    //System.out.println("D2");
                     defenseCentroid = new Position((defenseCentroid.x + gas.getCenter().x)/2, (defenseCentroid.y + gas.getCenter().y)/2);
                     resourceCentroid = new Position(resourceCentroid.x + gas.getCenter().x, resourceCentroid.y + gas.getCenter().y);
                     cnt++;
+                }
+
+                //System.out.println("cnt = " + cnt);
+
+                if (cnt <= 5) {
+                    continue;
                 }
 
                 if (cnt > 0)
@@ -255,13 +283,15 @@ public class Stations {
 
                 // Add reserved tiles
                 for (Mineral m : base.getMinerals()) {
+                    //System.out.println("D3");
                     JBWEB.addReserve(m.getTopLeft(), 2, 1);
-                    addResourceOverlap(resourceCentroid, m.getCenter(), base.getCenter());
+//                    addResourceOverlap(resourceCentroid, m.getCenter(), base.getCenter());
                 }
 
                 for (Geyser g : base.getGeysers()) {
+                    //System.out.println("D4");
                     JBWEB.addReserve(g.getTopLeft(), 4, 2);
-                    addResourceOverlap(resourceCentroid, g.getCenter(), base.getCenter());
+//                    addResourceOverlap(resourceCentroid, g.getCenter(), base.getCenter());
                 }
                 JBWEB.addReserve(base.getLocation(), 4, 3);
 
@@ -283,18 +313,23 @@ public class Stations {
                     }
                 }
 
+                //System.out.println("D5");
                 boolean placeRight = base.getCenter().x < defenseCentroid.x;
                 boolean placeBelow = base.getCenter().y < defenseCentroid.y;
                 List<TilePosition> defenses = stationDefenses(base, placeRight, placeBelow, isMain, isNatural);
 
                 // Add to our station lists
+                //System.out.println("D6");
                 Station newStation = new Station(resourceCentroid, defenses, base, isMain, isNatural);
                 stations.add(newStation);
 
+                allBases.add(newStation);
                 if (isMain)
                     mains.add(newStation);
                 if (isNatural)
                     naturals.add(newStation);
+
+                //System.out.println("E");
             }
         }
     }

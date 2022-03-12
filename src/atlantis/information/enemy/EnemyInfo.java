@@ -13,7 +13,7 @@ import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -32,14 +32,14 @@ public class EnemyInfo {
         startedWithCombatBuilding = false;
     }
 
-    public static boolean isEnemyNearAnyOurBuilding() {
-        return enemyNearAnyOurBuilding() != null;
+    public static boolean isEnemyNearAnyOurBase() {
+        return enemyNearAnyOurBase() != null;
     }
 
-    public static AUnit enemyNearAnyOurBuilding() {
+    public static AUnit enemyNearAnyOurBase() {
         return (AUnit) cache.get(
                 "enemyNearAnyOurBuilding",
-                50,
+                45,
                 () -> {
                     if (!Have.base()) {
                         return null;
@@ -53,10 +53,8 @@ public class EnemyInfo {
                             AUnitType.Zerg_Scourge
                     ).nearestTo(Select.main());
                     if (nearestEnemy != null) {
-                        return Select.ourBuildings()
-                                .excludeTypes(AUnitType.Terran_Missile_Turret)
-                                .inRadius(Enemy.terran() ? 13 : 7, nearestEnemy)
-                                .atLeast(1)
+                        return Select.ourBases()
+                                .inRadius(Enemy.terran() ? 22 : 17, nearestEnemy).atLeast(1)
                                 ? nearestEnemy : null;
                     }
 
@@ -202,4 +200,7 @@ public class EnemyInfo {
         );
     }
 
+    public static boolean hasHiddenUnits() {
+        return EnemyUnits.discovered().ofType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker).notEmpty();
+    }
 }

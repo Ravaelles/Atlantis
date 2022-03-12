@@ -28,14 +28,10 @@ public class ASquadCohesionManager {
 
     private static boolean shouldSkip(AUnit unit) {
         return
-//                unit.recentlyMoved(30)
-                // Only mission contain enforces unit coordination
-//                (unit.mission() != null && !unit.isMissionDefend())
-                (unit.mission() != null && unit.isMissionDefend())
-//                unit.mission() != null && (unit.mission().isMissionAttack() || unit.isMissionDefend());
-//                || unit.friendsNear().atMost(2);
+                unit.isMissionDefend()
                 || unit.squadSize() <= 2
-                || unit.mission().focusPoint() == null;
+                || unit.mission().focusPoint() == null
+                || (!unit.isMissionDefend() && unit.distToNearestChokeLessThan(6));
     }
 
     protected static AFocusPoint focusPoint(AUnit unit) {

@@ -1,14 +1,15 @@
 package atlantis.combat.targeting;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
-import static atlantis.combat.micro.AAttackEnemyUnit.MAX_DIST_TO_ATTACK;
+import java.util.List;
+
 import static atlantis.combat.micro.AAttackEnemyUnit.reasonNotToAttack;
 
 public class ATargeting {
@@ -60,17 +61,16 @@ public class ATargeting {
     // =========================================================
 
     private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
-        double MOST_WOUNDED_EXTRA = 0;
 
         // Most wounded enemy IN RANGE
-        AUnit enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, unit.isRanged() ? MOST_WOUNDED_EXTRA : 0);
+        AUnit enemy = selectWeakestEnemyOfType(enemyType, unit, 0);
         if (enemy != null) {
 //            unit.addLog("AttackClose");
             return enemy;
         }
 
         // Most wounded enemy some distance from away
-        enemy = selectWeakestEnemyOfTypeWithWeaponRange(enemyType, unit, 5);
+        enemy = selectWeakestEnemyOfType(enemyType, unit, 5);
         if (enemy != null) {
 //            unit.addLog("AttackDistant");
             return enemy;
@@ -80,7 +80,7 @@ public class ATargeting {
         // Couldn't find enemy of given type in/near weapon range. Change target
 
         // Most wounded enemy OF DIFFERENT TYPE, but IN RANGE
-        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, MOST_WOUNDED_EXTRA).mostWounded();
+        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0).mostWounded();
         if (enemy != null) {
 //            unit.addLog("AttackMostWounded");
             return enemy;
@@ -111,7 +111,7 @@ public class ATargeting {
 //        return targets.clone().nearestTo(ourUnit);
 //    }
 
-    private static AUnit selectWeakestEnemyOfTypeWithWeaponRange(AUnitType type, AUnit ourUnit, double extraRange) {
+    private static AUnit selectWeakestEnemyOfType(AUnitType type, AUnit ourUnit, double extraRange) {
 //        Selection targets = ourUnit.enemiesNear()
         Selection targets = Select.enemies(type)
                 .ofType(type)
@@ -119,9 +119,27 @@ public class ATargeting {
                 .effVisible();
 //                .hasPathFrom(ourUnit);
 
-        AUnit mostWounded = targets.clone().inShootRangeOf(extraRange, ourUnit).mostWounded();
-        if (mostWounded != null && mostWounded.isWounded()) {
-            return mostWounded;
+        // It makes sense to focus fire on units that have lot of HP
+        boolean shouldFocusFire = ourUnit.friendsNearCount() <= 7
+            || (type.maxHp() > 35 && !type.isWorker());
+        if (shouldFocusFire) {
+//            .inShootRangeOf(extraRange, ourUnit)
+            AUnit mostWounded = targets.mostWounded();
+            if (mostWounded != null && mostWounded.isWounded() && mostWounded.hp() >= 21) {
+                return mostWounded;
+            }
+        }
+
+        // For units with low HP (Zerglings, workers), it makes sense to spread the fire across multiple units,
+        // otherwise enemy that dies consumes unit's cooldown and effectively - it stops shooting at all.
+        else if (targets.notEmpty() && ourUnit.isRanged()) {
+            List<AUnit> enemies = targets.sortByHealth().limit(Enemy.zerg() ? 4 : 2).list();
+
+            // Randomize enemy target based on unit id
+            AUnit randomPeasant = enemies.get(ourUnit.id() % enemies.size());
+            if (randomPeasant != null) {
+                return randomPeasant;
+            }
         }
 
         HasPosition relativeTo = ourUnit.squadCenter() != null ? ourUnit.squadCenter() : ourUnit;
@@ -146,12 +164,10 @@ public class ATargeting {
         // =========================================================
 
         AUnit target;
-//        enemyBuildings = unit.enemiesNear()
         enemyBuildings = Select.enemyRealUnits(true, false, true)
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, maxDistFromEnemy);
-//        enemyBuildings.print("BBBB");
         enemyUnits = Select.enemyRealUnits()
                 .nonBuildings()
                 .inRadius(maxDistFromEnemy, unit)
@@ -186,21 +202,21 @@ public class ATargeting {
         // === Crucial units =======================================
 
         if ((target = ATargetingCrucial.target(unit)) != null) {
-            if (ATargeting.DEBUG) System.out.println("B = "+ target);
+//            if (ATargeting.DEBUG) System.out.println("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
         if ((target = ATargetingImportant.target(unit)) != null) {
-            if (ATargeting.DEBUG) System.out.println("C = "+ target);
+//            if (ATargeting.DEBUG) System.out.println("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
         if ((target = ATargetingStandard.target(unit)) != null) {
-            if (ATargeting.DEBUG) System.out.println("D = "+ target);
+//            if (ATargeting.DEBUG) System.out.println("D = "+ target);
             return target;
         }
 

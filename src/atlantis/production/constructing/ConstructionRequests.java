@@ -1,6 +1,5 @@
 package atlantis.production.constructing;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -180,7 +179,7 @@ public class ConstructionRequests {
         return total;
     }
 
-    public static int countNotStartedOfTypeInRadius(AUnitType type, double radius, APosition position) {
+    public static int countNotStartedOfTypeInRadius(AUnitType type, double radius, HasPosition position) {
         int total = 0;
         for (ConstructionOrder constructionOrder : constructionOrders) {
             if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
@@ -245,7 +244,7 @@ public class ConstructionRequests {
             throw new RuntimeException("Can only use it for buildings: " + type);
         }
 
-        return Select.ourOfTypeIncludingUnfinished(type).count()
+        return Select.ourWithUnfinished(type).count()
                 + countNotFinishedOfType(type);
     }
 
@@ -254,7 +253,7 @@ public class ConstructionRequests {
             throw new RuntimeException("Can only use it for buildings: " + type);
         }
 
-        return Select.ourOfTypeIncludingUnfinished(type).inRadius(radius, position).count()
+        return Select.ourWithUnfinished(type).inRadius(radius, position).count()
                 + countNotFinishedOfTypeInRadius(type, radius, position);
     }
 
@@ -336,7 +335,7 @@ public class ConstructionRequests {
 
     public static boolean hasNotStartedNear(AUnitType building, HasPosition position, double inRadius) {
         for (ConstructionOrder order : notStartedOfType(building)) {
-            if (order.positionToBuild() != null && position.distToLessThan(position, inRadius)) {
+            if (order.buildPosition() != null && position.distToLessThan(position, inRadius)) {
                 return true;
             }
         }

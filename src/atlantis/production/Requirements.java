@@ -114,7 +114,7 @@ public class Requirements {
 //            int requiredAmount = unitType.getRequiredUnits().get(requiredType);
 //            int weHaveAmount = requiredType.equals(AUnitType.Zerg_Larva)
 //                    ? Select.ourLarva().count()
-//                    : (countUnfinished ? Select.ourIncludingUnfinished() : Select.our()).ofType(requiredType).count();
+//                    : (countUnfinished ? Select.ourWithUnfinished() : Select.our()).ofType(requiredType).count();
 //            if (weHaveAmount < requiredAmount) {
 //                return false;
 //            }

@@ -5,7 +5,7 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import bwapi.TilePosition;
 import bwem.BWEM;
 import bwem.BWMap;
@@ -183,15 +183,6 @@ public class AMap {
                 return centers;
             }
         );
-    }
-
-    public static boolean distToNearestChokeLessThan(APosition position, double dist) {
-        for (APosition center : allChokeCenters()) {
-            if (center.distTo(position) <= dist) {
-                return true;
-            }
-        }
-        return false;
     }
 
     // =========================================================

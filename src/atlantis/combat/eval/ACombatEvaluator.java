@@ -3,7 +3,7 @@ package atlantis.combat.eval;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 
 
 public class ACombatEvaluator {
@@ -16,7 +16,7 @@ public class ACombatEvaluator {
     private static double PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS = 20;
 
     /** Maximum allowed value as a result of evaluation. */
-    private static final double MAX_VALUE = 9876;
+    private static final double MAX_VALUE = 9898;
 
     private static Cache<Object> cache = new Cache<>();
 
@@ -48,7 +48,7 @@ public class ACombatEvaluator {
      * 0.8 means ~20% disadvantage against enemies
      */
     public static double relativeAdvantage(AUnit unit) {
-        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4).nearestTo(unit);
+        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4.2).nearestTo(unit);
         if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
             return MAX_VALUE;
         }
@@ -153,17 +153,15 @@ public class ACombatEvaluator {
         // Our eval
         if (unit.isOur()) {
 //            System.out.println("unit = " + unit);
-            theseUnits = unit.ourCombatUnitsNear(false).ranged().inRadius(RANGED_RADIUS, unit);
-//            theseUnits.print("theseUnits A");
-            theseUnits.add(unit.ourCombatUnitsNear(false).melee().inRadius(MELEE_RADIUS, unit));
-//            theseUnits.print("theseUnits B");
+            theseUnits = unit.ourCombatUnitsNear(false).ranged().inRadius(RANGED_RADIUS, unit)
+                .add(unit.ourCombatUnitsNear(false).melee().inRadius(MELEE_RADIUS, unit));
         }
 
         // Enemy eval
         else if (unit.isEnemy()) {
-            theseUnits = EnemyUnits.discovered().ranged().inRadius(RANGED_RADIUS, unit);
-            theseUnits.add(EnemyUnits.discovered().melee().inRadius(MELEE_RADIUS, unit));
-            theseUnits.removeDuplicates();
+            theseUnits = EnemyUnits.discovered().ranged().inRadius(RANGED_RADIUS, unit)
+                .add(EnemyUnits.discovered().melee().inRadius(MELEE_RADIUS, unit))
+                .removeDuplicates();
         }
 
         else {
@@ -180,29 +178,31 @@ public class ACombatEvaluator {
                 .ranged()
                 .canAttack(unit, 6);
 
-//        System.out.println("againstUnits A0 = " + againstUnits.size());
+//        unit.enemiesNear().print("againstUnits");
 //        System.out.println("againstUnits A1 = " + unit.enemiesNear().size());
 //        System.out.println("againstUnits A2 = " + unit.enemiesNear().ranged().size());
 //        System.out.println("againstUnits A3 = " + unit.enemiesNear().ranged().canAttack(unit, 4).size());
+//        System.out.println("againstUnits A = " + againstUnits.size());
 
         // Melee
-        againstUnits.add(
+        againstUnits = againstUnits.add(
                 unit.enemiesNear().melee()
                         .inRadius(5, unit)
                         .canAttack(unit, false, true, 5)
         );
 
-//        System.out.println("againstUnits B0 = " + againstUnits.size());
 //        System.out.println("againstUnits B1 = " + unit.enemiesNear().size());
-//        System.out.println("againstUnits B2 = " + unit.enemiesNear().inRadius(6, unit).size());
-//        System.out.println("againstUnits B3 = " + unit.enemiesNear().inRadius(6, unit).canAttack(unit, 6).size());
+//        System.out.println("againstUnits B2 = " + unit.enemiesNear().melee().size());
+//        System.out.println("againstUnits B3 = " + unit.enemiesNear().melee().inRadius(5, unit).size());
+//        System.out.println("againstUnits B4 = " + unit.enemiesNear().melee().inRadius(5, unit).canAttack(unit, false, true, 5).count());
+//        System.out.println("againstUnits B = " + againstUnits.size());
 
 //        if (unit.isOur()) {
 //            againstUnits = againstUnits.add(EnemyUnits.combatUnitsToBetterAvoid()).removeDuplicates();
 //        }
 //        System.out.println("againstUnits C1 = " + againstUnits.size());
 
-        againstUnits.removeDuplicates();
+        againstUnits = againstUnits.removeDuplicates();
 
 //        System.out.println("againstUnits C2 = " + againstUnits.size());
 

@@ -2,6 +2,7 @@ package atlantis.information.decisions;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.terran.ShouldBuildBio;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
@@ -11,10 +12,11 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Cache;
+import atlantis.units.select.Have;
+import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 
-import static atlantis.units.AUnitType.Protoss_Zealot;
+import static atlantis.units.AUnitType.*;
 
 public class Decisions {
 
@@ -53,23 +55,7 @@ public class Decisions {
         return cache.get(
             "buildBio",
             100,
-            () ->
-                (EnemyInfo.isDoingEarlyGamePush())
-                    ||
-                    (
-                        (
-                            !maxFocusOnTanks()
-                                &&
-                                (
-                                    (OurStrategy.get().goingBio() || EnemyStrategy.get().isAirUnits())
-                                        && (Count.infantry() <= 18 || AGame.canAffordWithReserved(50, 0))
-                                )
-                        )
-                            || !GamePhase.isEarlyGame()
-                    )
-            || (A.hasMinerals(290) && OurStrategy.get().goingBio() && Count.infantry() <= 19)
-//                () -> (OurStrategy.get().goingBio() || Count.ourCombatUnits() <= 30)
-//                        (!EnemyInformation.enemyStartedWithCombatBuilding || Select.ourTerranInfantry().atMost(13))
+            () -> ShouldBuildBio.should()
         );
     }
 
@@ -97,7 +83,7 @@ public class Decisions {
         );
     }
 
-    private static boolean maxFocusOnTanks() {
+    public static boolean maxFocusOnTanks() {
         return cache.get(
             "maxFocusOnTanks",
             100,
@@ -140,5 +126,69 @@ public class Decisions {
         }
 
         return Count.ourCombatUnits() >= 8;
+    }
+
+    public static boolean buildRoboticsFacility() {
+        if (Have.roboticsFacility() || Have.no(Protoss_Forge)) {
+            return false;
+        }
+
+        if (EnemyInfo.hasHiddenUnits()) {
+//            System.err.println("roboticsFacility because hasHiddenUnits");
+            return true;
+        }
+        if (A.supplyUsed() <= 44 && enemyStrategyIsRushOrCheese()) {
+            return false;
+        }
+        if (A.supplyUsed() <= 46 && Have.cannon()) {
+            return false;
+        }
+
+//        System.err.println("----- buildRoboticsFacility OK" );
+//        System.err.println("EnemyStrategy.get().isRushOrCheese() = " + EnemyStrategy.get().isRushOrCheese());
+//        System.err.println("EnemyStrategy.get().isRush() = " + EnemyStrategy.get().isRush());
+
+        return true;
+    }
+
+    public static int minZealotsAgainstEnemyRush() {
+        if (Enemy.protoss()) return enemyStrategyIsRushOrCheese() ? 4 : 3;
+        if (Enemy.terran()) return 1;
+        return 5;
+    }
+
+    public static boolean needToProduceZealotsNow() {
+        int zealots = Count.zealots();
+
+        // Early game
+        if (GamePhase.isEarlyGame()) {
+            if (
+                enemyStrategyIsRushOrCheese()
+                && zealots < minZealotsAgainstEnemyRush()
+            ) {
+                return true;
+            }
+
+            if (zealots <= 1 || (A.hasMinerals(225) && Have.free(Protoss_Gateway))) {
+                return true;
+            }
+        }
+
+        // Mid + Late game
+        else {
+            if (zealots <= 1) {
+                return true;
+            }
+
+            if (AGame.canAffordWithReserved(130, 0)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected static boolean enemyStrategyIsRushOrCheese() {
+        return EnemyStrategy.get().isRushOrCheese();
     }
 }

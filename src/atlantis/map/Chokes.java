@@ -4,7 +4,7 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import bwem.ChokePoint;
 import jbweb.JBWEB;
 

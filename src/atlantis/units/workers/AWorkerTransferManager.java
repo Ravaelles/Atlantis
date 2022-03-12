@@ -17,7 +17,7 @@ public class AWorkerTransferManager {
     public static void transferWorkersBetweenBasesIfNeeded() {
 
         // Don't run every frame
-        if (!AGame.everyNthGameFrame(GamePhase.isEarlyGame() ? 10 : 30)) {
+        if (!AGame.everyNthGameFrame(GamePhase.isEarlyGame() ? 11 : 31)) {
             return;
         }
 
@@ -59,7 +59,7 @@ public class AWorkerTransferManager {
         double mostWorkersRatio = baseWorkersRatios.valueFor(baseWithMostWorkers);
         double workerRatioDiff = mostWorkersRatio - fewestWorkersRatio;
 
-        if (mostWorkersRatio < 2.1 || workerRatioDiff < 1.0 || baseWithMostWorkers.distTo(baseWithFewestWorkers) < 8) {
+        if (mostWorkersRatio < 2.0 || workerRatioDiff < 1.0 || baseWithMostWorkers.distTo(baseWithFewestWorkers) < 8) {
             return;
         }
 

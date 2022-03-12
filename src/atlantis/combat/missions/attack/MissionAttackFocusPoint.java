@@ -2,6 +2,7 @@ package atlantis.combat.missions.attack;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.GamePhase;
@@ -9,12 +10,13 @@ import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
 
@@ -43,7 +45,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
             return new AFocusPoint(
                     enemy,
-                    our
+                    our,
+                "FirstEnemy"
             );
         }
 
@@ -55,7 +58,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (enemyBase != null) {
                 return new AFocusPoint(
                         enemyBase,
-                        Select.main()
+                        Select.main(),
+                    "EnemyBase"
                 );
             }
         }
@@ -65,7 +69,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (enemyBuilding != null && enemyBuilding.position() != null) {
             return new AFocusPoint(
                     enemyBuilding,
-                    Select.main()
+                    Select.main(),
+                "EnemyBuilding"
             );
         }
 
@@ -74,17 +79,22 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (visibleEnemyBuilding != null) {
             return new AFocusPoint(
                     visibleEnemyBuilding,
-                    Select.main()
+                    Select.main(),
+                "VisibleEnemyBuilding"
             );
         }
 
         // Try going to any known enemy unit
-        AUnit anyEnemyUnit = EnemyUnits.discovered().groundUnits().effVisible().first();
+        HasPosition alphaCenter = Alpha.alphaCenter();
+        AUnit anyEnemyUnit = EnemyUnits.discovered().groundUnits().effVisible().nearestTo(
+            alphaCenter != null ? alphaCenter : Select.our().first()
+        );
 //        AUnit anyEnemyUnit = EnemyUnits.visibleAndFogged().combatUnits().groundUnits().first();
         if (anyEnemyUnit != null) {
             return new AFocusPoint(
                     anyEnemyUnit,
-                    Select.main()
+                    Select.main(),
+                "AnyEnemyUnit"
             );
         }
 
@@ -93,7 +103,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (mainChoke != null) {
                 return new AFocusPoint(
                         mainChoke,
-                        Select.main()
+                        Select.main(),
+                    "EnemyMainChoke"
                 );
             }
         }
@@ -105,7 +116,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (startLocation != null) {
                 return new AFocusPoint(
                         startLocation,
-                        Select.main()
+                        Select.main(),
+                    "NearStartLocation"
                 );
             }
         }

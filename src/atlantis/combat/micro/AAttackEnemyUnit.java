@@ -1,13 +1,9 @@
 package atlantis.combat.micro;
 
 import atlantis.combat.targeting.ATargeting;
-import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 
 public class AAttackEnemyUnit {
 
@@ -140,6 +136,10 @@ public class AAttackEnemyUnit {
 //    }
 
     private static boolean isValidTargetAndAllowedToAttackUnit(AUnit unit, AUnit target) {
+        if (target == null) {
+            return false;
+        }
+
         if (!missionAllowsToAttack(unit, target)) {
             reasonNotToAttack = "MissionForbids";
             unit.setTooltipTactical(reasonNotToAttack);
@@ -156,11 +156,14 @@ public class AAttackEnemyUnit {
         }
 
         // Prevent units from switching attack of the same unit, to another unit of the same type
-        if (unit.target() != null && unit.isMelee() && unit.target().isTank() && unit.isAttackingOrMovingToAttack()) {
-            if (unit.distToLessThan(unit.target(), 3)) {
-                reasonNotToAttack = "DontSwitch";
-                unit.addLog(reasonNotToAttack);
-                return false;
+//        unit.target().isTank() &&
+        if (unit.isMelee() && unit.target() != null && !unit.target().equals(target) && unit.isAttackingOrMovingToAttack()) {
+            if (unit.isWorker() || unit.isCombatUnit()) {
+                if (unit.distToLessThan(unit.target(), 1.03)) {
+                    reasonNotToAttack = "DontSwitch";
+                    unit.addLog(reasonNotToAttack);
+                    return false;
+                }
             }
         }
 

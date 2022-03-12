@@ -22,14 +22,14 @@ public class ProcessAttackUnit {
 //        unit.addLog("Attacking" + target.name());
         unit.addLog("Attacking" + target);
 
-
         // Ranged
         if (unit.isRanged() && unit.lastActionMoreThanAgo(10, Actions.HOLD_POSITION)) {
             int range = unit.weaponRangeAgainst(target);
             double dist = unit.distTo(target);
+            double distBonus = distBonus(unit, target);
             if (
-                dist - 0.5 < range
-                    && unit.cooldownRemaining() == 0
+                dist + distBonus < range
+                    && unit.cooldownRemaining() <= 8
                     && !unit.isHoldingPosition()
             ) {
                 unit.addLog("HoldToShoot");
@@ -39,12 +39,16 @@ public class ProcessAttackUnit {
         }
 
         // Melee
-//        else {
         confirmAttack(unit, target);
         return true;
-//        }
+    }
 
-//        return false;
+    private static double distBonus(AUnit unit, AUnit target) {
+        if (unit.isOtherUnitFacingThisUnit(target) && (target.isMoving() || target.isAttacking())) {
+            return -1.6;
+        }
+
+        return -0.5;
     }
 
     private static void confirmAttack(AUnit unit, AUnit target) {

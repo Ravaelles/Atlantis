@@ -1,6 +1,9 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
+import atlantis.map.AMap;
+import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import atlantis.util.Vector;
 
 /**
@@ -9,7 +12,7 @@ import atlantis.util.Vector;
  */
 public interface HasPosition {
 
-    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 20;
+    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 30;
 
     APosition position();
     int x();
@@ -74,6 +77,32 @@ public interface HasPosition {
                     ) {
                         APosition position = this.translateByTiles(dtx, dty);
                         if (position.isWalkable()) {
+                            return position;
+                        }
+                    }
+                }
+            }
+
+            currentRadius++;
+        }
+
+        return null;
+    }
+
+    default APosition makeFreeOfOurUnits(int maxRadius, double checkMargin, AUnit exceptUnit) {
+        int currentRadius = 0;
+        while (currentRadius <= maxRadius) {
+            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
+                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+                    if (
+                            dtx == -currentRadius || dtx == currentRadius
+                                    || dty == -currentRadius || dty == currentRadius
+                    ) {
+                        APosition position = this.translateByTiles(dtx, dty);
+                        if (
+                            position.isWalkable()
+                                && Select.our().exclude(exceptUnit).inRadius(checkMargin, position).empty()
+                        ) {
                             return position;
                         }
                     }
@@ -167,4 +196,26 @@ public interface HasPosition {
         return !position().makeValidFarFromBounds((int) (maxTilesAwayFromMapEdges * 32)).equals(position());
     }
 
+    default boolean distToNearestChokeLessThan(double dist) {
+        for (APosition center : AMap.allChokeCenters()) {
+            if (center.distTo(this) <= dist) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static HasPosition nearestPositionFreeFromUnits(Positions<HasPosition> points, AUnit nearestTo) {
+        for (HasPosition position : points.sortByDistanceTo(nearestTo, true).list()) {
+//            System.out.println(
+//                "Checking pos = " + position
+//                    + ": " + Select.our().exclude(nearestTo).inRadius(0.3, position).count()
+//            );
+            if (Select.our().exclude(nearestTo).inRadius(0.3, position).empty()) {
+                return position;
+            }
+        }
+
+        return null;
+    }
 }

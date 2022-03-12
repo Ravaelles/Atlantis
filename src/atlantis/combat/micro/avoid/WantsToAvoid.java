@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid;
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
@@ -46,6 +47,11 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldAlwaysAvoid(AUnit unit, Units enemies) {
+        if (unit.isMarine() && GamePhase.isEarlyGame() && unit.isRunning()) {
+            unit.addLog("DearGod");
+            return true;
+        }
+
         if (unit.isWorker() || unit.isScout()) {
             unit.addLog("AlwaysAvoid");
             return true;
@@ -74,7 +80,7 @@ public class WantsToAvoid {
         }
 
         // Running is not viable - so many other units Near, we would get stuck, better fight
-        if (Select.all().inRadius(0.4, unit).count() >= 6) {
+        if (Select.all().inRadius(0.3, unit).count() >= 6) {
             APainter.paintCircleFilled(unit, 8, Color.Black);
 //            System.err.println(unit + " fight cause clustered " + Select.all().inRadius(0.4, unit).count());
             return true;

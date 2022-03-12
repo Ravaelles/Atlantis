@@ -35,25 +35,27 @@ public class ATargetingStandard extends ATargeting {
         }
 
         // =========================================================
+        // Near WORKERS for MELEE
+
+        if (unit.isMelee()) {
+            target = enemyUnits
+                    .workers()
+                    .inRadius(3, unit)
+                    .nearestTo(unit);
+            if (target != null) {
+                if (ATargeting.DEBUG) System.out.println("D1b = " + target);
+                return target;
+            }
+        }
+
+        // =========================================================
         // Quite near WORKERS
 
         target = enemyUnits
                 .workers()
-                .inRadius(unit.isMelee() ? 6 : 10, unit)
+                .inRadius(unit.isMelee() ? 8 : 12, unit)
                 .nearestTo(unit);
 
-//        System.out.println("target wrk = " + target);
-//        if (unit.isDragoon()) {
-//            System.err.println("### workers = "
-//                + "A = " + enemyUnits.count()
-//                + " // B = " + enemyUnits.workers().count()
-//                + " // C = " + enemyUnits.workers().inRadius(unit.isMelee() ? 6 : 10, unit).count()
-//                + " // D = " + enemyUnits.workers().inRadius(unit.isMelee() ? 6 : 10, unit).nearestTo(unit)
-////                + "\n // E = " + enemyUnits.workers().nearestTo(unit)
-////                + " // F = " + unit
-////                + " // G = " + A.dist(unit, enemyUnits.workers().nearestTo(unit))
-//            );
-//        }
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("D2 = " + target);
             return target;
@@ -66,7 +68,7 @@ public class ATargetingStandard extends ATargeting {
                 .excludeMedics()
                 .nearestTo(unit);
 
-        if (target != null) {
+        if (target != null && (!target.isAir() || unit.isOtherUnitFacingThisUnit(target))) {
             if (ATargeting.DEBUG) System.out.println("D3 = " + target);
             return target;
         }
@@ -90,7 +92,21 @@ public class ATargetingStandard extends ATargeting {
                 .inRadius(17, unit)
                 .nearestTo(unit);
         if (target != null && Select.enemies(target.type()).inRadius(3, unit).atLeast(3)) {
-            if (ATargeting.DEBUG) System.out.println("D5 = " + target);
+            if (target.friendsNear().buildings().inRadius(6, target).notEmpty()) {
+                if (ATargeting.DEBUG) System.out.println("D5 = " + target);
+                return target;
+            }
+        }
+
+        // =========================================================
+        // Destroy Pylons first
+
+        target = enemyBuildings
+                .ofType(AUnitType.Protoss_Pylon)
+                .inRadius(8, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("D6a = " + target);
             return target;
         }
 
@@ -112,7 +128,7 @@ public class ATargetingStandard extends ATargeting {
                 .inRadius(25, unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (ATargeting.DEBUG) System.out.println("D6 = " + target);
+            if (ATargeting.DEBUG) System.out.println("D6b = " + target);
             return target;
         }
 

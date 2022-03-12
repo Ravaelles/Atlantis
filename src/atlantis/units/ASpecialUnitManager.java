@@ -38,7 +38,11 @@ public class ASpecialUnitManager {
         // === Protoss ========================================
 
         if (unit.isProtoss() && unit.shields() <= 5 && unit.hpLessThan(34)) {
-            AUnit battery = Select.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Shield_Battery)
+            if (unit.isMissionSparta()) {
+                return false;
+            }
+
+            AUnit battery = Select.ourWithUnfinished(AUnitType.Protoss_Shield_Battery)
                 .havingEnergy(40)
                 .nearestTo(unit);
             if (battery != null && battery.distToMoreThan(unit, 6)) {

@@ -1,6 +1,8 @@
 package atlantis.config;
 
 import atlantis.Atlantis;
+import atlantis.combat.missions.defend.MissionDefendFocusPoint;
+import atlantis.combat.missions.defend.MoveToDefendFocusPoint;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
@@ -35,7 +37,8 @@ public class UseMap {
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
 //        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
 //        if (true) return "ums/rav/Dragoons_v_Zealots.scm";
-//        if (true) return "ums/rav/P_v_Buildings.scx";
+//        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
+//        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
 //        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 
         // === Terran ==============================================
@@ -74,7 +77,7 @@ public class UseMap {
         // =========================================================
 
 //        if (true) return "ums/gol_v_zeals.scx";
-//        if (true) return "ums/aaa (1).scx"; // Nice mini maps for terran
+//        if (true) return "ums/aaa (1).scx";
 //        if (true) return "ums/aaa (2).scx";
 //        if (true) return "ums/aaa (3).scx";
 //        if (true) return "ums/aaa (4).scx";
@@ -87,6 +90,7 @@ public class UseMap {
         // === Generic ======================================================
 
 //        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
+//        if (true) return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons v. mines
 //        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
 //        if (true) return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
 //        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
@@ -100,7 +104,6 @@ public class UseMap {
 //        if (true) return "ums/micro3.scx";
 //        if (true) return "ums/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers
 //        if (true) return "ums/(1)micro3_007.scx";
-//        if (true) return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons v. mines
 //        if (true) return "ums/vulture_control.scx"; // Vulture v. Broodlings
 //        if (true) return "ums/MultiTask PvT.scx"; // Weird - ums but starts with bases
 //        if (true) return "ums/ControlFighterTZ-Easy.scx"; // Tanks & Marines v. Zerg
@@ -151,7 +154,7 @@ public class UseMap {
         // v. ZERG / PROTOSS / Gosu maps
 
         else if (
-                activeMap().equals("ums/vGosuComputer.scx")
+                activeMap().equals("ums/vsGosuComputer.scx")
                 || activeMap().equals("ums/exp_skilltest.scx")
                 || activeMap().equals("ums/7th.scx")
         ) {
@@ -160,21 +163,23 @@ public class UseMap {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(initFrameSkip);
+
+                CameraManager.centerCameraOn((new MissionDefendFocusPoint()).focusPoint());
             }
 
-            if (
-                GameSpeed.frameSkip == initFrameSkip
-                    && GameSpeed.gameSpeed == 0
-                    && A.everyNthGameFrame(50)
-            ) {
-                if (
-                        EnemyUnits.discovered().atLeast(4)
-                        && (Have.dragoon() || Have.cannon())
-                ) {
-                    GameSpeed.changeSpeedTo(10);
-                    GameSpeed.changeFrameSkipTo(0);
-                }
-            }
+//            if (
+//                GameSpeed.frameSkip == initFrameSkip
+//                    && GameSpeed.gameSpeed == 0
+//                    && A.everyNthGameFrame(51)
+//            ) {
+//                if (
+//                        EnemyUnits.discovered().atLeast(4)
+//                        && (Have.dragoon() || Have.cannon())
+//                ) {
+//                    GameSpeed.changeSpeedTo(10);
+//                    GameSpeed.changeFrameSkipTo(0);
+//                }
+//            }
         }
 
         // =========================================================

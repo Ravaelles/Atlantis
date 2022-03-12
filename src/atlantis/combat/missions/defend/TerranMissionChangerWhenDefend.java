@@ -24,7 +24,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
 
     public static boolean shouldChangeMissionToContain() {
         if (ArmyStrength.weAreMuchWeaker()) {
-            if (DEBUG) debugReason = "We are much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) reason = "We are much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return false;
         }
 
@@ -48,18 +48,18 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
 
         if (Count.bunkers() >= 1) {
             if (Decisions.weHaveBunkerAndDontHaveToDefendAnyLonger()) {
-                if (DEBUG) debugReason = "No longer have to defend (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                if (DEBUG) reason = "No longer have to defend (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
                 return true;
             }
         }
 
         if (ArmyStrength.weAreStronger()) {
-            if (DEBUG) debugReason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) reason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
         if (A.resourcesBalance() >= 250) {
-            if (DEBUG) debugReason = "resources balance is good";
+            if (DEBUG) reason = "resources balance is good";
             return true;
         }
 

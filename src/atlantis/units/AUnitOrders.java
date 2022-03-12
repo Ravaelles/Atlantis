@@ -325,8 +325,8 @@ public interface AUnitOrders {
      * canRepair
      */
     default boolean repair(AUnit target, String tooltip, boolean strategicLevel) {
-
         if (target == null) {
+            System.err.println("Null repair target");
             return false;
         }
 
@@ -468,6 +468,7 @@ public interface AUnitOrders {
      * Broodwar. See also load, unloadAll, getLoadedUnits, isLoaded, canUnload, canUnloadAtPosition
      */
     default boolean unload(AUnit target) {
+//        A.printStackTrace("Unloaded...");
         unit().setAction(Actions.UNLOAD);
         target.setAction(Actions.UNLOAD);
         return u().unload(target.u());

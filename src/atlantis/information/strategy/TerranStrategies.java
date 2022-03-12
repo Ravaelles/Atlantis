@@ -2,16 +2,16 @@ package atlantis.information.strategy;
 
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 
-
-public class TerranStrategies {
+public class TerranStrategies extends AStrategy {
     
     // Rush
     public static final AStrategy TERRAN_2_Rax_MnM = new AStrategy();
     public static final AStrategy TERRAN_3_Rax_MnM = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vZ = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vP = new AStrategy();
+    public static final AStrategy TERRAN_2_Rax_Academy_vT = new AStrategy();
+    public static final AStrategy TERRAN_3_Rax_Academy_vP = new AStrategy();
 
     // Cheese
     public static final AStrategy TERRAN_BBS = new AStrategy();
@@ -39,11 +39,17 @@ public class TerranStrategies {
                 .setGoingRush()
                 .setGoingBio()
                 .setUrl("https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)");
-
         TERRAN_2_Rax_Academy_vP.setTerran().setName("2 Rax Academy vP")
                 .setGoingRush()
                 .setGoingBio()
                 .setUrl("https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)");
+        TERRAN_2_Rax_Academy_vT.setTerran().setName("2 Rax Academy vT")
+                .setGoingRush()
+                .setGoingBio();
+
+        TERRAN_3_Rax_Academy_vP.setTerran().setName("3 Rax Academy vP")
+                .setGoingRush()
+                .setGoingBio();
 
         // === Cheese =================================
         
@@ -77,12 +83,12 @@ public class TerranStrategies {
     
     public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
-        int barracks = Select.enemy().countOfType(AUnitType.Terran_Barracks);
-        int bases = Select.enemy().countOfType(AUnitType.Terran_Command_Center);
-        int factories = Select.enemy().countOfType(AUnitType.Terran_Factory);
-        int bunkers = Select.enemy().countOfType(AUnitType.Terran_Bunker);
-        int marines = Select.enemy().countOfType(AUnitType.Terran_Marine);
-        int medics = Select.enemy().countOfType(AUnitType.Terran_Medic);
+        int barracks = count(AUnitType.Terran_Barracks);
+        int bases = count(AUnitType.Terran_Command_Center);
+        int factories = count(AUnitType.Terran_Factory);
+        int bunkers = count(AUnitType.Terran_Bunker);
+        int marines = count(AUnitType.Terran_Marine);
+        int medics = count(AUnitType.Terran_Medic);
         
         // === Cheese ==============================================
         

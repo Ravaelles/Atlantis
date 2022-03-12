@@ -105,10 +105,10 @@ public class ComeCloser extends ASquadCohesionManager {
     }
 
 //    private static boolean tooFarForward(AUnit unit, AFocusPoint focusPoint, APosition squadCenter) {
-//        double unitDistToFocus = unit.groundDist(focusPoint);
+//        double unitToFocus = unit.groundDist(focusPoint);
 //        double centerDistToFocus = squadCenter.groundDist(focusPoint);
 //
-//        return unitDistToFocus - centerDistToFocus <= -5.8;
+//        return unitToFocus - centerDistToFocus <= -5.8;
 //    }
 
     // =========================================================
@@ -144,9 +144,9 @@ public class ComeCloser extends ASquadCohesionManager {
             return true;
         }
 
-//        if (unit.squad().mission().isMissionAttack()) {
-//            return false;
-//        }
+        if (unit.enemiesNear().inRadius(6, unit).count() >= 5) {
+            return true;
+        }
 
         return false;
     }

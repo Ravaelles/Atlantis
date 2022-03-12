@@ -12,10 +12,15 @@ import atlantis.util.We;
 
 public class MissionDefend extends Mission {
 
-    private double focusPointDistToBase;
-    private double unitDistToBase;
-    private double enemyDistToBase;
-    private double enemyDistToFocus;
+    protected AUnit unit;
+    protected AUnit main;
+    protected AFocusPoint focusPoint;
+    protected double focusPointDistToBase;
+    protected double unitToEnemy;
+    protected double unitToFocus;
+    protected double unitToBase;
+    protected double enemyDistToBase;
+    protected double enemyDistToFocus;
 
     public MissionDefend() {
         super("Defend");
@@ -28,9 +33,8 @@ public class MissionDefend extends Mission {
             return false;
         }
 
-        // =========================================================
-
-        AFocusPoint focusPoint = focusPoint();
+        this.unit = unit;
+        focusPoint = focusPoint();
         if (focusPoint == null) {
             if (!Have.base()) {
                 return false;
@@ -40,69 +44,62 @@ public class MissionDefend extends Mission {
             throw new RuntimeException("Couldn't define choke point.");
         }
 
+        // =========================================================
+
         // Don't reposition if enemies Near
-        if (unit.enemiesNear().inRadius(7, unit).atLeast(3)) {
+        if (unit.enemiesNear().combatUnits().inRadius(6.2, unit).atLeast(2)) {
             return false;
         }
 
-        return MoveToDefendFocusPoint.move(unit, focusPoint);
+        return (new MoveToDefendFocusPoint()).move(unit, focusPoint);
     }
 
     // =========================================================
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        AFocusPoint focusPoint = focusPoint();
-        AUnit base = Select.main();
-        if (focusPoint == null || base == null) {
+        if (focusPoint == null || main == null) {
             return true;
         }
 
         // =========================================================
 
-        focusPointDistToBase = focusPoint.distTo(base);
-        unitDistToBase = unit.groundDist(base);
-        enemyDistToBase = enemy.groundDist(base);
+        main = Select.main();
+        focusPoint = focusPoint();
+        focusPointDistToBase = focusPoint.distTo(main);
+        unitToEnemy = unit.distTo(enemy);
+        unitToBase = unit.groundDist(main);
+        enemyDistToBase = enemy.groundDist(main);
         enemyDistToFocus = enemy.groundDist(focusPoint);
 
-        if (notAllowedToAttackTooFar(unit, enemy)) {
+        if (unitToEnemy <= 3 && unit.isDragoon() && enemy.isZealot() && unit.hp() <= 18) {
             return false;
         }
 
-        if (
-//                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
-                (unit.isMelee() && unit.distToLessThan(enemy, 1.02))
-                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 0.6))
-        ) {
-            if (unit.cooldownRemaining() == 0 || unit.lastAttackFrameMoreThanAgo(40)) {
-                return true;
-            }
-        }
-
-        if (focusPoint.isAroundChoke()) {
-            if (enemyDistToBase < (focusPointDistToBase - 0.5)) {
-                return true;
-            }
-            else if (enemyDistToBase > (focusPointDistToBase + 0.5)) {
-                return false;
-            }
-        }
-
-//        if (unit.isMelee() && enemy.isMelee() && "300".equals(unit.tooltip())) {
-//            return unit.distTo(enemy) <= 1;
-////            return false; // 300 mode - stand in line, default to SC auto attacks
+//        if (
+////                (unit.isMelee() && unit.hasWeaponRangeToAttack(enemy, 0.1))
+//                (unit.isMelee() && unitToEnemy <= 1.09)
+//                || (unit.isRanged() && unit.hasWeaponRangeToAttack(enemy, 2))
+//        ) {
+//            if (unit.cooldownRemaining() <= 3 || unit.lastAttackFrameMoreThanAgo(40)) {
+//                return true;
+//            }
 //        }
 
-        if (unit.isMelee() && enemyDistToBase > unitDistToBase) {
-            return false;
-        }
+//        if (notAllowedToAttackTooFar(unit, enemy)) {
+//            return false;
+//        }
+//
+//        if (unit.isMelee() && enemyDistToBase > unitToBase) {
+//            return false;
+//        }
 
         // Zealots vs Zealot fix
         if (ProtossMissionAdjustments.allowsToAttackEnemyUnits(unit, enemy)) {
             return true;
         }
 
-        if (Have.main()) {
-            if (Select.enemy().inRadius(18, Select.main()).atLeast(1)) {
+        if (main != null) {
+            if (Select.enemy().inRadius(18, main).atLeast(1)) {
                 return true;
             }
 
@@ -111,29 +108,9 @@ public class MissionDefend extends Mission {
             }
         }
 
-        if (focusPointDistToBase < enemyDistToBase || enemyDistToBase < unitDistToBase) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean notAllowedToAttackTooFar(AUnit unit, AUnit enemy) {
-        if (
-            unit.isMelee()
-                && enemyDistToFocus >= 1
-                && enemyDistToBase > focusPointDistToBase
-        ) {
-            return true;
-        }
-
-        else if (
-            unit.isRanged()
-                && enemyDistToFocus >= 1
-                && enemyDistToBase > focusPointDistToBase
-        ) {
-            return true;
-        }
+//        if (focusPointDistToBase < enemyDistToBase || enemyDistToBase < unitToBase) {
+//            return true;
+//        }
 
         return false;
     }
@@ -145,18 +122,24 @@ public class MissionDefend extends Mission {
         }
 
         if (
-            (unit.isMelee() || unit.hpMoreThan(40))
+            unit.isMelee()
             && unit.friendsNear().combatBuildings(false).inRadius(5, unit).notEmpty()
+            && !"Sparta".equals(unit.tooltip())
         ) {
             unit.addLog("ProtectBuilding");
             return true;
         }
 
-        if (unit.hpLessThan(36) && unit.friendsNearCount() <= 2) {
+        if (unit.hpLessThan(36) && unit.friendsNearCount() <= 2 && unit.lastAttackFrameMoreThanAgo(30 * 4)) {
             return false;
         }
 
-        if (unit.isDragoon() && enemies.onlyMelee() && unit.hp() >= 30 && unit.lastAttackFrameMoreThanAgo(35)) {
+        if (
+            unit.isDragoon()
+                && enemies.onlyMelee() && unit.hp() >= 40
+                && unit.lastAttackFrameMoreThanAgo(30 * 4)
+                && unit.nearestEnemyDist() >= 2.8
+        ) {
             return true;
         }
 

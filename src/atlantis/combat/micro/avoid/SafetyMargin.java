@@ -56,8 +56,8 @@ public class SafetyMargin {
             boolean doingWell = defender.woundPercent() < 33 && defender.lastUnderAttackMoreThanAgo((int) (30 * (5 + defender.woundPercent())));
             return defender.isTargetedBy(attacker)
                     ? (doingWell
-                        ? 0.7
-                        : 1.6
+                        ? 0.8
+                        : 1.7
                     )
                     : (doingWell
                         ? -1.4

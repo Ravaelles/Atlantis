@@ -1,7 +1,7 @@
 package atlantis.combat.squad;
 
+import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
-import atlantis.map.AMap;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -14,11 +14,11 @@ public class CohesionAssurance {
      * We want to make sure that at least N percent of units are inside X radius of squad center.
      */
     public static boolean handleTooLowCohesion(AUnit unit) {
-        if (AMap.distToNearestChokeLessThan(unit.position(), 4)) {
+        if (unit.isVulture() || unit.isAir()) {
             return false;
         }
 
-        if (!isSquadCohesionTooLow(unit)) {
+        if (isSquadCohesionOkay(unit)) {
             return false;
         }
 
@@ -29,24 +29,25 @@ public class CohesionAssurance {
 //        double maxDist = preferredDistToSquadCenter(unit.squad());
 //        unit.setTooltipTactical(A.digit(unit.distToSquadCenter()) + " / " + A.digit(unit.squadRadius()));
         if (unit.outsideSquadRadius()) {
+            String t = "Cohesion";
             unit.move(
                 unit.position().translateTilesTowards(1.5, unit.squadCenter()),
                 Actions.MOVE_FORMATION,
-                "Cohesion",
+                t,
                 false
             );
-            unit.addLog("Cohesion");
+            unit.addLog(t);
             return true;
         }
 
         return false;
     }
 
-    private static boolean isSquadCohesionTooLow(AUnit unit) {
+    private static boolean isSquadCohesionOkay(AUnit unit) {
         Squad squad = unit.squad();
         HasPosition squadCenter = unit.squadCenter();
         if (squad == null || squadCenter == null) {
-            return false;
+            return true;
         }
 
         int cohesionPercent = squad.cohesionPercent();
@@ -55,10 +56,14 @@ public class CohesionAssurance {
 
     private static int minCohesion() {
         if (GamePhase.isEarlyGame()) {
-            return 90;
+            if (A.supplyUsed() <= 25) {
+                return 85;
+            }
+
+            return 76;
         }
 
-        return 75;
+        return 70;
     }
 
     public static double squadMaxRadius(Squad squad) {

@@ -32,7 +32,7 @@ public class AbstractDynamicUnits extends Helpers {
             return;
         }
 
-        if (Count.includingPlanned(type) < haveN) {
+        if (Count.WithPlanned(type) < haveN) {
             trainIfPossible(type);
         }
     }
@@ -82,7 +82,7 @@ public class AbstractDynamicUnits extends Helpers {
 //            return;
 //        }
 //
-//        if (onlyOneAtTime && Count.ourOfTypeIncludingUnfinished(type) > 0) {
+//        if (onlyOneAtTime && Count.ourOfTypeWithUnfinished(type) > 0) {
 //            return;
 //        }
 

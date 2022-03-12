@@ -45,7 +45,7 @@ public class UnitsArchive {
         System.out.println();
         System.out.println("--- Unit kill/loss in resources ---");
         for (AUnitType type : ourKilledResourcesPerUnitTypes.map().keySet()) {
-            if (type.isNotRealUnit() || type.hasNoWeaponAtAll()) {
+            if (!type.isRealUnit() || type.hasNoWeaponAtAll()) {
                 continue;
             }
 
@@ -85,7 +85,7 @@ public class UnitsArchive {
 
     private static void print(MappingCounter<AUnitType> types) {
         for (AUnitType type : types.map().keySet()) {
-            if (type.isNotRealUnit()) {
+            if (!type.isRealUnit()) {
                 continue;
             }
             System.out.println(type + ":  " + types.getValueFor(type));

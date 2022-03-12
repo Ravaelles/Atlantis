@@ -60,7 +60,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         if (barracks.isNotEmpty()) {
 
             // Firebats - disabled, too problematic
-//            if (Count.medics() >= 4 && Count.ourOfTypeIncludingUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
+//            if (Count.medics() >= 4 && Count.ourOfTypeWithUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
 //                produceUnit(barracks.first(), AUnitType.Terran_Firebat);
 //                return;
 //            }
@@ -141,7 +141,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     protected static boolean trainMarinesForBunkersIfNeeded() {
-        int bunkers = Select.countOurOfTypeIncludingUnfinished(AUnitType.Terran_Bunker);
+        int bunkers = Select.countOurOfTypeWithUnfinished(AUnitType.Terran_Bunker);
         if (bunkers > 0) {
             int marines = Select.countOurOfType(AUnitType.Terran_Marine);
             int shouldHaveMarines = defineOptimalNumberOfMarines(bunkers);

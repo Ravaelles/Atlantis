@@ -3,6 +3,7 @@ package atlantis.debug.painter;
 import atlantis.Atlantis;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.MissionAttack;
@@ -20,13 +21,14 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.map.*;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.map.scout.AScoutManager;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.position.TerranBunkerPositionFinder;
 import atlantis.production.constructing.position.TerranPositionFinder;
+import atlantis.production.constructing.position.protoss.PylonPosition;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.production.orders.production.ProductionQueueMode;
@@ -309,19 +311,26 @@ public class AAdvancedPainter extends APainter {
         }
         paintSideMessage("Mission: " + mission.name() + " (" + Missions.counter() + ")", color);
 
-        paintSideMessage("Focus: " + (mission.focusPoint() != null ? mission.focusPoint().toString() : "NONE"), Color.White);
+        AFocusPoint focus = mission.focusPoint();
+//        String focusPointString = focus != null
+//            ? (focus.getName() != null ? focus.getName() : focus.toString())
+//            : "NONE";
+//        paintSideMessage("Focus: " + focusPointString, Color.White);
         paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.White);
 
         // =========================================================
         // Focus point
 
-        APosition focusPoint = MissionAttack.getInstance().focusPoint();
+        AFocusPoint focusPoint = MissionAttack.getInstance().focusPoint();
         AUnit mainBase = Select.main();
         String desc = "";
+        String focusPointString = focusPoint != null
+            ? (focusPoint.getName() != null ? focusPoint.getName() : focusPoint.toString())
+            : "NONE";
         if (focusPoint != null && mainBase != null) {
             desc = "(" + ((int) mainBase.distTo(focusPoint)) + " tiles)";
         }
-        paintSideMessage("Focus point: " + focusPoint + desc, Color.Blue, 0);
+        paintSideMessage("Focus point: " + focusPointString + desc, Color.Blue, 0);
 
         // =========================================================
 
@@ -630,12 +639,12 @@ public class AAdvancedPainter extends APainter {
                 }
 
                 String status = constructionOrder.status().toString().replace("CONSTRUCTION_", "");
-                String builderDist = A.dist(constructionOrder.builder(), constructionOrder.positionToBuild());
+                String builderDist = A.dist(constructionOrder.builder(), constructionOrder.buildPosition());
                 if (constructionOrder.builder() != null) {
                     String builder = (constructionOrder.builder().idWithHash() + " " + builderDist);
                     paintSideMessage(
                             constructionOrder.buildingType().name()
-                            + ", " + constructionOrder.positionToBuild()
+                            + ", " + constructionOrder.buildPosition()
                             + ", " + status + ", " + builder,
                             color,
                             yOffset
@@ -653,7 +662,7 @@ public class AAdvancedPainter extends APainter {
         for (ConstructionOrder order : ConstructionRequests.all()) {
             if (order.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
 //            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
-                APosition positionToBuild = order.positionToBuild();
+                APosition positionToBuild = order.buildPosition();
                 AUnitType buildingType = order.buildingType();
                 if (positionToBuild == null || buildingType == null) {
                     continue;
@@ -848,7 +857,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintConstructionProgress() {
         setTextSizeMedium();
-//        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
+//        for (AUnit unit : Select.ourBuildingsWithUnfinished().listUnits()) {
         for (ConstructionOrder order : ConstructionRequests.all()) {
             AUnit building = order.construction();
             if (building == null || building.isCompleted()) {
@@ -1083,7 +1092,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().list()) {
-            if (unit.isLoaded()) {
+            if (unit.isBuilding() || !unit.isCompleted() || unit.isLoaded()) {
                 continue;
             }
 
@@ -1385,6 +1394,11 @@ public class AAdvancedPainter extends APainter {
         AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
+        // First Pylon
+//        paintBuildingPosition(
+//            PylonPosition.positionForFirstPylon(), AUnitType.Protoss_Pylon, "First pylon", Color.Green
+//        );
+
         // Bunker
 //        TerranBunkerPositionFinder.findPosition(Select.ourWorkers().first(), null);
 
@@ -1436,5 +1450,68 @@ public class AAdvancedPainter extends APainter {
         double dtx = 1;
         paintRectangle(position, 2, 2, Color.Orange);
         paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);
+    }
+
+    public static void paintPosition(HasPosition position, String text) {
+        double dtx = 1;
+        paintRectangle(position.translateByTiles(-dtx, -dtx), 2 * 32, 2 * 32, Color.Orange);
+        paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);
+    }
+
+
+    public static void paintChoke(AChoke choke, Color color, String extraText) {
+        if (choke == null || isDisabled()) {
+            return;
+        }
+
+        if ("".equals(extraText)) {
+            extraText = choke.width() + " wide choke";
+        }
+
+//        for (WalkPosition walkPosition : choke.rawChoke().getGeometry()) {
+////            paintRectangle(APosition.create(walkPosition), 32, 32, Color.Brown);
+//            paintCircle(APosition.create(walkPosition), 32, Color.Brown);
+//        }
+
+        // Paint line perpendicular to the choke, useful for blocking it
+        paintLine(choke.firstPoint(), choke.lastPoint(), Color.Brown);
+
+        paintCircle(choke.center(), choke.width() * 32, color);
+        paintTextCentered(
+            choke.center().translateByTiles(0, choke.width()),
+            extraText,
+            color
+        );
+    }
+
+    public static void paintBases() {
+        for (ABaseLocation base : Bases.baseLocations()) {
+            AAdvancedPainter.paintBase(base.position(), "Base", Color.Grey);
+        }
+    }
+
+    public static void paintBase(APosition position, String text, Color color) {
+        if (position == null || isDisabled()) {
+            return;
+        }
+
+        paintRectangle(
+//                position.translateByPixels(-2 * 32, (int) -1.5 * 32),
+            position,
+            4 * 32, 3 * 32, color
+        );
+        APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
+    }
+
+    protected static void paintBuildingPosition(APosition position, AUnitType type, String text, Color color) {
+        if (position == null || isDisabled()) {
+            return;
+        }
+
+        paintRectangle(
+            position.translateByPixels(-2 * 32, (int) -1.5 * 32),
+            type.getTileWidth() * 32, type.getTileHeight() * 32, color
+        );
+        APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
     }
 }

@@ -49,7 +49,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                     + enemyMovementBonus(defender, attacker);
 
             // This should be enough as a minimum versus melee units
-            criticalDist = Math.min(criticalDist, defender.isDragoon() ? 2.7 : 3.4);
+            criticalDist = Math.min(criticalDist, defender.isDragoon() ? 2.95 : 3.4);
         }
 
         if (defender.isRanged() && attacker.isWorker()) {
@@ -64,14 +64,18 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             return -1;
         }
 
-        if (defender.shieldDamageAtMost(25) && !attacker.isDT()) {
-            if (defender.cooldownRemaining() <= 5) {
-                return 0;
+        if (defender.shieldDamageAtMost(10) && !attacker.isDT()) {
+            if (defender.friendsInRadiusCount(1.5) >= 3) {
+                return 1.1;
             }
 
-            if (defender.lastUnderAttackMoreThanAgo(150) && defender.shieldDamageAtMost(16)) {
-                return 0;
-            }
+//            if (defender.cooldownRemaining() <= ) {
+//                return 0;
+//            }
+//
+//            if (defender.lastUnderAttackMoreThanAgo(150) && defender.shieldDamageAtMost(16)) {
+//                return 0;
+//            }
         }
 
         if (attacker.isZergling()) {

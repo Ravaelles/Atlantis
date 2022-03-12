@@ -34,7 +34,8 @@ public class ADynamicTech {
             return false;
         }
 
-        if (!canAffordWithMargin(upgrade)) {
+//        if (!canAffordWithMargin(upgrade)) {
+        if (!canAfford(upgrade)) {
             return false;
         }
 
@@ -46,9 +47,17 @@ public class ADynamicTech {
         return false;
     }
 
+    protected static boolean canAfford(TechType tech) {
+        return AGame.canAffordWithReserved(tech.mineralPrice(), tech.gasPrice());
+    }
+
     protected static boolean canAffordWithMargin(TechType tech) {
         int margin = 100;
         return AGame.canAffordWithReserved(tech.mineralPrice() + margin, tech.gasPrice() + margin);
+    }
+
+    protected static boolean canAfford(UpgradeType upgrade) {
+        return AGame.canAffordWithReserved(upgrade.mineralPrice(), upgrade.gasPrice());
     }
 
     protected static boolean canAffordWithMargin(UpgradeType upgrade) {

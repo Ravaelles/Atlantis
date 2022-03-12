@@ -2,6 +2,7 @@ package atlantis.combat.micro.managers;
 
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.interrupt.UnitAttackWaitFrames;
 
 public class DanceAfterShoot {
 
@@ -9,33 +10,92 @@ public class DanceAfterShoot {
      * For ranged unit, once shoot is fired, move slightly away or move towards the target when still have cooldown.
      */
     public static boolean handle(AUnit unit) {
-        if (unit.isDragoon() && unit.isHealthy()) {
-            return false;
-        }
-
-        if (!unit.isAttacking() || !unit.isRanged() || unit.cooldownRemaining() >= 6) {
+        if (shouldSkip(unit)) {
             return false;
         }
 
         AUnit target = unit.target();
-        if (target == null) {
-            return false;
-        }
-
         double dist = target.distTo(unit);
+//        double range = unit.weaponRangeAgainst(target);
 
-        if (dist <= 2.45) {
-            return unit.moveAwayFrom(target, 0.4, "DanceAway", Actions.MOVE_DANCE);
-        }
-        else if (dist <= 3) {
-            return unit.moveAwayFrom(target, 0.1, "DanceAway", Actions.MOVE_DANCE);
-        }
-        else if (dist >= 3.8) {
+        String danceAway = "DanceAway-" + unit.cooldownRemaining();
+        String danceTo = "DanceTo";
+
+        // Step FORWARD
+        if (shouldDanceTo(target, dist)) {
+            unit.addLog(danceTo);
             return unit.move(
-                unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE, "DanceTo", false
+                unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE, danceTo, false
             );
         }
+        // Big step BACK
+        else if (dist <= 2.8) {
+            unit.addLog(danceAway);
+            return unit.moveAwayFrom(target, 0.3, danceAway, Actions.MOVE_DANCE);
+        }
+        // Small step BACK
+        else if (dist <= 3.3) {
+            unit.addLog(danceAway);
+            return unit.moveAwayFrom(target, 0.1, danceAway, Actions.MOVE_DANCE);
+        }
 
+        return false;
+    }
+
+    // =========================================================
+
+    private static boolean shouldDanceTo(AUnit target, double dist) {
+        return dist >= 3.8
+            || (!target.isBuilding() && dist >= 1.6)
+            || target.hasNoWeaponAtAll();
+    }
+
+    private static boolean shouldSkip(AUnit unit) {
+        if (true) return true;
+
+        if (unit.isMelee()) {
+            return true;
+        }
+
+        if (unit.target() == null) {
+            return true;
+        }
+
+//        if (unit.target() == null || !unit.target().isRealUnit()) {
+//            return true;
+//        }
+
+//        if (unit.isDragoon() && unit.isHealthy()) {
+//            return true;
+//        }
+
+        // Can start shooting
+        if (unit.cooldownRemaining() <= 3) {
+            return true;
+        }
+
+        int lastAttackFrameAgo = unit.lastAttackFrameAgo();
+        int cooldownAbsolute = unit.cooldownAbsolute();
+
+        int minStop = UnitAttackWaitFrames.effectiveStopFrames(unit.type());
+
+        if (lastAttackFrameAgo <= minStop || lastAttackFrameAgo >= cooldownAbsolute) {
+            return true;
+        }
+//        if (unit.lastAttackFrameMoreThanAgo(unit.cooldownAbsolute() - 3)) {
+//            return true;
+//        }
+
+        // In process of shooting
+        if ((unit.cooldownRemaining() + minStop) >= cooldownAbsolute) {
+            return true;
+        }
+
+        if (!unit.isAttacking()) {
+            return true;
+        }
+
+        System.out.println("unit.lastAttackFrameAgo = " + lastAttackFrameAgo + " // " + minStop);
         return false;
     }
 

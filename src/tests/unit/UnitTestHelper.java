@@ -19,6 +19,7 @@ public class UnitTestHelper {
     public static int REAL_UNITS = 10;
     public static int GROUND_UNITS = 5;
     public static int BUILDINGS = 5;
+    public static int COMBAT_BUILDINGS = 5;
     public static int AIR_UNITS = 5;
     public static int SPELLS = 2;
 

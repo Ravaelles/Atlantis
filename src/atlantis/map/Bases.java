@@ -8,7 +8,8 @@ import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
+import jbweb.Stations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -169,11 +170,18 @@ public class Bases {
         return (List<ABaseLocation>) cache.get(
                 "baseLocations",
                 -1,
-                () -> AMap.getMap()
-                        .getBases()
+                () -> Stations.allBases()
                         .stream()
-                        .map(base -> ABaseLocation.create(base))
+                        .map(base -> ABaseLocation.create(base.getBWEMBase()))
                         .collect(Collectors.toList())
+
+//                () -> AMap.getMap()
+//                        .getBases()
+//                        .stream()
+//                        .map(base -> ABaseLocation.create(base))
+                        // This won't work - fog of war :- (
+//                        .filter(base -> Select.minerals().inRadius(8, base).atLeast(6))
+//                        .collect(Collectors.toList())
         );
     }
 

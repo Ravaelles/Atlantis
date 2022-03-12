@@ -26,8 +26,12 @@ public class ASupplyManager {
             return;
         }
 
+        if (requestedConstructionsOfSupply() >= 1 && A.supplyTotal() <= 50) {
+            return;
+        }
+
         // Fix for UMS maps
-        if (A.isUms() && AGame.supplyFree() <= 1 && requestedConstructionsOfSupply() == 0) {
+        if (A.isUms() && AGame.supplyFree() <= 1) {
             requestAdditionalSupply();
             return;
         }
@@ -44,15 +48,15 @@ public class ASupplyManager {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 20) {
-                if (supplyFree <= 4 && noSuppliesBeingBuilt) {
+                if (supplyFree <= 3 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
-            } else if (supplyTotal <= 40) {
-                if (supplyFree <= 8 && noSuppliesBeingBuilt) {
+            } else if (supplyTotal <= 43) {
+                if (supplyFree <= 5 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 100) {
-                if (supplyFree <= 14 && noSuppliesBeingBuilt) {
+                if (supplyFree <= 10 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 200) {
@@ -66,6 +70,7 @@ public class ASupplyManager {
     // =========================================================
     
     private static void requestAdditionalSupply() {
+//        A.printStackTrace("Supply request: " + A.supplyUsed() + " // " + A.supplyTotal());
 
         // Zerg handles supply a bit differently
         if (AGame.isPlayingAsZerg()) {
@@ -84,7 +89,7 @@ public class ASupplyManager {
 
     private static int requestedConstructionsOfSupply() {
         if (We.zerg()) {
-//            return Count.ourOfTypeIncludingUnfinished(AUnitType.Zerg_Overlord);
+//            return Count.ourOfTypeWithUnfinished(AUnitType.Zerg_Overlord);
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }
 

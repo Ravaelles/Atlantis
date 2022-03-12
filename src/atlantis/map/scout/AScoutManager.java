@@ -49,17 +49,20 @@ public class AScoutManager {
     private static boolean scoutingAroundBaseWasInterrupted = false;
     private static boolean scoutingAroundBaseDirectionClockwise = true;
     private static APosition nextPositionToScout = null;
+    private static ARegion enemyBaseRegion = null;
 
     // =========================================================
 
     private static void update(AUnit scout) {
         scout.setTooltipTactical("Scout...");
 
-        if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
+//        if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
+        if (scout.isRunning()) {
             nextPositionToScout = null;
             scoutingAroundBaseWasInterrupted = true;
-            handleScoutFreeBases(scout);
-            return;
+            if (A.seconds() >= 300) {
+                handleScoutFreeBases(scout);
+            }
         }
 
         // =========================================================
@@ -187,15 +190,15 @@ public class AScoutManager {
 //        APosition enemyBase = Select.main().position();
 
         if (enemy != null) {
-            ARegion enemyBaseRegion = enemy.region();
+            enemyBaseRegion = enemy.region();
 
             if (scoutingAroundBasePoints.isEmpty()) {
-                initializeEnemyRegionPolygonPoints(scout, enemyBaseRegion);
+                initializeEnemyRegionPolygonPoints(scout);
             }
 
-            defineNextPolygonPointForEnemyBaseRoamingUnit(enemyBaseRegion, scout);
+            defineNextPolygonPointForEnemyBaseRoamingUnit(scout);
             if (scoutingAroundBaseLastPolygonPoint != null) {
-                scout.move(scoutingAroundBaseLastPolygonPoint, Actions.MOVE_EXPLORE, "Roam around", true);
+                scout.move(scoutingAroundBaseLastPolygonPoint, Actions.MOVE_EXPLORE, "RoamAround", true);
                 return true;
             } else {
                 scout.setTooltipTactical("Can't find polygon point");
@@ -250,7 +253,7 @@ public class AScoutManager {
             for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(Bases.natural(), true)) {
                 if (!scout.isBuilder() && !scout.isRepairerOfAnyKind()) {
                     if (scouts.isEmpty()) {
-                        System.out.println("Add scout " + scout);
+//                        System.out.println("Add scout " + scout);
                         scouts.add(scout);
                         return;
                     }
@@ -271,7 +274,7 @@ public class AScoutManager {
         for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
             AUnit scout = iterator.next();
             if (!scout.isAlive()) {
-                System.out.println("Remove dead scout " + scout);
+//                System.out.println("Remove dead scout " + scout);
                 iterator.remove();
                 anyScoutBeenKilled = true;
             }
@@ -285,51 +288,17 @@ public class AScoutManager {
         }
     }
 
-    private static void defineNextPolygonPointForEnemyBaseRoamingUnit(ARegion region, AUnit scout) {
+    private static void defineNextPolygonPointForEnemyBaseRoamingUnit(AUnit scout) {
         if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
             scout.setTooltipTactical("ChangeOfPlans");
             return;
         }
 
-        // Change roaming direction if we were forced to run from enemy units
-        if (scoutingAroundBaseWasInterrupted) {
-            scoutingAroundBaseDirectionClockwise = !scoutingAroundBaseDirectionClockwise;
-        }
-        
-        // Define direction
-        int deltaIndex = scoutingAroundBaseDirectionClockwise ? 1 : -1;
-        
-        // =========================================================
-        
-        HasPosition goTo = scoutingAroundBaseLastPolygonPoint != null
-                ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
-
-        if (goTo == null || scoutingAroundBaseWasInterrupted) {
-            goTo = useNearestBoundaryPoint(region, scout);
-        } else {
-            if (scout.distTo(goTo) <= 1.8) {
-                scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + deltaIndex)
-                        % scoutingAroundBasePoints.size();
-                if (scoutingAroundBaseNextPolygonIndex < 0) {
-                    scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.size() - 1;
-                }
-                
-                goTo = scoutingAroundBasePoints.get(scoutingAroundBaseNextPolygonIndex);
-            }
-        }
-
-//        if (AtlantisMap.getGroundDistance(scout, goTo) < 0.1) {
-//            scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + 1)
-//                        % scoutingAroundBasePoints.size();
-//            goTo = (APosition) scoutingAroundBasePoints.get(scoutingAroundBaseNextPolygonIndex);
-//        }
-
-        scoutingAroundBaseLastPolygonPoint = goTo;
-        scoutingAroundBaseWasInterrupted = false;
+        scoutingAroundBaseLastPolygonPoint = nextPointAroundEnemyBase(scout);
 
         if (APainter.paintingMode == APainter.MODE_FULL_PAINTING) {
             APainter.paintLine(
-                    scoutingAroundBaseLastPolygonPoint, scout.position(), Color.Yellow
+                scoutingAroundBaseLastPolygonPoint, scout.position(), Color.Yellow
             );
         }
 
@@ -337,34 +306,57 @@ public class AScoutManager {
             CameraManager.centerCameraOn(scout.position());
         }
     }
-    
-    private static void initializeEnemyRegionPolygonPoints(AUnit scout, ARegion regionToRoam) {
-//        Position centerOfRegion = enemyBaseRegion.center();
 
-//        scoutingAroundBasePoints.addPosition(APosition.create(centerOfRegion));
-//
-//        return;
+    private static HasPosition nextPointAroundEnemyBase(AUnit scout) {
 
-        for (ARegionBoundary position : regionToRoam.boundaries()) {
-//            APosition position = APosition.create(point);
+        // Change roaming direction if we were forced to run from enemy units
+        if (scoutingAroundBaseWasInterrupted) {
+            scoutingAroundBaseDirectionClockwise = !scoutingAroundBaseDirectionClockwise;
+        }
 
-            // Calculate actual ground distance to this position
-//            double groundDistance = AMap.getGroundDistance(scout, position);
-            double groundDistance = scout.groundDist(position);
+        // Define direction
+        HasPosition goTo = null;
+        int step = 1;
+        do {
+            int deltaIndex = scoutingAroundBaseDirectionClockwise ? step : -step;
 
-            // Fix problem with some points being unwalkable despite isWalkable being true
-//            if (groundDistance < 2) {
-//                continue;
-//            }
-//            position = PositionOperationsWrapper.getPositionMovedPercentTowards(position, centerOfRegion, 3.5);
+            goTo = scoutingAroundBaseLastPolygonPoint != null ? APosition.create(scoutingAroundBaseLastPolygonPoint) : null;
 
-            // If positions is walkable, not in different region and has path to it, it should be ok
-//            if (position.isWalkable() && regionToRoam.getPolygon().isInside(position)
+            if (goTo == null || scoutingAroundBaseWasInterrupted) {
+                goTo = useNearestBoundaryPoint(enemyBaseRegion, scout);
+            } else {
+                if (scout.distTo(goTo) <= 1.8) {
+                    scoutingAroundBaseNextPolygonIndex = (scoutingAroundBaseNextPolygonIndex + deltaIndex)
+                        % scoutingAroundBasePoints.size();
+                    if (scoutingAroundBaseNextPolygonIndex < 0) {
+                        scoutingAroundBaseNextPolygonIndex = scoutingAroundBasePoints.size() - 1;
+                    }
+
+                    goTo = scoutingAroundBasePoints.get(scoutingAroundBaseNextPolygonIndex);
+
+                    if (Select.all().inRadius(0.5, goTo).empty()) {
+                        break;
+                    }
+                }
+            }
+
+            step++;
+        } while (step <= 15);
+
+        scoutingAroundBaseWasInterrupted = false;
+        return scoutingAroundBaseLastPolygonPoint = goTo;
+    }
+
+    private static void initializeEnemyRegionPolygonPoints(AUnit scout) {
+        APosition center = (new Positions(enemyBaseRegion.boundaries())).average();
+
+        for (ARegionBoundary position : enemyBaseRegion.boundaries()) {
+            double groundDistance = center.distTo(position);
+
             if (
                     position.isWalkable()
-//                    && scout.hasPathTo(position) && groundDistance >= 4
                     && groundDistance >= 2
-//                    && groundDistance <= 1.7 * scout.distanceTo(position)
+                    && groundDistance <= 17
             ) {
                 scoutingAroundBasePoints.addPosition(position);
             }

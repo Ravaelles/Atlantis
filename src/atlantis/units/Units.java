@@ -332,7 +332,7 @@ public class Units {
             return null;
         }
         
-        return PositionHelper.getPositionAverage(this);
+        return PositionHelper.getPositionAverage(units);
     }
     
     /**

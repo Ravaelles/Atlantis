@@ -57,6 +57,9 @@ public class TerranTankWhenSieged extends TerranTank {
     // =========================================================
 
     private static boolean shouldNotThinkAboutUnsieging(AUnit unit) {
+//        unit.setTooltip(unit + ", SIEGED ago = " + unit.lastActionAgo(Actions.SIEGE), false);
+//        unit.setTooltip(unit + ", UNSIEGED ago = " + unit.lastActionAgo(Actions.UNSIEGE), false);
+
         if (unit.cooldownRemaining() > 0) {
             return true;
         }

@@ -3,6 +3,7 @@ package atlantis.production.constructing;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
+import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -16,7 +17,7 @@ public class ABuilderManager {
     public static boolean update(AUnit builder) {
 
         // Sometimes an ugly thing like this may happen
-        if (We.terran() && builder.isConstructing() && builder.buildUnit() != null && A.everyNthGameFrame(32)) {
+        if (We.terran() && builder.isConstructing() && builder.buildUnit() != null && A.everyNthGameFrame(29)) {
             builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(builder.buildUnit());
             return true;
         }
@@ -55,7 +56,7 @@ public class ABuilderManager {
     }
 
     private static boolean travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
-        APosition buildPosition = constructionOrder.positionToBuild();
+        APosition buildPosition = constructionOrder.buildPosition();
         APosition buildPositionCenter = constructionOrder.positionToBuildCenter();
         AUnitType buildingType = constructionOrder.buildingType();
 
@@ -112,38 +113,48 @@ public class ABuilderManager {
     }
 
     private static boolean issueBuildOrder(
-        AUnit builder, AUnitType buildingType, APosition buildPosition, ConstructionOrder constructionOrder
+        AUnit builder, AUnitType buildingType, APosition buildPosition, ConstructionOrder order
     ) {
         if (We.protoss()) {
             AUnit newBuilding = Select.ourUnfinished()
-                .ofType(constructionOrder.buildingType())
-                .inRadius(1.1, builder).first();
+                .ofType(order.buildingType())
+                .inRadius(2, builder).nearestTo(builder);
             if (newBuilding != null) {
-                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
-                constructionOrder.setBuilder(null);
+                order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+                order.setBuilder(null);
                 builder.stop("Finished!", true);
                 return false;
             }
         }
 
         if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
+            buildPosition = refreshBuildPosition(order);
+
             moveOtherUnitsOutOfConstructionPlace(builder, buildPosition.translateByTiles(1, 1));
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.
-            if (AGame.canAfford(buildingType)) {
-                buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
-                TilePosition buildTilePosition = new TilePosition(
-                    buildPosition.tx(), buildPosition.ty()
-                );
+            buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
+            TilePosition buildTilePosition = new TilePosition(
+                buildPosition.tx(), buildPosition.ty()
+            );
 
-                if (!builder.isConstructing() || builder.isIdle() || AGame.now() % 7 == 0) {
-                    builder.build(buildingType, buildTilePosition);
-                    return true;
-                }
+            if (!builder.isConstructing() || builder.isIdle() || AGame.now() % 7 == 0) {
+                builder.build(buildingType, buildTilePosition);
+                return true;
             }
         }
 
         return true;
+    }
+
+    private static APosition refreshBuildPosition(ConstructionOrder order) {
+        if (Select.ourWorkers().inRadius(1.8, order.buildPosition()).atLeast(2)) {
+            return APositionFinder.findPositionForNew(
+                order.builder(), order.buildingType(), order
+            );
+        }
+
+        return order.buildPosition();
     }
 
     private static void moveOtherUnitsOutOfConstructionPlace(AUnit builder, APosition buildPosition) {

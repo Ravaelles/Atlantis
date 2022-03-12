@@ -28,7 +28,7 @@ import java.util.Objects;
  */
 public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
 
-    private static final Map<Object, APosition> instances = new HashMap<>();
+//    private static final Map<Object, APosition> instances = new HashMap<>();
     
     private final Position p;
     
@@ -62,10 +62,10 @@ public class APosition extends Position implements HasPosition, Comparable<Point
      * you can create them here or reference original Position class via p() method.
      */
     public static APosition create(Object p) {
-        if (instances.containsKey(p)) {
-            return instances.get(p);
-        }
-        else {
+//        if (instances.containsKey(p)) {
+//            return instances.get(p);
+//        }
+//        else {
             APosition position = null;
 
             if (p instanceof HasPosition) {
@@ -78,9 +78,9 @@ public class APosition extends Position implements HasPosition, Comparable<Point
                 throw new RuntimeException("APosition::create invalid param " + p);
             }
 
-            instances.put(p, position);
+//            instances.put(p, position);
             return position;
-        }
+//        }
     }
     
     /**

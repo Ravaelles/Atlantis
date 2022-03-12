@@ -11,7 +11,7 @@ import atlantis.units.Units;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 
 import java.util.ArrayList;
 
@@ -278,7 +278,7 @@ public abstract class Squad extends Units {
     public int cohesionPercent() {
         return cacheInteger.get(
             "cohesionPercent",
-            15,
+            9,
             () -> {
                 APosition center = center();
                 if (size() <= 1 || center == null) {
@@ -289,7 +289,7 @@ public abstract class Squad extends Units {
                     .inRadius(CohesionAssurance.squadMaxRadius(this), center)
                     .count();
 
-                return (int) (100 * withinSquadRadius / size());
+                return (100 * withinSquadRadius / size());
             }
         );
     }

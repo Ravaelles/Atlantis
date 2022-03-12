@@ -11,7 +11,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 
 public class RetreatManager {
@@ -27,7 +27,7 @@ public class RetreatManager {
     public static boolean shouldRetreat(AUnit unit) {
         return cache.get(
                 "shouldRetreat:" + unit.id(),
-                25,
+                11,
                 () -> {
                     if (shouldNotConsiderRetreatingNow(unit)) {
                         return false;
@@ -36,9 +36,11 @@ public class RetreatManager {
                     Selection enemies = enemies(unit);
 
                     if (shouldSmallScaleRetreat(unit, enemies)) {
+                        GLOBAL_RETREAT_COUNTER++;
                         return true;
                     }
                     if (shouldLargeScaleRetreat(unit, enemies)) {
+                        GLOBAL_RETREAT_COUNTER++;
                         return true;
                     }
 
@@ -132,9 +134,9 @@ public class RetreatManager {
 
     private static boolean shouldLargeScaleRetreat(AUnit unit, Selection enemies) {
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
+
         if (!isSituationFavorable) {
             unit._lastRetreat = AGame.now();
-            GLOBAL_RETREAT_COUNTER++;
             unit.setTooltipTactical("Retreat");
             MissionChanger.notifyThatUnitRetreated(unit);
             APosition averageEnemyPosition = enemies.units().average();
@@ -147,7 +149,7 @@ public class RetreatManager {
                 return false;
             }
 
-            return unit.runningManager().runFrom(averageEnemyPosition, 3.5, Actions.RUN_RETREAT);
+            return unit.runningManager().runFrom(averageEnemyPosition, 5, Actions.RUN_RETREAT);
         }
 
         if ("Retreat".equals(unit.tooltip())) {
@@ -183,7 +185,7 @@ public class RetreatManager {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
-        if (unit.isRanged() && unit.isHealthy()) {
+        if (unit.kitingUnit() && unit.isHealthy()) {
             return true;
         }
 
@@ -191,27 +193,40 @@ public class RetreatManager {
             return true;
         }
 
-        if (unit.isMissionDefend()) {
-            AFocusPoint focusPoint = unit.squad().mission().focusPoint();
-            return focusPoint != null && unit.distTo(focusPoint) <= 3;
-        }
-
-        if (unit.hpLessThan(Enemy.protoss() ? 33 : 16)) {
-            return false;
-        }
-
-        if (
-            unit.isAttacking()
-//                && unit.hpMoreThan(32)
-                && unit.lastActionLessThanAgo(5)
-                && unit.lastAttackFrameMoreThanAgo(20)
-        ) {
+        if (unit.enemiesNear().tanks().inRadius(5, unit).notEmpty()) {
+            unit.addLog("EngageTanks");
             return true;
         }
 
-        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(80) && unit.lastUnderAttackLessThanAgo(80)) {
-            return true;
+        if (unit.isMissionSparta()) {
+//            if (unit.mission().allowsToRetreat(unit)) {
+//                System.err.println("Sparta allowed " + unit + " to retreat (HP=" + unit.hp() + ")");
+//            }
+            return !unit.mission().allowsToRetreat(unit);
         }
+
+//        if (unit.isMissionDefend() && (unit.isMelee() || unit.woundPercent() <= 10)) {
+//            AFocusPoint focusPoint = unit.squad().mission().focusPoint();
+//            return focusPoint != null && unit.distTo(focusPoint) <= 3;
+//        }
+
+//        if (unit.hpLessThan(Enemy.protoss() ? 33 : 16)) {
+//            return false;
+//        }
+
+
+//        if (
+//            unit.isAttacking()
+////                && unit.hpMoreThan(32)
+//                && unit.lastActionLessThanAgo(5)
+//                && unit.lastAttackFrameMoreThanAgo(20)
+//        ) {
+//            return true;
+//        }
+//
+//        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(80) && unit.lastUnderAttackLessThanAgo(80)) {
+//            return true;
+//        }
 
         if (unit.isMissionDefend() &&
             (
@@ -219,7 +234,7 @@ public class RetreatManager {
                 || Select.ourOfType(AUnitType.Zerg_Sunken_Colony).inRadius(4.9, unit).isNotEmpty()
             )
         ) {
-            return unit.hp() >= 12;
+            return unit.hp() >= 17;
         }
 
         if (unit.type().isReaver()) {

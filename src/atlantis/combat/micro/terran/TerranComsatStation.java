@@ -10,7 +10,7 @@ import tests.unit.FakeUnit;
 public class TerranComsatStation {
 
     public static boolean update(AUnit comsat) {
-        if (AGame.notNthGameFrame(15)) {
+        if (AGame.notNthGameFrame(13)) {
             return false;
         }
 
@@ -43,7 +43,7 @@ public class TerranComsatStation {
 
         int minUnitsNear = (comsat.energy(160) ? 3 : (comsat.energy(60) ? 4 : 6));
 
-        if (comsat.energy(100) && Select.ourBuildingsIncludingUnfinished().inRadius(6.5, lurker).isNotEmpty()) {
+        if (comsat.energy(100) && Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker).isNotEmpty()) {
 //            System.err.println("Scan " + lurker + " because buildings are close");
             return true;
         }

@@ -6,6 +6,7 @@ import atlantis.map.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.ColorUtil;
 import bwapi.Color;
 import bwapi.Game;
@@ -216,43 +217,6 @@ public class APainter {
 
     protected static void setTextSizeLarge() {
         bwapi.setTextSize(Text.Size.Large);
-    }
-
-    public static void paintChoke(AChoke choke, Color color, String extraText) {
-        if (choke == null || isDisabled()) {
-            return;
-        }
-
-        if ("".equals(extraText)) {
-            extraText = choke.width() + " wide choke";
-        }
-
-//        for (WalkPosition walkPosition : choke.rawChoke().getGeometry()) {
-////            paintRectangle(APosition.create(walkPosition), 32, 32, Color.Brown);
-//            paintCircle(APosition.create(walkPosition), 32, Color.Brown);
-//        }
-
-        // Paint line perpendicular to the choke, useful for blocking it
-        paintLine(choke.firstPoint(), choke.lastPoint(), Color.Brown);
-
-        paintCircle(choke.center(), choke.width() * 32, color);
-        paintTextCentered(
-                choke.center().translateByTiles(0, choke.width()),
-                extraText,
-                color
-        );
-    }
-
-    protected static void paintBase(APosition position, String text, Color color) {
-        if (position == null || isDisabled()) {
-            return;
-        }
-
-        paintRectangle(
-                position.translateByPixels(-2 * 32, (int) -1.5 * 32),
-                4 * 32, 3 * 32, color
-        );
-        APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
     }
 
     public static void assignBwapiInstance() {

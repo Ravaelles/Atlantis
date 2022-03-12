@@ -3,7 +3,7 @@ package atlantis.map;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import bwem.Area;
 
 import java.util.ArrayList;

@@ -2,14 +2,22 @@ package atlantis.production.dynamic.protoss;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.Decisions;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.tech.ATechRequests;
+import atlantis.map.ABaseLocation;
+import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
+import atlantis.production.requests.AAntiLandBuildingRequests;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import bwapi.TechType;
+
+import static atlantis.units.AUnitType.*;
 
 public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
 
@@ -18,11 +26,13 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
+        cannons();
         arbiterTribunal();
         stargate();
         observatory();
         roboticsSupportBay();
         roboticsFacility();
+        shieldBattery();
         forge();
         gateways();
     }
@@ -34,71 +44,92 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
-        if (Have.no(AUnitType.Protoss_Robotics_Facility) || Have.a(AUnitType.Protoss_Robotics_Support_Bay)) {
+        if (Have.no(Protoss_Robotics_Facility) || Have.a(Protoss_Robotics_Support_Bay)) {
             return;
         }
 
-        if (Have.notEvenInPlans(AUnitType.Protoss_Robotics_Support_Bay)) {
-            buildNow(AUnitType.Protoss_Robotics_Support_Bay);
+        if (Have.notEvenInPlans(Protoss_Robotics_Support_Bay)) {
+            buildNow(Protoss_Robotics_Support_Bay);
         }
     }
 
     private static void observatory() {
-        if (!A.supplyUsed(40)) {
+        if (Have.a(Protoss_Observatory) || Have.no(Protoss_Robotics_Facility)) {
             return;
         }
 
-        if (Have.no(AUnitType.Protoss_Robotics_Facility) || Have.a(AUnitType.Protoss_Observatory)) {
-            return;
-        }
-
-        if (Count.includingPlanned(AUnitType.Protoss_Observatory) == 0) {
-            buildNow(AUnitType.Protoss_Observatory);
+        if (Count.WithPlanned(Protoss_Observatory) == 0) {
+            buildNow(Protoss_Observatory);
         }
     }
 
     private static void roboticsFacility() {
-        if (!A.supplyUsed(37)) {
-            return;
-        }
-        if (!A.supplyUsed(46) && Have.cannon()) {
+        if (!Decisions.buildRoboticsFacility()) {
             return;
         }
 
-        if (Count.includingPlanned(AUnitType.Protoss_Robotics_Facility) == 0) {
-            buildNow(AUnitType.Protoss_Robotics_Facility);
+        if (Count.WithPlanned(Protoss_Robotics_Facility) == 0) {
+            buildNow(Protoss_Robotics_Facility);
         }
+    }
+
+    private static void shieldBattery() {
+//        buildToHaveOne(40, AUnitType.Protoss_Shield_Battery);
     }
 
     private static void gateways() {
         if (
-                GamePhase.isEarlyGame()
+            GamePhase.isEarlyGame()
                 && EnemyStrategy.get().isRushOrCheese()
-                && Count.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Gateway) <= (A.hasMinerals(300) ? 2 : 1)
+                && Count.ourOfTypeWithUnfinished(Protoss_Gateway) <= (A.hasMinerals(250) ? 2 : 1)
         ) {
-            buildIfHaveMineralsAndGas(AUnitType.Protoss_Gateway);
+            buildIfHaveMineralsAndGas(Protoss_Gateway);
             return;
         }
 
-        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway, 90, 0);
+        buildIfAllBusyButCanAfford(Protoss_Gateway, 120, 0);
     }
 
     private static void forge() {
-        buildToHaveOne(36, AUnitType.Protoss_Forge);
+        int buildAtSupply = EnemyStrategy.get().isRushOrCheese() ? 46 : 36;
+
+        buildToHaveOne(buildAtSupply, Protoss_Forge);
     }
 
     private static void stargate() {
-        buildToHaveOne(70, AUnitType.Protoss_Stargate);
+        buildToHaveOne(80, Protoss_Stargate);
     }
 
     private static void arbiterTribunal() {
-        buildToHaveOne(90, AUnitType.Protoss_Arbiter_Tribunal);
+        buildToHaveOne(90, Protoss_Arbiter_Tribunal);
 
         if (
-                hasFree(AUnitType.Protoss_Arbiter_Tribunal)
-                && has(AUnitType.Protoss_Arbiter)
+            hasFree(Protoss_Arbiter_Tribunal)
+                && has(Protoss_Arbiter)
         ) {
             ATechRequests.researchTech(TechType.Stasis_Field);
+        }
+    }
+
+    private static void cannons() {
+        if (A.notNthGameFrame(47) || A.seconds() < 350) {
+            return;
+        }
+
+        for (AUnit base : Select.ourBases().list()) {
+            int existingCannonsNearby = Select.ourWithUnfinished(Protoss_Photon_Cannon)
+                .inRadius(10, base)
+                .count();
+
+//            System.err.println(base + " cannons = " + existingCannonsNearby);
+
+            if (existingCannonsNearby < 1) {
+                HasPosition nearTo = ABaseLocation.mineralsCenter(base);
+                if (Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 10, nearTo) == 0) {
+                    AAntiLandBuildingRequests.requestCombatBuildingAntiLand(nearTo);
+                    System.err.println("Requested Cannon to protect base " + base);
+                }
+            }
         }
     }
 }

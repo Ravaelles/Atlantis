@@ -5,7 +5,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyFlags;
-import atlantis.information.generic.ArmyStrength;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -17,6 +17,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 
 import java.util.List;
 
@@ -56,8 +57,16 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         if (Have.no(AUnitType.Protoss_Observatory)) {
             if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
                 AddToQueue.withTopPriority(AUnitType.Protoss_Observatory);
+                AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
             }
             return;
+        }
+
+        if (Have.no(AUnitType.Protoss_Observer)) {
+            if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
+                AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
+                return;
+            }
         }
 
         int limit = Math.max(
@@ -72,7 +81,10 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
-        buildToHave(AUnitType.Protoss_Corsair, 4);
+        int mutas = EnemyUnits.count(AUnitType.Zerg_Mutalisk);
+        if (mutas >= 1) {
+            buildToHave(AUnitType.Protoss_Corsair, (int) (mutas / 2) + 1);
+        }
     }
 
     private static void reavers() {
@@ -90,17 +102,19 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
+        if (!A.hasGas(50) && !A.hasMinerals(125)) {
+            return;
+        }
+
         if (
-            GamePhase.isEarlyGame()
-                && EnemyStrategy.get().isRushOrCheese()
-                && !A.hasGas(70)
-                && !A.hasMinerals(175)
-                && Count.zealots() < minZealotsInRush()
+            Decisions.needToProduceZealotsNow()
+                && !A.hasGas(50)
+                && !A.hasMinerals(225)
         ) {
                 return;
         }
 
-        if (A.supplyUsed() <= 55 && A.hasGas(50) && A.hasMinerals(175)) {
+        if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
             trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
             return;
         }
@@ -112,20 +126,21 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         trainIfPossible(AUnitType.Protoss_Dragoon);
     }
 
-    private static int minZealotsInRush() {
-        return 2;
-    }
-
     private static void zealots() {
         if (Have.no(AUnitType.Protoss_Gateway)) {
             return;
         }
 
-        if (!AGame.canAffordWithReserved(125, 0)) {
+//        if (!AGame.canAffordWithReserved(125, 0)) {
+//            return;
+//        }
+
+        if (dragoonInsteadOfZealot()) {
             return;
         }
 
-        if (dragoonInsteadOfZealot()) {
+        if (Decisions.needToProduceZealotsNow()) {
+            trainIfPossible(AUnitType.Protoss_Zealot);
             return;
         }
 
@@ -139,15 +154,6 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
-        if (
-                GamePhase.isEarlyGame()
-                        && EnemyStrategy.get().isRushOrCheese()
-                        && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Zealot) <= minZealotsInRush()
-        ) {
-            trainIfPossible(AUnitType.Protoss_Zealot);
-            return;
-        }
-
         if (AGame.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) {
             trainIfPossible(AUnitType.Protoss_Zealot);
             return;
@@ -155,6 +161,17 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static boolean dragoonInsteadOfZealot() {
+        int mutas = EnemyUnits.count(AUnitType.Zerg_Mutalisk);
+        if (mutas >= 3) {
+            if (GamePhase.isEarlyGame()) {
+                return true;
+            }
+
+            if (mutas >= 8) {
+                return true;
+            }
+        }
+
         if (A.hasGas(50) && !A.hasMinerals(225) && Have.cyberneticsCore() && Count.dragoons() <= 2 && Count.zealots() >= 1) {
             return true;
         }

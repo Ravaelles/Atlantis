@@ -1,9 +1,7 @@
 package atlantis.production.constructing.position;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.AGame;
-import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionOrder;
@@ -11,9 +9,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.Cache;
+import atlantis.util.cache.Cache;
 import atlantis.util.We;
-import bwapi.Color;
 
 public class APositionFinder {
 
