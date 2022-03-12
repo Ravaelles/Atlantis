@@ -99,6 +99,18 @@ public class ATargetingStandard extends ATargeting {
         }
 
         // =========================================================
+        // Destroy Pylons first
+
+        target = enemyBuildings
+                .ofType(AUnitType.Protoss_Pylon)
+                .inRadius(8, unit)
+                .nearestTo(unit);
+        if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("D6a = " + target);
+            return target;
+        }
+
+        // =========================================================
         // Buildings worth destroying first
 
         target = enemyBuildings
@@ -116,7 +128,7 @@ public class ATargetingStandard extends ATargeting {
                 .inRadius(25, unit)
                 .nearestTo(unit);
         if (target != null) {
-            if (ATargeting.DEBUG) System.out.println("D6 = " + target);
+            if (ATargeting.DEBUG) System.out.println("D6b = " + target);
             return target;
         }
 

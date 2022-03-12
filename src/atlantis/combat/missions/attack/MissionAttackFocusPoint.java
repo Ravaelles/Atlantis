@@ -2,6 +2,7 @@ package atlantis.combat.missions.attack;
 
 import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionFocusPoint;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.GamePhase;
@@ -9,6 +10,7 @@ import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AbstractFoggedUnit;
 import atlantis.units.select.Count;
@@ -83,7 +85,10 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Try going to any known enemy unit
-        AUnit anyEnemyUnit = EnemyUnits.discovered().groundUnits().effVisible().first();
+        HasPosition alphaCenter = Alpha.alphaCenter();
+        AUnit anyEnemyUnit = EnemyUnits.discovered().groundUnits().effVisible().nearestTo(
+            alphaCenter != null ? alphaCenter : Select.our().first()
+        );
 //        AUnit anyEnemyUnit = EnemyUnits.visibleAndFogged().combatUnits().groundUnits().first();
         if (anyEnemyUnit != null) {
             return new AFocusPoint(

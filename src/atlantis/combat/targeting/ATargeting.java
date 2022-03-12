@@ -164,12 +164,10 @@ public class ATargeting {
         // =========================================================
 
         AUnit target;
-//        enemyBuildings = unit.enemiesNear()
         enemyBuildings = Select.enemyRealUnits(true, false, true)
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, maxDistFromEnemy);
-//        enemyBuildings.print("BBBB");
         enemyUnits = Select.enemyRealUnits()
                 .nonBuildings()
                 .inRadius(maxDistFromEnemy, unit)

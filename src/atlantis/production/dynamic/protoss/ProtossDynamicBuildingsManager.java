@@ -117,11 +117,11 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
 
         for (AUnit base : Select.ourBases().list()) {
-            int existingCannonsNearby = Select.ourWithUnfinished()
+            int existingCannonsNearby = Select.ourWithUnfinished(Protoss_Photon_Cannon)
                 .inRadius(10, base)
                 .count();
 
-            System.err.println(base + " cannons = " + existingCannonsNearby);
+//            System.err.println(base + " cannons = " + existingCannonsNearby);
 
             if (existingCannonsNearby < 1) {
                 HasPosition nearTo = ABaseLocation.mineralsCenter(base);
