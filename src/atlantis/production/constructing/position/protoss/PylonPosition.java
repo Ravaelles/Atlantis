@@ -29,7 +29,7 @@ public class PylonPosition {
         }
 
         if (mineralsCenter != null) {
-            position = position.translateTilesTowards(mineralsCenter, -2);
+            position = position.translateTilesTowards(mineralsCenter, -3);
 //            AAdvancedPainter.paintPosition(position, "AwayFromMinerals");
         }
         if (geyser != null) {

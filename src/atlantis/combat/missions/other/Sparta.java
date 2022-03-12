@@ -4,11 +4,13 @@ import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.MissionDefendFocusPoint;
 import atlantis.combat.missions.defend.MoveToDefendFocusPoint;
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 import java.util.List;
@@ -96,6 +98,28 @@ public class Sparta extends MissionDefend {
         return spartanPoint != null ? spartanPoint : focusPoint;
     }
 
+    // =========================================================
+
+    @Override
+    public boolean allowsToRetreat(AUnit unit) {
+        if (unit.isRanged()) {
+            return unit.hp() <= 20;
+        }
+
+//        return false;
+
+        if (unit.distToFocusPoint() <= 3) {
+            return false;
+        }
+//
+        return
+//            AGame.timeSeconds() > 300
+//                || unit.hp() > (unit.meleeEnemiesNearCount(2) >= 2 ? 33 : 17);
+            (unit.hp() <= 17 && unit.friendsInRadiusCount(3) <= 2)
+            || (unit.hp() <= 17 && unit.friendsInRadiusCount(1) >= 4);
+    }
+
+    @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         if (!unit.mission().focusPoint().isAroundChoke()) {
 //            System.err.println("Invalid Sparta not around choke");
@@ -107,10 +131,10 @@ public class Sparta extends MissionDefend {
         }
 
         if (enemy.isRanged()) {
-            return enemyDistToFocus <= 2.1 || enemyDistToBase < unitToBase;
+            return enemyDistToFocus <= 2 || (enemyDistToBase + 3 < unitToBase);
         }
 
-        if (enemy.isWorker() && unitToEnemy <= 2 && enemyDistToFocus <= 4 && A.seconds() <= 300) {
+        if (enemy.isWorker() && unitToEnemy <= 1.2 && enemyDistToFocus <= 1) {
             return true;
         }
 
@@ -118,10 +142,24 @@ public class Sparta extends MissionDefend {
             return false;
         }
 
+        // If unit outside our region...
+        if (enemyDistToBase - 0.3 <= focusPointDistToBase) {
+           if (unit.isMelee()) {
+                unit.addLog("Sparta:A");
+               return unitToEnemy <= 1;
+           }
+        }
+
+//        if (Count.dragoons() >= 2) {
+//            unit.addLog("Sparta:A");
+//            return unitToEnemy <= 1 && enemyDistToFocus <= 1;
+//        }
+
         // =========================================================
 
         focusPoint = focusPoint();
         if (!focusPoint.isAroundChoke()) {
+            unit.addLog("Sparta:B");
             return super.allowsToAttackEnemyUnit(unit, enemy);
         }
 
@@ -135,9 +173,15 @@ public class Sparta extends MissionDefend {
         // =========================================================
 
         if ((enemy.isZealot() || enemy.isZergling()) && unit.isZealot()) {
-            return unitToEnemy <= MAX_MELEE_DIST_TO_ATTACK
+            boolean canAttack = unitToEnemy <= MAX_MELEE_DIST_TO_ATTACK
                 || (isEnemyBehindLineOfDefence() && enemy.isZergling())
                 || (enemyDistToFocus <= 1.2 && unit.enemiesNear().count() == 0);
+
+            if (canAttack) {
+                unit.addLog("Sparta:C");
+            }
+
+            return canAttack;
         }
 
         if (!isEnemyBehindLineOfDefence() && unitToEnemy > MAX_MELEE_DIST_TO_ATTACK) {
@@ -145,10 +189,18 @@ public class Sparta extends MissionDefend {
         }
 
         if (isEnemyBehindLineOfDefence()) {
+            unit.addLog("Sparta:D");
             return true;
         }
 
-        return unit.distTo(enemy) <= (unit.isMelee() ? MAX_MELEE_DIST_TO_ATTACK : unit.weaponRangeAgainst(enemy));
+        boolean canAttack =
+            unit.distTo(enemy) <= (unit.isMelee() ? MAX_MELEE_DIST_TO_ATTACK : unit.weaponRangeAgainst(enemy));
+
+        if (canAttack) {
+            unit.addLog("Sparta:E");
+        }
+
+        return canAttack;
 
 //        return unit.isMelee() ? forMelee(unit, enemy);
 

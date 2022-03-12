@@ -16,8 +16,7 @@ import atlantis.units.select.Have;
 import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 
-import static atlantis.units.AUnitType.Protoss_Forge;
-import static atlantis.units.AUnitType.Protoss_Zealot;
+import static atlantis.units.AUnitType.*;
 
 public class Decisions {
 
@@ -135,10 +134,10 @@ public class Decisions {
         }
 
         if (EnemyInfo.hasHiddenUnits()) {
-            System.err.println("roboticsFacility because hasHiddenUnits");
+//            System.err.println("roboticsFacility because hasHiddenUnits");
             return true;
         }
-        if (A.supplyUsed() <= 44 && EnemyStrategy.get().isRushOrCheese()) {
+        if (A.supplyUsed() <= 44 && enemyStrategyIsRushOrCheese()) {
             return false;
         }
         if (A.supplyUsed() <= 46 && Have.cannon()) {
@@ -150,5 +149,46 @@ public class Decisions {
 //        System.err.println("EnemyStrategy.get().isRush() = " + EnemyStrategy.get().isRush());
 
         return true;
+    }
+
+    public static int minZealotsAgainstEnemyRush() {
+        if (Enemy.protoss()) return enemyStrategyIsRushOrCheese() ? 4 : 3;
+        if (Enemy.terran()) return 1;
+        return 5;
+    }
+
+    public static boolean needToProduceZealotsNow() {
+        int zealots = Count.zealots();
+
+        // Early game
+        if (GamePhase.isEarlyGame()) {
+            if (
+                enemyStrategyIsRushOrCheese()
+                && zealots < minZealotsAgainstEnemyRush()
+            ) {
+                return true;
+            }
+
+            if (zealots <= 1 || (A.hasMinerals(225) && Have.free(Protoss_Gateway))) {
+                return true;
+            }
+        }
+
+        // Mid + Late game
+        else {
+            if (zealots <= 1) {
+                return true;
+            }
+
+            if (AGame.canAffordWithReserved(130, 0)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected static boolean enemyStrategyIsRushOrCheese() {
+        return EnemyStrategy.get().isRushOrCheese();
     }
 }

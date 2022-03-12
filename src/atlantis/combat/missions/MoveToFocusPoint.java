@@ -82,7 +82,7 @@ public abstract class MoveToFocusPoint {
             return false;
         }
 
-        if (!isOnValidSideOfChoke(unit, focus)) {
+        if (!isOnValidSideOfChoke(unit, focus) && unit.distToFocusPoint() <= 7) {
             if (unit.enemiesNear().combatUnits().empty()) {
                 for (AUnit friend : unit.friendsNear().inRadius(7, unit).list()) {
                     friend.move(focus.fromSide(), Actions.MOVE_FOCUS, "HelpWithdraw", true);

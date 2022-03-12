@@ -2,8 +2,11 @@ package atlantis.game;
 
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.ABaseLocation;
+import atlantis.map.Bases;
 import atlantis.production.constructing.position.protoss.PylonPosition;
 import atlantis.units.select.Select;
+import bwapi.Color;
 import jbweb.Blocks;
 import jbweb.Stations;
 
@@ -12,6 +15,11 @@ public class OnEveryFrame {
 //    private static CappedList<Integer> frames = new CappedList<>(4);
 
     public static void update() {
+
+        for (ABaseLocation base : Bases.baseLocations()) {
+            AAdvancedPainter.paintBase(base.position(), "Base", Color.Grey);
+        }
+
 //        GameSpeed.checkIfNeedToSlowDown();
 //
 //        if (Select.our().count() <= 8) {

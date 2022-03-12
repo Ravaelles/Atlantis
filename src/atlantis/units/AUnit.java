@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ARunningManager;
@@ -2373,5 +2374,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean kitingUnit() {
         return isDragoon() || isVulture();
+    }
+
+    public double distToFocusPoint() {
+        Mission mission = mission();
+        if (mission == null) {
+            return 0;
+        }
+
+        AFocusPoint focusPoint = mission.focusPoint();
+        if (focusPoint == null) {
+            return 0;
+        }
+
+        return focusPoint.distTo(this);
     }
 }

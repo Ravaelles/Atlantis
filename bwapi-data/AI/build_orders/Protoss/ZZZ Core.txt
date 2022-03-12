@@ -34,9 +34,15 @@ Zealot First
 4 - MISSION=DEFEND
 8 - Pylon
 10 - Gateway
-12 - Assimilator
 13 - Zealot
+13 - Gateway
 16 - Pylon
-17 - Cybernetics Core
-20 - Dragoon
-22 - Gateway
+16 - Zealot
+19 - Cybernetics Core
+20 - Zealot
+25 - Assimilator
+//23 - MISSION=ATTACK
+26 - Dragoon
+28 - Gateway
+//35 - Forge
+//39 - Photon Cannon - @MAIN_CHOKE

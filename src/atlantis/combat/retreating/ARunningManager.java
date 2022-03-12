@@ -3,6 +3,7 @@ package atlantis.combat.retreating;
 import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
+import atlantis.game.GameSpeed;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -214,17 +215,19 @@ public class ARunningManager {
 //        System.out.println("runTo = " + runTo + " // " + unit);
         if (
             runTo != null
-                && unit.distTo(runTo) < 0.002
+                && unit.distTo(runTo) <= 0.02
 //                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
-//            System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
-//            APainter.paintLine(unit, runTo, Color.Purple);
-//            APainter.paintLine(
-//                    unit.translateByPixels(0, 1),
-//                    runTo.translateByPixels(0, 1),
-//                    Color.Purple
-//            );
+            System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
+            APainter.paintLine(unit, runTo, Color.Purple);
+            APainter.paintLine(
+                    unit.translateByPixels(0, 1),
+                    runTo.translateByPixels(0, 1),
+                    Color.Purple
+            );
+            runTo = findRunPositionInAnyDirection(runAwayFrom);
             APainter.paintCircleFilled(runTo, 8, Color.Red);
+            GameSpeed.pauseGame();
         }
 
         // === Run to base as a fallback ===========================
@@ -267,6 +270,20 @@ public class ARunningManager {
             return false;
         }
 
+        AUnit main = Select.main();
+        if (main == null) {
+            return false;
+        }
+
+        // If already close to the base, don't run towards it, no point
+        if (unit.distTo(main) < 50) {
+            return false;
+        }
+
+        if (unit.meleeEnemiesNearCount(4) >= 1) {
+            return false;
+        }
+
         // Only run towards our main if our army isn't too numerous, otherwise units gonna bump upon each other
         if (Count.ourCombatUnits() > 10) {
             return false;
@@ -276,18 +293,9 @@ public class ARunningManager {
             return false;
         }
 
-        AUnit main = Select.main();
-        if (main != null) {
-
-            // If already close to the base, don't run towards it, no point
-            if (unit.distTo(main) < 45) {
-                return false;
-            }
-
-            if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
-                if (unit.meleeEnemiesNearCount(3) == 0) {
-                    return true;
-                }
+        if (Count.ourCombatUnits() <= 10 || unit.isNearEnemyBuilding()) {
+            if (unit.meleeEnemiesNearCount(3) == 0) {
+                return true;
             }
         }
 
@@ -475,14 +483,8 @@ public class ARunningManager {
      * Tell other units that might be blocking our escape route to move.
      */
     private boolean notifyNearUnitsToMakeSpace(AUnit unit) {
-        if (We.protoss()) {
+        if (We.protoss() && unit.friendsNear().inRadius(0.3, unit).atMost(1)) {
             return false;
-//            if (
-//                    unit.shieldDamageAtLeast(20)
-//                    || unit.friendsNear().inRadius(0.7, unit).atLeast(3)
-//            ) {
-//                return false;
-//            }
         }
 
         if (unit.isAir() || unit.isLoaded()) {

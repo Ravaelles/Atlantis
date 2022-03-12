@@ -1,15 +1,14 @@
 package atlantis.information.strategy;
 
 import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 
 
 public class ProtossStrategies extends AStrategy {
 
     // Standard
     public static final AStrategy PROTOSS_Zealot_Core_Zealot = new AStrategy();
+    public static final AStrategy PROTOSS_ZZZ_Core = new AStrategy();
 
     // Rush
     public static final AStrategy PROTOSS_2_Gate_Zealot_vP = new AStrategy();
@@ -37,6 +36,7 @@ public class ProtossStrategies extends AStrategy {
 
         PROTOSS_Zealot_Core_Zealot.setProtoss().setName("Zealot Core Zealot")
                 .setUrl("https://liquipedia.net/starcraft/1_Gate_Core_(vs._Protoss)");
+        PROTOSS_ZZZ_Core.setProtoss().setName("ZZZ Core"); // Zealot-Zealot-Zealot-Core
 
         // === Rushes ========================================
 

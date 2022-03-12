@@ -136,6 +136,10 @@ public class AAttackEnemyUnit {
 //    }
 
     private static boolean isValidTargetAndAllowedToAttackUnit(AUnit unit, AUnit target) {
+        if (target == null) {
+            return false;
+        }
+
         if (!missionAllowsToAttack(unit, target)) {
             reasonNotToAttack = "MissionForbids";
             unit.setTooltipTactical(reasonNotToAttack);
@@ -154,10 +158,12 @@ public class AAttackEnemyUnit {
         // Prevent units from switching attack of the same unit, to another unit of the same type
 //        unit.target().isTank() &&
         if (unit.isMelee() && unit.target() != null && !unit.target().equals(target) && unit.isAttackingOrMovingToAttack()) {
-            if (unit.distToLessThan(unit.target(), 1.03)) {
-                reasonNotToAttack = "DontSwitch";
-                unit.addLog(reasonNotToAttack);
-                return false;
+            if (unit.isWorker() || unit.isCombatUnit()) {
+                if (unit.distToLessThan(unit.target(), 1.03)) {
+                    reasonNotToAttack = "DontSwitch";
+                    unit.addLog(reasonNotToAttack);
+                    return false;
+                }
             }
         }
 

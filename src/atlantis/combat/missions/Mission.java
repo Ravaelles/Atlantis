@@ -40,6 +40,11 @@ public abstract class Mission {
     }
 
     // Template method
+    public boolean allowsToRetreat(AUnit unit) {
+        return true;
+    }
+
+    // Template method
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         if (enemy.isCombatBuilding()) {
             return allowsToAttackCombatBuildings(unit, enemy);
@@ -151,5 +156,4 @@ public abstract class Mission {
         return false;
 //        return this.equals(Missions.UMS);
     }
-
 }

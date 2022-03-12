@@ -15,8 +15,8 @@ import atlantis.util.We;
 public abstract class AbstractPositionFinder {
     
     public static String _CONDITION_THAT_FAILED = null;
-    public static boolean DEBUG = true;
-//    public static boolean DEBUG = false;
+//    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     // =========================================================
     // Hi-level methods

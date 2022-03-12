@@ -1,5 +1,6 @@
 package atlantis.combat.squad;
 
+import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -55,10 +56,14 @@ public class CohesionAssurance {
 
     private static int minCohesion() {
         if (GamePhase.isEarlyGame()) {
-            return 85;
+            if (A.supplyUsed() <= 25) {
+                return 85;
+            }
+
+            return 76;
         }
 
-        return 72;
+        return 70;
     }
 
     public static double squadMaxRadius(Squad squad) {

@@ -80,7 +80,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
-        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway, 90, 0);
+        buildIfAllBusyButCanAfford(AUnitType.Protoss_Gateway, 120, 0);
     }
 
     private static void forge() {

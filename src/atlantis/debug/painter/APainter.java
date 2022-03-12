@@ -244,7 +244,7 @@ public class APainter {
         );
     }
 
-    protected static void paintBase(APosition position, String text, Color color) {
+    public static void paintBase(APosition position, String text, Color color) {
         if (position == null || isDisabled()) {
             return;
         }

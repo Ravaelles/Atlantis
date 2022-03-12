@@ -59,7 +59,6 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
-                            GameSpeed.pauseGame();
                             return constructionPosition;
                         }
 

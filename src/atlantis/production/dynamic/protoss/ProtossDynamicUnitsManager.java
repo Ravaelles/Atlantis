@@ -102,17 +102,19 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
+        if (!A.hasGas(50) && !A.hasMinerals(125)) {
+            return;
+        }
+
         if (
-            GamePhase.isEarlyGame()
-                && EnemyStrategy.get().isRushOrCheese()
-                && !A.hasGas(70)
-                && !A.hasMinerals(175)
-                && Count.zealots() < minZealotsAganstEnemyRush()
+            Decisions.needToProduceZealotsNow()
+                && !A.hasGas(50)
+                && !A.hasMinerals(225)
         ) {
                 return;
         }
 
-        if ((A.supplyUsed() <= 38 || Count.observers() >= 1) && A.hasGas(50) && A.hasMinerals(175)) {
+        if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
             trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
             return;
         }
@@ -124,12 +126,6 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         trainIfPossible(AUnitType.Protoss_Dragoon);
     }
 
-    private static int minZealotsAganstEnemyRush() {
-        if (Enemy.protoss()) return 4;
-        if (Enemy.terran()) return 1;
-        return 5;
-    }
-
     private static void zealots() {
         if (Have.no(AUnitType.Protoss_Gateway)) {
             return;
@@ -139,16 +135,12 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 //            return;
 //        }
 
-        if (
-                GamePhase.isEarlyGame()
-                    && EnemyStrategy.get().isRushOrCheese()
-                    && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Zealot) < minZealotsAganstEnemyRush()
-        ) {
-            trainIfPossible(AUnitType.Protoss_Zealot);
+        if (dragoonInsteadOfZealot()) {
             return;
         }
 
-        if (dragoonInsteadOfZealot()) {
+        if (Decisions.needToProduceZealotsNow()) {
+            trainIfPossible(AUnitType.Protoss_Zealot);
             return;
         }
 

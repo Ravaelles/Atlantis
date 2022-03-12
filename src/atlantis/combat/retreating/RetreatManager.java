@@ -198,11 +198,11 @@ public class RetreatManager {
             return true;
         }
 
-        if (unit.isMelee() && unit.isMissionSparta()) {
-            return AGame.timeSeconds() > 300
-//                || unit.hp() > (unit.meleeEnemiesNearCount(2) >= 2 ? 33 : 17);
-                || unit.hp() > 17
-                || unit.friendsInRadiusCount(1) >= 4;
+        if (unit.isMissionSparta()) {
+//            if (unit.mission().allowsToRetreat(unit)) {
+//                System.err.println("Sparta allowed " + unit + " to retreat (HP=" + unit.hp() + ")");
+//            }
+            return !unit.mission().allowsToRetreat(unit);
         }
 
 //        if (unit.isMissionDefend() && (unit.isMelee() || unit.woundPercent() <= 10)) {

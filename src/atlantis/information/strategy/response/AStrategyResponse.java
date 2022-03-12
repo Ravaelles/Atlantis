@@ -54,9 +54,9 @@ public abstract class AStrategyResponse {
         // === Tech ========================================
 
         if (enemyStrategy.isHiddenUnits()) {
-            if (!Enemy.terran()) {
-                Missions.forceGlobalMissionDefend("Enemy goes hidden units");
-            }
+//            if (!Enemy.terran()) {
+//                Missions.forceGlobalMissionDefend("Enemy goes hidden units");
+//            }
 
             OurStrategicBuildings.setAntiLandBuildingsNeeded(1);
 //            ADetectorRequest.requestDetectorImmediately(null);

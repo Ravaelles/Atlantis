@@ -195,7 +195,7 @@ public class ATargetingCrucial extends ATargeting {
                 .ofType(
                         AUnitType.Protoss_Archon
                 )
-                .inRadius(groundRange + 1, unit)
+                .inRadius(groundRange + 2.2, unit)
                 .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR10b = " + target);

@@ -19,6 +19,10 @@ public class Have {
         return Count.includingPlanned(type) == 0;
     }
 
+    public static boolean free(AUnitType building) {
+        return Select.ourOfType(building).free().notEmpty();
+    }
+
     public static boolean notEvenInPlans(AUnitType type) {
         return Count.includingPlanned(type) == 0;
     }
@@ -100,4 +104,5 @@ public class Have {
     public static boolean roboticsFacility() {
         return have(AUnitType.Protoss_Robotics_Facility);
     }
+
 }

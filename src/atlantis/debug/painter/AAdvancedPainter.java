@@ -1395,9 +1395,9 @@ public class AAdvancedPainter extends APainter {
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
         // First Pylon
-        paintBuildingPosition(
-            PylonPosition.positionForFirstPylon(), AUnitType.Protoss_Pylon, "First pylon", Color.Green
-        );
+//        paintBuildingPosition(
+//            PylonPosition.positionForFirstPylon(), AUnitType.Protoss_Pylon, "First pylon", Color.Green
+//        );
 
         // Bunker
 //        TerranBunkerPositionFinder.findPosition(Select.ourWorkers().first(), null);
