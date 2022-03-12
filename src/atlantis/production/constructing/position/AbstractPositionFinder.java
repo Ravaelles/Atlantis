@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
+import atlantis.game.A;
 import atlantis.map.*;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -24,7 +25,10 @@ public abstract class AbstractPositionFinder {
      * Returns true if game says it's possible to build given building at this position.
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
-        
+        if (We.protoss() && A.supplyTotal() <= 10) {
+            return false;
+        }
+
         // Special buildings can be build anywhere
         if (building.isBase() || building.isGasBuilding() || building.isCombatBuilding()) {
             return false;
@@ -122,6 +126,10 @@ public abstract class AbstractPositionFinder {
     }
 
     protected static boolean isTooCloseToMainBase(AUnitType building, APosition position) {
+        if (We.protoss() && A.supplyTotal() <= 10) {
+            return false;
+        }
+
         if (building.isCombatBuilding()) {
             return false;
         }
@@ -207,14 +215,13 @@ public abstract class AbstractPositionFinder {
 
             AUnit geyser = Select.geysers().nearestTo(position);
 //            System.out.println("Select.geysers() = " + Select.geysers().count());
-            if (geyser != null && geyser.distTo(position) <= (building.isPylon() ? 7 : (building.isSupplyUnit() ? 10 : 6))) {
+            if (geyser != null && geyser.distTo(position) <= (building.isPylon() ? 5 : (building.isSupplyUnit() ? 8 : 6))) {
                 _CONDITION_THAT_FAILED = "Too close to geyser";
                 return true;
             }
 
             AUnit gasBuilding = Select.geyserBuildings().nearestTo(position);
-//            System.out.println("Select.geyserBuildings() = " + Select.geyserBuildings().count());
-            if (gasBuilding != null && gasBuilding.distTo(position) <= 4 && distToBase <= 7.5) {
+            if (gasBuilding != null && gasBuilding.distTo(position) <= 4 && distToBase <= 5.5) {
                 _CONDITION_THAT_FAILED = "Too close to gas building";
                 return true;
             }

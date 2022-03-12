@@ -196,8 +196,10 @@ public class Stations {
         List<Base> natBases = new ArrayList<>();
         for (Area area : JBWEB.mapBWEM.getMap().getAreas()) {
             for (Base base : area.getBases()) {
-                if (base.isStartingLocation())
+                if (base.isStartingLocation()) {
+                    System.err.println("Add base " + base);
                     mainBases.add(base);
+                }
             }
         }
 

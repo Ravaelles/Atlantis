@@ -21,12 +21,14 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.map.*;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.map.scout.AScoutManager;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionOrder;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.TerranPositionFinder;
+import atlantis.production.constructing.position.protoss.PylonPosition;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.production.orders.production.ProductionQueueMode;
@@ -1392,6 +1394,11 @@ public class AAdvancedPainter extends APainter {
         AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
+        // First Pylon
+        paintBuildingPosition(
+            PylonPosition.positionForFirstPylon(), AUnitType.Protoss_Pylon, "First pylon", Color.Green
+        );
+
         // Bunker
 //        TerranBunkerPositionFinder.findPosition(Select.ourWorkers().first(), null);
 
@@ -1442,6 +1449,12 @@ public class AAdvancedPainter extends APainter {
     public static void paintBuildingPosition(APosition position, String text) {
         double dtx = 1;
         paintRectangle(position, 2, 2, Color.Orange);
+        paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);
+    }
+
+    public static void paintPosition(HasPosition position, String text) {
+        double dtx = 1;
+        paintRectangle(position.translateByTiles(-dtx, -dtx), 2 * 32, 2 * 32, Color.Orange);
         paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);
     }
 }

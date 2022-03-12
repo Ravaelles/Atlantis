@@ -6,6 +6,7 @@ import atlantis.map.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.ColorUtil;
 import bwapi.Color;
 import bwapi.Game;
@@ -251,6 +252,18 @@ public class APainter {
         paintRectangle(
                 position.translateByPixels(-2 * 32, (int) -1.5 * 32),
                 4 * 32, 3 * 32, color
+        );
+        APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
+    }
+
+    protected static void paintBuildingPosition(APosition position, AUnitType type, String text, Color color) {
+        if (position == null || isDisabled()) {
+            return;
+        }
+
+        paintRectangle(
+                position.translateByPixels(-2 * 32, (int) -1.5 * 32),
+            type.getTileWidth() * 32, type.getTileHeight() * 32, color
         );
         APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
     }

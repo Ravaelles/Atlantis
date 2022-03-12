@@ -173,6 +173,9 @@ public class Bases {
                         .getBases()
                         .stream()
                         .map(base -> ABaseLocation.create(base))
+
+                        // This won't work - fog of war :- (
+//                        .filter(base -> Select.minerals().inRadius(8, base).atLeast(6))
                         .collect(Collectors.toList())
         );
     }

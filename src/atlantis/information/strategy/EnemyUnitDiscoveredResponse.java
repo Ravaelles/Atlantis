@@ -2,6 +2,7 @@ package atlantis.information.strategy;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.decisions.OurStrategicBuildings;
@@ -16,6 +17,9 @@ import tests.unit.FakeUnit;
 public class EnemyUnitDiscoveredResponse {
 
     public static void updateEnemyUnitDiscovered(AUnit enemyUnit) {
+        if (A.isUms()) {
+            return;
+        }
 
         // HIDDEN units and buildings to produce it
         handleHiddenUnitDetected(enemyUnit);
@@ -40,7 +44,7 @@ public class EnemyUnitDiscoveredResponse {
 
             else if (enemyUnit.isZealot()) {
                 if (Count.ourCombatUnits() <= 4) {
-                    MissionChanger.forceMissionSparta("MoreCautiouslyWithZealot");
+                    MissionChanger.forceMissionSparta("CautionWithZealot");
                 }
             }
         }

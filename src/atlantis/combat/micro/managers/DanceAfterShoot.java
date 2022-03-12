@@ -21,8 +21,15 @@ public class DanceAfterShoot {
         String danceAway = "DanceAway-" + unit.cooldownRemaining();
         String danceTo = "DanceTo";
 
+        // Step FORWARD
+        if (shouldDanceTo(target, dist)) {
+            unit.addLog(danceTo);
+            return unit.move(
+                unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE, danceTo, false
+            );
+        }
         // Big step BACK
-        if (dist <= 2.8 && !target.isBuilding() && dist >= 1.6) {
+        else if (dist <= 2.8) {
             unit.addLog(danceAway);
             return unit.moveAwayFrom(target, 0.3, danceAway, Actions.MOVE_DANCE);
         }
@@ -31,18 +38,17 @@ public class DanceAfterShoot {
             unit.addLog(danceAway);
             return unit.moveAwayFrom(target, 0.1, danceAway, Actions.MOVE_DANCE);
         }
-        // Step FORWARD
-        else if (dist >= 3.8) {
-            unit.addLog(danceTo);
-            return unit.move(
-                unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE, danceTo, false
-            );
-        }
 
         return false;
     }
 
     // =========================================================
+
+    private static boolean shouldDanceTo(AUnit target, double dist) {
+        return dist >= 3.8
+            || (!target.isBuilding() && dist >= 1.6)
+            || target.hasNoWeaponAtAll();
+    }
 
     private static boolean shouldSkip(AUnit unit) {
         if (true) return true;

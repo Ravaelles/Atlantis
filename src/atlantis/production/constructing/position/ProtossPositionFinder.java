@@ -1,9 +1,11 @@
 package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.protoss.PylonPosition;
@@ -28,7 +30,6 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         _CONDITION_THAT_FAILED = null;
         int initSearchRadius = 0;
 
-
         // =========================================================
 
         if (building.isPylon()) {
@@ -36,6 +37,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             // First pylon should be close to Nexus for shorter travel dist
             if (AGame.supplyTotal() <= 10) {
                 nearTo = PylonPosition.positionForFirstPylon();
+//                AAdvancedPainter.paintPosition(nearTo, "PylonPosition");
             }
 
             // First pylon should be orientated towards the nearest choke
@@ -57,8 +59,11 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
+                            GameSpeed.pauseGame();
                             return constructionPosition;
                         }
+
+//                        System.err.println(building + ": " + AbstractPositionFinder._CONDITION_THAT_FAILED);
                     }
                 }
             }

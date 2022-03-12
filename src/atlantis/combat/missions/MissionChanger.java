@@ -46,7 +46,7 @@ public class MissionChanger {
 
         if (
             !Have.main()
-                || (Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS && !ArmyStrength.weAreMuchStronger()
+                || (Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS * 30 && !ArmyStrength.weAreMuchStronger()
         )) {
             return;
         }

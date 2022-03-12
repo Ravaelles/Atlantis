@@ -56,7 +56,7 @@ public class Sparta extends MissionDefend {
     // =========================================================
 
     private boolean advance() {
-        if (unitToFocus > 0 && A.everyNthGameFrame(9)) {
+        if (unitToFocus > 0 && (unit.isStopped() || A.everyNthGameFrame(17))) {
             HasPosition point = definePointForSpartan();
 
             if (point == null) {
@@ -110,7 +110,7 @@ public class Sparta extends MissionDefend {
             return enemyDistToFocus <= 2.1 || enemyDistToBase < unitToBase;
         }
 
-        if (enemy.isWorker() && unitToEnemy <= 3 && enemyDistToFocus <= 3 && A.seconds() <= 250) {
+        if (enemy.isWorker() && unitToEnemy <= 2 && enemyDistToFocus <= 4 && A.seconds() <= 300) {
             return true;
         }
 
@@ -229,7 +229,7 @@ public class Sparta extends MissionDefend {
         return !unit.isAttacking()
             && !unit.isHoldingPosition()
             && !"HelpWithdraw".equals(unit.tooltip())
-            && unit.lastActionMoreThanAgo(3);
+            && unit.lastActionMoreThanAgo(6);
     }
 
 }
