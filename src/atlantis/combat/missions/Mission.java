@@ -108,9 +108,9 @@ public abstract class Mission {
             return true;
         }
         else {
-            if (!AGame.isUms()) {
-                System.err.println("No invisible position found");
-            }
+//            if (!AGame.isUms()) {
+//                System.err.println("No invisible position found");
+//            }
             return false;
         }
     }
