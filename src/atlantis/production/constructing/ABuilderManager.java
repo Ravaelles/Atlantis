@@ -118,7 +118,7 @@ public class ABuilderManager {
         if (We.protoss()) {
             AUnit newBuilding = Select.ourUnfinished()
                 .ofType(order.buildingType())
-                .inRadius(1.1, builder).first();
+                .inRadius(2, builder).nearestTo(builder);
             if (newBuilding != null) {
                 order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
                 order.setBuilder(null);
@@ -133,16 +133,14 @@ public class ABuilderManager {
             moveOtherUnitsOutOfConstructionPlace(builder, buildPosition.translateByTiles(1, 1));
 
             // If place is ok, builder isn't constructing and we can afford it, issue the build command.
-            if (AGame.canAfford(buildingType)) {
-                buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
-                TilePosition buildTilePosition = new TilePosition(
-                    buildPosition.tx(), buildPosition.ty()
-                );
+            buildPosition = applyGasBuildingFixIfNeeded(builder, buildPosition, buildingType);
+            TilePosition buildTilePosition = new TilePosition(
+                buildPosition.tx(), buildPosition.ty()
+            );
 
-                if (!builder.isConstructing() || builder.isIdle() || AGame.now() % 7 == 0) {
-                    builder.build(buildingType, buildTilePosition);
-                    return true;
-                }
+            if (!builder.isConstructing() || builder.isIdle() || AGame.now() % 7 == 0) {
+                builder.build(buildingType, buildTilePosition);
+                return true;
             }
         }
 

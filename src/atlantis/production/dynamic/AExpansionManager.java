@@ -85,16 +85,16 @@ public class AExpansionManager {
         if (bases <= 1 && basesInProduction == 0) {
             boolean secondsAllow =
                 (
-                    (A.seconds() >= 550 && Count.ourCombatUnits() >= 20)
-                    || (A.seconds() >= 650 && Count.ourCombatUnits() >= 8)
-                    || (A.seconds() >= 750)
+                    (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)
+                    || (A.seconds() >= 520 && Count.ourCombatUnits() >= 8)
+                    || (A.seconds() >= 650)
                 );
 //                (
 //                    (A.seconds() >= 500 && Count.ourCombatUnits() >= 20)
 //                    || (A.seconds() >= 600 && Count.ourCombatUnits() >= 8)
 //                    || (A.seconds() >= 700)
 //                );
-            if (AGame.canAfford(370, 0) || secondsAllow) {
+            if (AGame.canAfford(330, 0) || secondsAllow) {
                 return true;
             }
         }

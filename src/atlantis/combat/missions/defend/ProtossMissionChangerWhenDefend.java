@@ -6,6 +6,7 @@ import atlantis.combat.missions.attack.ProtossMissionChangerWhenAttack;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.contain.ProtossMissionChangerWhenContain;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
@@ -31,6 +32,10 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean canChange() {
+        if (EnemyInfo.isEnemyNearAnyOurBase()) {
+            return false;
+        }
+
 //        if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {
         if (GamePhase.isEarlyGame()) {
             if (

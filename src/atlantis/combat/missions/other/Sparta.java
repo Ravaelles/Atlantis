@@ -145,7 +145,7 @@ public class Sparta extends MissionDefend {
         }
 
         if (enemy.isRanged()) {
-            return enemyDistToFocus <= 2 || (enemyDistToBase + 3 < unitToBase);
+            return enemyDistToFocus <= 2 || (enemyDistToBase + 3 < unitToBase) || unitToEnemy <= 3;
         }
 
         if (enemy.isWorker() && unitToEnemy <= 1.2 && enemyDistToFocus <= 1) {

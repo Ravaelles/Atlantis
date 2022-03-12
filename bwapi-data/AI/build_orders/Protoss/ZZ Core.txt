@@ -15,27 +15,27 @@
 // === Raw build order used - taken from Liquipedia or so =============
 
 /**
-Zealot Core Zealot
+Two Zealots before Cybernetics Core (zzcore)
 
 8 - Pylon[1]
 10 - Gateway
-12 - Assimilator
+12 - Pylon
 13 - Zealot
-16 - Pylon
-17 - Cybernetics Core
-18 - Zealot
+16 - Assimilator
+17 - Zealot
+20 - Cybernetics Core
 @100% Cybernetics Core - Dragoon
 */
 
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-4 - MISSION=DEFEND
 8 - Pylon
 10 - Gateway
-12 - Assimilator
+12 - Pylon
 13 - Zealot
-16 - Pylon
-17 - Cybernetics Core
-18 - Zealot
-20 - Dragoon
+13 - Gateway
+16 - Assimilator
+17 - Zealot
+20 - Cybernetics Core
+22 - Dragoon

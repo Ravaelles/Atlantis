@@ -65,7 +65,8 @@ public class MissionChanger {
     // =========================================================
 
     public static Mission defendOrSpartaMission() {
-        if (We.protoss() || We.terran()) {
+//        if (We.protoss() || We.terran()) {
+        if (A.seconds() <= 60 * 7) {
             return Missions.SPARTA;
         }
 

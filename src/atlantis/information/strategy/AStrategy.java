@@ -37,6 +37,10 @@ public class AStrategy {
         allStrategies.add(this);
     }
 
+    protected static AStrategy protossStrategy() {
+        return (new AStrategy()).setProtoss();
+    }
+
     // =========================================================
 
     protected static boolean has(AUnitType type) {
