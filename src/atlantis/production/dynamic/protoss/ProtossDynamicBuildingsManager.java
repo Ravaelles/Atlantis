@@ -112,7 +112,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void cannons() {
-        if (A.notNthGameFrame(47) || A.seconds() < 550) {
+        if (A.notNthGameFrame(47) || A.seconds() < 350) {
             return;
         }
 
@@ -125,6 +125,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
                 HasPosition nearTo = ABaseLocation.mineralsCenter(base);
                 if (Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 10, nearTo) == 0) {
                     AAntiLandBuildingRequests.requestCombatBuildingAntiLand(nearTo);
+                    System.err.println("Requested Cannon to protect base " + base);
                 }
             }
         }

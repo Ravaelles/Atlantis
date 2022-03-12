@@ -121,10 +121,20 @@ public class Sparta extends MissionDefend {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (!unit.mission().focusPoint().isAroundChoke()) {
-//            System.err.println("Invalid Sparta not around choke");
+        focusPoint = focusPoint();
+        if (!focusPoint.isAroundChoke()) {
+            unit.addLog("Sparta:---");
             return super.allowsToAttackEnemyUnit(unit, enemy);
         }
+
+        main = Select.main();
+        focusPointDistToBase = focusPoint.distTo(main);
+        unitToEnemy = unit.distTo(enemy);
+        unitToBase = unit.groundDist(main);
+        enemyDistToBase = enemy.groundDist(main);
+        enemyDistToFocus = enemy.groundDist(focusPoint);
+
+        // =========================================================
 
         if (unit.isRanged()) {
             if (unit.weaponRangeAgainst(enemy) >= 6) {
@@ -146,30 +156,13 @@ public class Sparta extends MissionDefend {
             return false;
         }
 
-        // =========================================================
-
-        focusPoint = focusPoint();
-        if (!focusPoint.isAroundChoke()) {
-            unit.addLog("Sparta:---");
-            return super.allowsToAttackEnemyUnit(unit, enemy);
-        }
-
-        main = Select.main();
-        focusPointDistToBase = focusPoint.distTo(main);
-        unitToEnemy = unit.distTo(enemy);
-        unitToBase = unit.groundDist(main);
-        enemyDistToBase = enemy.groundDist(main);
-        enemyDistToFocus = enemy.groundDist(focusPoint);
-
-        // =========================================================
-
         // If unit outside our region...
         if (enemyDistToBase + 3 <= focusPointDistToBase) {
            if (unit.isMelee()) {
-                unit.addLog("Sparta:A");
-               System.out.println("enemyDistToBase = " + enemyDistToBase);
-               System.out.println("focusPointDistToBase = " + focusPointDistToBase);
-               System.out.println("unitToEnemy = " + unitToEnemy);
+               unit.addLog("Sparta:A");
+//               System.out.println("enemyDistToBase = " + enemyDistToBase);
+//               System.out.println("focusPointDistToBase = " + focusPointDistToBase);
+//               System.out.println("unitToEnemy = " + unitToEnemy);
                return unitToEnemy <= 1;
            }
         }

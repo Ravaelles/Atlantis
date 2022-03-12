@@ -186,7 +186,7 @@ public class AWorkerDefenceManager {
                 AUnitType.Protoss_Archon,
                 AUnitType.Protoss_Reaver
 //                AUnitType.Protoss_Zealot
-        ).inRadius(6, worker).count() >= 3) {
+        ).inRadius(8, worker).count() >= 1) {
             return false;
         }
 
