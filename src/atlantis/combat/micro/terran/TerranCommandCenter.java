@@ -7,7 +7,6 @@ import atlantis.map.Bases;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -35,7 +34,7 @@ public class TerranCommandCenter {
 
     private static boolean flyToNewMineralPatches(AUnit building) {
         List<? extends AUnit> minerals = Select.minerals().sortDataByDistanceTo(building, true);
-        Selection bases = Select.ourBuildingsIncludingUnfinished().ofType(AUnitType.Terran_Command_Center);
+        Selection bases = Select.ourBuildingsWithUnfinished().ofType(AUnitType.Terran_Command_Center);
         for (AUnit mineral : minerals) {
             if (bases.clone().inRadius(10, mineral).isEmpty()) {
                 ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(mineral);

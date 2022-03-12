@@ -79,12 +79,12 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         if (
                 OurStrategy.get().goingBio()
                 && (
-//                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
-                        (Count.includingPlanned(AUnitType.Terran_Factory) == 0)
-                        || (A.supplyUsed() >= 30 && Count.includingPlanned(AUnitType.Terran_Factory) == 0)
+//                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.WithPlanned(AUnitType.Terran_Factory) == 0)
+                        (Count.WithPlanned(AUnitType.Terran_Factory) == 0)
+                        || (A.supplyUsed() >= 30 && Count.WithPlanned(AUnitType.Terran_Factory) == 0)
                 )
         ) {
-//            System.err.println("Change from BIO to TANKS (" + Count.includingPlanned(AUnitType.Terran_Factory) + ")");
+//            System.err.println("Change from BIO to TANKS (" + Count.WithPlanned(AUnitType.Terran_Factory) + ")");
 //            System.err.println("A = " + Count.inProduction(AUnitType.Terran_Factory));
 //            System.err.println("B = " + Count.inQueue(AUnitType.Terran_Factory, 5));
             AddToQueue.withHighPriority(AUnitType.Terran_Factory);
@@ -130,7 +130,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
 
         if (
-                Count.bases() > Count.includingPlanned(AUnitType.Terran_Comsat_Station)
+                Count.bases() > Count.WithPlanned(AUnitType.Terran_Comsat_Station)
                 && Count.inQueueOrUnfinished(AUnitType.Terran_Comsat_Station, 5) <= 0
         ) {
             AddToQueue.withStandardPriority(AUnitType.Terran_Comsat_Station);

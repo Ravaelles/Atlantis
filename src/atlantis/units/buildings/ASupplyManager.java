@@ -89,7 +89,7 @@ public class ASupplyManager {
 
     private static int requestedConstructionsOfSupply() {
         if (We.zerg()) {
-//            return Count.ourOfTypeIncludingUnfinished(AUnitType.Zerg_Overlord);
+//            return Count.ourOfTypeWithUnfinished(AUnitType.Zerg_Overlord);
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }
 

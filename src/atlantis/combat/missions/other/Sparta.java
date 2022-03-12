@@ -127,6 +127,10 @@ public class Sparta extends MissionDefend {
         }
 
         if (unit.isRanged()) {
+            if (unit.weaponRangeAgainst(enemy) >= 6) {
+                return true;
+            }
+
             return enemyDistToBase - 2.1 <= focusPointDistToBase;
         }
 
@@ -142,24 +146,11 @@ public class Sparta extends MissionDefend {
             return false;
         }
 
-        // If unit outside our region...
-        if (enemyDistToBase - 0.3 <= focusPointDistToBase) {
-           if (unit.isMelee()) {
-                unit.addLog("Sparta:A");
-               return unitToEnemy <= 1;
-           }
-        }
-
-//        if (Count.dragoons() >= 2) {
-//            unit.addLog("Sparta:A");
-//            return unitToEnemy <= 1 && enemyDistToFocus <= 1;
-//        }
-
         // =========================================================
 
         focusPoint = focusPoint();
         if (!focusPoint.isAroundChoke()) {
-            unit.addLog("Sparta:B");
+            unit.addLog("Sparta:---");
             return super.allowsToAttackEnemyUnit(unit, enemy);
         }
 
@@ -171,6 +162,17 @@ public class Sparta extends MissionDefend {
         enemyDistToFocus = enemy.groundDist(focusPoint);
 
         // =========================================================
+
+        // If unit outside our region...
+        if (enemyDistToBase + 3 <= focusPointDistToBase) {
+           if (unit.isMelee()) {
+                unit.addLog("Sparta:A");
+               System.out.println("enemyDistToBase = " + enemyDistToBase);
+               System.out.println("focusPointDistToBase = " + focusPointDistToBase);
+               System.out.println("unitToEnemy = " + unitToEnemy);
+               return unitToEnemy <= 1;
+           }
+        }
 
         if ((enemy.isZealot() || enemy.isZergling()) && unit.isZealot()) {
             boolean canAttack = unitToEnemy <= MAX_MELEE_DIST_TO_ATTACK

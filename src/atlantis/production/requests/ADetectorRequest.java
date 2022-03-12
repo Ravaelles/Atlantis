@@ -36,7 +36,7 @@ public class ADetectorRequest {
         // === Protect choke point =========================================
 
 //        if (where == null) {
-//            AUnit nearestBunker = Select.ourOfTypeIncludingUnfinished(AUnitType.Terran_Bunker)
+//            AUnit nearestBunker = Select.ourOfTypeWithUnfinished(AUnitType.Terran_Bunker)
 //                    .nearestTo(MissionDefend.getInstance().focusPoint());
 //            if (nearestBunker != null) {
 //                where = nearestBunker.getPosition();

@@ -12,11 +12,11 @@ public class Have {
     }
 
     public static boolean a(AUnitType type) {
-        return Count.includingPlanned(type) > 0;
+        return Count.WithPlanned(type) > 0;
     }
 
     public static boolean no(AUnitType type) {
-        return Count.includingPlanned(type) == 0;
+        return Count.WithPlanned(type) == 0;
     }
 
     public static boolean free(AUnitType building) {
@@ -24,7 +24,7 @@ public class Have {
     }
 
     public static boolean notEvenInPlans(AUnitType type) {
-        return Count.includingPlanned(type) == 0;
+        return Count.WithPlanned(type) == 0;
     }
 
     public static boolean existingOrPlanned(AUnitType building, HasPosition position, double inRadius) {
@@ -34,7 +34,7 @@ public class Have {
             return true;
         }
 
-        return Select.ourOfTypeIncludingUnfinished(building).inRadius(inRadius, position).atLeast(1);
+        return Select.ourWithUnfinished(building).inRadius(inRadius, position).atLeast(1);
     }
 
     public static boolean existingOrPlannedOrInQueue(AUnitType building, HasPosition position, double inRadius) {
@@ -48,7 +48,7 @@ public class Have {
             return true;
         }
 
-        return Select.ourOfTypeIncludingUnfinished(building).inRadius(inRadius, position).atLeast(1);
+        return Select.ourWithUnfinished(building).inRadius(inRadius, position).atLeast(1);
     }
 
     // =========================================================

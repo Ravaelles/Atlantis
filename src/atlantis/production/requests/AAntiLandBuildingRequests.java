@@ -113,7 +113,7 @@ public class AAntiLandBuildingRequests {
 
 //        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
 
-        AUnit previousBuilding = Select.ourBuildingsIncludingUnfinished().ofType(building).first();
+        AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
         if (previousBuilding != null) {
             nearTo = previousBuilding.position();
         }

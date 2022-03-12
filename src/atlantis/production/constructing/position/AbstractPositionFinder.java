@@ -148,7 +148,7 @@ public abstract class AbstractPositionFinder {
 
     protected static boolean isOverlappingBaseLocation(AUnitType building, APosition position) {
         if (building.isBase()) {
-            if (Select.ourBuildingsIncludingUnfinished().bases().inRadius(10, position).isNotEmpty()) {
+            if (Select.ourBuildingsWithUnfinished().bases().inRadius(10, position).isNotEmpty()) {
                 _CONDITION_THAT_FAILED = "Base already exists here";
                 return true;
             }

@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position.protoss;
 
 import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
@@ -18,7 +19,7 @@ public class PylonPosition {
 
         APosition position = base.position();
         HasPosition geyser = Select.geysers().inRadius(10, base).first();
-        HasPosition mineralsCenter = Select.minerals().inRadius(10, base).center();
+        HasPosition mineralsCenter = ABaseLocation.mineralsCenter(base);
 
 //        AAdvancedPainter.paintPosition(position, "geyser");
 //        AAdvancedPainter.paintPosition(mineralsCenter, "mineralsCenter");

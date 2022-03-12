@@ -111,7 +111,7 @@ public class TerranFlyingBuildingManager {
             return false;
         }
 
-        return Select.ourOfTypeIncludingUnfinished(AUnitType.Terran_Machine_Shop).atLeast(1)
+        return Select.ourWithUnfinished(AUnitType.Terran_Machine_Shop).atLeast(1)
                 || Select.countOurOfType(AUnitType.Terran_Vulture) >= 5;
     }
 

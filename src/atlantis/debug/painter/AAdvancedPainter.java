@@ -857,7 +857,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintConstructionProgress() {
         setTextSizeMedium();
-//        for (AUnit unit : Select.ourBuildingsIncludingUnfinished().listUnits()) {
+//        for (AUnit unit : Select.ourBuildingsWithUnfinished().listUnits()) {
         for (ConstructionOrder order : ConstructionRequests.all()) {
             AUnit building = order.construction();
             if (building == null || building.isCompleted()) {

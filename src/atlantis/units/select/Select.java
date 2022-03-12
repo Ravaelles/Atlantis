@@ -301,9 +301,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
-    public static int countOurOfTypesIncludingUnfinished(AUnitType... types) {
+    public static int countOurOfTypesWithUnfinished(AUnitType... types) {
         return cacheInt.get(
-                "countOurOfTypesIncludingUnfinished:" + AUnitType.arrayToIds(types),
+                "countOurOfTypesWithUnfinished:" + AUnitType.arrayToIds(types),
                 0,
                 () -> {
                     int total = 0;
@@ -322,9 +322,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Counts our units of given type.
      */
-    public static int countOurOfTypeIncludingUnfinished(AUnitType type) {
+    public static int countOurOfTypeWithUnfinished(AUnitType type) {
         return cacheInt.get(
-                "countOurOfTypeIncludingUnfinished:" + type.name(),
+                "countOurOfTypeWithUnfinished:" + type.name(),
                 microCacheForFrames,
                 () -> {
                     int total = 0;
@@ -343,10 +343,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects our units of given type(s).
      */
-    public static Selection ourOfTypeIncludingUnfinished(AUnitType type) {
+    public static Selection ourWithUnfinished(AUnitType type) {
         String cachePath;
         return cache.get(
-                cachePath = "ourOfTypeIncludingUnfinished:" + type.name(),
+                cachePath = "ourOfTypeWithUnfinished:" + type.name(),
                 microCacheForFrames,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
@@ -387,10 +387,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all of our units (units, buildings, but no spider mines etc), <b>even those unfinished</b>.
      */
-    public static Selection ourIncludingUnfinished() {
+    public static Selection ourWithUnfinished() {
         String cachePath;
         return cache.get(
-                cachePath = "ourIncludingUnfinished",
+                cachePath = "ourWithUnfinished",
                 microCacheForFrames,
                 () -> {
                     List<AUnit> data = new ArrayList<>(ourUnits());
@@ -400,15 +400,15 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
-    public static Selection ourIncludingUnfinishedOfType(AUnitType type) {
+    public static Selection ourWithUnfinishedOfType(AUnitType type) {
         String cachePath;
         return cache.get(
-                cachePath = "ourIncludingUnfinishedOfType:" + type.id(),
+                cachePath = "ourWithUnfinishedOfType:" + type.id(),
                 microCacheForFrames,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
 
-                    for (AUnit unit : ourIncludingUnfinishedUnits()) {
+                    for (AUnit unit : ourWithUnfinishedUnits()) {
                         if (unit.is(type)) {
                             data.add(unit);
                         }
@@ -425,10 +425,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * - unfinished units,
      * - nont started constructions
      */
-//    public static Selection ourOfTypeIncludingPlanned(AUnitType type) {
+//    public static Selection ourOfTypeWithPlanned(AUnitType type) {
 //        String cachePath;
 //        return cache.get(
-//                cachePath = "ourOfTypeIncludingPlanned:" + type.id(),
+//                cachePath = "ourOfTypeWithPlanned:" + type.id(),
 //                microCacheForFrames,
 //                () -> {
 //                    List<AUnit> data = new ArrayList<>(ourUnits());
@@ -747,7 +747,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 cachePath = "ourLarva",
                 microCacheForFrames,
                 () -> {
-                    Selection selectedUnits = ourIncludingUnfinished();
+                    Selection selectedUnits = ourWithUnfinished();
                     selectedUnits.list().removeIf(unit -> !unit.is(AUnitType.Zerg_Larva));
                     return selectedUnits;
                 }
@@ -757,13 +757,13 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all our buildings including those unfinished.
      */
-    public static Selection ourBuildingsIncludingUnfinished() {
+    public static Selection ourBuildingsWithUnfinished() {
         String cachePath;
         return cache.get(
-                cachePath = "ourBuildingsIncludingUnfinished",
+                cachePath = "ourBuildingsWithUnfinished",
                 microCacheForFrames,
                 () -> {
-                    Selection selectedUnits = Select.ourIncludingUnfinished();
+                    Selection selectedUnits = Select.ourWithUnfinished();
                     selectedUnits.list().removeIf(unit -> !unit.type().isBuilding() && !unit.type().isAddon());
                     return selectedUnits;
                 }

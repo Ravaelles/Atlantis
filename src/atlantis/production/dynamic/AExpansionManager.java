@@ -85,9 +85,9 @@ public class AExpansionManager {
         if (bases <= 1 && basesInProduction == 0) {
             boolean secondsAllow =
                 (
-                    (A.seconds() >= 650 && Count.ourCombatUnits() >= 20)
-                    || (A.seconds() >= 750 && Count.ourCombatUnits() >= 8)
-                    || (A.seconds() >= 850)
+                    (A.seconds() >= 550 && Count.ourCombatUnits() >= 20)
+                    || (A.seconds() >= 650 && Count.ourCombatUnits() >= 8)
+                    || (A.seconds() >= 750)
                 );
 //                (
 //                    (A.seconds() >= 500 && Count.ourCombatUnits() >= 20)

@@ -42,7 +42,7 @@ public class ASpecialUnitManager {
                 return false;
             }
 
-            AUnit battery = Select.ourOfTypeIncludingUnfinished(AUnitType.Protoss_Shield_Battery)
+            AUnit battery = Select.ourWithUnfinished(AUnitType.Protoss_Shield_Battery)
                 .havingEnergy(40)
                 .nearestTo(unit);
             if (battery != null && battery.distToMoreThan(unit, 6)) {

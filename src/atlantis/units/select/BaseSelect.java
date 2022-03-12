@@ -32,9 +32,9 @@ public class BaseSelect<T extends AUnit> {
         );
     }
 
-    public static List<AUnit> ourIncludingUnfinishedUnits() {
+    public static List<AUnit> ourWithUnfinishedUnits() {
         return cacheList.get(
-            "ourIncludingUnfinishedUnits",
+            "ourWithUnfinishedUnits",
             0,
             () -> {
                 List<AUnit> data = new ArrayList<>();

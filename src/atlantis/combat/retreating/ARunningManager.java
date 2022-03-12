@@ -126,7 +126,7 @@ public class ARunningManager {
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
 //        System.err.println("_lastPosition = " + _lastPosition);
-//        System.err.println("Our count = " + Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
+//        System.err.println("Our count = " + Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
 //        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
 
         unit.setTooltip("Cant run", false);
@@ -567,7 +567,7 @@ public class ARunningManager {
         boolean isOkay = isWalkable
 //                )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
-//                && Select.ourIncludingUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
+//                && Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
             && Select.all().inRadius(unit.size() * 1.7, position).exclude(unit).isEmpty()
 //                && distToNearestRegionBoundaryIsOkay(position)
             && unit.hasPathTo(position)

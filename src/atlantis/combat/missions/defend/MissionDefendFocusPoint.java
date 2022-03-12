@@ -47,7 +47,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // If NO BASE exists, return any building
                 if (mainBase == null) {
-                    Selection selection = Select.ourBuildingsIncludingUnfinished();
+                    Selection selection = Select.ourBuildingsWithUnfinished();
                     if (selection == null || selection.first() == null) {
                         return null;
                     }
@@ -119,7 +119,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //
 //                // === Gather around defensive buildings ===================
 //
-//                AUnit defBuilding = Select.ourOfTypeIncludingUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
+//                AUnit defBuilding = Select.ourOfTypeWithUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
 //                if (defBuilding != null) {
 //                    return defBuilding.translateTilesTowards(mainBase.position(), 5);
 //                }

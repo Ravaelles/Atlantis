@@ -1,6 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
@@ -26,7 +27,7 @@ public class Count {
         return Select.countOurOfType(type);
     }
 
-    public static int includingPlanned(AUnitType type) {
+    public static int WithPlanned(AUnitType type) {
         return existingOrInProductionOrInQueue(type);
     }
 
@@ -72,9 +73,9 @@ public class Count {
                     + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Spore_Colony);
         }
         else if (type.equals(AUnitType.Zerg_Creep_Colony)) {
-            return Select.ourIncludingUnfinished().ofType(type).count()
-                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
-                    + Select.ourIncludingUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
+            return Select.ourWithUnfinished().ofType(type).count()
+                    + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+                    + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
         }
         else if (type.isPrimaryBase()) {
             return Select.ourUnfinished().bases().count()
@@ -109,13 +110,13 @@ public class Count {
         }
     }
 
-    public static int existingOrPlannedBuildingsNear(AUnitType type, double radius, APosition position) {
+    public static int existingOrPlannedBuildingsNear(AUnitType type, double radius, HasPosition position) {
         assert type.isBuilding();
 
-        return ourOfTypeIncludingUnfinished(type, position, radius) + plannedBuildingsNear(type, radius, position);
+        return ourOfTypeWithUnfinished(type, position, radius) + plannedBuildingsNear(type, radius, position);
     }
 
-    public static int plannedBuildingsNear(AUnitType type, double radius, APosition position) {
+    public static int plannedBuildingsNear(AUnitType type, double radius, HasPosition position) {
         assert type.isBuilding();
 
         return ConstructionRequests.countNotStartedOfTypeInRadius(type, radius, position);
@@ -125,12 +126,12 @@ public class Count {
 //        return Select.ourOfType(type).count() + ProductionQueue.countInQueue(type, 6);
 //    }
 
-    public static int ourOfTypeIncludingUnfinished(AUnitType type, APosition near, double radius) {
-        return Select.ourIncludingUnfinishedOfType(type).inRadius(radius, near).count();
+    public static int ourOfTypeWithUnfinished(AUnitType type, HasPosition near, double radius) {
+        return Select.ourWithUnfinishedOfType(type).inRadius(radius, near).count();
     }
 
-    public static int ourOfTypeIncludingUnfinished(AUnitType type) {
-        return Select.countOurOfTypeIncludingUnfinished(type);
+    public static int ourOfTypeWithUnfinished(AUnitType type) {
+        return Select.countOurOfTypeWithUnfinished(type);
     }
 
     public static int ourOfTypeUnfinished(AUnitType type) {
@@ -174,7 +175,7 @@ public class Count {
     }
 
     public static int basesWithUnfinished() {
-        return Select.ourIncludingUnfinished().bases().count();
+        return Select.ourWithUnfinished().bases().count();
     }
 
     public static int tanks() {
@@ -216,13 +217,13 @@ public class Count {
 
     public static int ourStrictlyAntiAir() {
         if (We.protoss()) {
-            return Select.countOurOfTypeIncludingUnfinished(AUnitType.Protoss_Corsair);
+            return Select.countOurOfTypeWithUnfinished(AUnitType.Protoss_Corsair);
         }
         else if (We.terran()) {
-            return Select.countOurOfTypesIncludingUnfinished(AUnitType.Terran_Goliath, AUnitType.Terran_Valkyrie);
+            return Select.countOurOfTypesWithUnfinished(AUnitType.Terran_Goliath, AUnitType.Terran_Valkyrie);
         }
         else {
-            return Select.countOurOfTypesIncludingUnfinished(AUnitType.Zerg_Scourge);
+            return Select.countOurOfTypesWithUnfinished(AUnitType.Zerg_Scourge);
         }
     }
 
