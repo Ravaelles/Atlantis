@@ -12,7 +12,7 @@ public class DontInterruptStartedAttacks {
 
     public static boolean shouldNotInterrupt(AUnit unit) {
 //        if (true) return false;
-//        if (unit.cooldownRemaining() == 0 || unit.lastActionMoreThanAgo(15)) {
+
         if (unit.lastActionMoreThanAgo(15)) {
             return false;
         }
@@ -24,15 +24,15 @@ public class DontInterruptStartedAttacks {
         }
 
         if (unit.isDragoon()) {
-            if (unit.hpMoreThan(40)
-                && unit.lastAttackOrderMoreThanAgo(40)
-                && unit.lastAttackOrderLessThanAgo(40)) {
-                return true;
-            }
+//            if (unit.hpMoreThan(40)
+//                && unit.lastAttackOrderMoreThanAgo(40)
+//                && unit.lastAttackOrderLessThanAgo(40)) {
+//                return true;
+//            }
 
             if (unit.action().isAttacking()) {
                 AUnit nearestEnemy = unit.nearestEnemy();
-                if (nearestEnemy != null && nearestEnemy.distToMoreThan(unit, 2.8)) {
+                if (nearestEnemy != null && nearestEnemy.distToMoreThan(unit, 2.9)) {
                     return true;
                 }
             }
@@ -42,7 +42,7 @@ public class DontInterruptStartedAttacks {
             return false;
         }
 
-        if (unit.hp() <= 40 && unit.enemiesNear().ofType(AUnitType.Protoss_Zealot).inRadius(2.7, unit).atLeast(2)) {
+        if (unit.hp() <= 40 && unit.enemiesNear().ofType(AUnitType.Protoss_Zealot).inRadius(2.8, unit).atLeast(2)) {
             return false;
         }
 
@@ -68,9 +68,9 @@ public class DontInterruptStartedAttacks {
 
         // === Target acquired recently, allow to attack ===========
 
-        if (unit.recentlyAcquiredTargetToAttack()) {
-            return true;
-        }
+//        if (unit.recentlyAcquiredTargetToAttack()) {
+//            return true;
+//        }
 
         // === Unit already started attack animation ===============
 
@@ -81,9 +81,9 @@ public class DontInterruptStartedAttacks {
 //            if (unit.isFirstCombatUnit()) {
 //                System.out.println(A.now() + "  " + unit.idWithHash() + " STARTED ATTACK ANIMATION");
 //            }
-//            APainter.paintCircle(unit, 15, Color.Green);
-//            APainter.paintCircle(unit, 13, Color.Green);
-//            APainter.paintCircle(unit, 11, Color.Green);
+            APainter.paintCircle(unit, 15, Color.Green);
+            APainter.paintCircle(unit, 13, Color.Green);
+            APainter.paintCircle(unit, 11, Color.Green);
 //            unit.setTooltip("Shoot(" + unit.lastFrameOfStartingAttackAgo() + ")");
             return true;
         }

@@ -94,7 +94,7 @@ public class AExpansionManager {
 //                    || (A.seconds() >= 600 && Count.ourCombatUnits() >= 8)
 //                    || (A.seconds() >= 700)
 //                );
-            if (AGame.canAfford(420, 0) || secondsAllow) {
+            if (AGame.canAfford(370, 0) || secondsAllow) {
                 return true;
             }
         }

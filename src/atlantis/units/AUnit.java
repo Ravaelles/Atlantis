@@ -489,6 +489,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this;
     }
 
+    public AUnit setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+//        System.out.println(A.now() + " - " + this.tooltip);
+        return this;
+    }
+
 //    public AUnit addTooltip(String tooltip) {
 //        this.tooltip = tooltip() + tooltip;
 //        return this;

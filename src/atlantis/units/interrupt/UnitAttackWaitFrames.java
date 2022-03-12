@@ -21,8 +21,14 @@ public class UnitAttackWaitFrames {
     public static boolean unitAlreadyStartedAttackAnimation(AUnit unit) {
         return unit.isAttackingOrMovingToAttack()
                 && unit.hasValidTarget();
+//        return unit.isAttackingOrMovingToAttack()
+//                && unit.hasValidTarget()
 //                && unit.lastFrameOfStartingAttackAgo() < (unit.cooldownAbsolute() / 3)
 //                && (unit.lastFrameOfStartingAttackAgo() + stopFrames(unit.type())) > A.now();
+    }
+
+    public static int effectiveStopFrames(AUnitType type) {
+        return stopFrames(type) + attackAnimationFrames(type);
     }
 
     protected static int stopFrames(AUnitType type) {

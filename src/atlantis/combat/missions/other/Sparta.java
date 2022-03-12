@@ -98,7 +98,7 @@ public class Sparta extends MissionDefend {
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         if (!unit.mission().focusPoint().isAroundChoke()) {
-            System.err.println("Invalid Sparta not around choke");
+//            System.err.println("Invalid Sparta not around choke");
             return super.allowsToAttackEnemyUnit(unit, enemy);
         }
 
