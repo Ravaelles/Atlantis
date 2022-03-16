@@ -1439,4 +1439,12 @@ public class AUnitType implements Comparable<Object> {
             () -> is(Zerg_Zergling)
         );
     }
+
+    public boolean isScienceVessel() {
+        return (boolean) cache.get(
+            "isScienceVessel",
+            -1,
+            () -> is(Terran_Science_Vessel)
+        );
+    }
 }

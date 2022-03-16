@@ -1901,6 +1901,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isLockedDown();
     }
 
+    public boolean isDefenseMatrixed() {
+//        System.out.println(u.getDefenseMatrixTimer() + " // " + u.getDefenseMatrixPoints() + " // " + u.isDefenseMatrixed());
+        return u.isDefenseMatrixed();
+    }
+
     public int stimTimer() {
         return u.getStimTimer();
     }
@@ -2015,6 +2020,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isScv() {
         return type().isScv();
+    }
+
+    public boolean isScienceVessel() {
+        return type().isScienceVessel();
     }
 
     public boolean isCombatUnit() {
@@ -2388,5 +2397,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         return focusPoint.distTo(this);
+    }
+
+    public boolean lastPositioningActionMoreThanAgo(int minFramesAgo) {
+        return lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_FORMATION)
+            && lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
 }

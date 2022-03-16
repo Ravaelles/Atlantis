@@ -18,8 +18,14 @@ public class ShouldBuildBio {
             return wantsToReturnTrue();
         }
 
-        if (OurStrategy.get().goingBio() && infantry <= 30) {
-            return wantsToReturnTrue();
+        if (OurStrategy.get().goingBio()) {
+            if (Count.tanks() <= 1 && infantry <= 15) {
+                return wantsToReturnTrue();
+            }
+
+            if (infantry <= 30) {
+                return wantsToReturnTrue();
+            }
         }
 
         if (

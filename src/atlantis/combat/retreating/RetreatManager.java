@@ -5,14 +5,17 @@ import atlantis.combat.missions.AFocusPoint;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
+import bwapi.Position;
 
 public class RetreatManager {
 
@@ -20,6 +23,23 @@ public class RetreatManager {
     private static Cache<Boolean> cache = new Cache<>();
 
     // =========================================================
+
+    public static boolean handleRetreat(AUnit unit) {
+        if (shouldRetreat(unit)) {
+            Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
+            HasPosition runAwayFrom = nearEnemies.center();
+            if (runAwayFrom == null) {
+                runAwayFrom = nearEnemies.first();
+            }
+
+            if (nearEnemies != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT)) {
+                unit.addLog("HandledRetreat");
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * If chances to win the skirmish with the Near enemy units aren't favorable, avoid fight and retreat.
@@ -50,12 +70,25 @@ public class RetreatManager {
     }
 
     private static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
-        if (!unit.isTerran() && unit.isRanged() && unit.isHealthy()) {
-            return false;
-        }
-
         if (unit.isMelee() && formationMeleeUnits(unit, enemies)) {
             return true;
+        }
+
+        if (We.protoss()) {
+            if (unit.isRanged() && unit.isHealthy()) {
+                return false;
+            }
+        }
+
+        if (We.terran()) {
+            if (Enemy.terran()) {
+                if (unit.isMarine()) {
+                    if (unit.friendsNear().inRadius(5, unit).count() < unit.enemiesNear().inRadius(5, unit).count()) {
+                        unit.addLog("MvM-SmRetreat");
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;
@@ -243,5 +276,4 @@ public class RetreatManager {
 
         return false;
     }
-
 }

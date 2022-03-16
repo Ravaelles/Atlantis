@@ -17,7 +17,7 @@ public class UseMap {
 
     public static String activeMap() {
 //        if (true) return "sscai/(2)Destination.scx";
-//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
@@ -66,15 +66,16 @@ public class UseMap {
 //        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies
 //        if (true) return "ums/rav/M&M_v_M&M_2.scx"; // Standing in lines, shooting at another
 //        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
+        if (true) return "ums/rav/M&M_v_T.scx"; // Terran bio engaging with units that keep on adding
 
         // === Gosu bots - advanced single player cheating bots ====
 
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
-        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
+//        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
-//        if (true) return "ums/LostTemple.scm"; // v. 2x Protoss players, again Zealot rush
+//        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
 
         // =========================================================
 

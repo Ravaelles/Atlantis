@@ -89,7 +89,7 @@ public class TerranTankWhenSieged extends TerranTank {
     // =========================================================
 
     private static boolean allowToUnsiegeToMove(AUnit unit) {
-        if (unit.cooldownRemaining() == 0 && (A.now() % unit.id() <= 1)) {
+        if (unit.cooldownRemaining() == 0 && (A.now() % (1 + unit.id()) <= 1)) {
             return true;
         }
 

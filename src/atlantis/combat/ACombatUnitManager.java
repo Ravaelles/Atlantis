@@ -8,6 +8,7 @@ import atlantis.combat.micro.managers.DanceAfterShoot;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.ARunningManager;
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.terran.repair.AUnitBeingReparedManager;
@@ -178,6 +179,10 @@ public class ACombatUnitManager {
 
         // Handle repair of mechanical units
         if (AGame.isPlayingAsTerran() && AUnitBeingReparedManager.handleUnitBeingRepaired(unit)) {
+            return true;
+        }
+
+        if (RetreatManager.handleRetreat(unit)) {
             return true;
         }
 

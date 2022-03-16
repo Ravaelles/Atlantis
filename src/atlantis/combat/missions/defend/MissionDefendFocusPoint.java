@@ -36,7 +36,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit mainBase = Select.main();
 
-                if (We.terran() && A.supplyUsed() <= 50) {
+                if (We.terran() && A.supplyUsed() <= 50 && Count.infantry() <= 13) {
                     AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
                     if (GamePhase.isEarlyGame() && mainBase != null) {
                         if (bunker != null) {
@@ -86,7 +86,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                         return new AFocusPoint(
                             natural,
                             Select.main(),
-                            "NaturalChoke"
+                            "DefNaturalChoke"
                         );
                     }
                 }

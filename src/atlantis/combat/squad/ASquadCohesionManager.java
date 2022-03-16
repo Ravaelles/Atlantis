@@ -7,9 +7,9 @@ import atlantis.units.AUnit;
 public class ASquadCohesionManager {
 
     public static boolean handle(AUnit unit) {
-        if (shouldSkip(unit)) {
-            return false;
-        }
+//        if (shouldSkip(unit)) {
+//            return false;
+//        }
 
         if (ComeCloser.handleComeCloser(unit)) {
             return true;

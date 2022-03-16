@@ -7,6 +7,7 @@ import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -39,21 +40,10 @@ public class TerranScienceVessel extends MobileDetector {
             return true;
         }
 
-        if (Enemy.protoss()) {
-            if (unit.energy(100) && ATech.isResearched(TechType.EMP_Shockwave)) {
-                if (empShockwave(unit)) {
-                    unit.setTooltipTactical("EMP!");
-                    return true;
-                }
-            }
-        }
-
-        if (Enemy.zerg() || A.isUms()) {
-            if (unit.energy(75) && ATech.isResearched(TechType.Irradiate)) {
-                if (irradiate(unit)) {
-                    unit.setTooltipTactical("Irradiate!");
-                    return true;
-                }
+        if (unit.energy(75) && ATech.isResearched(TechType.Irradiate)) {
+            if (irradiate(unit)) {
+                unit.setTooltipTactical("Irradiate!");
+                return true;
             }
         }
 
@@ -71,11 +61,20 @@ public class TerranScienceVessel extends MobileDetector {
             return false;
         }
 
-        Selection tanks = unit.friendsNear().tanks().wounded();
-        if (tanks.notEmpty()) {
-            for (AUnit tank : tanks.list()) {
-                if (tank.lastUnderAttackLessThanAgo(10) && tank.meleeEnemiesNearCount() >= 2) {
-                    return unit.useTech(TechType.Defensive_Matrix, tank);
+        Selection targets = unit.friendsNear().wounded();
+        if (unit.energy() < 200 && Count.tanks() > 0) {
+            targets = targets.tanks();
+        }
+
+        if (targets.notEmpty()) {
+            for (AUnit target : targets.list()) {
+                if (target.isDefenseMatrixed()) {
+                    continue;
+                }
+
+                if (target.lastUnderAttackLessThanAgo(50) && target.enemiesNear().count() >= 2) {
+                    System.out.println(A.now() + " Use Defensive_Matrix on " + target);
+                    return unit.useTech(TechType.Defensive_Matrix, target);
                 }
             }
         }

@@ -9,6 +9,7 @@ import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 /**
@@ -66,7 +67,7 @@ public class MissionAttack extends Mission {
         }
 
         // Focus point is well known
-        if (focusPoint != null) {
+        if (focusPoint != null && unit.lastPositioningActionMoreThanAgo(10)) {
             unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
             return AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint);
         }

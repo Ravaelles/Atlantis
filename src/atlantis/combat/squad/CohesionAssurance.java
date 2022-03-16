@@ -14,10 +14,20 @@ public class CohesionAssurance {
      * We want to make sure that at least N percent of units are inside X radius of squad center.
      */
     public static boolean handleTooLowCohesion(AUnit unit) {
+//        System.out.println(
+//            A.now() + " " + unit
+//                + " // okay="
+//                + isSquadCohesionOkay(unit)
+//                + " // perc="
+//                + unit.squad().cohesionPercent()
+//                + " // outs="
+//                + unit.outsideSquadRadius()
+//        );
         if (unit.isVulture() || unit.isAir()) {
             return false;
         }
 
+        unit.setTooltipTactical(unit.squad().cohesionPercent() + "%/" + A.trueFalse(unit.outsideSquadRadius()) + "/" + A.trueFalse(isSquadCohesionOkay(unit)));
         if (isSquadCohesionOkay(unit)) {
             return false;
         }
@@ -31,7 +41,9 @@ public class CohesionAssurance {
         if (unit.outsideSquadRadius()) {
             String t = "Cohesion";
             unit.move(
-                unit.position().translateTilesTowards(1.5, unit.squadCenter()),
+                unit.position()
+                    .translateTilesTowards(1.5, unit.squadCenter())
+                    .makeFreeOfOurUnits(3, 0.3, unit),
                 Actions.MOVE_FORMATION,
                 t,
                 false

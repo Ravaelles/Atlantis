@@ -216,6 +216,10 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintLastAction(AUnit unit) {
+        if (!unit.isRealUnit() || unit.isBuilding()) {
+            return;
+        }
+
 //        String action = unit.action().toString() + "(" + unit.lastActionFramesAgo() + ")";
         String action = unit.action() != null ? unit.action().toString() : "NO_ACTION";
         if ("ATTACK_UNIT".equals(action)) {
@@ -311,17 +315,14 @@ public class AAdvancedPainter extends APainter {
         }
         paintSideMessage("Mission: " + mission.name() + " (" + Missions.counter() + ")", color);
 
-        AFocusPoint focus = mission.focusPoint();
-//        String focusPointString = focus != null
-//            ? (focus.getName() != null ? focus.getName() : focus.toString())
-//            : "NONE";
-//        paintSideMessage("Focus: " + focusPointString, Color.White);
+//        AFocusPoint focus = mission.focusPoint();
         paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.White);
 
         // =========================================================
         // Focus point
 
-        AFocusPoint focusPoint = MissionAttack.getInstance().focusPoint();
+//        AFocusPoint focusPoint = MissionAttack.getInstance().focusPoint();
+        AFocusPoint focusPoint = Alpha.get().mission().focusPoint();
         AUnit mainBase = Select.main();
         String desc = "";
         String focusPointString = focusPoint != null
