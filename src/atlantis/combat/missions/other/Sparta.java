@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 import java.util.List;
 
@@ -22,8 +23,6 @@ import java.util.List;
 public class Sparta extends MissionDefend {
 
 //    public static final double HOLD_DIST_FOR_MELEE = 0.6;
-    public static final double HOLD_DIST_FOR_MELEE = 0;
-    public static final double HOLD_DIST_FOR_MELEE_MARGIN = 0.08;
     private static final double MAX_MELEE_DIST_TO_ATTACK = 1.1;
 
     // =========================================================
@@ -248,8 +247,9 @@ public class Sparta extends MissionDefend {
         }
 
         double dist = spartanPoint.distTo(unit);
+        boolean distanceGood = dist <= optimalDist();
 
-        if (Math.abs(dist - HOLD_DIST_FOR_MELEE) <= HOLD_DIST_FOR_MELEE_MARGIN) {
+        if (distanceGood) {
             if (shouldHold(unit)) {
                 unit.holdPosition("Sparta", false);
             }
@@ -257,6 +257,18 @@ public class Sparta extends MissionDefend {
         }
 
         return false;
+    }
+
+    private double optimalDist() {
+        if (We.zerg()) {
+            return 1.8;
+        }
+
+        if (We.protoss()) {
+            return 0.08;
+        }
+
+        return 2.3;
     }
 
     private boolean holdForRanged() {

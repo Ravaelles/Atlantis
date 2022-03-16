@@ -12,7 +12,9 @@ import atlantis.production.orders.production.ProductionQueueMode;
 import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -90,6 +92,15 @@ public class AProductionManager {
         AUnit base = Select.ourOneNotTrainingUnits(AtlantisConfig.BASE);
         if (base == null) {
             return false;
+        }
+
+        if (We.zerg()) {
+//            if (AGame.supplyUsed() <= 9) {
+//                return true;
+//            }
+            if (AGame.supplyUsed() >= 10 && Count.larvas() <= 1) {
+                return false;
+            }
         }
 
         if (isSafeToProduceWorkerAt(base)) {

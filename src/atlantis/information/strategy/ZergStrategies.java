@@ -8,6 +8,7 @@ public class ZergStrategies extends AStrategy {
     
     // Rush
     public static final AStrategy ZERG_9_Pool_vP = new AStrategy();
+    public static final AStrategy ZERG_9_Pool_vT = new AStrategy();
     public static final AStrategy ZERG_9_Pool_vZ = new AStrategy();
 
     // Cheese
@@ -32,13 +33,11 @@ public class ZergStrategies extends AStrategy {
         
         // === Rushes ========================================
         
-        ZERG_9_Pool_vP.setZerg().setName("9 Pool vP")
-                .setGoingRush()
-                .setUrl("https://liquipedia.net/starcraft/9_Pool_(vs._Protoss)");
+        ZERG_9_Pool_vP.setZerg().setName("9 Pool vP").setGoingRush();
 
-        ZERG_9_Pool_vZ.setZerg().setName("9 Pool vZ")
-                .setGoingRush()
-                .setUrl("https://liquipedia.net/starcraft/9_Pool_(vs._Zerg)");
+        ZERG_9_Pool_vT.setZerg().setName("9 Pool vT").setGoingRush();
+
+        ZERG_9_Pool_vZ.setZerg().setName("9 Pool vZ").setGoingRush();
 
         // === Cheese ========================================
         

@@ -49,6 +49,10 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static boolean zerglings() {
+        if (Have.no(AUnitType.Zerg_Spawning_Pool)) {
+            return false;
+        }
+
         if (Count.zerglings() >= 8 && !AGame.canAffordWithReserved(100, 0)) {
             return false;
         }
