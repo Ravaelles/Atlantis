@@ -83,10 +83,6 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
         }
 
         return false;
-
-//        if (GamePhase.isEarlyGame()) {
-//            return Select.ourCombatUnits().atLeast(13) || A.resourcesBalance() >= 350;
-//        }
     }
 
 }

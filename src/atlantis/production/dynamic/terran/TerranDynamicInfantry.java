@@ -44,7 +44,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     protected static boolean medics() {
-        if (!Decisions.shouldBuildBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
+        if (!Decisions.shouldMakeTerranBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
             return false;
         }
 
@@ -88,7 +88,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     protected static boolean marines() {
-        if (!Decisions.shouldBuildBio()) {
+        if (!Decisions.shouldMakeTerranBio()) {
 //            System.out.println("Marines - A");
             return false;
         }

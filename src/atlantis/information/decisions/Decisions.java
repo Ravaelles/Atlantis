@@ -2,7 +2,8 @@ package atlantis.information.decisions;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.decisions.terran.ShouldBuildBio;
+import atlantis.information.decisions.terran.ShouldMakeTerranBio;
+import atlantis.information.decisions.zerg.ShouldMakeZerglings;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
@@ -51,11 +52,19 @@ public class Decisions {
         );
     }
 
-    public static boolean shouldBuildBio() {
+    public static boolean shouldMakeTerranBio() {
         return cache.get(
-            "buildBio",
+            "shouldMakeTerranBio",
             100,
-            () -> ShouldBuildBio.should()
+            () -> ShouldMakeTerranBio.should()
+        );
+    }
+
+    public static boolean shouldMakeZerglings() {
+        return cache.get(
+            "shouldMakeTerranBio",
+            100,
+            () -> ShouldMakeZerglings.should()
         );
     }
 

@@ -42,12 +42,7 @@ public class Evaluate {
 //        theseUnits.print("THESE");
 //        againstUnits.print("AGAINST");
 
-        if (againstUnit == null) {
-//            System.err.println("againstUnit is NULL");
-            return 0.0;
-        }
-        else if (!againstUnit.isAlive()) {
-            System.err.println("againstUnit is DEAD");
+        if (againstUnit == null || !againstUnit.isAlive()) {
             return 0.0;
         }
 

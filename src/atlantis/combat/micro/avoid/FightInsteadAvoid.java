@@ -5,7 +5,6 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmyStrength;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -343,7 +342,7 @@ public class FightInsteadAvoid {
 
         if (combatBuilding != null) {
             return unit.mission().isMissionAttack()
-                    && unit.ourCombatUnitsNear(false).inRadius(6, unit).atLeast(10)
+                    && unit.friendsNearInRadiusSelect(6).atLeast(10)
                     && ACombatEvaluator.advantagePercent(unit, 50);
 //                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
         }

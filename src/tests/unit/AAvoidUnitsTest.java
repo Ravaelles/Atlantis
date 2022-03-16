@@ -37,7 +37,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Spore_Colony, 12),
                 fake(AUnitType.Zerg_Drone, 13),
                 fake(AUnitType.Zerg_Drone, 14),
-                ling1 = fake(AUnitType.Zerg_Zergling, 12.5),
+                ling1 = fake(AUnitType.Zerg_Zergling, 11.8),
                 hydra = fake(AUnitType.Zerg_Hydralisk, 14),
                 sunken = fake(AUnitType.Zerg_Sunken_Colony, 16),
                 fake(AUnitType.Zerg_Creep_Colony, 11),
@@ -53,7 +53,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
-                    new FakeUnit[] { drone, ling1, hydra, sunken, ling2 },
+                    new FakeUnit[] { drone, ling1, hydra, sunken },
                     AAvoidUnits.unitsToAvoid(our).array()
             );
         });

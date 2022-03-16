@@ -1,6 +1,5 @@
 package atlantis.information.decisions.terran;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
@@ -9,7 +8,7 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.select.Count;
 
-public class ShouldBuildBio {
+public class ShouldMakeTerranBio {
 
     public static boolean should() {
         int infantry = Count.infantry();

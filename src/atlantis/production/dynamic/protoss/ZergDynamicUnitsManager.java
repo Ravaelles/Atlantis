@@ -3,6 +3,7 @@ package atlantis.production.dynamic.protoss;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.Decisions;
 import atlantis.production.AbstractDynamicUnits;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
@@ -40,7 +41,7 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
             return false;
         }
 
-        if (AGame.canAffordWithReserved(75, 75)) {
+        if (AGame.canAffordWithReserved(50, 0)) {
             AddToQueue.withStandardPriority(AUnitType.Zerg_Hydralisk);
             return true;
         }
@@ -53,7 +54,7 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
             return false;
         }
 
-        if (Count.zerglings() >= 8 && !AGame.canAffordWithReserved(100, 0)) {
+        if (!Decisions.shouldMakeZerglings()) {
             return false;
         }
 

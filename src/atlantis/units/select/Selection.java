@@ -50,6 +50,13 @@ public class Selection extends BaseSelection {
         return cloneByAdding(otherSelection.data, null);
     }
 
+    public Selection add(AUnit addUnit) {
+        ArrayList<AUnit> list = new ArrayList<>();
+        list.add(addUnit);
+
+        return cloneByAdding(list, null);
+    }
+
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>otherUnit</b>.
      */

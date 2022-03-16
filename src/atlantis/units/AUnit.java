@@ -2059,6 +2059,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         ));
     }
 
+    public int enemiesNearInRadius(double maxDist) {
+        return enemiesNear().inRadius(maxDist, this).count();
+//        return ((Selection) cache.get(
+//            "enemiesNearInRadius:" + maxDist,
+//            5,
+//            () -> enemiesNear().inRadius(maxDist, this)
+//        ));
+    }
+
     public int meleeEnemiesNearCount() {
         return cacheInt.get(
             "meleeEnemiesNearCount",
@@ -2097,14 +2106,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         ));
     }
 
-    public Selection ourCombatUnitsNear(boolean excludeThisUnit) {
-        return ((Selection) cache.get(
-            "ourCombatUnitsNear:" + A.trueFalse(excludeThisUnit),
-            5,
-            () -> Select.ourCombatUnits()
-                .inRadius(15, this)
-                .exclude(excludeThisUnit ? this : null)
-        ));
+    public Selection friendsNearInRadiusSelect(double radius) {
+        return friendsNear().inRadius(radius, this);
+    }
+
+    public int friendsNearInRadius(double radius) {
+        return friendsNear().inRadius(radius, this).count();
     }
 
     public Selection allUnitsNear() {
@@ -2190,7 +2197,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int meleeEnemiesNearCount(double maxDistToEnemy) {
         return cacheInt.get(
-            "meleeEnemiesNear",
+            "meleeEnemiesNear:" + maxDistToEnemy,
             2,
             () -> enemiesNear().melee().inRadius(maxDistToEnemy, this).size()
         );
@@ -2403,4 +2410,5 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_FORMATION)
             && lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
+
 }
