@@ -27,6 +27,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 import atlantis.util.CappedList;
 import atlantis.util.Vector;
@@ -2179,6 +2180,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public boolean isHydralisk() {
+        return cacheBoolean.get(
+            "isHydralisk",
+            -1,
+            () -> is(AUnitType.Zerg_Hydralisk)
+        );
+    }
+
     public boolean isDT() {
         return cacheBoolean.get(
             "isDT",
@@ -2236,10 +2245,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean shieldDamageAtMost(int maxDamage) {
+        if (!We.protoss()) {
+            return false;
+        }
+
         return shields() + maxDamage >= maxShields();
     }
 
     public boolean shieldDamageAtLeast(int minDamage) {
+        if (!We.protoss()) {
+            return false;
+        }
+
         return shields() + minDamage <= maxShields();
     }
 

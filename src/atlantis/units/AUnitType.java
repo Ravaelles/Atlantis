@@ -1200,7 +1200,8 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
                 "isCombatUnit",
                 -1,
-                () -> !isWorker() && !isInvincible() && !isMine() && !isObserver() && (!isBuilding() || isCombatBuilding()) && !isOverlord()
+                () -> !isWorker() && !isInvincible() && !isMine() && !isObserver() && isRealUnit()
+                    && (!isBuilding() || isCombatBuilding()) && !isOverlord()
         );
     }
 

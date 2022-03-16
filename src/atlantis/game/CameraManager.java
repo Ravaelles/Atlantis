@@ -11,8 +11,8 @@ public class CameraManager {
     
     protected static int SCREEN_WIDTH = 640;
     protected static int SCREEN_HEIGHT = 480;
-//    protected static boolean focusCameraOnFirstCombatUnit = true;
-    protected static boolean focusCameraOnFirstCombatUnit = false;
+    protected static boolean focusCameraOnFirstCombatUnit = true;
+//    protected static boolean focusCameraOnFirstCombatUnit = false;
 
     // =========================================================
 

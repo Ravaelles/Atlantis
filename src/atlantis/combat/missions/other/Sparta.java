@@ -247,7 +247,7 @@ public class Sparta extends MissionDefend {
         }
 
         double dist = spartanPoint.distTo(unit);
-        boolean distanceGood = dist <= optimalDist();
+        boolean distanceGood = dist <= optimalDist(unit);
 
         if (distanceGood) {
             if (shouldHold(unit)) {
@@ -259,16 +259,17 @@ public class Sparta extends MissionDefend {
         return false;
     }
 
-    private double optimalDist() {
+    private double optimalDist(AUnit unit) {
         if (We.zerg()) {
-            return 1.8;
+            return 3.5 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count() / 6.0;
+//            return 1.2 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count() / 6.0;
         }
 
         if (We.protoss()) {
-            return 0.08;
+            return 0.08 + (unit.isRanged() ? 1 : 0);
         }
 
-        return 2.3;
+        return 2.0 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count();
     }
 
     private boolean holdForRanged() {
