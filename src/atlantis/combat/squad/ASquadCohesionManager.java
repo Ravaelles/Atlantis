@@ -1,6 +1,6 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 

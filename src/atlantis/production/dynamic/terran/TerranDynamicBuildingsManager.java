@@ -80,7 +80,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void starport() {
-        if (A.supplyUsed() >= 90 && Have.factory() && Have.no(Terran_Starport)) {
+        if (A.supplyUsed() >= 90 && Have.factory() && Have.notEvenPlanned(Terran_Starport)) {
             AddToQueue.withStandardPriority(Terran_Starport);
         }
     }
@@ -97,8 +97,8 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
                 OurStrategy.get().goingBio()
                 && (
 //                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.WithPlanned(Terran_Factory) == 0)
-                        (Count.WithPlanned(Terran_Factory) == 0)
-                        || (A.supplyUsed() >= 30 && Count.WithPlanned(Terran_Factory) == 0)
+                        (Count.withPlanned(Terran_Factory) == 0)
+                        || (A.supplyUsed() >= 30 && Count.withPlanned(Terran_Factory) == 0)
                 )
         ) {
 //            System.err.println("Change from BIO to TANKS (" + Count.WithPlanned(Terran_Factory) + ")");
@@ -147,7 +147,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
 
         if (
-                Count.bases() > Count.WithPlanned(Terran_Comsat_Station)
+                Count.bases() > Count.withPlanned(Terran_Comsat_Station)
                 && Count.inQueueOrUnfinished(Terran_Comsat_Station, 5) <= 0
         ) {
             AddToQueue.withStandardPriority(Terran_Comsat_Station);

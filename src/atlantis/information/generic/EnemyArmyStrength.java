@@ -13,7 +13,7 @@ public class EnemyArmyStrength {
         total += allEnemyCombatUnits.melee().count() * 10;
         total += allEnemyCombatUnits.ranged().count() * 30;
 
-        return total;
+        return Math.max(1, total);
     }
 
 }

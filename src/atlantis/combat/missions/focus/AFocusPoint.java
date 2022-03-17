@@ -1,4 +1,4 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.focus;
 
 import atlantis.game.A;
 import atlantis.map.AChoke;

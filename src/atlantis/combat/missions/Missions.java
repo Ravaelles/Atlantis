@@ -3,7 +3,7 @@ package atlantis.combat.missions;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;
-import atlantis.combat.missions.other.Sparta;
+import atlantis.combat.missions.defend.Sparta;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;

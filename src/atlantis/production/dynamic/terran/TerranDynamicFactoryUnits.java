@@ -1,6 +1,5 @@
 package atlantis.production.dynamic.terran;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.Decisions;
@@ -65,7 +64,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
             return false;
         }
 
-        if (EnemyStrategy.get().isAirUnits() && Count.WithPlanned(AUnitType.Terran_Goliath) <= 20) {
+        if (EnemyStrategy.get().isAirUnits() && Count.withPlanned(AUnitType.Terran_Goliath) <= 20) {
             if (AGame.canAffordWithReserved(150, 100)) {
                 return addToQueueIfNotAlreadyThere(AUnitType.Terran_Goliath);
             }

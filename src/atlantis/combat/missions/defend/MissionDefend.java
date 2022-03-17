@@ -1,6 +1,6 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.ProtossMissionAdjustments;
 import atlantis.game.AGame;
@@ -52,6 +52,11 @@ public class MissionDefend extends Mission {
         }
 
         return (new MoveToDefendFocusPoint()).move(unit, focusPoint);
+    }
+
+    @Override
+    public double optimalDist(AUnit unit) {
+        return (new MoveToDefendFocusPoint()).optimalDist(unit);
     }
 
     // =========================================================

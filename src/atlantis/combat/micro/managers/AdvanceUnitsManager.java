@@ -1,10 +1,7 @@
 package atlantis.combat.micro.managers;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.missions.AFocusPoint;
-import atlantis.combat.missions.MissionUnitManager;
-import atlantis.combat.targeting.ATargeting;
-import atlantis.game.A;
+import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -13,7 +10,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-public class AdvanceUnitsManager extends MissionUnitManager {
+public class AdvanceUnitsManager {
 
 //    private Mission mission;
 //

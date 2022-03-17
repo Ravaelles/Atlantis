@@ -1,4 +1,4 @@
-package atlantis.combat.missions.other;
+package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.MissionDefendFocusPoint;
@@ -36,6 +36,7 @@ public class Sparta extends MissionDefend {
 
     // =========================================================
 
+    @Override
     public boolean update(AUnit unit) {
         focusPoint = focusPoint();
         if (!focusPoint.isAroundChoke() || unit.hasNoWeaponAtAll()) {
@@ -53,6 +54,20 @@ public class Sparta extends MissionDefend {
         return (new MoveToDefendFocusPoint()).handleWrongSideOfFocus(unit, focusPoint)
             || holdOnPerpendicularLine()
             || advance();
+    }
+
+    @Override
+    public double optimalDist(AUnit unit) {
+        if (We.zerg()) {
+            return 3.5 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count() / 6.0;
+//            return 1.2 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count() / 6.0;
+        }
+
+        if (We.protoss()) {
+            return 0.08 + (unit.isRanged() ? 1 : 0);
+        }
+
+        return 2.0 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count();
     }
 
     // =========================================================
@@ -258,19 +273,6 @@ public class Sparta extends MissionDefend {
         }
 
         return false;
-    }
-
-    private double optimalDist(AUnit unit) {
-        if (We.zerg()) {
-            return 3.5 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count() / 6.0;
-//            return 1.2 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count() / 6.0;
-        }
-
-        if (We.protoss()) {
-            return 0.08 + (unit.isRanged() ? 1 : 0);
-        }
-
-        return 2.0 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count();
     }
 
     private boolean holdForRanged() {

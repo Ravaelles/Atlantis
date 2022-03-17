@@ -6,23 +6,26 @@ import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.map.scout.AScoutManager;
-import atlantis.production.requests.AAntiAirBuildingRequests;
-import atlantis.production.requests.AAntiLandBuildingRequests;
+import atlantis.production.requests.AntiAirBuildingManager;
+import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.zerg.ZergSporeColony;
+import atlantis.production.requests.zerg.ZergSunkenColony;
+import atlantis.util.We;
 
 public abstract class AStrategyResponse {
 
     public boolean update() {
-        if (AGame.notNthGameFrame(10)) {
+        if (AGame.notNthGameFrame(17)) {
             return false;
         }
 
         // Anti-LAND
-        if (AAntiLandBuildingRequests.handle()) {
+        if (antiLandManager().handleBuildNew()) {
             return true;
         }
 
         // Anti-AIR
-        if (AAntiAirBuildingRequests.handle()) {
+        if (antiAirManager().handleBuildNew()) {
             return true;
         }
 
@@ -108,6 +111,24 @@ public abstract class AStrategyResponse {
         // =========================================================
 
         return !enemyStrategy.isRush() && !enemyStrategy.isGoingCheese();
+    }
+
+    // =========================================================
+
+    private AntiLandBuildingManager antiLandManager() {
+        if (We.zerg()) {
+            return ZergSunkenColony.get();
+        }
+
+        return AntiLandBuildingManager.get();
+    }
+
+    private AntiAirBuildingManager antiAirManager() {
+        if (We.zerg()) {
+            return ZergSporeColony.get();
+        }
+
+        return AntiAirBuildingManager.get();
     }
 
 }

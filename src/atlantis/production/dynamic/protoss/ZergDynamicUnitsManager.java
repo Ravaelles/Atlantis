@@ -16,32 +16,44 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
 
     public static void update() {
         mutalisks();
-        hydralisks();
+        hydras();
         zerglings();
     }
 
     // =========================================================
 
     private static void mutalisks() {
-        if (Have.no(AUnitType.Zerg_Spire) && Have.no(AUnitType.Zerg_Greater_Spire)) {
+        if (!Have.a(AUnitType.Zerg_Spire) && !Have.a(AUnitType.Zerg_Greater_Spire)) {
             return;
         }
 
-        if (!AGame.canAffordWithReserved(75, 75)) {
-            return;
-        }
+        int mutas = Count.mutas();
 
-        if (larvas(1) && AGame.canAffordWithReserved(50, 0)) {
-            AddToQueue.withStandardPriority(AUnitType.Zerg_Mutalisk);
+        if (mutas <= 2) {
+            System.out.println("mutas = " + mutas);
+            AddToQueue.withHighPriority(AUnitType.Zerg_Mutalisk);
+            AddToQueue.withHighPriority(AUnitType.Zerg_Mutalisk);
+            AddToQueue.withHighPriority(AUnitType.Zerg_Mutalisk);
+        }
+        else {
+            if (!AGame.canAffordWithReserved(75, 75)) {
+                return;
+            }
+
+            if (larvas(1) && AGame.canAffordWithReserved(50, 0)) {
+                AddToQueue.withStandardPriority(AUnitType.Zerg_Mutalisk);
+            }
         }
     }
 
-    private static boolean hydralisks() {
-        if (Have.no(AUnitType.Zerg_Hydralisk_Den)) {
+    private static boolean hydras() {
+        if (!Have.a(AUnitType.Zerg_Hydralisk_Den)) {
             return false;
         }
 
-        if (AGame.canAffordWithReserved(50, 0)) {
+        int hydras = Count.hydralisks();
+
+        if (hydras <= 2 || AGame.canAffordWithReserved(50, 0)) {
             AddToQueue.withStandardPriority(AUnitType.Zerg_Hydralisk);
             return true;
         }
@@ -50,22 +62,28 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static boolean zerglings() {
-        if (Have.no(AUnitType.Zerg_Spawning_Pool)) {
+        if (!Have.a(AUnitType.Zerg_Spawning_Pool)) {
             return false;
+        }
+
+        int zerglings = Count.zerglings();
+
+        if (Have.hydraliskDen()) {
+            if (!A.hasMinerals(210) && zerglings >= 4) {
+                return false;
+            }
         }
 
         if (!Decisions.shouldMakeZerglings()) {
             return false;
         }
 
-        if (Have.hydraliskDen()) {
-            if (!A.hasMinerals(210)) {
-                return false;
-            }
-        }
-
-        if (Count.zerglings() <= 50 && larvas(1) && A.hasMinerals(50)) {
-            System.err.println(A.now() + " zetgling enqueued");
+        if (
+            zerglings <= 50
+                && larvas(1)
+                && (zerglings <= 3 || AGame.canAffordWithReserved(50, 0))
+        ) {
+//            System.err.println(A.now() + " zergling enqueued");
             AddToQueue.withStandardPriority(AUnitType.Zerg_Zergling);
             return true;
         }

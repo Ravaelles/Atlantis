@@ -32,7 +32,7 @@ public class AbstractDynamicUnits extends Helpers {
             return;
         }
 
-        if (Count.WithPlanned(type) < haveN) {
+        if (Count.withPlanned(type) < haveN) {
             trainIfPossible(type);
         }
     }

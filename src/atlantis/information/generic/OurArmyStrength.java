@@ -13,7 +13,7 @@ public class OurArmyStrength {
         total += combatUnits.melee().count() * 10;
         total += combatUnits.ranged().count() * 30;
 
-        return total;
+        return Math.max(1, total);
     }
 
 }

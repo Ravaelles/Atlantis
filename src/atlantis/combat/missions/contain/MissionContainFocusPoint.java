@@ -1,7 +1,7 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.combat.missions.AFocusPoint;
-import atlantis.combat.missions.MissionFocusPoint;
+import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.missions.focus.MissionFocusPoint;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AChoke;

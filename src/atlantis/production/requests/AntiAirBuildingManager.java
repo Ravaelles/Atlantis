@@ -1,21 +1,33 @@
 package atlantis.production.requests;
 
-import atlantis.config.AtlantisConfig;
 import atlantis.information.decisions.OurStrategicBuildings;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.Requirements;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.requests.protoss.ProtossPhotonCannonAntiAir;
+import atlantis.production.requests.zerg.ZergSporeColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
-public class AntiAirBuilding {
+public abstract class AntiAirBuildingManager extends DynamicBuildingManager {
 
-    public static boolean handleBuildNew() {
+    private static AntiAirBuildingManager instance = null;
+
+    // =========================================================
+
+    public boolean handleBuildNew() {
+        if (We.terran()) {
+            return false;
+        }
+
+//        System.err.println("Should build new Spore?");
+
         if (shouldBuildNew()) {
+            System.err.println("ENQUEUE NEW Spore Colony");
             return requestOne(null);
         }
 
@@ -24,23 +36,25 @@ public class AntiAirBuilding {
 
     // =========================================================
 
-    private static boolean shouldBuildNew() {
-        if (!Requirements.hasRequirements(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND)) {
+    @Override
+    public boolean shouldBuildNew() {
+        if (!Requirements.hasRequirements(type())) {
             return false;
         }
 
-        int defBuildingAntiLand = Count.existingOrInProductionOrInQueue(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR);
-        return defBuildingAntiLand < OurStrategicBuildings.antiLandBuildingsNeeded();
+        int existing = Count.existingOrInProductionOrInQueue(type());
+        return existing < OurStrategicBuildings.antiLandBuildingsNeeded();
     }
 
-    public static int expectedUnits() {
+    public int expectedUnits() {
         return 3 * Select.ourBases().count();
     }
 
-    public static boolean requestOne(HasPosition nearTo) {
-        AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
+    @Override
+    public boolean requestOne(HasPosition at) {
+        AUnitType building = type();
 
-        if (nearTo == null) {
+        if (at == null) {
             for (AUnit base : Select.ourBases().list()) {
                 int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
                         building, 8, base.position()
@@ -52,8 +66,8 @@ public class AntiAirBuilding {
             }
         }
 
-        if (nearTo != null) {
-            AddToQueue.withTopPriority(building, nearTo);
+        if (at != null) {
+            AddToQueue.withTopPriority(building, at);
             return true;
         }
 
@@ -63,8 +77,8 @@ public class AntiAirBuilding {
     /**
      * Quick air units are: Mutalisk, Wraith, Protoss Scout.
      */
-//    public static void requestAntiAirQuick(APosition where) {
-//        AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
+//    public void requestAntiAirQuick(APosition where) {
+//        AUnitType building = type();
 ////        int antiAirBuildings = ConstructionRequests.countExistingAndPlannedConstructions(building);
 //
 //        // === Ensure we have required units ========================================
@@ -88,4 +102,25 @@ public class AntiAirBuilding {
 //        }
 //    }
 
+    // =========================================================
+
+    public static AntiAirBuildingManager get() {
+        if (instance == null) {
+            if (We.zerg()) {
+                return instance = new ZergSporeColony();
+            }
+            else if (We.protoss()) {
+                return instance = new ProtossPhotonCannonAntiAir();
+            }
+//            else if (We.terran()) {
+//                return instance = new AntiAirBuildingManager();
+//            }
+        }
+
+        return instance;
+    }
+
+    public int existing() {
+        return Count.ourOfTypeWithUnfinished(type());
+    }
 }

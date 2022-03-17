@@ -7,7 +7,10 @@ public class ZergRetreating {
 
     public static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
         if (unit.isZergling()) {
-            if (unit.friendsNearInRadius(2) <= 2 * unit.enemiesNearInRadius(2)) {
+            if (
+                unit.friendsNearInRadiusSelect(2).excludeRunning().count()
+                    <= 2 * unit.enemiesNearInRadius(2)
+            ) {
                 return false;
             }
         }

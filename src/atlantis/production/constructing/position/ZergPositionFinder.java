@@ -27,7 +27,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
 
-        int searchRadius = building.isCombatBuilding() ? 0 : 4;
+        int searchRadius = building.isCombatBuilding() ? 0 : 3;
         if (building.isBase()) {
             maxDistance = 15;
         }
@@ -95,21 +95,6 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Lo-level
-    
-//    private static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
-//
-//        // We have problem only if building is both close to base and to minerals or to geyser
-//        AUnit nearestBase = Select.ourBases().nearestTo(position);
-//        if (nearestBase != null && nearestBase.distTo(position) <= 7) {
-//            Collection<AUnit> mineralsInRange = Select.minerals().inRadius(8, position).listUnits();
-//            for (AUnit mineral : mineralsInRange) {
-//                if (mineral.distTo(position) <= 4) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
 
     private static boolean isCreepConditionFulfilled(AUnitType building, Position position) {
         return Atlantis.game().hasCreep(position.toTilePosition())

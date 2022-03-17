@@ -12,11 +12,16 @@ public class Have {
     }
 
     public static boolean a(AUnitType type) {
-        return Count.WithPlanned(type) > 0;
+//        return Count.withPlanned(type) > 0;
+        return Count.ofType(type) > 0;
     }
 
-    public static boolean no(AUnitType type) {
-        return Count.WithPlanned(type) == 0;
+    public static boolean unfinishedOrPlanned(AUnitType type) {
+        return Count.inProductionOrInQueue(type) > 0;
+    }
+
+    public static boolean notEvenPlanned(AUnitType type) {
+        return Count.withPlanned(type) == 0;
     }
 
     public static boolean free(AUnitType building) {
@@ -24,7 +29,7 @@ public class Have {
     }
 
     public static boolean notEvenInPlans(AUnitType type) {
-        return Count.WithPlanned(type) == 0;
+        return Count.withPlanned(type) == 0;
     }
 
     public static boolean existingOrPlanned(AUnitType building, HasPosition position, double inRadius) {

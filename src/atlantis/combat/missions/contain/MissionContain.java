@@ -1,13 +1,12 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 
 public class MissionContain extends Mission {
 
@@ -16,19 +15,17 @@ public class MissionContain extends Mission {
         focusPointManager = new MissionContainFocusPoint();
     }
 
+    // =========================================================
+
     @Override
     public boolean update(AUnit unit) {
         AFocusPoint focusPoint = focusPoint();
         unit.setTooltipTactical("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
 
-        // =========================================================
-
         if (focusPoint == null) {
             MissionChanger.forceMissionAttack("InvalidFocusPoint");
             return false;
         }
-
-        // =========================================================
 
 //        if (handleUnitSafety(unit, true, true)) {
 //            return true;
@@ -42,10 +39,15 @@ public class MissionContain extends Mission {
             return true;
         }
 
-        // Focus point is well known
         return (new MoveToContainFocusPoint()).move(unit, focusPoint);
 
-        // =========================================================
+    }
+
+    // =========================================================
+
+    @Override
+    public double optimalDist(AUnit unit) {
+        return (new MoveToContainFocusPoint()).optimalDist(unit);
     }
 
     @Override

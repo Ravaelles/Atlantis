@@ -3,6 +3,7 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.units.AUnit;
 import bwapi.Game;
 
@@ -1240,5 +1241,13 @@ public class A {
 
     public static void sleep(int ms) {
         try { TimeUnit.MILLISECONDS.sleep(ms); } catch (InterruptedException e) {}
+    }
+
+    public static int reservedMinerals() {
+        return CurrentProductionQueue.resourcesReserved()[0];
+    }
+
+    public static int reservedGas() {
+        return CurrentProductionQueue.resourcesReserved()[1];
     }
 }

@@ -9,9 +9,8 @@ import atlantis.information.tech.ATechRequests;
 import atlantis.map.ABaseLocation;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
-import atlantis.production.requests.AAntiLandBuildingRequests;
+import atlantis.production.requests.AntiLandBuildingManager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -44,7 +43,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
-        if (Have.no(Protoss_Robotics_Facility) || Have.a(Protoss_Robotics_Support_Bay)) {
+        if (Have.notEvenPlanned(Protoss_Robotics_Facility) || Have.a(Protoss_Robotics_Support_Bay)) {
             return;
         }
 
@@ -54,11 +53,11 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void observatory() {
-        if (Have.a(Protoss_Observatory) || Have.no(Protoss_Robotics_Facility)) {
+        if (Have.a(Protoss_Observatory) || Have.notEvenPlanned(Protoss_Robotics_Facility)) {
             return;
         }
 
-        if (Count.WithPlanned(Protoss_Observatory) == 0) {
+        if (Count.withPlanned(Protoss_Observatory) == 0) {
             buildNow(Protoss_Observatory);
         }
     }
@@ -68,7 +67,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
-        if (Count.WithPlanned(Protoss_Robotics_Facility) == 0) {
+        if (Count.withPlanned(Protoss_Robotics_Facility) == 0) {
             buildNow(Protoss_Robotics_Facility);
         }
     }
@@ -126,7 +125,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             if (existingCannonsNearby < 1) {
                 HasPosition nearTo = ABaseLocation.mineralsCenter(base);
                 if (Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 10, nearTo) == 0) {
-                    AAntiLandBuildingRequests.requestCombatBuildingAntiLand(nearTo);
+                    AntiLandBuildingManager.get().requestOne(nearTo);
                     System.err.println("Requested Cannon to protect base " + base);
                 }
             }

@@ -44,6 +44,10 @@ public class ZergBuildOrder extends ABuildOrder {
     }
 
     public static boolean produceZergBuilding(AUnitType type, ProductionOrder order) {
+        if (type == null) {
+            System.err.println("produceZergBuilding got type = null");
+        }
+
         if (type.isSunken()) {
             return morphBuildingInto(AUnitType.Zerg_Creep_Colony, type);
         }
@@ -60,6 +64,9 @@ public class ZergBuildOrder extends ABuildOrder {
             return morphBuildingInto(AUnitType.Zerg_Spire, type);
         }
 
+        if (order.unitType() == null) {
+            System.err.println("produceZergBuilding got order.unitType = null");
+        }
         return ConstructionRequests.requestConstructionOf(order);
     }
 

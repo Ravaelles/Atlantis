@@ -12,7 +12,7 @@ public class ShouldMakeZerglings {
             return true;
         }
 
-        return AGame.canAffordWithReserved(100, 0);
+        return AGame.canAffordWithReserved(75, 0);
     }
 
 }

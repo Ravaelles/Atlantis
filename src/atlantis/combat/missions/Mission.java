@@ -1,8 +1,9 @@
 package atlantis.combat.missions;
 
+import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.missions.focus.MissionFocusPoint;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
@@ -32,6 +33,11 @@ public abstract class Mission {
     // =========================================================
 
     public abstract boolean update(AUnit unit);
+
+    /**
+     * Optimal distance to focus point or -1 if not defined.
+     */
+    public abstract double optimalDist(AUnit unit);
 
     // =========================================================
 
@@ -156,4 +162,5 @@ public abstract class Mission {
         return false;
 //        return this.equals(Missions.UMS);
     }
+
 }

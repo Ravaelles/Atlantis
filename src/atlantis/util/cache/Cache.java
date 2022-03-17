@@ -1,8 +1,7 @@
 package atlantis.util.cache;
 
-import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.game.A;
-import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Callback;
 

@@ -81,7 +81,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     }
 
     protected static void buildToHaveOne(AUnitType type) {
-        if (Count.WithPlanned(type) > 0) {
+        if (Count.withPlanned(type) > 0) {
             return;
         }
 

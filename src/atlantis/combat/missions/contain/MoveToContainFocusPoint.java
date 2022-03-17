@@ -1,15 +1,11 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.combat.missions.AFocusPoint;
-import atlantis.combat.missions.MoveToFocusPoint;
+import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.missions.focus.MoveToFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
 public class MoveToContainFocusPoint extends MoveToFocusPoint {
-
-    protected final double BASE_DIST_TO_FOCUS_POINT = 6.5;
-
-//    protected  final double MARGIN = 0.6;
 
     public boolean move(AUnit unit, AFocusPoint focusPoint) {
         this.unit = unit;
@@ -32,12 +28,13 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
         return false;
     }
 
+    @Override
     public double optimalDist(AUnit unit) {
         int workersComeThroughBonus = workersComeThroughBonus();
 
         double ourUnitsNearBonus = Select.our().inRadius(2, unit).count() / 20.0;
 
-        return BASE_DIST_TO_FOCUS_POINT
+        return 6.5
             + (unit.isTank() ? 3.8 : 0)
             + (unit.isMedic() ? -0.8 : 0)
 //                + (unit.isMarine() ? 2 : 0)

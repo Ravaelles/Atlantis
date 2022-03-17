@@ -492,6 +492,10 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(AUnit::isMedic, "excludeMedics");
     }
 
+    public Selection excludeRunning() {
+        return cloneByRemovingIf(AUnit::isRunning, "excludeRunning");
+    }
+
     public Selection hasPathFrom(HasPosition fromPosition) {
         return cloneByRemovingIf(
             (unit -> !unit.hasPathTo(fromPosition)), "hasPathFrom:" + fromPosition

@@ -1,4 +1,4 @@
-package atlantis.combat.missions;
+package atlantis.combat.missions.focus;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -19,6 +19,9 @@ public abstract class MoveToFocusPoint {
 
     // =========================================================
 
+    /**
+     * Optimal distance to focus point or -1 if not defined.
+     */
     public abstract double optimalDist(AUnit unit);
 
 //    public double optimalDist(AUnit unit) {
@@ -82,7 +85,11 @@ public abstract class MoveToFocusPoint {
             return false;
         }
 
-        if (!isOnValidSideOfChoke(unit, focus) && unit.distToFocusPoint() <= 7) {
+        double distToFocusPoint = unit.distToFocusPoint();
+        if (
+            distToFocusPoint < unit.mission().optimalDist(unit)
+                || (!isOnValidSideOfChoke(unit, focus) && distToFocusPoint <= 7)
+        ) {
             if (unit.enemiesNear().combatUnits().empty()) {
                 for (AUnit friend : unit.friendsNear().inRadius(7, unit).list()) {
                     friend.move(focus.fromSide(), Actions.MOVE_FOCUS, "HelpWithdraw", true);

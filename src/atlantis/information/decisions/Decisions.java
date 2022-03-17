@@ -140,7 +140,7 @@ public class Decisions {
     }
 
     public static boolean buildRoboticsFacility() {
-        if (Have.roboticsFacility() || Have.no(Protoss_Forge)) {
+        if (Have.roboticsFacility() || Have.notEvenPlanned(Protoss_Forge)) {
             return false;
         }
 

@@ -1,7 +1,7 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.missions.AFocusPoint;
-import atlantis.combat.missions.MissionFocusPoint;
+import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.missions.focus.MissionFocusPoint;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;

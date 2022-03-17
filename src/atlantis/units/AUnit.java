@@ -1,7 +1,7 @@
 package atlantis.units;
 
 import atlantis.combat.eval.ACombatEvaluator;
-import atlantis.combat.missions.AFocusPoint;
+import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ARunningManager;

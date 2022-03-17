@@ -7,7 +7,6 @@ import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ProtossArmyComposition;
-import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.AbstractDynamicUnits;
 import atlantis.production.orders.build.AddToQueue;
@@ -17,7 +16,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 
 import java.util.List;
 
@@ -44,7 +42,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
     private static void shuttles() {
         if (
-                Have.no(AUnitType.Protoss_Robotics_Facility)
+                Have.notEvenPlanned(AUnitType.Protoss_Robotics_Facility)
                 || Count.ofType(AUnitType.Protoss_Reaver) >= Count.ofType(AUnitType.Protoss_Shuttle)
         ) {
             return;
@@ -54,7 +52,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void observers() {
-        if (Have.no(AUnitType.Protoss_Observatory)) {
+        if (Have.notEvenPlanned(AUnitType.Protoss_Observatory)) {
             if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
                 AddToQueue.withTopPriority(AUnitType.Protoss_Observatory);
                 AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
@@ -62,7 +60,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return;
         }
 
-        if (Have.no(AUnitType.Protoss_Observer)) {
+        if (Have.notEvenPlanned(AUnitType.Protoss_Observer)) {
             if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
                 AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
                 return;
@@ -77,7 +75,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void corsairs() {
-        if (Have.no(AUnitType.Protoss_Stargate)) {
+        if (Have.notEvenPlanned(AUnitType.Protoss_Stargate)) {
             return;
         }
 
@@ -88,7 +86,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void reavers() {
-        if (Have.no(AUnitType.Protoss_Robotics_Facility) || Have.no(AUnitType.Protoss_Robotics_Support_Bay)) {
+        if (Have.notEvenPlanned(AUnitType.Protoss_Robotics_Facility) || Have.notEvenPlanned(AUnitType.Protoss_Robotics_Support_Bay)) {
             return;
         }
 
@@ -98,7 +96,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void dragoons() {
-        if (Have.no(AUnitType.Protoss_Gateway) || Have.no(AUnitType.Protoss_Cybernetics_Core)) {
+        if (Have.notEvenPlanned(AUnitType.Protoss_Gateway) || Have.notEvenPlanned(AUnitType.Protoss_Cybernetics_Core)) {
             return;
         }
 
@@ -127,7 +125,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
     }
 
     private static void zealots() {
-        if (Have.no(AUnitType.Protoss_Gateway)) {
+        if (Have.notEvenPlanned(AUnitType.Protoss_Gateway)) {
             return;
         }
 

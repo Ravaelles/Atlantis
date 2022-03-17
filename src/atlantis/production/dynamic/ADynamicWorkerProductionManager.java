@@ -46,6 +46,13 @@ public class ADynamicWorkerProductionManager {
             }
         }
 
+        if (We.zerg()) {
+            ProductionOrder order = ProductionQueue.nextOrderFor(AUnitType.Zerg_Spawning_Pool, 2);
+            if (order != null && order.hasWhatRequired() && !A.hasMinerals(250)) {
+                return false;
+            }
+        }
+
         // Check if not TOO MANY WORKERS
         int workers = Select.ourWorkers().count();
         if (workers >= (25 * Select.ourBuildingsWithUnfinished().bases().count())) {

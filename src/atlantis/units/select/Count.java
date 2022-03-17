@@ -1,6 +1,5 @@
 package atlantis.units.select;
 
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.ProductionQueue;
@@ -27,7 +26,7 @@ public class Count {
         return Select.countOurOfType(type);
     }
 
-    public static int WithPlanned(AUnitType type) {
+    public static int withPlanned(AUnitType type) {
         return existingOrInProductionOrInQueue(type);
     }
 
@@ -160,6 +159,10 @@ public class Count {
 
     public static int hydralisks() {
         return ofType(AUnitType.Zerg_Hydralisk);
+    }
+
+    public static int mutas() {
+        return ofType(AUnitType.Zerg_Mutalisk);
     }
 
     public static int pylons() {

@@ -26,14 +26,9 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearEnemyUnits(AUnit unit) {
-//        if (!unit.isStopped()) {
-
-//        if (unit.lastActionLessThanAgo(5) && !unit.isStopped()) {
-////            AAdvancedPainter.paintCircleFilled(unit, 12, Color.Orange);
-////            System.out.println("u.getLastCommand().getType().name() = " + unit.getLastCommand().getType().name());
-//            unit.addLog("ContinueAttack");
-//            return false;
-//        }
+        if (unit.hasNoWeaponAtAll()) {
+            return false;
+        }
 
         AUnit enemy = defineEnemyToAttackFor(unit);
         if (enemy == null) {
@@ -136,7 +131,7 @@ public class AAttackEnemyUnit {
 //    }
 
     private static boolean isValidTargetAndAllowedToAttackUnit(AUnit unit, AUnit target) {
-        if (target == null) {
+        if (target == null || target.position() == null) {
             return false;
         }
 

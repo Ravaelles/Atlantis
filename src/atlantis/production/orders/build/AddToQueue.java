@@ -52,6 +52,12 @@ public class AddToQueue {
             return null;
         }
 
+        if (type.isBuilding()) {
+//            System.err.println("Reserved: minerals(" + A.reservedMinerals() + "), gas(" + A.reservedGas() + ")");
+//            System.err.println("At " + A.seconds() + "s added to QUEUE > " + type + " <");
+//            A.printStackTrace("At " + A.seconds() + "s added to QUEUE > " + type + " <");
+        }
+
 //        if (!allowToQueueRequiredBuildings(type)) {
         int minSupply = 0;
         ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);

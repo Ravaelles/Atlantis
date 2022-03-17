@@ -1,7 +1,7 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.missions.AFocusPoint;
-import atlantis.combat.missions.MoveToFocusPoint;
+import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.missions.focus.MoveToFocusPoint;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -94,7 +94,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
         return base
             + letWorkersComeThroughBonus()
-            + rangedDistBonus();
+            + rangedDistBonus(unit);
     }
 
     private double letWorkersComeThroughBonus() {
@@ -107,7 +107,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
                 ? 3 : 0;
     }
 
-    private double rangedDistBonus() {
+    private double rangedDistBonus(AUnit unit) {
         if (unit.isDragoon()) {
             return 1.7;
         }

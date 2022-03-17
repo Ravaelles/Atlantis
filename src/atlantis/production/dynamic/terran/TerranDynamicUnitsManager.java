@@ -23,7 +23,7 @@ public class TerranDynamicUnitsManager extends AbstractDynamicUnits {
     // =========================================================
 
     private static void scienceVessels() {
-        if (Have.no(Terran_Science_Vessel)) {
+        if (Have.notEvenPlanned(Terran_Science_Vessel)) {
             if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
                 AddToQueue.withTopPriority(Terran_Science_Vessel);
             }
