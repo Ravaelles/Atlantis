@@ -4,7 +4,7 @@
 #SCOUT_IS_NTH_WORKER=12
 
 // When supply is bigger than N, then start auto-producing supply units
-#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=15
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=14
 
 // If have empty slot for a worker, force to build new workers
 #AUTO_PRODUCE_WORKERS_MIN_WORKERS=0
@@ -17,9 +17,7 @@
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-9 - Spawning Pool
+6 - Spawning Pool
+9 - Sunken Colony
 9 - Overlord
-9 - Zergling
-9 - Zergling
-9 - Zergling
-16 - Extractor
+10 - Sunken Colony

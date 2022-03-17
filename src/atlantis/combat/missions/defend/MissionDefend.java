@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class MissionDefend extends Mission {
@@ -131,6 +132,16 @@ public class MissionDefend extends Mission {
             && unit.friendsNear().combatBuildings(false).inRadius(5, unit).notEmpty()
             && !"Sparta".equals(unit.tooltip())
         ) {
+            if (unit.hp() <= 18) {
+                if (Enemy.protoss()) {
+                    return false;
+                }
+
+                if (unit.hp() <= 10) {
+                    return false;
+                }
+            }
+
             unit.addLog("ProtectBuilding");
             return true;
         }

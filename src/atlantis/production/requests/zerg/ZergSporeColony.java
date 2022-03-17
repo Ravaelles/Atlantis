@@ -15,27 +15,32 @@ public class ZergSporeColony extends AntiAirBuildingManager {
     }
 
     @Override
-    public boolean shouldBuildNew() {
-        if (!Have.a(type())) {
-            return false;
+    public AUnitType typeToBuildFirst() {
+        return AUnitType.Zerg_Creep_Colony;
+    }
+
+    @Override
+    public int expected() {
+        if (!Have.a(AUnitType.Zerg_Spawning_Pool)) {
+            return 0;
         }
 
         Selection air = EnemyUnits.discovered().air();
 
-        int existing = Count.ofType(type());
-        if (existing == 0) {
-            int wraiths = air.ofType(AUnitType.Terran_Wraith).count();
-            int battlecruisers = air.ofType(AUnitType.Terran_Battlecruiser).count();
-            int scouts = air.ofType(AUnitType.Protoss_Scout).count();
-            return wraiths > 0 || battlecruisers > 0 || scouts > 0;
-        }
-
         int mutas = air.ofType(AUnitType.Zerg_Mutalisk).count();
-        if (existing * 4 < mutas) {
-            return true;
+        if (mutas > 0) {
+            return (mutas / 4) + 1;
         }
 
-        return false;
+        int wraiths = air.ofType(AUnitType.Terran_Wraith).count();
+        int battlecruisers = air.ofType(AUnitType.Terran_Battlecruiser).count();
+        int scouts = air.ofType(AUnitType.Protoss_Scout).count();
+        return (int) Math.ceil((wraiths + battlecruisers + scouts) / 4);
     }
 
+    @Override
+    public int existingWithUnfinished() {
+        return Count.existingOrInProductionOrInQueue(type())
+            + Count.existingOrInProductionOrInQueue(AUnitType.Zerg_Creep_Colony);
+    }
 }

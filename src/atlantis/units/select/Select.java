@@ -241,8 +241,27 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     /**
-     * Selects our units of given type(s).
+     * Selects our units of given type.
      */
+    public static Selection ourOfType(AUnitType type) {
+        String cachePath;
+        return cache.get(
+                cachePath = "ourOfType:" + type.id(),
+                microCacheForFrames,
+                () -> {
+                    List<AUnit> data = new ArrayList<>();
+
+                    for (AUnit unit : ourUnits()) {
+                        if (unit.isCompleted() && unit.is(type)) {
+                            data.add(unit);
+                        }
+                    }
+
+                    return new Selection(data, cachePath);
+                }
+        );
+    }
+
     public static Selection ourOfType(AUnitType... types) {
         String cachePath;
         return cache.get(

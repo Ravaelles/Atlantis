@@ -13,6 +13,10 @@ public class ProtossReaver {
             return AAvoidUnits.avoidEnemiesIfNeeded(reaver);
         }
 
+        if (reaver.cooldownRemaining() >= 10) {
+            return false;
+        }
+
         Selection enemiesInRange = reaver.enemiesNear();
         AUnit enemy;
 

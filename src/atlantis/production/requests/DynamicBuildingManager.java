@@ -3,6 +3,7 @@ package atlantis.production.requests;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 
 public abstract class DynamicBuildingManager {
 
@@ -23,8 +24,22 @@ public abstract class DynamicBuildingManager {
         return true;
     }
 
+    /**
+     * Different for Zerg e.g. Creep Colony for Sunken Colony.
+     */
+    public AUnitType typeToBuildFirst() {
+        return type();
+    }
+
+    /**
+     * null will be changed later to become something like "in main".
+     */
     public HasPosition nextBuildingPosition() {
         return null;
+    }
+
+    public int existingWithUnfinished() {
+        return Count.ourOfTypeWithUnfinished(type());
     }
 
 }

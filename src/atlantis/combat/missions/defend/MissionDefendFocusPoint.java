@@ -36,6 +36,13 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit mainBase = Select.main();
 
+                if (We.zerg() && mainBase != null) {
+                    AUnit sunken = Select.ourOfType(AUnitType.Zerg_Sunken_Colony).mostDistantTo(mainBase);
+                    if (sunken != null) {
+                        return new AFocusPoint(sunken.translateTilesTowards(4, mainBase), mainBase, "Sunken");
+                    }
+                }
+
                 if (We.terran() && A.supplyUsed() <= 50 && Count.infantry() <= 13) {
                     AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
                     if (GamePhase.isEarlyGame() && mainBase != null) {

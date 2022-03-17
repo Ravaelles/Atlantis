@@ -18,19 +18,13 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      *
      */
-    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo,
-            double maxDistance) {
+    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _CONDITION_THAT_FAILED = null;
-//        building = building;
-//        AtlantisPositionFinder.nearTo = nearTo;
-//        AtlantisPositionFinder.maxDistance = maxDistance;
 
-        // =========================================================
+//        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 10;
+        int searchRadius = 0;
+//        maxDistance = limitMaxDistanceForImportantBuildings(maxDistance, building);
 
-        int searchRadius = building.isCombatBuilding() ? 0 : 3;
-        if (building.isBase()) {
-            maxDistance = 15;
-        }
         while (searchRadius < maxDistance) {
             int xMin = nearTo.tx() - searchRadius;
             int xMax = nearTo.tx() + searchRadius;
@@ -64,7 +58,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // Check for CREEP
         if (!isCreepConditionFulfilled(building, position)) {
-            _CONDITION_THAT_FAILED = "CREEP";
+            _CONDITION_THAT_FAILED = "No CREEP";
             return false;
         }
 

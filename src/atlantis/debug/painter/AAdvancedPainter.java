@@ -30,6 +30,7 @@ import atlantis.production.constructing.position.TerranPositionFinder;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.production.orders.production.ProductionQueueMode;
+import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -103,6 +104,7 @@ public class AAdvancedPainter extends APainter {
 
 //        setTextSizeSmall();
 
+//        paintUnitTypes();
         paintRegions();
 //        paintMineralDistance();
         paintChokepoints();
@@ -128,6 +130,16 @@ public class AAdvancedPainter extends APainter {
     }
 
     // =========================================================
+
+    private static void paintUnitTypes() {
+        for (AUnit unit : Select.all().list()) {
+            paintTextCentered(unit, unit.type().toString(), Color.White, 0, -0.2);
+
+            if (unit.buildType() != null) {
+                paintTextCentered(unit, "Build: " + unit.buildType().toString(), Color.Green, 0,0.1);
+            }
+        }
+    }
 
     /**
      * Painting for combat units can be a little different. Put here all the related code.
@@ -1401,6 +1413,9 @@ public class AAdvancedPainter extends APainter {
         // Bunker
 //        TerranBunkerPositionFinder.findPosition(Select.ourWorkers().first(), null);
 
+        // Sunken
+        paintBuildingPosition((new ZergSunkenColony()).nextBuildingPosition(), "Sunken");
+
         // Next defensive building position
 //        if (Count.bases() > 0) {
 //            AUnitType building = AAntiLandBuildingRequests.building();
@@ -1445,7 +1460,8 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    public static void paintBuildingPosition(APosition position, String text) {
+    public static void paintBuildingPosition(HasPosition position, String text) {
+        aa
         double dtx = 1;
         paintRectangle(position, 2, 2, Color.Orange);
         paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);

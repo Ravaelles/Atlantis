@@ -46,11 +46,9 @@ public class Requirements {
 
         MappingCounter<AUnitType> requiredUnits = type.requiredUnits();
         for (AUnitType requiredType : requiredUnits.keys()) {
-            if (!requiredType.isLarva()) {
-                if (!Have.a(requiredType)) {
-//                    System.err.println("Dont have " + requiredType + " for " + type);
-                    return false;
-                }
+            if (!requiredType.isLarva() && !Have.a(requiredType)) {
+//                System.err.println("Dont have " + requiredType + " for " + type);
+                return false;
             }
         }
 

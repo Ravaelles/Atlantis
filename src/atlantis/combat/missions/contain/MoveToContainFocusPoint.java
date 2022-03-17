@@ -30,7 +30,7 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
 
     @Override
     public double optimalDist(AUnit unit) {
-        int workersComeThroughBonus = workersComeThroughBonus();
+        int workersComeThroughBonus = workersComeThroughBonus(unit);
 
         double ourUnitsNearBonus = Select.our().inRadius(2, unit).count() / 20.0;
 
@@ -45,8 +45,8 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
 
     // =========================================================
 
-    private int workersComeThroughBonus() {
-        if (unit.mission() != null && unit.isMissionDefend()) {
+    private int workersComeThroughBonus(AUnit unit) {
+        if (unit != null && unit.isMissionDefend()) {
             return Select.enemy().inRadius(5, unit).isEmpty()
                 && Select.ourWorkers().inRadius(6, unit).atLeast(1)
                 ? 4 : 0;

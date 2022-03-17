@@ -137,7 +137,7 @@ public class APositionFinder {
     public static APosition findStandardPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         return cache.get(
                 "findStandardPosition:" + building + "," + nearTo + "," + builder,
-                40,
+                41,
                 () -> {
                     // ===========================================================
                     // = Handle standard building position according to the race =
@@ -157,7 +157,9 @@ public class APositionFinder {
                     // Zerg
                     else if (AGame.isPlayingAsZerg()) {
                         return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-                    } else {
+                    }
+
+                    else {
                         System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
                         System.exit(-1);
                         return null;

@@ -4,7 +4,6 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.requests.AntiAirBuildingManager;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Have;
 
 public class ProtossPhotonCannonAntiAir extends AntiAirBuildingManager {
 
@@ -13,16 +12,14 @@ public class ProtossPhotonCannonAntiAir extends AntiAirBuildingManager {
     }
 
     @Override
-    public boolean shouldBuildNew() {
-        if (!Have.a(type())) {
-            return false;
-        }
-
+    public int expected() {
         if (GamePhase.isEarlyGame()) {
-            return existing() <= 4 && ArmyStrength.weAreWeaker();
+            if (existingWithUnfinished() <= 1 && ArmyStrength.weAreWeaker()) {
+                return 2;
+            }
         }
 
-        return false;
+        return 0;
     }
 
 }

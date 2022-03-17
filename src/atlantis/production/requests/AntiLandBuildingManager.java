@@ -1,8 +1,5 @@
 package atlantis.production.requests;
 
-import atlantis.combat.micro.terran.TerranBunker;
-import atlantis.information.decisions.OurStrategicBuildings;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
@@ -26,84 +23,71 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
     // =========================================================
 
+    public abstract int expected();
+
+    // =========================================================
+
+    @Override
+    public boolean shouldBuildNew() {
+        return existingWithUnfinished() < expected();
+    }
+
+    @Override
     public boolean handleBuildNew() {
-//        System.err.println("Should build new Sunken?");
+        if (We.zerg()) {
+            ((ZergSunkenColony) instance).handleExistingCreepColonyIfNeeded();
+        }
 
         if (shouldBuildNew()) {
-            System.err.println("ENQUEUE NEW Sunken Colony");
+//            System.err.println("ENQUEUE NEW Sunken Colony");
             return requestOne(nextBuildingPosition());
         }
 
         return false;
     }
 
-    // =========================================================
-
-//    public abstract AUnitType type();
-
-//    protected boolean shouldBuildNew() {
-//        if (!Requirements.hasRequirements(type())) {
-//            return false;
-//        }
-//
-//        int defBuildingAntiLand = Count.existingOrInProductionOrInQueue(type());
-////        int defBuildingAntiLand = ConstructionRequests.countExistingAndExpectedInNearFuture(
-////                AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND, 8
-////        );
-////        System.out.println(
-////                AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND
-////                + " // "
-////                + defBuildingAntiLand
-////                + " < "
-////                + Math.max(expectedUnits(), OurStrategicBuildings.antiLandBuildingsNeeded())
-////                + " //// " +
-////                + ProductionQueue.countInQueue(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND, 8)
-////
-////        );
-//        return defBuildingAntiLand < Math.max(expectedUnits(), OurStrategicBuildings.antiLandBuildingsNeeded());
-//    }
-//
-//    @Override
-//    public int expectedUnits() {
-//        if (We.terran()) {
-//            return TerranBunker.expectedBunkers();
-//        }
-//
-//        if (We.protoss()) {
-//            if (Count.cannons() >= 1 && EnemyInfo.isDoingEarlyGamePush()) {
-//                return 2;
-//            }
-//
-//            return 0;
-//        }
-//
-////        if (We.zerg()) {
-////            if (!OurStrategy.get().isRushOrCheese()) {
-////                return 3 * Select.ourBases().count();
-////            }
-////        }
-//
-//        return 0;
-//    }
 
     @Override
     public boolean requestOne(HasPosition at) {
+        AUnitType buildType = typeToBuildFirst();
+
+        // === Zerg fix - morph existing Creep Colonies ============
+
+        if (We.zerg()) {
+            AUnit creep = Select.ourOfType(AUnitType.Zerg_Creep_Colony).first();
+            if (creep != null) {
+                return creep.morph(buildType);
+            }
+        }
+
+        // =========================================================
+
         if (at == null) {
             at = nextBuildingPosition();
         }
 
         if (at != null) {
-            AUnitType required = type().whatIsRequired();
+            AUnitType requirement = buildType.whatIsRequired();
             if (
-                    required != null
-                            && !Requirements.hasRequirements(type())
-                            && !ProductionQueue.isAtTheTopOfQueue(required, 6)
+                requirement != null
+                    && !Requirements.hasRequirements(buildType)
+                    && !ProductionQueue.isAtTheTopOfQueue(requirement, 6)
             ) {
-                AddToQueue.withTopPriority(required);
-                return true;
+                if (!buildType.isSunken() && !buildType.isSporeColony()) {
+                    System.err.println("--- Non critical but ugly issue ---");
+                    System.err.println("Missing requirement: " + requirement + " for: " + buildType);
+    //                A.printStackTrace("Missing requirement: " + requirement + " for: " + type());
+                    return false;
+                }
+
+                // For Sunken/Spore build requirement = Creep Colony
+                else {
+                    AddToQueue.withTopPriority(requirement);
+                    return true;
+                }
             }
 
-            AddToQueue.withTopPriority(type(), at);
+            AddToQueue.withTopPriority(buildType, at);
             return true;
         }
 
@@ -185,10 +169,6 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
         }
 
         return instance;
-    }
-
-    public int existing() {
-        return Count.ourOfTypeWithUnfinished(type());
     }
 
 }

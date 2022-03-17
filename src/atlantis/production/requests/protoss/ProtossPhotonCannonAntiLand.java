@@ -13,16 +13,16 @@ public class ProtossPhotonCannonAntiLand extends AntiLandBuildingManager {
     }
 
     @Override
-    public boolean shouldBuildNew() {
-        if (!Have.a(type())) {
-            return false;
+    public int expected() {
+        if (!Have.a(AUnitType.Protoss_Forge)) {
+            return 0;
         }
 
-        if (GamePhase.isEarlyGame()) {
-            return existing() <= 2 && ArmyStrength.weAreMuchWeaker();
+        if (GamePhase.isEarlyGame() && ArmyStrength.weAreMuchWeaker()) {
+            return 2;
         }
 
-        return false;
+        return 0;
     }
 
 }

@@ -108,12 +108,12 @@ public class ABuilderManager {
         // be immediate as unit is standing just right there
 
         else {
-            return issueBuildOrder(builder, buildingType, buildPosition, constructionOrder);
+            return issueBuildOrder(builder, buildingType, constructionOrder);
         }
     }
 
     private static boolean issueBuildOrder(
-        AUnit builder, AUnitType buildingType, APosition buildPosition, ConstructionOrder order
+        AUnit builder, AUnitType buildingType, ConstructionOrder order
     ) {
         if (We.protoss()) {
             AUnit newBuilding = Select.ourUnfinished()
@@ -128,7 +128,15 @@ public class ABuilderManager {
         }
 
         if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
-            buildPosition = refreshBuildPosition(order);
+//            System.err.println("buildPosition PRE = " + order.buildPosition());
+            APosition buildPosition = refreshBuildPosition(order);
+
+            if (buildPosition == null) {
+                return false;
+            }
+
+//            System.err.println("buildPosition POST = " + buildPosition);
+//            System.err.println("buildPosition.translateByTiles(1, 1) = " + buildPosition.translateByTiles(1, 1));
 
             moveOtherUnitsOutOfConstructionPlace(builder, buildPosition.translateByTiles(1, 1));
 

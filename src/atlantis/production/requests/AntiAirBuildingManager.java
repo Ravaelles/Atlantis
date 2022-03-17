@@ -1,15 +1,12 @@
 package atlantis.production.requests;
 
-import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.map.position.HasPosition;
-import atlantis.production.Requirements;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiAir;
 import atlantis.production.requests.zerg.ZergSporeColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
@@ -19,88 +16,62 @@ public abstract class AntiAirBuildingManager extends DynamicBuildingManager {
 
     // =========================================================
 
+    public abstract int expected();
+
+    // =========================================================
+
+    @Override
+    public boolean shouldBuildNew() {
+        return existingWithUnfinished() < expected();
+    }
+
     public boolean handleBuildNew() {
         if (We.terran()) {
             return false;
         }
 
-//        System.err.println("Should build new Spore?");
-
         if (shouldBuildNew()) {
-            System.err.println("ENQUEUE NEW Spore Colony");
+//            System.err.println("ENQUEUE NEW Spore Colony");
             return requestOne(null);
         }
 
         return false;
     }
 
-    // =========================================================
-
-    @Override
-    public boolean shouldBuildNew() {
-        if (!Requirements.hasRequirements(type())) {
-            return false;
-        }
-
-        int existing = Count.existingOrInProductionOrInQueue(type());
-        return existing < OurStrategicBuildings.antiLandBuildingsNeeded();
-    }
-
-    public int expectedUnits() {
-        return 3 * Select.ourBases().count();
-    }
-
     @Override
     public boolean requestOne(HasPosition at) {
-        AUnitType building = type();
+        AUnitType buildType = typeToBuildFirst();
+
+        // === Zerg fix - morph existing Creep Colonies ============
+
+        if (We.zerg()) {
+            AUnit creep = Select.ourOfType(AUnitType.Zerg_Creep_Colony).first();
+            if (creep != null) {
+                return creep.morph(buildType);
+            }
+        }
+
+        // =========================================================
 
         if (at == null) {
             for (AUnit base : Select.ourBases().list()) {
                 int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
-                        building, 8, base.position()
+                        buildType, 8, base.position()
                 );
 
-                for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
-                    AddToQueue.withTopPriority(building, base.position());
+                for (int i = 0; i < expected() - numberOfAntiAirBuildingsNearBase; i++) {
+                    AddToQueue.withTopPriority(buildType, base.position());
                 }
             }
         }
 
         if (at != null) {
-            AddToQueue.withTopPriority(building, at);
+            AddToQueue.withTopPriority(buildType, at);
             return true;
         }
 
         return false;
     }
-
-    /**
-     * Quick air units are: Mutalisk, Wraith, Protoss Scout.
-     */
-//    public void requestAntiAirQuick(APosition where) {
-//        AUnitType building = type();
-////        int antiAirBuildings = ConstructionRequests.countExistingAndPlannedConstructions(building);
-//
-//        // === Ensure we have required units ========================================
-//
-//        int requiredParents = ConstructionRequests.countExistingAndNotFinished(building.whatIsRequired());
-//        if (requiredParents == 0) {
-//            AddToQueue.withHighPriority(building.whatIsRequired());
-//            return;
-//        }
-//
-//        // === Protect every base ==========================================
-//
-//        for (AUnit base : Select.ourBases().list()) {
-//            int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
-//                    building, 8, base.position()
-//            );
-//
-//            for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
-//                AddToQueue.withTopPriority(building, base.position());
-//            }
-//        }
-//    }
 
     // =========================================================
 
@@ -120,7 +91,4 @@ public abstract class AntiAirBuildingManager extends DynamicBuildingManager {
         return instance;
     }
 
-    public int existing() {
-        return Count.ourOfTypeWithUnfinished(type());
-    }
 }
