@@ -59,12 +59,13 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
         }
 
         if (Have.hydraliskDen()) {
-            if (!A.hasMinerals(300)) {
+            if (!A.hasMinerals(210)) {
                 return false;
             }
         }
 
-        if (Count.zerglings() <= 50 && larvas(1)) {
+        if (Count.zerglings() <= 50 && larvas(1) && A.hasMinerals(50)) {
+            System.err.println(A.now() + " zetgling enqueued");
             AddToQueue.withStandardPriority(AUnitType.Zerg_Zergling);
             return true;
         }

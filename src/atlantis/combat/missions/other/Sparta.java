@@ -3,6 +3,7 @@ package atlantis.combat.missions.other;
 import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.MissionDefendFocusPoint;
 import atlantis.combat.missions.defend.MoveToDefendFocusPoint;
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -182,7 +183,7 @@ public class Sparta extends MissionDefend {
             return false;
         }
 
-        if (isEnemyBehindLineOfDefence()) {
+        if (isEnemyBehindLineOfDefence() && unit.hp() >= 18 && !RetreatManager.shouldRetreat(unit)) {
             unit.addLog("Sparta:D");
             return true;
         }

@@ -36,7 +36,7 @@ public class Helpers {
     }
 
     public static boolean hasRequiredUnitFor(AUnitType type) {
-        return type.getWhatIsRequired() == null || Count.ofType(type.getWhatIsRequired()) > 0;
+        return type.whatIsRequired() == null || Count.ofType(type.whatIsRequired()) > 0;
     }
 
 }

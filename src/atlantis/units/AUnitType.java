@@ -846,7 +846,7 @@ public class AUnitType implements Comparable<Object> {
 
     public MappingCounter<AUnitType> requiredUnits() {
         return (MappingCounter<AUnitType>) cache.get(
-                "getRequiredUnits",
+                "requiredUnits",
                 -1,
                 () -> convertToAUnitTypesCollection(ut.requiredUnits())
         );
@@ -860,6 +860,9 @@ public class AUnitType implements Comparable<Object> {
                 "whatBuildsIt",
                 -1,
                 () -> from(ut.whatBuilds().getFirst())
+//                () -> {
+//                    return from(ut.whatBuilds().getFirst());
+//                }
         );
     }
 
@@ -989,14 +992,14 @@ public class AUnitType implements Comparable<Object> {
      * <br /><br />
      * For units it returns what type of building produces them (e.g. Barracks for Marines).
      */
-    public AUnitType getWhatIsRequired() {
+    public AUnitType whatIsRequired() {
         return (AUnitType) cache.get(
-                "getWhatIsRequired",
+                "whatIsRequired",
                 -1,
                 () -> {
                     if (isBuilding()) {
                         for (AUnitType requiredUnit : requiredUnits().map().keySet()) {
-                            if (requiredUnit.isBuilding() && !requiredUnit.isInitialBase()) {
+                            if (requiredUnit.isBuilding() && !requiredUnit.isInitialBase() && !requiredUnit.isLarva()) {
                                 return requiredUnit;
                             }
                         }
@@ -1234,7 +1237,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
                 "requiresUnit",
                 1,
-                () -> getWhatIsRequired() != null
+                () -> whatIsRequired() != null
         );
     }
 

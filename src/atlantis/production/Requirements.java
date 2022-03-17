@@ -5,6 +5,7 @@ import atlantis.information.tech.ATech;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.MappingCounter;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -12,6 +13,13 @@ public class Requirements {
 
     public static boolean hasRequirements(ProductionOrder order) {
         if (order.unitType() != null) {
+//            System.out.println("-----");
+//            System.out.println("order.unitType() = " + order.unitType());
+//            System.out.println("order.unitType().getWhatIsRequired() = " + order.unitType().whatIsRequired());
+//            System.out.println("order.unitType().hasRequiredUnit() = " + order.unitType().hasRequiredUnit());
+//            System.out.println("hasRequirements(order.unitType()) = " + hasRequirements(order.unitType()));
+//            order.unitType().requiredUnits().print("Required units");
+//            return !order.unitType().hasRequiredUnit() || hasRequirements(order.unitType());
             return !order.unitType().hasRequiredUnit() || hasRequirements(order.unitType());
         }
         else if (order.tech() != null) {
@@ -32,8 +40,18 @@ public class Requirements {
             return true;
         }
 
-        if (type.hasRequiredUnit() && Count.ofType(type.getWhatIsRequired()) == 0) {
+        if (type.hasRequiredUnit() && Count.ofType(type.whatIsRequired()) == 0) {
             return false;
+        }
+
+        MappingCounter<AUnitType> requiredUnits = type.requiredUnits();
+        for (AUnitType requiredType : requiredUnits.keys()) {
+            if (!requiredType.isLarva()) {
+                if (!Have.a(requiredType)) {
+//                    System.err.println("Dont have " + requiredType + " for " + type);
+                    return false;
+                }
+            }
         }
 
         if (type.getGasPrice() > 0) {

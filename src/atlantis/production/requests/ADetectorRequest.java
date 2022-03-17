@@ -62,10 +62,10 @@ public class ADetectorRequest {
 
         // === Ensure parent exists ========================================
 
-        int requiredParents = ConstructionRequests.countExistingAndNotFinished(detectorBuilding.getWhatIsRequired());
+        int requiredParents = ConstructionRequests.countExistingAndNotFinished(detectorBuilding.whatIsRequired());
         if (requiredParents == 0) {
 //            System.out.println("Detector dependency requested: " + detectorBuilding.getWhatIsRequired().name());
-            AddToQueue.withTopPriority(detectorBuilding.getWhatIsRequired());
+            AddToQueue.withTopPriority(detectorBuilding.whatIsRequired());
             return;
         }
 

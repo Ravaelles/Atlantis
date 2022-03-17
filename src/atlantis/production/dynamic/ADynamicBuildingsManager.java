@@ -128,7 +128,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         }
 
         if (!hasRequiredUnitFor(type)) {
-            buildToHaveOne(type.getWhatIsRequired());
+            buildToHaveOne(type.whatIsRequired());
             return;
         }
 

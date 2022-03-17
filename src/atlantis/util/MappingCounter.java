@@ -2,6 +2,7 @@ package atlantis.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Allows to easily count amount of given key objects. Can be used to e.g. count number of UnitTypes. Minimum
@@ -48,12 +49,17 @@ public class MappingCounter<K> {
 
     // =========================================================
     // Export
+
     public HashMap<K, Integer> map() {
         HashMap<K, Integer> map = new HashMap<>();
         for (K key : mapping.keySet()) {
             map.put(key, mapping.get(key));
         }
         return map;
+    }
+
+    public Set<K> keys() {
+        return mapping.keySet();
     }
 
     public void print(String message) {

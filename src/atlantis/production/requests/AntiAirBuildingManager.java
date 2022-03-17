@@ -12,11 +12,11 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
-public class AAntiAirBuildingRequests {
+public class AntiAirBuilding {
 
-    public static boolean handle() {
+    public static boolean handleBuildNew() {
         if (shouldBuildNew()) {
-            return requestCombatBuildingAntiAir(null);
+            return requestOne(null);
         }
 
         return false;
@@ -37,7 +37,7 @@ public class AAntiAirBuildingRequests {
         return 3 * Select.ourBases().count();
     }
 
-    public static boolean requestCombatBuildingAntiAir(HasPosition nearTo) {
+    public static boolean requestOne(HasPosition nearTo) {
         AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
 
         if (nearTo == null) {
@@ -63,29 +63,29 @@ public class AAntiAirBuildingRequests {
     /**
      * Quick air units are: Mutalisk, Wraith, Protoss Scout.
      */
-    public static void requestAntiAirQuick(APosition where) {
-        AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
-//        int antiAirBuildings = ConstructionRequests.countExistingAndPlannedConstructions(building);
-
-        // === Ensure we have required units ========================================
-
-        int requiredParents = ConstructionRequests.countExistingAndNotFinished(building.getWhatIsRequired());
-        if (requiredParents == 0) {
-            AddToQueue.withHighPriority(building.getWhatIsRequired());
-            return;
-        }
-
-        // === Protect every base ==========================================
-
-        for (AUnit base : Select.ourBases().list()) {
-            int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
-                    building, 8, base.position()
-            );
-
-            for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
-                AddToQueue.withTopPriority(building, base.position());
-            }
-        }
-    }
+//    public static void requestAntiAirQuick(APosition where) {
+//        AUnitType building = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
+////        int antiAirBuildings = ConstructionRequests.countExistingAndPlannedConstructions(building);
+//
+//        // === Ensure we have required units ========================================
+//
+//        int requiredParents = ConstructionRequests.countExistingAndNotFinished(building.whatIsRequired());
+//        if (requiredParents == 0) {
+//            AddToQueue.withHighPriority(building.whatIsRequired());
+//            return;
+//        }
+//
+//        // === Protect every base ==========================================
+//
+//        for (AUnit base : Select.ourBases().list()) {
+//            int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
+//                    building, 8, base.position()
+//            );
+//
+//            for (int i = 0; i < expectedUnits() - numberOfAntiAirBuildingsNearBase; i++) {
+//                AddToQueue.withTopPriority(building, base.position());
+//            }
+//        }
+//    }
 
 }

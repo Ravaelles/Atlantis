@@ -147,6 +147,14 @@ public class PositionUtil {
      */
     public static double groundDistanceTo(Position from, Position to) {
 //        return BWTA.getGroundDistance(new TilePosition(from.p()), new TilePosition(to.p())) / 32.0;
-        return JBWEB.getGroundDistance(from, to) / 32.0;
+//        return JBWEB.getGroundDistance(from, to) / 32.0;
+        try {
+            return JBWEB.getGroundDistance(from, to) / 32.0;
+        } catch (Exception e) {
+            System.err.println("from = " + from);
+            System.err.println("to = " + to);
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

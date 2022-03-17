@@ -16,23 +16,24 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.cache.Cache;
 import atlantis.util.We;
 
-public class AAntiLandBuildingRequests {
+public class AntiLandBuilding {
 
-    private Cache<APosition> cache = new Cache<>();
-
-    public static boolean handle() {
+    public static boolean handleBuildNew() {
         if (shouldBuildNew()) {
 //            System.out.println("ENQUEUE NEW ANTI LAND");
-            return requestCombatBuildingAntiLand(null);
+            return requestOne(positionForNext());
         }
 
         return false;
     }
 
     // =========================================================
+
+    public static AUnitType type() {
+        return AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
+    }
 
     private static boolean shouldBuildNew() {
         if (!Requirements.hasRequirements(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND)) {
@@ -78,23 +79,23 @@ public class AAntiLandBuildingRequests {
         return 0;
     }
 
-    public static boolean requestCombatBuildingAntiLand(HasPosition nearTo) {
+    public static boolean requestOne(HasPosition nearTo) {
         if (nearTo == null) {
             nearTo = positionForNext();
         }
 
         if (nearTo != null) {
-            AUnitType required = building().getWhatIsRequired();
+            AUnitType required = type().whatIsRequired();
             if (
                     required != null
-                            && !Requirements.hasRequirements(building())
+                            && !Requirements.hasRequirements(type())
                             && !ProductionQueue.isAtTheTopOfQueue(required, 6)
             ) {
                 AddToQueue.withTopPriority(required);
                 return true;
             }
 
-            AddToQueue.withTopPriority(building(), nearTo);
+            AddToQueue.withTopPriority(type(), nearTo);
             return true;
         }
 
@@ -104,11 +105,11 @@ public class AAntiLandBuildingRequests {
     public static APosition positionForNext() {
         if (Count.bases() <= 1) {
             return PositionModifier.toPosition(
-                PositionModifier.MAIN_CHOKE, AUnitType.Protoss_Photon_Cannon, null, null
+                PositionModifier.MAIN_CHOKE, type(), null, null
             );
         }
 
-        AUnitType building = building();
+        AUnitType building = type();
         APosition nearTo = null;
 
 //        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
@@ -134,10 +135,6 @@ public class AAntiLandBuildingRequests {
         }
 
         return nearTo;
-    }
-
-    public static AUnitType building() {
-        return AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
     }
 
 }

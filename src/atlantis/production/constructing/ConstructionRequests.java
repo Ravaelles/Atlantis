@@ -128,7 +128,7 @@ public class ConstructionRequests {
             return false;
         }
 
-        AUnitType requiredBuilding = building.getWhatIsRequired();
+        AUnitType requiredBuilding = building.whatIsRequired();
         if (countExistingAndNotFinished(requiredBuilding) == 0) {
             ConstructionRequests.requestConstructionOf(requiredBuilding);
             return true;
