@@ -101,9 +101,11 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
         // === Main choke ===========================================
 
         if (bases <= 1) {
-            return PositionModifier.toPosition(
-                PositionModifier.MAIN_CHOKE, type(), null, null
-            );
+            return Select.main().translateTilesTowards(9, Chokes.mainChoke());
+
+//            return PositionModifier.toPosition(
+//                PositionModifier.MAIN_CHOKE, type(), null, null
+//            );
         }
 
         // === At natural ===========================================

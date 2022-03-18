@@ -1,6 +1,7 @@
 package atlantis.information.strategy.response;
 
 import atlantis.combat.missions.Missions;
+import atlantis.config.AtlantisConfig;
 import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;

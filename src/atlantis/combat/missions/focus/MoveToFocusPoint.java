@@ -43,7 +43,7 @@ public abstract class MoveToFocusPoint {
         optimalDist = optimalDist(unit);
 
         if (unit.enemiesNear().inRadius(5, unit).notEmpty()) {
-            unit.addLog("DontWithdraw");
+            unit.addLog("DonNotWithdraw");
             return false;
         }
 

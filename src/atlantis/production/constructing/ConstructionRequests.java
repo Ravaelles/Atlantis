@@ -55,7 +55,7 @@ public class ConstructionRequests {
         }
 
         if (!Requirements.hasRequirements(building)) {
-            return handleNoRequirementsFullfilledFor(building);
+            return handleRequirementsNotFullfilledFor(building);
         }
 
         // =========================================================
@@ -123,7 +123,7 @@ public class ConstructionRequests {
         }
     }
 
-    private static boolean handleNoRequirementsFullfilledFor(AUnitType building) {
+    private static boolean handleRequirementsNotFullfilledFor(AUnitType building) {
         if (We.protoss() && AGame.supplyTotal() <= 10) {
             return false;
         }
@@ -131,7 +131,7 @@ public class ConstructionRequests {
         AUnitType requiredBuilding = building.whatIsRequired();
 
         if (requiredBuilding == null) {
-            System.out.println("requiredBuilding NULL for " + building);
+//            System.out.println("requiredBuilding NULL for " + building);
             return false;
         }
 

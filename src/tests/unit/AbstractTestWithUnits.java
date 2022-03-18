@@ -2,7 +2,7 @@ package tests.unit;
 
 import atlantis.Atlantis;
 import atlantis.combat.eval.ACombatEvaluator;
-import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.avoid.AAvoidEnemies;
 import atlantis.config.AtlantisConfig;
 import atlantis.debug.painter.APainter;
 import atlantis.information.enemy.EnemyInfo;
@@ -48,7 +48,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         AbstractFoggedUnit.clearCache();
         EnemyInfo.clearCache();
         EnemyUnits.clearCache();
-        AAvoidUnits.clearCache();
+        AAvoidEnemies.clearCache();
     }
 
     @After
@@ -84,7 +84,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     // =========================================================
 
     protected void mockAtlantisConfig() {
-        AtlantisConfig.MY_RACE = Race.Terran;
+        AtlantisConfig.MY_RACE = Race.Zerg;
         AtlantisConfig.BASE = AUnitType.Terran_Command_Center;
         AtlantisConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
         AtlantisConfig.WORKER = AUnitType.Terran_SCV;

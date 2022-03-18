@@ -1,8 +1,10 @@
 package atlantis.combat.micro;
 
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
 public class AAttackEnemyUnit {
@@ -26,7 +28,7 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearEnemyUnits(AUnit unit) {
-        if (unit.hasNoWeaponAtAll()) {
+        if (!canAttackNow(unit)) {
             return false;
         }
 
@@ -38,6 +40,21 @@ public class AAttackEnemyUnit {
         }
 
         return ProcessAttackUnit.processAttackUnit(unit, enemy);
+    }
+
+    private static boolean canAttackNow(AUnit unit) {
+        if (unit.hasNoWeaponAtAll()) {
+            return false;
+        }
+
+        if (
+            unit.isZergling()
+                && ((Enemy.protoss() && unit.hpLessThan(18)) || RetreatManager.shouldRetreat(unit))
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean canAttackEnemiesNow(AUnit unit) {

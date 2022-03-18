@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.micro.Microable;
-import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.avoid.AAvoidEnemies;
 import atlantis.combat.micro.terran.medic.BodyBlock;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
@@ -41,7 +41,7 @@ public class TerranMedic extends Microable {
     // =========================================================
 
     public static boolean update(AUnit medic) {
-        if (medic.hp() <= 17 && AAvoidUnits.avoidEnemiesIfNeeded(medic)) {
+        if (medic.hp() <= 17 && AAvoidEnemies.avoidEnemiesIfNeeded(medic)) {
             return true;
         }
 
@@ -121,7 +121,7 @@ public class TerranMedic extends Microable {
         }
 
         if (infantry == null) {
-            if (AAvoidUnits.avoidEnemiesIfNeeded(medic)) {
+            if (AAvoidEnemies.avoidEnemiesIfNeeded(medic)) {
                 return true;
             }
         }

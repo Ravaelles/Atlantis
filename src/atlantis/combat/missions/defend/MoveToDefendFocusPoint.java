@@ -93,11 +93,11 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         }
 
         return base
-            + letWorkersComeThroughBonus()
+            + letWorkersComeThroughBonus(unit)
             + rangedDistBonus(unit);
     }
 
-    private double letWorkersComeThroughBonus() {
+    private double letWorkersComeThroughBonus(AUnit unit) {
         if (We.protoss() && A.seconds() >= 150) {
             return 0;
         }

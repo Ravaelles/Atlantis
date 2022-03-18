@@ -1,19 +1,10 @@
 package tests.unit;
 
-import atlantis.combat.micro.avoid.AAvoidUnits;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.FakeFoggedUnit;
-import atlantis.units.select.BaseSelect;
 import org.junit.Test;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 

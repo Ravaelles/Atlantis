@@ -69,6 +69,14 @@ public class MissionDefend extends Mission {
 
         // =========================================================
 
+        if (unit.isZergling() && Enemy.protoss()) {
+            if (unit.hpLessThan(18)) {
+                return false;
+            }
+        }
+
+        // =========================================================
+
         main = Select.main();
         focusPoint = focusPoint();
         focusPointDistToBase = focusPoint.distTo(main);

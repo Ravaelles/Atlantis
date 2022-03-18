@@ -15,7 +15,7 @@ public class ZergExpansionManager {
 
     public static boolean handleNoZergLarvas() {
         if (!A.hasMinerals(300)) {
-            if (!We.zerg() || Count.larvas() > 0) {
+            if (!We.zerg() || (Count.larvas() > 0 && !A.hasMinerals(600))) {
                 return false;
             }
         }
@@ -25,7 +25,7 @@ public class ZergExpansionManager {
         }
 
 //        A.seconds() >= 200 &&
-        if (AGame.canAffordWithReserved(225, 0)) {
+        if (AGame.canAffordWithReserved(265, 0)) {
             return markExpandedNow();
         }
 

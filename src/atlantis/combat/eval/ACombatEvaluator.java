@@ -152,9 +152,11 @@ public class ACombatEvaluator {
 
         // Our eval
         if (unit.isOur()) {
-//            System.out.println("unit = " + unit);
-            theseUnits = unit.friendsNearInRadiusSelect(15).ranged().inRadius(RANGED_RADIUS, unit)
-                .add(unit.friendsNearInRadiusSelect(15).melee().inRadius(MELEE_RADIUS, unit))
+            Selection friendsInRadius = unit.friendsNearInRadiusSelect(15);
+
+            theseUnits = friendsInRadius.nonBuildings().ranged().inRadius(RANGED_RADIUS, unit)
+                .add(friendsInRadius.melee().inRadius(MELEE_RADIUS, unit))
+                .add(friendsInRadius.buildings().inRadius(4, unit))
                 .add(unit);
         }
 

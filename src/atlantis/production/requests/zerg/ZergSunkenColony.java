@@ -41,7 +41,7 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
             int ourArmyRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
             if (ourArmyRelativeStrength < 100) {
                 int missingStrengthToEquillibrium = 100 - ourArmyRelativeStrength;
-                int moreNeeded = (int) Math.ceil(missingStrengthToEquillibrium / 10.0);
+                int moreNeeded = Math.min(2, (int) Math.ceil(missingStrengthToEquillibrium / 10.0));
 
                 return existing + moreNeeded;
             }
@@ -52,8 +52,25 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
 
     @Override
     public boolean shouldBuildNew() {
-        if (Count.existingOrInProductionOrInQueue(AUnitType.Zerg_Creep_Colony) >= 2 && !A.hasMinerals(120)) {
+        int creepColonies = Count.existingOrInProductionOrInQueue(AUnitType.Zerg_Creep_Colony);
+
+        if (
+            Count.inProductionOrInQueue(AUnitType.Zerg_Creep_Colony) >= 2
+                || Count.inProductionOrInQueue(AUnitType.Zerg_Sunken_Colony) >= 2
+        ) {
             return false;
+        }
+
+        if (creepColonies >= 1) {
+            if (!A.hasMinerals(150)) {
+                return false;
+            }
+
+            int mineralsNeeded = 50 + creepColonies * 75;
+
+            if (!A.hasMinerals(mineralsNeeded)) {
+                return false;
+            }
         }
 
         return super.shouldBuildNew();
@@ -69,23 +86,14 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
             return false;
         }
 
-        for (int i = 1; i <= 3; i++) {
-            if (existingWithUnfinished() < expected()) {
-                AUnit colony = Select.ourOfType(AUnitType.Zerg_Creep_Colony).first();
-
-                if (colony != null) {
-                    colony.morph(type());
-                    String tooltip = "Into" + type();
-                    colony.addLog(tooltip);
-                    colony.setTooltip(tooltip);
+        for (AUnit colony : Select.ourOfType(AUnitType.Zerg_Creep_Colony).list()) {
+//            if (existingWithUnfinished() < expected()) {
+            if (A.hasMinerals(75)) {
+                colony.morph(type());
+                String tooltip = "Into" + type();
+                colony.addLog(tooltip);
+                colony.setTooltip(tooltip);
 //                    System.err.println("---- Morph " + colony + " into >>> " + type());
-                }
-                else {
-                    break;
-                }
-            }
-            else {
-                break;
             }
         }
 
@@ -96,7 +104,7 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
     public HasPosition nextBuildingPosition() {
         HasPosition standard = super.nextBuildingPosition();
 
-        AUnit existing = Select.ourOfType(type()).inRadius(5, standard).nearestTo(standard);
+        AUnit existing = Select.ourOfType(type()).inRadius(8, standard).nearestTo(standard);
 
         if (existing != null) {
             return existing;

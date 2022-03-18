@@ -45,8 +45,9 @@ public class OurStrategyManager {
 
     private static AStrategy initForZerg() {
         if (Enemy.protoss()) {
-//            return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
-            return ZergStrategies.ZERG_9_Pool_vP;
+            return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
+//            return ZergStrategies.ZERG_9_Pool_vP;
+//            return ZergStrategies.ZERG_3_Hatch_Lurker;
         }
         else if (Enemy.terran()) {
             return ZergStrategies.ZERG_9_Pool_vT;

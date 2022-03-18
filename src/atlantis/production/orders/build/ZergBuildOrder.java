@@ -69,10 +69,6 @@ public class ZergBuildOrder extends ABuildOrder {
             return morphBuildingFromTo(AUnitType.Zerg_Spire, type);
         }
 
-        if (We.zerg()) {
-            System.err.println("--- Produce standard Zerg building: " + order);
-        }
-
         return ConstructionRequests.requestConstructionOf(order);
     }
 

@@ -1,11 +1,8 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.retreating.RetreatManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-
-import static atlantis.combat.micro.avoid.AAvoidUnits.unit;
 
 public class SafetyMargin {
 

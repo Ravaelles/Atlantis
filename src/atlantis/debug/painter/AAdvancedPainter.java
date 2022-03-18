@@ -1,7 +1,7 @@
 package atlantis.debug.painter;
 
 import atlantis.Atlantis;
-import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.avoid.AAvoidEnemies;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
@@ -1280,7 +1280,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCooldown(AUnit unit) {
-        boolean shouldAvoidAnyUnit = AAvoidUnits.shouldAvoidAnyUnit(unit);
+        boolean shouldAvoidAnyUnit = AAvoidEnemies.shouldAvoidAnyUnit(unit);
 
 //        paintUnitProgressBar(unit, 27, 100, Color.Grey);
         paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldAvoidAnyUnit ? Color.Red : Color.Teal);
@@ -1461,13 +1461,20 @@ public class AAdvancedPainter extends APainter {
     }
 
     public static void paintBuildingPosition(HasPosition position, String text) {
-        aa
+        if (position == null) {
+            return;
+        }
+
         double dtx = 1;
         paintRectangle(position, 2, 2, Color.Orange);
         paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);
     }
 
     public static void paintPosition(HasPosition position, String text) {
+        if (position == null) {
+            return;
+        }
+
         double dtx = 1;
         paintRectangle(position.translateByTiles(-dtx, -dtx), 2 * 32, 2 * 32, Color.Orange);
         paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);

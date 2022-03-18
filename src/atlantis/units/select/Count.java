@@ -254,6 +254,10 @@ public class Count {
         return Select.countOurOfType(AUnitType.Protoss_Photon_Cannon);
     }
 
+    public static int sunkens() {
+        return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony);
+    }
+
     public static int creepColonies() {
         return Select.countOurOfType(AUnitType.Zerg_Creep_Colony);
     }

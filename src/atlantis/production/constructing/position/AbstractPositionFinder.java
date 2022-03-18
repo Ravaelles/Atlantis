@@ -109,8 +109,14 @@ public abstract class AbstractPositionFinder {
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
 //                        && (distance <= 5 && !We.zerg());
 
-                if (building.isCannon() && order.buildingType().isCannon() && distance >= 2) {
-                    return false;
+                if (distance >= 2) {
+                    if (building.isSunkenOrCreep() && order.buildingType().isSunkenOrCreep()) {
+                        return false;
+                    }
+
+                    if (building.isCannon() && order.buildingType().isCannon()) {
+                        return false;
+                    }
                 }
 
                 // Look for two bases that would be built too close one to another
@@ -137,10 +143,13 @@ public abstract class AbstractPositionFinder {
         AUnit base = Select.main();
 
 //        APainter.paintCircle(position, 10, Color.Green);
-        if (base != null && base.translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5) {
-//            APainter.paintCircle(position, 10, Color.Red);
-            _CONDITION_THAT_FAILED = "Too close to main base";
-            return true;
+        if (base != null) {
+            int minDistFromBase = We.terran() ? 3 : (We.zerg() ? 3 : 0);
+            if (base.translateByTiles(minDistFromBase, 0).distTo(position) <= 3.5) {
+    //            APainter.paintCircle(position, 10, Color.Red);
+                _CONDITION_THAT_FAILED = "Too close to main base";
+                return true;
+            }
         }
 
         return false;

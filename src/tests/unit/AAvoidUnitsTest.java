@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.avoid.AAvoidEnemies;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -54,7 +54,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { drone, ling1, hydra, sunken },
-                    AAvoidUnits.unitsToAvoid(our).array()
+                    AAvoidEnemies.unitsToAvoid(our).array()
             );
         });
     }
@@ -83,7 +83,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
-                    AAvoidUnits.unitsToAvoid(our).array()
+                    AAvoidEnemies.unitsToAvoid(our).array()
             );
         });
     }
@@ -114,7 +114,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3 },
-                    AAvoidUnits.unitsToAvoid(our).array()
+                    AAvoidEnemies.unitsToAvoid(our).array()
             );
         });
     }
@@ -147,7 +147,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
-                    AAvoidUnits.unitsToAvoid(our).array()
+                    AAvoidEnemies.unitsToAvoid(our).array()
             );
         });
     }
@@ -204,7 +204,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
 
             assertContainsAll(
                     new AUnit[] { enemy1, enemy2, enemy3, enemy4, enemy5, enemy6 },
-                    AAvoidUnits.unitsToAvoid(our).array()
+                    AAvoidEnemies.unitsToAvoid(our).array()
             );
         }
     }

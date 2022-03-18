@@ -30,7 +30,7 @@ public class AStrategyCommander {
         }
 
         // =========================================================
-        
+
         AStrategyResponseFactory.forOurRace().update();
     }
     

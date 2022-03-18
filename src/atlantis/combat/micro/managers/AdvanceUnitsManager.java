@@ -81,10 +81,10 @@ public class AdvanceUnitsManager {
 
         // =========================================================
 
-        if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
-            unit.setTooltip("Adv:Attack", true);
-            return true;
-        }
+//        if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
+//            unit.setTooltip("Adv:Attack", true);
+//            return true;
+//        }
 
         // =========================================================
 

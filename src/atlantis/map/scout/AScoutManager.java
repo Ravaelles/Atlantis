@@ -1,6 +1,6 @@
 package atlantis.map.scout;
 
-import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.avoid.AAvoidEnemies;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -289,7 +289,7 @@ public class AScoutManager {
     }
 
     private static void defineNextPolygonPointForEnemyBaseRoamingUnit(AUnit scout) {
-        if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
+        if (AAvoidEnemies.avoidEnemiesIfNeeded(scout)) {
             scout.setTooltipTactical("ChangeOfPlans");
             return;
         }

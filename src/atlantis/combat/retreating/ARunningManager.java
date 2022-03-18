@@ -1,6 +1,6 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.avoid.AAvoidEnemies;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.GameSpeed;
@@ -18,9 +18,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.Vector;
 import atlantis.util.We;
 import bwapi.Color;
-
 import java.util.ArrayList;
-
 
 public class ARunningManager {
 
@@ -72,7 +70,7 @@ public class ARunningManager {
         }
 
         if (
-            unit.lastStartedRunningMoreThanAgo(20) && !AAvoidUnits.shouldNotAvoidAnyUnit(unit))
+            unit.lastStartedRunningMoreThanAgo(20) && !AAvoidEnemies.shouldNotAvoidAnyUnit(unit))
         {
             unit.setTooltip("StopMan", false);
             return true;
@@ -83,7 +81,7 @@ public class ARunningManager {
                 && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
                 && !unit.isUnderAttack(unit.isAir() ? 250 : 5)
                 //                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
-                || AAvoidUnits.shouldNotAvoidAnyUnit(unit)
+                || AAvoidEnemies.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.setTooltip("StopRun", false);
             return true;
@@ -262,6 +260,14 @@ public class ARunningManager {
      * Running behavior which will make unit run toward main base.
      */
     private boolean shouldRunTowardsBase() {
+        AUnit main = Select.main();
+
+        if (unit.isMissionDefend() && main != null) {
+            if (unit.distTo(main) > 15) {
+                return true;
+            }
+        }
+
         if (A.seconds() >= 380) {
             return false;
         }
@@ -270,7 +276,6 @@ public class ARunningManager {
             return false;
         }
 
-        AUnit main = Select.main();
         if (main == null) {
             return false;
         }
@@ -590,7 +595,7 @@ public class ARunningManager {
         }
 
         // Check if only combat buildings are dangerously close. If so, don't run in any direction.
-        Units dangerous = AAvoidUnits.unitsToAvoid(unit, true);
+        Units dangerous = AAvoidEnemies.unitsToAvoid(unit, true);
 
         if (dangerous.isEmpty()) {
             return false;

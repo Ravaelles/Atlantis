@@ -21,6 +21,11 @@ public class ZergPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _CONDITION_THAT_FAILED = null;
 
+        if (nearTo == null) {
+            System.err.println("@@@ NULL nearTo for findStandardPositionFor " + building);
+            return null;
+        }
+
 //        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 10;
         int searchRadius = 0;
 //        maxDistance = limitMaxDistanceForImportantBuildings(maxDistance, building);
@@ -67,6 +72,10 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         if (!canPhysicallyBuildHere(builder, building, position)) {
 //            System.out.println(builder + " / " + ConstructionBuildPositionFinder.building + " / " + position);
             _CONDITION_THAT_FAILED = "CAN'T PHYSICALLY BUILD";
+            return false;
+        }
+
+        if (isTooCloseToMainBase(building, position)) {
             return false;
         }
 

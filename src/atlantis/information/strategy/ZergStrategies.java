@@ -24,6 +24,7 @@ public class ZergStrategies extends AStrategy {
     // Tech
     public static final AStrategy ZERG_1_Hatch_Lurker = new AStrategy();
     public static final AStrategy ZERG_2_Hatch_Lurker = new AStrategy();
+    public static final AStrategy ZERG_3_Hatch_Lurker = new AStrategy();
     public static final AStrategy ZERG_13_Pool_Muta = new AStrategy();
     public static final AStrategy ZERG_2_Hatch_Hydra_vP = new AStrategy();
 
@@ -70,6 +71,8 @@ public class ZergStrategies extends AStrategy {
 
         ZERG_2_Hatch_Lurker.setZerg().setName("2 Hatch Lurker")
                 .setGoingTech().setGoingHiddenUnits();
+
+        ZERG_3_Hatch_Lurker.setZerg().setName("3_Hatch_Hydra_vP").setGoingTech();
 
         ZERG_13_Pool_Muta.setZerg().setName("13 Pool Muta")
                 .setGoingTech().setGoingAirUnitsQuickly();

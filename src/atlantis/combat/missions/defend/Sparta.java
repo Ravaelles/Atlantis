@@ -10,9 +10,11 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.List;
  */
 public class Sparta extends MissionDefend {
 
-//    public static final double HOLD_DIST_FOR_MELEE = 0.6;
+    //    public static final double HOLD_DIST_FOR_MELEE = 0.6;
     private static final double MAX_MELEE_DIST_TO_ATTACK = 1.1;
 
     // =========================================================
@@ -117,6 +119,12 @@ public class Sparta extends MissionDefend {
 
     @Override
     public boolean allowsToRetreat(AUnit unit) {
+        if (unit.isZergling()) {
+            if (unit.hp() <= 18) {
+                return true;
+            }
+        }
+
         if (unit.isRanged()) {
             return unit.hp() <= 20;
         }
@@ -131,11 +139,23 @@ public class Sparta extends MissionDefend {
 //            AGame.timeSeconds() > 300
 //                || unit.hp() > (unit.meleeEnemiesNearCount(2) >= 2 ? 33 : 17);
             (unit.hp() <= 17 && unit.friendsInRadiusCount(3) <= 2)
-            || (unit.hp() <= 17 && unit.friendsInRadiusCount(1) >= 4);
+                || (unit.hp() <= 17 && unit.friendsInRadiusCount(1) >= 4);
     }
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (unit.isZergling() && Count.sunkens() > 0) {
+            Selection sunkens = Select.ourOfType(AUnitType.Zerg_Sunken_Colony);
+
+            if (
+                sunkens.inRadius(10, unit).notEmpty()
+                    && sunkens.inRadius(enemy.isRanged() ? 3 : 6, unit).empty()
+            ) {
+                unit.addLog("Trickster");
+                return false;
+            }
+        }
+
         focusPoint = focusPoint();
         if (!focusPoint.isAroundChoke()) {
             unit.addLog("Sparta:---");
@@ -173,13 +193,13 @@ public class Sparta extends MissionDefend {
 
         // If unit outside our region...
         if (enemyDistToBase + 3 <= focusPointDistToBase) {
-           if (unit.isMelee()) {
-               unit.addLog("Sparta:A");
+            if (unit.isMelee()) {
+                unit.addLog("Sparta:A");
 //               System.out.println("enemyDistToBase = " + enemyDistToBase);
 //               System.out.println("focusPointDistToBase = " + focusPointDistToBase);
 //               System.out.println("unitToEnemy = " + unitToEnemy);
-               return unitToEnemy <= 1;
-           }
+                return unitToEnemy <= 1;
+            }
         }
 
         if ((enemy.isZealot() || enemy.isZergling()) && unit.isZealot()) {

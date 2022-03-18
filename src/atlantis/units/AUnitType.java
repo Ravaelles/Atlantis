@@ -1063,6 +1063,14 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isSunkenOrCreep() {
+        return (boolean) cache.get(
+            "isSunkenOrCreep",
+            -1,
+            () -> is(Zerg_Sunken_Colony, Zerg_Creep_Colony)
+        );
+    }
+
     public boolean isSporeColony() {
         return (boolean) cache.get(
             "isSporeColony",

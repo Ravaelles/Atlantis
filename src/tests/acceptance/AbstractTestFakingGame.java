@@ -1,6 +1,7 @@
 package tests.acceptance;
 
 import atlantis.Atlantis;
+import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.OnStart;
@@ -10,8 +11,10 @@ import atlantis.map.position.PositionUtil;
 import atlantis.units.select.BaseSelect;
 import bwapi.Game;
 import bwapi.Position;
+import bwapi.Race;
 import bwapi.WalkPosition;
 import org.junit.After;
+import org.junit.Before;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -136,6 +139,8 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         aGame = Mockito.mockStatic(AGame.class);
         aGame.when(AGame::supplyTotal).thenReturn(5);
         aGame.when(AGame::supplyUsed).thenReturn(5);
+        aGame.when(AGame::isPlayingAsZerg).thenReturn(true);
+        aGame.when(AGame::isEnemyProtoss).thenReturn(true);
     }
 
     protected void useFakeTime(int framesNow) {

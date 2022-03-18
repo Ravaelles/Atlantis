@@ -1,8 +1,7 @@
 package atlantis.protoss;
 
-import atlantis.combat.micro.avoid.AAvoidUnits;
+import atlantis.combat.micro.avoid.AAvoidEnemies;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ProtossReaver {
@@ -10,7 +9,7 @@ public class ProtossReaver {
     public static boolean update(AUnit reaver) {
         if (reaver.scarabCount() <= 0) {
             reaver.setTooltipTactical("NoScarab");
-            return AAvoidUnits.avoidEnemiesIfNeeded(reaver);
+            return AAvoidEnemies.avoidEnemiesIfNeeded(reaver);
         }
 
         if (reaver.cooldownRemaining() >= 10) {
