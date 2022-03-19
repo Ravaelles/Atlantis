@@ -31,7 +31,11 @@ public class AFocusPoint extends APosition {
 //    }
 
     public AFocusPoint(AUnit unit, String name) {
-        this(unit.position(), null, null);
+        this(unit.position(), null, name);
+    }
+
+    public AFocusPoint(HasPosition position, String name) {
+        this(position, null, name);
     }
 
     public AFocusPoint(AChoke choke, HasPosition fromSide) {

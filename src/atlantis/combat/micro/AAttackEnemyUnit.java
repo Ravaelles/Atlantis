@@ -2,8 +2,11 @@ package atlantis.combat.micro;
 
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargeting;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
@@ -47,11 +50,32 @@ public class AAttackEnemyUnit {
             return false;
         }
 
+        if (unit.isMelee() && RetreatManager.shouldRetreat(unit)) {
+            return false;
+        }
+
         if (
             unit.isZergling()
-                && ((Enemy.protoss() && unit.hpLessThan(18)) || RetreatManager.shouldRetreat(unit))
+                && (
+                (Enemy.protoss() && unit.hp() <= 18) || RetreatManager.shouldRetreat(unit)
+            )
         ) {
             return false;
+        }
+
+        if (unit.isMelee()) {
+            Selection combatBuildings = Select.ourCombatUnits().buildings();
+            if (
+                combatBuildings.inRadius(12, unit).notEmpty()
+                    && combatBuildings.inRadius(6.8, unit).isEmpty()
+            ) {
+                return false;
+            }
+        }
+
+        if (unit.isMelee() && RetreatManager.shouldRetreat(unit)) {
+            System.err.println(unit + " should RETREAT buty it ATTACKS");
+            A.printStackTrace();
         }
 
         return true;
@@ -83,8 +107,8 @@ public class AAttackEnemyUnit {
         if (unit.isTerranInfantry() && Count.medics() >= 2) {
             if (!unit.medicInHealRange() && (unit.isWounded() || unit.combatEvalRelative() < 1.5)) {
 //                if (unit.cooldownRemaining() >= 2) {
-                    reasonNotToAttack = "NoMedics";
-                    return false;
+                reasonNotToAttack = "NoMedics";
+                return false;
 //                }
             }
         }

@@ -35,38 +35,28 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 }
 
                 AUnit mainBase = Select.main();
-
-                if (We.zerg() && mainBase != null) {
-                    AUnit sunken = Select.ourOfType(AUnitType.Zerg_Sunken_Colony).mostDistantTo(mainBase);
-                    if (sunken != null) {
-                        return new AFocusPoint(sunken.translateTilesTowards(4, mainBase), mainBase, "Sunken");
-                    }
-                }
-
-                if (We.terran() && A.supplyUsed() <= 50 && Count.infantry() <= 13) {
-                    AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
-                    if (GamePhase.isEarlyGame() && mainBase != null) {
-                        if (bunker != null) {
-                            return new AFocusPoint(bunker, "Bunker");
-                        }
-                    }
-                }
-
-                // If NO BASE exists, return any building
                 if (mainBase == null) {
-                    Selection selection = Select.ourBuildingsWithUnfinished();
-                    if (selection == null || selection.first() == null) {
-                        return null;
-                    }
-
-                    return new AFocusPoint(selection.first(), "AnyBuilding");
+                    AUnit firstBuilding = Select.ourBuildings().first();
+                    return new AFocusPoint(
+                        firstBuilding,
+                        "WeHaveNoBase"
+                    );
                 }
 
                 // === Enemies that breached into base =============
 
-                if (Have.base()) {
-                    AUnit enemyNear = EnemyInfo.enemyNearAnyOurBase();
-                    if (enemyNear != null && enemyNear.isAlive()) {
+                AUnit enemyNear = EnemyInfo.enemyNearAnyOurBase();
+                if (enemyNear != null && enemyNear.isAlive()) {
+                    int sunkens = Count.sunkens();
+
+                    if (
+                        sunkens == 0
+                            || (
+                            We.zerg() && sunkens > 0 && enemyNear.enemiesNear()
+                                .ofType(AUnitType.Zerg_Sunken_Colony)
+                                .notEmpty()
+                        )
+                    ) {
                         return new AFocusPoint(
                             enemyNear,
                             "EnemyInBase"
@@ -96,6 +86,37 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                             "DefNaturalChoke"
                         );
                     }
+                }
+
+                // === Around defensive building ===========================================
+
+                if (We.zerg()) {
+                    AUnit sunken = Select.ourOfType(AUnitType.Zerg_Sunken_Colony).mostDistantTo(mainBase);
+                    if (sunken != null) {
+                        return new AFocusPoint(
+                            sunken.translateTilesTowards(3.5, mainBase),
+                            "Sunken"
+                        );
+                    }
+                }
+
+                if (We.terran() && A.supplyUsed() <= 50 && Count.infantry() <= 13) {
+                    AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
+                    if (GamePhase.isEarlyGame() && mainBase != null) {
+                        if (bunker != null) {
+                            return new AFocusPoint(bunker, "Bunker");
+                        }
+                    }
+                }
+
+                // If NO BASE exists, return any building
+                if (mainBase == null) {
+                    Selection selection = Select.ourBuildingsWithUnfinished();
+                    if (selection == null || selection.first() == null) {
+                        return null;
+                    }
+
+                    return new AFocusPoint(selection.first(), "AnyBuilding");
                 }
 
                 // === Main choke ================
@@ -140,12 +161,11 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Return position near the first building ================
 
-                AUnit building = Select.ourBuildings().first();
-                if (building != null) {
+                AUnit ourFirst = Select.our().first();
+                if (ourFirst != null) {
                     return new AFocusPoint(
-                        Chokes.nearestChoke(building.position()),
-                        building,
-                        "FirstBuilding"
+                        ourFirst,
+                        "WeAlmostLost"
                     );
                 }
 

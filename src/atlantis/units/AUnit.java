@@ -5,6 +5,7 @@ import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ARunningManager;
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.CohesionAssurance;
 import atlantis.debug.painter.APainter;
@@ -2314,6 +2315,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return mission().equals(Missions.DEFEND);
     }
 
+    public boolean isMissionDefendOrSparta() {
+        if (mission() == null) {
+            return false;
+        }
+        return isMissionDefend() || isMissionSparta();
+    }
+
     public boolean isMissionAttack() {
         if (mission() == null) {
             return false;
@@ -2428,4 +2436,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             && lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
 
+    public boolean shouldRetreat() {
+        return RetreatManager.shouldRetreat(this);
+    }
 }

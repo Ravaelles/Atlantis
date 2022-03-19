@@ -98,6 +98,10 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
     public HasPosition nextBuildingPosition() {
         int bases = Count.bases();
 
+        if (bases == 0) {
+            return null;
+        }
+
         // === Main choke ===========================================
 
         if (bases <= 1) {

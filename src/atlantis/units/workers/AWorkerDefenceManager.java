@@ -211,12 +211,11 @@ public class AWorkerDefenceManager {
 
         // FIGHT against COMBAT UNITS
         List<AUnit> enemies = worker.enemiesNear()
-                .canBeAttackedBy(worker, 4)
+                .canBeAttackedBy(worker, 3)
                 .list();
         for (AUnit enemy : enemies) {
-            worker.attackUnit(enemy);
             worker.setTooltipTactical("FurMotherland!");
-            return true;
+            return worker.attackUnit(enemy);
         }
 
         return false;

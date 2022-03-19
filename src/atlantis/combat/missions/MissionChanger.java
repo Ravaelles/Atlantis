@@ -3,12 +3,14 @@ package atlantis.combat.missions;
 import atlantis.combat.missions.attack.MissionChangerWhenAttack;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
+import atlantis.combat.missions.defend.Sparta;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 import atlantis.util.We;
@@ -67,7 +69,7 @@ public class MissionChanger {
     public static Mission defendOrSpartaMission() {
 //        if (We.protoss() || We.terran()) {
         if (A.seconds() <= 60 * 7) {
-            if (!We.zerg() || !Enemy.protoss()) {
+            if (Sparta.canUseSpartaMission()) {
                 System.out.println("Using SPARTA mission instead of Defend");
                 return Missions.SPARTA;
             }
@@ -102,11 +104,15 @@ public class MissionChanger {
     }
 
     public static void forceMissionContain(String reason) {
-        Missions.setGlobalMissionContain(reason);
+        Missions.forceGlobalMissionContain(reason);
     }
 
-    public static void forceMissionSparta(String reason) {
-        Missions.setGlobalMissionSparta(reason);
+    public static void forceMissionSpartaOrDefend(String reason) {
+        if (Sparta.canUseSpartaMission()) {
+            Missions.forceGlobalMissionSparta(reason);
+        } else {
+            Missions.forceGlobalMissionDefend(reason);
+        }
     }
 
     protected static boolean defendAgainstMassZerglings() {

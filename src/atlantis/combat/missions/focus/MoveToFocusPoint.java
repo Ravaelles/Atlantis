@@ -39,6 +39,10 @@ public abstract class MoveToFocusPoint {
             return false;
         }
 
+        if (joinSquad(unit)) {
+            return true;
+        }
+
         unitToFocus = unit.distTo(focus);
         optimalDist = optimalDist(unit);
 
@@ -61,6 +65,14 @@ public abstract class MoveToFocusPoint {
     }
 
     // =========================================================
+
+    private boolean joinSquad(AUnit unit) {
+        if (unit.distToSquadCenter() >= 8 && unit.enemiesNear().isEmpty()) {
+            unit.addLog("JoinSquad");
+            return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
+        }
+        return false;
+    }
 
     public boolean isOnValidSideOfChoke(AUnit unit, AFocusPoint focus) {
         if (focus == null || !focus.isAroundChoke()) {
@@ -109,6 +121,10 @@ public abstract class MoveToFocusPoint {
      * Unit is too close to its focus point.
      */
     protected boolean tooCloseToFocusPoint() {
+        if (unit.isMelee() && unit.hp() <= 18 && unitToFocus <= 3.5) {
+            return unit.moveAwayFrom(focus, 2, "InjuredSafety", Actions.MOVE_FOCUS);
+        }
+
         if (!isAroundChoke()) {
             return false;
         }

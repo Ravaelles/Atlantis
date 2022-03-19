@@ -60,7 +60,13 @@ public class FightInsteadAvoid {
     public boolean shouldFight() {
 //        if (true) return false;
 
+        if (unit.isMelee() && unit.shouldRetreat()) {
+            return false;
+        }
+
         if (enemies.isEmpty()) {
+            System.err.println("NoEnemies? LooksBugged");
+            unit.addLog("NoEnemiesReally?");
             return true;
         }
 

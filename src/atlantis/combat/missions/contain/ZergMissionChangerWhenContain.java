@@ -23,16 +23,14 @@ public class ZergMissionChangerWhenContain extends MissionChanger {
     // === DEFEND ==============================================
 
     public static boolean shouldChangeMissionToDefend() {
-        if (ArmyStrength.weAreWeaker()) {
+        if (ArmyStrength.ourArmyRelativeStrength() <= 100) {
             if (RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
                 if (DEBUG) reason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
                 return true;
             }
 
-            if (GamePhase.isEarlyGame()) {
-                if (DEBUG) reason = "Eh, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
-                return true;
-            }
+            if (DEBUG) reason = "Eh, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return true;
         }
 
         if (defendAgainstMassZerglings()) {

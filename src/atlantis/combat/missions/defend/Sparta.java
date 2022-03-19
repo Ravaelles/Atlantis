@@ -15,6 +15,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 import java.util.List;
@@ -119,12 +120,6 @@ public class Sparta extends MissionDefend {
 
     @Override
     public boolean allowsToRetreat(AUnit unit) {
-        if (unit.isZergling()) {
-            if (unit.hp() <= 18) {
-                return true;
-            }
-        }
-
         if (unit.isRanged()) {
             return unit.hp() <= 20;
         }
@@ -144,18 +139,6 @@ public class Sparta extends MissionDefend {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (unit.isZergling() && Count.sunkens() > 0) {
-            Selection sunkens = Select.ourOfType(AUnitType.Zerg_Sunken_Colony);
-
-            if (
-                sunkens.inRadius(10, unit).notEmpty()
-                    && sunkens.inRadius(enemy.isRanged() ? 3 : 6, unit).empty()
-            ) {
-                unit.addLog("Trickster");
-                return false;
-            }
-        }
-
         focusPoint = focusPoint();
         if (!focusPoint.isAroundChoke()) {
             unit.addLog("Sparta:---");
@@ -313,6 +296,14 @@ public class Sparta extends MissionDefend {
             && !unit.isHoldingPosition()
             && !"HelpWithdraw".equals(unit.tooltip())
             && unit.lastActionMoreThanAgo(6);
+    }
+
+    public static boolean canUseSpartaMission() {
+        if (We.zerg() && Enemy.protoss()) {
+            return false;
+        }
+
+        return true;
     }
 
 }

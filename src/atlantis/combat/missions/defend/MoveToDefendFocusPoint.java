@@ -29,7 +29,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 //            return true;
 //        }
 
-        if (handleWrongSideOfFocus(unit, focusPoint) || tooCloseToFocusPoint() || joinSquad(unit) || advance()) {
+        if (handleWrongSideOfFocus(unit, focusPoint) || tooCloseToFocusPoint() || advance()) {
             return true;
         }
 
@@ -50,8 +50,10 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         optimalDist = optimalDist(unit);
 
         if (unit.enemiesNear().inRadius(5, unit).notEmpty()) {
-            unit.addLog("DontWithdraw");
-            return false;
+            if (!unit.isZergling() || unit.hp() >= 20) {
+                unit.addLog("DontWithdraw");
+                return false;
+            }
         }
 
         if (unitToFocus > (optimalDist + MARGIN)) {
@@ -64,14 +66,6 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
             );
         }
 
-        return false;
-    }
-
-    private boolean joinSquad(AUnit unit) {
-        if (unit.distToSquadCenter() >= 8 && unit.enemiesNear().isEmpty()) {
-            unit.addLog("JoinSquad");
-            return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
-        }
         return false;
     }
 

@@ -74,12 +74,12 @@ public class Missions {
         setGlobalMissionTo(DEFEND, reason);
     }
 
-    public static void setGlobalMissionContain(String reason) {
+    public static void forceGlobalMissionContain(String reason) {
         lastMissionEnforcedAt = A.now();
         setGlobalMissionTo(CONTAIN, reason);
     }
 
-    public static void setGlobalMissionSparta(String reason) {
+    public static void forceGlobalMissionSparta(String reason) {
         lastMissionEnforcedAt = A.now();
         setGlobalMissionTo(SPARTA, reason);
     }

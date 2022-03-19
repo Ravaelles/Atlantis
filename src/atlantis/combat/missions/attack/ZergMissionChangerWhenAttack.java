@@ -49,6 +49,11 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
             return true;
         }
 
+        if (ArmyStrength.ourArmyRelativeStrength() <= 120 && A.seconds() <= 600) {
+            if (DEBUG) reason = "Not strong enough (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return true;
+        }
+
         if (!GamePhase.isLateGame() && EnemyInfo.startedWithCombatBuilding && !ArmyStrength.weAreMuchStronger()) {
             if (DEBUG) reason = "startedWithCombatBuilding & !weAreMuchStronger";
             return true;

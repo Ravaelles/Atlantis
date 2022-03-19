@@ -1,7 +1,6 @@
 package atlantis.information.strategy.response;
 
 import atlantis.combat.missions.Missions;
-import atlantis.config.AtlantisConfig;
 import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
@@ -51,7 +50,7 @@ public abstract class AStrategyResponse {
         // === Expansion ===================================
 
         if (enemyStrategy.isExpansion()) {
-            Missions.setGlobalMissionContain("Enemy is expanding, engage him");
+            Missions.forceGlobalMissionContain("Enemy is expanding, engage him");
         }
 
         // === Tech ========================================

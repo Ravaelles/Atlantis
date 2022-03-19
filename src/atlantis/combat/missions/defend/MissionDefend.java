@@ -3,11 +3,16 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.ProtossMissionAdjustments;
+import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Units;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -55,23 +60,29 @@ public class MissionDefend extends Mission {
         return (new MoveToDefendFocusPoint()).move(unit, focusPoint);
     }
 
-    @Override
-    public double optimalDist(AUnit unit) {
-        return (new MoveToDefendFocusPoint()).optimalDist(unit);
-    }
-
     // =========================================================
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         if (focusPoint == null || main == null) {
             return true;
         }
-
         // =========================================================
 
-        if (unit.isZergling() && Enemy.protoss()) {
-            if (unit.hpLessThan(18)) {
+        if (unit.isZergling()) {
+            if (Enemy.protoss() && unit.hp() <= 18) {
                 return false;
+            }
+
+            if (A.seconds() <= 500 && Count.sunkens() > 0) {
+                Selection sunkens = Select.ourOfType(AUnitType.Zerg_Sunken_Colony);
+
+                if (
+                    sunkens.inRadius(10, unit).notEmpty()
+                        && sunkens.inRadius(enemy.isRanged() ? 3 : 6, unit).empty()
+                ) {
+                    unit.addLog("Trickster");
+                    return false;
+                }
             }
         }
 
@@ -183,5 +194,10 @@ public class MissionDefend extends Mission {
 
         return false;
 //        return enemies.onlyMelee() && unit.hp() >= 18;
+    }
+
+    @Override
+    public double optimalDist(AUnit unit) {
+        return (new MoveToDefendFocusPoint()).optimalDist(unit);
     }
 }

@@ -53,6 +53,10 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
 
         int hydras = Count.hydralisks();
 
+        if (larvas() == 0) {
+            return false;
+        }
+
         if (hydras <= 2 || AGame.canAffordWithReserved(50, 0)) {
             AddToQueue.withStandardPriority(AUnitType.Zerg_Hydralisk);
             return true;
@@ -67,6 +71,10 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
         }
 
         int zerglings = Count.zerglings();
+
+        if (zerglings >= 2 && larvas() == 0) {
+            return false;
+        }
 
         if (Have.hydraliskDen()) {
             if (!A.hasMinerals(210) && zerglings >= 4) {
@@ -104,7 +112,11 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
 //    }
 
     private static boolean larvas(int minLarvas) {
-        return Select.ourLarva().count() >= minLarvas;
+        return Count.larvas() >= minLarvas;
+    }
+
+    private static int larvas() {
+        return Count.larvas();
     }
 
 }

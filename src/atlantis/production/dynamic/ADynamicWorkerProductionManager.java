@@ -39,6 +39,8 @@ public class ADynamicWorkerProductionManager {
 //            return false;
 //        }
 
+        // === Terran ===========================================
+
         if (We.terran()) {
             ProductionOrder order = ProductionQueue.nextOrderFor(AUnitType.Terran_Comsat_Station, 1);
             if (order != null && order.hasWhatRequired() && !A.hasMinerals(100)) {
@@ -46,12 +48,24 @@ public class ADynamicWorkerProductionManager {
             }
         }
 
-        if (We.zerg()) {
+        // === Zerg ===========================================
+
+        else if (We.zerg()) {
+            if (!A.hasMinerals(75 * Count.creepColonies())) {
+                return false;
+            }
+
+            if (A.supplyUsed() <= 20 && !AGame.canAffordWithReserved(50, 0)) {
+                return false;
+            }
+
             ProductionOrder order = ProductionQueue.nextOrderFor(AUnitType.Zerg_Spawning_Pool, 2);
             if (order != null && order.hasWhatRequired() && !A.hasMinerals(250)) {
                 return false;
             }
         }
+
+        // =========================================================
 
         // Check if not TOO MANY WORKERS
         int workers = Select.ourWorkers().count();
