@@ -5,7 +5,7 @@ import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -39,7 +39,7 @@ public class PositionModifier {
     // =========================================================
 
     public static APosition toPosition(
-        String modifier, AUnitType building, AUnit builder, ConstructionOrder constructionOrder
+        String modifier, AUnitType building, AUnit builder, Construction constructionOrder
     ) {
         AUnit main = Select.main();
 

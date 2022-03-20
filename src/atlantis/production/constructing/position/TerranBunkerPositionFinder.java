@@ -1,24 +1,22 @@
 package atlantis.production.constructing.position;
 
-import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 
 public class TerranBunkerPositionFinder {
 
     private static AUnitType bunker = AUnitType.Terran_Bunker;
 
-    public static APosition findPosition(AUnit builder, ConstructionOrder order) {
+    public static APosition findPosition(AUnit builder, Construction order) {
         HasPosition nearTo = defineNearTo(order);
         if (nearTo == null) {
             nearTo = Select.ourBuildings().first();
@@ -66,7 +64,7 @@ public class TerranBunkerPositionFinder {
 
     // =========================================================
 
-    private static HasPosition defineNearTo(ConstructionOrder order) {
+    private static HasPosition defineNearTo(Construction order) {
         if (order != null && order.productionOrder() != null && order.productionOrder().getModifier() != null) {
             String locationModifier = order.productionOrder().getModifier();
             return defineBunkerPosition(locationModifier);

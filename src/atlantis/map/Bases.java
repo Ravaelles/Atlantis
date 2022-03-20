@@ -4,7 +4,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
-import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -256,7 +256,7 @@ public class Bases {
         }
 
         // Check for planned constructions
-        for (ConstructionOrder constructionOrder : ConstructionRequests.all()) {
+        for (Construction constructionOrder : ConstructionRequests.all()) {
             APosition constructionPlace = constructionOrder.positionToBuildCenter();
             if (constructionPlace != null && constructionPlace.distTo(baseLocation.position()) < 8) {
                 return false;

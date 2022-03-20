@@ -13,7 +13,7 @@ import atlantis.units.select.Select;
 /**
  * Represents construction of a building, including ones not yet started.
  */
-public class ConstructionOrder implements Comparable<ConstructionOrder> {
+public class Construction implements Comparable<Construction> {
 
     private static int _firstFreeId = 1;
     private final int ID = _firstFreeId++;
@@ -30,7 +30,7 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
 
     // =========================================================
     
-    public ConstructionOrder(AUnitType buildingType) {
+    public Construction(AUnitType buildingType) {
         this.buildingType = buildingType;
 
         status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
@@ -101,12 +101,12 @@ public class ConstructionOrder implements Comparable<ConstructionOrder> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ConstructionOrder other = (ConstructionOrder) obj;
+        final Construction other = (Construction) obj;
         return this.ID == other.ID;
     }
     
     @Override
-    public int compareTo(ConstructionOrder o) {
+    public int compareTo(Construction o) {
         return Integer.compare(ID, o.ID);
     }
 

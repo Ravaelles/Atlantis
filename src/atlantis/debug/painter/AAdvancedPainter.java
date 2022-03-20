@@ -23,7 +23,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.scout.AScoutManager;
 import atlantis.production.ProductionOrder;
-import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.TerranPositionFinder;
@@ -597,7 +597,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintNotStartedConstructions() {
 
         // Constructions already planned
-        for (ConstructionOrder order : ConstructionRequests.notStarted()) {
+        for (Construction order : ConstructionRequests.notStarted()) {
             AUnitType type = order.buildingType();
             paintSideMessage(type.name(), Color.Cyan);
         }
@@ -629,10 +629,10 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintSidebarConstructionsPending() {
         int yOffset = 250;
-        ArrayList<ConstructionOrder> allOrders = ConstructionRequests.all();
+        ArrayList<Construction> allOrders = ConstructionRequests.all();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
-            for (ConstructionOrder constructionOrder : allOrders) {
+            for (Construction constructionOrder : allOrders) {
                 Color color = null;
                 switch (constructionOrder.status()) {
                     case CONSTRUCTION_NOT_STARTED:
@@ -670,7 +670,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintConstructionPlaces() {
         Color color = Color.Grey;
-        for (ConstructionOrder order : ConstructionRequests.all()) {
+        for (Construction order : ConstructionRequests.all()) {
             if (order.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
 //            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 APosition positionToBuild = order.buildPosition();
@@ -869,7 +869,7 @@ public class AAdvancedPainter extends APainter {
     static void paintConstructionProgress() {
         setTextSizeMedium();
 //        for (AUnit unit : Select.ourBuildingsWithUnfinished().listUnits()) {
-        for (ConstructionOrder order : ConstructionRequests.all()) {
+        for (Construction order : ConstructionRequests.all()) {
             AUnit building = order.construction();
             if (building == null || building.isCompleted()) {
                 continue;

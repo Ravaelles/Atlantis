@@ -20,7 +20,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
 import atlantis.map.scout.AScoutManager;
 import atlantis.production.constructing.AConstructionManager;
-import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.actions.Action;
@@ -919,7 +919,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * If this unit is supposed to build something it will return ConstructionOrder object assigned to the
      * construction.
      */
-    public ConstructionOrder constructionOrder() {
+    public Construction constructionOrder() {
         return ConstructionRequests.constructionOrderFor(this);
     }
 

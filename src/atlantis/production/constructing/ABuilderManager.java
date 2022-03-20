@@ -37,7 +37,7 @@ public class ABuilderManager {
     // =========================================================
     
     private static boolean handleConstruction(AUnit builder) {
-        ConstructionOrder constructionOrder = ConstructionRequests.constructionOrderFor(builder);
+        Construction constructionOrder = ConstructionRequests.constructionOrderFor(builder);
         if (constructionOrder != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
@@ -55,7 +55,7 @@ public class ABuilderManager {
         return false;
     }
 
-    private static boolean travelToConstruct(AUnit builder, ConstructionOrder constructionOrder) {
+    private static boolean travelToConstruct(AUnit builder, Construction constructionOrder) {
         APosition buildPosition = constructionOrder.buildPosition();
         APosition buildPositionCenter = constructionOrder.positionToBuildCenter();
         AUnitType buildingType = constructionOrder.buildingType();
@@ -113,7 +113,7 @@ public class ABuilderManager {
     }
 
     private static boolean issueBuildOrder(
-        AUnit builder, AUnitType buildingType, ConstructionOrder order
+        AUnit builder, AUnitType buildingType, Construction order
     ) {
         if (We.protoss()) {
             AUnit newBuilding = Select.ourUnfinished()
@@ -155,7 +155,7 @@ public class ABuilderManager {
         return true;
     }
 
-    private static APosition refreshBuildPosition(ConstructionOrder order) {
+    private static APosition refreshBuildPosition(Construction order) {
         if (Select.ourWorkers().inRadius(1.8, order.buildPosition()).atLeast(2)) {
             return APositionFinder.findPositionForNew(
                 order.builder(), order.buildingType(), order

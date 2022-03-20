@@ -4,7 +4,7 @@ import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -25,7 +25,7 @@ public class APositionFinder {
     /**
      * Returns build position for next building of given type.
      */
-    public static APosition findPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
+    public static APosition findPositionForNew(AUnit builder, AUnitType building, Construction constructionOrder) {
         HasPosition near = constructionOrder != null ? constructionOrder.nearTo() : null;
         double maxDistance = constructionOrder != null ? constructionOrder.maxDistance() : 35;
 
@@ -50,7 +50,7 @@ public class APositionFinder {
      */
     public static APosition findPositionForNew(
             AUnit builder, AUnitType building,
-            ConstructionOrder constructionOrder,
+            Construction constructionOrder,
             HasPosition nearTo, double maxDistance
     ) {
 //        totalRequests++;

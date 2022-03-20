@@ -21,8 +21,8 @@ public class AConstructionManager {
      * finished objects etc.
      */
     public static void update() {
-        for (Iterator<ConstructionOrder> iterator = ConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
-            ConstructionOrder constructionOrder =  iterator.next();
+        for (Iterator<Construction> iterator = ConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
+            Construction constructionOrder =  iterator.next();
             checkForConstructionStatusChange(constructionOrder, constructionOrder.construction());
             checkForBuilderStatusChange(constructionOrder);
             handleConstructionUnderAttack(constructionOrder);
@@ -35,7 +35,7 @@ public class AConstructionManager {
     /**
      * If builder has died when constructing, replace him with new one.
      */
-    private static void checkForBuilderStatusChange(ConstructionOrder constructionOrder) {
+    private static void checkForBuilderStatusChange(Construction constructionOrder) {
 
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
@@ -62,7 +62,7 @@ public class AConstructionManager {
     /**
      * If building is completed, mark construction as finished and remove it.
      */
-    private static void checkForConstructionStatusChange(ConstructionOrder order, AUnit building) {
+    private static void checkForConstructionStatusChange(Construction order, AUnit building) {
 //        System.out.println("==============");
 //        System.out.println(order.buildingType());
 //        System.out.println(order.status());
@@ -165,7 +165,7 @@ public class AConstructionManager {
             return true;
         }
 
-        for (ConstructionOrder constructionOrder : ConstructionRequests.constructionOrders) {
+        for (Construction constructionOrder : ConstructionRequests.constructionOrders) {
             if (worker.equals(constructionOrder.builder())) {
                 
                 // Pending Protoss buildings allow builder to go away
@@ -187,9 +187,9 @@ public class AConstructionManager {
      */
     private static void handleZergConstructionsWhichBecameBuildings() {
         if (AGame.isPlayingAsZerg()) {
-            ArrayList<ConstructionOrder> allOrders = ConstructionRequests.all();
+            ArrayList<Construction> allOrders = ConstructionRequests.all();
             if (!allOrders.isEmpty()) {
-                for (ConstructionOrder constructionOrder : allOrders) {
+                for (Construction constructionOrder : allOrders) {
                     AUnit builder = constructionOrder.builder();
                     if (constructionOrder.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                         if (builder != null) {
@@ -203,7 +203,7 @@ public class AConstructionManager {
         }
     }
 
-    private static void handleConstructionUnderAttack(ConstructionOrder order) {
+    private static void handleConstructionUnderAttack(Construction order) {
         AUnit building = order.construction();
         
         // If unfinished building is under attack
@@ -217,7 +217,7 @@ public class AConstructionManager {
         }
     }
 
-    private static void handleConstructionThatLooksBugged(ConstructionOrder order) {
+    private static void handleConstructionThatLooksBugged(Construction order) {
         if (order.status() != ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
             return;
         }
@@ -244,7 +244,7 @@ public class AConstructionManager {
     public static ArrayList<AUnit> builders() {
         ArrayList<AUnit> units = new ArrayList<>();
 
-        for (ConstructionOrder order : ConstructionRequests.constructionOrders) {
+        for (Construction order : ConstructionRequests.constructionOrders) {
             if (order.builder() != null && order.builder().isAlive()) {
                 units.add(order.builder());
             }

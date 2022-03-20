@@ -5,7 +5,7 @@ import atlantis.game.A;
 import atlantis.map.*;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -96,7 +96,7 @@ public abstract class AbstractPositionFinder {
         
         // Compare against planned construction places
 //        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
-        for (ConstructionOrder order : ConstructionRequests.all()) {
+        for (Construction order : ConstructionRequests.all()) {
             HasPosition constructionPosition = order.buildPosition();
 //            System.out.println("another = " + constructionPosition + " // " + order.buildingType());
             if (

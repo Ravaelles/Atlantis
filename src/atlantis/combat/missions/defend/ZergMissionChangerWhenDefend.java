@@ -1,5 +1,6 @@
 package atlantis.combat.missions.defend;
 
+import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.ProtossMissionChangerWhenAttack;
@@ -58,7 +59,16 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
     }
 
     private static boolean shouldChangeMissionToAttack() {
-        if (ArmyStrength.ourArmyRelativeStrength() >= 200) {
+        if (A.supplyUsed() >= 195) {
+            if (DEBUG) reason = "Maxed out";
+            return true;
+        }
+
+        if (Atlantis.LOST >= 5 && A.supplyUsed() <= 50) {
+            return false;
+        }
+
+        if (ArmyStrength.ourArmyRelativeStrength() >= 300) {
             if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }

@@ -24,7 +24,7 @@ public class ConstructionRequests {
     /**
      * List of all unfinished (started or pending) constructions.
      */
-    protected static ConcurrentLinkedQueue<ConstructionOrder> constructionOrders = new ConcurrentLinkedQueue<>();
+    protected static ConcurrentLinkedQueue<Construction> constructionOrders = new ConcurrentLinkedQueue<>();
 
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for
@@ -40,7 +40,7 @@ public class ConstructionRequests {
 
     /**
      * Find a place for new building and assign a worker.
-     *
+     * <p>
      * WARNING: passed order parameter can later override nearTo parameter.
      */
     public static boolean requestConstructionOf(AUnitType building, HasPosition near, ProductionOrder order) {
@@ -61,7 +61,7 @@ public class ConstructionRequests {
         // =========================================================
         // Create ConstructionOrder object, assign random worker for the time being
 
-        ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
+        Construction newConstructionOrder = new Construction(building);
         newConstructionOrder.setProductionOrder(order);
         newConstructionOrder.setNearTo(near);
         newConstructionOrder.setMaxDistance(order != null ? order.maximumDistance() : -1);
@@ -111,7 +111,8 @@ public class ConstructionRequests {
 //                A.printStackTrace("Can't find place for `" + building + "`, " + order);
                 if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
                     System.err.print("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
-                } else {
+                }
+                else {
                     System.err.print("(reason not defined - bug)");
                 }
                 System.err.println();
@@ -148,8 +149,8 @@ public class ConstructionRequests {
     /**
      * Returns ConstructionOrder object for given builder.
      */
-    public static ConstructionOrder constructionOrderFor(AUnit builder) {
-        for (ConstructionOrder constructionOrder : constructionOrders) {
+    public static Construction constructionOrderFor(AUnit builder) {
+        for (Construction constructionOrder : constructionOrders) {
             if (builder.equals(constructionOrder.builder())) {
                 return constructionOrder;
             }
@@ -169,9 +170,9 @@ public class ConstructionRequests {
      */
     public static int countNotStartedOfType(AUnitType type) {
         int total = 0;
-        for (ConstructionOrder constructionOrder : constructionOrders) {
+        for (Construction constructionOrder : constructionOrders) {
             if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                    && constructionOrder.buildingType().equals(type)) {
+                && constructionOrder.buildingType().equals(type)) {
                 total++;
             }
         }
@@ -185,12 +186,25 @@ public class ConstructionRequests {
         return total;
     }
 
+    public static Construction getNotStartedOfType(AUnitType type) {
+        for (Construction constructionOrder : constructionOrders) {
+            if (
+                constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                    && constructionOrder.buildingType().equals(type)
+            ) {
+                return constructionOrder;
+            }
+        }
+
+        return null;
+    }
+
     public static int countNotStartedOfTypeInRadius(AUnitType type, double radius, HasPosition position) {
         int total = 0;
-        for (ConstructionOrder constructionOrder : constructionOrders) {
+        for (Construction constructionOrder : constructionOrders) {
             if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                    && constructionOrder.buildingType().equals(type)
-                    && position.distTo(constructionOrder.positionToBuildCenter()) <= radius) {
+                && constructionOrder.buildingType().equals(type)
+                && position.distTo(constructionOrder.positionToBuildCenter()) <= radius) {
                 total++;
             }
         }
@@ -206,12 +220,12 @@ public class ConstructionRequests {
 
     public static int countNotFinishedOfType(AUnitType type) {
         return Select.ourUnfinished().ofType(type).count()
-                + countNotStartedOfType(type);
+            + countNotStartedOfType(type);
     }
 
     public static int countNotFinishedOfTypeInRadius(AUnitType type, double radius, APosition position) {
         return Select.ourUnfinished().ofType(type).inRadius(radius, position).count()
-                + countNotStartedOfTypeInRadius(type, radius, position);
+            + countNotStartedOfTypeInRadius(type, radius, position);
     }
 
     /**
@@ -220,9 +234,9 @@ public class ConstructionRequests {
      */
     public static int countPendingOfType(AUnitType type) {
         int total = 0;
-        for (ConstructionOrder constructionOrder : constructionOrders) {
+        for (Construction constructionOrder : constructionOrders) {
             if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                    && constructionOrder.buildingType().equals(type)) {
+                && constructionOrder.buildingType().equals(type)) {
                 total++;
             }
         }
@@ -242,7 +256,7 @@ public class ConstructionRequests {
         }
 
         return Select.ourOfType(type).count()
-                + ProductionQueue.countInQueue(type, amongNTop);
+            + ProductionQueue.countInQueue(type, amongNTop);
     }
 
     public static int countExistingAndNotFinished(AUnitType type) {
@@ -251,7 +265,7 @@ public class ConstructionRequests {
         }
 
         return Select.ourWithUnfinished(type).count()
-                + countNotFinishedOfType(type);
+            + countNotFinishedOfType(type);
     }
 
     public static int countExistingAndPlannedInRadius(AUnitType type, double radius, APosition position) {
@@ -260,7 +274,7 @@ public class ConstructionRequests {
         }
 
         return Select.ourWithUnfinished(type).inRadius(radius, position).count()
-                + countNotFinishedOfTypeInRadius(type, radius, position);
+            + countNotFinishedOfTypeInRadius(type, radius, position);
     }
 
     /**
@@ -268,20 +282,20 @@ public class ConstructionRequests {
      * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
      * then, we can e.g. "get not started Terran Barracks constructions".
      */
-    public static ArrayList<ConstructionOrder> notStartedOfType(AUnitType type) {
-        ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
-        for (ConstructionOrder constructionOrder : constructionOrders) {
+    public static ArrayList<Construction> notStartedOfType(AUnitType type) {
+        ArrayList<Construction> notStarted = new ArrayList<>();
+        for (Construction constructionOrder : constructionOrders) {
             if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                    && (type == null || constructionOrder.buildingType().equals(type))) {
+                && (type == null || constructionOrder.buildingType().equals(type))) {
                 notStarted.add(constructionOrder);
             }
         }
         return notStarted;
     }
 
-    public static ArrayList<ConstructionOrder> notStarted() {
-        ArrayList<ConstructionOrder> notStarted = new ArrayList<>();
-        for (ConstructionOrder constructionOrder : constructionOrders) {
+    public static ArrayList<Construction> notStarted() {
+        ArrayList<Construction> notStarted = new ArrayList<>();
+        for (Construction constructionOrder : constructionOrders) {
             if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 notStarted.add(constructionOrder);
             }
@@ -295,7 +309,7 @@ public class ConstructionRequests {
      *
      * @return
      */
-    public static ArrayList<ConstructionOrder> all() {
+    public static ArrayList<Construction> all() {
         return new ArrayList<>(constructionOrders);
     }
 
@@ -315,7 +329,7 @@ public class ConstructionRequests {
     public static int[] resourcesNeededForNotStarted() {
         int mineralsNeeded = 0;
         int gasNeeded = 0;
-        for (ConstructionOrder constructionOrder : notStartedOfType(null)) {
+        for (Construction constructionOrder : notStartedOfType(null)) {
             mineralsNeeded += constructionOrder.buildingType().getMineralPrice();
             gasNeeded += constructionOrder.buildingType().getGasPrice();
         }
@@ -323,7 +337,7 @@ public class ConstructionRequests {
         return result;
     }
 
-    protected static void removeOrder(ConstructionOrder constructionOrder) {
+    protected static void removeOrder(Construction constructionOrder) {
         constructionOrders.remove(constructionOrder);
     }
 
@@ -331,8 +345,8 @@ public class ConstructionRequests {
      * Top-priority request.
      */
     public static void removeAllNotStarted() {
-        for (Iterator<ConstructionOrder> iterator = ConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
-            ConstructionOrder constructionOrder =  iterator.next();
+        for (Iterator<Construction> iterator = ConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
+            Construction constructionOrder = iterator.next();
             if (!constructionOrder.hasStarted()) {
                 constructionOrder.cancel();
             }
@@ -340,7 +354,7 @@ public class ConstructionRequests {
     }
 
     public static boolean hasNotStartedNear(AUnitType building, HasPosition position, double inRadius) {
-        for (ConstructionOrder order : notStartedOfType(building)) {
+        for (Construction order : notStartedOfType(building)) {
             if (order.buildPosition() != null && position.distToLessThan(position, inRadius)) {
                 return true;
             }

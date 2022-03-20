@@ -5,7 +5,7 @@ import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.ConstructionOrder;
+import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
@@ -39,7 +39,7 @@ public class ASpecialPositionFinder {
      * Returns build position for next base. It will usually be next free BaseLocation that doesn't have base
      * built.
      */
-    public static APosition findPositionForBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
+    public static APosition findPositionForBase(AUnitType building, AUnit builder, Construction constructionOrder) {
         return cache.get(
                 "findPositionForBase:" + builder + "," + constructionOrder.id(),
                 50,
@@ -61,7 +61,7 @@ public class ASpecialPositionFinder {
     }
 
     public static APosition positionModifierToPosition(
-        String modifier, AUnitType building, AUnit builder, ConstructionOrder constructionOrder
+        String modifier, AUnitType building, AUnit builder, Construction constructionOrder
     ) {
         if (modifier.equals(PositionModifier.MAIN) || modifier.equals("MAIN")) {
             if (constructionOrder.maxDistance() < 0) {
@@ -99,7 +99,7 @@ public class ASpecialPositionFinder {
 
     // =========================================================
 
-    protected static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
+    protected static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder, Construction constructionOrder) {
         ABaseLocation baseLocationToExpand;
         int ourBasesCount = Select.ourBases().count();
         if (ourBasesCount <= 2) {
@@ -131,7 +131,7 @@ public class ASpecialPositionFinder {
         );
     }
 
-    protected static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
+    protected static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, Construction constructionOrder) {
         APosition near = Select.main().translateByPixels(-64, -64);
 //        APosition near = Select.mainBase().position();
 
@@ -141,7 +141,7 @@ public class ASpecialPositionFinder {
         return APositionFinder.findStandardPosition(builder, building, near, constructionOrder.maxDistance());
     }
 
-    protected static APosition findPositionForBase_natural(AUnitType building, AUnit builder, ConstructionOrder constructionOrder) {
+    protected static APosition findPositionForBase_natural(AUnitType building, AUnit builder, Construction constructionOrder) {
         if (!Have.main()) {
             return null;
         }

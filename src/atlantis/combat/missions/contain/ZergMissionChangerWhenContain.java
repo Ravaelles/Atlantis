@@ -1,5 +1,6 @@
 package atlantis.combat.missions.contain;
 
+import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.ZergMissionChangerWhenAttack;
@@ -54,17 +55,26 @@ public class ZergMissionChangerWhenContain extends MissionChanger {
     // === ATTACK ==============================================
 
     private static boolean shouldChangeMissionToAttack() {
-        if (A.supplyUsed() >= 194) {
-            if (DEBUG) reason = "Supply blocked";
+        if (A.supplyUsed() >= 195) {
+            if (DEBUG) reason = "Maxed out";
             return true;
         }
 
-        if (ArmyStrength.weAreMuchStronger() && !EnemyInfo.hasDefensiveLandBuilding(true)) {
-            if (DEBUG) reason = "Much stronger";
+        if (Atlantis.LOST >= 5 && A.supplyUsed() <= 50) {
+            return false;
+        }
+
+        if (ArmyStrength.ourArmyRelativeStrength() >= 300) {
+            if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
-        if (A.resourcesBalance() >= 410 && ArmyStrength.weAreStronger()) {
+//        if (ArmyStrength.weAreMuchStronger() && !EnemyInfo.hasDefensiveLandBuilding(true)) {
+//            if (DEBUG) reason = "Much stronger";
+//            return true;
+//        }
+
+        if (A.resourcesBalance() >= 410 && ArmyStrength.weAreMuchStronger()) {
             if (DEBUG) reason = "Resources balance good";
             return true;
         }

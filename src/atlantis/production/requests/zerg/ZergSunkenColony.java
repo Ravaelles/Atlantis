@@ -2,16 +2,16 @@ package atlantis.production.requests.zerg;
 
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.requests.AntiLandBuildingManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 
 public class ZergSunkenColony extends AntiLandBuildingManager {
 
@@ -47,7 +47,10 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
             }
         }
 
-        return EnemyStrategy.get().isRushOrCheese() ? 2 : (Enemy.terran() ? 0 : 1);
+        return 3;
+//        int expected = EnemyStrategy.get().isRushOrCheese() ? 3 : (Enemy.terran() ? 0 : 1);
+//
+//        return expected;
     }
 
     @Override
@@ -104,7 +107,14 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
     public HasPosition nextBuildingPosition() {
         HasPosition standard = super.nextBuildingPosition();
 
-        AUnit existing = Select.ourOfType(type()).inRadius(8, standard).nearestTo(standard);
+        HasPosition existing = Select.ourWithUnfinished(type()).inRadius(8, standard).nearestTo(standard);
+
+        if (existing == null) {
+            Construction construction = ConstructionRequests.getNotStartedOfType(AUnitType.Zerg_Creep_Colony);
+            if (construction != null) {
+                existing = construction.buildPosition();
+            }
+        }
 
         if (existing != null) {
             return existing;
