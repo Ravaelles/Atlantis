@@ -203,4 +203,8 @@ public class EnemyInfo {
     public static boolean hasHiddenUnits() {
         return EnemyUnits.discovered().ofType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker).notEmpty();
     }
+
+    public static int hiddenUnitsCount() {
+        return EnemyUnits.discovered().ofType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker).count();
+    }
 }

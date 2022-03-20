@@ -1345,6 +1345,14 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isGhost() {
+        return (boolean) cache.get(
+            "isGhost",
+            -1,
+            () -> is(Terran_Ghost)
+        );
+    }
+
     public boolean isFirebat() {
         return (boolean) cache.get(
             "isFirebat",

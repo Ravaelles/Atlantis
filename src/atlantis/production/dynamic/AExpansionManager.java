@@ -61,19 +61,7 @@ public class AExpansionManager {
 //            return false;
 //        }
 
-        if (Count.workers() <= 17 * (bases + basesInProduction)) {
-            return false;
-        }
-
-        boolean hasPlentyOfMinerals = AGame.hasMinerals(580);
-        int minMinerals = 100 + (AGame.isPlayingAsZerg() ? 268 : 356);
-
-        // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AGame.canAffordWithReserved(minMinerals, 0)) {
-            return false;
-        }
-
-        // === True ===========================================
+        // === First base ===========================================
 
         if (bases == 0 && basesInProduction == 0) {
             if (We.terran() && EnemyStrategy.get().isRushOrCheese() && A.seconds() <= 450) {
@@ -86,8 +74,8 @@ public class AExpansionManager {
             boolean secondsAllow =
                 (
                     (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)
-                    || (A.seconds() >= 520 && Count.ourCombatUnits() >= 8)
-                    || (A.seconds() >= 650)
+                        || (A.seconds() >= 520 && Count.ourCombatUnits() >= 8)
+                        || (A.seconds() >= 650)
                 );
 //                (
 //                    (A.seconds() >= 500 && Count.ourCombatUnits() >= 20)
@@ -97,6 +85,20 @@ public class AExpansionManager {
             if (AGame.canAfford(330, 0) || secondsAllow) {
                 return true;
             }
+        }
+
+        // =========================================================
+
+        if (Count.workers() <= 17 * (bases + basesInProduction)) {
+            return false;
+        }
+
+        boolean hasPlentyOfMinerals = AGame.hasMinerals(580);
+        int minMinerals = 100 + (AGame.isPlayingAsZerg() ? 268 : 356);
+
+        // It makes sense to think about expansion only if we have a lot of minerals.
+        if (!AGame.canAffordWithReserved(minMinerals, 0)) {
+            return false;
         }
 
         // === False again ===========================================

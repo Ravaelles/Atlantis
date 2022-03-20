@@ -5,9 +5,11 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.TerranMissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 import atlantis.util.We;
@@ -39,6 +41,12 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
                 return false;
             }
         }
+
+        if (EnemyInfo.hiddenUnitsCount() >= 2 && Count.ofType(AUnitType.Terran_Science_Vessel) == 0) {
+            return false;
+        }
+
+        // === Might be TRUE ===========================================
 
         if (Enemy.protoss()) {
             if (GamePhase.isEarlyGame() && EnemyUnits.discovered().combatUnits().count() >= 6) {

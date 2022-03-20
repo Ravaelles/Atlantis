@@ -186,19 +186,18 @@ public class ARepairerManager {
             return true;
         }
 
-        // Fix: Sometimes minerals are returned
-        if (!target.isBuilding()) {
+        if (target.isWounded()) {
             return false;
         }
 
-        if (target.isWounded()) {
-            return false;
+        if (repairer.isProtector() && target.isBunker() && target.enemiesNear().count() <= 1) {
+            return true;
         }
 
         Selection enemies = target.enemiesNear().canAttack(target, 14);
         int workersNearby = target.friendsNear().workers().inRadius(1.5, target).count();
 
-        return enemies.isEmpty() || (workersNearby >= 2 && enemies.count() < workersNearby);
+        return enemies.isEmpty() || (workersNearby >= 3 && enemies.count() < workersNearby);
 //        return target.enemiesNear().canAttack(target, 14).isEmpty();
     }
 }

@@ -30,7 +30,7 @@ public class OurStrategyChooser {
 //        return TerranStrategies.TERRAN_1_Base_Vultures;
 
         if (Enemy.protoss()) {
-            return TerranStrategies.TERRAN_MMG;
+            return TerranStrategies.TERRAN_MMG_vP;
 //            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_Nada_2_Fac;

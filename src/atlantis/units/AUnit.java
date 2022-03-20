@@ -1033,10 +1033,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public TechType whatIsResearching() {
+        if (u.getLastCommand() == null) {
+            return null;
+        }
         return u.getLastCommand().getTechType();
     }
 
     public UpgradeType whatIsUpgrading() {
+        if (u.getLastCommand() == null) {
+            return null;
+        }
         return u.getLastCommand().getUpgradeType();
     }
 
@@ -1955,6 +1961,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isMarine() {
         return type().isMarine();
+    }
+
+    public boolean isGhost() {
+        return type().isGhost();
     }
 
     public boolean isFirebat() {

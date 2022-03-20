@@ -3,9 +3,12 @@ package atlantis.units.select;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.ProductionQueue;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.cache.Cache;
 import atlantis.util.We;
+import bwapi.TechType;
+import bwapi.UpgradeType;
 
 /**
  * Quick auxiliary class for counting our units.
@@ -54,8 +57,42 @@ public class Count {
         return ProductionQueue.countInQueue(type, amongNTop);
     }
 
+    public static int inQueue(TechType type, int amongNTop) {
+        return ProductionQueue.countInQueue(type, amongNTop);
+    }
+
+    public static int inQueue(UpgradeType type, int amongNTop) {
+        return ProductionQueue.countInQueue(type, amongNTop);
+    }
+
     public static int inQueueOrUnfinished(AUnitType type, int amongNTop) {
         return inQueue(type, amongNTop) + inProduction(type);
+    }
+
+    public static int inQueueOrUnfinished(TechType type, int amongNTop) {
+        return inQueue(type, amongNTop) + inProduction(type);
+    }
+
+    public static int inQueueOrUnfinished(UpgradeType type, int amongNTop) {
+        return inQueue(type, amongNTop) + inProduction(type);
+    }
+
+    private static int inProduction(TechType type) {
+        for (AUnit building : Select.ourOfType(AUnitType.from(type.whatResearches())).list()) {
+            if (type.equals(building.whatIsResearching())) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    private static int inProduction(UpgradeType type) {
+        for (AUnit building : Select.ourOfType(AUnitType.from(type.whatUpgrades())).list()) {
+            if (type.equals(building.whatIsResearching())) {
+                return 1;
+            }
+        }
+        return 0;
     }
 
     public static int inProduction(AUnitType type) {
@@ -256,6 +293,10 @@ public class Count {
 
     public static int sunkens() {
         return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony);
+    }
+
+    public static int scienceVessels() {
+        return Select.countOurOfType(AUnitType.Terran_Science_Vessel);
     }
 
     public static int creepColonies() {

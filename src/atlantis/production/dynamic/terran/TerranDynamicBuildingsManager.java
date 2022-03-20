@@ -202,7 +202,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static boolean barracks() {
-        int barracks = Count.barracks();
+        int barracks = Count.withPlanned(Terran_Barracks);
 
         if (barracks >= 3) {
             return false;

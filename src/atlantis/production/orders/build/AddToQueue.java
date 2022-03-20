@@ -8,6 +8,8 @@ import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
+import bwapi.TechType;
+import bwapi.UpgradeType;
 
 public class AddToQueue {
 
@@ -38,6 +40,22 @@ public class AddToQueue {
 
     public static ProductionOrder withStandardPriority(AUnitType type, HasPosition position) {
         return addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.STANDARD));
+    }
+
+    public static void tech(TechType tech) {
+        if (Count.inQueueOrUnfinished(tech, 8) > 0) {
+            return;
+        }
+
+        ProductionQueue.addToQueue(0, new ProductionOrder(tech, 0));
+    }
+
+    public static void upgrade(UpgradeType upgrade) {
+        if (Count.inQueueOrUnfinished(upgrade, 8) > 0) {
+            return;
+        }
+
+        ProductionQueue.addToQueue(0, new ProductionOrder(upgrade, 0));
     }
 
     // =========================================================
@@ -92,5 +110,4 @@ public class AddToQueue {
     private static int indexForPriority(ProductionOrderPriority priority) {
         return ProductionQueue.countOrdersWithPriorityAtLeast(priority);
     }
-
 }

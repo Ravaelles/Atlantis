@@ -4,6 +4,8 @@ import atlantis.information.strategy.AStrategy;
 import atlantis.production.ProductionOrder;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.AUnitType;
+import bwapi.TechType;
+import bwapi.UpgradeType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,6 +67,26 @@ public abstract class ProductionQueue {
         int count = 0;
         for (int i = 0; i < amongNTop && i < nextInQueue.size(); i++) {
             if (type.equals(nextInQueue.get(i).unitType())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int countInQueue(TechType type, int amongNTop) {
+        int count = 0;
+        for (int i = 0; i < amongNTop && i < nextInQueue.size(); i++) {
+            if (type.equals(nextInQueue.get(i).tech())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int countInQueue(UpgradeType type, int amongNTop) {
+        int count = 0;
+        for (int i = 0; i < amongNTop && i < nextInQueue.size(); i++) {
+            if (type.equals(nextInQueue.get(i).upgrade())) {
                 count++;
             }
         }

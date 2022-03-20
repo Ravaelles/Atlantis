@@ -59,6 +59,11 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
             return true;
         }
 
+        if (EnemyInfo.hiddenUnitsCount() >= 2 && Count.ofType(AUnitType.Terran_Science_Vessel) == 0) {
+            if (DEBUG) reason = "Hidden units";
+            return true;
+        }
+
         return false;
     }
 

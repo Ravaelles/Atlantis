@@ -65,7 +65,7 @@ public class ARepairAssignments {
 
         AUnit unitToRepair = repairersToUnit.get(repairer);
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
-            if (!repairer.isProtector() || ARepairerManager.canSafelyAbandonUnitToBeRepaired(repairer)) {
+            if (ARepairerManager.canSafelyAbandonUnitToBeRepaired(repairer)) {
                 System.err.println("Remove PROTECTOR for " + unitsToRepairers);
                 unitsToRepairers.get(unitToRepair).remove(repairer);
                 repairer.stop("No longer repairer", true);

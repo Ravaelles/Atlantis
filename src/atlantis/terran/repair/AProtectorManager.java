@@ -71,26 +71,6 @@ public class AProtectorManager {
             }
         }
 
-//        for (AUnit bunker : Select.ourOfType(AUnitType.Terran_Bunker).list()) {
-//            Selection enemies = bunker.enemiesNear().havingWeapon();
-//            if (enemies.isEmpty() && bunker.isHealthy()) {
-//                ArrayList<AUnit> protectors = ARepairAssignments.getProtectorsFor(bunker);
-//                ArrayList<AUnit> toRemove = new ArrayList<>();
-//                for (Iterator<AUnit> it = protectors.iterator(); it.hasNext(); ) {
-//                    AUnit repairer = it.next();
-//                    toRemove.add(repairer);
-//                }
-//
-//                for (AUnit protector : toRemove) {
-//                    ARepairAssignments.removeRepairerOrProtector(protector);
-//                }
-//                continue;
-//            }
-//
-//            int desiredProtectorsForThisBunker = desiredBunkerProtectors(bunker, enemies);
-//            assignProtectorsFor(bunker, desiredProtectorsForThisBunker);
-//        }
-
         return true;
     }
 
@@ -227,28 +207,15 @@ public class AProtectorManager {
     // =========================================================
 
     public static boolean updateProtector(AUnit protector) {
-//        if (protector.hpLessThan(10)) {
-//            ARepairAssignments.removeRepairerOrProtector(protector);
-//            return false;
-//        }
-
         AUnit target = ARepairAssignments.getUnitToProtectFor(protector);
+        System.out.println("protecting: " + target + "; "  + protector + " (" + protector.action() + ")");
+
         if (target != null && target.isAlive()) {
-//            if (A.everyNthGameFrame(39)) {
-//                if (target.enemiesNear().havingWeapon().isEmpty()) {
-//                    ARepairAssignments.removeRepairerOrProtector(protector);
-//                    return false;
-//                }
-//            }
 
             // WOUNDED
-//            if (target.isWounded() && A.hasMinerals(1)) {
-//            if (A.hasMinerals(1)) {
             if (target.isWounded() || target.enemiesNear().canAttack(target, 15).notEmpty()) {
                 return protector.repair(target, "Protect" + target.name(), true);
             }
-//                return true;
-//            }
 
             // Bunker fully HEALTHY
             else {

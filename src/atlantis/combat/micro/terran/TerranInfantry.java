@@ -116,7 +116,7 @@ public class TerranInfantry {
         }
 
         // Only Terran infantry get inside
-        if (unit.isLoaded() || !unit.isMarine()) {
+        if (unit.isLoaded() || (!unit.isMarine() && !unit.isGhost())) {
             return false;
         }
 

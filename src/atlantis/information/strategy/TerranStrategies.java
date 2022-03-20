@@ -12,7 +12,7 @@ public class TerranStrategies extends AStrategy {
     public static final AStrategy TERRAN_2_Rax_Academy_vP = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vT = new AStrategy();
     public static final AStrategy TERRAN_3_Rax_Academy_vP = new AStrategy();
-    public static final AStrategy TERRAN_MMG = new AStrategy(); // Marine Medic Ghost (with Lockdown)
+    public static final AStrategy TERRAN_MMG_vP = new AStrategy(); // Marine Medic Ghost (with Lockdown)
 
     // Cheese
     public static final AStrategy TERRAN_BBS = new AStrategy();
@@ -41,7 +41,7 @@ public class TerranStrategies extends AStrategy {
 
         TERRAN_3_Rax_Academy_vP.setTerran().setName("3 Rax Academy vP").setGoingRush().setGoingBio();
 
-        TERRAN_MMG.setTerran().setName("MMG").setGoingBio().setGoingRush();
+        TERRAN_MMG_vP.setTerran().setName("MMG vP").setGoingBio().setGoingRush();
 
         // === Cheese =================================
 

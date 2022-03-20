@@ -8,6 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 
 public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
 
@@ -44,7 +45,13 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
             return false;
         }
 
-        if (Decisions.dontProduceVultures() || Count.tanks() <= 0.4 * Count.vultures()) {
+        int tanks = Count.tanks();
+
+        if (Enemy.protoss() && tanks >= 4 && Count.scienceVessels() == 0) {
+            return AGame.canAffordWithReserved(200, 200);
+        }
+
+        if (Decisions.dontProduceVultures() || tanks <= 0.4 * Count.vultures()) {
             return addToQueueIfNotAlreadyThere(AUnitType.Terran_Siege_Tank_Tank_Mode);
         }
 
