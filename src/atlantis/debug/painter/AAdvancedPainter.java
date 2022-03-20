@@ -632,9 +632,9 @@ public class AAdvancedPainter extends APainter {
         ArrayList<Construction> allOrders = ConstructionRequests.all();
         if (!allOrders.isEmpty()) {
             paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
-            for (Construction constructionOrder : allOrders) {
+            for (Construction construction : allOrders) {
                 Color color = null;
-                switch (constructionOrder.status()) {
+                switch (construction.status()) {
                     case CONSTRUCTION_NOT_STARTED:
                         color = Color.Red;
                         break;
@@ -649,13 +649,13 @@ public class AAdvancedPainter extends APainter {
                         break;
                 }
 
-                String status = constructionOrder.status().toString().replace("CONSTRUCTION_", "");
-                String builderDist = A.dist(constructionOrder.builder(), constructionOrder.buildPosition());
-                if (constructionOrder.builder() != null) {
-                    String builder = (constructionOrder.builder().idWithHash() + " " + builderDist);
+                String status = construction.status().toString().replace("CONSTRUCTION_", "");
+                String builderDist = A.dist(construction.builder(), construction.buildPosition());
+                if (construction.builder() != null) {
+                    String builder = (construction.builder().idWithHash() + " " + builderDist);
                     paintSideMessage(
-                            constructionOrder.buildingType().name()
-                            + ", " + constructionOrder.buildPosition()
+                            construction.buildingType().name()
+                            + ", " + construction.buildPosition()
                             + ", " + status + ", " + builder,
                             color,
                             yOffset
@@ -1426,7 +1426,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintTurretsInMain() {
-        ArrayList<APosition> turrets = TerranMissileTurretsForMain.positionsForTurretsNearMainBorder();
+        ArrayList<APosition> turrets = (new TerranMissileTurretsForMain()).positionsForTurretsNearMainBorder();
 //        System.out.println("turrets = " + turrets.size());
         for (APosition turret : turrets) {
 //            System.out.println("turret = " + turret);

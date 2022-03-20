@@ -15,7 +15,7 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
 
     private static final int MIN_TURRETS_PER_BASE = 2;
 
-    public static boolean buildIfNeeded() {
+    public boolean buildIfNeeded() {
         if (!Have.engBay()) {
             return false;
         }
@@ -39,18 +39,18 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
 
     // =========================================================
 
-    private static boolean handleTurretForAllBases() {
+    private boolean handleTurretForAllBases() {
         if (!Enemy.zerg()) {
             return false;
         }
 
         for (AUnit base : Select.ourBases().list()) {
-            int existing = Count.existingOrPlannedBuildingsNear(turret, 8, base.position());
+            int existing = Count.existingOrPlannedBuildingsNear(type(), 8, base.position());
 
             if (existing < MIN_TURRETS_PER_BASE) {
                 APosition minerals = Select.minerals().inRadius(12, base).center();
                 if (minerals != null) {
-                    AddToQueue.withHighPriority(turret, base.translateTilesTowards(4, minerals))
+                    AddToQueue.withHighPriority(type(), base.translateTilesTowards(4, minerals))
                             .setMaximumDistance(12);
                     return true;
                 }
@@ -60,7 +60,7 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
         return false;
     }
 
-    protected static HasPosition turretForNatural() {
+    protected HasPosition turretForNatural() {
         APosition natural = Bases.natural();
         if (natural == null) {
             return null;

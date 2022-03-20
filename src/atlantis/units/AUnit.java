@@ -919,8 +919,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * If this unit is supposed to build something it will return ConstructionOrder object assigned to the
      * construction.
      */
-    public Construction constructionOrder() {
-        return ConstructionRequests.constructionOrderFor(this);
+    public Construction construction() {
+        return ConstructionRequests.constructionFor(this);
     }
 
     /**
@@ -2438,5 +2438,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean shouldRetreat() {
         return RetreatManager.shouldRetreat(this);
+    }
+
+    public boolean isMechanical() {
+        return u.getType().isMechanical();
     }
 }

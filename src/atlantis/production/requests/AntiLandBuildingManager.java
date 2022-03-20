@@ -1,5 +1,6 @@
 package atlantis.production.requests;
 
+import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
@@ -19,7 +20,7 @@ import atlantis.util.We;
 
 public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
-    private static AntiLandBuildingManager instance = null;
+    protected static AntiLandBuildingManager instance = null;
 
     // =========================================================
 
@@ -98,14 +99,14 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
     public HasPosition nextBuildingPosition() {
         int bases = Count.bases();
 
-        if (bases == 0) {
+        if (bases == 0 || Select.main() == null) {
             return null;
         }
 
         // === Main choke ===========================================
 
         if (bases <= 1) {
-            return Select.main().translateTilesTowards(9, Chokes.mainChoke());
+            return Select.main().translateTilesTowards(We.terran() ? 5 : 9, Chokes.mainChoke());
 
 //            return PositionModifier.toPosition(
 //                PositionModifier.MAIN_CHOKE, type(), null, null
@@ -169,9 +170,9 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
             else if (We.protoss()) {
                 return instance = new ProtossPhotonCannonAntiLand();
             }
-//            else if (We.terran()) {
-//                return instance = new AntiLandBuildingManager();
-//            }
+            else if (We.terran()) {
+                return instance = new TerranBunker();
+            }
         }
 
         return instance;

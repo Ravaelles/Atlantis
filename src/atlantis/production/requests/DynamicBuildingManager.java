@@ -1,6 +1,7 @@
 package atlantis.production.requests;
 
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -39,7 +40,7 @@ public abstract class DynamicBuildingManager {
     }
 
     public int existingWithUnfinished() {
-        return Count.ourOfTypeWithUnfinished(type());
+        return Count.ourOfTypeWithUnfinished(type()) + ConstructionRequests.countNotStartedOfType(type());
     }
 
 }

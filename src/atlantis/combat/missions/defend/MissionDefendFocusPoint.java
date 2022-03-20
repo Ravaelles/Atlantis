@@ -36,9 +36,14 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 AUnit mainBase = Select.main();
                 if (mainBase == null) {
-                    AUnit firstBuilding = Select.ourBuildings().first();
+                    AUnit firstUnit = Select.our().first();
+
+                    if (firstUnit == null) {
+                        return null;
+                    }
+
                     return new AFocusPoint(
-                        firstBuilding,
+                        firstUnit,
                         "WeHaveNoBase"
                     );
                 }

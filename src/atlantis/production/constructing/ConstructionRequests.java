@@ -24,7 +24,7 @@ public class ConstructionRequests {
     /**
      * List of all unfinished (started or pending) constructions.
      */
-    protected static ConcurrentLinkedQueue<Construction> constructionOrders = new ConcurrentLinkedQueue<>();
+    protected static ConcurrentLinkedQueue<Construction> constructions = new ConcurrentLinkedQueue<>();
 
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for
@@ -92,11 +92,11 @@ public class ConstructionRequests {
             newConstructionOrder.assignOptimalBuilder();
 
             // Add to list of pending orders
-            constructionOrders.add(newConstructionOrder);
+            constructions.add(newConstructionOrder);
 
 //            A.printStackTrace("AFTER ADDED");
-//            System.out.println("# ADDED, constructionOrders = ");
-//            A.printList(constructionOrders);
+//            System.out.println("# ADDED, constructions = ");
+//            A.printList(constructions);
 
             // Rebuild production queue as new building is about to be built
             ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
@@ -149,10 +149,10 @@ public class ConstructionRequests {
     /**
      * Returns ConstructionOrder object for given builder.
      */
-    public static Construction constructionOrderFor(AUnit builder) {
-        for (Construction constructionOrder : constructionOrders) {
-            if (builder.equals(constructionOrder.builder())) {
-                return constructionOrder;
+    public static Construction constructionFor(AUnit builder) {
+        for (Construction construction : constructions) {
+            if (builder.equals(construction.builder())) {
+                return construction;
             }
         }
 
@@ -170,9 +170,9 @@ public class ConstructionRequests {
      */
     public static int countNotStartedOfType(AUnitType type) {
         int total = 0;
-        for (Construction constructionOrder : constructionOrders) {
-            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                && constructionOrder.buildingType().equals(type)) {
+        for (Construction construction : constructions) {
+            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                && construction.buildingType().equals(type)) {
                 total++;
             }
         }
@@ -187,12 +187,12 @@ public class ConstructionRequests {
     }
 
     public static Construction getNotStartedOfType(AUnitType type) {
-        for (Construction constructionOrder : constructionOrders) {
+        for (Construction construction : constructions) {
             if (
-                constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                    && constructionOrder.buildingType().equals(type)
+                construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                    && construction.buildingType().equals(type)
             ) {
-                return constructionOrder;
+                return construction;
             }
         }
 
@@ -201,10 +201,10 @@ public class ConstructionRequests {
 
     public static int countNotStartedOfTypeInRadius(AUnitType type, double radius, HasPosition position) {
         int total = 0;
-        for (Construction constructionOrder : constructionOrders) {
-            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                && constructionOrder.buildingType().equals(type)
-                && position.distTo(constructionOrder.positionToBuildCenter()) <= radius) {
+        for (Construction construction : constructions) {
+            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                && construction.buildingType().equals(type)
+                && position.distTo(construction.positionToBuildCenter()) <= radius) {
                 total++;
             }
         }
@@ -234,9 +234,9 @@ public class ConstructionRequests {
      */
     public static int countPendingOfType(AUnitType type) {
         int total = 0;
-        for (Construction constructionOrder : constructionOrders) {
-            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                && constructionOrder.buildingType().equals(type)) {
+        for (Construction construction : constructions) {
+            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                && construction.buildingType().equals(type)) {
                 total++;
             }
         }
@@ -284,10 +284,10 @@ public class ConstructionRequests {
      */
     public static ArrayList<Construction> notStartedOfType(AUnitType type) {
         ArrayList<Construction> notStarted = new ArrayList<>();
-        for (Construction constructionOrder : constructionOrders) {
-            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
-                && (type == null || constructionOrder.buildingType().equals(type))) {
-                notStarted.add(constructionOrder);
+        for (Construction construction : constructions) {
+            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                && (type == null || construction.buildingType().equals(type))) {
+                notStarted.add(construction);
             }
         }
         return notStarted;
@@ -295,9 +295,9 @@ public class ConstructionRequests {
 
     public static ArrayList<Construction> notStarted() {
         ArrayList<Construction> notStarted = new ArrayList<>();
-        for (Construction constructionOrder : constructionOrders) {
-            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
-                notStarted.add(constructionOrder);
+        for (Construction construction : constructions) {
+            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+                notStarted.add(construction);
             }
         }
         return notStarted;
@@ -310,12 +310,12 @@ public class ConstructionRequests {
      * @return
      */
     public static ArrayList<Construction> all() {
-        return new ArrayList<>(constructionOrders);
+        return new ArrayList<>(constructions);
     }
 
 //    public static ArrayList<HasPosition> allConstructionOrdersIncludingCached() {
 //        ArrayList<HasPosition> positions = new ArrayList<>();
-//        for (ConstructionOrder order : ConstructionRequests.constructionOrders) {
+//        for (ConstructionOrder order : ConstructionRequests.constructions) {
 //            positions.add(order.positionToBuild());
 //        }
 //        positions.addAll(APositionFinder.cache.values());
@@ -329,26 +329,26 @@ public class ConstructionRequests {
     public static int[] resourcesNeededForNotStarted() {
         int mineralsNeeded = 0;
         int gasNeeded = 0;
-        for (Construction constructionOrder : notStartedOfType(null)) {
-            mineralsNeeded += constructionOrder.buildingType().getMineralPrice();
-            gasNeeded += constructionOrder.buildingType().getGasPrice();
+        for (Construction construction : notStartedOfType(null)) {
+            mineralsNeeded += construction.buildingType().getMineralPrice();
+            gasNeeded += construction.buildingType().getGasPrice();
         }
         int[] result = {mineralsNeeded, gasNeeded};
         return result;
     }
 
-    protected static void removeOrder(Construction constructionOrder) {
-        constructionOrders.remove(constructionOrder);
+    protected static void removeOrder(Construction construction) {
+        constructions.remove(construction);
     }
 
     /**
      * Top-priority request.
      */
     public static void removeAllNotStarted() {
-        for (Iterator<Construction> iterator = ConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
-            Construction constructionOrder = iterator.next();
-            if (!constructionOrder.hasStarted()) {
-                constructionOrder.cancel();
+        for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
+            Construction construction = iterator.next();
+            if (!construction.hasStarted()) {
+                construction.cancel();
             }
         }
     }

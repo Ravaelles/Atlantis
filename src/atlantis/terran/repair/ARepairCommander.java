@@ -2,7 +2,6 @@ package atlantis.terran.repair;
 
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 
 import java.util.Iterator;
 
@@ -39,35 +38,12 @@ public class ARepairCommander {
 
             if (!repairer.isAlive()) {
                 System.err.println("Dead repairer " + repairer.name() + " // " + repairer.hp());
-                ARepairAssignments.removeRepairerOrProtector(repairer);
+                ARepairAssignments.removeRepairer(repairer);
                 iterator.remove();
                 continue;
             }
             ARepairerManager.updateRepairer(repairer);
         }
-    }
-
-    // =========================================================
-    // === Asign repairers if needed ===========================
-    // =========================================================
-
-    protected static int defineOptimalRepairersForBunker(AUnit bunker) {
-        int enemiesNear = Select.enemy().combatUnits().inRadius(10, bunker).count();
-        double optimalNumber;
-
-        if (AGame.isEnemyProtoss()) {
-            optimalNumber = enemiesNear;
-        } else if (AGame.isEnemyTerran()) {
-            optimalNumber = enemiesNear * 0.38;
-        } else {
-            optimalNumber = enemiesNear * 0.4;
-        }
-
-        if (bunker.hp() < 100) {
-            optimalNumber += 2;
-        }
-
-        return Math.min(7, (int) Math.ceil(optimalNumber));
     }
 
 }

@@ -37,35 +37,35 @@ public class ABuilderManager {
     // =========================================================
     
     private static boolean handleConstruction(AUnit builder) {
-        Construction constructionOrder = ConstructionRequests.constructionOrderFor(builder);
-        if (constructionOrder != null) {
+        Construction construction = ConstructionRequests.constructionFor(builder);
+        if (construction != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
-            if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
-                return travelToConstruct(builder, constructionOrder);
-            } else if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
+            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+                return travelToConstruct(builder, construction);
+            } else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
                 // Do nothing - construction is pending
-            } else if (constructionOrder.status() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
+            } else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 // Do nothing - construction is finished
             }
         } else {
-            System.err.println("constructionOrder null for " + builder);
+            System.err.println("construction null for " + builder);
             return false;
         }
         return false;
     }
 
-    private static boolean travelToConstruct(AUnit builder, Construction constructionOrder) {
-        APosition buildPosition = constructionOrder.buildPosition();
-        APosition buildPositionCenter = constructionOrder.positionToBuildCenter();
-        AUnitType buildingType = constructionOrder.buildingType();
+    private static boolean travelToConstruct(AUnit builder, Construction construction) {
+        APosition buildPosition = construction.buildPosition();
+        APosition buildPositionCenter = construction.positionToBuildCenter();
+        AUnitType buildingType = construction.buildingType();
 
         if (builder == null) {
             throw new RuntimeException("Builder empty");
         }
         if (buildPosition == null) {
             System.err.println("buildPosition is null (travelToConstruct " + buildingType + ")");
-            constructionOrder.cancel();
+            construction.cancel();
             return false;
         }
 
@@ -86,12 +86,12 @@ public class ABuilderManager {
 
             if (!builder.isMoving()) {
 //                if (A.everyNthGameFrame(20)) {
-//                    constructionOrder.setPositionToBuild(newPosition);
+//                    construction.setPositionToBuild(newPosition);
 //                }
 
 //                    GameSpeed.changeSpeedTo(60);
                 builder.move(
-                    constructionOrder.positionToBuildCenter(),
+                    construction.positionToBuildCenter(),
                     Actions.MOVE_BUILD,
                     "Build " + buildingType.name() + distString,
                     true
@@ -108,7 +108,7 @@ public class ABuilderManager {
         // be immediate as unit is standing just right there
 
         else {
-            return issueBuildOrder(builder, buildingType, constructionOrder);
+            return issueBuildOrder(builder, buildingType, construction);
         }
     }
 

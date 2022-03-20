@@ -3,7 +3,7 @@ package atlantis.information.strategy;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-public class OurStrategyManager {
+public class OurStrategyChooser {
 
     /**
      * Choose initial strategy and therefore the Build Order.
@@ -30,7 +30,8 @@ public class OurStrategyManager {
 //        return TerranStrategies.TERRAN_1_Base_Vultures;
 
         if (Enemy.protoss()) {
-            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
+            return TerranStrategies.TERRAN_MMG;
+//            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_Nada_2_Fac;
         }

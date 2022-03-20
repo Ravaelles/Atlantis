@@ -12,12 +12,16 @@ import atlantis.information.decisions.Decisions;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
+import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 
 import static atlantis.units.AUnitType.*;
 
@@ -25,11 +29,11 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
         if (A.everyNthGameFrame(61)) {
-            TerranMissileTurretsForMain.buildIfNeeded();
-            TerranMissileTurretsForNonMain.buildIfNeeded();
+            (new TerranMissileTurretsForMain()).buildIfNeeded();
+            (new TerranMissileTurretsForNonMain()).buildIfNeeded();
 //            OffensiveTerranMissileTurrets.buildIfNeeded();
 //            TerranBunker.handleOffensiveBunkers();
-            TerranBunker.handleDefensiveBunkers();
+            TerranBunker.get().handleDefensiveBunkers();
         }
 
         comsats();
@@ -56,8 +60,12 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             if (haveNotExistingOrPlanned(Terran_Starport)) {
                 AddToQueue.withHighPriority(Terran_Starport);
             }
-            AddToQueue.withHighPriority(Terran_Science_Facility);
-            AddToQueue.withHighPriority(Terran_Control_Tower);
+            if (haveNotExistingOrPlanned(Terran_Science_Facility)) {
+                AddToQueue.withHighPriority(Terran_Science_Facility);
+            }
+            if (haveNotExistingOrPlanned(Terran_Control_Tower)) {
+                AddToQueue.withHighPriority(Terran_Control_Tower);
+            }
         }
     }
 

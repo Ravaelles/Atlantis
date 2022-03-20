@@ -35,21 +35,21 @@ public class ARepairerManager {
         if (target == null || !target.isAlive()) {
             repairer.setTooltipTactical("TargetRIP");
 //            System.err.println("Invalid repair target: " + target + ", alive:" + (target != null ? target.isAlive() : "-"));
-            ARepairAssignments.removeRepairerOrProtector(repairer);
+            ARepairAssignments.removeRepairer(repairer);
             return false;
         }
 
         // Target is totally healthy
         if (!target.isWounded()) {
             repairer.setTooltipTactical("Repaired!");
-            ARepairAssignments.removeRepairerOrProtector(repairer);
+            ARepairAssignments.removeRepairer(repairer);
             return handleRepairCompletedTryFindingNewTarget(repairer);
         }
 
         // Target is wounded
         if (!repairer.isRepairing() && target.isAlive() && A.hasMinerals(5)) {
             if (repairer.lastActionMoreThanAgo(30 * 3)) {
-                ARepairAssignments.removeRepairerOrProtector(repairer);
+                ARepairAssignments.removeRepairer(repairer);
                 repairer.setTooltipTactical("IdleGTFO");
                 return false;
             }
@@ -68,7 +68,7 @@ public class ARepairerManager {
 
         if (!ARepairAssignments.isProtector(repairer) && repairer.lastActionMoreThanAgo(30 * 2)) {
             System.err.println("Idle repairer, remove. Target was = " + target + " // " + target.hp() + " // " + target.isAlive());
-            ARepairAssignments.removeRepairerOrProtector(repairer);
+            ARepairAssignments.removeRepairer(repairer);
             repairer.setTooltipTactical("GoHome");
         }
         return false;
@@ -114,7 +114,7 @@ public class ARepairerManager {
      * try finding new repairable unit.
      */
     private static boolean handleRepairCompletedTryFindingNewTarget(AUnit repairer) {
-        ARepairAssignments.removeRepairerOrProtector(repairer);
+        ARepairAssignments.removeRepairer(repairer);
 
         AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(15, repairer).first();
         if (closestUnitNeedingRepair != null && A.hasMinerals(5)) {
@@ -173,11 +173,17 @@ public class ARepairerManager {
         }
     }
 
-    public static boolean canSafelyAbandonRepairTarget(AUnit repairer) {
-        AUnit target = repairer.target();
+    public static boolean canSafelyAbandonUnitToBeRepaired(AUnit repairer) {
+        AUnit target = ARepairAssignments.getUnitToRepairFor(repairer);
+        if (target == null) {
+            target = ARepairAssignments.getUnitToProtectFor(repairer);
+        }
 
         if (target == null || target.isNeutral() || !target.isAlive()) {
-            return false;
+//            System.err.println("repairer = " + repairer);
+//            System.err.println("target = " + target);
+//            A.printStackTrace("WTF, why here?");
+            return true;
         }
 
         // Fix: Sometimes minerals are returned
@@ -189,8 +195,10 @@ public class ARepairerManager {
             return false;
         }
 
-        Selection enemies = target.enemiesNear().havingWeapon();
+        Selection enemies = target.enemiesNear().canAttack(target, 14);
+        int workersNearby = target.friendsNear().workers().inRadius(1.5, target).count();
 
-        return enemies.isEmpty() || enemies.count() <= target.friendsNear().workers().inRadius(1, target).count();
+        return enemies.isEmpty() || (workersNearby >= 2 && enemies.count() < workersNearby);
+//        return target.enemiesNear().canAttack(target, 14).isEmpty();
     }
 }

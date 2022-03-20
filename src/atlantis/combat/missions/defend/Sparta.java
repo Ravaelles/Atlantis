@@ -299,6 +299,10 @@ public class Sparta extends MissionDefend {
     }
 
     public static boolean canUseSpartaMission() {
+        if (We.terran()) {
+            return false;
+        }
+
         if (We.zerg() && Enemy.protoss()) {
             return false;
         }

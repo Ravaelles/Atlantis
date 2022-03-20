@@ -9,7 +9,7 @@ import atlantis.units.select.Have;
 
 public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMain {
 
-    public static boolean buildIfNeeded() {
+    public boolean buildIfNeeded() {
         if (!Have.engBay()) {
             return false;
         }
@@ -23,16 +23,16 @@ public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMai
 
     // =========================================================
 
-    protected static boolean handleReinforceMissionAttack() {
+    protected boolean handleReinforceMissionAttack() {
         HasPosition squadCenter = Squad.alphaCenter();
         if (squadCenter == null) {
             return false;
         }
 
-        return handleReinforcePosition(squadCenter, 14);
+        return TerranMissileTurret.get().handleReinforcePosition(squadCenter, 14);
     }
 
-    protected static boolean handleReinforceMissionContain() {
+    protected boolean handleReinforceMissionContain() {
         APosition focusPoint = Missions.globalMission().focusPoint();
         if (focusPoint == null || !Have.main()) {
             return false;
@@ -45,7 +45,7 @@ public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMai
         return handleReinforcePosition(containReinforcePoint(focusPoint), 9);
     }
 
-    protected static HasPosition containReinforcePoint(APosition focusPoint) {
+    protected HasPosition containReinforcePoint(APosition focusPoint) {
         APosition point = focusPoint;
 //        FoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
 

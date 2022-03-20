@@ -63,17 +63,12 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
     }
 
     protected static boolean shouldChangeMissionToAttack() {
-        if (A.supplyUsed() >= 180) {
+        if (A.supplyUsed() >= 190) {
             if (DEBUG) reason = "Supply blocked";
             return true;
         }
 
-        if (ArmyStrength.weAreMuchStronger()) {
-            if (DEBUG) reason = "Much stronger";
-            return true;
-        }
-
-        if (A.resourcesBalance() >= 410 && ArmyStrength.weAreStronger()) {
+        if (A.supplyUsed() >= 80 && ArmyStrength.ourArmyRelativeStrength() >= 300) {
             if (DEBUG) reason = "Resources balance good";
             return true;
         }

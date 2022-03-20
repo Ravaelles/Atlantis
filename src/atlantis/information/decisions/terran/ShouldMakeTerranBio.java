@@ -10,25 +10,28 @@ import atlantis.units.select.Count;
 
 public class ShouldMakeTerranBio {
 
+    private static int infantry;
+
     public static boolean should() {
-        int infantry = Count.infantry();
+        infantry = Count.infantry();
 
         if (EnemyInfo.isDoingEarlyGamePush()) {
             return wantsToReturnTrue();
         }
 
         if (OurStrategy.get().goingBio()) {
-            if (Count.tanks() <= 1 && infantry <= 15) {
-                return wantsToReturnTrue();
-            }
-
             if (infantry <= 30) {
                 return wantsToReturnTrue();
             }
+
+//            if (Count.tanks() <= 1 && infantry <= 15) {
+//                return wantsToReturnTrue();
+//            }
         }
 
         if (
-            (
+            !GamePhase.isEarlyGame()
+                || (
                 !Decisions.maxFocusOnTanks()
                     &&
                     (
@@ -36,7 +39,6 @@ public class ShouldMakeTerranBio {
                             && (infantry <= 18 || AGame.canAffordWithReserved(50, 0))
                     )
             )
-                || !GamePhase.isEarlyGame()
         ) {
             return wantsToReturnTrue();
         }
@@ -45,13 +47,15 @@ public class ShouldMakeTerranBio {
     }
 
     private static boolean wantsToReturnTrue() {
-        int infantry = Count.infantry();
-
-        if (infantry <= 12) {
+        if (infantry <= 3) {
             return true;
         }
 
-        return AGame.canAffordWithReserved(60, 0);
+//        if (infantry <= 12) {
+//            return true;
+//        }
+
+        return AGame.canAffordWithReserved(50, 0);
     }
 
 }

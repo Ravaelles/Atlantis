@@ -59,7 +59,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
-        APainter.paintCircle(position, 6, Color.Red);
+//        APainter.paintCircle(position, 6, Color.Red);
 
         if (builder == null) {
             _CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";

@@ -21,7 +21,7 @@ public class AUnitBeingReparedManager {
         }
 
         if (!unitBeingRepared.isWounded()) {
-            ARepairAssignments.removeRepairerOrProtector(repairer);
+            ARepairAssignments.removeRepairer(repairer);
             return false;
         }
 

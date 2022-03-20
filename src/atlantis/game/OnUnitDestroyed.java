@@ -17,7 +17,7 @@ public class OnUnitDestroyed {
 
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {
-            ARepairAssignments.removeRepairerOrProtector(unit);
+            ARepairAssignments.removeRepairer(unit);
             ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
             if (!unit.type().isGasBuilding()) {
                 Atlantis.LOST++;

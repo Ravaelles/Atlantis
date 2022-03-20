@@ -13,6 +13,9 @@ import atlantis.util.Enemy;
 
 public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
+    private static boolean DEBUG = false;
+//    private static boolean DEBUG = true;
+
     protected static boolean saveForFactory() {
         if (!A.hasMinerals(200)) {
             if (
@@ -46,6 +49,10 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     protected static boolean medics() {
         if (!Decisions.shouldMakeTerranBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
             return false;
+        }
+
+        if (A.hasGas(25) && A.hasMinerals(50) && Count.medics() == 0 && Count.marines() > 0) {
+            return true;
         }
 
         if (saveForFactory()) {
@@ -88,51 +95,28 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     protected static boolean marines() {
-        if (!Decisions.shouldMakeTerranBio()) {
-//            System.out.println("Marines - A");
-            return false;
-        }
-
-        if (saveForFactory()) {
-//            System.out.println("Marines - B");
-            return false;
-        }
-
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) {
             return false;
         }
 
-        if (A.supplyUsed() >= 40 && !AGame.canAffordWithReserved(80, 0)) {
-//            System.out.println("Marines - D");
+        if (!Decisions.shouldMakeTerranBio()) {
+            if (DEBUG) System.out.println("Marines - Dont - shouldNOTMakeTerranBio");
             return false;
         }
 
-//        if (Count.ourCombatUnits() > 25) {
-            if (!AGame.canAffordWithReserved(80, 0)) {
-//                System.out.println("Marines - E");
-                return false;
-            }
-//        }
+        if (saveForFactory()) {
+            if (DEBUG) System.out.println("Marines - Dont - saveForFactory");
+            return false;
+        }
 
-//        if (
-//                A.hasGas(30)
-//                        && Count.ofType(AUnitType.Terran_Academy) >= 1
-//                        && Count.marines() >= 4
-//                        && Count.medics() <= 2
-//        ) {
-////            System.out.println("Marines - F, gas = " + AGame.gas() + " // " + A.hasGas(30));
-////            System.out.println(Atlantis.game().self().getRace() + " // " + Atlantis.game().self().getName());
-////            System.out.println(Atlantis.game().self().minerals() + " // " + Atlantis.game().self().gatheredMinerals()+ " // " + Atlantis.game().self().gatheredGas() + " / " + Atlantis.game().self().gatheredGas());
-////            System.out.println("-------------------");
-////            System.out.println(Atlantis.game().enemy().getRace() + " // " + Atlantis.game().enemy().getName());
-////            System.out.println(Atlantis.game().enemy().minerals() + " // " + Atlantis.game().enemy().gatheredGas());
-//            return;
-//        }
+        if (A.supplyUsed() >= 32 && !AGame.canAffordWithReserved(80, 0)) {
+            if (DEBUG) System.out.println("Marines - Dont - cantNOTAffordWithReserved");
+            return false;
+        }
 
-//        if (Enemy.zerg() && Count.marines() == 0) {
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {
-            return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 4);
+            return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 1);
 //            AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
 //            return;
         }

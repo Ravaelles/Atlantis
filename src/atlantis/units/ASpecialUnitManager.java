@@ -25,14 +25,11 @@ public class ASpecialUnitManager {
             return true;
         }
 
-        if (unit.isTank()) {
-            return TerranTank.update(unit);
+        if (unit.isTank() && TerranTank.update(unit)) {
+            return true;
         }
-        else if (unit.is(AUnitType.Terran_Medic)) {
-            return TerranMedic.update(unit);
-        }
-        else if (unit.is(AUnitType.Terran_Ghost)) {
-            return TerranMedic.update(unit);
+        else if (unit.is(AUnitType.Terran_Medic) && (new TerranMedic()).update(unit)) {
+            return true;
         }
 
         // === Protoss ========================================
@@ -73,14 +70,17 @@ public class ASpecialUnitManager {
             return true;
         }
 
-        if (unit.isVulture()) {
-            return TerranVulture.update(unit);
-        } else if (unit.is(AUnitType.Terran_Science_Vessel)) {
-            return TerranScienceVessel.update(unit);
+        if (unit.isVulture() && TerranVulture.update(unit)) {
+            return true;
         }
-
-        else if (unit.isTerranInfantry()) {
-            return TerranInfantry.update(unit);
+        else if (unit.is(AUnitType.Terran_Science_Vessel) && TerranScienceVessel.update(unit)) {
+            return true;
+        }
+        else if (unit.is(AUnitType.Terran_Ghost) && (new TerranGhost()).update(unit)) {
+            return true;
+        }
+        else if (unit.isTerranInfantry() && TerranInfantry.update(unit)) {
+            return true;
         }
 
         // === Protoss ========================================
@@ -95,8 +95,8 @@ public class ASpecialUnitManager {
 
         // === Zerg ========================================
 
-        else if (unit.is(AUnitType.Zerg_Overlord)) {
-            return ZergOverlordManager.update(unit);
+        else if (unit.is(AUnitType.Zerg_Overlord) && ZergOverlordManager.update(unit)) {
+            return true;
         }
 
         // =========================================================

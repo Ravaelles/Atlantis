@@ -21,12 +21,12 @@ public class AConstructionManager {
      * finished objects etc.
      */
     public static void update() {
-        for (Iterator<Construction> iterator = ConstructionRequests.constructionOrders.iterator(); iterator.hasNext(); ) {
-            Construction constructionOrder =  iterator.next();
-            checkForConstructionStatusChange(constructionOrder, constructionOrder.construction());
-            checkForBuilderStatusChange(constructionOrder);
-            handleConstructionUnderAttack(constructionOrder);
-            handleConstructionThatLooksBugged(constructionOrder);
+        for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
+            Construction construction =  iterator.next();
+            checkForConstructionStatusChange(construction, construction.construction());
+            checkForBuilderStatusChange(construction);
+            handleConstructionUnderAttack(construction);
+            handleConstructionThatLooksBugged(construction);
         }
     }
 
@@ -35,24 +35,24 @@ public class AConstructionManager {
     /**
      * If builder has died when constructing, replace him with new one.
      */
-    private static void checkForBuilderStatusChange(Construction constructionOrder) {
+    private static void checkForBuilderStatusChange(Construction construction) {
 
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
         if (We.terran()) {
-            AUnit builder = constructionOrder.builder();
+            AUnit builder = construction.builder();
 
             if (
                     (builder == null || !builder.exists() || !builder.isAlive())
             ) {
-                constructionOrder.assignOptimalBuilder();
+                construction.assignOptimalBuilder();
 
-                builder = constructionOrder.builder();
+                builder = construction.builder();
                 if (
-                        builder != null && constructionOrder.construction() != null
-                                && constructionOrder.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
+                        builder != null && construction.construction() != null
+                                && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
                 ) {
-                    builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(constructionOrder.construction());
+                    builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
                     builder.setTooltipTactical("Resume");
                 }
             }
@@ -101,13 +101,13 @@ public class AConstructionManager {
 
                 // Builder did not change it's type so it's not Zerg Extractor case
                 else {
-//                    System.out.println("getBuildType = " + constructionOrder.getBuilder().getBuildType());
-//                    System.out.println("getBuildUnit = " + constructionOrder.getBuilder().getBuildUnit());
-//                    System.out.println("getTarget = " + constructionOrder.getBuilder().getTarget());
-//                    System.out.println("getOrderTarget = " + constructionOrder.getBuilder().getOrderTarget());
-//                    System.out.println("Constr = " + constructionOrder.getConstruction());
-//                    System.out.println("Exists = " + constructionOrder.getBuilder().exists());
-//                    System.out.println("Completed = " + constructionOrder.getBuilder().isCompleted());
+//                    System.out.println("getBuildType = " + construction.getBuilder().getBuildType());
+//                    System.out.println("getBuildUnit = " + construction.getBuilder().getBuildUnit());
+//                    System.out.println("getTarget = " + construction.getBuilder().getTarget());
+//                    System.out.println("getOrderTarget = " + construction.getBuilder().getOrderTarget());
+//                    System.out.println("Constr = " + construction.getConstruction());
+//                    System.out.println("Exists = " + construction.getBuilder().exists());
+//                    System.out.println("Completed = " + construction.getBuilder().isCompleted());
                     AUnit buildUnit = builder.buildUnit();
                     if (buildUnit != null) {
                         building = buildUnit;
@@ -161,17 +161,17 @@ public class AConstructionManager {
      */
     public static boolean isBuilder(AUnit worker) {
         if (worker.isConstructing() || 
-                (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionOrderFor(worker) != null)) {
+                (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)) {
             return true;
         }
 
-        for (Construction constructionOrder : ConstructionRequests.constructionOrders) {
-            if (worker.equals(constructionOrder.builder())) {
+        for (Construction construction : ConstructionRequests.constructions) {
+            if (worker.equals(construction.builder())) {
                 
                 // Pending Protoss buildings allow builder to go away
                 // Terran and Zerg need to use the worker until construction is finished
                 return !AGame.isPlayingAsProtoss() || !ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                        .equals(constructionOrder.status());
+                        .equals(construction.status());
             }
         }
 
@@ -189,12 +189,12 @@ public class AConstructionManager {
         if (AGame.isPlayingAsZerg()) {
             ArrayList<Construction> allOrders = ConstructionRequests.all();
             if (!allOrders.isEmpty()) {
-                for (Construction constructionOrder : allOrders) {
-                    AUnit builder = constructionOrder.builder();
-                    if (constructionOrder.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                for (Construction construction : allOrders) {
+                    AUnit builder = construction.builder();
+                    if (construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                         if (builder != null) {
-                            if (builder.is(constructionOrder.buildingType())) {
-                                constructionOrder.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+                            if (builder.is(construction.buildingType())) {
+                                construction.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
                             }
                         }
                     }
@@ -244,7 +244,7 @@ public class AConstructionManager {
     public static ArrayList<AUnit> builders() {
         ArrayList<AUnit> units = new ArrayList<>();
 
-        for (Construction order : ConstructionRequests.constructionOrders) {
+        for (Construction order : ConstructionRequests.constructions) {
             if (order.builder() != null && order.builder().isAlive()) {
                 units.add(order.builder());
             }

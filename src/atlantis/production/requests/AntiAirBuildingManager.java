@@ -12,7 +12,7 @@ import atlantis.util.We;
 
 public abstract class AntiAirBuildingManager extends DynamicBuildingManager {
 
-    private static AntiAirBuildingManager instance = null;
+    protected static AntiAirBuildingManager instance = null;
 
     // =========================================================
 

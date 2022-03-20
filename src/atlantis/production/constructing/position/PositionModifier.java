@@ -39,23 +39,23 @@ public class PositionModifier {
     // =========================================================
 
     public static APosition toPosition(
-        String modifier, AUnitType building, AUnit builder, Construction constructionOrder
+        String modifier, AUnitType building, AUnit builder, Construction construction
     ) {
         AUnit main = Select.main();
 
         // === Bases ===========================================
 
         if (modifier.equals(MAIN) ) {
-            if (constructionOrder == null || constructionOrder.maxDistance() < 0) {
-                constructionOrder.setMaxDistance(40);
+            if (construction == null || construction.maxDistance() < 0) {
+                construction.setMaxDistance(40);
             }
-            return ASpecialPositionFinder.findPositionForBase_nearMainBase(building, builder, constructionOrder);
+            return ASpecialPositionFinder.findPositionForBase_nearMainBase(building, builder, construction);
         }
         else if (modifier.equals(NATURAL)) {
-            if (constructionOrder == null || constructionOrder.maxDistance() < 0) {
-                constructionOrder.setMaxDistance(30);
+            if (construction == null || construction.maxDistance() < 0) {
+                construction.setMaxDistance(30);
             }
-            return ASpecialPositionFinder.findPositionForBase_natural(building, builder, constructionOrder);
+            return ASpecialPositionFinder.findPositionForBase_natural(building, builder, construction);
         }
 
         if (main == null) {
@@ -68,8 +68,8 @@ public class PositionModifier {
         // === Chokes ===========================================
 
         if (modifier.equals(MAIN_CHOKE)) {
-            if (constructionOrder != null) {
-                constructionOrder.setMaxDistance(6);
+            if (construction != null) {
+                construction.setMaxDistance(6);
             }
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
@@ -77,8 +77,8 @@ public class PositionModifier {
             }
         }
         else if (modifier.equals(NATURAL_CHOKE)) {
-            if (constructionOrder != null) {
-                constructionOrder.setMaxDistance(6);
+            if (construction != null) {
+                construction.setMaxDistance(6);
             }
             AChoke chokepointForNatural = Chokes.natural(main.position());
             if (chokepointForNatural != null && main != null) {

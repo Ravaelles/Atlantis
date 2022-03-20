@@ -1,9 +1,9 @@
 package atlantis.terran.repair;
 
-import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.units.AUnit;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class MaxRepairers {
 
@@ -12,43 +12,36 @@ public class MaxRepairers {
     // =========================================================
 
     public static boolean tooManyRepairers(AUnit unit) {
-        return ARepairAssignments.countRepairersForUnit(unit) >= optimalRepairersFor(unit);
-    }
-
-    public static int optimalRepairersFor(AUnit unit) {
-        int alreadyAssigned = ARepairAssignments.countRepairersForUnit(unit) + ARepairAssignments.countProtectorsFor(unit);
-        int repairersNeeded = 1;
-
-        // === Bunker - very special case ========================================
-
-        if (unit.isBunker()) {
-            int shouldHaveThisManyRepairers = ARepairCommander.defineOptimalRepairersForBunker(unit);
-            if (shouldHaveThisManyRepairers > 0) {
-                unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
-                AProtectorManager.assignProtectorsFor(unit, shouldHaveThisManyRepairers - repairersNeeded);
-            }
-            else {
-                unit.removeTooltip();
-            }
-        }
-        else if (unit.isMissileTurret()) {
-            int enemies = unit.enemiesNear().air().inRadius(11, unit).count();
-
-            if (Have.main() && Select.main().distToLessThan(unit, 14)) {
-                return A.inRange(3, enemies, 5);
-            }
-
-            return A.inRange(2, (int) (enemies / 1.5), 5);
-        }
-        else if (unit.isTank()) {
-            return 3;
-        }
-
-        return Math.max(0, repairersNeeded - alreadyAssigned);
+        return ARepairAssignments.countRepairersForUnit(unit) >= RepairerAssigner.optimalRepairersFor(unit);
     }
 
     public static boolean usingMoreRepairersThanAllowed() {
         return ARepairAssignments.countTotalRepairers() > MAX_REPAIRERS_AT_ONCE;
     }
 
+    protected static int optimalRepairersForBunker(AUnit bunker) {
+        Selection potentialEnemies = Select.enemy().combatUnits().inRadius(18, bunker);
+
+        if (potentialEnemies.empty()) {
+            return 0;
+        }
+
+        int enemiesVeryNear = potentialEnemies.inRadius(10, bunker).count();
+        int enemiesQuiteFar = potentialEnemies.count() - enemiesVeryNear;
+        double optimalNumber;
+
+        if (AGame.isEnemyProtoss()) {
+            optimalNumber = enemiesVeryNear + enemiesQuiteFar * 0.2;
+        } else if (AGame.isEnemyTerran()) {
+            optimalNumber = enemiesVeryNear * 0.38 + enemiesQuiteFar * 0.1;
+        } else {
+            optimalNumber = enemiesVeryNear * 0.4 + enemiesQuiteFar * 0.15;
+        }
+
+        if (bunker.hp() < 250) {
+            optimalNumber += 2;
+        }
+
+        return Math.min(6, (int) Math.ceil(optimalNumber));
+    }
 }

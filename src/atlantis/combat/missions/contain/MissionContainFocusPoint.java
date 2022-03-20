@@ -45,7 +45,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                     AUnit nearestCombatBuilding = EnemyUnits.foggedUnits()
                         .combatBuildings(false)
                         .nearestTo(Select.main());
-                    if (nearestCombatBuilding != null) {
+                    if (nearestCombatBuilding != null && nearestCombatBuilding.hasPosition()) {
                         AChoke choke = Chokes.nearestChoke(nearestCombatBuilding);
                         if (choke != null) {
                             return new AFocusPoint(

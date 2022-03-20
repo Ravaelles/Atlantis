@@ -25,22 +25,22 @@ public class APositionFinder {
     /**
      * Returns build position for next building of given type.
      */
-    public static APosition findPositionForNew(AUnit builder, AUnitType building, Construction constructionOrder) {
-        HasPosition near = constructionOrder != null ? constructionOrder.nearTo() : null;
-        double maxDistance = constructionOrder != null ? constructionOrder.maxDistance() : 35;
+    public static APosition findPositionForNew(AUnit builder, AUnitType building, Construction construction) {
+        HasPosition near = construction != null ? construction.nearTo() : null;
+        double maxDistance = construction != null ? construction.maxDistance() : 35;
 
-        String modifier = constructionOrder.productionOrder().getModifier();
+        String modifier = construction.productionOrder().getModifier();
         if (modifier != null) {
 //            AAdvancedPainter.paintCircleFilled(
-//                PositionModifier.toPosition(modifier, building, builder, constructionOrder),
+//                PositionModifier.toPosition(modifier, building, builder, construction),
 //                24, Color.Brown
 //            );
 //            GameSpeed.pauseGame();
-            near = PositionModifier.toPosition(modifier, building, builder, constructionOrder);
+            near = PositionModifier.toPosition(modifier, building, builder, construction);
         }
 
 
-        return findPositionForNew(builder, building, constructionOrder, near, maxDistance);
+        return findPositionForNew(builder, building, construction, near, maxDistance);
     }
 
     /**
@@ -50,11 +50,11 @@ public class APositionFinder {
      */
     public static APosition findPositionForNew(
             AUnit builder, AUnitType building,
-            Construction constructionOrder,
+            Construction construction,
             HasPosition nearTo, double maxDistance
     ) {
 //        totalRequests++;
-        constructionOrder.setMaxDistance(maxDistance);
+        construction.setMaxDistance(maxDistance);
 
         // =========================================================
         // GAS extracting buildings
@@ -73,21 +73,21 @@ public class APositionFinder {
                 }
             }
 
-            return ASpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
+            return ASpecialPositionFinder.findPositionForBase(building, builder, construction);
         }
 
         // =========================================================
         // BUNKER
 
         else if (building.isBunker()) {
-            return TerranBunkerPositionFinder.findPosition(builder, constructionOrder);
+            return TerranBunkerPositionFinder.findPosition(builder, construction);
         }
 
         // =========================================================
         // Creep colony
 
         else if (building.is(AUnitType.Zerg_Creep_Colony)) {
-            return ZergCreepColony.findPosition(building, builder, constructionOrder);
+            return ZergCreepColony.findPosition(building, builder, construction);
         } 
 
         // =========================================================

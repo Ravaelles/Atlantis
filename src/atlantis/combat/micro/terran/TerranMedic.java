@@ -34,13 +34,13 @@ public class TerranMedic extends Microable {
     private static final HashMap<AUnit, AUnit> medicsToAssignments = new HashMap<>();
     private static final HashMap<AUnit, AUnit> assignmentsToMedics = new HashMap<>();
 
-    public static Class[] macroManagers = new Class[] {
+    public Class[] macroManagers = new Class[] {
         BodyBlock.class,
     };
 
     // =========================================================
 
-    public static boolean update(AUnit medic) {
+    public boolean update(AUnit medic) {
         if (medic.hp() <= 17 && AAvoidEnemies.avoidEnemiesIfNeeded(medic)) {
             return true;
         }

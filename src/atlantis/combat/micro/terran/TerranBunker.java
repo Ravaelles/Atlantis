@@ -1,28 +1,32 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.missions.Missions;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.strategy.EnemyStrategy;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
+import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
-import bwapi.Color;
+import atlantis.util.We;
 
 import static atlantis.production.AbstractDynamicUnits.addToQueueToMaxAtATime;
 
-public class TerranBunker {
+public class TerranBunker extends AntiLandBuildingManager {
 
-    public static final AUnitType bunker = AUnitType.Terran_Bunker;
+    @Override
+    public AUnitType type() {
+        return AUnitType.Terran_Bunker;
+    }
 
 //    public static boolean handleOffensiveBunkers() {
 ////        if (true) return false;
@@ -50,7 +54,8 @@ public class TerranBunker {
 //        return false;
 //    }
 
-    public static int expectedBunkers() {
+    @Override
+    public int expected() {
         if (EnemyInfo.isDoingEarlyGamePush()) {
             return Enemy.zerg() ? 2 : 1;
         }
@@ -58,17 +63,27 @@ public class TerranBunker {
         return 1;
     }
 
-    public static boolean handleDefensiveBunkers() {
+    @Override
+    public boolean handleBuildNew() {
+        if (!Have.barracks()) {
+            return false;
+        }
+
+        return super.handleBuildNew();
+    }
+
+    public boolean handleDefensiveBunkers() {
         if (!EnemyInfo.isDoingEarlyGamePush()) {
             return false;
         }
 
-        int existingBunkers = Count.existingOrInProductionOrInQueue(bunker);
-        int expectedBunkers = expectedBunkers();
+        int existingBunkers = Count.existingOrInProductionOrInQueue(type());
+        int expectedBunkers = expected();
         if (existingBunkers < expectedBunkers) {
             int neededBunkers = expectedBunkers - existingBunkers;
+
             for (int i = 0; i < neededBunkers; i++) {
-                addToQueueToMaxAtATime(bunker, neededBunkers);
+                addToQueueToMaxAtATime(type(), neededBunkers);
 //                System.err.println("Requested BUNKER");
             }
             return neededBunkers > 0;
@@ -96,7 +111,7 @@ public class TerranBunker {
 //        }
 //    }
 
-    private static boolean handleMainBunker() {
+    private boolean handleMainBunker() {
         if (!Enemy.terran() && AGame.timeSeconds() >= 300 && Count.bunkers() < 2) {
             AChoke choke = Chokes.mainChoke();
             if (choke != null) {
@@ -120,7 +135,7 @@ public class TerranBunker {
 //        return reinforcePosition(choke.translateTilesTowards(5, Select.main()), false);
     }
 
-    private static boolean handleNaturalBunker() {
+    private boolean handleNaturalBunker() {
         if (Count.bases() < 2) {
             return false;
         }
@@ -134,7 +149,7 @@ public class TerranBunker {
         return false;
     }
 
-    private static boolean handleMissionContain() {
+    private boolean handleMissionContain() {
         if (!Missions.isGlobalMissionContain()) {
             return false;
         }
@@ -147,17 +162,27 @@ public class TerranBunker {
         return reinforcePosition(focusPoint, true);
     }
 
-    private static boolean reinforcePosition(HasPosition position, boolean checkReservedMinerals) {
-        if (!Have.existingOrPlannedOrInQueue(bunker, position, 12)) {
+    private boolean reinforcePosition(HasPosition position, boolean checkReservedMinerals) {
+        if (!Have.existingOrPlannedOrInQueue(type(), position, 12)) {
 //            if (checkReservedMinerals ? AGame.canAffordWithReserved(84, 0) : AGame.canAfford(70, 0)) {
             if (checkReservedMinerals ? AGame.canAffordWithReserved(84, 0) : Count.ourCombatUnits() >= 2) {
-                System.out.println("Request bunker");
-                AddToQueue.withTopPriority(bunker, position);
+                System.out.println("Request type()");
+                AddToQueue.withTopPriority(type(), position);
                 return true;
             }
         }
 
         return false;
+    }
+
+    // =========================================================
+
+    public static TerranBunker get() {
+        if (instance == null) {
+            return (TerranBunker) (instance = new TerranBunker());
+        }
+
+        return (TerranBunker) instance;
     }
 
 }

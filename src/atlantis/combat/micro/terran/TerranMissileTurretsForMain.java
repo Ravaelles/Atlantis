@@ -33,7 +33,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
     // =========================================================
 
-    public static boolean buildIfNeeded() {
+    public boolean buildIfNeeded() {
         if (A.supplyUsed() <= 20) {
             return false;
         }
@@ -62,7 +62,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
     // =========================================================
 
-    private static boolean turretsForMainBase() {
+    private boolean turretsForMainBase() {
         APosition forMainBase = positionForMainBaseTurret();
 
         if (
@@ -76,7 +76,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         return false;
     }
 
-    private static int mainBaseTurrets() {
+    private int mainBaseTurrets() {
         if (Enemy.zerg()) {
             return (int) Math.min(6, (A.seconds() / 100));
         }
@@ -88,7 +88,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         return 1;
     }
 
-    private static boolean turretForMainChoke() {
+    private boolean turretForMainChoke() {
         APosition place = Chokes.mainChoke().translateTilesTowards(5, Select.main());
         if (place != null) {
             if (Count.existingOrPlannedBuildingsNear(turret, 5, place) == 0) {
@@ -100,7 +100,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         return false;
     }
 
-    private static boolean turretsForMainRegionBorders() {
+    private boolean turretsForMainRegionBorders() {
         if (true) {
             return false;
         }
@@ -123,7 +123,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
     // =========================================================
 
-    private static APosition positionForMainBaseTurret() {
+    private APosition positionForMainBaseTurret() {
         return cachePosition.get(
                 "positionForMainBaseTurret",
                 30,
@@ -140,7 +140,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         );
     }
 
-    public static ArrayList<APosition> positionsForTurretsNearMainBorder() {
+    public ArrayList<APosition> positionsForTurretsNearMainBorder() {
         return cacheList.get(
             "positionsForTurretsNearMainBorder",
             30,

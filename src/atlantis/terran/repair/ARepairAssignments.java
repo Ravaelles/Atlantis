@@ -58,23 +58,27 @@ public class ARepairAssignments {
         return null;
     }
 
-    public static void removeRepairerOrProtector(AUnit repairer) {
+    public static void removeRepairer(AUnit repairer) {
 //        if (repairer.target() != null && repairer.target().isAlive()) {
 //            A.printStackTrace(A.now() + " REMOVED REPAIRER");
 //        }
 
         AUnit unitToRepair = repairersToUnit.get(repairer);
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
-            unitsToRepairers.get(unitToRepair).remove(repairer);
-            repairer.stop("No longer repairer", true);
-            if (addLogs) { GameLog.get().addMessage("No longer repairer of " + unitToRepair); }
+            if (!repairer.isProtector() || ARepairerManager.canSafelyAbandonUnitToBeRepaired(repairer)) {
+                System.err.println("Remove PROTECTOR for " + unitsToRepairers);
+                unitsToRepairers.get(unitToRepair).remove(repairer);
+                repairer.stop("No longer repairer", true);
+                if (addLogs) { GameLog.get().addMessage("No longer repairer of " + unitToRepair); }
+                repairersToUnit.remove(repairer);
+                repairersToModes.remove(repairer);
+            }
         }
-        repairersToUnit.remove(repairer);
-        repairersToModes.remove(repairer);
     }
 
     public static void addProtector(AUnit protector, AUnit unit) {
         if (addLogs) { GameLog.get().addMessage("Added PROTECTOR of " + unit); }
+        System.out.println("Added PROTECTOR of " + unit);
 
         addRepairer(protector, unit);
         repairersToModes.put(protector, MODE_PROTECT);

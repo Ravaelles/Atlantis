@@ -77,7 +77,7 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
     }
 
     private static boolean shouldChangeMissionToContain() {
-        if (ArmyStrength.weAreStronger()) {
+        if (ArmyStrength.ourArmyRelativeStrength() >= 170) {
             if (DEBUG) reason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }

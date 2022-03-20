@@ -450,6 +450,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection mechanical() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isMechanical()), "mechanical"
+        );
+    }
+
     /**
      * Selects these units (makes sense only for workers) who aren't assigned to construct anything.
      */

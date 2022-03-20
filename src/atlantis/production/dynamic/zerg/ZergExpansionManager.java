@@ -15,7 +15,7 @@ public class ZergExpansionManager {
 
     public static boolean handleNoZergLarvas() {
         if (!A.hasMinerals(300)) {
-            if (!We.zerg() || (Count.larvas() > 0 && !A.hasMinerals(600))) {
+            if (Count.larvas() > 0 && !A.hasMinerals(600)) {
                 return false;
             }
         }

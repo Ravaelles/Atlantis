@@ -12,6 +12,7 @@ public class TerranStrategies extends AStrategy {
     public static final AStrategy TERRAN_2_Rax_Academy_vP = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vT = new AStrategy();
     public static final AStrategy TERRAN_3_Rax_Academy_vP = new AStrategy();
+    public static final AStrategy TERRAN_MMG = new AStrategy(); // Marine Medic Ghost (with Lockdown)
 
     // Cheese
     public static final AStrategy TERRAN_BBS = new AStrategy();
@@ -30,53 +31,35 @@ public class TerranStrategies extends AStrategy {
 
         // === Rushes ========================================
         
-        TERRAN_2_Rax_MnM.setTerran().setName("Double Rax MnM")
-                .setGoingRush()
-                .setGoingBio()
-                .setUrl("http://strategywiki.org/wiki/StarCraft/Terran_strategies#Terran_Double_Rax_MnM");
+        TERRAN_2_Rax_MnM.setTerran().setName("Double Rax MnM").setGoingRush().setGoingBio();
 
-        TERRAN_2_Rax_Academy_vZ.setTerran().setName("2 Rax Academy vZ")
-                .setGoingRush()
-                .setGoingBio()
-                .setUrl("https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)");
-        TERRAN_2_Rax_Academy_vP.setTerran().setName("2 Rax Academy vP")
-                .setGoingRush()
-                .setGoingBio()
-                .setUrl("https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)");
-        TERRAN_2_Rax_Academy_vT.setTerran().setName("2 Rax Academy vT")
-                .setGoingRush()
-                .setGoingBio();
+        TERRAN_2_Rax_Academy_vZ.setTerran().setName("2 Rax Academy vZ").setGoingRush().setGoingBio();
 
-        TERRAN_3_Rax_Academy_vP.setTerran().setName("3 Rax Academy vP")
-                .setGoingRush()
-                .setGoingBio();
+        TERRAN_2_Rax_Academy_vP.setTerran().setName("2 Rax Academy vP").setGoingRush().setGoingBio();
+
+        TERRAN_2_Rax_Academy_vT.setTerran().setName("2 Rax Academy vT").setGoingRush().setGoingBio();
+
+        TERRAN_3_Rax_Academy_vP.setTerran().setName("3 Rax Academy vP").setGoingRush().setGoingBio();
+
+        TERRAN_MMG.setTerran().setName("MMG").setGoingBio().setGoingRush();
 
         // === Cheese =================================
-        
-        TERRAN_BBS.setTerran().setName("BBS")
-                .setGoingRush().setGoingCheese()
-                .setUrl("http://wiki.teamliquid.net/starcraft/Barracks_Barracks_Supply_(vs._Terran)");
-        TERRAN_3_Rax_MnM.setTerran().setName("Tri-Rax MnM Rush")
-                .setGoingRush()
-                .setUrl("http://strategywiki.org/wiki/StarCraft/Terran_strategies#Terran_Tri-Rax_MnM_Rush");
+
+        TERRAN_BBS.setTerran().setName("BBS").setGoingRush().setGoingCheese();
+
+        TERRAN_3_Rax_MnM.setTerran().setName("Tri-Rax MnM Rush").setGoingRush();
 
         // === Expansion =====================================
-        
-        TERRAN_1_Rax_FE.setTerran().setName("1 Rax FE")
-                .setGoingExpansion().setGoingTech()
-                .setUrl("http://wiki.teamliquid.net/starcraft/1_Rax_FE_(vs._Terran)");
+
+        TERRAN_1_Rax_FE.setTerran().setName("1 Rax FE").setGoingExpansion().setGoingTech();
 
         // === Tech ==========================================
 
-        TERRAN_Mech.setTerran().setName("Mech")
-                .setGoingTech()
-                .setUrl("Improvised");
-        TERRAN_Nada_2_Fac.setTerran().setName("Nada 2 Fac")
-                .setGoingTech()
-                .setUrl("https://liquipedia.net/starcraft/Nada_2_Fac");
-        TERRAN_Three_Factory_Vultures.setTerran().setName("Three Factory Vultures")
-                .setGoingTech()
-                .setUrl("http://wiki.teamliquid.net/starcraft/Three_Factory_Vultures");
+        TERRAN_Mech.setTerran().setName("Mech").setGoingTech();
+
+        TERRAN_Nada_2_Fac.setTerran().setName("Nada 2 Fac").setGoingTech();
+
+        TERRAN_Three_Factory_Vultures.setTerran().setName("Three Factory Vultures").setGoingTech();
     }
     
     // =========================================================

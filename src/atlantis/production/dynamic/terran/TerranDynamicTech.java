@@ -20,11 +20,15 @@ public class TerranDynamicTech extends ADynamicTech {
             return;
         }
 
+        if (Count.ghosts() >= 2) {
+            handleResearch(TechType.Lockdown);
+        }
+
         if (
             !ATech.isResearched(TechType.Tank_Siege_Mode) && (
                 Decisions.wantsToBeAbleToProduceTanksSoon()
                 || (Enemy.protoss() && Have.machineShop())
-                || Count.tanks() >= 2
+                || Count.tanks() >= 1
             )
         ) {
             handleResearch(TechType.Tank_Siege_Mode);
@@ -34,10 +38,6 @@ public class TerranDynamicTech extends ADynamicTech {
             handleUpgrade(UpgradeType.Terran_Infantry_Weapons);
             handleUpgrade(UpgradeType.Terran_Infantry_Armor);
             handleUpgrade(UpgradeType.Caduceus_Reactor);
-        }
-
-        if (Count.ghosts() >= 2) {
-            handleResearch(TechType.Lockdown);
         }
     }
 

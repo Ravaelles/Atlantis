@@ -6,7 +6,7 @@ import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.debug.tweaker.ParamTweakerFactory;
-import atlantis.information.strategy.OurStrategyManager;
+import atlantis.information.strategy.OurStrategyChooser;
 import atlantis.information.strategy.ProtossStrategies;
 import atlantis.information.strategy.TerranStrategies;
 import atlantis.information.strategy.ZergStrategies;
@@ -85,7 +85,7 @@ public class OnStart {
 
     public static void initStrategyAndBuildOrder() {
         try {
-            OurStrategyManager.initialize();
+            OurStrategyChooser.initialize();
 
             if (Env.isLocal()) {
                 if (CurrentBuildOrder.get() != null) {

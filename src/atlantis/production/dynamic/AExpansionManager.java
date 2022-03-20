@@ -28,7 +28,7 @@ public class AExpansionManager {
 //        if (true) return false;
 
         // Zerg
-        if (ZergExpansionManager.handleNoZergLarvas()) {
+        if (We.zerg() && ZergExpansionManager.handleNoZergLarvas()) {
             return true;
         }
 
