@@ -83,12 +83,12 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === Natural choke if second base ================
 
                 if (Count.basesWithUnfinished() >= 2) {
-                    AChoke natural = Chokes.natural();
-                    if (natural != null) {
+//                    AChoke natural = Chokes.natural();
+                    AUnit lastBase = Select.ourBases().mostDistantTo(Select.main());
+                    if (lastBase != null) {
                         return new AFocusPoint(
-                            natural,
-                            Select.main(),
-                            "DefNaturalChoke"
+                            lastBase,
+                            "LatestBase"
                         );
                     }
                 }
