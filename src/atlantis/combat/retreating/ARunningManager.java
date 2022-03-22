@@ -262,10 +262,14 @@ public class ARunningManager {
     private boolean shouldRunTowardsBase() {
         AUnit main = Select.main();
 
-        if (unit.isMissionDefend() && main != null) {
-            if (unit.distTo(main) > 15) {
-                return true;
-            }
+        if (main == null) {
+            return false;
+        }
+
+        double distToMain = unit.distTo(main);
+
+        if (distToMain >= 40 || (distToMain > 15 && unit.isMissionDefend())) {
+            return true;
         }
 
         if (A.seconds() >= 380) {
@@ -281,7 +285,7 @@ public class ARunningManager {
         }
 
         // If already close to the base, don't run towards it, no point
-        if (unit.distTo(main) < 50) {
+        if (distToMain < 50) {
             return false;
         }
 

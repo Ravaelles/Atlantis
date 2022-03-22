@@ -70,7 +70,7 @@ public class MissionChanger {
 //        if (We.protoss() || We.terran()) {
         if (A.seconds() <= 60 * 7) {
             if (Sparta.canUseSpartaMission()) {
-                System.out.println("Using SPARTA mission instead of Defend");
+//                System.out.println("Using SPARTA mission instead of Defend");
                 return Missions.SPARTA;
             }
         }

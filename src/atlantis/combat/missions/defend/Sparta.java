@@ -67,7 +67,8 @@ public class Sparta extends MissionDefend {
         }
 
         if (We.protoss()) {
-            return 0.08 + (unit.isRanged() ? 1 : 0);
+            double base = Enemy.terran() ? 4 : 0.08;
+            return base + (unit.isRanged() ? 1 : 0);
         }
 
         return 2.0 + (unit.isRanged() ? 1 : 0) + unit.friendsInRadius(3).count();

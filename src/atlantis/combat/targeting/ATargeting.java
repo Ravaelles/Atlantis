@@ -55,7 +55,18 @@ public class ATargeting {
             return null;
         }
 
-        return selectWeakestEnemyOfType(enemy.type(), unit);
+        AUnit weakestEnemy = selectWeakestEnemyOfType(enemy.type(), unit);
+
+        if (weakestEnemy != null && unit.isTank()) {
+            if (weakestEnemy.enemiesNear().inRadius(2, unit).notEmpty()) {
+                AUnit tankTarget = unit.enemiesNear().combatUnits().canBeAttackedBy(unit, 0).mostDistantTo(unit);
+                if (tankTarget != null) {
+                    return tankTarget;
+                }
+            }
+        }
+
+        return weakestEnemy;
     }
 
     // =========================================================

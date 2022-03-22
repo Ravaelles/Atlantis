@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.information.generic.TerranArmyComposition;
 import atlantis.information.decisions.Decisions;
 import atlantis.units.AUnit;
@@ -39,7 +40,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return false;
         }
 
-        if (ghosts >= 4 && !AGame.canAffordWithReserved(60, 30)) {
+        if (ghosts >= 4 && !AGame.canAffordWithReserved(60, 200)) {
             return false;
         }
 
@@ -100,7 +101,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         }
 
         if (!Decisions.shouldMakeTerranBio()) {
-            if (DEBUG) System.out.println("Marines - Dont - shouldNOTMakeTerranBio");
+            if (DEBUG) System.out.println("Marines - Dont - shouldNOTMakeTerranBio - " + ShouldMakeTerranBio.reason);
             return false;
         }
 

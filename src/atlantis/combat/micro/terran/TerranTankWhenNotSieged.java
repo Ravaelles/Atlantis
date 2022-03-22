@@ -19,6 +19,10 @@ public class TerranTankWhenNotSieged extends TerranTank {
 
         // =========================================================
 
+        if (handleMissionDefend(unit)) {
+            return true;
+        }
+
         if (handleNearEnemyCombatBuilding(unit)) {
             return true;
         }
@@ -47,6 +51,16 @@ public class TerranTankWhenNotSieged extends TerranTank {
                 || unit.lastActionLessThanAgo(30 * (15 + (unit.idIsOdd() ? 4 : 0)), Actions.SIEGE)
         ) {
             return true;
+        }
+
+        return false;
+    }
+
+    private static boolean handleMissionDefend(AUnit unit) {
+        if (unit.isMissionDefendOrSparta()) {
+            if (TerranTankWhenSieged.shouldSiegeHereDuringMissionDefend(unit)) {
+                return wantsToSiege(unit, "SiegeDefend");
+            }
         }
 
         return false;

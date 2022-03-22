@@ -5,7 +5,9 @@ import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.ADynamicTech;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
+import atlantis.util.Enemy;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -19,9 +21,10 @@ public class ProtossDynamicTech extends ADynamicTech {
             return false;
         }
 
-        if (Count.dragoons() >= 7) {
-            return handleUpgrade(Singularity_Charge);
+        if (singularityCharge()) {
+            return true;
         }
+
         if (Count.zealots() >= 10) {
             return handleUpgrade(UpgradeType.Leg_Enhancements);
         }
@@ -30,6 +33,15 @@ public class ProtossDynamicTech extends ADynamicTech {
         }
         else if (Count.ourCombatUnits() >= 25) {
             return handleUpgrade(UpgradeType.Protoss_Ground_Armor);
+        }
+
+        return false;
+    }
+
+    private static boolean singularityCharge() {
+        if (Count.dragoons() >= (Enemy.terran() ? 2 : 7)) {
+            AddToQueue.upgrade(Singularity_Charge);
+            return true;
         }
 
         return false;

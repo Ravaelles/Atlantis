@@ -69,6 +69,12 @@ public class TerranBunker extends AntiLandBuildingManager {
             return false;
         }
 
+        if (Count.bases() >= 2) {
+            if (handleNaturalBunker()) {
+                return true;
+            }
+        }
+
         return super.handleBuildNew();
     }
 
@@ -111,29 +117,16 @@ public class TerranBunker extends AntiLandBuildingManager {
 //        }
 //    }
 
-    private boolean handleMainBunker() {
-        if (!Enemy.terran() && AGame.timeSeconds() >= 300 && Count.bunkers() < 2) {
-            AChoke choke = Chokes.mainChoke();
-            if (choke != null) {
-                return reinforcePosition(choke.translateTilesTowards(5, Select.main()), false);
-            }
-        }
-
-        return false;
-
-
-//        if (choke == null) {
-//            return false;
+//    private boolean handleMainBunker() {
+//        if (!Enemy.terran() && AGame.timeSeconds() >= 300 && Count.bunkers() < 2) {
+//            AChoke choke = Chokes.mainChoke();
+//            if (choke != null) {
+//                return reinforcePosition(choke.translateTilesTowards(5, Select.main()), false);
+//            }
 //        }
 //
-//        AAdvancedPainter.paintChoke(choke, Color.Cyan, "$");
-//        AAdvancedPainter.paintCircle(choke.translateTilesTowards(5, Select.main()), 18, Color.Cyan);
-//        if (!Have.base()) {
-//            return false;
-//        }
-//
-//        return reinforcePosition(choke.translateTilesTowards(5, Select.main()), false);
-    }
+//        return false;
+//    }
 
     private boolean handleNaturalBunker() {
         if (Count.bases() < 2) {
@@ -141,9 +134,11 @@ public class TerranBunker extends AntiLandBuildingManager {
         }
 
         AChoke naturalChoke = Chokes.natural();
-        AUnit naturalBase = Select.ourBases().last();
+        AUnit naturalBase = Select.ourBases().second();
         if (naturalBase != null && naturalChoke != null) {
-            return reinforcePosition(naturalBase.translateTilesTowards(5, naturalChoke), false);
+            if (Count.existingOrPlannedBuildingsNear(type(), 6, naturalBase) == 0) {
+                return reinforcePosition(naturalBase.translateTilesTowards(5, naturalChoke), false);
+            }
         }
 
         return false;
@@ -166,7 +161,6 @@ public class TerranBunker extends AntiLandBuildingManager {
         if (!Have.existingOrPlannedOrInQueue(type(), position, 12)) {
 //            if (checkReservedMinerals ? AGame.canAffordWithReserved(84, 0) : AGame.canAfford(70, 0)) {
             if (checkReservedMinerals ? AGame.canAffordWithReserved(84, 0) : Count.ourCombatUnits() >= 2) {
-                System.out.println("Request type()");
                 AddToQueue.withTopPriority(type(), position);
                 return true;
             }

@@ -67,7 +67,7 @@ public class ARepairerManager {
         }
 
         if (!ARepairAssignments.isProtector(repairer) && repairer.lastActionMoreThanAgo(30 * 2)) {
-            System.err.println("Idle repairer, remove. Target was = " + target + " // " + target.hp() + " // " + target.isAlive());
+//            System.err.println("Idle repairer, remove. Target was = " + target + " // " + target.hp() + " // " + target.isAlive());
             ARepairAssignments.removeRepairer(repairer);
             repairer.setTooltipTactical("GoHome");
         }
@@ -174,6 +174,10 @@ public class ARepairerManager {
     }
 
     public static boolean canSafelyAbandonUnitToBeRepaired(AUnit repairer) {
+        if (!repairer.isAlive()) {
+            return true;
+        }
+
         AUnit target = ARepairAssignments.getUnitToRepairFor(repairer);
         if (target == null) {
             target = ARepairAssignments.getUnitToProtectFor(repairer);

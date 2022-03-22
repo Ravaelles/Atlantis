@@ -66,7 +66,7 @@ public class ARepairAssignments {
         AUnit unitToRepair = repairersToUnit.get(repairer);
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
             if (ARepairerManager.canSafelyAbandonUnitToBeRepaired(repairer)) {
-                System.err.println("Remove PROTECTOR for " + unitsToRepairers);
+//                System.err.println("Remove PROTECTOR for " + unitsToRepairers);
                 unitsToRepairers.get(unitToRepair).remove(repairer);
                 repairer.stop("No longer repairer", true);
                 if (addLogs) { GameLog.get().addMessage("No longer repairer of " + unitToRepair); }
@@ -78,7 +78,7 @@ public class ARepairAssignments {
 
     public static void addProtector(AUnit protector, AUnit unit) {
         if (addLogs) { GameLog.get().addMessage("Added PROTECTOR of " + unit); }
-        System.out.println("Added PROTECTOR of " + unit);
+//        System.out.println("Added PROTECTOR of " + unit);
 
         addRepairer(protector, unit);
         repairersToModes.put(protector, MODE_PROTECT);

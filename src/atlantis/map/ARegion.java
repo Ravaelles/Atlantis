@@ -36,6 +36,7 @@ public class ARegion implements HasPosition {
 
         ARegion region = new ARegion();
         region.area = area;
+
         instances.put(area, region);
 
         return region;
@@ -62,6 +63,10 @@ public class ARegion implements HasPosition {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ARegion)) return false;
+        if (area == null) {
+//            System.err.println("Region area is NULL");
+            return false;
+        }
         ARegion aRegion = (ARegion) o;
         return area.equals(aRegion.area);
     }

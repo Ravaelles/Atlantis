@@ -37,7 +37,7 @@ public class ARepairCommander {
             }
 
             if (!repairer.isAlive()) {
-                System.err.println("Dead repairer " + repairer.name() + " // " + repairer.hp());
+//                System.err.println("Dead repairer " + repairer.name() + " // " + repairer.hp());
                 ARepairAssignments.removeRepairer(repairer);
                 iterator.remove();
                 continue;

@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.terran;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.Decisions;
@@ -43,6 +44,10 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
     private static boolean tanks(AUnit factory) {
         if (!Have.machineShop() || !Have.factory()) {
             return false;
+        }
+
+        if (Count.infantry() >= 6 && Count.medics() <= 1) {
+            return A.canAfford(175, 75);
         }
 
         int tanks = Count.tanks();

@@ -204,6 +204,10 @@ public class EnemyInfo {
         return EnemyUnits.discovered().ofType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker).notEmpty();
     }
 
+    public static int airUnitsAntiGround() {
+        return EnemyUnits.discovered().ofType(AUnitType.Zerg_Mutalisk, AUnitType.Terran_Wraith).count();
+    }
+
     public static int hiddenUnitsCount() {
         return EnemyUnits.discovered().ofType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker).count();
     }

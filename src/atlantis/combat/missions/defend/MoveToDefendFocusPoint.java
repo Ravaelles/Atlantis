@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.focus.MoveToFocusPoint;
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -58,12 +59,18 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
         if (unitToFocus > (optimalDist + MARGIN)) {
             String dist = A.dist(unitToFocus);
-            return unit.move(
-                focus.translatePercentTowards(unit, 40),
-                Actions.MOVE_FOCUS,
-                "ToFocus" + dist,
-                true
-            );
+
+            if (unit.lastActionMoreThanAgo(20, Actions.MOVE_FOCUS)) {
+                APosition position =
+                    (focus.distTo(unit) <= 6 || focus.region().equals(unit.position().region()))
+                        ? focus.translatePercentTowards(unit, 40) : focus;
+                return unit.move(
+                    position,
+                    Actions.MOVE_FOCUS,
+                    "ToFocus" + dist,
+                    true
+                );
+            }
         }
 
         return false;

@@ -71,6 +71,17 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection inGroundRadius(double maxDist, AUnit unit) {
+        return Select.cache.get(
+            addToCachePath("inGroundRadius:" + maxDist + ":" + unit.idWithHash()),
+            0,
+            () -> cloneByRemovingIf(
+                (u -> u.groundDist(unit) > maxDist),
+                maxDist + ":" + unit.idWithHash()
+            )
+        );
+    }
+
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */

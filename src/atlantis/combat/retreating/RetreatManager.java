@@ -30,6 +30,11 @@ public class RetreatManager {
                 runAwayFrom = nearEnemies.first();
             }
 
+            if (runAwayFrom == null && nearEnemies.notEmpty()) {
+                System.err.println("Retreat runAwayFrom is NULL, despite:");
+                nearEnemies.print("nearEnemies");
+            }
+
             if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT)) {
                 unit.addLog("HandledRetreat");
                 return true;

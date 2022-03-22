@@ -26,17 +26,25 @@ public class SafetyMargin {
 
         double base = baseMargin(defender, attacker);
 
+        double calculated;
         if (attacker.isMelee()) {
-            return base + defender.distTo(attacker) - SafetyMarginAgainstMelee.calculate(defender, attacker);
+            calculated = SafetyMarginAgainstMelee.calculate(defender, attacker);
         }
         else {
-            return base + defender.distTo(attacker) - SafetyMarginAgainstRanged.calculate(defender, attacker);
+            calculated = SafetyMarginAgainstRanged.calculate(defender, attacker);
         }
+
+        return base + defender.distTo(attacker) - calculated;
     }
 
     // =========================================================
 
     private static double baseMargin(AUnit defender, AUnit attacker) {
+        double special = SafetyMarginSpecial.handle(defender, attacker);
+        if (special >= 0) {
+            return special;
+        }
+
         return (defender.isSquadScout() ? -2.7 : 0)
                 + (defender.lastRetreatedAgo() <= 40 ? -3.3 : 0);
     }

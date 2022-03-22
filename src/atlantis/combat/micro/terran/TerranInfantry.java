@@ -121,7 +121,8 @@ public class TerranInfantry {
         }
 
         // Without enemies around, don't do anything
-        if (unit.enemiesNear().excludeMedics().empty()) {
+        Selection enemiesNear = unit.enemiesNear().canAttack(unit, 15);
+        if (enemiesNear.excludeMedics().empty()) {
             return false;
         }
 
@@ -137,8 +138,8 @@ public class TerranInfantry {
                 && (
                     nearestBunker.spaceRemaining() >= 2
                     || (
-                        unit.enemiesNear().inRadius(1.6, unit).atMost(1)
-                        && (!unit.enemiesNear().onlyMelee() || unit.nearestEnemyDist() < 5)
+                        enemiesNear.inRadius(1.6, unit).atMost(1)
+                        && (!enemiesNear.onlyMelee() || unit.nearestEnemyDist() < 5)
                     )
                 )
         ) {

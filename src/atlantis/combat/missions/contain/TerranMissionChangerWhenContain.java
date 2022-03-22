@@ -39,8 +39,8 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
             }
         }
 
-        if (ArmyStrength.weAreMuchWeaker()) {
-            if (DEBUG) reason = "Much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+        if (ArmyStrength.ourArmyRelativeStrength() < 200) {
+            if (DEBUG) reason = "Let us not risk (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 

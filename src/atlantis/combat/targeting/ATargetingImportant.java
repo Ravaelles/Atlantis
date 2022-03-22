@@ -131,6 +131,7 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyUnits
                 .combatUnits()
+                .excludeMedics()
 //                .inShootRangeOf(unit)
                 .inRadius(7, unit)
                 .nearestTo(unit);

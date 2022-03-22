@@ -3,6 +3,7 @@ package atlantis.combat.missions.contain;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
@@ -21,7 +22,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === DEFEND ==============================================
 
     public static boolean shouldChangeMissionToDefend() {
-        if (ArmyStrength.weAreWeaker()) {
+        if (ArmyStrength.ourArmyRelativeStrength() <= 199) {
             if (RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
                 if (DEBUG) reason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
                 return true;
@@ -57,6 +58,11 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
         if (A.supplyUsed() >= 194) {
             if (DEBUG) reason = "Supply blocked";
             return true;
+        }
+
+        Alpha alpha = Alpha.get();
+        if (alpha.cohesionPercent() <= 70 || alpha.size() <= 15) {
+            return false;
         }
 
         if (ArmyStrength.weAreMuchStronger() && !EnemyInfo.hasDefensiveLandBuilding(true)) {

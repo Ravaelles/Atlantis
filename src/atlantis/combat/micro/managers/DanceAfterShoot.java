@@ -16,27 +16,44 @@ public class DanceAfterShoot {
 
         AUnit target = unit.target();
         double dist = target.distTo(unit);
-//        double range = unit.weaponRangeAgainst(target);
+        int weaponRange = unit.weaponRangeAgainst(target);
 
         String danceAway = "DanceAway-" + unit.cooldownRemaining();
         String danceTo = "DanceTo";
 
+        // === Ranged vs ranged case ===============================
+
+        if (unit.isRanged() && target.isRanged()) {
+            boolean lesserRange = weaponRange < target.weaponRangeAgainst(unit);
+            if (lesserRange) {
+                unit.addLog(danceTo);
+                return unit.move(
+                    unit.translateTilesTowards(0.4, target), Actions.MOVE_DANCE, danceTo, false
+                );
+            } else {
+                unit.addLog(danceAway);
+                return unit.moveAwayFrom(target, 1, danceAway, Actions.MOVE_DANCE);
+            }
+        }
+
+        // =========================================================
+
         // Step FORWARD
-        if (shouldDanceTo(target, dist)) {
+        if (shouldDanceTo(unit, target, dist)) {
             unit.addLog(danceTo);
             return unit.move(
                 unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE, danceTo, false
             );
         }
         // Big step BACK
-        else if (dist <= 2.8) {
+        else if (dist <= weaponRange - 1.2) {
             unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.3, danceAway, Actions.MOVE_DANCE);
+            return unit.moveAwayFrom(target, 0.6, danceAway, Actions.MOVE_DANCE);
         }
         // Small step BACK
-        else if (dist <= 3.3) {
+        else if (dist <= weaponRange - 0.45) {
             unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.1, danceAway, Actions.MOVE_DANCE);
+            return unit.moveAwayFrom(target, 0.2, danceAway, Actions.MOVE_DANCE);
         }
 
         return false;
@@ -44,14 +61,14 @@ public class DanceAfterShoot {
 
     // =========================================================
 
-    private static boolean shouldDanceTo(AUnit target, double dist) {
+    private static boolean shouldDanceTo(AUnit unit, AUnit target, double dist) {
         return dist >= 3.8
             || (!target.isBuilding() && dist >= 1.6)
             || target.hasNoWeaponAtAll();
     }
 
     private static boolean shouldSkip(AUnit unit) {
-        if (true) return true;
+//        if (true) return true;
 
         if (unit.isMelee()) {
             return true;
@@ -95,7 +112,7 @@ public class DanceAfterShoot {
             return true;
         }
 
-        System.out.println("unit.lastAttackFrameAgo = " + lastAttackFrameAgo + " // " + minStop);
+//        System.out.println("unit.lastAttackFrameAgo = " + lastAttackFrameAgo + " // " + minStop);
         return false;
     }
 

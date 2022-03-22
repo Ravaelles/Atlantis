@@ -73,7 +73,7 @@ public class TerranScienceVessel extends MobileDetector {
                 }
 
                 if (target.lastUnderAttackLessThanAgo(50) && target.enemiesNear().count() >= 2) {
-                    System.out.println(A.now() + " Use Defensive_Matrix on " + target);
+//                    System.out.println(A.now() + " Use Defensive_Matrix on " + target);
                     return unit.useTech(TechType.Defensive_Matrix, target);
                 }
             }

@@ -9,10 +9,13 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
+import atlantis.information.tech.ATech;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 import atlantis.util.We;
+
+import static bwapi.TechType.Tank_Siege_Mode;
 
 public class TerranMissionChangerWhenDefend extends MissionChanger {
 
@@ -25,8 +28,17 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
     // === CONTAIN =============================================
 
     public static boolean shouldChangeMissionToContain() {
-        if (ArmyStrength.weAreMuchWeaker()) {
+        if (A.supplyUsed() >= 130) {
+            if (DEBUG) reason = "Supply allows it (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return true;
+        }
+
+        if (ArmyStrength.ourArmyRelativeStrength() < 200) {
             if (DEBUG) reason = "We are much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return false;
+        }
+
+        if (GamePhase.isEarlyGame() && A.resourcesBalance() <= -150) {
             return false;
         }
 
@@ -43,6 +55,10 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
         }
 
         if (EnemyInfo.hiddenUnitsCount() >= 2 && Count.ofType(AUnitType.Terran_Science_Vessel) == 0) {
+            return false;
+        }
+
+        if (Count.tanks() >= 2 && !ATech.isResearched(Tank_Siege_Mode)) {
             return false;
         }
 

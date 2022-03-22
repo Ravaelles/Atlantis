@@ -111,14 +111,14 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void cannons() {
+//        if (true) return;
+
         if (A.notNthGameFrame(47) || A.seconds() < 350) {
             return;
         }
 
         for (AUnit base : Select.ourBases().list()) {
-            int existingCannonsNearby = Select.ourWithUnfinished(Protoss_Photon_Cannon)
-                .inRadius(10, base)
-                .count();
+            int existingCannonsNearby = Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 10, base);
 
 //            System.err.println(base + " cannons = " + existingCannonsNearby);
 

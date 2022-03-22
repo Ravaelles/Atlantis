@@ -43,7 +43,7 @@ public class AddToQueue {
     }
 
     public static void tech(TechType tech) {
-        if (Count.inQueueOrUnfinished(tech, 8) > 0) {
+        if (Count.inQueueOrUnfinished(tech, 3) > 0) {
             return;
         }
 
@@ -51,7 +51,7 @@ public class AddToQueue {
     }
 
     public static void upgrade(UpgradeType upgrade) {
-        if (Count.inQueueOrUnfinished(upgrade, 8) > 0) {
+        if (Count.inQueueOrUnfinished(upgrade, 3) > 0) {
             return;
         }
 

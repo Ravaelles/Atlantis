@@ -61,13 +61,17 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
 //        APainter.paintCircle(position, 6, Color.Red);
 
-        if (builder == null) {
-            _CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
-            return false;
-        }
         if (position == null) {
             _CONDITION_THAT_FAILED = "POSITION ARGUMENT IS NULL";
             return false;
+        }
+
+        if (builder == null) {
+            builder = Select.ourWorkers().nearestTo(position);
+            if (builder == null) {
+                _CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
+                return false;
+            }
         }
 
         // Leave entire horizontal (same tileX) and vertical (same tileY) corridors free for units to pass

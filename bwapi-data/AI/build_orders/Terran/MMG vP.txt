@@ -37,18 +37,20 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 //18 - Bunker - @MAIN_CHOKE
 21 - Bunker - @MAIN
 21 - Academy
-24 - Supply Depot
+22 - Supply Depot
 25 - Refinery
 28 - Medic
 30 - Medic
-35 - Stim Packs
+32 - Stim Packs
 35 - Comsat Station
-35 - Factory
-38 - Starport
-40 - Science Facility
-40 - Control Tower
+38 - Factory
 40 - Machine Shop
 41 - U 238 Shells
-42 - Science Vessel
-43 - Covert Ops
-46 - Lockdown
+44 - Siege Mode
+47 - Starport
+50 - Control Tower
+52 - Science Vessel
+60 - Science Facility
+63 - Covert Ops
+64 - Ghost
+64 - Lockdown

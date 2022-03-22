@@ -66,7 +66,11 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Try going near any enemy building
         AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
-        if (enemyBuilding != null && enemyBuilding.position() != null) {
+        if (
+            enemyBuilding != null
+                && enemyBuilding.position() != null
+                && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
+            ) {
             return new AFocusPoint(
                     enemyBuilding,
                     Select.main(),

@@ -4,6 +4,7 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -35,6 +36,10 @@ public class AAttackEnemyUnit {
             return false;
         }
 
+        if (unit.shouldRetreat()) {
+            A.printStackTrace("Interesting, " + unit + " attacking despite RETREAT?!?");
+        }
+
         AUnit enemy = defineEnemyToAttackFor(unit);
         if (enemy == null) {
 //            AAdvancedPainter.paintCircleFilled(unit, 7, Color.White);
@@ -50,14 +55,19 @@ public class AAttackEnemyUnit {
             return false;
         }
 
-        if (unit.isMelee() && RetreatManager.shouldRetreat(unit)) {
+        if (unit.lastActionLessThanAgo(30 * 5, Actions.RUN_RETREAT)) {
+            return false;
+        }
+
+        boolean shouldRetreat = unit.shouldRetreat();
+        if (unit.isMelee() && shouldRetreat) {
             return false;
         }
 
         if (
             unit.isZergling()
                 && (
-                (Enemy.protoss() && unit.hp() <= 18) || RetreatManager.shouldRetreat(unit)
+                (Enemy.protoss() && unit.hp() <= 18) || shouldRetreat
             )
         ) {
             return false;
@@ -71,11 +81,6 @@ public class AAttackEnemyUnit {
             ) {
                 return false;
             }
-        }
-
-        if (unit.isMelee() && RetreatManager.shouldRetreat(unit)) {
-            System.err.println(unit + " should RETREAT buty it ATTACKS");
-            A.printStackTrace();
         }
 
         return true;
@@ -147,7 +152,7 @@ public class AAttackEnemyUnit {
                     return null;
                 }
                 if (!isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
-//                    System.out.println("Not allowed to attack: " + enemy + " (" + AAttackEnemyUnit.reasonNotToAttack + ")");
+//                    System.out.println("SNot allowed to attack: " + enemy + " (" + AAttackEnemyUnit.reasonNotToAttack + ")");
                     return null;
                 }
 

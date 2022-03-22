@@ -8,6 +8,10 @@ import atlantis.util.Enemy;
 public class ProtossRetreating {
 
     public static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
+        if (unit.isRanged()) {
+            return false;
+        }
+
         double radius = 1.2;
 
         // =========================================================

@@ -1,3 +1,0 @@
-2022-02-06 at 13:13:03 CET(2)Heartbreak Ridge.scxAt: 9.0 o'clock.
-Buildings:Terran_Supply_DepotTerran_Supply_DepotTerran_BarracksFailure Reasons:Power: 0Angle: 0Placement: 12009Tight: 0Path: 0Spawn: 0
-Generation Time: 711ms and failed.--------------------

@@ -5,6 +5,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import bwapi.Game;
 
 import javax.swing.*;
@@ -1249,5 +1250,17 @@ public class A {
 
     public static int reservedGas() {
         return CurrentProductionQueue.resourcesReserved()[1];
+    }
+
+    public static boolean canAfford(AUnitType unitType) {
+        return AGame.canAfford(unitType);
+    }
+
+    public static boolean canAfford(int minerals, int gas) {
+        return AGame.canAfford(minerals, gas);
+    }
+
+    public static boolean canAffordWithReserved(int minerals, int gas) {
+        return AGame.canAffordWithReserved(minerals, gas);
     }
 }

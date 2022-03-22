@@ -2,12 +2,8 @@ package atlantis.combat.micro.terran;
 
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
-
-import java.util.List;
 
 public class TerranTankWhenSieged extends TerranTank {
 
@@ -18,6 +14,10 @@ public class TerranTankWhenSieged extends TerranTank {
 
         if (shouldNotThinkAboutUnsieging(unit)) {
             return false;
+        }
+
+        if (shouldSiegeHereDuringMissionDefend(unit)) {
+            return true;
         }
 
         if (
@@ -67,6 +67,16 @@ public class TerranTankWhenSieged extends TerranTank {
 
         if (unit.lastActionLessThanAgo(30 * (7 + (unit.idIsOdd() ? 3 : 0)), Actions.SIEGE)) {
             return true;
+        }
+
+        return false;
+    }
+
+    public static boolean shouldSiegeHereDuringMissionDefend(AUnit unit) {
+        if (unit.isMissionDefendOrSparta() && unit.distToFocusPoint() <= 6) {
+            if (unit.target() == null || unit.target().distTo(unit) < 12) {
+                return true;
+            }
         }
 
         return false;

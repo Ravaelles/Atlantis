@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position;
 
+import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
@@ -59,7 +60,9 @@ public class TerranBunkerPositionFinder {
         // =========================================================
         // Find position near specified place
 
-        return APositionFinder.findStandardPosition(builder, bunker, nearTo, 30);
+//        return APositionFinder.findStandardPosition(builder, bunker, nearTo, 30);
+        HasPosition hasPosition = TerranBunker.get().nextBuildingPosition();
+        return hasPosition != null ? hasPosition.position() : null;
     }
 
     // =========================================================
@@ -101,7 +104,7 @@ public class TerranBunkerPositionFinder {
         else if (locationModifier.equals(PositionModifier.MAIN_CHOKE)) {
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
-                return APosition.create(mainChoke.center()).translateTilesTowards(mainBase, 2.5);
+                return APosition.create(mainChoke.center()).translateTilesTowards(mainBase, 4);
             }
         }
 

@@ -46,19 +46,25 @@ public abstract class MoveToFocusPoint {
         unitToFocus = unit.distTo(focus);
         optimalDist = optimalDist(unit);
 
-        if (unit.enemiesNear().inRadius(5, unit).notEmpty()) {
-            unit.addLog("DonNotWithdraw");
+        if (unit.isMissionDefendOrSparta() && unit.enemiesNear().inRadius(5, unit).notEmpty()) {
+            unit.addLog("DoNotWithdraw");
             return false;
         }
 
         if (unitToFocus > (optimalDist + MARGIN)) {
             String dist = A.dist(unitToFocus);
-            return unit.move(
-                focus.translatePercentTowards(unit, 40),
-                Actions.MOVE_FOCUS,
-                "ToFocus" + dist,
-                true
-            );
+            if (unit.lastActionMoreThanAgo(20, Actions.MOVE_FOCUS)) {
+                APosition position =
+                    (focus.distTo(unit) <= 6 || (focus.region() != null && focus.region().equals(unit.position().region())))
+                    ? focus.translatePercentTowards(unit, 40) : focus;
+
+                return unit.move(
+                    position,
+                    Actions.MOVE_FOCUS,
+                    "ToFocus" + dist,
+                    true
+                );
+            }
         }
 
         return false;
@@ -103,7 +109,7 @@ public abstract class MoveToFocusPoint {
                 || (!isOnValidSideOfChoke(unit, focus) && distToFocusPoint <= 7)
         ) {
             if (unit.enemiesNear().combatUnits().empty()) {
-                for (AUnit friend : unit.friendsNear().inRadius(7, unit).list()) {
+                for (AUnit friend : unit.friendsNear().combatUnits().inRadius(7, unit).list()) {
                     friend.move(focus.fromSide(), Actions.MOVE_FOCUS, "HelpWithdraw", true);
                     friend.setTooltip("HelpWithdraw", true);
                 }

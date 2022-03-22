@@ -1902,11 +1902,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isStasised() {
-        return u.isStasised();
+        return u != null && u.isStasised();
     }
 
     public boolean isLockedDown() {
-        return u.isLockedDown();
+        return u != null && u.isLockedDown();
     }
 
     public boolean isDefenseMatrixed() {

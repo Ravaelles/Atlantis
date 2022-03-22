@@ -69,7 +69,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     }
                 }
 
-                if (Missions.isGlobalMissionSparta()) {
+                int basesWithUnfinished = Count.basesWithUnfinished();
+                if (basesWithUnfinished <= 1 && Missions.isGlobalMissionSparta()) {
                     AChoke mainChoke = Chokes.mainChoke();
                     if (mainChoke != null) {
                         return new AFocusPoint(
@@ -82,7 +83,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Natural choke if second base ================
 
-                if (Count.basesWithUnfinished() >= 2) {
+                if (basesWithUnfinished >= 2) {
 //                    AChoke natural = Chokes.natural();
                     AUnit lastBase = Select.ourBases().mostDistantTo(Select.main());
                     if (lastBase != null) {

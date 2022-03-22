@@ -67,22 +67,26 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     }
 
     private static boolean shouldChangeMissionToContain() {
-        if (ArmyStrength.weAreStronger()) {
-            if (DEBUG) reason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
-            return true;
+        if (ArmyStrength.ourArmyRelativeStrength() < 200) {
+            return false;
         }
 
-        if ((GamePhase.isEarlyGame() && A.resourcesBalance() >= 300)) {
-            if (DEBUG) reason = "resources balance is good";
-            return true;
+        if (EnemyInfo.isEnemyNearAnyOurBase()) {
+            return false;
         }
 
-        if (A.supplyUsed(90)) {
-            if (DEBUG) reason = "Supply quite big";
-            return true;
-        }
+//        if ((GamePhase.isEarlyGame() && A.resourcesBalance() >= 300)) {
+//            if (DEBUG) reason = "resources balance is good";
+//            return true;
+//        }
 
-        return false;
+//        if (A.supplyUsed(90)) {
+//            if (DEBUG) reason = "Supply quite big";
+//            return true;
+//        }
+
+        if (DEBUG) reason = "Why not";
+        return true;
     }
 
 }

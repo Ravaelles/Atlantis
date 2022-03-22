@@ -44,8 +44,11 @@ public class AAvoidSpells {
         boolean canShootAtMines = unit.isRanged() && unit.canAttackGroundUnits();
 
         int radius = Math.max(6, canShootAtMines ? unit.groundWeapon().maxRange() + 3 : 0);
-        List<AUnit> mines = Select.allOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(radius, unit).list();
+        List<AUnit> mines = Select.enemies(AUnitType.Terran_Vulture_Spider_Mine).inRadius(radius, unit).list();
         for (AUnit mine : mines) {
+            if (!mine.isVisibleUnitOnMap() || !mine.isAlive()) {
+                continue;
+            }
 
             // Our mine
             if (mine.isOur()) {
@@ -82,11 +85,11 @@ public class AAvoidSpells {
     }
 
     private static boolean handleEnemyMineAsRangedUnit(AUnit unit, AUnit mine) {
-        if (mine.distTo(unit) <= 2.0) {
-            unit.runningManager().runFrom(mine, 3, Actions.MOVE_AVOID);
-            unit.setTooltipTactical("AVOID MINE(" + mine.distTo(unit) + ")");
-            return true;
-        }
+//        if (mine.distTo(unit) <= 2.0) {
+//            unit.runningManager().runFrom(mine, 3, Actions.MOVE_AVOID);
+//            unit.setTooltipTactical("AVOID MINE(" + mine.distTo(unit) + ")");
+//            return true;
+//        }
 
         unit.attackUnit(mine);
         unit.setTooltipTactical("SHOOT MINE");

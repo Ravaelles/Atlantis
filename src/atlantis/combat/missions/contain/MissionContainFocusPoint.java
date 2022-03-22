@@ -60,13 +60,13 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                 AChoke enemyMainChoke = Chokes.enemyMainChoke();
                 APosition enemyNatural = Bases.enemyNatural();
                 if (enemyNatural != null) {
-                    if (enemyMainChoke != null) {
-                        return new AFocusPoint(
-                            enemyNatural.translatePercentTowards(enemyMainChoke, 40),
-                            enemyNatural,
-                            "EnemyMainChoke"
-                        );
-                    }
+//                    if (enemyMainChoke != null) {
+//                        return new AFocusPoint(
+//                            enemyNatural.translatePercentTowards(enemyMainChoke, 40),
+//                            enemyNatural,
+//                            "EnemyMainChoke"
+//                        );
+//                    }
                     return new AFocusPoint(
                         enemyNatural,
                         Select.main(),

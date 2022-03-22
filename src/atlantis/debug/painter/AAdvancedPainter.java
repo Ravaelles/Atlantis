@@ -2,6 +2,7 @@ package atlantis.debug.painter;
 
 import atlantis.Atlantis;
 import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
@@ -1414,7 +1415,12 @@ public class AAdvancedPainter extends APainter {
 //        TerranBunkerPositionFinder.findPosition(Select.ourWorkers().first(), null);
 
         // Sunken
-        paintBuildingPosition((new ZergSunkenColony()).nextBuildingPosition(), "Sunken");
+        if (We.zerg()) {
+            paintBuildingPosition((new ZergSunkenColony()).nextBuildingPosition(), "Sunken");
+        }
+        if (We.terran()) {
+            paintBuildingPosition((new TerranBunker()).nextBuildingPosition(), "Bunker");
+        }
 
         // Next defensive building position
 //        if (Count.bases() > 0) {

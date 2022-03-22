@@ -40,14 +40,17 @@ public class CohesionAssurance {
 //        unit.setTooltipTactical(A.digit(unit.distToSquadCenter()) + " / " + A.digit(unit.squadRadius()));
         if (unit.outsideSquadRadius()) {
             String t = "Cohesion";
-            unit.move(
-                unit.position()
-                    .translateTilesTowards(1.5, unit.squadCenter())
-                    .makeFreeOfOurUnits(3, 0.3, unit),
-                Actions.MOVE_FORMATION,
-                t,
-                false
-            );
+
+            if (unit.lastActionMoreThanAgo(20, Actions.MOVE_FORMATION)) {
+                unit.move(
+                    unit.position()
+                        .translateTilesTowards(1.5, unit.squadCenter())
+                        .makeFreeOfOurUnits(3, 0.3, unit),
+                    Actions.MOVE_FORMATION,
+                    t,
+                    false
+                );
+            }
             unit.addLog(t);
             return true;
         }

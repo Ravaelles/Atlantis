@@ -43,8 +43,8 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
-        if (ArmyStrength.weAreWeaker()) {
-            if (DEBUG) reason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+        if (ArmyStrength.ourArmyRelativeStrength() <= 270) {
+            if (DEBUG) reason = "Not strong enough to attack (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 

@@ -7,6 +7,7 @@ import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.Requirements;
+import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.PositionModifier;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;
@@ -16,7 +17,10 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 import atlantis.util.We;
+
+import static atlantis.units.AUnitType.Terran_Bunker;
 
 public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
@@ -106,7 +110,19 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
         // === Main choke ===========================================
 
         if (bases <= 1) {
-            return Select.main().translateTilesTowards(We.terran() ? 5 : 9, Chokes.mainChoke());
+            if (We.terran() && Enemy.terran()) {
+                APosition nearTo = Chokes.mainChoke().translateTilesTowards(3, Select.main());
+                AUnit builder = Select.ourWorkers().nearestTo(nearTo);
+                return APositionFinder.findStandardPosition(
+                    null, type(), nearTo, 6
+                );
+            }
+
+            APosition nearTo = Select.main().translateTilesTowards(We.terran() ? 5 : 9, Chokes.mainChoke());
+            AUnit builder = Select.ourWorkers().nearestTo(nearTo);
+            return APositionFinder.findStandardPosition(
+                builder, type(), nearTo, 6
+            );
 
 //            return PositionModifier.toPosition(
 //                PositionModifier.MAIN_CHOKE, type(), null, null
