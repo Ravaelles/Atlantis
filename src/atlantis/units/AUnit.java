@@ -2451,6 +2451,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isMechanical() {
-        return u.getType().isMechanical();
+        return u != null && u.getType().isMechanical();
     }
 }

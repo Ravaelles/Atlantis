@@ -50,7 +50,7 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 47 - Starport
 50 - Control Tower
 52 - Science Vessel
-60 - Science Facility
-63 - Covert Ops
-64 - Ghost
-64 - Lockdown
+70 - Science Facility
+73 - Covert Ops
+74 - Ghost
+74 - Lockdown

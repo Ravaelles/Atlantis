@@ -36,9 +36,9 @@ public class AAttackEnemyUnit {
             return false;
         }
 
-        if (unit.shouldRetreat()) {
-            A.printStackTrace("Interesting, " + unit + " attacking despite RETREAT?!?");
-        }
+//        if (unit.shouldRetreat()) {
+//            A.printStackTrace("Interesting, " + unit + " attacking despite RETREAT?!?");
+//        }
 
         AUnit enemy = defineEnemyToAttackFor(unit);
         if (enemy == null) {

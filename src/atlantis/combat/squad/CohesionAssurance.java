@@ -2,6 +2,7 @@ package atlantis.combat.squad;
 
 import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -42,10 +43,16 @@ public class CohesionAssurance {
             String t = "Cohesion";
 
             if (unit.lastActionMoreThanAgo(20, Actions.MOVE_FORMATION)) {
+                APosition goTo = unit.position()
+                    .translateTilesTowards(1.5, unit.squadCenter())
+                    .makeFreeOfOurUnits(3, 0.3, unit);
+
+                if (goTo == null) {
+                    return false;
+                }
+
                 unit.move(
-                    unit.position()
-                        .translateTilesTowards(1.5, unit.squadCenter())
-                        .makeFreeOfOurUnits(3, 0.3, unit),
+                    goTo,
                     Actions.MOVE_FORMATION,
                     t,
                     false
@@ -83,7 +90,7 @@ public class CohesionAssurance {
 
     public static double squadMaxRadius(Squad squad) {
         double base = We.terran() ? 0 : (squad.size() >= 8 ? 3 : 0);
-        double tanksBonus = (Count.tanks() >= 2 ? (2 + Count.tanks() / 3.0) : 0);
+        double tanksBonus = Math.min(6, (Count.tanks() >= 2 ? (1 + Count.tanks() / 2.0) : 0));
 
         return Math.max(2.7, base + Math.sqrt(squad.size()) + tanksBonus);
     }

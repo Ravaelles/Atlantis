@@ -65,7 +65,7 @@ public class TerranGhost extends Microable {
     }
 
     private AUnit greatTarget() {
-        Selection selection = unit.enemiesNear().mechanical().havingPosition().thatCanMove();
+        Selection selection = unit.enemiesNear().effVisible().mechanical().havingPosition().thatCanMove();
 
         if (unit.energy() < 200 && Select.ourOfType(Terran_Ghost).havingEnergy(100).atMost(1)) {
             selection = selection.ofType(
