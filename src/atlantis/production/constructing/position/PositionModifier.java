@@ -52,10 +52,17 @@ public class PositionModifier {
             return ASpecialPositionFinder.findPositionForBase_nearMainBase(building, builder, construction);
         }
         else if (modifier.equals(NATURAL)) {
-            if (construction == null || construction.maxDistance() < 0) {
-                construction.setMaxDistance(30);
-            }
-            return ASpecialPositionFinder.findPositionForBase_natural(building, builder, construction);
+//            double maxDist = construction.maxDistance();
+//
+//            if (construction == null || construction.maxDistance() < 0) {
+//                maxDist = 30;
+//            }
+//
+//            if (building.isBase()) {
+//                maxDist = 1;
+//            }
+
+            return ASpecialPositionFinder.findPositionForBase_natural(building, builder);
         }
 
         if (main == null) {

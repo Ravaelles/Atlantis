@@ -189,7 +189,22 @@ public class ProductionOrder {
     
     // === Getters =============================================
     
-    public int getGasRequired() {
+    public int mineralPrice() {
+        if (unitOrBuilding != null) {
+            return unitOrBuilding.getMineralPrice();
+        }
+        else if (upgrade != null) {
+            return upgrade.mineralPrice();
+        }
+        else if (tech != null) {
+            return tech.mineralPrice();
+        }
+        else {
+            return 0;
+        }
+    }
+
+    public int gasPrice() {
         if (unitOrBuilding != null) {
             return unitOrBuilding.getGasPrice();
         }
@@ -203,7 +218,7 @@ public class ProductionOrder {
             return 0;
         }
     }
-    
+
     /**
      * If this production order concerns unit to be build (or building, AUnit class), it will return non-null
      * value being unit type.

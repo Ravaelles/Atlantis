@@ -153,8 +153,7 @@ public class Bases {
         baseLocations.sortByGroundDistanceTo(nearestTo, true);
 
         for (ABaseLocation baseLocation : baseLocations.list()) {
-//            baseLocation.isStartLocation() ||
-            if (!nearestTo.hasPathTo(baseLocation.position())) {
+            if (baseLocation.isStartLocation() || !nearestTo.hasPathTo(baseLocation.position())) {
                 continue;
             }
             return baseLocation;

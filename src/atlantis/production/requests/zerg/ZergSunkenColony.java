@@ -107,6 +107,10 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
     public HasPosition nextBuildingPosition() {
         HasPosition standard = super.nextBuildingPosition();
 
+        if (standard == null) {
+            return null;
+        }
+
         HasPosition existing = Select.ourWithUnfinished(type()).inRadius(8, standard).nearestTo(standard);
 
         if (existing == null) {

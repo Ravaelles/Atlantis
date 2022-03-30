@@ -5,6 +5,8 @@ import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
+import atlantis.production.orders.production.CurrentProductionQueue;
+import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -213,11 +215,29 @@ public class ABuilderManager {
     // =========================================================
 
     private static boolean shouldNotTravelYet(AUnitType building, double distance) {
-        if (AGame.timeSeconds() < 200 && !building.isBase()) {
-            return !AGame.canAfford(
-                     building.getMineralPrice() - 32 - (int) (distance * 1.3),
-                    building.getGasPrice() - 16 - (int) distance
-            );
+//        if (AGame.timeSeconds() < 300 && !building.isBase()) {
+        if (AGame.timeSeconds() < 300) {
+            int baseBonus = building.isBase() ? 80 : 0;
+//            return !AGame.canAfford(
+
+//            if (building.is(AUnitType.Zerg_Spawning_Pool)) {
+//                System.out.println(
+//                    "mineralsRes=" + CurrentProductionQueue.resourcesReserved()[0]
+//                    + ", queuePos=" + ProductionQueue.positionInQueue(building)
+//                );
+//            }
+
+//            if (ProductionQueue.isAtTheTopOfQueue(building, 1)) {
+                return !AGame.canAfford(
+                         building.getMineralPrice() - 32 - (int) (distance * 1.3) - baseBonus,
+                        building.getGasPrice() - 16 - (int) distance
+                );
+//            }
+//
+//            return !AGame.canAffordWithReserved(
+//                     building.getMineralPrice() - 32 - (int) (distance * 1.3),
+//                    building.getGasPrice() - 16 - (int) distance
+//            );
         }
 
         return false;

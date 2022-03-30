@@ -108,7 +108,7 @@ public class AAdvancedPainter extends APainter {
 //        paintUnitTypes();
         paintRegions();
 //        paintMineralDistance();
-        paintChokepoints();
+//        paintChokepoints();
         paintImportantPlaces();
         paintStrategicLocations();
 //        paintTestSupplyDepotLocationsNearMain();
@@ -1394,13 +1394,13 @@ public class AAdvancedPainter extends APainter {
         APosition enemyBase = Bases.enemyNatural();
         paintBase(enemyBase, "Enemy natural", Color.Orange);
 
-        // Our main choke
-        AChoke mainChoke = Chokes.mainChoke();
-        paintChoke(mainChoke, Color.Green, "Main choke");
-
         // Our natural choke
         AChoke naturalChoke = Chokes.natural(Bases.natural());
         paintChoke(naturalChoke, Color.Green, "Natural choke");
+
+        // Our main choke
+        AChoke mainChoke = Chokes.mainChoke();
+        paintChoke(mainChoke, Color.Green, "Main choke");
 
         // Enemy natural choke
         AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
@@ -1416,10 +1416,10 @@ public class AAdvancedPainter extends APainter {
 
         // Sunken
         if (We.zerg()) {
-            paintBuildingPosition((new ZergSunkenColony()).nextBuildingPosition(), "Sunken");
+            paintBuildingPosition((new ZergSunkenColony()).nextBuildingPosition(), "Next Sunken");
         }
         if (We.terran()) {
-            paintBuildingPosition((new TerranBunker()).nextBuildingPosition(), "Bunker");
+            paintBuildingPosition((new TerranBunker()).nextBuildingPosition(), "Next Bunker");
         }
 
         // Next defensive building position

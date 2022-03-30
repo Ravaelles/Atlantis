@@ -63,6 +63,13 @@ public class ADynamicWorkerProductionManager {
             if (order != null && order.hasWhatRequired() && !A.hasMinerals(250)) {
                 return false;
             }
+
+            if (A.supplyUsed() <= 15 && Count.zerglings() < 4) {
+                int zerglingsInQueue = ProductionQueue.countInQueue(AUnitType.Zerg_Zergling, 2);
+                if (!A.hasMinerals(zerglingsInQueue * 50 + 50)) {
+                    return false;
+                }
+            }
         }
 
         // =========================================================

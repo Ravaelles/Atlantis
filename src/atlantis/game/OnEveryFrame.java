@@ -4,6 +4,7 @@ import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.ABaseLocation;
 import atlantis.map.Bases;
+import atlantis.map.Chokes;
 import atlantis.production.constructing.position.protoss.PylonPosition;
 import atlantis.units.select.Select;
 import bwapi.Color;
@@ -30,6 +31,11 @@ public class OnEveryFrame {
 //            Wall wall = Walls.getWall(Chokes.mainChoke().rawChoke());
 //            Wall wall = Walls.createTWall();
 //            System.out.println("wall = " + wall);
+//        }
+
+//        if (A.everyNthGameFrame(200)) {
+//            System.out.println("Main choke = " + Chokes.mainChoke());
+//            System.out.println("Natural choke = " + Chokes.natural());
 //        }
     }
 

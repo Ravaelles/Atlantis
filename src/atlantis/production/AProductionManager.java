@@ -2,6 +2,7 @@ package atlantis.production;
 
 import atlantis.combat.missions.Missions;
 import atlantis.config.AtlantisConfig;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.constructing.ConstructionRequests;
@@ -30,6 +31,14 @@ public class AProductionManager {
         // Get sequence of units (Production Orders) based on current build order
         ArrayList<ProductionOrder> queue = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         for (ProductionOrder order : queue) {
+            AUnitType base = AtlantisConfig.BASE;
+
+            if (ConstructionRequests.countNotStartedOfType(base) > 0) {
+                if (!A.hasMinerals(base.getMineralPrice() + order.mineralPrice())) {
+                    return;
+                }
+            }
+
             try {
                 handleProductionOrder(order);
             }

@@ -43,9 +43,12 @@ public abstract class CurrentProductionQueue {
         int countCanNotAfford = 0;
         for (ProductionOrder order : ProductionQueue.nextInQueue) {
             boolean hasRequirements = AGame.hasSupply(order.minSupply()) && Requirements.hasRequirements(order);
-            boolean canAfford = AGame.canAfford(ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded);
+            boolean canAfford = AGame.canAfford(
+                ProductionQueue.mineralsNeeded + order.mineralPrice(),
+                ProductionQueue.gasNeeded + order.gasPrice()
+            );
 
-//            System.out.println("order = " + order + " // " + hasRequirements + " // " + canAfford);
+//            System.out.println("order = " + order + " // req=" + hasRequirements + " // aff=" + canAfford);
             order.setCanAffordNow(canAfford);
             AUnitType unitOrBuilding = order.unitType();
             UpgradeType upgrade = order.upgrade();
@@ -66,9 +69,9 @@ public abstract class CurrentProductionQueue {
             // === Define order type: UNIT/BUILDING or UPGRADE or TECH ==
 
             // UNIT/BUILDING
-            if (unitOrBuilding != null && hasRequirements) {
-//                System.out.println(unitOrBuilding + " // req:" + hasRequirements);
+            if (unitOrBuilding != null && hasRequirements && canAfford) {
                 if (hasFreeBuildingFor(unitOrBuilding) && (unitOrBuilding.isBuilding() || !hasUnitInQueue(unitOrBuilding, queue))) {
+//                    System.out.println("EnQUEUE " + unitOrBuilding);
                     ProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
                     ProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
                 }

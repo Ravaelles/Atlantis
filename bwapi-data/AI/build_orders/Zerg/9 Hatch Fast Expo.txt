@@ -1,0 +1,36 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=9
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=15
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+https://strategywiki.org/wiki/StarCraft/Zerg_strategies#Zerg_9_Hatch_9_Pool_Fast_Expo
+
+9/9 - Overlord1 (When ovy is half done send drone to expo)
+9/17 - Hatchery in expo
+9/17 - Spawning Pool
+11/17 - Begin saving larvae²
+10/18 - 8 Zerglings
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+//8 - Hatchery - NATURAL
+9 - Hatchery - NATURAL
+9 - Overlord
+9 - Spawning Pool
+9 - Zergling
+9 - Zergling
+11 - Zergling
+11 - Zergling
+11 - Zergling
+11 - Zergling
+12 - Sunken Colony - NATURAL
+12 - Sunken Colony - MAIN
+13 - Sunken Colony - NATURAL

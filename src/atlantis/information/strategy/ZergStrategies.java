@@ -19,6 +19,7 @@ public class ZergStrategies extends AStrategy {
 
     // Expansion
     public static final AStrategy ZERG_3_Hatch_Before_Pool = new AStrategy();
+    public static final AStrategy ZERG_9_Hatch_Fast_Expo = new AStrategy();
     public static final AStrategy ZERG_12_Hatch_vZ = new AStrategy();
 
     // Tech
@@ -42,44 +43,31 @@ public class ZergStrategies extends AStrategy {
 
         // === Cheese ========================================
         
-        ZERG_4_Pool.setZerg().setName("4 Pool")
-                .setGoingRush().setGoingCheese()
-                .setUrl("http://wiki.teamliquid.net/starcraft/4/5_Pool");
-        
-        ZERG_5_Pool.setZerg().setName("5 Pool")
-                .setGoingRush().setGoingCheese()
-                .setUrl("http://wiki.teamliquid.net/starcraft/5_Pool_(vs._Terran)");
-        
-        ZERG_6_Pool.setZerg().setName("6 Pool")
-                .setGoingRush().setGoingCheese()
-                .setUrl("---");
+        ZERG_4_Pool.setZerg().setName("4 Pool").setGoingRush().setGoingCheese();
+
+        ZERG_5_Pool.setZerg().setName("5 Pool").setGoingRush().setGoingCheese();
+
+        ZERG_6_Pool.setZerg().setName("6 Pool").setGoingRush().setGoingCheese();
 
         // === Expansion =====================================
         
-        ZERG_3_Hatch_Before_Pool.setZerg().setName("3 Hatch Before Pool")
-                .setGoingExpansion()
-                .setUrl("http://wiki.teamliquid.net/starcraft/3_Hatch_Before_Pool_(vs._Terran)");
+        ZERG_3_Hatch_Before_Pool.setZerg().setName("3 Hatch Before Pool").setGoingExpansion();
 
-        ZERG_12_Hatch_vZ.setZerg().setName("12 Hatch vZ")
-                .setGoingExpansion()
-                .setUrl("12 Hatch vZ");
+        ZERG_9_Hatch_Fast_Expo.setZerg().setName("9 Hatch Fast Expo").setGoingExpansion();
+
+        ZERG_12_Hatch_vZ.setZerg().setName("12 Hatch vZ").setGoingExpansion();
 
         // === Tech ==========================================
         
-        ZERG_1_Hatch_Lurker.setZerg().setName("1 Hatch Lurker")
-                .setGoingTech().setGoingHiddenUnits();
+        ZERG_1_Hatch_Lurker.setZerg().setName("1 Hatch Lurker").setGoingTech().setGoingHiddenUnits();
 
-        ZERG_2_Hatch_Lurker.setZerg().setName("2 Hatch Lurker")
-                .setGoingTech().setGoingHiddenUnits();
+        ZERG_2_Hatch_Lurker.setZerg().setName("2 Hatch Lurker").setGoingTech().setGoingHiddenUnits();
 
         ZERG_3_Hatch_Lurker.setZerg().setName("3_Hatch_Hydra_vP").setGoingTech();
 
-        ZERG_13_Pool_Muta.setZerg().setName("13 Pool Muta")
-                .setGoingTech().setGoingAirUnitsQuickly();
+        ZERG_13_Pool_Muta.setZerg().setName("13 Pool Muta").setGoingTech().setGoingAirUnitsQuickly();
 
-        ZERG_2_Hatch_Hydra_vP.setZerg().setName("2 Hatch Hydra")
-                .setGoingTech();
-
+        ZERG_2_Hatch_Hydra_vP.setZerg().setName("2 Hatch Hydra").setGoingTech();
     }
     
     public static AStrategy detectStrategy() {

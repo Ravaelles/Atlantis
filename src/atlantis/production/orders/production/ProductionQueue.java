@@ -127,6 +127,19 @@ public abstract class ProductionQueue {
         return total;
     }
 
+    public static int positionInQueue(AUnitType type) {
+        int current = 0;
+        for (int i = 0; i < nextInQueue.size(); i++) {
+            if (type.equals(nextInQueue.get(i).unitType())) {
+                return current;
+            }
+
+            current++;
+        }
+
+        return -1;
+    }
+
     public static void printQueue(String message) {
         if (message == null) {
             message = "Currently in queue";

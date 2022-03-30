@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position;
 
+import atlantis.game.A;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
@@ -47,12 +48,16 @@ public class ASpecialPositionFinder {
                     String modifier = construction.productionOrder() != null ?
                             construction.productionOrder().getModifier() : null;
 
-                    System.err.println("");
-                    System.err.println(construction.productionOrder());
-                    System.err.println(construction.maxDistance());
-                    System.err.println("=== modifier /" + modifier + "/ ===");
+                    APosition position = null;
                     if (modifier != null) {
-                        return positionModifierToPosition(modifier, building, builder, construction);
+                        position = positionModifierToPosition(modifier, building, builder, construction);
+                    }
+
+                    if (position == null) {
+                        System.err.println("");
+                        System.err.println(construction.productionOrder());
+                        System.err.println(construction.maxDistance());
+                        System.err.println("=== Base location error /" + modifier + "/ ===");
                     }
 
                     return findPositionForBase_nearestFreeBase(building, builder, construction);
@@ -71,9 +76,9 @@ public class ASpecialPositionFinder {
         }
         else if (modifier.equals(PositionModifier.NATURAL)) {
             if (construction.maxDistance() < 0) {
-                construction.setMaxDistance(30);
+                construction.setMaxDistance(20);
             }
-            return findPositionForBase_natural(building, builder, construction);
+            return findPositionForBase_natural(building, builder);
         }
 
         if (Select.main() == null) {
@@ -136,25 +141,30 @@ public class ASpecialPositionFinder {
 //        APosition near = Select.mainBase().position();
 
         construction.setNearTo(near);
-        construction.setMaxDistance(40);
-        
+        construction.setMaxDistance(15);
+
+        if (Select.main() != null) System.err.println("near = " + near + ", distToMain = " + A.dist(Select.main(), near));
+        if (true) throw new RuntimeException("findPositionForBase_nearMainBase");
+
         return APositionFinder.findStandardPosition(builder, building, near, construction.maxDistance());
     }
 
-    protected static APosition findPositionForBase_natural(AUnitType building, AUnit builder, Construction construction) {
+    protected static APosition findPositionForBase_natural(AUnitType building, AUnit builder) {
         if (!Have.main()) {
             return null;
         }
 
-        APosition near = APosition.create(
-                Bases.expansionFreeBaseLocationNearestTo(Select.main().position())
-        ).translateByPixels(0, 0);
+        APosition near = Bases.natural();
+//                Bases.expansionFreeBaseLocationNearestTo(Select.main().position())
 //        APosition near = APosition.create(Bases.getExpansionFreeBaseLocationNearestTo(Select.mainBase().position()).position());
 
-        construction.setNearTo(near);
-        construction.setMaxDistance(4);
-        
-        return APositionFinder.findStandardPosition(builder, building, near, construction.maxDistance());
+//        construction.setNearTo(near);
+//        construction.setMaxDistance(1);
+
+        if (Select.main() != null) System.err.println("near NAT = " + near + ", distToMain = " + A.dist(Select.main(), near));
+        if (true) throw new RuntimeException("findPositionForBase_natural");
+
+        return APositionFinder.findStandardPosition(builder, building, near, 3);
     }
 
 }

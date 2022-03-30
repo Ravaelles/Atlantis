@@ -1,6 +1,7 @@
 package atlantis.production.dynamic;
 
 import atlantis.config.AtlantisConfig;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
@@ -25,7 +26,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         }
         
         // If number of bases is bigger than gas buildings, it usually makes sense to build new gas extractor
-        gasBuildingIfNeeded();
+        requestGasBuildingIfNeeded();
     }
     
     // =========================================================
@@ -37,8 +38,8 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     /**
      * Build Refineries/Assimilators/Extractors when it makes sense.
      */
-    private static void gasBuildingIfNeeded() {
-        if (AGame.supplyTotal() <= 20) {
+    private static void requestGasBuildingIfNeeded() {
+        if (AGame.supplyUsed() <= 18) {
             return;
         }
 
@@ -56,6 +57,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
             && ConstructionRequests.countNotStartedOfType(AtlantisConfig.GAS_BUILDING) == 0
             && hasABaseWithFreeGeyser()
         ) {
+//            System.err.println("Request GAS BUILDING at supply: " + A.supplyUsed());
             AddToQueue.withTopPriority(AtlantisConfig.GAS_BUILDING);
         }
     }

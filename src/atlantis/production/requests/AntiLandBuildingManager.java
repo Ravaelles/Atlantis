@@ -114,14 +114,14 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                 APosition nearTo = Chokes.mainChoke().translateTilesTowards(3, Select.main());
                 AUnit builder = Select.ourWorkers().nearestTo(nearTo);
                 return APositionFinder.findStandardPosition(
-                    null, type(), nearTo, 6
+                    null, type(), nearTo, 15
                 );
             }
 
             APosition nearTo = Select.main().translateTilesTowards(We.terran() ? 5 : 9, Chokes.mainChoke());
             AUnit builder = Select.ourWorkers().nearestTo(nearTo);
             return APositionFinder.findStandardPosition(
-                builder, type(), nearTo, 6
+                builder, type(), nearTo, 15
             );
 
 //            return PositionModifier.toPosition(
@@ -138,7 +138,8 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                 if (naturalBase != null) {
                     AChoke naturalChoke = Chokes.natural();
                     if (naturalChoke != null) {
-                        return naturalChoke.translatePercentTowards(50, naturalBase);
+//                        return naturalChoke.translatePercentTowards(10, naturalBase);
+                        return naturalChoke.translateTilesTowards(4, naturalBase);
                     }
 
                     return naturalBase;
