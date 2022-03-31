@@ -55,7 +55,9 @@ public class OurStrategyChooser {
             return ZergStrategies.ZERG_9_Pool_vT;
         }
         else {
-            return ZergStrategies.ZERG_9_Pool_vZ;
+            return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
+//            return ZergStrategies.ZERG_9_Hatch_Fast_Expo;
+//            return ZergStrategies.ZERG_9_Pool_vZ;
         }
 
 //        return ZergStrategies.ZERG_2_Hatch_Hydra_vP;

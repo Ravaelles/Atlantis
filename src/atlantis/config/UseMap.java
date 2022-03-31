@@ -21,9 +21,10 @@ public class UseMap {
 //        if (true) return "sscai/(4)Roadrunner.scx";
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
-        // === Zrg ================================================
+        // === Zerg ================================================
 
 //        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
+//        if (true) return "ums/Muta Micro_ Python.scm"; // Need good squad management
 
         // === Protoss ============================================
 
@@ -72,7 +73,7 @@ public class UseMap {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
@@ -81,6 +82,9 @@ public class UseMap {
 
         // =========================================================
 
+//        if (true) return "ums/";
+//        if (true) return "ums/";
+//        if (true) return "ums/(1)Aracahn's Call A.scx"; // RPG
 //        if (true) return "ums/gol_v_zeals.scx";
 //        if (true) return "ums/aaa (1).scx";
 //        if (true) return "ums/aaa (2).scx";

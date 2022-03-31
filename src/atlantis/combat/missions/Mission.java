@@ -130,7 +130,7 @@ public abstract class Mission {
 
     // =========================================================
 
-    public static Mission getInstance() {
+    public static Mission get() {
         return instance;
     }
 

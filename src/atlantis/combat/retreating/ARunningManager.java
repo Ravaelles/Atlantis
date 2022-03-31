@@ -500,9 +500,9 @@ public class ARunningManager {
             return false;
         }
 
-        if (unit.enemiesNear().melee().inRadius(4, unit).empty()) {
-            return false;
-        }
+//        if (unit.enemiesNear().melee().inRadius(4, unit).empty()) {
+//            return false;
+//        }
 
         Selection friendsTooClose = Select.ourRealUnits()
             .exclude(unit)

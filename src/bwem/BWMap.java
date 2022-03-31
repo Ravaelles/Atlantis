@@ -12,6 +12,7 @@
 
 package bwem;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.select.Select;
 import bwapi.*;
@@ -346,7 +347,10 @@ public abstract class BWMap {
         }
 
         // TODO: Are we supposed to return start or not?
-        asserter.throwIllegalStateException("");
+
+        if (Select.ourWorkers().count() == 4) {
+            asserter.throwIllegalStateException("");
+        }
         return start;
     }
 

@@ -138,31 +138,25 @@ public class ASpecialPositionFinder {
 
     protected static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, Construction construction) {
         APosition near = Select.main().translateByPixels(-64, -64);
-//        APosition near = Select.mainBase().position();
 
         construction.setNearTo(near);
         construction.setMaxDistance(15);
 
-        if (Select.main() != null) System.err.println("near = " + near + ", distToMain = " + A.dist(Select.main(), near));
-        if (true) throw new RuntimeException("findPositionForBase_nearMainBase");
+//        if (Select.main() != null) System.err.println("near = " + near + ", distToMain = " + A.dist(Select.main(), near));
+//        if (true) A.printStackTrace("findPositionForBase_nearMainBase");
 
         return APositionFinder.findStandardPosition(builder, building, near, construction.maxDistance());
     }
 
     protected static APosition findPositionForBase_natural(AUnitType building, AUnit builder) {
-        if (!Have.main()) {
+        APosition near = Bases.natural();
+
+        if (near == null) {
             return null;
         }
 
-        APosition near = Bases.natural();
-//                Bases.expansionFreeBaseLocationNearestTo(Select.main().position())
-//        APosition near = APosition.create(Bases.getExpansionFreeBaseLocationNearestTo(Select.mainBase().position()).position());
-
-//        construction.setNearTo(near);
-//        construction.setMaxDistance(1);
-
-        if (Select.main() != null) System.err.println("near NAT = " + near + ", distToMain = " + A.dist(Select.main(), near));
-        if (true) throw new RuntimeException("findPositionForBase_natural");
+//        if (Select.main() != null) System.err.println("near NAT = " + near + ", distToMain = " + A.dist(Select.main(), near));
+//        if (true) A.printStackTrace("findPositionForBase_natural");
 
         return APositionFinder.findStandardPosition(builder, building, near, 3);
     }

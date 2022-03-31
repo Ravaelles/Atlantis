@@ -68,8 +68,8 @@ public class AKeyboard implements NativeKeyListener {
                 APainter.togglePainting();
                 break;
 
-            // Key "PauseBreak"
-            case 3653:
+            // 3653 - PauseBreak, 57 - Space
+            case 3653: case 57:
                 GameSpeed.pauseModeToggle();
                 break;
 

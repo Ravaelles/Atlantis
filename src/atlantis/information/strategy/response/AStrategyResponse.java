@@ -2,11 +2,13 @@ package atlantis.information.strategy.response;
 
 import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.combat.micro.terran.TerranMissileTurret;
+import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.OurStrategicBuildings;
+import atlantis.information.strategy.GamePhase;
 import atlantis.map.scout.AScoutManager;
 import atlantis.production.requests.AntiAirBuildingManager;
 import atlantis.production.requests.AntiLandBuildingManager;
@@ -51,7 +53,7 @@ public abstract class AStrategyResponse {
 
         // === Expansion ===================================
 
-        if (enemyStrategy.isExpansion()) {
+        if (enemyStrategy.isExpansion() && GamePhase.isEarlyGame() && Mission.get().isMissionDefendOrSparta()) {
             Missions.forceGlobalMissionContain("Enemy is expanding, engage him");
         }
 

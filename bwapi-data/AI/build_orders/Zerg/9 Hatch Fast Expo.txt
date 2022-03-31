@@ -31,6 +31,6 @@ https://strategywiki.org/wiki/StarCraft/Zerg_strategies#Zerg_9_Hatch_9_Pool_Fast
 11 - Zergling
 11 - Zergling
 11 - Zergling
-12 - Sunken Colony - NATURAL
 12 - Sunken Colony - MAIN
+13 - Sunken Colony - NATURAL
 13 - Sunken Colony - NATURAL

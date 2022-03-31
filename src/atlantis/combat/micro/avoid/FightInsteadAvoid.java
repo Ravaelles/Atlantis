@@ -326,6 +326,10 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightBecauseWayTooManyUnitsNear(AUnit unit) {
+        if (!We.terran()) {
+            return false;
+        }
+
         Selection our = unit.friendsNear().combatUnits();
         int allCount = unit.allUnitsNear().inRadius(0.3, unit).effVisible().count();
         int ourCount = our.inRadius(0.4, unit).count();
