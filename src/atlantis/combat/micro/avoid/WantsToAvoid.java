@@ -47,7 +47,8 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldAlwaysAvoid(AUnit unit, Units enemies) {
-        if (unit.isMarine() && GamePhase.isEarlyGame() && unit.isRunning()) {
+//        if (unit.isMarine() && GamePhase.isEarlyGame() && unit.isRunning()) {
+        if (unit.isMarine() && GamePhase.isEarlyGame() && unit.isRetreating()) {
             unit.addLog("DearGod");
             return true;
         }

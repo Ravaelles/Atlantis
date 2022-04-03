@@ -19,7 +19,7 @@ import java.util.HashMap;
 public class TerranMedic extends Microable {
 
     public static double BODY_BLOCK_POSITION_ERROR_MARGIN = 0.2;
-    public static double MIN_DIST_TO_ASSIGNMENT = 0.75;
+    public static double MIN_DIST_TO_ASSIGNMENT = 0.45;
 
     /**
      * Maximum allowed distance for a medic to heal wounded units that are not their assignment.

@@ -14,7 +14,8 @@ public class TerranTankWhenSieged extends TerranTank {
 //        }
 
         if (
-            Select.enemy().combatBuildings(false).inRadius(TerranTankWhenNotSieged.COMBAT_BUILDING_DIST_SIEGE, unit).empty()
+            !unit.isMissionDefendOrSparta()
+                && Select.enemy().combatBuildings(false).inRadius(TerranTankWhenNotSieged.COMBAT_BUILDING_DIST_SIEGE, unit).empty()
                 && unit.distToNearestChokeLessThan(2)
         ) {
             unit.setTooltip("DoNotBlockChoke");

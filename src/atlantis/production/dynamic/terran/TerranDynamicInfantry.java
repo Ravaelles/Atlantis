@@ -8,6 +8,7 @@ import atlantis.information.decisions.Decisions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -35,8 +36,12 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return false;
         }
 
+        if (Count.ofType(AUnitType.Terran_Covert_Ops) == 0) {
+            return false;
+        }
+
         int ghosts = Count.ofType(AUnitType.Terran_Ghost);
-        if (Count.ofType(AUnitType.Terran_Covert_Ops) == 0 || ghosts >= 14) {
+        if (ghosts >= 14) {
             return false;
         }
 
@@ -48,12 +53,20 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     protected static boolean medics() {
-        if (!Decisions.shouldMakeTerranBio() || Count.ofType(AUnitType.Terran_Academy) == 0) {
+        if (Count.ofType(AUnitType.Terran_Academy) == 0) {
             return false;
         }
 
+        if (!Decisions.shouldMakeTerranBio()) {
+            if (Have.academy() && Count.infantry() >= 4 && Count.medics() <= 0) {
+                return false;
+            }
+        }
+
+        // =========================================================
+
         if (A.hasGas(25) && A.hasMinerals(50) && Count.medics() == 0 && Count.marines() > 0) {
-            return true;
+            return addToQueueToMaxAtATime(AUnitType.Terran_Medic, 4);
         }
 
         if (saveForFactory()) {
@@ -67,11 +80,12 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {
 
-            // Firebats - disabled, too problematic
-//            if (Count.medics() >= 4 && Count.ourOfTypeWithUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
-//                produceUnit(barracks.first(), AUnitType.Terran_Firebat);
-//                return;
-//            }
+            // Firebats
+            if (!Enemy.terran()) {
+                if (Count.medics() >= 3 && Count.ourOfTypeWithUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
+                    return addToQueueToMaxAtATime(AUnitType.Terran_Firebat, 2);
+                }
+            }
 
             // Medics
             if (TerranArmyComposition.medicsToInfantryRatioTooLow()) {
@@ -92,7 +106,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         }
 
         // Zerg
-        return (int) Math.max(2, Count.medics() / 4);
+        return Math.max(2, Count.medics() / 4);
     }
 
     protected static boolean marines() {

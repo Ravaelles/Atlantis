@@ -2,6 +2,7 @@ package atlantis.combat.micro.terran;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
 import atlantis.map.Chokes;
@@ -10,6 +11,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -85,7 +87,11 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
             return 3;
         }
 
-        return 1;
+        if (EnemyUnits.discovered().ofType(AUnitType.Terran_Wraith).notEmpty()) {
+            return 1;
+        }
+
+        return 0;
     }
 
     private boolean turretForMainChoke() {

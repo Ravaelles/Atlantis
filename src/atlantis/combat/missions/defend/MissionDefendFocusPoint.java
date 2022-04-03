@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.focus.MissionFocusPoint;
 import atlantis.combat.missions.Missions;
+import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
@@ -85,7 +86,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 if (basesWithUnfinished >= 2) {
 //                    AChoke natural = Chokes.natural();
-                    AUnit lastBase = Select.ourBases().mostDistantTo(Select.main());
+                    AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisConfig.BASE).mostDistantTo(Select.main());
                     if (lastBase != null) {
                         return new AFocusPoint(
                             lastBase,

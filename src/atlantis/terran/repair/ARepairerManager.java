@@ -4,6 +4,7 @@ import atlantis.combat.micro.avoid.AAvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -48,7 +49,7 @@ public class ARepairerManager {
 
         // Target is wounded
         if (!repairer.isRepairing() && target.isAlive() && A.hasMinerals(5)) {
-            if (repairer.lastActionMoreThanAgo(30 * 3)) {
+            if (repairer.lastActionMoreThanAgo(30 * 3, Actions.REPAIR)) {
                 ARepairAssignments.removeRepairer(repairer);
                 repairer.setTooltipTactical("IdleGTFO");
                 return false;

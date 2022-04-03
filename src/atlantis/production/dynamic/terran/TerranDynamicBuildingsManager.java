@@ -78,10 +78,11 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static boolean armory() {
-
         if (enemyStrategy().isAirUnits()) {
-            AddToQueue.withTopPriority(Terran_Armory);
-            return true;
+            if (haveNotExistingOrPlanned(Terran_Armory)) {
+                AddToQueue.withTopPriority(Terran_Armory);
+                return true;
+            }
         }
 
         return false;
@@ -209,7 +210,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
 
 //        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
-        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 4) {
+        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
             return false;
         }
 

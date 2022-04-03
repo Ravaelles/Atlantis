@@ -54,6 +54,11 @@ public class APositionFinder {
             HasPosition nearTo, double maxDistance
     ) {
 //        totalRequests++;
+
+        if (building.isBunker() && maxDistance <= 5) {
+            maxDistance = 10;
+        }
+
         construction.setMaxDistance(maxDistance);
 
         // =========================================================

@@ -25,12 +25,12 @@ public class TerranBunkerPositionFinder {
 
         // =========================================================
 
-        if (nearTo != null && Count.bunkers() > 0) {
-            AUnit otherBunker = Select.ourOfType(bunker).nearestTo(Select.main());
-            if (otherBunker != null) {
-                nearTo = otherBunker;
-            }
-        }
+//        if (nearTo != null && Count.bunkers() > 0) {
+//            AUnit otherBunker = Select.ourOfType(bunker).nearestTo(Select.main());
+//            if (otherBunker != null) {
+//                nearTo = otherBunker;
+//            }
+//        }
 
         // =========================================================
 

@@ -16,9 +16,10 @@ import atlantis.units.select.Select;
 public class UseMap {
 
     public static String activeMap() {
-//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Zerg ================================================

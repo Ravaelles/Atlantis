@@ -37,7 +37,7 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 23 - Academy
 23 - Supply Depot
 24 - Bunker - @MAIN_CHOKE
-28 - Refinery
+25 - Refinery
 33 - Comsat Station
 35 - Factory
 38 - Stim Packs

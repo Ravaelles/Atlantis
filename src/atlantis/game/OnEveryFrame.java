@@ -42,18 +42,18 @@ public class OnEveryFrame {
 //            System.out.println("Natural choke = " + Chokes.natural());
 //        }
 
-        if (Select.main() != null) {
-            Position rawBaseP = Select.main().position().rawP();
-            Position rawNaturalP = Bases.natural().position().rawP();
-            CPPath path = AMap.getMap().getPath(rawBaseP, rawNaturalP);
-
-            int index = 0;
-            for (Iterator<ChokePoint> iterator = path.iterator(); iterator.hasNext(); ) {
-                AChoke choke = AChoke.create(iterator.next());
-                AAdvancedPainter.paintChoke(choke, Color.Orange, "Index:" + index, 3);
-                index++;
-            }
-        }
+//        if (Select.main() != null) {
+//            Position rawBaseP = Select.main().position().rawP();
+//            Position rawNaturalP = Bases.natural().position().rawP();
+//            CPPath path = AMap.getMap().getPath(rawBaseP, rawNaturalP);
+//
+//            int index = 0;
+//            for (Iterator<ChokePoint> iterator = path.iterator(); iterator.hasNext(); ) {
+//                AChoke choke = AChoke.create(iterator.next());
+//                AAdvancedPainter.paintChoke(choke, Color.Orange, "Index:" + index, 3);
+//                index++;
+//            }
+//        }
     }
 
 }
