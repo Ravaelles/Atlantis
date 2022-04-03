@@ -551,8 +551,18 @@ public class ARunningManager {
     public boolean isPossibleAndReasonablePosition(
         AUnit unit, APosition position, boolean includeNearWalkability, String charForIsOk, String charForNotOk
     ) {
+        if (position == null) {
+            return false;
+        }
+
         if (unit.isAir()) {
             return true;
+        }
+
+        position = position.makeWalkable(1);
+
+        if (position == null) {
+            return false;
         }
 
         _lastPosition = position;

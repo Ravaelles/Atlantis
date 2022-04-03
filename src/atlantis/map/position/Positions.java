@@ -1,6 +1,7 @@
 package atlantis.map.position;
 
 import atlantis.game.A;
+import atlantis.units.select.Select;
 import bwapi.Position;
 
 import java.util.*;
@@ -112,15 +113,22 @@ public class Positions<T extends HasPosition> {
     public Positions<T> sortByGroundDistanceTo(final HasPosition position, final boolean nearestFirst) {
         positions.sort(new Comparator<T>() {
             @Override
-            public int compare(T u1, T u2) {
-                double distToU1 = position.position().groundDistanceTo(u1);
+            public int compare(T p1, T p2) {
+                double distToU1 = position.position().groundDistanceTo(p1);
+//                System.out.println(position + " groundDIst toU1 " + distToU1);
                 if (distToU1 < 0) {
                     distToU1 = 99999;
                 }
-                double distToU2 = position.position().groundDistanceTo(u2);;
+                double distToU2 = position.position().groundDistanceTo(p2);;
+//                System.out.println(position + " groundDIst toU2 " + distToU2);
                 return distToU1 < distToU2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }
         });
+
+//        System.out.println("---------");
+//        for (T p :positions){
+//            System.out.println(p + " - " + Select.main().groundDist(p));
+//        }
 
         return this;
     }

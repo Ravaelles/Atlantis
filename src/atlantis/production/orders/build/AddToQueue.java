@@ -42,20 +42,22 @@ public class AddToQueue {
         return addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.STANDARD));
     }
 
-    public static void tech(TechType tech) {
+    public static boolean tech(TechType tech) {
         if (Count.inQueueOrUnfinished(tech, 3) > 0) {
-            return;
+            return false;
         }
 
         ProductionQueue.addToQueue(0, new ProductionOrder(tech, 0));
+        return true;
     }
 
-    public static void upgrade(UpgradeType upgrade) {
+    public static boolean upgrade(UpgradeType upgrade) {
         if (Count.inQueueOrUnfinished(upgrade, 3) > 0) {
-            return;
+            return false;
         }
 
         ProductionQueue.addToQueue(0, new ProductionOrder(upgrade, 0));
+        return true;
     }
 
     // =========================================================

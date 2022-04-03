@@ -1139,6 +1139,10 @@ public class A {
         return "(" + (unit1 != null && unit2 != null ? A.digit(unit1.distTo(unit2)) : "-") + ")";
     }
 
+    public static String distGround(AUnit unit1, HasPosition unit2) {
+        return "(" + (unit1 != null && unit2 != null ? A.digit(unit1.groundDist(unit2)) : "-") + ")";
+    }
+
     public static int supplyUsed() {
         return AGame.supplyUsed();
     }

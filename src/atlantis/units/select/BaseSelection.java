@@ -53,7 +53,7 @@ public class BaseSelection {
 //        return new Selection(newData, currentCachePath + ":" + cachePathSuffix);
     }
 
-    public Selection cloneByAdding(List<AUnit> addThese, String cachePathSuffix) {
+    public Selection cloneByAdding(Collection<? extends AUnit> addThese, String cachePathSuffix) {
         List<AUnit> newData = new ArrayList<>(data);
         newData.addAll(addThese);
         return new Selection(newData, null);

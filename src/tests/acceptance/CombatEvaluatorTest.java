@@ -1,10 +1,8 @@
 package tests.acceptance;
 
 import atlantis.combat.eval.ACombatEvaluator;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 

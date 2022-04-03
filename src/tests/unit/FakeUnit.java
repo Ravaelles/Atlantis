@@ -17,7 +17,10 @@ public class FakeUnit extends AUnit {
     public boolean enemy = false;
     public boolean neutral = false;
     public boolean cloaked = false;
+    public boolean effCloaked = false;
+    public boolean effVisible = true;
     public boolean detected = true;
+    public boolean isVisibleUnitOnMap = true;
     public boolean completed = true;
     public boolean loaded = false;
     public boolean stimmed = false;
@@ -104,6 +107,11 @@ public class FakeUnit extends AUnit {
     @Override
     public boolean isDetected() {
         return detected;
+    }
+
+    @Override
+    public boolean effCloaked() {
+        return effCloaked;
     }
 
     @Override
@@ -328,6 +336,31 @@ public class FakeUnit extends AUnit {
             this.enemy = true;
         }
         return this;
+    }
+
+    public FakeUnit setCloaked(boolean cloaked) {
+        this.cloaked = cloaked;
+        return this;
+    }
+
+    public FakeUnit setEffCloaked(boolean effCloaked) {
+        this.effCloaked = effCloaked;
+        return this;
+    }
+
+    public FakeUnit setEffVisible(boolean effVisible) {
+        this.effVisible = effVisible;
+        return this;
+    }
+
+    @Override
+    public boolean effVisible() {
+        return effVisible;
+    }
+
+    @Override
+    public boolean isVisibleUnitOnMap() {
+        return isVisibleUnitOnMap;
     }
 
     public void changeRawUnitType(AUnitType newType) {

@@ -42,6 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static atlantis.units.actions.Actions.RUN_RETREAT;
+
 /**
  * Wrapper for bwapi Unit class that makes units much easier to use.<br /><br />
  * Atlantis uses wrappers for bwapi native classes which can't be extended.<br /><br />
@@ -771,8 +773,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
     public boolean isRunning() {
-//        return runningManager.isRunning() || (action() != null && action().isRunning());
         return runningManager.isRunning();
+    }
+
+    public boolean isRetreating() {
+        return isRunning() && lastActionLessThanAgo(60, RUN_RETREAT);
     }
 
     public boolean lastOrderMinFramesAgo(int minFramesAgo) {
@@ -1911,7 +1916,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isDefenseMatrixed() {
 //        System.out.println(u.getDefenseMatrixTimer() + " // " + u.getDefenseMatrixPoints() + " // " + u.isDefenseMatrixed());
-        return u.isDefenseMatrixed();
+        return u != null && u.isDefenseMatrixed();
     }
 
     public int stimTimer() {
@@ -2451,6 +2456,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isMechanical() {
-        return u != null && u.getType().isMechanical();
+        return type() != null && type().isMechanical();
     }
 }

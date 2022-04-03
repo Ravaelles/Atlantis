@@ -21,9 +21,10 @@ public class EnemyUnits {
      * Both visible units and those behind fog of war.
      */
     public static Selection discovered() {
-        return Select.from(unitsDiscovered(), "")
+//        return Select.from(Select.enemy(), "")
+        return Select.enemy()
 //            .print("visibleAndFogged")
-            .add(Select.enemy())
+            .add(unitsDiscovered())
 //            .print("now with enemy")
             .removeDuplicates()
 //            .print("now after removal")

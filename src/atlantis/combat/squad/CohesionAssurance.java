@@ -89,7 +89,18 @@ public class CohesionAssurance {
     }
 
     public static double squadMaxRadius(Squad squad) {
-        double base = We.terran() ? 0 : (squad.size() >= 8 ? 3 : 0);
+        double base;
+
+        if (We.terran()) {
+            base = 0;
+        }
+        else if (We.protoss()) {
+            base = (squad.size() >= 8 ? 3 : 0);
+        }
+        else {
+            base = Math.min(8, 2 + (squad.size() / 3));
+        }
+
         double tanksBonus = Math.min(6, (Count.tanks() >= 2 ? (1 + Count.tanks() / 2.0) : 0));
 
         return Math.max(2.7, base + Math.sqrt(squad.size()) + tanksBonus);

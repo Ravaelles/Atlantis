@@ -16,6 +16,10 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         // GROUND unit
         if (defender.isGroundUnit()) {
             criticalDist = forGroundUnit(defender, attacker);
+
+            if (defender.isGhost()) {
+                criticalDist += bonusForGhost(defender, attacker);
+            }
         }
 
         // AIR unit
@@ -34,6 +38,18 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         // ==============================================
 
         return criticalDist;
+    }
+
+    private static double bonusForGhost(AUnit defender, AUnit attacker) {
+        if (attacker.isCombatBuilding()) {
+            return 4;
+        }
+
+        if (defender.isWounded()) {
+            return 3;
+        }
+
+        return 0;
     }
 
     private static double shouldRetreatBonus(AUnit defender) {

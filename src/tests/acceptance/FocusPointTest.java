@@ -1,14 +1,12 @@
 package tests.acceptance;
 
 import atlantis.OnUnitDiscover;
-import atlantis.game.*;
-import atlantis.information.enemy.EnemyUnits;
+import atlantis.game.A;
+import atlantis.game.AGameCommander;
+import atlantis.game.OnUnitMorph;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class FocusPointTest extends AbstractTestFakingGame {
 

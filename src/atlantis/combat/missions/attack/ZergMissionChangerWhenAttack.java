@@ -5,6 +5,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.select.Select;
@@ -44,12 +45,16 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     private static boolean shouldChangeMissionToContain() {
+        if (A.supplyUsed() >= 170) {
+            return false;
+        }
+
         if (ArmyStrength.weAreWeaker()) {
             if (DEBUG) reason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
-        if (ArmyStrength.ourArmyRelativeStrength() <= 120 && A.seconds() <= 600) {
+        if (ArmyStrength.ourArmyRelativeStrength() <= 150 && A.seconds() <= 600) {
             if (DEBUG) reason = "Not strong enough (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
@@ -57,6 +62,13 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
         if (!GamePhase.isLateGame() && EnemyInfo.startedWithCombatBuilding && !ArmyStrength.weAreMuchStronger()) {
             if (DEBUG) reason = "startedWithCombatBuilding & !weAreMuchStronger";
             return true;
+        }
+
+        if (EnemyUnits.discovered().combatBuildings(false).atLeast(2)) {
+            if (ArmyStrength.ourArmyRelativeStrength() <= 350) {
+                if (DEBUG) reason = "Caution with defensive buildings (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                return true;
+            }
         }
 
         return false;

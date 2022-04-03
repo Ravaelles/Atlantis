@@ -110,6 +110,7 @@ public class AAdvancedPainter extends APainter {
 //        paintMineralDistance();
 //        paintChokepoints();
         paintImportantPlaces();
+        paintBases();
         paintStrategicLocations();
 //        paintTestSupplyDepotLocationsNearMain();
         paintConstructionProgress();
@@ -1388,11 +1389,11 @@ public class AAdvancedPainter extends APainter {
 
         // Natural base
         APosition natural = Bases.natural();
-        paintBase(natural, "Our natural", Color.Grey);
+        paintBase(natural, "Our natural", Color.Grey, 0);
 
         // Enemy base
         APosition enemyBase = Bases.enemyNatural();
-        paintBase(enemyBase, "Enemy natural", Color.Orange);
+        paintBase(enemyBase, "Enemy natural", Color.Orange, 0);
 
         // Our natural choke
         AChoke naturalChoke = Chokes.natural(Bases.natural());
@@ -1486,8 +1487,11 @@ public class AAdvancedPainter extends APainter {
         paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);
     }
 
-
     public static void paintChoke(AChoke choke, Color color, String extraText) {
+        paintChoke(choke, color, extraText, 0);
+    }
+
+    public static void paintChoke(AChoke choke, Color color, String extraText, double extraDy) {
         if (choke == null || isDisabled()) {
             return;
         }
@@ -1506,19 +1510,24 @@ public class AAdvancedPainter extends APainter {
 
         paintCircle(choke.center(), choke.width() * 32, color);
         paintTextCentered(
-            choke.center().translateByTiles(0, choke.width()),
+            choke.center().translateByTiles(0, choke.width() + extraDy),
             extraText,
             color
         );
     }
 
     public static void paintBases() {
+        AUnit main = Select.main();
         for (ABaseLocation base : Bases.baseLocations()) {
-            AAdvancedPainter.paintBase(base.position(), "Base", Color.Grey);
+            if (base.isStartLocation()) {
+                continue;
+            }
+            String away = main == null ? "" : (A.distGround(main, base.position()) + " away");
+            AAdvancedPainter.paintBase(base.position(), "Base " + away, Color.Yellow, -0.3);
         }
     }
 
-    public static void paintBase(APosition position, String text, Color color) {
+    public static void paintBase(APosition position, String text, Color color, double extraDy) {
         if (position == null || isDisabled()) {
             return;
         }
@@ -1528,7 +1537,7 @@ public class AAdvancedPainter extends APainter {
             position,
             4 * 32, 3 * 32, color
         );
-        APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
+        APainter.paintTextCentered(position.translateByTiles(1, -0.4 + extraDy), text, color);
     }
 
     protected static void paintBuildingPosition(APosition position, AUnitType type, String text, Color color) {

@@ -2,14 +2,18 @@ package atlantis.game;
 
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.map.ABaseLocation;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.*;
 import atlantis.production.constructing.position.protoss.PylonPosition;
 import atlantis.units.select.Select;
 import bwapi.Color;
+import bwapi.Position;
+import bwem.BWEM;
+import bwem.CPPath;
+import bwem.ChokePoint;
 import jbweb.Blocks;
 import jbweb.Stations;
+
+import java.util.Iterator;
 
 public class OnEveryFrame {
 
@@ -37,6 +41,19 @@ public class OnEveryFrame {
 //            System.out.println("Main choke = " + Chokes.mainChoke());
 //            System.out.println("Natural choke = " + Chokes.natural());
 //        }
+
+        if (Select.main() != null) {
+            Position rawBaseP = Select.main().position().rawP();
+            Position rawNaturalP = Bases.natural().position().rawP();
+            CPPath path = AMap.getMap().getPath(rawBaseP, rawNaturalP);
+
+            int index = 0;
+            for (Iterator<ChokePoint> iterator = path.iterator(); iterator.hasNext(); ) {
+                AChoke choke = AChoke.create(iterator.next());
+                AAdvancedPainter.paintChoke(choke, Color.Orange, "Index:" + index, 3);
+                index++;
+            }
+        }
     }
 
 }

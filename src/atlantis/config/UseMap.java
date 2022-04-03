@@ -16,60 +16,61 @@ import atlantis.units.select.Select;
 public class UseMap {
 
     public static String activeMap() {
-//        if (true) return "sscai/(2)Destination.scx";
-        if (true) return "sscai/(2)Heartbreak Ridge.scx";
-//        if (true) return "sscai/(4)Roadrunner.scx";
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+//        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Zerg ================================================
 
-//        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
 //        if (true) return "ums/Muta Micro_ Python.scm"; // Need good squad management
+//        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
 
         // === Protoss ============================================
 
-//        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
-//        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
-//        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
-//        if (true) return "ums/rav/Zeal_v_Zeal.scm";
-//        if (true) return "ums/rav/3Zeal_v_1Zeal.scm";
-//        if (true) return "ums/rav/4Drag_v_Zeal.scm";
 //        if (true) return "ums/rav/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";
+//        if (true) return "ums/rav/3Zeal_v_1Zeal.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
+//        if (true) return "ums/rav/4Drag_v_Zeal.scm";
+//        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 //        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
 //        if (true) return "ums/rav/Dragoons_v_Zealots.scm";
-//        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
+//        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
 //        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
-//        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
+//        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
+//        if (true) return "ums/rav/Zeal_v_Zeal.scm";
+//        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
+//        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
 
         // === Terran ==============================================
 
-//        if (true) return "ums/rav/T_v_Sunkens.scx";
-//        if (true) return "ums/rav/T_v_Sunkens2.scx";
-//        if (true) return "ums/rav/T_v_Sunkens3.scx";
-//        if (true) return "ums/rav/Wraiths_v_Probes.scm";
-//        if (true) return "ums/rav/Wraiths_v_Cannons.scm";
+//        if (true) return "ums/rav/4M_v_2Zealots.scm";
+//        if (true) return "ums/rav/Bunker_v_M&M.scx";
+        if (true) return "ums/rav/Ghosts_v_P.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";
-//        if (true) return "ums/rav/M_v_Zealots.scx";
-//        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
-//        if (true) return "ums/rav/Vultures_v_Marines.scm";
-//        if (true) return "ums/rav/Vultures_v_Zealots.scm";
-//        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
-//        if (true) return "ums/rav/Tanks_v_DT.scx";
-//        if (true) return "ums/rav/Tanks_v_DT_2.scx";
-//        if (true) return "ums/rav/4M_v_2Zealots.scm";
-//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
-//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
-//        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
-//        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies
 //        if (true) return "ums/rav/M&M_v_M&M_2.scx"; // Standing in lines, shooting at another
 //        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
 //        if (true) return "ums/rav/M&M_v_T.scx"; // Terran bio engaging with units that keep on adding
+//        if (true) return "ums/rav/M_v_Zealots.scx";
+//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
+//        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
+//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
+//        if (true) return "ums/rav/T_v_Sunkens.scx";
+//        if (true) return "ums/rav/T_v_Sunkens2.scx";
+//        if (true) return "ums/rav/T_v_Sunkens3.scx";
+//        if (true) return "ums/rav/Tanks_v_DT.scx";
+//        if (true) return "ums/rav/Tanks_v_DT_2.scx";
+//        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
+//        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
+//        if (true) return "ums/rav/Vultures_v_Marines.scm";
+//        if (true) return "ums/rav/Vultures_v_Zealots.scm";
+//        if (true) return "ums/rav/Wraiths_v_Cannons.scm";
+//        if (true) return "ums/rav/Wraiths_v_Probes.scm";
 
         // === Gosu bots - advanced single player cheating bots ====
 

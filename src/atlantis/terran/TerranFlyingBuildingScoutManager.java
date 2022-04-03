@@ -12,7 +12,7 @@ import atlantis.units.select.Select;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class TerranFlyingBuildingManager {
+public class TerranFlyingBuildingScoutManager {
 
     private static final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
     

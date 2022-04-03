@@ -154,7 +154,7 @@ public class PositionUtil {
             System.err.println("from = " + from);
             System.err.println("to = " + to);
             e.printStackTrace();
-            return 0;
+            return PositionUtil.distanceTo(from, to);
         }
     }
 }

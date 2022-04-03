@@ -40,7 +40,7 @@ public abstract class AAvoidEnemies {
         // =========================================================
 
         // Only COMBAT BUILDINGS
-        if (onlyCombatBuildingsAreDangerouslyClose(enemiesDangerouslyClose)) {
+        if (!unit.isMissionAttack() && onlyCombatBuildingsAreDangerouslyClose(enemiesDangerouslyClose)) {
             if (
                     RetreatManager.shouldNotEngageCombatBuilding(unit)
                     && AvoidCombatBuildingsFix.handle(unit, enemiesDangerouslyClose)

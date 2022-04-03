@@ -13,8 +13,11 @@ import bwem.ChokePoint;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeMap;
 
 public class AChoke implements HasPosition {
+
+    private static TreeMap<Integer, AChoke> all = new TreeMap<>();
 
     private ChokePoint choke;
     private Position[] sides;
@@ -29,6 +32,10 @@ public class AChoke implements HasPosition {
             return null;
         }
 
+        if (all.containsKey(chokepoint.hashCode())) {
+            return all.get(chokepoint.hashCode());
+        }
+
 //        assert chokepoint != null;
 
         AChoke wrapper = new AChoke();
@@ -39,6 +46,8 @@ public class AChoke implements HasPosition {
         wrapper.perpendicular = wrapper.createPerpendicular();
         wrapper.firstPoint = APosition.create(chokepoint.getGeometry().get(0));
         wrapper.lastPoint = APosition.create(chokepoint.getGeometry().get(chokepoint.getGeometry().size() - 1));
+
+        all.put(chokepoint.hashCode(), wrapper);
 
         return wrapper;
     }

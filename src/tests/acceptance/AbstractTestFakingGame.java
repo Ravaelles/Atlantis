@@ -1,7 +1,6 @@
 package tests.acceptance;
 
 import atlantis.Atlantis;
-import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.OnStart;
@@ -11,17 +10,17 @@ import atlantis.map.position.PositionUtil;
 import atlantis.units.select.BaseSelect;
 import bwapi.Game;
 import bwapi.Position;
-import bwapi.Race;
 import bwapi.WalkPosition;
 import org.junit.After;
-import org.junit.Before;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import tests.unit.AbstractTestWithUnits;
 import tests.unit.FakeUnit;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -74,6 +73,12 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
+
+            ArrayList<FakeUnit> allUnits = new ArrayList<>();
+            Collections.addAll(allUnits, our);
+            Collections.addAll(allUnits, enemies);
+            Collections.addAll(allUnits, neutral);
+            baseSelect.when(BaseSelect::allUnits).thenReturn(allUnits);
 
             mockAtlantisConfig();
             mockGameObject();

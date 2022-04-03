@@ -12,7 +12,7 @@ import atlantis.util.Vector;
  */
 public interface HasPosition {
 
-    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 30;
+    public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 32;
 
     APosition position();
     int x();

@@ -2,7 +2,10 @@ package atlantis.combat.retreating;
 
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.squad.Squad;
 import atlantis.game.AGame;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -103,6 +106,10 @@ public class RetreatManager {
     }
 
     private static boolean shouldLargeScaleRetreat(AUnit unit, Selection enemies) {
+        if (shouldRetreatDueToSquadMostlyRetreating(unit)) {
+            return true;
+        }
+
         boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
 
         if (!isSituationFavorable) {
@@ -129,6 +136,20 @@ public class RetreatManager {
         return false;
     }
 
+    private static boolean shouldRetreatDueToSquadMostlyRetreating(AUnit unit) {
+        Squad squad = unit.squad();
+        if (squad == null || squad.size() <= 1 || unit.isMissionDefendOrSparta()) {
+            return false;
+        }
+
+        if (unit.distToNearestChokeLessThan(5)) {
+            return true;
+        }
+
+        int countRunning = squad.selection().countRetreating();
+        return countRunning >= 0.5 * squad.size();
+    }
+
     public static boolean getCachedShouldRetreat(AUnit unit) {
         return cache.has("shouldRetreat:" + unit.id()) && cache.get("shouldRetreat:" + unit.id());
     }
@@ -144,7 +165,7 @@ public class RetreatManager {
         return cache.get(
                 "shouldNotEngageCombatBuilding:" + unit.squad().name(),
                 10,
-                () -> ACombatEvaluator.relativeAdvantage(unit) <= 1.8
+                () -> ACombatEvaluator.relativeAdvantage(unit) <= 1.8 && ArmyStrength.ourArmyRelativeStrength() <= 250
         );
     }
 

@@ -25,14 +25,20 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         if ((criticalDist = forDragoon(defender, attacker)) >= 0) {
             return criticalDist;
         }
-        if (defender.isDT()) {
+        else if (defender.isDT()) {
             return 0;
         }
 
         // === Terran ===============================================
 
-        if (defender.isTerran()) {
+        else if (defender.isTerran()) {
             criticalDist = handleTerran(defender, attacker);
+        }
+
+        // === Zerg ===============================================
+
+        else if (defender.isHydralisk()) {
+            criticalDist = forHydralisk(defender, attacker);
         }
 
         // === Standard unit =========================================
@@ -57,6 +63,18 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         }
 
         return criticalDist;
+    }
+
+    private static double forHydralisk(AUnit defender, AUnit attacker) {
+        if (!defender.isHydralisk()) {
+            return -1;
+        }
+
+        if (defender.isHealthy()) {
+            return 0;
+        }
+
+        return defender.woundPercent() / 33;
     }
 
     private static double forDragoon(AUnit defender, AUnit attacker) {

@@ -64,7 +64,7 @@ public class ZergMissionChangerWhenContain extends MissionChanger {
             return false;
         }
 
-        if (ArmyStrength.ourArmyRelativeStrength() >= 300) {
+        if (ArmyStrength.ourArmyRelativeStrength() >= 400) {
             if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }

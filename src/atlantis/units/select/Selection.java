@@ -10,7 +10,6 @@ import atlantis.units.Units;
 import atlantis.util.cache.CachePathKey;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Selection extends BaseSelection {
@@ -50,6 +49,10 @@ public class Selection extends BaseSelection {
         return cloneByAdding(otherSelection.data, null);
     }
 
+    public Selection add(Collection<? extends AUnit> otherUnits) {
+        return cloneByAdding(otherUnits, null);
+    }
+
     public Selection add(AUnit addUnit) {
         ArrayList<AUnit> list = new ArrayList<>();
         list.add(addUnit);
@@ -65,7 +68,7 @@ public class Selection extends BaseSelection {
             addToCachePath("inRadius:" + maxDist + ":" + unit.idWithHash()),
             0,
             () -> cloneByRemovingIf(
-                (u -> u.distTo(unit) > maxDist),
+                (u -> !u.hasPosition() || u.distTo(unit) > maxDist),
                 maxDist + ":" + unit.idWithHash()
             )
         );
@@ -164,10 +167,10 @@ public class Selection extends BaseSelection {
     /**
      * Selects only those units which are VISIBLE ON MAP (not behind fog of war).
      */
-    public Selection visible() {
+    public Selection visibleOnMap() {
         return cloneByRemovingIf(
             (unit -> !unit.isVisibleUnitOnMap()),
-            "visible"
+            "visibleOnMap"
         );
     }
 
@@ -176,7 +179,7 @@ public class Selection extends BaseSelection {
      */
     public Selection effVisible() {
         return cloneByRemovingIf(
-            (unit -> !unit.isDetected() && unit.effCloaked()),
+            (unit -> !unit.effVisible()),
             "effVisible"
         );
     }
@@ -357,6 +360,20 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(u -> !u.hasPosition(), "havingPosition");
     }
 
+    public int countRunning(int maxStartedRunningAgo) {
+        return cloneByRemovingIf(
+            u -> (!u.isRunning() || u.lastStartedRunningMoreThanAgo(maxStartedRunningAgo)),
+            "countRunning:" + maxStartedRunningAgo
+        ).count();
+    }
+
+    public int countRetreating() {
+        return cloneByRemovingIf(
+            u -> !u.isRetreating(),
+            "countRetreating"
+        ).count();
+    }
+
     public Selection havingWeapon() {
         return cloneByRemovingIf(u -> !u.hasAnyWeapon(), "havingWeapon");
     }
@@ -380,6 +397,13 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(
             (unit -> includeCreepColonies ? !unit.type().isCombatBuildingOrCreepColony() : !unit.type().isCombatBuilding()),
             "combatBuildings:" + A.trueFalse(includeCreepColonies)
+        );
+    }
+
+    public Selection combatBuildingsAntiLand() {
+        return cloneByRemovingIf(
+            (unit -> unit.is(AUnitType.Protoss_Photon_Cannon, AUnitType.Terran_Bunker, AUnitType.Zerg_Sunken_Colony)),
+            "combatBuildingsAntiLand"
         );
     }
 
@@ -455,9 +479,9 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection thatCanMove() {
+    public Selection notStasisedOrLockedDown() {
         return cloneByRemovingIf(
-            (unit -> !unit.isStasised() && !unit.isLockedDown()), "thatCanMove"
+            (unit -> unit.isStasised() || unit.isLockedDown()), "notStasisedOrLockedDown"
         );
     }
 

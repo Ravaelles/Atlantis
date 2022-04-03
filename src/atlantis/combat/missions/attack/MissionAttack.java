@@ -73,6 +73,9 @@ public class MissionAttack extends Mission {
 
     @Override
     public boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
+        if (unit.isInfantry() && unit.hp() <= 39) {
+            return false;
+        }
 
         // Tanks always allowed
         if (unit.isTank() && unit.distToMoreThan(combatBuilding, 7.9)) {

@@ -13,7 +13,6 @@ import atlantis.units.select.Select;
 public class ZergOverlordManager {
 
     public static boolean update(AUnit unit) {
-
         if (AAvoidEnemies.avoidEnemiesIfNeeded(unit)) {
             unit.setTooltipTactical("Uaaa!");
             return true;
@@ -52,7 +51,7 @@ public class ZergOverlordManager {
 //            unit.move(goTo, false);
 //        }
 
-        if (overlord.id() % 5 == 0) {
+        if (overlord.id() % 3 == 0) {
             return followArmy(overlord);
         } else {
             return stayInHome(overlord);

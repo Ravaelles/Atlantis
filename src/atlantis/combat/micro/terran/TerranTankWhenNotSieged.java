@@ -108,6 +108,14 @@ public class TerranTankWhenNotSieged extends TerranTank {
             if (unit.friendsNear().tanksSieged().inRadius(1.2, unit).isNotEmpty()) {
                 return false;
             }
+
+            // Prevent tanks from blocking chokes
+            if (
+                unit.enemiesNear().combatBuildingsAntiLand().inRadius(8.2, unit).empty()
+                    && unit.distToNearestChokeLessThan(1.7)
+            ) {
+                return false;
+            }
         }
 
         unit.siege();

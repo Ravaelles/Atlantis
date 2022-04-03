@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.combat.micro.terran.TerranCommandCenter;
 import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.protoss.ProtossShieldBattery;
-import atlantis.terran.TerranFlyingBuildingManager;
+import atlantis.terran.TerranFlyingBuildingScoutManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -27,7 +27,7 @@ public class ABuildingManager {
         }
 
         if (We.terran()) {
-            TerranFlyingBuildingManager.update();
+            TerranFlyingBuildingScoutManager.update();
         }
 
         return false;
