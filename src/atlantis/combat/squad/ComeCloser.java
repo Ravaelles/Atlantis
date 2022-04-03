@@ -1,5 +1,6 @@
 package atlantis.combat.squad;
 
+import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -127,6 +128,12 @@ public class ComeCloser extends ASquadCohesionManager {
 //        if (unit.cooldownAbsolute() > 0) {
 //            return true;
 //        }
+
+        AFocusPoint focusPoint = focusPoint(unit);
+
+        if (focusPoint == null) {
+            return false;
+        }
 
         if (unit.isAir()) {
             return true;

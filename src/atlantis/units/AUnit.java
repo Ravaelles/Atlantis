@@ -1464,6 +1464,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean lastActionMoreThanAgo(int framesAgo) {
         if (unitAction == null) {
             System.err.println("unitAction A null for " + this);
+            A.printStackTrace("Null action");
             return true;
         }
 

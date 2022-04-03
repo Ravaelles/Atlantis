@@ -18,7 +18,7 @@ public class UseMap {
     public static String activeMap() {
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Zerg ================================================
@@ -48,7 +48,7 @@ public class UseMap {
 
 //        if (true) return "ums/rav/4M_v_2Zealots.scm";
 //        if (true) return "ums/rav/Bunker_v_M&M.scx";
-        if (true) return "ums/rav/Ghosts_v_P.scx";
+//        if (true) return "ums/rav/Ghosts_v_P.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";
 //        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies

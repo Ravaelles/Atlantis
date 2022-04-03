@@ -8,9 +8,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.PositionUtil;
 import atlantis.units.select.BaseSelect;
-import bwapi.Game;
-import bwapi.Position;
-import bwapi.WalkPosition;
+import bwapi.*;
 import org.junit.After;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -105,6 +103,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         initBuildOrder();
 
         aTech = Mockito.mockStatic(ATech.class);
+        aTech.when(() -> ATech.isResearched(TechType.Lockdown)).thenReturn(true);
         aTech.when(() -> ATech.isResearched(null)).thenReturn(false);
 
         positionUtil = Mockito.mockStatic(PositionUtil.class);

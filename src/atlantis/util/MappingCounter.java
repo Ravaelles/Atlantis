@@ -14,11 +14,13 @@ public class MappingCounter<K> {
     private final HashMap<K, Integer> mapping = new HashMap<>();
 
     // =====================================================================
+
     public MappingCounter() {
     }
 
     // =====================================================================
     // Value mapping methods
+
     public void incrementValueFor(K key) {
         changeValueBy(key, 1);
     }

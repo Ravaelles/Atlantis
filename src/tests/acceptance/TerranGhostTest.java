@@ -13,6 +13,7 @@ public class TerranGhostTest extends AbstractTestFakingGame {
     protected FakeUnit ghost2;
     protected FakeUnit ghost3;
     protected FakeUnit ghost4;
+    protected FakeUnit ghost5;
     protected FakeUnit dragoon;
     protected FakeUnit scout;
     protected FakeUnit reaver;
@@ -26,19 +27,24 @@ public class TerranGhostTest extends AbstractTestFakingGame {
                 TerranGhost manager2 = new TerranGhost();
                 TerranGhost manager3 = new TerranGhost();
                 TerranGhost manager4 = new TerranGhost();
+                TerranGhost manager5 = new TerranGhost();
                 manager1.update(ghost1);
                 manager2.update(ghost2);
                 manager3.update(ghost3);
                 manager4.update(ghost4);
+                manager5.update(ghost5);
 
-//                System.err.println("manager1.defineLockdownTarget() = " + manager1.defineLockdownTarget());
-//                System.err.println("manager2.defineLockdownTarget() = " + manager2.defineLockdownTarget());
-//                System.err.println("manager3.defineLockdownTarget() = " + manager3.defineLockdownTarget());
+//                System.out.println("Lockdown targetFor(ghost1) = " + TerranGhost.lockdownTargets.targetFor(ghost1));
+//                System.out.println("Lockdown targetFor(ghost2) = " + TerranGhost.lockdownTargets.targetFor(ghost2));
+//                System.out.println("Lockdown targetFor(ghost3) = " + TerranGhost.lockdownTargets.targetFor(ghost3));
+//                System.out.println("Lockdown targetFor(ghost4) = " + TerranGhost.lockdownTargets.targetFor(ghost4));
+//                System.out.println("Lockdown targetFor(ghost5) = " + TerranGhost.lockdownTargets.targetFor(ghost5));
 
-                assertEquals(dragoon, manager1.defineLockdownTarget());
-                assertEquals(dragoon, manager2.defineLockdownTarget());
-                assertEquals(reaver, manager3.defineLockdownTarget());
-                assertEquals(wraith1, manager4.defineLockdownTarget());
+                assertEquals(reaver, TerranGhost.lockdownTargets.targetFor(ghost1)); // Reaver
+                assertEquals(dragoon, TerranGhost.lockdownTargets.targetFor(ghost2)); // Dragoon
+                assertEquals(scout, TerranGhost.lockdownTargets.targetFor(ghost3)); // Scout
+                assertEquals(wraith1, TerranGhost.lockdownTargets.targetFor(ghost4)); // Wraith
+                assertEquals(null, TerranGhost.lockdownTargets.targetFor(ghost5)); // null
             },
             () -> this.generateOur(),
             () -> this.generateEnemies()
@@ -49,10 +55,11 @@ public class TerranGhostTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-            ghost1 = fake(Terran_Ghost, 10).setEnergy(100),
+            ghost1 = fake(Terran_Ghost, 15).setEnergy(100),
             ghost2 = fake(Terran_Ghost, 10).setEnergy(150),
-            ghost3 = fake(Terran_Ghost, 15).setEnergy(150),
+            ghost3 = fake(Terran_Ghost, 10).setEnergy(150),
             ghost4 = fake(Terran_Ghost, 50).setEnergy(150),
+            ghost5 = fake(Terran_Ghost, 50).setEnergy(150),
             fake(Terran_SCV, 11),
             fake(Terran_Bunker, 12)
         );
@@ -68,9 +75,6 @@ public class TerranGhostTest extends AbstractTestFakingGame {
             wraith1 = fakeEnemy(Terran_Wraith, 40).setCloaked(false).setEffVisible(true),
             wraith2 = fakeEnemy(Terran_Wraith, 45).setCloaked(true).setEffVisible(false)
         );
-
-//        System.out.println("wraith = " + wraith1.effVisible());
-//        System.out.println("wraith = " + wraith2.effVisible());
 
         return fakeEnemies;
     }

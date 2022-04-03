@@ -101,7 +101,7 @@ public class CohesionAssurance {
             base = Math.min(8, 2 + (squad.size() / 3));
         }
 
-        double tanksBonus = Math.min(6, (Count.tanks() >= 2 ? (1 + Count.tanks() / 2.0) : 0));
+        double tanksBonus = Math.min(6, (Count.tanks() >= 2 ? (1 + Count.tanks() / 1.6) : 0));
 
         return Math.max(2.7, base + Math.sqrt(squad.size()) + tanksBonus);
     }

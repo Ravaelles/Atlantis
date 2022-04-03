@@ -1,6 +1,8 @@
 package atlantis.combat.squad;
 
 import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.game.A;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 
@@ -10,6 +12,10 @@ public class ASquadCohesionManager {
 //        if (shouldSkip(unit)) {
 //            return false;
 //        }
+
+        if (A.supplyUsed() >= 150 && ArmyStrength.ourArmyRelativeStrength() >= 50) {
+            return false;
+        }
 
         if (ComeCloser.handleComeCloser(unit)) {
             return true;

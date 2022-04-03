@@ -67,9 +67,6 @@ public class BaseSelection {
     public Selection minus(Selection otherSelection) {
         List<AUnit> newData = new ArrayList<>(this.data);
         newData.removeAll(otherSelection.data);
-//        for (AUnit unit : otherSelection.data) {
-//            if ()
-//        }
 
         return new Selection(newData, null);
     }

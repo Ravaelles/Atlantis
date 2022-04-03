@@ -479,9 +479,9 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection notStasisedOrLockedDown() {
+    public Selection nonStasisedOrLockedDown() {
         return cloneByRemovingIf(
-            (unit -> unit.isStasised() || unit.isLockedDown()), "notStasisedOrLockedDown"
+            (unit -> unit.isStasised() || unit.isLockedDown()), "nonStasisedOrLockedDown"
         );
     }
 
