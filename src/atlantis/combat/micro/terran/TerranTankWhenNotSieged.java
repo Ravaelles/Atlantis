@@ -12,6 +12,8 @@ import atlantis.util.Enemy;
 
 public class TerranTankWhenNotSieged extends TerranTank {
 
+    public static final double COMBAT_BUILDING_DIST_SIEGE = 10.8;
+
     protected static boolean updateWhenNotSieged(AUnit unit) {
         if (shouldSkip(unit)) {
             return false;
@@ -111,7 +113,7 @@ public class TerranTankWhenNotSieged extends TerranTank {
 
             // Prevent tanks from blocking chokes
             if (
-                unit.enemiesNear().combatBuildingsAntiLand().inRadius(8.2, unit).empty()
+                unit.enemiesNear().combatBuildingsAntiLand().inRadius(COMBAT_BUILDING_DIST_SIEGE, unit).empty()
                     && unit.distToNearestChokeLessThan(1.7)
             ) {
                 return false;
@@ -132,12 +134,12 @@ public class TerranTankWhenNotSieged extends TerranTank {
     }
 
     private static boolean handleNearEnemyCombatBuilding(AUnit unit) {
-        AUnit combatBuilding = Select.enemy().combatBuildings(false).inRadius(11.9, unit).nearestTo(unit);
+        AUnit combatBuilding = Select.enemy().combatBuildings(false).inRadius(COMBAT_BUILDING_DIST_SIEGE, unit).nearestTo(unit);
 //        unit.setTooltip("Buildz:" + Select.enemy().combatBuildings().count());
 
         if (combatBuilding != null) {
             if (
-                (unit.distToLessThan(combatBuilding, 10.5) && canSiegeHere(unit, false))
+                (unit.distToLessThan(combatBuilding, COMBAT_BUILDING_DIST_SIEGE) && canSiegeHere(unit, false))
                     || unit.distToLessThan(combatBuilding, 8.4)
             ) {
                 return forceSiege(unit, "SiegeBuilding" + A.dist(unit, combatBuilding));

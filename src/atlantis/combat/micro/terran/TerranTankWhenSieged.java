@@ -4,6 +4,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class TerranTankWhenSieged extends TerranTank {
 
@@ -11,6 +12,15 @@ public class TerranTankWhenSieged extends TerranTank {
 //        if (handleShootingAtInvisibleUnits(unit)) {
 //            return true;
 //        }
+
+        if (
+            Select.enemy().combatBuildings(false).inRadius(TerranTankWhenNotSieged.COMBAT_BUILDING_DIST_SIEGE, unit).empty()
+                && unit.distToNearestChokeLessThan(2)
+        ) {
+            unit.setTooltip("DoNotBlockChoke");
+            unit.unsiege();
+            return true;
+        }
 
         if (shouldNotThinkAboutUnsieging(unit)) {
             return false;
