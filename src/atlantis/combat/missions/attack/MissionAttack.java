@@ -62,7 +62,7 @@ public class MissionAttack extends Mission {
         }
 
         // Focus point is well known
-        if (focusPoint != null && unit.lastPositioningActionMoreThanAgo(10)) {
+        if (focusPoint != null && unit.lastPositioningActionMoreThanAgo(40)) {
             unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
             return AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint);
         }

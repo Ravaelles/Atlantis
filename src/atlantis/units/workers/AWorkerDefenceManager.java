@@ -244,7 +244,7 @@ public class AWorkerDefenceManager {
     }
 
     private static boolean handleEnemyBuildingsOffensive(AUnit worker) {
-        if (A.isUms() || A.seconds() <= 40) {
+        if (A.isUms() || (A.seconds() >= 40 && Count.ourCombatUnits() >= 6)) {
             return false;
         }
 

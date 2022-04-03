@@ -141,7 +141,7 @@ public class ACombatEvaluator {
     private static double percentOfAdvantageNeeded(AUnit unit) {
         int extra = unit.isMissionDefendOrSparta() ? 0 : +15;
 
-        if (unit.enemiesNear().combatBuildings(false).inRadius(8.2, unit).isNotEmpty()) {
+        if (unit.enemiesNear().combatBuildings(false).inRadius(10.2, unit).isNotEmpty()) {
             return extra + PERCENT_ADVANTAGE_NEEDED_TO_FIGHT_IF_COMBAT_BUILDINGS;
         }
 

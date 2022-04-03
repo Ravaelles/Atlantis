@@ -111,14 +111,17 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
         if (bases <= 1) {
             if (We.terran() && Enemy.terran()) {
-                APosition nearTo = Chokes.mainChoke().translateTilesTowards(3, Select.main());
+                APosition nearTo = Chokes.mainChoke().translateTilesTowards(3, Select.main())
+                    .makeWalkable(8);
                 AUnit builder = Select.ourWorkers().nearestTo(nearTo);
                 return APositionFinder.findStandardPosition(
-                    null, type(), nearTo, 15
+                    builder, type(), nearTo, 15
                 );
             }
 
-            APosition nearTo = Select.main().translateTilesTowards(We.terran() ? 5 : 9, Chokes.mainChoke());
+            APosition nearTo = Select.main()
+                .translateTilesTowards(We.terran() ? 5 : 9, Chokes.mainChoke())
+                .makeWalkable(8);
             AUnit builder = Select.ourWorkers().nearestTo(nearTo);
             return APositionFinder.findStandardPosition(
                 builder, type(), nearTo, 15

@@ -62,7 +62,10 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      */
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
         APainter.paintCircle(position, 10, Color.Red);
-//        GameSpeed.changeSpeedTo(100);
+        if (building.isBunker()) {
+            CameraManager.centerCameraOn(position);
+            GameSpeed.changeSpeedTo(100);
+        }
 //        CameraManager.centerCameraOn(position);
 
         // Check for CREEP

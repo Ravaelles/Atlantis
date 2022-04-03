@@ -118,7 +118,8 @@ public class FightInsteadAvoid {
             ) {
                 unit.addLog("FightAsRanged");
                 return false;
-            } else {
+            }
+            else {
                 unit.setTooltip("Retreat", true);
                 unit.addLog("Retreat");
                 return false;
@@ -155,7 +156,8 @@ public class FightInsteadAvoid {
 
         if (unit.isMelee()) {
             return fightAsMeleeUnit();
-        } else {
+        }
+        else {
             return fightAsRangedUnit();
         }
     }
@@ -309,24 +311,27 @@ public class FightInsteadAvoid {
     protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
         return unit.isMelee()
 //                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
-                && (
-                    unit.isDT()
-                    || (unit.hp() <= 30 && unit.enemiesNear().ranged().inRadius(6, unit).notEmpty())
-                    || (unit.enemiesNear().ranged().inRadius(1, unit).isNotEmpty())
-                    || (unit.enemiesNear().combatBuildings(false).inRadius(3, unit).isNotEmpty())
-                    || (unit.enemiesNear().ofType(AUnitType.Protoss_Reaver).inRadius(3, unit).isNotEmpty())
-                );
+            && (
+            unit.isDT()
+                || (unit.hp() <= 30 && unit.enemiesNear().ranged().inRadius(6, unit).notEmpty())
+                || (unit.enemiesNear().ranged().inRadius(1, unit).isNotEmpty())
+                || (unit.enemiesNear().combatBuildings(false).inRadius(3, unit).isNotEmpty())
+                || (unit.enemiesNear().ofType(AUnitType.Protoss_Reaver).inRadius(3, unit).isNotEmpty())
+        );
     }
 
     protected boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
         return unit.isAirUnitAntiAir()
-                && unit.enemiesNear()
-                .canBeAttackedBy(unit, 3)
-                .isNotEmpty();
+            && unit.enemiesNear()
+            .canBeAttackedBy(unit, 3)
+            .isNotEmpty();
     }
 
     protected boolean fightBecauseWayTooManyUnitsNear(AUnit unit) {
-        if (!We.terran()) {
+        if (
+            !We.terran()
+                || unit.isAir()
+        ) {
             return false;
         }
 
@@ -338,22 +343,22 @@ public class FightInsteadAvoid {
         boolean isStacked = false;
         if (We.terran()) {
             isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
-                    || our.inRadius(1.3, unit).atLeast(25);
+                || our.inRadius(1.3, unit).atLeast(25);
         }
         else if (We.protoss()) {
             isStacked = allCount >= 7 || (invisibleDT != null && allCount >= 4)
-                    || our.inRadius(1.3, unit).atLeast(7);
+                || our.inRadius(1.3, unit).atLeast(7);
         }
         else if (We.zerg()) {
             isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
-                    || our.inRadius(1.3, unit).atLeast(7);
+                || our.inRadius(1.3, unit).atLeast(7);
         }
 //        }
 
         if (combatBuilding != null) {
             return unit.mission().isMissionAttack()
-                    && unit.friendsNearInRadiusSelect(6).atLeast(10)
-                    && ACombatEvaluator.advantagePercent(unit, 50);
+                && unit.friendsNearInRadiusSelect(6).atLeast(10)
+                && ACombatEvaluator.advantagePercent(unit, 50);
 //                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
         }
 

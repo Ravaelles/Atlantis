@@ -74,20 +74,34 @@ public class Decisions {
             "dontProduceVultures",
             100,
             () -> {
-                if (true) return true;
+//                if (true) return true;
+
+                int vultures = Count.vultures();
+
+                if (vultures <= 9 && A.hasMinerals(800)) {
+                    return false;
+                }
+
+                if (vultures <= 2 && EnemyUnits.count(Zerg_Zergling) >= 7) {
+                    return false;
+                }
+
+                if (vultures <= 2 && EnemyUnits.count(Protoss_Zealot) >= 6) {
+                    return false;
+                }
 
                 if (
                     GamePhase.isEarlyGame()
-                        && Count.vultures() <= 3
+                        && vultures <= 3
                         && EnemyUnits.discovered().ofType(Protoss_Zealot).atLeast(5)
                 ) {
                     return false;
                 }
 
-                return (maxFocusOnTanks() && Count.vultures() >= 1)
-                    || (Enemy.terran() && Count.vultures() >= 1)
-                    || (Count.vultures() >= 2 && Count.tanks() < 2)
-                    || Count.vultures() >= 15;
+                return (maxFocusOnTanks() && vultures >= 1)
+                    || (Enemy.terran() && vultures >= 1)
+                    || (vultures >= 2 && Count.tanks() < 2)
+                    || vultures >= 15;
             }
 //                () -> Count.vultures() >= 1
 //                () -> maxFocusOnTanks() || (shouldBuildBio() && Count.vultures() <= 1)

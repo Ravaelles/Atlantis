@@ -47,7 +47,13 @@ public class AddToQueue {
             return false;
         }
 
-        ProductionQueue.addToQueue(0, new ProductionOrder(tech, 0));
+        ProductionOrder productionOrder = new ProductionOrder(tech, 0);
+
+        if (tech.equals(TechType.Tank_Siege_Mode)) {
+            productionOrder.setPriority(ProductionOrderPriority.TOP);
+        }
+
+        ProductionQueue.addToQueue(0, productionOrder);
         return true;
     }
 
