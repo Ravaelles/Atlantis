@@ -74,6 +74,7 @@ public class Evaluate {
                 totalStrength += terranInfantryTweak(unit, unitStrengthEval);
             }
 
+
             // =========================================================
             // Ordinary MILITARY UNIT
 
@@ -120,6 +121,13 @@ public class Evaluate {
 //    }
 
     private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
+//        System.out.println("\nevaluate = " + evaluate);
+//        System.out.println("evaluate isLockedDown = " + evaluate.isLockedDown());
+//        System.out.println("evaluate isStasised = " + evaluate.isStasised());
+        if (evaluate.isStasised() || evaluate.isLockedDown()) {
+            return 0;
+        }
+
         return evaluateUnitHPandDamage(evaluate.type(), evaluate.hp(), againstUnit);
     }
 

@@ -22,7 +22,7 @@ public class UnitsToTargetsWithCacheTest  extends AbstractTestFakingGame {
     @Test
     public void tetsItReturnsTargetsAcquiredInLastNFrames() {
         createWorld(2, () -> {
-            System.out.println("\n### now = " + A.now());
+//            System.out.println("\n### now = " + A.now());
 
             // === 1 ===========================================
 
@@ -39,6 +39,8 @@ public class UnitsToTargetsWithCacheTest  extends AbstractTestFakingGame {
             else if (A.now() == 2) {
                 assertEquals(0, TerranGhost.lockdownTargets.targetsAcquiredInLast(0).size());
                 assertEquals(3, TerranGhost.lockdownTargets.targetsAcquiredInLast(1).size());
+
+                TerranGhost.lockdownTargets.clear();
             }
         });
     }

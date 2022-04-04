@@ -176,11 +176,7 @@ public class RetreatManager {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
-        if (unit.kitingUnit() && unit.isHealthy()) {
-            return true;
-        }
-
-        if (unit.isStimmed()) {
+        if (terran_shouldNotRetreat(unit)) {
             return true;
         }
 
@@ -230,6 +226,22 @@ public class RetreatManager {
 
         if (unit.type().isReaver()) {
             return unit.enemiesNear().isEmpty() && unit.cooldownRemaining() <= 7;
+        }
+
+        return false;
+    }
+
+    private static boolean terran_shouldNotRetreat(AUnit unit) {
+        if (unit.isTank() && unit.cooldownRemaining() <= 0) {
+            return true;
+        }
+
+        if (unit.kitingUnit() && unit.isHealthy()) {
+            return true;
+        }
+
+        if (unit.isStimmed()) {
+            return true;
         }
 
         return false;

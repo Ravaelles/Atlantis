@@ -17,12 +17,14 @@ public class FakeUnit extends AUnit {
     public boolean enemy = false;
     public boolean neutral = false;
     public boolean cloaked = false;
+    public boolean completed = true;
     public boolean effCloaked = false;
     public boolean effVisible = true;
     public boolean detected = true;
     public boolean isVisibleUnitOnMap = true;
-    public boolean completed = true;
     public boolean loaded = false;
+    public boolean lockedDown = false;
+    public boolean stasised = false;
     public boolean stimmed = false;
     public int energy = 0;
     public FakeUnit target = null;
@@ -306,6 +308,12 @@ public class FakeUnit extends AUnit {
 
     // =========================================================
 
+    public void changeRawUnitType(AUnitType newType) {
+        rawType = newType;
+    }
+
+    // =========================================================
+
     public FakeUnit setEnemy() {
         this.enemy = true;
         return this;
@@ -363,7 +371,23 @@ public class FakeUnit extends AUnit {
         return isVisibleUnitOnMap;
     }
 
-    public void changeRawUnitType(AUnitType newType) {
-        rawType = newType;
+    @Override
+    public boolean isLockedDown() {
+        return lockedDown;
+    }
+
+    public FakeUnit setLockedDown(boolean lockedDown) {
+        this.lockedDown = lockedDown;
+        return this;
+    }
+
+    @Override
+    public boolean isStasised() {
+        return stasised;
+    }
+
+    public FakeUnit setStasised(boolean stasised) {
+        this.stasised = stasised;
+        return this;
     }
 }

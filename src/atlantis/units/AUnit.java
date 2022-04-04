@@ -2070,6 +2070,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 else {
                     System.err.println("This is weird, should not be here");
                     System.err.println("This = " + this);
+                    System.err.println("alive = " + unit().isAlive());
                     A.printStackTrace("This is weird, should not be here");
                     return Select.from(new Units());
                 }

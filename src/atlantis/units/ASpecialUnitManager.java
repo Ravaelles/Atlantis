@@ -31,6 +31,9 @@ public class ASpecialUnitManager {
         else if (unit.is(AUnitType.Terran_Medic) && (new TerranMedic()).update(unit)) {
             return true;
         }
+        else if (unit.is(AUnitType.Terran_Ghost) && (new TerranGhost()).update(unit)) {
+            return true;
+        }
 
         // === Protoss ========================================
 
@@ -74,9 +77,6 @@ public class ASpecialUnitManager {
             return true;
         }
         else if (unit.is(AUnitType.Terran_Science_Vessel) && TerranScienceVessel.update(unit)) {
-            return true;
-        }
-        else if (unit.is(AUnitType.Terran_Ghost) && (new TerranGhost()).update(unit)) {
             return true;
         }
         else if (unit.isTerranInfantry() && TerranInfantry.update(unit)) {

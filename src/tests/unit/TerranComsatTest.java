@@ -17,9 +17,9 @@ public class TerranComsatTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Larva, 11),
                 fake(AUnitType.Zerg_Lurker_Egg, 11),
                 fake(AUnitType.Zerg_Drone, 13),
-                lurker1 = fake(AUnitType.Zerg_Lurker, 11).setDetected(true),
+                lurker1 = fake(AUnitType.Zerg_Lurker, 11).setEffCloaked(false),
                 fake(AUnitType.Zerg_Hydralisk, 14),
-                lurker2 = fake(AUnitType.Zerg_Lurker, 13).setDetected(false),
+                lurker2 = fake(AUnitType.Zerg_Lurker, 13).setDetected(false).setEffCloaked(true),
                 fake(AUnitType.Zerg_Sunken_Colony, 18)
         );
 

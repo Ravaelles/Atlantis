@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 
 public class TerranTankWhenSieged extends TerranTank {
 
@@ -14,7 +15,8 @@ public class TerranTankWhenSieged extends TerranTank {
 //        }
 
         if (
-            !unit.isMissionDefendOrSparta()
+            !Enemy.terran()
+                && unit.isMissionAttack()
                 && Select.enemy().combatBuildings(false).inRadius(TerranTankWhenNotSieged.COMBAT_BUILDING_DIST_SIEGE, unit).empty()
                 && unit.distToNearestChokeLessThan(2)
         ) {

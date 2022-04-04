@@ -12,6 +12,10 @@ public class ProtossRetreating {
             return false;
         }
 
+        if (unit.isReaver() && unit.cooldownRemaining() <= 4) {
+            return false;
+        }
+
         double radius = 1.2;
 
         // =========================================================

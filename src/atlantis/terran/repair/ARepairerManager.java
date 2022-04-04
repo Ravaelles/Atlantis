@@ -49,7 +49,7 @@ public class ARepairerManager {
 
         // Target is wounded
         if (!repairer.isRepairing() && target.isAlive() && A.hasMinerals(5)) {
-            if (repairer.lastActionMoreThanAgo(30 * 3, Actions.REPAIR)) {
+            if (repairer.lastActionMoreThanAgo(30 * 3, Actions.REPAIR) || repairer.isIdle() || repairer.isStopped()) {
                 ARepairAssignments.removeRepairer(repairer);
                 repairer.setTooltipTactical("IdleGTFO");
                 return false;

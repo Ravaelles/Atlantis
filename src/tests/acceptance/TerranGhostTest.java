@@ -45,6 +45,8 @@ public class TerranGhostTest extends AbstractTestFakingGame {
                 assertEquals(scout, TerranGhost.lockdownTargets.targetFor(ghost3)); // Scout
                 assertEquals(wraith1, TerranGhost.lockdownTargets.targetFor(ghost4)); // Wraith
                 assertEquals(null, TerranGhost.lockdownTargets.targetFor(ghost5)); // null
+
+                TerranGhost.lockdownTargets.clear();
             },
             () -> this.generateOur(),
             () -> this.generateEnemies()

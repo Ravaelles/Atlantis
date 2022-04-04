@@ -115,7 +115,7 @@ public class AdvanceUnitsManager {
 
         // Too far
         else if (distToFocusPoint > optimalDist + margin) {
-            if (unit.isMoving() && unit.lastActionLessThanAgo(20, Actions.MOVE_ENGAGE)) {
+            if (unit.isMoving() && unit.lastActionLessThanAgo(40, Actions.MOVE_ENGAGE)) {
                 return true;
             }
 

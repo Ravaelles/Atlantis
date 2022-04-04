@@ -381,7 +381,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "isRanged",
             -1,
-            () -> !isMelee() && !hasNoWeaponAtAll() && (isRealUnit() || isMine() || isScarab() || isCombatBuilding())
+            () -> !isReaver() && !isMelee() && !hasNoWeaponAtAll() && (isRealUnit() || isMine() || isScarab() || isCombatBuilding())
         );
     }
 

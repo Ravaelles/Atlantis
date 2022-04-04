@@ -70,7 +70,7 @@ public class ATargetingCrucial extends ATargeting {
         target = enemyUnits
                 .ofType(AUnitType.Zerg_Defiler)
                 .effVisible()
-                .inRadius(15, unit)
+                .inRadius(13, unit)
                 .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR3 = " + target);
@@ -78,7 +78,7 @@ public class ATargetingCrucial extends ATargeting {
         }
 
         target = enemyUnits
-                .ofType(AUnitType.Zerg_Lurker)
+                .ofType(AUnitType.Zerg_Lurker, AUnitType.Terran_Ghost)
                 .inShootRangeOf(unit)
                 .nearestTo(unit);
         if (target != null) {

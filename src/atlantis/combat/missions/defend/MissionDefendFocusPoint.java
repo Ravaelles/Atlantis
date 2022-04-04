@@ -82,19 +82,6 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     }
                 }
 
-                // === Natural choke if second base ================
-
-                if (basesWithUnfinished >= 2) {
-//                    AChoke natural = Chokes.natural();
-                    AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisConfig.BASE).mostDistantTo(Select.main());
-                    if (lastBase != null) {
-                        return new AFocusPoint(
-                            lastBase,
-                            "LatestBase"
-                        );
-                    }
-                }
-
                 // === Around defensive building ===========================================
 
                 if (We.zerg()) {
@@ -113,6 +100,19 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                         if (bunker != null) {
                             return new AFocusPoint(bunker, "Bunker");
                         }
+                    }
+                }
+
+                // === Natural choke if second base ================
+
+                if (basesWithUnfinished >= 2) {
+//                    AChoke natural = Chokes.natural();
+                    AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisConfig.BASE).mostDistantTo(Select.main());
+                    if (lastBase != null) {
+                        return new AFocusPoint(
+                            lastBase,
+                            "LatestBase"
+                        );
                     }
                 }
 

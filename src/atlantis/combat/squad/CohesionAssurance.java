@@ -39,10 +39,10 @@ public class CohesionAssurance {
 
 //        double maxDist = preferredDistToSquadCenter(unit.squad());
 //        unit.setTooltipTactical(A.digit(unit.distToSquadCenter()) + " / " + A.digit(unit.squadRadius()));
-        if (unit.outsideSquadRadius()) {
+        if (unit.outsideSquadRadius() && unit.meleeEnemiesNearCount(3) == 0) {
             String t = "Cohesion";
 
-            if (unit.lastActionMoreThanAgo(20, Actions.MOVE_FORMATION)) {
+            if (unit.lastActionMoreThanAgo(30, Actions.MOVE_FORMATION)) {
                 APosition goTo = unit.position()
                     .translateTilesTowards(1.5, unit.squadCenter())
                     .makeFreeOfOurUnits(3, 0.3, unit);

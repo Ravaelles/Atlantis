@@ -151,9 +151,9 @@ public class PositionUtil {
         try {
             return JBWEB.getGroundDistance(from, to) / 32.0;
         } catch (Exception e) {
-            System.err.println("from = " + from);
-            System.err.println("to = " + to);
-            e.printStackTrace();
+//            System.err.println("from = " + from);
+//            System.err.println("to = " + to);
+//            e.printStackTrace();
             return PositionUtil.distanceTo(from, to);
         }
     }

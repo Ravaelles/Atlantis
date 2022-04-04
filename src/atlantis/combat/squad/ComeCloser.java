@@ -139,15 +139,19 @@ public class ComeCloser extends ASquadCohesionManager {
             return true;
         }
 
-        if (Count.ourCombatUnits() <= 4) {
-            return true;
-        }
-
         if (unit.squad() == null) {
             return true;
         }
 
         if (unit.isVulture()) {
+            return true;
+        }
+
+        if (Count.ourCombatUnits() <= 4) {
+            return true;
+        }
+
+        if (unit.meleeEnemiesNearCount(3) > 0) {
             return true;
         }
 

@@ -174,7 +174,7 @@ public class ACombatEvaluator {
             throw new RuntimeException("Trying to combat eval neutral unit");
         }
 
-        return theseUnits.nonStasisedOrLockedDown();
+        return theseUnits;
     }
 
     public static Selection opposingUnits(AUnit unit) {
@@ -212,7 +212,7 @@ public class ACombatEvaluator {
 
 //        System.out.println("againstUnits C2 = " + againstUnits.size());
 
-        return againstUnits.nonStasisedOrLockedDown();
+        return againstUnits;
     }
 
     public static boolean advantagePercent(AUnit unit, int percentOfAdvantageRelativeToEnemyStrength) {

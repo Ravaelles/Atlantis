@@ -4,12 +4,15 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.Decisions;
+import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
+
+import static bwapi.TechType.Tank_Siege_Mode;
 
 public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
 
@@ -50,7 +53,13 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
             return A.canAfford(175, 75);
         }
 
-        int tanks = Count.tanks();
+        int tanks = Select.ourWithUnfinished().tanks().count();
+
+        if (Enemy.terran() && tanks >= 1 && !ATech.isResearched(Tank_Siege_Mode)) {
+            if (!AGame.canAffordWithReserved(150, 100)) {
+                return false;
+            }
+        }
 
         if (Enemy.protoss() && tanks >= 4 && Count.scienceVessels() == 0) {
             return AGame.canAffordWithReserved(200, 200);

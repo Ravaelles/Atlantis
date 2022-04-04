@@ -94,4 +94,11 @@ public class TargetsForUnits {
             System.out.println("- Executor (" + executor + ") has target (" + target + ")");
         }
     }
+
+    public void clear() {
+        targetsToExecutors.clear();
+        executorsToTargets.clear();
+        executorsTargetAcquiredAtFrame.clear();
+        targetsToAcquiredAtFrame.clear();
+    }
 }

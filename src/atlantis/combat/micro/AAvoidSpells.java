@@ -43,7 +43,15 @@ public class AAvoidSpells {
     private static boolean handleMines(AUnit unit) {
         boolean canShootAtMines = unit.isRanged() && unit.canAttackGroundUnits();
 
-        int radius = Math.max(6, canShootAtMines ? unit.groundWeapon().maxRange() + 3 : 0);
+        if (!canShootAtMines) {
+            return false;
+        }
+
+        if (unit.enemiesNear().combatUnits().inRadius(6, unit).atLeast(3)) {
+            return false;
+        }
+
+        int radius = Math.min(6, canShootAtMines ? unit.groundWeapon().maxRange() + 3 : 0);
         List<AUnit> mines = Select.enemies(AUnitType.Terran_Vulture_Spider_Mine).inRadius(radius, unit).list();
         for (AUnit mine : mines) {
             if (!mine.isVisibleUnitOnMap() || !mine.isAlive()) {

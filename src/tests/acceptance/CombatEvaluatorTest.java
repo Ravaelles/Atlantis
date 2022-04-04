@@ -3,6 +3,7 @@ package tests.acceptance;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -74,6 +75,34 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     }
 
     @Test
+    public void doesNotTakeIntoAccountLockedDownUnitsOrStasised() {
+        createWorld(1, () -> {
+            FakeUnit dragoon1 = (FakeUnit) Select.enemies(Protoss_Dragoon).first();
+            FakeUnit dragoon2 = (FakeUnit) Select.enemies(Protoss_Dragoon).second();
+
+//            System.out.println("Dragoon = " + dragoon1.isLockedDown());
+//            System.out.println("Dragoon = " + dragoon2.isStasised());
+
+//            Select.our().print("Our");
+//            System.out.println("wraith = " + wraith);
+//            wraith.enemiesNear().print("Enemies near");
+//            System.out.println("cannon = " + cannon);
+
+            assertEquals(2, ACombatEvaluator.opposingUnits(wraith).size());
+            assertEquals(1, ACombatEvaluator.opposingUnits(dragoon1).size());
+
+            double ourEval = wraith.combatEvalAbsolute();
+            double enemyEval = dragoon1.combatEvalAbsolute();
+
+//            System.out.println("ourEval = " + ourEval);
+//            System.out.println("enemyEval = " + enemyEval);
+
+            assertTrue(ourEval > 0);
+            assertTrue(enemyEval == 0);
+        }, () -> this.generateOur(), () -> this.generateEnemiesWithStasisesAndLockedDown());
+    }
+
+    @Test
     public void consistentlyEvaluatesFoggedUnits() {
         FakeUnit cannon1 = fakeEnemy(Protoss_Photon_Cannon, 92);
         FakeUnit cannon2 = fakeEnemy(Protoss_Photon_Cannon, 93);
@@ -113,6 +142,17 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             fakeEnemy(AUnitType.Zerg_Hydralisk, enemyTy),
             fakeEnemy(AUnitType.Zerg_Hydralisk, enemyTy + 1),
             fakeEnemy(Protoss_Zealot, 11)
+        );
+    }
+
+    private FakeUnit[] generateEnemiesWithStasisesAndLockedDown() {
+        int enemyTy = 16;
+        return fakeEnemies(
+            fakeEnemy(AUnitType.Zerg_Hydralisk, enemyTy),
+            fakeEnemy(AUnitType.Zerg_Hydralisk, enemyTy + 1),
+            fakeEnemy(Protoss_Zealot, 11),
+            fakeEnemy(Protoss_Dragoon, 92).setLockedDown(true),
+            fakeEnemy(Protoss_Dragoon, 93).setStasised(true)
         );
     }
 
