@@ -51,7 +51,7 @@ public class AProtectorManager {
             Selection enemies = bunker.enemiesNear().havingWeapon();
 
             // No enemies + bunker healthy
-            if (enemies.isEmpty() && bunker.isHealthy()) {
+            if ((enemies.isEmpty() || bunker.loadedUnits().isEmpty()) && bunker.isHealthy()) {
                 ArrayList<AUnit> protectors = ARepairAssignments.getProtectorsFor(bunker);
                 ArrayList<AUnit> toRemove = new ArrayList<>();
                 for (Iterator<AUnit> it = protectors.iterator(); it.hasNext(); ) {

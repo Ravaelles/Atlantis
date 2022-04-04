@@ -28,6 +28,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.units.workers.AMineralGathering;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 import atlantis.util.CappedList;
@@ -2238,30 +2239,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return !isWounded();
     }
 
-    public APosition makeLandable() {
-        int maxRadius = 1;
-        int currentRadius = 0;
-        while (currentRadius <= maxRadius) {
-            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
-                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
-                    if (
-                        dtx == -currentRadius || dtx == currentRadius
-                            || dty == -currentRadius || dty == currentRadius
-                    ) {
-                        APosition position = this.translateByTiles(dtx, dty);
-                        if (u.canLand(position.toTilePosition())) {
-                            return position;
-                        }
-                    }
-                }
-            }
-
-            currentRadius++;
-        }
-
-        return null;
-    }
-
     public boolean shieldDamageAtMost(int maxDamage) {
         if (!We.protoss()) {
             return false;
@@ -2459,5 +2436,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isMechanical() {
         return type() != null && type().isMechanical();
+    }
+
+    public void gatherBestResources() {
+        AMineralGathering.gatherResources(this);
     }
 }

@@ -29,7 +29,7 @@ public class DontDisturbInterrupt {
         // Don't INTERRUPT shooting units
         if (DontInterruptStartedAttacks.shouldNotInterrupt(unit)) {
             unit.setTooltip("Shoot-" + unit.cooldownRemaining());
-            APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Red);
+//            APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Red);
             return true;
         }
 

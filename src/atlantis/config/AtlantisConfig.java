@@ -20,25 +20,6 @@ public class AtlantisConfig {
      */
     public static boolean DISABLE_GUI = false;
 
-    /**`
-     * Race used by the Atlantis.
-     */
-    public static final String OUR_RACE = "Terran";
-//    public static final String OUR_RACE = "Protoss";
-//    public static final String OUR_RACE = "Zerg";
-
-    /**
-     * Single player enemy race.
-     */
-    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Protoss";
-//    public static final String ENEMY_RACE = "Zerg";
-    
-    /**
-     * Will modify bwapi.ini to use this map.
-     */
-    public static final String MAP = UseMap.activeMapPath();
-
     // =========================================================
     // =========================================================
     // =========================================================

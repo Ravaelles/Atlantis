@@ -1,19 +1,36 @@
 package atlantis.config;
 
 import atlantis.Atlantis;
-import atlantis.combat.missions.defend.MissionDefendFocusPoint;
-import atlantis.combat.missions.defend.MoveToDefendFocusPoint;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.CameraManager;
 import atlantis.game.GameSpeed;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
-public class UseMap {
+public class MapAndRace {
+
+    /**
+     * Race used by the Atlantis.
+     */
+//    public static final String OUR_RACE = "Protoss";
+    public static final String OUR_RACE = "Terran";
+//    public static final String OUR_RACE = "Zerg";
+
+    /**
+     * Single player enemy race.
+     */
+    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Terran";
+//    public static final String ENEMY_RACE = "Zerg";
+
+    /**
+     * Will modify bwapi.ini to use this map.
+     */
+    public static final String MAP = activeMapPath();
+
+    // =========================================================
 
     public static String activeMap() {
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
@@ -61,6 +78,7 @@ public class UseMap {
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
+//        if (true) return "ums/rav/T_rebasing.scm";
 //        if (true) return "ums/rav/T_v_Sunkens.scx";
 //        if (true) return "ums/rav/T_v_Sunkens2.scx";
 //        if (true) return "ums/rav/T_v_Sunkens3.scx";
@@ -70,12 +88,12 @@ public class UseMap {
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
 //        if (true) return "ums/rav/Vultures_v_Marines.scm";
 //        if (true) return "ums/rav/Vultures_v_Zealots.scm";
-        if (true) return "ums/rav/Wraiths_v_Cannons.scm";
+//        if (true) return "ums/rav/Wraiths_v_Cannons.scm";
 //        if (true) return "ums/rav/Wraiths_v_Probes.scm";
 
         // === Gosu bots - advanced single player cheating bots ====
 
-//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
@@ -229,6 +247,13 @@ public class UseMap {
                 CameraManager.centerCameraNowOnSquadCenter();
 //                GameSpeed.unpauseGame();
             }
+        }
+
+        // =========================================================
+        // Rebasing
+
+        else if (activeMap().equals("ums/rav/T_rebasing.scm")) {
+            CameraManager.centerCameraOn(Select.ourBases().first());
         }
     }
 }

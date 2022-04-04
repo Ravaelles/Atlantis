@@ -52,7 +52,8 @@ public class ARepairerManager {
             if (repairer.lastActionMoreThanAgo(30 * 3, Actions.REPAIR) || repairer.isIdle() || repairer.isStopped()) {
                 ARepairAssignments.removeRepairer(repairer);
                 repairer.setTooltipTactical("IdleGTFO");
-                return false;
+                repairer.gatherBestResources();
+                return true;
             }
 
             return repairer.repair(
@@ -71,6 +72,8 @@ public class ARepairerManager {
 //            System.err.println("Idle repairer, remove. Target was = " + target + " // " + target.hp() + " // " + target.isAlive());
             ARepairAssignments.removeRepairer(repairer);
             repairer.setTooltipTactical("GoHome");
+            repairer.gatherBestResources();
+            return true;
         }
         return false;
     }

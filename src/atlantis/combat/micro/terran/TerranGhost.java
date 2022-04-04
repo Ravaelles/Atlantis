@@ -5,6 +5,7 @@ import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.TargetsForUnits;
 import bwapi.TechType;
 
@@ -83,6 +84,10 @@ public class TerranGhost extends Microable {
     private AUnit standardTarget() {
         Selection selection = possibleTargets()
             .exclude(lockdownTargets.targetsAcquiredInLast(45));
+
+        if (!Enemy.terran()) {
+            selection = selection.havingAtLeastHp(50);
+        }
 
         return selection.nearestTo(unit);
     }

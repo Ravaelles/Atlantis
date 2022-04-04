@@ -54,7 +54,7 @@ public class DontInterruptStartedAttacks {
                     || unit.target().distToMoreThan(unit, 2.4)
 //                    || (unit.lastStartedAttackLessThanAgo(13) && unit.isFacingItsTarget())
             ) {
-                APainter.paintCircleFilled(unit, 10, Color.Brown);
+//                APainter.paintCircleFilled(unit, 10, Color.Brown);
                 return true;
             }
         }

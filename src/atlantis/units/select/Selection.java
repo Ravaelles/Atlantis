@@ -473,9 +473,15 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection notHavingHp(int hp) {
+    public Selection notHavingHp(int maxHp) {
         return cloneByRemovingIf(
-            (unit -> unit.hpMoreThan(hp)), "notHavingHp:" + hp
+            (unit -> unit.hpMoreThan(maxHp)), "notHavingHp:" + maxHp
+        );
+    }
+
+    public Selection havingAtLeastHp(int minHp) {
+        return cloneByRemovingIf(
+            (unit -> unit.hpLessThan(minHp)), "havingAtLeastHp:" + minHp
         );
     }
 

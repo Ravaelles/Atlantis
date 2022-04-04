@@ -89,6 +89,30 @@ public interface HasPosition {
         return null;
     }
 
+    default APosition makeLandableFor(AUnit building) {
+        int maxRadius = 1;
+        int currentRadius = 0;
+        while (currentRadius <= maxRadius) {
+            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
+                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+                    if (
+                        dtx == -currentRadius || dtx == currentRadius
+                            || dty == -currentRadius || dty == currentRadius
+                    ) {
+                        APosition position = this.translateByTiles(dtx, dty);
+                        if (!position.isExplored() || building.u().canLand(position.toTilePosition())) {
+                            return position;
+                        }
+                    }
+                }
+            }
+
+            currentRadius++;
+        }
+
+        return null;
+    }
+
     default APosition makeFreeOfOurUnits(int maxRadius, double checkMargin, AUnit exceptUnit) {
         int currentRadius = 0;
         while (currentRadius <= maxRadius) {

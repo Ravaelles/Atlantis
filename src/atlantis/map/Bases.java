@@ -91,7 +91,7 @@ public class Bases {
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation)) {
+            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation) || !baseLocation.isExplored()) {
                 return baseLocation;
             }
         }
@@ -246,12 +246,18 @@ public class Bases {
     public static boolean isBaseLocationFreeOfBuildingsAndEnemyUnits(ABaseLocation baseLocation) {
 
         // If we have any base, FALSE.
-        if (Select.ourBases().inRadius(7, baseLocation.position()).count() > 0) {
-            return false;
+//        List<AUnit> ourUnits = Select.ourBuildingsWithUnfinished()
+        List<AUnit> ourUnits = Select.ourBuildingsWithUnfinished()
+            .bases()
+            .inRadius(7, baseLocation.position()).list();
+        for (AUnit our : ourUnits) {
+            if (!our.isLifted()) {
+                return false;
+            }
         }
 
         // If any enemy unit is Near
-        if (Select.enemy().inRadius(11, baseLocation.position()).count() > 0) {
+        if (Select.enemy().inRadius(14, baseLocation.position()).count() > 0) {
             return false;
         }
 
