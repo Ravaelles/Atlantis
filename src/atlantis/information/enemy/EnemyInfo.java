@@ -1,6 +1,8 @@
 package atlantis.information.enemy;
 
 import atlantis.game.A;
+import atlantis.information.strategy.AStrategy;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
@@ -210,5 +212,9 @@ public class EnemyInfo {
 
     public static int hiddenUnitsCount() {
         return EnemyUnits.discovered().ofType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker).count();
+    }
+
+    public static AStrategy strategy() {
+        return EnemyStrategy.get();
     }
 }

@@ -2,7 +2,9 @@ package atlantis.production.constructing;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -43,20 +45,32 @@ public class AConstructionManager {
             AUnit builder = construction.builder();
 
             if (
-                    (builder == null || !builder.exists() || !builder.isAlive())
+                (builder == null || !builder.exists() || !builder.isAlive())
             ) {
-                construction.assignOptimalBuilder();
+                if (isItSafeToAssignNewBuilderTo(construction)) {
+                    construction.assignOptimalBuilder();
 
-                builder = construction.builder();
-                if (
-                        builder != null && construction.construction() != null
-                                && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
-                ) {
-                    builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
-                    builder.setTooltipTactical("Resume");
+                    builder = construction.builder();
+                    if (
+                            builder != null && construction.construction() != null
+                                    && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
+                    ) {
+                        builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
+                        builder.setTooltipTactical("Resume");
+                    }
                 }
             }
         }
+    }
+
+    private static boolean isItSafeToAssignNewBuilderTo(Construction construction) {
+        HasPosition position = construction.construction() != null
+            ? construction.construction() : construction.buildPosition();
+        if (EnemyUnits.discovered().combatUnits().inRadius(13, position).empty()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -205,6 +219,15 @@ public class AConstructionManager {
 
     private static void handleConstructionUnderAttack(Construction order) {
         AUnit building = order.construction();
+
+//        System.out.println("building = " + building);
+//        if (building != null) {
+//            System.out.println("building.isCompleted() = " + building.isCompleted());
+//            System.out.println("lastUnderAttack = " + building.lastUnderAttackAgo());
+//        }
+//         else {
+//            System.out.println(order);
+//        }
         
         // If unfinished building is under attack
         if (building != null && !building.isCompleted() && building.lastUnderAttackLessThanAgo(20)) {
@@ -223,7 +246,7 @@ public class AConstructionManager {
         }
 
         if (order.builder() == null) {
-            if (Count.workers() > 1) {
+            if (Count.workers() >= 3) {
                 System.out.println("Weird case, " + order.buildingType() + " has no builder. Cancel.");
             }
             order.cancel();

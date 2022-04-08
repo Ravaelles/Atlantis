@@ -39,18 +39,19 @@ public class CohesionAssurance {
 
 //        double maxDist = preferredDistToSquadCenter(unit.squad());
 //        unit.setTooltipTactical(A.digit(unit.distToSquadCenter()) + " / " + A.digit(unit.squadRadius()));
-        if (unit.outsideSquadRadius() && unit.meleeEnemiesNearCount(3) == 0) {
+        if (unit.outsideSquadRadius() && unit.meleeEnemiesNearCount(4) == 0) {
             String t = "Cohesion";
 
-            if (unit.lastActionMoreThanAgo(30, Actions.MOVE_FORMATION)) {
-                APosition goTo = unit.position()
-                    .translateTilesTowards(1.5, unit.squadCenter())
-                    .makeFreeOfOurUnits(3, 0.3, unit);
+            if (unit.lastActionMoreThanAgo(40, Actions.MOVE_FORMATION)) {
+                APosition goTo = unit.squadCenter()
+                    .translateTilesTowards(2, unit.position())
+                    .makeFreeOfOurUnits(5, 0.3, unit);
 
                 if (goTo == null) {
                     return false;
                 }
 
+                unit.addLog(t);
                 unit.move(
                     goTo,
                     Actions.MOVE_FORMATION,
@@ -58,7 +59,6 @@ public class CohesionAssurance {
                     false
                 );
             }
-            unit.addLog(t);
             return true;
         }
 

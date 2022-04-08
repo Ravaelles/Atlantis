@@ -3,8 +3,10 @@ package atlantis.combat.retreating;
 import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.Squad;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -192,28 +194,9 @@ public class RetreatManager {
             return !unit.mission().allowsToRetreat(unit);
         }
 
-//        if (unit.isMissionDefend() && (unit.isMelee() || unit.woundPercent() <= 10)) {
-//            AFocusPoint focusPoint = unit.squad().mission().focusPoint();
-//            return focusPoint != null && unit.distTo(focusPoint) <= 3;
-//        }
-
-//        if (unit.hpLessThan(Enemy.protoss() ? 33 : 16)) {
-//            return false;
-//        }
-
-
-//        if (
-//            unit.isAttacking()
-////                && unit.hpMoreThan(32)
-//                && unit.lastActionLessThanAgo(5)
-//                && unit.lastAttackFrameMoreThanAgo(20)
-//        ) {
-//            return true;
-//        }
-//
-//        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(80) && unit.lastUnderAttackLessThanAgo(80)) {
-//            return true;
-//        }
+        if (A.seconds() <= 400 && OurStrategy.get().isRushOrCheese()) {
+            return true;
+        }
 
         if (unit.isMissionDefend() &&
             (

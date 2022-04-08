@@ -21,9 +21,9 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Zerg";
+    public static final String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -35,7 +35,7 @@ public class MapAndRace {
     public static String activeMap() {
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
-//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
@@ -49,6 +49,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/3Zeal_v_1Zeal.scm";
+//        if (true) return "ums/rav/4Drag_v_4Drag_withBase.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_Zeal.scm";
@@ -93,8 +94,8 @@ public class MapAndRace {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
-//        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
+//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+        if (true) return "ums/exp_skilltest.scx"; // v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush

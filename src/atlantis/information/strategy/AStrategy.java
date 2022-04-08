@@ -123,7 +123,7 @@ public class AStrategy {
         return this;
     }
 
-    public boolean goingHiddenUnits() {
+    public boolean isGoingHiddenUnits() {
         return goingHiddenUnits;
     }
 

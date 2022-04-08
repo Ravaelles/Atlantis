@@ -6,6 +6,8 @@ import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.Sparta;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.strategy.GamePhase;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.units.select.Select;
 
 /**
@@ -95,6 +97,10 @@ public class Missions {
 
         // =========================================================
 
+        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+            return Missions.ATTACK;
+        }
+
 //        if (Enemy.zerg()) {
 //            return Missions.DEFEND;
 //        }
@@ -106,6 +112,7 @@ public class Missions {
 
     public static Mission fromString(String mission) {
         mission = mission.toUpperCase().replace("MISSION=", "");
+        mission = mission.toUpperCase().replace("MISSION:", "");
         switch (mission) {
             case "ATTACK" : return ATTACK;
             case "CONTAIN" : return CONTAIN;

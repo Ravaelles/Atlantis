@@ -88,9 +88,9 @@ public class ADynamicWorkerProductionManager {
             return false;
         }
 
-
         // =========================================================
 
+//        System.err.println("### AUTO-PRODUCE WORKERS ACTIVE");
         return Count.workers() < 60;
     }
 
@@ -120,6 +120,11 @@ public class ADynamicWorkerProductionManager {
                             && anotherBase.hasNothingInQueue()
                             && AGame.supplyFree() >= 2
             ) {
+//                System.err.println(
+//                    "At supply " + A.supplyUsed() + " produce worker " +
+//                        "(" + Count.ourOfTypeWithUnfinished(AtlantisConfig.WORKER) + ")"
+//                );
+
                 anotherBase.train(AtlantisConfig.WORKER);
                 return true;
             }
@@ -132,9 +137,12 @@ public class ADynamicWorkerProductionManager {
         
     public static boolean isAutoProduceWorkersActive(int workers) {
         int autoProduceMinWorkers = BuildOrderSettings.autoProduceWorkersMinWorkers();
-        int autoProduceMaxWorkers = BuildOrderSettings.autoProduceWorkersMaxWorkers();
+        if (A.supplyUsed() < autoProduceMinWorkers) {
+            return false;
+        }
 
-        return autoProduceMinWorkers <= workers && workers < autoProduceMaxWorkers;
+        int autoProduceMaxWorkers = BuildOrderSettings.autoProduceWorkersMaxWorkers();
+        return workers < autoProduceMaxWorkers;
     }
 
 }

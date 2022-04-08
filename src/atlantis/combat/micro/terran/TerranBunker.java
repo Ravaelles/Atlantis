@@ -1,8 +1,12 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.strategy.GamePhase;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
@@ -69,6 +73,14 @@ public class TerranBunker extends AntiLandBuildingManager {
             return false;
         }
 
+        if (
+            GamePhase.isEarlyGame()
+                && OurStrategy.get().isRushOrCheese()
+                && EnemyUnits.discovered().combatUnits().atMost(Enemy.zerg() ? 10 : 5)
+        ) {
+            return false;
+        }
+
         if (Count.bases() >= 2) {
             if (handleNaturalBunker()) {
                 return true;
@@ -79,6 +91,10 @@ public class TerranBunker extends AntiLandBuildingManager {
     }
 
     public boolean handleDefensiveBunkers() {
+        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+            return false;
+        }
+
         if (!EnemyInfo.isDoingEarlyGamePush()) {
             return false;
         }

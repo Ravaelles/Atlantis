@@ -1,6 +1,7 @@
 package atlantis.production.requests;
 
 import atlantis.combat.micro.terran.TerranBunker;
+import atlantis.game.A;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
@@ -79,8 +80,10 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                     && !ProductionQueue.isAtTheTopOfQueue(requirement, 6)
             ) {
                 if (!buildType.isSunken() && !buildType.isSporeColony()) {
-                    System.err.println("--- Non critical but ugly issue ---");
-                    System.err.println("Missing requirement: " + requirement + " for: " + buildType);
+                    if (A.supplyUsed() >= 6) {
+                        System.err.println("--- Non critical but ugly issue ---");
+                        System.err.println("Missing requirement: " + requirement + " for: " + buildType);
+                    }
     //                A.printStackTrace("Missing requirement: " + requirement + " for: " + type());
                     return false;
                 }

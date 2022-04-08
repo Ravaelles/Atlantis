@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class BuildOrderSettings {
 
-    public static final String AUTO_PRODUCE_WORKERS_MIN_WORKERS = "AUTO_PRODUCE_WORKERS_MIN_WORKERS";
+    public static final String AUTO_PRODUCE_WORKERS_MIN_SUPPLY = "AUTO_PRODUCE_WORKERS_MIN_SUPPLY";
     public static final String AUTO_PRODUCE_WORKERS_MAX_WORKERS = "AUTO_PRODUCE_WORKERS_MAX_WORKERS";
     public static final String AUTO_PRODUCE_ZEALOTS = "AUTO_PRODUCE_ZEALOTS";
     public static final String AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS = "AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS";
@@ -15,7 +15,7 @@ public class BuildOrderSettings {
     // =========================================================
 
     public static int autoProduceWorkersMinWorkers() {
-        return settingAsInt(AUTO_PRODUCE_WORKERS_MIN_WORKERS, 1);
+        return settingAsInt(AUTO_PRODUCE_WORKERS_MIN_SUPPLY, 1);
     }
 
     public static int autoProduceWorkersMaxWorkers() {

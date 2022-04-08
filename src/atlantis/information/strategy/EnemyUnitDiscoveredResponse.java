@@ -17,6 +17,10 @@ public class EnemyUnitDiscoveredResponse {
             return;
         }
 
+        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+            return;
+        }
+
         // HIDDEN units and buildings to produce it
         handleHiddenUnitDetected(enemyUnit);
 

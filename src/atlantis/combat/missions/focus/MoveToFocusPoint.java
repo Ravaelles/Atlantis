@@ -53,7 +53,7 @@ public abstract class MoveToFocusPoint {
 
         if (unitToFocus > (optimalDist + MARGIN)) {
             String dist = A.dist(unitToFocus);
-            if (unit.lastActionMoreThanAgo(20, Actions.MOVE_FOCUS)) {
+            if (unit.lastActionMoreThanAgo(35, Actions.MOVE_FOCUS)) {
                 APosition position =
                     (focus.distTo(unit) <= 6 || (focus.region() != null && focus.region().equals(unit.position().region())))
                     ? focus.translatePercentTowards(unit, 40) : focus;

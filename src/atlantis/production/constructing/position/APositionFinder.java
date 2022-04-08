@@ -85,7 +85,7 @@ public class APositionFinder {
         // BUNKER
 
         else if (building.isBunker()) {
-            return TerranBunkerPositionFinder.findPosition(builder, construction);
+            return TerranBunkerPositionFinder.findPosition(builder, construction, nearTo);
         }
 
         // =========================================================

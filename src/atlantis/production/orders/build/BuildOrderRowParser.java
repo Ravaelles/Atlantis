@@ -241,7 +241,7 @@ public class BuildOrderRowParser {
         }
 
         String settingKey;
-        if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MIN_WORKERS")) {
+        if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MIN_SUPPLY")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
         } else if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));

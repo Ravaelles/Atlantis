@@ -28,7 +28,7 @@ public class Decisions {
     public static boolean haveFactories() {
         return cache.get(
             "haveFactories",
-            100,
+            91,
             () -> {
                 return OurStrategy.get().goingBio();
             }
@@ -38,7 +38,7 @@ public class Decisions {
     public static boolean wantsToBeAbleToProduceTanksSoon() {
         return cache.get(
             "beAbleToProduceTanks",
-            100,
+            93,
             () -> {
                 if (
                     !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Siege_Tank_Tank_Mode, 5)
@@ -55,7 +55,7 @@ public class Decisions {
     public static boolean shouldMakeTerranBio() {
         return cache.get(
             "shouldMakeTerranBio",
-            100,
+            95,
             () -> ShouldMakeTerranBio.should()
         );
     }
@@ -63,27 +63,34 @@ public class Decisions {
     public static boolean shouldMakeZerglings() {
         return cache.get(
             "shouldMakeTerranBio",
-            100,
+            97,
             () -> ShouldMakeZerglings.should()
         );
     }
 
-    public static boolean dontProduceVultures() {
+    public static boolean produceVultures() {
 //        return true;
         return cache.get(
-            "dontProduceVultures",
-            100,
+            "produceVultures",
+            99,
             () -> {
-//                if (true) return true;
-
                 int vultures = Count.vultures();
 
-                if (vultures <= 9 && A.hasMinerals(800)) {
-                    return false;
+                if (FocusOnProducingUnits.isFocusedOn(Terran_Vulture)) {
+                    if (vultures < 30) {
+                        return true;
+                    }
+                }
+
+//                if (true) return true;
+
+
+                if (vultures <= 9 && A.hasMinerals(700)) {
+                    return true;
                 }
 
                 if (vultures <= 2 && EnemyUnits.count(Zerg_Zergling) >= 7) {
-                    return false;
+                    return true;
                 }
 
                 if (vultures <= 2 && EnemyUnits.count(Protoss_Zealot) >= 6) {
@@ -111,7 +118,7 @@ public class Decisions {
     public static boolean maxFocusOnTanks() {
         return cache.get(
             "maxFocusOnTanks",
-            100,
+            91,
             () ->
 //                    GamePhase.isEarlyGame()
                 (
@@ -125,7 +132,7 @@ public class Decisions {
     public static boolean isEnemyGoingAirAndWeAreNotPreparedEnough() {
         return cache.get(
             "isEnemyGoingAirAndWeAreNotPreparedEnough",
-            100,
+            89,
             () -> {
                 if (EnemyStrategy.get().isAirUnits()) {
                     if (Count.ourStrictlyAntiAir() <= 10 || ArmyStrength.weAreWeaker()) {

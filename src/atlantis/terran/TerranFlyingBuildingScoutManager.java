@@ -44,7 +44,7 @@ public class TerranFlyingBuildingScoutManager {
                 continue;
             }
 
-            if (!building.isLifted() && building.isUnderAttack(1) && !building.isLifted() && building.hpPercent() <= 34) {
+            if (!building.isLifted() && building.isUnderAttack(20) && building.hpPercent() <= 36) {
                 building.lift();
                 return;
             }

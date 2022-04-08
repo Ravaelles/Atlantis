@@ -83,6 +83,7 @@ public class TerranGhost extends Microable {
 
     private AUnit standardTarget() {
         Selection selection = possibleTargets()
+            .excludeTypes(AUnitType.Protoss_Interceptor)
             .exclude(lockdownTargets.targetsAcquiredInLast(45));
 
         if (!Enemy.terran()) {

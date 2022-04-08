@@ -6,13 +6,15 @@ import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.debug.tweaker.ParamTweakerFactory;
-import atlantis.information.strategy.OurStrategyChooser;
+import atlantis.information.strategy.StrategyChooser;
 import atlantis.information.strategy.ProtossStrategies;
 import atlantis.information.strategy.TerranStrategies;
 import atlantis.information.strategy.ZergStrategies;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
 import atlantis.production.orders.build.CurrentBuildOrder;
+import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class OnStart {
 
@@ -75,6 +77,12 @@ public class OnStart {
         if (Atlantis.game().mapPathName().contains("/ums/")) {
             AGame.setUmsMode();
         }
+
+        int ours = Select.our().count();
+
+        if (We.zerg() ? ours != 9 : ours != 5) {
+            AGame.setUmsMode();
+        }
     }
 
     public static void initializeAllStrategies() {
@@ -85,7 +93,7 @@ public class OnStart {
 
     public static void initStrategyAndBuildOrder() {
         try {
-            OurStrategyChooser.initialize();
+            StrategyChooser.initialize();
 
             if (Env.isLocal()) {
                 if (CurrentBuildOrder.get() != null) {

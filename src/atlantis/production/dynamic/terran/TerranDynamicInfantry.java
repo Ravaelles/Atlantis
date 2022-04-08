@@ -116,6 +116,10 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return false;
         }
 
+        if (A.canAffordWithReserved(50, 0)) {
+            return false;
+        }
+
         if (!Decisions.shouldMakeTerranBio()) {
             if (DEBUG) System.out.println("Marines - Dont - shouldNOTMakeTerranBio - " + ShouldMakeTerranBio.reason);
             return false;

@@ -140,7 +140,7 @@ public class TerranTankWhenNotSieged extends TerranTank {
         if (combatBuilding != null) {
             if (
                 (unit.distToLessThan(combatBuilding, COMBAT_BUILDING_DIST_SIEGE) && canSiegeHere(unit, false))
-                    || unit.distToLessThan(combatBuilding, 8.4)
+                    || unit.distToLessThan(combatBuilding, 8.6)
             ) {
                 return forceSiege(unit, "SiegeBuilding" + A.dist(unit, combatBuilding));
             }

@@ -38,6 +38,10 @@ public class AdvanceUnitsManager {
     private static boolean moveToFocusPoint(
             AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
+        if (unit.isAir()) {
+            return false;
+        }
+
         if (focusPoint == null) {
             unit.addLog("NoFocusPoint");
             return false;
@@ -51,8 +55,9 @@ public class AdvanceUnitsManager {
 //                    && unit.lastActionMoreThanAgo(15)
                     && unit.distToSquadCenter() >= 5
             ) {
-                unit.addLog("TooFast");
-                return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "TooFast", false);
+                String t = "TooFast";
+                unit.addLog(t);
+                return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, t, false);
             }
             return false;
         }

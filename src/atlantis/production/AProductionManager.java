@@ -131,7 +131,9 @@ public class AProductionManager {
         // =========================================================
         // Worker
 
-        if (type.equals(AtlantisConfig.WORKER)) {
+//        System.out.println(type + " (" + A.supplyUsed() + ")");
+        if (type.isWorker()) {
+//            System.out.println(A.now() + " worker");
             return produceWorker();
         } 
 

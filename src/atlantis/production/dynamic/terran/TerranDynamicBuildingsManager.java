@@ -13,9 +13,6 @@ import atlantis.information.tech.ATech;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
 import atlantis.production.orders.build.AddToQueue;
-import atlantis.production.requests.AntiLandBuildingManager;
-import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
-import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -23,7 +20,6 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import atlantis.util.We;
 
 import static atlantis.units.AUnitType.*;
 import static bwapi.TechType.Tank_Siege_Mode;
@@ -63,7 +59,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
-        if (A.supplyUsed() >= (Enemy.terran() ? 90 : 50) || enemyStrategy().goingHiddenUnits()) {
+        if (A.supplyUsed() >= (Enemy.terran() ? 90 : 50) || enemyStrategy().isGoingHiddenUnits()) {
             if (haveNotExistingOrPlanned(Terran_Starport)) {
                 AddToQueue.withHighPriority(Terran_Starport);
             }
@@ -216,20 +212,26 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     private static boolean barracks() {
         int barracks = Count.withPlanned(Terran_Barracks);
 
-        if (barracks >= 3) {
-            return false;
+        if (!A.hasMinerals(800)) {
+            if (barracks >= 3) {
+                return false;
+            }
+
+    //        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
+            if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
+                return false;
+            }
+
+            if (barracks >= 3 && A.supplyUsed() <= 40) {
+                return false;
+            }
+
+            if (barracks >= 3 && A.supplyUsed() <= 70) {
+                return false;
+            }
         }
 
-//        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
-        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
-            return false;
-        }
-
-        if (barracks >= 3 && A.supplyUsed() <= 40) {
-            return false;
-        }
-
-        if (barracks >= 3 && A.supplyUsed() <= 70) {
+        if (barracks >= 10) {
             return false;
         }
 

@@ -218,7 +218,8 @@ public class AGame {
      * Returns true if user plays as Zerg.
      */
     public static boolean isPlayingAsZerg() {
-        return AtlantisConfig.MY_RACE.equals(Race.Zerg);
+        return AGame.getPlayerUs().getRace().equals(Race.Zerg);
+//        return AtlantisConfig.MY_RACE.equals(Race.Zerg);
     }
 
     /**

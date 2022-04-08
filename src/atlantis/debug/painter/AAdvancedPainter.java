@@ -108,7 +108,7 @@ public class AAdvancedPainter extends APainter {
 //        paintUnitTypes();
         paintRegions();
 //        paintMineralDistance();
-//        paintChokepoints();
+        paintChokepoints();
         paintImportantPlaces();
         paintBases();
         paintStrategicLocations();
@@ -1368,15 +1368,16 @@ public class AAdvancedPainter extends APainter {
             paintCircle(position, 4, color);
             paintCircle(position, 3, color);
         }
-
     }
 
     protected static void paintChokepoints() {
 
         // All chokes
         List<AChoke> chokePoints = Chokes.chokes();
+        AUnit main = Select.main();
         for (AChoke choke : chokePoints) {
-            paintChoke(choke, Color.Brown, "");
+            String text = main == null ? "" : (((int) main.groundDist(choke)) + "");
+            paintChoke(choke, Color.Brown, text, 1.3);
         }
     }
 

@@ -1,5 +1,7 @@
 package atlantis.production.constructing.position;
 
+import atlantis.game.CameraManager;
+import atlantis.game.GameSpeed;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
@@ -36,6 +38,8 @@ public class PositionModifier {
      */
     public static final String NATURAL = "NATURAL";
 
+    public static final String ENEMY_NATURAL = "ENEMY_NATURAL";
+
     // =========================================================
 
     public static APosition toPosition(
@@ -44,6 +48,10 @@ public class PositionModifier {
         AUnit main = Select.main();
 
         // === Bases ===========================================
+
+//        if (modifier != null && modifier != "") {
+//            System.err.println("modifier = " + modifier);
+//        }
 
         if (modifier.equals(MAIN) ) {
             if (construction == null || construction.maxDistance() < 0) {
@@ -63,6 +71,22 @@ public class PositionModifier {
 //            }
 
             return ASpecialPositionFinder.findPositionForBase_natural(building, builder);
+        }
+        else if (modifier.equals(ENEMY_NATURAL)) {
+            APosition enemyNatural = Bases.enemyNatural();
+            AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
+
+            if (enemyNatural != null && enemyNaturalChoke != null) {
+                APosition at = enemyNatural.translateTilesTowards(4, enemyNatural);
+                APosition position = APositionFinder.findStandardPosition(builder, building, at, 10);
+                return position;
+            }
+            else if (enemyNaturalChoke != null) {
+                return APositionFinder.findStandardPosition(builder, building, enemyNaturalChoke, 10);
+            }
+            else if (enemyNatural != null) {
+                return APositionFinder.findStandardPosition(builder, building, enemyNatural, 10);
+            }
         }
 
         if (main == null) {

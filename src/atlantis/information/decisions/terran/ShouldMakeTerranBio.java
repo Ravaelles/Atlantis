@@ -2,11 +2,13 @@ package atlantis.information.decisions.terran;
 
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
+import atlantis.information.decisions.FocusOnProducingUnits;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 
@@ -19,6 +21,8 @@ public class ShouldMakeTerranBio {
         reason = "";
 
         infantry = Count.infantry();
+
+        // === True ===========================================
 
         if (AGame.hasMinerals(600)) {
             return true;
@@ -46,6 +50,13 @@ public class ShouldMakeTerranBio {
                 reason = "AntiAir";
                 return wantsToReturnTrue();
             }
+        }
+
+        // === False ===============================================
+
+        if (FocusOnProducingUnits.haveAnyFocus() && !FocusOnProducingUnits.isFocusedOn(AUnitType.Terran_Marine)) {
+            reason = "focusOnOtherUnits";
+            return false;
         }
 
         if (!Decisions.maxFocusOnTanks()) {

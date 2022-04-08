@@ -10,18 +10,21 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class TerranBunkerPositionFinder {
 
     private static AUnitType bunker = AUnitType.Terran_Bunker;
 
-    public static APosition findPosition(AUnit builder, Construction order) {
-        HasPosition nearTo = defineNearTo(order);
-        if (nearTo == null) {
-            nearTo = Select.ourBuildings().first();
+    public static APosition findPosition(AUnit builder, Construction order, HasPosition nearTo) {
+        if (nearTo != null) {
+//            nearTo = defineNearTo(order);
+            return APositionFinder.findStandardPosition(builder, bunker, nearTo, 15);
         }
+//        if (nearTo == null) {
+//            nearTo = defineNearTo(order);
+//            nearTo = Select.ourBuildings().first();
+//        }
 
         // =========================================================
 

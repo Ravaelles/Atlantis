@@ -5,6 +5,7 @@ import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.GameSpeed;
 import atlantis.information.strategy.GamePhase;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -266,6 +267,14 @@ public class ARunningManager {
             return false;
         }
 
+        if (OurStrategy.get().isRushOrCheese() && A.seconds() <= 300) {
+            return false;
+        }
+
+        if (!unit.hasPathTo(main)) {
+            return false;
+        }
+
         double distToMain = unit.distTo(main);
 
         if (distToMain >= 40 || (distToMain > 15 && unit.isMissionDefend())) {
@@ -516,7 +525,7 @@ public class ARunningManager {
         for (AUnit otherUnit : friendsTooClose.list()) {
             if (canBeNotifiedToMakeSpace(otherUnit)) {
                 AUnit runFrom = otherUnit.enemiesNear().nearestTo(otherUnit);
-                if (runFrom == null) {
+                if (runFrom == null || !runFrom.hasPosition()) {
                     continue;
                 }
 

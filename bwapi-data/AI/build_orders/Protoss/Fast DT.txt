@@ -7,7 +7,7 @@
 #AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=24
 
 // If have empty slot for a worker, force to build new workers
-#AUTO_PRODUCE_WORKERS_MIN_WORKERS=1
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
 
 // Max number of workers for workers auto-production to remain active
 #AUTO_PRODUCE_WORKERS_MAX_WORKERS=55

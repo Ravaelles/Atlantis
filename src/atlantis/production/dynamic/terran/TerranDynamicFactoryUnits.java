@@ -65,7 +65,8 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
             return AGame.canAffordWithReserved(200, 200);
         }
 
-        if (Decisions.dontProduceVultures() || tanks <= 0.4 * Count.vultures()) {
+        int vultures = Count.vultures();
+        if (!Decisions.produceVultures() || tanks <= 5 || tanks <= 0.4 * vultures) {
             return addToQueueIfNotAlreadyThere(AUnitType.Terran_Siege_Tank_Tank_Mode);
         }
 
@@ -73,7 +74,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
     }
 
     private static boolean vultures() {
-        if (Decisions.dontProduceVultures()) {
+        if (!Decisions.produceVultures()) {
             return false;
         }
 

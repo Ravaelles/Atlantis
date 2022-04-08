@@ -4,7 +4,10 @@ import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 
 public class TerranStrategies extends AStrategy {
-    
+
+    // Cheese
+    public static final AStrategy TERRAN_BBS = new AStrategy();
+
     // Rush
     public static final AStrategy TERRAN_2_Rax_MnM = new AStrategy();
     public static final AStrategy TERRAN_3_Rax_MnM = new AStrategy();
@@ -13,9 +16,6 @@ public class TerranStrategies extends AStrategy {
     public static final AStrategy TERRAN_2_Rax_Academy_vT = new AStrategy();
     public static final AStrategy TERRAN_3_Rax_Academy_vP = new AStrategy();
     public static final AStrategy TERRAN_MMG_vP = new AStrategy(); // Marine Medic Ghost (with Lockdown)
-
-    // Cheese
-    public static final AStrategy TERRAN_BBS = new AStrategy();
 
     // Expansion
     public static final AStrategy TERRAN_1_Rax_FE = new AStrategy();

@@ -1,13 +1,13 @@
 // === CUSTOMIZABLE VARIABLES =========================================
 
 // Which worker (1st, 8th etc) should scout and try to find enemy base
-#SCOUT_IS_NTH_WORKER=11
+#SCOUT_IS_NTH_WORKER=6
 
 // When supply is bigger than N, then start auto-producing supply units
-#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=30
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=17
 
 // If have empty slot for a worker, force to build new workers
-#AUTO_PRODUCE_WORKERS_MIN_WORKERS=13
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=17
 
 // Max number of workers for workers auto-production to remain active
 #AUTO_PRODUCE_WORKERS_MAX_WORKERS=60
@@ -15,51 +15,29 @@
 // === Raw build order used - taken from Liquipedia or so =============
 
 /**
-This build is modified Nada 2 Fact, only with focus on Vultures
-http://wiki.teamliquid.net/starcraft/Nada_2_Fac
+Improvised Build Order
 */
 
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-//4 - MISSION=RUSH
+4 - SCV
 5 - SCV
+6 - Barracks
 6 - SCV
-7 - SCV
-8 - SCV
-8 - Barracks
-8 - Barracks
-8 - SCV
+7 - Barracks
+7 - Marine
+8 - Bunker - ENEMY_NATURAL
+8 - Marine
+//9 - MISSION:ATTACK
+9 - Marine
 9 - Supply Depot
-10 - SCV
+10 - Marine
 11 - Marine
 12 - Marine
 13 - Marine
+13 - Bunker - ENEMY_NATURAL
 14 - Marine
-14 - Supply Depot
-15 - SCV
+15 - Marine
 16 - Marine
-17 - SCV
-18 - Marine
-18 - Barracks
-19 - SCV
-Marines - x5
-23 - Supply Depot
-25 - Marine
-25 - Barracks
-Marines - x5
-30 - Barracks
-Marines - x5
-35 - Barracks
-Marines - x5
-40 - Barracks
-Marines - x5
-45 - Barracks
-//45 - MISSION=RESET
-Marines - x5
-50 - Barracks
-Marines - x5
-55 - Barracks
-Marines - x5
-60 - Barracks
-Marines - x5
+17 - Marine

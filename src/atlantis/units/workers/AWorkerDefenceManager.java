@@ -190,6 +190,7 @@ public class AWorkerDefenceManager {
                 AUnitType.Zerg_Lurker,
                 AUnitType.Zerg_Ultralisk,
                 AUnitType.Protoss_Archon,
+                AUnitType.Protoss_Dark_Templar,
                 AUnitType.Protoss_Reaver
 //                AUnitType.Protoss_Zealot
         ).inRadius(8, worker).count() >= 1) {
@@ -211,9 +212,13 @@ public class AWorkerDefenceManager {
 
         // FIGHT against COMBAT UNITS
         List<AUnit> enemies = worker.enemiesNear()
-                .canBeAttackedBy(worker, 3)
+                .canBeAttackedBy(worker, 2)
                 .list();
         for (AUnit enemy : enemies) {
+            if (worker.hp() <= 20) {
+                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY);
+                return true;
+            }
             worker.setTooltipTactical("FurMotherland!");
             return worker.attackUnit(enemy);
         }

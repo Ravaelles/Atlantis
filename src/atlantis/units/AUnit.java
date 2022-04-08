@@ -427,11 +427,27 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
     public int groundWeaponRange() {
-        return cacheInt.get(
+        int range = cacheInt.get(
             "groundWeaponRange",
             60,
             () -> type().groundWeapon().maxRange() / 32
         );
+
+        if (isMarine()) {
+            if (isLoaded()) {
+                range++;
+            }
+            if (isOur() && ATech.isResearched(UpgradeType.U_238_Shells)) {
+                range++;
+            }
+        }
+        else if (isDragoon()) {
+            if (ATech.isResearched(UpgradeType.Singularity_Charge)) {
+                range += 2;
+            }
+        }
+
+        return range;
     }
 
     /**

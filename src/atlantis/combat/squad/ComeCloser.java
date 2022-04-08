@@ -59,7 +59,7 @@ public class ComeCloser extends ASquadCohesionManager {
             HasPosition goTo = unit.distToSquadCenter() >= unit.squadRadius()
                 ? squadCenter
                 : unit.translateTilesTowards(2, squadCenter).makeWalkable(6);
-            if (goTo != null) {
+            if (goTo != null && unit.friendsNear().inRadius(3, unit).atMost(2)) {
                 return unit.move(goTo, Actions.MOVE_FORMATION, "Closer", false);
             }
         }

@@ -4,11 +4,13 @@ import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.combat.micro.terran.TerranMissileTurret;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.strategy.GamePhase;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.map.scout.AScoutManager;
 import atlantis.production.requests.AntiAirBuildingManager;
 import atlantis.production.requests.AntiLandBuildingManager;
@@ -45,9 +47,13 @@ public abstract class AStrategyResponse {
     public void updateEnemyStrategyChanged() {
         AStrategy enemyStrategy = EnemyStrategy.get();
 
+        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+            return;
+        }
+
         // === Rush ========================================
 
-        if (enemyStrategy.isRushOrCheese()) {
+        if (enemyStrategy.isRushOrCheese() && GamePhase.isEarlyGame()) {
             rushDefence(enemyStrategy);
         }
 
@@ -59,7 +65,7 @@ public abstract class AStrategyResponse {
 
         // === Tech ========================================
 
-        if (enemyStrategy.goingHiddenUnits()) {
+        if (enemyStrategy.isGoingHiddenUnits()) {
 //            if (!Enemy.terran()) {
 //                Missions.forceGlobalMissionDefend("Enemy goes hidden units");
 //            }

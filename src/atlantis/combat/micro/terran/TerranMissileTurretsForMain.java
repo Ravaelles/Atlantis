@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.strategy.AStrategy;
 import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
 import atlantis.map.Chokes;
@@ -65,11 +66,18 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     // =========================================================
 
     private boolean turretsForMainBase() {
-        APosition forMainBase = positionForMainBaseTurret();
+        int turretsForMain = mainBaseTurrets();
 
+        if (turretsForMain <= 0) {
+            return false;
+        }
+
+        // =========================================================
+
+        APosition forMainBase = positionForMainBaseTurret();
         if (
                 forMainBase != null
-                && Count.existingOrPlannedBuildingsNear(turret, 6, forMainBase) < mainBaseTurrets()
+                && Count.existingOrPlannedBuildingsNear(turret, 6, forMainBase) < turretsForMain
         ) {
             AddToQueue.withHighPriority(turret, forMainBase).setMaximumDistance(12);
             return true;
@@ -79,19 +87,35 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     }
 
     private int mainBaseTurrets() {
+        AStrategy enemyStrategy = EnemyInfo.strategy();
+
         if (Enemy.zerg()) {
-            return (int) Math.min(6, (A.seconds() / 100));
+            int base = 0;
+
+            if (enemyStrategy.isAirUnits()) {
+                base = 3;
+            }
+
+            return Math.min(6, base + (A.seconds() / 100));
         }
 
-        if (Enemy.protoss()) {
-            return 3;
+        else if (Enemy.protoss()) {
+            if (enemyStrategy.isAirUnits()) {
+                return 6;
+            }
+
+            return (EnemyInfo.hasHiddenUnits() || enemyStrategy.isGoingHiddenUnits())
+                ? 2
+                : (A.seconds() >= 400 ? 1 : 0);
         }
 
-        if (EnemyUnits.discovered().ofType(AUnitType.Terran_Wraith).notEmpty()) {
-            return 1;
-        }
+        else {
+            if (EnemyUnits.discovered().ofType(AUnitType.Terran_Wraith).notEmpty()) {
+                return 1;
+            }
 
-        return 0;
+            return 0;
+        }
     }
 
     private boolean turretForMainChoke() {

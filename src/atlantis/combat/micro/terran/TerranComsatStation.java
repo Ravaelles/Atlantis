@@ -4,6 +4,7 @@ import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import bwapi.TechType;
 import tests.unit.FakeUnit;
 
@@ -59,9 +60,13 @@ public class TerranComsatStation {
 
     private static boolean scanDarkTemplars(AUnit comsat) {
         for (AUnit dt : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Dark_Templar).list()) {
-            if (Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
+            Selection ourCombatUnits = Select.ourCombatUnits();
+            if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
                     .atLeast(comsat.energy(150) ? (comsat.energy(190) ? 2 : 4) : 7)) {
-                if (Select.ourCombatUnits().nearestTo(dt).distToLessThan(dt, 6)) {
+                if (
+                    ourCombatUnits.nearestTo(dt).distToLessThan(dt, 6)
+                    || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()
+                ) {
                     return scan(comsat, dt);
                 }
             }

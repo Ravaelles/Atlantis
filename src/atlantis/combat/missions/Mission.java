@@ -100,7 +100,7 @@ public abstract class Mission {
         if ((A.isUms() || A.chance(10)) && (temporaryTarget == null || temporaryTarget.isExplored())) {
             temporaryTarget = AMap.getRandomUnexploredPosition(unit.position());
 //            if (temporaryTarget != null) {
-//                System.out.println("Go to unexplored " + temporaryTarget);
+//            System.out.println("Go to unexplored " + temporaryTarget);
 //            }
         }
 
@@ -108,7 +108,7 @@ public abstract class Mission {
         if (temporaryTarget == null || temporaryTarget.isPositionVisible()) {
             temporaryTarget = AMap.randomInvisiblePosition(unit);
 //            if (temporaryTarget != null) {
-//                System.out.println("Go to invisible " + temporaryTarget);
+//            System.out.println("Go to invisible " + temporaryTarget);
 //            }
         }
 

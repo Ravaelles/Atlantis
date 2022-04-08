@@ -8,6 +8,8 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.GamePhase;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -46,6 +48,10 @@ public class MissionChanger {
 
         // =========================================================
 
+        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+            return;
+        }
+
         if (
             !Have.main()
                 || (Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS * 30 && !ArmyStrength.weAreMuchStronger()
@@ -83,7 +89,12 @@ public class MissionChanger {
             return;
         }
 
+        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+            return;
+        }
+
         if (Missions.isFirstMission()) {
+
             if (Missions.isGlobalMissionAttack() && unit.friendsNear().atLeast(3)) {
                 forceMissionContain("BetterContainRatherThanAttacking");
             }
