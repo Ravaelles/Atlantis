@@ -459,7 +459,10 @@ public class ARunningManager {
                 // If has path to given point, add it to the list of potential points
 //                APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
 //                if (isPossibleAndReasonablePosition(unit, potentialPosition, false, "v", "x")) {
-                if (isPossibleAndReasonablePosition(unit, potentialPosition, false, null, null)) {
+                if (
+                    isPossibleAndReasonablePosition(unit, potentialPosition, false, null, null)
+                        && !potentialPosition.isCloseToMapBounds()
+                ) {
                     potentialPositionsList.add(potentialPosition);
                 }
             }

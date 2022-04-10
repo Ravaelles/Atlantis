@@ -132,6 +132,7 @@ public class ABuilderManager {
         if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
 //            System.err.println("buildPosition PRE = " + order.buildPosition());
             APosition buildPosition = refreshBuildPosition(order);
+//            APosition buildPosition = order.buildPosition();
 
             if (buildPosition == null) {
                 return false;
@@ -159,9 +160,12 @@ public class ABuilderManager {
 
     private static APosition refreshBuildPosition(Construction order) {
         if (Select.ourWorkers().inRadius(1.8, order.buildPosition()).atLeast(2)) {
-            return APositionFinder.findPositionForNew(
-                order.builder(), order.buildingType(), order
+            return APositionFinder.findStandardPosition(
+                order.builder(), order.buildingType(), order.buildPosition(), 10
             );
+//            return APositionFinder.findPositionForNew(
+//                order.builder(), order.buildingType(), order
+//            );
         }
 
         return order.buildPosition();

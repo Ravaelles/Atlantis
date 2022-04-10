@@ -96,7 +96,7 @@ public class ComeCloser extends ASquadCohesionManager {
         }
 
         if (unit.groundDist(focusPoint(unit)) + 3 <= unit.squad().groundDistToFocusPoint()) {
-            if (unit.friendsNear().inRadius(4, unit).atMost(6)) {
+            if (unit.friendsNear().inRadius(4, unit).atMost(5)) {
                 unit.addLog("TooAhead");
                 return true;
             }
@@ -169,6 +169,10 @@ public class ComeCloser extends ASquadCohesionManager {
             return false;
         }
 
+        if (unit.isMissionAttack()) {
+            return false;
+        }
+
         if (unit.distToSquadCenter() >= 15) {
             return false;
         }
@@ -180,7 +184,7 @@ public class ComeCloser extends ASquadCohesionManager {
 
         double maxDistToSquadCenter = CohesionAssurance.squadMaxRadius(unit.squad());
 
-        if (unit.distTo(center) > maxDistToSquadCenter) {
+        if (unit.distTo(center) > maxDistToSquadCenter && unit.friendsNear().inRadius(2, unit).atMost(5)) {
             AUnit nearestFriend = unit.friendsNear().nearestTo(unit);
             if (nearestFriend == null) {
                 return false;

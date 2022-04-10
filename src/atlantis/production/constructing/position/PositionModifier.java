@@ -2,10 +2,9 @@ package atlantis.production.constructing.position;
 
 import atlantis.game.CameraManager;
 import atlantis.game.GameSpeed;
-import atlantis.map.ABaseLocation;
-import atlantis.map.AChoke;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.*;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
@@ -38,7 +37,10 @@ public class PositionModifier {
      */
     public static final String NATURAL = "NATURAL";
 
+    public static final String MAP_CENTER = "MAP_CENTER";
+
     public static final String ENEMY_NATURAL = "ENEMY_NATURAL";
+    public static final String ENEMY_MAIN = "ENEMY_MAIN";
 
     // =========================================================
 
@@ -77,9 +79,8 @@ public class PositionModifier {
             AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
 
             if (enemyNatural != null && enemyNaturalChoke != null) {
-                APosition at = enemyNatural.translateTilesTowards(4, enemyNatural);
-                APosition position = APositionFinder.findStandardPosition(builder, building, at, 10);
-                return position;
+                APosition at = enemyNaturalChoke.translateTilesTowards(4, enemyNatural);
+                return APositionFinder.findStandardPosition(builder, building, at, 10);
             }
             else if (enemyNaturalChoke != null) {
                 return APositionFinder.findStandardPosition(builder, building, enemyNaturalChoke, 10);
@@ -87,6 +88,28 @@ public class PositionModifier {
             else if (enemyNatural != null) {
                 return APositionFinder.findStandardPosition(builder, building, enemyNatural, 10);
             }
+        }
+        else if (modifier.equals(ENEMY_MAIN)) {
+            AChoke enemyMainChoke = Chokes.enemyMainChoke();
+            APosition enemyBase = EnemyUnits.enemyBase();
+            if (enemyBase != null && enemyMainChoke != null) {
+                APosition at = enemyBase.translateTilesTowards(14, enemyMainChoke);
+                return APositionFinder.findStandardPosition(builder, building, at, 10);
+            }
+            else if (enemyMainChoke != null) {
+                return APositionFinder.findStandardPosition(builder, building, enemyMainChoke, 10);
+            }
+            else if (enemyBase != null) {
+                return APositionFinder.findStandardPosition(builder, building, enemyBase, 10);
+            }
+        }
+        else if (modifier.equals(MAP_CENTER)) {
+            APosition at = new APosition(
+                (AMap.getMapWidthInTiles() / 2) * 32,
+                (AMap.getMapHeightInTiles() / 2) * 32
+            );
+//            System.out.println("at = " + at);
+            return APositionFinder.findStandardPosition(builder, building, at, 30);
         }
 
         if (main == null) {

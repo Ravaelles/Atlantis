@@ -118,6 +118,7 @@ public class ConstructionRequests {
                 System.err.println();
             }
 
+            System.out.println("Cancel " + building + " (Invalid place)");
             newConstructionOrder.cancel();
 //            throw new RuntimeException("Can't find place for `" + building + "` ");
             return false;
@@ -348,6 +349,7 @@ public class ConstructionRequests {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
             if (!construction.hasStarted()) {
+                System.out.println("Removing all non started buildings due to priority request");
                 construction.cancel();
             }
         }

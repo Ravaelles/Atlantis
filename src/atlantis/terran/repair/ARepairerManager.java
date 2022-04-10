@@ -3,6 +3,7 @@ package atlantis.terran.repair;
 import atlantis.combat.micro.avoid.AAvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -147,8 +148,11 @@ public class ARepairerManager {
 
     protected static AUnit repairerFor(AUnit unitToRepair, boolean criticallyImportant) {
         if (criticallyImportant) {
-            return Select.ourWorkers().notRepairing().notConstructing().notScout()
-                    .exclude(unitToRepair).nearestTo(unitToRepair);
+            Selection candidates = Select.ourWorkers().notRepairing();
+            if (!OurStrategy.get().isRush()) {
+                candidates = candidates.notScout().notConstructing();
+            }
+            return candidates.exclude(unitToRepair).nearestTo(unitToRepair);
         }
 
         // Try to use one of the protectors if he's non occupied

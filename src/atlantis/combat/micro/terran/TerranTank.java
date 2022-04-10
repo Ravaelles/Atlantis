@@ -48,7 +48,7 @@ public class TerranTank {
             return true;
         }
 
-        return (unit.distTo(choke.center()) - choke.width()) >= 1.6 || (choke.width() >= 3.8);
+        return (unit.distTo(choke.center()) - choke.width()) >= 2.6 || (choke.width() >= 3.8);
     }
 
     private static boolean tooManyTanksInOnePlace(AUnit unit) {

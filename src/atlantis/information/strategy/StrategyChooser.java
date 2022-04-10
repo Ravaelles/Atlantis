@@ -28,7 +28,7 @@ public class StrategyChooser {
 //        return TerranStrategies.TERRAN_3_Rax_MnM;
 //        return TerranStrategies.TERRAN_Nada_2_Fac;
 //        return TerranStrategies.TERRAN_1_Base_Vultures;
-        if (true) { return TerranStrategies.TERRAN_BBS; }
+//        if (true) { return TerranStrategies.TERRAN_BBS; }
 
         if (Enemy.protoss()) {
             return TerranStrategies.TERRAN_MMG_vP;

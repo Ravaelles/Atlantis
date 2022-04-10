@@ -7,6 +7,7 @@ import atlantis.game.AGame;
 import atlantis.game.CameraManager;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
 import atlantis.map.Bases;
@@ -250,6 +251,10 @@ public class AScoutManager {
         // TERRAN + PROTOSS
 
         else if (scouts.isEmpty()) {
+            if (anyScoutBeenKilled && OurStrategy.get().isRushOrCheese()) {
+                return;
+            }
+
             for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(Bases.natural(), true)) {
                 if (!scout.isBuilder() && !scout.isRepairerOfAnyKind()) {
                     if (scouts.isEmpty()) {

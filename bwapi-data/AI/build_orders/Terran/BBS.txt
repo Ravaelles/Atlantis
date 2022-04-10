@@ -1,7 +1,7 @@
 // === CUSTOMIZABLE VARIABLES =========================================
 
 // Which worker (1st, 8th etc) should scout and try to find enemy base
-#SCOUT_IS_NTH_WORKER=6
+#SCOUT_IS_NTH_WORKER=17
 
 // When supply is bigger than N, then start auto-producing supply units
 #AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=17
@@ -23,18 +23,19 @@ Improvised Build Order
 @ - Name - Modifier
 4 - SCV
 5 - SCV
+//6 - Barracks - MAP_CENTER
 6 - Barracks
 6 - SCV
 7 - Barracks
 7 - Marine
-8 - Bunker - ENEMY_NATURAL
 8 - Marine
-//9 - MISSION:ATTACK
+//9 - Bunker - ENEMY_NATURAL
 9 - Marine
 9 - Supply Depot
 10 - Marine
 11 - Marine
 12 - Marine
+//12 - Bunker - ENEMY_MAIN
 13 - Marine
 13 - Bunker - ENEMY_NATURAL
 14 - Marine

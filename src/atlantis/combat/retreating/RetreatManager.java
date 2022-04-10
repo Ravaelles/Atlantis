@@ -194,7 +194,7 @@ public class RetreatManager {
             return !unit.mission().allowsToRetreat(unit);
         }
 
-        if (A.seconds() <= 400 && OurStrategy.get().isRushOrCheese()) {
+        if (A.seconds() <= 400 && OurStrategy.get().isRushOrCheese() && unit.enemiesNear().ranged().empty()) {
             return true;
         }
 

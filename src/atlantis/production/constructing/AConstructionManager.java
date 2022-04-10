@@ -9,6 +9,7 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -17,14 +18,14 @@ import java.util.Iterator;
 public class AConstructionManager {
 
     // =========================================================
-    
+
     /**
      * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
      * finished objects etc.
      */
     public static void update() {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
-            Construction construction =  iterator.next();
+            Construction construction = iterator.next();
             checkForConstructionStatusChange(construction, construction.construction());
             checkForBuilderStatusChange(construction);
             handleConstructionUnderAttack(construction);
@@ -52,8 +53,8 @@ public class AConstructionManager {
 
                     builder = construction.builder();
                     if (
-                            builder != null && construction.construction() != null
-                                    && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
+                        builder != null && construction.construction() != null
+                            && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
                     ) {
                         builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
                         builder.setTooltipTactical("Resume");
@@ -86,7 +87,7 @@ public class AConstructionManager {
 //        }
 
         if (
-                !We.zerg()
+            !We.zerg()
                 && order.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
                 && order.startedAgo() >= 30
                 && (building == null || !building.isAlive())
@@ -153,7 +154,7 @@ public class AConstructionManager {
         else if (builder != null && !builder.isMoving()) {
             if (order.buildPosition() == null) {
                 APosition positionToBuild = APositionFinder.findPositionForNew(
-                        order.builder(), order.buildingType(), order
+                    order.builder(), order.buildingType(), order
                 );
                 order.setPositionToBuild(positionToBuild);
             }
@@ -168,24 +169,24 @@ public class AConstructionManager {
 
     // =========================================================no
     // Public class access methods
-    
+
     /**
      * Returns true if given worker has been assigned to construct new building or if the constructions is
      * already in progress.
      */
     public static boolean isBuilder(AUnit worker) {
-        if (worker.isConstructing() || 
-                (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)) {
+        if (worker.isConstructing() ||
+            (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)) {
             return true;
         }
 
         for (Construction construction : ConstructionRequests.constructions) {
             if (worker.equals(construction.builder())) {
-                
+
                 // Pending Protoss buildings allow builder to go away
                 // Terran and Zerg need to use the worker until construction is finished
                 return !AGame.isPlayingAsProtoss() || !ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                        .equals(construction.status());
+                    .equals(construction.status());
             }
         }
 
@@ -193,7 +194,7 @@ public class AConstructionManager {
     }
 
     // === Zerg ========================================
-    
+
     /**
      * The moment zerg drone starts building a building we're not detecting it without this method. This
      * method looks for constructions for which builder.type and builder.builds.type is the same, meaning that
@@ -228,10 +229,10 @@ public class AConstructionManager {
 //         else {
 //            System.out.println(order);
 //        }
-        
+
         // If unfinished building is under attack
         if (building != null && !building.isCompleted() && building.lastUnderAttackLessThanAgo(20)) {
-            
+
             // If it has less than 71HP or less than 60% and is close to being finished
             if (building.hp() <= 32 || building.getRemainingBuildTime() <= 30) {
 //                System.out.println("Construction under attack - cancel! " + building.lastUnderAttackLessThanAgo(20));
@@ -253,13 +254,16 @@ public class AConstructionManager {
             return;
         }
 
+        AUnit main = Select.main();
         int timeout = 30 * (
-                (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 60 : 15)
-                + (int) (1.7 * order.buildPosition().distTo(order.builder())
-        ));
+                20
+                + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 60 : 15)
+                + ((int) (2.9 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
+        );
 
         if (AGame.now() - order.timeOrdered() > timeout) {
-            System.out.println("Cancel construction of " + order.buildingType());
+//            System.err.println(" // " + AGame.now() + " // " + order.timeOrdered() + " // > " + timeout);
+            System.out.println("Cancel construction of " + order.buildingType() + " (Took too long)");
             order.cancel();
         }
     }
