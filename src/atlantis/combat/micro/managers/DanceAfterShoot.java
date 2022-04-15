@@ -25,7 +25,7 @@ public class DanceAfterShoot {
 
         if (unit.isRanged() && target.isRanged()) {
             boolean lesserRange = weaponRange < target.weaponRangeAgainst(unit);
-            if (lesserRange) {
+            if (lesserRange && dist >= 3.8) {
                 unit.addLog(danceTo);
                 return unit.move(
                     unit.translateTilesTowards(0.4, target), Actions.MOVE_DANCE, danceTo, false

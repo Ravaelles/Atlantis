@@ -62,7 +62,7 @@ public class MobileDetector {
             return false;
         }
 
-        AUnit scout = Alpha.get().getSquadScout();
+        AUnit scout = Alpha.get().squadScout();
         if (scout != null) {
             unitForSquadScout = unit;
             if (scout.distTo(unit) > 1) {

@@ -277,7 +277,12 @@ public class ARunningManager {
 
         double distToMain = unit.distTo(main);
 
-        if (distToMain >= 40 || (distToMain > 15 && unit.isMissionDefend())) {
+        if (main == null) {
+            return false;
+        }
+
+        int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(4);
+        if (distToMain >= 40 || (distToMain > 15 && meleeEnemiesNearCount == 0 && unit.isMissionDefend())) {
             return true;
         }
 
@@ -289,16 +294,12 @@ public class ARunningManager {
             return false;
         }
 
-        if (main == null) {
-            return false;
-        }
-
         // If already close to the base, don't run towards it, no point
         if (distToMain < 50) {
             return false;
         }
 
-        if (unit.meleeEnemiesNearCount(4) >= 1) {
+        if (meleeEnemiesNearCount >= 1) {
             return false;
         }
 

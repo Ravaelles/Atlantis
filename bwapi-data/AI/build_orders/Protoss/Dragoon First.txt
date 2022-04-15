@@ -35,3 +35,4 @@ Dragoon First
 13 - Cybernetics Core
 15 - Pylon
 17 - Dragoon
+18 - Gateway

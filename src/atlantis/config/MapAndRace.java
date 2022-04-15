@@ -14,8 +14,8 @@ public class MapAndRace {
     /**
      * Race used by the Atlantis.
      */
-//    public static final String OUR_RACE = "Protoss";
-    public static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Protoss";
+//    public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Zerg";
 
     /**
@@ -35,7 +35,7 @@ public class MapAndRace {
     public static String activeMap() {
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
-        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 

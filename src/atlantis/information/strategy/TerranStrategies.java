@@ -41,7 +41,7 @@ public class TerranStrategies extends AStrategy {
 
         TERRAN_3_Rax_Academy_vP.setTerran().setName("3 Rax Academy vP").setGoingRush().setGoingBio();
 
-        TERRAN_MMG_vP.setTerran().setName("MMG vP").setGoingBio().setGoingRush();
+        TERRAN_MMG_vP.setTerran().setName("MMG vP").setGoingBio();
 
         // === Cheese =================================
 

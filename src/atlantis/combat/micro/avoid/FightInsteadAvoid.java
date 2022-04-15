@@ -4,12 +4,9 @@ import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.game.A;
-import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -163,10 +160,10 @@ public class FightInsteadAvoid {
     }
 
     protected boolean dontFightInTopImportantCases() {
-        if (unit.isMarine() && GamePhase.isEarlyGame() && (!ArmyStrength.weAreMuchStronger() || Count.medics() <= 1)) {
-            unit.addLog("OhLord");
-            return true;
-        }
+//        if (unit.isMarine() && GamePhase.isEarlyGame() && !unit.isMissionDefendOrSparta() && (!ArmyStrength.weAreMuchStronger() || Count.medics() <= 1)) {
+//            unit.addLog("OhLord");
+//            return true;
+//        }
 
         // Always avoid invisible combat units
 //        if (invisibleDT != null || invisibleCombatUnit != null) {
@@ -181,12 +178,7 @@ public class FightInsteadAvoid {
             System.err.println("Worker in fightInImportantCases");
         }
 
-        if (
-            unit.isDragoon()
-                && unit.shieldDamageAtMost(30)
-                && (unit.lastStartedAttackMoreThanAgo(30 * 4) || unit.lastUnderAttackMoreThanAgo(30 * 10))
-        ) {
-            unit.addLog("ForAiur");
+        if (forDragoon(unit)) {
             return true;
         }
 
@@ -210,6 +202,22 @@ public class FightInsteadAvoid {
         }
 
         if (forbidAntiAirAbandoningCloseTargets(unit)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean forDragoon(AUnit unit) {
+        if (!unit.isDragoon()) {
+            return false;
+        }
+
+        if (
+            ((unit.hp() >= 33 && unit.cooldownRemaining() <= 5) || unit.shieldDamageAtMost(30))
+                && (unit.lastStartedAttackMoreThanAgo(30 * 2) || unit.lastUnderAttackMoreThanAgo(30 * 10))
+        ) {
+            unit.addLog("ForAiur");
             return true;
         }
 
@@ -336,8 +344,8 @@ public class FightInsteadAvoid {
         }
 
         Selection our = unit.friendsNear().combatUnits();
-        int allCount = unit.allUnitsNear().inRadius(0.3, unit).effVisible().count();
-        int ourCount = our.inRadius(0.4, unit).count();
+        int allCount = unit.allUnitsNear().inRadius(0.8, unit).effVisible().count();
+        int ourCount = our.nonBuildings().inRadius(1, unit).count();
 
 //        if (unit.mission() != null && unit.mission().isMissionAttack()) {
         boolean isStacked = false;

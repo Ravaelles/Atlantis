@@ -6,6 +6,7 @@ import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -105,18 +106,23 @@ public class ASpecialPositionFinder {
     // =========================================================
 
     protected static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder, Construction construction) {
-        ABaseLocation baseLocationToExpand;
+//        ABaseLocation baseLocationToExpand;
+        HasPosition near;
         int ourBasesCount = Select.ourBases().count();
-        if (ourBasesCount <= 2) {
-            AUnit mainBase = Select.main();
 
-            baseLocationToExpand = Bases.expansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
+        if (A.seconds() <= 800 && ourBasesCount <= 1) {
+            near = Bases.natural();
         }
+//        else if (ourBasesCount <= 2) {
         else {
-            baseLocationToExpand = Bases.expansionBaseLocationMostDistantToEnemy();
+            AUnit mainBase = Select.main();
+            near = Bases.expansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
         }
+//        else {
+//            baseLocationToExpand = Bases.expansionBaseLocationMostDistantToEnemy();
+//        }
         
-        if (baseLocationToExpand == null) {
+        if (near == null) {
             if (ourBasesCount <= 2) {
                 System.err.println("baseLocationToExpand is null");
             }
@@ -124,7 +130,7 @@ public class ASpecialPositionFinder {
         }
         
 //        APosition near = APosition.create(baseLocationToExpand.position()).translateByPixels(-64, -48);
-        APosition near = APosition.create(baseLocationToExpand.position());
+//        near = APosition.create(baseLocationToExpand.position());
         construction.setMaxDistance(4);
 
 //        System.out.println("Main base = " + Select.mainBase());

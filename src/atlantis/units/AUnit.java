@@ -1479,7 +1479,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean lastActionMoreThanAgo(int framesAgo) {
-        if (unitAction == null) {
+        if (unitAction == null && !isWorker()) {
             System.err.println("unitAction A null for " + this);
             A.printStackTrace("Null action");
             return true;
@@ -1905,7 +1905,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        return equals(squad().getSquadScout()) && Missions.CONTAIN.equals(squadMission());
+        return equals(squad().squadScout()) && Missions.CONTAIN.equals(squadMission());
     }
 
     private Mission squadMission() {

@@ -5,7 +5,6 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.ProtossMissionAdjustments;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -25,8 +24,8 @@ public class MissionDefend extends Mission {
     protected double unitToEnemy;
     protected double unitToFocus;
     protected double unitToBase;
-    protected double enemyDistToBase;
-    protected double enemyDistToFocus;
+    protected double enemyToBase;
+    protected double enemyToFocus;
 
     public MissionDefend() {
         super("Defend");
@@ -93,8 +92,8 @@ public class MissionDefend extends Mission {
         focusPointDistToBase = focusPoint.distTo(main);
         unitToEnemy = unit.distTo(enemy);
         unitToBase = unit.groundDist(main);
-        enemyDistToBase = enemy.groundDist(main);
-        enemyDistToFocus = enemy.groundDist(focusPoint);
+        enemyToBase = enemy.groundDist(main);
+        enemyToFocus = enemy.groundDist(focusPoint);
 
         if (unitToEnemy <= 3 && unit.isDragoon() && enemy.isZealot() && unit.hp() <= 18) {
             return false;

@@ -65,8 +65,8 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
         // =========================================================
 
-        if (A.hasGas(25) && A.hasMinerals(50) && Count.medics() == 0 && Count.marines() > 0) {
-            return addToQueueToMaxAtATime(AUnitType.Terran_Medic, 4);
+        if (A.hasGas(25) && Count.medics() == 0 && Count.marines() > 0) {
+            return addToQueueToMaxAtATime(AUnitType.Terran_Medic, 2);
         }
 
         if (saveForFactory()) {

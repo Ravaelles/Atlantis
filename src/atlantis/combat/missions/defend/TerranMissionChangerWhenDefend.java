@@ -8,6 +8,7 @@ import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.tech.ATech;
 import atlantis.units.AUnitType;
@@ -39,6 +40,10 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
         }
 
         if (GamePhase.isEarlyGame() && A.resourcesBalance() <= -150) {
+            return false;
+        }
+
+        if (EnemyStrategy.get().isRushOrCheese() && A.supplyUsed() <= 110) {
             return false;
         }
 

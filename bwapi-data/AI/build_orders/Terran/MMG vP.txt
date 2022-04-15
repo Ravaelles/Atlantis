@@ -33,19 +33,20 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 9 - Supply Depot
 11 - Barracks
 14 - Supply Depot
-14 - Barracks
 //18 - Bunker - @MAIN_CHOKE
-21 - Bunker - @MAIN
-21 - Academy
+18 - Refinery
+19 - Academy
+20 - Bunker - @MAIN
+21 - Barracks
 22 - Supply Depot
-25 - Refinery
-28 - Medic
-30 - Medic
+23 - Medic
+23 - Medic
 32 - Stim Packs
 35 - Comsat Station
 38 - Factory
 40 - Machine Shop
 41 - U 238 Shells
+42 - Bunker - @NATURAL_CHOKE
 44 - Siege Mode
 47 - Starport
 50 - Control Tower

@@ -189,7 +189,7 @@ public interface HasPosition {
     }
 
     default boolean hasPosition() {
-        return position() != null;
+        return position() != null || position().x() <= 0;
     }
 
     // =========================================================

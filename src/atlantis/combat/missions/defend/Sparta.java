@@ -1,24 +1,14 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.missions.defend.MissionDefend;
-import atlantis.combat.missions.defend.MissionDefendFocusPoint;
-import atlantis.combat.missions.defend.MoveToDefendFocusPoint;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
-
-import java.util.List;
 
 /**
  * Make Zealots stand in one line and defend narrow choke point like in 300.
@@ -150,24 +140,28 @@ public class Sparta extends MissionDefend {
         focusPointDistToBase = focusPoint.distTo(main);
         unitToEnemy = unit.distTo(enemy);
         unitToBase = unit.groundDist(main);
-        enemyDistToBase = enemy.groundDist(main);
-        enemyDistToFocus = enemy.groundDist(focusPoint);
+        enemyToBase = enemy.groundDist(main);
+        enemyToFocus = enemy.groundDist(focusPoint);
 
         // =========================================================
+
+        if (enemy.isMelee() && enemyToBase > (unitToBase + 1.5)) {
+            return false;
+        }
 
         if (unit.isRanged()) {
             if (unit.weaponRangeAgainst(enemy) >= 6) {
                 return true;
             }
 
-            return enemyDistToBase - 2.1 <= focusPointDistToBase;
+            return enemyToBase - 2.1 <= focusPointDistToBase;
         }
 
         if (enemy.isRanged()) {
-            return enemyDistToFocus <= 2 || (enemyDistToBase + 3 < unitToBase) || unitToEnemy <= 3;
+            return enemyToFocus <= 2 || (enemyToBase + 3 < unitToBase) || unitToEnemy <= 3;
         }
 
-        if (enemy.isWorker() && unitToEnemy <= 1.2 && enemyDistToFocus <= 1) {
+        if (enemy.isWorker() && unitToEnemy <= 1.2 && enemyToFocus <= 1) {
             return true;
         }
 
@@ -176,7 +170,7 @@ public class Sparta extends MissionDefend {
         }
 
         // If unit outside our region...
-        if (enemyDistToBase + 3 <= focusPointDistToBase) {
+        if (enemyToBase + 3 <= focusPointDistToBase) {
             if (unit.isMelee()) {
                 unit.addLog("Sparta:A");
 //               System.out.println("enemyDistToBase = " + enemyDistToBase);
@@ -189,7 +183,7 @@ public class Sparta extends MissionDefend {
         if ((enemy.isZealot() || enemy.isZergling()) && unit.isZealot()) {
             boolean canAttack = unitToEnemy <= MAX_MELEE_DIST_TO_ATTACK
                 || (isEnemyBehindLineOfDefence() && enemy.isZergling())
-                || (enemyDistToFocus <= 1.2 && unit.enemiesNear().count() == 0);
+                || (enemyToFocus <= 1.2 && unit.enemiesNear().count() == 0);
 
             if (canAttack) {
                 unit.addLog("Sparta:C");
@@ -231,7 +225,7 @@ public class Sparta extends MissionDefend {
     }
 
     private boolean isEnemyBehindLineOfDefence() {
-        return unitToBase + 5 > enemyDistToBase;
+        return unitToBase + 5 > enemyToBase;
     }
 
     private boolean holdOnPerpendicularLine() {

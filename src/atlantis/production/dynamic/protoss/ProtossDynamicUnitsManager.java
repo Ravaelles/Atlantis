@@ -19,6 +19,8 @@ import atlantis.units.select.Select;
 
 import java.util.List;
 
+import static atlantis.units.AUnitType.Protoss_Dragoon;
+
 
 public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
@@ -95,33 +97,37 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         buildToHave(AUnitType.Protoss_Reaver, maxReavers);
     }
 
-    private static void dragoons() {
+    private static boolean dragoons() {
         if (Have.notEvenPlanned(AUnitType.Protoss_Gateway) || Have.notEvenPlanned(AUnitType.Protoss_Cybernetics_Core)) {
-            return;
+            return false;
         }
 
-        if (!A.hasGas(50) && !A.hasMinerals(125)) {
-            return;
-        }
+//        if (!A.hasGas(50) && !A.hasMinerals(125)) {
+//            return;
+//        }
 
         if (
             Decisions.needToProduceZealotsNow()
                 && !A.hasGas(50)
-                && !A.hasMinerals(225)
+//                && !A.hasMinerals(225)
         ) {
-                return;
+            return false;
         }
 
         if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
-            trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
-            return;
+//            trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
+            return addToQueueToMaxAtATime(Protoss_Dragoon, 5);
+        }
+
+        if (A.hasGas(100) && A.supplyUsed() <= 38) {
+            return addToQueueToMaxAtATime(Protoss_Dragoon, 5);
         }
 
 //        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
 //            return;
 //        }
 
-        trainIfPossible(AUnitType.Protoss_Dragoon);
+        return trainIfPossible(Protoss_Dragoon);
     }
 
     private static void zealots() {

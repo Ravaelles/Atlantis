@@ -197,7 +197,7 @@ public abstract class Squad extends Units {
         return unit.equals(first());
     }
 
-    public AUnit getSquadScout() {
+    public AUnit squadScout() {
         if (!isMainSquad() || Count.ourCombatUnits() < 3) {
             return null;
         }
@@ -210,6 +210,10 @@ public abstract class Squad extends Units {
         }
 
         return groundUnits.melee().first();
+    }
+
+    public AUnit centerUnit() {
+        return squadCenter.centerUnit();
     }
 
     public boolean lessThanUnits(int units) {

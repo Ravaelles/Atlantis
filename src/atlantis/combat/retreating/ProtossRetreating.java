@@ -35,10 +35,18 @@ public class ProtossRetreating {
             return false;
         }
 
+        Selection friendsNear = unit.friendsNear().inRadius(1, unit);
+
+        if (friendsNear.atLeast(3)) {
+            return false;
+        }
+
         if (ourCount <= enemiesNear && unit.friendsNear().inRadius(5, unit).atLeast(2)) {
 //        Selection enemiesAroundEnemy = enemy.friendsNear().inRadius(radius, unit);
 //        if (oursAroundEnemy.count() > enemiesAroundEnemy.count()) {
-            if (unit.enemiesNear().inRadius(7, unit).onlyMelee()) {
+            if (
+                friendsNear.atMost(1) && unit.enemiesNear().inRadius(7, unit).onlyMelee()
+            ) {
                 unit.setTooltip("RetreatingB", false);
                 unit.addLog("RetreatingB");
                 return true;

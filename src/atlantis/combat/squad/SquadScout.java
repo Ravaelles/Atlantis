@@ -18,7 +18,7 @@ import bwapi.Color;
 public class SquadScout {
 
     public static boolean handle(AUnit unit) {
-        if (unit.equals(unit.squad().getSquadScout())) {
+        if (unit.equals(unit.squad().squadScout())) {
             return handleSquadScout(unit);
         }
 

@@ -71,8 +71,8 @@ public class GameSpeed {
 //                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Select.enemyCombatUnits().atLeast(2)
                         && EnemyInfo.hasDiscoveredEnemyBase()
-                        && Alpha.get().getSquadScout() != null
-                        && Alpha.get().getSquadScout().isWounded()
+                        && Alpha.get().squadScout() != null
+                        && Alpha.get().squadScout().isWounded()
 //                        && Missions.isGlobalMissionContain()
         ) {
             oneTimeSlowdownUsed = true;

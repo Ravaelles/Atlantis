@@ -9,7 +9,6 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.Requirements;
 import atlantis.production.constructing.position.APositionFinder;
-import atlantis.production.constructing.position.PositionModifier;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
@@ -21,7 +20,7 @@ import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-import static atlantis.units.AUnitType.Terran_Bunker;
+import static atlantis.units.AUnitType.Protoss_Forge;
 
 public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
@@ -79,7 +78,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                     && !Requirements.hasRequirements(buildType)
                     && !ProductionQueue.isAtTheTopOfQueue(requirement, 6)
             ) {
-                if (!buildType.isSunken() && !buildType.isSporeColony()) {
+                if (!buildType.isSunken() && !buildType.isSporeColony() && !buildType.isCannon()) {
                     if (A.supplyUsed() >= 6) {
                         System.err.println("--- Non critical but ugly issue ---");
                         System.err.println("Missing requirement: " + requirement + " for: " + buildType);
@@ -88,15 +87,26 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                     return false;
                 }
 
-                // For Sunken/Spore build requirement = Creep Colony
+                // We're missing the requirement, so explicitly request it
                 else {
-                    AddToQueue.withTopPriority(requirement);
+                    addRequirement(buildType);
                     return true;
                 }
             }
 
             AddToQueue.withTopPriority(buildType, at);
             return true;
+        }
+
+        return false;
+    }
+
+    private boolean addRequirement(AUnitType buildType) {
+        if (buildType.isCannon()) {
+            if (Count.existingOrInProductionOrInQueue(Protoss_Forge) == 0) {
+                AddToQueue.withTopPriority(Protoss_Forge);
+                return true;
+            }
         }
 
         return false;

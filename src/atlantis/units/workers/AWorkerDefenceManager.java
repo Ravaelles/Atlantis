@@ -121,6 +121,14 @@ public class AWorkerDefenceManager {
 //            return true;
 //        }
 
+        if (A.supplyUsed() >= 40) {
+            return true;
+        }
+
+        if (worker.enemiesNear().empty() || worker.enemiesNear().inRadius(4, worker).empty()) {
+            return true;
+        }
+
         if (Enemy.protoss() && worker.hp() <= 22) {
             return true;
         }

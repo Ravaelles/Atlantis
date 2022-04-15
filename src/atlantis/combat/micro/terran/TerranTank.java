@@ -13,7 +13,6 @@ import atlantis.util.Enemy;
 import bwapi.Color;
 import bwapi.TechType;
 
-
 public class TerranTank {
 
     public static boolean update(AUnit unit) {

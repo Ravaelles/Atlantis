@@ -220,8 +220,8 @@ public class AAttackEnemyUnit {
     private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
         return unit.mission() == null
             || unit.isTank()
-            || unit.mission().allowsToAttackEnemyUnit(unit, enemy)
-            || (unit.isRanged() && enemy.isMelee());
+            || unit.mission().allowsToAttackEnemyUnit(unit, enemy);
+//            || (unit.isRanged() && enemy.isMelee());
     }
 
 }

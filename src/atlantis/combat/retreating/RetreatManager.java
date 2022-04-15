@@ -7,7 +7,6 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -52,11 +51,17 @@ public class RetreatManager {
     /**
      * If chances to win the skirmish with the Near enemy units aren't favorable, avoid fight and retreat.
      */
-    public static boolean shouldRetreat(AUnit unit) {
+    public static boolean shouldRetreat(AUnit u) {
         return cache.get(
-                "shouldRetreat:" + unit.id(),
+                "shouldRetreat:" + u.id(),
                 11,
                 () -> {
+                    // Change unit context to unit
+                    AUnit unit = u.squad() != null ? u.squad().centerUnit() : null;
+                    if (unit == null) {
+                        unit = u;
+                    }
+
                     if (shouldNotConsiderRetreatingNow(unit)) {
                         return false;
                     }
@@ -187,6 +192,13 @@ public class RetreatManager {
             return true;
         }
 
+        AUnit main = Select.main();
+        if (main != null) {
+            if (main.distTo(unit) <= 8) {
+                return true;
+            }
+        }
+
         if (unit.isMissionSparta()) {
 //            if (unit.mission().allowsToRetreat(unit)) {
 //                System.err.println("Sparta allowed " + unit + " to retreat (HP=" + unit.hp() + ")");
@@ -200,7 +212,7 @@ public class RetreatManager {
 
         if (unit.isMissionDefend() &&
             (
-                (Have.main() && unit.distToLessThan(Select.main(), 14))
+                (Have.main() && unit.distToLessThan(main, 14))
                 || Select.ourOfType(AUnitType.Zerg_Sunken_Colony).inRadius(4.9, unit).isNotEmpty()
             )
         ) {
