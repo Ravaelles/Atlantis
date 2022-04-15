@@ -93,7 +93,7 @@ public class RetreatManager {
         }
 
         if (We.protoss()) {
-            if (unit.isRanged() && unit.isHealthy()) {
+            if (unit.isRanged() && unit.shieldDamageAtMost(13)) {
                 return false;
             }
         }
@@ -114,6 +114,7 @@ public class RetreatManager {
 
     private static boolean shouldLargeScaleRetreat(AUnit unit, Selection enemies) {
         if (shouldRetreatDueToSquadMostlyRetreating(unit)) {
+            unit.addLog("SquadMostlyRetreating");
             return true;
         }
 
@@ -149,7 +150,8 @@ public class RetreatManager {
             return false;
         }
 
-        if (unit.distToNearestChokeLessThan(5)) {
+        if (unit.distToNearestChokeLessThan(5) && unit.combatEvalRelative() <= 4) {
+            unit.addLog("ChokeDanger");
             return true;
         }
 

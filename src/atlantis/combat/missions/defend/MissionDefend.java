@@ -20,7 +20,7 @@ public class MissionDefend extends Mission {
     protected AUnit unit;
     protected AUnit main;
     protected AFocusPoint focusPoint;
-    protected double focusPointDistToBase;
+    protected double focusPointToBase;
     protected double unitToEnemy;
     protected double unitToFocus;
     protected double unitToBase;
@@ -89,7 +89,7 @@ public class MissionDefend extends Mission {
 
         main = Select.main();
         focusPoint = focusPoint();
-        focusPointDistToBase = focusPoint.distTo(main);
+        focusPointToBase = focusPoint.distTo(main);
         unitToEnemy = unit.distTo(enemy);
         unitToBase = unit.groundDist(main);
         enemyToBase = enemy.groundDist(main);

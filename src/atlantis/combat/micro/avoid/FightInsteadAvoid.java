@@ -214,8 +214,14 @@ public class FightInsteadAvoid {
         }
 
         if (
-            ((unit.hp() >= 33 && unit.cooldownRemaining() <= 5) || unit.shieldDamageAtMost(30))
-                && (unit.lastStartedAttackMoreThanAgo(30 * 2) || unit.lastUnderAttackMoreThanAgo(30 * 10))
+            // Long didn't shoot
+            unit.lastStartedAttackMoreThanAgo(30 * 5)
+                || (
+                // Relatively healthy
+                ((unit.hp() >= 33 && unit.cooldownRemaining() <= 5) || unit.shieldDamageAtMost(13))
+                    // Should fire by now
+                    && (unit.lastStartedAttackMoreThanAgo(30 * 2) || unit.lastUnderAttackMoreThanAgo(30 * 6))
+            )
         ) {
             unit.addLog("ForAiur");
             return true;

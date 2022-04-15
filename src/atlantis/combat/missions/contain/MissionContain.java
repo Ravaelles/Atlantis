@@ -54,7 +54,11 @@ public class MissionContain extends Mission {
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         AFocusPoint focusPoint = focusPoint();
 
-        if (enemy.hasWeaponRangeToAttack(unit, 0.2)) {
+        if (enemy.hasWeaponRangeToAttack(unit, unit.isMelee() ? 0.3 : 1.3)) {
+            return true;
+        }
+
+        if (!enemy.distToNearestChokeLessThan(5)) {
             return true;
         }
 
@@ -72,7 +76,10 @@ public class MissionContain extends Mission {
         }
 
         // Attack enemies near squad center
-        if (enemy.distTo(unit.squad().center()) <= 12) {
+        if (
+            unit.friendsNear().inRadius(3, unit).atLeast(4)
+                || enemy.distTo(unit.squad().center()) <= 12
+        ) {
             return true;
         }
 

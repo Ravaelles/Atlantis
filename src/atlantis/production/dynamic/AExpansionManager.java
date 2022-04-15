@@ -89,7 +89,7 @@ public class AExpansionManager {
 
         // =========================================================
 
-        if (Count.workers() <= 17 * (bases + basesInProduction)) {
+        if (bases >= 3 && Count.workers() <= 17 * (bases + basesInProduction)) {
             return false;
         }
 

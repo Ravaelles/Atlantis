@@ -137,7 +137,7 @@ public class Sparta extends MissionDefend {
         }
 
         main = Select.main();
-        focusPointDistToBase = focusPoint.distTo(main);
+        focusPointToBase = focusPoint.distTo(main);
         unitToEnemy = unit.distTo(enemy);
         unitToBase = unit.groundDist(main);
         enemyToBase = enemy.groundDist(main);
@@ -145,7 +145,11 @@ public class Sparta extends MissionDefend {
 
         // =========================================================
 
-        if (enemy.isMelee() && enemyToBase > (unitToBase + 1.5)) {
+        if (
+            enemy.isMelee()
+                && enemyToBase > focusPointToBase
+                && enemyToBase > (unitToBase + 1.5)
+        ) {
             return false;
         }
 
@@ -154,7 +158,7 @@ public class Sparta extends MissionDefend {
                 return true;
             }
 
-            return enemyToBase - 2.1 <= focusPointDistToBase;
+            return enemyToBase - 2.1 <= focusPointToBase;
         }
 
         if (enemy.isRanged()) {
@@ -170,7 +174,7 @@ public class Sparta extends MissionDefend {
         }
 
         // If unit outside our region...
-        if (enemyToBase + 3 <= focusPointDistToBase) {
+        if (enemyToBase + 3 <= focusPointToBase) {
             if (unit.isMelee()) {
                 unit.addLog("Sparta:A");
 //               System.out.println("enemyDistToBase = " + enemyDistToBase);

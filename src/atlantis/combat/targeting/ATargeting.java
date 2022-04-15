@@ -51,7 +51,24 @@ public class ATargeting {
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
 //        System.out.println("defineTarget = " + enemy);
 
+//        if (enemy == null) {
+//            return null;
+//        }
+
+        // Somewhat ugly fix for when targeting goes wrong
+//        if (enemy == null) {
+//            enemy = unit.enemiesNear().canBeAttackedBy(unit, 1.2).nearestTo(unit);
+//        }
+
         if (enemy == null) {
+            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
+        }
+
+        if (enemy == null) {
+            if (unit.enemiesNear().havingPosition().effVisible().groundUnits().atLeast(1)) {
+                System.err.println(unit + " return NULL target WTF");
+                unit.enemiesNear().groundUnits().print("These could be targetted");
+            }
             return null;
         }
 

@@ -28,7 +28,7 @@ public class CohesionAssurance {
             return false;
         }
 
-        unit.setTooltipTactical(unit.squad().cohesionPercent() + "%/" + A.trueFalse(unit.outsideSquadRadius()) + "/" + A.trueFalse(isSquadCohesionOkay(unit)));
+//        unit.setTooltipTactical(unit.squad().cohesionPercent() + "%/" + A.trueFalse(unit.outsideSquadRadius()) + "/" + A.trueFalse(isSquadCohesionOkay(unit)));
         if (isSquadCohesionOkay(unit)) {
             return false;
         }

@@ -1,8 +1,6 @@
 package atlantis.combat.micro;
 
-import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.targeting.ATargeting;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
@@ -181,8 +179,8 @@ public class AAttackEnemyUnit {
             return false;
         }
 
-        if (!missionAllowsToAttack(unit, target)) {
-            reasonNotToAttack = "MissionForbids";
+        if (!missionAllowsToAttackEnemyUnit(unit, target)) {
+            reasonNotToAttack = "MissionForbids" + target.name();
             unit.setTooltipTactical(reasonNotToAttack);
             unit.addLog(reasonNotToAttack);
             return false;
@@ -217,7 +215,7 @@ public class AAttackEnemyUnit {
         return true;
     }
 
-    private static boolean missionAllowsToAttack(AUnit unit, AUnit enemy) {
+    private static boolean missionAllowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         return unit.mission() == null
             || unit.isTank()
             || unit.mission().allowsToAttackEnemyUnit(unit, enemy);

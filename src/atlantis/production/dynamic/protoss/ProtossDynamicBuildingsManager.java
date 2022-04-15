@@ -9,6 +9,7 @@ import atlantis.information.tech.ATechRequests;
 import atlantis.map.ABaseLocation;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.requests.AntiLandBuildingManager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -39,7 +40,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     // =========================================================
 
     private static void roboticsSupportBay() {
-        if (!A.supplyUsed(60)) {
+        if (!A.supplyUsed(80)) {
             return;
         }
 
@@ -73,7 +74,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void shieldBattery() {
-//        buildToHaveOne(40, AUnitType.Protoss_Shield_Battery);
+        buildToHaveOne(60, Protoss_Shield_Battery);
     }
 
     private static void gateways() {
@@ -110,11 +111,15 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
         }
     }
 
-    private static void cannons() {
+    private static boolean cannons() {
 //        if (true) return;
 
         if (A.notNthGameFrame(47) || A.seconds() < 350) {
-            return;
+            return false;
+        }
+
+        if (Count.inProductionOrInQueue(Protoss_Photon_Cannon) >= 2) {
+            return false;
         }
 
         for (AUnit base : Select.ourBases().list()) {
@@ -125,10 +130,22 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             if (existingCannonsNearby < 1) {
                 HasPosition nearTo = ABaseLocation.mineralsCenter(base);
                 if (Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 10, nearTo) == 0) {
+                    if (Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 6, nearTo) == 0) {
+                        nearTo = nearTo.translateTilesTowards(3, base);
+                        System.err.println(
+                            "Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 6, nearTo) = "
+                            + Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 6, nearTo)
+                        );
+                        AddToQueue.withHighPriority(Protoss_Pylon, nearTo);
+                        return true;
+                    }
+
                     AntiLandBuildingManager.get().requestOne(nearTo);
                     System.err.println("Requested Cannon to protect base " + base);
+                    return true;
                 }
             }
         }
+        return false;
     }
 }
