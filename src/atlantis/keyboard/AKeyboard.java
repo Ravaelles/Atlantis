@@ -7,9 +7,11 @@ import atlantis.game.CameraManager;
 import atlantis.game.GameSpeed;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
+import com.github.kwhat.jnativehook.NativeInputEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 
+import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,6 +47,7 @@ public class AKeyboard implements NativeKeyListener {
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
 //        System.out.println("Key pressed code: " + e.getKeyCode());
+        consumeEvent(e);
         
         switch (e.getKeyCode()) {
             
@@ -137,6 +140,28 @@ public class AKeyboard implements NativeKeyListener {
         }
     }
 
+    @Override
+    public void nativeKeyReleased(NativeKeyEvent e) {
+        switch (e.getKeyCode()) {
+            case 3653: case 57: case 29: consumeEvent(e);
+        }
+    }
+
+    /**
+     * Doesn't work on some OS e.g. on Linux.
+     * See: https://github.com/kwhat/jnativehook/blob/2.2/doc/ConsumingEvents.md
+     */
+    private void consumeEvent(NativeKeyEvent e) {
+        try {
+            Field f = NativeInputEvent.class.getDeclaredField("reserved");
+            f.setAccessible(true);
+            f.setShort(e, (short) 0x01);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private void changeSpeedAndFrameSkip(int speed, int frameSkip) {
 //        GameSpeed.pauseGame();
         GameSpeed.changeSpeedTo(speed);
@@ -145,10 +170,10 @@ public class AKeyboard implements NativeKeyListener {
 //        GameSpeed.unpauseGame();
     }
 
-    @Override
-    public void nativeKeyReleased(NativeKeyEvent e) {
+//    @Override
+//    public void nativeKeyReleased(NativeKeyEvent e) {
 //        System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
-    }
+//    }
 
     @Override
     public void nativeKeyTyped(NativeKeyEvent e) {

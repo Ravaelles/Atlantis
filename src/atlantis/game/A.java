@@ -1175,6 +1175,10 @@ public class A {
         return AGame.hasMinerals(minerals);
     }
 
+    public static boolean hasMineralsAndGas(int minerals, int gas) {
+        return hasMinerals(minerals) && hasGas(gas);
+    }
+
     public static boolean hasGas(int gas) {
         return AGame.hasGas(gas);
     }

@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.eval.ACombatEvaluator;
-import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -101,7 +101,7 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        if (RetreatManager.shouldRetreat(unit)) {
+        if (ShouldRetreat.shouldRetreat(unit)) {
             if (finishOffAlmostDeadTarget(unit)) {
                 unit.addLog("FatalityTo" + unit.target().type());
                 return true;
@@ -214,9 +214,12 @@ public class FightInsteadAvoid {
         }
 
         if (unit.cooldownRemaining() <= 3) {
-            if (unit.hp() >= 32 || unit.lastStartedAttackMoreThanAgo(30 * 6)) {
-                unit.addLog("Aiur");
-                return true;
+            boolean haveNotAttackedInAWhile = unit.lastStartedAttackMoreThanAgo(30 * 6);
+            if (unit.hp() >= 32 || haveNotAttackedInAWhile) {
+                if (unit.meleeEnemiesNearCount(2) <= 1 || haveNotAttackedInAWhile) {
+                    unit.addLog("Aiur");
+                    return true;
+                }
             }
         }
 
@@ -282,7 +285,7 @@ public class FightInsteadAvoid {
             }
         }
 
-        if (ranged != null && !RetreatManager.shouldRetreat(unit)) {
+        if (ranged != null && !ShouldRetreat.shouldRetreat(unit)) {
             unit.addLog("CanFight");
             return true;
         }
@@ -298,7 +301,7 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        return !RetreatManager.shouldRetreat(unit);
+        return !ShouldRetreat.shouldRetreat(unit);
 //        return true;
     }
 

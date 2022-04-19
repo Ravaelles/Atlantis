@@ -172,6 +172,15 @@ public class EnemyInfo {
         );
     }
 
+    public static AUnit enemyUnitInMainBase() {
+        AUnit main = Select.main();
+        if (main == null) {
+            return null;
+        }
+
+        return Select.enemyCombatUnits().inRadius(20, main).nearestTo(main);
+    }
+
     public static boolean isProxyBuilding(AbstractFoggedUnit enemyBuilding) {
         if (A.seconds() >= 400 || !We.haveBase()) {
             return false;

@@ -6,15 +6,9 @@ import atlantis.information.decisions.Decisions;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.tech.ATechRequests;
-import atlantis.map.ABaseLocation;
-import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
-import atlantis.production.orders.build.AddToQueue;
-import atlantis.production.requests.AntiLandBuildingManager;
-import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 import bwapi.TechType;
 
 import static atlantis.units.AUnitType.*;
@@ -26,14 +20,17 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
-        cannons();
-        arbiterTribunal();
-        stargate();
-        observatory();
-        roboticsSupportBay();
-        roboticsFacility();
-        shieldBattery();
-        forge();
+        if (isItSafeToAddTechBuildings()) {
+            cannons();
+            arbiterTribunal();
+            stargate();
+            observatory();
+            roboticsSupportBay();
+            roboticsFacility();
+            shieldBattery();
+            forge();
+        }
+
         gateways();
     }
 
@@ -74,7 +71,8 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void shieldBattery() {
-        buildToHaveOne(60, Protoss_Shield_Battery);
+        // Dont use - it's really buggy and causes units to stand instead of fight, not worth it at the moment
+//        buildToHaveOne(60, Protoss_Shield_Battery);
     }
 
     private static void gateways() {
@@ -92,7 +90,6 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     private static void forge() {
         int buildAtSupply = EnemyStrategy.get().isRushOrCheese() ? 46 : 36;
-
         buildToHaveOne(buildAtSupply, Protoss_Forge);
     }
 

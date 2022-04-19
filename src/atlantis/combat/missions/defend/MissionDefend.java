@@ -65,6 +65,17 @@ public class MissionDefend extends Mission {
         if (focusPoint == null || main == null) {
             return true;
         }
+
+        if (unit.isRanged()) {
+            if (unit.distTo(enemy) <= 6) {
+                return true;
+            }
+
+            if (unit.weaponRangeAgainst(enemy) >= 6) {
+                return true;
+            }
+        }
+
         // =========================================================
 
         if (unit.isZergling()) {

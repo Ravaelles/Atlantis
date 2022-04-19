@@ -7,7 +7,7 @@ import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.CohesionAssurance;
@@ -853,7 +853,7 @@ public class AAdvancedPainter extends APainter {
         int flagWidth = 15;
         int flagHeight = 8;
         int dy = 12;
-        Color flagColor = RetreatManager.shouldRetreat(unit) ? Color.Red : Color.White;
+        Color flagColor = ShouldRetreat.shouldRetreat(unit) ? Color.Red : Color.White;
 
         paintLine(unit, unit.targetPosition(), Color.Blue); // Where unit is running to
 

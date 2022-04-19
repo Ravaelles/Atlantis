@@ -1,6 +1,6 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
@@ -20,7 +20,7 @@ public class AvoidCombatBuildingsFix {
 
         if (
                 unit.isMissionAttack()
-                && !RetreatManager.shouldRetreat(unit)
+                && !ShouldRetreat.shouldRetreat(unit)
                 && enemyCombatBuildings.selection().combatBuildings(false).inRadius(10, unit).notEmpty()
         ) {
             return false;

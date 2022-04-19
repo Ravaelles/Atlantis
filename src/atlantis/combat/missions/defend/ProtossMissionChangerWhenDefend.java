@@ -17,6 +17,10 @@ import atlantis.units.select.Count;
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
+        if (changeFromSpartaToDefend()) {
+            return;
+        }
+
         if (!canChange()) {
             return;
         }
@@ -30,6 +34,14 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
     }
 
     // === CONTAIN =============================================
+
+    private static boolean changeFromSpartaToDefend() {
+        if (Missions.isGlobalMissionSparta() && Count.basesWithUnfinished() >= 2) {
+            return true;
+        }
+
+        return false;
+    }
 
     private static boolean canChange() {
         if (EnemyInfo.isEnemyNearAnyOurBase()) {

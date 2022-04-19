@@ -5,7 +5,7 @@ import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ARunningManager;
-import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.CohesionAssurance;
 import atlantis.debug.painter.APainter;
@@ -2447,7 +2447,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean shouldRetreat() {
-        return RetreatManager.shouldRetreat(this);
+        return ShouldRetreat.shouldRetreat(this);
     }
 
     public boolean isMechanical() {

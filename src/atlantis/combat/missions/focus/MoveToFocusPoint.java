@@ -124,6 +124,14 @@ public abstract class MoveToFocusPoint {
 
     // =========================================================
 
+    protected boolean isTooClose() {
+        return unitToFocus <= optimalDist;
+    }
+
+    protected boolean isTooFarBack() {
+        return unitToFocus + MARGIN >= optimalDist;
+    }
+
     /**
      * Unit is too close to its focus point.
      */
@@ -144,7 +152,7 @@ public abstract class MoveToFocusPoint {
             return false;
         }
 
-        if (unitToFocus <= (optimalDist - MARGIN)) {
+        if (isTooClose()) {
             String dist = A.dist(unitToFocus);
 
 //            if (distUnitToFromSide > 3) {
@@ -152,6 +160,16 @@ public abstract class MoveToFocusPoint {
 //            }
 
             return unit.moveAwayFrom(focus, 0.15, "TooCloze" + dist, Actions.MOVE_FOCUS);
+        }
+
+        return false;
+    }
+
+    protected boolean tooFarBack() {
+        if (isTooFarBack()) {
+            APosition goTo = unitToFocus >= 8 ? focus : focus.translateTilesTowards(0.5, unit);
+            unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
+            return true;
         }
 
         return false;

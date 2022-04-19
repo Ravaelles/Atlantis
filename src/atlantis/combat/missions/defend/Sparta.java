@@ -1,6 +1,6 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
@@ -145,20 +145,24 @@ public class Sparta extends MissionDefend {
 
         // =========================================================
 
+        if (unit.isRanged()) {
+            if (unit.distTo(enemy) <= 6) {
+                return true;
+            }
+
+            if (unit.weaponRangeAgainst(enemy) >= 6) {
+                return true;
+            }
+
+            return enemyToBase - 2.1 <= focusPointToBase;
+        }
+
         if (
             enemy.isMelee()
                 && enemyToBase > focusPointToBase
                 && enemyToBase > (unitToBase + 1.5)
         ) {
             return false;
-        }
-
-        if (unit.isRanged()) {
-            if (unit.weaponRangeAgainst(enemy) >= 6) {
-                return true;
-            }
-
-            return enemyToBase - 2.1 <= focusPointToBase;
         }
 
         if (enemy.isRanged()) {
@@ -200,7 +204,7 @@ public class Sparta extends MissionDefend {
             return false;
         }
 
-        if (isEnemyBehindLineOfDefence() && unit.hp() >= 18 && !RetreatManager.shouldRetreat(unit)) {
+        if (isEnemyBehindLineOfDefence() && unit.hp() >= 18 && !ShouldRetreat.shouldRetreat(unit)) {
             unit.addLog("Sparta:D");
             return true;
         }

@@ -3,6 +3,8 @@ package atlantis.production.dynamic;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.constructing.ConstructionRequests;
@@ -147,6 +149,21 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         }
 
         return false;
+    }
+
+    protected static boolean isItSafeToAddTechBuildings() {
+        if (EnemyStrategy.get().isRushOrCheese()) {
+            if (ArmyStrength.ourArmyRelativeStrength() <= 80 && !A.hasMineralsAndGas(250, 100)) {
+                return false;
+            }
+        }
+
+        AUnit enemyUnitInMainBase = EnemyInfo.enemyUnitInMainBase();
+        if (enemyUnitInMainBase == null || enemyUnitInMainBase.effCloaked()) {
+            return false;
+        }
+
+        return true;
     }
 
 }

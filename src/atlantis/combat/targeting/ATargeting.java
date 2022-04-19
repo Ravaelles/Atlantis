@@ -61,17 +61,22 @@ public class ATargeting {
 //        }
 
         if (enemy == null) {
-            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
+//            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
+            enemy = unit.enemiesNear().realUnitsButAllowBuildings().canBeAttackedBy(unit, 0).nearestTo(unit);
         }
 
+//        if (enemy == null) {
+//            Selection possible = unit.enemiesNear().visibleOnMap().havingAtLeastHp(1).effVisible().groundUnits();
+//            if (possible.atLeast(1) && unit.canAttackGroundUnits()) {
+//                System.err.println(unit + " return NULL target WTF");
+//                possible.print("These could be targetted");
+//                System.err.println("As a fix return: " + possible.nearestTo(unit));
+//                return possible.nearestTo(unit);
+//            }
+//            return null;
+//        }
+
         if (enemy == null) {
-            if (
-                unit.enemiesNear().havingPosition().effVisible().groundUnits().atLeast(1)
-                && unit.canAttackGroundUnits()
-            ) {
-                System.err.println(unit + " return NULL target WTF");
-                unit.enemiesNear().groundUnits().print("These could be targetted");
-            }
             return null;
         }
 

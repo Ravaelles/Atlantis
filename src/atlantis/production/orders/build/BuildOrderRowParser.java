@@ -177,6 +177,9 @@ public class BuildOrderRowParser {
         else if ("dragoon range".equals(nameString)) {
             return "Singularity Charge";
         }
+        else if ("cannon".equals(nameString)) {
+            return "Photon Cannon";
+        }
 
         return nameString;
     }
