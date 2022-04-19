@@ -26,7 +26,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
     public static void update() {
         if (AGame.notNthGameFrame(3)) {
-            return ;
+            return;
         }
 
         scarabs();
@@ -44,7 +44,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
     private static void shuttles() {
         if (
-                Have.notEvenPlanned(AUnitType.Protoss_Robotics_Facility)
+            Have.notEvenPlanned(AUnitType.Protoss_Robotics_Facility)
                 || Count.ofType(AUnitType.Protoss_Reaver) >= Count.ofType(AUnitType.Protoss_Shuttle)
         ) {
             return;
@@ -70,8 +70,8 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
         }
 
         int limit = Math.max(
-                1 + (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT ? 2 : 0),
-                A.supplyTotal() / 30
+            1 + (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT ? 2 : 0),
+            A.supplyTotal() / 30
         );
         buildToHave(AUnitType.Protoss_Observer, limit);
     }
@@ -111,6 +111,10 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
                 && !A.hasGas(50)
 //                && !A.hasMinerals(225)
         ) {
+            return false;
+        }
+
+        if (!A.canAffordWithReserved(125, 50)) {
             return false;
         }
 

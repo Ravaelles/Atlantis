@@ -35,7 +35,10 @@ public class AvoidCombatBuildingsFix {
             // Do nothing
         }
         else if (distTo < (baseDist + 1) && unit.isMoving() && !unit.isRunning() && unit.target() == null) {
-            return unit.holdPosition("HoldHere", false);
+            if (unit.isMoving()) {
+                unit.holdPosition("HoldHere", false);
+            }
+            return true;
         }
 
         return false;

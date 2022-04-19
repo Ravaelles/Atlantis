@@ -91,6 +91,10 @@ public class DanceAfterShoot {
             return true;
         }
 
+        if (unit.isMissionSparta()) {
+            return true;
+        }
+
         int lastAttackFrameAgo = unit.lastAttackFrameAgo();
         int cooldownAbsolute = unit.cooldownAbsolute();
 

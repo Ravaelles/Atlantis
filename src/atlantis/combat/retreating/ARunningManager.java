@@ -631,7 +631,9 @@ public class ARunningManager {
         Selection combatBuildings = Select.from(dangerous).combatBuildings(false);
         if (dangerous.size() == combatBuildings.size() && unit.enemiesNear().combatUnits().atMost(1)) {
             if (combatBuildings.nearestTo(unit).distToMoreThan(unit, 7.9)) {
-                unit.holdPosition("Steady", true);
+                if (unit.isMoving()) {
+                    unit.holdPosition("Steady", true);
+                }
                 return true;
             }
         }

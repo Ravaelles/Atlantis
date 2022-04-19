@@ -57,7 +57,10 @@ public class AScoutManager {
     private static void update(AUnit scout) {
         scout.setTooltipTactical("Scout...");
 
-//        if (AAvoidUnits.avoidEnemiesIfNeeded(scout)) {
+        if (AAvoidEnemies.avoidEnemiesIfNeeded(scout)) {
+            return;
+        }
+
         if (scout.isRunning()) {
             nextPositionToScout = null;
             scoutingAroundBaseWasInterrupted = true;
@@ -121,7 +124,7 @@ public class AScoutManager {
 
     private static boolean handleScoutFreeBases(AUnit scout) {
         if (nextPositionToScout != null && !nextPositionToScout.isPositionVisible()) {
-            return scout.move(nextPositionToScout, Actions.MOVE_SCOUT, "ScoutBases", true);
+            return scout.move(nextPositionToScout, Actions.MOVE_SCOUT, "ScoutBases" + A.now(), true);
         }
 
         AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();

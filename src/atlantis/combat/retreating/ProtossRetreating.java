@@ -16,6 +16,10 @@ public class ProtossRetreating {
             return false;
         }
 
+        if (enemies.ranged().inRadius(7, unit).notEmpty()) {
+            return false;
+        }
+
         double radius = 1.2;
 
         // =========================================================

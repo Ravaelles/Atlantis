@@ -41,38 +41,21 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //                        }
                 }
 
-                if (EnemyInfo.hasDefensiveLandBuilding(true) && We.haveBase()) {
-                    AUnit nearestCombatBuilding = EnemyUnits.foggedUnits()
-                        .combatBuildings(false)
-                        .nearestTo(Select.main());
-                    if (nearestCombatBuilding != null && nearestCombatBuilding.hasPosition()) {
-                        AChoke choke = Chokes.nearestChoke(nearestCombatBuilding);
-                        if (choke != null) {
-                            return new AFocusPoint(
-                                choke.position(),
-                                Select.main(),
-                                "DefensiveBuilding"
-                            );
-                        }
-                    }
-                }
-
-                AChoke enemyMainChoke = Chokes.enemyMainChoke();
-                APosition enemyNatural = Bases.enemyNatural();
-                if (enemyNatural != null) {
-//                    if (enemyMainChoke != null) {
-//                        return new AFocusPoint(
-//                            enemyNatural.translatePercentTowards(enemyMainChoke, 40),
-//                            enemyNatural,
-//                            "EnemyMainChoke"
-//                        );
+//                if (EnemyInfo.hasDefensiveLandBuilding(true) && We.haveBase()) {
+//                    AUnit nearestCombatBuilding = EnemyUnits.foggedUnits()
+//                        .combatBuildings(false)
+//                        .nearestTo(Select.main());
+//                    if (nearestCombatBuilding != null && nearestCombatBuilding.hasPosition()) {
+//                        AChoke choke = Chokes.nearestChoke(nearestCombatBuilding);
+//                        if (choke != null) {
+//                            return new AFocusPoint(
+//                                choke.position(),
+//                                Select.main(),
+//                                "DefensiveBuilding"
+//                            );
+//                        }
 //                    }
-                    return new AFocusPoint(
-                        enemyNatural,
-                        Select.main(),
-                        "EnemyNatural"
-                    );
-                }
+//                }
 
                 AChoke naturalChoke = Chokes.enemyNaturalChoke();
                 if (naturalChoke != null && naturalChoke.width() <= 4) {
@@ -82,6 +65,25 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                         "EnemyNaturalChoke"
                     );
                 }
+
+//                AChoke enemyMainChoke = Chokes.enemyMainChoke();
+                APosition enemyNatural = Bases.enemyNatural();
+                if (enemyNatural != null) {
+//                    AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
+//                    if (enemyNaturalChoke != null) {
+//                        return new AFocusPoint(
+//                            enemyNatural.translatePercentTowards(enemyNaturalChoke, 40),
+//                            enemyNatural,
+//                            "EnemyNaturalChoke"
+//                        );
+//                    }
+                    return new AFocusPoint(
+                        enemyNatural,
+                        Select.main(),
+                        "EnemyNatural"
+                    );
+                }
+
 
 //                    if (enemyMainChoke != null && enemyMainChoke.getWidth() <= 4) {
 //                        return enemyMainChoke.position();

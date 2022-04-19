@@ -58,6 +58,12 @@ public class MissionContain extends Mission {
             return true;
         }
 
+        if (enemy.friendsNear().combatBuildingsAntiLand().inRadius(7.6, unit).atLeast(1)) {
+            if (enemy.combatEvalRelative() >= 0.5) {
+                return false;
+            }
+        }
+
         if (!enemy.distToNearestChokeLessThan(5)) {
             return true;
         }

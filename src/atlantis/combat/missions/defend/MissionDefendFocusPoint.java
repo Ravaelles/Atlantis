@@ -9,7 +9,9 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.AChoke;
+import atlantis.map.Bases;
 import atlantis.map.Chokes;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -31,6 +33,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             "focusPoint",
             29,
             () -> {
+                AFocusPoint focus = null;
+
                 if (AGame.isUms()) {
                     return null;
                 }
@@ -106,13 +110,9 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === Natural choke if second base ================
 
                 if (basesWithUnfinished >= 2) {
-//                    AChoke natural = Chokes.natural();
-                    AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisConfig.BASE).mostDistantTo(Select.main());
-                    if (lastBase != null) {
-                        return new AFocusPoint(
-                            lastBase,
-                            "LatestBase"
-                        );
+                    focus = atAnyBase();
+                    if (focus != null) {
+                        return focus;
                     }
                 }
 
@@ -159,13 +159,6 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //                    return defBuilding.translateTilesTowards(mainBase.position(), 5);
 //                }
 
-                // === Return position near the choke point ================
-
-//                AChoke chokepointForNatural = AMap.getChokeForNatural(mainBase.position());
-//                if (chokepointForNatural != null) {
-//                    return APosition.create(chokepointForNatural.getCenter());
-//                }
-
                 // === Return position near the first building ================
 
                 AUnit ourFirst = Select.our().first();
@@ -179,6 +172,46 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 return null;
             }
         );
+    }
+
+    // =========================================================
+
+    private AFocusPoint atAnyBase() {
+        //                    AChoke natural = Chokes.natural();
+        AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisConfig.BASE).mostDistantTo(Select.main());
+        if (lastBase != null) {
+
+            // === At natural =========================================
+
+            if (Bases.hasBaseAtNatural()) {
+//                AChoke naturalChoke = Chokes.mainChoke();
+                AChoke naturalChoke = Chokes.mainChoke();
+                if (naturalChoke != null) {
+                    APosition natural = Bases.natural();
+                    return new AFocusPoint(
+                        naturalChoke.translateTilesTowards(5, natural),
+                        "NaturalChoke"
+                    );
+                }
+            }
+
+            // === Standard ===========================================
+
+            AChoke choke = Chokes.nearestChoke(lastBase);
+            if (choke != null) {
+                return new AFocusPoint(
+                    choke.translateTilesTowards(5, lastBase),
+                    "LastBaseChoke"
+                );
+            }
+
+            return new AFocusPoint(
+                lastBase,
+                "LastBase"
+            );
+        }
+
+        return null;
     }
 
 }

@@ -292,4 +292,19 @@ public class Bases {
                 }
         );
     }
+
+    public static boolean hasBaseAtNatural() {
+        return (boolean) cache.get(
+            "hasBaseAtNatural",
+            57,
+            () -> {
+                APosition natural = natural();
+                if (natural == null) {
+                    return false;
+                }
+
+                return Select.ourBases().inRadius(6, natural).notEmpty();
+            }
+        );
+    }
 }

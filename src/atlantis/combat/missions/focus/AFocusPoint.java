@@ -69,7 +69,10 @@ public class AFocusPoint extends APosition {
     // =========================================================
 
     public boolean isValid() {
-        return unit == null || unit.isAlive();
+        return unit != null && unit.isAlive() && (
+            !unit.isVisibleUnitOnMap()
+            || (unit.hp() > 0 && unit.isVisibleUnitOnMap())
+        );
     }
 
     // =========================================================
