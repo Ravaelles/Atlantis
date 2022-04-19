@@ -12,10 +12,12 @@ import atlantis.units.select.BaseSelect;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import tests.acceptance.AbstractTestFakingGame;
 
 import java.util.Arrays;
 
 public class AAvoidUnitsTest extends AbstractTestWithUnits {
+//public class AAvoidUnitsTest extends AbstractTestFakingGame {
 
     public MockedStatic<AGame> aGame;
     public MockedStatic<EnemyInfo> enemyInformation;
