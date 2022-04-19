@@ -24,16 +24,16 @@ public class ProtossReinforceBases {
                 if (Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 12, nearTo) == 0) {
                     if (Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 8, nearTo) == 0) {
                         nearTo = nearTo.translateTilesTowards(3, base);
-                        System.err.println(
-                            "Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 8, nearTo) = "
-                                + Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 8, nearTo)
-                        );
+//                        System.err.println(
+//                            "Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 8, nearTo) = "
+//                                + Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 8, nearTo)
+//                        );
                         AddToQueue.withHighPriority(Protoss_Pylon, nearTo);
                         return true;
                     }
 
                     AntiLandBuildingManager.get().requestOne(nearTo);
-                    System.err.println("Requested Cannon to protect base " + base);
+//                    System.err.println("Requested Cannon to protect base " + base);
                     return true;
                 }
             }

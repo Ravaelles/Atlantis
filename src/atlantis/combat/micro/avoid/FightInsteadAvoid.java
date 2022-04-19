@@ -220,7 +220,6 @@ public class FightInsteadAvoid {
             }
         }
 
-        aa
 //            oddal sie od contain focus pointu, bo na Destination stackują się na focusie
 //            trzymaj ładny krąg na focusie
 

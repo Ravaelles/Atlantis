@@ -73,7 +73,7 @@ public abstract class MoveToFocusPoint {
     // =========================================================
 
     private boolean joinSquad(AUnit unit) {
-        if (unit.distToSquadCenter() >= 8 && unit.enemiesNear().isEmpty()) {
+        if (unit.distToSquadCenter() >= 8 && unit.enemiesNear().isEmpty() && unit.friendsInRadius(2.1).atMost(2)) {
             unit.addLog("JoinSquad");
             return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
         }
@@ -109,8 +109,9 @@ public abstract class MoveToFocusPoint {
                 || (!isOnValidSideOfChoke(unit, focus) && distToFocusPoint <= 7)
         ) {
             if (unit.enemiesNear().combatUnits().empty()) {
-                for (AUnit friend : unit.friendsNear().combatUnits().inRadius(7, unit).list()) {
-                    friend.move(focus.fromSide(), Actions.MOVE_FOCUS, "HelpWithdraw", true);
+                for (AUnit friend : unit.friendsNear().inRadius(0.6, unit).combatUnits().inRadius(7, unit).list()) {
+                    APosition withdrawTo = friend.translateTilesTowards(1, focus.fromSide());
+                    friend.move(withdrawTo, Actions.MOVE_FOCUS, "HelpWithdraw", true);
                     friend.setTooltip("HelpWithdraw", true);
                 }
             }

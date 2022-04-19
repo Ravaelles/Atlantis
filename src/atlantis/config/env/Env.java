@@ -77,4 +77,8 @@ public class Env {
     public static boolean isFirstRun() {
         return firstRun;
     }
+
+    public static boolean isTesting() {
+        return false;
+    }
 }

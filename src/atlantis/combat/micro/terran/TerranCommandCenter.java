@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -37,11 +38,15 @@ public class TerranCommandCenter {
     }
 
     private static boolean flyToNewMineralPatches(AUnit building) {
+        if (Env.isTesting()) {
+            return false;
+        }
+
         List<? extends AUnit> minerals = Select.minerals().sortDataByDistanceTo(building, true);
         Selection bases = Select.ourBuildingsWithUnfinished().ofType(AUnitType.Terran_Command_Center);
         ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(building);
 
-        if (baseLocation == null) {
+        if (baseLocation == null && !Env.isTesting()) {
             System.err.println("No expansionFreeBaseLocationNearestTo for rebasing");
             return false;
         }

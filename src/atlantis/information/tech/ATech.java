@@ -1,5 +1,6 @@
 package atlantis.information.tech;
 
+import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.production.ProductionOrder;
 import atlantis.util.cache.Cache;
@@ -61,6 +62,10 @@ public class ATech {
      * Returns level of given upgrade. 0 is initially, it can raise up to 3.
      */
     public static int getUpgradeLevel(UpgradeType upgrade) {
+        if (Env.isTesting()) {
+            return 0;
+        }
+
         return AGame.getPlayerUs().getUpgradeLevel(upgrade);
     }
 

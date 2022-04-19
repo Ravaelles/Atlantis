@@ -30,11 +30,11 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
 
     @Override
     public double optimalDist(AUnit unit) {
+        double base = 7.2;
+        double ourUnitsNearBonus = Select.our().inRadius(2, unit).count() / 20.0;
         int workersComeThroughBonus = workersComeThroughBonus(unit);
 
-        double ourUnitsNearBonus = Select.our().inRadius(2, unit).count() / 20.0;
-
-        return 6.5
+        return base
             + (unit.isTank() ? 3.8 : 0)
             + (unit.isMedic() ? -0.8 : 0)
 //                + (unit.isMarine() ? 2 : 0)

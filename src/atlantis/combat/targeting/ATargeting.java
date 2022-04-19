@@ -65,21 +65,24 @@ public class ATargeting {
         }
 
         if (enemy == null) {
-            if (unit.enemiesNear().havingPosition().effVisible().groundUnits().atLeast(1)) {
+            if (
+                unit.enemiesNear().havingPosition().effVisible().groundUnits().atLeast(1)
+                && unit.canAttackGroundUnits()
+            ) {
                 System.err.println(unit + " return NULL target WTF");
                 unit.enemiesNear().groundUnits().print("These could be targetted");
             }
             return null;
         }
 
+//        System.out.println("enemy.type() = " + enemy.type());
         AUnit weakestEnemy = selectWeakestEnemyOfType(enemy.type(), unit);
+//        System.out.println("weakestEnemy = " + weakestEnemy);
 
         if (weakestEnemy != null && unit.isTank()) {
-            if (weakestEnemy.enemiesNear().inRadius(2, unit).notEmpty()) {
-                AUnit tankTarget = unit.enemiesNear().combatUnits().canBeAttackedBy(unit, 0).mostDistantTo(unit);
-                if (tankTarget != null) {
-                    return tankTarget;
-                }
+            AUnit tank = handleTanksSpecially(unit, weakestEnemy);
+            if (tank != null) {
+                return tank;
             }
         }
 
@@ -92,13 +95,15 @@ public class ATargeting {
 
         // Most wounded enemy IN RANGE
         AUnit enemy = selectWeakestEnemyOfType(enemyType, unit, 0);
+//        System.out.println("enemy A = " + enemy);
         if (enemy != null) {
 //            unit.addLog("AttackClose");
             return enemy;
         }
 
         // Most wounded enemy some distance from away
-        enemy = selectWeakestEnemyOfType(enemyType, unit, 2);
+        enemy = selectWeakestEnemyOfType(enemyType, unit, 6);
+//        System.out.println("enemy B = " + enemy);
         if (enemy != null) {
 //            unit.addLog("AttackDistant");
             return enemy;
@@ -107,22 +112,31 @@ public class ATargeting {
         // =====================================================================
         // Couldn't find enemy of given type in/near weapon range. Change target
 
-        // Most wounded enemy OF DIFFERENT TYPE, but IN RANGE
-        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0).mostWounded();
+        // Nearest enemy
+        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0).nearestTo(unit);
         if (enemy != null) {
-//            unit.addLog("AttackMostWounded");
+            unit.addLog("AttackNearest");
             return enemy;
         }
 
-//        int nearbyEnemiesCount = unit.enemiesNear().inRadius(4, unit).count();
-//        System.err.println("Man, how comes we're here? " + unit + " // " + nearbyEnemiesCount);
-//        if (nearbyEnemiesCount > 0) {
-//            A.printStackTrace("Lets debug this");
+//        // Most wounded enemy OF DIFFERENT TYPE, but IN RANGE
+//        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0).mostWounded();
+//        if (enemy != null) {
+////            unit.addLog("AttackMostWounded");
+//            return enemy;
 //        }
+//
+////        int nearbyEnemiesCount = unit.enemiesNear().inRadius(4, unit).count();
+////        System.err.println("Man, how comes we're here? " + unit + " // " + nearbyEnemiesCount);
+////        if (nearbyEnemiesCount > 0) {
+////            A.printStackTrace("Lets debug this");
+////        }
+//
+//        double maxDistToEnemy = unit.mission() != null && unit.isMissionDefend() ? 6 : 999;
+//
+//        return Select.enemyRealUnits().canBeAttackedBy(unit, maxDistToEnemy).nearestTo(unit);
 
-        double maxDistToEnemy = unit.mission() != null && unit.isMissionDefend() ? 6 : 999;
-
-        return Select.enemyRealUnits().canBeAttackedBy(unit, maxDistToEnemy).nearestTo(unit);
+        return null;
     }
 
 //    private static AUnit selectWeakestEnemyOfTypeInRange(AUnitType type, AUnit ourUnit) {
@@ -172,6 +186,17 @@ public class ATargeting {
 
         HasPosition relativeTo = ourUnit.squadCenter() != null ? ourUnit.squadCenter() : ourUnit;
         return targets.clone().nearestTo(relativeTo);
+    }
+
+    private static AUnit handleTanksSpecially(AUnit unit, AUnit weakestEnemy) {
+        if (weakestEnemy.enemiesNear().inRadius(2, unit).notEmpty()) {
+            AUnit tankTarget = unit.enemiesNear().combatUnits().canBeAttackedBy(unit, 0).mostDistantTo(unit);
+            if (tankTarget != null) {
+                return tankTarget;
+            }
+        }
+
+        return null;
     }
 
     // =========================================================
