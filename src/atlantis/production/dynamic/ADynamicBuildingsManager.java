@@ -13,7 +13,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.Helpers;
 
 
@@ -66,17 +65,17 @@ public abstract class ADynamicBuildingsManager extends Helpers {
 
     // =========================================================
 
-    protected static boolean requestMoreIfAllBusy(AUnitType building, int freeMinerals, int freeGas) {
-        if (AGame.canAffordWithReserved(freeMinerals, freeGas)) {
-            Selection buildings = Select.ourOfType(building);
-
-            if (buildings.areAllBusy()) {
-                AddToQueue.withStandardPriority(building);
-                return true;
-            }
-        }
-        return false;
-    }
+//    protected static boolean requestMoreIfAllBusy(AUnitType building, int freeMinerals, int freeGas) {
+//        if (AGame.canAffordWithReserved(freeMinerals, freeGas)) {
+//            Selection buildings = Select.ourOfType(building);
+//
+//            if (buildings.areAllBusy()) {
+//                AddToQueue.withStandardPriority(building);
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     protected static void buildToHaveOne(int minSupply, AUnitType type) {
         if (AGame.supplyUsed() >= minSupply) {
@@ -100,18 +99,24 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         buildIfCanAffordWithReserved(type, true, type.getMineralPrice(), type.getGasPrice());
     }
 
-    protected static void buildIfAllBusyButCanAfford(AUnitType type, int extraMinerals, int extraGas) {
-        if (Select.ourOfType(type).areAllBusy()) {
-            buildIfHaveMineralsAndGas(type, true, type.getMineralPrice() + extraMinerals, type.getGasPrice() + extraGas);
+    protected static boolean buildIfAllBusyButCanAfford(AUnitType type, int extraMinerals, int extraGas) {
+        if (Count.inProductionOrInQueue(type) > 0) {
+            return false;
         }
+
+        if (Select.ourOfType(type).areAllBusy()) {
+            return buildIfHaveMineralsAndGas(type, true, type.getMineralPrice() + extraMinerals, type.getGasPrice() + extraGas);
+        }
+
+        return false;
     }
 
-    protected static void buildIfHaveMineralsAndGas(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
+    protected static boolean buildIfHaveMineralsAndGas(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
         if (!AGame.canAfford(hasMinerals, hasGas)) {
-            return;
+            return false;
         }
 
-        buildNow(type, onlyOneAtTime);
+        return buildNow(type, onlyOneAtTime);
     }
 
     protected static void buildIfCanAffordWithReserved(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
@@ -126,17 +131,18 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         buildNow(type, false);
     }
 
-    protected static void buildNow(AUnitType type, boolean onlyOneAtTime) {
+    protected static boolean buildNow(AUnitType type, boolean onlyOneAtTime) {
         if (onlyOneAtTime && ConstructionRequests.hasRequestedConstructionOf(type)) {
-            return;
+            return false;
         }
 
         if (!hasRequiredUnitFor(type)) {
             buildToHaveOne(type.whatIsRequired());
-            return;
+            return false;
         }
 
         AddToQueue.withTopPriority(type);
+        return true;
     }
 
     // =========================================================

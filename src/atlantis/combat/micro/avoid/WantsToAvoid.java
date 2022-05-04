@@ -59,8 +59,10 @@ public class WantsToAvoid {
         }
 
         if (unit.hpLessThan(17) && !enemies.onlyMelee() && !Enemy.terran()) {
-            unit.addLog("AlmostDead");
-            return true;
+            if (!unit.isMelee() && !unit.isMissionDefendOrSparta()) {
+                unit.addLog("AlmostDead");
+                return true;
+            }
         }
 
         if (unit.isSquadScout() && unit.isWounded() && unit.friendsNear().inRadius(3, unit).isEmpty()) {

@@ -1,6 +1,6 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.GameSpeed;
@@ -71,7 +71,7 @@ public class ARunningManager {
         }
 
         if (
-            unit.lastStartedRunningMoreThanAgo(20) && !AAvoidEnemies.shouldNotAvoidAnyUnit(unit))
+            unit.lastStartedRunningMoreThanAgo(20) && !AvoidEnemies.shouldNotAvoidAnyUnit(unit))
         {
             unit.setTooltip("StopMan", false);
             return true;
@@ -82,7 +82,7 @@ public class ARunningManager {
                 && unit.lastStartedRunningMoreThanAgo(STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
                 && !unit.isUnderAttack(unit.isAir() ? 250 : 5)
                 //                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
-                || AAvoidEnemies.shouldNotAvoidAnyUnit(unit)
+                || AvoidEnemies.shouldNotAvoidAnyUnit(unit)
         ) {
             unit.setTooltip("StopRun", false);
             return true;
@@ -622,7 +622,7 @@ public class ARunningManager {
         }
 
         // Check if only combat buildings are dangerously close. If so, don't run in any direction.
-        Units dangerous = AAvoidEnemies.unitsToAvoid(unit, true);
+        Units dangerous = AvoidEnemies.unitsToAvoid(unit, true);
 
         if (dangerous.isEmpty()) {
             return false;

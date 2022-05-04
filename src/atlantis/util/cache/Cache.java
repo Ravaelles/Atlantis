@@ -2,6 +2,7 @@ package atlantis.util.cache;
 
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.game.A;
+import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Callback;
 
@@ -57,8 +58,17 @@ public class Cache<V> {
 
     public V getIfValid(String cacheKey, int cacheForFrames, Callback callback) {
         V value = get(cacheKey, cacheForFrames, callback);
-        if (value != null && ((AFocusPoint) value).isValid()) {
-            return value;
+        if (value != null) {
+            if (value instanceof AFocusPoint) {
+                if (((AFocusPoint) value).isValid()) {
+                    return value;
+                }
+            }
+            if (value instanceof AUnit) {
+                if (((AUnit) value).isValid()) {
+                    return value;
+                }
+            }
         }
 
         set(cacheKey, cacheForFrames, callback);

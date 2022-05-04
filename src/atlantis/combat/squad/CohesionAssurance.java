@@ -33,6 +33,14 @@ public class CohesionAssurance {
             return false;
         }
 
+        // Too stacked for cohesion
+        if (
+            unit.friendsInRadius(4).count() >= 6
+            || unit.friendsInRadius(7).count() >= 20
+        ) {
+            return false;
+        }
+
         if (!We.terran() && unit.enemiesNear().units().onlyMelee()) {
             return false;
         }

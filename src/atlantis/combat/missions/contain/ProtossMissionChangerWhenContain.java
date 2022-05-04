@@ -34,6 +34,11 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
             }
         }
 
+        if (ArmyStrength.ourArmyRelativeStrength() <= 160) {
+            if (DEBUG) reason = "Not so strong (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return true;
+        }
+
         if (defendAgainstMassZerglings()) {
             if (DEBUG) reason = "Mass zerglings";
             return true;

@@ -43,14 +43,17 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 23 - Medic
 32 - Stim Packs
 35 - Comsat Station
-38 - Factory
-40 - Machine Shop
-41 - U 238 Shells
+//38 - Factory
+//40 - Machine Shop
+//41 - U 238 Shells
 42 - Bunker - @NATURAL_CHOKE
-44 - Siege Mode
-47 - Starport
-50 - Control Tower
-52 - Science Vessel
+//44 - Siege Mode
+48 - Factory
+50 - Machine Shop
+51 - U 238 Shells
+60 - Starport
+63 - Control Tower
+67 - Science Vessel
 70 - Science Facility
 73 - Covert Ops
 74 - Ghost

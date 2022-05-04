@@ -1,6 +1,6 @@
 package atlantis.units.workers;
 
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.AConstructionManager;
@@ -37,7 +37,7 @@ public class AWorkerDefenceManager {
             return true;
         }
 
-        if (AAvoidEnemies.avoidEnemiesIfNeeded(worker)) {
+        if (AvoidEnemies.avoidEnemiesIfNeeded(worker)) {
             worker.addLog("WorkerAvoid");
             return true;
         }

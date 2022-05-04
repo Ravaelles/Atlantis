@@ -120,14 +120,15 @@ public class AGasManager {
     }
 
     private static int gasWorkers(AUnit gasBuilding, int numOfWorkersNear) {
-
         if (Count.workers() <= 8) {
             return 0;
         }
 
         // Too much gas, too little minerals
-        if (A.hasGas(400) || Count.workers() <= 16 || (!A.hasMinerals(160) && A.hasGas(150))) {
-            return 1;
+        if (A.seconds() <= 800) {
+            if ((A.hasGas(170) && Count.workers() <= 16) || (!A.hasMinerals(160) && A.hasGas(150))) {
+                return 1;
+            }
         }
 
 //        if (AGame.hasGas(800)) {

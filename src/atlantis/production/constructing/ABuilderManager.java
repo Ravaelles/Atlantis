@@ -1,12 +1,12 @@
 package atlantis.production.constructing;
 
+import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
-import atlantis.production.orders.production.CurrentProductionQueue;
-import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -17,6 +17,9 @@ import bwapi.TilePosition;
 public class ABuilderManager {
 
     public static boolean update(AUnit builder) {
+        if (AvoidEnemies.avoidEnemiesIfNeeded(builder)) {
+            return true;
+        }
 
         // Sometimes an ugly thing like this may happen
         if (We.terran() && builder.isConstructing() && builder.buildUnit() != null && A.everyNthGameFrame(29)) {
@@ -149,6 +152,11 @@ public class ABuilderManager {
                 buildPosition.tx(), buildPosition.ty()
             );
 
+            if (Select.ourWithUnfinishedOfType(AtlantisConfig.GAS_BUILDING).inRadius(3, buildPosition).notEmpty()) {
+                order.cancel();
+                return false;
+            }
+
             if (!builder.isConstructing() || builder.isIdle() || AGame.now() % 7 == 0) {
                 builder.build(buildingType, buildTilePosition);
                 return true;
@@ -206,7 +214,7 @@ public class ABuilderManager {
                     System.out.println("Applied [2,1] " + building + " position FIX");
                     return position.translateByTiles(2, 1);
                 }
-                
+
                 System.err.println("Gas building FIX was not applied");
                 System.err.println("This probably halts gas building");
             } 

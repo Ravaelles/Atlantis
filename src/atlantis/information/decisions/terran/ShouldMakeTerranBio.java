@@ -1,5 +1,6 @@
 package atlantis.information.decisions.terran;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.FocusOnProducingUnits;
@@ -24,7 +25,7 @@ public class ShouldMakeTerranBio {
 
         // === True ===========================================
 
-        if (AGame.hasMinerals(600)) {
+        if (A.hasMinerals(680)) {
             return true;
         }
 

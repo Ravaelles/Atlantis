@@ -102,8 +102,10 @@ public class TerranInfantry {
             unit.enemiesNear().isEmpty()
                 && unit.lastActionMoreThanAgo(15)
         ) {
-            unit.setTooltipTactical("Unload");
-            return unloadFromBunker(unit);
+            if (!unit.isMissionDefendOrSparta() || unit.distToFocusPoint() >= 10) {
+                unit.setTooltipTactical("Unload");
+                return unloadFromBunker(unit);
+            }
         }
 
         return false;

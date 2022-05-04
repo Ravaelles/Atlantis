@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -12,7 +12,6 @@ import atlantis.units.select.BaseSelect;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import tests.acceptance.AbstractTestFakingGame;
 
 import java.util.Arrays;
 
@@ -56,7 +55,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { drone, ling1, hydra, sunken },
-                    AAvoidEnemies.unitsToAvoid(our).array()
+                    AvoidEnemies.unitsToAvoid(our).array()
             );
         });
     }
@@ -85,7 +84,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
-                    AAvoidEnemies.unitsToAvoid(our).array()
+                    AvoidEnemies.unitsToAvoid(our).array()
             );
         });
     }
@@ -116,7 +115,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3 },
-                    AAvoidEnemies.unitsToAvoid(our).array()
+                    AvoidEnemies.unitsToAvoid(our).array()
             );
         });
     }
@@ -149,7 +148,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
-                    AAvoidEnemies.unitsToAvoid(our).array()
+                    AvoidEnemies.unitsToAvoid(our).array()
             );
         });
     }
@@ -206,7 +205,7 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
 
             assertContainsAll(
                     new AUnit[] { enemy1, enemy2, enemy3, enemy4, enemy5, enemy6 },
-                    AAvoidEnemies.unitsToAvoid(our).array()
+                    AvoidEnemies.unitsToAvoid(our).array()
             );
         }
     }

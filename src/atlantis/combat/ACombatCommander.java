@@ -1,6 +1,6 @@
 package atlantis.combat;
 
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
@@ -52,7 +52,7 @@ public class ACombatCommander {
                 unit.setTooltipTactical("");
             }
 
-            double margin = AAvoidEnemies.lowestSafetyMarginForAnyEnemy(unit);
+            double margin = AvoidEnemies.lowestSafetyMarginForAnyEnemy(unit);
             unit.setTooltipTactical( (margin < 9876 ? A.digit(margin) : "-") + " / " + unit.tooltip()
 //                    A.digit(nearestEnemy.distanceTo(unit)) + " \\ "
 //                            + A.digit(AAvoidUnits.lowestSafetyMarginForAnyEnemy(unit)) + " / "

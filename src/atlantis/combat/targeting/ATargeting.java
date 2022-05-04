@@ -63,6 +63,9 @@ public class ATargeting {
         if (enemy == null) {
 //            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
             enemy = unit.enemiesNear().realUnitsButAllowBuildings().canBeAttackedBy(unit, 0).nearestTo(unit);
+            if (enemy != null) {
+                System.err.println("DefineTarget fix for " + unit + ", chosen " + enemy);
+            }
         }
 
 //        if (enemy == null) {

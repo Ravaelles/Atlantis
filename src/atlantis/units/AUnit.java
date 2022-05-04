@@ -2363,10 +2363,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit nearestEnemy() {
-        return (AUnit) cache.get(
+        return (AUnit) cache.getIfValid(
             "nearestEnemy",
             2,
-            () -> enemiesNear().canAttack(this, 5).nearestTo(this)
+            () -> enemiesNear().havingPosition().canAttack(this, 5).nearestTo(this)
         );
     }
 
@@ -2456,5 +2456,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public void gatherBestResources() {
         AMineralGathering.gatherResources(this);
+    }
+
+    public boolean isValid() {
+        return isAlive() && hasPosition();
     }
 }

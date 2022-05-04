@@ -49,12 +49,12 @@ Probe x2
 39 - Dragoon
 42 - Dragoon
 42 - Gateway
-43 - MISSION=ATTACK
+//43 - MISSION=ATTACK
 43 - Dragoon
 44 - Dragoon Range
 45 - Robotics Facility
 49 - Robotics Support Bay
-50 - MISSION=ATTACK
+//50 - MISSION=ATTACK
 50 - Observatory
 52 - Reaver
 55 - Observer

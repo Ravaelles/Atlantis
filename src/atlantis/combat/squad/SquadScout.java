@@ -1,7 +1,7 @@
 package atlantis.combat.squad;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.debug.painter.APainter;
@@ -28,7 +28,7 @@ public class SquadScout {
     // =========================================================
 
     private static boolean handleSquadScout(AUnit squadScout) {
-        if (AAvoidEnemies.avoidEnemiesIfNeeded(squadScout)) {
+        if (AvoidEnemies.avoidEnemiesIfNeeded(squadScout)) {
             return true;
         }
 

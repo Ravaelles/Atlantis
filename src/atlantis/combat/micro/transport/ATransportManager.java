@@ -1,6 +1,6 @@
 package atlantis.combat.micro.transport;
 
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -38,7 +38,7 @@ public class ATransportManager {
             return false;
         }
 
-        return AAvoidEnemies.avoidEnemiesIfNeeded(transport);
+        return AvoidEnemies.avoidEnemiesIfNeeded(transport);
     }
 
     private static AUnit babyToCarry(AUnit transport) {

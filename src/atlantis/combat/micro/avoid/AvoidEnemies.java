@@ -9,7 +9,7 @@ import atlantis.util.cache.Cache;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AAvoidEnemies {
+public abstract class AvoidEnemies {
 
     protected static AUnit unit;
     private static Cache<Units> cache = new Cache<>();

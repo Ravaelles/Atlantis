@@ -19,12 +19,17 @@ public class UnitAttackWaitFrames {
 //    }
 
     public static boolean unitAlreadyStartedAttackAnimation(AUnit unit) {
-        return unit.isAttackingOrMovingToAttack()
-                && unit.hasValidTarget();
+//        return unit.isAttackingOrMovingToAttack()
 //        return unit.isAttackingOrMovingToAttack()
 //                && unit.hasValidTarget()
 //                && unit.lastFrameOfStartingAttackAgo() < (unit.cooldownAbsolute() / 3)
 //                && (unit.lastFrameOfStartingAttackAgo() + stopFrames(unit.type())) > A.now();
+
+        if (unit.lastFrameOfStartingAttackAgo() >= effectiveStopFrames(unit.type())) {
+            return true;
+        }
+
+        return unit.cooldownRemaining() > 0 && unit.isAttackingOrMovingToAttack();
     }
 
     public static int effectiveStopFrames(AUnitType type) {

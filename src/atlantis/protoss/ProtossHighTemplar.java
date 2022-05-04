@@ -1,7 +1,7 @@
 
 package atlantis.protoss;
 
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.AGame;
 import atlantis.information.tech.SpellCoordinator;
@@ -37,7 +37,7 @@ public class ProtossHighTemplar {
             }
         }
 
-        if (AAvoidEnemies.avoidEnemiesIfNeeded(highTemplar)) {
+        if (AvoidEnemies.avoidEnemiesIfNeeded(highTemplar)) {
             return true;
         }
 

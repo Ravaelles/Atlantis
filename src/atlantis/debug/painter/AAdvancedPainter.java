@@ -1,7 +1,7 @@
 package atlantis.debug.painter;
 
 import atlantis.Atlantis;
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.missions.focus.AFocusPoint;
@@ -52,6 +52,8 @@ import bwapi.UpgradeType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static bwapi.Color.Green;
 
 public class AAdvancedPainter extends APainter {
 
@@ -138,7 +140,7 @@ public class AAdvancedPainter extends APainter {
             paintTextCentered(unit, unit.type().toString(), Color.White, 0, -0.2);
 
             if (unit.buildType() != null) {
-                paintTextCentered(unit, "Build: " + unit.buildType().toString(), Color.Green, 0,0.1);
+                paintTextCentered(unit, "Build: " + unit.buildType().toString(), Green, 0,0.1);
             }
         }
     }
@@ -148,7 +150,7 @@ public class AAdvancedPainter extends APainter {
      */
     protected static void paintCombatUnits() {
         for (AUnit unit : Select.ourCombatUnits().list()) {
-            APosition position = unit.position();
+            paintUnitInRangeInfo(unit);
 
             // =========================================================
             // === Paint targets for combat units
@@ -208,6 +210,24 @@ public class AAdvancedPainter extends APainter {
             paintLastAction(unit);
             paintLog(unit);
         }
+    }
+
+    private static void paintUnitInRangeInfo(AUnit unit) {
+        APosition position = unit.position();
+
+        Color inRangeColor = unit.nearestEnemyDist() <= 4
+            ? (unit.cooldownRemaining() == 0 ? Color.Green : Color.Yellow)
+            : Color.Red;
+
+        paintRectangleFilled(
+            position.translateByTiles(0.5, 0),
+            32, 5, inRangeColor
+        );
+        paintTextCentered(
+            position.translateByTiles(0.5, 0),
+            A.dist(unit.nearestEnemyDist()) + "  " + unit.cooldownRemaining(),
+            inRangeColor, 1, -0.4
+        );
     }
 
     private static void paintLog(AUnit unit) {
@@ -288,9 +308,9 @@ public class AAdvancedPainter extends APainter {
         }
         for (AUnit enemy : Select.enemy().effVisible().list()) {
             if (enemy.isCloaked() || enemy.isBurrowed()) {
-                paintCircle(enemy, 16, Color.Green);
-                paintCircle(enemy, 15, Color.Green);
-                paintCircle(enemy, 15, Color.Green);
+                paintCircle(enemy, 16, Green);
+                paintCircle(enemy, 15, Green);
+                paintCircle(enemy, 15, Green);
                 paintTextCentered(enemy, "CloakedVisible,HP=" + enemy.hp(), Color.White);
             }
         }
@@ -305,7 +325,7 @@ public class AAdvancedPainter extends APainter {
 
         // Time
         if (AGame.isUms()) {
-            paintSideMessage("UMS map mode enabled", Color.Green);
+            paintSideMessage("UMS map mode enabled", Green);
         }
         paintSideMessage("Time: " + AGame.timeSeconds() + "s (" + A.now() + ")", Color.Grey);
 
@@ -313,7 +333,7 @@ public class AAdvancedPainter extends APainter {
         // Global mission
 
         int armyStrength = ArmyStrength.ourArmyRelativeStrength();
-        paintSideMessage("Army strength: " + armyStrength + "%", armyStrength >= 100 ? Color.Green : Color.Red);
+        paintSideMessage("Army strength: " + armyStrength + "%", armyStrength >= 100 ? Green : Color.Red);
         paintSideMessage("Enemy strategy: " + (EnemyStrategy.isEnemyStrategyKnown()
                 ? EnemyStrategy.get().toString() : "Unknown"),
                 EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
@@ -567,7 +587,7 @@ public class AAdvancedPainter extends APainter {
         for (ProductionOrder order : produceNow) {
             paintSideMessage(
                     String.format("%02d", order.minSupply()) + " - " + order.name(),
-                    order.hasWhatRequired() ? (order.currentlyInProduction() ? Color.Green : Color.Yellow) : Color.Red
+                    order.hasWhatRequired() ? (order.currentlyInProduction() ? Green : Color.Yellow) : Color.Red
             );
             if (++counter >= 10) {
                 break;
@@ -612,17 +632,17 @@ public class AAdvancedPainter extends APainter {
             if (type.equals(AUnitType.Zerg_Egg)) {
                 type = unit.buildType();
             }
-            paintSideMessage(type.name(), Color.Green);
+            paintSideMessage(type.name(), Green);
         }
 
         // Techs
         for (TechType techType : ATech.getCurrentlyResearching()) {
-            paintSideMessage(techType.toString(), Color.Green);
+            paintSideMessage(techType.toString(), Green);
         }
 
         // Upgrades
         for (UpgradeType upgradeType : ATech.getCurrentlyUpgrading()) {
-            paintSideMessage(upgradeType.toString(), Color.Green);
+            paintSideMessage(upgradeType.toString(), Green);
         }
     }
 
@@ -917,7 +937,7 @@ public class AAdvancedPainter extends APainter {
                 progressColor = Color.Yellow;
             }
             else {
-                progressColor = Color.Green;
+                progressColor = Green;
             }
             stringToDisplay = labelProgress + "%";
 
@@ -939,7 +959,7 @@ public class AAdvancedPainter extends APainter {
             AUnit builder = order.builder();
             boolean builderProblem = builder == null || !builder.isAlive();
             paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 15),
-                    builderProblem ? "NO BUILDER" : "", builderProblem ? Color.Red : Color.Green);
+                    builderProblem ? "NO BUILDER" : "", builderProblem ? Color.Red : Green);
         }
 
         setTextSizeSmall();
@@ -961,7 +981,7 @@ public class AAdvancedPainter extends APainter {
             double hpRatio = (double) unit.hp() / unit.maxHp();
             int hpProgress = (int) (1 + 99 * hpRatio);
 
-            Color color = Color.Green;
+            Color color = Green;
             if (hpRatio < 0.66) {
                 color = Color.Yellow;
                 if (hpRatio < 0.33) {
@@ -1091,11 +1111,11 @@ public class AAdvancedPainter extends APainter {
         paintMessage("-----------", Color.Grey, x, y + 2 * dy, true);
         paintMessage("Price: ", Color.White, x, y + 3 * dy, true);
 
-        paintMessage(Atlantis.KILLED + "", Color.Green, x + dx, y, true);
+        paintMessage(Atlantis.KILLED + "", Green, x + dx, y, true);
         paintMessage(Atlantis.LOST + "", Color.Red, x + dx, y + dy, true);
 
         int balance = AGame.killsLossesResourceBalance();
-        Color color = balance >= 0 ? Color.Green : Color.Red;
+        Color color = balance >= 0 ? Green : Color.Red;
         paintMessage((balance >= 0 ? "+" : "") + balance, color, x + dx, y + 3 * dy, true);
     }
 
@@ -1177,10 +1197,10 @@ public class AAdvancedPainter extends APainter {
                         worker, AUnitType.Terran_Supply_Depot, position
                 );
 
-                paintCircleFilled(position, 4, canBuild ? Color.Green : Color.Red);
+                paintCircleFilled(position, 4, canBuild ? Green : Color.Red);
 
                 if (x == tileX && y == tileY) {
-                    paintCircleFilled(position, 10, canBuild ? Color.Green : Color.Red);
+                    paintCircleFilled(position, 10, canBuild ? Green : Color.Red);
                 }
             }
         }
@@ -1282,14 +1302,14 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCooldown(AUnit unit) {
-        boolean shouldAvoidAnyUnit = AAvoidEnemies.shouldAvoidAnyUnit(unit);
+        boolean shouldAvoidAnyUnit = AvoidEnemies.shouldAvoidAnyUnit(unit);
 
 //        paintUnitProgressBar(unit, 27, 100, Color.Grey);
         paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldAvoidAnyUnit ? Color.Red : Color.Teal);
     }
 
     private static void paintLifeBar(AUnit unit) {
-        Color color = unit.isOur() ? Color.Green : Color.Yellow;
+        Color color = unit.isOur() ? Green : Color.Yellow;
 
 //        if (unit.isWounded()) {
         paintUnitProgressBar(unit, 10, 100, Color.Red);
@@ -1398,11 +1418,11 @@ public class AAdvancedPainter extends APainter {
 
         // Our natural choke
         AChoke naturalChoke = Chokes.natural(Bases.natural());
-        paintChoke(naturalChoke, Color.Green, "Natural choke");
+        paintChoke(naturalChoke, Green, "Natural choke");
 
         // Our main choke
         AChoke mainChoke = Chokes.mainChoke();
-        paintChoke(mainChoke, Color.Green, "Main choke");
+        paintChoke(mainChoke, Green, "Main choke");
 
         // Enemy natural choke
         AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();

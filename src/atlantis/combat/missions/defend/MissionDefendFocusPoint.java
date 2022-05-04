@@ -7,7 +7,6 @@ import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.strategy.GamePhase;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
@@ -15,7 +14,6 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
@@ -86,6 +84,25 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     }
                 }
 
+                // === Natural / main choke ================
+
+                if (Count.ourCombatUnits() >= 12) {
+//                    if (Bases.hasBaseAtNatural()) {
+                    if (Bases.hasBunkerAtNatural()) {
+                        focus = atNaturalChoke();
+                        if (focus != null) {
+                            return focus;
+                        }
+                    }
+
+                    else {
+                        focus = atMainChoke();
+                        if (focus != null) {
+                            return focus;
+                        }
+                    }
+                }
+
                 // === Around defensive building ===========================================
 
                 if (We.zerg()) {
@@ -98,16 +115,17 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     }
                 }
 
-                if (We.terran() && A.supplyUsed() <= 50 && Count.infantry() <= 13) {
-                    AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
-                    if (GamePhase.isEarlyGame() && mainBase != null) {
-                        if (bunker != null) {
-                            return new AFocusPoint(bunker.translateTilesTowards(4, mainBase), "Bunker");
-                        }
+//                if (We.terran() && A.supplyUsed() <= 50 && Count.infantry() <= 13) {
+                if (We.terran() && A.seconds() <= 500) {
+                    AUnit bunker = Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
+//                    if (GamePhase.isEarlyGame() && mainBase != null) {
+                    if (bunker != null) {
+                        return new AFocusPoint(bunker.translateTilesTowards(4, mainBase), "Bunker");
                     }
+//                    }
                 }
 
-                // === Natural choke if second base ================
+                // =========================================================
 
                 if (basesWithUnfinished >= 2) {
                     focus = atAnyBase();
@@ -128,13 +146,9 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Main choke ================
 
-                AChoke mainChoke = Chokes.mainChoke();
-                if (mainChoke != null) {
-                    return new AFocusPoint(
-                        mainChoke,
-                        Select.main(),
-                        "MainChoke"
-                    );
+                focus = atMainChoke();
+                if (focus != null) {
+                    return focus;
                 }
 
                 // === Focus enemy attacking the main base =================
@@ -187,23 +201,11 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //                AChoke naturalChoke = Chokes.mainChoke();
                 AChoke naturalChoke = Chokes.mainChoke();
                 if (naturalChoke != null) {
-                    APosition natural = Bases.natural();
-                    return new AFocusPoint(
-                        naturalChoke.translateTilesTowards(5, natural),
-                        "NaturalChoke"
-                    );
+                    return atNaturalChoke();
                 }
             }
 
             // === Standard ===========================================
-
-            AChoke choke = Chokes.nearestChoke(lastBase);
-            if (choke != null) {
-                return new AFocusPoint(
-                    choke.translateTilesTowards(5, lastBase),
-                    "LastBaseChoke"
-                );
-            }
 
             return new AFocusPoint(
                 lastBase,
@@ -212,6 +214,44 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         }
 
         return null;
+    }
+
+    // =========================================================
+
+    private AFocusPoint atMainChoke() {
+        AChoke mainChoke = Chokes.mainChoke();
+        if (mainChoke == null) {
+            return null;
+        }
+
+        return new AFocusPoint(
+            mainChoke,
+            Select.main(),
+            "MainChoke"
+        );
+    }
+
+    private AFocusPoint atNaturalChoke() {
+//        AChoke choke = Chokes.nearestChoke(lastBase);
+//        if (choke != null) {
+//            return new AFocusPoint(
+//                choke.translateTilesTowards(5, lastBase),
+//                "LastBaseChoke"
+//            );
+//        }
+
+        AChoke naturalChoke = Chokes.natural();
+
+        if (naturalChoke == null) {
+            return null;
+        }
+
+        APosition natural = Bases.natural();
+        return new AFocusPoint(
+            natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
+            natural != null ? natural : null,
+            "NaturalChoke"
+        );
     }
 
 }

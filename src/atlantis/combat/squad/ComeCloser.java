@@ -91,6 +91,10 @@ public class ComeCloser extends ASquadCohesionManager {
 //            return false;
 //        }
 
+        if (unit.cooldownRemaining() == 0) {
+            return false;
+        }
+
         if (unit.distToSquadCenter() <= 4 || unit.distToSquadCenter() >= 15) {
             return false;
         }

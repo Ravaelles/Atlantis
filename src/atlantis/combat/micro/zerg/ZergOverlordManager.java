@@ -1,6 +1,6 @@
 package atlantis.combat.micro.zerg;
 
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.stack.StackedUnitsManager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.information.enemy.EnemyInfo;
@@ -13,7 +13,7 @@ import atlantis.units.select.Select;
 public class ZergOverlordManager {
 
     public static boolean update(AUnit unit) {
-        if (AAvoidEnemies.avoidEnemiesIfNeeded(unit)) {
+        if (AvoidEnemies.avoidEnemiesIfNeeded(unit)) {
             unit.setTooltipTactical("Uaaa!");
             return true;
         }

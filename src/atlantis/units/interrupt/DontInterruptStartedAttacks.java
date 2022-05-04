@@ -24,18 +24,13 @@ public class DontInterruptStartedAttacks {
         }
 
         if (unit.isDragoon()) {
-//            if (unit.hpMoreThan(40)
-//                && unit.lastAttackOrderMoreThanAgo(40)
-//                && unit.lastAttackOrderLessThanAgo(40)) {
-//                return true;
+//            if (unit.action().isAttacking()) {
+//                AUnit nearestEnemy = unit.nearestEnemy();
+//                if (nearestEnemy != null && nearestEnemy.distToMoreThan(unit, 2.9)) {
+//                    System.err.println("Drag A");
+//                    return true;
+//                }
 //            }
-
-            if (unit.action().isAttacking()) {
-                AUnit nearestEnemy = unit.nearestEnemy();
-                if (nearestEnemy != null && nearestEnemy.distToMoreThan(unit, 2.9)) {
-                    return true;
-                }
-            }
         }
 
         if (unit.hp() <= 20 || !unit.isAttackingOrMovingToAttack()) {
@@ -91,17 +86,17 @@ public class DontInterruptStartedAttacks {
         return false;
     }
 
-    private static boolean attackingCrucialUnit(AUnit unit) {
-        AUnit target = unit.target();
-        if (target == null) {
-            return false;
-        }
-
-//        if (!unit.isRanged() && unit.lastStartedAttackLessThanAgo(9)) {
-//            return true;
+//    private static boolean attackingCrucialUnit(AUnit unit) {
+//        AUnit target = unit.target();
+//        if (target == null) {
+//            return false;
 //        }
-
-        return target.isTank() || target.is(AUnitType.Protoss_Reaver);
-    }
+//
+////        if (!unit.isRanged() && unit.lastStartedAttackLessThanAgo(9)) {
+////            return true;
+////        }
+//
+//        return target.isTank() || target.is(AUnitType.Protoss_Reaver);
+//    }
 
 }

@@ -1,6 +1,6 @@
 package atlantis.terran.repair;
 
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
@@ -80,7 +80,7 @@ public class ARepairerManager {
     }
 
     private static boolean handleRepairerSafety(AUnit repairer) {
-        if ((!repairer.isRepairing() || repairer.hpPercent() <= 30) && AAvoidEnemies.avoidEnemiesIfNeeded(repairer)) {
+        if ((!repairer.isRepairing() || repairer.hpPercent() <= 30) && AvoidEnemies.avoidEnemiesIfNeeded(repairer)) {
             repairer.setTooltipTactical("FuckThisJob");
             return true;
         }

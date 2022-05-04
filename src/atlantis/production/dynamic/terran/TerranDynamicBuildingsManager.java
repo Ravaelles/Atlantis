@@ -235,7 +235,11 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             return false;
         }
 
-        return requestMoreIfAllBusy(Terran_Barracks, 200, 0);
+        if (A.canAffordWithReserved(150, 0)) {
+            return buildIfAllBusyButCanAfford(Terran_Barracks, 200, 0);
+        }
+
+        return false;
     }
 
 }

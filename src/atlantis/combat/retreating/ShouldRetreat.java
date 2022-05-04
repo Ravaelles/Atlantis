@@ -133,6 +133,13 @@ public class ShouldRetreat {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
+        if (unit.isMissionSparta()) {
+//            if (unit.mission().allowsToRetreat(unit)) {
+//                System.err.println("Sparta allowed " + unit + " to retreat (HP=" + unit.hp() + ")");
+//            }
+            return !unit.mission().allowsToRetreat(unit);
+        }
+
         if (terran_shouldNotRetreat(unit)) {
             return true;
         }
@@ -147,13 +154,6 @@ public class ShouldRetreat {
             if (main.distTo(unit) <= 8) {
                 return true;
             }
-        }
-
-        if (unit.isMissionSparta()) {
-//            if (unit.mission().allowsToRetreat(unit)) {
-//                System.err.println("Sparta allowed " + unit + " to retreat (HP=" + unit.hp() + ")");
-//            }
-            return !unit.mission().allowsToRetreat(unit);
         }
 
         if (A.seconds() <= 400 && OurStrategy.get().isRushOrCheese() && unit.enemiesNear().ranged().empty()) {

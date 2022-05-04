@@ -39,7 +39,7 @@ public class ProtossDynamicTech extends ADynamicTech {
     }
 
     private static boolean singularityCharge() {
-        if (Count.dragoons() >= (Enemy.terran() ? 2 : 7)) {
+        if (A.hasGas(180) || Count.dragoons() >= (Enemy.terran() ? 2 : 7)) {
             AddToQueue.upgrade(Singularity_Charge);
             return true;
         }

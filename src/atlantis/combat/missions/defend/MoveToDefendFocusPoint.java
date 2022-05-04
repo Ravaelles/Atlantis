@@ -26,15 +26,17 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 
-        if (handleWrongSideOfFocus(unit, focusPoint) || tooFarBack() || tooCloseToFocusPoint()) {
-            return true;
+        if (focus.isAroundChoke()) {
+            if (handleWrongSideOfFocus(unit, focusPoint) || tooFarBack() || tooCloseToFocusPoint()) {
+                return true;
+            }
         }
 
 //        if (handleWrongSideOfFocus(unit, focusPoint) || tooCloseToFocusPoint() || advance()) {
 //            return true;
 //        }
 
-        return false;
+        return advance();
     }
 
     protected boolean advance() {

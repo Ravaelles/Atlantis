@@ -1,7 +1,9 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
+import atlantis.map.AChoke;
 import atlantis.map.AMap;
+import atlantis.map.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.Vector;
@@ -221,11 +223,16 @@ public interface HasPosition {
     }
 
     default boolean distToNearestChokeLessThan(double dist) {
-        for (APosition center : AMap.allChokeCenters()) {
-            if (center.distTo(this) <= dist) {
+        for (AChoke choke : Chokes.chokes()) {
+            if (choke.width() <= 5 && choke.center().distTo(this) <= dist) {
                 return true;
             }
         }
+//        for (APosition center : AMap.allChokeCenters()) {
+//            if (center.distTo(this) <= dist) {
+//                return true;
+//            }
+//        }
         return false;
     }
 

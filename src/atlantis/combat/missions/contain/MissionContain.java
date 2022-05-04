@@ -7,6 +7,7 @@ import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.Units;
 
 public class MissionContain extends Mission {
 
@@ -51,10 +52,28 @@ public class MissionContain extends Mission {
     }
 
     @Override
+    public boolean forcesUnitToFight(AUnit unit, Units enemies) {
+        if (unit.isRanged() && unit.hp() >= 34 && unit.lastUnderAttackMoreThanAgo(30 * 3)) {
+            if (
+                unit.lastStartedAttackMoreThanAgo(50)
+                    && unit.enemiesNear().inRadius(13, unit).onlyMelee()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         AFocusPoint focusPoint = focusPoint();
 
         if (enemy.hasWeaponRangeToAttack(unit, unit.isMelee() ? 0.3 : 1.3)) {
+            return true;
+        }
+
+        if (unit.lastUnderAttackMoreThanAgo(30 * 5) && unit.combatEvalRelative() >= 3) {
             return true;
         }
 

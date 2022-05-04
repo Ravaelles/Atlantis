@@ -23,18 +23,18 @@ public class DanceAfterShoot {
 
         // === Ranged vs ranged case ===============================
 
-        if (unit.isRanged() && target.isRanged()) {
-            boolean lesserRange = weaponRange < target.weaponRangeAgainst(unit);
-            if (lesserRange && dist >= 3.8) {
-                unit.addLog(danceTo);
-                return unit.move(
-                    unit.translateTilesTowards(0.4, target), Actions.MOVE_DANCE, danceTo, false
-                );
-            } else {
-                unit.addLog(danceAway);
-                return unit.moveAwayFrom(target, 1, danceAway, Actions.MOVE_DANCE);
-            }
-        }
+//        if (unit.isRanged() && target.isRanged()) {
+//            boolean lesserRange = weaponRange < target.weaponRangeAgainst(unit);
+//            if (lesserRange && dist >= 3.8) {
+//                unit.addLog(danceTo);
+//                return unit.move(
+//                    unit.translateTilesTowards(0.4, target), Actions.MOVE_DANCE, danceTo, false
+//                );
+//            } else {
+//                unit.addLog(danceAway);
+//                return unit.moveAwayFrom(target, 1, danceAway, Actions.MOVE_DANCE);
+//            }
+//        }
 
         // =========================================================
 
@@ -48,12 +48,12 @@ public class DanceAfterShoot {
         // Big step BACK
         else if (dist <= weaponRange - 1.2) {
             unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.6, danceAway, Actions.MOVE_DANCE);
+            return unit.moveAwayFrom(target, 0.9, danceAway, Actions.MOVE_DANCE);
         }
         // Small step BACK
         else if (dist <= weaponRange - 0.45) {
             unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.2, danceAway, Actions.MOVE_DANCE);
+            return unit.moveAwayFrom(target, 0.35, danceAway, Actions.MOVE_DANCE);
         }
 
         return false;
@@ -62,7 +62,7 @@ public class DanceAfterShoot {
     // =========================================================
 
     private static boolean shouldDanceTo(AUnit unit, AUnit target, double dist) {
-        return dist >= 3.8
+        return dist >= (unit.weaponRangeAgainst(target))
             || (!target.isBuilding() && dist >= 1.6)
             || target.hasNoWeaponAtAll();
     }

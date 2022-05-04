@@ -2,7 +2,7 @@ package atlantis.combat;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.AAvoidSpells;
-import atlantis.combat.micro.avoid.AAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.managers.DanceAfterShoot;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
@@ -146,7 +146,7 @@ public class ACombatUnitManager {
             else if (A.everyNthGameFrame(3)) {
     //            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
     //            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded(unit) : true;
-                return AAvoidEnemies.avoidEnemiesIfNeeded(unit);
+                return AvoidEnemies.avoidEnemiesIfNeeded(unit);
             }
         }
 
@@ -166,7 +166,7 @@ public class ACombatUnitManager {
         // - close melee units (Zealots)
         // - ranged units that can shoot at us (Dragoons)
         // - defensive buildings (Cannons)
-        if (AAvoidEnemies.avoidEnemiesIfNeeded(unit)) {
+        if (AvoidEnemies.avoidEnemiesIfNeeded(unit)) {
             return true;
         }
 

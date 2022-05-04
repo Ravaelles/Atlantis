@@ -9,8 +9,11 @@ import atlantis.production.ProductionOrder;
 import atlantis.production.dynamic.ADynamicTech;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -25,11 +28,14 @@ public class TerranDynamicTech extends ADynamicTech {
 
         if (
             !ATech.isResearched(TechType.Tank_Siege_Mode) && (
-                Count.tanks() >= 1 || Decisions.wantsToBeAbleToProduceTanksSoon()
+                Count.tanks() >= 1 || Decisions.wantsToBeAbleToProduceTanksSoon() || A.seconds() >= 600
             )
         ) {
-            AddToQueue.tech(TechType.Tank_Siege_Mode);
-            return;
+            AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).free().random();
+            if (machineShop != null) {
+                AddToQueue.tech(TechType.Tank_Siege_Mode);
+                return;
+            }
         }
 
         if (Count.ghosts() >= 1) {

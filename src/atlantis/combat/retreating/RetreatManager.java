@@ -1,6 +1,7 @@
 package atlantis.combat.retreating;
 
 import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.combat.micro.avoid.FightInsteadAvoid;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -16,7 +17,7 @@ public class RetreatManager {
     // =========================================================
 
     public static boolean handleRetreat(AUnit unit) {
-        if (ShouldRetreat.shouldRetreat(unit)) {
+        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFightCached(unit)) {
             Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
             HasPosition runAwayFrom = nearEnemies.center();
             if (runAwayFrom == null) {

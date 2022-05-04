@@ -11,8 +11,11 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
 
 public class FightInsteadAvoid {
+
+    private static Cache<Boolean> cache = new Cache<>();
 
     protected final AUnit unit;
     protected final Units enemies;
@@ -55,42 +58,51 @@ public class FightInsteadAvoid {
     // =========================================================
 
     public boolean shouldFight() {
-//        if (true) return false;
+        return cache.get(
+            "shouldFight:" + unit.idWithHash(),
+            5,
+            () -> {
+                if (unit.isMelee() && unit.shouldRetreat()) {
+                    return false;
+                }
 
-        if (unit.isMelee() && unit.shouldRetreat()) {
-            return false;
-        }
+                if (enemies.isEmpty()) {
+                    System.err.println("NoEnemies? LooksBugged");
+                    unit.addLog("NoEnemiesReally?");
+                    return true;
+                }
 
-        if (enemies.isEmpty()) {
-            System.err.println("NoEnemies? LooksBugged");
-            unit.addLog("NoEnemiesReally?");
-            return true;
-        }
+                if (dontFightInTopImportantCases()) {
+                    unit.addLog("DoNotFight");
+                    return false;
+                }
 
-        if (dontFightInTopImportantCases()) {
-            unit.addLog("DoNotFight");
-            return false;
-        }
+                if (unit.mission().forcesUnitToFight(unit, enemies)) {
+                    unit.addLog("ForcedFight");
+                    return true;
+                }
 
-        if (unit.mission().forcesUnitToFight(unit, enemies)) {
-            unit.addLog("ForcedFight");
-            return true;
-        }
+                // Workers
+                if (unit.isWorker()) {
+                    return fightAsWorker(unit, enemies);
+                }
 
-        // Workers
-        if (unit.isWorker()) {
-            return fightAsWorker(unit, enemies);
-        }
+                // Combat units
+                else {
+                    if (fightInImportantCases()) {
+                        unit.addLog("FightImportant");
+                        return true;
+                    }
 
-        // Combat units
-        else {
-            if (fightInImportantCases()) {
-                unit.addLog("FightImportant");
-                return true;
+                    return fightAsCombatUnit();
+                }
             }
+        );
+    }
 
-            return fightAsCombatUnit();
-        }
+    public static boolean shouldFightCached(AUnit unit) {
+        String key = "shouldFight:" + unit.idWithHash();
+        return cache.has(key) ? cache.get(key) : false;
     }
 
     // =========================================================
@@ -182,6 +194,10 @@ public class FightInsteadAvoid {
             return true;
         }
 
+        if (forTerranInfantry(unit)) {
+            return true;
+        }
+
         if (
             unit.isMelee()
                 && unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).inRadius(2.8, unit).notEmpty()
@@ -208,14 +224,27 @@ public class FightInsteadAvoid {
         return false;
     }
 
+    private boolean forTerranInfantry(AUnit unit) {
+        if (!unit.isMarine() && !unit.isGhost() && !unit.isFirebat()) {
+            return false;
+        }
+
+        if (unit.hp() >= 34 && (unit.cooldownRemaining() <= 2 || unit.isStimmed() || unit.friendsInRadius(3).atLeast(5))) {
+            return true;
+        }
+
+        return false;
+    }
+
     private boolean forDragoon(AUnit unit) {
         if (!unit.isDragoon()) {
             return false;
         }
 
         if (unit.cooldownRemaining() <= 3) {
-            boolean haveNotAttackedInAWhile = unit.lastStartedAttackMoreThanAgo(30 * 6);
-            if (unit.hp() >= 32 || haveNotAttackedInAWhile) {
+            int secondsWithoutAttack = (int) (2 + unit.woundPercent() / 13);
+            boolean haveNotAttackedInAWhile = unit.lastStartedAttackMoreThanAgo(30 * secondsWithoutAttack);
+            if (unit.shieldDamageAtMost(10) || haveNotAttackedInAWhile) {
                 if (unit.meleeEnemiesNearCount(2) <= 1 || haveNotAttackedInAWhile) {
                     unit.addLog("Aiur");
                     return true;

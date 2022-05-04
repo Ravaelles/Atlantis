@@ -74,9 +74,9 @@ public class OnStart {
     }
 
     private static void handleCheckIfUmsMap() {
-        if (Atlantis.game().mapPathName().contains("/ums/")) {
-            AGame.setUmsMode();
-        }
+//        if (Atlantis.game().mapPathName().contains("/ums/")) {
+//            AGame.setUmsMode();
+//        }
 
         int ours = Select.our().count();
 

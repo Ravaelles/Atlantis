@@ -63,8 +63,8 @@ public class MissionChanger {
 
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.changeMissionIfNeeded();
-        } else if (Missions.isGlobalMissionContain()) {
-            MissionChangerWhenContain.changeMissionIfNeeded();
+//        } else if (Missions.isGlobalMissionContain()) {
+//            MissionChangerWhenContain.changeMissionIfNeeded();
         } else if (Missions.isGlobalMissionDefend() || Missions.isGlobalMissionSparta()) {
             MissionChangerWhenDefend.changeMissionIfNeeded();
         }
@@ -94,9 +94,9 @@ public class MissionChanger {
         }
 
         if (Missions.isFirstMission()) {
-
             if (Missions.isGlobalMissionAttack() && unit.friendsNear().atLeast(3)) {
-                forceMissionContain("BetterContainRatherThanAttacking");
+                forceMissionSpartaOrDefend("BetterDefendRatherThanAttack");
+//                forceMissionContain("BetterContainRatherThanAttacking");
             }
         }
     }

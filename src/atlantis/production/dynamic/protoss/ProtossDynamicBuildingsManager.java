@@ -7,6 +7,7 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.dynamic.ADynamicBuildingsManager;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import bwapi.TechType;
@@ -65,6 +66,11 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
+        if (Have.notEvenPlanned(Protoss_Robotics_Facility)) {
+            AddToQueue.withHighPriority(Protoss_Robotics_Facility);
+            return;
+        }
+
         if (Count.withPlanned(Protoss_Robotics_Facility) == 0) {
             buildNow(Protoss_Robotics_Facility);
         }
@@ -85,7 +91,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
-        buildIfAllBusyButCanAfford(Protoss_Gateway, 120, 0);
+        buildIfAllBusyButCanAfford(Protoss_Gateway, A.supplyUsed() <= 90 ? 170 : 250, 0);
     }
 
     private static void forge() {

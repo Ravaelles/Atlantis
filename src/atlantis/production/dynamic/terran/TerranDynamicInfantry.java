@@ -116,7 +116,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return false;
         }
 
-        if (!A.hasMinerals(150) && A.canAffordWithReserved(50, 0)) {
+        if (!A.hasMinerals(150) && !A.canAffordWithReserved(50, 0)) {
             return false;
         }
 

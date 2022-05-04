@@ -115,6 +115,12 @@ public class Sparta extends MissionDefend {
             return unit.hp() <= 20;
         }
 
+        if (unit.isMelee()) {
+            if (unit.hp() <= 32 && unit.friendsInRadius(4.2).empty()) {
+                return true;
+            }
+        }
+
 //        return false;
 
         if (unit.distToFocusPoint() <= 3) {
@@ -189,7 +195,8 @@ public class Sparta extends MissionDefend {
         }
 
         if ((enemy.isZealot() || enemy.isZergling()) && unit.isZealot()) {
-            boolean canAttack = unitToEnemy <= MAX_MELEE_DIST_TO_ATTACK
+            boolean canAttack = (unit.hp() >= 18 || unit.friendsInRadius(1).atLeast(1))
+                || unitToEnemy <= MAX_MELEE_DIST_TO_ATTACK
                 || (isEnemyBehindLineOfDefence() && enemy.isZergling())
                 || (enemyToFocus <= 1.2 && unit.enemiesNear().count() == 0);
 

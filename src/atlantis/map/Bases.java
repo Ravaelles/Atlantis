@@ -7,6 +7,7 @@ import atlantis.map.position.Positions;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 import jbweb.Stations;
@@ -303,7 +304,22 @@ public class Bases {
                     return false;
                 }
 
-                return Select.ourBases().inRadius(6, natural).notEmpty();
+                return Select.ourBuildingsWithUnfinished().bases().inRadius(8, natural).notEmpty();
+            }
+        );
+    }
+
+    public static boolean hasBunkerAtNatural() {
+        return (boolean) cache.get(
+            "hasBunkerAtNatural",
+            57,
+            () -> {
+                APosition natural = natural();
+                if (natural == null) {
+                    return false;
+                }
+
+                return Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).inRadius(12, natural).notEmpty();
             }
         );
     }

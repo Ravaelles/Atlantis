@@ -114,7 +114,7 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
             return false;
         }
 
-        if (!A.canAffordWithReserved(125, 50)) {
+        if (!A.hasMineralsAndGas(700, 250) && !A.canAffordWithReserved(125, 50)) {
             return false;
         }
 

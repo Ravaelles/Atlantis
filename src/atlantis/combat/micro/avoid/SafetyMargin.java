@@ -132,7 +132,7 @@ public class SafetyMargin {
 
     protected static double workerBonus(AUnit defender, AUnit attacker) {
         if (defender.isWorker()) {
-            return 1.5;
+            return 1.5 + (defender.isBuilder() ? 2.2 : 0);
         }
 
         return 0;
