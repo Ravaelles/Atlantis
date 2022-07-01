@@ -3,6 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
+import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
@@ -19,6 +20,10 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
     // === CONTAIN =============================================
 
     public static boolean shouldChangeMissionToContain() {
+        if (A.supplyUsed() >= 174) {
+            return false;
+        }
+
 //        if (OurStrategy.get().goingBio()) {
         if (!ArmyStrength.weAreStronger()) {
             if (DEBUG) reason = "We aren't stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";

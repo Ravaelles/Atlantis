@@ -35,12 +35,17 @@ public class EnemyInfo {
     }
 
     public static boolean isEnemyNearAnyOurBase() {
-        return enemyNearAnyOurBase() != null;
+        return enemyNearAnyOurBase(-1) != null;
     }
 
-    public static AUnit enemyNearAnyOurBase() {
+    public static AUnit enemyNearAnyOurBase(int maxDistToBase) {
+        if (maxDistToBase < 0) {
+            maxDistToBase = 12;
+        }
+        int finalMaxDistToBase = maxDistToBase;
+
         return (AUnit) cache.get(
-                "enemyNearAnyOurBuilding",
+                "enemyNearAnyOurBuilding:" + maxDistToBase,
                 45,
                 () -> {
                     if (!Have.base()) {
@@ -56,7 +61,8 @@ public class EnemyInfo {
                     ).nearestTo(Select.main());
                     if (nearestEnemy != null) {
                         return Select.ourBases()
-                                .inRadius(Enemy.terran() ? 22 : 17, nearestEnemy).atLeast(1)
+//                                .inRadius(Enemy.terran() ? 22 : 17, nearestEnemy).atLeast(1)
+                                .inRadius(finalMaxDistToBase, nearestEnemy).atLeast(1)
                                 ? nearestEnemy : null;
                     }
 

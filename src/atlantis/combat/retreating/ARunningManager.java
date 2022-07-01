@@ -217,6 +217,7 @@ public class ARunningManager {
                 && unit.distTo(runTo) <= 0.02
 //                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
+            // Info: This is a known issue, I couldn't debug this, but it shouldn't be a huge problem...
             System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
             APainter.paintLine(unit, runTo, Color.Purple);
             APainter.paintLine(
@@ -226,7 +227,6 @@ public class ARunningManager {
             );
             runTo = findRunPositionInAnyDirection(runAwayFrom);
             APainter.paintCircleFilled(runTo, 8, Color.Red);
-            GameSpeed.pauseGame();
         }
 
         // === Run to base as a fallback ===========================

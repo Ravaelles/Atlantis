@@ -17,10 +17,6 @@ import atlantis.units.select.Count;
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
-        if (changeFromSpartaToDefend()) {
-            return;
-        }
-
         if (!canChange()) {
             return;
         }
@@ -30,6 +26,10 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
         }
         else if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.CONTAIN);
+        }
+
+        if (changeFromSpartaToDefend()) {
+            return;
         }
     }
 

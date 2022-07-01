@@ -39,7 +39,7 @@ public class AGasManager {
             
             int realCount = countWorkersGatheringGasNear(gasBuilding);
             int expectedCount = expectedGasWorkers(gasBuilding, realCount);
-            System.out.println("OPTIMAL_GAS=" + expectedCount + " // realCount=" + realCount);
+//            System.out.println("OPTIMAL_GAS=" + expectedCount + " // realCount=" + realCount);
 
             // Less workers gathering gas than optimal
             if (realCount < expectedCount) {

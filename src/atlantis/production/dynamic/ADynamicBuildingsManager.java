@@ -92,7 +92,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
     }
 
     protected static void buildIfHaveMineralsAndGas(AUnitType type) {
-        buildIfHaveMineralsAndGas(type, true, type.getMineralPrice(), type.getGasPrice());
+        buildIfHaveMineralsAndGas(type, true, type.getMineralPrice() + 100, type.getGasPrice() + 50);
     }
 
     protected static void buildIfCanAffordWithReserved(AUnitType type) {

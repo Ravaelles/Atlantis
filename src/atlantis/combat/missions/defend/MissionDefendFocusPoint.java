@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.focus.MissionFocusPoint;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.focus.special.EnemyWhoBreachedBase;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -53,24 +54,15 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Enemies that breached into base =============
 
-                AUnit enemyNear = EnemyInfo.enemyNearAnyOurBase();
-                if (enemyNear != null && enemyNear.isAlive()) {
-                    int sunkens = Count.sunkens();
-
-                    if (
-                        sunkens == 0
-                            || (
-                            We.zerg() && sunkens > 0 && enemyNear.enemiesNear()
-                                .ofType(AUnitType.Zerg_Sunken_Colony)
-                                .notEmpty()
-                        )
-                    ) {
-                        return new AFocusPoint(
-                            enemyNear,
-                            "EnemyInBase"
-                        );
-                    }
+                AUnit enemyInBase = EnemyWhoBreachedBase.get();
+                if (enemyInBase != null) {
+                    return new AFocusPoint(
+                        enemyInBase,
+                        "EnemyBreachedBase"
+                    );
                 }
+
+                // =========================================================
 
                 int basesWithUnfinished = Count.basesWithUnfinished();
                 if (basesWithUnfinished <= 1 && Missions.isGlobalMissionSparta()) {
