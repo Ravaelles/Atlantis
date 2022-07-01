@@ -18,16 +18,18 @@ public class AGasManager {
      * no more needed).
      */
     public static void handleGasBuildings() {
-        if (AGame.notNthGameFrame(7)) {
+        if (AGame.notNthGameFrame(9)) {
             return;
         }
-//        int minGasWorkersPerBuilding = defineMinGasWorkersPerBuilding();
-        
+
+        if (tooEarlyForAnotherGasBuilding()) {
+            return;
+        }
+
         // =========================================================
         
         Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).list();
-//        Collection<AUnit> workers = Select.ourWorkers().listUnits();
-        
+
         // =========================================================
         
         for (AUnit gasBuilding : gasBuildings) {
@@ -35,38 +37,38 @@ public class AGasManager {
                 continue;
             }
             
-            int numOfWorkersNear = countWorkersGatheringGasNear(gasBuilding);
-            int optimalNumOfGasWorkers = gasWorkers(gasBuilding, numOfWorkersNear);
-//            System.out.println(optimalNumOfGasWorkers + " // " + numOfWorkersNear);
+            int realCount = countWorkersGatheringGasNear(gasBuilding);
+            int expectedCount = expectedGasWorkers(gasBuilding, realCount);
+            System.out.println("OPTIMAL_GAS=" + expectedCount + " // realCount=" + realCount);
 
             // Less workers gathering gas than optimal
-            if (numOfWorkersNear < optimalNumOfGasWorkers) {
+            if (realCount < expectedCount) {
                 assignBestWorkerToGasBuilding(gasBuilding);
-                break; // Only one worker per execution
+                break; // Only one worker per execution - prevent weird runs
             }
             
             // More workers than optimal
-            else if (numOfWorkersNear > optimalNumOfGasWorkers) {
+            else if (realCount > expectedCount) {
                 AUnit worker = AWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null && worker.isGatheringGas()) {
                     worker.stop("I'm fired!", true);
                 }
-                break; // Only one worker per execution
+                break; // Only one worker per execution - prevent weird runs
             }
         }
-        
-        // =========================================================
-        
-//        AUnit gasBuildingNeedingWorker = AtlantisGasManager.getOneGasBuildingNeedingWorker();
-//        if (gasBuildingNeedingWorker != null) {
-//            AUnit worker = Select.ourWorkers().gatheringMinerals(true).first();
-//            if (worker != null) {
-//                worker.gather(gasBuildingNeedingWorker, false);
-//            }
-//        }
     }
 
     // =========================================================
+
+    private static boolean tooEarlyForAnotherGasBuilding() {
+        if (Count.existingOrInProduction(AtlantisConfig.GAS_BUILDING) >= 1) {
+            if (!A.hasMinerals(200) || A.supplyTotal() <= 30) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private static void assignBestWorkerToGasBuilding(AUnit gasBuilding) {
         AUnit worker = getWorkerForGasBuilding(gasBuilding);
@@ -103,30 +105,34 @@ public class AGasManager {
         return Select.ourWorkers().gatheringMinerals(true).nearestTo(gasBuilding);
     }
 
-    public static int defineMinGasWorkersPerBuilding() {
-        return 3;
+    public static int minGasWorkersPerBuilding() {
+//        return 3;
+
+        if (Count.workers() <= 8) {
+            return 0;
+        }
         
-//        int seconds = AGame.getTimeSeconds();
-//        
-//        if (seconds < 150) {
-//            return 1;
-//        }
-//        else if (seconds < 200) {
-//            return 2;
-//        }
-//        else {
-//            return 3;
-//        }
+        int seconds = A.seconds();
+
+        if (seconds < 150 && A.hasGas(100)) {
+            return 1;
+        }
+        else if (seconds < 250 && A.hasGas(100)) {
+            return 2;
+        }
+        else {
+            return 3;
+        }
     }
 
-    private static int gasWorkers(AUnit gasBuilding, int numOfWorkersNear) {
+    private static int expectedGasWorkers(AUnit gasBuilding, int numOfWorkersNear) {
         if (Count.workers() <= 8) {
             return 0;
         }
 
         // Too much gas, too little minerals
         if (A.seconds() <= 800) {
-            if ((A.hasGas(170) && Count.workers() <= 16) || (!A.hasMinerals(160) && A.hasGas(150))) {
+            if ((A.hasGas(170) && Count.workers() <= 19) || (!A.hasMinerals(160) && A.hasGas(150))) {
                 return 1;
             }
         }

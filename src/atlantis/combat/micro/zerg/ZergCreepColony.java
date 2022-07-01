@@ -1,5 +1,7 @@
 package atlantis.combat.micro.zerg;
 
+import atlantis.map.AChoke;
+import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.APositionFinder;
@@ -13,7 +15,14 @@ public class ZergCreepColony {
     public static APosition findPosition(AUnitType building, AUnit builder, Construction construction) {
         AUnit secondBase = Select.naturalOrMain();
         if (secondBase != null) {
-            return APositionFinder.findStandardPosition(builder, building, secondBase.position(), 10);
+            APosition near = secondBase.position();
+
+            AChoke mainChoke = Chokes.mainChoke();
+            if (mainChoke != null) {
+                near = near.translatePercentTowards(50, mainChoke);
+            }
+
+            return APositionFinder.findStandardPosition(builder, building, near, 10);
         }
         else {
             return null;

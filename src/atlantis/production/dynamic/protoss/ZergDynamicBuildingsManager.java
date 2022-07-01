@@ -25,7 +25,15 @@ public class ZergDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
+        if (!A.hasGas(50)) {
+            return;
+        }
+
         if (A.supplyUsed() <= 13 || Count.bases() <= 1) {
+            return;
+        }
+
+        if (!A.hasMinerals(120) && Count.existing(Zerg_Creep_Colony) > 0) {
             return;
         }
 
