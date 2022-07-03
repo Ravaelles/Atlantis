@@ -91,7 +91,7 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
             return;
         }
 
-        buildIfAllBusyButCanAfford(Protoss_Gateway, A.supplyUsed() <= 90 ? 170 : 250, 0);
+        buildIfAllBusyButCanAfford(Protoss_Gateway, A.supplyUsed() <= 90 ? 260 : 650, 0);
     }
 
     private static void forge() {
