@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.map.position.APosition;
+import tests.fakes.FakePlayer;
 import tests.unit.FakeUnit;
 
 /**
@@ -32,12 +33,6 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
     // =========================================================
 
     @Override
-    public boolean isCloaked() {
-        return aUnit.isCloaked();
-    }
-
-
-    @Override
     public APosition position() {
         return aUnit.position();
     }
@@ -51,4 +46,23 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
     public int y() {
         return aUnit.position().y;
     }
+
+    @Override
+    public FakePlayer player() {
+        if (isEnemy()) {
+            return FakePlayer.ENEMY;
+        }
+        return FakePlayer.NEUTRAL;
+    }
+
+    @Override
+    public boolean isCloaked() {
+        return aUnit.isCloaked();
+    }
+
+    @Override
+    public int shields() {
+        return 0;
+    }
+
 }

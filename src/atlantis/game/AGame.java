@@ -7,19 +7,22 @@ import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.units.AUnitType;
 import bwapi.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static atlantis.Atlantis.game;
 
 /**
  * Represents various aspect of the game like time elapsed (in frames or approximated seconds), free supply
- * (from our point of view), game speed, enemy player etc.<br />
+ * (from our point of view), game speed, enemy APlayer etc.<br />
  * <br /><b>It's worth to study this class carefully as it contains some really useful methods.</b>
  */
 public class AGame {
 
     private static boolean umsMode = false; // Should be set to `true` on UMS (custom) maps
-    private static Player _enemy = null; // Cached enemy player
+    private static APlayer _enemy = null; // Cached enemy APlayer
+    private static APlayer _neutral = null; // Cached neutral APlayer
+    private static APlayer _our = null; // Cached our APlayer
 
     // =========================================================
     
@@ -132,44 +135,42 @@ public class AGame {
     }
 
     /**
-     * Returns current player.
+     * Returns current APlayer.
      */
-    public static Player getPlayerUs() {
-        return Atlantis.game().self();
+    public static APlayer getPlayerUs() {
+        if (_our == null) {
+            _our = new APlayer(Atlantis.game().self());
+        }
+
+        return _our;
     }
 
     /**
-     * Returns all players.
+     * Returns all APlayers.
      */
-    public static List<Player> getPlayers() {
-        return Atlantis.game().getPlayers();
+    public static List<APlayer> getPlayers() {
+        List<APlayer> players = new ArrayList<>();
+        for (Player p : game().getPlayers()){
+            players.add(APlayer.create(p));
+        }
+        return players;
     }
 
     /**
-     * Returns enemy player.
+     * Returns enemy APlayer.
      */
-    public static Player enemy() {
+    public static APlayer enemy() {
         if (_enemy == null) {
-            _enemy = Atlantis.game().enemies().iterator().next();
+            _enemy = new APlayer(Atlantis.game().enemies().iterator().next());
         }
         return _enemy;
     }
 
     /**
-     * Returns enemy player.
+     * Returns neutral APlayer (minerals, geysers, critters).
      */
-    public static Player getEnemy() {
-        if (_enemy == null) {
-            _enemy = Atlantis.game().enemies().iterator().next();
-        }
-        return _enemy;
-    }
-
-    /**
-     * Returns neutral player (minerals, geysers, critters).
-     */
-    public static Player getNeutralPlayer() {
-        return Atlantis.game().neutral();
+    public static APlayer neutralPlayer() {
+        return new APlayer(Atlantis.game().neutral());
     }
 
     /**
@@ -320,7 +321,7 @@ public class AGame {
     // =========================================================
     // Utility
     /**
-     * Sends in-game message that will be visible by other players.
+     * Sends in-game message that will be visible by other APlayers.
      */
     public static void sendMessage(String message) {
         if (game() != null) {

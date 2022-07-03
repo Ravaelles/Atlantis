@@ -1,6 +1,8 @@
 package atlantis.units;
 
 import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.game.APlayer;
 import atlantis.map.position.APosition;
 import atlantis.util.cache.Cache;
 import tests.unit.FakeUnit;
@@ -19,6 +21,7 @@ public class AbstractFoggedUnit extends AUnit {
     protected int _id;
     protected int _hp;
     protected int _energy;
+    protected int _shields;
     protected APosition _position;
     protected AUnitType _lastType;
     protected boolean _isCompleted;
@@ -69,6 +72,10 @@ public class AbstractFoggedUnit extends AUnit {
         return _lastType;
     }
 
+    public APlayer player() {
+        return AGame.enemy();
+    }
+
     public AUnit getUnit() {
         return aUnit;
     }
@@ -80,6 +87,7 @@ public class AbstractFoggedUnit extends AUnit {
         _isCompleted = unit.isCompleted();
         _hp = unit.hp();
         _energy = unit.energy();
+        _shields = unit.shields();
     }
 
     public void updatePosition(AUnit unit) {
@@ -198,6 +206,21 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public int energy() {
         return _energy;
+    }
+
+    @Override
+    public int shields() {
+        return _shields;
+    }
+
+    @Override
+    public int x() {
+        return _position.x();
+    }
+
+    @Override
+    public int y() {
+        return _position.y();
     }
 
 }

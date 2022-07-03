@@ -1,6 +1,6 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.combat.eval.OldUnusedCombatEvaluator;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.game.A;
@@ -414,7 +414,7 @@ public class FightInsteadAvoid {
         if (combatBuilding != null) {
             return unit.mission().isMissionAttack()
                 && unit.friendsNearInRadiusSelect(6).atLeast(10)
-                && ACombatEvaluator.advantagePercent(unit, 50);
+                && OldUnusedCombatEvaluator.advantagePercent(unit, 50);
 //                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
         }
 

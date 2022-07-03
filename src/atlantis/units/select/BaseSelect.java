@@ -2,6 +2,7 @@ package atlantis.units.select;
 
 import atlantis.Atlantis;
 import atlantis.game.AGame;
+import atlantis.game.APlayer;
 import atlantis.units.AUnit;
 import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
@@ -58,7 +59,7 @@ public class BaseSelect<T extends AUnit> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (Player player : Enemy.players()) {
+                for (APlayer player : Enemy.players()) {
                     for (Unit u : player.getUnits()) {
                         AUnit unit = AUnit.getById(u);
                         data.add(unit);

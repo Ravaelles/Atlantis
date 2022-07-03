@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.Atlantis;
-import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.combat.eval.OldUnusedCombatEvaluator;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.env.Env;
@@ -57,7 +57,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         APainter.disablePainting();
         Select.clearCache();
         BaseSelect.clearCache();
-        ACombatEvaluator.clearCache();
+        OldUnusedCombatEvaluator.clearCache();
         AbstractFoggedUnit.clearCache();
         EnemyInfo.clearCache();
         EnemyUnits.clearCache();

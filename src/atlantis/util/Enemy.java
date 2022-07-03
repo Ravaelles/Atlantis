@@ -1,6 +1,7 @@
 package atlantis.util;
 
 import atlantis.game.AGame;
+import atlantis.game.APlayer;
 import atlantis.util.cache.Cache;
 import bwapi.Player;
 
@@ -24,15 +25,15 @@ public class Enemy {
         return AGame.isEnemyZerg();
     }
 
-    public static ArrayList<Player> players() {
-        return (ArrayList<Player>) cache.get(
+    public static ArrayList<APlayer> players() {
+        return (ArrayList<APlayer>) cache.get(
                 "players",
                 -1,
                 () -> {
-                    ArrayList<Player> players = new ArrayList<>();
+                    ArrayList<APlayer> players = new ArrayList<>();
 
-                    Player playerUs = AGame.getPlayerUs();
-                    for (Player player : AGame.getPlayers()) {
+                    APlayer playerUs = AGame.getPlayerUs();
+                    for (APlayer player : AGame.getPlayers()) {
                         if (player.isEnemy(playerUs)) {
                             players.add(player);
                         }

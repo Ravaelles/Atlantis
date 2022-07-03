@@ -128,7 +128,8 @@ public abstract class AvoidEnemies {
             return enemies.lowestValue();
         }
 
-        return 9876;
+//        return 9876;
+        return 0;
     }
 
     public static boolean shouldAvoidAnyUnit(AUnit unit) {

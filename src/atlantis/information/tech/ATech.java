@@ -9,7 +9,6 @@ import bwapi.UpgradeType;
 
 import java.util.ArrayList;
 
-
 public class ATech {
     
     private static final ArrayList<TechType> currentlyResearching = new ArrayList<>();

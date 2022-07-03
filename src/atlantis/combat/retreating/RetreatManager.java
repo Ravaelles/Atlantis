@@ -1,6 +1,6 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.combat.eval.OldUnusedCombatEvaluator;
 import atlantis.combat.micro.avoid.FightInsteadAvoid;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.map.position.HasPosition;
@@ -53,7 +53,7 @@ public class RetreatManager {
         return cache.get(
                 "shouldNotEngageCombatBuilding:" + unit.squad().name(),
                 10,
-                () -> ACombatEvaluator.relativeAdvantage(unit) <= 1.8 && ArmyStrength.ourArmyRelativeStrength() <= 250
+                () -> unit.combatEvalRelative() <= 1.8 && ArmyStrength.ourArmyRelativeStrength() <= 250
         );
     }
 

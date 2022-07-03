@@ -1,9 +1,15 @@
 package jfap;
 
 import atlantis.Atlantis;
+import atlantis.game.AGame;
 import atlantis.units.AUnit;
+import atlantis.units.AbstractFoggedUnit;
+import tests.unit.FakeUnit;
 
-public class AtlantisJFAP {
+/**
+ * Uses JFAP (with modifications to make it comptabile with JBWAPI).
+ */
+public class CombatEvaluator {
 
     public static boolean wouldLose(AUnit unit) {
         if (unit.enemiesNear().empty()) {
@@ -11,8 +17,8 @@ public class AtlantisJFAP {
         }
 
         Integer[] eval = fullEval(unit);
-        int myScoreDiff = eval[0];
-        int enemyScoreDiff = eval[1];
+        int myScoreDiff = eval[1];
+        int enemyScoreDiff = eval[2];
 
         return myScoreDiff * 1.06 <= enemyScoreDiff;
     }
@@ -27,16 +33,30 @@ public class AtlantisJFAP {
      * E.g. 121 (of arbitrary "score points")
      */
     public static double eval(AUnit unit, boolean relativeToEnemy) {
+//        System.out.println(unit.friendsNear().print("Friends for " + unit));
+//        System.out.println(unit.enemiesNear().print("Enemies for " + unit));
+
         if (unit.enemiesNear().empty()) {
             return 9876;
+//            return 0;
         }
 
         Integer[] eval = fullEval(unit);
-        int myScoreDiff = eval[0];
-        int enemyScoreDiff = eval[1];
+        int score = eval[0];
+        int myScoreDiff = eval[1];
+        int enemyScoreDiff = eval[2];
+
+        if (myScoreDiff == 0) {
+            return 9878;
+//            return 0;
+        }
 
         if (relativeToEnemy) {
-            return 1 + (double) (myScoreDiff / enemyScoreDiff);
+//            return (myScoreDiff / (enemyScoreDiff + 0.001));
+//            System.out.println("enemyScoreDiff = " + enemyScoreDiff);
+//            System.out.println("myScoreDiff = " + myScoreDiff);
+            return Math.abs(enemyScoreDiff / (myScoreDiff + 0.001));
+//            return Math.abs(enemyScoreDiff / (myScoreDiff + 0.001));
         }
 
         return myScoreDiff;
@@ -58,12 +78,12 @@ public class AtlantisJFAP {
         MutablePair<Integer, Integer> postSimScores = simulator.playerScores();
         int postSimFriendlyUnitCount = simulator.getState().first.size();
         int myLosses = preSimFriendlyUnitCount - postSimFriendlyUnitCount;
-        int myScoreDiff = preSimScores.first - postSimScores.first;
-        int enemyScoreDiff = preSimScores.second - postSimScores.second;
+        int myScoreDiff = postSimScores.first - preSimScores.first;
+        int enemyScoreDiff = postSimScores.second - preSimScores.second;
         int scoreDiff = myScoreDiff - enemyScoreDiff;
 
-//        System.out.println(unit + " score = " + scoreDiff + ", myScoreDiff = " + myScoreDiff +
-//            ", myLosses=" + myLosses + ", enemyScoreDiff=" + enemyScoreDiff);
+//        System.err.println(unit + "\n   score = " + scoreDiff + ", \n   myScoreDiff = " + myScoreDiff +
+//            ", \n   myLosses=" + myLosses + ", \n   enemyScoreDiff=" + enemyScoreDiff + "\n");
 
         return new Integer[] { scoreDiff, myScoreDiff, enemyScoreDiff, myLosses, postSimFriendlyUnitCount };
     }
@@ -71,18 +91,29 @@ public class AtlantisJFAP {
     // =========================================================
 
     private static void addFriends(AUnit unit, JFAP simulator) {
-        simulator.addUnitPlayer1(new JFAPUnit(unit.u())); // Adds a friendly unit to the simulator
+//        if (unit.canMove()) {
+            simulator.addUnitPlayer1(new JFAPUnit(unit)); // Adds a friendly unit to the simulator
+//        }
+
         for (AUnit friend : unit.friendsNear().list()){
-            if (friend.u() != null) {
-                simulator.addUnitPlayer1(new JFAPUnit(friend.u()));
+            if (friend.u() != null || friend instanceof FakeUnit || friend instanceof AbstractFoggedUnit) {
+//                if (friend.canMove()) {
+                    simulator.addUnitPlayer1(new JFAPUnit(friend));
+//                }
             }
         }
     }
 
     private static void addEnemies(AUnit unit, JFAP simulator) {
+//        System.err.println("unit = " + unit);
+//        unit.enemiesNear().print("addEnemies enemiesNear");
         for (AUnit enemy : unit.enemiesNear().list()){
-            if (enemy.u() != null) {
-                simulator.addUnitPlayer2(new JFAPUnit(enemy.u()));
+//            System.err.println("enemy = " + enemy);
+            if (enemy.u() != null || enemy instanceof FakeUnit || enemy instanceof AbstractFoggedUnit) {
+                if (enemy.canMove()) {
+//                    System.err.println("Added /" + enemy + "/ as enemy for " + unit);
+                    simulator.addUnitPlayer2(new JFAPUnit(enemy));
+                }
             }
         }
     }

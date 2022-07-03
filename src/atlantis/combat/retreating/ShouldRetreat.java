@@ -1,6 +1,6 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.eval.ACombatEvaluator;
+import atlantis.combat.eval.OldUnusedCombatEvaluator;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
@@ -16,7 +16,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
-import jfap.AtlantisJFAP;
+import jfap.CombatEvaluator;
 
 public class ShouldRetreat {
 
@@ -40,21 +40,30 @@ public class ShouldRetreat {
                         return false;
                     }
 
-                    if (AtlantisJFAP.wouldLose(unit)) {
+                    if (CombatEvaluator.wouldLose(unit)) {
                         RetreatManager.GLOBAL_RETREAT_COUNTER++;
                         return true;
                     }
 
-//                    Selection enemies = enemies(unit);
-//
-//                    if (shouldSmallScaleRetreat(unit, enemies)) {
-//                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
-//                        return true;
-//                    }
+                    Selection enemies = enemies(unit);
+
+                    if (shouldSmallScaleRetreat(unit, enemies)) {
+                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
+                        return true;
+                    }
 //                    if (shouldLargeScaleRetreat(unit, enemies)) {
 //                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
 //                        return true;
 //                    }
+
+//                    if (shouldRetreatDueToSquadMostlyRetreating(unit)) {
+//                        unit.addLog("SquadMostlyRetreating");
+//                        return true;
+//                    }
+
+                    if ("Retreat".equals(unit.tooltip())) {
+                        unit.removeTooltip();
+                    }
 
                     return false;
                 }
@@ -91,37 +100,33 @@ public class ShouldRetreat {
         return false;
     }
 
-    private static boolean shouldLargeScaleRetreat(AUnit unit, Selection enemies) {
-        if (shouldRetreatDueToSquadMostlyRetreating(unit)) {
-            unit.addLog("SquadMostlyRetreating");
-            return true;
-        }
-
-        boolean isSituationFavorable = ACombatEvaluator.isSituationFavorable(unit);
-
-        if (!isSituationFavorable) {
-            unit._lastRetreat = AGame.now();
-            unit.setTooltipTactical("Retreat");
-            MissionChanger.notifyThatUnitRetreated(unit);
-            APosition averageEnemyPosition = enemies.units().average();
-
-            if (unit.position().equals(averageEnemyPosition)) {
-                averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
-            }
-
-            if (averageEnemyPosition == null) {
-                return false;
-            }
-
-            return unit.runningManager().runFrom(averageEnemyPosition, 5, Actions.RUN_RETREAT);
-        }
-
-        if ("Retreat".equals(unit.tooltip())) {
-            unit.removeTooltip();
-        }
-
-        return false;
-    }
+//    private static boolean shouldLargeScaleRetreat(AUnit unit, Selection enemies) {
+//        if (shouldRetreatDueToSquadMostlyRetreating(unit)) {
+//            unit.addLog("SquadMostlyRetreating");
+//            return true;
+//        }
+//
+////        boolean isSituationFavorable = OldUnusedCombatEvaluator.isSituationFavorable(unit);
+////
+////        if (!isSituationFavorable) {
+////            unit._lastRetreat = AGame.now();
+////            unit.setTooltipTactical("Retreat");
+////            MissionChanger.notifyThatUnitRetreated(unit);
+////            APosition averageEnemyPosition = enemies.units().average();
+////
+////            if (unit.position().equals(averageEnemyPosition)) {
+////                averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
+////            }
+////
+////            if (averageEnemyPosition == null) {
+////                return false;
+////            }
+////
+////            return unit.runningManager().runFrom(averageEnemyPosition, 5, Actions.RUN_RETREAT);
+////        }
+//
+//        return false;
+//    }
 
     private static boolean shouldRetreatDueToSquadMostlyRetreating(AUnit unit) {
         Squad squad = unit.squad();
@@ -201,7 +206,7 @@ public class ShouldRetreat {
     // =========================================================
 
     private static Selection enemies(AUnit unit) {
-        return ACombatEvaluator.opposingUnits(unit);
+        return OldUnusedCombatEvaluator.opposingUnits(unit);
     }
 
 }

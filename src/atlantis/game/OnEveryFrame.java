@@ -1,22 +1,5 @@
 package atlantis.game;
 
-import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.map.*;
-import atlantis.production.constructing.position.protoss.PylonPosition;
-import atlantis.units.AUnit;
-import atlantis.units.select.Select;
-import bwapi.Color;
-import bwapi.Position;
-import bwem.BWEM;
-import bwem.CPPath;
-import bwem.ChokePoint;
-import jbweb.Blocks;
-import jbweb.Stations;
-import jfap.AtlantisJFAP;
-
-import java.util.Iterator;
-
 public class OnEveryFrame {
 
 //    private static CappedList<Integer> frames = new CappedList<>(4);

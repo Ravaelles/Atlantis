@@ -391,10 +391,11 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintCombatEval(AUnit unit) {
         APosition unitPosition = unit.position();
-//        double combatEval = unit.combatEvalRelative();
-        double combatEval = unit.combatEvalAbsolute();
+        double combatEval = unit.combatEvalRelative();
+//        double combatEval = unit.combatEvalAbsolute();
         String combatStrength = ColorUtil.getColorString(Color.Red) +
                 (combatEval >= 9876 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
+//                (combatEval >= 0 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
         paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
     }
 

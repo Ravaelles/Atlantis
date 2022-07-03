@@ -1,5 +1,6 @@
 package tests.unit;
 
+import atlantis.game.APlayer;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -7,6 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Action;
 import bwapi.TechType;
 import bwapi.UnitType;
+import tests.fakes.FakePlayer;
 
 public class FakeUnit extends AUnit {
 
@@ -14,6 +16,7 @@ public class FakeUnit extends AUnit {
     public int id;
     public AUnitType rawType;
     public APosition position;
+    public APlayer player;
     public boolean enemy = false;
     public boolean neutral = false;
     public boolean cloaked = false;
@@ -84,6 +87,17 @@ public class FakeUnit extends AUnit {
     @Override
     public UnitType bwapiType() {
         return rawType.ut();
+    }
+
+    @Override
+    public FakePlayer player() {
+        if (isOur()) {
+            return FakePlayer.OUR;
+        }
+        else if (isEnemy()) {
+            return FakePlayer.ENEMY;
+        }
+        return FakePlayer.NEUTRAL;
     }
 
     @Override
@@ -390,4 +404,10 @@ public class FakeUnit extends AUnit {
         this.stasised = stasised;
         return this;
     }
+
+    @Override
+    public int shields() {
+        return 0;
+    }
+
 }

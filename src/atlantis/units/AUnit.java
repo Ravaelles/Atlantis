@@ -1,6 +1,5 @@
 package atlantis.units;
 
-import atlantis.combat.eval.ACombatEvaluator;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
@@ -11,6 +10,7 @@ import atlantis.combat.squad.CohesionAssurance;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.APlayer;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.information.tech.ATech;
@@ -36,7 +36,7 @@ import atlantis.util.Vector;
 import atlantis.util.Vectors;
 import atlantis.util.log.Log;
 import bwapi.*;
-import jfap.AtlantisJFAP;
+import jfap.CombatEvaluator;
 import tests.unit.FakeUnit;
 
 import java.util.ArrayList;
@@ -953,10 +953,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (u == null) {
             return true;
         }
-//        if (isNeutral()) {
-//            System.err.println("ooo");
-//            return false;
-//        }
+
         return AGame.getPlayerUs().isEnemy(player());
     }
 
@@ -964,6 +961,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to us.
      */
     public boolean isOur() {
+//        System.out.println("this = " + this);
+//        System.out.println("u = " + u);
+//        System.out.println("player() = " + player());
         if (u == null || player() == null) {
             return false;
         }
@@ -975,7 +975,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit is neutral (minerals, geysers, critters).
      */
     public boolean isNeutral() {
-        return player().equals(AGame.getNeutralPlayer());
+        return player().equals(AGame.neutralPlayer());
     }
 
     /**
@@ -998,10 +998,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     // =========================================================
-    // Method intermediates between BWMirror and Atlantis
-    public Player player() {
-        return u.getPlayer();
+    // Method intermediates between bridge and Atlantis
+
+    public APlayer player() {
+        return new APlayer(u.getPlayer());
     }
+//    public Player player() {
+//        return u.getPlayer();
+//    }
 
     public int x() {
         return u.getX();
@@ -1944,7 +1948,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double combatEvalAbsolute() {
         // New JFAP solution
-        return AtlantisJFAP.eval(this, false);
+        return CombatEvaluator.eval(this, false);
 
         // Old manual implementation
 //        return ACombatEvaluator.absoluteEvaluation(this);
@@ -1952,7 +1956,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double combatEvalRelative() {
         // New JFAP solution
-        return AtlantisJFAP.eval(this, true);
+        return CombatEvaluator.eval(this, true);
 
         // Old manual implementation
 //        return ACombatEvaluator.relativeAdvantage(this);
@@ -2469,5 +2473,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isValid() {
         return isAlive() && hasPosition();
+    }
+
+    public boolean canMove() {
+        return !isStasised() && !isLockedDown();
     }
 }

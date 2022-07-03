@@ -1,5 +1,6 @@
 package jfap;
 
+import atlantis.units.AUnitType;
 import bwapi.*;
 
 import java.util.Iterator;
@@ -24,8 +25,8 @@ public class JFAP extends AJFAP {
 
     @Override
     public void addIfCombatUnitPlayer1(JFAPUnit fu) {
-        if (fu.unitType == UnitType.Protoss_Interceptor) return;
-        if (fu.groundDamage > 0 || fu.airDamage > 0 || fu.unitType == UnitType.Terran_Medic) addUnitPlayer1(fu);
+        if (fu.unitType == AUnitType.Protoss_Interceptor) return;
+        if (fu.groundDamage > 0 || fu.airDamage > 0 || fu.unitType == AUnitType.Terran_Medic) addUnitPlayer1(fu);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class JFAP extends AJFAP {
 
     @Override
     public void addIfCombatUnitPlayer2(JFAPUnit fu) {
-        if (fu.groundDamage > 0 || fu.airDamage > 0 || fu.unitType == UnitType.Terran_Medic) addUnitPlayer2(fu);
+        if (fu.groundDamage > 0 || fu.airDamage > 0 || fu.unitType == AUnitType.Terran_Medic) addUnitPlayer2(fu);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class JFAP extends AJFAP {
         int score = 0;
         if (fu.health > 0 && fu.maxHealth > 0) {
             score = ((fu.score * (fu.health * 3 + fu.shields) + fu.score) / (fu.maxHealth * 3 + fu.maxShields));
-            if (fu.unitType == UnitType.Terran_Bunker) score += UnitType.Terran_Marine.destroyScore() * 4;
+            if (fu.unitType == AUnitType.Terran_Bunker) score += AUnitType.Terran_Marine.ut().destroyScore() * 4;
         }
         return score;
     }
@@ -140,18 +141,18 @@ public class JFAP extends AJFAP {
         return (u1.x - u2.x) * (u1.x - u2.x) + (u1.y - u2.y) * (u1.y - u2.y);
     }
 
-    private boolean isSuicideUnit(UnitType ut) {
-        return (ut == UnitType.Zerg_Scourge ||
-                ut == UnitType.Terran_Vulture_Spider_Mine ||
-                ut == UnitType.Zerg_Infested_Terran ||
-                ut == UnitType.Protoss_Scarab);
+    private boolean isSuicideUnit(AUnitType ut) {
+        return (ut == AUnitType.Zerg_Scourge ||
+                ut == AUnitType.Terran_Vulture_Spider_Mine ||
+                ut == AUnitType.Zerg_Infested_Terran ||
+                ut == AUnitType.Protoss_Scarab);
     }
 
     // Thanks and credits to @bmnielsen for kiting code sim
     private void unitSim(JFAPUnit fu, Set<JFAPUnit> enemyUnits) {
         boolean kite = false;
         if (fu.attackCooldownRemaining > 0) {
-            if (fu.unitType == UnitType.Terran_Marine && fu.attackCooldownRemaining <= UnitType.Terran_Marine.groundWeapon().damageCooldown() - 9)
+            if (fu.unitType == AUnitType.Terran_Marine && fu.attackCooldownRemaining <= AUnitType.Terran_Marine.groundWeapon().damageCooldown() - 9)
                 kite = true;
             if (!kite) {
                 didSomething = true;
@@ -283,7 +284,7 @@ public class JFAP extends AJFAP {
         if (isSuicideUnit(ju.unitType)) {
             final boolean unitDied = suicideSim(ju, player2);
             if (unitDied) unit.remove();
-        } else if (ju.unitType == UnitType.Terran_Medic) medicsim(ju, player1);
+        } else if (ju.unitType == AUnitType.Terran_Medic) medicsim(ju, player1);
         else unitSim(ju, player2);
     }
 
@@ -309,14 +310,14 @@ public class JFAP extends AJFAP {
     }
 
     private void unitDeath(JFAPUnit fu, Set<JFAPUnit> player) {
-        if (fu.unitType == UnitType.Terran_Bunker) {
-            JFAPUnit m = convertToUnitType(fu, UnitType.Terran_Marine);
-            m.unitType = UnitType.Terran_Marine;
+        if (fu.unitType == AUnitType.Terran_Bunker) {
+            JFAPUnit m = convertToUnitType(fu, AUnitType.Terran_Marine);
+            m.unitType = AUnitType.Terran_Marine;
             for (int i = 0; i < 4; ++i) player.add(m);
         }
     }
 
-    private JFAPUnit convertToUnitType(JFAPUnit fu, UnitType ut) {
+    private JFAPUnit convertToUnitType(JFAPUnit fu, AUnitType ut) {
         JFAPUnit aux = new JFAPUnit();
         aux.id = fu.id;
         aux.x = fu.x;
