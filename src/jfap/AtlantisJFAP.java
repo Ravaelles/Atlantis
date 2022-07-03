@@ -1,20 +1,48 @@
 package jfap;
 
 import atlantis.Atlantis;
-import atlantis.game.AGame;
 import atlantis.units.AUnit;
 
 public class AtlantisJFAP {
 
-    public static boolean wouldWin(AUnit unit) {
-        return eval(unit) > 0;
+    public static boolean wouldLose(AUnit unit) {
+        if (unit.enemiesNear().empty()) {
+            return false;
+        }
+
+        Integer[] eval = fullEval(unit);
+        int myScoreDiff = eval[0];
+        int enemyScoreDiff = eval[1];
+
+        return myScoreDiff * 1.06 <= enemyScoreDiff;
     }
 
-    private static double eval(AUnit unit) {
-//        if (unit.enemiesNear().empty()) {
-//            return 975;
-//        }
+    /**
+     * Relative:
+     * 1.2 - 20% better outcome than for enemy
+     * 1.0 - equally strong
+     * 0.9 - 10% worse outcome than for enemy
+     *
+     * Absolute:
+     * E.g. 121 (of arbitrary "score points")
+     */
+    public static double eval(AUnit unit, boolean relativeToEnemy) {
+        if (unit.enemiesNear().empty()) {
+            return 9876;
+        }
 
+        Integer[] eval = fullEval(unit);
+        int myScoreDiff = eval[0];
+        int enemyScoreDiff = eval[1];
+
+        if (relativeToEnemy) {
+            return 1 + (double) (myScoreDiff / enemyScoreDiff);
+        }
+
+        return myScoreDiff;
+    }
+
+    private static Integer[] fullEval(AUnit unit) {
         JFAP simulator = new JFAP(Atlantis.game()); // Requires a 'BW' object to be passed by parameter
         simulator.clear(); // Before starting the simulations we need to clear the simulator
 
@@ -32,10 +60,12 @@ public class AtlantisJFAP {
         int myLosses = preSimFriendlyUnitCount - postSimFriendlyUnitCount;
         int myScoreDiff = preSimScores.first - postSimScores.first;
         int enemyScoreDiff = preSimScores.second - postSimScores.second;
+        int scoreDiff = myScoreDiff - enemyScoreDiff;
 
-        System.out.println("myScoreDiff = " + myScoreDiff + ", myLosses=" + myLosses + ", enemyScoreDiff=" + enemyScoreDiff);
+//        System.out.println(unit + " score = " + scoreDiff + ", myScoreDiff = " + myScoreDiff +
+//            ", myLosses=" + myLosses + ", enemyScoreDiff=" + enemyScoreDiff);
 
-        return myScoreDiff;
+        return new Integer[] { scoreDiff, myScoreDiff, enemyScoreDiff, myLosses, postSimFriendlyUnitCount };
     }
 
     // =========================================================
@@ -52,7 +82,7 @@ public class AtlantisJFAP {
     private static void addEnemies(AUnit unit, JFAP simulator) {
         for (AUnit enemy : unit.enemiesNear().list()){
             if (enemy.u() != null) {
-                simulator.addUnitPlayer1(new JFAPUnit(enemy.u()));
+                simulator.addUnitPlayer2(new JFAPUnit(enemy.u()));
             }
         }
     }

@@ -16,6 +16,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
+import jfap.AtlantisJFAP;
 
 public class ShouldRetreat {
 
@@ -39,16 +40,21 @@ public class ShouldRetreat {
                         return false;
                     }
 
-                    Selection enemies = enemies(unit);
+                    if (AtlantisJFAP.wouldLose(unit)) {
+                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
+                        return true;
+                    }
 
-                    if (shouldSmallScaleRetreat(unit, enemies)) {
-                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
-                        return true;
-                    }
-                    if (shouldLargeScaleRetreat(unit, enemies)) {
-                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
-                        return true;
-                    }
+//                    Selection enemies = enemies(unit);
+//
+//                    if (shouldSmallScaleRetreat(unit, enemies)) {
+//                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
+//                        return true;
+//                    }
+//                    if (shouldLargeScaleRetreat(unit, enemies)) {
+//                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
+//                        return true;
+//                    }
 
                     return false;
                 }

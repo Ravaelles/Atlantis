@@ -36,6 +36,7 @@ import atlantis.util.Vector;
 import atlantis.util.Vectors;
 import atlantis.util.log.Log;
 import bwapi.*;
+import jfap.AtlantisJFAP;
 import tests.unit.FakeUnit;
 
 import java.util.ArrayList;
@@ -1942,11 +1943,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public double combatEvalAbsolute() {
-        return ACombatEvaluator.absoluteEvaluation(this);
+        // New JFAP solution
+        return AtlantisJFAP.eval(this, false);
+
+        // Old manual implementation
+//        return ACombatEvaluator.absoluteEvaluation(this);
     }
 
     public double combatEvalRelative() {
-        return ACombatEvaluator.relativeAdvantage(this);
+        // New JFAP solution
+        return AtlantisJFAP.eval(this, true);
+
+        // Old manual implementation
+//        return ACombatEvaluator.relativeAdvantage(this);
     }
 
     public boolean isMedic() {

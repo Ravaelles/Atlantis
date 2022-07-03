@@ -57,10 +57,10 @@ public class OnEveryFrame {
 //            }
 //        }
 
-        AUnit ourCombat = Select.ourCombatUnits().first();
-        if (ourCombat != null) {
-            System.out.println("wouldWin = " + AtlantisJFAP.wouldWin(ourCombat));
-        }
+//        AUnit ourCombat = Select.ourCombatUnits().first();
+//        if (ourCombat != null) {
+//            System.out.println("wouldWin = " + AtlantisJFAP.wouldWin(ourCombat));
+//        }
     }
 
 }
