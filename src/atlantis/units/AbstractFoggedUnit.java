@@ -22,6 +22,7 @@ public class AbstractFoggedUnit extends AUnit {
     protected int _hp;
     protected int _energy;
     protected int _shields;
+    protected boolean _isStimmed;
     protected APosition _position;
     protected AUnitType _lastType;
     protected boolean _isCompleted;
@@ -88,6 +89,7 @@ public class AbstractFoggedUnit extends AUnit {
         _hp = unit.hp();
         _energy = unit.energy();
         _shields = unit.shields();
+        _isStimmed = unit.isStimmed();
     }
 
     public void updatePosition(AUnit unit) {
@@ -211,6 +213,11 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public int shields() {
         return _shields;
+    }
+
+    @Override
+    public boolean isStimmed() {
+        return _isStimmed;
     }
 
     @Override

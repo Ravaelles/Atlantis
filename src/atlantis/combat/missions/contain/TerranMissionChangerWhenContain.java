@@ -68,7 +68,7 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
     }
 
     protected static boolean shouldChangeMissionToAttack() {
-        if (A.supplyUsed() >= 196) {
+        if (A.supplyUsed() >= 190) {
             if (DEBUG) reason = "Supply blocked";
             return true;
         }

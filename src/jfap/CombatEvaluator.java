@@ -98,7 +98,9 @@ public class CombatEvaluator {
         for (AUnit friend : unit.friendsNear().list()){
             if (friend.u() != null || friend instanceof FakeUnit || friend instanceof AbstractFoggedUnit) {
 //                if (friend.canMove()) {
+                if (friend.hasPosition()) {
                     simulator.addUnitPlayer1(new JFAPUnit(friend));
+                }
 //                }
             }
         }
@@ -110,7 +112,7 @@ public class CombatEvaluator {
         for (AUnit enemy : unit.enemiesNear().list()){
 //            System.err.println("enemy = " + enemy);
             if (enemy.u() != null || enemy instanceof FakeUnit || enemy instanceof AbstractFoggedUnit) {
-                if (enemy.canMove()) {
+                if (enemy.canMove() && enemy.hasPosition()) {
 //                    System.err.println("Added /" + enemy + "/ as enemy for " + unit);
                     simulator.addUnitPlayer2(new JFAPUnit(enemy));
                 }

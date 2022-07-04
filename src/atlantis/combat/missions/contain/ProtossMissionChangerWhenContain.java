@@ -22,11 +22,6 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === DEFEND ==============================================
 
     public static boolean shouldChangeMissionToDefend() {
-        if (A.supplyUsed() >= 194) {
-            if (DEBUG) reason = "Supply blocked";
-            return true;
-        }
-
         if (ArmyStrength.ourArmyRelativeStrength() <= 199) {
             if (RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
                 if (DEBUG) reason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
@@ -65,7 +60,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
     // === ATTACK ==============================================
 
     private static boolean shouldChangeMissionToAttack() {
-        if (A.supplyUsed() >= 194) {
+        if (A.supplyUsed() >= 190) {
             if (DEBUG) reason = "Supply blocked";
             return true;
         }
