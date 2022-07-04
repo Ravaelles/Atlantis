@@ -67,9 +67,22 @@ public class MissionContain extends Mission {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (unit.isStimmed()) {
+            return true;
+        }
+
+        // @Temp
+        if (unit.distToLessThan(enemy, 8)) {
+            return true;
+        }
+        if (unit.hasWeaponRangeToAttack(enemy, enemy.isMelee() ? 4 : 2.1)) {
+            return true;
+        }
+
+
         AFocusPoint focusPoint = focusPoint();
 
-        if (enemy.hasWeaponRangeToAttack(unit, unit.isMelee() ? 0.3 : 1.3)) {
+        if (enemy.hasWeaponRangeToAttack(unit, unit.isMelee() ? 0.3 : 2.1)) {
             return true;
         }
 
@@ -93,10 +106,6 @@ public class MissionContain extends Mission {
 
         // Allow to defend bases
         if (enemyIsNearAnyOurBuilding(enemy)) {
-            return true;
-        }
-
-        if (unit.isStimmed()) {
             return true;
         }
 

@@ -36,7 +36,7 @@ public class MapAndRace {
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Zerg ================================================
@@ -55,7 +55,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/4Drag_v_Zeal.scm";
 //        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 //        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
-        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";
+//        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";
 //        if (true) return "ums/rav/Dragoons_v_Marines.scm";
 //        if (true) return "ums/rav/Dragoons_v_Zealots.scm";
 //        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";

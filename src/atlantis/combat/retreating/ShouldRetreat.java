@@ -41,11 +41,11 @@ public class ShouldRetreat {
                     }
 
                     if (CombatEvaluator.wouldLose(unit)) {
-                        System.out.println(
-                            u + " would lose.  REL="
-                                + CombatEvaluator.eval(unit, true)
-                                + ", ABS=" + CombatEvaluator.eval(unit, false)
-                        );
+//                        System.out.println(
+//                            u + " would lose.  REL="
+//                                + CombatEvaluator.eval(unit, true)
+//                                + ", ABS=" + CombatEvaluator.eval(unit, false)
+//                        );
                         RetreatManager.GLOBAL_RETREAT_COUNTER++;
                         return true;
                     }

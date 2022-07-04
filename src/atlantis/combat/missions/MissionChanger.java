@@ -52,19 +52,23 @@ public class MissionChanger {
             return;
         }
 
-        if (
-            !Have.main()
-                || (Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS * 30 && !ArmyStrength.weAreMuchStronger()
-        )) {
-            return;
-        }
+//        if (
+//            !Have.main()
+//                || (Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS * 30 && !ArmyStrength.weAreMuchStronger()
+//        )) {
+//            return;
+//        }
 
         reason = "";
 
+        changeMissionIfNeeded();
+    }
+
+    private static void changeMissionIfNeeded() {
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.changeMissionIfNeeded();
-//        } else if (Missions.isGlobalMissionContain()) {
-//            MissionChangerWhenContain.changeMissionIfNeeded();
+        } else if (Missions.isGlobalMissionContain()) {
+            MissionChangerWhenContain.changeMissionIfNeeded();
         } else if (Missions.isGlobalMissionDefend() || Missions.isGlobalMissionSparta()) {
             MissionChangerWhenDefend.changeMissionIfNeeded();
         }
