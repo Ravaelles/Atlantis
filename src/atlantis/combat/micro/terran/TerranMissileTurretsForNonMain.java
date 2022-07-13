@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.game.A;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
@@ -44,14 +45,20 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
             return false;
         }
 
+        if (exceededExistingAndInProduction()) {
+            return false;
+        }
+
+        int maxDist = 12;
+
         for (AUnit base : Select.ourBases().list()) {
-            int existing = Count.existingOrPlannedBuildingsNear(type(), 8, base.position());
+            int existing = Count.existingOrPlannedBuildingsNear(type(), maxDist, base.position());
 
             if (existing < MIN_TURRETS_PER_BASE) {
-                APosition minerals = Select.minerals().inRadius(12, base).center();
+                APosition minerals = Select.minerals().inRadius(maxDist, base).center();
                 if (minerals != null) {
                     AddToQueue.withHighPriority(type(), base.translateTilesTowards(4, minerals))
-                            .setMaximumDistance(12);
+                            .setMaximumDistance(maxDist);
                     return true;
                 }
             }

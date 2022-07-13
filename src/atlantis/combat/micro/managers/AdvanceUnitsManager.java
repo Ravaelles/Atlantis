@@ -59,6 +59,7 @@ public class AdvanceUnitsManager {
                 unit.addLog(t);
                 return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, t, false);
             }
+
             return false;
         }
 
@@ -78,9 +79,8 @@ public class AdvanceUnitsManager {
         double optimalDist = optimalDistFromFocusPoint(unit, focusPoint);
         double distToFocusPoint = unit.distTo(focusPoint);
         double margin = Math.max(2.5, unit.squadSize() / 7.0);
-        boolean result;
 
-        if (We.terran() && handleTerranAdvance(unit)) {
+        if (We.terran() && handledTerranAdvance(unit)) {
             return true;
         }
 
@@ -94,17 +94,20 @@ public class AdvanceUnitsManager {
         // =========================================================
 
         // Too close
+        boolean movedAway;
         if (
                 allowTooClose
                 && distToFocusPoint <= optimalDist - margin
-                && (result = unit.moveAwayFrom(
+                && (movedAway = unit.moveAwayFrom(
                         focusPoint,
                         2.5,
                         "#Adv:TooClose(" + (int) distToFocusPoint + ")",
                         Actions.MOVE_FORMATION
                 ))
         ) {
-            return result;
+            if (movedAway) {
+                return true;
+            }
         }
 
         // Close enough
@@ -128,7 +131,11 @@ public class AdvanceUnitsManager {
                 return false;
             }
 
-            return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")", true);
+            if (unit.move(
+                focusPoint, Actions.MOVE_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")", true)
+            ) {
+                return true;
+            }
         }
 
 //        System.out.println("Target = " + ATargeting.defineBestEnemyToAttackFor(unit, 40) + " // " +
@@ -143,9 +150,10 @@ public class AdvanceUnitsManager {
 
             if (!unit.isMoving()) {
                 String canAttack = AAttackEnemyUnit.canAttackEnemiesNowString(unit);
-                unit.move(focusPoint, Actions.MOVE_ENGAGE, "Advance" + canAttack, true);
+                if (unit.move(focusPoint, Actions.MOVE_ENGAGE, "Advance" + canAttack, true)) {
+                    return true;
+                }
             }
-            return true;
         }
 
         if (!unit.hasTooltip()) {
@@ -163,7 +171,7 @@ public class AdvanceUnitsManager {
 
     // === Terran ======================================================
 
-    private static boolean handleTerranAdvance(AUnit unit) {
+    private static boolean handledTerranAdvance(AUnit unit) {
         if (unit.isTerranInfantry() && unit.isWounded() && !unit.isMedic() && Count.medics() >= 1) {
             AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).nearestTo(unit);
 //            if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {

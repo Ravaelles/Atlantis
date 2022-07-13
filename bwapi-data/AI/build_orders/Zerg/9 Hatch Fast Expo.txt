@@ -22,6 +22,12 @@ https://strategywiki.org/wiki/StarCraft/Zerg_strategies#Zerg_9_Hatch_9_Pool_Fast
 
 @ - Name - Modifier
 //8 - Hatchery - NATURAL
+4 - Drone
+5 - Drone
+6 - Drone
+7 - Drone
+8 - Drone
+9 - Drone
 9 - Hatchery - NATURAL
 9 - Overlord
 9 - Spawning Pool

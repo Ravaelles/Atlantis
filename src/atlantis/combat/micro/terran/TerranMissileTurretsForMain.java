@@ -66,9 +66,13 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     // =========================================================
 
     private boolean turretsForMainBase() {
-        int turretsForMain = mainBaseTurrets();
+        int turretsForMain = optimalMainBaseTurrets();
 
         if (turretsForMain <= 0) {
+            return false;
+        }
+
+        if (exceededExistingAndInProduction()) {
             return false;
         }
 
@@ -86,7 +90,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         return false;
     }
 
-    private int mainBaseTurrets() {
+    private int optimalMainBaseTurrets() {
         AStrategy enemyStrategy = EnemyInfo.strategy();
 
         if (Enemy.zerg()) {
@@ -132,6 +136,10 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
     private boolean turretsForMainRegionBorders() {
         if (true) {
+            return false;
+        }
+
+        if (exceededExistingAndInProduction()) {
             return false;
         }
 

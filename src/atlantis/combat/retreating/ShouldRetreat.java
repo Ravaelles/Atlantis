@@ -1,22 +1,17 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.eval.OldUnusedCombatEvaluator;
-import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.eval.HeuristicCombatEvaluator;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
-import jfap.CombatEvaluator;
 
 public class ShouldRetreat {
 
@@ -40,7 +35,8 @@ public class ShouldRetreat {
                         return false;
                     }
 
-                    if (CombatEvaluator.wouldLose(unit)) {
+//                    if (CombatEvaluator.wouldLose(unit)) {
+                    if (!HeuristicCombatEvaluator.isSituationFavorable(unit)) {
 //                        System.out.println(
 //                            u + " would lose.  REL="
 //                                + CombatEvaluator.eval(unit, true)
@@ -205,7 +201,7 @@ public class ShouldRetreat {
             return true;
         }
 
-        if (unit.isStimmed()) {
+        if (unit.isStimmed() && unit.enemiesNearInRadius(1.8) <= 2) {
             return true;
         }
 
@@ -219,7 +215,7 @@ public class ShouldRetreat {
     // =========================================================
 
     private static Selection enemies(AUnit unit) {
-        return OldUnusedCombatEvaluator.opposingUnits(unit);
+        return HeuristicCombatEvaluator.opposingUnits(unit);
     }
 
 }

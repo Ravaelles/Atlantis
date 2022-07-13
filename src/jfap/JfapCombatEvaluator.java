@@ -1,7 +1,6 @@
 package jfap;
 
 import atlantis.Atlantis;
-import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AbstractFoggedUnit;
 import tests.unit.FakeUnit;
@@ -9,7 +8,7 @@ import tests.unit.FakeUnit;
 /**
  * Uses JFAP (with modifications to make it comptabile with JBWAPI).
  */
-public class CombatEvaluator {
+public class JfapCombatEvaluator {
 
     public static boolean wouldLose(AUnit unit) {
         if (unit.enemiesNear().empty()) {

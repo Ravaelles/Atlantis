@@ -6,7 +6,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
 
-public class OldUnusedCombatEvaluator {
+public class HeuristicCombatEvaluator {
 
     private static double RANGED_RADIUS = 15;
     private static double MELEE_RADIUS = 5.5;
@@ -32,14 +32,14 @@ public class OldUnusedCombatEvaluator {
      * (retreat otherwise). If false then it means we would engage in new fight, so make sure you've got
      * some safe margin. This feature avoids fighting and immediately running away and fighting again.
      */
-//    public static boolean isSituationFavorable(AUnit unit) {
-//        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4).nearestTo(unit);
-//        if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
-//            return true;
-//        }
-//
-//        return (absoluteEvaluation(unit) * (100 - percentOfAdvantageNeeded(unit)) / 100) >= absoluteEvaluation(nearestEnemy);
-//    }
+    public static boolean isSituationFavorable(AUnit unit) {
+        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4).nearestTo(unit);
+        if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
+            return true;
+        }
+
+        return (absoluteEvaluation(unit) * (100 - percentOfAdvantageNeeded(unit)) / 100) >= absoluteEvaluation(nearestEnemy);
+    }
 
     /**
      * Calculated per squad, not per unit.
@@ -47,22 +47,22 @@ public class OldUnusedCombatEvaluator {
      * 1.0 means same strength
      * 0.8 means ~20% disadvantage against enemies
      */
-//    public static double relativeAdvantage(AUnit unit) {
-//        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4.2).nearestTo(unit);
-//        if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
-//            return MAX_VALUE;
-//        }
-//
-//        return absoluteEvaluation(unit) / absoluteEvaluation(nearestEnemy);
-//    }
+    public static double relativeAdvantage(AUnit unit) {
+        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4.2).nearestTo(unit);
+        if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
+            return MAX_VALUE;
+        }
+
+        return absoluteEvaluation(unit) / absoluteEvaluation(nearestEnemy);
+    }
 
     /**
      * Calculated per squad, not per unit.
      * More equals given squad is considered to be stronger.
      */
-//    public static double absoluteEvaluation(AUnit unit) {
-//        return evaluateSituation(unit, false);
-//    }
+    public static double absoluteEvaluation(AUnit unit) {
+        return evaluateSituation(unit, false);
+    }
 
     /**
      * 

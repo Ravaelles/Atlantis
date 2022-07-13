@@ -1,10 +1,12 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.requests.AntiAirBuildingManager;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
 public class TerranMissileTurret extends AntiAirBuildingManager {
@@ -32,6 +34,21 @@ public class TerranMissileTurret extends AntiAirBuildingManager {
             AddToQueue.withTopPriority(type(), position).setMaximumDistance(8);
 //            AAntiAirBuildingRequests.requestCombatBuildingAntiAir(position);
             return true;
+        }
+
+        return false;
+    }
+
+    protected boolean exceededExistingAndInProduction() {
+        int existing = Count.existingOrInProductionOrInQueue(type());
+        if (existing >= 12) {
+            return true;
+        }
+
+        if (existing >= 6) {
+            if (!A.hasMinerals(250)) {
+                return true;
+            }
         }
 
         return false;

@@ -36,7 +36,7 @@ import atlantis.util.Vector;
 import atlantis.util.Vectors;
 import atlantis.util.log.Log;
 import bwapi.*;
-import jfap.CombatEvaluator;
+import jfap.JfapCombatEvaluator;
 import tests.unit.FakeUnit;
 
 import java.util.ArrayList;
@@ -1948,7 +1948,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double combatEvalAbsolute() {
         // New JFAP solution
-        return CombatEvaluator.eval(this, false);
+        return JfapCombatEvaluator.eval(this, false);
 
         // Old manual implementation
 //        return ACombatEvaluator.absoluteEvaluation(this);
@@ -1956,7 +1956,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double combatEvalRelative() {
         // New JFAP solution
-        return CombatEvaluator.eval(this, true);
+        return JfapCombatEvaluator.eval(this, true);
 
         // Old manual implementation
 //        return ACombatEvaluator.relativeAdvantage(this);

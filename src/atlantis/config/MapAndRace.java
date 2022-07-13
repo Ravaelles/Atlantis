@@ -21,8 +21,8 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-//    public static final String ENEMY_RACE = "Protoss";
-    public static final String ENEMY_RACE = "Terran";
+    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Terran";
 //    public static final String ENEMY_RACE = "Zerg";
 
     /**
@@ -82,7 +82,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/T_rebasing.scm";
-        if (true) return "ums/rav/T_v_Sunkens.scx";
+//        if (true) return "ums/rav/T_v_Sunkens.scx";
 //        if (true) return "ums/rav/T_v_Sunkens2.scx";
 //        if (true) return "ums/rav/T_v_Sunkens3.scx";
 //        if (true) return "ums/rav/Tanks_v_DT.scx";
@@ -96,9 +96,9 @@ public class MapAndRace {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
-//        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
+        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran

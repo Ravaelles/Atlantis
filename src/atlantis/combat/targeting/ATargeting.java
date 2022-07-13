@@ -42,17 +42,21 @@ public class ATargeting {
     }
 
     private static AUnit closestFirst(AUnit unit, double maxDistFromEnemy) {
+
+        // Combat units
         AUnit combat = Select.enemy().combatUnits().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo(unit);
         if (combat != null) {
             return combat;
         }
-        
+
+        // Normal units
         AUnit regular = Select.enemy().realUnits().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo(unit);
         if (regular != null) {
             return regular;
         }
 
-        return Select.enemy().inRadius(maxDistFromEnemy, unit).nearestTo(unit);
+        // Buildings
+        return Select.enemy().buildings().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo(unit);
     }
 
     public static AUnit defineBestEnemyToAttackFor(AUnit unit) {

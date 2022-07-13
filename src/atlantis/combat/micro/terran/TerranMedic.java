@@ -86,9 +86,15 @@ public class TerranMedic extends Microable {
             return false;
         }
 
-        AUnit nearestFriend = medic.friendsNear().excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
+        AUnit nearestFriend = medic.friendsNear()
+            .inRadius(4, medic).excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
+
+        if (nearestFriend == null) {
+            return false;
+        }
+
         AUnit nearestEnemy = meleeEnemies.inRadius(4, medic).nearestTo(medic);
-        if (nearestEnemy == null || nearestFriend == null) {
+        if (nearestEnemy == null) {
             return false;
         }
 

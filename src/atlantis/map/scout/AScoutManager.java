@@ -34,7 +34,7 @@ public class AScoutManager {
 
 //    public static boolean MAKE_CAMERA_FOLLOW_SCOUT_AROUND_BASE = true;
     public static boolean MAKE_CAMERA_FOLLOW_SCOUT_AROUND_BASE = false;
-    
+
     // =========================================================
     
     /**

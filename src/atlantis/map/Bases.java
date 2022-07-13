@@ -1,5 +1,6 @@
 package atlantis.map;
 
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -56,9 +57,14 @@ public class Bases {
 //        // Sort them all by closest to given nearestTo position
 //        startingLocations.sortByDistanceTo(nearestTo, true);
 
+        APosition enemyBase = EnemyUnits.enemyBase();
+
         // For every location...
         for (ABaseLocation baseLocation : nonStartingLocations()) {
-            if (!baseLocation.position().isPositionVisible()) {
+            if (
+                !baseLocation.position().isPositionVisible()
+                    && (enemyBase == null || baseLocation.position().distToMoreThan(enemyBase, 15))
+            ) {
                 return baseLocation.position();
             }
         }
@@ -96,6 +102,14 @@ public class Bases {
                 return baseLocation;
             }
         }
+
+        // For every location...
+        for (ABaseLocation baseLocation : baseLocations.list()) {
+            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation) || !baseLocation.isPositionVisible()) {
+                return baseLocation;
+            }
+        }
+
         return null;
     }
 

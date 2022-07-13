@@ -17,7 +17,12 @@ public class TerranBunkerPositionFinder {
     private static AUnitType bunker = AUnitType.Terran_Bunker;
 
     public static APosition findPosition(AUnit builder, Construction order, HasPosition nearTo) {
+        if (nearTo == null) {
+            nearTo = order.nearTo();
+        }
+
         if (nearTo != null) {
+//            System.out.println("Near to defined " + order.nearTo());
 //            nearTo = defineNearTo(order);
             return APositionFinder.findStandardPosition(builder, bunker, nearTo, 15);
         }
@@ -70,18 +75,18 @@ public class TerranBunkerPositionFinder {
 
     // =========================================================
 
-    private static HasPosition defineNearTo(Construction order) {
-        if (order != null && order.productionOrder() != null && order.productionOrder().getModifier() != null) {
-            String locationModifier = order.productionOrder().getModifier();
-            return defineBunkerPosition(locationModifier);
-        }
-        else if (order == null) {
-            return defineBunkerPosition(PositionModifier.MAIN);
-        }
-        else {
-            return defineBunkerPosition(PositionModifier.NATURAL);
-        }
-    }
+//    private static HasPosition defineNearTo(Construction order) {
+//        if (order != null && order.productionOrder() != null && order.productionOrder().getModifier() != null) {
+//            String locationModifier = order.productionOrder().getModifier();
+//            return defineBunkerPosition(locationModifier);
+//        }
+//        else if (order == null) {
+//            return defineBunkerPosition(PositionModifier.MAIN);
+//        }
+//        else {
+//            return defineBunkerPosition(PositionModifier.NATURAL);
+//        }
+//    }
 
     private static APosition defineBunkerPosition(String locationModifier) {
         AUnit mainBase = Select.main();
@@ -95,7 +100,7 @@ public class TerranBunkerPositionFinder {
         if (locationModifier.equals(PositionModifier.MAIN)) {
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
-                return mainBase.translateTilesTowards(mainChoke, 4)
+                return mainBase.translateTilesTowards(mainChoke, 2)
                     .makeWalkable(8);
             }
 
