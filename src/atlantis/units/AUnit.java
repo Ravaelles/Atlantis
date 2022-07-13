@@ -1178,6 +1178,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.getGroundWeaponCooldown();
     }
 
+    public int cooldown() {
+        return Math.max(u.getGroundWeaponCooldown(), u.getAirWeaponCooldown());
+    }
+
     public int airWeaponCooldown() {
         return u.getAirWeaponCooldown();
     }

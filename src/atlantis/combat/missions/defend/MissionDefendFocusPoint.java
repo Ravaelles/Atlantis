@@ -76,6 +76,15 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     }
                 }
 
+                // === Terran bunker ===========================================
+
+                if (We.terran() && A.seconds() <= 500) {
+                    AUnit bunker = Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
+                    if (bunker != null) {
+                        return new AFocusPoint(bunker.translateTilesTowards(-3, mainBase), "Bunker");
+                    }
+                }
+
                 // === Natural / main choke ================
 
                 if (Count.ourCombatUnits() >= 12) {
@@ -105,16 +114,6 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                             "Sunken"
                         );
                     }
-                }
-
-//                if (We.terran() && A.supplyUsed() <= 50 && Count.infantry() <= 13) {
-                if (We.terran() && A.seconds() <= 500) {
-                    AUnit bunker = Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
-//                    if (GamePhase.isEarlyGame() && mainBase != null) {
-                    if (bunker != null) {
-                        return new AFocusPoint(bunker.translateTilesTowards(-2, mainBase), "Bunker");
-                    }
-//                    }
                 }
 
                 // =========================================================

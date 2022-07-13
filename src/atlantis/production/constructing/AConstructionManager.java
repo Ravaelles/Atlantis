@@ -27,7 +27,7 @@ public class AConstructionManager {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
             checkForConstructionStatusChange(construction, construction.construction());
-            checkForBuilderStatusChange(construction);
+            checkIfTerranBuilderGotKilled(construction);
             handleConstructionUnderAttack(construction);
             handleConstructionThatLooksBugged(construction);
         }
@@ -38,36 +38,41 @@ public class AConstructionManager {
     /**
      * If builder has died when constructing, replace him with new one.
      */
-    private static void checkForBuilderStatusChange(Construction construction) {
+    private static void checkIfTerranBuilderGotKilled(Construction construction) {
+        if (!We.terran()) {
+            return;
+        }
 
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
-        if (We.terran()) {
-            AUnit builder = construction.builder();
+        AUnit builder = construction.builder();
 
-            if (
-                (builder == null || !builder.exists() || !builder.isAlive())
-            ) {
-                if (isItSafeToAssignNewBuilderTo(construction)) {
-                    construction.assignOptimalBuilder();
+        if (
+            (builder == null || !builder.exists() || !builder.isAlive())
+        ) {
+            if (isItSafeToAssignNewBuilderTo(construction)) {
+                construction.assignOptimalBuilder();
 
-                    builder = construction.builder();
-                    if (
-                        builder != null && construction.construction() != null
-                            && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
-                    ) {
-                        builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
-                        builder.setTooltipTactical("Resume");
-                    }
+                builder = construction.builder();
+                if (
+                    builder != null && construction.construction() != null
+                        && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
+                ) {
+                    builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
+                    builder.setTooltipTactical("Resume");
                 }
             }
         }
     }
 
     private static boolean isItSafeToAssignNewBuilderTo(Construction construction) {
+        if (construction.buildingType().isBunker()) {
+            return true;
+        }
+
         HasPosition position = construction.construction() != null
             ? construction.construction() : construction.buildPosition();
-        if (EnemyUnits.discovered().combatUnits().inRadius(13, position).empty()) {
+        if (EnemyUnits.discovered().combatUnits().inRadius(8, position).empty()) {
             return true;
         }
 

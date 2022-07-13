@@ -51,7 +51,9 @@ public class TerranCommandCenter {
             return false;
         }
 
-        APosition rebaseTo = baseLocation.makeLandableFor(building);
+        APosition rebaseTo = baseLocation.isPositionVisible()
+            ? baseLocation.makeLandableFor(building)
+            : baseLocation.position();
 
         if (rebaseTo == null) {
             System.err.println("Null rebaseTo");

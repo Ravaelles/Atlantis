@@ -91,9 +91,18 @@ public abstract class Mission {
 //        return false;
 //    }
 
-    protected boolean handleWeDontKnowWhereTheEnemyIs(AUnit unit) {
+    protected boolean handleWeDontKnowWhereTheEnemyBaseIs(AUnit unit) {
         if (unit.isMoving() && unit.enemiesNear().empty()) {
             return false;
+        }
+
+        AUnit nearestEnemy = unit.enemiesNear().canBeAttackedBy(unit, 20).nearestTo(unit);
+        if (nearestEnemy != null) {
+            temporaryTarget = nearestEnemy.position();
+            unit.setTooltip("FindEnemy&Attack");
+            if (unit.attackUnit(nearestEnemy)) {
+                return true;
+            }
         }
 
         // Go to random UNEXPLORED

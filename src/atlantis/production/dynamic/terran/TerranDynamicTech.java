@@ -31,11 +31,15 @@ public class TerranDynamicTech extends ADynamicTech {
                 Count.tanks() >= 1 || Decisions.wantsToBeAbleToProduceTanksSoon() || A.seconds() >= 600
             )
         ) {
-            AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).first();
-            if (machineShop != null) {
+            if (Have.factory() && Count.inQueueOrUnfinished(TechType.Tank_Siege_Mode, 6) == 0) {
                 AddToQueue.tech(TechType.Tank_Siege_Mode);
                 return;
             }
+//            AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).first();
+//            if (machineShop != null) {
+//                AddToQueue.tech(TechType.Tank_Siege_Mode);
+//                return;
+//            }
         }
 
         if (Count.ghosts() >= 1) {

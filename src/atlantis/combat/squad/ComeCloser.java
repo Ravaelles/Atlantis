@@ -75,9 +75,15 @@ public class ComeCloser extends ASquadCohesionManager {
         if (Count.tanks() >= 2) {
             AUnit tank = Select.ourTanks().nearestTo(unit);
             if (tank != null && tank.distToMoreThan(unit, 4.9)) {
-                unit.move(unit.translateTilesTowards(2, tank), Actions.MOVE_FORMATION, "HugTanks", true);
-                unit.addLog("HugTanks");
-                return true;
+                if (unit.move(
+                    unit.translateTilesTowards(2, tank),
+                    Actions.MOVE_FORMATION,
+                    "HugTanks",
+                    true
+                )) {
+                    unit.addLog("HugTanks");
+                    return true;
+                }
             }
         }
 
@@ -101,8 +107,10 @@ public class ComeCloser extends ASquadCohesionManager {
 
         if (unit.groundDist(focusPoint(unit)) + 3 <= unit.squad().groundDistToFocusPoint()) {
             if (unit.friendsNear().inRadius(4, unit).atMost(5)) {
-                unit.addLog("TooAhead");
-                return true;
+                if (unit.isMoving() && unit.cooldown() == 0) {
+                    unit.addLog("TooAhead");
+                    return unit.holdPosition("TooAhead", false);
+                }
             }
         }
 
@@ -199,18 +207,15 @@ public class ComeCloser extends ASquadCohesionManager {
                 return false;
             }
 
-//            if (!unit.recentlyMoved()) {
-            unit.move(
+            if (unit.move(
                 unit.translateTilesTowards(center, 2).makeWalkable(5),
                 Actions.MOVE_FOCUS,
                 "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
                 false
-            );
-            unit.addLog("TooExposed");
-            return true;
-//            }
-
-//            return false;
+            )) {
+                unit.addLog("TooExposed");
+                return true;
+            }
         }
 
         return false;

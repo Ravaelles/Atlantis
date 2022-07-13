@@ -29,7 +29,7 @@ public interface AUnitOrders {
 //        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
 //            System.out.println(
 //                    "@ @" + A.now() + " ATTACK  / " +
-//                            "" + unit().idWithHash() + " // " +
+//                            "" + unit().typeWithHash() + " // " +
 //                            "cooldown " + unit().cooldownRemaining()+ " // " +
 //                            "attackFrame " + unit()._lastAttackFrame + " // " +
 //                            "StartingAttack " + unit()._lastStartedAttack + " // " +
@@ -38,23 +38,23 @@ public interface AUnitOrders {
 //        }
 
         if (target == null) {
-            System.err.println("Null attack unit target for " + this.unit().idWithHash());
+            System.err.println("Null attack unit target for " + this.unit().typeWithHash());
             return false;
         }
 
         if (target.u() == null) {
-            System.err.println("Null attack u(nit) for " + this.unit().idWithHash());
+            System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
 //            throw new RuntimeException("Null attack u(nit)");
             return false;
         }
 
         if (!target.hasPosition()) {
-            System.err.println("Target (" + target + ") has no position " + this.unit().idWithHash());
+            System.err.println("Target (" + target + ") has no position " + this.unit().typeWithHash());
             return false;
         }
 
         if (!target.isAlive()) {
-            System.err.println("Dead target (" + target + ") for " + this.unit().idWithHash());
+            System.err.println("Dead target (" + target + ") for " + this.unit().typeWithHash());
             return false;
         }
 
@@ -68,7 +68,7 @@ public interface AUnitOrders {
         }
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(unit().idWithHash() + " @ " + A.now() + " ATTACK " + target);
+            System.out.println(unit().typeWithHash() + " @ " + A.now() + " ATTACK " + target);
         }
 
 //        if (unit().outsideSquadRadius()) {
@@ -149,7 +149,7 @@ public interface AUnitOrders {
             System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / " +  tooltip);
         }
         if (target == null) {
-            System.err.println("Null move position for " + this.unit().idWithHash());
+            System.err.println("Null move position for " + this.unit().typeWithHash());
             A.printStackTrace("Null move position");
             return false;
         }
@@ -231,7 +231,7 @@ public interface AUnitOrders {
      */
     default boolean holdPosition(String tooltip, boolean strategicLevel) {
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(unit().idWithHash() + " HOLD @" + A.now() + " / " + tooltip);
+            System.out.println(unit().typeWithHash() + " HOLD @" + A.now() + " / " + tooltip);
         }
 
         unit().setTooltip(tooltip, strategicLevel)
@@ -248,7 +248,7 @@ public interface AUnitOrders {
      */
     default boolean stop(String tooltip, boolean strategicLevel) {
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(unit().idWithHash() + "STOP @" + A.now() + " / " + tooltip);
+            System.out.println(unit().typeWithHash() + "STOP @" + A.now() + " / " + tooltip);
         }
 
         unit().setTooltip(tooltip, strategicLevel)
@@ -281,7 +281,7 @@ public interface AUnitOrders {
      */
     default boolean gather(AUnit target) {
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("GATHER @" + A.now() + " / worker:" + unit().idWithHash() + " / " + target);
+            System.out.println("GATHER @" + A.now() + " / worker:" + unit().typeWithHash() + " / " + target);
         }
         
         if (target.type().isMineralField()) {
@@ -305,7 +305,7 @@ public interface AUnitOrders {
     // Bugged, doesn't work
 //    default boolean returnCargo() {
 //        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-//            System.out.println("RETURN_CARGO @" + A.now() + " / " + unit().idWithHash());
+//            System.out.println("RETURN_CARGO @" + A.now() + " / " + unit().typeWithHash());
 //        }
 //
 //        AUnit base = Select.ourBases().nearestTo(unit());
@@ -349,7 +349,7 @@ public interface AUnitOrders {
         u().repair(target.u());
 
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println(unit().idWithHash() + " REPAIR @" + A.now() + " / " + target + " (" + target.hp() + ")");
+            System.out.println(unit().typeWithHash() + " REPAIR @" + A.now() + " / " + target + " (" + target.hp() + ")");
         }
 
         return true;
@@ -624,7 +624,7 @@ public interface AUnitOrders {
      */
 //    default boolean useTech(TechType tech) {
 //        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-//            System.out.println("TECH_1 @" + A.now() + " / " + unit().idWithHash());
+//            System.out.println("TECH_1 @" + A.now() + " / " + unit().typeWithHash());
 //        }
 //
 //        unit().setAction(UnitActions.USING_TECH, tech, null);
@@ -634,7 +634,7 @@ public interface AUnitOrders {
 
     default boolean useTech(TechType tech, APosition target) {
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("TECH_2 @" + A.now() + " / " + unit().idWithHash());
+            System.out.println("TECH_2 @" + A.now() + " / " + unit().typeWithHash());
         }
 
         unit().setAction(Actions.USING_TECH, tech, target);
@@ -643,7 +643,7 @@ public interface AUnitOrders {
 
     default boolean useTech(TechType tech) {
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("TECH_1 @" + A.now() + " / " + unit().idWithHash());
+            System.out.println("TECH_1 @" + A.now() + " / " + unit().typeWithHash());
         }
 
         unit().setAction(Actions.USING_TECH, tech, unit());
@@ -652,7 +652,7 @@ public interface AUnitOrders {
 
     default boolean useTech(TechType tech, AUnit target) {
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("TECH_3 @" + A.now() + " / " + unit().idWithHash());
+            System.out.println("TECH_3 @" + A.now() + " / " + unit().typeWithHash());
         }
 
         unit().setAction(Actions.USING_TECH, tech, target);
@@ -661,7 +661,7 @@ public interface AUnitOrders {
 
     default boolean doRightClickAndYesIKnowIShouldAvoidUsingIt(AUnit target) {
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("RIGHT_CLICK @" + A.now() + " / " + unit().idWithHash() + " // " + target);
+            System.out.println("RIGHT_CLICK @" + A.now() + " / " + unit().typeWithHash() + " // " + target);
         }
 
         unit().setAction(Actions.RIGHT_CLICK);

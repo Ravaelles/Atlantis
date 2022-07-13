@@ -14,8 +14,9 @@ public class ProcessAttackUnit {
         }
 
         if (target.isBase() && unit.distToMoreThan(target, 2.8)) {
-            unit.move(target, Actions.MOVE_ATTACK, "BaseAttack", false);
-            return true;
+            if (unit.move(target, Actions.MOVE_ATTACK, "BaseAttack", false)) {
+                return true;
+            }
         }
 
 //        unit.setTooltip("@" + target.name());
@@ -39,8 +40,7 @@ public class ProcessAttackUnit {
 //        }
 
         // Melee
-        confirmAttack(unit, target);
-        return true;
+        return confirmAttack(unit, target);
     }
 
     private static double distBonus(AUnit unit, AUnit target) {
@@ -51,8 +51,8 @@ public class ProcessAttackUnit {
         return -0.5;
     }
 
-    private static void confirmAttack(AUnit unit, AUnit target) {
-        unit.attackUnit(target);
+    private static boolean confirmAttack(AUnit unit, AUnit target) {
+        return unit.attackUnit(target);
     }
 
     // =========================================================

@@ -54,7 +54,7 @@ public class MissionAttack extends Mission {
 
         // Invalid focus point, no enemy can be found, roam around map
         if (focusPoint == null && (!unit.isAttackingOrMovingToAttack() || unit.isIdle())) {
-            return handleWeDontKnowWhereTheEnemyIs(unit);
+            return handleWeDontKnowWhereTheEnemyBaseIs(unit);
         }
 
         if (ASquadCohesionManager.handle(unit)) {
@@ -64,11 +64,13 @@ public class MissionAttack extends Mission {
         // Focus point is well known
         if (focusPoint != null && unit.lastPositioningActionMoreThanAgo(40)) {
             unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
-            return AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint);
+            if (AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint)) {
+                return true;
+            }
         }
 
         unit.setTooltipTactical("#MA-NoFocus");
-        return handleWeDontKnowWhereTheEnemyIs(unit);
+        return handleWeDontKnowWhereTheEnemyBaseIs(unit);
     }
 
     @Override
