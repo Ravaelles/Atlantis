@@ -215,8 +215,7 @@ public class ABuilderManager {
                     return position.translateByTiles(2, 1);
                 }
 
-                System.err.println("Gas building FIX was not applied");
-                System.err.println("This probably halts gas building");
+                System.err.println("Gas building FIX was not applied. This probably halts gas building");
             } 
             return position;
         } else {

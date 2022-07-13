@@ -42,6 +42,12 @@ public interface AUnitOrders {
             return false;
         }
 
+        if (target.u() == null) {
+            System.err.println("Null attack u(nit) for " + this.unit().idWithHash());
+//            throw new RuntimeException("Null attack u(nit)");
+            return false;
+        }
+
         if (!target.hasPosition()) {
             System.err.println("Target (" + target + ") has no position " + this.unit().idWithHash());
             return false;

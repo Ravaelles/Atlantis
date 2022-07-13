@@ -90,15 +90,26 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Try going to any known enemy unit
         HasPosition alphaCenter = Alpha.alphaCenter();
-        AUnit anyEnemyUnit = EnemyUnits.discovered().groundUnits().effVisible().nearestTo(
+        AUnit anyEnemyLandUnit = EnemyUnits.discovered().groundUnits().effVisible().nearestTo(
             alphaCenter != null ? alphaCenter : Select.our().first()
         );
-//        AUnit anyEnemyUnit = EnemyUnits.visibleAndFogged().combatUnits().groundUnits().first();
-        if (anyEnemyUnit != null) {
+//        AUnit anyEnemyLandUnit = EnemyUnits.visibleAndFogged().combatUnits().groundUnits().first();
+        if (anyEnemyLandUnit != null) {
             return new AFocusPoint(
-                    anyEnemyUnit,
+                    anyEnemyLandUnit,
                     Select.main(),
-                "AnyEnemyUnit"
+                "AnyEnemyLandUnit"
+            );
+        }
+
+        AUnit anyEnemyAirUnit = EnemyUnits.discovered().air().effVisible().nearestTo(
+            alphaCenter != null ? alphaCenter : Select.our().first()
+        );
+        if (anyEnemyAirUnit != null) {
+            return new AFocusPoint(
+                    anyEnemyAirUnit,
+                    Select.main(),
+                "AnyEnemyAirUnit"
             );
         }
 

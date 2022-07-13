@@ -137,12 +137,19 @@ public class ConstructionRequests {
             return false;
         }
 
-        if (countExistingAndNotFinished(requiredBuilding) == 0) {
+//        if (countExistingAndNotFinished(requiredBuilding) == 0) {
+        if (Count.existing(requiredBuilding) == 0 && Count.inProductionOrInQueue(requiredBuilding) == 0) {
             ConstructionRequests.requestConstructionOf(requiredBuilding);
             return true;
         }
 
-        System.err.println("Uhmmm... shouldn't reach here.");
+        System.err.println(
+            "Uhmmm... shouldn't reach here. "
+                + "EXISTING_BUILDING=" + Count.existing(building)
+                + ", IN_PROD_BUILDING" + Count.inProductionOrInQueue(building)
+                + "EXISTING_REQ=" + Count.existing(requiredBuilding)
+                + ", IN_PROD_REQ" + Count.inProductionOrInQueue(requiredBuilding)
+        );
         System.err.println(building + " // " + requiredBuilding);
         return false;
     }
