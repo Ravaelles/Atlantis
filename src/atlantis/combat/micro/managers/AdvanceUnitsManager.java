@@ -124,6 +124,10 @@ public class AdvanceUnitsManager {
                 return true;
             }
 
+            if (unit.isMissionAttack() && unit.friendsInRadius(2).count() >= 3) {
+                return false;
+            }
+
             return unit.move(focusPoint, Actions.MOVE_ENGAGE, "#Adv:Back(" + (int) distToFocusPoint + ")", true);
         }
 

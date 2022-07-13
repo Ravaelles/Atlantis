@@ -14,6 +14,15 @@ public class TerranTankWhenSieged extends TerranTank {
 //            return true;
 //        }
 
+        // Get the hell outta here
+        if (unit.lastUnderAttackLessThanAgo(30)) {
+            if (unit.enemiesNear().groundUnits().inRadius(3, unit).count() >= (unit.hpPercent() >= 50 ? 2 : 1)) {
+                unit.setTooltip("Evacuate");
+                unit.unsiege();
+                return true;
+            }
+        }
+
         if (
             !Enemy.terran()
                 && unit.isMissionAttack()
@@ -34,7 +43,7 @@ public class TerranTankWhenSieged extends TerranTank {
         }
 
         if (
-            unit.enemiesNear().isEmpty()
+            unit.enemiesNear().combatUnits().empty()
                 && unit.lastAttackFrameMoreThanAgo(30 * 3 + (unit.id() % 3))
                 && unit.distToSquadCenter() >= 8
         ) {
@@ -78,7 +87,7 @@ public class TerranTankWhenSieged extends TerranTank {
             return true;
         }
 
-        if (unit.lastActionLessThanAgo(30 * (7 + (unit.idIsOdd() ? 3 : 0)), Actions.SIEGE)) {
+        if (unit.lastActionLessThanAgo(30 * (5 + (unit.idIsOdd() ? 3 : 0)), Actions.SIEGE)) {
             return true;
         }
 

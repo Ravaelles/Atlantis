@@ -207,6 +207,10 @@ public class AProtectorManager {
     // =========================================================
 
     public static boolean updateProtector(AUnit protector) {
+        if (protector.isRepairing()) {
+            return true;
+        }
+
         AUnit target = ARepairAssignments.getUnitToProtectFor(protector);
 //        System.out.println("protecting: " + target + "; "  + protector + " (" + protector.action() + ")");
 

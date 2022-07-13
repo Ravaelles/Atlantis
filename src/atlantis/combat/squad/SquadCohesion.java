@@ -9,7 +9,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 
-public class CohesionAssurance {
+public class SquadCohesion {
 
     /**
      * We want to make sure that at least N percent of units are inside X radius of squad center.

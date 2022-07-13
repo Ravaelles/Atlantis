@@ -6,7 +6,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.CohesionAssurance;
+import atlantis.combat.squad.SquadCohesion;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -2421,7 +2421,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (this.squad == null) {
             return 988;
         }
-        return CohesionAssurance.squadMaxRadius(this.squad);
+        return SquadCohesion.squadMaxRadius(this.squad);
     }
 
     public boolean outsideSquadRadius() {

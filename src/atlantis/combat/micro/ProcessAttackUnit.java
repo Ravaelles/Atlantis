@@ -22,21 +22,21 @@ public class ProcessAttackUnit {
 //        unit.addLog("Attacking" + target.name());
         unit.addLog("Attacking" + target);
 
-        // Ranged
-        if (unit.isRanged() && unit.lastActionMoreThanAgo(10, Actions.HOLD_POSITION)) {
-            int range = unit.weaponRangeAgainst(target);
-            double dist = unit.distTo(target);
-            double distBonus = distBonus(unit, target);
-            if (
-                dist + distBonus < range
-                    && unit.cooldownRemaining() <= 8
-                    && !unit.isHoldingPosition()
-            ) {
-                unit.addLog("HoldToShoot");
-                unit.holdPosition("HoldToShoot", false);
-                return true;
-            }
-        }
+        // Ranged HOLD TO SHOOT
+//        if (unit.isRanged() && unit.lastActionMoreThanAgo(10, Actions.HOLD_POSITION)) {
+//            int range = unit.weaponRangeAgainst(target);
+//            double dist = unit.distTo(target);
+//            double distBonus = distBonus(unit, target);
+//            if (
+//                dist + distBonus < range
+//                    && unit.cooldownRemaining() <= 8
+//                    && !unit.isHoldingPosition()
+//            ) {
+//                unit.addLog("HoldToShoot");
+//                unit.holdPosition("HoldToShoot", false);
+//                return true;
+//            }
+//        }
 
         // Melee
         confirmAttack(unit, target);

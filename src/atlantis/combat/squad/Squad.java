@@ -290,7 +290,7 @@ public abstract class Squad extends Units {
                 }
 
                 int withinSquadRadius = selection()
-                    .inRadius(CohesionAssurance.squadMaxRadius(this), center)
+                    .inRadius(SquadCohesion.squadMaxRadius(this), center)
                     .count();
 
                 return (100 * withinSquadRadius / size());

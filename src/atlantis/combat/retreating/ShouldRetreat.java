@@ -149,6 +149,10 @@ public class ShouldRetreat {
     }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
+        if (A.supplyUsed() >= 182) {
+            return true;
+        }
+
         if (unit.isMissionSparta()) {
 //            if (unit.mission().allowsToRetreat(unit)) {
 //                System.err.println("Sparta allowed " + unit + " to retreat (HP=" + unit.hp() + ")");
@@ -202,6 +206,10 @@ public class ShouldRetreat {
         }
 
         if (unit.isStimmed()) {
+            return true;
+        }
+
+        if (unit.friendsInRadius(4).count() >= 8) {
             return true;
         }
 

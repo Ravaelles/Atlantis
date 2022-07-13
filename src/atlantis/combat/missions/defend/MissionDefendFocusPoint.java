@@ -112,7 +112,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     AUnit bunker = Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
 //                    if (GamePhase.isEarlyGame() && mainBase != null) {
                     if (bunker != null) {
-                        return new AFocusPoint(bunker.translateTilesTowards(4, mainBase), "Bunker");
+                        return new AFocusPoint(bunker.translateTilesTowards(-2, mainBase), "Bunker");
                     }
 //                    }
                 }

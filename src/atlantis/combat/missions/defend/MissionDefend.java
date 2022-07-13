@@ -67,6 +67,13 @@ public class MissionDefend extends Mission {
         }
 
         if (unit.isRanged()) {
+            if (
+                unit.hp() >= 20 && unit.isInWeaponRangeByGame(enemy)
+                    && (!enemy.isRanged() || enemy.distToMoreThan(enemy, 2.8))
+            ) {
+                return true;
+            }
+
             if (unit.distTo(enemy) <= 6) {
                 return true;
             }

@@ -79,7 +79,6 @@ public class MissionContain extends Mission {
             return true;
         }
 
-
         AFocusPoint focusPoint = focusPoint();
 
         if (enemy.hasWeaponRangeToAttack(unit, unit.isMelee() ? 0.3 : 2.1)) {

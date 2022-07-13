@@ -43,7 +43,7 @@ public class AddToQueue {
     }
 
     public static boolean tech(TechType tech) {
-        if (Count.inQueueOrUnfinished(tech, 3) > 0) {
+        if (Count.inQueueOrUnfinished(tech, 6) > 0) {
             return false;
         }
 

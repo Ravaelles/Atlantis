@@ -16,9 +16,12 @@ public interface AUnitOrders {
     Unit u();
     AUnit unit();
 
-    boolean DEBUG = false;
-//    boolean DEBUG = true;
     int DEBUG_MIN_FRAMES = 0;
+
+    boolean DEBUG_ALL = false;
+//    boolean DEBUG_ALL = true;
+    boolean DEBUG_COMBAT = false;
+//    boolean DEBUG_COMBAT = true;
 
     // =========================================================
     
@@ -26,7 +29,7 @@ public interface AUnitOrders {
 //        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
 //            System.out.println(
 //                    "@ @" + A.now() + " ATTACK  / " +
-//                            "unit#" + unit().id() + " // " +
+//                            "" + unit().idWithHash() + " // " +
 //                            "cooldown " + unit().cooldownRemaining()+ " // " +
 //                            "attackFrame " + unit()._lastAttackFrame + " // " +
 //                            "StartingAttack " + unit()._lastStartedAttack + " // " +
@@ -35,17 +38,17 @@ public interface AUnitOrders {
 //        }
 
         if (target == null) {
-            System.err.println("Null attack unit target for unit " + this);
+            System.err.println("Null attack unit target for " + this.unit().idWithHash());
             return false;
         }
 
         if (!target.hasPosition()) {
-            System.err.println("Target (" + target + ") has no position " + this);
+            System.err.println("Target (" + target + ") has no position " + this.unit().idWithHash());
             return false;
         }
 
         if (!target.isAlive()) {
-            System.err.println("Dead target (" + target + ") for " + this);
+            System.err.println("Dead target (" + target + ") for " + this.unit().idWithHash());
             return false;
         }
 
@@ -58,8 +61,8 @@ public interface AUnitOrders {
             return true;
         }
 
-        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("@ " + A.now() + " ------> ATTACK UNIT #" + target);
+        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println(unit().idWithHash() + " @ " + A.now() + " ATTACK " + target);
         }
 
 //        if (unit().outsideSquadRadius()) {
@@ -136,11 +139,11 @@ public interface AUnitOrders {
     }
 
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
-        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("MOVE @" + A.now() + " / " + unit().nameWithId() + " // " + tooltip);
+        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / " +  tooltip);
         }
         if (target == null) {
-            System.err.println("Null move position for " + this);
+            System.err.println("Null move position for " + this.unit().idWithHash());
             A.printStackTrace("Null move position");
             return false;
         }
@@ -221,8 +224,8 @@ public interface AUnitOrders {
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
     default boolean holdPosition(String tooltip, boolean strategicLevel) {
-        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("HOLD @" + A.now() + " / unit#" + unit().id() + " // " + tooltip);
+        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println(unit().idWithHash() + " HOLD @" + A.now() + " / " + tooltip);
         }
 
         unit().setTooltip(tooltip, strategicLevel)
@@ -238,8 +241,8 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also canStop, isIdle
      */
     default boolean stop(String tooltip, boolean strategicLevel) {
-        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("STOP @" + A.now() + " / unit#" + unit().id() + " // " + tooltip);
+        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println(unit().idWithHash() + "STOP @" + A.now() + " / " + tooltip);
         }
 
         unit().setTooltip(tooltip, strategicLevel)
@@ -271,8 +274,8 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also isGatheringGas, isGatheringMinerals, canGather
      */
     default boolean gather(AUnit target) {
-        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("GATHER @" + A.now() + " / unit#" + unit().id());
+        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("GATHER @" + A.now() + " / worker:" + unit().idWithHash() + " / " + target);
         }
         
         if (target.type().isMineralField()) {
@@ -296,7 +299,7 @@ public interface AUnitOrders {
     // Bugged, doesn't work
 //    default boolean returnCargo() {
 //        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-//            System.out.println("RETURN_CARGO @" + A.now() + " / unit#" + unit().id());
+//            System.out.println("RETURN_CARGO @" + A.now() + " / " + unit().idWithHash());
 //        }
 //
 //        AUnit base = Select.ourBases().nearestTo(unit());
@@ -339,8 +342,8 @@ public interface AUnitOrders {
         unit().setAction(Actions.REPAIR);
         u().repair(target.u());
 
-        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("REPAIR @" + A.now() + " / " + this + " repair " + target + " (" + target.hp() + ")");
+        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println(unit().idWithHash() + " REPAIR @" + A.now() + " / " + target + " (" + target.hp() + ")");
         }
 
         return true;
@@ -615,7 +618,7 @@ public interface AUnitOrders {
      */
 //    default boolean useTech(TechType tech) {
 //        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-//            System.out.println("TECH_1 @" + A.now() + " / unit#" + unit().id());
+//            System.out.println("TECH_1 @" + A.now() + " / " + unit().idWithHash());
 //        }
 //
 //        unit().setAction(UnitActions.USING_TECH, tech, null);
@@ -624,8 +627,8 @@ public interface AUnitOrders {
 //    }
 
     default boolean useTech(TechType tech, APosition target) {
-        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("TECH_2 @" + A.now() + " / unit#" + unit().id());
+        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("TECH_2 @" + A.now() + " / " + unit().idWithHash());
         }
 
         unit().setAction(Actions.USING_TECH, tech, target);
@@ -633,8 +636,8 @@ public interface AUnitOrders {
     }
 
     default boolean useTech(TechType tech) {
-        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("TECH_1 @" + A.now() + " / unit#" + unit().id());
+        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("TECH_1 @" + A.now() + " / " + unit().idWithHash());
         }
 
         unit().setAction(Actions.USING_TECH, tech, unit());
@@ -642,8 +645,8 @@ public interface AUnitOrders {
     }
 
     default boolean useTech(TechType tech, AUnit target) {
-        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-            System.out.println("TECH_3 @" + A.now() + " / unit#" + unit().id());
+        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+            System.out.println("TECH_3 @" + A.now() + " / " + unit().idWithHash());
         }
 
         unit().setAction(Actions.USING_TECH, tech, target);
@@ -651,12 +654,16 @@ public interface AUnitOrders {
     }
 
     default boolean doRightClickAndYesIKnowIShouldAvoidUsingIt(AUnit target) {
-        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("RIGHT_CLICK @" + A.now() + " / unit#" + unit().id() + " // " + target);
+        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println("RIGHT_CLICK @" + A.now() + " / " + unit().idWithHash() + " // " + target);
         }
 
         unit().setAction(Actions.RIGHT_CLICK);
         return u().rightClick(target.u());
+    }
+
+    default boolean shouldPrint() {
+        return (DEBUG_ALL || (DEBUG_COMBAT && unit().isCombatUnit()));
     }
 
 }

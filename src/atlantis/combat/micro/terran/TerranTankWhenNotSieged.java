@@ -29,12 +29,16 @@ public class TerranTankWhenNotSieged extends TerranTank {
             return true;
         }
 
+        if (enemiesTooClose(unit)) {
+            return false;
+        }
+
         if (shouldSiegeBecauseSpecificEnemiesNear(unit)) {
-            return wantsToSiege(unit, "GroundEnemies");
+            return wantsToSiege(unit, "SpecificEnemies");
         }
 
         if (goodDistanceToContainFocusPoint(unit)) {
-            return wantsToSiege(unit, "GroundEnemies");
+            return wantsToSiege(unit, "ContainPoint");
         }
 
         return false;
@@ -52,6 +56,14 @@ public class TerranTankWhenNotSieged extends TerranTank {
             unit.lastActionLessThanAgo(30 * (11 + (unit.idIsOdd() ? 4 : 0)), Actions.UNSIEGE)
                 || unit.lastActionLessThanAgo(30 * (15 + (unit.idIsOdd() ? 4 : 0)), Actions.SIEGE)
         ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean enemiesTooClose(AUnit unit) {
+        if (unit.enemiesNear().combatUnits().groundUnits().inRadius(5, unit).notEmpty()) {
             return true;
         }
 
@@ -76,7 +88,7 @@ public class TerranTankWhenNotSieged extends TerranTank {
         APosition focusPoint = Missions.globalMission().focusPoint();
         if (
             focusPoint != null
-                && (unit.distTo(focusPoint) <= 9)
+                && unit.distTo(focusPoint) <= (Enemy.terran() ? 10 : (6 + unit.id() % 3))
                 && canSiegeHere(unit, true)
         ) {
             return wantsToSiege(unit, "ContainSiege");

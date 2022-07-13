@@ -31,7 +31,7 @@ public class TerranDynamicTech extends ADynamicTech {
                 Count.tanks() >= 1 || Decisions.wantsToBeAbleToProduceTanksSoon() || A.seconds() >= 600
             )
         ) {
-            AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).free().random();
+            AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).first();
             if (machineShop != null) {
                 AddToQueue.tech(TechType.Tank_Siege_Mode);
                 return;

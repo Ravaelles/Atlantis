@@ -1,6 +1,5 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.eval.OldUnusedCombatEvaluator;
 import atlantis.combat.micro.avoid.FightInsteadAvoid;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.map.position.HasPosition;
@@ -18,6 +17,10 @@ public class RetreatManager {
 
     public static boolean handleRetreat(AUnit unit) {
         if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFightCached(unit)) {
+            if (TempDontRetreat.temporarilyDontRetreat(unit)) {
+                return false;
+            }
+
             Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
             HasPosition runAwayFrom = nearEnemies.center();
             if (runAwayFrom == null) {
@@ -30,13 +33,15 @@ public class RetreatManager {
             }
 
             if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT)) {
-                unit.addLog("HandledRetreat");
+                unit.addLog("RetreatedFrom" + runAwayFrom);
                 return true;
             }
         }
 
         return false;
     }
+
+    // =========================================================
 
     public static boolean getCachedShouldRetreat(AUnit unit) {
         return cache.has("shouldRetreat:" + unit.id()) && cache.get("shouldRetreat:" + unit.id());

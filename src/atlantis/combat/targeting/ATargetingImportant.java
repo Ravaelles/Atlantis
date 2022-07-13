@@ -60,7 +60,7 @@ public class ATargetingImportant extends ATargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Zerg_Sunken_Colony
                 )
-                .canBeAttackedBy(unit, 0.5)
+                .canBeAttackedBy(unit, 0)
                 .nearestTo(unit);
         if (target != null) {
             return combatBuildingOrScvRepairingIt(target);
@@ -72,7 +72,7 @@ public class ATargetingImportant extends ATargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Zerg_Sunken_Colony
                 )
-                .inRadius(7, unit)
+                .inRadius(2.3, unit)
                 .nearestTo(unit);
         if (target != null) {
             return combatBuildingOrScvRepairingIt(target);
@@ -147,13 +147,13 @@ public class ATargetingImportant extends ATargeting {
                 .ofType(
                         AUnitType.Protoss_Photon_Cannon,
                         AUnitType.Zerg_Sunken_Colony,
-                        AUnitType.Zerg_Creep_Colony,
-//                        AUnitType.Zerg_Spore_Colony,
+//                        AUnitType.Zerg_Creep_Colony,
+                        AUnitType.Zerg_Spore_Colony,
                         AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret
                 )
                 .inRadius(16, unit)
-                .canBeAttackedBy(unit, 4)
+                .canBeAttackedBy(unit, 0)
                 .nearestTo(unit);
 
         if (target != null && ATargeting.DEBUG) System.out.println("C5 = " + target);

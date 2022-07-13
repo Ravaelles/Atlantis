@@ -274,6 +274,10 @@ public class FightInsteadAvoid {
 
     // RANGED
     protected boolean fightAsRangedUnit() {
+        if (ranged != null && ranged.isBuilding()) {
+            return false;
+        }
+
         if (unit.isRanged() && melee != null && ranged == null) {
 //            if (unit.hp() >= 40 && unit.lastAttackFrameMoreThanAgo(30 * 5)) {
             if (unit.hp() >= 40 && unit.lastAttackFrameMoreThanAgo(30 * 4) && unit.nearestEnemyDist() >= 2.9) {
@@ -299,19 +303,19 @@ public class FightInsteadAvoid {
                 return true;
             }
 
-            // Dragoon faster than Marines, can outrun them
-            if (unit.isQuickerOrSameSpeedAs(enemies) && unit.hasBiggerRangeThan(enemies)) {
-                if (unit.woundPercent() <= 40 && unit.lastUnderAttackMoreThanAgo(30 * 8)) {
-                    unit.addLog("FightQuick");
-                    return true;
-                }
-            }
-
-            // Dragoon slower than Vultures, cannot outrun them
-            else {
-                unit.addLog("FightTooSlow");
-                return true;
-            }
+//            // Dragoon faster than Marines, can outrun them
+//            if (unit.isQuickerOrSameSpeedAs(enemies) && unit.hasBiggerRangeThan(enemies)) {
+//                if (unit.woundPercent() <= 40 && unit.lastUnderAttackMoreThanAgo(30 * 8)) {
+//                    unit.addLog("FightQuick");
+//                    return true;
+//                }
+//            }
+//
+//            // Dragoon slower than Vultures, cannot outrun them
+//            else {
+//                unit.addLog("FightTooSlow");
+//                return true;
+//            }
         }
 
         if (ranged != null && !ShouldRetreat.shouldRetreat(unit)) {

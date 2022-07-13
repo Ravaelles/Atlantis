@@ -92,7 +92,7 @@ public abstract class Mission {
 //    }
 
     protected boolean handleWeDontKnowWhereTheEnemyIs(AUnit unit) {
-        if (unit.isMoving()) {
+        if (unit.isMoving() && unit.enemiesNear().empty()) {
             return false;
         }
 

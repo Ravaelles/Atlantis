@@ -28,7 +28,6 @@ public class ATargeting {
 //        if (true) return null;
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
-//        AUnit enemy = Select.enemy().canBeAttackedBy(unit, 30).nearestTo(unit);
 
 //        if (enemy != null) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
@@ -38,7 +37,17 @@ public class ATargeting {
             reasonNotToAttack = null;
         }
 
-        return enemy;
+        return closestFirst(unit);
+//        return enemy;
+    }
+
+    private static AUnit closestFirst(AUnit unit) {
+        AUnit combat = Select.enemy().combatUnits().canBeAttackedBy(unit, 30).nearestTo(unit);
+        if (combat != null) {
+            return combat;
+        }
+
+        return Select.enemy().realUnits().canBeAttackedBy(unit, 30).nearestTo(unit);
     }
 
     public static AUnit defineBestEnemyToAttackFor(AUnit unit) {

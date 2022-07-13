@@ -82,7 +82,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/T_rebasing.scm";
-//        if (true) return "ums/rav/T_v_Sunkens.scx";
+        if (true) return "ums/rav/T_v_Sunkens.scx";
 //        if (true) return "ums/rav/T_v_Sunkens2.scx";
 //        if (true) return "ums/rav/T_v_Sunkens3.scx";
 //        if (true) return "ums/rav/Tanks_v_DT.scx";
