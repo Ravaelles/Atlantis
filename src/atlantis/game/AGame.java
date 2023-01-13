@@ -234,7 +234,6 @@ public class AGame {
      * Returns true if enemy plays as Protoss.
      */
     public static boolean isEnemyProtoss() {
-        System.out.println("Real isEnemyProtoss");
         return AGame.enemy().getRace().equals(Race.Protoss);
     }
 

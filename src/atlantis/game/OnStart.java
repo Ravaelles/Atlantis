@@ -6,10 +6,7 @@ import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.debug.tweaker.ParamTweakerFactory;
-import atlantis.information.strategy.StrategyChooser;
-import atlantis.information.strategy.ProtossStrategies;
-import atlantis.information.strategy.TerranStrategies;
-import atlantis.information.strategy.ZergStrategies;
+import atlantis.information.strategy.*;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
 import atlantis.production.orders.build.CurrentBuildOrder;
@@ -106,6 +103,17 @@ public class OnStart {
             }
         }
         catch (Exception e) {
+            System.err.println();
+            System.err.println("#######################################################");
+            System.err.println("Make sure that Starcraft/bwapi-data contains build_orders directory,");
+            System.err.println("copy it from Atlantis/build_orders");
+            System.err.println("#######################################################");
+
+            if (CurrentBuildOrder.get() == null) {
+                System.err.println();
+                throw new RuntimeException("Current BUILD ORDER is NULL");
+            }
+
             System.err.println(
                 "Does file exist? "
                     + (A.fileExists(CurrentBuildOrder.get().getName()) ? "YES - " : "NO, IT DOESN'T! ")

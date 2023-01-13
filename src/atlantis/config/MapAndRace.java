@@ -36,7 +36,7 @@ public class MapAndRace {
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Zerg ================================================
@@ -67,7 +67,10 @@ public class MapAndRace {
 
         // === Terran ==============================================
 
-//        if (true) return "ums/rav/4M_v_2Zealots.scm";
+//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
+//        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
+        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
+//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/Ghosts_v_P.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
@@ -77,10 +80,6 @@ public class MapAndRace {
 //        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
 //        if (true) return "ums/rav/M&M_v_T.scx"; // Terran bio engaging with units that keep on adding
 //        if (true) return "ums/rav/M_v_Zealots.scx";
-//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
-//        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
-//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/T_rebasing.scm";
 //        if (true) return "ums/rav/T_v_Sunkens.scx";
 //        if (true) return "ums/rav/T_v_Sunkens2.scx";
@@ -96,9 +95,9 @@ public class MapAndRace {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
-        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
+//        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran

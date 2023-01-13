@@ -21,19 +21,21 @@ public class ABuildOrderLoader {
     
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
 //        String filePath = BUILD_ORDERS_PATH + buildOrder.getBuildOrderRelativePath();
-        String filePath = "../" + BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.name() + ".txt";
+        String filePath = "./" + BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.name() + ".txt";
 //        System.out.println("\r\nUse build order from file: `" + strategy.name() + ".txt`");
 
         File f = new File(filePath);
         if (!f.exists()) {
-            String message = "### Build order file does not exist:\r\n"
+            String message = "\n### Build order file does not exist:\r\n"
                 + filePath
                 + "\r\n### Strategy: " + strategy
                 + "\r\n### Quit ###";
 
             System.err.println("Current strategy: " + strategy);
 
-            if (A.seconds() < 1) {
+            if (A.seconds() <= 1) {
+                System.err.println(message);
+
                 throw new RuntimeException(message);
             } else {
                 System.err.println(message);
