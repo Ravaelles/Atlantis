@@ -7,7 +7,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.FakeFoggedUnit;
+import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import org.junit.Test;
 import org.mockito.MockedStatic;
@@ -16,7 +16,6 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 
 public class AAvoidUnitsTest extends AbstractTestWithUnits {
-//public class AAvoidUnitsTest extends AbstractTestFakingGame {
 
     public MockedStatic<AGame> aGame;
     public MockedStatic<EnemyInfo> enemyInformation;
@@ -174,21 +173,29 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
             aGame.when(AGame::now).thenReturn(framesNow);
 
             FakeFoggedUnit enemy2, enemy3, enemy4, enemy5, enemy6;
+            FakeFoggedUnit skippedTank1, skippedTank2;
 
             FakeFoggedUnit[] fogged = new FakeFoggedUnit[] {
-                    enemy2 = fogged(AUnitType.Protoss_Photon_Cannon, inRange),
+                    enemy2 = fogged(AUnitType.Protoss_Photon_Cannon, inRange + 1),
                     fogged(AUnitType.Protoss_Photon_Cannon, outsideRange),
                     enemy3 = fogged(AUnitType.Zerg_Sunken_Colony, inRange),
                     fogged(AUnitType.Zerg_Sunken_Colony, outsideRange),
                     fogged(AUnitType.Protoss_Zealot, inRange),
-                    fogged(AUnitType.Zerg_Mutalisk, inRange),
-                    enemy4 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, inRange),
-                    fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, outsideRange),
+                    fogged(AUnitType.Zerg_Mutalisk, outsideRange),
+                    enemy4 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, inRange + 1),
+                    skippedTank1 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, outsideRange),
                     enemy5 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, inRange),
-                    fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, outsideRange),
+                    skippedTank2 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, outsideRange),
                     enemy6 = fogged(AUnitType.Zerg_Lurker, inRange),
                     fogged(AUnitType.Zerg_Lurker, outsideRange)
             };
+
+//            System.out.println("our = " + our);
+//            System.out.println("skippedTank1 = " + skippedTank1);
+//            System.out.println("skippedTank2 = " + skippedTank2);
+
+            mockOtherStaticClasses();
+            beforeTestLogic();
 
             for (FakeFoggedUnit unit : fogged) {
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
@@ -203,8 +210,11 @@ public class AAvoidUnitsTest extends AbstractTestWithUnits {
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
 
+//            Select.enemy().print("Enemy units");
+
             assertContainsAll(
                     new AUnit[] { enemy1, enemy2, enemy3, enemy4, enemy5, enemy6 },
+//                    new AUnit[] { enemy4 },
                     AvoidEnemies.unitsToAvoid(our).array()
             );
         }

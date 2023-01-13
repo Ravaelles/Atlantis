@@ -2,6 +2,9 @@ package atlantis.information.strategy;
 
 import atlantis.production.orders.production.ProductionQueue;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 public class OurStrategy {
 
     private static AStrategy ourStrategy = null;
@@ -32,6 +35,8 @@ public class OurStrategy {
      * Use this strategy and build order.
      */
     public static void setTo(AStrategy strategy) {
+        assertNotNull(strategy);
+
         ourStrategy = strategy;
 //        System.out.println("### Use strategy `" + strategy + "` ###");
 

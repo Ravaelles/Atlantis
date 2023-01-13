@@ -1032,7 +1032,7 @@ public class AUnitType implements Comparable<Object> {
             "weaponRangeAgainst:" + anotherUnit.type().name(),
             -1,
             () -> {
-                if (isCannon()) {
+                if (isCannon() || isSunken() || isSporeColony()) {
                     return 7;
                 }
                 if (isBunker()) {

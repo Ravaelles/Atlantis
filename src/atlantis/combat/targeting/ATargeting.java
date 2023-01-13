@@ -29,15 +29,13 @@ public class ATargeting {
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
 
-//        if (enemy != null) {
+        if (enemy != null) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
-//        }
-
-        if (enemy == null) {
-            reasonNotToAttack = null;
+            return enemy;
         }
 
         // Used when something went wrong there ^
+        reasonNotToAttack = null;
         return closestUnitFallback(unit, maxDistFromEnemy);
     }
 

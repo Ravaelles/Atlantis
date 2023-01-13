@@ -42,7 +42,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
     private static double bonusForGhost(AUnit defender, AUnit attacker) {
         if (attacker.isCombatBuilding()) {
-            return 4;
+            return 9;
         }
 
         if (defender.isWounded()) {
@@ -118,7 +118,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             criticalDist = MIN_DIST_TO_COMBAT_BUILDING;
         }
 
-//        System.out.println("criticalDist = " + criticalDist + " // against " + attacker);
+//        System.err.println("criticalDist = " + criticalDist + " // against " + attacker);
 
         return criticalDist;
     }

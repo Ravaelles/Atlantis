@@ -2,7 +2,7 @@ package atlantis.information.enemy;
 
 import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
-import atlantis.units.AbstractFoggedUnit;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
 
 public class EnemyUnitsUpdater extends EnemyUnits {

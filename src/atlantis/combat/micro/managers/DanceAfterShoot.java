@@ -16,7 +16,7 @@ public class DanceAfterShoot {
 
         AUnit target = unit.target();
         double dist = target.distTo(unit);
-        int weaponRange = unit.weaponRangeAgainst(target);
+        int weaponRange = unit.enemyWeaponRange(target);
 
         String danceAway = "DanceAway-" + unit.cooldownRemaining();
         String danceTo = "DanceTo";
@@ -62,7 +62,7 @@ public class DanceAfterShoot {
     // =========================================================
 
     private static boolean shouldDanceTo(AUnit unit, AUnit target, double dist) {
-        return dist >= (unit.weaponRangeAgainst(target))
+        return dist >= (unit.enemyWeaponRange(target))
             || (!target.isBuilding() && dist >= 1.6)
             || target.hasNoWeaponAtAll();
     }

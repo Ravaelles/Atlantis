@@ -18,7 +18,7 @@ import atlantis.map.position.Positions;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.AbstractFoggedUnit;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;

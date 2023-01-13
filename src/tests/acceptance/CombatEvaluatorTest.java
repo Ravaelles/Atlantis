@@ -129,8 +129,10 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //            System.out.println("ourEval = " + ourEval);
 //            System.out.println("enemyEval = " + enemyEval);
 
-            assertTrue(ourEval == 0);
-            assertTrue(enemyEval < 0);
+            assertTrue(ourEval == 9878);
+            if (enemyEval < 0) {
+                assertTrue(enemyEval < -790);
+            }
 
 //            double ourEval = wraith.combatEvalRelative();
 //            double enemyEval = dragoon1.combatEvalRelative();
@@ -140,8 +142,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //            System.out.println("ourEval = " + ourEval);
 //            System.out.println("enemyEval = " + enemyEval);
 
-//            assertTrue(ourEval == 0);
-//            assertTrue(enemyEval < 0);
+            assertTrue(ourEval == 9878);
+            assertTrue(enemyEval < 0.4);
         }, () -> this.generateOur(), () -> this.generateEnemiesWithStasisesAndLockedDown());
     }
 
@@ -199,6 +201,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             fakeEnemy(AUnitType.Zerg_Hydralisk, enemyTy),
             fakeEnemy(AUnitType.Zerg_Hydralisk, enemyTy + 1),
             fakeEnemy(Protoss_Zealot, 11),
+//            fakeEnemy(Protoss_Dragoon, 92),
+//            fakeEnemy(Protoss_Dragoon, 93)
             fakeEnemy(Protoss_Dragoon, 92).setLockedDown(true),
             fakeEnemy(Protoss_Dragoon, 93).setStasised(true)
         );

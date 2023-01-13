@@ -2,6 +2,7 @@ package atlantis.information.enemy;
 
 import atlantis.map.position.APosition;
 import atlantis.units.*;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;

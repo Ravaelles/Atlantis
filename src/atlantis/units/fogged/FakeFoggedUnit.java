@@ -1,6 +1,7 @@
-package atlantis.units;
+package atlantis.units.fogged;
 
 import atlantis.map.position.APosition;
+import atlantis.units.AUnit;
 import tests.fakes.FakePlayer;
 import tests.unit.FakeUnit;
 

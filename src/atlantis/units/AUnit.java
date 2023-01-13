@@ -25,6 +25,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -474,10 +475,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     /**
-     * Returns max shoot range (in build tiles) of this unit against given <b>opponentUnit</b>.
+     * Returns max range of enemyUnit's weapon against this unit.
      */
-    public int weaponRangeAgainst(AUnit opponentUnit) {
-        return opponentUnit.type().weaponRangeAgainst(this);
+    public int enemyWeaponRange(AUnit enemyUnit) {
+        return enemyUnit.type().weaponRangeAgainst(this);
     }
 
     /**
@@ -597,10 +598,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // Auxiliary
 
     public double distTo(AUnit otherUnit) {
+//        System.err.println("AUnit::distTo (AUnit)");
+//        System.err.println("This = " + this);
+//        System.err.println("otherUnit = " + otherUnit);
+
         return PositionUtil.distanceTo(this, otherUnit);
     }
 
     public double distTo(Object o) {
+//        System.err.println("AUnit::distTo (Object)");
+
         return PositionUtil.distanceTo(position(), o);
     }
 
@@ -690,7 +697,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         // Shooting RANGE
         if (checkShootingRange && !hasWeaponRangeToAttack(target, extraMargin)) {
-//            System.out.println("No range for " + target + " / " + A.dist(this, target));
+//            System.out.println(this.type() + " has no range for " + target + " / " + A.dist(this, target));
             return false;
         }
 
@@ -740,7 +747,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        double dist = distTo(targetUnit);
+        double dist = this.distTo(targetUnit);
+//        System.out.println("ThisUnit = " + this);
+//        System.out.println(
+//            this.typeWithId() + " -> " + targetUnit.typeWithId()
+//                + "     Min / Dist / Max :  "
+//                + (weaponAgainstThisUnit.minRange() / 32)
+//                + " < " + dist
+//                + " < " + (weaponAgainstThisUnit.maxRange() / 32 + extraMargin)
+//        );
 //        System.out.println("min = " + weaponAgainstThisUnit.minRange() / 32);
 //        System.out.println("max = " + weaponAgainstThisUnit.maxRange() / 32);
         return (weaponAgainstThisUnit.minRange() / 32) <= dist
@@ -961,9 +976,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to us.
      */
     public boolean isOur() {
-//        System.out.println("this = " + this);
-//        System.out.println("u = " + u);
-//        System.out.println("player() = " + player());
         if (u == null || player() == null) {
             return false;
         }
@@ -995,6 +1007,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public String typeWithHash() {
         return "#" + type();
+    }
+
+    public String typeWithId() {
+        return type() + "#" + id();
     }
 
     // =========================================================
@@ -1954,7 +1970,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         // New JFAP solution
         return JfapCombatEvaluator.eval(this, false);
 
-        // Old manual implementation
+        // Old Heuristic implementation
 //        return ACombatEvaluator.absoluteEvaluation(this);
     }
 
@@ -2103,7 +2119,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 }
                 else {
                     System.err.println("This is weird, should not be here");
-                    System.err.println("This = " + this);
+                    System.err.println("ThisContext = " + this);
                     System.err.println("alive = " + unit().isAlive());
                     A.printStackTrace("This is weird, should not be here");
                     return Select.from(new Units());

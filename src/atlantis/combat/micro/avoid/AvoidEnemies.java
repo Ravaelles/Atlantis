@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
@@ -94,6 +95,7 @@ public abstract class AvoidEnemies {
                 Units enemies = new Units();
 //                System.out.println("enemyUnitsToPotentiallyAvoid(unit) = " + enemyUnitsToPotentiallyAvoid(unit).size());
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
+//                    System.err.println(enemy);
 //                    APainter.paintLine(enemy, unit, Color.Yellow);
                     enemies.addUnitWithValue(enemy, SafetyMargin.calculate(unit, enemy));
                 }
@@ -106,7 +108,8 @@ public abstract class AvoidEnemies {
                 }
 
 //                for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
-//                    System.out.println(enemy + " which is " + A.dist(enemy, unit) + " away from " + unit);
+////                    //System.out.println(enemy + " which is " + A.dist(enemy, unit) + " away");
+//                    System.out.println(enemy + " has value: " + enemies.valueFor(enemy));
 //                }
 
                 if (onlyDangerouslyClose) {

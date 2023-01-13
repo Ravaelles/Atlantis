@@ -34,6 +34,11 @@ public class SafetyMargin {
             calculated = SafetyMarginAgainstRanged.calculate(defender, attacker);
         }
 
+//        System.out.println("================ " + attacker);
+//        System.out.println("base = " + base);
+//        System.out.println("defender.distTo(attacker) = " + defender.distTo(attacker));
+//        System.out.println("calculated = " + calculated);
+
         return base + defender.distTo(attacker) - calculated;
     }
 
@@ -50,8 +55,10 @@ public class SafetyMargin {
     }
 
     protected static double enemyWeaponRange(AUnit defender, AUnit attacker) {
-//        return attacker.getWeaponRangeAgainst(defender) - (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
-        return attacker.weaponRangeAgainst(defender) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
+//        System.out.println(attacker.type() + ".enemyWeaponRange(" + defender.type() + ") = " + attacker.enemyWeaponRange(defender));
+//        System.out.println(defender.type() + ".enemyWeaponRange(" + attacker.type() + ") = " + defender.enemyWeaponRange(attacker));
+
+        return defender.enemyWeaponRange(attacker) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 
     protected static double enemyMovementBonus(AUnit defender, AUnit attacker) {

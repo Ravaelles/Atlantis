@@ -1,9 +1,11 @@
-package atlantis.units;
+package atlantis.units.fogged;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
 import atlantis.map.position.APosition;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.cache.Cache;
 import tests.unit.FakeUnit;
 

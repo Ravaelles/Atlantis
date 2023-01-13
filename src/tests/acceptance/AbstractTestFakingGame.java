@@ -97,6 +97,8 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
             mockAGameObject();
             mockOtherStaticClasses();
 
+            beforeTestLogic();
+
             int framesNow = 1;
             while (framesNow <= proceedUntilFrameReached) {
                 useFakeTime(framesNow);

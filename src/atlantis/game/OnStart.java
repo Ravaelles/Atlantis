@@ -106,7 +106,13 @@ public class OnStart {
             }
         }
         catch (Exception e) {
-            System.err.println("Does file exist? " + CurrentBuildOrder.get().getName());
+            System.err.println(
+                "Does file exist? "
+                    + (A.fileExists(CurrentBuildOrder.get().getName()) ? "YES - " : "NO, IT DOESN'T! ")
+                    + CurrentBuildOrder.get().getName()
+            );
+            System.err.println(e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Exception when loading build orders file");
         }
     }

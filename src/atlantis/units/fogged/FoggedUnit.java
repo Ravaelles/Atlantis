@@ -1,6 +1,7 @@
-package atlantis.units;
+package atlantis.units.fogged;
 
 import atlantis.map.position.APosition;
+import atlantis.units.AUnit;
 
 /**
  * Stores information about units in order to retrieve them when they are out of sight

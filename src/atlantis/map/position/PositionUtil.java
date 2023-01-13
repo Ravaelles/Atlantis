@@ -4,8 +4,8 @@ import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.ARegionBoundary;
 import atlantis.units.AUnit;
-import atlantis.units.FakeFoggedUnit;
-import atlantis.units.FoggedUnit;
+import atlantis.units.fogged.FakeFoggedUnit;
+import atlantis.units.fogged.FoggedUnit;
 import bwapi.Position;
 import bwapi.Unit;
 import jbweb.JBWEB;
@@ -21,6 +21,8 @@ public class PositionUtil {
      * building dimensions.
      */
     public static double distanceTo(Object object1, Object object2) {
+//        if (true) throw new RuntimeException("PositionUtil.distanceTo was used");
+
         if (object1 == null || object2 == null) {
             System.err.println("object1");
             System.err.println(object1);
@@ -79,7 +81,7 @@ public class PositionUtil {
         
         Position toPosition = null;
         Unit toUnit = null;
-        
+
         if (object2 instanceof FakeUnit) {
             toPosition = ((FakeUnit) object2).position();
         }

@@ -1,6 +1,7 @@
 package tests.acceptance;
 
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -23,8 +24,22 @@ public class CombatEvaluatorMeleeTest extends AbstractTestFakingGame {
 //            System.out.println("ourEval = " + ourEval);
 //            System.out.println("enemyEval = " + enemyEval);
 
-            assertTrue(ourEval < enemyEval);
-            assertTrue(ourEval * 4 > enemyEval);
+            /**
+             * It only works for Atlantis heuristic model (ACombatEvaluator)
+             * For JFAP solution this will be negative, but more = better
+             *
+             * @see AUnit::combatEvalAbsolute
+             */
+
+            // ACombatEvaluator
+            if (ourEval > 0) {
+                assertTrue(ourEval < enemyEval);
+                assertTrue(ourEval * 4 > enemyEval);
+            }
+            // JFAP
+            else {
+                assertTrue(ourEval < enemyEval);
+            }
 
             ourEval = our.combatEvalRelative();
             enemyEval = enemy.combatEvalRelative();

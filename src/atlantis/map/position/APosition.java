@@ -127,10 +127,14 @@ public class APosition extends Position implements HasPosition, Comparable<Point
      * building dimensions.
      */
     public double distTo(Position position) {
+//        System.err.println("APosition::distTo (Position)");
+
         return PositionUtil.distanceTo(p, position);
     }
 
     public double distTo(APosition position) {
+//        System.err.println("APosition::distTo (APosition)");
+
         return PositionUtil.distanceTo(p, position);
     }
 
@@ -148,6 +152,8 @@ public class APosition extends Position implements HasPosition, Comparable<Point
      * building dimensions.
      */
     public double distTo(AUnit unit) {
+//        System.err.println("APosition::distTo (AUnit)");
+
         return PositionUtil.distanceTo(p, unit);
     }
 

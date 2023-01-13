@@ -12,7 +12,7 @@ import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.AbstractFoggedUnit;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;

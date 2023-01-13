@@ -11,7 +11,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.AbstractFoggedUnit;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.actions.Actions;
 import bwapi.Color;
 

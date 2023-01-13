@@ -10,12 +10,14 @@ import atlantis.game.AGame;
 import atlantis.game.OnStart;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.TerranStrategies;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.PositionUtil;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.AbstractFoggedUnit;
-import atlantis.units.FakeFoggedUnit;
+import atlantis.units.fogged.AbstractFoggedUnit;
+import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import bwapi.*;
@@ -54,7 +56,9 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         }
 
         mockAtlantisConfig();
+
         APainter.disablePainting();
+
         Select.clearCache();
         BaseSelect.clearCache();
         HeuristicCombatEvaluator.clearCache();
@@ -62,6 +66,11 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         EnemyInfo.clearCache();
         EnemyUnits.clearCache();
         AvoidEnemies.clearCache();
+    }
+
+    protected void beforeTestLogic() {
+        initBuildOrder();
+        setUpStrategy();
     }
 
     @After
@@ -107,8 +116,6 @@ public class AbstractTestWithUnits extends UnitTestHelper {
      * You have to define static mocks as public field of this class, so they can be automatically reset on test end.
      */
     protected void mockOtherStaticClasses() {
-        initBuildOrder();
-
         env = Mockito.mockStatic(Env.class);
         env.when(Env::isTesting).thenReturn(true);
 
@@ -117,13 +124,15 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         aTech.when(() -> ATech.isResearched(null)).thenReturn(false);
         aTech.when(() -> ATech.getUpgradeLevel(any())).thenReturn(0);
 
-        positionUtil = Mockito.mockStatic(PositionUtil.class);
-        positionUtil.when(() -> PositionUtil.groundDistanceTo(any(Position.class), any(Position.class)))
-            .thenAnswer((InvocationOnMock invocationOnMock) -> {
-                Position p1 = invocationOnMock.getArgument(0);
-                Position p2 = invocationOnMock.getArgument(1);
-                return p1.getDistance(p2) / 32.0;
-            });
+        // This is not needed for green tests and was causing standard AUnit::distTo(AUnit) to return 0
+//        positionUtil = Mockito.mockStatic(PositionUtil.class);
+//        positionUtil.when(() -> PositionUtil.groundDistanceTo(any(Position.class), any(Position.class)))
+//            .thenAnswer((InvocationOnMock invocationOnMock) -> {
+//                Position p1 = invocationOnMock.getArgument(0);
+//                Position p2 = invocationOnMock.getArgument(1);
+//                System.err.println("positionUtil groundDistanceTo A = " + p1 + " / B = " + p2);
+//                return p1.getDistance(p2) / 32.0;
+//            });
     }
 
     protected void initBuildOrder() {
@@ -144,8 +153,6 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         AtlantisConfig.BARRACKS = AUnitType.Terran_Barracks;
         AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
         AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
-
-
     }
 
     protected void mockGameObject() {
@@ -168,6 +175,10 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         aGame.when(AGame::supplyUsed).thenReturn(5);
         aGame.when(AGame::isPlayingAsZerg).thenReturn(true);
         aGame.when(AGame::isEnemyProtoss).thenReturn(true);
+    }
+
+    protected void setUpStrategy() {
+        OurStrategy.setTo(TerranStrategies.TERRAN_Nada_2_Fac);
     }
 
     // =========================================================
@@ -233,6 +244,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(ours));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
+
+            beforeTestLogic();
 
             runnable.run();
         }

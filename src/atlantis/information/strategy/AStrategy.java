@@ -60,7 +60,7 @@ public class AStrategy {
 
     @Override
     public String toString() {
-        return name;
+        return race() + ":" + name;
     }
 
     // =========================================================

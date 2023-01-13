@@ -244,18 +244,27 @@ public class FakeUnit extends AUnit {
 
     @Override
     public double distTo(AUnit otherUnit) {
-//        System.out.println("this = " + this.position + " // " + this);
-//        System.out.println("otherUnit = " + ((FakeUnit) otherUnit).position);
+//        System.err.println("FakeUnit::distTo (AUnit)");
+
         int dx = otherUnit.x() - position.x();
         int dy = otherUnit.y() - position.y();
+
+//        System.out.println("this = " + this.position + " // " + this);
+//        System.out.println("otherUnit = " + ((FakeUnit) otherUnit).position);
+//        System.out.println("dx = " + dx + ", dy = " + dy);
+//        System.out.println("Fake dist = " + (Math.sqrt(dx * dx + dy * dy) / 32.0));
+
 //        System.out.println("X =  " + otherUnit.x() + " // " + position.x() + " // " + dx);
 //        System.out.println("Y =  " + otherUnit.y() + " // " + position.y() + " // " + dy);
 //        System.out.println("Length = " + Math.sqrt(dx * dx + dy * dy) / 32.0);
+
         return Math.sqrt(dx * dx + dy * dy) / 32.0;
     }
 
     @Override
     public double distTo(HasPosition otherPosition) {
+//        System.err.println("FakeUnit::distTo (HasPosition)");
+
         int dx = otherPosition.x() - position.x();
         int dy = otherPosition.y() - position.y();
         return Math.sqrt(dx * dx + dy * dy) / 32.0;

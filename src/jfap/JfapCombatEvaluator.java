@@ -2,7 +2,7 @@ package jfap;
 
 import atlantis.Atlantis;
 import atlantis.units.AUnit;
-import atlantis.units.AbstractFoggedUnit;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import tests.unit.FakeUnit;
 
 /**
