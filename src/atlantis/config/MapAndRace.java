@@ -95,7 +95,7 @@ public class MapAndRace {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player

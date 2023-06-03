@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.micro.avoid.margin.SafetyMargin;
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;

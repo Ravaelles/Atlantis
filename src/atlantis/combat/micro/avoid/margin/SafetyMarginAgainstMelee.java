@@ -1,6 +1,5 @@
-package atlantis.combat.micro.avoid;
+package atlantis.combat.micro.avoid.margin;
 
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -185,7 +184,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         // === Terran INFANTRY =======================================
 
         if (defender.isTerranInfantry()) {
-            return handleTerranInfantry(defender, attacker);
+            return TerranSafetyMarginAgainstMelee.handleTerranInfantry(defender, attacker);
         }
 
         // === VULTURE ===============================================
@@ -216,7 +215,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return attacker.isZealot() ? 0.5 : 0.7;
     }
 
-    private static double enemyUnitsNearBonus(AUnit defender) {
+    protected static double enemyUnitsNearBonus(AUnit defender) {
         if (defender.enemiesNear().ofType(Protoss_Zealot).inRadius(2, defender).atLeast(3)) {
             return 2.3;
         }
@@ -277,59 +276,4 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         return (defender.woundPercent() * (applyExtraModifier ? 2 : 1)) / 32.0;
     }
-
-    // =========================================================
-
-    private static double handleTerranInfantry(AUnit defender, AUnit attacker) {
-        double criticalDist;
-
-//        if (true) return 3;
-
-        // === MEDIC in range ===========================================
-
-        boolean medicInRange = defender.hasMedicInRange();
-        if (medicInRange) {
-            if (defender.isHealthy()) {
-                defender.setTooltipTactical("Healthy");
-                return enemyUnitsNearBonus(defender);
-            }
-
-            criticalDist = INFANTRY_BASE_IF_MEDIC
-//                    + ourMovementBonus(defender)
-//                    + enemyMovementBonus(defender, attacker)
-                    + woundedAgainstMeleeBonus(defender, attacker);
-
-            defender.setTooltipTactical("HasMedic");
-        }
-
-        // === No medic Near ===========================================
-
-        else {
-            criticalDist = INFANTRY_BASE_IF_NO_MEDIC
-//                    + ourMovementBonus(defender)
-                    + enemyMovementBonus(defender, attacker)
-                    + (defender.hasCooldown() ? enemyMovementBonus(defender, attacker) : 0)
-                    + workerBonus(defender, attacker)
-                    + woundedAgainstMeleeBonus(defender, attacker);
-
-//            criticalDist = Math.min(criticalDist, defender.isWounded() ? 2.9 : 2.8);
-
-            String log = "NoMedic" + A.digit(criticalDist);
-            defender.setTooltipTactical(log);
-            defender.addLog(log);
-        }
-
-        criticalDist += enemyUnitsNearBonus(defender);
-
-        if (medicInRange) {
-            criticalDist = Math.min(criticalDist, 2.1);
-        } else {
-            criticalDist = Math.min(criticalDist, 3.0);
-        }
-
-//        defender.addTooltip(A.digit(criticalDist));
-
-        return criticalDist;
-    }
-
 }

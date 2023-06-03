@@ -1,4 +1,4 @@
-package atlantis.combat.micro.avoid;
+package atlantis.combat.micro.avoid.margin;
 
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.debug.painter.APainter;

@@ -1,6 +1,6 @@
 package atlantis.debug.tweaker;
 
-import atlantis.combat.micro.avoid.SafetyMarginAgainstMelee;
+import atlantis.combat.micro.avoid.margin.SafetyMarginAgainstMelee;
 import atlantis.game.A;
 
 public class ParamTweakerFactory extends ParamTweaker {
