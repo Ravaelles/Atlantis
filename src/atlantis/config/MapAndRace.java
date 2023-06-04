@@ -68,9 +68,9 @@ public class MapAndRace {
         // === Terran ==============================================
 
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
-//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
+        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/Ghosts_v_P.scx";
@@ -98,7 +98,7 @@ public class MapAndRace {
 
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
-        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
+//        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran

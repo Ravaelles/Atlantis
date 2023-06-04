@@ -18,7 +18,7 @@ public class ASupplyManager {
     private static int supplyFree;
 
     // =========================================================
-    
+
     public static void update() {
         supplyTotal = AGame.supplyTotal();
 
@@ -55,8 +55,12 @@ public class ASupplyManager {
                 if (supplyFree <= 5 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
-            } else if (supplyTotal <= 100) {
-                if (supplyFree <= 10 && noSuppliesBeingBuilt) {
+            } else if (supplyTotal <= 70) {
+                if (supplyFree <= 8 && suppliesBeingBuilt <= 1) {
+                    requestAdditionalSupply();
+                }
+            } else if (supplyTotal <= 170) {
+                if (supplyFree <= 12 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
                 }
             } else if (supplyTotal <= 200) {
@@ -68,14 +72,14 @@ public class ASupplyManager {
     }
 
     // =========================================================
-    
+
     private static void requestAdditionalSupply() {
 //        A.printStackTrace("Supply request: " + A.supplyUsed() + " // " + A.supplyTotal());
 
         // Zerg handles supply a bit differently
         if (AGame.isPlayingAsZerg()) {
             ((ZergBuildOrder) CurrentBuildOrder.get()).produceZergUnit(AUnitType.Zerg_Overlord);
-        } 
+        }
 
         // Terran + Protoss
         else {
