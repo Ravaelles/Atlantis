@@ -1,13 +1,12 @@
 package atlantis.util.log;
 
 import atlantis.game.A;
+import atlantis.units.AUnit;
 
 import java.util.ArrayList;
 
 public class Log {
 
-//    public static final int UNIT_LOG_SIZE = 10;
-//    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 50;
     public static final int UNIT_LOG_SIZE = 6;
     public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 18;
 
@@ -24,8 +23,11 @@ public class Log {
 
     // =========================================================
 
-    public void addMessage(String message) {
+    public void addMessage(String message, AUnit unit) {
         messages.add(new LogMessage(message, expireAfterFrames));
+        if (LogUnitsToFiles.SAVE_UNIT_LOGS_TO_FILES > 0) {
+            LogUnitsToFiles.saveUnitLogToFile(message, unit);
+        }
 
 //        System.out.println("LOG: " + message);
 
