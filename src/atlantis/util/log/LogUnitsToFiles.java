@@ -5,7 +5,7 @@ import atlantis.units.AUnit;
 
 public class LogUnitsToFiles {
 
-    public static final int SAVE_UNIT_LOGS_TO_FILES = 1; // 0 - Off, 1 - Only our combat units
+    public static final int SAVE_UNIT_LOGS_TO_FILES = 0; // 0 - Off, 1 - Only our combat units
 
     public static void saveUnitLogToFile(String message, AUnit unit) {
         if (
