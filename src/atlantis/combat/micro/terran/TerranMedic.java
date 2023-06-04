@@ -84,9 +84,9 @@ public class TerranMedic extends Microable {
             return false;
         }
 
-        Selection meleeEnemies = medic.enemiesNear().melee().inRadius(6, medic);
+        Selection meleeEnemies = medic.enemiesNear().melee().inRadius(2, medic);
 //        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 3) {
-        if (meleeEnemies.count() == 0) {
+        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 3) {
             return false;
         }
 

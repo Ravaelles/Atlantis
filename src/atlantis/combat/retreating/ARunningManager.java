@@ -34,15 +34,12 @@ public class ARunningManager {
     public static int ANY_DIRECTION_RADIUS_DEFAULT = 3;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 4;
-    public static int ANY_DIRECTION_RADIUS_INFANTRY = 4;
+    public static int ANY_DIRECTION_RADIUS_INFANTRY = 2;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.65;
 
     private final AUnit unit;
-    private static APosition _lastPosition;
-    //    private APosition runAwayFrom = null;
     private APosition runTo = null;
-//    private Units closeEnemies;
-//    private APosition enemyMedian = null;
+    private boolean fallbackMode = false; // When nothing else seems to work
 
     // =========================================================
 
@@ -80,6 +77,10 @@ public class ARunningManager {
         {
             unit.setTooltip("StopMan", false);
             return true;
+        }
+
+        if (unit.isWounded() && unit.nearestEnemyDist() >= 3) {
+            return false;
         }
 
         if (
@@ -201,16 +202,22 @@ public class ARunningManager {
         }
 
         if (shouldRunTowardsBase()) {
-            return Select.main().position();
+            return runTo = Select.main().position();
         }
 
         // === Run directly away from the enemy ========================================
 
-        APosition runTo = findRunPositionShowYourBackToEnemy(runAwayFrom, dist);
+        if (unit.friendsInRadius(1).atLeast(1) && A.notNthGameFrame(30)) {
+            runTo = findRunPositionShowYourBackToEnemy(runAwayFrom, dist);
+        }
 
         // === Get run to position - as far from enemy as possible =====================
 
         if (runTo == null) {
+            runTo = findRunPositionInAnyDirection(runAwayFrom);
+        }
+        if (runTo == null) {
+            fallbackMode = true;
             runTo = findRunPositionInAnyDirection(runAwayFrom);
         }
 
@@ -460,7 +467,7 @@ public class ARunningManager {
 
         for (int dtx = -radius; dtx <= radius; dtx++) {
             for (int dty = -radius; dty <= radius; dty++) {
-                if (dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
+                if (!fallbackMode && dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
                     continue;
                 }
 
@@ -487,10 +494,15 @@ public class ARunningManager {
         double mostDistant = -99;
         APosition bestPosition = null;
         for (APosition position : potentialPositionsList) {
-            double dist = runAwayFrom.distTo(position);
-            if (bestPosition == null || dist >= mostDistant) {
+
+            // Score is calculated as:
+            // - being most distant to enemy we're running from,
+            AUnit closestAlly = unit.friendsNear().nearestTo(unit);
+            double tooCloseFriendFactor = (closestAlly == null ? 0 : closestAlly.distTo(position) / 10);
+            double positionScore = runAwayFrom.distTo(position) - tooCloseFriendFactor;
+            if (bestPosition == null || positionScore >= mostDistant) {
                 bestPosition = position;
-                mostDistant = dist;
+                mostDistant = positionScore;
             }
         }
 
@@ -501,11 +513,10 @@ public class ARunningManager {
         if (unit.isVulture()) {
             return ANY_DIRECTION_RADIUS_VULTURE;
         }
-        if (unit.isDragoon()) {
+        else if (unit.isDragoon()) {
             return ANY_DIRECTION_RADIUS_DRAGOON;
         }
-
-        if (unit.isInfantry()) {
+        else if (unit.isInfantry()) {
             return ANY_DIRECTION_RADIUS_INFANTRY;
         }
 
@@ -588,8 +599,6 @@ public class ARunningManager {
         if (position == null) {
             return false;
         }
-
-        _lastPosition = position;
 
 //        System.out.println("position.isWalkable() = " + position.isWalkable());
 //        System.out.println("unit.hasPathTo(position) = " + unit.hasPathTo(position));

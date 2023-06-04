@@ -37,10 +37,10 @@ public class TerranSafetyMarginAgainstMelee {
         else {
             criticalDist = SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC
 //                    + ourMovementBonus(defender)
-                    + SafetyMargin.enemyMovementBonus(defender, attacker)
+                    + (1.05 * SafetyMargin.enemyMovementBonus(defender, attacker))
 //                    + (defender.hasCooldown() ? enemyMovementBonus(defender, attacker) : 0)
                     + SafetyMargin.workerBonus(defender, attacker)
-                    + Math.min(2, SafetyMarginAgainstMelee.woundedAgainstMeleeBonus(defender, attacker));
+                    + Math.min(1.2, SafetyMarginAgainstMelee.woundedAgainstMeleeBonus(defender, attacker));
 
 //            criticalDist = Math.min(criticalDist, defender.isWounded() ? 2.9 : 2.8);
 

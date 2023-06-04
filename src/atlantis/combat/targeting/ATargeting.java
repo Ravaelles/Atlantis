@@ -151,10 +151,16 @@ public class ATargeting {
         }
 
         // Most wounded enemy some distance from away
-        enemy = selectWeakestEnemyOfType(enemyType, unit, 6);
+        enemy = selectWeakestEnemyOfType(enemyType, unit, 1);
 //        System.out.println("enemy B = " + enemy);
         if (enemy != null) {
-//            unit.addLog("AttackDistant");
+            return enemy;
+        }
+
+        // Most wounded enemy some distance from away
+        enemy = selectWeakestEnemyOfType(enemyType, unit, 6);
+//        System.out.println("enemy B2 = " + enemy);
+        if (enemy != null) {
             return enemy;
         }
 

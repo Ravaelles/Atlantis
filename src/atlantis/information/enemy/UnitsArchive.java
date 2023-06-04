@@ -59,6 +59,9 @@ public class UnitsArchive {
                     + ", lost: " + ourLostTypes.getValueFor(type) + ")"
             );
         }
+
+//        System.out.println();
+//        System.out.println("Damage taken: " + A.ki);
     }
 
     private static String balancePercentFor(AUnitType type, int balance) {
