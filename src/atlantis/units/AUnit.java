@@ -36,6 +36,7 @@ import atlantis.util.CappedList;
 import atlantis.util.Vector;
 import atlantis.util.Vectors;
 import atlantis.util.log.Log;
+import atlantis.util.log.LogUnitsToFiles;
 import bwapi.*;
 import jfap.JfapCombatEvaluator;
 import tests.unit.FakeUnit;
@@ -509,6 +510,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             this.tooltip = tooltip;
         }
         this.tooltip = tooltip;
+
+        if (LogUnitsToFiles.SAVE_UNIT_LOGS_TO_FILES > 0) {
+            LogUnitsToFiles.saveUnitLogToFile(tooltip, this);
+        }
+
 //        System.out.println(A.now() + " - " + this.tooltip);
         return this;
     }
@@ -2318,8 +2324,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public void addLog(String message) {
         if (!log.lastMessageWas(message)) {
-            log.addMessage(message);
+            log.addMessage(message, this);
         }
+    }
+
+    public void addFileLog(String message) {
+        LogUnitsToFiles.saveUnitLogToFile(message, this);
     }
 
     public Log log() {

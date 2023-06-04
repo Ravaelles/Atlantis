@@ -62,7 +62,7 @@ public class SquadScout {
         squadScout.setTooltipTactical("MadeContact");
 
         if (EnemyUnits.discovered().atMost(2)) {
-            GameLog.get().addMessage("Squad scout forced GLOBAL ATTACK");
+            squadScout.addLog("Squad scout forced GLOBAL ATTACK");
             if (!Missions.isGlobalMissionAttack()) {
                 MissionChanger.forceMissionAttack("EngageWorkersNow");
             }

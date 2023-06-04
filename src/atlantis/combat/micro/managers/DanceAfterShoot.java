@@ -62,9 +62,12 @@ public class DanceAfterShoot {
     // =========================================================
 
     private static boolean shouldDanceTo(AUnit unit, AUnit target, double dist) {
-        return dist >= (unit.enemyWeaponRange(target))
-            || (!target.isBuilding() && dist >= 1.6)
-            || target.hasNoWeaponAtAll();
+        return unit.distToMoreThan(target, 3)
+            && dist >= (unit.enemyWeaponRange(target))
+            && (
+                (!target.isBuilding() && dist >= 1.6)
+                || target.hasNoWeaponAtAll()
+            );
     }
 
     private static boolean shouldSkip(AUnit unit) {

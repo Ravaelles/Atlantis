@@ -497,6 +497,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection medics() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isMedic()), "medics"
+        );
+    }
+
     /**
      * Selects these units (makes sense only for workers) who aren't assigned to construct anything.
      */

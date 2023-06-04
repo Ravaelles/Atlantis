@@ -229,7 +229,13 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        if (unit.hp() >= 34 && (unit.cooldownRemaining() <= 2 || unit.isStimmed() || unit.friendsInRadius(3).atLeast(5))) {
+        if (
+                unit.hp() >= 40
+                && unit.cooldownRemaining() <= 2
+                && unit.friendsInRadius(3).medics().free().isNotEmpty()
+                && (unit.isStimmed() || unit.friendsInRadius(3).atLeast(5))
+        ) {
+            unit.setTooltipTactical("QuiteHealthy");
             return true;
         }
 
@@ -388,10 +394,7 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightBecauseWayTooManyUnitsNear(AUnit unit) {
-        if (
-            !We.terran()
-                || unit.isAir()
-        ) {
+        if (!We.terran() || unit.isAir()) {
             return false;
         }
 
@@ -402,7 +405,7 @@ public class FightInsteadAvoid {
 //        if (unit.mission() != null && unit.mission().isMissionAttack()) {
         boolean isStacked = false;
         if (We.terran()) {
-            isStacked = allCount >= 6 || (invisibleDT != null && allCount >= 4)
+            isStacked = allCount >= 7 || (invisibleDT != null && allCount >= 4)
                 || our.inRadius(1.3, unit).atLeast(25);
         }
         else if (We.protoss()) {

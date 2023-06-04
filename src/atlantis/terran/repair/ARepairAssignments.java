@@ -69,7 +69,7 @@ public class ARepairAssignments {
 //                System.err.println("Remove PROTECTOR for " + unitsToRepairers);
                 unitsToRepairers.get(unitToRepair).remove(repairer);
                 repairer.stop("No longer repairer", true);
-                if (addLogs) { GameLog.get().addMessage("No longer repairer of " + unitToRepair); }
+                if (addLogs) { repairer.addLog("No longer repairer of " + unitToRepair); }
                 repairersToUnit.remove(repairer);
                 repairersToModes.remove(repairer);
             }
@@ -77,7 +77,7 @@ public class ARepairAssignments {
     }
 
     public static void addProtector(AUnit protector, AUnit unit) {
-        if (addLogs) { GameLog.get().addMessage("Added PROTECTOR of " + unit); }
+        if (addLogs) { protector.addLog("Added PROTECTOR of " + unit); }
 //        System.out.println("Added PROTECTOR of " + unit);
 
         addRepairer(protector, unit);
@@ -89,7 +89,7 @@ public class ARepairAssignments {
             throw new RuntimeException(repairer + "is not SCV in addRepairer!");
         }
 
-        if (addLogs) { GameLog.get().addMessage("Added Repairer (" + repairer.idWithHash() + ") of " + unitToRepair); }
+        if (addLogs) { unitToRepair.addLog("Added Repairer (" + repairer.idWithHash() + ") of " + unitToRepair); }
 
         repairersToUnit.put(repairer, unitToRepair);
         repairersToModes.put(repairer, MODE_REPAIR_ONLY);

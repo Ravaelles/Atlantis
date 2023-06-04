@@ -4,7 +4,7 @@ package atlantis.units.actions;
  * All possible unit action labels. Very useful for debugging.
  */
 public class Actions {
-    
+
     public static final Action ATTACK_POSITION = new Action(true).setName("ATTACK_POSITION");
     public static final Action ATTACK_UNIT = new Action(true).setName("ATTACK_UNIT");
     public static final Action BUILD = new Action().setName("BUILD");
@@ -48,6 +48,7 @@ public class Actions {
 //    public static final Action RUN_ = new Action(false, true).setName("RUN_");
     public static final Action RUN_ENEMY = new Action(false, true).setName("RUN_ENEMY");
     public static final Action RUN_ENEMIES = new Action(false, true).setName("RUN_ENEMIES");
+    public static final Action RUN_IN_ANY_DIRECTION = new Action(false, true).setName("RUN_IN_ANY_DIR");
     public static final Action RUN_RETREAT = new Action(false, true).setName("RUN_RETREAT");
     public static final Action RESEARCH_OR_UPGRADE = new Action().setName("RESEARCH_OR_UPGRADE");
     public static final Action SIEGE = new Action().setName("SIEGE");
@@ -58,5 +59,5 @@ public class Actions {
     public static final Action UNBURROW = new Action().setName("UNBURROW");
     public static final Action UNSIEGE = new Action().setName("UNSIEGE");
     public static final Action USING_TECH = new Action().setName("USING_TECH");
-    
+
 }

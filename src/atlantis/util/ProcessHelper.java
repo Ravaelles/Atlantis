@@ -6,7 +6,8 @@ package atlantis.util;
 public class ProcessHelper {
 
 //    public static String ChaosLauncherPath = "D:\\JAVA\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe";
-    public static String ChaosLauncherPath = "D:\\JAVA\\Starcraft\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe";
+//    public static String ChaosLauncherPath = "D:\\JAVA\\Starcraft\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe";
+    public static String ChaosLauncherPath = "D:\\GAMES\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe";
 
     public static void killStarcraftProcess() {
         executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
@@ -16,10 +17,10 @@ public class ProcessHelper {
         executeInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
 //        executeInCommandLine("taskkill /IM Chaoslauncher - MultiInstance.exe /T /F");
     }
-    
+
     /**
      * Autostart Chaoslauncher
-     * Combined with Chaoslauncher -> Settings -> Run Starcraft on Startup 
+     * Combined with Chaoslauncher -> Settings -> Run Starcraft on Startup
      * SC will be autostarted at this moment
      */
     public static void startChaosLauncherProcess() {
@@ -30,9 +31,9 @@ public class ProcessHelper {
             executeInCommandLine(command);
         } catch (InterruptedException ignored) { }
     }
-    
+
     // =========================================================
-    
+
     private static void executeInCommandLine(String command) {
         try {
             Process process = Runtime.getRuntime().exec(command);

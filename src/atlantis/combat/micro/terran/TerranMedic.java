@@ -80,6 +80,10 @@ public class TerranMedic extends Microable {
     // =========================================================
 
     private static boolean bodyBlockMelee(AUnit medic) {
+        if (medic.cooldownRemaining() > 0) {
+            return false;
+        }
+
         Selection meleeEnemies = medic.enemiesNear().melee().inRadius(6, medic);
 //        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 3) {
         if (meleeEnemies.count() == 0) {
@@ -225,7 +229,7 @@ public class TerranMedic extends Microable {
 //                return medic.holdPosition("Ok");
 //            }
         }
-        
+
         return false;
     }
 

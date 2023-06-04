@@ -28,13 +28,13 @@ public class ARunningManager {
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
     public static double Near_UNIT_MAKE_SPACE = 0.75;
     //    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
-    private static final double SHOW_BACK_DIST_DEFAULT = 3;
+    private static final double SHOW_BACK_DIST_DEFAULT = 6;
     private static final double SHOW_BACK_DIST_VULTURE = 5;
     private static final double SHOW_BACK_DIST_DRAGOON = 3;
     public static int ANY_DIRECTION_RADIUS_DEFAULT = 3;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 4;
-    public static int ANY_DIRECTION_RADIUS_INFANTRY = 2;
+    public static int ANY_DIRECTION_RADIUS_INFANTRY = 4;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.65;
 
     private final AUnit unit;
@@ -57,6 +57,11 @@ public class ARunningManager {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
 //        System.out.println(unit.isRunning() + " // " + unit.runningManager().isRunning() + " // " + unit.action().isRunning());
         if (!unit.isRunning()) {
+            return false;
+        }
+
+        if (unit.isUnitAction(Actions.RUN_IN_ANY_DIRECTION) && unit.lastActionLessThanAgo(20)) {
+            unit.setTooltipTactical("InAnyDir");
             return false;
         }
 
@@ -226,6 +231,12 @@ public class ARunningManager {
                     Color.Purple
             );
             runTo = findRunPositionInAnyDirection(runAwayFrom);
+
+            if (runTo != null) {
+                unit.setAction(Actions.RUN_IN_ANY_DIRECTION);
+                unit.setTooltipTactical("RunAnywhere");
+            }
+
             APainter.paintCircleFilled(runTo, 8, Color.Red);
         }
 

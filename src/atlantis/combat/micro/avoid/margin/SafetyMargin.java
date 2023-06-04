@@ -39,7 +39,10 @@ public class SafetyMargin {
 //        System.out.println("defender.distTo(attacker) = " + defender.distTo(attacker));
 //        System.out.println("calculated = " + calculated);
 
-        return base + defender.distTo(attacker) - calculated;
+        double safetyMargin = base + defender.distTo(attacker) - calculated;
+//        System.out.println(defender.idWithHash() + ": MARGIN: " + safetyMargin);
+
+        return safetyMargin;
     }
 
     // =========================================================

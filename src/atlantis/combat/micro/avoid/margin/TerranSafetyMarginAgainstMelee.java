@@ -19,7 +19,7 @@ public class TerranSafetyMarginAgainstMelee {
 
         boolean medicInRange = defender.hasMedicInRange();
         if (medicInRange) {
-            if (defender.isHealthy()) {
+            if (defender.isHealthy() && defender.enemiesNearInRadius(3) <= 1) {
                 defender.setTooltipTactical("Healthy");
                 return SafetyMarginAgainstMelee.enemyUnitsNearBonus(defender);
             }
@@ -40,7 +40,7 @@ public class TerranSafetyMarginAgainstMelee {
                     + SafetyMargin.enemyMovementBonus(defender, attacker)
 //                    + (defender.hasCooldown() ? enemyMovementBonus(defender, attacker) : 0)
                     + SafetyMargin.workerBonus(defender, attacker)
-                    + SafetyMarginAgainstMelee.woundedAgainstMeleeBonus(defender, attacker);
+                    + Math.min(2, SafetyMarginAgainstMelee.woundedAgainstMeleeBonus(defender, attacker));
 
 //            criticalDist = Math.min(criticalDist, defender.isWounded() ? 2.9 : 2.8);
 
@@ -64,6 +64,10 @@ public class TerranSafetyMarginAgainstMelee {
     }
 
     private static boolean canIgnoreThisEnemyForNow(AUnit defender, AUnit attacker) {
+        if (attacker.isRanged()) {
+            return false;
+        }
+
         double distTo = defender.distTo(attacker);
         if (distTo >= 4) {
             return true;

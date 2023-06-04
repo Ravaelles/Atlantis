@@ -9,8 +9,11 @@ public class TempDontRetreat {
      */
     protected static boolean temporarilyDontRetreat(AUnit unit) {
         if (unit.isRanged()) {
+
+            // No enemy can shoot us
             if (unit.enemiesNear().inShootRangeOf(unit).empty()) {
-                return false;
+                unit.addFileLog("TemporarilyDontRetreat");
+                return true;
             }
 
 //            if (unit.isMissionDefend() && unit.groundWeaponCooldown() <= 3
@@ -22,7 +25,7 @@ public class TempDontRetreat {
 //            if (unit.isMissionAttack()
             if ((unit.groundWeaponCooldown() <= 3 || unit.lastAttackFrameMoreThanAgo(30 * 5))
                 && (unit.hp() >= 25 || unit.meleeEnemiesNearCount(2.7) == 0)) {
-                unit.addLog("TempAttack(MA)");
+                unit.addFileLog("TempAttack(MA)");
                 return true;
             }
         }

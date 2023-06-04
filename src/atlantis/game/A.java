@@ -521,6 +521,19 @@ public class A {
         return null;
     }
 
+    public static PrintWriter appendToFile(String filePath, String stringToWrite) {
+        try {
+            File file = new File(filePath);
+            PrintWriter out = new PrintWriter(new FileOutputStream(file, true));
+            out.print(stringToWrite);
+            out.close();
+        } catch (Exception e) {
+            A.displayException(e, "Error", "Error while appending to file\n" + "Path(\"" + filePath
+                    + "\", \"" + stringToWrite + "\")");
+        }
+        return null;
+    }
+
     public static void writeToFileWithHeader(String filePath, String content, String[] headers) {
         try {
             if (!fileExists(filePath)) {
@@ -730,7 +743,7 @@ public class A {
         if (footer == null) {
             footer = "### END OF LIST";
         }
-        
+
         System.out.println(header);
         for (Object object : list) {
             System.out.print(object + "/");
@@ -741,7 +754,7 @@ public class A {
         if (!useNewLines) {
             System.out.println();
         }
-        
+
         if (!"".equals(footer)) {
             System.out.println(footer);
         }
@@ -1022,7 +1035,7 @@ public class A {
                 line = line.replace("—", "-"); // Replace em dashes with hyphens - omfg, that hurt
 
                 String[] fields = line.split(delimiter);
-                
+
                 if (fields.length == 1 && line.contains(" - ")) {
                     fields = line.split(" - ");
                 }
@@ -1047,7 +1060,7 @@ public class A {
             System.exit(-1);
             return null;
         }
-        
+
         // =========================================================
 
         String[][] result = new String[listOfArrays.size()][numberOfFields];
