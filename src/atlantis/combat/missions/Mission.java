@@ -104,8 +104,14 @@ public abstract class Mission {
         if (nearestEnemy != null) {
             temporaryTarget = nearestEnemy.position();
             unit.setTooltip("FindEnemy&Attack");
-            if (temporaryTarget != null && unit.attackUnit(nearestEnemy)) {
-                return true;
+            if (temporaryTarget != null) {
+                if (nearestEnemy.u() != null && unit.attackUnit(nearestEnemy)) {
+                    unit.setTooltip("StrategicAttack", true);
+                    return true;
+                }
+                else if (unit.move(temporaryTarget, Actions.MOVE_EXPLORE, "FindEm", false)) {
+                    return true;
+                }
             }
 //            if (temporaryTarget != null) {
 //                return unit.move(temporaryTarget, Actions.MOVE_EXPLORE, "FindEm", false);

@@ -344,6 +344,13 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection havingTarget(AUnit targetUnit) {
+        return cloneByRemovingIf(
+            (unit -> (unit.target() == null || !unit.target().equals(targetUnit))),
+            "havingTarget:" + targetUnit.idWithHash()
+        );
+    }
+
     /**
      * Selects only buildings.
      */
@@ -476,6 +483,12 @@ public class Selection extends BaseSelection {
     public Selection notHavingHp(int maxHp) {
         return cloneByRemovingIf(
             (unit -> unit.hpMoreThan(maxHp)), "notHavingHp:" + maxHp
+        );
+    }
+
+    public Selection notBeingHealed() {
+        return cloneByRemovingIf(
+            (unit -> unit.isBeingHealed()), "notBeingHealed"
         );
     }
 

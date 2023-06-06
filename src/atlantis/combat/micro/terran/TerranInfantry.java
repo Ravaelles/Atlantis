@@ -79,6 +79,10 @@ public class TerranInfantry {
             return true;
         }
 
+        if (Enemy.protoss() && unit.hp() >= 40 && unit.id() % 3 == 0) {
+            return true;
+        }
+
         return false;
     }
 

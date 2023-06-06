@@ -42,18 +42,18 @@ public class DanceAfterShoot {
         if (shouldDanceTo(unit, target, dist)) {
             unit.addLog(danceTo);
             return unit.move(
-                unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE, danceTo, false
+                unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE_TO, danceTo, false
             );
         }
         // Big step BACK
         else if (dist <= weaponRange - 1.2) {
             unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.9, danceAway, Actions.MOVE_DANCE);
+            return unit.moveAwayFrom(target, 0.9, danceAway, Actions.MOVE_DANCE_AWAY);
         }
         // Small step BACK
         else if (dist <= weaponRange - 0.45) {
             unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.35, danceAway, Actions.MOVE_DANCE);
+            return unit.moveAwayFrom(target, 0.35, danceAway, Actions.MOVE_DANCE_AWAY);
         }
 
         return false;
@@ -62,7 +62,9 @@ public class DanceAfterShoot {
     // =========================================================
 
     private static boolean shouldDanceTo(AUnit unit, AUnit target, double dist) {
-        return unit.distToMoreThan(target, 3)
+        return target.isVisibleUnitOnMap()
+            && target.effVisible()
+            && unit.distToMoreThan(target, 3)
             && dist >= (unit.enemyWeaponRange(target))
             && (
                 (!target.isBuilding() && dist >= 1.6)

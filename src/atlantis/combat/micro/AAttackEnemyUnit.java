@@ -53,6 +53,10 @@ public class AAttackEnemyUnit {
             return false;
         }
 
+        if (unit.isIdle()) {
+            return true;
+        }
+
         if (unit.lastActionLessThanAgo(30 * 5, Actions.RUN_RETREAT)) {
             return false;
         }

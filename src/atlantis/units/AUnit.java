@@ -2278,6 +2278,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public boolean isBeingHealed() {
+        return cacheBoolean.get(
+            "isBeingHealed",
+            6,
+            () -> friendsInRadius(2).ofType(AUnitType.Terran_Medic).havingTarget(this).notEmpty()
+        );
+    }
+
     public int meleeEnemiesNearCount(double maxDistToEnemy) {
         return cacheInt.get(
             "meleeEnemiesNear:" + maxDistToEnemy,
@@ -2508,4 +2516,5 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean canMove() {
         return !isStasised() && !isLockedDown();
     }
+
 }

@@ -23,7 +23,8 @@ public class Actions {
     public static final Action MOVE_ATTACK = new Action().setName("MOVE_ATTACK");
     public static final Action MOVE_AVOID = new Action().setName("MOVE_AVOID");
     public static final Action MOVE_BUILD = new Action().setName("MOVE_BUILD");
-    public static final Action MOVE_DANCE = new Action().setName("MOVE_DANCE");
+    public static final Action MOVE_DANCE_AWAY = new Action().setName("MOVE_DANCE_AWAY");
+    public static final Action MOVE_DANCE_TO = new Action().setName("MOVE_DANCE_TO");
     public static final Action MOVE_ENGAGE = new Action().setName("MOVE_ENGAGE");
     public static final Action MOVE_ERROR = new Action().setName("MOVE_ERROR");
     public static final Action MOVE_EXPLORE = new Action().setName("MOVE_EXPLORE");

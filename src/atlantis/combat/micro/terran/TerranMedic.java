@@ -45,7 +45,7 @@ public class TerranMedic extends Microable {
             return true;
         }
 
-        if (medic.lastActionLessThanAgo(5, Actions.HEAL)) {
+        if (medic.lastActionLessThanAgo(8, Actions.HEAL)) {
             return true;
         }
 
@@ -80,29 +80,37 @@ public class TerranMedic extends Microable {
     // =========================================================
 
     private static boolean bodyBlockMelee(AUnit medic) {
-        if (medic.cooldownRemaining() > 0) {
+//        if (medic.cooldownRemaining() >= 2) {
+//            return false;
+//        }
+
+        if (medic.friendsInRadiusCount(1.2) <= 0) {
             return false;
         }
 
-        Selection meleeEnemies = medic.enemiesNear().melee().inRadius(2, medic);
-//        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 3) {
-        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 3) {
+        Selection meleeEnemies = medic.enemiesNear().melee().inRadius(2.3, medic);
+        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 2) {
             return false;
         }
 
         AUnit nearestFriend = medic.friendsNear()
-            .inRadius(4, medic).excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
+            .inRadius(4, medic)
+                .excludeTypes(AUnitType.Terran_Medic)
+                .notBeingHealed()
+                .nearestTo(medic);
 
         if (nearestFriend == null) {
             return false;
         }
 
-        AUnit nearestEnemy = meleeEnemies.inRadius(4, medic).nearestTo(medic);
+        AUnit nearestEnemy = meleeEnemies.visibleOnMap().inRadius(4, medic).nearestTo(medic);
         if (nearestEnemy == null) {
             return false;
         }
 
-        APosition desiredPosition = nearestFriend.translateTilesTowards(0.4, nearestEnemy);
+        APosition enemyTarget = nearestEnemy.hasTargetPosition()
+                ? nearestEnemy.targetPosition() : nearestFriend.position();
+        APosition desiredPosition = enemyTarget.translateTilesTowards(0.4, nearestEnemy);
         if (medic.distToMoreThan(desiredPosition, BODY_BLOCK_POSITION_ERROR_MARGIN) || medic.isIdle()) {
             return medic.move(desiredPosition, Actions.MOVE_MACRO, "Block", false);
         }
@@ -243,6 +251,7 @@ public class TerranMedic extends Microable {
                 .criticallyWounded()
                 .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
                 .exclude(medic)
+                .notBeingHealed()
                 .nearestTo(medic);
 
         // =========================================================
@@ -266,6 +275,7 @@ public class TerranMedic extends Microable {
                 .notHavingHp(19)
                 .inRadius(1.99, medic)
                 .exclude(medic)
+                .notBeingHealed()
                 .sortByHealth()
                 .first();
 
@@ -290,6 +300,7 @@ public class TerranMedic extends Microable {
                 .wounded()
                 .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
                 .exclude(medic)
+                .notBeingHealed()
                 .nearestTo(medic);
 
         // =========================================================

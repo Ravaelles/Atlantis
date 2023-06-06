@@ -175,7 +175,7 @@ public class AdvanceUnitsManager {
         if (unit.isTerranInfantry() && unit.isWounded() && !unit.isMedic() && Count.medics() >= 1) {
             AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).nearestTo(unit);
 //            if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
-            if (medic != null) {
+            if (medic != null && (!medic.hasTarget() || medic.target().equals(unit))) {
 //                if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
                 return unit.move(medic, Actions.MOVE_FOCUS, "ToMedic", false);
 //                }
@@ -185,16 +185,16 @@ public class AdvanceUnitsManager {
         return false;
     }
 
-    private static double maxDistToMedic(AUnit unit) {
-        if (unit.isMarine()) {
-            return 8;
-        }
-        else if (unit.isFirebat()) {
-            return 1.9;
-        }
-
-        return 8;
-    }
+//    private static double maxDistToMedic(AUnit unit) {
+//        if (unit.isMarine()) {
+//            return 8;
+//        }
+//        else if (unit.isFirebat()) {
+//            return 1.9;
+//        }
+//
+//        return 8;
+//    }
 
     // =========================================================
 
