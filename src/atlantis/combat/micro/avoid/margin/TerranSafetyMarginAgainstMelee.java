@@ -60,6 +60,8 @@ public class TerranSafetyMarginAgainstMelee {
 
 //        defender.addTooltip(A.digit(criticalDist));
 
+        criticalDist = Math.min(3.7, criticalDist);
+
         return criticalDist;
     }
 

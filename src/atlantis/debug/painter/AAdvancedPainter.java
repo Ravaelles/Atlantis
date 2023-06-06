@@ -150,7 +150,7 @@ public class AAdvancedPainter extends APainter {
      */
     protected static void paintCombatUnits() {
         for (AUnit unit : Select.ourCombatUnits().list()) {
-            paintUnitInRangeInfo(unit);
+//            paintUnitInRangeInfo(unit);
 
             // =========================================================
             // === Paint targets for combat units
@@ -757,22 +757,17 @@ public class AAdvancedPainter extends APainter {
             int unitRadius = unit.type().dimensionLeft();
 
             // STARTING ATTACK
-            if (unit.isStartingAttack()) {
-                paintCircle(unit, unitRadius - 7, Color.Orange);
-                paintCircle(unit, unitRadius - 6, Color.Orange);
-                paintCircle(unit, unitRadius - 5, Color.Orange);
-                paintCircle(unit, unitRadius - 4, Color.Orange);
-                paintCircle(unit, unitRadius - 3, Color.Orange);
-            }
+//            if (unit.isStartingAttack()) {
+//                paintCircle(unit, unitRadius - 7, Color.Orange);
+//                paintCircle(unit, unitRadius - 6, Color.Orange);
+//                paintCircle(unit, unitRadius - 5, Color.Orange);
+//                paintCircle(unit, unitRadius - 4, Color.Orange);
+//                paintCircle(unit, unitRadius - 3, Color.Orange);
+//            }
             // ATTACK FRAME
-            if (unit.isAttackFrame()) {
-                paintRectangleFilled(unit.translateByPixels(-5, -10), 10, 20, Color.Red);
-//                paintCircle(unit, 2, Color.Red);
-//                paintCircle(unit, 4, Color.Red);
-//                paintCircle(unit, 5, Color.Red);
-//                paintCircle(unit, 8, Color.Red);
-//                paintCircle(unit, 9, Color.Red);
-            }
+//            if (unit.isAttackFrame()) {
+//                paintRectangleFilled(unit.translateByPixels(-5, -10), 10, 20, Color.Red);
+//            }
             // STUCK
             if (unit.isStuck()) {
                 unit.setTooltipTactical("STUCK");
@@ -783,20 +778,20 @@ public class AAdvancedPainter extends APainter {
                 paintCircle(unit, 10, Color.Teal);
             }
             // ATTACKING
-            if (unit.isAttackingOrMovingToAttack()) {
-                paintCircle(unit, unitRadius - 3, Color.Yellow);
-                paintCircle(unit, unitRadius - 2, Color.Yellow);
-            }
+//            if (unit.isAttackingOrMovingToAttack()) {
+//                paintCircle(unit, unitRadius - 3, Color.Yellow);
+//                paintCircle(unit, unitRadius - 2, Color.Yellow);
+//            }
             // MOVE
-            if (unit.isMoving()) {
-                paintCircle(unit, unitRadius - 4, Color.Blue);
-                paintCircle(unit, unitRadius - 3, Color.Blue);
-                paintCircle(unit, unitRadius - 2, Color.Blue);
-                if (unit.targetPosition() != null) {
-                    paintCircleFilled(unit.targetPosition(), 4, Color.Blue);
-                    paintLine(unit.position(), unit.targetPosition(), Color.Blue);
-                }
-            }
+//            if (unit.isMoving()) {
+//                paintCircle(unit, unitRadius - 4, Color.Blue);
+//                paintCircle(unit, unitRadius - 3, Color.Blue);
+//                paintCircle(unit, unitRadius - 2, Color.Blue);
+//                if (unit.targetPosition() != null) {
+//                    paintCircleFilled(unit.targetPosition(), 4, Color.Blue);
+//                    paintLine(unit.position(), unit.targetPosition(), Color.Blue);
+//                }
+//            }
 //            // CONSTRUCTING
 //            if (unit.isConstructing()) {
 //                paintCircle(unit, 6, Color.Teal);

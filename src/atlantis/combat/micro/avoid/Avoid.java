@@ -43,7 +43,7 @@ public class Avoid {
 
         if (unit.runningManager().runFrom(runFrom, getRunDistance(unit), Actions.RUN_ENEMIES)) {
 //            APainter.paintCircleFilled(unit.position(), 5, Color.Green);
-            APainter.paintCircleFilled(runFrom, 5, Color.Red);
+//            APainter.paintCircleFilled(runFrom, 5, Color.Red);
 //            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");
             return true;
         }

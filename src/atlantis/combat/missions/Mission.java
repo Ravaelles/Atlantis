@@ -96,13 +96,20 @@ public abstract class Mission {
             return false;
         }
 
+//        if (!unit.isIdle()) {
+//            return false;
+//        }
+
         AUnit nearestEnemy = unit.enemiesNear().canBeAttackedBy(unit, 20).nearestTo(unit);
         if (nearestEnemy != null) {
             temporaryTarget = nearestEnemy.position();
             unit.setTooltip("FindEnemy&Attack");
-            if (unit.attackUnit(nearestEnemy)) {
+            if (temporaryTarget != null && unit.attackUnit(nearestEnemy)) {
                 return true;
             }
+//            if (temporaryTarget != null) {
+//                return unit.move(temporaryTarget, Actions.MOVE_EXPLORE, "FindEm", false);
+//            }
         }
 
         // Go to random UNEXPLORED

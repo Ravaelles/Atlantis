@@ -68,8 +68,8 @@ public class MapAndRace {
         // === Terran ==============================================
 
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
-        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
-//        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
+//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
+        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/Bunker_v_M&M.scx";
@@ -169,6 +169,7 @@ public class MapAndRace {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(30);
                 GameSpeed.changeFrameSkipTo(0);
+                CameraManager.centerCameraNowOnSquadCenter();
             }
         }
 

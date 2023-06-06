@@ -3,7 +3,6 @@ package atlantis.combat.retreating;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
-import atlantis.game.GameSpeed;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.position.APosition;
@@ -62,7 +61,11 @@ public class ARunningManager {
             return false;
         }
 
-        if (unit.hp() > 30 && unit.lastStartedRunningMoreThanAgo(150)) {
+        if (
+            unit.hp() > 30
+            && unit.lastStartedRunningMoreThanAgo(150)
+            && unit.nearestEnemyDist() >= 3.5
+        ) {
             unit.setTooltipTactical("RanTooLong");
             return true;
         }
@@ -73,15 +76,17 @@ public class ARunningManager {
         }
 
         if (
-            unit.lastStartedRunningMoreThanAgo(20) && !AvoidEnemies.shouldNotAvoidAnyUnit(unit))
+            unit.noCooldown()
+            && unit.lastStartedRunningMoreThanAgo(15)
+            && !AvoidEnemies.shouldNotAvoidAnyUnit(unit))
         {
             unit.setTooltip("StopMan", false);
             return true;
         }
 
-        if (unit.isWounded() && unit.nearestEnemyDist() >= 3) {
-            return false;
-        }
+//        if (unit.isWounded() && unit.nearestEnemyDist() >= 3) {
+//            return false;
+//        }
 
         if (
             unit.lastStoppedRunningMoreThanAgo(STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
@@ -207,8 +212,11 @@ public class ARunningManager {
 
         // === Run directly away from the enemy ========================================
 
-        if (unit.friendsInRadius(1).atLeast(1) && A.notNthGameFrame(30)) {
+        if (shouldRunByShowingBackToEnemy()) {
             runTo = findRunPositionShowYourBackToEnemy(runAwayFrom, dist);
+//            APainter.paintCircleFilled(runTo, 6, Color.Green);
+//            APainter.paintLine(unit, runTo, Color.Green);
+            unit.setTooltip("AnyDir");
         }
 
         // === Get run to position - as far from enemy as possible =====================
@@ -256,6 +264,10 @@ public class ARunningManager {
         // =============================================================================
 
         return runTo;
+    }
+
+    protected boolean shouldRunByShowingBackToEnemy() {
+        return A.notNthGameFrame(30) && unit.friendsInRadius(1.2).isEmpty();
     }
 
     // =========================================================

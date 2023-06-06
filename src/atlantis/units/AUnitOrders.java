@@ -24,7 +24,7 @@ public interface AUnitOrders {
 //    boolean DEBUG_COMBAT = true;
 
     // =========================================================
-    
+
     default boolean attackUnit(AUnit target) {
 //        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
 //            System.out.println(
@@ -44,6 +44,10 @@ public interface AUnitOrders {
 
         if (target.u() == null) {
             System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
+            if (A.isUms()) {
+                A.printStackTrace();
+            }
+
 //            throw new RuntimeException("Null attack u(nit)");
             return false;
         }
@@ -159,9 +163,9 @@ public interface AUnitOrders {
 //        if (unit().isCommand(UnitCommandType.Move) && target.equals(u().getTargetPosition())) {
 //            return true;
 //        }
-        
+
         // === Handle LOADED/SIEGED units ========================================
-        
+
 //        if (unit().isLoaded()) {
 //            unit().unload(unit());
 //            unit().setLastUnitOrderNow();
@@ -177,19 +181,19 @@ public interface AUnitOrders {
 //                return false;
 //            }
 //        }
-            
+
         // =========================================================
 
 //        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
 //        if (unit().isMoving() && A.now() % 4 != 0) {
 //            return true;
 //        }
-//        
+//
 //        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
 //            System.out.println(u().getID() + " MOVE at @" + A.now());
 //        if (!unit().isMoving() || A.now() % 4 != 0) {
 //        if (!unit().isUnitActionMove() || A.now() % 5 == 0) {
-        
+
         APosition currentTarget = unit().targetPosition();
 
         if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
@@ -202,7 +206,7 @@ public interface AUnitOrders {
                 .setAction(unitAction);
             return true;
         }
-        
+
         return true;
     }
 
@@ -283,7 +287,7 @@ public interface AUnitOrders {
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
             System.out.println("GATHER @" + A.now() + " / worker:" + unit().typeWithHash() + " / " + target);
         }
-        
+
         if (target.type().isMineralField()) {
             unit().setAction(Actions.GATHER_MINERALS);
         } else {
@@ -534,7 +538,7 @@ public interface AUnitOrders {
 //    default boolean rightClick(PositionOrUnit target) {
 //        return u().rightClick(target);
 //    }
-    
+
     /**
      * Orders a SCV to stop constructing a structure. This leaves the structure in an incomplete state until
      * it is either cancelled, razed, or completed by another SCV. Returns true if the command was passed to
