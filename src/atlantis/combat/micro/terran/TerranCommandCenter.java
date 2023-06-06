@@ -42,7 +42,7 @@ public class TerranCommandCenter {
             return false;
         }
 
-        List<? extends AUnit> minerals = Select.minerals().sortDataByDistanceTo(building, true);
+        List<AUnit> minerals = Select.minerals().sortDataByDistanceTo(building, true);
         Selection bases = Select.ourBuildingsWithUnfinished().ofType(AUnitType.Terran_Command_Center);
         ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(building);
 
@@ -54,6 +54,10 @@ public class TerranCommandCenter {
         APosition rebaseTo = baseLocation.isPositionVisible()
             ? baseLocation.makeLandableFor(building)
             : baseLocation.position();
+
+        if (rebaseTo == null) {
+            rebaseTo = minerals.get(0) != null ? minerals.get(0).position() : null;
+        }
 
         if (rebaseTo == null) {
             System.err.println("Null rebaseTo");
