@@ -41,11 +41,11 @@ public class TerranMedic extends Microable {
     // =========================================================
 
     public boolean update(AUnit medic) {
-        if (medic.hp() <= 17 && AvoidEnemies.avoidEnemiesIfNeeded(medic)) {
+        if (medic.hp() <= 14 && AvoidEnemies.avoidEnemiesIfNeeded(medic)) {
             return true;
         }
 
-        if (medic.lastActionLessThanAgo(8, Actions.HEAL)) {
+        if (!medic.isIdle() && medic.lastActionLessThanAgo(8, Actions.HEAL)) {
             return true;
         }
 
@@ -61,11 +61,11 @@ public class TerranMedic extends Microable {
             return true;
         }
 
-        if (Enemy.protoss() && bodyBlockMelee(medic)) {
+        if (healAnyWoundedNear(medic)) {
             return true;
         }
 
-        if (healAnyWoundedNear(medic)) {
+        if (Enemy.protoss() && bodyBlockMelee(medic)) {
             return true;
         }
 
@@ -80,9 +80,9 @@ public class TerranMedic extends Microable {
     // =========================================================
 
     private static boolean bodyBlockMelee(AUnit medic) {
-//        if (medic.cooldownRemaining() >= 2) {
-//            return false;
-//        }
+        if (medic.cooldownRemaining() >= 2) {
+            return false;
+        }
 
         if (medic.friendsInRadiusCount(1.2) <= 0) {
             return false;
@@ -270,6 +270,10 @@ public class TerranMedic extends Microable {
             return false;
         }
 
+        if (medic.lastActionLessThanAgo(10, Actions.HEAL)) {
+            return false;
+        }
+
         AUnit nearestWoundedInfantry = Select.our()
                 .organic()
                 .notHavingHp(19)
@@ -300,7 +304,7 @@ public class TerranMedic extends Microable {
                 .wounded()
                 .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
                 .exclude(medic)
-                .notBeingHealed()
+//                .notBeingHealed()
                 .nearestTo(medic);
 
         // =========================================================
