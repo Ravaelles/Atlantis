@@ -25,6 +25,10 @@ public class ShouldRetreat {
                 "shouldRetreat:" + u.id(),
                 11,
                 () -> {
+                    if (A.isUms() && A.supplyUsed() <= 30) {
+                        return false;
+                    }
+
                     // Change unit context to unit
                     AUnit unit = u.squad() != null ? u.squad().centerUnit() : null;
                     if (unit == null) {

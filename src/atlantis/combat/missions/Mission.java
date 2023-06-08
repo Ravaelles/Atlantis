@@ -136,7 +136,7 @@ public abstract class Mission {
 
         if (temporaryTarget != null) {
             unit.move(temporaryTarget, Actions.MOVE_ENGAGE, "#FindEnemy", true);
-            APainter.paintLine(unit.position(), temporaryTarget, Color.Yellow);
+//            APainter.paintLine(unit.position(), temporaryTarget, Color.Yellow);
             return true;
         }
         else {

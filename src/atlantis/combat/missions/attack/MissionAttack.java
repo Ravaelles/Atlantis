@@ -12,7 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 /**
- * This is the mission object that is used by battle squads and it indicates that we should attack 
+ * This is the mission object that is used by battle squads and it indicates that we should attack
  * the enemy at the <b>focusPoint</b>.
  */
 public class MissionAttack extends Mission {
@@ -53,24 +53,28 @@ public class MissionAttack extends Mission {
         AFocusPoint focusPoint = focusPoint();
 
         // Invalid focus point, no enemy can be found, roam around map
-        if (focusPoint == null && (!unit.isAttackingOrMovingToAttack() || unit.isIdle())) {
-            return handleWeDontKnowWhereTheEnemyBaseIs(unit);
-        }
+//        if (focusPoint == null && (!unit.isAttackingOrMovingToAttack() || unit.isIdle())) {
+//            return handleWeDontKnowWhereTheEnemyBaseIs(unit);
+//        }
 
         if (ASquadCohesionManager.handle(unit)) {
             return true;
         }
 
         // Focus point is well known
-        if (focusPoint != null && unit.lastPositioningActionMoreThanAgo(40)) {
-            unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
-            if (AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint)) {
-                return true;
+//        if (focusPoint != null && unit.lastPositioningActionMoreThanAgo(40)) {
+        if (focusPoint != null) {
+            if (unit.lastPositioningActionMoreThanAgo(40)) {
+                if (AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint)) {
+                    unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
+                    return true;
+                }
             }
         }
 
         unit.setTooltipTactical("#MA-NoFocus");
-        return handleWeDontKnowWhereTheEnemyBaseIs(unit);
+        return false;
+//        return handleWeDontKnowWhereTheEnemyBaseIs(unit);
     }
 
     @Override

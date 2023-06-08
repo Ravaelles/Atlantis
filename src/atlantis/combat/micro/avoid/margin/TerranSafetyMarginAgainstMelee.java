@@ -3,7 +3,8 @@ package atlantis.combat.micro.avoid.margin;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
-public class TerranSafetyMarginAgainstMelee {
+public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
+
     protected static double handleTerranInfantry(AUnit defender, AUnit attacker) {
         if (canIgnoreThisEnemyForNow(defender, attacker)) {
             return 2;
@@ -11,7 +12,7 @@ public class TerranSafetyMarginAgainstMelee {
 
         // =========================================================
 
-        double criticalDist;
+        double criticalDist = enemyFacingThisUnitBonus(defender, attacker);
 
 //        if (true) return 3;
 
@@ -24,7 +25,7 @@ public class TerranSafetyMarginAgainstMelee {
                 return SafetyMarginAgainstMelee.enemyUnitsNearBonus(defender);
             }
 
-            criticalDist = SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC
+            criticalDist += SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC
 //                    + ourMovementBonus(defender)
 //                    + enemyMovementBonus(defender, attacker)
                     + SafetyMarginAgainstMelee.woundedAgainstMeleeBonus(defender, attacker);
@@ -35,9 +36,10 @@ public class TerranSafetyMarginAgainstMelee {
         // === No medic Near ===========================================
 
         else {
-            criticalDist = SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC
-//                    + ourMovementBonus(defender)
-                    + (1.05 * SafetyMargin.enemyMovementBonus(defender, attacker))
+            criticalDist += SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC
+                    + ourMovementBonus(defender)
+                    + (1.2 * SafetyMargin.enemyMovementBonus(defender, attacker))
+//                    + SafetyMargin.enemyMovementBonus(defender, attacker)
 //                    + (defender.hasCooldown() ? enemyMovementBonus(defender, attacker) : 0)
                     + SafetyMargin.workerBonus(defender, attacker)
                     + Math.min(1.2, SafetyMarginAgainstMelee.woundedAgainstMeleeBonus(defender, attacker));
@@ -60,9 +62,15 @@ public class TerranSafetyMarginAgainstMelee {
 
 //        defender.addTooltip(A.digit(criticalDist));
 
-        criticalDist = Math.min(3.7, criticalDist);
+        if (attacker.groundWeaponRange() <= 1) {
+            criticalDist = Math.min(3.6, criticalDist);
+        }
 
         return criticalDist;
+    }
+
+    protected static double ourMovementBonus(AUnit defender) {
+        return defender.isMoving() ? -0.2 : +0.3;
     }
 
     private static boolean canIgnoreThisEnemyForNow(AUnit defender, AUnit attacker) {

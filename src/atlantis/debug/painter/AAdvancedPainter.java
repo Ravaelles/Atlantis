@@ -167,7 +167,7 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             if (unit.isRunning()) {
-                paintWhiteFlagForRunningUnit(unit);
+                paintWhiteFlagWhenRunning(unit);
             }
 
             // =========================================================
@@ -807,7 +807,7 @@ public class AAdvancedPainter extends APainter {
                     paintCircleFilled(unit.runningManager().getRunToPosition(), 10, Color.Yellow);
                 }
 
-                paintWhiteFlagForRunningUnit(unit);
+                paintWhiteFlagWhenRunning(unit);
             }
 
             // Paint hash + unit ID and unit action e.g. "ENGAGE", "ATTACK_UNIT" etc
@@ -865,13 +865,13 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    private static void paintWhiteFlagForRunningUnit(AUnit unit) {
+    private static void paintWhiteFlagWhenRunning(AUnit unit) {
         int flagWidth = 15;
         int flagHeight = 8;
         int dy = 12;
         Color flagColor = ShouldRetreat.shouldRetreat(unit) ? Color.Red : Color.White;
 
-        paintLine(unit, unit.targetPosition(), Color.Blue); // Where unit is running to
+//        paintLine(unit, unit.targetPosition(), Color.Blue); // Where unit is running to
 
         paintRectangleFilled(unit.translateByPixels(0, -flagHeight - dy),
                 flagWidth, flagHeight, flagColor); // White flag
@@ -1277,8 +1277,8 @@ public class AAdvancedPainter extends APainter {
             if (median != null) {
                 int maxDist = (int) (SquadCohesion.squadMaxRadius(squad) * 32);
 
-                paintCircle(median, maxDist + 1, Color.Cyan);
-                paintCircle(median, maxDist, Color.Cyan);
+//                paintCircle(median, maxDist + 1, Color.Cyan);
+//                paintCircle(median, maxDist, Color.Cyan);
 
                 setTextSizeMedium();
                 paintTextCentered(median, squad.cohesionPercent() + "%", Color.Teal, 0, -(maxDist / 32.0) + 0.12);

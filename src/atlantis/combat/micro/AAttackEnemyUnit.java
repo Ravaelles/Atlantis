@@ -42,9 +42,12 @@ public class AAttackEnemyUnit {
         if (enemy == null) {
 //            AAdvancedPainter.paintCircleFilled(unit, 7, Color.White);
             unit.addLog("NothingToAttack");
+
+//            System.err.println(unit.idWithHash() + " aaa " + unit);
             return false;
         }
 
+//        System.err.println(unit.idWithHash() + " BBB " + unit);
         return ProcessAttackUnit.processAttackUnit(unit, enemy);
     }
 
@@ -57,9 +60,10 @@ public class AAttackEnemyUnit {
             return true;
         }
 
-        if (unit.lastActionLessThanAgo(30 * 5, Actions.RUN_RETREAT)) {
-            return false;
-        }
+        // @Check
+//        if (unit.lastActionLessThanAgo(30, Actions.RUN_RETREAT)) {
+//            return false;
+//        }
 
         boolean shouldRetreat = unit.shouldRetreat();
         if (unit.isMelee() && shouldRetreat) {

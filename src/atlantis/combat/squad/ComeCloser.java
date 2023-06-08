@@ -105,7 +105,11 @@ public class ComeCloser extends ASquadCohesionManager {
             return false;
         }
 
-        if (unit.groundDist(focusPoint(unit)) + 3 <= unit.squad().groundDistToFocusPoint()) {
+        AFocusPoint focusPoint = focusPoint(unit);
+        if (
+            focusPoint != null
+            && unit.groundDist(focusPoint) + 3 <= unit.squad().groundDistToFocusPoint()
+        ) {
             if (unit.friendsNear().inRadius(4, unit).atMost(5)) {
                 if (unit.isMoving() && unit.cooldown() == 0) {
                     unit.addLog("TooAhead");

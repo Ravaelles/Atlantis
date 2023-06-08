@@ -94,6 +94,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int _lastUnderAttack;
     public int _lastX;
     public int _lastY;
+    public APosition _lastPositionRunInAnyDir = null;
 
     // =========================================================
 
@@ -268,7 +269,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return true;
         }
 
-        APainter.paintLine(position, newPosition, Color.Teal);
+//        APainter.paintLine(position, newPosition, Color.Teal);
         this.setTooltip("Cant move away", false);
         return move(newPosition, Actions.MOVE_ERROR, "Force move", false);
     }
@@ -1790,6 +1791,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Current mission object for this unit's squad.
      */
     public Mission mission() {
+        if (squad == null) {
+            return null;
+        }
+
         return squad != null ? squad.mission() : null;
     }
 

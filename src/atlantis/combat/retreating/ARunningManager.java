@@ -28,12 +28,13 @@ public class ARunningManager {
     public static double Near_UNIT_MAKE_SPACE = 0.75;
     //    private static final double SHOW_BACK_TO_ENEMY_DIST_MIN = 2;
     private static final double SHOW_BACK_DIST_DEFAULT = 6;
-    private static final double SHOW_BACK_DIST_VULTURE = 5;
     private static final double SHOW_BACK_DIST_DRAGOON = 3;
+    private static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 6;
+    private static final double SHOW_BACK_DIST_VULTURE = 5;
     public static int ANY_DIRECTION_RADIUS_DEFAULT = 3;
-    public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 4;
-    public static int ANY_DIRECTION_RADIUS_INFANTRY = 2;
+    public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 3;
+    public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
     public static double NOTIFY_UNITS_IN_RADIUS = 0.65;
 
     private final AUnit unit;
@@ -56,7 +57,10 @@ public class ARunningManager {
             return false;
         }
 
-        if (unit.isUnitAction(Actions.RUN_IN_ANY_DIRECTION) && unit.lastActionLessThanAgo(20)) {
+        if (
+                unit.isUnitAction(Actions.RUN_IN_ANY_DIRECTION)
+                && unit.lastActionLessThanAgo(20)
+        ) {
             unit.setTooltipTactical("InAnyDir");
             return false;
         }
@@ -118,7 +122,14 @@ public class ARunningManager {
             return true;
         }
 
-//        HasPosition runAwayFrom = defineRunAwayFrom(unitOrPosition);
+        if (unit.isRunning()) {
+            if (unit.lastStoppedRunningLessThanAgo(6)) {
+                return true;
+            }
+            if (unit.lastActionLessThanAgo(20, Actions.RUN_IN_ANY_DIRECTION)) {
+                return true;
+            }
+        }
 
         // === Define run to position ==============================
 
@@ -210,63 +221,92 @@ public class ARunningManager {
             return runTo = Select.main().position();
         }
 
-        // === Run directly away from the enemy ========================================
+        // === Run directly away from the enemy ========================
 
         if (shouldRunByShowingBackToEnemy()) {
+
+            // Force units like Marines to slightly run away from each other to avoid one blob of running units
+            Selection nearFriends = unit.friendsNear().groundUnits().inRadius(1.6, unit);
+            if (nearFriends.atLeast(1)) {
+                AUnit nearestFriend = nearFriends.nearestTo(unit);
+//                HasPosition old = runAwayFrom;
+                runAwayFrom = runAwayFrom.translatePercentTowards(nearestFriend, 20);
+//                System.out.println("nearFriends TRANSLATE " + old.distTo(runAwayFrom));
+            }
+
             runTo = findRunPositionShowYourBackToEnemy(runAwayFrom, dist);
-//            APainter.paintCircleFilled(runTo, 6, Color.Green);
-//            APainter.paintLine(unit, runTo, Color.Green);
-            unit.setTooltip("AnyDir");
+            APainter.paintCircleFilled(runTo, 3, Color.Brown);
+            APainter.paintLine(unit, runTo, Color.Brown);
+            unit.setTooltip("ShowBack");
+
+            if (runTo != null) {
+                return runTo;
+            }
         }
 
-        // === Get run to position - as far from enemy as possible =====================
+        // === Run as far from enemy as possible =====================
+
+        return runTo = runInAnyDirection(runAwayFrom);
+    }
+
+    private APosition runInAnyDirection(HasPosition runAwayFrom) {
+        if (
+            unit._lastPositionRunInAnyDir != null
+            && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
+        ) {
+            return unit._lastPositionRunInAnyDir;
+        }
 
         if (runTo == null) {
             runTo = findRunPositionInAnyDirection(runAwayFrom);
         }
-        if (runTo == null) {
-            fallbackMode = true;
-            runTo = findRunPositionInAnyDirection(runAwayFrom);
-        }
+//        if (runTo == null) {
+//            fallbackMode = true;
+//            runTo = findRunPositionInAnyDirection(runAwayFrom);
+//        }
 
         // =============================================================================
 
 //        System.out.println("runTo = " + runTo + " // " + unit);
         if (
-            runTo != null
-                && unit.distTo(runTo) <= 0.02
+                runTo != null && unit.distTo(runTo) <= 0.02
 //                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
         ) {
             // Info: This is a known issue, I couldn't debug this, but it shouldn't be a huge problem...
-            System.err.println("Invalid run position, dist = " + unit.distTo(runTo));
-            APainter.paintLine(unit, runTo, Color.Purple);
-            APainter.paintLine(
-                    unit.translateByPixels(0, 1),
-                    runTo.translateByPixels(0, 1),
-                    Color.Purple
-            );
+            System.err.println("Invalid run_any_dir TOO_SHORT, dist = " + unit.distTo(runTo));
+//            APainter.paintLine(unit, runTo, Color.Purple);
+//            APainter.paintLine(
+//                    unit.translateByPixels(0, 1),
+//                    runTo.translateByPixels(0, 1),
+//                    Color.Purple
+//            );
             runTo = findRunPositionInAnyDirection(runAwayFrom);
 
             if (runTo != null) {
                 unit.setAction(Actions.RUN_IN_ANY_DIRECTION);
-                unit.setTooltipTactical("RunAnywhere");
+                unit._lastPositionRunInAnyDir = runTo;
+                APainter.paintCircleFilled(runTo, 3, Color.Green);
+                APainter.paintLine(unit, runTo, Color.Green);
+                unit.setTooltip("RunAnyDir");
             }
 
-            APainter.paintCircleFilled(runTo, 8, Color.Red);
+//            APainter.paintCircleFilled(runTo, 8, Color.Red);
         }
 
         // === Run to base as a fallback ===========================
 
-        if (runTo == null) {
-            runTo = handleRunToMainAsAFallback(unit, runAwayFrom);
-        }
+//        if (runTo == null) {
+//            runTo = handleRunToMainAsAFallback(unit, runAwayFrom);
+//        }
 
         // =============================================================================
 
+//        System.err.println("Invalid run_any_dir NULL");
         return runTo;
     }
 
     protected boolean shouldRunByShowingBackToEnemy() {
+//        return true;
         return A.notNthGameFrame(30) && unit.friendsInRadius(1.2).isEmpty();
     }
 
@@ -420,10 +460,13 @@ public class ARunningManager {
     }
 
     private double showBackRunPixelRadius(AUnit unit, HasPosition runAwayFrom) {
-        if (unit.isVulture()) {
+        if (unit.isTerranInfantry()) {
+            return SHOW_BACK_DIST_TERRAN_INFANTRY * 32;
+        }
+        else if (unit.isVulture()) {
             return SHOW_BACK_DIST_VULTURE * 32;
         }
-        if (unit.isDragoon()) {
+        else if (unit.isDragoon()) {
             return SHOW_BACK_DIST_DRAGOON * 32;
         }
 
@@ -479,7 +522,7 @@ public class ARunningManager {
 
         for (int dtx = -radius; dtx <= radius; dtx++) {
             for (int dty = -radius; dty <= radius; dty++) {
-                if (!fallbackMode && dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
+                if (dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
                     continue;
                 }
 
@@ -529,7 +572,7 @@ public class ARunningManager {
             return ANY_DIRECTION_RADIUS_DRAGOON;
         }
         else if (unit.isInfantry()) {
-            return ANY_DIRECTION_RADIUS_INFANTRY;
+            return ANY_DIRECTION_RADIUS_TERRAN_INFANTRY;
         }
 
         return ANY_DIRECTION_RADIUS_DEFAULT;
@@ -662,7 +705,8 @@ public class ARunningManager {
 
         Selection combatBuildings = Select.from(dangerous).combatBuildings(false);
         if (dangerous.size() == combatBuildings.size() && unit.enemiesNear().combatUnits().atMost(1)) {
-            if (combatBuildings.nearestTo(unit).distToMoreThan(unit, 7.9)) {
+            double minDist = unit.isGhost() ? 9.5 : 8.0;
+            if (combatBuildings.nearestTo(unit).distToMoreThan(unit, minDist)) {
                 if (unit.isMoving()) {
                     unit.holdPosition("Steady", true);
                 }

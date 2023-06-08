@@ -223,7 +223,7 @@ public class TerranMedic extends Microable {
         AUnit assignment = medicAssignment(medic);
 
         if (assignment != null && assignment.isAlive()) {
-            APainter.paintLine(medic, assignment, Color.White);
+//            APainter.paintLine(medic, assignment, Color.White);
 
             double dist = assignment.distTo(medic);
 

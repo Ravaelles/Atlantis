@@ -76,6 +76,14 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return defender.woundPercent() / 33;
     }
 
+    protected static double enemyFacingThisUnitBonus(AUnit defender, AUnit attacker) {
+        if (defender.isOtherUnitFacingThisUnit(attacker)) {
+            return -0.3;
+        }
+
+        return +0.2;
+    }
+
     private static double forDragoon(AUnit defender, AUnit attacker) {
         if (!defender.isDragoon()) {
             return -1;

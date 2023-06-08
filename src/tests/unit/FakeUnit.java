@@ -1,5 +1,8 @@
 package tests.unit;
 
+import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.Missions;
+import atlantis.config.env.Env;
 import atlantis.game.APlayer;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -25,6 +28,7 @@ public class FakeUnit extends AUnit {
     public boolean effVisible = true;
     public boolean detected = true;
     public boolean isVisibleUnitOnMap = true;
+    public boolean idle = false;
     public boolean loaded = false;
     public boolean lockedDown = false;
     public boolean stasised = false;
@@ -279,6 +283,11 @@ public class FakeUnit extends AUnit {
     // Orders
 
     @Override
+    public Mission mission() {
+        return Missions.ATTACK;
+    }
+
+    @Override
     public boolean useTech(TechType tech, AUnit target) {
         this.lastTechUsed = tech;
         this.target = (FakeUnit) target;
@@ -392,6 +401,11 @@ public class FakeUnit extends AUnit {
     @Override
     public boolean isVisibleUnitOnMap() {
         return isVisibleUnitOnMap;
+    }
+
+    @Override
+    public boolean isIdle() {
+        return idle;
     }
 
     @Override
