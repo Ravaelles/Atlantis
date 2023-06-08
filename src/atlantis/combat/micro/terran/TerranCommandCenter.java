@@ -86,7 +86,10 @@ public class TerranCommandCenter {
                     if (dist <= 5) {
                         rebaseTo = baseLocation.makeLandableFor(building);
 //                        System.err.println("# Land at " + rebaseTo.toTilePosition());
-                        building.land(rebaseTo.toTilePosition());
+                        if (rebaseTo != null) {
+                            building.land(rebaseTo.toTilePosition());
+                            return true;
+                        }
                     } else {
 //                        System.err.println("# Fly to " + rebaseTo + " // " + dist);
                         building.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true);

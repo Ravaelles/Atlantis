@@ -69,7 +69,7 @@ public class RepairerAssigner {
         if (unit.isBunker()) {
             int shouldHaveThisManyRepairers = MaxRepairers.optimalRepairersForBunker(unit);
             if (shouldHaveThisManyRepairers > 0) {
-                A.displayMessage("Bunker repairers = " + shouldHaveThisManyRepairers);
+//                System.out.println("Bunker repairers = " + shouldHaveThisManyRepairers);
                 unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
                 AProtectorManager.assignProtectorsFor(unit, shouldHaveThisManyRepairers);
                 return shouldHaveThisManyRepairers;

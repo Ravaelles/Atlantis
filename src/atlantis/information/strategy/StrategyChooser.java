@@ -37,8 +37,8 @@ public class StrategyChooser {
 //            return TerranStrategies.TERRAN_Nada_2_Fac;
         }
         else if (Enemy.terran()) {
-//            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
-            return TerranStrategies.TERRAN_Mech;
+            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
+//            return TerranStrategies.TERRAN_Mech;
         }
         else {
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
