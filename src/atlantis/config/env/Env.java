@@ -1,5 +1,6 @@
 package atlantis.config.env;
 
+import atlantis.config.AtlantisIgniter;
 import atlantis.game.A;
 
 /**
@@ -8,7 +9,7 @@ import atlantis.game.A;
  */
 public class Env {
 
-    private static final String FILE = "ENV";
+    private static final String ENV_FILE_PATH = "ENV";
 
     private static boolean isLocal = false;
     private static boolean firstRun = true;
@@ -17,14 +18,20 @@ public class Env {
     // =========================================================
 
     public static void readEnvFile(String[] mainArgs) {
-        String[][] env = A.loadFile(FILE, 2, "=");
+        String[][] env = A.loadFile(ENV_FILE_PATH, 2, "=");
 
         for (String[] line : env) {
-            String key = line[0].toLowerCase();
+            String key = line[0].toUpperCase();
             String value = line[1];
 
+            if (key.length() > 0 && key.charAt(0) == '#') {
+                continue;
+            }
+
             switch (key) {
-                case "local": isLocal = trueFalse(value);
+                case "LOCAL": isLocal = trueFalse(value);
+                case "BWAPI_INI_PATH": AtlantisIgniter.setBwapiIniPath(value);
+                case "CHAOS_LAUNCHER_PATH": AtlantisIgniter.setChaosLauncherPath(value);
             }
         }
 
@@ -34,6 +41,9 @@ public class Env {
         if (mainArgsContains("--counter=", mainArgs) && !mainArgsEquals("--counter=1", mainArgs)) {
             firstRun = false;
         }
+
+        System.out.println(AtlantisIgniter.getBwapiIniPath());
+        System.out.println(AtlantisIgniter.getChaosLauncherPath());
     }
 
     // =========================================================

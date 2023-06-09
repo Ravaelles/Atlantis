@@ -43,7 +43,7 @@ public class MapAndRace {
 
         // === Gosu bots - advanced single player cheating bots ====
 
-        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
@@ -51,32 +51,6 @@ public class MapAndRace {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
-
-        // === Zerg ================================================
-
-//        if (true) return "ums/Muta Micro_ Python.scm"; // Need good squad management
-//        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
-
-        // === Protoss ============================================
-
-//        if (true) return "ums/rav/3Drag_v_1Drag.scm";
-//        if (true) return "ums/rav/3Drag_v_4Drag.scm";
-//        if (true) return "ums/rav/3Zeal_v_1Zeal.scm";
-//        if (true) return "ums/rav/4Drag_v_4Drag_withBase.scm";
-//        if (true) return "ums/rav/4Drag_v_4Drag.scm";
-//        if (true) return "ums/rav/4Drag_v_5Drag.scm";
-//        if (true) return "ums/rav/4Drag_v_Zeal.scm";
-//        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
-//        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
-//        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";
-//        if (true) return "ums/rav/Dragoons_v_Marines.scm";
-//        if (true) return "ums/rav/Dragoons_v_Zealots.scm";
-//        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
-//        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
-//        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
-//        if (true) return "ums/rav/Zeal_v_Zeal.scm";
-//        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
-//        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
 
         // === Terran ==============================================
 
@@ -107,6 +81,32 @@ public class MapAndRace {
 //        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/Wraiths_v_Cannons.scm";
 //        if (true) return "ums/rav/Wraiths_v_Probes.scm";
+
+        // === Zerg ================================================
+
+//        if (true) return "ums/Muta Micro_ Python.scm"; // Need good squad management
+//        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
+
+        // === Protoss ============================================
+
+//        if (true) return "ums/rav/3Drag_v_1Drag.scm";
+//        if (true) return "ums/rav/3Drag_v_4Drag.scm";
+//        if (true) return "ums/rav/3Zeal_v_1Zeal.scm";
+//        if (true) return "ums/rav/4Drag_v_4Drag_withBase.scm";
+//        if (true) return "ums/rav/4Drag_v_4Drag.scm";
+//        if (true) return "ums/rav/4Drag_v_5Drag.scm";
+//        if (true) return "ums/rav/4Drag_v_Zeal.scm";
+//        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
+//        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
+//        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";
+//        if (true) return "ums/rav/Dragoons_v_Marines.scm";
+//        if (true) return "ums/rav/Dragoons_v_Zealots.scm";
+//        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
+//        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
+//        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
+//        if (true) return "ums/rav/Zeal_v_Zeal.scm";
+//        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
+//        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
 
         // =========================================================
 

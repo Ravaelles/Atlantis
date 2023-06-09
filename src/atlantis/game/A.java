@@ -250,14 +250,14 @@ public class A {
     }
 
     /**
-     * Displays given exception in user friendly way (with exception name and stack).
+     * Displays given exception in user-friendly way (with exception name and stack).
      */
     public static void displayException(Exception e) {
-        displayException(e, "Błąd", "Wystąpił błąd!");
+        displayException(e, "Error", "An error has occurred");
     }
 
     /**
-     * Displays given exception in user friendly way (with exception name and stack).
+     * Displays given exception in user-friendly way (with exception name and stack).
      */
     public static void displayException(Exception e, String title, String preText) {
         A.displayError(title,

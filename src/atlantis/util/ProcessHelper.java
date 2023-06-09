@@ -1,13 +1,11 @@
 package atlantis.util;
 
+import atlantis.config.AtlantisIgniter;
+
 /**
  * Kills and starts processes, including Starcraft game itself and Chaoslauncher.
  */
 public class ProcessHelper {
-
-//    public static String ChaosLauncherPath = "D:\\JAVA\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe";
-//    public static String ChaosLauncherPath = "D:\\JAVA\\Starcraft\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe";
-    public static String ChaosLauncherPath = "D:\\GAMES\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe";
 
     public static void killStarcraftProcess() {
         executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
@@ -26,7 +24,7 @@ public class ProcessHelper {
     public static void startChaosLauncherProcess() {
         try {
             Thread.sleep(150);
-            String command = "cmd /c " + ProcessHelper.ChaosLauncherPath;
+            String command = "cmd /c " + AtlantisIgniter.getChaosLauncherPath();
 
             executeInCommandLine(command);
         } catch (InterruptedException ignored) { }

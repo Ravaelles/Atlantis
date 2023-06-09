@@ -6,11 +6,36 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class AtlantisIgniter {
-    
+
+    public static String[] potentialBwapiPaths = new String[] {
+        "D:/JAVA/StarCraft/bwapi-data/bwapi.ini",
+        "C:/StarCraft/bwapi-data/bwapi.ini",
+        "D:/GAMES/StarCraft/bwapi-data/bwapi.ini",
+        "C:/Program files/StarCraft/bwapi-data/bwapi.ini",
+        "C:/Program files (x86)/StarCraft/bwapi-data/bwapi.ini"
+    };
+
+//    public static String ChaosLauncherPath = "D:\\JAVA\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe";
+//    public static String ChaosLauncherPath = "D:\\JAVA\\Starcraft\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe";
+//    public static String ChaosLauncherPath = "D:\\GAMES\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe";
+
+    // =========================================================
+
     private static boolean shouldUpdateFileContent = false;
     private static String bwapiIniPath = null;
+    private static String chaosLauncherPath = null;
     private static String[] fileContent = null;
     
+    // =========================================================
+
+    public static String getBwapiIniPath() {
+        return bwapiIniPath;
+    }
+
+    public static String getChaosLauncherPath() {
+        return chaosLauncherPath;
+    }
+
     // =========================================================
     
     public static void modifyBwapiFileIfNeeded() {
@@ -25,9 +50,10 @@ public class AtlantisIgniter {
         // =========================================================
         
         // Try locating bwap.ini file
-        bwapiIniPath = defineBwapiIniPath();
+        bwapiIniPath = getBwapiIniPath();
+        System.out.println("bwapiIniPath = " + bwapiIniPath);
         if (bwapiIniPath == null) {
-            System.err.println("Couldn't locate bwapi.ini file, not changing it.");
+            System.err.println("Couldn't locate bwapi.ini file. See ENV and ENV-EXAMPLE file.");
             return;
         }
         
@@ -52,31 +78,6 @@ public class AtlantisIgniter {
     
     // =========================================================
 
-    private static String defineBwapiIniPath() {
-        File file;
-        String path;
-
-        // Only one will be used, but we can have many
-        String[] potentialBwapiPaths = new String[] {
-            "D:/JAVA/StarCraft/bwapi-data/bwapi.ini",
-            "C:/StarCraft/bwapi-data/bwapi.ini",
-            "D:/GAMES/StarCraft/bwapi-data/bwapi.ini",
-            "C:/Program files/StarCraft/bwapi-data/bwapi.ini",
-            "C:/Program files (x86)/StarCraft/bwapi-data/bwapi.ini"
-        };
-
-        for (String potentialBwapiPath : potentialBwapiPaths) {
-            file = new File(potentialBwapiPath);
-
-            // Return the first found from the list above, order matters.
-            if (file.exists()) {
-                return potentialBwapiPath;
-            }
-        }
-        
-        return null;
-    }
-    
     private static void updateOurRace() {
         for (int i = 0; i < fileContent.length; i++) {
             String line = fileContent[i];
@@ -142,5 +143,14 @@ public class AtlantisIgniter {
         
         A.saveToFile(bwapiIniPath, finalContent, true);
     }
-    
+
+    // =========================================================
+
+    public static void setBwapiIniPath(String bwapiIniPath) {
+        AtlantisIgniter.bwapiIniPath = bwapiIniPath;
+    }
+
+    public static void setChaosLauncherPath(String chaosLauncherPath) {
+        AtlantisIgniter.chaosLauncherPath = chaosLauncherPath;
+    }
 }

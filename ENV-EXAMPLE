@@ -1,0 +1,7 @@
+LOCAL=true
+
+BWAPI_INI_PATH=D:\\JAVA\\Starcraft\\bwapi-data\\bwapi.ini
+
+# Change this to the location of ChaosLauncher
+CHAOS_LAUNCHER_PATH=C:\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe
+
