@@ -4,6 +4,7 @@ import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class MaxRepairers {
 
@@ -21,6 +22,7 @@ public class MaxRepairers {
 
     protected static int optimalRepairersForBunker(AUnit bunker) {
         Selection potentialEnemies = Select.enemy().combatUnits().inRadius(18, bunker);
+        System.out.println("potentialEnemies = " + potentialEnemies.size());
 
         if (potentialEnemies.empty()) {
             return 0;
@@ -30,9 +32,11 @@ public class MaxRepairers {
         int enemiesQuiteFar = potentialEnemies.count() - enemiesVeryNear;
         double optimalNumber;
 
-        if (AGame.isEnemyProtoss()) {
+        System.out.println("enemiesVeryNear = " + enemiesVeryNear + " // " + enemiesQuiteFar);
+
+        if (Enemy.protoss()) {
             optimalNumber = enemiesVeryNear + enemiesQuiteFar * 0.2;
-        } else if (AGame.isEnemyTerran()) {
+        } else if (Enemy.terran()) {
             optimalNumber = enemiesVeryNear * 0.38 + enemiesQuiteFar * 0.1;
         } else {
             optimalNumber = enemiesVeryNear * 0.4 + enemiesQuiteFar * 0.15;

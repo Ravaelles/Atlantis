@@ -1585,7 +1585,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //    }
 
     public boolean noCooldown() {
-        return groundWeaponCooldown() <= 0 || airWeaponCooldown() <= 0;
+        return groundWeaponCooldown() == 0 || airWeaponCooldown() == 0;
     }
 
     public boolean hasCooldown() {

@@ -48,16 +48,14 @@ public class AProtectorManager {
         // =========================================================
 
         for (AUnit bunker : Select.ourOfType(AUnitType.Terran_Bunker).list()) {
-            Selection enemies = bunker.enemiesNear().havingWeapon();
+            Selection enemies = bunker.enemiesNear().havingWeapon().canAttack(bunker, 10);
+            System.out.println("           enemies = " +            enemies.size());
 
             // No enemies + bunker healthy
-            if ((enemies.isEmpty() || bunker.loadedUnits().isEmpty()) && bunker.isHealthy()) {
+            if (enemies.size() <= 1 && (enemies.isEmpty() || bunker.loadedUnits().isEmpty()) && bunker.isHealthy()) {
                 ArrayList<AUnit> protectors = ARepairAssignments.getProtectorsFor(bunker);
                 ArrayList<AUnit> toRemove = new ArrayList<>();
-                for (Iterator<AUnit> it = protectors.iterator(); it.hasNext(); ) {
-                    AUnit repairer = it.next();
-                    toRemove.add(repairer);
-                }
+                toRemove.addAll(protectors);
 
                 for (AUnit protector : toRemove) {
                     ARepairAssignments.removeRepairer(protector);
@@ -67,6 +65,7 @@ public class AProtectorManager {
             // Bunker damaged or enemies nearby
             else {
                 int desiredBunkerProtectors = RepairerAssigner.optimalRepairersFor(bunker);
+                System.err.println(desiredBunkerProtectors);
                 assignProtectorsFor(bunker, desiredBunkerProtectors);
             }
         }

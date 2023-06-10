@@ -72,11 +72,6 @@ public class FightInsteadAvoid {
                     return true;
                 }
 
-                if (dontFightInTopImportantCases()) {
-                    unit.addLog("DoNotFight");
-                    return false;
-                }
-
                 if (unit.mission().forcesUnitToFight(unit, enemies)) {
                     unit.addLog("ForcedFight");
                     return true;
@@ -135,10 +130,10 @@ public class FightInsteadAvoid {
             }
         }
 
-        if (handleTerranInfantryShouldFight(unit)) {
-            unit.addLog("InfantryFight");
-            return true;
-        }
+//        if (handleTerranInfantryShouldFight(unit)) {
+//            unit.addLog("InfantryFight");
+//            return true;
+//        }
 
 //        if (combatBuilding != null && fightBecauseWayTooManyUnitsNear(unit)) {
 //            return true;
@@ -176,20 +171,6 @@ public class FightInsteadAvoid {
         }
     }
 
-    protected boolean dontFightInTopImportantCases() {
-//        if (unit.isMarine() && GamePhase.isEarlyGame() && !unit.isMissionDefendOrSparta() && (!ArmyStrength.weAreMuchStronger() || Count.medics() <= 1)) {
-//            unit.addLog("OhLord");
-//            return true;
-//        }
-
-        // Always avoid invisible combat units
-//        if (invisibleDT != null || invisibleCombatUnit != null) {
-//            return true;
-//        }
-
-        return false;
-    }
-
     protected boolean fightInImportantCases() {
         if (unit.isWorker()) {
             System.err.println("Worker in fightInImportantCases");
@@ -223,6 +204,7 @@ public class FightInsteadAvoid {
         }
 
         if (forbidAntiAirAbandoningCloseTargets(unit)) {
+            unit.setTooltipTactical("DontAbandonCloseTargetz");
             return true;
         }
 
@@ -237,10 +219,15 @@ public class FightInsteadAvoid {
         if (
                 unit.hp() >= 40
                 && unit.cooldownRemaining() <= 2
+                && (
+                    unit.noCooldown()
+                    || (unit.friendsNearInRadius(1.5) >= 4
+                    || unit.enemiesNearInRadius(2) == 0)
+                )
                 && unit.friendsInRadius(3).medics().free().isNotEmpty()
                 && (unit.isStimmed() || unit.friendsInRadius(3).atLeast(5))
         ) {
-            unit.setTooltipTactical("QuiteHealthy");
+            unit.setTooltipTactical("SafeWithMedics");
             return true;
         }
 
@@ -364,20 +351,20 @@ public class FightInsteadAvoid {
         return false;
     }
 
-    private boolean handleTerranInfantryShouldFight(AUnit unit) {
-        if (!unit.isTerranInfantry()) {
-            return false;
-        }
-
-        int meleeEnemiesNear = unit.enemiesNear().melee().inRadius(1.5, unit).count();
-        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) * meleeEnemiesNear) {
-            return false;
-        }
-
-//        return false;
-        boolean medicNear = unit.medicInHealRange();
-        return medicNear || (!unit.isWounded() && ranged == null && unit.friendsInRadiusCount(1) >= 4);
-    }
+//    private boolean handleTerranInfantryShouldFight(AUnit unit) {
+//        if (!unit.isTerranInfantry()) {
+//            return false;
+//        }
+//
+//        int meleeEnemiesNear = unit.enemiesNear().melee().inRadius(1.5, unit).count();
+//        if (unit.hp() <= (Enemy.protoss() ? 18 : 11) * meleeEnemiesNear) {
+//            return false;
+//        }
+//
+////        return false;
+//        boolean medicNear = unit.medicInHealRange();
+//        return medicNear || (!unit.isWounded() && ranged == null && unit.friendsInRadiusCount(1) >= 4);
+//    }
 
     protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
         return unit.isMelee()
