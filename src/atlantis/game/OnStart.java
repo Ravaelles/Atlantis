@@ -9,6 +9,7 @@ import atlantis.debug.tweaker.ParamTweakerFactory;
 import atlantis.information.strategy.*;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
+import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.select.Select;
 import atlantis.util.We;
@@ -105,7 +106,10 @@ public class OnStart {
         catch (Exception e) {
             System.err.println();
             System.err.println("#######################################################");
-            System.err.println("Make sure that Starcraft/bwapi-data contains build_orders directory,");
+            System.err.println(
+                "Make sure that Starcraft/" + ABuildOrderLoader.BUILD_ORDERS_PATH
+                + " contains build_orders directory,"
+            );
             System.err.println("copy it from Atlantis/build_orders");
             System.err.println("#######################################################");
 

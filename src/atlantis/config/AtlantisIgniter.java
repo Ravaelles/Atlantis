@@ -7,20 +7,6 @@ import java.util.ArrayList;
 
 public class AtlantisIgniter {
 
-    public static String[] potentialBwapiPaths = new String[] {
-        "D:/JAVA/StarCraft/bwapi-data/bwapi.ini",
-        "C:/StarCraft/bwapi-data/bwapi.ini",
-        "D:/GAMES/StarCraft/bwapi-data/bwapi.ini",
-        "C:/Program files/StarCraft/bwapi-data/bwapi.ini",
-        "C:/Program files (x86)/StarCraft/bwapi-data/bwapi.ini"
-    };
-
-//    public static String ChaosLauncherPath = "D:\\JAVA\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe";
-//    public static String ChaosLauncherPath = "D:\\JAVA\\Starcraft\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe";
-//    public static String ChaosLauncherPath = "D:\\GAMES\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe";
-
-    // =========================================================
-
     private static boolean shouldUpdateFileContent = false;
     private static String bwapiIniPath = null;
     private static String chaosLauncherPath = null;

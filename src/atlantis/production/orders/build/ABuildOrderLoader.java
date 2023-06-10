@@ -1,5 +1,6 @@
 package atlantis.production.orders.build;
 
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.production.ProductionOrder;
@@ -22,12 +23,17 @@ public class ABuildOrderLoader {
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
 //        String filePath = BUILD_ORDERS_PATH + buildOrder.getBuildOrderRelativePath();
         String filePath = "./" + BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.name() + ".txt";
+
+        if (Env.isTesting()) {
+            filePath = "." + filePath; // Fix for tests: Replace ./ with ../
+        }
+
 //        System.out.println("\r\nUse build order from file: `" + strategy.name() + ".txt`");
 
         File f = new File(filePath);
         if (!f.exists()) {
             String message = "\n### Build order file does not exist:\r\n"
-                + filePath
+                + f.getAbsolutePath()
                 + "\r\n### Strategy: " + strategy
                 + "\r\n### Quit ###";
 
