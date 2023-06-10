@@ -58,7 +58,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
         if (true) return "ums/rav/Bunker_v_Zealots.scx";
 //        if (true) return "ums/rav/Bunker_v_M&M.scx";

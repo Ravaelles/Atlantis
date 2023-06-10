@@ -349,8 +349,27 @@ public interface AUnitOrders {
             return true;
         }
 
-        unit().setAction(Actions.REPAIR);
-        u().repair(target.u());
+
+        unit().setLastActionReceivedNow().setAction(Actions.REPAIR);
+
+//        if (unit().distToMoreThan(target, unit().isRepairing() ? 1 : 0.4)) {
+        if (
+            !unit().isRepairing()
+            && unit().distToMoreThan(target, 1.1)
+            && !unit().isMoving())
+//            && (!unit().isMoving() || unit().lastActionMoreThanAgo(10, Actions.REPAIR)))
+        {
+//            u().move(target.position());
+            // A fix to avoid stucking SCVs that go to repair in line.
+            // We send them in slightly different places, hoping they don't stuck in line
+            u().move(target.position().translateByTiles(
+                -0.3 + 0.7 * (unit().id() % 4) / 4.0,
+                -0.3 + 0.7 * (unit().id() % 4) / 4.0
+            ));
+        }
+        else {
+            u().repair(target.u());
+        }
 
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
             System.out.println(unit().typeWithHash() + " REPAIR @" + A.now() + " / " + target + " (" + target.hp() + ")");

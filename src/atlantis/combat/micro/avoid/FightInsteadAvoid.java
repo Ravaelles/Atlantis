@@ -219,11 +219,12 @@ public class FightInsteadAvoid {
         if (
                 unit.hp() >= 40
                 && unit.cooldownRemaining() <= 2
-                && (
-                    unit.noCooldown()
-                    || (unit.friendsNearInRadius(1.5) >= 4
-                    || unit.enemiesNearInRadius(2) == 0)
-                )
+                && unit.enemiesNearInRadius(2) == 0
+//                && (
+                   && unit.noCooldown()
+//                    || (unit.friendsNearInRadius(1.5) >= 4
+//                    || unit.enemiesNearInRadius(3) == 0
+//                )
                 && unit.friendsInRadius(3).medics().free().isNotEmpty()
                 && (unit.isStimmed() || unit.friendsInRadius(3).atLeast(5))
         ) {

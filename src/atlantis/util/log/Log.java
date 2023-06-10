@@ -16,8 +16,8 @@ public class Log {
     /**
      * Helpful for logging of <b>unitAction</b> changes. Very helpful to get human-readable unit reasoning.
      */
-//    public static boolean logUnitActionChanges = false;
-    public static boolean logUnitActionChanges = true;
+    public static boolean logUnitActionChanges = false;
+//    public static boolean logUnitActionChanges = true;
 
     public static final int UNIT_LOG_SIZE = 6;
     public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 18;

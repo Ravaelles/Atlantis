@@ -22,7 +22,6 @@ public class MaxRepairers {
 
     protected static int optimalRepairersForBunker(AUnit bunker) {
         Selection potentialEnemies = Select.enemy().combatUnits().inRadius(18, bunker);
-        System.out.println("potentialEnemies = " + potentialEnemies.size());
 
         if (potentialEnemies.empty()) {
             return 0;
@@ -31,8 +30,6 @@ public class MaxRepairers {
         int enemiesVeryNear = potentialEnemies.inRadius(10, bunker).count();
         int enemiesQuiteFar = potentialEnemies.count() - enemiesVeryNear;
         double optimalNumber;
-
-        System.out.println("enemiesVeryNear = " + enemiesVeryNear + " // " + enemiesQuiteFar);
 
         if (Enemy.protoss()) {
             optimalNumber = enemiesVeryNear + enemiesQuiteFar * 0.2;

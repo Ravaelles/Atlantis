@@ -49,7 +49,6 @@ public class AProtectorManager {
 
         for (AUnit bunker : Select.ourOfType(AUnitType.Terran_Bunker).list()) {
             Selection enemies = bunker.enemiesNear().havingWeapon().canAttack(bunker, 10);
-            System.out.println("           enemies = " +            enemies.size());
 
             // No enemies + bunker healthy
             if (enemies.size() <= 1 && (enemies.isEmpty() || bunker.loadedUnits().isEmpty()) && bunker.isHealthy()) {
@@ -65,7 +64,6 @@ public class AProtectorManager {
             // Bunker damaged or enemies nearby
             else {
                 int desiredBunkerProtectors = RepairerAssigner.optimalRepairersFor(bunker);
-                System.err.println(desiredBunkerProtectors);
                 assignProtectorsFor(bunker, desiredBunkerProtectors);
             }
         }
@@ -220,7 +218,10 @@ public class AProtectorManager {
                 if (protector.isRepairing()) {
                     return true;
                 }
+
                 return protector.repair(target, "Protect" + target.name(), true);
+//                return protector.repair(Select.main(), "Protect" + target.name(), true);
+//                return protector.doRightClickAndYesIKnowIShouldAvoidUsingIt(target);
             }
 
             // Bunker fully HEALTHY
