@@ -99,6 +99,14 @@ public class AAvoidSpells {
 //            return true;
 //        }
 
+        // Randomize fire if there are multiple mines
+        if (unit.idIsOdd()) {
+            AUnit otherMine = mine.friendsNear().ofType(AUnitType.Terran_Vulture_Spider_Mine).first();
+            if (otherMine != null) {
+                mine = otherMine;
+            }
+        }
+
         unit.attackUnit(mine);
         unit.setTooltipTactical("SHOOT MINE");
         return true;

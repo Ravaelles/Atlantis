@@ -31,7 +31,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint defineFocusPoint() {
-        if (A.supplyUsed() <= 1 || !Have.main()) {
+        if (A.supplyUsed() <= 1) {
             AUnit enemy = Select.enemy().first();
             AUnit our = Select.our().first();
 
@@ -137,6 +137,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             }
         }
 
+//        System.err.println("No MissionAttack FocusPoint");
+//        Select.enemy().print("Enemy units");
         return null;
     }
 

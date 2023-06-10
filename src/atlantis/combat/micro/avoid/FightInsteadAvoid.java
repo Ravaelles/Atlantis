@@ -149,14 +149,18 @@ public class FightInsteadAvoid {
 //            return true;
 //        }
 
-        if (lurker != null && (!lurker.isBurrowed() || lurker.isDetected())) {
+        if (
+            lurker != null && (!lurker.isBurrowed() || lurker.isDetected())
+            && unit.noCooldown() && lurker.distToLessThan(unit, 4) && unit.friendsNearInRadius(3) >= 3
+        ) {
             unit.addLog("FightLurker");
             return true;
         }
 
-//        if (tankSieged != null || tanks != null) {
-//            return true;
-//        }
+        if (tankSieged != null && unit.distToLessThan(tankSieged, 3)) {
+            unit.addLog("FightSiegedTank");
+            return true;
+        }
 
         if (combatBuilding != null && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)) {
             unit.addLog("FightBuilding");
@@ -167,7 +171,8 @@ public class FightInsteadAvoid {
             return fightAsMeleeUnit();
         }
         else {
-            return fightAsRangedUnit();
+            return false;
+//            return fightAsRangedUnit();
         }
     }
 

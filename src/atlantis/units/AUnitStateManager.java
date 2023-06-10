@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.combat.micro.Unfreezer;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
 
@@ -10,7 +11,7 @@ public class AUnitStateManager {
 
     public static void update() {
         now = AGame.now();
-        updatePosition = AGame.everyNthGameFrame(AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES);
+        updatePosition = AGame.everyNthGameFrame(Unfreezer.UPDATE_UNIT_POSITION_EVERY_FRAMES);
 
         for (AUnit unit : Select.our().list()) {
             updateUnitInfo(unit);

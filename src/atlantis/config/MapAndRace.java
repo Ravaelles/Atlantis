@@ -58,7 +58,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
+        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/Ghosts_v_P.scx";
@@ -80,9 +80,9 @@ public class MapAndRace {
 //        if (true) return "ums/rav/Vultures_v_Marines.scm";
 //        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/Wraiths_v_Cannons.scm";
-//        if (true) return "ums/rav/Wraiths_v_Probes.scm";
-        if (true) return "ums/Jim_v_Lurker.scx";
-        if (true) return "ums/InfantryControl.scx"; // Terran Infantry units vs enemies
+//        if (true) return "ums/rav/Wraiths_v_Probes.scm"; // Wraiths v Probes & Cannons
+//        if (true) return "ums/Jim_v_Lurker.scx"; // Marine vs Lurker
+//        if (true) return "ums/InfantryControl.scx"; // Terran Infantry units vs enemies
 
         // === Zerg ================================================
 
@@ -206,20 +206,6 @@ public class MapAndRace {
 
 //                CameraManager.centerCameraOn((new MissionDefendFocusPoint()).focusPoint());
             }
-
-//            if (
-//                GameSpeed.frameSkip == initFrameSkip
-//                    && GameSpeed.gameSpeed == 0
-//                    && A.everyNthGameFrame(51)
-//            ) {
-//                if (
-//                        EnemyUnits.discovered().atLeast(4)
-//                        && (Have.dragoon() || Have.cannon())
-//                ) {
-//                    GameSpeed.changeSpeedTo(10);
-//                    GameSpeed.changeFrameSkipTo(0);
-//                }
-//            }
         }
 
         // =========================================================
@@ -233,6 +219,17 @@ public class MapAndRace {
             if (Atlantis.KILLED >= 32) {
                 Atlantis.getInstance().onEnd(true);
             }
+        }
+
+        // =========================================================
+        // Marines v. ZERGLINGS
+
+        else if (activeMap().equals("ums/Jim_v_Lurker.scx")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedTo(1);
+                GameSpeed.changeFrameSkipTo(0);
+            }
+            CameraManager.centerCameraNowOnSquadCenter();
         }
 
         // =========================================================

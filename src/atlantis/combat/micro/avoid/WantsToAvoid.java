@@ -20,14 +20,11 @@ public class WantsToAvoid {
         // =========================================================
 
         if (!shouldAlwaysAvoid(unit, enemies)) {
-            if (
-                    unit.hasAnyWeapon() && (new FightInsteadAvoid(unit, enemies)).shouldFight()
-            ) {
-                APainter.paintCircle(unit, 10, Color.Green);
-                APainter.paintCircle(unit, 11, Color.Green);
+//                APainter.paintCircle(unit, 10, Color.Green);
+//                APainter.paintCircle(unit, 11, Color.Green);
 
-                return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
-            }
+            unit.addFileLog("NOT shouldAlwaysAvoid");
+            return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
         }
 
         // =========================================================
@@ -47,7 +44,10 @@ public class WantsToAvoid {
     // =========================================================
 
     private static boolean shouldAlwaysAvoid(AUnit unit, Units enemies) {
-//        if (unit.isMarine() && GamePhase.isEarlyGame() && unit.isRunning()) {
+        if (!unit.hasAnyWeapon()) {
+            return false;
+        }
+
         if (
                 unit.isMarine() && !A.isUms() && GamePhase.isEarlyGame() && unit.isRetreating()
                 && (unit.hp() >= 24 && unit.cooldownRemaining() >= 1)
@@ -73,7 +73,12 @@ public class WantsToAvoid {
             return true;
         }
 
-        return false;
+        if (new FightInsteadAvoid(unit, enemies).shouldFight()) {
+            unit.addLog("SHOULD FightInsteadAvoid");
+            return false;
+        }
+
+        return true;
     }
 
     private static boolean shouldNeverAvoidIf(AUnit unit, Units enemies) {

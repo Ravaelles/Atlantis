@@ -13,7 +13,8 @@ public class ProcessAttackUnit {
             return true;
         }
 
-        if (target.isBase() && unit.distToMoreThan(target, 2.8)) {
+        // Come closer when attacking enemy bases
+        if (target.isBase() && unit.hasCooldown() && unit.distToMoreThan(target, 2.8)) {
             if (unit.move(target, Actions.MOVE_ATTACK, "BaseAttack", false)) {
                 return true;
             }

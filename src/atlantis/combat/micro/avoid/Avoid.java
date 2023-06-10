@@ -98,8 +98,10 @@ public class Avoid {
 //        System.err.println("ERROR_RUN for " + unit.nameWithId());
         unit.addLog("RUN-ERROR");
 
-        AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
-        unit.setTooltipTactical("Cant run, fight");
+        if (unit.cooldown() <= 4) {
+            AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
+            unit.setTooltipTactical("Cant run, fight");
+        }
 
         return true;
     }

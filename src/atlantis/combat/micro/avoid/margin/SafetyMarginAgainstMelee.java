@@ -30,8 +30,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // === Terran ===============================================
 
-        else if (defender.isTerran()) {
-            criticalDist = handleTerran(defender, attacker);
+        else if (defender.isTerranInfantry()) {
+            criticalDist = TerranSafetyMarginAgainstMelee.handleTerranInfantry(defender, attacker);
         }
 
         // === Zerg ===============================================
@@ -42,11 +42,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // === Standard unit =========================================
 
-        if (criticalDist <= -1) {
+        if (criticalDist == -1) {
             criticalDist = baseForMelee(defender, attacker)
                     + enemyWeaponRange(defender, attacker)
                     + woundedAgainstMeleeBonus(defender, attacker)
-                    + beastBonus(defender)
+                    + beastBonus(defender, attacker)
                     + ourUnitsNearBonus(defender)
                     + workerBonus(defender, attacker)
                     + ourMovementBonus(defender)
@@ -55,6 +55,9 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
             // This should be enough as a minimum versus melee units
             criticalDist = Math.min(criticalDist, defender.isDragoon() ? 2.95 : 3.4);
+        }
+        else {
+            criticalDist += beastBonus(defender, attacker);
         }
 
         if (defender.isRanged() && attacker.isWorker()) {
@@ -187,28 +190,6 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //        return -1;
 //    }
 
-    private static double handleTerran(AUnit defender, AUnit attacker) {
-
-        // === Terran INFANTRY =======================================
-
-        if (defender.isTerranInfantry()) {
-            return TerranSafetyMarginAgainstMelee.handleTerranInfantry(defender, attacker);
-        }
-
-        // === VULTURE ===============================================
-
-//        else if (defender.isVulture()) {
-//            return Math.min(
-//                    3.6,
-//                    2.7 + woundedAgainstMeleeBonus(defender, attacker)
-//                            + ourMovementBonus(defender)
-//                            + enemyMovementBonus(defender, attacker)
-//            );
-//        }
-
-        return -1;
-    }
-
     // =========================================================
 
     private static double enemyMeleeUnitsNearBonus(AUnit defender) {
@@ -235,22 +216,16 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return 0;
     }
 
-    protected static double beastBonus(AUnit defender) {
-        if (
-                defender.enemiesNear()
-                .ofType(AUnitType.Protoss_Dark_Templar)
-                .inRadius(5, defender)
-                .notEmpty()
-        ) {
+    protected static double beastBonus(AUnit defender, AUnit attacker) {
+        if (attacker.isDT() && attacker.distToLessThan(defender, 4.4)) {
             return 2.6;
         }
 
-        int beastNear = defender.enemiesNear()
-                .ofType(AUnitType.Protoss_Archon, AUnitType.Zerg_Ultralisk)
-                .inRadius(5, defender)
-                .count();
+        if ((attacker.isUltralisk() || attacker.isArchon()) && defender.distToLessThan(attacker, 4.4)) {
+            return 1.8;
+        }
 
-        return beastNear > 0 ? 1.8 : 0;
+        return 0;
     }
 
     protected static double woundedAgainstMeleeBonus(AUnit defender, AUnit attacker) {

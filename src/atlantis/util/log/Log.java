@@ -7,6 +7,16 @@ import java.util.ArrayList;
 
 public class Log {
 
+    /**
+     * Write every tooltip to logs/units/unit_file.txt, so it's possible to debug things.
+     */
+    public static final int SAVE_UNIT_LOGS_TO_FILES = 0; // 0 - Off, 1 - Only our combat units
+
+    /**
+     * Helpful for logging of <b>unitAction</b> changes. Very helpful to get human-readable unit reasoning.
+     */
+    public static boolean logUnitActionChanges = false;
+
     public static final int UNIT_LOG_SIZE = 6;
     public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 18;
 
@@ -25,7 +35,7 @@ public class Log {
 
     public void addMessage(String message, AUnit unit) {
         messages.add(new LogMessage(message, expireAfterFrames));
-        if (LogUnitsToFiles.SAVE_UNIT_LOGS_TO_FILES > 0) {
+        if (SAVE_UNIT_LOGS_TO_FILES > 0) {
             LogUnitsToFiles.saveUnitLogToFile(message, unit);
         }
 

@@ -20,7 +20,7 @@ public class GameSpeed {
 
     /**
      * By skipping rendering of game frames, we can make the game much quicker, regardless of the game speed.
-     * Value 3 means we render every 3th game frame, skipping 67% of total rendering.
+     * Value 3 means we render every 3rd game frame, skipping 67% of total rendering.
      */
     public static int frameSkip;
 

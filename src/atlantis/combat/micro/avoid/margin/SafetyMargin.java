@@ -1,8 +1,11 @@
 package atlantis.combat.micro.avoid.margin;
 
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import bwapi.Color;
 
 public class SafetyMargin {
 
@@ -24,10 +27,14 @@ public class SafetyMargin {
             throw new RuntimeException("Attacker is null");
         }
 
-        double base = baseMargin(defender, attacker);
-
+        double base = BaseSafetyMargin.baseSafetyDistance(defender, attacker);
         double calculated;
-        if (attacker.isMelee()) {
+
+        if ((calculated = SafetyMarginSpecial.handle(defender, attacker)) != -1) {
+            // Do nothing
+//            System.out.println("SafetyMarginSpecial = " + calculated + " / " + A.dist(defender, attacker));
+        }
+        else if (attacker.isMelee()) {
             calculated = SafetyMarginAgainstMelee.calculate(defender, attacker);
         }
         else {
@@ -42,20 +49,14 @@ public class SafetyMargin {
         double safetyMargin = base + defender.distTo(attacker) - calculated;
 //        System.out.println(defender.idWithHash() + ": MARGIN: " + safetyMargin);
 
+        Color color = safetyMargin < 0 ? Color.Red : Color.Green;
+        APainter.paintLine(defender, attacker, color);
+        APainter.paintTextCentered(defender, A.formatDecimalPlaces(calculated, 1), color, 0.6, 0);
+
         return safetyMargin;
     }
 
     // =========================================================
-
-    private static double baseMargin(AUnit defender, AUnit attacker) {
-        double special = SafetyMarginSpecial.handle(defender, attacker);
-        if (special >= 0) {
-            return special;
-        }
-
-        return (defender.isSquadScout() ? -2.7 : 0)
-                + (defender.lastRetreatedAgo() <= 40 ? -3.3 : 0);
-    }
 
     protected static double enemyWeaponRange(AUnit defender, AUnit attacker) {
 //        System.out.println(attacker.type() + ".enemyWeaponRange(" + defender.type() + ") = " + attacker.enemyWeaponRange(defender));

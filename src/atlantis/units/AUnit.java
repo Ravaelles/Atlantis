@@ -7,7 +7,6 @@ import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.SquadCohesion;
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
@@ -60,22 +59,31 @@ import static atlantis.units.actions.Actions.RUN_RETREAT;
 //public class AUnit implements UnitInterface, Comparable<AUnit>, HasPosition, AUnitOrders {
 public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
-    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 30;
-
-    // Mapping of native unit IDs to AUnit objects
+    /**
+     * Mapping of native unit IDs to AUnit objects
+     */
     private static final Map<Integer, AUnit> instances = new HashMap<>();
 
-    // Cached distances to other units - reduces time on calculating unit1.distanceTo(unit2)
-//    public static final ACachedValue<Double> unitDistancesCached = new ACachedValue<>();
-
+    /**
+     * Inner BWAPI Unit object that we extend for easier code maintainability.
+     */
     private Unit u;
+
+    /**
+     * Cache var storing generic Object-type keys.
+     */
     private Cache<Object> cache = new Cache<>();
     private Cache<Integer> cacheInt = new Cache<>();
     private Cache<Boolean> cacheBoolean = new Cache<>();
+
+    /**
+     * Last type that this unit was seen with. It changes e.g. for Zerg Eggs.
+     */
     protected AUnitType _lastType = null;
     private Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
     private Action unitAction = Actions.INIT;
-    //    private final AUnit _cachedNearestMeleeEnemy = null;
+    private Action _prevAction = null;
+
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
     private int _lastActionReceived = 0;
     public int _lastAttackOrder;
@@ -512,7 +520,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
         this.tooltip = tooltip;
 
-        if (LogUnitsToFiles.SAVE_UNIT_LOGS_TO_FILES > 0) {
+        if (Log.SAVE_UNIT_LOGS_TO_FILES > 0) {
             LogUnitsToFiles.saveUnitLogToFile(tooltip, this);
         }
 
@@ -1474,7 +1482,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit setAction(Action unitAction) {
+        if (Log.logUnitActionChanges && this._prevAction != unitAction) {
+            System.err.println(nameWithId() + " ACTION (@ " + A.now() + "): " + unitAction);
+        }
+
+        this._prevAction = this.unitAction;
         this.unitAction = unitAction;
+
         setLastActionReceivedNow();
         rememberSpecificUnitAction(unitAction);
         return this;
