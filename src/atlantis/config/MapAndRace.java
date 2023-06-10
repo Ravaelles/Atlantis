@@ -37,7 +37,7 @@ public class MapAndRace {
 
         // === Popular SSCAIT maps =================================
 
-//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
@@ -58,8 +58,8 @@ public class MapAndRace {
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
-//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Many Marines v many Zealots
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx";
 //        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/Ghosts_v_P.scx";
@@ -147,7 +147,7 @@ public class MapAndRace {
 //        if (true) return "ums/vulture_control.scx"; // Vulture v. Broodlings
 //        if (true) return "ums/MultiTask PvT.scx"; // Weird - ums but starts with bases
 //        if (true) return "ums/ControlFighterTZ-Easy.scx"; // Tanks & Marines v. Zerg
-//        if (true) return "ums/protoss_micro.scx"; // Huge parallel map, bad performance wise
+//        if (true) return "ums/protoss_micro.scx"; // Huge parallel map for Protosss
 
         return "sscai/(?)*.sc?";
     }

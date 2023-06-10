@@ -92,7 +92,8 @@ public abstract class Mission {
 //    }
 
     protected boolean handleWeDontKnowWhereTheEnemyBaseIs(AUnit unit) {
-        if (unit.isMoving() && unit.enemiesNear().empty()) {
+//        if (unit.isMoving() && unit.enemiesNear().empty()) {
+        if (unit.isMoving() && unit.lastActionLessThanAgo(30 * 10)) {
             return false;
         }
 

@@ -72,7 +72,7 @@ public class FightInsteadAvoid {
                     return true;
                 }
 
-                if (unit.mission().forcesUnitToFight(unit, enemies)) {
+                if (unit.mission() != null && unit.mission().forcesUnitToFight(unit, enemies)) {
                     unit.addLog("ForcedFight");
                     return true;
                 }

@@ -754,7 +754,7 @@ public class ARunningManager {
             unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false);
 
             // Make all other units very close to it run as well
-            notifyNearUnitsToMakeSpace(unit);
+//            notifyNearUnitsToMakeSpace(unit);
 
             return true;
         }

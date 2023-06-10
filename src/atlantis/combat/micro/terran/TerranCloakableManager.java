@@ -25,7 +25,6 @@ public class TerranCloakableManager {
             // Not cloaked
             if (!unit.isCloaked()) {
                 if (unit.energy() > 10 && enemiesNear && !detectorsNear) {
-                    System.err.println(unit.name() + " CLOAKED");
                     unit.cloak();
                     unit.setTooltipTactical("CLOAK!");
                     return true;
@@ -36,7 +35,6 @@ public class TerranCloakableManager {
             else {
                 System.out.println("CLOAKED");
                 if (!enemiesNear || detectorsNear || unit.lastUnderAttackLessThanAgo(25)) {
-                    System.err.println("------------- DECLOAK");
                     unit.decloak();
                     unit.setTooltipTactical("DECLOAK");
                     return true;

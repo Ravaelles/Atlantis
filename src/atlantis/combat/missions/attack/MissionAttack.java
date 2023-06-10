@@ -73,8 +73,8 @@ public class MissionAttack extends Mission {
         }
 
         unit.setTooltipTactical("#MA-NoFocus");
-        return false;
-//        return handleWeDontKnowWhereTheEnemyBaseIs(unit);
+//        return false;
+        return handleWeDontKnowWhereTheEnemyBaseIs(unit);
     }
 
     @Override

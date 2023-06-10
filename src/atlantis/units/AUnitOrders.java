@@ -44,6 +44,9 @@ public interface AUnitOrders {
 
         if (target.u() == null) {
             System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
+            System.err.println(unit().getClass());
+            System.err.println(unit().toString());
+            System.err.println(unit().isVisibleUnitOnMap());
             A.printStackTrace();
 //            if (A.isUms()) {
 //            }
