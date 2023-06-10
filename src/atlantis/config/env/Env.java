@@ -2,6 +2,7 @@ package atlantis.config.env;
 
 import atlantis.config.AtlantisIgniter;
 import atlantis.game.A;
+import atlantis.game.AGame;
 
 /**
  * Aim of Env is to differentiate between LOCAL, TESTING and PRODUCTION (any online tournaments).
@@ -18,15 +19,21 @@ public class Env {
     // =========================================================
 
     public static void readEnvFile(String[] mainArgs) {
+        if (!A.fileExists(ENV_FILE_PATH)) {
+            AGame.exit("ENV file doesn't exist. Please create it by copying ENV-EXAMPLE file and renaming it.");
+        }
+
         String[][] env = A.loadFile(ENV_FILE_PATH, 2, "=");
 
         for (String[] line : env) {
             String key = line[0].toUpperCase();
-            String value = line[1];
-
             if (key.length() > 0 && key.charAt(0) == '#') {
                 continue;
             }
+            if (key.trim().length() == 0) {
+                continue;
+            }
+            String value = line[1];
 
             switch (key) {
                 case "LOCAL": isLocal = trueFalse(value);
