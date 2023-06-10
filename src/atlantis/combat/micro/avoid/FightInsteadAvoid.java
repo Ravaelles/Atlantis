@@ -217,16 +217,23 @@ public class FightInsteadAvoid {
         }
 
         if (
-                unit.hp() >= 40
-                && unit.cooldownRemaining() <= 2
-                && unit.enemiesNearInRadius(2) == 0
-//                && (
-                   && unit.noCooldown()
-//                    || (unit.friendsNearInRadius(1.5) >= 4
-//                    || unit.enemiesNearInRadius(3) == 0
-//                )
-                && unit.friendsInRadius(3).medics().free().isNotEmpty()
-                && (unit.isStimmed() || unit.friendsInRadius(3).atLeast(5))
+            unit.hp() >= 38
+            && unit.cooldownRemaining() <= 2
+            && (unit.enemiesNearInRadius(2.4) <= 1 || unit.lastAttackFrameMoreThanAgo(30 * 3))
+            && (
+                unit.noCooldown()
+//                || (unit.friendsNearInRadius(1.5) >= 5 || unit.enemiesNearInRadius(2) == 0)
+                || unit.friendsNearInRadius(1.5) >= 5
+            )
+            && unit.friendsInRadius(3).medics().free().isNotEmpty()
+            && (unit.isStimmed() || unit.friendsInRadius(3).atLeast(5))
+
+//                unit.hp() >= 40
+//                && unit.cooldownRemaining() <= 2
+//                && (unit.enemiesNearInRadius(2) == 0 || unit.lastAttackFrameMoreThanAgo(30 * 3))
+//                && (unit.isHealthy() || unit.enemiesNearInRadius(2.4) <= 1)
+//                && unit.friendsInRadius(2.5).medics().free().isNotEmpty()
+//                && (unit.isStimmed() || unit.friendsInRadius(3).atLeast(5))
         ) {
             unit.setTooltipTactical("SafeWithMedics");
             return true;
