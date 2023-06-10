@@ -48,17 +48,27 @@ public class WantsToAvoid {
             return false;
         }
 
-        if (
-                unit.isMarine() && !A.isUms() && GamePhase.isEarlyGame() && unit.isRetreating()
-                && (unit.hp() >= 24 && unit.cooldownRemaining() >= 1)
-        ) {
-            unit.addLog("DearGod");
-            return true;
-        }
+//        if (unit.isWorker() || unit.isScout()) {
+//            unit.addLog("AlwaysAvoid");
+//            return true;
+//        }
+//
+//        if (
+//                unit.isMarine() && !A.isUms() && GamePhase.isEarlyGame() && unit.isRetreating()
+//                && (unit.hp() >= 24 && unit.cooldownRemaining() >= 1)
+//        ) {
+//            unit.addLog("DearGod");
+//            return true;
+//        }
+//
+//        if (unit.isSquadScout() && unit.isWounded() && unit.friendsNear().inRadius(3, unit).isEmpty()) {
+//            unit.addLog("SquadScoutAvoid");
+//            return true;
+//        }
 
-        if (unit.isWorker() || unit.isScout()) {
-            unit.addLog("AlwaysAvoid");
-            return true;
+        if (new FightInsteadAvoid(unit, enemies).shouldFight()) {
+            unit.addLog("SHOULD FightInsteadAvoid");
+            return false;
         }
 
         if (unit.hpLessThan(17) && !enemies.onlyMelee() && !Enemy.terran()) {
@@ -66,16 +76,6 @@ public class WantsToAvoid {
                 unit.addLog("AlmostDead");
                 return true;
             }
-        }
-
-        if (unit.isSquadScout() && unit.isWounded() && unit.friendsNear().inRadius(3, unit).isEmpty()) {
-            unit.addLog("SquadScoutAvoid");
-            return true;
-        }
-
-        if (new FightInsteadAvoid(unit, enemies).shouldFight()) {
-            unit.addLog("SHOULD FightInsteadAvoid");
-            return false;
         }
 
         return true;

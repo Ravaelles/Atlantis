@@ -140,21 +140,27 @@ public class TerranInfantry {
         if (
             nearestBunker != null
                 && nearestBunker.hasFreeSpaceFor(unit)
-                && nearestBunker.distTo(unit) < maxDistanceToLoad
-                && (
-                    nearestBunker.spaceRemaining() >= 2
-                    || (
-                        enemiesNear.inRadius(1.6, unit).atMost(1)
-                        && (!enemiesNear.onlyMelee() || unit.nearestEnemyDist() < 5)
-                    )
-                )
         ) {
-            unit.load(nearestBunker);
+            double bunkerDist = nearestBunker.distTo(unit);
+            if (bunkerDist < maxDistanceToLoad
+                && (
+                nearestBunker.spaceRemaining() >= 2
+                    || (
+                    enemiesNear.inRadius(1.6, unit).atMost(1)
+                        && (!enemiesNear.onlyMelee() || unit.nearestEnemyDist() < 5)
+                )
+            )) {
+                if (unit.hp() <= 20 && bunkerDist >= 3 && bunkerDist > unit.nearestEnemyDist()) {
+                    return false;
+                }
 
-            String t = "GetToDaChoppa";
-            unit.setTooltipTactical(t);
-            unit.addLog(t);
-            return true;
+                unit.load(nearestBunker);
+
+                String t = "GetToDaChoppa";
+                unit.setTooltipTactical(t);
+                unit.addLog(t);
+                return true;
+            }
         }
 
         return false;

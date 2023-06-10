@@ -239,6 +239,16 @@ public class FightInsteadAvoid {
             return true;
         }
 
+        if (
+            unit.hp() >= 20
+                && unit.cooldown() <= 3
+                && unit.friendsInRadius(2).medics().isNotEmpty()
+                && unit.enemiesNear().melee().inRadius(3.8, unit).isEmpty()
+        ) {
+            unit.setTooltipTactical("BeBrave");
+            return true;
+        }
+
         return false;
     }
 

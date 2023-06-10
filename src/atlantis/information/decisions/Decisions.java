@@ -77,7 +77,7 @@ public class Decisions {
                 int vultures = Count.vultures();
 
                 if (FocusOnProducingUnits.isFocusedOn(Terran_Vulture)) {
-                    if (vultures < 30) {
+                    if (vultures < 20) {
                         return true;
                     }
                 }

@@ -14,6 +14,10 @@ public class SafetyMarginSpecial {
     }
 
     private static double vsLurker(AUnit defender, AUnit lurker) {
+        if (defender.isWorker()) {
+            return 9.5;
+        }
+
         if (defender.isMelee() || defender.isAir() || defender.effCloaked()) {
             return 0;
         }

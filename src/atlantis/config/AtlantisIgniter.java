@@ -37,7 +37,6 @@ public class AtlantisIgniter {
         
         // Try locating bwap.ini file
         bwapiIniPath = getBwapiIniPath();
-        System.out.println("bwapiIniPath = " + bwapiIniPath);
         if (bwapiIniPath == null) {
             System.err.println("Couldn't locate bwapi.ini file. See ENV and ENV-EXAMPLE file.");
             return;
