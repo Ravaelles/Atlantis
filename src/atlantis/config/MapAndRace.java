@@ -58,7 +58,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx";
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx";
 //        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/Ghosts_v_P.scx";
@@ -81,6 +81,8 @@ public class MapAndRace {
 //        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/Wraiths_v_Cannons.scm";
 //        if (true) return "ums/rav/Wraiths_v_Probes.scm";
+        if (true) return "ums/Jim_v_Lurker.scx";
+        if (true) return "ums/InfantryControl.scx"; // Terran Infantry units vs enemies
 
         // === Zerg ================================================
 
