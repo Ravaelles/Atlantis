@@ -27,6 +27,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 
         if (focus.isAroundChoke()) {
+//            if (unit.debug())System.out.println("handleWrongSideOfFocus " + unit);
             if (handleWrongSideOfFocus(unit, focusPoint) || tooFarBack() || tooCloseToFocusPoint()) {
                 return true;
             }

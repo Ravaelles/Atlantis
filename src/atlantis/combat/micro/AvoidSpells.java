@@ -12,7 +12,7 @@ import bwapi.BulletType;
 import java.util.List;
 
 
-public class AAvoidSpells {
+public class AvoidSpells {
 
     public static boolean avoidSpellsAndMines(AUnit unit) {
 
@@ -25,7 +25,7 @@ public class AAvoidSpells {
                 if (bullet.getType().equals(BulletType.Psionic_Storm)) {
 //                    System.err.println("------------- " + A.now() + " PSIONIC! ----------------");
 
-                    if (handleMoveAwayIfCloserThan(unit, APosition.create(bullet.getPosition()), 3.2)) {
+                    if (handleMoveAwayIfCloserThan(unit, APosition.create(bullet.getPosition()), 1.5)) {
                         unit.setTooltipTactical("Psionic Storm!");
                         return true;
                     }

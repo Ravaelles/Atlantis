@@ -2536,4 +2536,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return !isStasised() && !isLockedDown();
     }
 
+    public boolean debug() {
+        if (action().equals(Actions.INIT)) {
+            System.out.println("UNIT " + this + " " + this.idWithHash());
+//            A.printStackTrace("Ahhhhhhhh");
+            return true;
+        }
+
+        return false;
+    }
 }

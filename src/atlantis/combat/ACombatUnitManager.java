@@ -1,7 +1,7 @@
 package atlantis.combat;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.micro.AAvoidSpells;
+import atlantis.combat.micro.AvoidSpells;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.managers.DanceAfterShoot;
 import atlantis.combat.micro.transport.TransportUnits;
@@ -19,13 +19,21 @@ import atlantis.units.interrupt.DontDisturbInterrupt;
 public class ACombatUnitManager {
 
     public static boolean update(AUnit unit) {
-        //if (true)System.out.println("A0 " + unit.nameWithId() + " at " + A.now());
+        //if (true)System.out.println("A0 " + unit + " at " + A.now());
+
+//        if (unit.action() == null || unit.action().equals(Actions.INIT)) {
+//            System.err.println(unit + " @ " + A.now());
+//            System.err.println(unit.action());
+//            System.err.println(unit.squad());
+//            System.err.println(unit.mission());
+//            System.err.println(unit.tooltip());
+//        }
 
         if (preActions(unit)) {
             return true;
         }
 
-        //if (true)System.out.println("A " + unit.nameWithId() + " at " + A.now());
+        //if (unit.debug())System.out.println("A " + unit + " at " + A.now());
 
         // =========================================================
         // === SPECIAL units =======================================
@@ -37,7 +45,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        //if (true)System.out.println("B " + unit.nameWithId());
+        //if (unit.debug())System.out.println("B " + unit);
 
         // =========================================================
         // === TOP priority ========================================
@@ -47,7 +55,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        //if (true)System.out.println("C " + unit.nameWithId());
+        //if (unit.debug())System.out.println("C " + unit);
 
         // =========================================================
         // === SPECIAL units =======================================
@@ -56,10 +64,12 @@ public class ACombatUnitManager {
         // Terran infantry has own managers, but these allow higher
         // level managers to take control.
         if (ASpecialUnitManager.updateAndAllowTopManagers(unit)) {
+//            System.out.println("@@ Special - " + unit);
+            unit.addLog("SpecialManager");
             return true;
         }
 
-        //if (true)System.out.println("D " + unit.nameWithId());
+//        if (unit.debug())System.out.println("D " + unit);
 
         // =========================================================
         // === MEDIUM priority - TACTICAL level ====================
@@ -69,7 +79,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        //if (true)System.out.println("E " + unit.nameWithId());
+//        if (unit.debug())System.out.println("E " + unit);
 
         // =========================================================
         // === LOW priority - MISSION level =======================
@@ -103,7 +113,7 @@ public class ACombatUnitManager {
             return true;
         }
 
-        if (unit.lastActionLessThanAgo(90, Actions.PATROL) || unit.isPatrolling()) {
+        if (unit.lastActionLessThanAgo(120, Actions.PATROL) || unit.isPatrolling()) {
             if (A.now() > 90) {
                 unit.setTooltipTactical("#Manual");
                 return true;
@@ -117,6 +127,13 @@ public class ACombatUnitManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
+        // Avoid bad weather like:
+        // - raining Psionic Storm,
+        // - spider mines hail
+        if (AvoidSpells.avoidSpellsAndMines(unit)) {
+            return true;
+        }
+
         if (DanceAfterShoot.handle(unit)) {
             return true;
         }
@@ -153,10 +170,7 @@ public class ACombatUnitManager {
         // Useful for testing and debugging of shooting/running
 //        if (testUnitBehaviorShootAtOwnUnit(unit)) { return true; };
 
-        // Avoid bad weather like:
-        // - raining Psionic Storm,
-        // - spider mines hail
-        return AAvoidSpells.avoidSpellsAndMines(unit);
+        return false;
     }
 
     private static boolean handledMediumPriority(AUnit unit) {
@@ -198,10 +212,13 @@ public class ACombatUnitManager {
 
         Mission mission = unit.mission();
         if (mission != null) {
+//            if (unit.debug())System.out.println("F " + unit);
+
             unit.setTooltipTactical(mission.name());
             return mission.update(unit);
         }
 
+//        if (unit.debug())System.out.println("G " + unit);
         return false;
     }
 

@@ -23,7 +23,8 @@ public class WantsToAvoid {
 //                APainter.paintCircle(unit, 10, Color.Green);
 //                APainter.paintCircle(unit, 11, Color.Green);
 
-            unit.addFileLog("NOT shouldAlwaysAvoid");
+//            unit.addFileLog("NOT shouldAlwaysAvoid");
+            unit.addLog("NOT shouldAlwaysAvoid");
             return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
         }
 

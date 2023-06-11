@@ -62,7 +62,6 @@ public class ASpecialUnitManager {
      * Does NOT block other managers from taking precedence.
      */
     public static boolean updateAndAllowTopManagers(AUnit unit) {
-
         if (unit.type().isTransportExcludeOverlords() && ATransportManager.handleTransportUnit(unit)) {
             return true;
         }
@@ -85,11 +84,11 @@ public class ASpecialUnitManager {
 
         // === Protoss ========================================
 
-        else if (unit.is(AUnitType.Protoss_Observer) && ProtossObserver.update(unit)) {
+        else if (unit.isObserver() && ProtossObserver.update(unit)) {
             return true;
         } else if (unit.is(AUnitType.Protoss_High_Templar) && ProtossHighTemplar.update(unit)) {
             return true;
-        } else if (unit.is(AUnitType.Protoss_Reaver) && ProtossReaver.update(unit)) {
+        } else if (unit.isReaver() && ProtossReaver.update(unit)) {
             return true;
         }
 

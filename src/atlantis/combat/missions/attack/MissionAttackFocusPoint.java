@@ -169,7 +169,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
-        System.err.println("No MissionAttack FocusPoint");
+//        System.err.println("No MissionAttack FocusPoint");
         return null;
     }
 

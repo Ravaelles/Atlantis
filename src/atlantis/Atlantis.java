@@ -164,15 +164,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-//        if (A.now() <= 1 && !A.isUms()) {
-//            return;
-//        }
-
         AUnit unit = AUnit.getById(u);
         if (unit != null) {
             unit.refreshType();
             if (unit.isOur()) {
-//                System.out.println("Our new unit " + unit);
                 ourNewUnit(unit);
             }
         }
@@ -269,30 +264,14 @@ public class Atlantis implements BWEventListener {
     public static void ourNewUnit(AUnit unit) {
         ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
         NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
+
+//        System.out.println("NEW UNIT @ " + A.now() + " - " + unit);
+//        System.out.println(unit.mission());
+//        System.out.println(unit.squad());
+//        System.out.println(unit.action());
+//        System.out.println(unit.lastActionFramesAgo());
     }
 
-    /**
-     * Any key has been pressed. Can be used to define key shortcuts.
-     *
-     * @Override public void keyPressed(int keyCode) { //
-     * System.err.println("########################################"); // System.err.println("############KEY
-     * = " + keyCode + "############################"); //
-     * System.err.println("########################################");
-     *
-     * // 27 (Esc) - pause/unpause game if (keyCode == 27) { pauseOrUnpause(); } // 107 (+) - increase game
-     * speed else if (keyCode == 107) { AtlantisConfig.GAME_SPEED -= 2; if (AtlantisConfig.GAME_SPEED < 0) {
-     * AtlantisConfig.GAME_SPEED = 0; } AGame.changeSpeed(AtlantisConfig.GAME_SPEED); } // 109 (-) -
-     * decrease game speed else if (keyCode == 109) { AtlantisConfig.GAME_SPEED += 2;
-     * AGame.changeSpeed(AtlantisConfig.GAME_SPEED); }
-     *
-     * // =========================================================
-     * // 107 (+) - increase game speed
-     * if (AtlantisConfig.GAME_SPEED > 2) { AtlantisConfig.GAME_SPEED -= 10; } else { }
-     *
-     *
-     * // ========================================================= // 109 (-) - decrease game speed if
-     * (AtlantisConfig.GAME_SPEED > 2) { AtlantisConfig.GAME_SPEED += 10; } else { } }
-     */
     /**
      * Match has ended. Shortly after that the game will go to the menu.
      */
@@ -320,7 +299,7 @@ public class Atlantis implements BWEventListener {
     }
 
     private void killProcesses() {
-        System.out.println("");
+        System.out.println();
         System.out.println("Killing StarCraft process... ");
         ProcessHelper.killStarcraftProcess();
 

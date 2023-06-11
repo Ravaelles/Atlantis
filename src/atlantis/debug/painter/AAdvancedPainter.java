@@ -266,7 +266,8 @@ public class AAdvancedPainter extends APainter {
         if (!unit.isAlive() || unit.squad() == null) {
             return;
         }
-        String squadLetter = unit.squad().letter();
+        String extra = " " + unit.idWithHash();
+        String squadLetter = unit.squad().letter() + extra;
         paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
     }
 

@@ -14,7 +14,8 @@ import bwapi.TechType;
 public class TerranInfantry {
 
     public static boolean update(AUnit unit) {
-        if (stimpack(unit)) {
+        if (shouldStimpack(unit)) {
+            unit.useTech(stim());
             return true;
         }
 
@@ -57,7 +58,7 @@ public class TerranInfantry {
         return false;
     }
 
-    private static boolean stimpack(AUnit unit) {
+    private static boolean shouldStimpack(AUnit unit) {
         if (!ATech.isResearched(stim()) || !unit.isMarine()) {
             return false;
         }
@@ -73,13 +74,12 @@ public class TerranInfantry {
         ) {
             if (unit.lastActionMoreThanAgo(5, Actions.USING_TECH)) {
                 if (Select.ourOfType(AUnitType.Terran_Medic).inRadius(5, unit).havingEnergy(40).atLeast(2)) {
-                    unit.useTech(stim());
+                    return true;
                 }
             }
-            return true;
         }
 
-        if (Enemy.protoss() && unit.hp() >= 40 && unit.id() % 3 == 0) {
+        if (Enemy.protoss() && unit.hp() >= 40 && unit.id() % 3 == 0 && unit.enemiesNearInRadius(4) >= 2) {
             return true;
         }
 

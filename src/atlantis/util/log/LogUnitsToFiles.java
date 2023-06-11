@@ -1,5 +1,6 @@
 package atlantis.util.log;
 
+import atlantis.Atlantis;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
@@ -9,6 +10,7 @@ public class LogUnitsToFiles {
         if (
                 Log.SAVE_UNIT_LOGS_TO_FILES == 0
                 || unit == null
+//                || Atlantis.KILLED <= 2
                 || ((!unit.isOur() || !unit.isCombatUnit()) && Log.SAVE_UNIT_LOGS_TO_FILES < 1)
         ) {
             return;
