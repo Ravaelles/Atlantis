@@ -7,6 +7,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.AChoke;
+import atlantis.map.AMap;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
@@ -14,13 +15,14 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
 
     private Cache<AFocusPoint> cache = new Cache<>();
+
+    private static APosition _temporaryTarget = null;
 
     public AFocusPoint focusPoint() {
         return cache.getIfValid(
@@ -31,9 +33,9 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint defineFocusPoint() {
+        AUnit our = Select.our().first();
         if (A.supplyUsed() <= 1) {
             AUnit enemy = Select.enemy().first();
-            AUnit our = Select.our().first();
 
             if (our == null) {
                 return null;
@@ -90,7 +92,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Try going to any known enemy unit
         HasPosition alphaCenter = Alpha.alphaCenter();
-        AUnit anyEnemyLandUnit = EnemyUnits.discovered().groundUnits().effVisible().nearestTo(
+        AUnit anyEnemyLandUnit = EnemyUnits.discovered().groundUnits().effVisible().realUnits().nearestTo(
             alphaCenter != null ? alphaCenter : Select.our().first()
         );
 //        AUnit anyEnemyLandUnit = EnemyUnits.visibleAndFogged().combatUnits().groundUnits().first();
@@ -137,9 +139,42 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             }
         }
 
-//        System.err.println("No MissionAttack FocusPoint");
-//        Select.enemy().print("Enemy units");
+        if (isTemporaryTargetStillValid()) {
+            return new AFocusPoint(
+                _temporaryTarget,
+                our,
+                "RandPosition"
+            );
+        }
+
+//        System.out.println("New temp target @ " + A.now());
+
+        // Go to random UNEXPLORED
+        _temporaryTarget = AMap.randomUnexploredPosition(our);
+        if (_temporaryTarget != null) {
+            return new AFocusPoint(
+                _temporaryTarget,
+                our,
+                "RandomUnexplored"
+            );
+        }
+
+        // Go to random INVISIBLE
+        _temporaryTarget = AMap.randomInvisiblePosition(our);
+        if (_temporaryTarget != null) {
+            return new AFocusPoint(
+                _temporaryTarget,
+                our,
+                "RandomInvisible"
+            );
+        }
+
+        System.err.println("No MissionAttack FocusPoint");
         return null;
+    }
+
+    private boolean isTemporaryTargetStillValid() {
+        return _temporaryTarget != null && !_temporaryTarget.isPositionVisible();
     }
 
 }

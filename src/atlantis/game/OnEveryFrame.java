@@ -1,10 +1,22 @@
 package atlantis.game;
 
+import atlantis.Atlantis;
+import atlantis.units.select.Select;
+
 public class OnEveryFrame {
 
 //    private static CappedList<Integer> frames = new CappedList<>(4);
 
     public static void update() {
+//        if (Atlantis.KILLED >= 3) {
+//            if (A.everyNthGameFrame(120)) {
+//                System.out.println("----------------- @ " + A.now());
+//                Select.ourCombatUnits().print("Our combat");
+//                System.out.println("----");
+//                Select.enemy().print("ENEMY");
+//            }
+//        }
+
 //        GameSpeed.checkIfNeedToSlowDown();
 
 //        AAdvancedPainter.paintBuildingPosition(PylonPosition.positionForFirstPylon(), "First");

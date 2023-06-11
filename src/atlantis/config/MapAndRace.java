@@ -37,7 +37,7 @@ public class MapAndRace {
 
         // === Popular SSCAIT maps =================================
 
-        if (true) return "sscai/(2)HeartbreakRidge.scx";
+//        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
@@ -130,7 +130,7 @@ public class MapAndRace {
         // === Generic ======================================================
 
 //        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
-//        if (true) return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons v. mines
+        if (true) return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons v. mines
 //        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
 //        if (true) return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
 //        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons

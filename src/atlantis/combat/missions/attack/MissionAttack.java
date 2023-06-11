@@ -2,6 +2,7 @@ package atlantis.combat.missions.attack;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.managers.AdvanceUnitsManager;
+import atlantis.combat.missions.WeDontKnowEnemyEnemyUnit;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.ProtossMissionAdjustments;
@@ -74,7 +75,7 @@ public class MissionAttack extends Mission {
 
         unit.setTooltipTactical("#MA-NoFocus");
 //        return false;
-        return handleWeDontKnowWhereTheEnemyBaseIs(unit);
+        return WeDontKnowEnemyEnemyUnit.handleWeDontKnowWhereToFindEnemy(this, unit);
     }
 
     @Override

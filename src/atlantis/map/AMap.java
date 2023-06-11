@@ -103,7 +103,7 @@ public class AMap {
         return null;
     }
 
-    public static APosition getRandomUnexploredPosition(HasPosition startPoint) {
+    public static APosition randomUnexploredPosition(HasPosition startPoint) {
         APosition position = null;
         for (int attempts = 0; attempts < 50; attempts++) {
             int mapDimension = Math.max(Atlantis.game().mapWidth(), Atlantis.game().mapHeight());

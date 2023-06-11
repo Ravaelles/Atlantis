@@ -2,15 +2,10 @@ package atlantis.combat.missions;
 
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.focus.MissionFocusPoint;
-import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.actions.Actions;
-import bwapi.Color;
 
 
 /**
@@ -79,75 +74,6 @@ public abstract class Mission {
         return EnemyInfo.isEnemyNearAnyOurBase();
     }
 
-//    protected boolean handleUnitSafety(AUnit unit, boolean avoidBuildings, boolean avoidMelee) {
-//        if (AAvoidEnemyCombatBuildings.avoidCloseBuildings(unit, false)) {
-//            return true;
-//        }
-//
-//        if (AAvoidEnemyMeleeUnits.avoidCloseMeleeUnits(unit)) {
-//            return true;
-//        }
-//
-//        return false;
-//    }
-
-    protected boolean handleWeDontKnowWhereTheEnemyBaseIs(AUnit unit) {
-//        if (unit.isMoving() && unit.enemiesNear().empty()) {
-        if (unit.isMoving() && unit.lastActionLessThanAgo(30 * 10)) {
-            return false;
-        }
-
-//        if (!unit.isIdle()) {
-//            return false;
-//        }
-
-        AUnit nearestEnemy = unit.enemiesNear().canBeAttackedBy(unit, 20).nearestTo(unit);
-        if (nearestEnemy != null) {
-            temporaryTarget = nearestEnemy.position();
-            unit.setTooltip("FindEnemy&Attack");
-            if (temporaryTarget != null) {
-                if (nearestEnemy.u() != null && unit.attackUnit(nearestEnemy)) {
-                    unit.setTooltip("StrategicAttack", true);
-                    return true;
-                }
-                else if (unit.move(temporaryTarget, Actions.MOVE_EXPLORE, "FindEm", false)) {
-                    return true;
-                }
-            }
-//            if (temporaryTarget != null) {
-//                return unit.move(temporaryTarget, Actions.MOVE_EXPLORE, "FindEm", false);
-//            }
-        }
-
-        // Go to random UNEXPLORED
-        if ((A.isUms() || A.chance(10)) && (temporaryTarget == null || temporaryTarget.isExplored())) {
-            temporaryTarget = AMap.getRandomUnexploredPosition(unit.position());
-//            if (temporaryTarget != null) {
-//            System.out.println("Go to unexplored " + temporaryTarget);
-//            }
-        }
-
-        // Go to random INVISIBLE
-        if (temporaryTarget == null || temporaryTarget.isPositionVisible()) {
-            temporaryTarget = AMap.randomInvisiblePosition(unit);
-//            if (temporaryTarget != null) {
-//            System.out.println("Go to invisible " + temporaryTarget);
-//            }
-        }
-
-        if (temporaryTarget != null) {
-            unit.move(temporaryTarget, Actions.MOVE_ENGAGE, "#FindEnemy", true);
-//            APainter.paintLine(unit.position(), temporaryTarget, Color.Yellow);
-            return true;
-        }
-        else {
-//            if (!AGame.isUms()) {
-//                System.err.println("No invisible position found");
-//            }
-            return false;
-        }
-    }
-
     // =========================================================
 
     @Override
@@ -194,4 +120,11 @@ public abstract class Mission {
 //        return this.equals(Missions.UMS);
     }
 
+    public APosition temporaryTarget() {
+        return temporaryTarget;
+    }
+
+    public void setTemporaryTarget(APosition temporaryTarget) {
+        this.temporaryTarget = temporaryTarget;
+    }
 }
