@@ -44,12 +44,15 @@ public interface AUnitOrders {
         }
 
         if (target.u() == null) {
-            System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
-            System.err.println("target = " + target.getClass());
-            System.err.println("toString = " + target.toString());
-            System.err.println("isVisibleUnitOnMap " + target.isVisibleUnitOnMap());
-            System.err.println("isPositionVisible = " + target.isPositionVisible());
-            if (Env.isLocal()) A.printStackTrace();
+            // This likes to happen to sieged tanks. What matters is that we return false here.
+            if (!unit().isTankSieged()) {
+                System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
+                System.err.println("target = " + target.getClass());
+                System.err.println("toString = " + target.toString());
+                System.err.println("isVisibleUnitOnMap " + target.isVisibleUnitOnMap());
+                System.err.println("isPositionVisible = " + target.isPositionVisible());
+                if (Env.isLocal()) A.printStackTrace();
+            }
             return false;
         }
 

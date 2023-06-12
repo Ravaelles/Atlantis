@@ -61,7 +61,7 @@ public class ATargetingImportant extends ATargeting {
                         AUnitType.Zerg_Sunken_Colony
                 )
                 .canBeAttackedBy(unit, 0)
-                .nearestTo(unit);
+                .mostWounded();
         if (target != null) {
             return combatBuildingOrScvRepairingIt(target);
         }
@@ -72,7 +72,7 @@ public class ATargetingImportant extends ATargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Zerg_Sunken_Colony
                 )
-                .inRadius(2.3, unit)
+                .canBeAttackedBy(unit, 5)
                 .nearestTo(unit);
         if (target != null) {
             return combatBuildingOrScvRepairingIt(target);
@@ -141,6 +141,22 @@ public class ATargetingImportant extends ATargeting {
         }
 
         // =========================================================
+        // WORKERS for AIR UNITS
+
+        if (unit.isAir() && unit.canAttackGroundUnits()) {
+            target = enemyUnits
+                .workers()
+                .inRadius(unit.groundWeaponRange() + 2, unit)
+                .nearestTo(unit);
+            if (target != null && Select.enemies(target.type()).inRadius(3, unit).atLeast(3)) {
+                if (target.friendsNear().buildings().inRadius(6, target).notEmpty()) {
+                    if (ATargeting.DEBUG) System.out.println("D5b = " + target);
+                    return target;
+                }
+            }
+        }
+
+        // =========================================================
         // Including unfinished defensive buildings
 
         target = Select.enemy()
@@ -152,9 +168,9 @@ public class ATargetingImportant extends ATargeting {
                         AUnitType.Terran_Bunker,
                         AUnitType.Terran_Missile_Turret
                 )
-                .inRadius(16, unit)
+                .inRadius(14, unit)
                 .canBeAttackedBy(unit, 0)
-                .nearestTo(unit);
+                .mostWounded();
 
         if (target != null && ATargeting.DEBUG) System.out.println("C5 = " + target);
 
@@ -162,11 +178,33 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyBuildings
             .bases()
-            .notHavingHp(200)
+            .notHavingHp(140)
             .inRadius(15, unit)
-            .nearestTo(unit);
+            .mostWounded();
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C6 = " + target);
+            return target;
+        }
+
+        // =========================================================
+        // Stategic buildings worth destroying
+
+        target = enemyBuildings
+            .ofType(
+                AUnitType.Protoss_Fleet_Beacon,
+                AUnitType.Protoss_Cybernetics_Core,
+                AUnitType.Protoss_Templar_Archives,
+                AUnitType.Terran_Armory,
+                AUnitType.Terran_Engineering_Bay,
+                AUnitType.Terran_Academy,
+                AUnitType.Zerg_Spawning_Pool,
+                AUnitType.Zerg_Spire,
+                AUnitType.Zerg_Greater_Spire
+            )
+            .inRadius(25, unit)
+            .nearestTo(unit);
+        if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("D6b = " + target);
             return target;
         }
 

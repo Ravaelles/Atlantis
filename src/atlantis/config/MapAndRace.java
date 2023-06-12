@@ -21,9 +21,9 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Zerg";
+    public static final String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -38,7 +38,7 @@ public class MapAndRace {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====

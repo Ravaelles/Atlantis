@@ -137,6 +137,7 @@ public class FightInsteadAvoid {
             && unit.friendsNearInRadius(2) >= 2
             && unit.friendsNearInRadius(4) >= (unit.isAir() ? 14 : 6)
             && (!unit.isAir() || unit.woundPercent(10))
+            && unit.combatEvalRelative() >= 2.8
         ) {
             unit.addLog("FightBuilding");
             return true;

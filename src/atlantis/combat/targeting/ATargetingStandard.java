@@ -66,7 +66,8 @@ public class ATargetingStandard extends ATargeting {
 
         target = enemyUnits
                 .excludeMedics()
-                .nearestTo(unit);
+                .inRadius(12, unit)
+                .mostWounded();
 
         if (target != null && (!target.isAir() || unit.isOtherUnitFacingThisUnit(target))) {
             if (ATargeting.DEBUG) System.out.println("D3 = " + target);
@@ -78,7 +79,8 @@ public class ATargetingStandard extends ATargeting {
 
         target = enemyBuildings
                 .bases()
-                .nearestTo(unit);
+                .inRadius(10, unit)
+                .mostWounded();
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("D4 = " + target);
             return target;
@@ -96,28 +98,6 @@ public class ATargetingStandard extends ATargeting {
                 if (ATargeting.DEBUG) System.out.println("D5 = " + target);
                 return target;
             }
-        }
-
-        // =========================================================
-        // Buildings worth destroying first
-
-        target = enemyBuildings
-                .ofType(
-                        AUnitType.Protoss_Fleet_Beacon,
-                        AUnitType.Protoss_Cybernetics_Core,
-                        AUnitType.Protoss_Templar_Archives,
-                        AUnitType.Terran_Armory,
-                        AUnitType.Terran_Engineering_Bay,
-                        AUnitType.Terran_Academy,
-                        AUnitType.Zerg_Spawning_Pool,
-                        AUnitType.Zerg_Spire,
-                        AUnitType.Zerg_Greater_Spire
-                )
-                .inRadius(25, unit)
-                .nearestTo(unit);
-        if (target != null) {
-            if (ATargeting.DEBUG) System.out.println("D6b = " + target);
-            return target;
         }
 
         // =========================================================
