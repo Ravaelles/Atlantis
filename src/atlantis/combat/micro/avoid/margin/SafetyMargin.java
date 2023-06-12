@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid.margin;
 
+import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstSpecial;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -30,7 +31,7 @@ public class SafetyMargin {
         double base = BaseSafetyMargin.baseSafetyDistance(defender, attacker);
         double calculated;
 
-        if ((calculated = SafetyMarginSpecial.handle(defender, attacker)) != -1) {
+        if ((calculated = SafetyMarginAgainstSpecial.handle(defender, attacker)) != -1) {
             // Do nothing
 //            System.out.println("SafetyMarginSpecial = " + calculated + " / " + A.dist(defender, attacker));
         }

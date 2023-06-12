@@ -1,5 +1,6 @@
 package tests.acceptance;
 
+import atlantis.combat.targeting.ATargeting;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
 import org.junit.Test;
@@ -66,6 +67,79 @@ public class AUnitTest extends AbstractTestFakingGame {
 
             assertEquals(2, cannon.enemiesNear().count());
             assertEquals(2, cannon.friendsNear().count());
+        });
+    }
+
+    @Test
+    public void canNotAttackNotDetectedUnits() {
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Drone, 11).setBurrowed(true).setDetected(false),
+            fake(AUnitType.Zerg_Lurker, 12).setCloaked(true).setDetected(false),
+            fake(AUnitType.Zerg_Lurker, 13).setBurrowed(true).setDetected(false),
+            fake(AUnitType.Protoss_Dark_Templar, 11).setCloaked(true).setDetected(false)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(null, ATargeting.defineBestEnemyToAttackFor(our));
+        });
+    }
+
+    @Test
+    public void canAttackBurrowedDetectedUnits() {
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        final FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            expectedTarget = fake(AUnitType.Zerg_Drone, 13).setBurrowed(true).setDetected(true)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+        });
+    }
+
+    @Test
+    public void canAttackDetectedCloakedUnits() {
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        final FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            expectedTarget = fake(AUnitType.Protoss_Dragoon, 12).setCloaked(true).setDetected(true)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+        });
+    }
+
+    @Test
+    public void canAttackDetectedBurrowedLurkers() {
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        final FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            expectedTarget = fake(AUnitType.Zerg_Lurker, 13).setBurrowed(true).setDetected(true)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+        });
+    }
+
+    @Test
+    public void canAttackDetectedCloakedDT() {
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        final FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            expectedTarget = fake(AUnitType.Protoss_Dark_Templar, 11).setCloaked(true).setDetected(true)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }
 

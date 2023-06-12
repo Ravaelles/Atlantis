@@ -753,7 +753,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         if (!targetUnit.isDetected() || targetUnit.position() == null) {
-            System.out.println("Undetected fix");
             return false;
         }
 
@@ -1210,7 +1209,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int cooldown() {
-        return Math.max(u.getGroundWeaponCooldown(), u.getAirWeaponCooldown());
+        return Math.max(groundWeaponCooldown(), airWeaponCooldown());
     }
 
     public int airWeaponCooldown() {

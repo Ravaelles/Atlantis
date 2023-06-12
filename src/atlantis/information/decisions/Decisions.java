@@ -85,7 +85,7 @@ public class Decisions {
 //                if (true) return true;
 
 
-                if (vultures <= 9 && A.hasMinerals(700)) {
+                if (vultures < 12 && (A.hasMinerals(800) && !A.hasGas(200))) {
                     return true;
                 }
 

@@ -1,6 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -76,13 +77,13 @@ public class WeDontKnowEnemyEnemyUnit {
     }
 
     private static boolean handleAnyEnemy(Mission mission, AUnit unit) {
-        AUnit foggedEnemy = Select.enemyFoggedUnits().groundUnits().first();
+        AUnit foggedEnemy = EnemyUnits.discovered().groundUnits().nearestTo(unit);
 
         if (foggedEnemy != null) {
             mission.setTemporaryTarget(foggedEnemy.position());
             unit.setTooltip("FindFogged");
             if (mission.temporaryTarget() != null) {
-                if (foggedEnemy.u() != null && unit.attackUnit(foggedEnemy)) {
+                if (foggedEnemy.u() != null && foggedEnemy.effVisible() && unit.attackUnit(foggedEnemy)) {
                     unit.setTooltip("StrategicAttack", true);
                     return true;
                 }

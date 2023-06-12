@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
@@ -44,14 +45,21 @@ public interface AUnitOrders {
 
         if (target.u() == null) {
             System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
-            System.err.println(unit().getClass());
-            System.err.println(unit().toString());
-            System.err.println(unit().isVisibleUnitOnMap());
-            A.printStackTrace();
-//            if (A.isUms()) {
-//            }
+            System.err.println("target = " + target.getClass());
+            System.err.println("toString = " + target.toString());
+            System.err.println("isVisibleUnitOnMap " + target.isVisibleUnitOnMap());
+            System.err.println("isPositionVisible = " + target.isPositionVisible());
+            if (Env.isLocal()) A.printStackTrace();
+            return false;
+        }
 
-//            throw new RuntimeException("Null attack u(nit)");
+        if (!target.isDetected()) {
+            System.err.println("Trying to attack not detected unit for " + this.unit().typeWithHash());
+            System.err.println(target);
+            System.err.println(target.position());
+            System.err.println(target.isPositionVisible());
+            System.err.println(target.hp());
+            if (Env.isLocal()) A.printStackTrace();
             return false;
         }
 

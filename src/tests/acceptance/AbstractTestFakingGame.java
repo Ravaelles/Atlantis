@@ -134,8 +134,8 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         return (FakeUnit) EnemyUnits.discovered().nearestTo(unit);
     }
 
-    protected String distToNearestEnemy(FakeUnit unit) {
-        return A.dist(unit, nearestEnemy(unit));
+    protected double distToNearestEnemy(FakeUnit unit) {
+        return unit.distTo(nearestEnemy(unit));
     }
 
 }

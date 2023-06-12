@@ -22,6 +22,7 @@ public class FakeUnit extends AUnit {
     public APlayer player;
     public boolean enemy = false;
     public boolean neutral = false;
+    public boolean burrowed = false;
     public boolean cloaked = false;
     public boolean completed = true;
     public boolean effCloaked = false;
@@ -378,6 +379,11 @@ public class FakeUnit extends AUnit {
         return this;
     }
 
+    public FakeUnit setBurrowed(boolean burrowed) {
+        this.burrowed = burrowed;
+        return this;
+    }
+
     public FakeUnit setCloaked(boolean cloaked) {
         this.cloaked = cloaked;
         return this;
@@ -401,6 +407,11 @@ public class FakeUnit extends AUnit {
     @Override
     public boolean isVisibleUnitOnMap() {
         return isVisibleUnitOnMap;
+    }
+
+    @Override
+    public boolean isBurrowed() {
+        return burrowed;
     }
 
     @Override

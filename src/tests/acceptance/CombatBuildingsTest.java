@@ -1,9 +1,12 @@
 package tests.acceptance;
 
 import atlantis.combat.ACombatUnitManager;
+import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
+
+import static org.junit.Assert.assertTrue;
 
 public class CombatBuildingsTest extends AbstractTestFakingGame {
 
@@ -13,14 +16,21 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
             FakeUnit unit = ourFirst;
             boolean result = ACombatUnitManager.update(unit);
 
-//            System.out.println(A.now() + " -       " + unit.tooltip()
-//                    + "\n " + unit.lastCommand()
-//                    + ",\n tx:" + unit.tx()
-//                    + ",\n dist_to_sunken:" + distToNearestEnemy(unit)
-//                    + (unit.target == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target))
-//                    + (unit.targetPosition == null ? "" : ",\n target_position:" + unit.targetPosition)
-//            );
-//            System.out.println("_______________________________________");
+            double distToSunken = distToNearestEnemy(unit);
+            boolean isSafe = distToSunken > 7.05;
+
+//            if (!isSafe) {
+//                System.out.println(A.now() + " -       " + unit.tooltip()
+//                        + "\n " + unit.lastCommand()
+//                        + ",\n tx:" + unit.tx()
+//                        + ",\n dist_to_sunken:" + A.dist(distToSunken)
+//                        + (unit.target == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target))
+//                        + (unit.targetPosition == null ? "" : ",\n target_position:" + unit.targetPosition)
+//                );
+//                System.out.println("_______________________________________");
+//            }
+//
+//            assertTrue(isSafe);
         });
     }
 
@@ -30,11 +40,11 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
         return fakeOurs(
                 fake(AUnitType.Terran_Marine, 10),
                 fake(AUnitType.Terran_Marine, 11),
-                fake(AUnitType.Terran_Marine, 11),
-                fake(AUnitType.Terran_Marine, 11),
-                fake(AUnitType.Terran_Marine, 11),
-                fake(AUnitType.Terran_Marine, 11),
-                fake(AUnitType.Terran_Marine, 11),
+//                fake(AUnitType.Terran_Marine, 11),
+//                fake(AUnitType.Terran_Marine, 11),
+//                fake(AUnitType.Terran_Marine, 11),
+//                fake(AUnitType.Terran_Marine, 11),
+//                fake(AUnitType.Terran_Marine, 11),
                 fake(AUnitType.Terran_Medic, 11)
         );
     }

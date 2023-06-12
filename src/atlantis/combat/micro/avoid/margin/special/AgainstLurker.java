@@ -1,19 +1,9 @@
-package atlantis.combat.micro.avoid.margin;
+package atlantis.combat.micro.avoid.margin.special;
 
-import atlantis.game.A;
 import atlantis.units.AUnit;
 
-public class SafetyMarginSpecial {
-
-    public static double handle(AUnit defender, AUnit attacker) {
-        if (attacker.isLurker()) {
-            return vsLurker(defender, attacker);
-        }
-
-        return -1;
-    }
-
-    private static double vsLurker(AUnit defender, AUnit lurker) {
+public class AgainstLurker {
+    protected static double vsLurker(AUnit defender, AUnit lurker) {
         if (defender.isWorker()) {
             return 9.5;
         }
@@ -30,5 +20,4 @@ public class SafetyMarginSpecial {
             return cooldownBonus + (defender.isHealthy() ? 0 : 3.0);
         }
     }
-
 }

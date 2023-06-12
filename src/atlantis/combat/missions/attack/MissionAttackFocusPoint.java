@@ -149,9 +149,15 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
 //        System.out.println("New temp target @ " + A.now());
 
+        if (our == null) {
+            return null;
+        }
+
         // Go to random UNEXPLORED
         _temporaryTarget = AMap.randomUnexploredPosition(our);
-        if (_temporaryTarget != null) {
+        System.out.println("@ " + A.now() + " - UNEXPL " +  _temporaryTarget);
+        if (_temporaryTarget != null && _temporaryTarget.hasPathTo(our.position())) {
+            System.out.println("@@@@@ UNEXPL GOOD");
             return new AFocusPoint(
                 _temporaryTarget,
                 our,
@@ -161,7 +167,9 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Go to random INVISIBLE
         _temporaryTarget = AMap.randomInvisiblePosition(our);
-        if (_temporaryTarget != null) {
+        System.out.println("@ " + A.now() + " - INVSI " +  _temporaryTarget);
+        if (_temporaryTarget != null && _temporaryTarget.hasPathTo(our.position())) {
+            System.out.println("@@@@@ INV GOOD");
             return new AFocusPoint(
                 _temporaryTarget,
                 our,

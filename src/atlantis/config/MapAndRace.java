@@ -76,6 +76,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/T_v_Sunkens3.scx";
 //        if (true) return "ums/rav/Tanks_v_DT.scx";
 //        if (true) return "ums/rav/Tanks_v_DT_2.scx";
+        if (true) return "ums/rav/Tanks_v_Lurkers.scx"; // Tanks & Marines vs Lurkers
 //        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
 //        if (true) return "ums/rav/Vultures_v_Marines.scm";

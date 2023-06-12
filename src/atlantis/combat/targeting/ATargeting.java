@@ -56,7 +56,8 @@ public class ATargeting {
         }
 
         // Combat units
-        AUnit combat = Select.enemy().combatUnits().nonBuildings().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo(unit);
+        AUnit combat = Select.enemy().combatUnits()
+            .nonBuildings().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo(unit);
         if (combat != null && combat.isAlive()) {
             return combat;
         }
