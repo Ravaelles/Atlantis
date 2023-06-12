@@ -76,7 +76,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/T_v_Sunkens3.scx";
 //        if (true) return "ums/rav/Tanks_v_DT.scx";
 //        if (true) return "ums/rav/Tanks_v_DT_2.scx";
-        if (true) return "ums/rav/Tanks_v_Lurkers.scx"; // Tanks & Marines vs Lurkers
+//        if (true) return "ums/rav/Tanks_v_Lurkers.scx"; // Tanks & Marines vs Lurkers
 //        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
 //        if (true) return "ums/rav/Vultures_v_Marines.scm";
@@ -85,6 +85,9 @@ public class MapAndRace {
 //        if (true) return "ums/rav/Wraiths_v_Probes.scm"; // Wraiths v Probes & Cannons
 //        if (true) return "ums/Jim_v_Lurker.scx"; // Marine vs Lurker
 //        if (true) return "ums/InfantryControl.scx"; // Terran Infantry units vs enemies
+//        if (true) return "ums/gol_v_zeals.scx"; // Goliath & Dropship v Zerglings
+//        if (true) return "ums/marines/m (5).scx"; // Nice map to test different terran infantry in rounds
+//        if (true) return "ums/marines/m (8).scx"; // Hmm
 
         // === Zerg ================================================
 
@@ -111,22 +114,6 @@ public class MapAndRace {
 //        if (true) return "ums/rav/Zeal_v_Zeal.scm";
 //        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 //        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
-
-        // =========================================================
-
-//        if (true) return "ums/";
-//        if (true) return "ums/";
-//        if (true) return "ums/(1)Aracahn's Call A.scx"; // RPG
-//        if (true) return "ums/gol_v_zeals.scx";
-//        if (true) return "ums/aaa (1).scx";
-//        if (true) return "ums/aaa (2).scx";
-//        if (true) return "ums/aaa (3).scx";
-//        if (true) return "ums/aaa (4).scx";
-//        if (true) return "ums/aaa (5).scx";
-//        if (true) return "ums/aaa (6).scx";
-
-//        if (true) return "ums/marines/m (5).scx"; // Nice map to test different terran infantry in rounds
-//        if (true) return "ums/marines/m (8).scx"; // Hmm
 
         // === Generic ======================================================
 

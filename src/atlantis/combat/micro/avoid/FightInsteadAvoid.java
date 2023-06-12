@@ -130,6 +130,18 @@ public class FightInsteadAvoid {
             }
         }
 
+        // vs COMBAT BUILDINGS
+        if (
+            combatBuilding != null
+            && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)
+            && unit.friendsNearInRadius(2) >= 2
+            && unit.friendsNearInRadius(4) >= (unit.isAir() ? 14 : 6)
+            && (!unit.isAir() || unit.woundPercent(10))
+        ) {
+            unit.addLog("FightBuilding");
+            return true;
+        }
+
 //        if (handleTerranInfantryShouldFight(unit)) {
 //            unit.addLog("InfantryFight");
 //            return true;
@@ -157,11 +169,6 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        if (combatBuilding != null && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)) {
-            unit.addLog("FightBuilding");
-            return true;
-        }
-
         if (unit.isMelee()) {
             return fightAsMeleeUnit();
         }
@@ -186,7 +193,8 @@ public class FightInsteadAvoid {
 
         if (
             unit.isMelee()
-                && unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).inRadius(2.8, unit).notEmpty()
+                && unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony)
+                    .inRadius(2.8, unit).notEmpty()
         ) {
             unit.addLog("DefendCannon");
             return true;

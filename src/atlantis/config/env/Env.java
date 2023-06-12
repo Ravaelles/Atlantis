@@ -48,9 +48,6 @@ public class Env {
         if (mainArgsContains("--counter=", mainArgs) && !mainArgsEquals("--counter=1", mainArgs)) {
             firstRun = false;
         }
-
-        System.out.println(AtlantisIgniter.getBwapiIniPath());
-        System.out.println(AtlantisIgniter.getChaosLauncherPath());
     }
 
     // =========================================================
