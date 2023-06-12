@@ -102,8 +102,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         if (!attacker.isCombatBuilding()) {
             return 0;
         }
-
-        if (attacker.isCombatBuilding()) {
+        else {
             APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
         }
 

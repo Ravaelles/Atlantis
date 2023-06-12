@@ -21,14 +21,6 @@ public class ACombatUnitManager {
     public static boolean update(AUnit unit) {
         //if (true)System.out.println("A0 " + unit + " at " + A.now());
 
-//        if (unit.action() == null || unit.action().equals(Actions.INIT)) {
-//            System.err.println(unit + " @ " + A.now());
-//            System.err.println(unit.action());
-//            System.err.println(unit.squad());
-//            System.err.println(unit.mission());
-//            System.err.println(unit.tooltip());
-//        }
-
         if (preActions(unit)) {
             return true;
         }

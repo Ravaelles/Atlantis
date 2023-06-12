@@ -14,7 +14,7 @@ public class FakeOnFrameEnd {
     // =========================================================
 
     private static void updatePosition(FakeUnit unit) {
-        int speedInPixels = 24;
+        int speedInPixels = (int) (unit.maxSpeed() * 3);
 
 //        System.out.println("unit.targetPosition = " + unit.targetPosition);
 //        System.out.println("unit.isMoving() = " + unit.isMoving());

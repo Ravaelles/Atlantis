@@ -18,19 +18,21 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
 
             double distToSunken = distToNearestEnemy(unit);
             boolean isSafe = distToSunken > 7.05;
+            boolean alwaysShow = false;
+//            boolean alwaysShow = true;
 
-//            if (!isSafe) {
-//                System.out.println(A.now() + " -       " + unit.tooltip()
-//                        + "\n " + unit.lastCommand()
-//                        + ",\n tx:" + unit.tx()
-//                        + ",\n dist_to_sunken:" + A.dist(distToSunken)
-//                        + (unit.target == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target))
-//                        + (unit.targetPosition == null ? "" : ",\n target_position:" + unit.targetPosition)
-//                );
-//                System.out.println("_______________________________________");
-//            }
-//
-//            assertTrue(isSafe);
+            if (!isSafe || alwaysShow) {
+                System.out.println(A.now() + " -       " + unit.tooltip()
+                        + "\n " + unit.lastCommand()
+                        + ",\n tx:" + unit.tx()
+                        + ",\n dist_to_sunken:" + A.dist(distToSunken)
+                        + (unit.target == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target))
+                        + (unit.targetPosition == null ? "" : ",\n target_position:" + unit.targetPosition)
+                );
+                System.out.println("_______________________________________");
+            }
+
+            assertTrue(isSafe);
         });
     }
 
