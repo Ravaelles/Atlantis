@@ -9,8 +9,6 @@ import atlantis.combat.missions.ProtossMissionAdjustments;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 
 /**
  * This is the mission object that is used by battle squads and it indicates that we should attack
@@ -29,7 +27,7 @@ public class MissionAttack extends Mission {
     public boolean update(AUnit unit) {
         unit.setTooltipTactical("#MA");
 
-        return handleAdvance(unit);
+        return MissionAttackAdvance.advance(unit, this);
     }
 
     @Override
@@ -39,77 +37,13 @@ public class MissionAttack extends Mission {
 
     // =========================================================
 
+    @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (A.supplyUsed() <= 40) {
-            // Zealots vs Zealot fix
-            if (ProtossMissionAdjustments.allowsToAttackEnemyUnits(unit, enemy)) {
-                return true;
-            }
-        }
-
-        return true;
-    }
-
-    private boolean handleAdvance(AUnit unit) {
-        AFocusPoint focusPoint = focusPoint();
-
-        // Invalid focus point, no enemy can be found, roam around map
-//        if (focusPoint == null && (!unit.isAttackingOrMovingToAttack() || unit.isIdle())) {
-//            return handleWeDontKnowWhereTheEnemyBaseIs(unit);
-//        }
-
-        if (ASquadCohesionManager.handle(unit)) {
-            return true;
-        }
-
-        // Focus point is well known
-//        if (focusPoint != null && unit.lastPositioningActionMoreThanAgo(40)) {
-        if (focusPoint != null) {
-            if (unit.lastPositioningActionMoreThanAgo(40)) {
-                if (AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint)) {
-                    unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
-                    return true;
-                }
-            }
-        }
-
-        unit.setTooltipTactical("#MA-NoFocus");
-//        return false;
-        return WeDontKnowEnemyEnemyUnit.handleWeDontKnowWhereToFindEnemy(this, unit);
+        return MissionAttackVsEnemyUnit.allowsToAttackEnemyUnit(unit, enemy);
     }
 
     @Override
     public boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
-        if (unit.isInfantry() && unit.hp() <= 39) {
-            return false;
-        }
-
-        // Tanks always allowed
-        if (unit.isTank() && unit.distToMoreThan(combatBuilding, 7.9)) {
-            return true;
-        }
-
-        // Air units
-        if (unit.isAir() && combatBuilding.isSunken()) {
-            return true;
-        }
-
-        if (unit.friendsNearCount() <= 6) {
-            return false;
-        }
-
-        // Standard infantry attack
-//        boolean notStrongEnough = Select.ourCombatUnits().inRadius(6, unit).atMost(8);
-//        if (notStrongEnough || unit.lastStoppedRunningLessThanAgo(30 * 10)) {
-//        if (unit.lastStoppedRunningLessThanAgo(30 * 10)) {
-//            return false;
-//        }
-
-        int buildings = Select.enemy().combatBuildings(false).inRadius(7, combatBuilding).count();
-
-        return Select.ourRealUnits()
-                .inRadius(6, unit)
-                .excludeTypes(AUnitType.Terran_Medic)
-                .atLeast(9 * buildings);
+        return MissionAttackVsCombatBuildings.allowsToAttackCombatBuildings(unit, combatBuilding);
     }
 }

@@ -38,7 +38,7 @@ public class MapAndRace {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -54,6 +54,10 @@ public class MapAndRace {
 
         // === Terran ==============================================
 
+        // vs Zerg
+        if (true) return "ums/rav/M&M_v_Hydras.scx";
+
+        // vs Protoss
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
@@ -61,7 +65,6 @@ public class MapAndRace {
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Many Marines v many Zealots
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx";
-//        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/Ghosts_v_P.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";
@@ -88,6 +91,9 @@ public class MapAndRace {
 //        if (true) return "ums/gol_v_zeals.scx"; // Goliath & Dropship v Zerglings
 //        if (true) return "ums/marines/m (5).scx"; // Nice map to test different terran infantry in rounds
 //        if (true) return "ums/marines/m (8).scx"; // Hmm
+
+        // vs Terran
+//@        if (true) return "ums/rav/Bunker_v_M&M.scx";
 
         // === Zerg ================================================
 

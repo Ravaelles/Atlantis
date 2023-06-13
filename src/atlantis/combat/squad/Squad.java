@@ -4,6 +4,7 @@ import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;

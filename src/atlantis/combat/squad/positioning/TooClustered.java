@@ -1,4 +1,4 @@
-package atlantis.combat.squad;
+package atlantis.combat.squad.positioning;
 
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

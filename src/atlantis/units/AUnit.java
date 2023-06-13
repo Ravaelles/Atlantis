@@ -6,7 +6,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.SquadCohesion;
+import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;

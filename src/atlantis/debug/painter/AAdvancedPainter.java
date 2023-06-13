@@ -10,7 +10,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.SquadCohesion;
+import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -266,7 +266,8 @@ public class AAdvancedPainter extends APainter {
         if (!unit.isAlive() || unit.squad() == null) {
             return;
         }
-        String extra = " " + unit.idWithHash();
+//        String extra = " " + unit.idWithHash();
+        String extra = " " + A.dist(unit.distToSquadCenter());
         String squadLetter = unit.squad().letter() + extra;
         paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
     }
@@ -1278,8 +1279,8 @@ public class AAdvancedPainter extends APainter {
             if (median != null) {
                 int maxDist = (int) (SquadCohesion.squadMaxRadius(squad) * 32);
 
-//                paintCircle(median, maxDist + 1, Color.Cyan);
-//                paintCircle(median, maxDist, Color.Cyan);
+                paintCircle(median, maxDist + 1, Color.Cyan);
+                paintCircle(median, maxDist, Color.Cyan);
 
                 setTextSizeMedium();
                 paintTextCentered(median, squad.cohesionPercent() + "%", Color.Teal, 0, -(maxDist / 32.0) + 0.12);

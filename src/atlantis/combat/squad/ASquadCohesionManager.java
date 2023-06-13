@@ -1,6 +1,9 @@
 package atlantis.combat.squad;
 
 import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.squad.positioning.ComeCloser;
+import atlantis.combat.squad.positioning.SquadCohesion;
+import atlantis.combat.squad.positioning.TooClustered;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.map.position.APosition;
@@ -32,13 +35,13 @@ public class ASquadCohesionManager {
         return false;
     }
 
-    private static boolean shouldSkip(AUnit unit) {
-        return
-                unit.isMissionDefend()
-                || unit.squadSize() <= 2
-                || unit.mission().focusPoint() == null
-                || (!unit.isMissionDefend() && unit.distToNearestChokeLessThan(6));
-    }
+//    private static boolean shouldSkip(AUnit unit) {
+//        return
+//                unit.isMissionDefend()
+//                || unit.squadSize() <= 2
+//                || unit.mission().focusPoint() == null
+//                || (!unit.isMissionDefend() && unit.distToNearestChokeLessThan(6));
+//    }
 
     protected static AFocusPoint focusPoint(AUnit unit) {
         return unit.mission().focusPoint();

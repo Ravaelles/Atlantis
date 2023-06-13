@@ -1,6 +1,7 @@
-package atlantis.combat.squad;
+package atlantis.combat.squad.positioning;
 
 import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -26,6 +27,8 @@ public class ComeCloser extends ASquadCohesionManager {
             isTooFarFromSquadCenter(unit)
                 || isTooFarFromTanks(unit)
                 || isTooFarAhead(unit)
+                || isTooFarAhead(unit)
+                || TerranInfantryComeCloser.isTooFarFromMedic(unit)
         ) {
             return comeCloser(unit);
         }

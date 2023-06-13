@@ -1,5 +1,6 @@
-package atlantis.combat.squad;
+package atlantis.combat.squad.positioning;
 
+import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.APosition;
