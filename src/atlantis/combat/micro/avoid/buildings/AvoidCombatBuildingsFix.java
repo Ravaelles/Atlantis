@@ -40,13 +40,7 @@ public class AvoidCombatBuildingsFix {
         }
 //        else if (distTo <= criticalDist && unit.isMoving() && !unit.isRunning() && unit.target() == null) {
         else if (distTo <= criticalDist) {
-//            if (unit.isMoving() && unit.isFacing(combatBuilding)) {
-            if (
-                unit.isMoving()
-                    && unit.targetPosition() != null
-                    && unit.targetPosition().distTo(combatBuilding) < 7.25
-            ) {
-                unit.holdPosition("HoldHere", false);
+            if (AvoidCombatBuildingCriticallyClose.handle(unit, combatBuilding)) {
                 return true;
             }
         }

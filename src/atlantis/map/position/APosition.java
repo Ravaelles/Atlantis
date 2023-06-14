@@ -1,6 +1,7 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
+import atlantis.game.A;
 import atlantis.map.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.ARegion;
@@ -319,7 +320,14 @@ public class APosition extends Position implements HasPosition, Comparable<Point
             return true;
         }
         else return py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
-    }    
+    }
+
+    public APosition randomizePosition(int maxTiles) {
+        return APosition.create(
+            tx() - maxTiles + A.rand(0, 2 * maxTiles),
+            ty() - maxTiles + A.rand(0, 2 * maxTiles)
+        ).makeValid();
+    }
 
     /**
      * Return region object for this position.

@@ -15,7 +15,7 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 
-public class AAvoidUnitsTest extends AbstractTestWithUnits {
+public class AvoidEnemiesTest extends AbstractTestWithUnits {
 
     public MockedStatic<AGame> aGame;
     public MockedStatic<EnemyInfo> enemyInformation;

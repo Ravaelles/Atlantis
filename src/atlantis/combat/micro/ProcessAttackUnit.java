@@ -9,10 +9,9 @@ import atlantis.units.select.Select;
 public class ProcessAttackUnit {
 
     public static boolean processAttackUnit(AUnit unit, AUnit target) {
-        if (unit.isFoggedUnitWithKnownPosition()) {
-            if (unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false)) {
-                return true;
-            }
+        if (target.isFoggedUnitWithKnownPosition()) {
+            unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false);
+            return true;
         }
 
         if (handleMoveNextToTanksWhenAttackingThem(unit, target)) {
@@ -50,13 +49,13 @@ public class ProcessAttackUnit {
         return confirmAttack(unit, target);
     }
 
-    private static double distBonus(AUnit unit, AUnit target) {
-        if (unit.isOtherUnitFacingThisUnit(target) && (target.isMoving() || target.isAttacking())) {
-            return -1.6;
-        }
-
-        return -0.5;
-    }
+//    private static double distBonus(AUnit unit, AUnit target) {
+//        if (unit.isOtherUnitFacingThisUnit(target) && (target.isMoving() || target.isAttacking())) {
+//            return -1.6;
+//        }
+//
+//        return -0.5;
+//    }
 
     private static boolean confirmAttack(AUnit unit, AUnit target) {
         return unit.attackUnit(target);

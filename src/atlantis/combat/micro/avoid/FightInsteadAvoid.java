@@ -188,7 +188,7 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        if (forTerranInfantry(unit)) {
+        if (fightImportantForTerranInfantry(unit)) {
             return true;
         }
 
@@ -220,7 +220,7 @@ public class FightInsteadAvoid {
         return false;
     }
 
-    private boolean forTerranInfantry(AUnit unit) {
+    private boolean fightImportantForTerranInfantry(AUnit unit) {
         if (!unit.isMarine() && !unit.isGhost() && !unit.isFirebat()) {
             return false;
         }

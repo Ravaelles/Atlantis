@@ -47,7 +47,7 @@ public class MapAndRace {
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
-//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
@@ -92,7 +92,7 @@ public class MapAndRace {
 //        if (true) return "ums/marines/m (8).scx"; // Hmm
 
         // vs Terran
-        if (true) return "ums/rav/Wraiths_v_Base.scx";
+//        if (true) return "ums/rav/Wraiths_v_Base.scx";
 //@        if (true) return "ums/rav/Bunker_v_M&M.scx";
 
         // === Zerg ================================================

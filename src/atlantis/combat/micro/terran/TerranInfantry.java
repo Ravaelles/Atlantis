@@ -91,6 +91,12 @@ public class TerranInfantry {
             return false;
         }
 
+        if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) {
+            return false;
+        }
+
+        AUnit bunker = unit.loadedInto();
+
         if (
             unit.hasTargetPosition()
                 && unit.targetPositionAtLeastAway(6.1)
@@ -103,10 +109,14 @@ public class TerranInfantry {
 
 //        if (Select.enemyRealUnits().inRadius(6, unit).isEmpty()) {
         if (
-            unit.enemiesNear().isEmpty()
-                && unit.lastActionMoreThanAgo(15)
+            unit.enemiesNear().inRadius(8, bunker).isEmpty()
         ) {
-            if (!unit.isMissionDefendOrSparta() || unit.distToFocusPoint() >= 10) {
+            if (unit.lastActionLessThanAgo(5, Actions.UNLOAD)) {
+                unit.setTooltip("Unloading");
+                return true;
+            }
+
+            if (!unit.isMissionDefendOrSparta() || unit.distToFocusPoint() >= 8) {
                 unit.setTooltipTactical("Unload");
                 return unloadFromBunker(unit);
             }
@@ -150,7 +160,13 @@ public class TerranInfantry {
                         && (!enemiesNear.onlyMelee() || unit.nearestEnemyDist() < 5)
                 )
             )) {
-                if (unit.hp() <= 20 && bunkerDist >= 3 && bunkerDist > unit.nearestEnemyDist()) {
+                if (
+                    unit.hp() <= 20 && bunkerDist >= 3 &&
+                    (
+                        bunkerDist > unit.nearestEnemyDist()
+                        || nearestBunker.enemiesNear().inRadius(0.3, nearestBunker).atMost(4)
+                    )
+                ) {
                     return false;
                 }
 

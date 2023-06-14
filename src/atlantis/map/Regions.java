@@ -123,6 +123,13 @@ public class Regions {
             return null;
         }
 
-        return ARegion.create(AMap.getMap().getArea(position.toTilePosition()));
+        try {
+            ARegion region = ARegion.create(AMap.getMap().getArea(position.toTilePosition()));
+            return region;
+        } catch (Exception e) {
+            System.err.println("Failed trying to get region for " + position);
+        }
+
+        return null;
     }
 }

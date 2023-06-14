@@ -5,6 +5,7 @@ import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
@@ -66,6 +67,15 @@ public class WantsToAvoid {
 //            unit.addLog("SquadScoutAvoid");
 //            return true;
 //        }
+
+
+        if (
+            unit.isInfantry()
+            && unit.enemiesNear().ofType(AUnitType.Zerg_Lurker).inRadius(6.8, unit).effCloaked().notEmpty()
+        ) {
+            unit.setTooltip("Aaa-LURKER!");
+            return false;
+        }
 
         if (new FightInsteadAvoid(unit, enemies).shouldFight()) {
             unit.addLog("SHOULD FightInsteadAvoid");

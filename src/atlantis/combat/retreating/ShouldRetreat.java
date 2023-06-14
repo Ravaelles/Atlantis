@@ -171,12 +171,14 @@ public class ShouldRetreat {
 
         AUnit main = Select.main();
         if (main != null) {
-            if (main.distTo(unit) <= 8) {
+            if (main.distTo(unit) <= 8 && unit.hp() >= 19 && unit.noCooldown()) {
+                unit.setTooltip("ProtectMain");
                 return true;
             }
         }
 
         if (A.seconds() <= 400 && OurStrategy.get().isRushOrCheese() && unit.enemiesNear().ranged().empty()) {
+            unit.setTooltip("Rush");
             return true;
         }
 
@@ -197,21 +199,25 @@ public class ShouldRetreat {
     }
 
     private static boolean terran_shouldNotRetreat(AUnit unit) {
-        if (unit.isTank() && unit.cooldownRemaining() <= 0) {
+        if (unit.isTank() && unit.woundPercentMax(60) && unit.cooldownRemaining() <= 0) {
+            unit.setTooltip("BraveTank");
             return true;
         }
 
         if (unit.kitingUnit() && unit.isHealthy()) {
+            unit.setTooltip("BraveKite");
             return true;
         }
 
-        if (unit.isStimmed() && unit.enemiesNearInRadius(1.8) <= 2) {
+        if (unit.isStimmed() && unit.hp() >= 2 && unit.enemiesNearInRadius(1.8) <= 2) {
+            unit.setTooltip("BraveStim");
             return true;
         }
 
-        if (unit.friendsInRadius(4).count() >= 8) {
-            return true;
-        }
+//        if (unit.friendsInRadius(4).count() >= 8) {
+//            unit.setTooltip("BraveRetard");
+//            return true;
+//        }
 
         return false;
     }

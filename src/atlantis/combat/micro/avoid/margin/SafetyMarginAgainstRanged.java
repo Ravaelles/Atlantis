@@ -29,8 +29,9 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
         // === For all ==================================
 
-        criticalDist += addBuildingBonus(defender, attacker, criticalDist)
-                        + shouldRetreatBonus(defender);
+        criticalDist += addBuildingBonus(defender, attacker, criticalDist);
+        criticalDist += shouldRetreatBonus(defender);
+//            addBuildingBonus(defender, attacker, criticalDist)
 //        if (attacker.isCombatBuilding()) {
 //            System.out.println(defender + ", CRIT_DIST = " + criticalDist + " // " + addBuildingBonus(defender, attacker, criticalDist));
 //        }
@@ -98,24 +99,9 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         if (!attacker.isCombatBuilding()) {
             return 0;
         }
-        else {
-            APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
-        }
 
-        // Reaver range is 8, buildings have 7
-        if (defender.isReaver()) {
-            return 7.7;
-        }
-
-//        criticalDist += extraMarginAgainstCombatBuilding(defender, attacker);
-
-//        if (criticalDist <= MIN_DIST_TO_COMBAT_BUILDING) {
-//            criticalDist = MIN_DIST_TO_COMBAT_BUILDING;
-//        }
-
-//        System.err.println("criticalDist = " + criticalDist + " // against " + attacker);
-
-        return criticalDist;
+        APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
+        return 0.5 + defender.woundPercent() / 100.0 + (defender.isMoving() ? 0.5 : 0) + (defender.isAir() ? 0.5 : 0);
     }
 
 //    private static double extraMarginAgainstCombatBuilding(AUnit defender, AUnit attacker) {

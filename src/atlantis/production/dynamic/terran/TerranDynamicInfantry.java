@@ -116,7 +116,11 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return false;
         }
 
-        if (!A.hasMinerals(150) && !A.canAffordWithReserved(50, 0)) {
+        if (Enemy.zerg() && A.seconds() >= 300 && Count.marines() <= 4) {
+            return true;
+        }
+
+        if (!A.hasMinerals(200) && !A.canAffordWithReserved(50, 0)) {
             return false;
         }
 
@@ -136,7 +140,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         }
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
-        if (barracks.isNotEmpty()) {
+        if (barracks.isNotEmpty() && A.hasMinerals(100 + 50 * barracks.count())) {
             return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 1);
 //            AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
 //            return;

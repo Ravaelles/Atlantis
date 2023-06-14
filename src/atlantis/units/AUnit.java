@@ -2335,11 +2335,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isFoggedUnitWithUnknownPosition() {
-        return this instanceof AbstractFoggedUnit && position() == null;
+        return this instanceof AbstractFoggedUnit && !hasPosition();
     }
 
     public boolean isFoggedUnitWithKnownPosition() {
-        return this instanceof FoggedUnit && position() != null;
+        return this instanceof FoggedUnit && hasPosition();
     }
 
     public boolean isHealthy() {

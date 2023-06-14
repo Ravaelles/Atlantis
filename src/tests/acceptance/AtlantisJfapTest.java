@@ -69,12 +69,14 @@ public class AtlantisJfapTest extends NonAbstractTestFakingGame {
         FakeUnit[] enemies = fakeEnemies(
 //            sunkenColony = fake(AUnitType.Zerg_Sunken_Colony, 12),
             hydra = fake(AUnitType.Zerg_Hydralisk, 12.1),
-            fake(AUnitType.Zerg_Hydralisk, 12.2),
-            fake(AUnitType.Zerg_Hydralisk, 12.3),
-            fake(AUnitType.Zerg_Hydralisk, 12.4)
+//            fake(AUnitType.Zerg_Hydralisk, 12.2),
+//            fake(AUnitType.Zerg_Hydralisk, 12.3),
+//            fake(AUnitType.Zerg_Hydralisk, 12.4),
 //            fake(AUnitType.Zerg_Hydralisk, 12.5),
-//            fake(AUnitType.Zerg_Hydralisk, 12.6)
-//            fake(AUnitType.Zerg_Hydralisk, 12.9)
+//            fake(AUnitType.Zerg_Hydralisk, 12.6),
+            fake(AUnitType.Zerg_Hydralisk, 12.7),
+            fake(AUnitType.Zerg_Hydralisk, 12.8),
+            fake(AUnitType.Zerg_Hydralisk, 12.9)
         );
 
         createWorld(1, () -> {

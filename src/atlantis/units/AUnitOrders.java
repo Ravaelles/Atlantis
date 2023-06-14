@@ -50,6 +50,7 @@ public interface AUnitOrders {
                 System.err.println("target = " + target.getClass());
                 System.err.println("toString = " + target.toString());
                 System.err.println("isVisibleUnitOnMap " + target.isVisibleUnitOnMap());
+                System.err.println("hasPosition = " + target.hasPosition());
                 System.err.println("isPositionVisible = " + target.isPositionVisible());
                 if (Env.isLocal()) A.printStackTrace();
             }

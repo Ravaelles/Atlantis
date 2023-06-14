@@ -128,8 +128,9 @@ public class ATargeting {
         }
 
 //        System.out.println("enemy.type() = " + enemy.type());
-        AUnit weakestEnemy = selectWeakestEnemyOfType(enemy.type(), unit);
-//        System.out.println("weakestEnemy = " + weakestEnemy);
+//        AUnit weakestEnemy = selectWeakestEnemyOfType(enemy.type(), unit);
+        AUnit weakestEnemy = enemy;
+//        System.out.println("weakestEnemy = " + weakestEnemy + "\n");
 
         if (weakestEnemy != null && unit.isTank()) {
             AUnit tank = handleTanksSpecially(unit, weakestEnemy);
@@ -222,8 +223,7 @@ public class ATargeting {
 //        Selection targets = ourUnit.enemiesNear()
         Selection targets = enemyUnits
                 .ofType(type)
-                .canBeAttackedBy(ourUnit, extraRange)
-                .effVisible();
+                .canBeAttackedBy(ourUnit, extraRange);
 //                .hasPathFrom(ourUnit);
 
         // It makes sense to focus fire on units that have lot of HP
@@ -288,12 +288,11 @@ public class ATargeting {
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, maxDistFromEnemy);
-//        enemyUnits = Select.enemyRealUnits()
         enemyUnits = Select.enemyRealUnitsWithBuildings()
-//                .nonBuildings()
                 .inRadius(maxDistFromEnemy, unit)
                 .maxGroundDist(maxDistFromEnemy, unit)
-                .effVisibleOrFoggedWithKnownPosition();
+                .effVisibleOrFoggedWithKnownPosition()
+                .canBeAttackedBy(unit, maxDistFromEnemy);
 
 //        Select.enemyRealUnits().print();
 //        enemyBuildings.print();

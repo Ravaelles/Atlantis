@@ -126,15 +126,15 @@ public abstract class AvoidEnemies {
         );
     }
 
-    public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {
-        Units enemies = unitsToAvoid(unit, false);
-        if (enemies.isNotEmpty()) {
-            return enemies.lowestValue();
-        }
-
-//        return 9876;
-        return 0;
-    }
+//    public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {
+//        Units enemies = unitsToAvoid(unit, false);
+//        if (enemies.isNotEmpty()) {
+//            return enemies.lowestValue();
+//        }
+//
+////        return 9876;
+//        return 0;
+//    }
 
     public static boolean shouldAvoidAnyUnit(AUnit unit) {
         return unitsToAvoid(unit).isNotEmpty();
@@ -148,6 +148,7 @@ public abstract class AvoidEnemies {
 
     protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
         return unit.enemiesNear()
+//                .nonBuildings() // This is because we rely on AvoidCombatBuildingsFix
                 .removeDuplicates()
                 .onlyCompleted()
                 .canAttack(unit, true, true, 4.5)

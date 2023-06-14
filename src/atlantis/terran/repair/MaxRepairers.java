@@ -1,5 +1,6 @@
 package atlantis.terran.repair;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -21,6 +22,13 @@ public class MaxRepairers {
     }
 
     protected static int optimalRepairersForBunker(AUnit bunker) {
+        if (
+            bunker.loadedUnits().isEmpty()
+            && bunker.friendsNear().terranInfantryWithoutMedics().inRadius(6, bunker).atMost(1)
+        ) {
+            return 0;
+        }
+
         Selection potentialEnemies = Select.enemy().combatUnits().inRadius(18, bunker);
 
         if (potentialEnemies.empty()) {
@@ -43,6 +51,6 @@ public class MaxRepairers {
             optimalNumber += 2;
         }
 
-        return Math.min(6, (int) Math.ceil(optimalNumber));
+        return Math.min(A.hasMinerals(20) ? 6 : 3, (int) Math.ceil(optimalNumber));
     }
 }
