@@ -9,7 +9,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
@@ -136,8 +135,9 @@ public class FightInsteadAvoid {
             && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)
             && unit.friendsNearInRadius(2) >= 2
             && unit.friendsNearInRadius(4) >= (unit.isAir() ? 14 : 6)
-            && (!unit.isAir() || unit.woundPercent(10))
-            && unit.combatEvalRelative() >= 2.8
+            && (!unit.isAir() || unit.woundPercentMax(15))
+            && unit.combatEvalRelative() >= 3.2
+            && (unit.hp() >= 23 || unit.isMelee())
         ) {
             unit.addLog("FightBuilding");
             return true;

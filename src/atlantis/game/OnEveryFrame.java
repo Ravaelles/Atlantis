@@ -54,7 +54,7 @@ public class OnEveryFrame {
 
 //        AUnit ourCombat = Select.ourCombatUnits().first();
 //        if (ourCombat != null) {
-//            System.out.println("wouldWin = " + AtlantisJFAP.wouldWin(ourCombat));
+//            System.out.println("wouldWin = " + AtlantisJfap.wouldWin(ourCombat));
 //        }
     }
 

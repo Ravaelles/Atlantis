@@ -38,7 +38,7 @@ public class RepairerAssigner {
                 || unit.isScout()
                 || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 5))
                 || (unit.isBuilding() && TerranFlyingBuildingScoutManager.isFlyingBuilding(unit) && unit.lastUnderAttackLessThanAgo(30 * 15))
-                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercent(40))
+                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercentMin(40))
                 || ARepairerManager.itIsForbiddenToRepairThisUnitNow(unit)
                 || GamePhase.isEarlyGame() && (unit.isBuilding() && !unit.isCombatBuilding() && unit.enemiesNear().atLeast(2));
     }

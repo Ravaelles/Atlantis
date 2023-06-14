@@ -1,13 +1,12 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingsFix;
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
-import bwapi.Color;
 
 import java.util.List;
 import java.util.stream.Collectors;

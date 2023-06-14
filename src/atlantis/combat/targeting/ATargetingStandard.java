@@ -22,11 +22,11 @@ public class ATargetingStandard extends ATargeting {
         // =========================================================
         // WORKERS IN RANGE
 
-        Selection workersInRnage = enemyUnits.workers().inShootRangeOf(unit);
+        Selection workersInRange = enemyUnits.workers().inShootRangeOf(unit);
         if (unit.isMelee()) {
-            target = workersInRnage.nearestTo(unit);
+            target = workersInRange.nearestTo(unit);
         } else {
-            target = workersInRnage.randomWithSeed(unit.id());
+            target = workersInRange.randomWithSeed(unit.id());
         }
 
         if (target != null) {

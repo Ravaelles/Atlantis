@@ -31,34 +31,29 @@ public class JfapCombatEvaluator {
      * Absolute:
      * E.g. 121 (of arbitrary "score points")
      */
-    public static double eval(AUnit unit, boolean relativeToEnemy) {
+    public static double[] eval(AUnit unit, boolean relativeToEnemy) {
 //        System.out.println(unit.friendsNear().print("Friends for " + unit));
 //        System.out.println(unit.enemiesNear().print("Enemies for " + unit));
 
         if (unit.enemiesNear().empty()) {
-            return 9876;
+            return new double[] { 9876, 0 };
 //            return 0;
         }
 
         Integer[] eval = fullEval(unit);
-        int score = eval[0];
+//        int score = eval[0];
         int myScoreDiff = eval[1];
         int enemyScoreDiff = eval[2];
+//        int myScoreDiff = Math.abs(eval[1]);
+//        int enemyScoreDiff = Math.abs(eval[2]);
+
+//        System.out.println("my/enemy ScoreDiff = " + myScoreDiff + " // " + enemyScoreDiff);
 
         if (myScoreDiff == 0) {
-            return 9878;
-//            return 0;
+            return new double[] { 9878, 0 };
         }
 
-        if (relativeToEnemy) {
-//            return (myScoreDiff / (enemyScoreDiff + 0.001));
-//            System.out.println("enemyScoreDiff = " + enemyScoreDiff);
-//            System.out.println("myScoreDiff = " + myScoreDiff);
-            return Math.abs(enemyScoreDiff / (myScoreDiff + 0.001));
-//            return Math.abs(enemyScoreDiff / (myScoreDiff + 0.001));
-        }
-
-        return myScoreDiff;
+        return new double[] { myScoreDiff, enemyScoreDiff };
     }
 
     private static Integer[] fullEval(AUnit unit) {

@@ -17,11 +17,6 @@ public class ATargetingImportant extends ATargeting {
 
         AUnit target;
 
-        if (unit.isAir() && (target = ATargetingForAir.targetForAirUnits(unit)) != null) {
-            if (ATargeting.DEBUG) System.out.println("CA = " + target);
-            return target;
-        }
-
         if ((target = targetInShootingRange(unit)) != null) {
             return target;
         }
@@ -141,22 +136,6 @@ public class ATargetingImportant extends ATargeting {
         }
 
         // =========================================================
-        // WORKERS for AIR UNITS
-
-        if (unit.isAir() && unit.canAttackGroundUnits()) {
-            target = enemyUnits
-                .workers()
-                .inRadius(unit.groundWeaponRange() + 2, unit)
-                .nearestTo(unit);
-            if (target != null && Select.enemies(target.type()).inRadius(3, unit).atLeast(3)) {
-                if (target.friendsNear().buildings().inRadius(6, target).notEmpty()) {
-                    if (ATargeting.DEBUG) System.out.println("D5b = " + target);
-                    return target;
-                }
-            }
-        }
-
-        // =========================================================
         // Including unfinished defensive buildings
 
         target = Select.enemy()
@@ -173,6 +152,18 @@ public class ATargetingImportant extends ATargeting {
                 .mostWounded();
 
         if (target != null && ATargeting.DEBUG) System.out.println("C5 = " + target);
+
+        // === WORKERS ======================================================
+
+        target = enemyUnits
+            .workers()
+            .inRadius(unit.isMelee() ? 8 : 12, unit)
+            .nearestTo(unit);
+
+        if (target != null) {
+            if (ATargeting.DEBUG) System.out.println("C5b = " + target);
+            return target;
+        }
 
         // === Damaged bases ======================================================
 
@@ -192,16 +183,15 @@ public class ATargetingImportant extends ATargeting {
         target = enemyBuildings
             .ofType(
                 AUnitType.Protoss_Fleet_Beacon,
-                AUnitType.Protoss_Cybernetics_Core,
                 AUnitType.Protoss_Templar_Archives,
                 AUnitType.Terran_Armory,
-                AUnitType.Terran_Engineering_Bay,
-                AUnitType.Terran_Academy,
+//                AUnitType.Terran_Engineering_Bay,
+//                AUnitType.Terran_Academy,
                 AUnitType.Zerg_Spawning_Pool,
                 AUnitType.Zerg_Spire,
                 AUnitType.Zerg_Greater_Spire
             )
-            .inRadius(25, unit)
+            .inRadius(15, unit)
             .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("D6b = " + target);

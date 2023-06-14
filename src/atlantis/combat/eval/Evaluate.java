@@ -8,6 +8,7 @@ import atlantis.util.WeaponUtil;
 
 import java.util.Iterator;
 
+@Deprecated
 public class Evaluate {
 
     /**

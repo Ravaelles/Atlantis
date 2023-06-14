@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.combat.eval.AtlantisJfap;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
@@ -25,6 +26,7 @@ import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
+import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -37,7 +39,6 @@ import atlantis.util.Vectors;
 import atlantis.util.log.Log;
 import atlantis.util.log.LogUnitsToFiles;
 import bwapi.*;
-import jfap.JfapCombatEvaluator;
 import tests.unit.FakeUnit;
 
 import java.util.ArrayList;
@@ -395,8 +396,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return 100 - 100.0 * hp() / maxHp();
     }
 
-    public boolean woundPercent(int minWoundPercent) {
+    public boolean woundPercentMin(int minWoundPercent) {
         return woundPercent() >= minWoundPercent;
+    }
+
+    public boolean woundPercentMax(int maxWoundPercent) {
+        return woundPercent() <= maxWoundPercent;
     }
 
     public boolean isWounded() {
@@ -1463,7 +1468,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // === Unit actions ========================================
 
-    public boolean isUnitAction(Action constant) {
+    public boolean isAction(Action constant) {
         return unitAction == constant;
     }
 
@@ -1744,6 +1749,23 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return positionDifference.isParallelTo(otherUnitLookingVector);
     }
 
+    public boolean isFacing(AUnit otherUnit) {
+        if (otherUnit.hasNoU()) {
+            return false;
+        }
+
+        Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
+        Vector thisUnitLookingVector = Vectors.vectorFromAngle(this.getAngle(), positionDifference.length());
+
+//        if (isFirstCombatUnit()) {
+//            System.out.println("### ARE PARALLEL = " + (positionDifference.isParallelTo(thisUnitLookingVector)));
+//            System.out.println(positionDifference + " // " + positionDifference.toAngle());
+//            System.out.println(thisUnitLookingVector + " // " + thisUnitLookingVector.toAngle());
+//        }
+
+        return positionDifference.isParallelTo(thisUnitLookingVector);
+    }
+
     /**
      * Inner BWAPI unit object, if null it means unit is not visible.
      */
@@ -1991,16 +2013,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public double combatEvalAbsolute() {
-        // New JFAP solution
-        return JfapCombatEvaluator.eval(this, false);
+        // New Jfap solution
+        return (new AtlantisJfap(this, false)).evaluateCombatSituation();
 
         // Old Heuristic implementation
 //        return ACombatEvaluator.absoluteEvaluation(this);
     }
 
     public double combatEvalRelative() {
-        // New JFAP solution
-        return JfapCombatEvaluator.eval(this, true);
+        // New Jfap solution
+        return (new AtlantisJfap(this, true)).evaluateCombatSituation();
 
         // Old manual implementation
 //        return ACombatEvaluator.relativeAdvantage(this);
@@ -2314,6 +2336,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isFoggedUnitWithUnknownPosition() {
         return this instanceof AbstractFoggedUnit && position() == null;
+    }
+
+    public boolean isFoggedUnitWithKnownPosition() {
+        return this instanceof FoggedUnit && position() != null;
     }
 
     public boolean isHealthy() {

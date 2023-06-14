@@ -1,6 +1,7 @@
 package atlantis.combat.targeting;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -10,6 +11,7 @@ import atlantis.util.Enemy;
 
 import java.util.List;
 
+import static atlantis.combat.micro.AAttackEnemyUnit.MAX_DIST_TO_ATTACK;
 import static atlantis.combat.micro.AAttackEnemyUnit.reasonNotToAttack;
 
 public class ATargeting {
@@ -165,6 +167,13 @@ public class ATargeting {
             return enemy;
         }
 
+        // Ok, any possible of this type
+        enemy = selectWeakestEnemyOfType(enemyType, unit, MAX_DIST_TO_ATTACK);
+//        System.out.println("enemy B3 = " + enemy);
+        if (enemy != null) {
+            return enemy;
+        }
+
         // =====================================================================
         // Couldn't find enemy of given type in/near weapon range. Change target
 
@@ -211,7 +220,7 @@ public class ATargeting {
 
     private static AUnit selectWeakestEnemyOfType(AUnitType type, AUnit ourUnit, double extraRange) {
 //        Selection targets = ourUnit.enemiesNear()
-        Selection targets = Select.enemies(type)
+        Selection targets = enemyUnits
                 .ofType(type)
                 .canBeAttackedBy(ourUnit, extraRange)
                 .effVisible();
@@ -220,6 +229,7 @@ public class ATargeting {
         // It makes sense to focus fire on units that have lot of HP
         boolean shouldFocusFire = ourUnit.friendsNearCount() <= 7
             || (type.maxHp() > 35 && !type.isWorker());
+
         if (shouldFocusFire) {
 //            .inShootRangeOf(extraRange, ourUnit)
             AUnit mostWounded = targets.mostWounded();
@@ -262,10 +272,11 @@ public class ATargeting {
         // Quit early if no target at all
         if (
             unit.enemiesNear()
-                .effVisible()
+//                .effVisible()
                 .inRadius(maxDistFromEnemy, unit)
                 .isEmpty()
         ) {
+//            System.err.println("selectUnitToAttackByType maxDistFromEnemy = " + maxDistFromEnemy);
 //            System.out.println("No enemies near for " + unit + " in dist=" + maxDistFromEnemy);
             return null;
         }
@@ -277,11 +288,12 @@ public class ATargeting {
                 .buildings()
                 .inRadius(maxDistFromEnemy, unit)
                 .canBeAttackedBy(unit, maxDistFromEnemy);
-        enemyUnits = Select.enemyRealUnits()
-                .nonBuildings()
+//        enemyUnits = Select.enemyRealUnits()
+        enemyUnits = Select.enemyRealUnitsWithBuildings()
+//                .nonBuildings()
                 .inRadius(maxDistFromEnemy, unit)
                 .maxGroundDist(maxDistFromEnemy, unit)
-                .effVisible();
+                .effVisibleOrFoggedWithKnownPosition();
 
 //        Select.enemyRealUnits().print();
 //        enemyBuildings.print();
@@ -307,6 +319,19 @@ public class ATargeting {
 //            if (ATargeting.DEBUG) System.out.println("A = "+ target);
 //            return target;
 //        }
+
+        // === AIR UNITS due to their mobility use different targeting logic ===
+
+        if (unit.isAir() && unit.canAttackGroundUnits()) {
+            target = ATargetingForAirUnits.targetForAirUnits(unit);
+
+//            System.out.println("Air target for " + unit + ": " + target);
+//            if ((target = ATargetingForAirUnits.targetForAirUnits(unit)) != null) {
+//                if (ATargeting.DEBUG) System.out.println("AirTarget = " + target);
+//            }
+
+            return target;
+        }
 
         // === Crucial units =======================================
 

@@ -7,7 +7,7 @@ import atlantis.units.select.Select;
 public class MissionAttackVsCombatBuildings {
     
     public static boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
-        if (unit.isInfantry() && unit.hp() <= 39) {
+        if (forbiddenForTerranInfantry(unit, combatBuilding)) {
             return false;
         }
 
@@ -38,5 +38,25 @@ public class MissionAttackVsCombatBuildings {
             .inRadius(6, unit)
             .excludeTypes(AUnitType.Terran_Medic)
             .atLeast(9 * buildings);
+    }
+
+    private static boolean forbiddenForTerranInfantry(AUnit unit, AUnit combatBuilding) {
+        if (!unit.isTerranInfantry()) {
+            return false;
+        }
+
+        if (unit.distToMoreThan(combatBuilding, 8.2)) {
+            return false;
+        }
+
+        if (unit.hp() <= 35) {
+            return true;
+        }
+
+        if (unit.friendsInRadiusCount(1.5) <= 0 || unit.friendsInRadiusCount(4) <= 6) {
+            return true;
+        }
+
+        return false;
     }
 }

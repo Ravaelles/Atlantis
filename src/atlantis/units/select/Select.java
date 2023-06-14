@@ -540,14 +540,13 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
-    public static Selection enemyRealUnits(boolean includeBuildings) {
+    public static Selection enemyRealUnitsWithBuildings() {
         String cachePath;
         return cache.get(
-                cachePath = "enemyRealUnits" + (includeBuildings ? "T" : "F"),
+                cachePath = "enemyRealUnitsWithBuildings",
                 0,
-                () -> enemyRealUnits(true, true, includeBuildings)
+                () -> enemyRealUnits(true, true, true)
         );
-//        return enemyRealUnits(true, true, includeBuildings);
     }
 
     /**

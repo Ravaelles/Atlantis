@@ -25,7 +25,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
         }
 
 //        if (OurStrategy.get().goingBio()) {
-        if (!ArmyStrength.weAreStronger()) {
+        if (!ArmyStrength.weAreMuchStronger()) {
             if (DEBUG) reason = "We aren't stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }

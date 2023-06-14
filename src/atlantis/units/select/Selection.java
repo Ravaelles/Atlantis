@@ -1,6 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.terran.repair.ARepairAssignments;
@@ -58,6 +59,10 @@ public class Selection extends BaseSelection {
         list.add(addUnit);
 
         return cloneByAdding(list, null);
+    }
+
+    public Selection withEnemyFoggedUnits() {
+        return cloneByAdding(EnemyUnits.foggedUnits().data, null);
     }
 
     /**
@@ -181,6 +186,13 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(
             (unit -> !unit.effVisible()),
             "effVisible"
+        );
+    }
+
+    public Selection effVisibleOrFoggedWithKnownPosition() {
+        return cloneByRemovingIf(
+            (unit -> !unit.effVisible() && !unit.isFoggedUnitWithKnownPosition()),
+            "effVisibleOrFoggedWithKnownPosition"
         );
     }
 
@@ -383,6 +395,10 @@ public class Selection extends BaseSelection {
 
     public Selection havingWeapon() {
         return cloneByRemovingIf(u -> !u.hasAnyWeapon(), "havingWeapon");
+    }
+
+    public Selection notHavingAntiAirWeapon() {
+        return cloneByRemovingIf(u -> !u.canAttackAirUnits(), "notHavingAntiAirWeapon");
     }
 
     public int totalHp() {

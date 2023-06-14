@@ -55,7 +55,9 @@ public class MapAndRace {
         // === Terran ==============================================
 
         // vs Zerg
-        if (true) return "ums/rav/M&M_v_Hydras.scx";
+//        if (true) return "ums/rav/M&M_v_Hydras.scx";
+//        if (true) return "ums/rav/T_v_Sunkens.scx";
+//        if (true) return "ums/rav/M&M_v_Cannons.scx";
 
         // vs Protoss
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
@@ -74,9 +76,6 @@ public class MapAndRace {
 //        if (true) return "ums/rav/M&M_v_T.scx"; // Terran bio engaging with units that keep on adding
 //        if (true) return "ums/rav/M_v_Zealots.scx";
 //        if (true) return "ums/rav/T_rebasing.scm";
-//        if (true) return "ums/rav/T_v_Sunkens.scx";
-//        if (true) return "ums/rav/T_v_Sunkens2.scx";
-//        if (true) return "ums/rav/T_v_Sunkens3.scx";
 //        if (true) return "ums/rav/Tanks_v_DT.scx";
 //        if (true) return "ums/rav/Tanks_v_DT_2.scx";
 //        if (true) return "ums/rav/Tanks_v_Lurkers.scx"; // Tanks & Marines vs Lurkers
@@ -93,6 +92,7 @@ public class MapAndRace {
 //        if (true) return "ums/marines/m (8).scx"; // Hmm
 
         // vs Terran
+        if (true) return "ums/rav/Wraiths_v_Base.scx";
 //@        if (true) return "ums/rav/Bunker_v_M&M.scx";
 
         // === Zerg ================================================

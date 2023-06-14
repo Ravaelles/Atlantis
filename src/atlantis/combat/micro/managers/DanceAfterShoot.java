@@ -46,12 +46,12 @@ public class DanceAfterShoot {
             );
         }
         // Big step BACK
-        else if (dist <= weaponRange - 1.2) {
+        else if (dist <= weaponRange - 1.2 && !target.isCombatBuilding()) {
             unit.addLog(danceAway);
             return unit.moveAwayFrom(target, 0.9, danceAway, Actions.MOVE_DANCE_AWAY);
         }
         // Small step BACK
-        else if (dist <= weaponRange - 0.45) {
+        else if (dist <= weaponRange - 0.45 && !target.isCombatBuilding()) {
             unit.addLog(danceAway);
             return unit.moveAwayFrom(target, 0.35, danceAway, Actions.MOVE_DANCE_AWAY);
         }

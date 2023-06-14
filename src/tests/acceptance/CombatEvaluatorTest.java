@@ -46,7 +46,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     }
 
     @Test
-    public void testOnaMarinevsOneMargine() {
+    public void testOneMarinevsOneMargine() {
         final FakeUnit enemyMarine = fakeEnemy(Terran_Marine, 7);
 
         createWorld(1, () -> {
@@ -56,7 +56,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //                System.out.println("ourEval = " + ourEval);
 //                System.out.println("enemyEval = " + enemyEval);
 
-                assertTrue(ourEval < 0);
+                assertTrue(ourEval > 0);
                 assertTrue(ourEval == enemyEval);
             },
             () -> this.generateOur(),

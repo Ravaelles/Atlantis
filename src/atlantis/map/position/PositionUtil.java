@@ -72,6 +72,9 @@ public class PositionUtil {
         else if (object1 instanceof ARegionBoundary) {
             fromPosition = ((ARegionBoundary) object1).position();
         }
+        else if (object1 instanceof FoggedUnit) {
+            fromPosition = ((FoggedUnit) object1).position();
+        }
 
         if (fromPosition == null && fromUnit == null) {
             throw new RuntimeException("Invalid class for argument `from`: " + object1);

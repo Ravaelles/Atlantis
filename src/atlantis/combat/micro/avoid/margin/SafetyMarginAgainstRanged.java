@@ -8,7 +8,7 @@ import bwapi.Color;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
 
-    private static final double MIN_DIST_TO_COMBAT_BUILDING = 8.7;
+//    private static final double MIN_DIST_TO_COMBAT_BUILDING = 8.7;
 
     public static double calculate(AUnit defender, AUnit attacker) {
         double criticalDist;
@@ -42,14 +42,10 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
     private static double bonusForGhost(AUnit defender, AUnit attacker) {
         if (attacker.isCombatBuilding()) {
-            return 9;
+            return 7;
         }
 
-        if (defender.isWounded()) {
-            return 3;
-        }
-
-        return 0;
+        return defender.woundPercent() / 25.0;
     }
 
     private static double shouldRetreatBonus(AUnit defender) {
@@ -111,26 +107,26 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             return 7.7;
         }
 
-        criticalDist += extraMarginAgainstCombatBuilding(defender, attacker);
+//        criticalDist += extraMarginAgainstCombatBuilding(defender, attacker);
 
-        if (criticalDist <= MIN_DIST_TO_COMBAT_BUILDING) {
-            criticalDist = MIN_DIST_TO_COMBAT_BUILDING;
-        }
+//        if (criticalDist <= MIN_DIST_TO_COMBAT_BUILDING) {
+//            criticalDist = MIN_DIST_TO_COMBAT_BUILDING;
+//        }
 
 //        System.err.println("criticalDist = " + criticalDist + " // against " + attacker);
 
         return criticalDist;
     }
 
-    private static double extraMarginAgainstCombatBuilding(AUnit defender, AUnit attacker) {
-        if (defender.isVulture()) {
-            return 6.4;
-        } else if (defender.is(AUnitType.Terran_Wraith)) {
-            return 7.3;
-        }
-
-        return (defender.isAir() ? 5.8 : 1.1);
-    }
+//    private static double extraMarginAgainstCombatBuilding(AUnit defender, AUnit attacker) {
+//        if (defender.isVulture()) {
+//            return 6.4;
+//        } else if (defender.is(AUnitType.Terran_Wraith)) {
+//            return 7.3;
+//        }
+//
+//        return (defender.isAir() ? 5.8 : 1.1);
+//    }
 
     private static double lurkerBonus(AUnit defender, AUnit attacker) {
         if (attacker.is(AUnitType.Zerg_Lurker) && attacker.effCloaked()) {

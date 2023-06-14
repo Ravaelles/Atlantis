@@ -9,6 +9,12 @@ import atlantis.units.select.Select;
 public class ProcessAttackUnit {
 
     public static boolean processAttackUnit(AUnit unit, AUnit target) {
+        if (unit.isFoggedUnitWithKnownPosition()) {
+            if (unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false)) {
+                return true;
+            }
+        }
+
         if (handleMoveNextToTanksWhenAttackingThem(unit, target)) {
             return true;
         }

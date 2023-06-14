@@ -50,7 +50,7 @@ public class AdvanceUnitsManager {
         if (unit.friendsNearCount() <= 10 && unit.enemiesNear().combatUnits().notEmpty()) {
             if (
                 unit.isMoving()
-                    && !unit.isUnitAction(Actions.MOVE_FORMATION)
+                    && !unit.isAction(Actions.MOVE_FORMATION)
                     && !unit.isRunning()
 //                    && unit.lastActionMoreThanAgo(15)
                     && unit.distToSquadCenter() >= 5

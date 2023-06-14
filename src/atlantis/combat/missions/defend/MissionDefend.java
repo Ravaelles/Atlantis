@@ -189,7 +189,7 @@ public class MissionDefend extends Mission {
         }
 
         if (unit.isHydralisk()) {
-            if (unit.woundPercent(60) || unit.meleeEnemiesNearCount(2) >= 2) {
+            if (unit.woundPercentMin(60) || unit.meleeEnemiesNearCount(2) >= 2) {
                 return false;
             }
         }

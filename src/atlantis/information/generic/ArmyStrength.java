@@ -42,7 +42,7 @@ public class ArmyStrength {
     // =========================================================
 
     private static int muchStrongerPercent() {
-        int base = 40;
+        int base = 140;
 
         if (RetreatManager.GLOBAL_RETREAT_COUNTER == 0) {
             return base;

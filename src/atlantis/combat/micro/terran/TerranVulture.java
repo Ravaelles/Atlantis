@@ -27,14 +27,14 @@ public class TerranVulture {
         // Unit gets status "stuck" after mine has been planted, being the only way I know of to
         // define that a mine planting has been finished.
 //        if (unit.isUnitAction(UnitActions.USING_TECH) && (unit.isStuck() || unit.isIdle() || !unit.isMoving())) {
-        if (unit.isUnitAction(Actions.USING_TECH) && unit.lastActionFramesAgo() > 15) {
+        if (unit.isAction(Actions.USING_TECH) && unit.lastActionFramesAgo() > 15) {
             unit.setAction(Actions.STOP);
             unit.setTooltipTactical("Planted!");
             return false;
         }
 
         // Can't allow to interrupt
-        if (unit.isUnitAction(Actions.USING_TECH) && unit.lastActionLessThanAgo(15, Actions.USING_TECH)) {
+        if (unit.isAction(Actions.USING_TECH) && unit.lastActionLessThanAgo(15, Actions.USING_TECH)) {
             unit.setTooltipTactical("Planting mine");
             return true;
         }

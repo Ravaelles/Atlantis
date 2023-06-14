@@ -9,6 +9,7 @@ import atlantis.util.cache.Cache;
 import bwapi.TilePosition;
 import bwem.BWEM;
 import bwem.BWMap;
+import com.sun.jna.platform.win32.WinCrypt;
 
 import java.util.ArrayList;
 
@@ -48,7 +49,12 @@ public class AMap {
         bwem.getMap().assignStartingLocationsToSuitableBases();
 
         // Init JBWEB - needed for calculating ground distance
-        InitJBWEB.init();
+        try {
+            InitJBWEB.init();
+        } catch (Exception e) {
+            System.err.println("JBWEB exception");
+            e.printStackTrace();
+        }
 
         System.out.println("OK.");
     }
