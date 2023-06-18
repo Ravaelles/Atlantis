@@ -20,6 +20,7 @@ public class ArmyStrength {
     }
 
     public static boolean weAreMuchStronger() {
+        System.err.println("ourArmyRelativeStrength() = " + ourArmyRelativeStrength());
         return ourArmyRelativeStrength() >= muchStrongerPercent();
     }
 

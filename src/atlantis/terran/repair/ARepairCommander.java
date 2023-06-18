@@ -1,6 +1,7 @@
 package atlantis.terran.repair;
 
 import atlantis.game.AGame;
+import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnit;
 
 import java.util.Iterator;
@@ -12,7 +13,7 @@ public class ARepairCommander {
         if (AGame.everyNthGameFrame(11)) {
             RepairerAssigner.removeExcessiveRepairersIfNeeded();
 
-            if (!MaxRepairers.usingMoreRepairersThanAllowed()) {
+            if (!OptimalNumOfRepairers.weHaveTooManyRepairersOverall()) {
                 RepairerAssigner.assignRepairersToWoundedUnits();
             }
         }
@@ -24,6 +25,10 @@ public class ARepairCommander {
         // === Handle normal repairers ==================================
 
         handleStandardRepairers();
+
+        // =========================================================
+
+        makeSureEnoughMineralsIsLeftForRepairers();
     }
 
     // =========================================================
@@ -43,6 +48,16 @@ public class ARepairCommander {
                 continue;
             }
             ARepairerManager.updateRepairer(repairer);
+        }
+    }
+
+    protected static void makeSureEnoughMineralsIsLeftForRepairers() {
+        int totalRepairers = ARepairAssignments.countTotalRepairers();
+        int minMineralsForRepairers = totalRepairers * 20;
+        if (totalRepairers >= 1 && ProductionQueue.mineralsReserved() <= minMineralsForRepairers) {
+            ProductionQueue.setMineralsNeeded(
+                Math.max(ProductionQueue.mineralsNeeded(), minMineralsForRepairers)
+            );
         }
     }
 

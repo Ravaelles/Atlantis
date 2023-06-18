@@ -11,13 +11,13 @@ import atlantis.units.select.Select;
 public class RepairerAssigner {
 
     protected static void assignRepairersToWoundedUnits() {
-//        if (!MaxRepairers.usingMoreRepairersThanAllowed()) {
+//        if (!OptimalNumOfRepairers.usingMoreRepairersThanAllowed()) {
         for (AUnit woundedUnit : Select.our().repairable(true).excludeTypes(AtlantisConfig.WORKER).list()) {
             if (shouldNotRepairUnit(woundedUnit)) {
                 continue;
             }
 
-            if (MaxRepairers.tooManyRepairers(woundedUnit)) {
+            if (OptimalNumOfRepairers.hasUnitTooManyRepairers(woundedUnit)) {
                 continue;
             }
 
@@ -44,9 +44,9 @@ public class RepairerAssigner {
     }
 
     public static boolean removeExcessiveRepairersIfNeeded() {
-        int allowedRepairers = MaxRepairers.MAX_REPAIRERS_AT_ONCE;
+        int allowedRepairers = OptimalNumOfRepairers.MAX_REPAIRERS_AT_ONCE;
 
-        if (MaxRepairers.usingMoreRepairersThanAllowed()) {
+        if (OptimalNumOfRepairers.weHaveTooManyRepairersOverall()) {
             for (int i = 0; i < ARepairAssignments.countTotalRepairers() - allowedRepairers; i++) {
                 AUnit repairer = ARepairAssignments.getRepairers().get(ARepairAssignments.getRepairers().size() - 1);
                 if (!ARepairerManager.canSafelyAbandonUnitToBeRepaired(repairer)) {
@@ -67,7 +67,7 @@ public class RepairerAssigner {
         // === Bunker - very special case ========================================
 
         if (unit.isBunker()) {
-            int shouldHaveThisManyRepairers = MaxRepairers.optimalRepairersForBunker(unit);
+            int shouldHaveThisManyRepairers = OptimalNumOfBunkerRepairers.optimalRepairersForBunker(unit);
             if (shouldHaveThisManyRepairers > 0) {
 //                System.out.println("Bunker repairers = " + shouldHaveThisManyRepairers);
                 unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");

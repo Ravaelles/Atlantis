@@ -1,6 +1,5 @@
 package atlantis.terran.repair;
 
-import atlantis.game.GameLog;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
@@ -37,7 +36,7 @@ public class ARepairAssignments {
 
     public static AUnit getClosestRepairerAssignedTo(AUnit wounded) {
         if (
-                unitsToRepairers.size() > MaxRepairers.MAX_REPAIRERS_AT_ONCE
+                unitsToRepairers.size() > OptimalNumOfRepairers.MAX_REPAIRERS_AT_ONCE
                 || unitsToRepairers.size() >= (0.5 * Select.ourWorkers().count())
         ) {
             return null;

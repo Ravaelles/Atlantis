@@ -4,7 +4,10 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
 
@@ -36,6 +39,11 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
     public static boolean shouldChangeMissionToDefend() {
         if (baseUnderSeriousAttack()) {
             if (DEBUG) reason = "Protect base";
+            return true;
+        }
+
+        if (EnemyInfo.hiddenUnitsCount() >= 2 && Count.ofType(AUnitType.Terran_Science_Vessel) == 0) {
+            if (DEBUG) reason = "Hidden unitz";
             return true;
         }
 

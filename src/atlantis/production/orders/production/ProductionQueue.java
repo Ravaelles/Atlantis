@@ -116,6 +116,14 @@ public abstract class ProductionQueue {
         return gasNeeded;
     }
 
+    public static int mineralsNeeded() {
+        return mineralsNeeded;
+    }
+
+    public static void setMineralsNeeded(int mineralsNeeded) {
+        ProductionQueue.mineralsNeeded = mineralsNeeded;
+    }
+
     public static int countOrdersWithPriorityAtLeast(ProductionOrderPriority priority) {
         int total = 0;
         for (ProductionOrder order : nextInQueue) {

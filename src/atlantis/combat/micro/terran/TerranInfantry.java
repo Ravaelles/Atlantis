@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.combat.missions.Missions;
+import atlantis.combat.micro.terran.bunker.LoadIntoBunkers;
+import atlantis.combat.micro.terran.bunker.UnloadFromBunkers;
 import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -19,11 +20,11 @@ public class TerranInfantry {
             return true;
         }
 
-        if (tryUnloadingFromBunkerIfNeeded(unit)) {
+        if (UnloadFromBunkers.tryUnloadingFromBunkerIfNeeded(unit)) {
             return true;
         }
 
-        if (tryLoadingInfantryIntoBunkerIfNeeded(unit)) {
+        if (LoadIntoBunkers.tryLoadingInfantryIntoBunkerIfNeeded(unit)) {
             return true;
         }
 
@@ -86,138 +87,7 @@ public class TerranInfantry {
         return false;
     }
 
-    private static boolean tryUnloadingFromBunkerIfNeeded(AUnit unit) {
-        if (!unit.isLoaded()) {
-            return false;
-        }
-
-        if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) {
-            return false;
-        }
-
-        AUnit bunker = unit.loadedInto();
-
-        if (
-            unit.hasTargetPosition()
-                && unit.targetPositionAtLeastAway(6.1)
-                && unit.enemiesNear().inRadius(4, unit).empty()
-        ) {
-            unit.setTooltipTactical("Unload");
-            unit.addLog("UnloadToMove");
-            return unloadFromBunker(unit);
-        }
-
-//        if (Select.enemyRealUnits().inRadius(6, unit).isEmpty()) {
-        if (
-            unit.enemiesNear().inRadius(8, bunker).isEmpty()
-        ) {
-            if (unit.lastActionLessThanAgo(5, Actions.UNLOAD)) {
-                unit.setTooltip("Unloading");
-                return true;
-            }
-
-            if (!unit.isMissionDefendOrSparta() || unit.distToFocusPoint() >= 8) {
-                unit.setTooltipTactical("Unload");
-                return unloadFromBunker(unit);
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean tryLoadingInfantryIntoBunkerIfNeeded(AUnit unit) {
-        if (unit.lastActionLessThanAgo(10, Actions.LOAD)) {
-            unit.addLog("Loading");
-            return true;
-        }
-
-        // Only Terran infantry get inside
-        if (unit.isLoaded() || (!unit.isMarine() && !unit.isGhost())) {
-            return false;
-        }
-
-        // Without enemies around, don't do anything
-        Selection enemiesNear = unit.enemiesNear().canAttack(unit, 15);
-        if (enemiesNear.excludeMedics().empty()) {
-            return false;
-        }
-
-        // =========================================================
-
-        AUnit nearestBunker = defineBunkerToLoadTo(unit);
-        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
-
-        if (
-            nearestBunker != null
-                && nearestBunker.hasFreeSpaceFor(unit)
-        ) {
-            double bunkerDist = nearestBunker.distTo(unit);
-            if (bunkerDist < maxDistanceToLoad
-                && (
-                nearestBunker.spaceRemaining() >= 2
-                    || (
-                    enemiesNear.inRadius(1.6, unit).atMost(1)
-                        && (!enemiesNear.onlyMelee() || unit.nearestEnemyDist() < 5)
-                )
-            )) {
-                if (
-                    unit.hp() <= 20 && bunkerDist >= 3 &&
-                    (
-                        bunkerDist > unit.nearestEnemyDist()
-                        || nearestBunker.enemiesNear().inRadius(0.3, nearestBunker).atMost(4)
-                    )
-                ) {
-                    return false;
-                }
-
-                unit.load(nearestBunker);
-
-                String t = "GetToDaChoppa";
-                unit.setTooltipTactical(t);
-                unit.addLog(t);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     // =========================================================
-
-    private static boolean unloadFromBunker(AUnit unit) {
-        unit.loadedInto().addLog("UnloadCrew");
-        unit.loadedInto().unloadAll();
-        return true;
-//        Select.ourOfType(AUnitType.Terran_Bunker).inRadius(0.5, unit).first().unloadAll();
-    }
-
-    // =========================================================
-
-    private static AUnit defineBunkerToLoadTo(AUnit unit) {
-        return Select.ourOfType(AUnitType.Terran_Bunker)
-            .inRadius(15, unit)
-            .havingSpaceFree(unit.spaceRequired())
-            .nearestTo(unit);
-
-//        System.out.println("bunker = " + bunker);
-//        if (bunker != null) {
-//            AUnit mainBase = Select.main();
-//
-//            // Select the most distance (according to main base) bunker
-//            if (Missions.isGlobalMissionDefend() && mainBase != null) {
-//                AUnit mostDistantBunker = bunkers
-//                        .units()
-//                        .sortByGroundDistTo(mainBase.position(), false)
-//                        .first();
-//                return mostDistantBunker;
-//            }
-//            else {
-//                return bunker;
-//            }
-//        }
-
-//        return bunker;
-    }
 
     private static TechType stim() {
         return TechType.Stim_Packs;

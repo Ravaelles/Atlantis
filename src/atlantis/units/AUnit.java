@@ -2453,6 +2453,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return action().isMoving() && lastActionLessThanAgo(framesAgo);
     }
 
+    public boolean idIsEven() {
+        return id() % 2 == 0;
+    }
+
     public boolean idIsOdd() {
         return id() % 2 > 0;
     }

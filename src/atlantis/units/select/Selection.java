@@ -363,6 +363,20 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection havingTargetedBuildings() {
+        return cloneByRemovingIf(
+            (unit -> (unit.target() == null || !unit.target().isBuilding())),
+            "havingTargetedBuildings"
+        );
+    }
+
+    public Selection havingAnyTarget() {
+        return cloneByRemovingIf(
+            (unit -> (unit.target() == null)),
+            "havingAnyTarget"
+        );
+    }
+
     /**
      * Selects only buildings.
      */
@@ -631,9 +645,13 @@ public class Selection extends BaseSelection {
             return null;
         }
 
+        if (data.size() == 1) {
+            return data.get(0);
+        }
+
         sortDataByDistanceTo(position, true);
 
-        return data.isEmpty() ? null : (AUnit) data.get(0);
+        return data.isEmpty() ? null : data.get(0);
     }
 
     public AUnit mostDistantTo(HasPosition position) {
