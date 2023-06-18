@@ -116,4 +116,14 @@ public class UnitTestHelper {
         return game;
     }
 
+    protected boolean valueAround(double expectedValue, double actualValue) {
+        double margin = 0.05;
+
+        if (expectedValue / actualValue < 0) {
+            return false;
+        }
+
+        return Math.abs(actualValue / expectedValue - 1) <= margin;
+    }
+
 }

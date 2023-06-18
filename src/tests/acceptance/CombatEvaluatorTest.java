@@ -46,6 +46,63 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     }
 
     @Test
+    public void combatEvalAgainstNoEnemy() {
+        createWorld(1, () -> {
+                double ourEvalRelative = marine.combatEvalRelative();
+                double ourEvalAbsolute = marine.combatEvalAbsolute();
+//                double enemyEval = enemy.combatEvalRelative();
+
+                System.out.println("ourEvalRelative = " + ourEvalRelative);
+                System.out.println("ourEvalAbsolute = " + ourEvalAbsolute);
+
+                assertTrue(marine.combatEvalRelative() > 0);
+                assertTrue(marine.combatEvalAbsolute() < 0);
+            },
+            () -> fakeOurs(
+                marine = fake(AUnitType.Terran_Marine, 10)
+            ),
+            () -> fakeEnemies()
+        );
+    }
+
+    @Test
+    public void combatEvalAgainstWeakEnemy() {
+        FakeUnit enemy = fake(Zerg_Zergling, 13);
+        FakeUnit[] enemyUnits = fakeEnemies(
+            enemy
+        );
+
+        createWorld(1, () -> {
+                double ourEvalRelative = marine.combatEvalRelative();
+                double ourEvalAbsolute = marine.combatEvalAbsolute();
+                double enemyEvalRelative = enemy.combatEvalRelative();
+                double enemyEvalAbsolute = enemy.combatEvalAbsolute();
+
+//                System.err.println("ourEvalRelative = " + ourEvalRelative);
+//                System.err.println("ourEvalAbsolute = " + ourEvalAbsolute);
+//
+//                System.err.println("enemyEvalRelative = " + enemyEvalRelative);
+//                System.err.println("enemyEvalAbsolute = " + enemyEvalAbsolute);
+
+                assertTrue(marine.combatEvalRelative() > 0);
+                assertTrue(marine.combatEvalAbsolute() < 0);
+                assertTrue(enemy.combatEvalRelative() > 0);
+                assertTrue(enemy.combatEvalAbsolute() < 0);
+
+                assertTrue(valueAround(marine.combatEvalRelative(), 1.66));
+                assertTrue(valueAround(enemy.combatEvalRelative(), 0.6));
+            },
+            () -> fakeOurs(
+                fake(AUnitType.Terran_Marine, 10),
+                fake(AUnitType.Terran_Marine, 11),
+                marine = fake(AUnitType.Terran_Marine, 11.5),
+                fake(AUnitType.Terran_Marine, 12)
+            ),
+            () -> enemyUnits
+        );
+    }
+
+    @Test
     public void testOneMarinevsOneMargine() {
         final FakeUnit enemyMarine = fakeEnemy(Terran_Marine, 7);
 

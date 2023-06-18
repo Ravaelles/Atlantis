@@ -36,7 +36,11 @@ public class JfapCombatEvaluator {
 //        System.out.println(unit.enemiesNear().print("Enemies for " + unit));
 
         if (unit.enemiesNear().empty()) {
-            return new double[] { 9876, 0 };
+            if (relativeToEnemy) {
+                return new double[] { 9876, -9876 };
+            } else {
+                return new double[] { 9876, -1 };
+            }
 //            return 0;
         }
 
@@ -49,8 +53,12 @@ public class JfapCombatEvaluator {
 
 //        System.out.println("my/enemy ScoreDiff = " + myScoreDiff + " // " + enemyScoreDiff);
 
-        if (myScoreDiff == 0) {
-            return new double[] { 9878, 0 };
+        if (myScoreDiff >= -1) {
+            if (relativeToEnemy) {
+                return new double[] { 9878, -9876 };
+            } else {
+                return new double[] { 9878, -9878 };
+            }
         }
 
         return new double[] { myScoreDiff, enemyScoreDiff };
