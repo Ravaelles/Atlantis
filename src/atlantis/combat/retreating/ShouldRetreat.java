@@ -133,20 +133,20 @@ public class ShouldRetreat {
 //        return false;
 //    }
 
-    private static boolean shouldRetreatDueToSquadMostlyRetreating(AUnit unit) {
-        Squad squad = unit.squad();
-        if (squad == null || squad.size() <= 1 || unit.isMissionDefendOrSparta()) {
-            return false;
-        }
-
-        if (unit.distToNearestChokeLessThan(5) && unit.combatEvalRelative() <= 4) {
-            unit.addLog("ChokeDanger");
-            return true;
-        }
-
-        int countRunning = squad.selection().countRetreating();
-        return countRunning >= 0.5 * squad.size();
-    }
+//    private static boolean shouldRetreatDueToSquadMostlyRetreating(AUnit unit) {
+//        Squad squad = unit.squad();
+//        if (squad == null || squad.size() <= 1 || unit.isMissionDefendOrSparta()) {
+//            return false;
+//        }
+//
+//        if (unit.distToNearestChokeLessThan(5) && unit.combatEvalRelative() <= 4) {
+//            unit.addLog("ChokeDanger");
+//            return true;
+//        }
+//
+//        int countRunning = squad.selection().countRetreating();
+//        return countRunning >= 0.5 * squad.size();
+//    }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
         if (A.supplyUsed() >= 182) {
@@ -160,7 +160,11 @@ public class ShouldRetreat {
             return !unit.mission().allowsToRetreat(unit);
         }
 
-        if (terran_shouldNotRetreat(unit)) {
+        if (TerranRetreat.shouldRetreat(unit)) {
+            return true;
+        }
+
+        if (TerranRetreat.shouldNotRetreat(unit)) {
             return true;
         }
 
@@ -194,30 +198,6 @@ public class ShouldRetreat {
         if (unit.type().isReaver()) {
             return unit.enemiesNear().isEmpty() && unit.cooldownRemaining() <= 7;
         }
-
-        return false;
-    }
-
-    private static boolean terran_shouldNotRetreat(AUnit unit) {
-        if (unit.isTank() && unit.woundPercentMax(60) && unit.cooldownRemaining() <= 0) {
-            unit.setTooltip("BraveTank");
-            return true;
-        }
-
-        if (unit.kitingUnit() && unit.isHealthy()) {
-            unit.setTooltip("BraveKite");
-            return true;
-        }
-
-        if (unit.isStimmed() && unit.hp() >= 2 && unit.enemiesNearInRadius(1.8) <= 2) {
-            unit.setTooltip("BraveStim");
-            return true;
-        }
-
-//        if (unit.friendsInRadius(4).count() >= 8) {
-//            unit.setTooltip("BraveRetard");
-//            return true;
-//        }
 
         return false;
     }

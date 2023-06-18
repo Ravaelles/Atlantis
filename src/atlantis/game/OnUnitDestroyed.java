@@ -1,7 +1,7 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
-import atlantis.combat.squad.ASquadManager;
+import atlantis.combat.squad.SquadTransfers;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
@@ -43,7 +43,7 @@ public class OnUnitDestroyed {
             UnitsArchive.paintKilledUnits();
         }
 
-        ASquadManager.removeUnitFromSquads(unit);
+        SquadTransfers.removeUnitFromSquads(unit);
     }
 
 }

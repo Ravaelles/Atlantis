@@ -1,7 +1,7 @@
 package atlantis.game;
 
-import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
+import atlantis.combat.squad.SquadTransfers;
 import atlantis.config.AtlantisConfig;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitsUpdater;
@@ -51,7 +51,7 @@ public class OnUnitMorph {
 
             // Add to combat squad if it's military unit
             if (unit.isRealUnit()) {
-                ASquadManager.removeUnitFromSquads(unit);
+                SquadTransfers.removeUnitFromSquads(unit);
                 NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
             }
         }

@@ -89,7 +89,7 @@ public class Decisions {
                     return true;
                 }
 
-                if (vultures <= 2 && EnemyUnits.count(Zerg_Zergling) >= 7) {
+                if (vultures == 0 && EnemyUnits.count(Zerg_Zergling) >= 7) {
                     return true;
                 }
 

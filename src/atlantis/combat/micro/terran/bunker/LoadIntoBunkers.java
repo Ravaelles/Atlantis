@@ -42,21 +42,21 @@ public class LoadIntoBunkers {
             double bunkerDist = nearestBunker.distTo(unit);
             if (bunkerDist < maxDistanceToLoad
                 && (
-                nearestBunker.spaceRemaining() >= 2
+                nearestBunker.spaceRemaining() >= 1
                     || (
-                    enemiesNear.inRadius(1.6, unit).atMost(1)
+                    enemiesNear.inRadius(1.6, unit).atMost(4)
                         && (!enemiesNear.onlyMelee() || unit.nearestEnemyDist() < 5)
                 )
             )) {
-                if (
-                    unit.hp() <= 20 && bunkerDist >= 3 &&
-                    (
-                        bunkerDist > unit.nearestEnemyDist()
-                        || nearestBunker.enemiesNear().inRadius(0.3, nearestBunker).atLeast(5)
-                    )
-                ) {
-                    return false;
-                }
+//                if (
+//                    unit.hp() <= 20 && bunkerDist >= 3 &&
+//                    (
+//                        bunkerDist > unit.nearestEnemyDist()
+//                        || nearestBunker.enemiesNear().inRadius(0.3, nearestBunker).atLeast(5)
+//                    )
+//                ) {
+//                    return false;
+//                }
 
                 unit.load(nearestBunker);
 

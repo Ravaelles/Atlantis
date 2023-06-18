@@ -69,6 +69,11 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return addToQueueToMaxAtATime(AUnitType.Terran_Medic, 2);
         }
 
+        // We have medics, but all of them are depleted from energy
+        if (Count.medics() > 0 && Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).isEmpty()) {
+            return addToQueueToMaxAtATime(AUnitType.Terran_Medic, 4);
+        }
+
         if (saveForFactory()) {
             return false;
         }
@@ -117,10 +122,10 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         }
 
         if (Enemy.zerg() && A.seconds() >= 300 && Count.marines() <= 4) {
-            return true;
+            return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 1);
         }
 
-        if (!A.hasMinerals(200) && !A.canAffordWithReserved(50, 0)) {
+        if (!A.hasMinerals(200) && Count.marines() >= 4 && !A.canAffordWithReserved(50, 0)) {
             return false;
         }
 

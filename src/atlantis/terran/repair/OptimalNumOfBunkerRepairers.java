@@ -38,10 +38,10 @@ public class OptimalNumOfBunkerRepairers {
         }
 
         if (
-            potentialEnemies.inRadius(8, bunker).atMost(1)
+            potentialEnemies.inRadius(4, bunker).atMost(2)
             && thereIsAnotherBunkerNearbyThatIsInBiggerDanger(bunker)
         ) {
-            optimalNumber = bunker.isHealthy() ? 1 : (bunker.woundPercent() / 25);
+            optimalNumber = 1 + (bunker.isHealthy() ? 0 : (bunker.woundPercent() / 25));
         }
 
         return Math.min(A.hasMinerals(20) ? 6 : 3, (int) Math.ceil(optimalNumber));

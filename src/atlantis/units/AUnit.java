@@ -1827,7 +1827,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public Mission mission() {
         if (squad == null) {
-            return null;
+            if (isCombatUnit()) {
+                System.err.println("Empty unit squad for: " + this);
+            }
+            return Missions.DEFEND;
+        }
+        else if (squad.mission() == null) {
+            System.err.println("Empty squad mission for: " + squad);
+            return Missions.DEFEND;
         }
 
         return squad != null ? squad.mission() : null;
@@ -2573,5 +2580,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         return false;
+    }
+
+    public AUnit repairer() {
+        if (!isRepairable()) {
+            return null;
+        }
+
+        return ARepairAssignments.getClosestRepairerAssignedTo(this);
     }
 }

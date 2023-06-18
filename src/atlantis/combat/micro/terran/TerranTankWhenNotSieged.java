@@ -29,6 +29,10 @@ public class TerranTankWhenNotSieged extends TerranTank {
             return true;
         }
 
+        if (handleDontRunWhenBeingRepared(unit)) {
+            return false;
+        }
+
         if (enemiesTooClose(unit)) {
             return false;
         }
@@ -56,6 +60,24 @@ public class TerranTankWhenNotSieged extends TerranTank {
             unit.lastActionLessThanAgo(30 * (11 + (unit.idIsOdd() ? 4 : 0)), Actions.UNSIEGE)
                 || unit.lastActionLessThanAgo(30 * (15 + (unit.idIsOdd() ? 4 : 0)), Actions.SIEGE)
         ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean handleDontRunWhenBeingRepared(AUnit unit) {
+        if (!unit.woundPercentMin(50)) {
+            return false;
+        }
+
+        if (unit.enemiesNear().melee().inRadius(1.1, unit).notEmpty()) {
+            return false;
+        }
+
+        AUnit repairer = unit.repairer();
+        if (repairer != null && repairer.distToLessThan(unit, 1.1) && repairer.isRepairing()) {
+            unit.setTooltipTactical("BeFixed");
             return true;
         }
 

@@ -47,6 +47,10 @@ public class SquadCenter {
     }
 
     protected AUnit defineCenterUnit() {
+        if (squad.isEmpty()) {
+            return null;
+        }
+
         ArrayList<Integer> xCoords = new ArrayList<>();
         ArrayList<Integer> yCoords = new ArrayList<>();
 

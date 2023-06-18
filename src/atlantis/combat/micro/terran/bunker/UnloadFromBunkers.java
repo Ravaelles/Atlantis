@@ -66,11 +66,14 @@ public class UnloadFromBunkers {
     // =========================================================
 
     public static boolean preventFromActingLikeFrenchOnMaginotLine(AUnit unit) {
-        if (!unit.isLoaded()) {
+        if (
+            unit.hpLessThan(22)
+                && unit.enemiesNear().inRadius(6 + (unit.idIsOdd() ? 2 : 0), unit).ranged().notEmpty()
+        ) {
             return false;
         }
 
-        if (unit.hpLessThan(22)) {
+        if (unit.enemiesNearInRadius(5) > 0) {
             return false;
         }
 

@@ -8,8 +8,8 @@ import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
-import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.SquadTransfers;
 import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
@@ -1264,7 +1264,7 @@ public class AAdvancedPainter extends APainter {
 
         if (Alpha.get().isNotEmpty()) {
             paintMessage("Squads: ", Color.White, x + 4, y, true);
-            for (Squad squad : ASquadManager.allSquads()) {
+            for (Squad squad : SquadTransfers.allSquads()) {
                 if (squad.size() == 0) {
                     continue;
                 }
@@ -1274,7 +1274,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintSquads() {
-        for (Squad squad : ASquadManager.allSquads()) {
+        for (Squad squad : SquadTransfers.allSquads()) {
             APosition median = squad.center();
             if (median != null) {
                 int maxDist = (int) (SquadCohesion.squadMaxRadius(squad) * 32);

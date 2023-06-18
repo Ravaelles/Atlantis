@@ -193,9 +193,9 @@ public class MapAndRace {
                 || activeMap().equals("ums/exp_skilltest.scx")
                 || activeMap().equals("ums/7th.scx")
         ) {
-            int initFrameSkip = 0;
+            int initFrameSkip = 30;
 
-            if (A.now() <= 1) {
+            if (A.seconds() <= 200) {
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(initFrameSkip);
 
