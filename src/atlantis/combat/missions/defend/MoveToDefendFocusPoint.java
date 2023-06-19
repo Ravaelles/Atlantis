@@ -43,7 +43,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
     protected boolean advance() {
         focus = unit.mission().focusPoint();
 
-        if (focus == null) {
+        if (focus == null || !focus.hasPosition()) {
 //            System.err.println("Null focus point for " + unit + " in MoveToFocusPoint");
             System.err.println("unit.mission() = " + unit.mission());
             A.printStackTrace("Null focus point for " + unit + " in MoveToFocusPoint");
@@ -65,8 +65,11 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
             if (unit.lastActionMoreThanAgo(20, Actions.MOVE_FOCUS)) {
                 APosition position =
-                    (focus.distTo(unit) <= 6 || focus.region().equals(unit.position().region()))
-                        ? focus.translatePercentTowards(unit, 40) : focus;
+                    (unit.distTo(focus) <= 6 ||
+                    (
+                        focus.region() != null && focus.region().equals(unit.position().region()))
+                        ? focus.translatePercentTowards(unit, 40) : focus
+                    );
                 return unit.move(
                     position,
                     Actions.MOVE_FOCUS,

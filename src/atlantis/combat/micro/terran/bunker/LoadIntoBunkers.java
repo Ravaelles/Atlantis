@@ -20,13 +20,13 @@ public class LoadIntoBunkers {
             return false;
         }
 
-        if (UnloadFromBunkers.preventFromActingLikeFrenchOnMaginotLine(unit)) {
-            return false;
-        }
-
         // Without enemies around, don't do anything
         Selection enemiesNear = unit.enemiesNear().canAttack(unit, 15);
         if (enemiesNear.excludeMedics().empty()) {
+            return false;
+        }
+
+        if (UnloadFromBunkers.preventFromActingLikeFrenchOnMaginotLine(unit)) {
             return false;
         }
 
@@ -40,12 +40,13 @@ public class LoadIntoBunkers {
                 && nearestBunker.hasFreeSpaceFor(unit)
         ) {
             double bunkerDist = nearestBunker.distTo(unit);
+
             if (bunkerDist < maxDistanceToLoad
                 && (
                 nearestBunker.spaceRemaining() >= 1
                     || (
-                    enemiesNear.inRadius(1.6, unit).atMost(4)
-                        && (!enemiesNear.onlyMelee() || unit.nearestEnemyDist() < 5)
+                    enemiesNear.inRadius(1.6, unit).atMost(2)
+                        && (!enemiesNear.onlyMelee() || unit.nearestEnemyDist() < 1.2)
                 )
             )) {
 //                if (

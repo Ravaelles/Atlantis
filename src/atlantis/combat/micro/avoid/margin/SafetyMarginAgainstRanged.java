@@ -20,6 +20,9 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             if (defender.isGhost()) {
                 criticalDist += bonusForGhost(defender, attacker);
             }
+            else if (defender.isWraith()) {
+                criticalDist += bonusForWraith(defender, attacker);
+            }
         }
 
         // AIR unit
@@ -39,6 +42,14 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         // ==============================================
 
         return criticalDist;
+    }
+
+    private static double bonusForWraith(AUnit defender, AUnit attacker) {
+        if (attacker.isDragoon()) {
+            return 2.3;
+        }
+
+        return 1.3;
     }
 
     private static double bonusForGhost(AUnit defender, AUnit attacker) {

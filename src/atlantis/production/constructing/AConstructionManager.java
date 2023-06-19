@@ -1,6 +1,7 @@
 package atlantis.production.constructing;
 
 import atlantis.config.AtlantisConfig;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
@@ -50,14 +51,17 @@ public class AConstructionManager {
         if (
             (builder == null || !builder.exists() || !builder.isAlive())
         ) {
+//            System.err.println("Dead builder for " + construction.construction());
             if (isItSafeToAssignNewBuilderTo(construction)) {
                 construction.assignOptimalBuilder();
 
                 builder = construction.builder();
+//                System.err.println("   Assigned new: " + builder);
                 if (
                     builder != null && construction.construction() != null
                         && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
                 ) {
+//                    System.err.println("     Should be good now!");
                     builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
                     builder.setTooltipTactical("Resume");
                 }
@@ -72,7 +76,10 @@ public class AConstructionManager {
 
         HasPosition position = construction.construction() != null
             ? construction.construction() : construction.buildPosition();
-        if (EnemyUnits.discovered().combatUnits().inRadius(8, position).empty()) {
+        if (
+            EnemyUnits.discovered().combatUnits().inRadius(8, position).empty()
+            || (A.hasMinerals(700))
+        ) {
             return true;
         }
 

@@ -30,8 +30,8 @@ public class PositionUtil {
             System.err.println("object2");
             System.err.println(object2);
 //            throw new RuntimeException("distanceTo got null");
-//            System.err.println("distanceTo got null");
-            A.printStackTrace("distanceTo got null");
+            System.err.println("distanceTo got null");
+//            A.printStackTrace("distanceTo got null");
             return 999;
         }
 
@@ -121,10 +121,11 @@ public class PositionUtil {
         }
 
         if (toPosition == null && toUnit == null) {
-            System.err.println("Object: " + object2);
-            System.err.println("Class:  " + object2 != null ? object2.getClass() : "- null -");
+//            System.err.println("Object: " + object2);
+//            System.err.println("Class:  " + object2 != null ? object2.getClass() : "- null -");
 //            throw new RuntimeException("Invalid class for argument `to`: " + object2);
-            A.printStackTrace("Invalid class for argument `to`: " + object2);
+//            A.printStackTrace("Invalid class for argument `to`: " + object2);
+            System.err.println("Invalid class for argument `to`: " + object2);
             return 999;
         }
         

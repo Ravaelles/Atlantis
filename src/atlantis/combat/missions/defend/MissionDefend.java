@@ -67,8 +67,17 @@ public class MissionDefend extends Mission {
         if (focusPoint == null || main == null) {
             return true;
         }
+        double distTo = unit.distTo(enemy);
 
         if (unit.isRanged()) {
+
+            // Don't chase workers too far from base
+            if (
+                enemy.isWorker() && distTo > unit.weaponRangeAgainst(enemy) && enemy.enemiesNear().buildings().empty()
+            ) {
+                return false;
+            }
+
             if (
                 unit.hp() >= 20 && unit.isInWeaponRangeByGame(enemy)
                     && (!enemy.isRanged() || enemy.distToMoreThan(enemy, 2.8))
@@ -76,7 +85,7 @@ public class MissionDefend extends Mission {
                 return true;
             }
 
-            if (unit.distTo(enemy) <= 6) {
+            if (distTo <= 6) {
                 return true;
             }
 

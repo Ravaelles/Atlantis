@@ -11,7 +11,7 @@ public class UnloadFromBunkers {
             return false;
         }
 
-        if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) {
+        if (unit.lastActionLessThanAgo(30 * 2, Actions.LOAD)) {
             return false;
         }
 
@@ -52,7 +52,7 @@ public class UnloadFromBunkers {
 
     private static boolean tooFarToAttackTheTargetFromBunker(AUnit unit) {
         if (unit.hasTargetPosition()
-            && unit.targetPositionAtLeastAway(6.1)
+            && unit.targetPositionAtLeastAway(6.05)
             && unit.enemiesNear().inRadius(4, unit).empty()
         ) {
             unit.setTooltipTactical("UnloadToMove");
@@ -68,12 +68,12 @@ public class UnloadFromBunkers {
     public static boolean preventFromActingLikeFrenchOnMaginotLine(AUnit unit) {
         if (
             unit.hpLessThan(22)
-                && unit.enemiesNear().inRadius(6 + (unit.idIsOdd() ? 2 : 0), unit).ranged().notEmpty()
+                && unit.enemiesNear().inRadius(4.9 + (unit.idIsOdd() ? 2 : 0), unit).ranged().notEmpty()
         ) {
             return false;
         }
 
-        if (unit.enemiesNearInRadius(5) > 0) {
+        if (unit.enemiesNear().inRadius(3.5, unit).notEmpty()) {
             return false;
         }
 
@@ -108,9 +108,11 @@ public class UnloadFromBunkers {
             if (!enemyTarget.isBunker()) {
 //                if (enemyTarget.woundPercent() >= 2 || enemiesAttackingBuildings.atMost(3)) {
                 if (enemyTarget.woundPercent() >= 2 || unit.idIsEven()) {
-//                    System.err.println("SupportDemBuildings " + enemyTarget);
-                    unit.setTooltipTactical("SupportDemBuildings");
-                    return true;
+                    if (!enemy.isHydralisk() || unit.distTo(enemy) > 7) {
+    //                    System.err.println("SupportDemBuildings " + enemyTarget);
+                        unit.setTooltipTactical("SupportDemBuildings");
+                        return true;
+                    }
                 }
             }
         }

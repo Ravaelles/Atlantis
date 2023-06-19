@@ -15,6 +15,7 @@ public class TerranDynamicUnitsManager extends AbstractDynamicUnits {
 
         TerranDynamicFactoryUnits.handleFactoryProduction();
 
+        TerranDynamicInfantry.wraiths();
         TerranDynamicInfantry.ghosts();
         TerranDynamicInfantry.medics();
         TerranDynamicInfantry.marines();

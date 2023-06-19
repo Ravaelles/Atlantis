@@ -329,6 +329,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isWorker();
     }
 
+    public boolean isWraith() {
+        return type().is(AUnitType.Terran_Wraith);
+    }
+
     public boolean isBunker() {
         return type().equals(AUnitType.Terran_Bunker);
     }

@@ -1,6 +1,7 @@
 package atlantis.combat.squad;
 
 import atlantis.combat.missions.Missions;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -19,12 +20,19 @@ public class ChangeSquadMission {
             return;
         }
 
-        if (squad.isMissionAttack()) {
+        if (squad.isMissionAttack() || squad.isMissionContain()) {
             medicsExhausted(squad);
             weakerThanEnemy(squad);
             hugeEnemySquad(squad);
             tooManyUnitsWounded(squad);
             backOffFromLurkers(squad);
+            tooFewUnitsAndNotEarlyGame(squad);
+        }
+    }
+
+    private static void tooFewUnitsAndNotEarlyGame(Squad squad) {
+        if ((units.size() <= 13 || unit.friendsInRadiusCount(5) <= 7) && !GamePhase.isEarlyGame()) {
+            changeMissionToDefend(squad, "Too little squad (" + units.size() + ")");
         }
     }
 
@@ -32,7 +40,7 @@ public class ChangeSquadMission {
 
         // Hydralisk fix
         int hydras = unit.enemiesNear().ofType(AUnitType.Zerg_Hydralisk).count();
-        if (units.terranInfantryWithoutMedics().count() * 0.8 < hydras && Count.tanks() <= 5) {
+        if (units.terranInfantryWithoutMedics().count() * 0.4 < hydras && units.tanks().count() <= 5) {
             changeMissionToDefend(squad, "Mass hydras (" + hydras + " vs " + units.count() + ")");
         }
     }

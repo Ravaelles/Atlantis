@@ -31,17 +31,53 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         return false;
     }
 
+    protected static boolean wraiths() {
+//        if (Enemy.zerg()) {
+//            return false;
+//        }
+
+        if (
+            Count.ofType(AUnitType.Terran_Starport) == 0
+        ) {
+            return false;
+        }
+
+        int wraiths = Count.ofType(AUnitType.Terran_Wraith);
+
+        if (A.supplyUsed() >= 110 && wraiths <= 1) {
+            return addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
+        }
+
+        if (A.supplyUsed() <= 160 && wraiths >= 95 + wraiths * 20) {
+            return false;
+        }
+
+        if (wraiths >= 6 && !AGame.canAffordWithReserved(150, 150)) {
+            return false;
+        }
+
+        return addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
+    }
+
     protected static boolean ghosts() {
         if (Enemy.zerg()) {
             return false;
         }
 
-        if (Count.ofType(AUnitType.Terran_Covert_Ops) == 0) {
+        if (
+            Count.ofType(AUnitType.Terran_Covert_Ops) == 0
+            && Count.ofType(AUnitType.Terran_Science_Facility) == 0
+        ) {
             return false;
         }
 
         int ghosts = Count.ofType(AUnitType.Terran_Ghost);
-        if (ghosts >= 14) {
+
+        if (ghosts >= 2 && !A.hasGas(150)) {
+            return false;
+        }
+
+        if (ghosts >= 8 || A.supplyUsed() <= 80 + 5 * ghosts) {
             return false;
         }
 
@@ -49,7 +85,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return false;
         }
 
-        return addToQueueToMaxAtATime(AUnitType.Terran_Ghost, 4);
+        return addToQueueIfNotAlreadyThere(AUnitType.Terran_Ghost);
     }
 
     protected static boolean medics() {
@@ -121,11 +157,17 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return false;
         }
 
-        if (Enemy.zerg() && A.seconds() >= 300 && Count.marines() <= 4) {
+        int marines = Count.marines();
+
+        if (marines >= 4 && A.supplyUsed(150)) {
+            return false;
+        }
+
+        if (Enemy.zerg() && A.seconds() >= 300 && marines <= 4) {
             return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 1);
         }
 
-        if (!A.hasMinerals(200) && Count.marines() >= 4 && !A.canAffordWithReserved(50, 0)) {
+        if (!A.hasMinerals(200) && marines >= 4 && !A.canAffordWithReserved(50, 0)) {
             return false;
         }
 

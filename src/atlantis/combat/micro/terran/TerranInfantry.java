@@ -51,6 +51,10 @@ public class TerranInfantry {
 //            return false;
 //        }
 
+        if (unit.friendsNearInRadiusSelect(10).bunkers().notEmpty() && unit.enemiesNearInRadius(2.7) > 0) {
+            return false;
+        }
+
         AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).inRadius(8, unit).havingEnergy(25).nearestTo(unit);
         if (medic != null && medic.distToMoreThan(unit, 2)) {
             return unit.move(medic, Actions.MOVE_SPECIAL, "BeHealed", false);

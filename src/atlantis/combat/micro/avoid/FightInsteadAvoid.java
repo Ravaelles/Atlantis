@@ -225,6 +225,10 @@ public class FightInsteadAvoid {
             return false;
         }
 
+        if (unit.combatEvalRelative() < 0.7) {
+            return false;
+        }
+
         if (
             unit.hp() >= 38
             && unit.cooldownRemaining() <= 2

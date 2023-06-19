@@ -553,6 +553,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection bunkers() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isBunker()), "bunkers"
+        );
+    }
+
     public Selection lurkers() {
         return cloneByRemovingIf(
             (unit -> !unit.isLurker()), "lurkers"

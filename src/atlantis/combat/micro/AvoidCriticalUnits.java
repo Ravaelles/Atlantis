@@ -13,7 +13,7 @@ public class AvoidCriticalUnits {
     }
 
     private static boolean lurkers(AUnit unit) {
-        AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(6.6, unit).nearestTo(unit);
+        AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(7.7, unit).nearestTo(unit);
 
         if (lurker == null) {
             return false;

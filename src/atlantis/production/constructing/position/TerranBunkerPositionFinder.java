@@ -100,7 +100,7 @@ public class TerranBunkerPositionFinder {
         if (locationModifier.equals(PositionModifier.MAIN)) {
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
-                return mainBase.translateTilesTowards(mainChoke, 2)
+                return mainBase.translateTilesTowards(mainChoke, 3.2)
                     .makeWalkable(8);
             }
 

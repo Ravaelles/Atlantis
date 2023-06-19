@@ -46,7 +46,7 @@ public class MapAndRace {
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
-//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
@@ -60,7 +60,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/M_v_1Ling.scm"; // 1 Marine v 1 Zergling
 
         // vs Protoss
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Many Marines v many Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";

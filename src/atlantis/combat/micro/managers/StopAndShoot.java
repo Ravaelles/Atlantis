@@ -1,9 +1,11 @@
 package atlantis.combat.micro.managers;
 
+import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.game.A;
 import atlantis.game.CameraManager;
 import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 
 public class StopAndShoot {
@@ -37,7 +39,8 @@ public class StopAndShoot {
 //            System.err.println("@ STOP - " + distToEnemy);
             String tooltip = "Stop&Shoot";
             unit.addLog(tooltip);
-            return unit.attackUnit(target);
+//            return unit.attackUnit(target);
+            return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
         }
 //        else {
 //            GameSpeed.changeSpeedTo(1);
@@ -54,6 +57,7 @@ public class StopAndShoot {
     private static boolean shouldStop() {
         return (c1 = unit.isMoving())
             && (c2 = unit.cooldown() <= 2)
+            && unit.combatEvalRelative() > 0.8
             && (c3 = distToEnemy <= minDistToStop())
             && (c4 = unit.lastActionMoreThanAgo(15, Actions.HOLD_POSITION));
 //            && (c4 = !unit.isStartingAttack());
@@ -68,26 +72,54 @@ public class StopAndShoot {
     }
 
     private static boolean shouldSkip() {
-//        if (unit.isMelee()) {
-//            return true;
-//        }
-//
+        if (unit.isMelee()) {
+            return true;
+        }
+
+        if (unit.isTank() || unit.isVulture()) {
+            return true;
+        }
+
 //        if (!unit.isAttacking()) {
 //            return true;
 //        }
-//
-//        // Can start shooting
-//        if (unit.cooldownRemaining() <= 3) {
-//            return true;
-//        }
-//
-//        if (unit.isMissionSparta()) {
-//            return true;
-//        }
+
+        if (unit.cooldownRemaining() >= 4) {
+            return true;
+        }
+
+        if (unit.isMissionSparta()) {
+            return true;
+        }
 
         AUnit target = unit.target();
         if (target == null) {
             return true;
+        }
+
+        // Allow to load into bunkers and transports
+        if (target.isOur()) {
+            return true;
+        }
+
+        if (unit.isRetreating()) {
+            return true;
+        }
+
+        if (unit.combatEvalRelative() < 0.8) {
+            return true;
+        }
+
+        if (unit.isMissionDefendOrSparta() && unit.friendsNear().buildings().empty()) {
+            return true;
+        }
+
+        if (unit.friendsNearInRadiusSelect(13).ofType(AUnitType.Terran_Bunker).notEmpty()) {
+            return false;
+        }
+
+        if (unit.allUnitsNear().groundUnits().inRadius(1, unit).atLeast(3)) {
+            return false;
         }
 
 //        if (!unit.hasBiggerWeaponRangeThan(target)) {

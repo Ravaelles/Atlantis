@@ -212,10 +212,10 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     private static boolean barracks() {
         int barracks = Count.withPlanned(Terran_Barracks);
 
-        if (!A.hasMinerals(800)) {
-            if (barracks >= 3) {
-                return false;
-            }
+        if (!A.hasMinerals(650)) {
+//            if (barracks >= 3) {
+//                return false;
+//            }
 
     //        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
             if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
@@ -235,8 +235,8 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             return false;
         }
 
-        if (A.canAffordWithReserved(150, 0)) {
-            return buildIfAllBusyButCanAfford(Terran_Barracks, 200, 0);
+        if (A.canAffordWithReserved(150, 0) || A.hasMinerals(650)) {
+            return buildIfAllBusyButCanAfford(Terran_Barracks, 0, 0);
         }
 
         return false;
