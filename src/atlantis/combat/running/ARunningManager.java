@@ -83,6 +83,8 @@ public class ARunningManager {
 
         // === Define run to position ==============================
 
+        runTo = adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(runAwayFrom);
+
         runTo = runPositionFinder.findBestPositionToRun(runAwayFrom, dist);
 
         // === Actual run order ====================================
@@ -102,6 +104,17 @@ public class ARunningManager {
 
         unit.setTooltip("Cant run", false);
         return false;
+    }
+
+    private HasPosition adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(HasPosition runAwayFrom) {
+        Selection friendsVeryNear = unit.friendsNear().inRadius(1, unit);
+        if (friendsVeryNear.size() == 1) {
+//            System.out.println("runAwayFrom = " + runAwayFrom);
+//            System.out.println("and now = " + runAwayFrom.translatePercentTowards(20, friendsVeryNear.first()));
+            return runAwayFrom.translatePercentTowards(35, friendsVeryNear.first());
+        }
+
+        return runAwayFrom;
     }
 
 //    private HasPosition defineRunAwayFrom(Object unitOrPosition) {

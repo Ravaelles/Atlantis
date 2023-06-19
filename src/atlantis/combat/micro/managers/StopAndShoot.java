@@ -54,7 +54,8 @@ public class StopAndShoot {
     private static boolean shouldStop() {
         return (c1 = unit.isMoving())
             && (c2 = unit.cooldown() <= 2)
-            && (c3 = distToEnemy <= minDistToStop());
+            && (c3 = distToEnemy <= minDistToStop())
+            && (c4 = unit.lastActionMoreThanAgo(15, Actions.HOLD_POSITION));
 //            && (c4 = !unit.isStartingAttack());
 //            && (c4 = unit.lastStartedAttackMoreThanAgo(10));
     }
