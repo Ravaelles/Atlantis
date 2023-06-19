@@ -131,7 +131,7 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
-    public boolean effCloaked() {
+    public boolean effUndetected() {
         return effCloaked;
     }
 

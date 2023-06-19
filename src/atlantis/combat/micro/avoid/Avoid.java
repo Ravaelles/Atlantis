@@ -25,7 +25,7 @@ public class Avoid {
             return CircumnavigateCombatBuilding.handle(unit, enemy);
         }
 
-        if (unit.runningManager().runFrom(enemy.position(), calculateRunDistance(unit, enemy), Actions.RUN_ENEMY)) {
+        if (unit.runningManager().runFrom(enemy.position(), calculateRunDistance(unit, enemy), Actions.RUN_ENEMY, false)) {
 //            unit.setTooltip(getTooltip(unit, enemy));
             return true;
         }
@@ -47,7 +47,7 @@ public class Avoid {
         APainter.paintCircle(runFrom, 2, Color.Orange);
 
         if (unit.runningManager().runFrom(
-            runFrom, calculateRunDistance(unit, enemiesDangerouslyClose.first()), Actions.RUN_ENEMIES)
+            runFrom, calculateRunDistance(unit, enemiesDangerouslyClose.first()), Actions.RUN_ENEMIES, false)
         ) {
 //            APainter.paintCircleFilled(unit.position(), 5, Color.Green);
 //            APainter.paintCircleFilled(runFrom, 5, Color.Red);

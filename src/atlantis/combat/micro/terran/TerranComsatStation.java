@@ -28,7 +28,7 @@ public class TerranComsatStation {
     // Zerg
 
     private static boolean scanLurkers(AUnit comsat) {
-        for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effCloaked().list()) {
+        for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effUndetected().list()) {
             if (shouldScanThisLurker(lurker, comsat)) {
                 return scan(comsat, lurker);
             }
@@ -59,7 +59,7 @@ public class TerranComsatStation {
     // Protoss
 
     private static boolean scanDarkTemplars(AUnit comsat) {
-        for (AUnit dt : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Dark_Templar).list()) {
+        for (AUnit dt : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Dark_Templar).list()) {
             Selection ourCombatUnits = Select.ourCombatUnits();
             if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
                     .atLeast(comsat.energy(150) ? (comsat.energy(190) ? 2 : 4) : 7)) {
@@ -80,7 +80,7 @@ public class TerranComsatStation {
             return false;
         }
 
-        for (AUnit observer : Select.enemy().effCloaked().ofType(AUnitType.Protoss_Observer).list()) {
+        for (AUnit observer : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Observer).list()) {
             if (shouldScanThisObserver(observer, comsat)) {
                 return scan(comsat, observer);
             }
@@ -107,7 +107,7 @@ public class TerranComsatStation {
     // =========================================================
 
     private static boolean scan(AUnit comsat, AUnit unitToScan) {
-        if (!unitToScan.effCloaked()) {
+        if (!unitToScan.effUndetected()) {
             System.err.println("unitToScan is not effectively cloaked = " + unitToScan.hp());
             return false;
         }

@@ -42,8 +42,8 @@ public class FightInsteadAvoid {
         this.enemiesSelection = Select.from(enemies);
 
         Selection selector = Select.from(enemies);
-        invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effCloaked().first();
-        invisibleCombatUnit = selector.clone().effCloaked().combatUnits().first();
+        invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effUndetected().first();
+        invisibleCombatUnit = selector.clone().effUndetected().combatUnits().first();
         lurker = selector.clone().ofType(AUnitType.Zerg_Lurker).first();
         tankSieged = selector.clone().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first();
         tanks = selector.clone().tanks().first();
@@ -437,12 +437,14 @@ public class FightInsteadAvoid {
         }
 //        }
 
-        if (combatBuilding != null) {
-            return unit.mission().isMissionAttack()
-                && unit.friendsNearInRadiusSelect(6).atLeast(10)
-                && HeuristicCombatEvaluator.advantagePercent(unit, 50);
-//                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
-        }
+//        if (combatBuilding != null) {
+//            if (unit.mission().isMissionAttack() || unit.combatEvalRelative() >= 3.0) {
+//                return true;
+//            }
+////                && unit.friendsNearInRadiusSelect(6).atLeast(10)
+////                && HeuristicCombatEvaluator.advantagePercent(unit, 50);
+////                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
+//        }
 
 //        boolean isStacked = ourCount >= 5 || allCount >= 6;
 //        boolean isStacked = ourCount >= 5 || allCount >= 6;

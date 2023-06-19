@@ -29,21 +29,28 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
     // === CONTAIN =============================================
 
     public static boolean shouldChangeMissionToContain() {
+        int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
+
         if (A.supplyUsed() >= 130) {
-            if (DEBUG) reason = "Supply allows it (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) reason = "Supply allows it (" + ourRelativeStrength + "%)";
             return true;
         }
 
-        if (ArmyStrength.ourArmyRelativeStrength() < 200) {
-            if (DEBUG) reason = "We are much weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+        if (ourRelativeStrength < 200) {
+            if (DEBUG) reason = "We are much weaker (" + ourRelativeStrength + "%)";
             return false;
         }
 
-        if (GamePhase.isEarlyGame() && A.resourcesBalance() <= -150) {
+        if (ourRelativeStrength >= 400) {
+            if (DEBUG) reason = "Much stronger (" + ourRelativeStrength + "%)";
+            return true;
+        }
+
+        if (ourRelativeStrength < 300 && GamePhase.isEarlyGame() && A.resourcesBalance() <= -150) {
             return false;
         }
 
-        if (EnemyStrategy.get().isRushOrCheese() && A.supplyUsed() <= 110) {
+        if (ourRelativeStrength < 300 && EnemyStrategy.get().isRushOrCheese() && A.supplyUsed() <= 110) {
             return false;
         }
 
@@ -77,13 +84,13 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
 
         if (Count.bunkers() >= 1) {
             if (Decisions.weHaveBunkerAndDontHaveToDefendAnyLonger()) {
-                if (DEBUG) reason = "No longer have to defend (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                if (DEBUG) reason = "No longer have to defend (" + ourRelativeStrength + "%)";
                 return true;
             }
         }
 
         if (ArmyStrength.weAreStronger()) {
-            if (DEBUG) reason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) reason = "We are stronger (" + ourRelativeStrength + "%)";
             return true;
         }
 

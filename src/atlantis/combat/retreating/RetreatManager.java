@@ -32,7 +32,7 @@ public class RetreatManager {
                 nearEnemies.print("nearEnemies");
             }
 
-            if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT)) {
+            if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
                 unit.addLog("RetreatedFrom" + runAwayFrom);
                 return true;
             }
@@ -50,16 +50,16 @@ public class RetreatManager {
     /**
      * Calculated per unit squad, not per unit.
      */
-    public static boolean shouldNotEngageCombatBuilding(AUnit unit) {
-        if (unit.squad() == null) {
-            return false;
-        }
-
-        return cache.get(
-                "shouldNotEngageCombatBuilding:" + unit.squad().name(),
-                10,
-                () -> unit.combatEvalRelative() <= 1.8 && ArmyStrength.ourArmyRelativeStrength() <= 250
-        );
-    }
+//    public static boolean shouldNotEngageCombatBuilding(AUnit unit) {
+//        if (unit.squad() == null) {
+//            return false;
+//        }
+//
+//        return cache.get(
+//                "shouldNotEngageCombatBuilding:" + unit.squad().name(),
+//                10,
+//                () -> unit.combatEvalRelative() <= 2.4 && ArmyStrength.ourArmyRelativeStrength() <= 280
+//        );
+//    }
 
 }

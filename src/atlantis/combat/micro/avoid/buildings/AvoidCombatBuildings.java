@@ -6,9 +6,9 @@ import atlantis.units.Units;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
-public class AvoidCombatBuildingsFix {
+public class AvoidCombatBuildings {
 
-    public static boolean handle(AUnit unit, Units enemyCombatBuildings) {
+    public static boolean shouldNotEngage(AUnit unit, Units enemyCombatBuildings) {
         if (unit.isMissionDefendOrSparta()) {
             return false;
         }
@@ -18,11 +18,14 @@ public class AvoidCombatBuildingsFix {
             return false;
         }
 
+//        System.err.println("@ C = " + ShouldRetreat.shouldRetreat(unit));
         if (
-                unit.isMissionAttack()
+                unit.friendsNearInRadius(3) >= 2
+                && unit.friendsNearInRadius(5) >= 7
                 && !ShouldRetreat.shouldRetreat(unit)
                 && enemyCombatBuildings.selection().combatBuildings(false).inRadius(10, unit).notEmpty()
         ) {
+//            System.err.println("@ D YOLO");
             return false;
         }
 
@@ -33,7 +36,7 @@ public class AvoidCombatBuildingsFix {
 
         double doNothingMargin = 0.3;
         if (distTo <= (criticalDist + doNothingMargin)) {
-            return unit.runningManager().runFrom(combatBuilding, 0.5, Actions.MOVE_AVOID);
+            return unit.runningManager().runFrom(combatBuilding, 0.5, Actions.MOVE_AVOID, false);
         }
         else if (distTo < (criticalDist + doNothingMargin)) {
             // Do nothing

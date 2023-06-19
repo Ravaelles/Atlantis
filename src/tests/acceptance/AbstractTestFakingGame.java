@@ -1,19 +1,11 @@
 package tests.acceptance;
 
-import atlantis.Atlantis;
-import atlantis.config.env.Env;
-import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.OnStart;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.tech.ATech;
-import atlantis.map.position.PositionUtil;
 import atlantis.units.select.BaseSelect;
-import bwapi.*;
 import org.junit.After;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import tests.unit.AbstractTestWithUnits;
 import tests.unit.FakeUnit;
 
@@ -21,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.Callable;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
@@ -47,7 +36,6 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
     ) {
         try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(ours));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));

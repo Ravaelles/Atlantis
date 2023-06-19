@@ -1,13 +1,15 @@
 package atlantis.combat;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.micro.AvoidSpells;
+import atlantis.combat.micro.AvoidSpellsAndMines;
+import atlantis.combat.micro.AvoidCriticalUnits;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.managers.DanceAfterShoot;
+import atlantis.combat.micro.managers.StopAndShoot;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.Mission;
-import atlantis.combat.retreating.ARunningManager;
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.running.ShouldStopRunning;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.terran.repair.AUnitBeingReparedManager;
@@ -119,14 +121,19 @@ public class ACombatUnitManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
-        // Avoid bad weather like:
-        // - raining Psionic Storm,
-        // - spider mines hail
-        if (AvoidSpells.avoidSpellsAndMines(unit)) {
+        if (AvoidSpellsAndMines.avoidSpellsAndMines(unit)) {
             return true;
         }
 
-        if (DanceAfterShoot.handle(unit)) {
+        if (AvoidCriticalUnits.update(unit)) {
+            return true;
+        }
+
+        if (DanceAfterShoot.update(unit)) {
+            return true;
+        }
+
+        if (StopAndShoot.update(unit)) {
             return true;
         }
 
@@ -148,7 +155,7 @@ public class ACombatUnitManager {
 //        }
 
         if (unit.isRunning()) {
-            if (ARunningManager.shouldStopRunning(unit)) {
+            if (ShouldStopRunning.shouldStopRunning(unit)) {
                 unit.runningManager().stopRunning();
             }
     //        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {

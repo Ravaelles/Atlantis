@@ -8,7 +8,7 @@ public class AgainstLurker {
             return 9.5;
         }
 
-        if (defender.isMelee() || defender.isAir() || defender.effCloaked()) {
+        if (defender.isMelee() || defender.isAir() || defender.effUndetected()) {
             return 0;
         }
 

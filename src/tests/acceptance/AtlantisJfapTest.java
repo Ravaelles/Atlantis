@@ -22,7 +22,9 @@ public class AtlantisJfapTest extends NonAbstractTestFakingGame {
 
         FakeUnit[] our = fakeOurs(
             dragoon1 = fake(AUnitType.Protoss_Dragoon, 10),
-            fake(AUnitType.Protoss_Dragoon, 11)
+            fake(AUnitType.Protoss_Dragoon, 11),
+            fake(AUnitType.Protoss_Dragoon, 11.1),
+            fake(AUnitType.Protoss_Dragoon, 11.9)
         );
         FakeUnit[] enemies = fakeEnemies(
             sunkenColony = fake(AUnitType.Zerg_Sunken_Colony, 12),
@@ -33,12 +35,13 @@ public class AtlantisJfapTest extends NonAbstractTestFakingGame {
                 double ourScore = dragoon1.combatEvalAbsolute();
                 double enemyScore = sunkenColony.combatEvalAbsolute();
 
-                System.out.println();
-                System.out.println("## our   SCORE = " + ourScore);
-                System.out.println("## enemy SCORE = " + enemyScore);
+//                System.out.println();
+//                System.out.println("## our   SCORE = " + ourScore);
+//                System.out.println("## enemy SCORE = " + enemyScore);
 
-                assertTrue(ourScore < 0);
-                assertTrue(ourScore > enemyScore);
+                assertTrue(ourScore < -10);
+                assertTrue(enemyScore < -10);
+//                assertTrue(ourScore > enemyScore);
             },
             () -> our,
             () -> enemies

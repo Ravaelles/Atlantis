@@ -165,7 +165,7 @@ public abstract class ADynamicBuildingsManager extends Helpers {
         }
 
         AUnit enemyUnitInMainBase = EnemyInfo.enemyUnitInMainBase();
-        if (enemyUnitInMainBase == null || enemyUnitInMainBase.effCloaked()) {
+        if (enemyUnitInMainBase == null || enemyUnitInMainBase.effUndetected()) {
             return false;
         }
 

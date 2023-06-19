@@ -123,23 +123,23 @@ public class ATargetingTest extends AbstractTestWithUnits {
     @Test
     public void targetsDoesNotTargetTooFarHighTemplars() {
         FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
-        FakeUnit drone, ling1, hydra, sunken, ling2;
+        FakeUnit spore;
 
         FakeUnit[] enemies = fakeEnemies(
             fake(AUnitType.Zerg_Larva, 11),
             fake(AUnitType.Zerg_Egg, 11),
             fake(AUnitType.Zerg_Lurker_Egg, 11),
             fake(AUnitType.Zerg_Cocoon, 11),
-            fake(AUnitType.Zerg_Spore_Colony, 12),
+            spore = fake(AUnitType.Zerg_Spore_Colony, 12),
             fake(AUnitType.Zerg_Greater_Spire, 17),
-            hydra = fake(AUnitType.Zerg_Hydralisk, 18),
+            fake(AUnitType.Zerg_Hydralisk, 18),
             fake(AUnitType.Protoss_High_Templar, 21),
             fake(AUnitType.Protoss_Dragoon, 28),
             fake(AUnitType.Zerg_Sunken_Colony, 29)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(hydra, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(spore, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }
 
@@ -199,7 +199,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         FakeUnit expectedTarget;
 
         FakeUnit[] enemies = fakeEnemies(
-            fake(AUnitType.Zerg_Hydralisk_Den, 11),
+            fake(AUnitType.Zerg_Hydralisk_Den, 13),
             expectedTarget = fake(AUnitType.Zerg_Overlord, 12),
             fake(AUnitType.Zerg_Zergling, 19)
         );

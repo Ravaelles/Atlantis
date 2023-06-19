@@ -117,7 +117,7 @@ public class MobileDetector {
     }
 
     protected static AUnit enemyDangerousHiddenUnit() {
-        AUnit invisibleUnit = Select.enemy().effCloaked().combatUnits().nearestTo(Select.main());
+        AUnit invisibleUnit = Select.enemy().effUndetected().combatUnits().nearestTo(Select.main());
         if (invisibleUnit != null) {
             return invisibleUnit;
         }
@@ -132,7 +132,7 @@ public class MobileDetector {
 //            return terranCloaked;
 //        }
 
-        return Select.enemy().effCloaked().nearestTo(Select.main());
+        return Select.enemy().effUndetected().nearestTo(Select.main());
     }
     
 }

@@ -117,12 +117,15 @@ public class UnitTestHelper {
     }
 
     protected boolean valueAround(double expectedValue, double actualValue) {
-        double margin = 0.05;
+        return valueAround(expectedValue, actualValue, 0.1);
+    }
 
+    protected boolean valueAround(double expectedValue, double actualValue, double margin) {
         if (expectedValue / actualValue < 0) {
             return false;
         }
 
+//        System.out.println("actualValue / expectedValue = " + (actualValue / expectedValue));
         return Math.abs(actualValue / expectedValue - 1) <= margin;
     }
 

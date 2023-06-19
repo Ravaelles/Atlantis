@@ -1,6 +1,7 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
+import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
 public class OnEveryFrame {
@@ -8,6 +9,15 @@ public class OnEveryFrame {
 //    private static CappedList<Integer> frames = new CappedList<>(4);
 
     public static void update() {
+//        AUnit marine = Select.ourCombatUnits().first();
+//        AUnit enemy = marine.enemiesNear().first();
+//
+//        if (enemy != null) {
+//            String dist = A.dist(marine, enemy);
+//
+//            System.out.println("@ " + A.now() + " - " + dist + ", " + marine.action());
+//        }
+
 //        if (Atlantis.KILLED >= 3) {
 //            if (A.everyNthGameFrame(120)) {
 //                System.out.println("----------------- @ " + A.now());

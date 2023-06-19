@@ -9,7 +9,7 @@ public class DanceAfterShoot {
     /**
      * For ranged unit, once shoot is fired, move slightly away or move towards the target when still have cooldown.
      */
-    public static boolean handle(AUnit unit) {
+    public static boolean update(AUnit unit) {
         if (shouldSkip(unit)) {
             return false;
         }

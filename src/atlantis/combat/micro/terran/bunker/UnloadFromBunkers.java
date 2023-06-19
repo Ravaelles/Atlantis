@@ -108,7 +108,7 @@ public class UnloadFromBunkers {
             if (!enemyTarget.isBunker()) {
 //                if (enemyTarget.woundPercent() >= 2 || enemiesAttackingBuildings.atMost(3)) {
                 if (enemyTarget.woundPercent() >= 2 || unit.idIsEven()) {
-                    System.err.println("SupportDemBuildings " + enemyTarget);
+//                    System.err.println("SupportDemBuildings " + enemyTarget);
                     unit.setTooltipTactical("SupportDemBuildings");
                     return true;
                 }

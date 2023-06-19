@@ -5,6 +5,8 @@ import tests.unit.FakeUnit;
 
 public class FakeOnFrameEnd {
 
+    public static double UNIT_SPEED_MODIFIER_PER_FRAME = 1;
+
     protected static void onFrameEnd(AbstractTestFakingGame game) {
         for (FakeUnit unit : game.our) {
             updatePosition(unit);
@@ -14,7 +16,7 @@ public class FakeOnFrameEnd {
     // =========================================================
 
     private static void updatePosition(FakeUnit unit) {
-        int speedInPixels = (int) (unit.maxSpeed() * 3);
+        int speedInPixels = (int) (unit.maxSpeed() * UNIT_SPEED_MODIFIER_PER_FRAME);
 
 //        System.out.println("unit.targetPosition = " + unit.targetPosition);
 //        System.out.println("unit.isMoving() = " + unit.isMoving());

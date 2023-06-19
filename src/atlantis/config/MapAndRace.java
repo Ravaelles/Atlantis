@@ -21,9 +21,9 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-//    public static final String ENEMY_RACE = "Protoss";
+    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
-    public static final String ENEMY_RACE = "Zerg";
+//    public static final String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -46,8 +46,8 @@ public class MapAndRace {
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
@@ -57,15 +57,15 @@ public class MapAndRace {
         // vs Zerg
 //        if (true) return "ums/rav/M&M_v_Hydras.scx";
 //        if (true) return "ums/rav/T_v_Sunkens.scx";
-//        if (true) return "ums/rav/M&M_v_Cannons.scx";
+//        if (true) return "ums/rav/M_v_1Ling.scm"; // 1 Marine v 1 Zergling
 
         // vs Protoss
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Many Marines v many Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
-//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Many Marines v many Zealots
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx";
 //        if (true) return "ums/rav/Ghosts_v_P.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
@@ -79,9 +79,9 @@ public class MapAndRace {
 //        if (true) return "ums/rav/Tanks_v_DT.scx";
 //        if (true) return "ums/rav/Tanks_v_DT_2.scx";
 //        if (true) return "ums/rav/Tanks_v_Lurkers.scx"; // Tanks & Marines vs Lurkers
-//        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
+//@        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
-//        if (true) return "ums/rav/Vultures_v_Marines.scm";
+//@        if (true) return "ums/rav/Vultures_v_Marines.scm";
 //        if (true) return "ums/rav/Vultures_v_Zealots.scm";
 //        if (true) return "ums/rav/Wraiths_v_Cannons.scm";
 //        if (true) return "ums/rav/Wraiths_v_Probes.scm"; // Wraiths v Probes & Cannons
@@ -90,6 +90,7 @@ public class MapAndRace {
 //        if (true) return "ums/gol_v_zeals.scx"; // Goliath & Dropship v Zerglings
 //        if (true) return "ums/marines/m (5).scx"; // Nice map to test different terran infantry in rounds
 //        if (true) return "ums/marines/m (8).scx"; // Hmm
+//        if (true) return "ums/rav/M&M_v_Cannons.scx";
 
         // vs Terran
 //        if (true) return "ums/rav/Wraiths_v_Base.scx";
@@ -195,7 +196,7 @@ public class MapAndRace {
         ) {
             int initFrameSkip = 30;
 
-            if (A.seconds() <= 200) {
+            if (A.seconds() <= 1) {
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(initFrameSkip);
 

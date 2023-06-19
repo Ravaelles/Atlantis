@@ -96,7 +96,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     public void updatePosition(AUnit unit) {
 //        if (unit.x() > 0 && unit.y() > 0) {
-//        System.out.println("unit = " + unit);
+//        System.out.println("unit = " + unit + " // " + _position);
         if (unit.hasPosition()) {
             _position = new APosition(unit.x(), unit.y());
 //            System.out.println("_position = " + _position);
@@ -106,6 +106,11 @@ public class AbstractFoggedUnit extends AUnit {
 //        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
 //            _position = null;
 //        }
+    }
+
+    @Override
+    public boolean hasPosition() {
+        return _position != null;
     }
 
     protected void updateType(AUnit unit) {
@@ -120,11 +125,6 @@ public class AbstractFoggedUnit extends AUnit {
     public void positionUnknown() {
         _position = null;
         cacheInt.set("lastPositionUpdated", -1, A.now());
-    }
-
-    @Override
-    public boolean hasPosition() {
-        return _position != null;
     }
 
     public void removeKnownPosition() {
@@ -188,7 +188,7 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     @Override
-    public boolean effCloaked() {
+    public boolean effUndetected() {
         return false;
     }
 

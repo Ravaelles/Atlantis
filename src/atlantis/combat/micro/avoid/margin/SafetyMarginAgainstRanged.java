@@ -101,7 +101,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         }
 
         APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
-        return 0.5 + defender.woundPercent() / 100.0 + (defender.isMoving() ? 0.5 : 0) + (defender.isAir() ? 0.5 : 0);
+        return 1.6 + defender.woundPercent() / 100.0 + (defender.isMoving() ? 0.5 : 0) + (defender.isAir() ? 0.5 : 0);
     }
 
 //    private static double extraMarginAgainstCombatBuilding(AUnit defender, AUnit attacker) {
@@ -115,7 +115,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 //    }
 
     private static double lurkerBonus(AUnit defender, AUnit attacker) {
-        if (attacker.is(AUnitType.Zerg_Lurker) && attacker.effCloaked()) {
+        if (attacker.is(AUnitType.Zerg_Lurker) && attacker.effUndetected()) {
             return 3.6;
         }
 

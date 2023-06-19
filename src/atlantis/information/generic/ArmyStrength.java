@@ -20,7 +20,7 @@ public class ArmyStrength {
     }
 
     public static boolean weAreMuchStronger() {
-        System.err.println("ourArmyRelativeStrength() = " + ourArmyRelativeStrength());
+//        System.err.println("ourArmyRelativeStrength() = " + ourArmyRelativeStrength());
         return ourArmyRelativeStrength() >= muchStrongerPercent();
     }
 
@@ -55,7 +55,7 @@ public class ArmyStrength {
             return base + 20;
         }
         else {
-            return base + 30 + RetreatManager.GLOBAL_RETREAT_COUNTER;
+            return Math.min(200, base + 30 + RetreatManager.GLOBAL_RETREAT_COUNTER);
         }
     }
 }

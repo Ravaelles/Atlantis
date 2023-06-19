@@ -199,10 +199,10 @@ public class Selection extends BaseSelection {
     /**
      * Selects only those units which are hidden, cloaked / burrowed. Not possible to be attacked.
      */
-    public Selection effCloaked() {
+    public Selection effUndetected() {
         return cloneByRemovingIf(
-            (unit -> !unit.effCloaked()),
-            "effCloaked"
+            (unit -> !unit.effUndetected()),
+            "effUndetected"
         );
     }
 
@@ -242,6 +242,13 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(
             (unit -> unit.isBuilding()),
             "nonBuildings"
+        );
+    }
+
+    public Selection nonBuildingsOrCombatBuildings() {
+        return cloneByRemovingIf(
+            (unit -> unit.isBuilding() && !unit.isCombatBuilding()),
+            "nonBuildingsOrCombatBuildings"
         );
     }
 
@@ -581,6 +588,12 @@ public class Selection extends BaseSelection {
     public Selection notCarrying() {
         return cloneByRemovingIf(
             (unit -> unit.isCarryingGas() || unit.isCarryingMinerals()), "notCarrying"
+        );
+    }
+
+    public Selection notImmobilized() {
+        return cloneByRemovingIf(
+            (unit -> !unit.notImmobilized()), "notImmobilized"
         );
     }
 

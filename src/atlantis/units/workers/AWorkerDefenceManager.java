@@ -55,7 +55,7 @@ public class AWorkerDefenceManager {
     private static boolean runFromReaverFix(AUnit worker) {
         AUnit reaver = worker.enemiesNear().ofType(AUnitType.Protoss_Reaver).nearestTo(worker);
         if (reaver != null && reaver.distToLessThan(worker, 10)) {
-            worker.runningManager().runFrom(reaver, 5, Actions.RUN_ENEMY);
+            worker.runningManager().runFrom(reaver, 5, Actions.RUN_ENEMY, true);
             worker.setTooltip("OhFuckReaver!", true);
             worker.addLog("OhFuckReaver!");
             return true;
@@ -210,7 +210,7 @@ public class AWorkerDefenceManager {
 //            if ((worker.hp() <= 20 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
             if (worker.hp() <= 20) {
                 worker.setTooltipTactical("Aaargh!");
-                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY);
+                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, true);
                 return true;
             }
             worker.attackUnit(enemy);
@@ -224,7 +224,7 @@ public class AWorkerDefenceManager {
                 .list();
         for (AUnit enemy : enemies) {
             if (worker.hp() <= 20) {
-                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY);
+                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, false);
                 return true;
             }
             worker.setTooltipTactical("FurMotherland!");

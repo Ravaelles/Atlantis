@@ -2,16 +2,38 @@ package atlantis.combat.squad;
 
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class ChangeSquadMission {
+    private static AUnit unit;
+    private static Selection units;
+
     protected static void changeSquadMissionifNeeded(Squad squad) {
+        unit = squad.centerUnit();
+        units = squad.selection();
+
+        if (unit == null) {
+            return;
+        }
+
         if (squad.isMissionAttack()) {
             medicsExhausted(squad);
             weakerThanEnemy(squad);
+            hugeEnemySquad(squad);
             tooManyUnitsWounded(squad);
             backOffFromLurkers(squad);
+        }
+    }
+
+    private static void hugeEnemySquad(Squad squad) {
+
+        // Hydralisk fix
+        int hydras = unit.enemiesNear().ofType(AUnitType.Zerg_Hydralisk).count();
+        if (units.terranInfantryWithoutMedics().count() * 0.8 < hydras && Count.tanks() <= 5) {
+            changeMissionToDefend(squad, "Mass hydras (" + hydras + " vs " + units.count() + ")");
         }
     }
 

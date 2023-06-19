@@ -1,5 +1,6 @@
 package atlantis.map.position;
 
+import atlantis.game.A;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.ARegionBoundary;
@@ -28,7 +29,10 @@ public class PositionUtil {
             System.err.println(object1);
             System.err.println("object2");
             System.err.println(object2);
-            throw new RuntimeException("distanceTo got null");
+//            throw new RuntimeException("distanceTo got null");
+//            System.err.println("distanceTo got null");
+            A.printStackTrace("distanceTo got null");
+            return 999;
         }
 
         // === Convert object1 to position or unit ====================
@@ -117,7 +121,11 @@ public class PositionUtil {
         }
 
         if (toPosition == null && toUnit == null) {
-            throw new RuntimeException("Invalid class for argument `to`: " + object2);
+            System.err.println("Object: " + object2);
+            System.err.println("Class:  " + object2 != null ? object2.getClass() : "- null -");
+//            throw new RuntimeException("Invalid class for argument `to`: " + object2);
+            A.printStackTrace("Invalid class for argument `to`: " + object2);
+            return 999;
         }
         
         // =========================================================

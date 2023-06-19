@@ -592,6 +592,7 @@ public interface AUnitOrders {
      */
     default boolean cancelConstruction() {
         unit().setAction(null);
+//        throw new RuntimeException("Cancel!");
         return u().cancelConstruction();
     }
 

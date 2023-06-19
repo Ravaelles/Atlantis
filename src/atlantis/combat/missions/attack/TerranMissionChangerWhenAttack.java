@@ -12,11 +12,11 @@ import atlantis.units.select.Count;
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToContain()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
-        else if (shouldChangeMissionToDefend()) {
+        if (shouldChangeMissionToDefend()) {
             changeMissionTo(MissionChanger.defendOrSpartaMission());
+        }
+        else if (shouldChangeMissionToContain()) {
+            changeMissionTo(Missions.CONTAIN);
         }
     }
 
@@ -42,10 +42,13 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
             return true;
         }
 
-        if (EnemyInfo.hiddenUnitsCount() >= 2 && Count.ofType(AUnitType.Terran_Science_Vessel) == 0) {
-            if (DEBUG) reason = "Hidden unitz";
-            return true;
-        }
+//        if (
+//            EnemyInfo.hiddenUnitsCount() >= 2
+//                && Count.ofType(AUnitType.Terran_Science_Vessel) == 0
+//        ) {
+//            if (DEBUG) reason = "Hidden unitz";
+//            return true;
+//        }
 
         return false;
     }

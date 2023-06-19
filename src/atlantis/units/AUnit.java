@@ -4,7 +4,7 @@ import atlantis.combat.eval.AtlantisJfap;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.retreating.ARunningManager;
+import atlantis.combat.running.ARunningManager;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.positioning.SquadCohesion;
@@ -103,7 +103,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int _lastUnderAttack;
     public int _lastX;
     public int _lastY;
-    public APosition _lastPositionRunInAnyDir = null;
+    public HasPosition _lastPositionRunInAnyDir = null;
 
     // =========================================================
 
@@ -496,6 +496,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return enemyUnit.type().weaponRangeAgainst(this);
     }
 
+    public int weaponRangeAgainst(AUnit enemyUnit) {
+        return type().weaponRangeAgainst(enemyUnit);
+    }
+
+//    public boolean hasBiggerWeaponRangeThan(AUnit enemyUnit) {
+//        return type().weaponRangeAgainst(enemyUnit) > enemyUnit.type().weaponRangeAgainst(this);
+//    }
+
     /**
      * Returns which unit of the same type this unit is. E.g. it can be first (0) Overlord or third (2)
      * Zergling. It compares IDs of units to return correct result.
@@ -701,7 +709,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         // Target CLOAKED
-        if (checkVisibility && target.effCloaked()) {
+        if (checkVisibility && target.effUndetected()) {
             return false;
         }
 
@@ -1132,13 +1140,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean effVisible() {
-        return isVisibleUnitOnMap() && (isDetected() || !effCloaked());
+        return isVisibleUnitOnMap() && (isDetected() || !effUndetected());
     }
 
     /**
      * Unit is effectvely cloaked and we can't attack it. Need to detect it first.
      */
-    public boolean effCloaked() {
+    public boolean effUndetected() {
         return (!isDetected() || hp() == 0);
 
 //        if ((!isCloaked() && !isBurrowed()) || ensnared() || plagued()) {
@@ -1560,7 +1568,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int lastActionAgo(Action unitAction) {
-        Integer time = cacheInt.get("_last" + unitAction.name());
+        String cacheKey = "_last" + unitAction.name();
+
+        if (!cacheInt.has(cacheKey)) {
+//            throw new RuntimeException("No cacheKey `" + cacheKey + "` for " + this);
+            return 99999;
+        }
+
+        Integer time = cacheInt.get(cacheKey);
 
 //        if (!cacheInt.isEmpty()) {
 //            cacheInt.print("lastActionAgo", true);
@@ -1827,7 +1842,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public Mission mission() {
         if (squad == null) {
-            if (isCombatUnit()) {
+            if (isCombatUnit() && !isBuilding()) {
                 System.err.println("Empty unit squad for: " + this);
             }
             return Missions.DEFEND;
@@ -1852,14 +1867,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return enemies.stream().anyMatch(u -> u.maxSpeed() > this.maxSpeed());
     }
 
-    public boolean hasBiggerRangeThan(AUnit enemy) {
+    public boolean hasBiggerWeaponRangeThan(AUnit enemy) {
         if (isGroundUnit()) {
             return groundWeaponRange() > enemy.groundWeaponRange();
         }
         return airWeaponRange() > enemy.airWeaponRange();
     }
 
-    public boolean hasBiggerRangeThan(Units enemies) {
+    public boolean hasBiggerWeaponRangeThan(Units enemies) {
         if (isGroundUnit()) {
             return enemies.stream().noneMatch(u -> u.groundWeaponRange() > this.groundWeaponRange());
         }
@@ -2568,7 +2583,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return isAlive() && hasPosition();
     }
 
-    public boolean canMove() {
+    public boolean notImmobilized() {
         return !isStasised() && !isLockedDown();
     }
 

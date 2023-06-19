@@ -12,7 +12,7 @@ import bwapi.BulletType;
 import java.util.List;
 
 
-public class AvoidSpells {
+public class AvoidSpellsAndMines {
 
     public static boolean avoidSpellsAndMines(AUnit unit) {
 

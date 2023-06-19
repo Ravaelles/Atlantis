@@ -303,7 +303,7 @@ public class AAdvancedPainter extends APainter {
         }
 
         setTextSizeMedium();
-        for (AUnit enemy : Select.enemy().effCloaked().list()) {
+        for (AUnit enemy : Select.enemy().effUndetected().list()) {
             paintCircle(enemy, 16, Color.Orange);
             paintCircle(enemy, 15, Color.Orange);
             paintTextCentered(enemy, "Cloaked," + enemy.name() + ",HP=" + enemy.hp(), Color.Red);
@@ -802,11 +802,11 @@ public class AAdvancedPainter extends APainter {
 
             // RUN
             if (unit.isRunning()) {
-                paintLine(unit.position(), unit.runningManager().getRunToPosition(), Color.Yellow);
-                paintLine(unit.translateByPixels(1, 1), unit.runningManager().getRunToPosition(), Color.Yellow);
+                paintLine(unit.position(), unit.runningManager().runToPosition(), Color.Yellow);
+                paintLine(unit.translateByPixels(1, 1), unit.runningManager().runToPosition(), Color.Yellow);
 
-                if (unit.runningManager().getRunToPosition() != null) {
-                    paintCircleFilled(unit.runningManager().getRunToPosition(), 10, Color.Yellow);
+                if (unit.runningManager().runToPosition() != null) {
+                    paintCircleFilled(unit.runningManager().runToPosition(), 10, Color.Yellow);
                 }
 
                 paintWhiteFlagWhenRunning(unit);

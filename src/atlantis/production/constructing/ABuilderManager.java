@@ -152,10 +152,10 @@ public class ABuilderManager {
                 buildPosition.tx(), buildPosition.ty()
             );
 
-            if (Select.ourWithUnfinishedOfType(AtlantisConfig.GAS_BUILDING).inRadius(3, buildPosition).notEmpty()) {
-                order.cancel();
-                return false;
-            }
+//            if (Select.ourWithUnfinishedOfType(AtlantisConfig.GAS_BUILDING).inRadius(3, buildPosition).notEmpty()) {
+//                order.cancel();
+//                return false;
+//            }
 
             if (!builder.isConstructing() || builder.isIdle() || AGame.now() % 7 == 0) {
                 builder.build(buildingType, buildTilePosition);

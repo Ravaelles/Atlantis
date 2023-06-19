@@ -1,8 +1,9 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingsFix;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildings;
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
@@ -26,6 +27,7 @@ public abstract class AvoidEnemies {
         Units enemiesDangerouslyClose = unitsToAvoid(unit);
 
         if (enemiesDangerouslyClose.isEmpty()) {
+//            System.err.println("@ " + A.now() + " - No-one close");
 //            AUnit nearestEnemy = unit.enemiesNear().nearestTo(unit);
 //            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
 //                    "C=0(" + (nearestEnemy != null ? A.dist(unit, nearestEnemy) : "-") + ")",
@@ -42,11 +44,15 @@ public abstract class AvoidEnemies {
         // =========================================================
 
         // Only COMBAT BUILDINGS
-        if (!unit.isMissionAttack() && onlyCombatBuildingsAreDangerouslyClose(enemiesDangerouslyClose)) {
+//        if (!unit.isMissionAttack() && onlyCombatBuildingsAreDangerouslyClose(enemiesDangerouslyClose)) {
+//        System.err.println(" A " + unit.combatEvalRelative());
+        if (onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)) {
+//            System.err.println(" B Deeper");
             if (
-                    RetreatManager.shouldNotEngageCombatBuilding(unit)
-                    && AvoidCombatBuildingsFix.handle(unit, enemiesDangerouslyClose)
+//                    RetreatManager.shouldNotEngageCombatBuilding(unit)
+                    AvoidCombatBuildings.shouldNotEngage(unit, enemiesDangerouslyClose)
             ) {
+//                System.err.println(" C ----------------------");
                 unit.addLog("KeepAway");
                 return true;
             }
@@ -80,7 +86,7 @@ public abstract class AvoidEnemies {
         return unit.isLoaded();
     }
 
-    private static boolean onlyCombatBuildingsAreDangerouslyClose(Units enemiesDangerouslyClose) {
+    private static boolean onlyEnemyCombatBuildingsAreNear(Units enemiesDangerouslyClose) {
         return Select.from(enemiesDangerouslyClose).combatBuildings(false).size() == enemiesDangerouslyClose.size();
     }
 
@@ -91,14 +97,17 @@ public abstract class AvoidEnemies {
     public static Units unitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
         return cache.get(
             "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
-            4,
+            0,
             () -> {
                 Units enemies = new Units();
 //                System.out.println("enemyUnitsToPotentiallyAvoid(unit) = " + enemyUnitsToPotentiallyAvoid(unit).size());
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
-//                    System.err.println(enemy);
+                    double safetyMargin = SafetyMargin.calculate(unit, enemy);
+//                    System.err.println(
+//                        enemy + " // " + String.format("%.2f", safetyMargin) + " // " + A.dist(enemy.distTo(unit))
+//                    );
 //                    APainter.paintLine(enemy, unit, Color.Yellow);
-                    enemies.addUnitWithValue(enemy, SafetyMargin.calculate(unit, enemy));
+                    enemies.addUnitWithValue(enemy, safetyMargin);
                 }
 //                enemies.print("Enemies to avoid");
 
@@ -148,7 +157,7 @@ public abstract class AvoidEnemies {
 
     protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
         return unit.enemiesNear()
-//                .nonBuildings() // This is because we rely on AvoidCombatBuildingsFix
+//                .nonBuildings() // This is because we rely on AvoidCombatBuildings
                 .removeDuplicates()
                 .onlyCompleted()
                 .canAttack(unit, true, true, 4.5)

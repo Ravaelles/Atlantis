@@ -8,8 +8,6 @@ import atlantis.units.AUnit;
  */
 public class FoggedUnit extends AbstractFoggedUnit {
 
-    // =========================================================
-
     public static AbstractFoggedUnit from(AUnit unit) {
         _lastAUnit = unit;
 

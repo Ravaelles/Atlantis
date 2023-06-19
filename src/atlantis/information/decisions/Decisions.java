@@ -77,17 +77,16 @@ public class Decisions {
                 int vultures = Count.vultures();
 
                 if (FocusOnProducingUnits.isFocusedOn(Terran_Vulture)) {
-                    if (vultures < 10) {
+                    if (vultures < 4) {
                         return true;
                     }
                 }
 
 //                if (true) return true;
 
-
-                if (vultures < 12 && (A.hasMinerals(800) && !A.hasGas(200))) {
-                    return true;
-                }
+//                if (vultures < 12 && (A.hasMinerals(800) && !A.hasGas(200))) {
+//                    return true;
+//                }
 
                 if (vultures == 0 && EnemyUnits.count(Zerg_Zergling) >= 7) {
                     return true;
