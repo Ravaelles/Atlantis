@@ -155,7 +155,7 @@ public class HeuristicCombatEvaluator {
 
         // Our eval
         if (unit.isOur()) {
-            Selection friendsInRadius = unit.friendsNearInRadiusSelect(15);
+            Selection friendsInRadius = unit.friendsInRadius(15);
 
             theseUnits = friendsInRadius.nonBuildings().ranged().inRadius(RANGED_RADIUS, unit)
                 .add(friendsInRadius.melee().inRadius(MELEE_RADIUS, unit))

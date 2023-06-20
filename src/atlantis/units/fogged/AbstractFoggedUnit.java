@@ -25,7 +25,7 @@ public class AbstractFoggedUnit extends AUnit {
     protected int _energy;
     protected int _shields;
     protected boolean _isStimmed;
-    protected APosition _position;
+    protected APosition _lastPosition;
     protected AUnitType _lastType;
     protected boolean _isCompleted;
     protected Cache<Integer> cacheInt = new Cache<>();
@@ -98,7 +98,7 @@ public class AbstractFoggedUnit extends AUnit {
 //        if (unit.x() > 0 && unit.y() > 0) {
 //        System.out.println("unit = " + unit + " // " + _position);
         if (unit.hasPosition()) {
-            _position = new APosition(unit.x(), unit.y());
+            _lastPosition = new APosition(unit.x(), unit.y());
 //            System.out.println("_position = " + _position);
             cacheInt.set("lastPositionUpdated", -1, A.now());
         }
@@ -110,7 +110,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     @Override
     public boolean hasPosition() {
-        return _position != null;
+        return _lastPosition != null;
     }
 
     protected void updateType(AUnit unit) {
@@ -123,12 +123,12 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     public void positionUnknown() {
-        _position = null;
+        _lastPosition = null;
         cacheInt.set("lastPositionUpdated", -1, A.now());
     }
 
     public void removeKnownPosition() {
-        _position = null;
+        _lastPosition = null;
     }
 
     public int lastPositionUpdated() {
@@ -156,7 +156,7 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " "
-                + nameWithId() + " at " + _position
+                + nameWithId() + " at " + _lastPosition
                 + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
     }
 
@@ -169,7 +169,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     @Override
     public APosition position() {
-        return _position;
+        return _lastPosition;
     }
 
     @Override
@@ -224,12 +224,12 @@ public class AbstractFoggedUnit extends AUnit {
 
     @Override
     public int x() {
-        return _position.x();
+        return _lastPosition.x();
     }
 
     @Override
     public int y() {
-        return _position.y();
+        return _lastPosition.y();
     }
 
 }

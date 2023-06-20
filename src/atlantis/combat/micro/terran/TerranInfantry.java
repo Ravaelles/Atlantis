@@ -51,7 +51,7 @@ public class TerranInfantry {
 //            return false;
 //        }
 
-        if (unit.friendsNearInRadiusSelect(10).bunkers().notEmpty() && unit.enemiesNearInRadius(2.7) > 0) {
+        if (unit.friendsInRadius(10).bunkers().notEmpty() && unit.enemiesNearInRadius(2.7) > 0) {
             return false;
         }
 

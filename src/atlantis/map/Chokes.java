@@ -197,4 +197,13 @@ public class Chokes {
         );
     }
 
+    public static APosition mainChokeCenter() {
+        AChoke mainChoke = mainChoke();
+
+        if (mainChoke == null) {
+            return null;
+        }
+
+        return mainChoke.center();
+    }
 }

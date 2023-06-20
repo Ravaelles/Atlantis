@@ -32,6 +32,11 @@ public class AUnitBeingReparedManager {
 
         // =========================================================
 
+        if (unitBeingRepared.nearestEnemyDist() <= 1.7) {
+            unitBeingRepared.setTooltip("DontRepairEnemy");
+            return false;
+        }
+
         // Go to repairer if he's close
         if (distanceToRepairer > 1) {
             unitBeingRepared.move(repairer.position(), Actions.MOVE_REPAIR, "To repairer", false);

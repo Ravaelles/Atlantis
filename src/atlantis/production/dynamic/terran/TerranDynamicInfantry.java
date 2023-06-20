@@ -32,6 +32,8 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     protected static boolean wraiths() {
+        int startProducingWraithsSinceSupply = 110;
+
 //        if (Enemy.zerg()) {
 //            return false;
 //        }
@@ -44,11 +46,11 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
         int wraiths = Count.ofType(AUnitType.Terran_Wraith);
 
-        if (A.supplyUsed() >= 110 && wraiths <= 1) {
+        if (A.supplyUsed() >= startProducingWraithsSinceSupply && wraiths <= 1) {
             return addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
         }
 
-        if (A.supplyUsed() <= 160 && wraiths >= 95 + wraiths * 20) {
+        if (A.supplyUsed() <= 160 && wraiths >= startProducingWraithsSinceSupply + wraiths * 15) {
             return false;
         }
 
@@ -82,6 +84,10 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         }
 
         if (ghosts >= 4 && !AGame.canAffordWithReserved(60, 200)) {
+            return false;
+        }
+
+        if (!A.hasGas(ghosts * 25)) {
             return false;
         }
 
@@ -139,6 +145,8 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     private static int minFirebats() {
+
+
         return 0; // Firebats are broken
 
 //        if (Enemy.terran()) {
@@ -158,6 +166,10 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         }
 
         int marines = Count.marines();
+
+        if (!A.supplyUsed(160) && A.hasMinerals(800) && !A.hasGas(120)) {
+            return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 2);
+        }
 
         if (marines >= 4 && A.supplyUsed(150)) {
             return false;

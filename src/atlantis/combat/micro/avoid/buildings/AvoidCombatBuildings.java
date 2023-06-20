@@ -20,8 +20,8 @@ public class AvoidCombatBuildings {
 
 //        System.err.println("@ C = " + ShouldRetreat.shouldRetreat(unit));
         if (
-                unit.friendsNearInRadius(3) >= 2
-                && unit.friendsNearInRadius(5) >= 7
+                unit.friendsInRadiusCount(3) >= 2
+                && unit.friendsInRadiusCount(5) >= 7
                 && !ShouldRetreat.shouldRetreat(unit)
                 && enemyCombatBuildings.selection().combatBuildings(false).inRadius(10, unit).notEmpty()
         ) {
@@ -30,8 +30,7 @@ public class AvoidCombatBuildings {
         }
 
 //        double criticalDist = 9.8 + (unit.isAir() ? 2.5 : 0);
-        double criticalDist = 7.5 + (unit.isAir() ? 0.5 : 0) + (unit.isMoving() ? 0.5 : 0)
-            + unit.woundPercent() / 200.0;
+        double criticalDist = criticalDist(unit);
         double distTo = combatBuilding.distTo(unit);
 
         double doNothingMargin = 0.3;
@@ -49,6 +48,11 @@ public class AvoidCombatBuildings {
         }
 
         return false;
+    }
+
+    private static double criticalDist(AUnit unit) {
+        return 7.5 + (unit.isAir() ? 0.9 : 0) + (unit.isMoving() ? 0.5 : 0)
+            + unit.woundPercent() / 200.0;
     }
 
 }

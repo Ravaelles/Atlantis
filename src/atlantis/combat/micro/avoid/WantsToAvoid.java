@@ -72,6 +72,14 @@ public class WantsToAvoid {
             return true;
         }
 
+        if (
+            unit.isInfantry()
+            && unit.enemiesNear().ofType(AUnitType.Protoss_Reaver).inRadius(9.2, unit).effUndetected().notEmpty()
+        ) {
+            unit.setTooltip("Aaa-LURKER!");
+            return true;
+        }
+
         if (new FightInsteadAvoid(unit, enemies).shouldFight()) {
             unit.addLog("SHOULD FightInsteadAvoid");
             return false;

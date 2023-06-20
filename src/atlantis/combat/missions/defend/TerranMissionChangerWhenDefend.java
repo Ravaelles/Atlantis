@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
 import atlantis.combat.missions.contain.TerranMissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
@@ -21,9 +22,29 @@ import static bwapi.TechType.Tank_Siege_Mode;
 public class TerranMissionChangerWhenDefend extends MissionChanger {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToContain() && !TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
+        if (shouldChangeMissionToAttack() && !TerranMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
+            changeMissionTo(Missions.ATTACK);
+        }
+        else if (shouldChangeMissionToContain() && !TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.CONTAIN);
         }
+    }
+
+    // === ATTACK ==============================================
+
+    public static boolean shouldChangeMissionToAttack() {
+        if (!shouldChangeMissionToContain()) {
+            return false;
+        }
+
+        int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
+
+        if (ourRelativeStrength >= 350) {
+            if (DEBUG) reason = "Comfortably stronger (" + ourRelativeStrength + "%)";
+            return true;
+        }
+
+        return false;
     }
 
     // === CONTAIN =============================================
@@ -100,46 +121,6 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
         }
 
         return false;
-
-//        if (EnemyInfo.isEnemyNearAnyOurBuilding()) {
-//            return false;
-//        }
-//
-////        if (TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
-////            return false;
-////        }
-//        // === Protoss ===================================================
-//
-//        if (Enemy.protoss()) {
-////            if (Missions.isFirstMission()) {
-//            if (Atlantis.LOST <= 3 && Count.ourCombatUnits() >= 4) {
-//                return true;
-//            }
-//
-//            return Count.ourCombatUnits() >= 15 || Count.tanks() >= 2;
-//        }
-//
-//        // === Zerg ======================================================
-//
-//        else if (Enemy.zerg()) {
-//            if (Atlantis.LOST <= 2) {
-//                return true;
-//            }
-//
-////            return A.supplyUsed(140);
-//
-//            if (A.resourcesBalance() >= 250) {
-//                return true;
-//            }
-//
-//            if (Missions.counter() <= 3) {
-//                if (OurStrategy.get().isRush()) {
-//                    return Count.ourCombatUnits() >= 2;
-//                }
-//            }
-////
-////            return Count.ourCombatUnits() >= Math.max(24, 12 + Missions.counter());
-//            return Count.ourCombatUnits() >= 13 || Count.tanks() >= 3;
     }
 
 }

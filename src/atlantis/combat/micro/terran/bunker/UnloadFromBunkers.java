@@ -1,6 +1,8 @@
 package atlantis.combat.micro.terran.bunker;
 
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 
@@ -75,6 +77,13 @@ public class UnloadFromBunkers {
 
         if (unit.enemiesNear().inRadius(3.5, unit).notEmpty()) {
             return false;
+        }
+
+        int dragoons = unit.enemiesNear().ofType(AUnitType.Protoss_Dragoon).inRadius(7, unit).count();
+        if (dragoons > 0) {
+            if (GamePhase.isEarlyGame() && unit.friendsInRadiusCount(5) <= 4 * dragoons) {
+                return false;
+            }
         }
 
         if (preventEnemiesFromAttackingNearBuildingsWithoutConsequences(unit)) {

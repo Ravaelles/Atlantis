@@ -29,8 +29,8 @@ public class Delta extends Squad {
     @Override
     public int expectedUnits() {
         return Math.max(
-                1,
-                Math.min(5, Count.ourCombatUnits() / 8)
+            1,
+            Math.min(5, Count.ourCombatUnits() / 8)
         );
     }
 

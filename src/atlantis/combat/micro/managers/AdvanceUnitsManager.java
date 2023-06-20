@@ -47,7 +47,7 @@ public class AdvanceUnitsManager {
             return false;
         }
 
-        if (unit.friendsNearCount() <= 10 && unit.enemiesNear().combatUnits().notEmpty()) {
+        if (unit.friendsInRadiusCount(6) <= 10 && unit.enemiesNear().combatUnits().notEmpty()) {
             if (
                 unit.isMoving()
                     && !unit.isAction(Actions.MOVE_FORMATION)

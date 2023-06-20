@@ -6,6 +6,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.running.ARunningManager;
 import atlantis.combat.retreating.ShouldRetreat;
+import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.game.A;
@@ -1848,6 +1849,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (squad == null) {
             if (isCombatUnit() && !isBuilding()) {
                 System.err.println("Empty unit squad for: " + this);
+                NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
             }
             return Missions.DEFEND;
         }
@@ -2247,13 +2249,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         ));
     }
 
-    public Selection friendsNearInRadiusSelect(double radius) {
-        return friendsNear().inRadius(radius, this);
-    }
-
-    public int friendsNearInRadius(double radius) {
-        return friendsNear().inRadius(radius, this).count();
-    }
+//    public Selection friendsInRadius(double radius) {
+//        return friendsNear().inRadius(radius, this);
+//    }
+//
+//    public int friendsInRadiusCount(double radius) {
+//        return friendsNear().inRadius(radius, this).count();
+//    }
 
     public Selection allUnitsNear() {
         return ((Selection) cache.get(

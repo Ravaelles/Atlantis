@@ -3,6 +3,8 @@ package atlantis.combat.squad;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.beta.Beta;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 
 import java.util.ArrayList;
 
@@ -18,8 +20,8 @@ public class SquadTransfers {
     }
 
     private static boolean shouldHaveBeta() {
-        return false;
-//        return Count.ourCombatUnits() >= 24 && Have.main();
+//        return false;
+        return Count.ourCombatUnits() >= 35 && Count.bases() >= 2;
     }
 
     private static void handleReinforcements(Squad squad) {
@@ -47,6 +49,11 @@ public class SquadTransfers {
 
         for (int i = 0; i < assignThisManyFromAlpha; i++) {
             AUnit transfer = alpha.get(0);
+
+            if (transfer.isAir() || !transfer.hasAnyWeapon() || transfer.isScienceVessel()) {
+                continue;
+            }
+
             transferUnitToSquad(transfer, toSquad);
         }
     }

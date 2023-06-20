@@ -72,9 +72,7 @@ public class EnemyUnitDiscoveredResponse {
         if (enemyUnit.is(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
             OurStrategicBuildings.setDetectorsNeeded(2);
 
-            ARequests.getInstance().requestDetectorQuick(
-                    Chokes.mainChoke().center()
-            );
+            ARequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
 
 //            ARequests.getInstance().requestDetectorQuick(
 //                    Chokes.natural(Select.mainBase().position()).getCenter()

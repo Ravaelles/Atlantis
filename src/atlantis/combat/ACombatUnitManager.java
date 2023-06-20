@@ -1,8 +1,8 @@
 package atlantis.combat;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.micro.AvoidSpellsAndMines;
-import atlantis.combat.micro.AvoidCriticalUnits;
+import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
+import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.managers.DanceAfterShoot;
 import atlantis.combat.micro.managers.StopAndShoot;

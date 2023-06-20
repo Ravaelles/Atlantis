@@ -1,9 +1,6 @@
 package atlantis.combat.micro.managers;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.game.A;
-import atlantis.game.CameraManager;
-import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -114,7 +111,7 @@ public class StopAndShoot {
             return true;
         }
 
-        if (unit.friendsNearInRadiusSelect(13).ofType(AUnitType.Terran_Bunker).notEmpty()) {
+        if (unit.friendsInRadius(13).ofType(AUnitType.Terran_Bunker).notEmpty()) {
             return false;
         }
 

@@ -37,11 +37,24 @@ public class ChangeSquadMission {
     }
 
     private static void hugeEnemySquad(Squad squad) {
+        if (!We.terran()) {
+            return;
+        }
+
+        int tanks = units.tanks().count();
+        int infantry = units.terranInfantryWithoutMedics().count();
 
         // Hydralisk fix
         int hydras = unit.enemiesNear().ofType(AUnitType.Zerg_Hydralisk).count();
-        if (units.terranInfantryWithoutMedics().count() * 0.4 < hydras && units.tanks().count() <= 5) {
+
+        if (infantry * 0.4 < hydras && tanks <= 5) {
             changeMissionToDefend(squad, "Mass hydras (" + hydras + " vs " + units.count() + ")");
+        }
+
+        // Dragoon fix
+        int dragoons = unit.enemiesNear().ofType(AUnitType.Protoss_Dragoon).count();
+        if (infantry <= 2 && infantry * 0.6 < dragoons && tanks <= 5) {
+            changeMissionToDefend(squad, "Mass goons (" + hydras + " vs " + units.count() + ")");
         }
     }
 
@@ -53,7 +66,7 @@ public class ChangeSquadMission {
 
         if (
             unit.enemiesNear().lurkers().inRadius(7, unit).notEmpty()
-            && unit.friendsNearInRadius(5) <= 20
+            && unit.friendsInRadiusCount(5) <= 20
         ) {
             changeMissionToDefend(squad, "Back off from lurkers");
         }

@@ -1,4 +1,4 @@
-package atlantis.combat.micro;
+package atlantis.combat.micro.avoid.special;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;

@@ -133,8 +133,8 @@ public class FightInsteadAvoid {
         if (
             combatBuilding != null
             && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)
-            && unit.friendsNearInRadius(2) >= 2
-            && unit.friendsNearInRadius(4) >= (unit.isAir() ? 14 : 6)
+            && unit.friendsInRadiusCount(2) >= 2
+            && unit.friendsInRadiusCount(4) >= (unit.isAir() ? 14 : 6)
             && (!unit.isAir() || unit.woundPercentMax(15))
             && unit.combatEvalRelative() >= 3.2
             && (unit.hp() >= 23 || unit.isMelee())
@@ -159,7 +159,7 @@ public class FightInsteadAvoid {
 
         if (
             lurker != null && (!lurker.isBurrowed() || lurker.isDetected())
-            && unit.noCooldown() && lurker.distToLessThan(unit, 4) && unit.friendsNearInRadius(3) >= 3
+            && unit.noCooldown() && lurker.distToLessThan(unit, 4) && unit.friendsInRadiusCount(3) >= 3
         ) {
             unit.addLog("FightLurker");
             return true;
@@ -235,8 +235,8 @@ public class FightInsteadAvoid {
             && (unit.enemiesNearInRadius(2.4) <= 1 || unit.lastAttackFrameMoreThanAgo(30 * 3))
             && (
                 unit.noCooldown()
-//                || (unit.friendsNearInRadius(1.5) >= 5 || unit.enemiesNearInRadius(2) == 0)
-                || unit.friendsNearInRadius(1.5) >= 5
+//                || (unit.friendsInRadiusCount(1.5) >= 5 || unit.enemiesNearInRadius(2) == 0)
+                || unit.friendsInRadiusCount(1.5) >= 5
             )
             && unit.friendsInRadius(3).medics().free().isNotEmpty()
             && (unit.isStimmed() || unit.friendsInRadius(3).atLeast(5))
@@ -445,7 +445,7 @@ public class FightInsteadAvoid {
 //            if (unit.mission().isMissionAttack() || unit.combatEvalRelative() >= 3.0) {
 //                return true;
 //            }
-////                && unit.friendsNearInRadiusSelect(6).atLeast(10)
+////                && unit.friendsInRadiusCountSelect(6).atLeast(10)
 ////                && HeuristicCombatEvaluator.advantagePercent(unit, 50);
 ////                    && A.printErrorAndReturnTrue("Fight DEF building cuz stacked " + unit.nameWithId());
 //        }

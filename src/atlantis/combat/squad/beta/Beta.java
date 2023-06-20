@@ -30,7 +30,7 @@ public class Beta extends Squad {
     public int expectedUnits() {
         return Math.max(
                 1,
-                Math.min(5, Count.ourCombatUnits() / 12)
+                Math.min(4, Count.ourCombatUnits() / 13)
         );
     }
 

@@ -35,10 +35,10 @@ public class FoggedUnit extends AbstractFoggedUnit {
 
     @Override
     public APosition position() {
-//        if (_lastAUnit != null && _lastAUnit.isVisibleUnitOnMap()) {
-//            return _lastAUnit.position();
-//        }
-        return _position;
+        if (_lastAUnit != null && _lastAUnit.position() != null) {
+            return _lastAUnit.position();
+        }
+        return _lastPosition;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class FoggedUnit extends AbstractFoggedUnit {
 
     @Override
     public String toString() {
-        return "FoggedUnit{#" + _id + " " + _lastType + " at " + _position + "}";
+        return "FoggedUnit{#" + _id + " " + _lastType + " at " + _lastPosition + "}";
     }
 
     @Override

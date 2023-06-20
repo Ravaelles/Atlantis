@@ -31,6 +31,10 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection type(AUnitType... types) {
+        return ofType(types);
+    }
+
     /**
      * Returns whether the type in unit matches one in the haystack
      */
@@ -562,6 +566,12 @@ public class Selection extends BaseSelection {
     public Selection lurkers() {
         return cloneByRemovingIf(
             (unit -> !unit.isLurker()), "lurkers"
+        );
+    }
+
+    public Selection reavers() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isReaver()), "reavers"
         );
     }
 

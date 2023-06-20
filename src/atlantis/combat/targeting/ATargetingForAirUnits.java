@@ -26,10 +26,92 @@ public class ATargetingForAirUnits {
     private static AUnit targetInShootingRange(AUnit unit) {
         AUnit target;
 
-        Selection allEnemies = ATargeting.enemyUnits.withEnemyFoggedUnits().removeDuplicates();
+        Selection allEnemies = ATargeting.enemyUnits.withEnemyFoggedUnits()
+            .removeDuplicates()
+            .effVisible()
+            .canBeAttackedBy(unit, 20);
 
         // =========================================================
-        // Target AIR units
+        // Target CRUCIAL AIR units
+
+        target = allEnemies
+                .air()
+                .ofType(
+                    AUnitType.Protoss_Observer,
+                    AUnitType.Protoss_Arbiter,
+
+                    AUnitType.Terran_Science_Vessel,
+
+                    AUnitType.Zerg_Scourge
+                )
+                .inShootRangeOf(unit)
+                .mostWounded();
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Target REAVERS + HT + TANKS + DEFILERS
+
+        target = allEnemies
+                .ofType(
+                    AUnitType.Protoss_Reaver,
+                    AUnitType.Protoss_High_Templar,
+
+                    AUnitType.Terran_Siege_Tank_Siege_Mode,
+                    AUnitType.Terran_Siege_Tank_Tank_Mode,
+
+                    AUnitType.Zerg_Defiler
+                )
+//                .inShootRangeOf(unit)
+                .inRadius(15, unit)
+                .mostWounded();
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Target DT + Mutalisks
+
+        target = allEnemies
+                .ofType(
+                    AUnitType.Protoss_Dark_Templar,
+                    AUnitType.Protoss_Archon,
+
+                    AUnitType.Terran_Ghost,
+
+                    AUnitType.Zerg_Mutalisk
+                )
+//                .inShootRangeOf(unit)
+                .inRadius(15, unit)
+                .mostWounded();
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Target IMPORTANT AIR units
+
+        target = allEnemies
+                .air()
+                .ofType(
+                    AUnitType.Protoss_Carrier,
+                    AUnitType.Protoss_Shuttle,
+
+                    AUnitType.Terran_Battlecruiser,
+                    AUnitType.Terran_Dropship,
+
+                    AUnitType.Zerg_Guardian,
+                    AUnitType.Zerg_Devourer
+                )
+                .inShootRangeOf(unit)
+                .mostWounded();
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
+        // Target ANY AIR units
 
         target = allEnemies
                 .air()
@@ -40,32 +122,15 @@ public class ATargetingForAirUnits {
         }
 
         // =========================================================
-        // Target REAVERS + TANKS + DEFILERS
-
-        target = allEnemies
-                .ofType(
-                    AUnitType.Protoss_Reaver,
-                    AUnitType.Terran_Siege_Tank_Siege_Mode,
-                    AUnitType.Terran_Siege_Tank_Tank_Mode,
-                    AUnitType.Zerg_Defiler
-                )
-//                .inShootRangeOf(unit)
-                .inRadius(10, unit)
-                .nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
-
-        // =========================================================
         // Target TRANSPORT
 
-        target = allEnemies
-                .transports(true)
-                .inRadius(10, unit)
-                .nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
+//        target = allEnemies
+//                .transports(true)
+//                .inRadius(10, unit)
+//                .nearestTo(unit);
+//        if (target != null) {
+//            return target;
+//        }
 
         // =========================================================
         // Target WORKERS

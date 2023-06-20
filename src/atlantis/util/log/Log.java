@@ -19,8 +19,8 @@ public class Log {
     public static boolean logUnitActionChanges = false;
 //    public static boolean logUnitActionChanges = true;
 
-    public static final int UNIT_LOG_SIZE = 6;
-    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 18;
+    public static final int UNIT_LOG_SIZE = 3;
+    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 2;
 
     private ArrayList<LogMessage> messages = new ArrayList<>();
     private int expireAfterFrames;
