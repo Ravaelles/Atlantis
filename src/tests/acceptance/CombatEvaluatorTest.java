@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 public class CombatEvaluatorTest extends AbstractTestFakingGame {
 
+    private FakeUnit hydra;
     private FakeUnit marine;
     private FakeUnit wraith;
     private FakeUnit sunken;
@@ -75,6 +76,37 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             ),
             () -> fakeEnemies(
                 sunken = fake(AUnitType.Zerg_Sunken_Colony, 13)
+            )
+        );
+    }
+
+    @Test
+    public void marinesAndMedicsVsHydras() {
+        createWorld(1, () -> {
+                double ourEval;
+                double enemyEval;
+
+                ourEval = marine.combatEvalRelative();
+                enemyEval = marine.nearestEnemy().combatEvalRelative();
+
+//                System.out.println("-- ourEval = " + ourEval);
+//                System.out.println("-- enemyEval = " + enemyEval);
+
+                assertTrue(valueAround(0.8, ourEval));
+                assertTrue(valueAround(0.9, enemyEval));
+            },
+            () -> fakeOurs(
+//                fake(AUnitType.Terran_Marine, 10),
+                marine = fake(AUnitType.Terran_Marine, 11.5),
+                fake(AUnitType.Terran_Marine, 11.6),
+//                fake(AUnitType.Terran_Marine, 11.7),
+                fake(AUnitType.Terran_Marine, 12)
+            ),
+            () -> fakeEnemies(
+//                hydra = fake(Zerg_Hydralisk, 13),
+//                fake(Zerg_Hydralisk, 13.1),
+//                fake(Zerg_Hydralisk, 13.2),
+                fake(Zerg_Hydralisk, 13.3)
             )
         );
     }

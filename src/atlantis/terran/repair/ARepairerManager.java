@@ -89,11 +89,17 @@ public class ARepairerManager {
     }
 
     public static boolean itIsForbiddenToRepairThisUnitNow(AUnit target) {
-        if (!target.isBuilding() || target.isCombatBuilding()) {
+        if (target.isBuilding() && target.isCombatBuilding()) {
             return false;
         }
 
-        return target.enemiesNear().inRadius(12, target).atLeast(1);
+        if (target.isBuilding() && target.hp() >= 400) {
+            return true;
+        }
+
+        return false;
+//
+//        return target.enemiesNear().inRadius(12, target).atLeast(1);
     }
 
     // =========================================================

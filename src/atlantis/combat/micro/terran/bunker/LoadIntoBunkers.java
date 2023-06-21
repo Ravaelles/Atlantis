@@ -32,34 +32,29 @@ public class LoadIntoBunkers {
 
         // =========================================================
 
-        AUnit nearestBunker = defineBunkerToLoadTo(unit);
-        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
+        AUnit bunker = defineBunkerToLoadTo(unit);
+//        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
+        double maxDistanceToLoad = 8.2;
 
-        if (
-            nearestBunker != null
-                && nearestBunker.hasFreeSpaceFor(unit)
-        ) {
-            double bunkerDist = nearestBunker.distTo(unit);
+        if (bunker != null && bunker.hasFreeSpaceFor(unit)) {
+            boolean canLoad;
 
-            if (bunkerDist < maxDistanceToLoad
-                && (
-                nearestBunker.spaceRemaining() >= 1
-                    || (
-                    enemiesNear.inRadius(1.6, unit).atMost(2)
-                        && (!enemiesNear.onlyMelee() || unit.nearestEnemyDist() < 1.2)
-                )
-            )) {
-//                if (
-//                    unit.hp() <= 20 && bunkerDist >= 3 &&
-//                    (
-//                        bunkerDist > unit.nearestEnemyDist()
-//                        || nearestBunker.enemiesNear().inRadius(0.3, nearestBunker).atLeast(5)
-//                    )
-//                ) {
-//                    return false;
-//                }
+            AUnit nearestEnemy = unit.nearestEnemy();
+            if (nearestEnemy == null) {
+                canLoad = true;
+            }
+            else {
+                double unitDistToBunker = bunker.distTo(unit);
+                double enemyDist = unit.distTo(nearestEnemy);
+                double enemyDistToBunker = nearestEnemy.distTo(bunker);
 
-                unit.load(nearestBunker);
+                canLoad = unitDistToBunker < maxDistanceToLoad
+                    && unitDistToBunker < enemyDistToBunker
+                    && (enemyDist < 1.6 || !enemiesNear.onlyMelee());
+            }
+
+            if (canLoad) {
+                unit.load(bunker);
 
                 String t = "GetToDaChoppa";
                 unit.setTooltipTactical(t);

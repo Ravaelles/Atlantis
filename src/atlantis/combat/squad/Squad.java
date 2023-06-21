@@ -5,6 +5,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.positioning.SquadCohesion;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -139,6 +140,15 @@ public abstract class Squad extends Units {
         if (mission == null) {
             throw new RuntimeException("Assigned null Mission to squad");
         }
+        if (mission == this.mission) {
+            return;
+        }
+
+        System.err.println("Squad " + name() + " change mission: " + mission);
+//        if (mission.isMissionDefend()) {
+//            A.printStackTrace("Aaaa = " + mission);
+//        }
+
         this.mission = mission;
     }
 

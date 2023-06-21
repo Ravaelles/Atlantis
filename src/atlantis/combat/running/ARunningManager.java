@@ -50,8 +50,12 @@ public class ARunningManager {
 
     // =========================================================
 
-    public boolean runFromAndNotifyOthersToMove(HasPosition runFrom) {
-        return runFrom(runFrom, 1.0, Actions.RUN_ENEMY, true);
+    public boolean runFromAndNotifyOthersToMove(HasPosition runFrom, String tooltip) {
+        if (runFrom(runFrom, 1.0, Actions.RUN_ENEMY, true)) {
+            unit.setTooltip(tooltip);
+            return true;
+        }
+        return false;
     }
 
 //    public boolean runFromHere() {

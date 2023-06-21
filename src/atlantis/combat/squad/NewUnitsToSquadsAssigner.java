@@ -27,15 +27,16 @@ public class NewUnitsToSquadsAssigner {
     private static Squad chooseSquadFor(AUnit unit) {
         Alpha alpha = Alpha.get();
 
-        if (unit.isAir()) {
-            if (unit.is(AUnitType.Protoss_Observer)) {
-                return alpha;
-            }
-
+        if (assignToDelta(unit)) {
             return Delta.get();
         }
 
         return alpha;
+    }
+
+    private static boolean assignToDelta(AUnit unit) {
+        return (unit.isAir() && !unit.type().isTransport())
+            || unit.type().isDetectorNonBuilding();
     }
 
     /**

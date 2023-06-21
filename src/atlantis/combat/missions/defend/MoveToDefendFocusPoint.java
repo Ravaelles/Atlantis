@@ -53,12 +53,12 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         unitToFocus = unit.distTo(focus);
         optimalDist = optimalDist(unit);
 
-        if (unit.enemiesNear().inRadius(5, unit).notEmpty()) {
-            if (!unit.isZergling() || unit.hp() >= 20) {
-                unit.addLog("DontWithdraw");
-                return false;
-            }
-        }
+//        if (unit.enemiesNear().inRadius(5, unit).notEmpty()) {
+//            if (!unit.isZergling() || unit.hp() >= 20) {
+//                unit.addLog("DontWithdraw");
+//                return false;
+//            }
+//        }
 
         if (unitToFocus > (optimalDist + MARGIN)) {
             String dist = A.dist(unitToFocus);

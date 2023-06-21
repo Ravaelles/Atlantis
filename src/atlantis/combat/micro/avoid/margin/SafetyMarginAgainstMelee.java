@@ -222,7 +222,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         }
 
         if ((attacker.isUltralisk() || attacker.isArchon()) && defender.distToLessThan(attacker, 4.4)) {
-            return 1.8;
+            return 1.0 + (defender.hasCooldown() ? 0.7 : 0);
         }
 
         return 0;

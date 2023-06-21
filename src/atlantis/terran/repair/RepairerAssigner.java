@@ -34,11 +34,15 @@ public class RepairerAssigner {
 
     private static boolean shouldNotRepairUnit(AUnit unit) {
         return !unit.isRepairable()
-                || (unit.isAir() && unit.hp() >= 51)
+                || (unit.isAir() && unit.hp() >= 51 && unit.friendsNear().workers().notRepairing().empty())
                 || unit.isScout()
-                || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 5))
-                || (unit.isBuilding() && TerranFlyingBuildingScoutManager.isFlyingBuilding(unit) && unit.lastUnderAttackLessThanAgo(30 * 15))
-                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercentMin(40))
+                || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 3))
+                || (
+                    unit.isBuilding()
+                        && TerranFlyingBuildingScoutManager.isFlyingBuilding(unit)
+                        && unit.lastUnderAttackLessThanAgo(30 * 9)
+                )
+//                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercentMin(40))
                 || ARepairerManager.itIsForbiddenToRepairThisUnitNow(unit)
                 || GamePhase.isEarlyGame() && (unit.isBuilding() && !unit.isCombatBuilding() && unit.enemiesNear().atLeast(2));
     }

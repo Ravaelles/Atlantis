@@ -51,15 +51,11 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     // =========================================================
 
     private static void scienceFacilities() {
-        if (Have.a(Terran_Science_Facility)) {
-            return;
-        }
+//        if (!ATech.isResearched(Tank_Siege_Mode)) {
+//            return;
+//        }
 
-        if (!ATech.isResearched(Tank_Siege_Mode)) {
-            return;
-        }
-
-        if (A.supplyUsed() >= (Enemy.terran() ? 90 : 50) || enemyStrategy().isGoingHiddenUnits()) {
+        if (A.supplyUsed() >= (Enemy.terran() ? 90 : 50) && enemyStrategy().isGoingHiddenUnits()) {
             if (haveNotExistingOrPlanned(Terran_Starport)) {
                 AddToQueue.withHighPriority(Terran_Starport);
             }
@@ -68,6 +64,24 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             }
             if (haveNotExistingOrPlanned(Terran_Control_Tower)) {
                 AddToQueue.withHighPriority(Terran_Control_Tower);
+            }
+        }
+
+        if (Have.a(Terran_Science_Facility)) {
+            return;
+        }
+
+        int scienceFacilities = Count.existingOrInProductionOrInQueue(Terran_Science_Facility);
+        if (A.supplyUsed() >= 60) {
+            if (scienceFacilities == 0) {
+                AddToQueue.withHighPriority(Terran_Science_Facility);
+            }
+        }
+
+        if (A.supplyUsed() >= 120 && scienceFacilities > 0) {
+            int covertOps = Count.existingOrInProductionOrInQueue(Terran_Covert_Ops);
+            if (covertOps == 0) {
+                AddToQueue.withHighPriority(Terran_Covert_Ops);
             }
         }
     }

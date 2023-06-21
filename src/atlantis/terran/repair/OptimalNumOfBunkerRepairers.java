@@ -44,7 +44,7 @@ public class OptimalNumOfBunkerRepairers {
             optimalNumber = 1 + (bunker.isHealthy() ? 0 : (bunker.woundPercent() / 25));
         }
 
-        return Math.min(A.hasMinerals(20) ? 6 : 3, (int) Math.ceil(optimalNumber));
+        return Math.min(A.hasMinerals(20) ? 7 : 3, (int) Math.ceil(optimalNumber));
     }
 
     private static boolean thereIsAnotherBunkerNearbyThatIsInBiggerDanger(AUnit bunker) {

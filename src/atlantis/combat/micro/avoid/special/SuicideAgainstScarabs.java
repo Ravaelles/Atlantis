@@ -16,10 +16,17 @@ public class SuicideAgainstScarabs {
             return false;
         }
 
-        AUnit scarabAimedAtUnit = unit.enemiesNear().ofType(AUnitType.Protoss_Scarab).havingTarget(unit).nearestTo(unit);
+        AUnit scarabAimedAtUnit = unit.allUnitsNear().ofType(AUnitType.Protoss_Scarab)
+            .havingTarget(unit).nearestTo(unit);
         if (scarabAimedAtUnit == null) {
             return false;
         }
+
+        System.err.println();
+        System.err.println("#### SCARAB SUICIDE unit   = " + unit);
+        System.err.println("#### SCARAB SUICIDE scarab = " + scarabAimedAtUnit);
+        System.err.println("#### SCARAB SUICIDE target = " + scarabAimedAtUnit.target());
+        System.err.println();
 
         Selection friendsNear = unit.friendsInRadius(2.1).groundUnits().nonBuildings();
 
@@ -34,8 +41,7 @@ public class SuicideAgainstScarabs {
     private static void moveNearbyFriendsIfNeeded(Selection friendsNear, AUnit unit) {
         for (AUnit nearUnit : friendsNear.list()){
             if (unit.distToLessThan(nearUnit, 2.1)) {
-                nearUnit.runningManager().runFromAndNotifyOthersToMove(unit);
-                nearUnit.setTooltip("SuicideNear");
+                nearUnit.runningManager().runFromAndNotifyOthersToMove(unit, "SuicideNear");
             }
         }
     }

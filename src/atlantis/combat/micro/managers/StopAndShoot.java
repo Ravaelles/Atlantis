@@ -73,6 +73,10 @@ public class StopAndShoot {
             return true;
         }
 
+        if (unit.hpLessThan(21)) {
+            return true;
+        }
+
         if (unit.isTank() || unit.isVulture()) {
             return true;
         }

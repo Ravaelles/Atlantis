@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.special;
 
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
 
 public class AvoidCriticalUnits {
@@ -15,6 +16,10 @@ public class AvoidCriticalUnits {
         }
 
         if (avoidReavers(unit)) {
+            return true;
+        }
+
+        if (avoidDT(unit)) {
             return true;
         }
 
@@ -38,8 +43,22 @@ public class AvoidCriticalUnits {
             return false;
         }
 
-        unit.runningManager().runFromAndNotifyOthersToMove(reaver);
-        unit.setTooltipTactical("REAVER!");
+        unit.runningManager().runFromAndNotifyOthersToMove(reaver, "REAVER!");
+        return true;
+    }
+
+    private static boolean avoidDT(AUnit unit) {
+        if (unit.isAir() || unit.isBuilding()) {
+            return false;
+        }
+
+        AUnit dt = unit.enemiesNear().ofType(AUnitType.Protoss_Dark_Templar).effUndetected()
+            .inRadius(2.5, unit).nearestTo(unit);
+        if (dt == null) {
+            return false;
+        }
+
+        unit.runningManager().runFromAndNotifyOthersToMove(dt, "DT!");
         return true;
     }
 
@@ -53,8 +72,7 @@ public class AvoidCriticalUnits {
             return false;
         }
 
-        unit.runningManager().runFromAndNotifyOthersToMove(lurker);
-        unit.setTooltipTactical("LURKER!");
+        unit.runningManager().runFromAndNotifyOthersToMove(lurker, "LURKER!");
         return true;
     }
 

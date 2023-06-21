@@ -976,6 +976,14 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isDetectorNonBuilding() {
+        return (boolean) cache.get(
+            "isDetectorNonBuilding",
+            -1,
+            () -> is(AUnitType.Protoss_Observer, Terran_Science_Vessel, Zerg_Overlord)
+        );
+    }
+
     public boolean isNeutralType() {
         return (boolean) cache.get(
             "isNeutralType",

@@ -53,16 +53,13 @@ public class AtlantisJfap {
     }
 
     private double[] applyTweaks() {
-//        double oldScore0 = scores[0];
-//        double oldScore1 = scores[1];
-//
-//        double newScore0 = AtlantisJfapTweaks.forHydralisks(scores[0], unit);
-
         scores[0] = AtlantisJfapTweaks.forHydralisks(scores[0], unit);
 
         AUnit enemy = unit.enemiesNear().nearestTo(unit);
         if (enemy != null) {
+//            System.out.println("BEFORE enemyScore = " + scores[1]);
             scores[1] = AtlantisJfapTweaks.forHydralisks(scores[1], enemy);
+//            System.out.println("AFTER  enemyScore = " + scores[1]);
         }
 
         if (scores[0] > -1) {

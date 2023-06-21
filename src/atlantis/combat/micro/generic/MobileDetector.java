@@ -2,6 +2,7 @@ package atlantis.combat.micro.generic;
 
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -11,7 +12,7 @@ import atlantis.util.We;
 
 public class MobileDetector {
 
-    protected static AUnit unitForArmy = null;
+    protected static AUnit unitAssignedToMainSquad = null;
     protected static AUnit unitForSquadScout = null;
     protected static AUnit unitForBase = null;
 
@@ -22,11 +23,11 @@ public class MobileDetector {
             return true;
         }
 
-        if (followArmy(unit, false)) {
+        if (detectInvisibleUnitsClosestToBase(unit)) {
             return true;
         }
 
-        if (detectInvisibleUnitsClosestToBase(unit)) {
+        if (followArmy(unit, false)) {
             return true;
         }
 
@@ -74,16 +75,16 @@ public class MobileDetector {
         return false;
     }
 
-    protected static boolean followArmy(AUnit unit, boolean defaultBehavior) {
-        if (!defaultBehavior && !unit.is(unitForArmy)) {
+    protected static boolean followArmy(AUnit unit, boolean shouldFollowItsSquad) {
+        if (!shouldFollowItsSquad && !unit.is(unitAssignedToMainSquad)) {
             return false;
         }
 
-        APosition goTo = Alpha.get().center();
+        HasPosition goTo = unit.squadCenter();
         if (goTo != null) {
-            unitForArmy = unit;
+            unitAssignedToMainSquad = unit;
             if (goTo.distTo(unit) > 1) {
-                unitForArmy.move(goTo, Actions.MOVE_FOLLOW, "Follow", true);
+                unitAssignedToMainSquad.move(goTo, Actions.MOVE_FOLLOW, "Follow", true);
             }
             return true;
         }
