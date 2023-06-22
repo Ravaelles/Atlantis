@@ -145,9 +145,9 @@ public abstract class Squad extends Units {
         }
 
         System.err.println("Squad " + name() + " change mission: " + mission);
-        if (size() > 0 && mission.isMissionDefend()) {
-            A.printStackTrace("Why DEFEND? " + mission);
-        }
+//        if (size() > 0 && mission.isMissionDefend()) {
+//            A.printStackTrace("Why DEFEND? " + mission);
+//        }
 
         this.mission = mission;
     }

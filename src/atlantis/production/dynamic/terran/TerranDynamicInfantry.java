@@ -32,7 +32,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     protected static boolean wraiths() {
-        int startProducingWraithsSinceSupply = 110;
+        int startProducingWraithsSinceSupply = 90;
 
 //        if (Enemy.zerg()) {
 //            return false;

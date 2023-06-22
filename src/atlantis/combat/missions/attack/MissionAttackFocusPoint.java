@@ -143,7 +143,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 return new AFocusPoint(
                     startLocation,
                     main,
-                    "UnexploredStartLocation"
+                    "UnexplStartLoc"
                 );
             }
         }

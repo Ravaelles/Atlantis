@@ -1,12 +1,8 @@
 package atlantis.combat.squad.mission;
 
-import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
-import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 
 public class ChangeSquadMission {
     
@@ -26,7 +22,7 @@ public class ChangeSquadMission {
         if (ChangeSquadToDefend.shouldChangeToDefend(squad)) {
             return true;
         }
-        else if (ChangeSquadToAttack.shouldChangeToAttack(squad)) {
+        else if (ChangeSquadToDefault.shouldChangeToDefault(squad)) {
             return true;
         }
 

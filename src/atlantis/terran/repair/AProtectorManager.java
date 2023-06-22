@@ -1,5 +1,6 @@
 package atlantis.terran.repair;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -19,7 +20,6 @@ import java.util.List;
 public class AProtectorManager {
 
     private static final int MAX_PROTECTORS = 3;
-    private static final int MAX_BUNKER_PROTECTORS = 3;
 
     // =========================================================
 
@@ -71,9 +71,23 @@ public class AProtectorManager {
         return true;
     }
 
+    private static int maxProtectors() {
+        int workers = Count.workers();
+
+        if (!A.hasMinerals(1) && workers <= 20) {
+            return 3;
+        }
+        else if (!A.hasMinerals(10)) {
+            return Math.min(workers / 2, MAX_PROTECTORS);
+        }
+
+        return MAX_PROTECTORS;
+    }
+
     protected static boolean assignUnitsProtectorsIfNeeded() {
+        int maxProtectors = maxProtectors();
         int totalProtectors = ARepairAssignments.countTotalProtectors();
-        if (totalProtectors >= MAX_PROTECTORS) {
+        if (totalProtectors >= maxProtectors) {
             return false;
         }
 
@@ -82,7 +96,7 @@ public class AProtectorManager {
             return false;
         }
 
-        for (int i = 0; i < MAX_PROTECTORS - totalProtectors; i++) {
+        for (int i = 0; i < maxProtectors - totalProtectors; i++) {
             assignProtectorsFor(tanks.get(i % tanks.size()), 1);
         }
 
@@ -125,8 +139,9 @@ public class AProtectorManager {
     private static boolean removeProtectorsIfNeeded() {
 //        System.out.println("PROT = " + ARepairAssignments.countTotalProtectors() + " // " + MAX_PROTECTORS);
 
-        if (ARepairAssignments.countTotalProtectors() > MAX_PROTECTORS) {
-            for (int i = 0; i < ARepairAssignments.countTotalProtectors() - MAX_PROTECTORS; i++) {
+        int maxProtectors = maxProtectors();
+        if (ARepairAssignments.countTotalProtectors() > maxProtectors) {
+            for (int i = 0; i < ARepairAssignments.countTotalProtectors() - maxProtectors; i++) {
                 AUnit protector = ARepairAssignments.getProtectors().get(ARepairAssignments.getProtectors().size() - 1);
                 if (ARepairerManager.canSafelyAbandonUnitToBeRepaired(protector)) {
                     ARepairAssignments.removeRepairer(protector);

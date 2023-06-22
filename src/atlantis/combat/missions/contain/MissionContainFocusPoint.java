@@ -121,7 +121,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                         return new AFocusPoint(
                             unexploredBase,
                             Select.main(),
-                            "UnexploredStartLocation"
+                            "UnexplStartLocat"
                         );
                     }
 
