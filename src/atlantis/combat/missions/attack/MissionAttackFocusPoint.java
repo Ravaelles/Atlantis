@@ -3,6 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.focus.MissionFocusPoint;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.GamePhase;
@@ -17,6 +18,7 @@ import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
+import bwapi.Color;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
 
@@ -26,9 +28,9 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
     public AFocusPoint focusPoint() {
         return cache.getIfValid(
-                "focusPoint",
-                60,
-                () -> defineFocusPoint()
+            "focusPoint",
+            61,
+            () -> defineFocusPoint()
         );
     }
 
@@ -46,22 +48,23 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             }
 
             return new AFocusPoint(
-                    enemy,
-                    our,
+                enemy,
+                our,
                 "FirstEnemy"
             );
         }
 
         // Try going near any enemy building
         AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+        AUnit main = Select.main();
         if (
             enemyBuilding != null
                 && enemyBuilding.position() != null
                 && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
-            ) {
+        ) {
             return new AFocusPoint(
-                    enemyBuilding,
-                    Select.main(),
+                enemyBuilding,
+                main,
                 "EnemyBuilding"
             );
         }
@@ -73,8 +76,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             APosition enemyBase = EnemyUnits.enemyBase();
             if (enemyBase != null) {
                 return new AFocusPoint(
-                        enemyBase,
-                        Select.main(),
+                    enemyBase,
+                    main,
                     "EnemyBase"
                 );
             }
@@ -84,8 +87,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         AUnit visibleEnemyBuilding = EnemyUnits.discovered().buildings().last();
         if (visibleEnemyBuilding != null) {
             return new AFocusPoint(
-                    visibleEnemyBuilding,
-                    Select.main(),
+                visibleEnemyBuilding,
+                main,
                 "AnyEnemyBuilding"
             );
         }
@@ -98,8 +101,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //        AUnit anyEnemyLandUnit = EnemyUnits.visibleAndFogged().combatUnits().groundUnits().first();
         if (anyEnemyLandUnit != null) {
             return new AFocusPoint(
-                    anyEnemyLandUnit,
-                    Select.main(),
+                anyEnemyLandUnit,
+                main,
                 "AnyEnemyLandUnit"
             );
         }
@@ -109,8 +112,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         );
         if (anyEnemyAirUnit != null) {
             return new AFocusPoint(
-                    anyEnemyAirUnit,
-                    Select.main(),
+                anyEnemyAirUnit,
+                main,
                 "AnyEnemyAirUnit"
             );
         }
@@ -119,22 +122,28 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             AChoke mainChoke = Chokes.enemyMainChoke();
             if (mainChoke != null) {
                 return new AFocusPoint(
-                        mainChoke,
-                        Select.main(),
+                    mainChoke,
+                    main,
                     "EnemyMainChoke"
                 );
             }
         }
 
         // Try to go to some starting location, hoping to find enemy there.
-        if (Select.main() != null) {
-            APosition startLocation = Bases.nearestUnexploredStartingLocation(Select.main());
+        if (main != null) {
+            APosition startLocation = Bases.nearestUnexploredStartingLocation(main);
+
+//            System.err.println("startLocation = " + startLocation);
+//            if (startLocation != null && startLocation.isExplored()) {
+//                System.err.println("Damn, this start location is already explored!");
+//                System.err.println(startLocation.isExplored() + " / " + startLocation.isPositionVisible());
+//            }
 
             if (startLocation != null) {
                 return new AFocusPoint(
-                        startLocation,
-                        Select.main(),
-                    "NearStartLocation"
+                    startLocation,
+                    main,
+                    "UnexploredStartLocation"
                 );
             }
         }

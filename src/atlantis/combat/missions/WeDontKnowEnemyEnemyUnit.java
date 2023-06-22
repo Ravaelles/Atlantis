@@ -11,7 +11,7 @@ public class WeDontKnowEnemyEnemyUnit {
 
     public static boolean handleWeDontKnowWhereToFindEnemy(Mission mission, AUnit unit) {
 //        if (unit.isMoving() && unit.enemiesNear().empty()) {
-        if (unit.isMoving() && unit.lastActionLessThanAgo(30 * 10)) {
+        if (unit.isMoving() && unit.lastActionLessThanAgo(30 * 2)) {
             return false;
         }
 
@@ -64,10 +64,10 @@ public class WeDontKnowEnemyEnemyUnit {
             unit.setTooltip("FindEnemy&Attack");
             if (mission.temporaryTarget() != null) {
                 if (nearestEnemy.u() != null && unit.attackUnit(nearestEnemy)) {
-                    unit.setTooltip("StrategicAttack", true);
+                    unit.setTooltip("TempEnemy", true);
                     return true;
                 }
-                else if (unit.move(mission.temporaryTarget(), Actions.MOVE_EXPLORE, "FindEm", false)) {
+                else if (unit.move(mission.temporaryTarget(), Actions.MOVE_EXPLORE, "ExploreNow", false)) {
                     return true;
                 }
             }
@@ -84,7 +84,7 @@ public class WeDontKnowEnemyEnemyUnit {
             unit.setTooltip("FindFogged");
             if (mission.temporaryTarget() != null) {
                 if (foggedEnemy.u() != null && foggedEnemy.effVisible() && unit.attackUnit(foggedEnemy)) {
-                    unit.setTooltip("StrategicAttack", true);
+                    unit.setTooltip("AnyEnemy", true);
                     return true;
                 }
                 else if (unit.move(

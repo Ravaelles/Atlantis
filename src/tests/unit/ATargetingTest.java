@@ -208,4 +208,21 @@ public class ATargetingTest extends AbstractTestWithUnits {
             assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }
+
+    @Test
+    public void guardians() {
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Hydralisk_Den, 11),
+            fake(AUnitType.Zerg_Drone, 12),
+            expectedTarget = fake(AUnitType.Zerg_Guardian, 12.5),
+            fake(AUnitType.Zerg_Zergling, 19)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+        });
+    }
 }

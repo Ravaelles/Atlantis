@@ -5,7 +5,9 @@ import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.missions.WeDontKnowEnemyEnemyUnit;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
+import bwapi.Color;
 
 public class MissionAttackAdvance {
 
@@ -33,7 +35,6 @@ public class MissionAttackAdvance {
         }
 
         unit.setTooltipTactical("#MA-NoFocus");
-//        return false;
         return WeDontKnowEnemyEnemyUnit.handleWeDontKnowWhereToFindEnemy(mission, unit);
     }
 }

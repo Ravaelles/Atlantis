@@ -46,7 +46,7 @@ public class MapAndRace {
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
@@ -99,6 +99,7 @@ public class MapAndRace {
 
         // === Zerg ================================================
 
+        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 //        if (true) return "ums/Muta Micro_ Python.scm"; // Need good squad management
 //        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
 

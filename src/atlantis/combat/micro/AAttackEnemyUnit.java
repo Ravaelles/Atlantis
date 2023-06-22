@@ -42,7 +42,7 @@ public class AAttackEnemyUnit {
         AUnit enemy = defineEnemyToAttackFor(unit);
         if (enemy == null) {
 //            AAdvancedPainter.paintCircleFilled(unit, 7, Color.White);
-            unit.addLog("NothingToAttack");
+//            unit.addLog("NothingToAttack");
 
 //            System.err.println(unit.idWithHash() + " aaa " + unit);
             return false;

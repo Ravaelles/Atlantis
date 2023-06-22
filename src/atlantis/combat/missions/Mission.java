@@ -2,10 +2,12 @@ package atlantis.combat.missions;
 
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.focus.MissionFocusPoint;
+import atlantis.debug.painter.APainter;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import bwapi.Color;
 
 
 /**
