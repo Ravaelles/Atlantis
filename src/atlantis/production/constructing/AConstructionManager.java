@@ -49,7 +49,7 @@ public class AConstructionManager {
         AUnit builder = construction.builder();
 
         if (
-            (builder == null || !builder.exists() || !builder.isAlive())
+            (builder == null || !builder.exists() || !builder.isAlive() || builder.hp() <= 0)
         ) {
 //            System.err.println("Dead builder for " + construction.construction());
             if (isItSafeToAssignNewBuilderTo(construction)) {
@@ -76,9 +76,17 @@ public class AConstructionManager {
 
         HasPosition position = construction.construction() != null
             ? construction.construction() : construction.buildPosition();
+
+        if (position == null) {
+            System.err.println("Null position in isItSafeToAssignNewBuilderTo");
+            System.err.println(construction);
+            return false;
+        }
+
         if (
             EnemyUnits.discovered().combatUnits().inRadius(8, position).empty()
-            || (A.hasMinerals(700))
+            || (construction.buildingType().isCombatBuilding() && Select.our().inRadius(7, position).atLeast(2))
+            || A.hasMinerals(700)
         ) {
             return true;
         }

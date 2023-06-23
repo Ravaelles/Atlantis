@@ -87,11 +87,12 @@ public class EnemyUnits {
                 50,
                 () -> {
                     AUnit ourMainBase = Select.main();
-                    AbstractFoggedUnit best = null;
+                    AUnit best = null;
                     if (ourMainBase != null) {
                         double minDist = 999999;
 
-                        for (AbstractFoggedUnit enemy : unitsDiscovered()) {
+//                        for (AbstractFoggedUnit enemy : unitsDiscovered()) {
+                        for (AUnit enemy : discovered().list()) {
                             if (enemy.type().isBuilding() && enemy.position() != null) {
                                 double dist = ourMainBase.groundDist(enemy.position());
                                 if (dist < minDist) {

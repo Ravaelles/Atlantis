@@ -947,6 +947,7 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             // Display name of unit
+            // @TODO BUG_NULL happens with destroyed Turret in vsGosu
             String name = (building.buildType() != null ? building.buildType().name() : "-BUG_NULL");
 
             // Paint building name

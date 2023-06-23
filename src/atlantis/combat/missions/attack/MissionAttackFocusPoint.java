@@ -50,7 +50,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             return new AFocusPoint(
                 enemy,
                 our,
-                "FirstEnemy"
+                "FirstEnemy(" + enemy.name() + ")"
             );
         }
 
@@ -65,7 +65,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             return new AFocusPoint(
                 enemyBuilding,
                 main,
-                "EnemyBuilding"
+                "EnemyBuilding(" + enemyBuilding.name() + ")"
             );
         }
 
@@ -89,7 +89,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             return new AFocusPoint(
                 visibleEnemyBuilding,
                 main,
-                "AnyEnemyBuilding"
+                "AnyEnemyBuilding(" + visibleEnemyBuilding.name() + ")"
             );
         }
 
@@ -103,7 +103,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             return new AFocusPoint(
                 anyEnemyLandUnit,
                 main,
-                "AnyEnemyLandUnit"
+                "AnyEnemyLandUnit(" + anyEnemyLandUnit.name() + ")"
             );
         }
 
@@ -114,7 +114,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             return new AFocusPoint(
                 anyEnemyAirUnit,
                 main,
-                "AnyEnemyAirUnit"
+                "AnyEnemyAirUnit(" + anyEnemyAirUnit.name() + ")"
             );
         }
 

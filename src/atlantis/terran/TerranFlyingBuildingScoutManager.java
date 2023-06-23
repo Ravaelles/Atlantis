@@ -15,9 +15,9 @@ import java.util.Iterator;
 public class TerranFlyingBuildingScoutManager {
 
     private static final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
-    
+
     // =========================================================
-    
+
     public static void update() {
         if (AGame.isUms()) {
             return;
@@ -65,7 +65,7 @@ public class TerranFlyingBuildingScoutManager {
             return true;
         }
 
-        if (flyingBuilding.lastUnderAttackLessThanAgo(70)) {
+        if (flyingBuilding.lastUnderAttackLessThanAgo(30 * 3)) {
 //            APosition median = Alpha.get().median();
 //            if (median != null) {
 //                flyingBuilding.moveStrategic(median, Actions.MOVE_SAFETY, "UnderFire");
@@ -78,11 +78,11 @@ public class TerranFlyingBuildingScoutManager {
         }
 
         APosition focusPoint = flyingBuildingFocusPoint();
-        
+
         // Move towards focus point if needed
         if (focusPoint != null) {
             double distToFocusPoint = focusPoint.distTo(flyingBuilding);
-            
+
             if (distToFocusPoint > 2) {
                 flyingBuilding.moveStrategic(focusPoint, Actions.MOVE_SPECIAL, "Fly baby!");
                 return true;
@@ -97,7 +97,7 @@ public class TerranFlyingBuildingScoutManager {
         APosition attackFocusPoint = Missions.ATTACK.focusPoint();
 
         if (containFocusPoint != null && attackFocusPoint != null) {
-            return containFocusPoint.translateTilesTowards(attackFocusPoint, 4);
+            return containFocusPoint.translateTilesTowards(attackFocusPoint, 6);
         }
 
         return containFocusPoint;
@@ -112,21 +112,21 @@ public class TerranFlyingBuildingScoutManager {
         }
 
         return Select.ourWithUnfinished(AUnitType.Terran_Machine_Shop).atLeast(1)
-                || Select.countOurOfType(AUnitType.Terran_Vulture) >= 5;
+                || Select.ourTanks().atLeast(3);
     }
 
     private static void liftABuildingAndFlyAmongStars() {
-        AUnit flying = Select.ourOfType(AUnitType.Terran_Barracks, AUnitType.Terran_Engineering_Bay).free().first();
+        AUnit flying = Select.ourOfType(AUnitType.Terran_Barracks).free().first();
         if (flying != null) {
             flying.lift();
             flyingBuildings.add(flying);
         }
     }
-    
+
     // =========================================================
 
     public static boolean isFlyingBuilding(AUnit unit) {
         return unit.type().isBuilding() && flyingBuildings.contains(unit);
     }
-    
+
 }

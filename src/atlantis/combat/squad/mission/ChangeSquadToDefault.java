@@ -9,10 +9,11 @@ import atlantis.information.strategy.GamePhase;
 public class ChangeSquadToDefault extends ChangeSquadMission {
 
     public static boolean shouldChangeToDefault(Squad squad) {
-        if (EnemyStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+        Mission defaultMission = defaultMission();
+
+        if (defaultMission.isMissionAttackOrContain() && GamePhase.isEarlyGame() && EnemyStrategy.get().isRushOrCheese()) {
             return false;
         }
-//        Mission defaultMission = defaultMission();
 
         return changeMissionToMainMission(squad, "Be good soldier");
     }

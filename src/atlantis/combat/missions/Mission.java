@@ -117,6 +117,10 @@ public abstract class Mission {
         return this.equals(Missions.ATTACK);
     }
 
+    public boolean isMissionAttackOrContain() {
+        return isMissionAttack() || isMissionContain();
+    }
+
     public boolean isMissionUms() {
         return false;
 //        return this.equals(Missions.UMS);
