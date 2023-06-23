@@ -46,6 +46,10 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
         int wraiths = Count.ofType(AUnitType.Terran_Wraith);
 
+        if (wraiths >= 5 && !AGame.canAffordWithReserved(200, 200)) {
+            return false;
+        }
+
         if (A.supplyUsed() >= startProducingWraithsSinceSupply && wraiths <= 1) {
             return addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
         }

@@ -55,7 +55,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Try going near any enemy building
-        AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+        AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
         AUnit main = Select.main();
         if (
             enemyBuilding != null
@@ -73,12 +73,12 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (GamePhase.isEarlyGame() || Select.enemy().buildings().atMost(2)) {
 
             // Try going near enemy base
-            APosition enemyBase = EnemyUnits.enemyBase();
+            AUnit enemyBase = EnemyUnits.enemyBase();
             if (enemyBase != null) {
                 return new AFocusPoint(
                     enemyBase,
                     main,
-                    "EnemyBase"
+                    "EnemyBase(" + enemyBase.name() + ")"
                 );
             }
         }

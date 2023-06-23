@@ -135,12 +135,12 @@ public class EnemyInfo {
                 "enemyLocationOrGuess",
                 50,
                 () -> {
-                    APosition enemyBase = EnemyUnits.enemyBase();
+                    AUnit enemyBase = EnemyUnits.enemyBase();
                     if (enemyBase != null) {
                         return enemyBase.position();
                     }
 
-                    AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+                    AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
                     if (enemyBuilding != null) {
                         return enemyBuilding.position();
                     }
@@ -187,7 +187,7 @@ public class EnemyInfo {
         return Select.enemyCombatUnits().inRadius(20, main).nearestTo(main);
     }
 
-    public static boolean isProxyBuilding(AbstractFoggedUnit enemyBuilding) {
+    public static boolean isProxyBuilding(AUnit enemyBuilding) {
         if (A.seconds() >= 400 || !We.haveBase()) {
             return false;
         }

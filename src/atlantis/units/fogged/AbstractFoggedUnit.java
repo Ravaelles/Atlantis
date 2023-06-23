@@ -95,10 +95,10 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     public void updatePosition(AUnit unit) {
-//        if (unit.x() > 0 && unit.y() > 0) {
 //        System.out.println("unit = " + unit + " // " + _position);
-        if (unit.hasPosition()) {
-            _lastPosition = new APosition(unit.x(), unit.y());
+//        if (unit.hasPosition()) {
+        if (u() != null && unit.x() > 0 && unit.y() > 0) {
+            _lastPosition = APosition.createFromPixels(unit.x(), unit.y());
 //            System.out.println("_position = " + _position);
             cacheInt.set("lastPositionUpdated", -1, A.now());
         }
@@ -122,13 +122,21 @@ public class AbstractFoggedUnit extends AUnit {
         }
     }
 
-    public void positionUnknown() {
-        _lastPosition = null;
-        cacheInt.set("lastPositionUpdated", -1, A.now());
-    }
+//    public void positionUnknown() {
+//        _lastPosition = null;
+//        cacheInt.set("lastPositionUpdated", -1, A.now());
+//    }
 
-    public void removeKnownPosition() {
-        _lastPosition = null;
+    public void removeKnownPositionIfNeeded() {
+        if (_lastPosition != null) {
+            if (_lastPosition.isPositionVisible() || _lastType == null) {
+//                System.out.println("unit() = " + unit() + " / is_building:" + unit().isBuilding());
+//                    System.out.println("REMOVE LAST POSITION FOR " + _lastType);
+                if (_lastType != null && !_lastType.isBuilding()) {
+                    _lastPosition = null;
+                }
+            }
+        }
     }
 
     public int lastPositionUpdated() {

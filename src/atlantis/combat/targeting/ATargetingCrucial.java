@@ -211,7 +211,7 @@ public class ATargetingCrucial extends ATargeting {
                         AUnitType.Protoss_Dark_Templar,
                         AUnitType.Zerg_Scourge,
                         AUnitType.Zerg_Defiler,
-                        AUnitType.Zerg_Mutalisk
+                        AUnitType.Zerg_Guardian
                 )
                 .inShootRangeOf(unit)
                 .nearestTo(unit);

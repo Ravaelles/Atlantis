@@ -8,8 +8,9 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
 public class OptimalNumOfBunkerRepairers {
+
     public static int optimalRepairersForBunker(AUnit bunker) {
-        if (thereIsNooneToProtectInBunker(bunker)) {
+        if (thereIsNooneInsideTheBunker(bunker)) {
             return 0;
         }
 
@@ -64,7 +65,7 @@ public class OptimalNumOfBunkerRepairers {
         return false;
     }
 
-    private static boolean thereIsNooneToProtectInBunker(AUnit bunker) {
+    private static boolean thereIsNooneInsideTheBunker(AUnit bunker) {
         return bunker.loadedUnits().isEmpty()
             && bunker.friendsNear().terranInfantryWithoutMedics().inRadius(6, bunker).atMost(1);
     }

@@ -1209,9 +1209,9 @@ public class AAdvancedPainter extends APainter {
      * Can be helpful to illustrate or debug behavior or worker unit which is scouting around enemy base.
      */
     private static void paintEnemyRegionDetails() {
-        APosition enemyBase = EnemyUnits.enemyBase();
+        AUnit enemyBase = EnemyUnits.enemyBase();
         if (enemyBase != null) {
-            ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
+//            ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
             for (ARegionBoundary point : AScoutManager.scoutingAroundBasePoints.arrayList()) {
@@ -1350,9 +1350,9 @@ public class AAdvancedPainter extends APainter {
 
         paintRegionBoundaries(mainRegion);
 
-        APosition enemyBase = EnemyUnits.enemyBase();
+        AUnit enemyBase = EnemyUnits.enemyBase();
         if (enemyBase != null) {
-            paintRegionBoundaries(enemyBase.region());
+            paintRegionBoundaries(enemyBase.position().region());
         }
 
 //        List<ARegion> regions = Regions.regions();

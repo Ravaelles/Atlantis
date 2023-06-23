@@ -15,6 +15,7 @@ import atlantis.util.We;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class AConstructionManager {
 
@@ -32,9 +33,42 @@ public class AConstructionManager {
             handleConstructionUnderAttack(construction);
             handleConstructionThatLooksBugged(construction);
         }
+
+        fixForIdleBuilders();
     }
 
     // =========================================================
+
+    private static void fixForIdleBuilders() {
+        if (!We.terran()) {
+            return;
+        }
+
+        if (A.notNthGameFrame(27)) {
+            return;
+        }
+
+        for (AUnit worker : Select.ourWorkers().list()) {
+            if (worker.isIdle() && !worker.isGatheringMinerals()) {
+                List<AUnit> unfinished = Select.ourUnfinished()
+                    .buildings()
+                    .excludeTypes(AUnitType.Terran_Refinery)
+                    .sortDataByDistanceTo(worker, true);
+                for (AUnit construction : unfinished) {
+                    if (construction.type().isAddon()) {
+                        continue;
+                    }
+
+                    if (construction.friendsNear().workers().inRadius(0.6, construction).empty()) {
+                        worker.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction);
+                        worker.setTooltip("ConstructionUglyFix");
+                        System.out.println("### ConstructionUglyFix on " + construction);
+                        return;
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * If builder has died when constructing, replace him with new one.
@@ -276,7 +310,7 @@ public class AConstructionManager {
 
         AUnit main = Select.main();
         int timeout = 30 * (
-                20
+                14
                 + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 60 : 15)
                 + ((int) (2.9 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
         );

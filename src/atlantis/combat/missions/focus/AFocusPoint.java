@@ -33,11 +33,17 @@ public class AFocusPoint extends APosition {
 
     public AFocusPoint(AUnit unit, String name) {
         this(unit.position(), null, name);
+        this.unit = unit;
     }
 
-    public AFocusPoint(HasPosition position, String name) {
-        this(position, null, name);
+    public AFocusPoint(AUnit unit, HasPosition fromSide, String name) {
+        this(unit.position(), fromSide, name);
+        this.unit = unit;
     }
+
+//    public AFocusPoint(HasPosition position, String name) {
+//        this(position, null, name);
+//    }
 
     public AFocusPoint(AChoke choke, HasPosition fromSide) {
         this(choke, fromSide, null);
@@ -56,17 +62,6 @@ public class AFocusPoint extends APosition {
         this.name = name;
     }
 
-//    public AFocusPoint(HasPosition position, HasPosition fromSide) {
-//        super(position.position());
-//        this.fromSide = fromSide.position();
-//
-//        if (A.notUms() && position.position().equals(this.fromSide)) {
-//            System.err.println("AFocusPoint got fromSide being the same point.");
-//            A.printStackTrace();
-//            this.fromSide = null;
-//        }
-//    }
-
     // =========================================================
 
     public boolean isValid() {
@@ -74,7 +69,7 @@ public class AFocusPoint extends APosition {
             return !unit.isVisibleUnitOnMap() || (unit.hp() > 0 && unit.isVisibleUnitOnMap());
         }
         else {
-            return !this.isPositionVisible() || Select.our().inRadius(4, this).empty();
+            return !this.isPositionVisible() || Select.our().inRadius(3, this).empty();
         }
     }
 
@@ -83,9 +78,10 @@ public class AFocusPoint extends APosition {
     @Override
     public String toString() {
         return "Focus{" +
-            "from=" + fromSide +
-            ",choke=" + choke +
-            ",name='" + name + '\'' +
+            "name='" + name + '\'' +
+            ", unit=" + unit +
+//            ", from=" + fromSide +
+//            ", choke=" + choke +
             '}';
     }
 

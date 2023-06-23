@@ -66,14 +66,14 @@ public class EnemyUnits {
         );
     }
 
-    public static APosition enemyBase() {
-        return (APosition) cache.get(
+    public static AUnit enemyBase() {
+        return (AUnit) cache.get(
                 "enemyBase",
                 70,
                 () -> {
                     for (AbstractFoggedUnit enemyUnit : unitsDiscovered()) {
                         if (enemyUnit.isBase()) {
-                            return enemyUnit.position();
+                            return enemyUnit;
                         }
                     }
                     return null;
@@ -81,8 +81,8 @@ public class EnemyUnits {
         );
     }
 
-    public static AbstractFoggedUnit nearestEnemyBuilding() {
-        return (AbstractFoggedUnit) cache.get(
+    public static AUnit nearestEnemyBuilding() {
+        return (AUnit) cache.get(
                 "nearestEnemyBuilding",
                 50,
                 () -> {

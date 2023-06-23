@@ -8,14 +8,17 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.units.AUnit;
 
 public class ACombatCommander {
-    
+
     /**
      * Acts with all battle units.
      */
     public static void update() {
 
         // Global mission is de facto Alpha squad's mission
-        Alpha.get().setMission(Missions.globalMission());
+        Alpha alpha = Alpha.get();
+        if (alpha.mission() == null) {
+            alpha.setMission(Missions.globalMission());
+        }
 
         SquadTransfers.updateSquadTransfers();
 

@@ -45,7 +45,7 @@ public class TooClustered {
     }
 
     private static double minDistBetweenUnits(AUnit unit) {
-        double baseDist = 0.4;
+        double baseDist = preferedBaseDistToNextUnit(unit);
         int enemiesNear = unit.enemiesNearInRadius(4);
 
         if (enemiesNear <= 1 || unit.noCooldown()) {
@@ -63,6 +63,14 @@ public class TooClustered {
         }
 
         return baseDist;
+    }
+
+    private static double preferedBaseDistToNextUnit(AUnit unit) {
+        if (unit.isTank()) {
+            return 0.8;
+        }
+
+        return 0.4;
     }
 
     private static boolean tooClustered(

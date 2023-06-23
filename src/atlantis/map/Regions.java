@@ -1,5 +1,6 @@
 package atlantis.map;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.util.cache.Cache;
@@ -127,7 +128,9 @@ public class Regions {
             ARegion region = ARegion.create(AMap.getMap().getArea(position.toTilePosition()));
             return region;
         } catch (Exception e) {
-            System.err.println("Failed trying to get region for " + position);
+            if (!A.isUms() || A.everyNthGameFrame(77)) {
+                System.err.println("Failed trying to get region for " + position);
+            }
         }
 
         return null;

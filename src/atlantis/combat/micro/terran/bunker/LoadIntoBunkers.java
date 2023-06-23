@@ -34,7 +34,7 @@ public class LoadIntoBunkers {
 
         AUnit bunker = defineBunkerToLoadTo(unit);
 //        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
-        double maxDistanceToLoad = 8.2;
+        double maxDistanceToLoad = 5.9;
 
         if (bunker != null && bunker.hasFreeSpaceFor(unit)) {
             boolean canLoad;
@@ -46,11 +46,13 @@ public class LoadIntoBunkers {
             else {
                 double unitDistToBunker = bunker.distTo(unit);
                 double enemyDist = unit.distTo(nearestEnemy);
-                double enemyDistToBunker = nearestEnemy.distTo(bunker);
+//                double enemyDistToBunker = nearestEnemy.distTo(bunker);
 
-                canLoad = unitDistToBunker < maxDistanceToLoad
-                    && unitDistToBunker < enemyDistToBunker
-                    && (enemyDist < 1.6 || !enemiesNear.onlyMelee());
+                canLoad =
+                    (
+                        unitDistToBunker < maxDistanceToLoad
+                        && (enemyDist < 1.9 || !enemiesNear.onlyMelee())
+                    );
             }
 
             if (canLoad) {

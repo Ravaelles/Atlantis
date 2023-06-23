@@ -3,6 +3,7 @@ package atlantis.information.enemy;
 import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
+import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.select.Select;
 
 public class EnemyUnitsUpdater extends EnemyUnits {
@@ -37,9 +38,9 @@ public class EnemyUnitsUpdater extends EnemyUnits {
      * If so, change it, because it means we don't know where it is.
      */
     private static void updatedFogged(AbstractFoggedUnit foggedUnit) {
-        AUnit aUnit = foggedUnit.innerAUnit();
+//        AUnit aUnit = foggedUnit.innerAUnit();
 //        System.out.println(aUnit + " // visible: " + (aUnit != null ? aUnit.isVisibleUnitOnMap() : "---"));
-        if (aUnit == null || !aUnit.isVisibleUnitOnMap()) {
+//        if (aUnit == null || !aUnit.isVisibleUnitOnMap()) {
 //            if (foggedUnit.hasPosition()) {
 //                APainter.paintCircleFilled(
 //                    foggedUnit,
@@ -48,11 +49,11 @@ public class EnemyUnitsUpdater extends EnemyUnits {
 //                );
 //            }
 
-            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible()) {
+//            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible() && foggedUnit.u() == null) {
 //                System.out.println(">> Fogged unit is no longer visible, remove position " + foggedUnit);
-                foggedUnit.removeKnownPosition();
-            }
-        }
+            foggedUnit.removeKnownPositionIfNeeded();
+//            }
+//        }
     }
 
     /**
@@ -70,6 +71,11 @@ public class EnemyUnitsUpdater extends EnemyUnits {
     }
 
     public static void removeFoggedUnit(AUnit enemyUnit) {
+        if (enemyUnit instanceof FoggedUnit) {
+            FoggedUnit foggedUnit = (FoggedUnit) enemyUnit;
+            foggedUnit.removeKnownPositionIfNeeded();
+        }
+
         enemyUnitsDiscovered.remove(enemyUnit.id());
         cache.clear();
     }

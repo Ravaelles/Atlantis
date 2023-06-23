@@ -57,7 +57,7 @@ public class Bases {
 //        // Sort them all by closest to given nearestTo position
 //        startingLocations.sortByDistanceTo(nearestTo, true);
 
-        APosition enemyBase = EnemyUnits.enemyBase();
+        AUnit enemyBase = EnemyUnits.enemyBase();
 
         // For every location...
         for (ABaseLocation baseLocation : nonStartingLocations()) {
@@ -117,7 +117,7 @@ public class Bases {
      * Returns free base location which is as far from enemy starting location as possible.
      */
     public static ABaseLocation expansionBaseLocationMostDistantToEnemy() {
-        APosition farthestTo = EnemyUnits.enemyBase();
+        AUnit farthestTo = EnemyUnits.enemyBase();
         if (farthestTo == null) {
             return expansionFreeBaseLocationNearestTo(Select.ourBases().first().position());
         }
@@ -129,9 +129,7 @@ public class Bases {
         baseLocations.addPositions(baseLocations());
 
         // Sort them all by closest to given nearestTo position
-        if (farthestTo != null) {
-            baseLocations.sortByDistanceTo(farthestTo, false);
-        }
+        baseLocations.sortByDistanceTo(farthestTo, false);
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
@@ -293,12 +291,12 @@ public class Bases {
                 "enemyNatural",
                 60,
                 () -> {
-                    APosition enemyBase = EnemyUnits.enemyBase();
+                    AUnit enemyBase = EnemyUnits.enemyBase();
                     if (enemyBase == null) {
                         return null;
                     }
 
-                    ABaseLocation baseLocation = natural(enemyBase);
+                    ABaseLocation baseLocation = natural(enemyBase.position());
                     if (baseLocation != null) {
                         return baseLocation.position().translateByTiles(2, 0);
                     }

@@ -61,7 +61,7 @@ public class ATargetingImportant extends ATargeting {
             return combatBuildingOrScvRepairingIt(target);
         }
 
-        target = Select.enemy()
+        target = enemyUnits
                 .ofType(
                         AUnitType.Protoss_Photon_Cannon,
                         AUnitType.Terran_Bunker,
@@ -71,6 +71,30 @@ public class ATargetingImportant extends ATargeting {
                 .nearestTo(unit);
         if (target != null) {
             return combatBuildingOrScvRepairingIt(target);
+        }
+
+        // =========================================================
+
+        target = enemyUnits
+            .ofType(
+                AUnitType.Zerg_Devourer
+            )
+//                .inShootRangeOf(unit)
+            .inRadius(15, unit)
+            .mostWounded();
+        if (target != null) {
+            return target;
+        }
+
+        target = enemyUnits
+            .ofType(
+                AUnitType.Zerg_Mutalisk
+            )
+//                .inShootRangeOf(unit)
+            .inRadius(15, unit)
+            .mostWounded();
+        if (target != null) {
+            return target;
         }
 
         // =========================================================

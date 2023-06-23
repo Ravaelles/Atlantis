@@ -24,7 +24,8 @@ public class OnUnitDestroyed {
                 Atlantis.LOST_RESOURCES += unit.type().getTotalResources();
             }
         }
-        else if (unit.isEnemy() && unit.isRealUnit()) {
+//        else if (unit.isEnemy() && unit.isRealUnit()) {
+        else if (unit.isEnemy()) {
             EnemyInfo.removeDiscoveredUnit(unit);
             if (!unit.type().isGeyser()) {
                 Atlantis.KILLED++;

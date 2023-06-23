@@ -72,13 +72,13 @@ public class SquadScout {
     private static APosition positionToEngageEarlyOn(AUnit squadScout) {
         APosition positionToEngage = null;
 
-        APosition enemyBase = EnemyUnits.enemyBase();
+        AUnit enemyBase = EnemyUnits.enemyBase();
         if (enemyBase != null) {
-            positionToEngage = enemyBase;
+            positionToEngage = enemyBase.position();
         }
 
         if (positionToEngage == null) {
-            AbstractFoggedUnit nearestEnemyBuilding = EnemyUnits.nearestEnemyBuilding();
+            AUnit nearestEnemyBuilding = EnemyUnits.nearestEnemyBuilding();
             if (nearestEnemyBuilding != null) {
                 positionToEngage = nearestEnemyBuilding.position();
             }

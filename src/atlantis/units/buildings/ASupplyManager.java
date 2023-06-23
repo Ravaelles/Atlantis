@@ -26,8 +26,8 @@ public class ASupplyManager {
             return;
         }
 
-        if (!A.hasFreeSupply(1) && A.supplyUsed() <= 60 && A.hasMinerals(300)) {
-            if (requestedConstructionsOfSupply() <= 1) {
+        if (!A.hasFreeSupply(1) && A.supplyUsed() <= 170 && A.hasMinerals(300)) {
+            if (requestedConstructionsOfSupply() <= 2) {
                 requestAdditionalSupply();
                 return;
             }

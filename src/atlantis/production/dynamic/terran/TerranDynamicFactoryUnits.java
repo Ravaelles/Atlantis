@@ -49,11 +49,23 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
             return false;
         }
 
+        int tanks = Select.ourWithUnfinished().tanks().count();
+
+        if (tanks >= 5) {
+            if (!AGame.canAffordWithReserved(250, 150)) {
+                return false;
+            }
+        }
+
+        if (tanks >= 2 && Enemy.zerg() && Count.ofType(AUnitType.Terran_Wraith) <= 1) {
+            if (!AGame.canAffordWithReserved(300, 200)) {
+                return false;
+            }
+        }
+
         if (Count.infantry() >= 6 && Count.medics() <= 1) {
             return A.canAfford(175, 75);
         }
-
-        int tanks = Select.ourWithUnfinished().tanks().count();
 
         if (Enemy.terran() && tanks >= 1 && !ATech.isResearched(Tank_Siege_Mode)) {
             if (!AGame.canAffordWithReserved(150, 100)) {

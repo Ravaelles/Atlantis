@@ -61,7 +61,8 @@ public class ATargetingForAirUnits {
                     AUnitType.Terran_Siege_Tank_Siege_Mode,
                     AUnitType.Terran_Siege_Tank_Tank_Mode,
 
-                    AUnitType.Zerg_Defiler
+                    AUnitType.Zerg_Defiler,
+                    AUnitType.Zerg_Guardian
                 )
 //                .inShootRangeOf(unit)
                 .inRadius(15, unit)

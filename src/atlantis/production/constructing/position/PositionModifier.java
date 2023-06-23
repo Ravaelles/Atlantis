@@ -91,7 +91,7 @@ public class PositionModifier {
         }
         else if (modifier.equals(ENEMY_MAIN)) {
             AChoke enemyMainChoke = Chokes.enemyMainChoke();
-            APosition enemyBase = EnemyUnits.enemyBase();
+            AUnit enemyBase = EnemyUnits.enemyBase();
             if (enemyBase != null && enemyMainChoke != null) {
                 APosition at = enemyBase.translateTilesTowards(14, enemyMainChoke);
                 return APositionFinder.findStandardPosition(builder, building, at, 10);

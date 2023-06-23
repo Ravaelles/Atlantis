@@ -36,14 +36,14 @@ public class AScoutManager {
     public static boolean MAKE_CAMERA_FOLLOW_SCOUT_AROUND_BASE = false;
 
     // =========================================================
-    
+
     /**
      * Current scout unit.
      */
     private static final ArrayList<AUnit> scouts = new ArrayList<>();
 
     private static boolean anyScoutBeenKilled = false;
-    
+
     public static Positions<ARegionBoundary> scoutingAroundBasePoints = new Positions<>();
     private static int scoutingAroundBaseNextPolygonIndex = -1;
     private static HasPosition scoutingAroundBaseLastPolygonPoint = null;
@@ -95,7 +95,7 @@ public class AScoutManager {
 //        if (true) return;
 
         // === Handle UMS ==========================================
-        
+
         if (AGame.isUms()) {
             return;
         }
@@ -127,7 +127,7 @@ public class AScoutManager {
             return scout.move(nextPositionToScout, Actions.MOVE_SCOUT, "ScoutBases" + A.now(), true);
         }
 
-        AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+        AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
         APosition position = enemyBuilding != null ? enemyBuilding.position() : scout.position();
         nextPositionToScout = Bases.nearestUnexploredStartingLocation(position);
         if (nextPositionToScout != null) {
@@ -184,9 +184,15 @@ public class AScoutManager {
 
         // === Remain at the enemy base if it's known ==============
 
-        APosition enemy = EnemyUnits.enemyBase();
+        AUnit enemyBase = EnemyUnits.enemyBase();
+        APosition enemy = null;
+
+        if (enemyBase != null) {
+            enemy = enemyBase.position();
+        }
+
         if (enemy == null) {
-            AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+            AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
             if (enemyBuilding != null) {
                 enemy = enemyBuilding.position();
             }
@@ -211,7 +217,7 @@ public class AScoutManager {
 
         return false;
     }
-    
+
     // =========================================================
 
     /**
@@ -383,10 +389,10 @@ public class AScoutManager {
         return nearest;
     }
 
-    public static APosition getUmsFocusPoint(APosition startPosition) {
-        ARegion nearestUnexploredRegion = Regions.getNearestUnexploredRegion(startPosition);
-        return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.center()) : null;
-    }
+//    public static APosition getUmsFocusPoint(APosition startPosition) {
+//        ARegion nearestUnexploredRegion = Regions.getNearestUnexploredRegion(startPosition);
+//        return nearestUnexploredRegion != null ? APosition.create(nearestUnexploredRegion.center()) : null;
+//    }
 
     // =========================================================
     /**

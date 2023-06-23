@@ -208,7 +208,10 @@ public class AWorkerDefenceManager {
         // FIGHT against ZERGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).list()) {
 //            if ((worker.hp() <= 20 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
-            if (worker.hp() <= 20) {
+            if (
+                worker.hp() <= 20
+                || (worker.hp() <= 54 && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty())
+            ) {
                 worker.setTooltipTactical("Aaargh!");
                 worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, true);
                 return true;
@@ -223,7 +226,10 @@ public class AWorkerDefenceManager {
                 .canBeAttackedBy(worker, 2)
                 .list();
         for (AUnit enemy : enemies) {
-            if (worker.hp() <= 20) {
+            if (
+                worker.hp() <= 20
+                || (worker.hp() <= 39 && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty())
+            ) {
                 worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, false);
                 return true;
             }
@@ -307,5 +313,5 @@ public class AWorkerDefenceManager {
 //
 //        return false;
 //    }
-    
+
 }

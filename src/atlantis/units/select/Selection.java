@@ -228,6 +228,20 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection guardians() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Zerg_Guardian)),
+            "guardians"
+        );
+    }
+
+    public Selection mutalisks() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Zerg_Mutalisk)),
+            "mutalisks"
+        );
+    }
+
     public Selection tanks() {
         return cloneByRemovingIf(unit -> !unit.is(
             AUnitType.Terran_Siege_Tank_Siege_Mode,

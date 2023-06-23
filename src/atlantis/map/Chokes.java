@@ -4,6 +4,7 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.units.AUnit;
 import atlantis.util.cache.Cache;
 import bwem.ChokePoint;
 import jbweb.JBWEB;
@@ -172,7 +173,7 @@ public class Chokes {
     }
 
     public static AChoke enemyMainChoke() {
-        APosition enemyMain = EnemyUnits.enemyBase();
+        AUnit enemyMain = EnemyUnits.enemyBase();
         if (enemyMain == null) {
             return null;
         }

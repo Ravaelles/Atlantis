@@ -23,6 +23,10 @@ public class AvoidCriticalUnits {
             return true;
         }
 
+        if (avoidGuardian(unit)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -64,6 +68,20 @@ public class AvoidCriticalUnits {
 
     private static boolean avoidLurkers(AUnit unit) {
         if (unit.isAir() || unit.isBuilding()) {
+            return false;
+        }
+
+        AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(7.7, unit).nearestTo(unit);
+        if (lurker == null) {
+            return false;
+        }
+
+        unit.runningManager().runFromAndNotifyOthersToMove(lurker, "LURKER!");
+        return true;
+    }
+
+    private static boolean avoidGuardian(AUnit unit) {
+        if (unit.isAir() || unit.isBuilding() || unit.canAttackAirUnits()) {
             return false;
         }
 

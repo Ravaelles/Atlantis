@@ -106,11 +106,13 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     }
 
     private static void starport() {
-        if (!ATech.isResearched(Tank_Siege_Mode)) {
-            return;
-        }
+//        if (!ATech.isResearched(Tank_Siege_Mode)) {
+//            return;
+//        }
 
-        if (A.supplyUsed() >= 90 && Have.factory() && Have.notEvenPlanned(Terran_Starport)) {
+        int minSupply = Enemy.zerg() ? 60 : 90;
+
+        if (A.supplyUsed() >= minSupply && Have.factory() && Have.notEvenPlanned(Terran_Starport)) {
             AddToQueue.withStandardPriority(Terran_Starport);
         }
     }
@@ -147,14 +149,14 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
     private static boolean factories() {
         if (AGame.canAffordWithReserved(160, 120)) {
             Selection factories = Select.ourOfType(Terran_Factory);
-            
-            int unfinishedFactories = 
+
+            int unfinishedFactories =
                     ConstructionRequests.countNotFinishedOfType(Terran_Factory);
             int numberOfFactories = factories.size() + unfinishedFactories;
-            
+
             // Proceed only if all factories are busy
             if (numberOfFactories >= 1 && factories.areAllBusy()) {
-                
+
                 if (unfinishedFactories == 0) {
                     AddToQueue.withHighPriority(Terran_Factory);
                     return true;

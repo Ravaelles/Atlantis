@@ -8,6 +8,7 @@ import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
+import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
@@ -25,7 +26,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
             () -> {
                 if (We.terran() && We.haveBase()) {
 //                        if (!EnemyInformation.hasDefensiveLandBuilding()) {
-                    AbstractFoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+                    AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
                     if (
                         enemyBuilding != null
                             && enemyBuilding.position() != null
@@ -98,8 +99,8 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //            return nearestEnemy.position();
 //        }
 
-                APosition enemyBase = EnemyUnits.enemyBase();
-                if (enemyBase != null && enemyBase.position() != null) {
+                AUnit enemyBase = EnemyUnits.enemyBase();
+                if (enemyBase != null && enemyBase.hasPosition()) {
                     return new AFocusPoint(
                         enemyBase,
                         Select.main(),
