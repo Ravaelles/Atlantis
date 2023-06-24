@@ -44,6 +44,7 @@ import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import atlantis.util.MappingCounter;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLogging;
 import atlantis.util.log.LogMessage;
 import bwapi.Color;
 import bwapi.TechType;
@@ -712,7 +713,7 @@ public class AAdvancedPainter extends APainter {
     private static void paintConstructionPlace(APosition positionToBuild, AUnitType buildingType, String text, Color color) {
         if (positionToBuild == null) {
             if (Select.main() != null) {
-                System.err.println(buildingType + " has no position to build");
+                ErrorLogging.printErrorOnce(buildingType + " has no position to build");
 //                throw new Exception("That's unacceptable, lad!");
                 return;
             } else {

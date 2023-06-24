@@ -1,7 +1,6 @@
 package atlantis.combat.targeting;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -106,7 +105,7 @@ public class ATargeting {
 
         if (enemy == null) {
 //            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
-            enemy = unit.enemiesNear().realUnitsButAllowBuildings().canBeAttackedBy(unit, 0).nearestTo(unit);
+            enemy = unit.enemiesNear().realUnitsAndBuildings().canBeAttackedBy(unit, 0).nearestTo(unit);
             if (enemy != null) {
                 System.err.println("DefineTarget fix for " + unit + ", chosen " + enemy);
             }

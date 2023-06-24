@@ -2179,7 +2179,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             () -> {
                 if (unit().isOur()) {
                     return EnemyUnits.discovered()
-                        .realUnitsButAllowBuildings()
+                        .realUnitsAndBuildings()
                         .inRadius(15, this)
                         .exclude(this);
                 }
@@ -2192,7 +2192,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                         .exclude(this);
                 }
                 else {
-                    System.err.println("This is weird, should not be here");
+                    System.err.println("enemiesNear invoked for neutral?");
                     System.err.println("ThisContext = " + this);
                     System.err.println("alive = " + unit().isAlive());
                     A.printStackTrace("This is weird, should not be here");

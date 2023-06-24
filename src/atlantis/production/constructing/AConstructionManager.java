@@ -62,7 +62,7 @@ public class AConstructionManager {
                     if (construction.friendsNear().workers().inRadius(0.6, construction).empty()) {
                         worker.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction);
                         worker.setTooltip("ConstructionUglyFix");
-                        System.out.println("### ConstructionUglyFix on " + construction);
+//                        System.out.println("### ConstructionUglyFix on " + construction);
                         return;
                     }
                 }

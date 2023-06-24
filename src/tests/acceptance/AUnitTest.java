@@ -42,10 +42,10 @@ public class AUnitTest extends AbstractTestFakingGame {
     }
 
     @Test
-    public void ourOrEnemy() {
+    public void ourAndEnemyCount() {
         createWorld(1, () -> {
             EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon = fakeEnemy(Protoss_Photon_Cannon, 18));
-            
+
             assertTrue(fake(AUnitType.Terran_Marine).isOur());
             assertFalse(fake(AUnitType.Terran_Marine).isEnemy());
 

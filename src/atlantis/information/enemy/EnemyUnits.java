@@ -28,9 +28,9 @@ public class EnemyUnits {
             .add(unitsDiscovered())
 //            .print("now with enemy")
             .removeDuplicates()
-//            .print("now after removal")
+//            .print("after removing duplicates")
             .havingPosition();
-//            .print("and having position?");
+//            .print("and having position");
     }
 
     // =========================================================

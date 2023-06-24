@@ -336,9 +336,9 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection realUnitsButAllowBuildings() {
+    public Selection realUnitsAndBuildings() {
         return cloneByRemovingIf(
-            (unit -> !unit.isRealUnitOrBuilding()), "realUnitsButAllowBuildings"
+            (unit -> !unit.isRealUnitOrBuilding()), "realUnitsAndBuildings"
         );
     }
 

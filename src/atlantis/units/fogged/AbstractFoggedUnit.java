@@ -28,6 +28,7 @@ public class AbstractFoggedUnit extends AUnit {
     protected APosition _lastPosition;
     protected AUnitType _lastType;
     protected boolean _isCompleted;
+    protected boolean _isCloaked = false;
     protected Cache<Integer> cacheInt = new Cache<>();
 
     // =========================================================
@@ -88,6 +89,7 @@ public class AbstractFoggedUnit extends AUnit {
         updateType(unit);
         aUnit = unit;
         _isCompleted = unit.isCompleted();
+        _isCloaked = unit.isCloaked();
         _hp = unit.hp();
         _energy = unit.energy();
         _shields = unit.shields();
@@ -95,9 +97,10 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     public void updatePosition(AUnit unit) {
-//        System.out.println("unit = " + unit + " // " + _position);
+//        System.err.println("unit = " + unit + " // " + unit.position());
 //        if (unit.hasPosition()) {
-        if (u() != null && unit.x() > 0 && unit.y() > 0) {
+//        if (u() != null && unit.x() > 0 && unit.y() > 0) {
+        if (unit.x() > 0 && unit.y() > 0) {
             _lastPosition = APosition.createFromPixels(unit.x(), unit.y());
 //            System.out.println("_position = " + _position);
             cacheInt.set("lastPositionUpdated", -1, A.now());

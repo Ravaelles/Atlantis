@@ -13,6 +13,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.log.ErrorLogging;
 import bwapi.Color;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class TerranCommandCenter {
         ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(building);
 
         if (baseLocation == null && !Env.isTesting()) {
-            System.err.println("No expansionFreeBaseLocationNearestTo for rebasing");
+            ErrorLogging.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
             return false;
         }
 
@@ -60,7 +61,7 @@ public class TerranCommandCenter {
         }
 
         if (rebaseTo == null) {
-            System.err.println("Null rebaseTo");
+            ErrorLogging.printErrorOnce("Null rebaseTo");
             return false;
         }
 

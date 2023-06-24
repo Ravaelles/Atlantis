@@ -1,5 +1,6 @@
 package atlantis.units.fogged;
 
+import atlantis.config.env.Env;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import tests.fakes.FakePlayer;
@@ -28,14 +29,22 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
     // =========================================================
 
     protected void updateType(AUnit unit) {
-        _lastType = ((FakeUnit) unit).rawType;
+        if (unit instanceof FakeUnit) {
+            _lastType = ((FakeUnit) unit).rawType;
+        } else if (unit instanceof AbstractFoggedUnit) {
+            _lastType = ((AbstractFoggedUnit) unit)._lastType;
+        }
     }
 
     // =========================================================
 
     @Override
     public APosition position() {
-        return aUnit.position();
+//        if (aUnit.x() > 0) {
+//            return aUnit.position();
+//        }
+
+        return _lastPosition;
     }
 
     @Override
@@ -58,7 +67,8 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
 
     @Override
     public boolean isCloaked() {
-        return aUnit.isCloaked();
+        return _isCloaked;
+//        return aUnit.isCloaked();
     }
 
     @Override

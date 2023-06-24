@@ -12,21 +12,21 @@ import java.util.ArrayList;
 public class ABuildOrderLoader {
 
     final int NUMBER_OF_COLUMNS_IN_FILE = 2;
-    
+
     /**
      * Directory that contains build orders.
      */
     public static final String BUILD_ORDERS_PATH = "bwapi-data/AI/build_orders/";
 
     // =========================================================
-    
+
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
 //        String filePath = BUILD_ORDERS_PATH + buildOrder.getBuildOrderRelativePath();
         String filePath = "./" + BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.name() + ".txt";
 
-        if (Env.isTesting()) {
-            filePath = "." + filePath; // Fix for tests: Replace ./ with ../
-        }
+//        if (Env.isTesting()) {
+//            filePath = ".." + filePath; // Fix for tests: Replace ./ with ../
+//        }
 
 //        System.out.println("\r\nUse build order from file: `" + strategy.name() + ".txt`");
 

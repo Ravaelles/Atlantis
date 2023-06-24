@@ -66,6 +66,7 @@ public class EnemyUnitsUpdater extends EnemyUnits {
 
     public static void addFoggedUnit(AUnit enemyUnit) {
         AbstractFoggedUnit foggedUnit = AbstractFoggedUnit.from(enemyUnit);
+        foggedUnit.update(enemyUnit);
 
         enemyUnitsDiscovered.put(enemyUnit.id(), foggedUnit);
     }
