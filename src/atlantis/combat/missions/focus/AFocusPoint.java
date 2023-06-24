@@ -5,6 +5,7 @@ import atlantis.map.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
 
 /**
@@ -66,7 +67,8 @@ public class AFocusPoint extends APosition {
 
     public boolean isValid() {
         if (unit != null) {
-            return !unit.isVisibleUnitOnMap() || (unit.hp() > 0 && unit.isVisibleUnitOnMap());
+            return (!unit.isVisibleUnitOnMap() && unit instanceof AbstractFoggedUnit)
+                || (unit.hp() > 0 && unit.isVisibleUnitOnMap());
         }
         else {
             return !this.isPositionVisible() || Select.our().inRadius(3, this).empty();

@@ -117,7 +117,7 @@ public class DanceAfterShoot {
             return true;
         }
 
-        if (!unit.isAttacking()) {
+        if (!unit.isAttacking() && unit.noCooldown()) {
             return true;
         }
 

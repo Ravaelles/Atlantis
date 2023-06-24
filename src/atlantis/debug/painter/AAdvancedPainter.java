@@ -324,7 +324,6 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintSidebarInfo() {
         Color color;
-        Mission mission = Alpha.get().mission();
 
         // Time
         if (AGame.isUms()) {
@@ -341,6 +340,7 @@ public class AAdvancedPainter extends APainter {
                 ? EnemyStrategy.get().toString() : "Unknown"),
                 EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
 
+        Mission mission = Missions.globalMission();
         if (mission.isMissionDefend()) {
             color = Color.White;
         } else if (mission.isMissionContain()) {
@@ -348,7 +348,17 @@ public class AAdvancedPainter extends APainter {
         } else {
             color = Color.Orange;
         }
-        paintSideMessage("Mission: " + mission.name() + " (" + Missions.counter() + ")", color);
+        paintSideMessage("Global mission: " + mission.name() + " (" + Missions.counter() + ")", color);
+
+        mission = Alpha.get().mission();
+        if (mission.isMissionDefend()) {
+            color = Color.White;
+        } else if (mission.isMissionContain()) {
+            color = Color.Teal;
+        } else {
+            color = Color.Orange;
+        }
+        paintSideMessage("Alpha mission: " + Alpha.get().mission().name(), color);
 
 //        AFocusPoint focus = mission.focusPoint();
         paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.White);
@@ -1155,7 +1165,7 @@ public class AAdvancedPainter extends APainter {
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
     static void paintFoggedUnits() {
-        for (AbstractFoggedUnit foggedEnemy : EnemyUnits.unitsDiscovered()) {
+        for (AbstractFoggedUnit foggedEnemy : EnemyUnits.rawUnitsDiscovered()) {
             if (!foggedEnemy.hasPosition()) {
                 continue;
             }

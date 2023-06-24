@@ -30,7 +30,6 @@ public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
         int mutas = Count.mutas();
 
         if (mutas <= 2) {
-            System.out.println("mutas = " + mutas);
             AddToQueue.withHighPriority(AUnitType.Zerg_Mutalisk);
             AddToQueue.withHighPriority(AUnitType.Zerg_Mutalisk);
             AddToQueue.withHighPriority(AUnitType.Zerg_Mutalisk);

@@ -10,7 +10,7 @@ import atlantis.units.select.Selection;
 public class LoadIntoBunkers {
 
     public static boolean tryLoadingInfantryIntoBunkerIfNeeded(AUnit unit) {
-        if (unit.lastActionLessThanAgo(10, Actions.LOAD)) {
+        if (unit.lastActionLessThanAgo(15, Actions.LOAD)) {
             unit.addLog("Loading");
             return true;
         }
@@ -51,7 +51,7 @@ public class LoadIntoBunkers {
                 canLoad =
                     (
                         unitDistToBunker < maxDistanceToLoad
-                        && (enemyDist < 1.9 || !enemiesNear.onlyMelee())
+                        && (enemyDist < 1.9 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6)
                     );
             }
 

@@ -100,7 +100,7 @@ public abstract class Squad extends Units {
         if (size() <= 0) {
             return null;
         }
-        
+
         if (squadCenter.isInvalid(_centerUnit)) {
             _centerUnit = squadCenter.centerUnit();
         }
@@ -144,7 +144,10 @@ public abstract class Squad extends Units {
             return;
         }
 
-        System.err.println("Squad " + name() + " change mission: " + mission);
+        if (this.mission != null) {
+            System.err.println("Squad " + name() + " change mission: " + mission);
+        }
+
 //        if (size() > 0 && mission.isMissionDefend()) {
 //            A.printStackTrace("Why DEFEND? " + mission);
 //        }
@@ -265,7 +268,7 @@ public abstract class Squad extends Units {
                         return 0;
                     }
 
-                    return focusPoint.distTo(center());
+                    return (double) focusPoint.distTo(center());
                 }
         );
     }

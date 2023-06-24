@@ -20,32 +20,46 @@ public class OptimalNumOfBunkerRepairers {
             return 0;
         }
 
-        int enemiesVeryNear = potentialEnemies.inRadius(10, bunker).count();
-        int enemiesQuiteFar = potentialEnemies.count() - enemiesVeryNear;
+        int enemiesNear = potentialEnemies.inRadius(10, bunker).count();
+        int enemiesFar = potentialEnemies.count() - enemiesNear;
         double optimalNumber = 0;
 
         if (Enemy.protoss()) {
-            optimalNumber = enemiesVeryNear + enemiesQuiteFar * 0.2;
+            optimalNumber = enemiesNear + enemiesFar * 0.2;
         }
         else if (Enemy.terran()) {
-            optimalNumber = enemiesVeryNear * 0.38 + enemiesQuiteFar * 0.1;
+            optimalNumber = enemiesNear * 0.38 + enemiesFar * 0.1;
         }
         else if (Enemy.zerg()) {
-            optimalNumber = enemiesVeryNear * 0.4 + enemiesQuiteFar * 0.15;
+            optimalNumber = enemiesNear * 0.55 + enemiesFar * 0.25;
         }
 
         if (bunker.hp() < 250) {
             optimalNumber += 2;
         }
 
+        Selection enemiesVeryNear = potentialEnemies.inRadius(4, bunker);
         if (
-            potentialEnemies.inRadius(4, bunker).atMost(2)
+            enemiesVeryNear.atMost(2)
             && thereIsAnotherBunkerNearbyThatIsInBiggerDanger(bunker)
         ) {
             optimalNumber = 1 + (bunker.isHealthy() ? 0 : (bunker.woundPercent() / 25));
         }
 
-        return Math.min(A.hasMinerals(20) ? 7 : 3, (int) Math.ceil(optimalNumber));
+        if (enemiesVeryNear.empty() && potentialEnemies.ranged().atMost(1)) {
+            optimalNumber = Math.min(bunker.isHealthy() ? 0 : 1, optimalNumber);
+        }
+
+        if (optimalNumber > 1) {
+            if (!A.hasMinerals(7)) {
+                return 2;
+            }
+            else if (!A.hasMinerals(1)) {
+                return 1;
+            }
+        }
+
+        return Math.min(7, (int) Math.floor(optimalNumber));
     }
 
     private static boolean thereIsAnotherBunkerNearbyThatIsInBiggerDanger(AUnit bunker) {

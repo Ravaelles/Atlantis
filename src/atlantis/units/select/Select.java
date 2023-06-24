@@ -102,7 +102,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 0,
                 () -> {
                     List<AUnit> data = new ArrayList<>();
-                    data.addAll(EnemyUnits.unitsDiscovered());
+                    data.addAll(EnemyUnits.discovered().list());
 
                     return new Selection(data, cachePath);
                 }

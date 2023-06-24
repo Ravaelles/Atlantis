@@ -2,12 +2,14 @@ package atlantis.units.select;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.util.cache.CachePathKey;
 
 import java.util.*;
@@ -242,6 +244,13 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection hydralisks() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Zerg_Hydralisk)),
+            "hydralisks"
+        );
+    }
+
     public Selection tanks() {
         return cloneByRemovingIf(unit -> !unit.is(
             AUnitType.Terran_Siege_Tank_Siege_Mode,
@@ -416,6 +425,13 @@ public class Selection extends BaseSelection {
      */
     public Selection havingPosition() {
         return cloneByRemovingIf(u -> !u.hasPosition(), "havingPosition");
+    }
+
+    public Selection beingVisibleUnitOrNotVisibleFoggedUnit() {
+        return cloneByRemovingIf(
+            u -> u.u() != null || ((u instanceof AbstractFoggedUnit) && !u.position().isPositionVisible()),
+            "beingVisibleUnitOrNotVisibleFoggedUnit"
+        );
     }
 
     public int countRunning(int maxStartedRunningAgo) {

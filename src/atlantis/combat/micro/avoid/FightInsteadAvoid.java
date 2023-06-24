@@ -32,7 +32,7 @@ public class FightInsteadAvoid {
     protected final AUnit vulture;
     protected final AUnit ranged;
     protected final AUnit melee;
-    private final TerranFightInsteadAvoid terranFightInsteadAvoid = new TerranFightInsteadAvoid();
+    private final TerranInfantryFightInsteadAvoid terranFightInsteadAvoid = new TerranInfantryFightInsteadAvoid();
 
     // =========================================================
 
@@ -213,6 +213,44 @@ public class FightInsteadAvoid {
 
         if (forbidAntiAirAbandoningCloseTargets(unit)) {
             unit.setTooltipTactical("DontAbandonCloseTargetz");
+            return true;
+        }
+
+        if (forWraith(unit)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean forWraith(AUnit unit) {
+        if (!unit.isWraith()) {
+            return false;
+        }
+
+        if (unit.hp() <= 40 || unit.cooldown() <= 3) {
+            return false;
+        }
+
+        if (
+            unit.enemiesNear().effVisible().inRadius(12, unit).ofType(
+                AUnitType.Protoss_Carrier,
+                AUnitType.Zerg_Guardian
+            ).notEmpty()
+        ) {
+            unit.setTooltip("AntiAirBravery");
+            return true;
+        }
+
+        if (
+            unit.enemiesNear().effVisible().inRadius(7, unit).ofType(
+                AUnitType.Protoss_Arbiter,
+                AUnitType.Terran_Battlecruiser,
+                AUnitType.Terran_Wraith,
+                AUnitType.Zerg_Mutalisk
+            ).notEmpty()
+        ) {
+            unit.setTooltip("AntiAirBravery");
             return true;
         }
 

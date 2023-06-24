@@ -188,6 +188,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public UnitType bwapiType() {
+        if (this instanceof AbstractFoggedUnit) {
+            return type().ut();
+        }
         return u.getType();
     }
 

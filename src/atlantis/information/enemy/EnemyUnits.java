@@ -1,6 +1,5 @@
 package atlantis.information.enemy;
 
-import atlantis.map.position.APosition;
 import atlantis.units.*;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
@@ -25,11 +24,12 @@ public class EnemyUnits {
 //        return Select.from(Select.enemy(), "")
         return Select.enemy()
 //            .print("visibleAndFogged")
-            .add(unitsDiscovered())
+            .add(rawUnitsDiscovered())
 //            .print("now with enemy")
             .removeDuplicates()
 //            .print("after removing duplicates")
             .havingPosition();
+//            .beingVisibleUnitOrNotVisibleFoggedUnit();
 //            .print("and having position");
     }
 
@@ -40,7 +40,7 @@ public class EnemyUnits {
         enemyUnitsDiscovered.clear();
     }
 
-    public static Collection<AbstractFoggedUnit> unitsDiscovered() {
+    public static Collection<AbstractFoggedUnit> rawUnitsDiscovered() {
         return enemyUnitsDiscovered.values();
     }
 
@@ -62,7 +62,7 @@ public class EnemyUnits {
         return (Selection) cache.get(
             "foggedUnits",
             0,
-            () -> Select.from(unitsDiscovered(), "foggedUnits")
+            () -> Select.from(rawUnitsDiscovered(), "foggedUnits")
         );
     }
 
@@ -71,7 +71,7 @@ public class EnemyUnits {
                 "enemyBase",
                 70,
                 () -> {
-                    for (AbstractFoggedUnit enemyUnit : unitsDiscovered()) {
+                    for (AbstractFoggedUnit enemyUnit : rawUnitsDiscovered()) {
                         if (enemyUnit.isBase()) {
                             return enemyUnit;
                         }

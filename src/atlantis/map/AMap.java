@@ -85,7 +85,7 @@ public class AMap {
         return Atlantis.game().mapHeight();
     }
 
-    // === Choke points ========================================    
+    // === Choke points ========================================
 
     /**
      * Returns random point on map with fog of war, preferably unexplored one.
@@ -98,10 +98,11 @@ public class AMap {
             int dy = -maxRadius + A.randWithSeed(0, 2 * maxRadius, unit.id());
             position = unit.translateByPixels(dx, dy).makeValidFarFromBounds();
             if (
-                    position.isWalkable()
-                            && !position.isPositionVisible()
-                            && unit.hasPathTo(position)
-                            && unit.position().groundDistanceTo(position) <= 100
+                position.isWalkable()
+                    && position.isBuildable()
+                    && !position.isPositionVisible()
+                    && unit.hasPathTo(position)
+                    && unit.position().groundDistanceTo(position) <= 100
             ) {
                 return getMostWalkablePositionNear(position, 4);
             }
@@ -118,14 +119,15 @@ public class AMap {
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
             position = startPoint.translateByPixels(dx, dy).makeValidFarFromBounds();
             if (
-                    position.isWalkable()
-                            && !position.isExplored()
+                position.isWalkable()
+                    && position.isBuildable()
+                    && !position.isExplored()
 //                            && position.translateByTiles(-1, 0).isWalkable()
 //                            && position.translateByTiles(1, 0).isWalkable()
 //                            && position.translateByTiles(0, 1).isWalkable()
 //                            && position.translateByTiles(0, -1).isWalkable()
-                            && startPoint.position().hasPathTo(position)
-                            && startPoint.position().groundDistanceTo(position) <= 100
+                    && startPoint.position().hasPathTo(position)
+                    && startPoint.position().groundDistanceTo(position) <= 100
             ) {
                 return getMostWalkablePositionNear(position, 4);
             }

@@ -45,15 +45,21 @@ public interface AUnitOrders {
 
         if (target.u() == null) {
             // This likes to happen to sieged tanks. What matters is that we return false here.
-            if (!unit().isTankSieged()) {
+//            if (!unit().isTankSieged()) {
+//                if (Env.isLocal()) A.printStackTrace();
+
+            if (unit().distTo(target) >= 12.5) {
+                return move(target, Actions.MOVE_ATTACK, null, false);
+            }
+            else {
                 System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
                 System.err.println("target = " + target.getClass());
                 System.err.println("toString = " + target.toString());
                 System.err.println("isVisibleUnitOnMap " + target.isVisibleUnitOnMap());
                 System.err.println("hasPosition = " + target.hasPosition());
                 System.err.println("isPositionVisible = " + target.isPositionVisible());
-                if (Env.isLocal()) A.printStackTrace();
             }
+//            }
             return false;
         }
 
@@ -173,7 +179,9 @@ public interface AUnitOrders {
             return false;
         }
 
-        unit().setTooltip(tooltip, strategicLevel);
+        if (tooltip != null) {
+            unit().setTooltip(tooltip, strategicLevel);
+        }
 
 //        if (unit().isCommand(UnitCommandType.Move) && target.equals(u().getTargetPosition())) {
 //            return true;
@@ -367,20 +375,19 @@ public interface AUnitOrders {
 
         unit().setLastActionReceivedNow().setAction(Actions.REPAIR);
 
-//        if (unit().distToMoreThan(target, unit().isRepairing() ? 1 : 0.4)) {
-        if (
-            !unit().isRepairing()
-            && unit().distToMoreThan(target, 1.1)
-            && !unit().isMoving())
-//            && (!unit().isMoving() || unit().lastActionMoreThanAgo(10, Actions.REPAIR)))
-        {
-//            u().move(target.position());
-            // A fix to avoid stucking SCVs that go to repair in line.
-            // We send them in slightly different places, hoping they don't stuck in line
-            u().move(target.position().translateByTiles(
-                -0.3 + 0.7 * (unit().id() % 4) / 4.0,
-                -0.3 + 0.7 * (unit().id() % 4) / 4.0
-            ));
+        if (!unit().isRepairing()) {
+            if (unit().distToMoreThan(target, 0.99) && !unit().isMoving()) {
+    //            u().move(target.position());
+                // A fix to avoid stucking SCVs that go to repair in line.
+                // We send them in slightly different places, hoping they don't stuck in line
+                u().move(target.position().translateByTiles(
+                    -0.3 + 0.7 * (unit().id() % 4) / 4.0,
+                    -0.3 + 0.7 * (unit().id() % 4) / 4.0
+                ));
+            }
+            else {
+                u().repair(target.u());
+            }
         }
         else {
             u().repair(target.u());

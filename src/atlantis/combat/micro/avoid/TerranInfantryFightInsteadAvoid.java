@@ -2,12 +2,19 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
 
-public class TerranFightInsteadAvoid {
-    public TerranFightInsteadAvoid() {
+public class TerranInfantryFightInsteadAvoid {
+    public TerranInfantryFightInsteadAvoid() {
     }
 
     public boolean fightForTerranInfantry(AUnit unit) {
         if (!unit.isMarine() && !unit.isGhost() && !unit.isFirebat()) {
+            return false;
+        }
+
+        double combatEval = unit.combatEvalRelative();
+
+        if (unit.friendsNear().combatUnits().count() < unit.enemiesNear().hydralisks().count()) {
+            unit.setTooltipTactical("TooManyHydras");
             return false;
         }
 
@@ -44,12 +51,12 @@ public class TerranFightInsteadAvoid {
             return true;
         }
 
-        if (unit.hp() >= 12 && unit.enemiesNear().mutalisks().notEmpty()) {
+        if (unit.hp() >= 12 && combatEval > 0.5 && unit.enemiesNear().mutalisks().notEmpty()) {
             unit.setTooltipTactical("Mutas");
             return true;
         }
 
-        if (unit.combatEvalRelative() < 0.7) {
+        if (combatEval < 0.7) {
             return false;
         }
 

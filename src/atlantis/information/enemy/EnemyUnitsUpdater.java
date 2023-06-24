@@ -1,10 +1,12 @@
 package atlantis.information.enemy;
 
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
-import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.select.Select;
+import bwapi.Color;
 
 public class EnemyUnitsUpdater extends EnemyUnits {
 
@@ -27,8 +29,9 @@ public class EnemyUnitsUpdater extends EnemyUnits {
         }
 
         AbstractFoggedUnit foggedUnit = getFoggedUnit(enemy);
-        if (foggedUnit != null) {
-            foggedUnit.update(enemy);
+        if (foggedUnit != null && foggedUnit.u() != null) {
+            foggedUnit.updatePosition(enemy);
+            foggedUnit.updateType(enemy);
         }
         return false;
     }
@@ -38,22 +41,33 @@ public class EnemyUnitsUpdater extends EnemyUnits {
      * If so, change it, because it means we don't know where it is.
      */
     private static void updatedFogged(AbstractFoggedUnit foggedUnit) {
-//        AUnit aUnit = foggedUnit.innerAUnit();
-//        System.out.println(aUnit + " // visible: " + (aUnit != null ? aUnit.isVisibleUnitOnMap() : "---"));
-//        if (aUnit == null || !aUnit.isVisibleUnitOnMap()) {
-//            if (foggedUnit.hasPosition()) {
-//                APainter.paintCircleFilled(
-//                    foggedUnit,
-//                    8,
-//                    foggedUnit.position().isPositionVisible() ? Color.Green : Color.Red
-//                );
-//            }
+        AUnit unit = foggedUnit.innerAUnit();
+//        System.out.println(unit + " // visible: " + (unit != null ? unit.isVisibleUnitOnMap() : "---"));
+
+//        if (unit == null || !unit.isVisibleUnitOnMap()) {
+        if (!unit.isVisibleUnitOnMap()) {
+            if (foggedUnit.hasPosition()) {
+                APainter.paintCircleFilled(
+                    foggedUnit,
+                    8,
+                    foggedUnit.position().isPositionVisible() ? Color.Green : Color.Red
+                );
+            }
+
+//            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible() && foggedUnit.u() == null) {
+            if (
+                foggedUnit.hasPosition()
+                    && foggedUnit.position().isPositionVisible()
+                    && (foggedUnit.u() == null && !foggedUnit.isCloaked() && !foggedUnit.isDetected())
+            ) {
+                System.out.println(">> Fogged unit no longer present at this visible position " + foggedUnit);
+                foggedUnit.forceRemoveKnownPosition();
+            }
 
 //            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible() && foggedUnit.u() == null) {
 //                System.out.println(">> Fogged unit is no longer visible, remove position " + foggedUnit);
-            foggedUnit.removeKnownPositionIfNeeded();
 //            }
-//        }
+        }
     }
 
     /**
@@ -65,19 +79,36 @@ public class EnemyUnitsUpdater extends EnemyUnits {
     }
 
     public static void addFoggedUnit(AUnit enemyUnit) {
-        AbstractFoggedUnit foggedUnit = AbstractFoggedUnit.from(enemyUnit);
-        foggedUnit.update(enemyUnit);
+        int id = enemyUnit.id();
 
-        enemyUnitsDiscovered.put(enemyUnit.id(), foggedUnit);
+        if (!enemyUnitsDiscovered.containsKey(id)) {
+            AbstractFoggedUnit foggedUnit = AbstractFoggedUnit.from(enemyUnit);
+//            foggedUnit.onAbstractFoggedUnitCreated(enemyUnit);
+
+            enemyUnitsDiscovered.put(id, foggedUnit);
+
+//            System.out.println("ADD enemyUnit = " +  enemyUnit + " / " + id);
+//            if (enemyUnit.isBuilding()) {
+//                A.printStackTrace("ADD enemyUnit = " + enemyUnit + " / " + enemyUnit.id());
+//            }
+        }
     }
 
     public static void removeFoggedUnit(AUnit enemyUnit) {
-        if (enemyUnit instanceof FoggedUnit) {
-            FoggedUnit foggedUnit = (FoggedUnit) enemyUnit;
-            foggedUnit.removeKnownPositionIfNeeded();
+//        System.out.println("REMOVE a enemyUnit = " +  enemyUnit + " / " + enemyUnit.id());
+        AbstractFoggedUnit foggedUnit = enemyUnitsDiscovered.get(enemyUnit.id());
+
+        if (foggedUnit != null) {
+//            System.out.println("        forceRemoveKnownPosition");
+            foggedUnit.forceRemoveKnownPosition();
         }
 
         enemyUnitsDiscovered.remove(enemyUnit.id());
         cache.clear();
+//        System.out.println("REMOVE b enemyUnit = " +  enemyUnit + " / " + enemyUnit.id());
+
+//        if (enemyUnit.isBuilding()) {
+//            A.printStackTrace("REMOVE b enemyUnit = " + enemyUnit + " / " + enemyUnit.id());
+//        }
     }
 }

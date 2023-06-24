@@ -35,9 +35,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     protected AbstractFoggedUnit(AUnit unit) {
         if (unit != null) {
-            this._id = unit.id();
-            this.aUnit = unit;
-            this.update(unit);
+            this.onAbstractFoggedUnitCreated(unit);
 
             all.put(unit.id(), this);
         }
@@ -84,10 +82,13 @@ public class AbstractFoggedUnit extends AUnit {
         return aUnit;
     }
 
-    public void update(AUnit unit) {
+    protected void onAbstractFoggedUnitCreated(AUnit unit) {
+        _id = unit.id();
+        aUnit = unit;
+
         updatePosition(unit);
         updateType(unit);
-        aUnit = unit;
+
         _isCompleted = unit.isCompleted();
         _isCloaked = unit.isCloaked();
         _hp = unit.hp();
@@ -100,10 +101,12 @@ public class AbstractFoggedUnit extends AUnit {
 //        System.err.println("unit = " + unit + " // " + unit.position());
 //        if (unit.hasPosition()) {
 //        if (u() != null && unit.x() > 0 && unit.y() > 0) {
-        if (unit.x() > 0 && unit.y() > 0) {
-            _lastPosition = APosition.createFromPixels(unit.x(), unit.y());
-//            System.out.println("_position = " + _position);
+//        if (!(unit instanceof AbstractFoggedUnit) || unit.position().isPositionVisible()) {
+        if (!(unit instanceof AbstractFoggedUnit) || unit.u() != null) {
+//        if (unit.x() > 0 && unit.y() > 0 && unit.position().isPositionVisible()) {
+            _lastPosition = APosition.createFromPixels(unit.u().getX(), unit.u().getY());
             cacheInt.set("lastPositionUpdated", -1, A.now());
+//            System.out.println("UPDATED _lastPosition = " + _lastPosition);
         }
 
 //        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
@@ -116,7 +119,7 @@ public class AbstractFoggedUnit extends AUnit {
         return _lastPosition != null;
     }
 
-    protected void updateType(AUnit unit) {
+    public void updateType(AUnit unit) {
         if (_lastType == null || (unit.type() != null && !_lastType.equals(unit.bwapiType()))) {
 //            System.err.println("UPDATING TYPE, current = " + _lastType
 //                             + ", \n           foggedUnit = " + this
@@ -130,16 +133,19 @@ public class AbstractFoggedUnit extends AUnit {
 //        cacheInt.set("lastPositionUpdated", -1, A.now());
 //    }
 
-    public void removeKnownPositionIfNeeded() {
-        if (_lastPosition != null) {
-            if (_lastPosition.isPositionVisible() || _lastType == null) {
-//                System.out.println("unit() = " + unit() + " / is_building:" + unit().isBuilding());
-//                    System.out.println("REMOVE LAST POSITION FOR " + _lastType);
-                if (_lastType != null && !_lastType.isBuilding()) {
-                    _lastPosition = null;
-                }
-            }
-        }
+//    public void removeKnownPositionIfNeeded() {
+//        if (_lastPosition != null && _lastPosition.isPositionVisible()) {
+////                System.out.println("unit() = " + unit() + " / is_building:" + unit().isBuilding());
+////                    System.out.println("REMOVE LAST POSITION FOR " + _lastType);
+//                if (_lastType != null && (!_lastType.isBuilding() || _lastPosition.isPositionVisible())) {
+//                    _lastPosition = null;
+//                }
+//            }
+//        }
+//    }
+
+    public void forceRemoveKnownPosition() {
+        _lastPosition = null;
     }
 
     public int lastPositionUpdated() {
@@ -184,8 +190,18 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     @Override
+    public boolean isVisibleUnitOnMap() {
+        return position() != null && position().isPositionVisible();
+    }
+
+    @Override
     public boolean isCompleted() {
         return _isCompleted;
+    }
+
+    @Override
+    public boolean isCloaked() {
+        return _isCloaked;
     }
 
     @Override

@@ -3,6 +3,7 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.combat.squad.SquadTransfers;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
 import atlantis.terran.repair.ARepairAssignments;
