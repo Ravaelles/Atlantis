@@ -1,5 +1,6 @@
 package atlantis.config;
 
+import atlantis.config.env.Env;
 import atlantis.game.A;
 
 import java.io.File;
@@ -8,14 +9,19 @@ import java.util.ArrayList;
 public class AtlantisIgniter {
 
     private static boolean shouldUpdateFileContent = false;
-    private static String bwapiIniPath = null;
+    private static String bwapiDataPath = null;
     private static String chaosLauncherPath = null;
     private static String[] fileContent = null;
 
     // =========================================================
 
-    public static String getBwapiIniPath() {
-        return bwapiIniPath;
+    public static String getBwapiDataPath() {
+        if (bwapiDataPath == null && Env.isTesting()) {
+//            filePath = "." + filePath; // Fix for tests: Replace ./ with ../
+            return "..\\";
+        }
+
+        return bwapiDataPath;
     }
 
     public static String getChaosLauncherPath() {
@@ -35,14 +41,14 @@ public class AtlantisIgniter {
         // =========================================================
 
         // Try locating bwap.ini file
-        bwapiIniPath = getBwapiIniPath();
-        if (bwapiIniPath == null) {
+        bwapiDataPath = getBwapiDataPath();
+        if (bwapiDataPath == null) {
             System.err.println("Couldn't locate bwapi.ini file. See ENV and ENV-EXAMPLE file.");
             return;
         }
 
         // Read every single line
-        ArrayList<String> linesList = A.readTextFileToList(bwapiIniPath);
+        ArrayList<String> linesList = A.readTextFileToList(bwapiDataPath + "bwapi.ini");
         fileContent = new String[linesList.size()];
         fileContent = linesList.toArray(fileContent);
 
@@ -125,13 +131,13 @@ public class AtlantisIgniter {
             finalContent += line + "\n";
         }
 
-        A.saveToFile(bwapiIniPath, finalContent, true);
+        A.saveToFile(bwapiDataPath + "bwapi.ini", finalContent, true);
     }
 
     // =========================================================
 
-    public static void setBwapiIniPath(String bwapiIniPath) {
-        AtlantisIgniter.bwapiIniPath = bwapiIniPath;
+    public static void setBwapiDataPath(String bwapiIniPath) {
+        AtlantisIgniter.bwapiDataPath = bwapiIniPath;
     }
 
     public static void setChaosLauncherPath(String chaosLauncherPath) {

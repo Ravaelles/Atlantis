@@ -37,7 +37,7 @@ public class Env {
 
             switch (key) {
                 case "LOCAL": isLocal = trueFalse(value);
-                case "BWAPI_INI_PATH": AtlantisIgniter.setBwapiIniPath(value);
+                case "BWAPI_DATA_PATH": AtlantisIgniter.setBwapiDataPath(value);
                 case "CHAOS_LAUNCHER_PATH": AtlantisIgniter.setChaosLauncherPath(value);
             }
         }
