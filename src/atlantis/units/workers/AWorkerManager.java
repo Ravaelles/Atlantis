@@ -1,6 +1,7 @@
 package atlantis.units.workers;
 
 import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.production.constructing.ABuilderManager;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.terran.repair.ARepairAssignments;
@@ -17,6 +18,10 @@ public class AWorkerManager {
 
         if (workerManagerForbiddenFor(worker)) {
             return false;
+        }
+
+        if (AvoidCriticalUnits.update(worker)) {
+            return true;
         }
 
         worker.setTooltipTactical(":)");

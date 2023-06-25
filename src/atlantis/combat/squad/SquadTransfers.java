@@ -2,6 +2,8 @@ package atlantis.combat.squad;
 
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.beta.Beta;
+import atlantis.game.A;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -21,7 +23,7 @@ public class SquadTransfers {
 
     private static boolean shouldHaveBeta() {
 //        return false;
-        return Count.ourCombatUnits() >= 35 && Count.bases() >= 2;
+        return A.seconds() >= 400 && Count.ourCombatUnits() >= 35 && Count.bases() >= 2;
     }
 
     private static void handleReinforcements(Squad squad) {

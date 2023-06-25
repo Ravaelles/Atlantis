@@ -25,8 +25,16 @@ public class AUnitBeingReparedManager {
             return false;
         }
 
+        // Air units should be repaired thoroughly
+        if (unitBeingRepared.isAir()) {
+            if (!unitBeingRepared.isRunning() && unitBeingRepared.isMoving()) {
+                unitBeingRepared.setTooltip("HoldTheFuckDown");
+                return true;
+            }
+        }
+
         // Ignore going closer to repairer if unit is still relatively healthy
-        if (unitBeingRepared.hpPercent() > 50 && distanceToRepairer >= 3) {
+        if (!unitBeingRepared.isAir() && unitBeingRepared.hpPercent() > 80 && distanceToRepairer >= 3) {
             return false;
         }
 

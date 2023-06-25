@@ -10,9 +10,13 @@ import atlantis.units.select.Selection;
 public class LoadIntoBunkers {
 
     public static boolean tryLoadingInfantryIntoBunkerIfNeeded(AUnit unit) {
-        if (unit.lastActionLessThanAgo(15, Actions.LOAD)) {
+        if (unit.isLoaded()) {
+            return false;
+        }
+
+        if (unit.lastActionLessThanAgo(10, Actions.LOAD)) {
             unit.addLog("Loading");
-            return true;
+            return continueLoadingIntoBunker(unit);
         }
 
         // Only Terran infantry get inside
@@ -50,7 +54,7 @@ public class LoadIntoBunkers {
 
                 canLoad =
                     (
-                        unitDistToBunker < maxDistanceToLoad
+                        (unitDistToBunker < maxDistanceToLoad || enemyDist < 2.2)
                         && (enemyDist < 1.9 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6)
                     );
             }
@@ -66,6 +70,22 @@ public class LoadIntoBunkers {
         }
 
         return false;
+    }
+
+    private static boolean continueLoadingIntoBunker(AUnit unit) {
+        AUnit target = unit.target();
+
+        if (target != null && target.isBunker()) {
+            return true;
+        }
+        else {
+            AUnit bunker = defineBunkerToLoadTo(unit);
+            if (bunker != null) {
+                return unit.load(bunker);
+            }
+
+            return false;
+        }
     }
 
     // =========================================================

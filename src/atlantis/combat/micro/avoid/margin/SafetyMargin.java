@@ -63,7 +63,7 @@ public class SafetyMargin {
 //        System.out.println(attacker.type() + ".enemyWeaponRange(" + defender.type() + ") = " + attacker.enemyWeaponRange(defender));
 //        System.out.println(defender.type() + ".enemyWeaponRange(" + attacker.type() + ") = " + defender.enemyWeaponRange(attacker));
 
-        return defender.enemyWeaponRange(attacker) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
+        return defender.enemyWeaponRangeAgainstThisUnit(attacker) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 
     protected static double enemyMovementBonus(AUnit defender, AUnit attacker) {

@@ -149,19 +149,17 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     private static int minFirebats() {
+//        return 0; // Firebats are broken
 
+        if (Enemy.terran()) {
+            return 0;
+        }
+        if (Enemy.protoss()) {
+            return Math.max(1, Count.medics() / 5);
+        }
 
-        return 0; // Firebats are broken
-
-//        if (Enemy.terran()) {
-//            return 0;
-//        }
-//        if (Enemy.protoss()) {
-//            return Math.max(1, Count.medics() / 5);
-//        }
-//
-//        // Zerg
-//        return Math.max(2, Count.medics() / 4);
+        // Zerg
+        return Math.max(1, Count.medics() / 4);
     }
 
     protected static boolean marines() {

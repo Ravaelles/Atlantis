@@ -99,7 +99,7 @@ public class MissionDefend extends Mission {
                 return true;
             }
 
-            if (unit.enemyWeaponRange(enemy) >= 6) {
+            if (unit.enemyWeaponRangeAgainstThisUnit(enemy) >= 6) {
                 return true;
             }
         }

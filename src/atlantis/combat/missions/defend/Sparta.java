@@ -156,7 +156,7 @@ public class Sparta extends MissionDefend {
                 return true;
             }
 
-            if (unit.enemyWeaponRange(enemy) >= 6) {
+            if (unit.enemyWeaponRangeAgainstThisUnit(enemy) >= 6) {
                 return true;
             }
 
@@ -217,7 +217,7 @@ public class Sparta extends MissionDefend {
         }
 
         boolean canAttack = unit.distTo(enemy) <= (unit.isMelee()
-            ? MAX_MELEE_DIST_TO_ATTACK : unit.enemyWeaponRange(enemy));
+            ? MAX_MELEE_DIST_TO_ATTACK : unit.enemyWeaponRangeAgainstThisUnit(enemy));
 
         if (canAttack) {
             unit.addLog("Sparta:E");

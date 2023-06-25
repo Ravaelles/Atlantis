@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.combat.eval.AtlantisJfap;
+import atlantis.combat.micro.avoid.margin.UnitRange;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
@@ -499,10 +500,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     /**
-     * Returns max range of enemyUnit's weapon against this unit.
+     * Returns max range of otherUnit's weapon against this unit.
      */
-    public int enemyWeaponRange(AUnit enemyUnit) {
-        return enemyUnit.type().weaponRangeAgainst(this);
+    public int enemyWeaponRangeAgainstThisUnit(AUnit otherUnit) {
+        return otherUnit.type().weaponRangeAgainst(this)
+            + UnitRange.unitRangeBonus(otherUnit);
     }
 
     public int weaponRangeAgainst(AUnit enemyUnit) {
@@ -1629,7 +1631,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isRepairerOfAnyKind() {
-        return ARepairAssignments.isRepairerOfAnyKind(this);
+        return ARepairAssignments.isRepairerOfAnyKind(this) || ARepairAssignments.isProtector(this);
     }
 
     public boolean isScout() {
@@ -2327,6 +2329,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             "isDragoon",
             -1,
             () -> is(AUnitType.Protoss_Dragoon)
+        );
+    }
+
+    public boolean isGoliath() {
+        return cacheBoolean.get(
+            "isGoliath",
+            -1,
+            () -> is(AUnitType.Terran_Goliath)
         );
     }
 
