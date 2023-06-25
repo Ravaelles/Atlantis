@@ -9,6 +9,7 @@ import atlantis.map.Regions;
 import atlantis.units.AUnit;
 import bwapi.Point;
 import bwapi.Position;
+import bwapi.TilePosition;
 import bwapi.WalkPosition;
 
 import java.util.Objects;
@@ -25,36 +26,39 @@ import java.util.Objects;
  * <br /><br />
  * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
  */
-public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
+//public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
+public class APosition extends Point<Position> implements HasPosition, Comparable<Point<Position>> {
 
-//    private static final Map<Object, APosition> instances = new HashMap<>();
-    
     private final Position p;
     
     // =========================================================
 
     public APosition(APosition position) {
-        super(position.x(), position.y());
+        super(position.x(), position.y(), 1);
 //        this.p = position.p;
-        this.p = this;
+//        this.p = this;
+        this.p = new Position(position.x(), position.y());
     }
 
     private APosition(HasPosition p) {
-        super(p.x(), p.y());
+        super(p.x(), p.y(), 1);
 //        this.p = p.position();
-        this.p = this;
+//        this.p = this;
+        this.p = new Position(p.x(), p.y());
     }
 
     public APosition(int pixelX, int pixelY) {
-        super(pixelX, pixelY);
+        super(pixelX, pixelY, 1);
 //        this.p = new Position(pixelX, pixelY);
-        this.p = this;
+//        this.p = this;
+        this.p = new Position(pixelX, pixelY);
     }
 
     private APosition(Position p) {
-        super(p.getX(), p.getY());
+        super(p.getX(), p.getY(), 1);
 //        this.p = p;
-        this.p = this;
+//        this.p = this;
+        this.p = new Position(p.getX(), p.getY());
     }
 
     /**
@@ -108,9 +112,9 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     // =========================================================
 
     /**
-     * APosition class should be used always instead of Position when possible.
+     * APosition class should be used always instead of Position (coming from bridge connector) when possible.
      */
-    public Position rawP() {
+    public Position p() {
         return p;
     }
 
@@ -146,7 +150,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     }
 
     public double groundDistanceTo(HasPosition position) {
-        return PositionUtil.groundDistanceTo(this, position.position());
+        return PositionUtil.groundDistanceTo(this.p, position.position().p);
     }
 
     public double distTo(AChoke choke) {
@@ -260,7 +264,33 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         }
     }
 
-    // =========================================================
+    // === From JBWAPI =============================================
+
+    @Override
+    public Position subtract(Position position) {
+        System.err.println("APosition - subtract - not used");
+        return null;
+    }
+
+    @Override
+    public Position add(Position position) {
+        System.err.println("APosition - add - not used");
+        return null;
+    }
+
+    @Override
+    public Position divide(int i) {
+        System.err.println("APosition - divide - not used");
+        return null;
+    }
+
+    @Override
+    public Position multiply(int i) {
+        System.err.println("APosition - multiple - not used");
+        return null;
+    }
+
+    // =============================================================
 
     @Override
     public String toString() {
@@ -269,9 +299,7 @@ public class APosition extends Position implements HasPosition, Comparable<Point
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 29 * hash + Objects.hashCode(this.p);
-        return hash;
+        return this.p.hashCode();
     }
     
 //    public int compareTo(Position o) {
@@ -283,13 +311,6 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         }
         return compare;
     }
-//    public int compareTo(Point o) {
-//        int compare = Integer.compare(getX(), o.getX());
-//        if (compare == 0) {
-//            compare = Integer.compare(getY(), o.getY());
-//        }
-//        return compare;
-//    }
 
     @Override
     public boolean equals(Object obj) {
@@ -299,24 +320,21 @@ public class APosition extends Position implements HasPosition, Comparable<Point
         if (obj == null) {
             return false;
         }
-//        if (!(obj instanceof APosition) && !(obj instanceof Position)) {
-//            return false;
-//        }
-//        if (!(obj instanceof HasPosition)) {
-//            return false;
-//        }
-        
+
         int otherX = ((HasPosition) obj).x();
         int otherY = ((HasPosition) obj).y();
         return this.x == otherX && this.y == otherY;
-//        return this.getX() == otherX && this.getY() == otherY;
     }
     
     /**
-     * Returns true if given position has land connection to given point.
+     * Returns true if given position has land connection to given position.
      */
-    public boolean hasPathTo(APosition point) {
-        return Atlantis.game().hasPath(this, point);
+    public boolean hasPathTo(APosition position) {
+        return Atlantis.game().hasPath(this.p(), position.p());
+    }
+
+    public TilePosition toTilePosition() {
+        return p().toTilePosition();
     }
 
     public boolean isCloseToMapBounds() {

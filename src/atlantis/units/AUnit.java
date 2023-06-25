@@ -1451,11 +1451,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if given position has land connection to given point.
      */
     public boolean hasPathTo(HasPosition point) {
-        return u.hasPath(point.position());
+        return u.hasPath(point.position().p());
     }
 
     public boolean hasPathTo(AUnit unit) {
-        return u.hasPath(unit.position());
+        return u.hasPath(unit.position().p());
     }
 
     public boolean isTrainingAnyUnit() {

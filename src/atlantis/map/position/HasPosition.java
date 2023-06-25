@@ -1,9 +1,7 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
-import atlantis.game.A;
 import atlantis.map.AChoke;
-import atlantis.map.AMap;
 import atlantis.map.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -103,7 +101,7 @@ public interface HasPosition {
                             || dty == -currentRadius || dty == currentRadius
                     ) {
                         APosition position = this.translateByTiles(dtx, dty);
-                        if (!position.isExplored() || building.u().canLand(position.toTilePosition())) {
+                        if (!position.isExplored() || building.u().canLand(position.p().toTilePosition())) {
                             return position;
                         }
                     }
@@ -172,23 +170,23 @@ public interface HasPosition {
     }
 
     default boolean isWalkable() {
-        return Atlantis.game().isWalkable(position().toWalkPosition());
+        return Atlantis.game().isWalkable(position().p().toWalkPosition());
     }
 
     default boolean isExplored() {
-        return Atlantis.game().isExplored(position().toTilePosition());
+        return Atlantis.game().isExplored(position().p().toTilePosition());
     }
 
     default boolean isPositionVisible() {
-        return Atlantis.game().isVisible(position().toTilePosition());
+        return Atlantis.game().isVisible(position().p().toTilePosition());
     }
 
     default boolean isBuildable() {
-        return Atlantis.game().isBuildable(position().toTilePosition());
+        return Atlantis.game().isBuildable(position().p().toTilePosition());
     }
 
     default boolean isConnected() {
-        return Atlantis.game().isVisible(position().toTilePosition());
+        return Atlantis.game().isVisible(position().p().toTilePosition());
     }
 
     default boolean hasPosition() {
@@ -198,7 +196,7 @@ public interface HasPosition {
     // =========================================================
 
     default String toStringPixels() {
-        return "(" + x() + ", " + y() + ")";
+        return "(px:" + x() + ",py:" + y() + ")";
     }
 
     /**

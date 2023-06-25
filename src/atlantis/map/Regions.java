@@ -116,9 +116,9 @@ public class Regions {
         if (param instanceof Position) {
             position = (Position) param;
         } else if (param instanceof ARegion) {
-            position = ((ARegion) param).center();
+            position = ((ARegion) param).center().p();
         } else if (param instanceof HasPosition) {
-            position = ((HasPosition) param).position();
+            position = ((HasPosition) param).position().p();
         } else {
             ErrorLogging.printErrorOnce("getRegion failed for " + param);
             return null;

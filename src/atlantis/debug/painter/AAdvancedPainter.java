@@ -39,7 +39,6 @@ import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.buildings.AGasManager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.units.workers.AWorkerManager;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
@@ -921,8 +920,8 @@ public class AAdvancedPainter extends APainter {
 
             // Paint box
             bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight),
+                    new APosition(labelLeft, labelTop).p(),
+                    new APosition(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight).p(),
                     Color.Blue,
                     true
             );
@@ -930,8 +929,8 @@ public class AAdvancedPainter extends APainter {
 
             // Paint box borders
             bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight),
+                    new APosition(labelLeft, labelTop).p(),
+                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight).p(),
                     Color.Black,
                     false
             );
@@ -1004,16 +1003,16 @@ public class AAdvancedPainter extends APainter {
 
             // Paint box
             bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight),
+                    new APosition(labelLeft, labelTop).p(),
+                    new APosition(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight).p(),
                     color,
                     true
             );
 
             // Paint box borders
             bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop),
-                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight),
+                    new APosition(labelLeft, labelTop).p(),
+                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight).p(),
                     Color.Black,
                     false
             );

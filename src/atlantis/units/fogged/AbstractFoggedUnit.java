@@ -195,8 +195,8 @@ public class AbstractFoggedUnit extends AUnit {
 //        _lastPosition = _lastAUnit == null ? null : APosition.create(_lastAUnit.position());
 
         if (_lastAUnit != null && _lastAUnit.isBuilding()) {
-            System.out.println("\n_lastAUnit = " + _lastAUnit);
-            System.out.println("_thisFogged = " + this);
+            System.out.println("\n_lastAUnit = " + _lastAUnit + " / x:" + _lastAUnit.x() + "," + _lastAUnit.y());
+            System.out.println("_thisFogged = " + this + " / x:" + this.x() + "," + this.y());
         }
 
         updateLastPosition(_lastAUnit);

@@ -113,7 +113,7 @@ public interface AUnitOrders {
         if (true) throw new RuntimeException("DO NOT USE IT, PLEASE");
 
         if (u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
-            u().attack(target.rawP());
+            u().attack(target.p());
             unit().setAction(Actions.ATTACK_POSITION);
 
 //            System.out.println("--------- SHOOT AT POSITION " + target.position() + " // #" + u().getID());
@@ -223,7 +223,7 @@ public interface AUnitOrders {
 //            if (unit().isFirstCombatUnit()) {
 //                System.out.println(A.now() + " move");
 //            }
-            u().move(target.position());
+            u().move(target.position().p());
 
             unit().setLastActionReceivedNow()
                 .setAction(unitAction);
@@ -246,7 +246,7 @@ public interface AUnitOrders {
     default boolean patrol(APosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         unit().setTooltip(tooltip, strategicLevel)
                 .setAction(Actions.PATROL);
-        return u().patrol(target);
+        return u().patrol(target.p());
     }
 
     /**
@@ -383,7 +383,7 @@ public interface AUnitOrders {
                 u().move(target.position().translateByTiles(
                     -0.3 + 0.7 * (unit().id() % 4) / 4.0,
                     -0.3 + 0.7 * (unit().id() % 4) / 4.0
-                ));
+                ).p());
             }
             else {
                 u().repair(target.u());
@@ -558,7 +558,7 @@ public interface AUnitOrders {
         for (AUnit loaded : unit().loadedUnits()) {
             loaded.setAction(Actions.UNLOAD);
         }
-        return u().unloadAll(target);
+        return u().unloadAll(target.p());
     }
 
     /**
@@ -684,7 +684,7 @@ public interface AUnitOrders {
         }
 
         unit().setAction(Actions.USING_TECH, tech, target);
-        return u().useTech(tech, target);
+        return u().useTech(tech, target.p());
     }
 
     default boolean useTech(TechType tech) {

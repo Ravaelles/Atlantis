@@ -25,7 +25,7 @@ public class Chokes {
      */
     public static AChoke mainChoke() {
         return (AChoke) cache.get(
-                "mainBaseChoke",
+                "mainChoke",
                 -1,
                 () -> AChoke.create(JBWEB.getMainChoke())
 //                    AUnit mainBase = Select.mainBase();
@@ -97,7 +97,7 @@ public class Chokes {
 
         return (AChoke) cache.get(
                 "natural:" + relativeTo.toStringPixels(),
-                400,
+                403,
                 () -> {
                     ARegion naturalRegion = Regions.getRegion(Bases.natural(relativeTo.position()));
                     if (naturalRegion == null) {
@@ -180,7 +180,7 @@ public class Chokes {
 
         return (AChoke) cache.get(
                 "enemyMainChoke",
-                150,
+                151,
                 () -> nearestChoke(enemyMain)
         );
     }
@@ -193,7 +193,7 @@ public class Chokes {
 
         return (AChoke) cache.get(
                 "enemyNaturalChoke",
-                100,
+                101,
                 () -> natural(enemyNatural)
         );
     }

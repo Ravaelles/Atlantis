@@ -82,9 +82,9 @@ public class APainter {
 
     public static void paintMessage(String text, Color color, int x, int y, boolean screenCoord) {
         if (screenCoord) {
-            bwapi.drawTextScreen(new APosition(x, y), ColorUtil.getColorString(color) + text);
+            bwapi.drawTextScreen(new APosition(x, y).p(), ColorUtil.getColorString(color) + text);
         } else {
-            bwapi.drawTextMap(new APosition(x, y), ColorUtil.getColorString(color) + text);
+            bwapi.drawTextMap(new APosition(x, y).p(), ColorUtil.getColorString(color) + text);
         }
     }
 
@@ -94,7 +94,7 @@ public class APainter {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position.position(), position.translateByPixels(width, height), color, false);
+        bwapi.drawBoxMap(position.position().p(), position.translateByPixels(width, height).p(), color, false);
     }
 
     public static void paintRectangleFilled(APosition position, int width, int height, Color color) {
@@ -103,7 +103,7 @@ public class APainter {
         if (position == null) {
             return;
         }
-        bwapi.drawBoxMap(position, position.translateByPixels(width, height), color, true);
+        bwapi.drawBoxMap(position.p(), position.translateByPixels(width, height).p(), color, true);
     }
 
     public static void paintCircle(AUnit unit, int radius, Color color) {
@@ -116,7 +116,7 @@ public class APainter {
         if (position == null || position.position() == null) {
             return;
         }
-        bwapi.drawCircleMap(position.position(), radius, color, false);
+        bwapi.drawCircleMap(position.position().p(), radius, color, false);
     }
 
     public static void paintCircleFilled(HasPosition position, int radius, Color color) {
@@ -125,7 +125,7 @@ public class APainter {
         if (position == null || position.position() == null) {
             return;
         }
-        bwapi.drawCircleMap(position.position(), radius, color, true);
+        bwapi.drawCircleMap(position.position().p(), radius, color, true);
     }
 
     public static void paintCircleFilled(AUnit unit, int radius, Color color) {
@@ -135,7 +135,7 @@ public class APainter {
     public static void paintLine(HasPosition start, int dx, int dy, Color color) {
         if (isDisabled()) { return; }
 
-        bwapi.drawLineMap(start.position(), start.translateByPixels(dx, dy), color);
+        bwapi.drawLineMap(start.position().p(), start.translateByPixels(dx, dy).p(), color);
     }
 
 //    public static void paintLine(Position start, Position end, Color color) {
@@ -149,7 +149,7 @@ public class APainter {
         if (unit == null || end == null || isDisabled()) {
             return false;
         }
-        bwapi.drawLineMap(unit.position(), end.position(), color);
+        bwapi.drawLineMap(unit.position().p(), end.position().p(), color);
         return true;
     }
 
@@ -157,7 +157,7 @@ public class APainter {
         if (unit == null || end == null || isDisabled()) {
             return;
         }
-        bwapi.drawLineMap(unit.position(), end.position(), color);
+        bwapi.drawLineMap(unit.position().p(), end.position().p(), color);
     }
 
     public static void paintTextCentered(AUnit unit, String text, Color color) {
@@ -189,11 +189,11 @@ public class APainter {
         }
 
         if (screenCoords) {
-            bwapi.drawTextScreen(position.translateByPixels((int) (-2.7 * text.length()), -2),
+            bwapi.drawTextScreen(position.translateByPixels((int) (-2.7 * text.length()), -2).p(),
                     ColorUtil.getColorString(color) + text
             );
         } else {
-            bwapi.drawTextMap(position.translateByPixels((int) (-2.7 * text.length()), -2),
+            bwapi.drawTextMap(position.translateByPixels((int) (-2.7 * text.length()), -2).p(),
                     ColorUtil.getColorString(color) + text
             );
         }
@@ -204,7 +204,7 @@ public class APainter {
             return;
         }
 
-        bwapi.drawTextMap(position, ColorUtil.getColorString(color) + text);
+        bwapi.drawTextMap(position.p(), ColorUtil.getColorString(color) + text);
     }
 
     protected static void setTextSizeMedium() {

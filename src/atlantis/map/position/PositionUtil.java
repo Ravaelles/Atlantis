@@ -1,6 +1,5 @@
 package atlantis.map.position;
 
-import atlantis.game.A;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.ARegionBoundary;
@@ -41,16 +40,16 @@ public class PositionUtil {
         Unit fromUnit = null;
 
         if (object1 instanceof FakeUnit) {
-            fromPosition = ((FakeUnit) object1).position();
+            fromPosition = ((FakeUnit) object1).position().p();
         }
         else if (object1 instanceof FoggedUnit) {
-            fromPosition = ((FoggedUnit) object1).position();
+            fromPosition = ((FoggedUnit) object1).position().p();
             if (fromPosition == null) {
                 return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
             }
         }
         else if (object1 instanceof FakeFoggedUnit) {
-            fromPosition = ((FakeFoggedUnit) object1).position();
+            fromPosition = ((FakeFoggedUnit) object1).position().p();
             if (fromPosition == null) {
                 return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
             }
@@ -62,22 +61,22 @@ public class PositionUtil {
             fromUnit = (Unit) object1;
         }
         else if (object1 instanceof APosition) {
-            fromPosition = (APosition) object1;
+            fromPosition = ((APosition) object1).p();
         }
         else if (object1 instanceof Position) {
             fromPosition = (Position) object1;
         }
         else if (object1 instanceof AChoke) {
-            fromPosition = ((AChoke) object1).center();
+            fromPosition = ((AChoke) object1).center().p();
         }
         else if (object1 instanceof ABaseLocation) {
-            fromPosition = ((ABaseLocation) object1).position();
+            fromPosition = ((ABaseLocation) object1).position().p();
         }
         else if (object1 instanceof ARegionBoundary) {
-            fromPosition = ((ARegionBoundary) object1).position();
+            fromPosition = ((ARegionBoundary) object1).position().p();
         }
         else if (object1 instanceof FoggedUnit) {
-            fromPosition = ((FoggedUnit) object1).position();
+            fromPosition = ((FoggedUnit) object1).position().p();
         }
 
         if (fromPosition == null && fromUnit == null) {
@@ -90,13 +89,13 @@ public class PositionUtil {
         Unit toUnit = null;
 
         if (object2 instanceof FakeUnit) {
-            toPosition = ((FakeUnit) object2).position();
+            toPosition = ((FakeUnit) object2).position().p();
         }
         else if (object2 instanceof FoggedUnit) {
-            toPosition = ((FoggedUnit) object2).position();
+            toPosition = ((FoggedUnit) object2).position().p();
         }
         else if (object2 instanceof FakeFoggedUnit) {
-            toPosition = ((FakeFoggedUnit) object2).position();
+            toPosition = ((FakeFoggedUnit) object2).position().p();
         }
         else if (object2 instanceof AUnit) {
             toUnit = ((AUnit) object2).u();
@@ -105,19 +104,19 @@ public class PositionUtil {
             toUnit = (Unit) object2;
         }
         else if (object2 instanceof APosition) {
-            toPosition = (APosition) object2;
+            toPosition = ((APosition) object2).p();
         }
         else if (object2 instanceof Position) {
             toPosition = (Position) object2;
         }
         else if (object2 instanceof AChoke) {
-            toPosition = ((AChoke) object2).center();
+            toPosition = ((AChoke) object2).center().p();
         }
         else if (object2 instanceof ABaseLocation) {
-            toPosition = ((ABaseLocation) object2).position();
+            toPosition = ((ABaseLocation) object2).position().p();
         }
         else if (object2 instanceof ARegionBoundary) {
-            toPosition = ((ARegionBoundary) object2).position();
+            toPosition = ((ARegionBoundary) object2).position().p();
         }
 
         if (toPosition == null && toUnit == null) {
@@ -159,6 +158,10 @@ public class PositionUtil {
     /**
      * Returns real ground distance to given point (not the air shortcut over impassable terrain).
      */
+    public static double groundDistanceTo(HasPosition from, HasPosition to) {
+        return groundDistanceTo(from.position().p(), to.position().p());
+    }
+
     public static double groundDistanceTo(Position from, Position to) {
 //        return BWTA.getGroundDistance(new TilePosition(from.p()), new TilePosition(to.p())) / 32.0;
 //        return JBWEB.getGroundDistance(from, to) / 32.0;
