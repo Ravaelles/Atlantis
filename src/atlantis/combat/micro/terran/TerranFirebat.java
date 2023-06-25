@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -16,8 +17,18 @@ public class TerranFirebat {
         if (unit.cooldown() >= 4 || !shouldContinueMeleeFighting(unit)) {
             AUnit nearestEnemy = unit.nearestEnemy();
             return nearestEnemy != null && unit.runningManager().runFrom(
-                nearestEnemy, 1.5, Actions.RUN_ENEMY, false
+                nearestEnemy, 1.0, Actions.RUN_ENEMY, false
             );
+        }
+
+        if (
+            unit.hp() >= 37
+            && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 2 : 3)
+        ) {
+            if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
+                unit.setTooltip("Napalm");
+                return true;
+            }
         }
 
         return false;
@@ -35,8 +46,8 @@ public class TerranFirebat {
         }
 
         int enemies = Select.enemyCombatUnits().canAttack(unit, 0).count();
+        int enemyModifier = Enemy.zerg() ? 25 : 40;
 
-        int enemyModifier = Enemy.zerg() ? 25 : 35;
         return unit.hpPercent(Math.min(50, enemies * enemyModifier));
     }
 }

@@ -155,7 +155,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return 0;
         }
         if (Enemy.protoss()) {
-            return Math.max(1, Count.medics() / 5);
+            return Math.max(1, (Count.medics() / 5 - 1));
         }
 
         // Zerg

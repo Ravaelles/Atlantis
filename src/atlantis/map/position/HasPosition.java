@@ -114,11 +114,39 @@ public interface HasPosition {
         return null;
     }
 
-    default APosition makeFreeOfOurUnits(int maxRadius, double checkMargin, AUnit exceptUnit) {
-        int currentRadius = 0;
+//    default APosition makeFreeOfOurUnits(int maxRadius, double checkMargin, AUnit exceptUnit) {
+//        int currentRadius = 0;
+//        while (currentRadius <= maxRadius) {
+//            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
+//                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+//                    if (
+//                            dtx == -currentRadius || dtx == currentRadius
+//                                    || dty == -currentRadius || dty == currentRadius
+//                    ) {
+//                        APosition position = this.translateByTiles(dtx, dty);
+//                        if (
+//                            position.isWalkable()
+//                                && Select.our().exclude(exceptUnit).inRadius(checkMargin, position).empty()
+//                        ) {
+//                            return position;
+//                        }
+//                    }
+//                }
+//            }
+//
+//            currentRadius++;
+//        }
+//
+//        return null;
+//    }
+
+    default APosition makeFreeOfAnyGroundUnits(double maxRadius, double step, AUnit exceptUnit) {
+        double currentRadius = 0;
+        double closenessMargin = 0.06;
+
         while (currentRadius <= maxRadius) {
-            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
-                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+            for (double dtx = -currentRadius; dtx <= currentRadius; dtx += step) {
+                for (double dty = -currentRadius; dty <= currentRadius; dty += step) {
                     if (
                             dtx == -currentRadius || dtx == currentRadius
                                     || dty == -currentRadius || dty == currentRadius
@@ -126,7 +154,7 @@ public interface HasPosition {
                         APosition position = this.translateByTiles(dtx, dty);
                         if (
                             position.isWalkable()
-                                && Select.our().exclude(exceptUnit).inRadius(checkMargin, position).empty()
+                            && Select.our().exclude(exceptUnit).inRadius(closenessMargin, position).empty()
                         ) {
                             return position;
                         }

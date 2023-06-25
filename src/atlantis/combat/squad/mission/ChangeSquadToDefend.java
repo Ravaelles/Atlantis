@@ -11,12 +11,21 @@ import atlantis.util.We;
 public class ChangeSquadToDefend extends ChangeSquadMission {
 
     public static boolean shouldChangeToDefend(Squad squad) {
-        return medicsExhausted(squad)
-            || weakerThanEnemy(squad)
+        boolean offensiveRole = squad.hasHighlyOffensiveRole();
+
+        if (!offensiveRole) {
+            if (
+                medicsExhausted(squad)
+                || tooFewUnitsAndNotEarlyGame(squad)
+            ) {
+                return true;
+            }
+        }
+
+        return weakerThanEnemy(squad)
             || hugeEnemySquad(squad)
             || tooManyUnitsWounded(squad)
-            || backOffFromLurkers(squad)
-            || tooFewUnitsAndNotEarlyGame(squad);
+            || backOffFromLurkers(squad);
     }
 
     protected static boolean changeMissionToDefend(Squad squad, String reason) {

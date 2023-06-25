@@ -13,6 +13,10 @@ public class ChangeSquadToDefault extends ChangeSquadMission {
     public static boolean shouldChangeToDefault(Squad squad) {
         Mission defaultMission = defaultMission();
 
+        if (!squad.mission().equals(defaultMission) && squad.hasHighlyOffensiveRole()) {
+            return changeMissionToMainMission(squad, "Offensive role");
+        }
+
         if (A.supplyUsed() <= 193) {
             if (
                 defaultMission.isMissionAttackOrContain()

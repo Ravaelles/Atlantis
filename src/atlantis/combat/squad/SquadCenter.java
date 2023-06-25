@@ -30,7 +30,7 @@ public class SquadCenter {
     }
 
     protected AUnit centerUnit() {
-        int ttl = 600;
+        int ttl = 601;
         AUnit centerUnit = cache.get(
             "centerUnit",
             ttl,
@@ -63,7 +63,11 @@ public class SquadCenter {
         Collections.sort(yCoords);
 
         APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
-        AUnit nearestToMedian = Select.ourCombatUnits().nonBuildings().nearestTo(median);
+        AUnit nearestToMedian = Select.ourCombatUnits()
+            .nonBuildings()
+            .groundUnits()
+            .excludeMedics()
+            .nearestTo(median);
 
         if (nearestToMedian != null && We.terran()) {
             if (Count.tanks() >= 2) {

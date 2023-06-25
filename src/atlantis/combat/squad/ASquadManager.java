@@ -2,7 +2,6 @@ package atlantis.combat.squad;
 
 import atlantis.combat.ACombatUnitManager;
 import atlantis.combat.squad.mission.ChangeSquadMission;
-import atlantis.combat.squad.mission.ChangeSquadToDefend;
 import atlantis.units.AUnit;
 
 import java.util.ArrayList;

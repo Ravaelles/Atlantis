@@ -616,7 +616,7 @@ public class Selection extends BaseSelection {
 
     public Selection free() {
         return cloneByRemovingIf(
-            (u -> u.isBusy() || u.isLifted()), "free"
+            (u -> u.isBusy() || u.isLifted() || u.isResearching()), "free"
         );
     }
 

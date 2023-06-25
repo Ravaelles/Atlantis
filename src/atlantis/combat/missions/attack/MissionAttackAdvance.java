@@ -26,15 +26,24 @@ public class MissionAttackAdvance {
         // Focus point is well known
 //        if (focusPoint != null && unit.lastPositioningActionMoreThanAgo(40)) {
         if (focusPoint != null) {
-            if (unit.lastPositioningActionMoreThanAgo(40) || unit.isIdle()) {
+            if (
+                unit.lastPositioningActionMoreThanAgo(40)
+                || unit.isIdle()
+                || !unit.isMoving()
+                || !unit.isAttacking()
+            ) {
                 if (AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint)) {
                     unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
                     return true;
                 }
             }
-        }
 
-        unit.setTooltipTactical("#MA-NoFocus");
-        return WeDontKnowEnemyEnemyUnit.handleWeDontKnowWhereToFindEnemy(mission, unit);
+            unit.setTooltip("Advancing...");
+            return false;
+        }
+        else {
+            unit.setTooltipTactical("#MA-NoFocus");
+            return WeDontKnowEnemyEnemyUnit.handleWeDontKnowWhereToFindEnemy(mission, unit);
+        }
     }
 }

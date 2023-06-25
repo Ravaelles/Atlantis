@@ -62,7 +62,7 @@ public class RunToPositionFinder {
     protected HasPosition runInAnyDirection(HasPosition runAwayFrom) {
         if (
             manager.unit()._lastPositionRunInAnyDir != null
-                && manager.unit().lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
+                && manager.unit().lastActionLessThanAgo(40, Actions.RUN_IN_ANY_DIRECTION)
         ) {
             return manager.unit()._lastPositionRunInAnyDir;
         }

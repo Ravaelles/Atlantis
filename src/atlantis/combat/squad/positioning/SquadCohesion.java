@@ -54,7 +54,7 @@ public class SquadCohesion {
             if (unit.lastActionMoreThanAgo(40, Actions.MOVE_FORMATION)) {
                 APosition goTo = unit.squadCenter()
                     .translateTilesTowards(2, unit.position())
-                    .makeFreeOfOurUnits(5, 0.3, unit);
+                    .makeFreeOfAnyGroundUnits(5, unit.type().dimensionLeft() * 2, unit);
 
                 if (goTo == null) {
                     return false;

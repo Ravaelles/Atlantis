@@ -7,7 +7,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
@@ -25,7 +24,7 @@ public class ComeCloser extends ASquadCohesionManager {
 
         if (
             isTooFarFromSquadCenter(unit)
-                || isTooFarFromTanks(unit)
+                || ComeCloserToTanks.isTooFarFromTanks(unit)
                 || isTooFarAhead(unit)
                 || isTooFarAhead(unit)
                 || TerranInfantryComeCloser.isTooFarFromMedic(unit)
@@ -64,29 +63,6 @@ public class ComeCloser extends ASquadCohesionManager {
                 : unit.translateTilesTowards(2, squadCenter).makeWalkable(6);
             if (goTo != null && unit.friendsNear().inRadius(3, unit).atMost(2)) {
                 return unit.move(goTo, Actions.MOVE_FORMATION, "Closer", false);
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean isTooFarFromTanks(AUnit unit) {
-        if (!We.terran() || unit.isMissionDefend()) {
-            return false;
-        }
-
-        if (Count.tanks() >= 2) {
-            AUnit tank = Select.ourTanks().nearestTo(unit);
-            if (tank != null && tank.distToMoreThan(unit, 4.9)) {
-                if (unit.move(
-                    unit.translateTilesTowards(2, tank),
-                    Actions.MOVE_FORMATION,
-                    "HugTanks",
-                    true
-                )) {
-                    unit.addLog("HugTanks");
-                    return true;
-                }
             }
         }
 

@@ -4,8 +4,8 @@ import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.delta.Delta;
 import atlantis.combat.squad.positioning.SquadCohesion;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -24,6 +24,7 @@ public abstract class Squad extends Units {
 
     private final int ID = firstFreeID++;
     private static int firstFreeID = 1;
+    private static Cache<Boolean> cacheBoolean = new Cache<>();
     private static Cache<Double> cacheDouble = new Cache<>();
     private static Cache<Integer> cacheInteger = new Cache<>();
 
@@ -309,6 +310,18 @@ public abstract class Squad extends Units {
 
                 return (100 * withinSquadRadius / size());
             }
+        );
+    }
+
+    public Selection units() {
+        return selection();
+    }
+
+    public boolean hasHighlyOffensiveRole() {
+        return cacheBoolean.get(
+            "hasHighlyOffensiveRole",
+            -1,
+            () -> Delta.get().equals(this)
         );
     }
 }

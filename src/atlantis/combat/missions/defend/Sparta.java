@@ -93,7 +93,8 @@ public class Sparta extends MissionDefend {
         // Ranged
         if (unit.isRanged()) {
             return focusPoint.translatePercentTowards(unit, 30)
-                .makeFreeOfOurUnits(2, 0.12, unit);
+                .makeFreeOfAnyGroundUnits(2, 0.12, unit);
+//                .makeFreeOfAnyGroundUnits(2, 0.12, unit);
         }
 
         // Melee
