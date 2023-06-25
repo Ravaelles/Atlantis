@@ -26,6 +26,10 @@ public class TerranMissileTurret extends AntiAirBuildingManager {
     // =========================================================
 
     protected boolean handleReinforcePosition(HasPosition position, double inRadius) {
+        if (position == null) {
+            return false;
+        }
+
         if (!AGame.canAffordWithReserved(75, 0)) {
             return false;
         }

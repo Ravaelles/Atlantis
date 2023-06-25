@@ -3,11 +3,16 @@ package atlantis.combat.missions.contain;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.focus.MoveToFocusPoint;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class MoveToContainFocusPoint extends MoveToFocusPoint {
 
     public boolean move(AUnit unit, AFocusPoint focusPoint) {
+        if (unit.isRunning() || unit.enemiesNear().groundUnits().inRadius(7, unit).notEmpty()) {
+            return false;
+        }
+
         this.unit = unit;
         this.focus = focusPoint;
         fromSide = focusPoint.fromSide();
@@ -17,12 +22,18 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
         unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 
-        if (advance()) {
-            return true;
+        if (unit.enemiesNear().isEmpty()) {
+            if (unit.lastActionMoreThanAgo(5, Actions.MOVE_FORMATION)) {
+                return handleWrongSideOfFocus(unit, focusPoint) || tooCloseToFocusPoint();
+            }
         }
 
-        if (unit.enemiesNear().isEmpty()) {
-            return handleWrongSideOfFocus(unit, focusPoint) || tooCloseToFocusPoint();
+//        if (spreadOut()) {
+//            return true;
+//        }
+
+        if (advance()) {
+            return true;
         }
 
         return false;

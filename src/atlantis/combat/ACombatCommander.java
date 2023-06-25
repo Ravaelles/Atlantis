@@ -5,7 +5,13 @@ import atlantis.combat.squad.ASquadManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.SquadTransfers;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.beta.Beta;
+import atlantis.combat.squad.delta.Delta;
+import atlantis.game.A;
 import atlantis.units.AUnit;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ACombatCommander {
 
@@ -20,10 +26,21 @@ public class ACombatCommander {
             alpha.setMission(Missions.globalMission());
         }
 
+        if (A.seconds() <= 1) {
+            makeSureSquadObjectsAreCreated();
+        }
+
         SquadTransfers.updateSquadTransfers();
 
-        for (Squad squad : Squad.getSquads()) {
+        for (Iterator<Squad> it = Squad.getSquads().iterator(); it.hasNext();) {
+            Squad squad = it.next();
             ASquadManager.update(squad);
         }
+    }
+
+    private static void makeSureSquadObjectsAreCreated() {
+        Alpha.get();
+        Beta.get();
+        Delta.get();
     }
 }

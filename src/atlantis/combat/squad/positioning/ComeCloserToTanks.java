@@ -13,6 +13,10 @@ public class ComeCloserToTanks {
             return false;
         }
 
+        if (unit.isMoving() && unit.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)) {
+            return true;
+        }
+
         if (unit.isMissionDefend()) {
             AUnit nearestEnemy = unit.nearestEnemy();
 
@@ -29,8 +33,9 @@ public class ComeCloserToTanks {
         if (unit.squad().units().tanks().count() >= 2) {
             AUnit tank = Select.ourTanks().nearestTo(unit);
             if (tank != null && !unitIsOvercrowded(unit) && !tankIsOvercrowded(tank)) {
-                APosition goTo = unit.translateTilesTowards(1.5, tank).makeFreeOfAnyGroundUnits(1.5, 0.25, unit);
-                if (unit.move(goTo, Actions.MOVE_FORMATION, "HugTanks", false)) {
+                APosition goTo = unit.translateTilesTowards(1.5, tank)
+                    .makeFreeOfAnyGroundUnits(1.5, 0.25, unit);
+                if (goTo != null && unit.move(goTo, Actions.MOVE_FORMATION, "HugTanks", false)) {
                     unit.addLog("HugTanks");
                     return true;
                 }

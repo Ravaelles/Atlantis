@@ -15,7 +15,10 @@ public class TerranTankWhenSieged extends TerranTank {
 //        }
 
         // Get the hell outta here
-        if (unit.lastUnderAttackLessThanAgo(30)) {
+        if (
+            unit.lastUnderAttackLessThanAgo(30)
+            && (unit.hp() >= 100 || unit.enemiesNearInRadius(2) <= 2)
+        ) {
             if (unit.enemiesNear().groundUnits().inRadius(3, unit).count() >= (unit.hpPercent() >= 50 ? 2 : 1)) {
                 unit.setTooltip("Evacuate");
                 unit.unsiege();
@@ -23,12 +26,7 @@ public class TerranTankWhenSieged extends TerranTank {
             }
         }
 
-        if (
-            !Enemy.terran()
-                && unit.isMissionAttack()
-                && Select.enemy().combatBuildings(false).inRadius(TerranTankWhenNotSieged.COMBAT_BUILDING_DIST_SIEGE, unit).empty()
-                && unit.distToNearestChokeLessThan(2)
-        ) {
+        if (wouldBlockChoke(unit)) {
             unit.setTooltip("DoNotBlockChoke");
             unit.unsiege();
             return true;
@@ -75,6 +73,13 @@ public class TerranTankWhenSieged extends TerranTank {
 //        }
 
         return false;
+    }
+
+    public static boolean wouldBlockChoke(AUnit unit) {
+        return !Enemy.terran()
+            && unit.isMissionAttack()
+            && Select.enemy().combatBuildings(false).inRadius(TerranTankWhenNotSieged.COMBAT_BUILDING_DIST_SIEGE, unit).empty()
+            && unit.distToNearestChokeLessThan(2);
     }
 
     // =========================================================

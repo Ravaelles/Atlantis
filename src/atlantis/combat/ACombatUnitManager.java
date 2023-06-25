@@ -189,7 +189,7 @@ public class ACombatUnitManager {
 //        }
 
         // Handle repair of mechanical units
-        if (AGame.isPlayingAsTerran() && AUnitBeingReparedManager.handleUnitBeingRepaired(unit)) {
+        if (AGame.isPlayingAsTerran() && AUnitBeingReparedManager.handleUnitShouldBeRepaired(unit)) {
             return true;
         }
 

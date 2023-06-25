@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
 
 public abstract class MoveToFocusPoint {
 
@@ -72,6 +73,32 @@ public abstract class MoveToFocusPoint {
 
     // =========================================================
 
+    protected boolean spreadOut() {
+        Selection friends = unit.friendsNear().groundUnits().inRadius(1, unit);
+        if (friends.notEmpty()) {
+            AUnit nearest = friends.nearestTo(unit);
+            if (unit.distTo(nearest) <= 0.1) {
+//                if (nearest.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)) {
+////                    boolean b = nearest.moveAwayFrom(unit, 0.1, "Separate", Actions.MOVE_FORMATION)
+////                        || nearest.moveAwayFrom(unit, 2, "Separate", Actions.MOVE_FORMATION);
+//                }
+                if (
+                    unit.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)
+                ) {
+//                    boolean b = unit.moveAwayFrom(nearest, 0.1, "Separate", Actions.MOVE_FORMATION)
+//                        || unit.moveAwayFrom(nearest, 2, "Separate", Actions.MOVE_FORMATION);
+//                    return b;
+                    APosition goTo = unit.makeFreeOfAnyGroundUnits(3, 0.2, unit);
+                    if (goTo != null) {
+                        return unit.move(goTo, Actions.MOVE_FORMATION, "Separate", false);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     private boolean joinSquad(AUnit unit) {
         if (unit.distToSquadCenter() >= 8 && unit.enemiesNear().isEmpty() && unit.friendsInRadius(2.1).atMost(2)) {
             unit.addLog("JoinSquad");
@@ -115,8 +142,10 @@ public abstract class MoveToFocusPoint {
             if (unit.enemiesNear().combatUnits().empty()) {
                 for (AUnit friend : unit.friendsNear().inRadius(0.6, unit).combatUnits().inRadius(7, unit).list()) {
                     APosition withdrawTo = friend.translateTilesTowards(1, focus.fromSide());
-                    friend.move(withdrawTo, Actions.MOVE_FOCUS, "HelpWithdraw", true);
-                    friend.setTooltip("HelpWithdraw", true);
+                    if (friend.move(withdrawTo, Actions.MOVE_FOCUS, "HelpWithdraw", true)) {
+                        friend.setTooltip("HelpWithdraw", true);
+                        return true;
+                    }
                 }
             }
 
@@ -141,7 +170,9 @@ public abstract class MoveToFocusPoint {
      */
     protected boolean tooCloseToFocusPoint() {
         if (unit.isMelee() && unit.hp() <= 18 && unitToFocus <= 3.5) {
-            return unit.moveAwayFrom(focus, 2, "InjuredSafety", Actions.MOVE_FOCUS);
+            if (unit.moveAwayFrom(focus, 2, "InjuredSafety", Actions.MOVE_FOCUS)) {
+                return true;
+            }
         }
 
         if (!isAroundChoke()) {
@@ -172,8 +203,9 @@ public abstract class MoveToFocusPoint {
     protected boolean tooFarBack() {
         if (isTooFarBack()) {
             APosition goTo = unitToFocus >= 8 ? focus : focus.translateTilesTowards(0.5, unit);
-            unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
-            return true;
+            if (unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)) {
+                return true;
+            }
         }
 
         return false;

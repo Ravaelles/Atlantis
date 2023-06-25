@@ -7,12 +7,17 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
     public boolean move(AUnit unit, AFocusPoint focusPoint) {
+        if (unit.isRunning() || unit.enemiesNear().groundUnits().inRadius(7, unit).notEmpty()) {
+            return false;
+        }
+
         this.unit = unit;
         this.focus = focusPoint;
 
@@ -26,14 +31,20 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 
-        if (focus.isAroundChoke()) {
-//            if (unit.debug())System.out.println("handleWrongSideOfFocus " + unit);
-            if (handleWrongSideOfFocus(unit, focusPoint) || tooFarBack() || tooCloseToFocusPoint()) {
-                return true;
+        if (unit.lastActionMoreThanAgo(5, Actions.MOVE_FORMATION)) {
+            if (focus.isAroundChoke()) {
+    //            if (unit.debug())System.out.println("handleWrongSideOfFocus " + unit);
+                if (handleWrongSideOfFocus(unit, focusPoint) || tooFarBack() || tooCloseToFocusPoint()) {
+                    return true;
+                }
             }
         }
 
 //        if (handleWrongSideOfFocus(unit, focusPoint) || tooCloseToFocusPoint() || advance()) {
+//            return true;
+//        }
+
+//        if (spreadOut()) {
 //            return true;
 //        }
 

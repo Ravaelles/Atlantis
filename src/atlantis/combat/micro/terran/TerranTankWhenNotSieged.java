@@ -121,7 +121,9 @@ public class TerranTankWhenNotSieged extends TerranTank {
 
     private static boolean shouldSiegeBecauseSpecificEnemiesNear(AUnit unit) {
         Selection enemies = unit.enemiesNear().groundUnits().nonBuildings().nonWorkers();
+        AUnit enemy = unit.nearestEnemy();
 
+        double maxDist = enemy != null && enemy.isMoving() && unit.isOtherUnitFacingThisUnit(enemy) ? 14.5 : 11.98;
         if (
             enemies
                 .clone()
@@ -130,16 +132,20 @@ public class TerranTankWhenNotSieged extends TerranTank {
                     AUnitType.Terran_Siege_Tank_Tank_Mode,
                     AUnitType.Terran_Siege_Tank_Siege_Mode
                 )
-                .inRadius(13.5, unit)
+                .inRadius(maxDist, unit)
                 .isNotEmpty()
         ) {
-            return enemies.groundUnits().inRadius(7, unit).isEmpty();
+            return enemies.groundUnits().inRadius(5 + unit.id() % 4, unit).isEmpty();
         }
 
         return enemies.inRadius(15, unit).atLeast(2);
     }
 
     protected static boolean wantsToSiege(AUnit unit, String log) {
+        if (TerranTankWhenSieged.wouldBlockChoke(unit)) {
+            return false;
+        }
+
         if (!Enemy.terran()) {
             if (unit.friendsNear().tanksSieged().inRadius(1.2, unit).isNotEmpty()) {
                 return false;

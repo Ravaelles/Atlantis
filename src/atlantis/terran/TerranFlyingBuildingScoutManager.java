@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,7 +24,7 @@ public class TerranFlyingBuildingScoutManager {
             return;
         }
 
-        if (shouldHaveAFlyingBuilding()) {
+        if (needNewFlyingBuilding()) {
             liftABuildingAndFlyAmongStars();
         }
 
@@ -63,6 +64,13 @@ public class TerranFlyingBuildingScoutManager {
         if (!flyingBuilding.isAlive()) {
             flyingBuildings.remove(flyingBuilding);
             return true;
+        }
+
+        Selection combatBuildings = flyingBuilding.enemiesNear()
+            .combatBuildingsAntiAir()
+            .inRadius(7.8, flyingBuilding);
+        if (combatBuildings.notEmpty()) {
+            return flyingBuilding.moveAwayFrom(flyingBuilding, 3, "BloodyBuilding", Actions.MOVE_SAFETY);
         }
 
         if (flyingBuilding.lastUnderAttackLessThanAgo(30 * 3)) {
@@ -106,7 +114,7 @@ public class TerranFlyingBuildingScoutManager {
 
     // =========================================================
 
-    private static boolean shouldHaveAFlyingBuilding() {
+    private static boolean needNewFlyingBuilding() {
         if (!flyingBuildings.isEmpty()) {
             return false;
         }

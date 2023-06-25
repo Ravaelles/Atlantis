@@ -1,5 +1,6 @@
 package atlantis.combat.missions.contain;
 
+import atlantis.combat.missions.attack.MissionAttackVsCombatBuildings;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionChanger;
@@ -67,6 +68,10 @@ public class MissionContain extends Mission {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (unit.isTerranInfantry() && MissionAttackVsCombatBuildings.forbiddenForTerranInfantry(unit, enemy)) {
+            return false;
+        }
+
         if (unit.isStimmed()) {
             return true;
         }

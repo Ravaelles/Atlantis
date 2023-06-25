@@ -38,9 +38,10 @@ public class AdvanceUnitsManager {
     private static boolean moveToFocusPoint(
             AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
     ) {
-        if (unit.isAir()) {
-            return false;
-        }
+        // @Check
+//        if (unit.isAir()) {
+//            return false;
+//        }
 
         if (focusPoint == null) {
             unit.addLog("NoFocusPoint");
@@ -124,6 +125,7 @@ public class AdvanceUnitsManager {
         // Too far
         else if (distToFocusPoint > optimalDist + margin) {
             if (unit.isMoving() && unit.lastActionLessThanAgo(40, Actions.MOVE_ENGAGE)) {
+                unit.setTooltip("Engaging");
                 return true;
             }
 
@@ -173,29 +175,16 @@ public class AdvanceUnitsManager {
 
     private static boolean handledTerranAdvance(AUnit unit) {
         if (unit.isTerranInfantry() && unit.isWounded() && !unit.isMedic() && Count.medics() >= 1) {
-            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).nearestTo(unit);
-//            if (medic != null && medic.distToMoreThan(unit, maxDistToMedic(unit))) {
+            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic)
+                .havingEnergy(20)
+                .inRadius(15, unit)
+                .nearestTo(unit);
+
             if (medic != null && (!medic.hasTarget() || medic.target().equals(unit))) {
-//                if (Select.ourCombatUnits().inRadius(5, unit).atMost(5)) {
-                return unit.move(medic, Actions.MOVE_FOCUS, "ToMedic", false);
-//                }
+                return unit.move(medic, Actions.MOVE_FOCUS, "Regenerate", false);
             }
         }
 
         return false;
     }
-
-//    private static double maxDistToMedic(AUnit unit) {
-//        if (unit.isMarine()) {
-//            return 8;
-//        }
-//        else if (unit.isFirebat()) {
-//            return 1.9;
-//        }
-//
-//        return 8;
-//    }
-
-    // =========================================================
-
 }

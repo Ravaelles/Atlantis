@@ -16,14 +16,17 @@ public class TerranFirebat {
 
         if (unit.cooldown() >= 4 || !shouldContinueMeleeFighting(unit)) {
             AUnit nearestEnemy = unit.nearestEnemy();
-            return nearestEnemy != null && unit.runningManager().runFrom(
-                nearestEnemy, 1.0, Actions.RUN_ENEMY, false
-            );
+            if (nearestEnemy != null && unit.distTo(nearestEnemy) <= 1.8) {
+                return unit.runningManager().runFrom(
+                    nearestEnemy, 1.0, Actions.RUN_ENEMY, false
+                );
+            }
         }
 
         if (
-            unit.hp() >= 37
-            && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 2 : 3)
+            unit.hp() >= 33
+            && unit.cooldown() <= 3
+            && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
         ) {
             if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
                 unit.setTooltip("Napalm");

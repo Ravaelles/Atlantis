@@ -10,6 +10,8 @@ import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.positioning.SquadCohesion;
+import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
@@ -279,14 +281,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (
             runningManager().isPossibleAndReasonablePosition(this, newPosition)
                 && move(newPosition, action, "Move away", false)
+                && Select.all().groundUnits().inRadius(0.05, newPosition).empty()
         ) {
             this.setTooltip(tooltip, false);
             return true;
         }
 
 //        APainter.paintLine(position, newPosition, Color.Teal);
-        this.setTooltip("Cant move away", false);
-        return move(newPosition, Actions.MOVE_ERROR, "Force move", false);
+        this.setTooltip("CantMoveAway", false);
+        APainter.paintCircle(this, 3, Color.Red);
+        APainter.paintCircle(this, 5, Color.Red);
+        APainter.paintCircle(this, 7, Color.Red);
+        APainter.paintCircle(this, 9, Color.Red);
+        return false;
+//        return move(newPosition, Actions.MOVE_ERROR, "Force move", false);
     }
 
     // =========================================================
@@ -2627,5 +2635,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         return ARepairAssignments.getClosestRepairerAssignedTo(this);
+    }
+
+    public boolean isBeingRepaired() {
+        for (AUnit worker : Select.ourWorkers().inRadius(1.1, this).list()) {
+            if (worker.isRepairing() && worker.isTarget(this)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isTarget(AUnit otherUnit) {
+        return otherUnit.equals(target());
     }
 }

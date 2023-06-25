@@ -5,6 +5,7 @@ import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.Vector;
 
 /**
@@ -142,7 +143,8 @@ public interface HasPosition {
 
     default APosition makeFreeOfAnyGroundUnits(double maxRadius, double step, AUnit exceptUnit) {
         double currentRadius = 0;
-        double closenessMargin = 0.06;
+        double closenessMargin = 0.15;
+        Selection our = Select.our().groundUnits();
 
         while (currentRadius <= maxRadius) {
             for (double dtx = -currentRadius; dtx <= currentRadius; dtx += step) {
@@ -154,7 +156,7 @@ public interface HasPosition {
                         APosition position = this.translateByTiles(dtx, dty);
                         if (
                             position.isWalkable()
-                            && Select.our().exclude(exceptUnit).inRadius(closenessMargin, position).empty()
+                            && our.exclude(exceptUnit).inRadius(closenessMargin, position).empty()
                         ) {
                             return position;
                         }

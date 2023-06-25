@@ -485,6 +485,18 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection combatBuildingsAntiAir() {
+        return cloneByRemovingIf(
+            (unit -> unit.is(
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Terran_Bunker,
+                AUnitType.Terran_Missile_Turret,
+                AUnitType.Zerg_Spore_Colony
+            )),
+            "combatBuildingsAntiAir"
+        );
+    }
+
     public Selection onlyCompleted() {
         return cloneByRemovingIf(
             (unit -> !unit.isCompleted()), "onlyCompleted"

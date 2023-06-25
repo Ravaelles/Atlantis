@@ -2,8 +2,6 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildings;
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
-import atlantis.combat.retreating.RetreatManager;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
@@ -46,11 +44,16 @@ public abstract class AvoidEnemies {
         // Only COMBAT BUILDINGS
 //        if (!unit.isMissionAttack() && onlyCombatBuildingsAreDangerouslyClose(enemiesDangerouslyClose)) {
 //        System.err.println(" A " + unit.combatEvalRelative());
-        if (onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)) {
+        if (
+            onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)
+                || unit.isAir()
+                || unit.hp() <= 40
+                || unit.combatEvalRelative() <= 2.7
+        ) {
 //            System.err.println(" B Deeper");
             if (
 //                    RetreatManager.shouldNotEngageCombatBuilding(unit)
-                    AvoidCombatBuildings.shouldNotEngage(unit, enemiesDangerouslyClose)
+                    AvoidCombatBuildings.update(unit, enemiesDangerouslyClose)
             ) {
 //                System.err.println(" C ----------------------");
                 unit.addLog("KeepAway");

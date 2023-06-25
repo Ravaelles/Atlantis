@@ -40,12 +40,8 @@ public class MissionAttackVsCombatBuildings {
             .atLeast(9 * buildings);
     }
 
-    private static boolean forbiddenForTerranInfantry(AUnit unit, AUnit combatBuilding) {
+    public static boolean forbiddenForTerranInfantry(AUnit unit, AUnit combatBuilding) {
         if (!unit.isTerranInfantry()) {
-            return false;
-        }
-
-        if (unit.distToMoreThan(combatBuilding, 8.2)) {
             return false;
         }
 
@@ -53,7 +49,16 @@ public class MissionAttackVsCombatBuildings {
             return true;
         }
 
+        double distTo = unit.distTo(combatBuilding);
+        if (distTo > 8.2) {
+            return false;
+        }
+
         if (unit.friendsInRadiusCount(1.5) <= 0 || unit.friendsInRadiusCount(4) <= 6) {
+            return true;
+        }
+
+        if (distTo >= 5 && unit.combatEvalRelative() <= 1.2) {
             return true;
         }
 

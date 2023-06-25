@@ -65,8 +65,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // =========================================================
 
                 int basesWithUnfinished = Count.basesWithUnfinished();
+                AChoke mainChoke = Chokes.mainChoke();
                 if (basesWithUnfinished <= 1 && Missions.isGlobalMissionSparta()) {
-                    AChoke mainChoke = Chokes.mainChoke();
                     if (mainChoke != null) {
                         return new AFocusPoint(
                             mainChoke,
@@ -78,13 +78,23 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Terran bunker ===========================================
 
-                if (We.terran() && A.seconds() <= 500) {
+                if (We.terran() && A.seconds() <= 700 && Count.tanks() <= 5) {
                     AUnit bunker = Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
                     if (bunker != null) {
+                        APosition point;
+                        String tooltip;
+                        if (mainChoke != null) {
+                            point = mainChoke.center().translateTilesTowards(6, bunker);
+                            tooltip = "Bunker & Choke";
+                        } else {
+                            point = bunker.translateTilesTowards(-3, mainBase);
+                            tooltip = "Bunker";
+                        }
+
                         return new AFocusPoint(
-                            bunker.translateTilesTowards(-3, mainBase),
+                            point,
                             mainBase,
-                            "Bunker"
+                            tooltip
                         );
                     }
                 }

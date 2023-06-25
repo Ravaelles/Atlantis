@@ -32,6 +32,8 @@ public class MissionDefend extends Mission {
         focusPointManager = new MissionDefendFocusPoint();
     }
 
+    // =========================================================
+
     @Override
     public boolean update(AUnit unit) {
         if (AGame.isUms()) {
@@ -42,19 +44,13 @@ public class MissionDefend extends Mission {
         focusPoint = focusPoint();
 
         if (focusPoint == null) {
-            if (!Have.base()) {
-                return false;
-            }
-
-            System.err.println("Couldn't define choke point.");
-            throw new RuntimeException("Couldn't define choke point.");
+            return noFocusPoint();
         }
 
         // =========================================================
 
         // Don't reposition if enemies Near
         if (unit.enemiesNear().combatUnits().inRadius(6.2, unit).atLeast(2)) {
-//            if (unit.debug())System.out.println("Don't reposition " + unit);
             return false;
         }
 
@@ -232,6 +228,15 @@ public class MissionDefend extends Mission {
 
         return false;
 //        return enemies.onlyMelee() && unit.hp() >= 18;
+    }
+
+    protected static boolean noFocusPoint() {
+        if (!Have.base()) {
+            return false;
+        }
+
+        System.err.println("Couldn't define choke point.");
+        throw new RuntimeException("Couldn't define choke point.");
     }
 
     @Override

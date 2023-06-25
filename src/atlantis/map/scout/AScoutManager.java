@@ -1,6 +1,8 @@
 package atlantis.map.scout;
 
 import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildings;
+import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -11,14 +13,12 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.map.ARegion;
 import atlantis.map.ARegionBoundary;
 import atlantis.map.Bases;
-import atlantis.map.Regions;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -56,6 +56,16 @@ public class AScoutManager {
 
     private static void update(AUnit scout) {
         scout.setTooltipTactical("Scout...");
+
+        if (AvoidCriticalUnits.update(scout)) {
+            scout.setTooltip("Daaaamn!");
+            return;
+        }
+
+        if (AvoidCombatBuildings.update(scout, null)) {
+            scout.setTooltip("Eh!");
+            return;
+        }
 
         if (AvoidEnemies.avoidEnemiesIfNeeded(scout)) {
             return;

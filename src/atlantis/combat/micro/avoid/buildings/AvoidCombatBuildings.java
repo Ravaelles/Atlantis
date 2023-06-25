@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.combat.retreating.ShouldRetreat;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
@@ -8,9 +9,13 @@ import atlantis.units.select.Select;
 
 public class AvoidCombatBuildings {
 
-    public static boolean shouldNotEngage(AUnit unit, Units enemyCombatBuildings) {
+    public static boolean update(AUnit unit, Units enemyCombatBuildings) {
         if (unit.isMissionDefendOrSparta()) {
             return false;
+        }
+
+        if (enemyCombatBuildings == null) {
+            enemyCombatBuildings = EnemyUnits.discovered().combatBuildings(false).units();
         }
 
         AUnit combatBuilding = Select.from(enemyCombatBuildings).nearestTo(unit);
