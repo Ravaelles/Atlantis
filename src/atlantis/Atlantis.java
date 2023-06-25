@@ -207,10 +207,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitEvade(Unit u) {
-        AUnit unit = AUnit.getById(u);
-        if (unit.isEnemy()) {
-            EnemyUnitsUpdater.updateUnitTypeAndPosition(unit);
-        }
+//        AUnit unit = AUnit.getById(u);
+//        if (unit.isEnemy()) {
+//            EnemyUnitsUpdater.updateUnitTypeAndPosition(unit);
+//        }
     }
 
     /**
@@ -218,10 +218,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitHide(Unit u) {
-        AUnit unit = AUnit.getById(u);
-        if (unit.isEnemy()) {
-            EnemyUnitsUpdater.updateUnitTypeAndPosition(unit);
-        }
+//        AUnit unit = AUnit.getById(u);
+//        if (unit.isEnemy()) {
+//            EnemyUnitsUpdater.updateUnitTypeAndPosition(unit);
+//        }
     }
 
     /**

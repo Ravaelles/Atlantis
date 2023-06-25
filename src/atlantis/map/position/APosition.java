@@ -34,23 +34,27 @@ public class APosition extends Position implements HasPosition, Comparable<Point
     // =========================================================
 
     public APosition(APosition position) {
-        super(position.getX(), position.getY());
-        this.p = position.p;
+        super(position.x(), position.y());
+//        this.p = position.p;
+        this.p = this;
     }
 
     private APosition(HasPosition p) {
-        super(p.position().getX(), p.position().getY());
-        this.p = p.position();
+        super(p.x(), p.y());
+//        this.p = p.position();
+        this.p = this;
     }
 
     public APosition(int pixelX, int pixelY) {
         super(pixelX, pixelY);
-        this.p = new Position(pixelX, pixelY);
+//        this.p = new Position(pixelX, pixelY);
+        this.p = this;
     }
 
     private APosition(Position p) {
         super(p.getX(), p.getY());
-        this.p = p;
+//        this.p = p;
+        this.p = this;
     }
 
     /**
@@ -67,7 +71,9 @@ public class APosition extends Position implements HasPosition, Comparable<Point
 //        else {
             APosition position = null;
 
-            if (p instanceof HasPosition) {
+            if (p instanceof APosition) {
+                position = new APosition((APosition) p);
+            } else if (p instanceof HasPosition) {
                 position = new APosition(((HasPosition) p).position());
             } else if (p instanceof Position) {
                 position = new APosition((Position) p);
@@ -271,13 +277,20 @@ public class APosition extends Position implements HasPosition, Comparable<Point
 //    public int compareTo(Position o) {
     @Override
     public int compareTo(Point o) {
-        int compare = Integer.compare(getX(), o.getX());
+        int compare = Integer.compare(x, y);
         if (compare == 0) {
-            compare = Integer.compare(getY(), o.getY());
+            compare = Integer.compare(x, y);
         }
         return compare;
     }
-    
+//    public int compareTo(Point o) {
+//        int compare = Integer.compare(getX(), o.getX());
+//        if (compare == 0) {
+//            compare = Integer.compare(getY(), o.getY());
+//        }
+//        return compare;
+//    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -289,13 +302,14 @@ public class APosition extends Position implements HasPosition, Comparable<Point
 //        if (!(obj instanceof APosition) && !(obj instanceof Position)) {
 //            return false;
 //        }
-        if (!(obj instanceof HasPosition)) {
-            return false;
-        }
+//        if (!(obj instanceof HasPosition)) {
+//            return false;
+//        }
         
         int otherX = ((HasPosition) obj).x();
         int otherY = ((HasPosition) obj).y();
-        return this.getX() == otherX && this.getY() == otherY;
+        return this.x == otherX && this.y == otherY;
+//        return this.getX() == otherX && this.getY() == otherY;
     }
     
     /**

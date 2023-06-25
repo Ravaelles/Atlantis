@@ -1,5 +1,6 @@
 package atlantis.production.orders.build;
 
+import atlantis.config.AtlantisIgniter;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
@@ -16,17 +17,16 @@ public class ABuildOrderLoader {
     /**
      * Directory that contains build orders.
      */
-    public static final String BUILD_ORDERS_PATH = "bwapi-data/AI/build_orders/";
+    public static final String BUILD_ORDERS_PATH = "AI/build_orders/";
 
     // =========================================================
 
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
 //        String filePath = BUILD_ORDERS_PATH + buildOrder.getBuildOrderRelativePath();
-        String filePath = "./" + BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.name() + ".txt";
-
-//        if (Env.isTesting()) {
-//            filePath = ".." + filePath; // Fix for tests: Replace ./ with ../
-//        }
+//        String filePath = "../" + BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.name() + ".txt";
+        String filePath = AtlantisIgniter.getBwapiDataPath()
+            + BUILD_ORDERS_PATH + strategy.race() + "/"
+            + strategy.name() + ".txt";
 
 //        System.out.println("\r\nUse build order from file: `" + strategy.name() + ".txt`");
 

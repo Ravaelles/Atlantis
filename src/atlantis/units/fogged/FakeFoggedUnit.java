@@ -17,7 +17,7 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
     public static FakeFoggedUnit fromFake(FakeUnit unit) {
         FakeFoggedUnit fakeFoggedUnit = new FakeFoggedUnit();
         fakeFoggedUnit._id = unit.id();
-        fakeFoggedUnit.aUnit = unit;
+        fakeFoggedUnit._lastAUnit = unit;
         fakeFoggedUnit.onAbstractFoggedUnitCreated(unit);
 
         all.put(unit.id(), fakeFoggedUnit);
@@ -48,12 +48,12 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
 
     @Override
     public int x() {
-        return aUnit.position().x;
+        return _lastAUnit.position().x;
     }
 
     @Override
     public int y() {
-        return aUnit.position().y;
+        return _lastAUnit.position().y;
     }
 
     @Override

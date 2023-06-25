@@ -1,6 +1,5 @@
 package atlantis.combat.targeting;
 
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
@@ -10,11 +9,11 @@ public class ATargetingForAirUnits {
     protected static AUnit targetForAirUnits(AUnit unit) {
         AUnit target;
 
-        if ((target = targetInShootingRange(unit)) != null) {
+        if ((target = targetsCrucial(unit)) != null) {
             return target;
         }
 
-        if ((target = targetOutsideShootingRange(unit)) != null) {
+        if ((target = targetsStandard(unit)) != null) {
             return target;
         }
 
@@ -23,7 +22,7 @@ public class ATargetingForAirUnits {
 
     // =========================================================
 
-    private static AUnit targetInShootingRange(AUnit unit) {
+    private static AUnit targetsCrucial(AUnit unit) {
         AUnit target;
 
         Selection allEnemies = ATargeting.enemyUnits.withEnemyFoggedUnits()
@@ -52,6 +51,23 @@ public class ATargetingForAirUnits {
 
         // =========================================================
         // Target REAVERS + HT + TANKS + DEFILERS
+
+        target = allEnemies
+                .ofType(
+                    AUnitType.Protoss_Reaver,
+                    AUnitType.Protoss_High_Templar,
+
+                    AUnitType.Terran_Siege_Tank_Siege_Mode,
+                    AUnitType.Terran_Siege_Tank_Tank_Mode,
+
+                    AUnitType.Zerg_Defiler,
+                    AUnitType.Zerg_Guardian
+                )
+                .inShootRangeOf(unit)
+                .mostWounded();
+        if (target != null) {
+            return target;
+        }
 
         target = allEnemies
                 .ofType(
@@ -147,7 +163,7 @@ public class ATargetingForAirUnits {
         return null;
     }
 
-    private static AUnit targetOutsideShootingRange(AUnit unit) {
+    private static AUnit targetsStandard(AUnit unit) {
         AUnit target;
 
         Selection allEnemies = ATargeting.enemyUnits.withEnemyFoggedUnits().removeDuplicates();

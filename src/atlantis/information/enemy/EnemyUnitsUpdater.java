@@ -1,12 +1,10 @@
 package atlantis.information.enemy;
 
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
-import bwapi.Color;
 
 public class EnemyUnitsUpdater extends EnemyUnits {
 
@@ -14,25 +12,32 @@ public class EnemyUnitsUpdater extends EnemyUnits {
 //        System.out.println("--- UPDATE at " + A.now());
         for (AUnit enemy : Select.enemy().list()) {
 //            System.out.println("update fogged from real = " + enemy);
-            updateUnitTypeAndPosition(enemy);
+            updateTypeAndPositionOfFoggedUnitBasenOnVisibleAUnit(enemy);
         }
 
         for (AbstractFoggedUnit foggedUnit : enemyUnitsDiscovered.values()) {
 //            System.out.println("update fogged = " + foggedUnit);
-            updatedFogged(foggedUnit);
+            updatedFoggedUnitEvenIfNotVisible(foggedUnit);
         }
     }
 
-    public static boolean updateUnitTypeAndPosition(AUnit enemy) {
+    private static boolean updateTypeAndPositionOfFoggedUnitBasenOnVisibleAUnit(AUnit enemy) {
         if (enemy.type().isGasBuildingOrGeyser()) {
             return true;
         }
 
-        AbstractFoggedUnit foggedUnit = getFoggedUnit(enemy);
-        if (foggedUnit != null && foggedUnit.u() != null) {
-            foggedUnit.updatePosition(enemy);
-            foggedUnit.updateType(enemy);
+        if (enemy instanceof AbstractFoggedUnit) {
+            System.err.println("updateTypeAndPositionOfFoggedUnitBasenOnVisibleAUnit got AbstractFoggedUnit: " + enemy);
+            A.printStackTrace();
         }
+
+        AbstractFoggedUnit foggedUnit = getFoggedUnit(enemy);
+//        if (foggedUnit != null && foggedUnit.u() != null) {
+//        if (foggedUnit != null && foggedUnit.isVisibleUnitOnMap()) {
+//        if (foggedUnit != null && foggedUnit.isVisibleUnitOnMap()) {
+        foggedUnit.updatePosition(enemy);
+        foggedUnit.updateType(enemy);
+//        }
         return false;
     }
 
@@ -40,34 +45,43 @@ public class EnemyUnitsUpdater extends EnemyUnits {
      * Check if the position of fogged unit is visible and there is no unit there.
      * If so, change it, because it means we don't know where it is.
      */
-    private static void updatedFogged(AbstractFoggedUnit foggedUnit) {
-        AUnit unit = foggedUnit.innerAUnit();
+    private static void updatedFoggedUnitEvenIfNotVisible(AbstractFoggedUnit foggedUnit) {
+//        System.out.println(
+//            foggedUnit + " / " + foggedUnit.getUnit() + " / " + foggedUnit.getUnit().isPositionVisible()
+//        );
+
+//        AUnit unit = foggedUnit.innerAUnit();
 //        System.out.println(unit + " // visible: " + (unit != null ? unit.isVisibleUnitOnMap() : "---"));
 
 //        if (unit == null || !unit.isVisibleUnitOnMap()) {
-        if (!unit.isVisibleUnitOnMap()) {
-            if (foggedUnit.hasPosition()) {
-                APainter.paintCircleFilled(
-                    foggedUnit,
-                    8,
-                    foggedUnit.position().isPositionVisible() ? Color.Green : Color.Red
-                );
-            }
+//        System.err.println(unit + " / isVisibleUnitOnMap:" + unit.isVisibleUnitOnMap());
+//        if (!unit.isVisibleUnitOnMap()) {
+//            if (foggedUnit.hasPosition()) {
+//                APainter.paintCircleFilled(
+//                    foggedUnit,
+//                    4,
+//                    foggedUnit.position().isPositionVisible() ? Color.Green : Color.Red
+//                );
+//            }
 
 //            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible() && foggedUnit.u() == null) {
             if (
-                foggedUnit.hasPosition()
+//                foggedUnit.u() == null
+                    foggedUnit.hasPosition()
                     && foggedUnit.position().isPositionVisible()
-                    && (foggedUnit.u() == null && !foggedUnit.isCloaked() && !foggedUnit.isDetected())
+//                    && (foggedUnit.u() == null && !foggedUnit.isCloaked() && !foggedUnit.isDetected())
+//                    && (!foggedUnit.isCloaked() && !foggedUnit.isDetected())
             ) {
-                System.out.println(">> Fogged unit no longer present at this visible position " + foggedUnit);
-                foggedUnit.forceRemoveKnownPosition();
+//                System.out.println(">> Fogged unit no longer present at this visible position " + foggedUnit);
+//                foggedUnit.forceRemoveKnownPosition();
+//                foggedUnit.forceRemoveKnownPosition();
+                foggedUnit.foggedUnitNoLongerWhereItWasBefore();
             }
 
 //            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible() && foggedUnit.u() == null) {
 //                System.out.println(">> Fogged unit is no longer visible, remove position " + foggedUnit);
 //            }
-        }
+//        }
     }
 
     /**
@@ -88,9 +102,13 @@ public class EnemyUnitsUpdater extends EnemyUnits {
             enemyUnitsDiscovered.put(id, foggedUnit);
 
 //            System.out.println("ADD enemyUnit = " +  enemyUnit + " / " + id);
-//            if (enemyUnit.isBuilding()) {
-//                A.printStackTrace("ADD enemyUnit = " + enemyUnit + " / " + enemyUnit.id());
-//            }
+            if (enemyUnit.isBuilding()) {
+//                A.printStackTrace(
+                System.err.println(
+                    "ADD enemyBuilding = " + enemyUnit + " / " + enemyUnit.id()
+                    + " / " + enemyUnit.isVisibleUnitOnMap() + " / " + enemyUnit.isPositionVisible()
+                );
+            }
         }
     }
 
@@ -100,15 +118,19 @@ public class EnemyUnitsUpdater extends EnemyUnits {
 
         if (foggedUnit != null) {
 //            System.out.println("        forceRemoveKnownPosition");
-            foggedUnit.forceRemoveKnownPosition();
+            foggedUnit.foggedUnitNoLongerWhereItWasBefore();
         }
 
         enemyUnitsDiscovered.remove(enemyUnit.id());
         cache.clear();
 //        System.out.println("REMOVE b enemyUnit = " +  enemyUnit + " / " + enemyUnit.id());
 
-//        if (enemyUnit.isBuilding()) {
-//            A.printStackTrace("REMOVE b enemyUnit = " + enemyUnit + " / " + enemyUnit.id());
-//        }
+        if (enemyUnit.isBuilding()) {
+//            A.printStackTrace(
+            System.err.println(
+                "REMOVE enemyBuilding = " + enemyUnit + " / " + enemyUnit.id()
+                + " / " + enemyUnit.isVisibleUnitOnMap() + " / " + enemyUnit.isPositionVisible()
+            );
+        }
     }
 }

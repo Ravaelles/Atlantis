@@ -8,6 +8,7 @@ import atlantis.game.OnUnitRenegade;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -114,8 +115,11 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
     }
 
     private void fifthFrame() {
-//        EnemyUnits.unitsDiscoveredSelection().print("Fogged");
-//        Select.enemy().print("Visible enemies");
+        EnemyUnits.discovered().print("Fogged");
+        Select.enemy().print("Visible enemies");
+
+//        System.out.println(EnemyUnits.getFoggedUnit(drone3).type());
+//        System.out.println(EnemyUnits.getFoggedUnit(lurkerEgg).type());
 
         assertEquals(AUnitType.Zerg_Creep_Colony, EnemyUnits.getFoggedUnit(drone1).type());
         assertEquals(AUnitType.Zerg_Sunken_Colony, EnemyUnits.getFoggedUnit(drone2).type());

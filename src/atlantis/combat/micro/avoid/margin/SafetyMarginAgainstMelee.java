@@ -4,6 +4,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
+import static atlantis.units.AUnitType.Zerg_Devourer;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
@@ -217,6 +218,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     protected static double beastBonus(AUnit defender, AUnit attacker) {
+        if (defender.isAir() && attacker.is(Zerg_Devourer)) {
+            return 1.2;
+        }
+
         if (attacker.isDT() && attacker.distToLessThan(defender, 4.4)) {
             return 2.6;
         }

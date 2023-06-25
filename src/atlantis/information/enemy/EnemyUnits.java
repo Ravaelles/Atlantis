@@ -70,14 +70,7 @@ public class EnemyUnits {
         return (AUnit) cache.get(
                 "enemyBase",
                 70,
-                () -> {
-                    for (AbstractFoggedUnit enemyUnit : rawUnitsDiscovered()) {
-                        if (enemyUnit.isBase()) {
-                            return enemyUnit;
-                        }
-                    }
-                    return null;
-                }
+                () -> discovered().bases().first()
         );
     }
 
@@ -86,59 +79,13 @@ public class EnemyUnits {
                 "nearestEnemyBuilding",
                 50,
                 () -> {
-                    AUnit ourMainBase = Select.main();
-                    AUnit best = null;
-                    if (ourMainBase != null) {
-                        double minDist = 999999;
-
-//                        for (AbstractFoggedUnit enemy : unitsDiscovered()) {
-                        for (AUnit enemy : discovered().list()) {
-                            if (enemy.type().isBuilding() && enemy.position() != null) {
-                                double dist = ourMainBase.groundDist(enemy.position());
-                                if (dist < minDist) {
-                                    minDist = dist;
-                                    best = enemy;
-                                }
-                            }
-                        }
+                    AUnit ourUnit = Select.main();
+                    if (ourUnit == null) {
+                        ourUnit = Select.ourBuildings().first();
                     }
-
-                    return best; // Can be null
+                    return discovered().buildings().nearestTo(ourUnit);
                 }
         );
     }
-
-//    public static Selection combatBuildings(boolean includeCreepColonies) {
-//        return (Selection) cache.get(
-//                "combatBuildings:" + A.trueFalse(includeCreepColonies),
-//                40,
-//                () -> selectFoggedUnits().combatBuildings(includeCreepColonies)
-//        );
-//    }
-
-//    public static Selection combatUnitsToBetterAvoid() {
-//        return (Selection) cache.get(
-//                "combatUnitsToBetterAvoid:",
-//                30,
-//                () -> {
-//                    Selection foggedCombatnits = foggedUnits()
-//                            .combatUnits()
-//                            .havingPosition();
-//
-//                    return foggedCombatnits
-//                            .clone()
-//                            .combatBuildings(false)
-//                            .add(
-//                                foggedCombatnits.clone().ofType(
-//                                    AUnitType.Protoss_Photon_Cannon,
-//                                    AUnitType.Terran_Siege_Tank_Siege_Mode,
-//                                    AUnitType.Zerg_Lurker,
-//                                    AUnitType.Zerg_Sunken_Colony
-//                                )
-//                            )
-//                            .havingPosition();
-//                }
-//        );
-//    }
 
 }

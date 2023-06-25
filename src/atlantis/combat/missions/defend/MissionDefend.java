@@ -69,11 +69,21 @@ public class MissionDefend extends Mission {
         }
         double distTo = unit.distTo(enemy);
 
+        Selection ourBuildings = enemy.enemiesNear().buildings();
+        if (unit.isAir()) {
+            if (
+                ourBuildings.atLeast(2) &&
+                ourBuildings.nearestTo(enemy).distTo(enemy) <= enemy.groundWeaponRange() + 0.1
+            ) {
+                return true;
+            }
+        }
+
         if (unit.isRanged()) {
 
             // Don't chase workers too far from base
             if (
-                enemy.isWorker() && distTo > unit.weaponRangeAgainst(enemy) && enemy.enemiesNear().buildings().empty()
+                enemy.isWorker() && distTo > unit.weaponRangeAgainst(enemy) && ourBuildings.empty()
             ) {
                 return false;
             }

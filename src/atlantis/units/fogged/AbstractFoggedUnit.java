@@ -1,5 +1,6 @@
 package atlantis.units.fogged;
 
+import atlantis.debug.tooltip.Tooltip;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
@@ -18,8 +19,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     protected final static TreeMap<Integer, AbstractFoggedUnit> all = new TreeMap<>();
 
-    protected static AUnit _lastAUnit = null;
-    protected AUnit aUnit;
+    protected AUnit _lastAUnit = null;
     protected int _id;
     protected int _hp;
     protected int _energy;
@@ -29,6 +29,7 @@ public class AbstractFoggedUnit extends AUnit {
     protected AUnitType _lastType;
     protected boolean _isCompleted;
     protected boolean _isCloaked = false;
+    protected boolean _isDetected;
     protected Cache<Integer> cacheInt = new Cache<>();
 
     // =========================================================
@@ -49,6 +50,108 @@ public class AbstractFoggedUnit extends AUnit {
 
     // =========================================================
 
+    protected void onAbstractFoggedUnitCreated(AUnit unit) {
+        _id = unit.id();
+        _lastAUnit = unit;
+
+        updatePosition(unit);
+        updateType(unit);
+
+        _isCompleted = unit.isCompleted();
+        _isCloaked = unit.isCloaked();
+        _isDetected = unit.isDetected();
+        _hp = unit.hp();
+        _energy = unit.energy();
+        _shields = unit.shields();
+        _isStimmed = unit.isStimmed();
+    }
+
+    public void updatePosition(AUnit unit) {
+        if (unit instanceof AbstractFoggedUnit) {
+            System.err.println("updatePosition got AbstractFoggedUnit: " + unit);
+            A.printStackTrace();
+        }
+
+//        System.err.println("unit = " + unit + " // " + unit.position());
+//        if (unit.hasPosition()) {
+//        if (u() != null && unit.x() > 0 && unit.y() > 0) {
+//        if (!(unit instanceof AbstractFoggedUnit) || unit.position().isPositionVisible()) {
+//        if (unit.x() > 0 && unit.y() > 0 && unit.position().isPositionVisible()) {
+//            _lastPosition = APosition.createFromPixels(unit.u().getX(), unit.u().getY());
+//        if (!(unit instanceof AbstractFoggedUnit) || unit.u() != null) {
+//        if (unit.isVisibleUnitOnMap()) {
+//            if (unit.type().isBase()) {
+//                System.err.println("--------- " + unit + " / x:" + unit.x() + " , y:" + unit.y());
+//            }
+
+//            _lastPosition = APosition.createFromPixels(unit.x(), unit.y());
+        updateLastPosition(unit);
+//            System.out.println("UPDATED _lastPosition = " + _lastPosition);
+//            if (unit.type().isBase()) {
+//                System.err.println("--AFTER-- " + unit + " / x:" + unit.x() + " , y:" + unit.y());
+//            }
+//        }
+
+//        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
+//            _position = null;
+//        }
+    }
+
+    private void updateLastPosition(AUnit unit) {
+//        _lastPosition = unit == null ? null : APosition.create(_lastAUnit.position());
+        if (unit.isBuilding() && _lastPosition != null) System.err.println("PRE " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
+
+        _lastPosition = APosition.create(unit.position());
+        cacheInt.set("lastPositionUpdated", -1, A.now());
+
+        if (unit.isBuilding() && _lastPosition != null) System.err.println("POST " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
+    }
+
+    public void updateType(AUnit unit) {
+        if (_lastType == null || (unit.type() != null && !_lastType.equals(unit.bwapiType()))) {
+//            System.err.println("UPDATING TYPE, current = " + _lastType
+//                             + ", \n           foggedUnit = " + this
+//                             + ", \n           REAL = " + unit.bwapiType().name());
+            _lastAUnit = unit;
+            _lastType = AUnitType.from(unit.bwapiType());
+        }
+    }
+
+    /**
+     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached
+     * type.
+     */
+    @Override
+    public AUnitType type() {
+//        if (_lastType == null) {
+//            if (_lastAUnit == null) {
+//                _lastAUnit = _lastAUnit;
+//            }
+//            _lastType = _lastAUnit.type();
+//        }
+
+        return _lastType;
+    }
+
+    // =========================================================
+
+    @Override
+    public int hashCode() {
+        return _id;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null || !(other instanceof AUnit)) {
+            return false;
+        }
+
+        return id() == ((AUnit) other).id();
+
+    }
+
+    // =========================================================
+
     public static void clearCache() {
         all.clear();
     }
@@ -58,74 +161,17 @@ public class AbstractFoggedUnit extends AUnit {
         return _id;
     }
 
-    /**
-     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached
-     * type.
-     */
-    @Override
-    public AUnitType type() {
-        if (_lastType == null) {
-            if (aUnit == null) {
-                aUnit = _lastAUnit;
-            }
-            _lastType = aUnit.type();
-        }
-
-        return _lastType;
-    }
-
     public APlayer player() {
         return AGame.enemy();
     }
 
     public AUnit getUnit() {
-        return aUnit;
-    }
-
-    protected void onAbstractFoggedUnitCreated(AUnit unit) {
-        _id = unit.id();
-        aUnit = unit;
-
-        updatePosition(unit);
-        updateType(unit);
-
-        _isCompleted = unit.isCompleted();
-        _isCloaked = unit.isCloaked();
-        _hp = unit.hp();
-        _energy = unit.energy();
-        _shields = unit.shields();
-        _isStimmed = unit.isStimmed();
-    }
-
-    public void updatePosition(AUnit unit) {
-//        System.err.println("unit = " + unit + " // " + unit.position());
-//        if (unit.hasPosition()) {
-//        if (u() != null && unit.x() > 0 && unit.y() > 0) {
-//        if (!(unit instanceof AbstractFoggedUnit) || unit.position().isPositionVisible()) {
-        if (!(unit instanceof AbstractFoggedUnit) || unit.u() != null) {
-//        if (unit.x() > 0 && unit.y() > 0 && unit.position().isPositionVisible()) {
-            _lastPosition = APosition.createFromPixels(unit.u().getX(), unit.u().getY());
-            cacheInt.set("lastPositionUpdated", -1, A.now());
-//            System.out.println("UPDATED _lastPosition = " + _lastPosition);
-        }
-
-//        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
-//            _position = null;
-//        }
+        return _lastAUnit;
     }
 
     @Override
     public boolean hasPosition() {
         return _lastPosition != null;
-    }
-
-    public void updateType(AUnit unit) {
-        if (_lastType == null || (unit.type() != null && !_lastType.equals(unit.bwapiType()))) {
-//            System.err.println("UPDATING TYPE, current = " + _lastType
-//                             + ", \n           foggedUnit = " + this
-//                             + ", \n           REAL = " + unit.bwapiType().name());
-            _lastType = AUnitType.from(unit.bwapiType());
-        }
     }
 
 //    public void positionUnknown() {
@@ -144,8 +190,20 @@ public class AbstractFoggedUnit extends AUnit {
 //        }
 //    }
 
-    public void forceRemoveKnownPosition() {
-        _lastPosition = null;
+    public void foggedUnitNoLongerWhereItWasBefore() {
+//        _lastPosition = null;
+//        _lastPosition = _lastAUnit == null ? null : APosition.create(_lastAUnit.position());
+
+        if (_lastAUnit != null && _lastAUnit.isBuilding()) {
+            System.out.println("\n_lastAUnit = " + _lastAUnit);
+            System.out.println("_thisFogged = " + this);
+        }
+
+        updateLastPosition(_lastAUnit);
+
+        if (_lastAUnit != null && _lastAUnit.isBuilding()) {
+            System.err.println("#" + id() + " _lastPosition = " + _lastPosition + "\n");
+        }
     }
 
     public int lastPositionUpdated() {
@@ -161,11 +219,11 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     public boolean isAccessible() {
-        return !AUnitType.Unknown.equals(aUnit.type());
+        return !AUnitType.Unknown.equals(_lastAUnit.type());
     }
 
     public AUnit innerAUnit() {
-        return aUnit;
+        return _lastAUnit;
     }
 
     // =========================================================
@@ -197,6 +255,11 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public boolean isCompleted() {
         return _isCompleted;
+    }
+
+    @Override
+    public boolean isDetected() {
+        return _isDetected;
     }
 
     @Override

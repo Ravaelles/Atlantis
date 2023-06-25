@@ -9,8 +9,6 @@ import atlantis.units.AUnit;
 public class FoggedUnit extends AbstractFoggedUnit {
 
     public static AbstractFoggedUnit from(AUnit unit) {
-        _lastAUnit = unit;
-
         AbstractFoggedUnit foggedUnit = (AbstractFoggedUnit) all.get(unit.id());
         if (foggedUnit != null) {
             return foggedUnit;
@@ -56,11 +54,6 @@ public class FoggedUnit extends AbstractFoggedUnit {
         return position().getY();
     }
 
-    @Override
-    public boolean isDetected() {
-        return true;
-    }
-
     // =========================================================
 
     @Override
@@ -88,7 +81,7 @@ public class FoggedUnit extends AbstractFoggedUnit {
             return 1;
         }
 
-        return o.compareTo(aUnit);
+        return o.compareTo(_lastAUnit);
     }
 
 }

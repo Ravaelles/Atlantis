@@ -51,7 +51,7 @@ public class SafetyMargin {
 //        System.out.println(defender.idWithHash() + ": MARGIN: " + safetyMargin);
 
         Color color = safetyMargin < 0 ? Color.Red : Color.Green;
-        APainter.paintLine(defender, attacker, color);
+//        APainter.paintLine(defender, attacker, color);
         APainter.paintTextCentered(defender, A.formatDecimalPlaces(calculated, 1), color, 0.6, 0);
 
         return safetyMargin;

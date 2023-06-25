@@ -39,6 +39,7 @@ import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.buildings.AGasManager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.workers.AWorkerManager;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
@@ -361,7 +362,9 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Alpha mission: " + Alpha.get().mission().name(), color);
 
 //        AFocusPoint focus = mission.focusPoint();
-        paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.White);
+        paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.Grey);
+        paintSideMessage("Fogged buildings: " + EnemyUnits.foggedUnits().buildings().count(), Color.Grey);
+        paintSideMessage("Fogged units: " + EnemyUnits.foggedUnits().realUnits().count(), Color.Grey);
 
         // =========================================================
         // Focus point
@@ -1164,16 +1167,28 @@ public class AAdvancedPainter extends APainter {
     /**
      * Paints information about enemy units that are not visible, but as far as we know are alive.
      */
-    static void paintFoggedUnits() {
+    public static void paintFoggedUnits() {
+//        Selection buildings = EnemyUnits.foggedUnits().buildings();
+//        if (buildings.notEmpty()) {
+//            buildings.print("Enemy fogged buildings");
+//        }
+
         for (AbstractFoggedUnit foggedEnemy : EnemyUnits.rawUnitsDiscovered()) {
             if (!foggedEnemy.hasPosition()) {
                 continue;
             }
 
+            APainter.paintCircleFilled(
+                foggedEnemy,
+                6,
+                foggedEnemy.position().isPositionVisible() ? Color.White : Color.Grey
+            );
+
             APosition topLeft;
+            AUnitType type = foggedEnemy.type();
             topLeft = foggedEnemy.translateByPixels(
-                    -foggedEnemy.type().dimensionLeft(),
-                    -foggedEnemy.type().dimensionUp()
+                    -type.dimensionLeft(),
+                    -type.dimensionUp()
             );
 //            paintRectangle(
 //                    topLeft,
@@ -1183,11 +1198,11 @@ public class AAdvancedPainter extends APainter {
 //            );
             paintRectangle(
                     foggedEnemy.position(),
-                    foggedEnemy.type().dimensionRight() / 32,
-                    foggedEnemy.type().dimensionDown() / 32,
+                    type.dimensionRight() / 32,
+                    type.dimensionDown() / 32,
                     Color.Grey
             );
-            paintText(topLeft, foggedEnemy.type().name() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
+            paintText(topLeft, type.name() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
         }
     }
 

@@ -95,6 +95,10 @@ public abstract class MoveToFocusPoint {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     public boolean handleWrongSideOfFocus(AUnit unit, AFocusPoint focus) {
+        if (unit.isAir()) {
+            return false;
+        }
+
         if (!focus.isAroundChoke() || focus.fromSide() == null) {
 //            System.out.println("fromSide = " + fromSide);
 //            System.out.println("FOCUS POINT = " + focus.toString());
