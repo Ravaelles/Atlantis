@@ -15,6 +15,10 @@ import bwapi.TechType;
 public class TerranInfantry {
 
     public static boolean update(AUnit unit) {
+        if (TerranFirebat.update(unit)) {
+            return true;
+        }
+
         if (shouldStimpack(unit)) {
             unit.useTech(stim());
             return true;
