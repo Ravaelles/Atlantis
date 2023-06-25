@@ -159,7 +159,7 @@ public class AAttackEnemyUnit {
                     return null;
                 }
                 if (!isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
-                    System.out.println("Not allowed to attack: " + enemy + " (" + AAttackEnemyUnit.reasonNotToAttack + ")");
+//                    System.out.println("Not allowed to attack: " + enemy + " (" + AAttackEnemyUnit.reasonNotToAttack + ")");
                     return null;
                 }
 

@@ -32,6 +32,8 @@ public class OnEveryFrame {
 //        }
 
         AAdvancedPainter.paintFoggedUnits();
+
+        paintMissionAttackFocusPoint();
     }
 
     private static void paintMissionAttackFocusPoint() {
@@ -41,6 +43,8 @@ public class OnEveryFrame {
         if (focusPoint != null) {
             APainter.paintLine(unit, focusPoint, Color.Cyan);
         }
+
+//        AAdvancedPainter.paintSideMessage("Focus: x:" + focusPoint.x() + ", y:" + focusPoint.y(), Color.Yellow);
     }
 
 }

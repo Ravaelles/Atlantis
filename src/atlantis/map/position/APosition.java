@@ -214,7 +214,6 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         }
 
         if (somethingChanged) {
-//            p = new HasPosition(px, py);
             return new APosition(px, py);
         }
         else {

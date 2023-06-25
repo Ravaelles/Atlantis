@@ -99,12 +99,12 @@ public class AbstractFoggedUnit extends AUnit {
 
     private void updateLastPosition(AUnit unit) {
 //        _lastPosition = unit == null ? null : APosition.create(_lastAUnit.position());
-        if (unit.isBuilding() && _lastPosition != null) System.err.println("PRE " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
+//        if (unit.isBuilding() && _lastPosition != null) System.err.println("PRE " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
 
         _lastPosition = APosition.create(unit.position());
         cacheInt.set("lastPositionUpdated", -1, A.now());
 
-        if (unit.isBuilding() && _lastPosition != null) System.err.println("POST " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
+//        if (unit.isBuilding() && _lastPosition != null) System.err.println("POST " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
     }
 
     public void updateType(AUnit unit) {
@@ -194,16 +194,16 @@ public class AbstractFoggedUnit extends AUnit {
 //        _lastPosition = null;
 //        _lastPosition = _lastAUnit == null ? null : APosition.create(_lastAUnit.position());
 
-        if (_lastAUnit != null && _lastAUnit.isBuilding()) {
-            System.out.println("\n_lastAUnit = " + _lastAUnit + " / x:" + _lastAUnit.x() + "," + _lastAUnit.y());
-            System.out.println("_thisFogged = " + this + " / x:" + this.x() + "," + this.y());
-        }
+//        if (_lastAUnit != null && _lastAUnit.isBuilding()) {
+//            System.out.println("\n_lastAUnit = " + _lastAUnit + " / x:" + _lastAUnit.x() + "," + _lastAUnit.y());
+//            System.out.println("_thisFogged = " + this + " / x:" + this.x() + "," + this.y());
+//        }
 
         updateLastPosition(_lastAUnit);
 
-        if (_lastAUnit != null && _lastAUnit.isBuilding()) {
-            System.err.println("#" + id() + " _lastPosition = " + _lastPosition + "\n");
-        }
+//        if (_lastAUnit != null && _lastAUnit.isBuilding()) {
+//            System.err.println("#" + id() + " _lastPosition = " + _lastPosition + "\n");
+//        }
     }
 
     public int lastPositionUpdated() {

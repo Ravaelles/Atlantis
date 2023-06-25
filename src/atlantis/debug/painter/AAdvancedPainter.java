@@ -1177,11 +1177,9 @@ public class AAdvancedPainter extends APainter {
                 continue;
             }
 
-            APainter.paintCircleFilled(
-                foggedEnemy,
-                6,
-                foggedEnemy.position().isPositionVisible() ? Color.White : Color.Grey
-            );
+            if (!foggedEnemy.position().isPositionVisible()) {
+                APainter.paintCircleFilled(foggedEnemy, 4, Color.Grey);
+            }
 
             APosition topLeft;
             AUnitType type = foggedEnemy.type();

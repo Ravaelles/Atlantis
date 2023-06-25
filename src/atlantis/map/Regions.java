@@ -1,5 +1,6 @@
 package atlantis.map;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.util.cache.Cache;
@@ -129,6 +130,7 @@ public class Regions {
             return region;
         } catch (Exception e) {
             ErrorLogging.printErrorOnce("Failed trying to get region for " + position);
+//            A.printStackTrace();
         }
 
         return null;

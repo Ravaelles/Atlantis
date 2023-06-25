@@ -37,6 +37,7 @@ import atlantis.util.cache.Cache;
 import atlantis.util.CappedList;
 import atlantis.util.Vector;
 import atlantis.util.Vectors;
+import atlantis.util.log.ErrorLogging;
 import atlantis.util.log.Log;
 import atlantis.util.log.LogUnitsToFiles;
 import bwapi.*;
@@ -1546,8 +1547,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean lastActionMoreThanAgo(int framesAgo) {
         if (unitAction == null && !isWorker()) {
-            System.err.println("unitAction A null for " + this);
-            A.printStackTrace("Null action");
+            ErrorLogging.printErrorOnce("unitAction null for " + this);
+            return true;
+        }
+
+        if (unitAction == null && isWorker()) {
+            ErrorLogging.printErrorOnce("Null action for worker");
             return true;
         }
 

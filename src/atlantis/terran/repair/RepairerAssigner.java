@@ -14,9 +14,9 @@ public class RepairerAssigner {
     protected static void assignRepairersToWoundedUnits() {
 //        if (!OptimalNumOfRepairers.usingMoreRepairersThanAllowed()) {
         for (AUnit woundedUnit : Select.our().repairable(true).excludeTypes(AtlantisConfig.WORKER).list()) {
-            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {
-                System.out.println("Repair TURRET? ");
-            }
+//            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {
+//                System.out.println("Repair TURRET? ");
+//            }
 
             if (shouldNotRepairUnit(woundedUnit)) {
                 continue;
@@ -27,9 +27,9 @@ public class RepairerAssigner {
             }
 
             int newRepairersNeeded = optimalRepairersFor(woundedUnit);
-            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {
-                System.out.println("   HP=" + woundedUnit.hp() + " / repairers=" + newRepairersNeeded);
-            }
+//            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {
+//                System.out.println("   HP=" + woundedUnit.hp() + " / repairers=" + newRepairersNeeded);
+//            }
             if (newRepairersNeeded > 0) {
                 ARepairerManager.assignRepairersToWoundedUnits(woundedUnit, newRepairersNeeded);
 //                    System.out.println("Assign " + newRepairersNeeded + " repairers to " + woundedUnit.name());

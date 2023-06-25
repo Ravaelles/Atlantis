@@ -18,6 +18,7 @@ public class ChangeSquadToDefault extends ChangeSquadMission {
                 defaultMission.isMissionAttackOrContain()
                     && GamePhase.isEarlyGame()
                     && EnemyStrategy.get().isRushOrCheese()
+                    && squad.size() <= 13
             ) {
                 return false;
             }

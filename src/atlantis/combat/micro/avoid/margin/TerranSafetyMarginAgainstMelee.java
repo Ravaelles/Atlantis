@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid.margin;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.util.Enemy;
 
 public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
@@ -61,6 +62,10 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 //        }
 
 //        defender.addTooltip(A.digit(criticalDist));
+
+        if (defender.hp() <= (Enemy.zerg() ? 9 : 17)) {
+            criticalDist += 1.5;
+        }
 
         if (attacker.groundWeaponRange() <= 1) {
             criticalDist = Math.min(3.6, criticalDist);

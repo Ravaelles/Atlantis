@@ -102,13 +102,13 @@ public class EnemyUnitsUpdater extends EnemyUnits {
             enemyUnitsDiscovered.put(id, foggedUnit);
 
 //            System.out.println("ADD enemyUnit = " +  enemyUnit + " / " + id);
-            if (enemyUnit.isBuilding()) {
+//            if (enemyUnit.isBuilding()) {
 //                A.printStackTrace(
-                System.err.println(
-                    "ADD enemyBuilding = " + enemyUnit + " / " + enemyUnit.id()
-                    + " / " + enemyUnit.isVisibleUnitOnMap() + " / " + enemyUnit.isPositionVisible()
-                );
-            }
+//                System.err.println(
+//                    "ADD enemyBuilding = " + enemyUnit + " / " + enemyUnit.id()
+//                    + " / " + enemyUnit.isVisibleUnitOnMap() + " / " + enemyUnit.isPositionVisible()
+//                );
+//            }
         }
     }
 
@@ -123,14 +123,15 @@ public class EnemyUnitsUpdater extends EnemyUnits {
 
         enemyUnitsDiscovered.remove(enemyUnit.id());
         cache.clear();
+
 //        System.out.println("REMOVE b enemyUnit = " +  enemyUnit + " / " + enemyUnit.id());
 
-        if (enemyUnit.isBuilding()) {
-//            A.printStackTrace(
-            System.err.println(
-                "REMOVE enemyBuilding = " + enemyUnit + " / " + enemyUnit.id()
-                + " / " + enemyUnit.isVisibleUnitOnMap() + " / " + enemyUnit.isPositionVisible()
-            );
-        }
+//        if (enemyUnit.isBuilding()) {
+////            A.printStackTrace(
+//            System.err.println(
+//                "REMOVE enemyBuilding = " + enemyUnit + " / " + enemyUnit.id()
+//                + " / " + enemyUnit.isVisibleUnitOnMap() + " / " + enemyUnit.isPositionVisible()
+//            );
+//        }
     }
 }
