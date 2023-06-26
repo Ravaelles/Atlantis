@@ -95,12 +95,14 @@ public class ABuilderManager {
 //                }
 
 //                    GameSpeed.changeSpeedTo(60);
-                builder.move(
+                if (builder.move(
                     construction.positionToBuildCenter(),
                     Actions.MOVE_BUILD,
                     "Build " + buildingType.name() + distString,
                     true
-                );
+                )) {
+                    return true;
+                }
             }
 
             return true;

@@ -70,8 +70,10 @@ public class ZergOverlordManager {
     private static boolean followArmy(AUnit overlord) {
         APosition medianUnitPosition = Alpha.get().center();
         if (medianUnitPosition != null) {
-            if (overlord.distTo(medianUnitPosition) > 2.5) {
-                overlord.move(medianUnitPosition, Actions.MOVE_FOLLOW, "Follow army", true);
+            if (
+                overlord.distTo(medianUnitPosition) > 2.5
+                && overlord.move(medianUnitPosition, Actions.MOVE_FOLLOW, "Follow army", true)
+            ) {
                 return true;
             }
         }

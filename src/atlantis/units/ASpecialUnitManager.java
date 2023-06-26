@@ -45,8 +45,10 @@ public class ASpecialUnitManager {
             AUnit battery = Select.ourWithUnfinished(AUnitType.Protoss_Shield_Battery)
                 .havingEnergy(40)
                 .nearestTo(unit);
-            if (battery != null && battery.distToMoreThan(unit, 6)) {
-                unit.move(battery, Actions.MOVE_SPECIAL, "ToBattery", false);
+            if (
+                battery != null && battery.distToMoreThan(unit, 6)
+                && unit.move(battery, Actions.MOVE_SPECIAL, "ToBattery", false)
+            ) {
                 return true;
             }
         }

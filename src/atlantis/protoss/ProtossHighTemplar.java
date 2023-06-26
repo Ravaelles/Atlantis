@@ -199,8 +199,10 @@ public class ProtossHighTemplar {
                 );
             }
 
-            if (center.distTo(highTemplar) > 1) {
-                highTemplar.move(center, Actions.MOVE_FOLLOW, "Follow army", true);
+            if (
+                center.distTo(highTemplar) > 1
+                && highTemplar.move(center, Actions.MOVE_FOLLOW, "Follow army", true)
+            ) {
                 return true;
             }
         }

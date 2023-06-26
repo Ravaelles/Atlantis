@@ -177,8 +177,10 @@ public class AScoutManager {
 
         // =========================================================
 
-        if (startingLocation != null) {
-            scout.move(startingLocation, Actions.MOVE_EXPLORE, "Explore", true);
+        if (
+            startingLocation != null
+            && scout.move(startingLocation, Actions.MOVE_EXPLORE, "Explore", true)
+        ) {
             return true;
         }
         else {
@@ -217,8 +219,10 @@ public class AScoutManager {
             }
 
             defineNextPolygonPointForEnemyBaseRoamingUnit(scout);
-            if (scoutingAroundBaseLastPolygonPoint != null) {
-                scout.move(scoutingAroundBaseLastPolygonPoint, Actions.MOVE_EXPLORE, "RoamAround", true);
+            if (
+                scoutingAroundBaseLastPolygonPoint != null
+                && scout.move(scoutingAroundBaseLastPolygonPoint, Actions.MOVE_EXPLORE, "RoamAround", true)
+            ) {
                 return true;
             } else {
                 scout.setTooltipTactical("Can't find polygon point");
@@ -307,8 +311,11 @@ public class AScoutManager {
 
     private static void scoutForTheNextBase(AUnit scout) {
         APosition baseLocation = Bases.nearestUnexploredStartingLocation(scout.position());
-        if (baseLocation != null) {
-            scout.move(baseLocation.position(), Actions.MOVE_EXPLORE, "Explore next base", true);
+        if (
+            baseLocation != null
+            && scout.move(baseLocation.position(), Actions.MOVE_EXPLORE, "Explore next base", true)
+        ) {
+            return;
         }
     }
 
@@ -437,8 +444,10 @@ public class AScoutManager {
         else {
             worker.setTooltipTactical("Dajesz kurwa!");
             if (A.now() % 50 >= 25) {
-                worker.move(horse, Actions.MOVE_SPECIAL, "", true);
-                worker.setTooltipTactical("Ciśniesz!");
+                if (worker.move(horse, Actions.MOVE_SPECIAL, "", true)) {
+                    worker.setTooltipTactical("Ciśniesz!");
+                    return true;
+                }
             }
         }
 

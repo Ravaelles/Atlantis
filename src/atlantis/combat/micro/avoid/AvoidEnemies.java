@@ -2,10 +2,14 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildings;
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
+import bwapi.Color;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,36 +45,28 @@ public abstract class AvoidEnemies {
 
         // =========================================================
 
-        // Only COMBAT BUILDINGS
-//        if (!unit.isMissionAttack() && onlyCombatBuildingsAreDangerouslyClose(enemiesDangerouslyClose)) {
-//        System.err.println(" A " + unit.combatEvalRelative());
         if (
             onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)
                 || unit.isAir()
                 || unit.hp() <= 40
                 || unit.combatEvalRelative() <= 2.7
         ) {
-//            System.err.println(" B Deeper");
-            if (
-//                    RetreatManager.shouldNotEngageCombatBuilding(unit)
-                    AvoidCombatBuildings.update(unit, enemiesDangerouslyClose)
-            ) {
-//                System.err.println(" C ----------------------");
+            if (AvoidCombatBuildings.update(unit, enemiesDangerouslyClose)) {
                 unit.addLog("KeepAway");
                 return true;
             }
-
-            return false;
         }
 
         // Only ENEMY WORKERS
-        if (unit.hpPercent() >= 70 && Select.from(enemiesDangerouslyClose).workers().size() == enemiesDangerouslyClose.size()) {
+        if (
+            unit.hpPercent() >= 70
+            && Select.from(enemiesDangerouslyClose).workers().size() == enemiesDangerouslyClose.size()
+        ) {
             unit.addLog("FightWorkers");
             return false;
         }
 
         else {
-            // Standard case
             if (WantsToAvoid.unitOrUnits(unit, enemiesDangerouslyClose)) {
                 return true;
             }
@@ -86,6 +82,22 @@ public abstract class AvoidEnemies {
     // =========================================================
 
     private static boolean shouldSkip(AUnit unit) {
+        if (
+            unit.hp() <= 16 && unit.isMelee() && unit.isCombatUnit()
+            && unit.enemiesNear().groundUnits().effVisible().inRadius(1, unit).notEmpty()
+        ) {
+            unit.setTooltipTactical("Kamikaze");
+            return true;
+        }
+
+        if (
+            unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
+            && unit.lastStartedAttackMoreThanAgo(8)
+        ) {
+            unit.setTooltipTactical("StartAttack");
+            return true;
+        }
+
         return unit.isLoaded();
     }
 

@@ -61,14 +61,16 @@ public class SquadCohesion {
                 }
 
                 unit.addLog(t);
-                unit.move(
+
+                if (unit.move(
                     goTo,
                     Actions.MOVE_FORMATION,
                     t,
                     false
-                );
+                )) {
+                    return true;
+                }
             }
-            return true;
         }
 
         return false;

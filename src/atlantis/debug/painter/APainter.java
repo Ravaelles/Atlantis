@@ -110,6 +110,12 @@ public class APainter {
         paintCircle(unit.position(), radius, color);
     }
 
+    public static void paintCircle(AUnit unit, int[] radiuses, Color color) {
+        for (int radius : radiuses) {
+            paintCircle(unit.position(), radius, color);
+        }
+    }
+
     public static void paintCircle(HasPosition position, int radius, Color color) {
         if (isDisabled()) { return; }
 

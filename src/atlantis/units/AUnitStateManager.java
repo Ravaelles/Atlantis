@@ -13,7 +13,7 @@ public class AUnitStateManager {
         now = AGame.now();
         updatePosition = AGame.everyNthGameFrame(Unfreezer.UPDATE_UNIT_POSITION_EVERY_FRAMES);
 
-        for (AUnit unit : Select.our().list()) {
+        for (AUnit unit : Select.ourWithUnfinishedUnits()) {
             updateUnitInfo(unit);
         }
     }

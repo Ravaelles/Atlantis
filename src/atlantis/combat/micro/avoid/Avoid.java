@@ -72,7 +72,7 @@ public class Avoid {
             APainter.paintCircle(enemy, 16, Color.Orange);
         }
 
-        return enemies.first();
+        return enemies.first().translatePercentTowards(15, enemies.second());
     }
 
     protected static double calculateRunDistance(AUnit unit, AUnit enemy) {

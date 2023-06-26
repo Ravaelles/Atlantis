@@ -24,7 +24,7 @@ public class Vector extends Vector2d {
      * Angle between vectors less than 0.50 radians.
      */
     public boolean isParallelTo(Vector otherVector) {
-        return (Math.abs(this.angle(otherVector)) % 3.14) < 0.55;
+        return (Math.abs(this.angle(otherVector)) % 3.14) < 0.77;
     }
 
     /**

@@ -52,7 +52,8 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 //            defender.addLog(log);
         }
 
-        criticalDist += SafetyMarginAgainstMelee.enemyUnitsNearBonus(defender);
+        criticalDist += enemyUnitsNearBonus(defender);
+        criticalDist += cooldownBonus(defender);
 
         if (medicInRange) {
             criticalDist = Math.min(criticalDist, 2.1);
@@ -72,6 +73,15 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         }
 
         return criticalDist;
+    }
+
+    private static double cooldownBonus(AUnit defender) {
+        int cooldown = defender.cooldown();
+        if (cooldown >= 4) {
+            return cooldown / 6.0;
+        }
+
+        return 0;
     }
 
     protected static double ourMovementBonus(AUnit defender) {

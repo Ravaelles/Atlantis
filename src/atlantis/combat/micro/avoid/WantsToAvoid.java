@@ -30,12 +30,14 @@ public class WantsToAvoid {
 //            A.printStackTrace();
 //        }
 
-        if (enemies.size() == 1) {
-            return Avoid.singleUnit(unit, enemies.first());
-        }
-        else {
-            return Avoid.groupOfUnits(unit, enemies);
-        }
+        return Avoid.singleUnit(unit, enemies.first());
+
+//        if (enemies.size() == 1) {
+//            return Avoid.singleUnit(unit, enemies.first());
+//        }
+//        else {
+//            return Avoid.groupOfUnits(unit, enemies);
+//        }
     }
 
     // =========================================================

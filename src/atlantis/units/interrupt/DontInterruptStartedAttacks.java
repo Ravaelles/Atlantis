@@ -23,7 +23,7 @@ public class DontInterruptStartedAttacks {
             }
         }
 
-        if (unit.isDragoon()) {
+//        if (unit.isDragoon()) {
 //            if (unit.action().isAttacking()) {
 //                AUnit nearestEnemy = unit.nearestEnemy();
 //                if (nearestEnemy != null && nearestEnemy.distToMoreThan(unit, 2.9)) {
@@ -31,9 +31,10 @@ public class DontInterruptStartedAttacks {
 //                    return true;
 //                }
 //            }
-        }
+//        }
 
-        if (unit.hp() <= 20 || !unit.isAttackingOrMovingToAttack()) {
+//        if (unit.hp() <= 20 || !unit.isAttackingOrMovingToAttack()) {
+        if (!unit.isAttackingOrMovingToAttack()) {
             return false;
         }
 

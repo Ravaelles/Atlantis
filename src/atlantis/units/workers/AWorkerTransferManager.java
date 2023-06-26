@@ -89,7 +89,9 @@ public class AWorkerTransferManager {
 
     private static void transferWorkerTo(AUnit worker, AUnit baseWithFewestWorkers) {
         if (worker.distTo(baseWithFewestWorkers.position()) > 3) {
-            worker.move(baseWithFewestWorkers.position(), Actions.TRANSFER, "Transfer", true);
+            if (worker.move(baseWithFewestWorkers.position(), Actions.TRANSFER, "Transfer", true)) {
+                return;
+            }
         } else if (worker.isMoving()) {
             AMineralGathering.gatherResources(worker);
             worker.setTooltipTactical("Transferred!");

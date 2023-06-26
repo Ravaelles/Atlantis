@@ -1,6 +1,7 @@
 package atlantis.combat.micro.managers;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -33,7 +34,17 @@ public class StopAndShoot {
 //        CameraManager.centerCameraOn(unit);
         if (shouldStop()) {
 //            GameSpeed.changeSpeedTo(30);
-//            System.err.println("@ STOP - " + distToEnemy);
+//            System.err.println("@ STOP & SHOOT - " + distToEnemy + " / " + unit);
+            if (
+                unit.isMoving()
+                && !unit.isHoldingPosition()
+                && unit.lastActionMoreThanAgo(2, Actions.HOLD_POSITION)
+            ) {
+//                System.err.println("@ HOLD - " + distToEnemy + " / " + unit);
+                unit.holdPosition("HoldToShoot", false);
+                return true;
+            }
+
             String tooltip = "Stop&Shoot";
             unit.addLog(tooltip);
 //            return unit.attackUnit(target);
@@ -54,9 +65,10 @@ public class StopAndShoot {
     private static boolean shouldStop() {
         return (c1 = unit.isMoving())
             && (c2 = unit.cooldown() <= 2)
-            && unit.combatEvalRelative() > 0.8
+//            && unit.combatEvalRelative() > 0.8
+            && AvoidEnemies.unitsToAvoid(unit, true).isEmpty()
             && (c3 = distToEnemy <= minDistToStop())
-            && (c4 = unit.lastActionMoreThanAgo(15, Actions.HOLD_POSITION));
+            && (c4 = unit.lastActionMoreThanAgo(10, Actions.HOLD_POSITION));
 //            && (c4 = !unit.isStartingAttack());
 //            && (c4 = unit.lastStartedAttackMoreThanAgo(10));
     }
@@ -73,7 +85,7 @@ public class StopAndShoot {
             return true;
         }
 
-        if (unit.hpLessThan(21)) {
+        if (unit.hpLessThan(19)) {
             return true;
         }
 
@@ -111,9 +123,9 @@ public class StopAndShoot {
             return true;
         }
 
-        if (unit.isMissionDefendOrSparta() && unit.friendsNear().buildings().empty()) {
-            return true;
-        }
+//        if (unit.isMissionDefendOrSparta() && unit.friendsNear().buildings().empty()) {
+//            return true;
+//        }
 
         if (unit.friendsInRadius(13).ofType(AUnitType.Terran_Bunker).notEmpty()) {
             return false;

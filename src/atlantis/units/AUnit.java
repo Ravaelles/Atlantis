@@ -280,8 +280,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         if (
             runningManager().isPossibleAndReasonablePosition(this, newPosition)
-                && move(newPosition, action, "Move away", false)
-                && Select.all().groundUnits().inRadius(0.05, newPosition).empty()
+            && move(newPosition, action, "Move away", false)
+//                && (unit().isAir() || Select.all().groundUnits().inRadius(0.05, newPosition).empty())
         ) {
             this.setTooltip(tooltip, false);
             return true;
@@ -2649,5 +2649,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isTarget(AUnit otherUnit) {
         return otherUnit.equals(target());
+    }
+
+    public boolean isFlying() {
+        return isAir() || isLifted();
     }
 }

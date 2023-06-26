@@ -93,7 +93,9 @@ public class TerranCommandCenter {
                         }
                     } else {
 //                        System.err.println("# Fly to " + rebaseTo + " // " + dist);
-                        building.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true);
+                        if (building.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true)) {
+                            return true;
+                        }
                     }
                 }
                 return true;

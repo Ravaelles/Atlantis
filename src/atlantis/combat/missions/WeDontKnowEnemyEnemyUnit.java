@@ -43,8 +43,10 @@ public class WeDontKnowEnemyEnemyUnit {
 //            }
         }
 
-        if (mission.temporaryTarget() != null) {
-            unit.move(mission.temporaryTarget(), Actions.MOVE_ENGAGE, "#FindEnemy", true);
+        if (
+            mission.temporaryTarget() != null
+                && unit.move(mission.temporaryTarget(), Actions.MOVE_ENGAGE, "#FindEnemy", true)
+        ) {
 //            APainter.paintLine(unit.position(), temporaryTarget, Color.Yellow);
             return true;
         }

@@ -14,7 +14,7 @@ public class ShouldStopRunning {
             return false;
         }
 
-        if (unit.isAir() && unit.enemiesNearInRadius(8.2) == 0) {
+        if (unit.isFlying() && unit.enemiesNearInRadius(8.2) == 0) {
             unit.setTooltipTactical("SafeEnough");
             return true;
         }
@@ -56,7 +56,7 @@ public class ShouldStopRunning {
         if (
             unit.lastStoppedRunningMoreThanAgo(ARunningManager.STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
                 && unit.lastStartedRunningMoreThanAgo(ARunningManager.STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
-                && !unit.isUnderAttack(unit.isAir() ? 250 : 5)
+                && !unit.isUnderAttack(unit.isFlying() ? 250 : 5)
                 //                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
                 || AvoidEnemies.shouldNotAvoidAnyUnit(unit)
         ) {
