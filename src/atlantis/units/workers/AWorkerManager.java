@@ -21,25 +21,24 @@ public class AWorkerManager {
             return false;
         }
 
-        if (AvoidCriticalUnits.update(worker)) {
-            return true;
+        if (worker.enemiesNear().notEmpty()) {
+            if (AvoidCriticalUnits.update(worker)) {
+                return true;
+            }
+
+            worker.setTooltipTactical(":)");
+
+            if (AWorkerDefenceManager.handleDefenceIfNeeded(worker)) {
+                return true;
+            }
+
+            if (AvoidEnemies.avoidEnemiesIfNeeded(worker)) {
+                return true;
+            }
         }
 
-        worker.setTooltipTactical(":)");
 
-        if (AWorkerDefenceManager.handleDefenceIfNeeded(worker)) {
-            return true;
-        }
-
-        if (AvoidEnemies.avoidEnemiesIfNeeded(worker)) {
-            return true;
-        }
-
-//        if (worker.lastActionLessThanAgo(20, UnitActions.RETURN_CARGO)) {
-//            return true;
-//        }
-
-        // Act as BUILDER
+//        // Act as BUILDER
         if (AConstructionManager.isBuilder(worker)) {
             worker.setTooltipTactical("Builder");
             return ABuilderManager.update(worker);
@@ -73,42 +72,16 @@ public class AWorkerManager {
      * Assigns given worker unit (which is idle by now at least doesn't have anything to do) to gather minerals.
      */
     private static boolean handleGatherMineralsOrGas(AUnit worker) {
-//        if (worker.target() != null) {
-//            APainter.paintLine(worker, worker.target(), Color.Green);
-//        }
-
         // Don't react if already gathering
         if (worker.isMiningOrExtractingGas()) {
             worker.setTooltipTactical("Miner");
             return true;
         }
 
-        // If is carrying minerals, return
-//        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
-//            worker.returnCargo();
-//            return true;
-//        }
-
-//        if (worker.isMoving()) {
-//            worker.setTooltip("OnTheRoadAgain");
-//            return true;
-//        }
-
         if (worker.isRepairing()) {
             worker.setTooltipTactical("Repair");
             return true;
         }
-
-//        if (
-//                (worker.isMoving() || worker.isRepairing() || worker.isMiningOrExtractingGas())
-//                && worker.target() != null && !worker.target().type().isMineralField()
-//        ) {
-//            worker.setTooltip("--> " + worker.target().name());
-//            return true;
-//        }
-//        else {
-//            worker.setTooltip("Worker");
-//        }
 
         // If basically unit is not doing a shit, send it to gather resources (minerals or gas).
         // But check for multiple conditions (like if isn't constructing, repairing etc).

@@ -48,6 +48,11 @@ public class ARepairerManager {
             return handleRepairCompletedTryFindingNewTarget(repairer);
         }
 
+        if (repairer.lastActionLessThanAgo(3, Actions.REPAIR)) {
+            repairer.setTooltip("Repairin");
+            return true;
+        }
+
         // Target is wounded
         if (!repairer.isRepairing() && target.isAlive() && A.hasMinerals(5)) {
             if (repairer.lastActionMoreThanAgo(30 * 3, Actions.REPAIR) || repairer.isIdle() || repairer.isStopped()) {

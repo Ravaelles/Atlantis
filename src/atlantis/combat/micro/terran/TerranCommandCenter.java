@@ -79,6 +79,7 @@ public class TerranCommandCenter {
                 if (!building.isLifted() && rebaseTo.distToMoreThan(building, 3)) {
 //                    System.err.println("# Lift");
                     building.lift();
+                    return true;
                 }
                 else {
 //                    if (A.everyNthGameFrame(31)) {
@@ -98,7 +99,6 @@ public class TerranCommandCenter {
                         }
                     }
                 }
-                return true;
             }
 //        }
 

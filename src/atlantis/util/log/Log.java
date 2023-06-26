@@ -10,8 +10,8 @@ public class Log {
     /**
      * Write every tooltip to logs/units/unit_file.txt, so it's possible to debug things.
      */
-//    public static final int SAVE_UNIT_LOGS_TO_FILES = 0; // 0 - Off
-    public static final int SAVE_UNIT_LOGS_TO_FILES = 1; // 1 - Log our combat units
+    public static final int SAVE_UNIT_LOGS_TO_FILES = 0; // 0 - Off
+//    public static final int SAVE_UNIT_LOGS_TO_FILES = 1; // 1 - Log our combat units
 
     /**
      * Helpful for logging of <b>unitAction</b> changes. Very helpful to get human-readable unit reasoning.

@@ -62,7 +62,7 @@ public class AScoutManager {
             return;
         }
 
-        if (AvoidCombatBuildings.update(scout, null)) {
+        if (AvoidCombatBuildings.update(scout)) {
             scout.setTooltip("Eh!");
             return;
         }

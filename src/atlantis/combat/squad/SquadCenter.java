@@ -5,6 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 import atlantis.util.We;
 
@@ -30,7 +31,7 @@ public class SquadCenter {
     }
 
     protected AUnit centerUnit() {
-        int ttl = 601;
+        int ttl = 67;
         AUnit centerUnit = cache.get(
             "centerUnit",
             ttl,
@@ -63,11 +64,18 @@ public class SquadCenter {
         Collections.sort(yCoords);
 
         APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
-        AUnit nearestToMedian = Select.ourCombatUnits()
+        Selection potentials = Select.ourCombatUnits()
             .nonBuildings()
             .groundUnits()
-            .excludeMedics()
+            .excludeMedics();
+
+        AUnit nearestToMedian = potentials
+            .havingAtLeastHp(25)
             .nearestTo(median);
+
+        if (nearestToMedian == null) {
+            nearestToMedian = potentials.nearestTo(median);
+        }
 
         if (nearestToMedian != null && We.terran()) {
             if (Count.tanks() >= 2) {

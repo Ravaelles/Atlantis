@@ -12,7 +12,7 @@ import atlantis.util.We;
 public class ABuildingManager {
 
     public static boolean update() {
-        for (AUnit building : Select.our().list()) {
+        for (AUnit building : Select.ourBuildings().list()) {
 //            System.out.println("#### = " + building + " // " + building.type() + " // " + building.bwapiType());
 
             if (building.is(AUnitType.Terran_Comsat_Station)) {

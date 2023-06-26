@@ -95,31 +95,28 @@ public class AdvanceUnitsManager {
         // =========================================================
 
         // Too close
-        boolean movedAway;
         if (
                 allowTooClose
                 && distToFocusPoint <= optimalDist - margin
-                && (movedAway = unit.moveAwayFrom(
-                        focusPoint,
-                        2.5,
-                        "#Adv:TooClose(" + (int) distToFocusPoint + ")",
-                        Actions.MOVE_FORMATION
-                ))
+                && unit.moveAwayFrom(
+                    focusPoint,
+                    2.5,
+                    "#Adv:TooClose(" + (int) distToFocusPoint + ")",
+                    Actions.MOVE_FORMATION
+                )
         ) {
-            if (movedAway) {
-                return true;
-            }
+            return true;
         }
 
         // Close enough
         else if (allowCloseEnough && distToFocusPoint <= optimalDist + margin) {
             if (unit.isMoving() && unit.lastActionMoreThanAgo(5)) {
-                unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")", true);
+                return unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")", true);
             }
             else {
                 unit.setTooltip("Adv:Ok", true);
+                return true;
             }
-            return true;
         }
 
         // Too far

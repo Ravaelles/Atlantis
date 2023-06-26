@@ -59,6 +59,11 @@ public class ASpecialPositionFinder {
                         System.err.println(construction.productionOrder());
                         System.err.println(construction.maxDistance());
                         System.err.println("=== Base location error /" + modifier + "/ ===");
+
+                        position = positionModifierToPosition("", building, builder, construction);
+                        if (position != null) {
+                            System.err.println("Used fix to build base anywhere.");
+                        }
                     }
 
                     return findPositionForBase_nearestFreeBase(building, builder, construction);
@@ -158,13 +163,14 @@ public class ASpecialPositionFinder {
         APosition near = Bases.natural();
 
         if (near == null) {
+            System.err.println("Unknown natural position - it will break base position");
             return null;
         }
 
 //        if (Select.main() != null) System.err.println("near NAT = " + near + ", distToMain = " + A.dist(Select.main(), near));
 //        if (true) A.printStackTrace("findPositionForBase_natural");
 
-        return APositionFinder.findStandardPosition(builder, building, near, 3);
+        return APositionFinder.findStandardPosition(builder, building, near, 5);
     }
 
 }

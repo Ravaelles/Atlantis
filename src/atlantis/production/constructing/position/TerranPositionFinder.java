@@ -21,7 +21,8 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                                                     double maxDistance) {
         _CONDITION_THAT_FAILED = null;
 
-        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 3;
+        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
+//        int searchRadius = 0;
         maxDistance = limitMaxDistanceForImportantBuildings(maxDistance, building);
 
         while (searchRadius < maxDistance) {
@@ -35,9 +36,11 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
 
-                            // Turret fix - make sure to build in the same region
-                            if (building.isCombatBuilding() && constructionPosition.groundDistanceTo(nearTo) > 1.6 * searchRadius) {
-                                continue;
+                            if (building.isCombatBuilding()) {
+                                // Turret fix - make sure to build in the same region
+                                if (constructionPosition.groundDistanceTo(nearTo) > 1.6 * searchRadius) {
+                                    continue;
+                                }
                             }
 
                             return constructionPosition;
@@ -59,7 +62,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
-//        APainter.paintCircle(position, 6, Color.Red);
+        APainter.paintCircle(position, 6, Color.Red);
 
         if (position == null) {
             _CONDITION_THAT_FAILED = "POSITION ARGUMENT IS NULL";
@@ -90,15 +93,15 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             return false;
         }
 
+        if (isOverlappingBaseLocation(building, position)) {
+            return false;
+        }
+
         if (building.isMissileTurret()) {
             return true;
         }
 
         if (isTooCloseToMainBase(building, position)) {
-            return false;
-        }
-
-        if (isOverlappingBaseLocation(building, position)) {
             return false;
         }
 

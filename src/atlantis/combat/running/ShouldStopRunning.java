@@ -11,7 +11,7 @@ public class ShouldStopRunning {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
 //        System.out.println(unit.isRunning() + " // " + unit.runningManager().isRunning() + " // " + unit.action().isRunning());
         if (!unit.isRunning()) {
-            return false;
+            return true;
         }
 
         if (unit.isFlying() && unit.enemiesNearInRadius(8.2) == 0) {

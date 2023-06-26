@@ -28,8 +28,11 @@ public class MissionAttackAdvance {
         if (focusPoint != null) {
             boolean looksIdle = !unit.isHoldingPosition() && (
                 unit.isIdle()
+                || unit.isStopped()
                 || !unit.isMoving()
                 || !unit.isAttacking()
+                || unit.lastActionMoreThanAgo(40)
+                || (unit.isAttacking() && unit.target() == null)
             );
 
             if (

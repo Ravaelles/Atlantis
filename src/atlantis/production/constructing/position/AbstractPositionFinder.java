@@ -93,6 +93,10 @@ public abstract class AbstractPositionFinder {
 //                + " // all = " + ConstructionRequests.all().size());
 
 //        A.printStackTrace("loooooooooooking");
+
+        if (building.isBase()) {
+            return false;
+        }
         
         // Compare against planned construction places
 //        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
@@ -166,8 +170,10 @@ public abstract class AbstractPositionFinder {
         }
 
         for (ABaseLocation base : Bases.baseLocations()) {
+            APosition natural = Bases.natural();
             if (
                     !base.isStartLocation()
+                    && (natural != null && natural.translateByTiles(3, 1).distTo(position) <= 3)
                     && base.translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5
             ) {
                 _CONDITION_THAT_FAILED = "Overlaps base location";

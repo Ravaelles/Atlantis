@@ -63,11 +63,11 @@ public class AGameCommander {
         // =========================================================
 
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_OTHER);
-        AUnitStateManager.update();
-        MissionChanger.evaluateGlobalMission();
-        UmsSpecialActionsManager.update();
-        EnemyUnitsUpdater.updateFoggedUnits();
         ABuildingManager.update();
+        MissionChanger.evaluateGlobalMission();
+        EnemyUnitsUpdater.updateFoggedUnits();
+        UmsSpecialActionsManager.update();
+        AUnitStateManager.update();
         CameraManager.update();
         MapAndRace.updateMapSpecific();
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_OTHER);

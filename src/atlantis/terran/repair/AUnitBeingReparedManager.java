@@ -10,6 +10,8 @@ public class AUnitBeingReparedManager {
             return false;
         }
 
+        if (true) return true;
+
         AUnit repairer = ARepairAssignments.getClosestRepairerAssignedTo(unit);
         if (repairer == null) {
             return false;

@@ -1,36 +1,40 @@
 package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.combat.retreating.ShouldRetreat;
+import atlantis.debug.painter.APainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
+import bwapi.Color;
 
 public class AvoidCombatBuildings {
 
-    public static boolean update(AUnit unit, Units enemyCombatBuildings) {
+    public static boolean update(AUnit unit) {
         if (unit.isMissionDefendOrSparta()) {
             return false;
         }
 
-        if (enemyCombatBuildings == null) {
-            enemyCombatBuildings = EnemyUnits.discovered().combatBuildings(false).units();
-        }
+//        if (enemyCombatBuildings == null) {
+        Selection combatBuildings = EnemyUnits.discovered().combatBuildings(false);
+//        }
 
-        AUnit combatBuilding = Select.from(enemyCombatBuildings).nearestTo(unit);
+        AUnit combatBuilding = combatBuildings.nearestTo(unit);
         if (combatBuilding == null) {
+//            APainter.paintCircleFilled(unit, 8, Color.Green);
             return false;
         }
 
 //        System.err.println("@ C = " + ShouldRetreat.shouldRetreat(unit));
         if (
-                unit.friendsInRadiusCount(3) >= 2
+                unit.friendsInRadiusCount(3) >= 4
                 && unit.friendsInRadiusCount(5) >= 7
                 && !ShouldRetreat.shouldRetreat(unit)
-                && enemyCombatBuildings.selection().combatBuildings(false).inRadius(10, unit).notEmpty()
+                && combatBuildings.combatBuildings(false).inRadius(10, unit).notEmpty()
         ) {
-//            System.err.println("@ D YOLO");
+//            unit.setTooltip("@ D YOLO " + unit);
             return false;
         }
 
@@ -47,7 +51,9 @@ public class AvoidCombatBuildings {
         }
 //        else if (distTo <= criticalDist && unit.isMoving() && !unit.isRunning() && unit.target() == null) {
         else if (distTo <= criticalDist) {
+//            System.err.println("@ EEEEEEEEEEEEE");
             if (AvoidCombatBuildingCriticallyClose.handle(unit, combatBuilding)) {
+//                System.err.println("----->");
                 return true;
             }
         }
@@ -56,7 +62,7 @@ public class AvoidCombatBuildings {
     }
 
     private static double criticalDist(AUnit unit) {
-        return 7.5 + (unit.isAir() ? 0.9 : 0) + (unit.isMoving() ? 0.5 : 0)
+        return 8.3 + (unit.isAir() ? 0.9 : 0) + (unit.isMoving() ? 0.8 : 0)
             + unit.woundPercent() / 200.0;
     }
 

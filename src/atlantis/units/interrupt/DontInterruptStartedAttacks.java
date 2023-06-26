@@ -17,6 +17,11 @@ public class DontInterruptStartedAttacks {
             return false;
         }
 
+        AUnit target = unit.target();
+        if (target != null && target.isCombatBuilding() && unit.friendsInRadiusCount(4) <= 7) {
+            return false;
+        }
+
         if (unit.isVulture()) {
             if (unit.hp() >= 22 && unit.isBraking() && unit.isAttackingOrMovingToAttack() && unit.lastAttackFrameAgo() >= 40) {
                 return true;
@@ -42,12 +47,12 @@ public class DontInterruptStartedAttacks {
 //            return false;
 //        }
 
-        if (unit.isVulture() && unit.target() != null && unit.isUnitActionAttack()) {
+        if (unit.isVulture() && target != null && unit.isUnitActionAttack()) {
 //            if (unit.lastStartedAttackLessThanAgo(12 + unit.hpPercent() / 25)) {
             if (
-                unit.target().hp() <= 18
+                target.hp() <= 18
                     || unit.lastStartedAttackLessThanAgo(10)
-                    || unit.target().distToMoreThan(unit, 2.4)
+                    || target.distToMoreThan(unit, 2.4)
 //                    || (unit.lastStartedAttackLessThanAgo(13) && unit.isFacingItsTarget())
             ) {
 //                APainter.paintCircleFilled(unit, 10, Color.Brown);

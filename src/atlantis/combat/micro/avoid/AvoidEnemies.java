@@ -26,6 +26,8 @@ public abstract class AvoidEnemies {
             return false;
         }
 
+        // =========================================================
+
         Units enemiesDangerouslyClose = unitsToAvoid(unit);
 
         if (enemiesDangerouslyClose.isEmpty()) {
@@ -37,6 +39,18 @@ public abstract class AvoidEnemies {
             return false;
         }
 
+        if (
+            onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)
+                || unit.isAir()
+                || unit.hp() <= 40
+                || unit.combatEvalRelative() <= 2.7
+        ) {
+            if (AvoidCombatBuildings.update(unit)) {
+                unit.addLog("KeepAway");
+                return true;
+            }
+        }
+
 //        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
 //        for (AUnit enemy : enemiesDangerouslyClose.list()) {
 //            APainter.paintLine(enemy, unit, Color.Orange);
@@ -44,18 +58,6 @@ public abstract class AvoidEnemies {
 //        }
 
         // =========================================================
-
-        if (
-            onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)
-                || unit.isAir()
-                || unit.hp() <= 40
-                || unit.combatEvalRelative() <= 2.7
-        ) {
-            if (AvoidCombatBuildings.update(unit, enemiesDangerouslyClose)) {
-                unit.addLog("KeepAway");
-                return true;
-            }
-        }
 
         // Only ENEMY WORKERS
         if (
@@ -88,6 +90,10 @@ public abstract class AvoidEnemies {
         ) {
             unit.setTooltipTactical("Kamikaze");
             return true;
+        }
+
+        if (unit.enemiesNear().combatBuildings(false).notEmpty()) {
+            return false;
         }
 
         if (

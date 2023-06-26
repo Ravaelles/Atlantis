@@ -33,7 +33,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
@@ -55,7 +55,7 @@ public class MapAndRace {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 
         // === Terran ==============================================
 
