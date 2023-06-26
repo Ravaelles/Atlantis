@@ -15,10 +15,10 @@ public class AWorkerTransferManager {
      * Every base should have similar number of workers, more or less.
      */
     public static void transferWorkersBetweenBasesIfNeeded() {
-        if (true) return;
+//        if (true) return;
 
         // Don't run every frame
-        if (!AGame.everyNthGameFrame(GamePhase.isEarlyGame() ? 11 : 31)) {
+        if (!AGame.everyNthGameFrame(GamePhase.isEarlyGame() ? 11 : 41)) {
             return;
         }
 
