@@ -4,13 +4,13 @@ import atlantis.config.AtlantisIgniter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 
+import java.io.File;
+
 /**
  * Aim of Env is to differentiate between LOCAL, TESTING and PRODUCTION (any online tournaments).
  * We don't want to print out too much data in production.
  */
 public class Env {
-
-    private static final String ENV_FILE_PATH = "ENV";
 
     private static boolean isLocal = false;
     private static boolean firstRun = true;
@@ -19,11 +19,14 @@ public class Env {
     // =========================================================
 
     public static void readEnvFile(String[] mainArgs) {
-        if (!A.fileExists(ENV_FILE_PATH)) {
-            AGame.exit("ENV file doesn't exist. Please create it by copying ENV-EXAMPLE file and renaming it.");
+        if (!A.fileExists(envFilePath())) {
+            AGame.exit(
+                "ENV file doesn't exist (" + (new File(envFilePath())).getAbsolutePath()
+                + ")\nPlease create it by copying ENV-EXAMPLE file and renaming it."
+            );
         }
 
-        String[][] env = A.loadFile(ENV_FILE_PATH, 2, "=");
+        String[][] env = A.loadFile(envFilePath(), 2, "=");
 
         for (String[] line : env) {
             String key = line[0].toUpperCase();
@@ -48,6 +51,14 @@ public class Env {
         if (mainArgsContains("--counter=", mainArgs) && !mainArgsEquals("--counter=1", mainArgs)) {
             firstRun = false;
         }
+    }
+
+    private static String envFilePath() {
+        if (A.currentPath().contains("src")) {
+            return "../ENV";
+        }
+
+        return "ENV";
     }
 
     // =========================================================

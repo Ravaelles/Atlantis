@@ -6,7 +6,7 @@ import atlantis.units.select.Selection;
 
 public class AtlantisJfapTweaks {
 
-    private static final int HYDRA_SINGLE_UNIT_BONUS = 310;
+    private static final int HYDRA_SINGLE_UNIT_BONUS = 160;
 
     protected static double forHydralisks(double score, AUnit unit) {
         Selection friendlyHydras = unit.friendsNear().add(unit).ofType(AUnitType.Zerg_Hydralisk);

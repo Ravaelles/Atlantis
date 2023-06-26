@@ -32,12 +32,11 @@ public class EnemyUnitsUpdater extends EnemyUnits {
         }
 
         AbstractFoggedUnit foggedUnit = getFoggedUnit(enemy);
-//        if (foggedUnit != null && foggedUnit.u() != null) {
-//        if (foggedUnit != null && foggedUnit.isVisibleUnitOnMap()) {
-//        if (foggedUnit != null && foggedUnit.isVisibleUnitOnMap()) {
-        foggedUnit.updatePosition(enemy);
-        foggedUnit.updateType(enemy);
-//        }
+        if (foggedUnit != null) {
+            foggedUnit.updatePosition(enemy);
+            foggedUnit.updateType(enemy);
+        }
+
         return false;
     }
 

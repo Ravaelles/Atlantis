@@ -25,7 +25,7 @@ public class AdvanceUnitsManager {
 //        return false;
 //    }
 
-    public static boolean attackMoveToFocusPoint(AUnit unit, AFocusPoint focusPoint) {
+    public static boolean moveToFocusPoint(AUnit unit, AFocusPoint focusPoint) {
         return moveToFocusPoint(unit, focusPoint, false, false);
     }
 
@@ -58,10 +58,10 @@ public class AdvanceUnitsManager {
             ) {
                 String t = "TooFast";
                 unit.addLog(t);
-                return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, t, false);
+                if (unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, t, false)) {
+                    return true;
+                }
             }
-
-            return false;
         }
 
         // =========================================================
@@ -111,7 +111,9 @@ public class AdvanceUnitsManager {
         // Close enough
         else if (allowCloseEnough && distToFocusPoint <= optimalDist + margin) {
             if (unit.isMoving() && unit.lastActionMoreThanAgo(5)) {
-                return unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")", true);
+                if (unit.stop("#Adv:Good(" + (int) distToFocusPoint + ")", true)) {
+                    return true;
+                }
             }
             else {
                 unit.setTooltip("Adv:Ok", true);

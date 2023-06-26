@@ -278,6 +278,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         APosition newPosition = new APosition(x() - dx, y() - dy).makeValid();
 
+        if (!this.isFlying()) {
+            newPosition = newPosition.makeFreeOfAnyGroundUnits(3, 0.15, this);
+        }
+
+        if (newPosition == null) {
+            ErrorLogging.printErrorOnce("Cannot moveAwayFrom " + position + " for " + name());
+            return false;
+        }
+
         if (
             runningManager().isPossibleAndReasonablePosition(this, newPosition)
             && move(newPosition, action, "Move away", false)

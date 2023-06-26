@@ -22,13 +22,12 @@ public class ABuildOrderLoader {
     // =========================================================
 
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
-//        String filePath = BUILD_ORDERS_PATH + buildOrder.getBuildOrderRelativePath();
-//        String filePath = "../" + BUILD_ORDERS_PATH + strategy.race() + "/" + strategy.name() + ".txt";
+//        System.out.println("AtlantisIgniter.getBwapiDataPath() = " + AtlantisIgniter.getBwapiDataPath());
+//        System.out.println("BUILD_ORDERS_PATH = " + BUILD_ORDERS_PATH);
+
         String filePath = AtlantisIgniter.getBwapiDataPath()
             + BUILD_ORDERS_PATH + strategy.race() + "/"
             + strategy.name() + ".txt";
-
-//        System.out.println("\r\nUse build order from file: `" + strategy.name() + ".txt`");
 
         File f = new File(filePath);
         if (!f.exists()) {

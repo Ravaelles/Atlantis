@@ -1285,4 +1285,8 @@ public class A {
     public static boolean canAffordWithReserved(int minerals, int gas) {
         return AGame.canAffordWithReserved(minerals, gas);
     }
+
+    public static String currentPath() {
+        return (new File("")).getAbsolutePath();
+    }
 }

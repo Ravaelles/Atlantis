@@ -53,22 +53,42 @@ public class AtlantisJfap {
     }
 
     private double[] applyTweaks() {
-        scores[0] = AtlantisJfapTweaks.forHydralisks(scores[0], unit);
+        int forUs = 0;
+        int forThem = 1;
+
+        // =========================================================
+
+        double oldForUs = scores[forUs];
+        scores[forUs] = AtlantisJfapTweaks.forHydralisks(scores[forUs], unit);
+        double deltaForUs = scores[forUs] - oldForUs;
 
         AUnit enemy = unit.enemiesNear().nearestTo(unit);
+        double deltaForThem = 0;
         if (enemy != null) {
+            double oldForThem = scores[forThem];
 //            System.out.println("BEFORE enemyScore = " + scores[1]);
-            scores[1] = AtlantisJfapTweaks.forHydralisks(scores[1], enemy);
+            scores[forThem] = AtlantisJfapTweaks.forHydralisks(scores[forThem], enemy);
+            deltaForThem = scores[forThem] - oldForThem;
 //            System.out.println("AFTER  enemyScore = " + scores[1]);
         }
 
-        if (scores[0] > -1) {
+        // === Apply bi-directional tweaks relative to enemy =======
+
+        scores[forUs] -= deltaForThem;
+        scores[forThem] -= deltaForUs;
+
+        // =========================================================
+
+        // Prevent positive AJFAP value
+        if (scores[forUs] > -1) {
 //            System.err.println("Prevent positive AJFAP value");
-            scores[0] = -1;
+            scores[forUs] = -1;
         }
-        if (scores[1] > -1) {
+
+        // Prevent positive AJFAP value
+        if (scores[forThem] > -1) {
 //            System.err.println("Prevent positive AJFAP value");
-            scores[1] = -1;
+            scores[forThem] = -1;
         }
 
         return scores;

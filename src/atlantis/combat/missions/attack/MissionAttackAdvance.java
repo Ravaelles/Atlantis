@@ -5,9 +5,7 @@ import atlantis.combat.micro.managers.AdvanceUnitsManager;
 import atlantis.combat.missions.WeDontKnowEnemyEnemyUnit;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.squad.ASquadCohesionManager;
-import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
-import bwapi.Color;
 
 public class MissionAttackAdvance {
 
@@ -38,7 +36,7 @@ public class MissionAttackAdvance {
             if (
                 unit.lastPositioningActionMoreThanAgo(40) || looksIdle
             ) {
-                if (AdvanceUnitsManager.attackMoveToFocusPoint(unit, focusPoint)) {
+                if (AdvanceUnitsManager.moveToFocusPoint(unit, focusPoint)) {
                     unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
                     return true;
                 }

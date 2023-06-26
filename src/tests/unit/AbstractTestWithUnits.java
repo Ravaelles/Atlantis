@@ -51,6 +51,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     @Before
     public void before() {
+        Env.readEnvFile(new String[] {});
+
         if (!(this instanceof AbstractTestFakingGame)) {
             useFakeTime(0); // This needs to be 0 so every modulo division returns 0
         }

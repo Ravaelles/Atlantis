@@ -37,7 +37,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 
             assertTrue(ourEval < 0);
             assertTrue(enemyEval < 0);
-            assertTrue(valueAround(-88, ourEval));
+            assertTrue(valueAround(-408, ourEval));
             assertTrue(valueAround(-1, enemyEval));
 
             ourEval = marine.combatEvalRelative();
@@ -46,8 +46,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //            System.out.println("-- ourEval = " + ourEval);
 //            System.out.println("-- enemyEval = " + enemyEval);
 
-            assertTrue(valueAround(0.011, ourEval));
-            assertTrue(valueAround(88, enemyEval));
+            assertTrue(valueAround(0.0024, ourEval));
+            assertTrue(valueAround(408, enemyEval));
         });
     }
 
@@ -81,7 +81,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     }
 
     @Test
-    public void marinesAndMedicsVsHydras() {
+    public void marinesVsHydras() {
         createWorld(1, () -> {
                 double ourEval;
                 double enemyEval;
@@ -92,20 +92,67 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //                System.out.println("-- ourEval = " + ourEval);
 //                System.out.println("-- enemyEval = " + enemyEval);
 
-                assertTrue(valueAround(0.8, ourEval));
-                assertTrue(valueAround(0.9, enemyEval));
+                assertTrue(valueAround(0.9, ourEval / enemyEval));
             },
             () -> fakeOurs(
-//                fake(AUnitType.Terran_Marine, 10),
                 marine = fake(AUnitType.Terran_Marine, 11.5),
                 fake(AUnitType.Terran_Marine, 11.6),
-//                fake(AUnitType.Terran_Marine, 11.7),
                 fake(AUnitType.Terran_Marine, 12)
             ),
             () -> fakeEnemies(
-//                hydra = fake(Zerg_Hydralisk, 13),
-//                fake(Zerg_Hydralisk, 13.1),
-//                fake(Zerg_Hydralisk, 13.2),
+                fake(Zerg_Hydralisk, 13.3)
+            )
+        );
+    }
+
+    @Test
+    public void threeMarinesVsTwoHydras() {
+        createWorld(1, () -> {
+                double ourEval;
+                double enemyEval;
+
+                ourEval = marine.combatEvalRelative();
+                enemyEval = marine.nearestEnemy().combatEvalRelative();
+
+//                System.out.println("-- ourEval = " + ourEval);
+//                System.out.println("-- enemyEval = " + enemyEval);
+
+                assertTrue(ourEval * 200 < enemyEval);
+                assertTrue(ourEval * 300 > enemyEval);
+            },
+            () -> fakeOurs(
+                marine = fake(AUnitType.Terran_Marine, 11.5),
+                fake(AUnitType.Terran_Marine, 11.6),
+                fake(AUnitType.Terran_Marine, 12)
+            ),
+            () -> fakeEnemies(
+                fake(Zerg_Hydralisk, 13.2),
+                fake(Zerg_Hydralisk, 13.3)
+            )
+        );
+    }
+
+    @Test
+    public void marinesAndMedicsVsHydra() {
+        createWorld(1, () -> {
+                double ourEval;
+                double enemyEval;
+
+                ourEval = marine.combatEvalRelative();
+                enemyEval = marine.nearestEnemy().combatEvalRelative();
+
+//                System.out.println("-- ourEval = " + ourEval);
+//                System.out.println("-- enemyEval = " + enemyEval);
+
+                assertTrue(valueAround(1.2, ourEval / enemyEval));
+            },
+            () -> fakeOurs(
+                marine = fake(AUnitType.Terran_Marine, 11.5),
+                fake(AUnitType.Terran_Marine, 11.6),
+                fake(AUnitType.Terran_Medic, 11.7),
+                fake(AUnitType.Terran_Marine, 12)
+            ),
+            () -> fakeEnemies(
                 fake(Zerg_Hydralisk, 13.3)
             )
         );
