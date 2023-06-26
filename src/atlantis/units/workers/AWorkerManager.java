@@ -2,6 +2,7 @@ package atlantis.units.workers;
 
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
+import atlantis.game.A;
 import atlantis.production.constructing.ABuilderManager;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.terran.repair.ARepairAssignments;

@@ -21,9 +21,9 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Zerg";
+    public static final String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -33,7 +33,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
@@ -60,30 +60,30 @@ public class MapAndRace {
         // === Terran ==============================================
 
         // vs Zerg
-//        if (true) return "ums/rav/M&M_v_Hydras.scx";
-//        if (true) return "ums/rav/T_v_Sunkens.scx";
+//        if (true) return "ums/rav/M&M_v_Hydras.scx"; // M&M v Hydras
+//        if (true) return "ums/rav/T_v_Sunkens.scx"; // M&M + Tank + Wraith v Sunkens
 //        if (true) return "ums/rav/M_v_1Ling.scm"; // 1 Marine v 1 Zergling
 
         // vs Protoss
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
-//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Many Marines v many Zealots
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
+//        if (true) return "ums/rav/M_v_Zealots.scx"; // Many Zealots v Many Marines in a Terran base
 //        if (true) return "ums/rav/Wraiths_v_Protoss.scm"; // Wraiths v Reavers & HT & Observer
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx";
-//        if (true) return "ums/rav/Ghosts_v_P.scx";
+//@        if (true) return "ums/rav/Ghosts_v_P.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";
-//        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies
-//        if (true) return "ums/rav/M&M_v_M&M_2.scx"; // Standing in lines, shooting at another
-//        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
-//        if (true) return "ums/rav/M&M_v_T.scx"; // Terran bio engaging with units that keep on adding
-//        if (true) return "ums/rav/M_v_Zealots.scx";
-//        if (true) return "ums/rav/T_rebasing.scm";
-//        if (true) return "ums/rav/Tanks_v_DT.scx";
-//        if (true) return "ums/rav/Tanks_v_DT_2.scx";
+//@        if (true) return "ums/rav/M&M_v_M&M.scx"; // Yours in bad line formation, ~10 away from enemies
+//@        if (true) return "ums/rav/M&M_v_M&M_2.scx"; // Standing in lines, shooting at another
+//@        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
+//@        if (true) return "ums/rav/M&M_v_T.scx"; // Terran bio engaging with units that keep on adding
+//@        if (true) return "ums/rav/T_rebasing.scm";
+//@        if (true) return "ums/rav/Tanks_v_DT.scx";
+//@        if (true) return "ums/rav/Tanks_v_DT_2.scx";
 //        if (true) return "ums/rav/Tanks_v_Lurkers.scx"; // Tanks & Marines vs Lurkers
 //@        if (true) return "ums/rav/TanksM&M_v_ZealDrag.scx";
 //        if (true) return "ums/rav/Vultures_v_Dragoons.scm";
@@ -106,7 +106,8 @@ public class MapAndRace {
 
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 //        if (true) return "ums/Muta Micro_ Python.scm"; // Need good squad management
-//        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
+//        if (true) return "ums/vulture_v_zerglings.scx"; // 1 Vulture v entire map of Lings
+//@        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
 
         // === Protoss ============================================
 
@@ -128,6 +129,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/Zeal_v_Zeal.scm";
 //        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 //        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers
 
         // === Generic ======================================================
 
@@ -144,7 +146,6 @@ public class MapAndRace {
 //        if (true) return "ums/trening nr 2.scx";
 //        if (true) return "ums/micro tvp 1.00.scx"; // Huge Terran army (tanks & vultures) v. Zealots & Hi-Templars & Dragoons
 //        if (true) return "ums/micro3.scx";
-//        if (true) return "ums/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers
 //        if (true) return "ums/(1)micro3_007.scx";
 //        if (true) return "ums/vulture_control.scx"; // Vulture v. Broodlings
 //        if (true) return "ums/MultiTask PvT.scx"; // Weird - ums but starts with bases

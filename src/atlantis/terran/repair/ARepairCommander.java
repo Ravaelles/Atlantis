@@ -3,6 +3,9 @@ package atlantis.terran.repair;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
+import atlantis.util.We;
 
 import java.util.Iterator;
 
@@ -10,6 +13,10 @@ import java.util.Iterator;
 public class ARepairCommander {
 
     public static void update() {
+        if (!We.terran() || Select.ourOfType(AUnitType.Terran_SCV).empty()) {
+            return;
+        }
+
         if (AGame.everyNthGameFrame(11)) {
             RepairerAssigner.removeExcessiveRepairersIfNeeded();
 
