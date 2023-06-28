@@ -6,6 +6,7 @@ import atlantis.combat.missions.WeDontKnowEnemyEnemyUnit;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 
 public class MissionAttackAdvance {
 
@@ -25,10 +26,7 @@ public class MissionAttackAdvance {
 //        if (focusPoint != null && unit.lastPositioningActionMoreThanAgo(40)) {
         if (focusPoint != null) {
             boolean looksIdle = !unit.isHoldingPosition() && (
-                unit.isIdle()
-                || unit.isStopped()
-                || !unit.isMoving()
-                || !unit.isAttacking()
+                unit.looksIdle()
                 || unit.lastActionMoreThanAgo(40)
                 || (unit.isAttacking() && unit.target() == null)
             );
@@ -43,6 +41,13 @@ public class MissionAttackAdvance {
             }
 
             unit.setTooltip("Advancing...");
+//            if (!unit.isMoving() && !unit.isAccelerating() && unit.distTo(focusPoint) >= 7) {
+            if (unit.looksIdle() && unit.distTo(focusPoint) >= 7) {
+                if (unit.move(focusPoint, Actions.MOVE_FOCUS, "Hoorray", true)) {
+                    return true;
+                }
+            }
+
             return false;
         }
         else {

@@ -32,7 +32,7 @@ public class FightInsteadAvoid {
     protected final AUnit vulture;
     protected final AUnit ranged;
     protected final AUnit melee;
-    private final TerranInfantryFightInsteadAvoid terranFightInsteadAvoid = new TerranInfantryFightInsteadAvoid();
+    private final TerranFightInsteadAvoid terranFightInsteadAvoid = new TerranFightInsteadAvoid();
 
     // =========================================================
 
@@ -129,7 +129,7 @@ public class FightInsteadAvoid {
             }
         }
 
-        if (terranFightInsteadAvoid.fightForTerranInfantry(unit)) {
+        if (terranFightInsteadAvoid.fightForTerran(unit)) {
             return true;
         }
 
@@ -187,7 +187,7 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        if (terranFightInsteadAvoid.fightForTerranInfantry(unit)) {
+        if (terranFightInsteadAvoid.fightForTerran(unit)) {
             return true;
         }
 

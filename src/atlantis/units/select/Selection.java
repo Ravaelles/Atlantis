@@ -510,7 +510,10 @@ public class Selection extends BaseSelection {
      */
     public Selection repairable(boolean checkIfWounded) {
         return cloneByRemovingIf(
-            (unit -> !unit.isCompleted() || !unit.type().isMechanical() || (checkIfWounded && !unit.isWounded())),
+            (unit -> !unit.isCompleted()
+                || (!unit.type().isMechanical() && (!unit.isBuilding() || !unit.isTerran()))
+                || (checkIfWounded && !unit.isWounded())
+            ),
             "repairable:" + A.trueFalse(checkIfWounded)
         );
     }

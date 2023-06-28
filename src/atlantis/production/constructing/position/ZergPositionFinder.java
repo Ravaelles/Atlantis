@@ -61,7 +61,8 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
-        APainter.paintCircle(position, 10, Color.Red);
+//        APainter.paintCircle(position, 10, Color.Red);
+
         if (building.isBunker()) {
             CameraManager.centerCameraOn(position);
             GameSpeed.changeSpeedTo(100);

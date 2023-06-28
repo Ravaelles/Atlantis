@@ -9,11 +9,13 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
+import java.util.List;
+
 public class RepairerAssigner {
 
     protected static void assignRepairersToWoundedUnits() {
-//        if (!OptimalNumOfRepairers.usingMoreRepairersThanAllowed()) {
-        for (AUnit woundedUnit : Select.our().repairable(true).excludeTypes(AtlantisConfig.WORKER).list()) {
+        List<AUnit> repairable = Select.our().repairable(true).excludeTypes(AtlantisConfig.WORKER).list();
+        for (AUnit woundedUnit : repairable) {
 //            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {
 //                System.out.println("Repair TURRET? ");
 //            }
@@ -32,7 +34,7 @@ public class RepairerAssigner {
 //            }
             if (newRepairersNeeded > 0) {
                 ARepairerManager.assignRepairersToWoundedUnits(woundedUnit, newRepairersNeeded);
-//                    System.out.println("Assign " + newRepairersNeeded + " repairers to " + woundedUnit.name());
+                System.err.println("Assign " + newRepairersNeeded + " repairers to " + woundedUnit.name());
             }
         }
 //        }
@@ -42,13 +44,13 @@ public class RepairerAssigner {
 
     private static boolean shouldNotRepairUnit(AUnit unit) {
         return !unit.isRepairable()
-                || (unit.isAir() && unit.hp() >= 81 && unit.friendsNear().workers().notRepairing().empty())
+                || (unit.isAir() && unit.hp() >= 91 && unit.friendsNear().workers().notRepairing().empty())
                 || unit.isScout()
-                || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 3))
+                || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 2))
                 || (
                     unit.isBuilding()
                         && TerranFlyingBuildingScoutManager.isFlyingBuilding(unit)
-                        && unit.lastUnderAttackLessThanAgo(30 * 9)
+                        && unit.lastUnderAttackLessThanAgo(30 * 6)
                 )
 //                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercentMin(40))
                 || ARepairerManager.itIsForbiddenToRepairThisUnitNow(unit)

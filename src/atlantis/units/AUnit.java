@@ -10,7 +10,6 @@ import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.positioning.SquadCohesion;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -2662,5 +2661,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isFlying() {
         return isAir() || isLifted();
+    }
+
+    public boolean looksIdle() {
+        return isIdle()
+            || (!isMoving() && !isAccelerating() && noCooldown());
     }
 }
