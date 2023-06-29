@@ -1,10 +1,12 @@
 package atlantis.combat.missions.focus;
 
+import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
+import bwapi.Color;
 
 public abstract class MoveToFocusPoint {
 
@@ -112,8 +114,16 @@ public abstract class MoveToFocusPoint {
             return true;
         }
 
-        double unitToFromSide = focus.fromSide() == null ? -1 : unit.distTo(focus.fromSide());
-        double focusToFromSide = focus.fromSide() == null ? -1 : focus.distTo(focus.fromSide());
+        APosition choke = focus.choke().center();
+        double unitToChoke = unit.distTo(choke);
+        double focusToChoke = focus.distTo(choke);
+
+        if (unitToChoke < focusToChoke) {
+            return false;
+        }
+
+        double unitToFromSide = unit.distTo(focus.fromSide());
+        double focusToFromSide = focus.distTo(focus.fromSide());
 
         return unitToFromSide <= focusToFromSide;
     }
@@ -126,7 +136,9 @@ public abstract class MoveToFocusPoint {
             return false;
         }
 
-        if (!focus.isAroundChoke() || focus.fromSide() == null) {
+        APosition withdrawTo = focus.fromSide();
+        
+        if (!focus.isAroundChoke() || withdrawTo == null) {
 //            System.out.println("fromSide = " + fromSide);
 //            System.out.println("FOCUS POINT = " + focus.toString());
 //            System.out.println("isAroundChoke = " + focus.isAroundChoke());
@@ -135,24 +147,42 @@ public abstract class MoveToFocusPoint {
         }
 
         double distToFocusPoint = unit.distToFocusPoint();
-        if (
-            distToFocusPoint < unit.mission().optimalDist(unit)
-                || (!isOnValidSideOfChoke(unit, focus) && distToFocusPoint <= 7)
-        ) {
-            if (unit.enemiesNear().combatUnits().empty()) {
-                for (AUnit friend : unit.friendsNear().inRadius(0.6, unit).combatUnits().inRadius(7, unit).list()) {
-                    APosition withdrawTo = friend.translateTilesTowards(1, focus.fromSide());
-                    if (friend.move(withdrawTo, Actions.MOVE_FOCUS, "HelpWithdraw", true)) {
-                        friend.setTooltip("HelpWithdraw", true);
-                    }
-                    return true;
-                }
-            }
+//        double optimalDist = unit.mission().optimalDist(unit);
 
-            unit.move(focus.fromSide(), Actions.MOVE_FOCUS, "Withdraw", true);
+        boolean onValidSideOfChoke = isOnValidSideOfChoke(unit, focus);
+//        APainter.paintCircleFilled(unit, 6, onValidSideOfChoke ? Color.Green : Color.Red);
+
+        if (!onValidSideOfChoke && distToFocusPoint <= 7) {
+            makeFriendsHelpWithdraw(unit, focus);
+
+            unit.move(withdrawTo, Actions.MOVE_FOCUS, "Withdraw", true);
             return true;
         }
+        
+//        if (!isOnValidSideOfChoke(unit, focus) && distToFocusPoint <= 7) {
+////        if (
+////            distToFocusPoint < optimalDist
+////                || (!isOnValidSideOfChoke(unit, focus) && distToFocusPoint <= 7)
+////        ) {
+//        if (makeFriendsHelpWithdraw(unit, focus)) return true;
+//
+//            unit.move(focus.fromSide(), Actions.MOVE_FOCUS, "Withdraw", true);
+//            return true;
+//        }
 
+        return false;
+    }
+
+    private static boolean makeFriendsHelpWithdraw(AUnit unit, AFocusPoint focus) {
+        if (unit.enemiesNear().combatUnits().empty()) {
+            for (AUnit friend : unit.friendsNear().inRadius(0.3, unit).combatUnits().list()) {
+                APosition withdrawFriendTo = friend.translateTilesTowards(1, focus.fromSide());
+                if (friend.move(withdrawFriendTo, Actions.MOVE_FOCUS, "HelpWithdraw", true)) {
+                    friend.setTooltip("HelpWithdraw", true);
+                }
+                return true;
+            }
+        }
         return false;
     }
 

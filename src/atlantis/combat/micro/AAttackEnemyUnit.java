@@ -32,7 +32,7 @@ public class AAttackEnemyUnit {
      */
     public static boolean handleAttackNearEnemyUnits(AUnit unit) {
         return (boolean) cacheObject.getIfValid(
-            unit.idWithHash(),
+            "handleAttackNearEnemyUnits: " + unit.id(),
             4,
             () -> {
                 if (!canAttackNow(unit)) {
@@ -222,7 +222,7 @@ public class AAttackEnemyUnit {
 
     private static boolean missionAllowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         return unit.mission() == null
-            || unit.isTank()
+            || unit.isTankSieged()
             || unit.mission().allowsToAttackEnemyUnit(unit, enemy);
 //            || (unit.isRanged() && enemy.isMelee());
     }

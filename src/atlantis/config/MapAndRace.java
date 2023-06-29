@@ -24,12 +24,12 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -47,7 +47,7 @@ public class MapAndRace {
 
         // vs ZERG cheat-bots
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
-//        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
+        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Terran ==============================================
 

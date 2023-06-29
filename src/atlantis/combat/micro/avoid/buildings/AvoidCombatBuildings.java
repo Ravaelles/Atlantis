@@ -17,7 +17,7 @@ public class AvoidCombatBuildings {
         Selection combatBuildings = EnemyUnits.discovered().combatBuildings(false);
 //        }
 
-        AUnit combatBuilding = combatBuildings.nearestTo(unit);
+        AUnit combatBuilding = combatBuildings.inRadius(12, unit).canAttack(unit, 5).nearestTo(unit);
         if (combatBuilding == null) {
 //            APainter.paintCircleFilled(unit, 8, Color.Green);
             return false;

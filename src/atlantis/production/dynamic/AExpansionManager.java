@@ -26,6 +26,7 @@ public class AExpansionManager {
 
     public static boolean shouldBuildNewBase() {
 //        if (true) return false;
+//        if (A.supplyTotal() <= 100) return false;
 
         // Zerg
         if (We.zerg() && ZergExpansionManager.handleNoZergLarvas()) {

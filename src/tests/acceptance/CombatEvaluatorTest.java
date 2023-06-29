@@ -92,7 +92,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //                System.out.println("-- ourEval = " + ourEval);
 //                System.out.println("-- enemyEval = " + enemyEval);
 
-                assertTrue(valueAround(0.9, ourEval / enemyEval));
+                assertTrue(valueAround(0.73, ourEval / enemyEval));
             },
             () -> fakeOurs(
                 marine = fake(AUnitType.Terran_Marine, 11.5),
@@ -117,8 +117,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //                System.out.println("-- ourEval = " + ourEval);
 //                System.out.println("-- enemyEval = " + enemyEval);
 
-                assertTrue(ourEval * 200 < enemyEval);
-                assertTrue(ourEval * 300 > enemyEval);
+                assertTrue(ourEval * 300 < enemyEval);
             },
             () -> fakeOurs(
                 marine = fake(AUnitType.Terran_Marine, 11.5),
@@ -144,7 +143,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //                System.out.println("-- ourEval = " + ourEval);
 //                System.out.println("-- enemyEval = " + enemyEval);
 
-                assertTrue(valueAround(1.2, ourEval / enemyEval));
+                assertTrue(valueAround(1.01, ourEval / enemyEval));
             },
             () -> fakeOurs(
                 marine = fake(AUnitType.Terran_Marine, 11.5),

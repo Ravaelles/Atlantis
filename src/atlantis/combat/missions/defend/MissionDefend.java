@@ -43,7 +43,8 @@ public class MissionDefend extends Mission {
         }
 
         this.unit = unit;
-        focusPoint = focusPoint();
+        this.main = Select.main();
+        this.focusPoint = focusPoint();
 
         if (focusPoint == null) {
             return noFocusPoint();
@@ -52,7 +53,7 @@ public class MissionDefend extends Mission {
         // =========================================================
 
         // Don't reposition if enemies Near
-        if (unit.enemiesNear().combatUnits().inRadius(6.2, unit).atLeast(2)) {
+        if (unit.enemiesNear().combatUnits().inRadius(7.2, unit).atLeast(2)) {
             return false;
         }
 

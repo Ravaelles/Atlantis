@@ -63,7 +63,7 @@ public class ACombatUnitManager {
         // level managers to take control.
         if (ASpecialUnitManager.updateAndAllowTopManagers(unit)) {
 //            System.out.println("@@ Special - " + unit);
-            unit.addLog("SpecialManager");
+//            unit.addLog("SpecialManager");
             return true;
         }
 

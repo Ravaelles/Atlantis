@@ -143,7 +143,6 @@ public class Sparta extends MissionDefend {
             return super.allowsToAttackEnemyUnit(unit, enemy);
         }
 
-        main = Select.main();
         focusPointToBase = focusPoint.distTo(main);
         unitToEnemy = unit.distTo(enemy);
         unitToBase = unit.groundDist(main);

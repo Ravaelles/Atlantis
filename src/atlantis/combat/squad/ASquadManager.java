@@ -27,7 +27,6 @@ public class ASquadManager {
             ChangeSquadMission.changeSquadMissionIfNeeded(squad);
         }
 
-
         // Act with every combat unit
         for (AUnit unit : squad.list()) {
             ACombatUnitManager.update(unit);

@@ -14,8 +14,8 @@ import atlantis.util.We;
 public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
     public boolean move(AUnit unit, AFocusPoint focusPoint) {
-        if (unit.isRunning() || unit.enemiesNear().groundUnits().inRadius(7, unit).notEmpty()) {
-            return false;
+        if (unit.isRunning()) {
+            return true;
         }
 
         if (unit.lastActionLessThanAgo(2)) {
@@ -36,7 +36,11 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 
-        if (unit.lastActionMoreThanAgo(5, Actions.MOVE_FORMATION)) {
+        if (spreadOut()) {
+            return true;
+        }
+
+//        if (unit.lastActionMoreThanAgo(5, Actions.MOVE_FORMATION)) {
             if (focus.isAroundChoke()) {
     //            if (unit.debug())System.out.println("handleWrongSideOfFocus " + unit);
                 if (
@@ -45,15 +49,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
                     return true;
                 }
             }
-        }
-
-//        if (handleWrongSideOfFocus(unit, focusPoint) || tooCloseToFocusPoint() || advance()) {
-//            return true;
 //        }
-
-        if (spreadOut()) {
-            return true;
-        }
 
         return advance();
     }
@@ -113,6 +109,10 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
                 + (unit.isMedic() ? -2.5 : 0)
                 + (unit.isMarine() ? 2 : 0)
                 + (Select.our().inRadius(2, unit).count() / 25.0);
+
+            if (focus.isAroundChoke()) {
+                base += (focus.choke().width() <= 3) ? 3.5 : 0;
+            }
         }
 
         return base

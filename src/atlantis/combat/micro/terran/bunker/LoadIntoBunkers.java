@@ -14,20 +14,20 @@ public class LoadIntoBunkers {
             return false;
         }
 
-        if (unit.lastActionLessThanAgo(10, Actions.LOAD)) {
-            unit.addLog("Loading");
-            return continueLoadingIntoBunker(unit);
-        }
-
         // Only Terran infantry get inside
-        if (unit.isLoaded() || (!unit.isMarine() && !unit.isGhost())) {
+        if (!unit.isMarine() && !unit.isGhost()) {
             return false;
         }
 
         // Without enemies around, don't do anything
-        Selection enemiesNear = unit.enemiesNear().canAttack(unit, 15);
+        Selection enemiesNear = unit.enemiesNear().canAttack(unit, 10);
         if (enemiesNear.excludeMedics().empty()) {
             return false;
+        }
+
+        if (unit.lastActionLessThanAgo(10, Actions.LOAD)) {
+            unit.addLog("Loading");
+            return continueLoadingIntoBunker(unit);
         }
 
         if (UnloadFromBunkers.preventFromActingLikeFrenchOnMaginotLine(unit)) {
@@ -38,9 +38,15 @@ public class LoadIntoBunkers {
 
         AUnit bunker = defineBunkerToLoadTo(unit);
 //        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
-        double maxDistanceToLoad = 3.9 + unit.id() % 4;
 
         if (bunker != null && bunker.hasFreeSpaceFor(unit)) {
+            double unitDistToBunker = bunker.distTo(unit);
+            double maxDistanceToLoad = 3.9 + unit.id() % 4;
+
+            if (unitDistToBunker > maxDistanceToLoad) {
+                return false;
+            }
+
             boolean canLoad;
 
             AUnit nearestEnemy = unit.nearestEnemy();
@@ -48,15 +54,10 @@ public class LoadIntoBunkers {
                 canLoad = true;
             }
             else {
-                double unitDistToBunker = bunker.distTo(unit);
                 double enemyDist = unit.distTo(nearestEnemy);
 //                double enemyDistToBunker = nearestEnemy.distTo(bunker);
 
-                canLoad =
-                    (
-                        (unitDistToBunker < maxDistanceToLoad || enemyDist < 2.2)
-                        && (enemyDist < 1.9 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6)
-                    );
+                canLoad = enemyDist < 1.9 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6;
             }
 
             if (canLoad) {

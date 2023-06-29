@@ -15,18 +15,20 @@ public class TerranFirebat {
         }
 
         if (unit.cooldown() >= 4 || !shouldContinueMeleeFighting(unit)) {
-            AUnit nearestEnemy = unit.nearestEnemy();
-            if (nearestEnemy != null && unit.distTo(nearestEnemy) <= 1.8) {
+            AUnit enemy = unit.nearestEnemy();
+            boolean shouldRun = (enemy != null && unit.distTo(enemy) <= 1.8);
+            if (shouldRun) {
                 return unit.runningManager().runFrom(
-                    nearestEnemy, 1.0, Actions.RUN_ENEMY, false
+                    enemy, 1.0, Actions.RUN_ENEMY, false
                 );
             }
         }
 
         if (
             unit.hp() >= 33
-            && unit.cooldown() <= 3
-            && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
+                && unit.cooldown() <= 3
+                && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
+                && unit.friendsNear().medics().inRadius(1.4, unit).notEmpty()
         ) {
             if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
                 unit.setTooltip("Napalm");
@@ -42,7 +44,10 @@ public class TerranFirebat {
             return true;
         }
 
-        int medics = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).inRadius(1.85, unit).count();
+        int medics = Select.ourOfType(AUnitType.Terran_Medic)
+            .havingEnergy(30)
+            .inRadius(1.85, unit)
+            .count();
 
         if (medics >= 1) {
             return true;
