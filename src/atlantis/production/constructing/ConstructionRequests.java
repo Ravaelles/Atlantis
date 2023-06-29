@@ -14,6 +14,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLogging;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -69,7 +70,7 @@ public class ConstructionRequests {
 
         if (newConstructionOrder.builder() == null) {
             if (AGame.supplyUsed() >= 7 && Count.bases() > 0 && Count.workers() > 0) {
-                System.err.println("Builder is null, got damn it!");
+                ErrorLogging.printMaxOncePerMinute("Builder is null, got damn it!");
             }
             return false;
         }
@@ -107,18 +108,17 @@ public class ConstructionRequests {
         // Couldn't find place for building! That's bad, print descriptive explanation.
         else {
             if (AGame.supplyTotal() > 10) {
-                System.err.print("Can't find place for `" + building + "`, " + order);
+                ErrorLogging.printMaxOncePerMinute("Can't find place for `" + building + "`, " + order);
 //                A.printStackTrace("Can't find place for `" + building + "`, " + order);
                 if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
-                    System.err.print("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
+                    ErrorLogging.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
                 }
                 else {
-                    System.err.print("(reason not defined - bug)");
+                    ErrorLogging.printMaxOncePerMinute("(reason not defined - bug)");
                 }
-                System.err.println();
             }
 
-            System.out.println("Cancel " + building + " (Invalid place)");
+            ErrorLogging.printMaxOncePerMinute("Cancel " + building + " (Invalid place)");
             newConstructionOrder.cancel();
 //            throw new RuntimeException("Can't find place for `" + building + "` ");
             return false;
@@ -143,14 +143,14 @@ public class ConstructionRequests {
             return true;
         }
 
-        System.err.println(
+        ErrorLogging.printMaxOncePerMinute(
             "Uhmmm... shouldn't reach here. "
                 + "EXISTING_BUILDING=" + Count.existing(building)
                 + ", IN_PROD_BUILDING" + Count.inProductionOrInQueue(building)
                 + "EXISTING_REQ=" + Count.existing(requiredBuilding)
                 + ", IN_PROD_REQ" + Count.inProductionOrInQueue(requiredBuilding)
         );
-        System.err.println(building + " // " + requiredBuilding);
+        ErrorLogging.printMaxOncePerMinute(building + " // " + requiredBuilding);
         return false;
     }
 
@@ -356,7 +356,7 @@ public class ConstructionRequests {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
             if (!construction.hasStarted()) {
-                System.out.println("Removing all non started buildings due to priority request");
+//                System.out.println("Removing all non started buildings due to priority request");
                 construction.cancel();
             }
         }

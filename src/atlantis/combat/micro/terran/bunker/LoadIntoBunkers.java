@@ -14,6 +14,11 @@ public class LoadIntoBunkers {
             return false;
         }
 
+        if (unit.lastActionLessThanAgo(20, Actions.LOAD)) {
+            unit.addLog("Loading");
+            return continueLoadingIntoBunker(unit);
+        }
+
         // Only Terran infantry get inside
         if (!unit.isMarine() && !unit.isGhost()) {
             return false;
@@ -23,11 +28,6 @@ public class LoadIntoBunkers {
         Selection enemiesNear = unit.enemiesNear().canAttack(unit, 10);
         if (enemiesNear.excludeMedics().empty()) {
             return false;
-        }
-
-        if (unit.lastActionLessThanAgo(10, Actions.LOAD)) {
-            unit.addLog("Loading");
-            return continueLoadingIntoBunker(unit);
         }
 
         if (UnloadFromBunkers.preventFromActingLikeFrenchOnMaginotLine(unit)) {
@@ -41,7 +41,7 @@ public class LoadIntoBunkers {
 
         if (bunker != null && bunker.hasFreeSpaceFor(unit)) {
             double unitDistToBunker = bunker.distTo(unit);
-            double maxDistanceToLoad = 3.9 + unit.id() % 4;
+            double maxDistanceToLoad = 2.9 + unit.id() % 4;
 
             if (unitDistToBunker > maxDistanceToLoad) {
                 return false;
@@ -55,7 +55,11 @@ public class LoadIntoBunkers {
             }
             else {
                 double enemyDist = unit.distTo(nearestEnemy);
-//                double enemyDistToBunker = nearestEnemy.distTo(bunker);
+                double enemyDistToBunker = nearestEnemy.distTo(bunker);
+
+                if (enemyDistToBunker + 1 < unitDistToBunker) {
+                    return false;
+                }
 
                 canLoad = enemyDist < 1.9 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6;
             }

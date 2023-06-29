@@ -12,6 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLogging;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -302,7 +303,7 @@ public class AConstructionManager {
 
         if (order.builder() == null) {
             if (Count.workers() >= 3) {
-                System.out.println("Weird case, " + order.buildingType() + " has no builder. Cancel.");
+                ErrorLogging.printMaxOncePerMinute("Weird case, " + order.buildingType() + " has no builder. Cancel.");
             }
             order.cancel();
             return;
@@ -310,7 +311,7 @@ public class AConstructionManager {
 
         AUnit main = Select.main();
         int timeout = 30 * (
-                14
+                11
                 + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 60 : 15)
                 + ((int) (2.9 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
         );

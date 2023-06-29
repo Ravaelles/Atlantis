@@ -22,11 +22,11 @@ public class SuicideAgainstScarabs {
             return false;
         }
 
-        System.err.println();
-        System.err.println("#### SCARAB SUICIDE unit   = " + unit);
-        System.err.println("#### SCARAB SUICIDE scarab = " + scarabAimedAtUnit);
-        System.err.println("#### SCARAB SUICIDE target = " + scarabAimedAtUnit.target());
-        System.err.println();
+//        System.err.println();
+//        System.err.println("#### SCARAB SUICIDE unit   = " + unit);
+//        System.err.println("#### SCARAB SUICIDE scarab = " + scarabAimedAtUnit);
+//        System.err.println("#### SCARAB SUICIDE target = " + scarabAimedAtUnit.target());
+//        System.err.println();
 
         Selection friendsNear = unit.friendsInRadius(2.1).groundUnits().nonBuildings();
 

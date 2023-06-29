@@ -64,7 +64,7 @@ public class TerranCommandCenter {
             ? baseLocation.makeLandableFor(building)
             : baseLocation.position();
 
-        if (rebaseTo == null) {
+        if (rebaseTo == null && minerals.size() > 0) {
             rebaseTo = minerals.get(0) != null ? minerals.get(0).position() : null;
         }
 

@@ -18,8 +18,10 @@ public class MissionAttackAdvance {
 //            return handleWeDontKnowWhereTheEnemyBaseIs(unit);
 //        }
 
-        if (ASquadCohesionManager.handle(unit)) {
-            return true;
+        if (unit.lastPositioningActionMoreThanAgo(30)) {
+            if (ASquadCohesionManager.handle(unit)) {
+                return true;
+            }
         }
 
         // Focus point is well known

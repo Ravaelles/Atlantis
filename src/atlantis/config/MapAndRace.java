@@ -12,9 +12,9 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-//    public static final String ENEMY_RACE = "Protoss";
+    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
-    public static final String ENEMY_RACE = "Zerg";
+//    public static final String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -47,7 +47,7 @@ public class MapAndRace {
 
         // vs ZERG cheat-bots
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
-        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
+//        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Terran ==============================================
 
