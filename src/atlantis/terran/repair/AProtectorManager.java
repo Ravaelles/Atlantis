@@ -7,7 +7,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,34 +40,41 @@ public class AProtectorManager {
     // =========================================================
 
     protected static boolean assignBunkerProtectorsIfNeeded() {
-        if (Count.bunkers() == 0) {
-            return false;
-        }
-
-        // =========================================================
-
         for (AUnit bunker : Select.ourOfType(AUnitType.Terran_Bunker).list()) {
-            Selection enemies = bunker.enemiesNear().havingWeapon().canAttack(bunker, 10);
+//            Selection enemies = bunker.enemiesNear().havingWeapon().canAttack(bunker, 10);
 
             // No enemies + bunker healthy
-            if (enemies.size() <= 1 && (enemies.isEmpty() || bunker.loadedUnits().isEmpty()) && bunker.isHealthy()) {
-                ArrayList<AUnit> protectors = ARepairAssignments.getProtectorsFor(bunker);
-                ArrayList<AUnit> toRemove = new ArrayList<>();
-                toRemove.addAll(protectors);
+            ArrayList<AUnit> existingProtectors = ARepairAssignments.protectorsFor(bunker);
+//            int desiredBunkerProtectors = RepairerAssigner.optimalNumOfRepairersFor(bunker);
+            int desiredBunkerProtectors = OptimalNumOfBunkerRepairers.forBunker(bunker);
+            int howMany = desiredBunkerProtectors - existingProtectors.size();
 
-                for (AUnit protector : toRemove) {
-                    ARepairAssignments.removeRepairer(protector);
-                }
+//            if (enemies.size() <= 1 && (enemies.isEmpty() || bunker.loadedUnits().isEmpty()) && bunker.isHealthy()) {
+
+            // Remove some (or all) existing protectors
+            if (howMany < 0) {
+                removeExcessiveProtectors(existingProtectors, -howMany);
             }
 
             // Bunker damaged or enemies nearby
-            else {
-                int desiredBunkerProtectors = RepairerAssigner.optimalRepairersFor(bunker);
-                assignProtectorsFor(bunker, desiredBunkerProtectors);
+            else if (howMany > 0) {
+                addProtectorsForUnit(bunker, howMany);
             }
         }
 
         return true;
+    }
+
+    private static void removeExcessiveProtectors(ArrayList<AUnit> existingProtectors, int howMany) {
+        ArrayList<AUnit> toRemove = new ArrayList<>();
+        int protectorsToRemove = Math.min(howMany, existingProtectors.size());
+        for (int i = 0; i < protectorsToRemove; i++) {
+            toRemove.add(existingProtectors.get(i));
+        }
+
+        for (AUnit protector : toRemove) {
+            ARepairAssignments.removeRepairer(protector);
+        }
     }
 
     private static int maxProtectors() {
@@ -97,11 +103,11 @@ public class AProtectorManager {
         }
 
         for (int i = 0; i < maxProtectors - totalProtectors; i++) {
-            assignProtectorsFor(tanks.get(i % tanks.size()), 1);
+            addProtectorsForUnit(tanks.get(i % tanks.size()), 1);
         }
 
         if (ARepairAssignments.countTotalProtectors() == 0) {
-            assignProtectorsFor(Select.ourOfType(AUnitType.Terran_Medic).last(), 1);
+            addProtectorsForUnit(Select.ourOfType(AUnitType.Terran_Medic).last(), 1);
         }
 
 //        if (!Missions.isGlobalMissionAttack() && !Missions.isGlobalMissionContain()) {
@@ -154,7 +160,7 @@ public class AProtectorManager {
 
     // =========================================================
 
-    protected static void assignProtectorsFor(AUnit unitToProtect, int numberOfProtectorsToAssign) {
+    protected static void addProtectorsForUnit(AUnit unitToProtect, int numberOfProtectorsToAssign) {
         if (unitToProtect == null || unitToProtect.isDead()) {
             return;
         }

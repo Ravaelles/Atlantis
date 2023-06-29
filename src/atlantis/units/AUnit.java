@@ -278,7 +278,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         APosition newPosition = new APosition(x() - dx, y() - dy).makeValid();
 
         if (!this.isFlying()) {
-            newPosition = newPosition.makeFreeOfAnyGroundUnits(3, 0.15, this);
+            APosition freeFromUnits = newPosition.makeFreeOfAnyGroundUnits(3, 0.15, this);
+            if (freeFromUnits != null) {
+                newPosition = freeFromUnits;
+            }
         }
 
         if (newPosition == null) {
@@ -291,17 +294,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             && move(newPosition, action, "Move away", false)
 //                && (unit().isAir() || Select.all().groundUnits().inRadius(0.05, newPosition).empty())
         ) {
-            this.setTooltip(tooltip, false);
-            return true;
         }
+        this.setTooltip(tooltip, false);
+        return true;
 
-//        APainter.paintLine(position, newPosition, Color.Teal);
-        this.setTooltip("CantMoveAway", false);
-        APainter.paintCircle(this, 3, Color.Red);
-        APainter.paintCircle(this, 5, Color.Red);
-        APainter.paintCircle(this, 7, Color.Red);
-        APainter.paintCircle(this, 9, Color.Red);
-        return false;
+//        this.setTooltip("CantMoveAway", false);
+//        APainter.paintCircle(this, 3, Color.Red);
+//        APainter.paintCircle(this, 5, Color.Red);
+//        APainter.paintCircle(this, 7, Color.Red);
+//        APainter.paintCircle(this, 9, Color.Red);
+//        return false;
 //        return move(newPosition, Actions.MOVE_ERROR, "Force move", false);
     }
 

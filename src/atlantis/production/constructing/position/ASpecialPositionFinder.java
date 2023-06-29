@@ -44,7 +44,7 @@ public class ASpecialPositionFinder {
     public static APosition findPositionForBase(AUnitType building, AUnit builder, Construction construction) {
         return cache.get(
                 "findPositionForBase:" + builder + "," + construction.id(),
-                50,
+                53,
                 () -> {
                     String modifier = construction.productionOrder() != null ?
                             construction.productionOrder().getModifier() : null;
@@ -66,7 +66,13 @@ public class ASpecialPositionFinder {
                         }
                     }
 
-                    return findPositionForBase_nearestFreeBase(building, builder, construction);
+                    APosition result = findPositionForBase_nearestFreeBase(building, builder, construction);
+
+                    if (result != null) {
+                        cache.clear();
+                    }
+
+                    return result;
                 }
         );
     }
@@ -136,7 +142,7 @@ public class ASpecialPositionFinder {
         
 //        APosition near = APosition.create(baseLocationToExpand.position()).translateByPixels(-64, -48);
 //        near = APosition.create(baseLocationToExpand.position());
-        construction.setMaxDistance(4);
+        construction.setMaxDistance(3);
 
 //        System.out.println("Main base = " + Select.mainBase());
 //        System.out.println("baseLocationToExpand = " + baseLocationToExpand);

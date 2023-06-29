@@ -87,6 +87,7 @@ public class Missions {
     }
 
     public static Mission initialMission() {
+        if (true) return Missions.DEFEND;
 
         // === Handle UMS ==========================================
 

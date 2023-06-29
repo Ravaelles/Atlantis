@@ -5,7 +5,6 @@ import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.terran.TerranFlyingBuildingScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
@@ -28,13 +27,13 @@ public class RepairerAssigner {
                 continue;
             }
 
-            int newRepairersNeeded = optimalRepairersFor(woundedUnit);
+            int newRepairersNeeded = optimalNumOfRepairersFor(woundedUnit);
 //            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {
 //                System.out.println("   HP=" + woundedUnit.hp() + " / repairers=" + newRepairersNeeded);
 //            }
             if (newRepairersNeeded > 0) {
                 ARepairerManager.assignRepairersToWoundedUnits(woundedUnit, newRepairersNeeded);
-                System.err.println("Assign " + newRepairersNeeded + " repairers to " + woundedUnit.name());
+//                System.err.println("Assign " + newRepairersNeeded + " repairers to " + woundedUnit.name());
             }
         }
 //        }
@@ -74,18 +73,18 @@ public class RepairerAssigner {
         return false;
     }
 
-    public static int optimalRepairersFor(AUnit unit) {
+    public static int optimalNumOfRepairersFor(AUnit unit) {
         int alreadyAssigned = ARepairAssignments.countRepairersForUnit(unit) + ARepairAssignments.countProtectorsFor(unit);
         int repairersNeeded = 1;
 
         // === Bunker - very special case ========================================
 
         if (unit.isBunker()) {
-            int shouldHaveThisManyRepairers = OptimalNumOfBunkerRepairers.optimalRepairersForBunker(unit);
+            int shouldHaveThisManyRepairers = OptimalNumOfBunkerRepairers.forBunker(unit);
             if (shouldHaveThisManyRepairers > 0) {
 //                System.out.println("Bunker repairers = " + shouldHaveThisManyRepairers);
                 unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
-                AProtectorManager.assignProtectorsFor(unit, shouldHaveThisManyRepairers);
+                AProtectorManager.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
                 return shouldHaveThisManyRepairers;
             }
             else {

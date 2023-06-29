@@ -127,8 +127,12 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
     private static double limitMaxDistanceForImportantBuildings(double maxDistance, AUnitType building) {
         if (building.is(AUnitType.Terran_Academy)) {
-            return 10;
+            return 8;
         }
+
+//        if (building.isBase()) {
+//            return 10;
+//        }
 
         return maxDistance;
     }
@@ -140,7 +144,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         // === Compare against existing buildings ========================================
         
         for (AUnit otherBuilding : Select.ourBuildingsWithUnfinished().inRadius(8, position).list()) {
-            double distance = otherBuilding.distTo(position);
+//            double distance = otherBuilding.distTo(position);
 
             // Check for this building's addon if needed
             if (canThisBuildingHaveAddon && !isBase) {

@@ -10,6 +10,10 @@ public class TempDontRetreat {
     protected static boolean temporarilyDontRetreat(AUnit unit) {
         if (unit.isRanged()) {
 
+            if (unit.enemiesNear().ranged().atLeast(2)) {
+                return false;
+            }
+
             // No enemy can shoot us
             if (unit.enemiesNear().inShootRangeOf(unit).empty()) {
                 unit.addFileLog("TemporarilyDontRetreat");

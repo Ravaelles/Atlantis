@@ -1,14 +1,5 @@
 package atlantis.config;
 
-import atlantis.Atlantis;
-import atlantis.config.env.Env;
-import atlantis.debug.painter.APainter;
-import atlantis.game.A;
-import atlantis.game.CameraManager;
-import atlantis.game.GameSpeed;
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-
 public class MapAndRace {
 
     /**
@@ -38,7 +29,7 @@ public class MapAndRace {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -55,7 +46,8 @@ public class MapAndRace {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Terran ==============================================
 
@@ -161,111 +153,7 @@ public class MapAndRace {
         return "maps/BroodWar/" + activeMap();
     }
 
-    // =========================================================
-
-    public static void updateMapSpecific() {
-        if (Env.isParamTweaker() || !Env.isLocal()) {
-            return;
-        }
-
-        // =========================================================
-        // Marines & Medics v. Zealots
-
-        if (
-                activeMap().startsWith("ums/rav/")
-                || activeMap().startsWith("ums/rav/minimaps/")
-        ) {
-            if (A.now() <= 1) {
-                GameSpeed.changeSpeedTo(30);
-                GameSpeed.changeFrameSkipTo(0);
-                CameraManager.centerCameraNowOnSquadCenter();
-            }
-        }
-
-        // =========================================================
-
-        else if (
-            activeMap().equals("ums/rav/Dragoon_v_Zealot.scm")
-            || activeMap().equals("ums/rav/Dragoons_v_Zealots.scm")
-        ) {
-            if (A.now() <= 1) {
-                GameSpeed.changeSpeedTo(50);
-                GameSpeed.changeFrameSkipTo(0);
-            }
-        }
-
-        // =========================================================
-        // v. ZERG / PROTOSS / Gosu maps
-
-        else if (
-                activeMap().equals("ums/vsGosuComputer.scx")
-                || activeMap().equals("ums/exp_skilltest.scx")
-                || activeMap().equals("ums/7th.scx")
-        ) {
-            int initFrameSkip = 30;
-
-            if (A.seconds() <= 1) {
-                GameSpeed.changeSpeedTo(0);
-                GameSpeed.changeFrameSkipTo(initFrameSkip);
-
-//                CameraManager.centerCameraOn((new MissionDefendFocusPoint()).focusPoint());
-            }
-        }
-
-        // =========================================================
-        // Marines v. ZERGLINGS
-
-        else if (activeMap().equals("ums/marines_v_zerglings.scm")) {
-            if (A.now() <= 1) {
-                GameSpeed.changeSpeedTo(20);
-                GameSpeed.changeFrameSkipTo(0);
-            }
-            if (Atlantis.KILLED >= 32) {
-                Atlantis.getInstance().onEnd(true);
-            }
-        }
-
-        // =========================================================
-        // Marines v. ZERGLINGS
-
-        else if (activeMap().equals("ums/Jim_v_Lurker.scx")) {
-            if (A.now() <= 1) {
-                GameSpeed.changeSpeedTo(1);
-                GameSpeed.changeFrameSkipTo(0);
-            }
-            CameraManager.centerCameraNowOnSquadCenter();
-        }
-
-        // =========================================================
-        // Marines v. ZEALOTS
-
-        else if (activeMap().equals("ums/mar_v_zea.scx")) {
-            if (Select.enemyCombatUnits().isEmpty()) {
-                GameSpeed.changeSpeedTo(0);
-                GameSpeed.changeFrameSkipTo(70);
-            }
-
-            if (
-                    A.now() > 60
-                    && GameSpeed.frameSkip >= 30
-                    && Count.ourCombatUnits() >= 5
-//                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
-                    && Select.enemyCombatUnits().atLeast(2)
-            ) {
-//                GameSpeed.pauseGame();
-                APainter.disablePainting();
-                GameSpeed.changeSpeedTo(30);
-                GameSpeed.changeFrameSkipTo(0);
-                CameraManager.centerCameraNowOnSquadCenter();
-//                GameSpeed.unpauseGame();
-            }
-        }
-
-        // =========================================================
-        // Rebasing
-
-        else if (activeMap().equals("ums/rav/T_rebasing.scm")) {
-            CameraManager.centerCameraOn(Select.ourBases().first());
-        }
+    public static boolean isMap(String mapPartialName) {
+        return activeMap().contains(mapPartialName);
     }
 }

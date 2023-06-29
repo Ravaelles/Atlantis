@@ -150,7 +150,7 @@ public class ARepairAssignments {
         return repairersToUnit.keySet().size();
     }
 
-    public static ArrayList<AUnit> getProtectorsFor(AUnit unit) {
+    public static ArrayList<AUnit> protectorsFor(AUnit unit) {
         return unitsToRepairers.containsKey(unit) ? unitsToRepairers.get(unit) : new ArrayList<>();
     }
 }

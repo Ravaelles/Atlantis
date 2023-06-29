@@ -2,7 +2,7 @@ package atlantis.game;
 
 import atlantis.combat.ACombatCommander;
 import atlantis.combat.missions.MissionChanger;
-import atlantis.config.MapAndRace;
+import atlantis.config.MapSpecificConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.strategy.AStrategyCommander;
@@ -69,7 +69,7 @@ public class AGameCommander {
         UmsSpecialActionsManager.update();
         AUnitStateManager.update();
         CameraManager.update();
-        MapAndRace.updateMapSpecific();
+        MapSpecificConfig.updateMapSpecific();
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_OTHER);
     }
 

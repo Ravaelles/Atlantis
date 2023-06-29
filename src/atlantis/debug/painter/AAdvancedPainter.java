@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import static bwapi.Color.Green;
+import static bwapi.Color.Grey;
 
 public class AAdvancedPainter extends APainter {
 
@@ -327,7 +328,8 @@ public class AAdvancedPainter extends APainter {
 
         // Time
         if (AGame.isUms()) {
-            paintSideMessage("UMS map mode enabled", Green);
+            paintSideMessage("UMS MAP MODE DETECTED", Green);
+            paintSideMessage("---------------------", Grey);
         }
         paintSideMessage("Time: " + AGame.timeSeconds() + "s (" + A.now() + ")", Color.Grey);
 
@@ -1177,9 +1179,9 @@ public class AAdvancedPainter extends APainter {
                 continue;
             }
 
-            if (!foggedEnemy.position().isPositionVisible()) {
-                APainter.paintCircleFilled(foggedEnemy, 4, Color.Grey);
-            }
+//            if (!foggedEnemy.position().isPositionVisible()) {
+//                APainter.paintCircleFilled(foggedEnemy, 4, Color.Grey);
+//            }
 
             APosition topLeft;
             AUnitType type = foggedEnemy.type();
@@ -1187,12 +1189,6 @@ public class AAdvancedPainter extends APainter {
                     -type.dimensionLeft(),
                     -type.dimensionUp()
             );
-//            paintRectangle(
-//                    topLeft,
-//                    foggedEnemy.type().getDimensionRight() / 32,
-//                    foggedEnemy.type().getDimensionDown() / 32,
-//                    Color.Grey
-//            );
             paintRectangle(
                     foggedEnemy.position(),
                     type.dimensionRight() / 32,

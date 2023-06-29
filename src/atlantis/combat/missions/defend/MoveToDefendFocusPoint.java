@@ -18,6 +18,11 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
             return false;
         }
 
+        if (unit.lastActionLessThanAgo(2)) {
+            unit.setTooltip(unit.tooltip() + ".");
+            return true;
+        }
+
         this.unit = unit;
         this.focus = focusPoint;
 
@@ -27,14 +32,16 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 
         fromSide = focusPoint.fromSide();
         optimalDist = optimalDist(unit);
-        unitToFocus = unit.distTo(focusPoint);
+        unitToFocus = unit.distTo(focus);
         unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
 
         if (unit.lastActionMoreThanAgo(5, Actions.MOVE_FORMATION)) {
             if (focus.isAroundChoke()) {
     //            if (unit.debug())System.out.println("handleWrongSideOfFocus " + unit);
-                if (handleWrongSideOfFocus(unit, focusPoint) || tooFarBack() || tooCloseToFocusPoint()) {
+                if (
+                    handleWrongSideOfFocus(unit, focusPoint) || tooFarBack() || tooCloseToFocusPoint()
+                ) {
                     return true;
                 }
             }
@@ -44,9 +51,9 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 //            return true;
 //        }
 
-//        if (spreadOut()) {
-//            return true;
-//        }
+        if (spreadOut()) {
+            return true;
+        }
 
         return advance();
     }
@@ -60,9 +67,6 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
             A.printStackTrace("Null focus point for " + unit + " in MoveToFocusPoint");
             return false;
         }
-
-        unitToFocus = unit.distTo(focus);
-        optimalDist = optimalDist(unit);
 
 //        if (unit.enemiesNear().inRadius(5, unit).notEmpty()) {
 //            if (!unit.isZergling() || unit.hp() >= 20) {

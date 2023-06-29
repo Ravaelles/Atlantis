@@ -9,11 +9,14 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.cache.Cache;
 
 /**
  * Represents construction of a building, including ones not yet started.
  */
 public class Construction implements Comparable<Construction> {
+
+    private static Cache<Object> cache = new Cache<>();
 
     private static int _firstFreeId = 1;
     private final int ID = _firstFreeId++;
@@ -43,7 +46,12 @@ public class Construction implements Comparable<Construction> {
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
      */
     public APosition findPositionForNewBuilding() {
-        return APositionFinder.findPositionForNew(builder, buildingType, this);
+        return (APosition) cache.get(
+            "buildingType,builder:" + builder.id(),
+            57,
+            () -> APositionFinder.findPositionForNew(builder, buildingType, this)
+        );
+//        return APositionFinder.findPositionForNew(builder, buildingType, this);
     }
 
     /**

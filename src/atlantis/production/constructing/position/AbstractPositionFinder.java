@@ -78,8 +78,12 @@ public abstract class AbstractPositionFinder {
             return false;
         }
 
-        _CONDITION_THAT_FAILED = "Can't physically build here";
-        return Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
+        if (!Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u())) {
+            _CONDITION_THAT_FAILED = "Can't physically build here";
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -92,14 +96,7 @@ public abstract class AbstractPositionFinder {
 //        System.out.println("position = " + position + ", not started = " + ConstructionRequests.notStarted().size()
 //                + " // all = " + ConstructionRequests.all().size());
 
-//        A.printStackTrace("loooooooooooking");
-
-        if (building.isBase()) {
-            return false;
-        }
-        
         // Compare against planned construction places
-//        for (HasPosition constructionPosition : ConstructionRequests.allConstructionOrdersIncludingCached()) {
         for (Construction order : ConstructionRequests.all()) {
             HasPosition constructionPosition = order.buildPosition();
 //            System.out.println("another = " + constructionPosition + " // " + order.buildingType());

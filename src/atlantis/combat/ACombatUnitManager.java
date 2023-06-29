@@ -39,6 +39,10 @@ public class ACombatUnitManager {
             return true;
         }
 
+        if (unit.enemiesNear().empty() && A.notNthGameFrame(7)) {
+            return false;
+        }
+
         //if (unit.debug())System.out.println("B " + unit);
 
         // =========================================================
@@ -83,7 +87,7 @@ public class ACombatUnitManager {
     }
 
     private static boolean preActions(AUnit unit) {
-        if (unit.isPatrolling() || unit.lastActionLessThanAgo(15, Actions.RIGHT_CLICK)) {
+        if (unit.lastActionLessThanAgo(15, Actions.RIGHT_CLICK)) {
             unit.setTooltip("Manual", true);
             return true;
         }
@@ -114,7 +118,6 @@ public class ACombatUnitManager {
             }
         }
 
-        unit.setTooltipTactical(unit.tooltip() + ".");
         return false;
     }
 

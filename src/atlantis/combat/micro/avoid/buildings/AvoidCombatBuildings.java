@@ -1,14 +1,10 @@
 package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.combat.retreating.ShouldRetreat;
-import atlantis.debug.painter.APainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
-import atlantis.units.Units;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import bwapi.Color;
 
 public class AvoidCombatBuildings {
 
@@ -39,7 +35,7 @@ public class AvoidCombatBuildings {
         }
 
 //        double criticalDist = 9.8 + (unit.isAir() ? 2.5 : 0);
-        double criticalDist = criticalDist(unit);
+        double criticalDist = criticalDist(unit, combatBuilding);
         double distTo = combatBuilding.distTo(unit);
 
         double doNothingMargin = 0.3;
@@ -61,8 +57,10 @@ public class AvoidCombatBuildings {
         return false;
     }
 
-    private static double criticalDist(AUnit unit) {
-        return 8.3 + (unit.isAir() ? 0.9 : 0) + (unit.isMoving() ? 0.8 : 0)
+    private static double criticalDist(AUnit unit, AUnit combatBuilding) {
+        return 8.3
+            + (combatBuilding.isSunken() ? 1.6 : 0)
+            + (unit.isAir() ? 0.9 : 0) + (unit.isMoving() ? 0.8 : 0)
             + unit.woundPercent() / 200.0;
     }
 

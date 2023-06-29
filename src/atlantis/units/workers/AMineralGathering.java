@@ -36,7 +36,7 @@ public class AMineralGathering {
         Collection<AUnit> workers = Select.ourWorkers().list();
         int counter = 0;
         for (AUnit worker : workers) {
-            AUnit mineral = minerals.get(counter);
+            AUnit mineral = minerals.get(counter % minerals.size());
             worker.gather(mineral);
             worker.setTooltipTactical("Mandatum!");
 

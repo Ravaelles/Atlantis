@@ -78,12 +78,12 @@ public class ConstructionRequests {
         // Find place for new building
 
         APosition positionToBuild = newConstructionOrder.findPositionForNewBuilding();
-        APositionFinder.clearCache();
 
         // =========================================================
         // Successfully found position for new building
 
         if (positionToBuild != null) {
+            APositionFinder.clearCache();
 
             // Update construction order with found position for building
             newConstructionOrder.setPositionToBuild(positionToBuild);

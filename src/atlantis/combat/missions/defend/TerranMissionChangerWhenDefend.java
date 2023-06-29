@@ -22,12 +22,12 @@ import static bwapi.TechType.Tank_Siege_Mode;
 public class TerranMissionChangerWhenDefend extends MissionChanger {
 
     public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToAttack() && !TerranMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
-            changeMissionTo(Missions.ATTACK);
-        }
-        else if (shouldChangeMissionToContain() && !TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
+//        if (shouldChangeMissionToAttack() && !TerranMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
+//            changeMissionTo(Missions.ATTACK);
+//        }
+//        else if (shouldChangeMissionToContain() && !TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
+//            changeMissionTo(Missions.CONTAIN);
+//        }
     }
 
     // === ATTACK ==============================================

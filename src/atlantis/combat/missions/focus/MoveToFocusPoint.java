@@ -8,7 +8,7 @@ import atlantis.units.select.Selection;
 
 public abstract class MoveToFocusPoint {
 
-    protected static final double MARGIN = 0.4;
+    protected static final double MARGIN = 0.25;
 
     protected double optimalDist;
     protected double unitToFocus;
@@ -144,12 +144,13 @@ public abstract class MoveToFocusPoint {
                     APosition withdrawTo = friend.translateTilesTowards(1, focus.fromSide());
                     if (friend.move(withdrawTo, Actions.MOVE_FOCUS, "HelpWithdraw", true)) {
                         friend.setTooltip("HelpWithdraw", true);
-                        return true;
                     }
+                    return true;
                 }
             }
 
-            return unit.move(focus.fromSide(), Actions.MOVE_FOCUS, "Withdraw", true);
+            unit.move(focus.fromSide(), Actions.MOVE_FOCUS, "Withdraw", true);
+            return true;
         }
 
         return false;
@@ -158,7 +159,7 @@ public abstract class MoveToFocusPoint {
     // =========================================================
 
     protected boolean isTooClose() {
-        return unitToFocus <= optimalDist;
+        return unitToFocus < (optimalDist - MARGIN);
     }
 
     protected boolean isTooFarBack() {
@@ -194,7 +195,8 @@ public abstract class MoveToFocusPoint {
 //                return unit.move(fromSide, Actions.MOVE_FOCUS, "TooClose" + dist, true);
 //            }
 
-            return unit.moveAwayFrom(focus, 0.15, "TooCloze" + dist, Actions.MOVE_FOCUS);
+            unit.moveAwayFrom(focus, 0.15, "TooCloze" + dist, Actions.MOVE_FOCUS);
+            return true;
         }
 
         return false;
@@ -202,10 +204,11 @@ public abstract class MoveToFocusPoint {
 
     protected boolean tooFarBack() {
         if (isTooFarBack()) {
-            APosition goTo = unitToFocus >= 8 ? focus : focus.translateTilesTowards(0.5, unit);
-            if (unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)) {
-                return true;
-            }
+            boolean isTooFar = unitToFocus >= (optimalDist + MARGIN);
+            APosition goTo = isTooFar ? focus : focus.translateTilesTowards(0.5, unit);
+
+            unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
+            return true;
         }
 
         return false;

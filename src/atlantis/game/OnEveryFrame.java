@@ -31,9 +31,9 @@ public class OnEveryFrame {
 //            CameraManager.centerCameraOn(firstEnemyBuilding);
 //        }
 
-        AAdvancedPainter.paintFoggedUnits();
+//        AAdvancedPainter.paintFoggedUnits();
 
-        paintMissionAttackFocusPoint();
+//        paintMissionAttackFocusPoint();
     }
 
     private static void paintMissionAttackFocusPoint() {

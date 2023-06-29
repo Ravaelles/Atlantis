@@ -6,60 +6,71 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
+import atlantis.util.cache.Cache;
 
 public class OptimalNumOfBunkerRepairers {
 
-    public static int optimalRepairersForBunker(AUnit bunker) {
-        if (thereIsNooneInsideTheBunker(bunker)) {
-            return 0;
-        }
+    private static Cache<Integer> cacheInt = new Cache<>();
 
-        Selection potentialEnemies = Select.enemy().combatUnits().inRadius(18, bunker);
+    public static int forBunker(AUnit bunker) {
+        return cacheInt.get(
+            "forBunker:" + bunker.id(),
+            2,
+            () -> {
+                if (thereIsNooneInsideTheBunker(bunker)) {
+                    return 0;
+                }
 
-        if (potentialEnemies.empty()) {
-            return 0;
-        }
+                Selection potentialEnemies = Select.enemy().combatUnits().inRadius(18, bunker);
 
-        int enemiesNear = potentialEnemies.inRadius(10, bunker).count();
-        int enemiesFar = potentialEnemies.count() - enemiesNear;
-        double optimalNumber = 0;
+                if (potentialEnemies.empty()) {
+                    return 0;
+                }
 
-        if (Enemy.protoss()) {
-            optimalNumber = enemiesNear + enemiesFar * 0.3;
-        }
-        else if (Enemy.terran()) {
-            optimalNumber = enemiesNear * 0.38 + enemiesFar * 0.1;
-        }
-        else if (Enemy.zerg()) {
-            optimalNumber = enemiesNear * 0.55 + enemiesFar * 0.25;
-        }
+                int enemiesNear = potentialEnemies.inRadius(10, bunker).count();
+                int enemiesFar = potentialEnemies.count() - enemiesNear;
+                double optimalNumber = 0;
 
-        if (bunker.hp() < 250) {
-            optimalNumber += 2;
-        }
+                // against PROTOSS
+                if (Enemy.protoss()) {
+                    optimalNumber = enemiesNear + enemiesFar * 0.3;
+                }
+                // against TERRAN
+                else if (Enemy.terran()) {
+                    optimalNumber = enemiesNear * 0.38 + enemiesFar * 0.1;
+                }
+                // against ZERG
+                else if (Enemy.zerg()) {
+                    optimalNumber = enemiesNear * 0.65 + enemiesFar * 0.45;
+                }
 
-        Selection enemiesVeryNear = potentialEnemies.inRadius(4, bunker);
-        if (
-            enemiesVeryNear.atMost(2)
-            && thereIsAnotherBunkerNearbyThatIsInBiggerDanger(bunker)
-        ) {
-            optimalNumber = 1 + (bunker.isHealthy() ? 0 : (bunker.woundPercent() / 25));
-        }
+                if (bunker.hp() < 250) {
+                    optimalNumber += 2;
+                }
 
-        if (enemiesVeryNear.empty() && potentialEnemies.ranged().atMost(1)) {
-            optimalNumber = Math.min(bunker.isHealthy() ? 0 : 1, optimalNumber);
-        }
+                Selection enemiesVeryNear = potentialEnemies.inRadius(4, bunker);
+                if (
+                    enemiesVeryNear.atMost(2)
+                        && thereIsAnotherBunkerNearbyThatIsInBiggerDanger(bunker)
+                ) {
+                    optimalNumber = 1 + (bunker.isHealthy() ? 0 : (bunker.woundPercent() / 25));
+                }
 
-        if (optimalNumber > 1) {
-            if (!A.hasMinerals(7)) {
-                return 2;
-            }
-            else if (!A.hasMinerals(1)) {
-                return 1;
-            }
-        }
+                if (enemiesVeryNear.empty() && potentialEnemies.ranged().atMost(1)) {
+                    optimalNumber = Math.min(bunker.isHealthy() ? 0 : 1, optimalNumber);
+                }
 
-        return Math.min(7, (int) Math.floor(optimalNumber));
+                if (optimalNumber > 1) {
+                    if (!A.hasMinerals(7)) {
+                        return 2;
+                    }
+                    else if (!A.hasMinerals(1)) {
+                        return 1;
+                    }
+                }
+
+                return Math.min(7, (int) Math.floor(optimalNumber));
+            });
     }
 
     private static boolean thereIsAnotherBunkerNearbyThatIsInBiggerDanger(AUnit bunker) {

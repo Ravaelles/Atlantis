@@ -1,7 +1,6 @@
 package atlantis.combat.micro;
 
 import atlantis.combat.targeting.ATargeting;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
@@ -12,12 +11,13 @@ import atlantis.util.cache.Cache;
 
 public class AAttackEnemyUnit {
 
-//    public static final double MAX_DIST_TO_ATTACK = 17;
+    //    public static final double MAX_DIST_TO_ATTACK = 17;
     public static final double MAX_DIST_TO_ATTACK = 60;
 
     public static String reasonNotToAttack;
 
     private static Cache<AUnit> cache = new Cache<>();
+    private static Cache<Object> cacheObject = new Cache<>();
 
 //    public static boolean handleAttackNearEnemyUnits(AUnit unit) {
 //        return handleAttackNearEnemyUnits(unit, MAX_DIST_TO_ATTACK);
@@ -31,25 +31,22 @@ public class AAttackEnemyUnit {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public static boolean handleAttackNearEnemyUnits(AUnit unit) {
-        if (!canAttackNow(unit)) {
-            return false;
-        }
+        return (boolean) cacheObject.getIfValid(
+            unit.idWithHash(),
+            4,
+            () -> {
+                if (!canAttackNow(unit)) {
+                    return false;
+                }
 
-//        if (unit.shouldRetreat()) {
-//            A.printStackTrace("Interesting, " + unit + " attacking despite RETREAT?!?");
-//        }
+                AUnit enemy = defineEnemyToAttackFor(unit);
+                if (enemy == null) {
+                    return false;
+                }
 
-        AUnit enemy = defineEnemyToAttackFor(unit);
-        if (enemy == null) {
-//            AAdvancedPainter.paintCircleFilled(unit, 7, Color.White);
-//            unit.addLog("NothingToAttack");
-
-//            System.err.println(unit.idWithHash() + " aaa " + unit);
-            return false;
-        }
-
-//        System.err.println(unit.idWithHash() + " BBB " + unit);
-        return ProcessAttackUnit.processAttackUnit(unit, enemy);
+                return ProcessAttackUnit.processAttackUnit(unit, enemy);
+            }
+        );
     }
 
     private static boolean canAttackNow(AUnit unit) {
@@ -61,10 +58,9 @@ public class AAttackEnemyUnit {
             return true;
         }
 
-        // @Check
-//        if (unit.lastActionLessThanAgo(30, Actions.RUN_RETREAT)) {
-//            return false;
-//        }
+        if (unit.lastActionLessThanAgo(70, Actions.RUN_RETREAT)) {
+            return false;
+        }
 
         boolean shouldRetreat = unit.shouldRetreat();
         if (unit.isMelee() && shouldRetreat) {

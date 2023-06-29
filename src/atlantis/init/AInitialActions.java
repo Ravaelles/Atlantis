@@ -1,5 +1,6 @@
 package atlantis.init;
 
+import atlantis.config.MapAndRace;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
 import atlantis.units.workers.AMineralGathering;
@@ -16,14 +17,12 @@ public class AInitialActions {
         }
 
         if (Select.ourWorkers().count() != 4) {
-            AGame.setUmsMode();
+            if (!MapAndRace.isMap("vsGosuRav")) {
+                AGame.setUmsMode();
+            }
         }
 
-//        try {
         AMineralGathering.initialAssignWorkersToMinerals();
-//        } catch (Exception ex) {
-//            AGame.setUmsMode(true);
-//        }
     }
 
 }

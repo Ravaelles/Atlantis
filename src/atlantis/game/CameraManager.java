@@ -71,7 +71,7 @@ public class CameraManager {
     public static void toggleFocusCameraOnFirstCombatUnit() {
         focusCameraOnFirstCombatUnit = !focusCameraOnFirstCombatUnit;
 
-        System.out.println("Toggle camera on units: " + focusCameraOnFirstCombatUnit);
+//        System.out.println("Toggle camera on units: " + focusCameraOnFirstCombatUnit);
     }
 
     public static boolean isFocusCameraOnUnit() {

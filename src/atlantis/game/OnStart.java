@@ -56,9 +56,11 @@ public class OnStart {
         try {
             AInitialActions.executeInitialActions();
         } catch (Exception e) {
-            System.err.println("### Early exception ###");
+            System.err.println("### Early exception, but don't worry ###");
             System.err.println("This probably means you are playing UMS map.");
+            System.err.println("Atlantis is handling this case and keeps on playing.");
             AGame.setUmsMode();
+            A.printStackTrace();
         }
 
         System.out.println("### Atlantis is working! ###\n");

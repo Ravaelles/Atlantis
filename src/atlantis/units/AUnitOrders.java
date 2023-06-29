@@ -376,22 +376,25 @@ public interface AUnitOrders {
         unit().setLastActionReceivedNow().setAction(Actions.REPAIR);
 
         if (!unit().isRepairing()) {
-            if (unit().distToMoreThan(target, 0.99) && !unit().isMoving()) {
+            if (unit().distToMoreThan(target, 1.05) && !unit().isMoving()) {
     //            u().move(target.position());
                 // A fix to avoid stucking SCVs that go to repair in line.
                 // We send them in slightly different places, hoping they don't stuck in line
-                u().move(target.position().translateByTiles(
+
+                APosition moveTo = target.position().translateByTiles(
                     -0.3 + 0.7 * (unit().id() % 4) / 4.0,
                     -0.3 + 0.7 * (unit().id() % 4) / 4.0
-                ).p());
+                );
+                move(moveTo, Actions.MOVE_REPAIR, tooltip, false);
+//                u().move();
             }
             else {
                 u().repair(target.u());
             }
         }
-        else {
-            u().repair(target.u());
-        }
+//        else {
+//            u().repair(target.u());
+//        }
 
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
             System.out.println(unit().typeWithHash() + " REPAIR @" + A.now() + " / " + target + " (" + target.hp() + ")");

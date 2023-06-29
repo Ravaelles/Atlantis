@@ -38,7 +38,7 @@ public class LoadIntoBunkers {
 
         AUnit bunker = defineBunkerToLoadTo(unit);
 //        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
-        double maxDistanceToLoad = 5.9;
+        double maxDistanceToLoad = 3.9 + unit.id() % 4;
 
         if (bunker != null && bunker.hasFreeSpaceFor(unit)) {
             boolean canLoad;
