@@ -2571,13 +2571,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (this.squad == null) {
             return 988;
         }
-        return SquadCohesion.squadMaxRadius(this.squad);
+        return squad.radius();
     }
 
     public boolean outsideSquadRadius() {
         return (boolean) cache.get(
             "outsideSquadRadius",
-            2,
+            3,
             () -> distToSquadCenter() > squadRadius()
         );
     }

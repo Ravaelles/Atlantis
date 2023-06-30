@@ -1,13 +1,7 @@
 package atlantis.combat.missions.attack;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
-import atlantis.combat.micro.managers.AdvanceUnitsManager;
-import atlantis.combat.missions.WeDontKnowEnemyEnemyUnit;
-import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.ProtossMissionAdjustments;
-import atlantis.combat.squad.ASquadCohesionManager;
-import atlantis.game.A;
+import atlantis.decions.Decision;
 import atlantis.units.AUnit;
 
 /**
@@ -15,6 +9,8 @@ import atlantis.units.AUnit;
  * the enemy at the <b>focusPoint</b>.
  */
 public class MissionAttack extends Mission {
+
+    private final MissionAttackPermissionToAttack missionAttackPermissionToAttack = new MissionAttackPermissionToAttack();
 
     public MissionAttack() {
         super("Attack");
@@ -36,6 +32,10 @@ public class MissionAttack extends Mission {
     }
 
     // =========================================================
+
+    public Decision permissionToAttack(AUnit unit) {
+        return missionAttackPermissionToAttack.permissionToAttack(unit);
+    }
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {

@@ -46,6 +46,10 @@ public abstract class MoveToFocusPoint {
             return true;
         }
 
+        if (unit.lastActionLessThanAgo(6, Actions.MOVE_FORMATION)) {
+            return true;
+        }
+
         unitToFocus = unit.distTo(focus);
         optimalDist = optimalDist(unit);
 
@@ -76,6 +80,10 @@ public abstract class MoveToFocusPoint {
     // =========================================================
 
     protected boolean spreadOut() {
+        if (unit.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)) {
+            return true;
+        }
+
         Selection friends = unit.friendsNear().groundUnits().inRadius(1, unit);
         if (friends.notEmpty()) {
             AUnit nearest = friends.nearestTo(unit);
@@ -137,7 +145,7 @@ public abstract class MoveToFocusPoint {
         }
 
         APosition withdrawTo = focus.fromSide();
-        
+
         if (!focus.isAroundChoke() || withdrawTo == null) {
 //            System.out.println("fromSide = " + fromSide);
 //            System.out.println("FOCUS POINT = " + focus.toString());
@@ -158,7 +166,7 @@ public abstract class MoveToFocusPoint {
             unit.move(withdrawTo, Actions.MOVE_FOCUS, "Withdraw", true);
             return true;
         }
-        
+
 //        if (!isOnValidSideOfChoke(unit, focus) && distToFocusPoint <= 7) {
 ////        if (
 ////            distToFocusPoint < optimalDist

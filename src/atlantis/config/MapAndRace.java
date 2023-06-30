@@ -6,8 +6,8 @@ public class MapAndRace {
      * Race used by the Atlantis.
      */
 //    public static final String OUR_RACE = "Protoss";
-    public static final String OUR_RACE = "Terran";
-//    public static final String OUR_RACE = "Zerg";
+//    public static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Zerg";
 
     /**
      * Single player enemy race.
@@ -24,7 +24,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
@@ -37,7 +37,7 @@ public class MapAndRace {
         // vs PROTOSS cheat-bots
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
-//        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
+        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
 //        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player

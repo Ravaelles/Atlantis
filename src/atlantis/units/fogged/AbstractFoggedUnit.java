@@ -107,6 +107,7 @@ public class AbstractFoggedUnit extends AUnit {
 //        if (unit.isBuilding() && _lastPosition != null) System.err.println("POST " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
     }
 
+
     public void updateType(AUnit unit) {
         if (_lastType == null || (unit.type() != null && !_lastType.equals(unit.bwapiType()))) {
 //            System.err.println("UPDATING TYPE, current = " + _lastType

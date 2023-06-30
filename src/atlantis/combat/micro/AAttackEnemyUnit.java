@@ -1,6 +1,7 @@
 package atlantis.combat.micro;
 
 import atlantis.combat.targeting.ATargeting;
+import atlantis.decions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
@@ -54,7 +55,16 @@ public class AAttackEnemyUnit {
             return false;
         }
 
-        if (unit.isIdle()) {
+        // === Mission =============================================
+
+        Decision decision = unit.mission().permissionToAttack(unit);
+        if (decision.notIndifferent()) {
+            return decision.toTrueOrFalse();
+        }
+
+        // =========================================================
+
+        if (unit.looksIdle() && unit.noCooldown()) {
             return true;
         }
 

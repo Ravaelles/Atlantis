@@ -3,6 +3,7 @@ package atlantis.combat.missions;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.focus.MissionFocusPoint;
 import atlantis.debug.painter.APainter;
+import atlantis.decions.Decision;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -45,6 +46,10 @@ public abstract class Mission {
     // Template method
     public boolean allowsToRetreat(AUnit unit) {
         return true;
+    }
+
+    public Decision permissionToAttack(AUnit unit) {
+        return Decision.INDIFFERENT;
     }
 
     // Template method
@@ -133,4 +138,5 @@ public abstract class Mission {
     public void setTemporaryTarget(APosition temporaryTarget) {
         this.temporaryTarget = temporaryTarget;
     }
+
 }

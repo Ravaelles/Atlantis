@@ -169,6 +169,10 @@ public interface AUnitOrders {
         return move(target, unitAction, tooltip, false);
     }
 
+    default boolean move(HasPosition target, Action unitAction, String tooltip) {
+        return move(target, unitAction, tooltip, false);
+    }
+
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / " +  tooltip);

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.game.A;
+import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
@@ -73,7 +74,12 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
             return null;
         }
 
-        return natural.translateTilesTowards(Chokes.nearestChoke(natural), 10);
+        AChoke choke = Chokes.nearestChoke(natural);
+        if (choke == null) {
+            return null;
+        }
+
+        return natural.translateTilesTowards(choke, 10);
     }
 
 }

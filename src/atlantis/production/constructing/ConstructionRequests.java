@@ -1,5 +1,6 @@
 package atlantis.production.constructing;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -61,6 +62,12 @@ public class ConstructionRequests {
 
         // =========================================================
         // Create ConstructionOrder object, assign random worker for the time being
+
+//        System.err.println("Requested CONSTRUCTION:");
+//        System.err.println( building + " / " + near + " / " + order);
+        if (building.isBase()) {
+            A.printStackTrace("Requested BASE");
+        }
 
         Construction newConstructionOrder = new Construction(building);
         newConstructionOrder.setProductionOrder(order);

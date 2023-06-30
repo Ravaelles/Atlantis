@@ -25,16 +25,15 @@ public class TerranCommandCenter {
             return false;
         }
 
-        if (baseMinedOut(building)) {
-            if (building.isLifted()) {
-                return flyToNewMineralPatches(building);
+        boolean baseMinedOut = baseMinedOut(building);
+        if (baseMinedOut && building.isLifted()) {
+            return flyToNewMineralPatches(building);
+        }
+        else if (baseMinedOut) {
+            if (building.lastActionMoreThanAgo(3)) {
+                building.lift();
             }
-            else {
-                if (building.lastActionMoreThanAgo(3)) {
-                    building.lift();
-                }
-                return true;
-            }
+            return true;
         }
 
         return false;

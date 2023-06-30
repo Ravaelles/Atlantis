@@ -22,8 +22,8 @@ public class SquadTransfers {
     }
 
     private static boolean shouldHaveBeta() {
-//        return false;
-        return A.seconds() >= 400 && Count.ourCombatUnits() >= 35 && Count.bases() >= 2;
+        return false;
+//        return A.seconds() >= 400 && Count.ourCombatUnits() >= 35 && Count.bases() >= 2;
     }
 
     private static void handleReinforcements(Squad squad) {

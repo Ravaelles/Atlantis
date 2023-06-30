@@ -68,10 +68,6 @@ public abstract class Squad extends Units {
         return ASquadManager.squads;
     }
 
-    public static void setSquads(ArrayList<Squad> squads) {
-        ASquadManager.squads = squads;
-    }
-
     public static HasPosition alphaCenter() {
         return Alpha.get() != null ? Alpha.get().center() : null;
     }
@@ -305,7 +301,7 @@ public abstract class Squad extends Units {
                 }
 
                 int withinSquadRadius = selection()
-                    .inRadius(SquadCohesion.squadMaxRadius(this), center)
+                    .inRadius(radius(), center)
                     .count();
 
                 return (100 * withinSquadRadius / size());
@@ -322,6 +318,14 @@ public abstract class Squad extends Units {
             "hasHighlyOffensiveRole",
             -1,
             () -> Delta.get().equals(this)
+        );
+    }
+
+    public double radius() {
+        return cacheDouble.get(
+            "radius",
+            17,
+            () -> SquadCohesion.squadMaxRadius(this)
         );
     }
 }

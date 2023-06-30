@@ -8,7 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 
-public class ChangeSquadToDefend extends ChangeSquadMission {
+public class ChangeSquadToDefend extends SquadMissionChanger {
 
     public static boolean shouldChangeToDefend(Squad squad) {
         boolean offensiveRole = squad.hasHighlyOffensiveRole();

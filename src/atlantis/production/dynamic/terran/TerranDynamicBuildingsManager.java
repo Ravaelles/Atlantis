@@ -27,25 +27,31 @@ import static bwapi.TechType.Tank_Siege_Mode;
 public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
 
     public static void update() {
-        if (A.everyNthGameFrame(61)) {
+        if (A.everyNthGameFrame(71)) {
             (new TerranMissileTurretsForMain()).buildIfNeeded();
+        }
+        if (A.everyNthGameFrame(73)) {
             (new TerranMissileTurretsForNonMain()).buildIfNeeded();
-//            OffensiveTerranMissileTurrets.buildIfNeeded();
-//            TerranBunker.handleOffensiveBunkers();
+        }
+        if (A.everyNthGameFrame(77)) {
             TerranBunker.get().handleDefensiveBunkers();
         }
 
-        comsats();
-        scienceFacilities();
+        if (A.everyNthGameFrame(7)) {
+            comsats();
+            scienceFacilities();
 
-        factoryIfBioOnly();
+            factoryIfBioOnly();
+        }
 
-        armory();
-        machineShop();
-        factories();
-        starport();
+        if (A.everyNthGameFrame(9)) {
+            armory();
+            machineShop();
+            factories();
+            starport();
 
-        barracks();
+            barracks();
+        }
     }
 
     // =========================================================

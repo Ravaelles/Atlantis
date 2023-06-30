@@ -1,5 +1,6 @@
 package atlantis.combat.squad.positioning;
 
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -13,14 +14,19 @@ public class TooClustered {
             return false;
         }
 
+        if (unit.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)) {
+            return true;
+        }
+
         Selection ourCombatUnits = Select.ourCombatUnits().inRadius(5, unit);
         AUnit nearestBuddy = ourCombatUnits.clone().nearestTo(unit);
         double minDistBetweenUnits = minDistBetweenUnits(unit);
 
         if (tooClustered(unit, ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
-            return unit.moveAwayFrom(
-                nearestBuddy, 0.3, "SpreadOut", Actions.MOVE_FORMATION
-            );
+            APosition goTo = unit.makeFreeOfAnyGroundUnits(3, 0.2, unit);
+            if (goTo != null) {
+                return unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false);
+            }
         }
 
         return false;

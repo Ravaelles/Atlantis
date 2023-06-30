@@ -25,7 +25,7 @@ public class LoadIntoBunkers {
         }
 
         // Without enemies around, don't do anything
-        Selection enemiesNear = unit.enemiesNear().canAttack(unit, 10);
+        Selection enemiesNear = unit.enemiesNear().inRadius(9, unit).canAttack(unit, 10);
         if (enemiesNear.excludeMedics().empty()) {
             return false;
         }

@@ -1,7 +1,7 @@
 package atlantis.combat.squad;
 
 import atlantis.combat.ACombatUnitManager;
-import atlantis.combat.squad.mission.ChangeSquadMission;
+import atlantis.combat.squad.mission.SquadMissionChanger;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
@@ -24,7 +24,7 @@ public class ASquadManager {
      */
     public static void update(Squad squad) {
         if (A.everyNthGameFrame(11)) {
-            ChangeSquadMission.changeSquadMissionIfNeeded(squad);
+            SquadMissionChanger.changeSquadMissionIfNeeded(squad);
         }
 
         // Act with every combat unit
