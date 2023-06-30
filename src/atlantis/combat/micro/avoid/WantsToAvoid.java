@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -20,7 +21,7 @@ public class WantsToAvoid {
 //                APainter.paintCircle(unit, 11, Color.Green);
 
 //            unit.addFileLog("NOT shouldAlwaysAvoid");
-            unit.addLog("NOT shouldAlwaysAvoid");
+//            unit.addLog("NOT shouldAlwaysAvoid");
             return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
         }
 
@@ -45,6 +46,10 @@ public class WantsToAvoid {
     private static boolean shouldAlwaysAvoid(AUnit unit, Units enemies) {
         if (!unit.hasAnyWeapon()) {
             return false;
+        }
+
+        if (ShouldAlwaysAvoidAsZerg.shouldAlwaysAvoid(unit)) {
+            return true;
         }
 
 //        if (unit.isWorker() || unit.isScout()) {

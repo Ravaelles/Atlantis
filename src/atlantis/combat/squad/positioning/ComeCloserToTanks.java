@@ -13,7 +13,7 @@ public class ComeCloserToTanks {
             return false;
         }
 
-        if (unit.isMoving() && unit.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)) {
+        if (unit.isMoving() && unit.lastActionLessThanAgo(11, Actions.MOVE_FORMATION)) {
             return true;
         }
 

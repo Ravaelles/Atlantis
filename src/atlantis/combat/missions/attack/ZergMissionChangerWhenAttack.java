@@ -16,9 +16,9 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
         if (shouldChangeMissionToDefend()) {
             changeMissionTo(MissionChanger.defendOrSpartaMission());
         }
-        else if (shouldChangeMissionToContain()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
+//        else if (shouldChangeMissionToContain()) {
+//            changeMissionTo(Missions.CONTAIN);
+//        }
     }
 
     // === DEFEND ==============================================

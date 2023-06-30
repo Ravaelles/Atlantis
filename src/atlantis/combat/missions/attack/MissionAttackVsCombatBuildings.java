@@ -5,15 +5,17 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 public class MissionAttackVsCombatBuildings {
-    
-    public static boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
-        if (forbiddenForTerranInfantry(unit, combatBuilding)) {
-            return false;
-        }
 
-        // Tanks always allowed
-        if (unit.isTank() && unit.distToMoreThan(combatBuilding, 7.9)) {
-            return true;
+    public static boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
+        if (unit.isTerran()) {
+            if (forbiddenForTerranInfantry(unit, combatBuilding)) {
+                return false;
+            }
+
+            // Tanks always allowed
+            if (unit.isTank() && unit.distToMoreThan(combatBuilding, 7.9)) {
+                return true;
+            }
         }
 
         // Air units
@@ -21,7 +23,7 @@ public class MissionAttackVsCombatBuildings {
             return true;
         }
 
-        if (unit.friendsNearCount() <= 6) {
+        if (unit.friendsInRadiusCount(5) <= 8) {
             return false;
         }
 

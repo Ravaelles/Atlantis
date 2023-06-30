@@ -80,7 +80,7 @@ public abstract class MoveToFocusPoint {
     // =========================================================
 
     protected boolean spreadOut() {
-        if (unit.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)) {
+        if (unit.lastActionLessThanAgo(11, Actions.MOVE_FORMATION)) {
             return true;
         }
 
@@ -93,7 +93,7 @@ public abstract class MoveToFocusPoint {
 ////                        || nearest.moveAwayFrom(unit, 2, "Separate", Actions.MOVE_FORMATION);
 //                }
                 if (
-                    unit.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)
+                    unit.lastActionLessThanAgo(11, Actions.MOVE_FORMATION)
                 ) {
 //                    boolean b = unit.moveAwayFrom(nearest, 0.1, "Separate", Actions.MOVE_FORMATION)
 //                        || unit.moveAwayFrom(nearest, 2, "Separate", Actions.MOVE_FORMATION);

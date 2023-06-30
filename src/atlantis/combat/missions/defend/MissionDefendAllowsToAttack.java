@@ -45,6 +45,16 @@ public class MissionDefendAllowsToAttack {
     }
 
     private boolean whenSameRegion(AUnit unit, AUnit enemy) {
+        Selection sunkens = Select.ourOfType(AUnitType.Zerg_Sunken_Colony);
+
+        if (
+            unit.isMelee()
+            && sunkens.inRadius(15, enemy).notEmpty()
+            && sunkens.inRadius(7, enemy).empty()
+        ) {
+            return false;
+        }
+
         return unit.combatEvalRelative() >= 3;
     }
 
@@ -53,7 +63,7 @@ public class MissionDefendAllowsToAttack {
     }
 
     private boolean ourBuildingIsInDanger(AUnit unit, AUnit enemy) {
-        Selection ourBuildings = Select.ourBuildings().inRadius(enemy.groundWeaponRange() + 0.1, enemy);
+        Selection ourBuildings = Select.ourBuildings().inRadius(enemy.groundWeaponRange() + 0.5, enemy);
         if (unit.isAir()) {
             if (ourBuildings.atLeast(2)) {
                 return true;

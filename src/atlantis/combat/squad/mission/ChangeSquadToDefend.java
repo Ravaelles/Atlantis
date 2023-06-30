@@ -23,8 +23,8 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
         }
 
         return weakerThanEnemy(squad)
-            || hugeEnemySquad(squad)
-            || tooManyUnitsWounded(squad)
+            || asTerranFacingHugeEnemySquad(squad)
+            || tooManyUnitsWoundedAsTerran(squad)
             || backOffFromLurkers(squad);
     }
 
@@ -38,14 +38,14 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
 
 
     private static boolean tooFewUnitsAndNotEarlyGame(Squad squad) {
-        if ((units.size() <= 13 || unit.friendsInRadiusCount(5) <= 7) && !GamePhase.isEarlyGame()) {
+        if ((units.size() <= 11) && !GamePhase.isEarlyGame()) {
             return changeMissionToDefend(squad, "Too little squad (" + units.size() + ")");
         }
 
         return false;
     }
 
-    private static boolean hugeEnemySquad(Squad squad) {
+    private static boolean asTerranFacingHugeEnemySquad(Squad squad) {
         if (!We.terran()) {
             return false;
         }
@@ -85,8 +85,8 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
         return false;
     }
 
-    private static boolean tooManyUnitsWounded(Squad squad) {
-        if (We.protoss()) {
+    private static boolean tooManyUnitsWoundedAsTerran(Squad squad) {
+        if (!We.terran()) {
             return false;
         }
 
@@ -113,6 +113,10 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
     }
 
     private static boolean medicsExhausted(Squad squad) {
+        if (!We.terran()) {
+            return false;
+        }
+
         Selection medics = squad.selection().medics();
         if (medics.atLeast(2) && medics.havingEnergy(30).isEmpty()) {
             return changeMissionToDefend(squad, "Medics exhausted");

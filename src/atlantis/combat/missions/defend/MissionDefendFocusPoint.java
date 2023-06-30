@@ -76,6 +76,19 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     }
                 }
 
+                // === Around defensive building ===========================================
+
+                if (We.zerg()) {
+                    AUnit sunken = Select.ourOfType(AUnitType.Zerg_Sunken_Colony).mostDistantTo(mainBase);
+                    if (sunken != null) {
+                        return new AFocusPoint(
+                            sunken.translateTilesTowards(3.2, mainBase),
+                            mainBase,
+                            "Sunken"
+                        );
+                    }
+                }
+
                 // === Natural / main choke ================
 
 //                if (Count.ourCombatUnits() >= 12) {
@@ -118,18 +131,6 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     }
                 }
 
-                // === Around defensive building ===========================================
-
-                if (We.zerg()) {
-                    AUnit sunken = Select.ourOfType(AUnitType.Zerg_Sunken_Colony).mostDistantTo(mainBase);
-                    if (sunken != null) {
-                        return new AFocusPoint(
-                            sunken.translateTilesTowards(3.5, mainBase),
-                            mainBase,
-                            "Sunken"
-                        );
-                    }
-                }
 
                 // =========================================================
 

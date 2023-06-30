@@ -1,10 +1,12 @@
 package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.combat.retreating.ShouldRetreat;
+import atlantis.debug.painter.APainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
+import bwapi.Color;
 
 public class AvoidCombatBuildings {
 
@@ -13,20 +15,19 @@ public class AvoidCombatBuildings {
             return false;
         }
 
-//        if (enemyCombatBuildings == null) {
         Selection combatBuildings = EnemyUnits.discovered().combatBuildings(false);
-//        }
 
-        AUnit combatBuilding = combatBuildings.inRadius(12, unit).canAttack(unit, 5).nearestTo(unit);
+        AUnit combatBuilding = combatBuildings.inRadius(12, unit).canAttack(unit, 6).nearestTo(unit);
         if (combatBuilding == null) {
 //            APainter.paintCircleFilled(unit, 8, Color.Green);
             return false;
         }
 
+//        APainter.paintCircleFilled(unit, 8, Color.Red);
 //        System.err.println("@ C = " + ShouldRetreat.shouldRetreat(unit));
         if (
-                unit.friendsInRadiusCount(3) >= 4
-                && unit.friendsInRadiusCount(5) >= 7
+                unit.friendsInRadiusCount(3) >= 6
+                && unit.friendsInRadiusCount(5) >= 8
                 && !ShouldRetreat.shouldRetreat(unit)
                 && combatBuildings.combatBuildings(false).inRadius(10, unit).notEmpty()
         ) {
@@ -58,9 +59,9 @@ public class AvoidCombatBuildings {
     }
 
     private static double criticalDist(AUnit unit, AUnit combatBuilding) {
-        return 8.3
+        return 9.1
             + (combatBuilding.isSunken() ? 1.6 : 0)
-            + (unit.isAir() ? 0.9 : 0) + (unit.isMoving() ? 0.8 : 0)
+            + (unit.isAir() ? 0.9 : 0) + (unit.isMoving() ? 0.9 : 0)
             + unit.woundPercent() / 200.0;
     }
 

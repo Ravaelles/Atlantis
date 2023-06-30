@@ -26,9 +26,9 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
         if (shouldChangeMissionToAttack() && !ProtossMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
             MissionChanger.changeMissionTo(Missions.ATTACK);
         }
-        else if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
+//        else if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
+//            changeMissionTo(Missions.CONTAIN);
+//        }
     }
 
     // === CONTAIN =============================================

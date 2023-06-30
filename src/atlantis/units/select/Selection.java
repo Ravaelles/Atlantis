@@ -251,6 +251,13 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection sunkens() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Zerg_Sunken_Colony)),
+            "sunkens"
+        );
+    }
+
     public Selection tanks() {
         return cloneByRemovingIf(unit -> !unit.is(
             AUnitType.Terran_Siege_Tank_Siege_Mode,

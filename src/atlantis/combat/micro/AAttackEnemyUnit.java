@@ -80,7 +80,7 @@ public class AAttackEnemyUnit {
         if (
             unit.isZergling()
                 && (
-                (Enemy.protoss() && unit.hp() <= 18) || shouldRetreat
+                (Enemy.protoss() && unit.hp() <= 19) || shouldRetreat
             )
         ) {
             return false;

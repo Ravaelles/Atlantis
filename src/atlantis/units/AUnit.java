@@ -1637,11 +1637,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //    }
 
     public boolean noCooldown() {
-        return groundWeaponCooldown() == 0 || airWeaponCooldown() == 0;
+        return groundWeaponCooldown() <= 2 || airWeaponCooldown() <= 2;
     }
 
     public boolean hasCooldown() {
-        return groundWeaponCooldown() > 0 || airWeaponCooldown() > 0;
+        return groundWeaponCooldown() > 2 || airWeaponCooldown() > 2;
     }
 
     public int scarabCount() {

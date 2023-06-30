@@ -65,9 +65,9 @@ public class ConstructionRequests {
 
 //        System.err.println("Requested CONSTRUCTION:");
 //        System.err.println( building + " / " + near + " / " + order);
-        if (building.isBase()) {
-            A.printStackTrace("Requested BASE");
-        }
+//        if (building.isBase()) {
+//            A.printStackTrace("Requested BASE");
+//        }
 
         Construction newConstructionOrder = new Construction(building);
         newConstructionOrder.setProductionOrder(order);

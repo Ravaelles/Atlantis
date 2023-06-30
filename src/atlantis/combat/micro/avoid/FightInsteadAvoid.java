@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.combat.micro.avoid.zerg.ShouldFightInsteadAvoidAsZerg;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.game.A;
@@ -59,8 +60,12 @@ public class FightInsteadAvoid {
     public boolean shouldFight() {
         return cache.get(
             "shouldFight:" + unit.idWithHash(),
-            5,
+            3,
             () -> {
+                if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) {
+                    return true;
+                }
+
                 if (unit.isMelee() && unit.shouldRetreat()) {
                     return false;
                 }
@@ -120,7 +125,7 @@ public class FightInsteadAvoid {
                     && (unit.hp() >= 21 || unit.lastStartedAttackMoreThanAgo(30 * 7))
             ) {
                 unit.addLog("FightAsRanged");
-                return false;
+                return true;
             }
             else {
                 unit.setTooltip("Retreat", true);

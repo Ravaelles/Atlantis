@@ -6,9 +6,10 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLogging;
 
 public class ZergBuildOrder extends ABuildOrder {
-    
+
 //    public static final ZergBuildOrder ZERG_13_POOL_MUTA = new ZergBuildOrder("13 Pool Muta");
 
     // =========================================================
@@ -35,7 +36,10 @@ public class ZergBuildOrder extends ABuildOrder {
                 try {
                     base.train(type);
                 } catch (Exception e) {
-                    System.err.println("Exception in produceZergUnit: " + type + " // " + base);
+                    ErrorLogging.printMaxOncePerMinute("" +
+                        "Exception in produceZergUnit: " + type + " // " + base
+                        + " / " + e.getMessage()
+                    );
                 }
                 return true;
             }
@@ -77,7 +81,7 @@ public class ZergBuildOrder extends ABuildOrder {
         if (fromUnit != null) {
             return fromUnit.morph(into);
         }
-        
+
         return false;
     }
 

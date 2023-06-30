@@ -14,7 +14,7 @@ public class TooClustered {
             return false;
         }
 
-        if (unit.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)) {
+        if (unit.lastActionLessThanAgo(13, Actions.MOVE_FORMATION)) {
             return true;
         }
 
@@ -23,7 +23,7 @@ public class TooClustered {
         double minDistBetweenUnits = minDistBetweenUnits(unit);
 
         if (tooClustered(unit, ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
-            APosition goTo = unit.makeFreeOfAnyGroundUnits(3, 0.2, unit);
+            APosition goTo = unit.makeFreeOfAnyGroundUnits(4, 0.2, unit);
             if (goTo != null) {
                 return unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false);
             }

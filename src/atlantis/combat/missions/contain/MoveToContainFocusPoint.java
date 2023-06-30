@@ -13,6 +13,10 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
             return false;
         }
 
+        if (unit.lastActionLessThanAgo(11, Actions.MOVE_FORMATION)) {
+            return true;
+        }
+
         this.unit = unit;
         this.focus = focusPoint;
         fromSide = focusPoint.fromSide();
