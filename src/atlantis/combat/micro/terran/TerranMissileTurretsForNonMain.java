@@ -27,12 +27,12 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
         }
 
         if (handleReinforcePosition(turretForNatural(), 7)) {
-            System.out.println("Requested TURRET for NATURAL");
+//            System.out.println("Requested TURRET for NATURAL");
             return true;
         }
 
         if (handleTurretForAllBases()) {
-            System.out.println("Requested TURRET for NON MAIN");
+//            System.out.println("Requested TURRET for NON MAIN");
             return true;
         }
 

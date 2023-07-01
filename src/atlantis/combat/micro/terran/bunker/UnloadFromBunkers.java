@@ -17,6 +17,10 @@ public class UnloadFromBunkers {
             return false;
         }
 
+        if (unit.enemiesNearInRadius(3) > 0) {
+            return false;
+        }
+
 //        if (preventEnemiesFromAttackingNearBuildingsWithoutConsequences(unit)) {
 //            return true;
 //        }
@@ -101,7 +105,12 @@ public class UnloadFromBunkers {
         Selection enemiesAttacking = unit.enemiesNear().havingAnyTarget();
         for (AUnit enemy : enemiesAttacking.list()){
             AUnit enemyTarget = enemy.target();
-            if (enemyTarget != null && enemyTarget.isWorker() && enemyTarget.distToMoreThan(unit, 6)) {
+            if (
+                enemyTarget != null
+                    && enemyTarget.isWorker()
+                    && enemyTarget.distToMoreThan(unit, 6)
+                    && unit.distTo(enemy) >= 3
+            ) {
                 unit.setTooltipTactical("SupportWorkers");
                 return true;
             }

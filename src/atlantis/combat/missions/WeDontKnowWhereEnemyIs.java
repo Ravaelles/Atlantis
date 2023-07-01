@@ -5,11 +5,10 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
-public class WeDontKnowEnemyEnemyUnit {
+public class WeDontKnowWhereEnemyIs {
 
-    public static boolean handleWeDontKnowWhereToFindEnemy(Mission mission, AUnit unit) {
+    public static boolean update(Mission mission, AUnit unit) {
 //        if (unit.isMoving() && unit.enemiesNear().empty()) {
         if (unit.isMoving() && unit.lastActionLessThanAgo(30 * 2)) {
             return false;

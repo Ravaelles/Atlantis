@@ -29,6 +29,10 @@ public class ShouldRetreat {
                         return false;
                     }
 
+                    if (u.isRunning()) {
+                        return false;
+                    }
+
                     // Change unit context to unit
                     AUnit unit = u.squad() != null ? u.squad().centerUnit() : null;
                     if (unit == null) {

@@ -1830,6 +1830,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int squadSize() {
+        if (squad() == null) {
+            if (!isWorker()) {
+                ErrorLogging.printMaxOncePerMinute("Squad null for " + nameWithId());
+            }
+            return 0;
+        }
         return squad().size();
     }
 
@@ -2607,6 +2613,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean lastPositioningActionMoreThanAgo(int minFramesAgo) {
         return lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_FORMATION)
             && lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
+    }
+
+    public boolean lastPositioningActionLessThanAgo(int minFramesAgo) {
+        return lastActionLessThanAgo(minFramesAgo, Actions.MOVE_FORMATION)
+            && lastActionLessThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
 
     public boolean shouldRetreat() {

@@ -55,7 +55,26 @@ public class MissionDefendAllowsToAttack {
             return false;
         }
 
-        return unit.combatEvalRelative() >= 3;
+        // =========================================================
+
+        // =========================================================
+
+        int friends = unit.friendsInRadiusCount(4);
+        if (
+            (
+                enemy.isMelee()
+                || (unit.squadSize() >= 4 && friends <= 1)
+            )
+            && !unit.enemiesNear().inRadius(9, unit).onlyMelee()
+        ) {
+            unit.setTooltip("TooScarce");
+            return false;
+        }
+
+        // =========================================================
+
+        return (friends >= 2 && unit.combatEvalRelative() >= 2.5)
+            || (friends >= 5 && unit.woundPercentMax(15));
     }
 
     private boolean whenDifferentRegions(AUnit unit, AUnit enemy) {

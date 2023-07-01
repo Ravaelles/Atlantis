@@ -46,17 +46,17 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         }
 
         if (turretForMainChoke()) {
-            System.out.println("Requested TURRET for MAIN CHOKE");
+//            System.out.println("Requested TURRET for MAIN CHOKE");
             return true;
         }
 
         if (turretsForMainRegionBorders()) {
-            System.out.println("Requested TURRET for BORDERS");
+//            System.out.println("Requested TURRET for BORDERS");
             return true;
         }
 
         if (turretsForMainBase()) {
-            System.out.println("Requested TURRET for MAIN BASE");
+//            System.out.println("Requested TURRET for MAIN BASE");
             return true;
         }
 

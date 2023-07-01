@@ -105,9 +105,10 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         double base = Enemy.protoss() ? 0.6 : 0.0;
 
         if (unit.isTerran()) {
-            base += (unit.isTank() ? 3 : 0)
+            base += (unit.isTank() ? 2.5 : 0)
                 + (unit.isMedic() ? -2.5 : 0)
-                + (unit.isMarine() ? 2 : 0)
+                + (unit.isFirebat() ? -1.5 : 0)
+//                + (unit.isMarine() ? 2 : 0)
                 + (Select.our().inRadius(2, unit).count() / 25.0);
 
             if (focus.isAroundChoke()) {

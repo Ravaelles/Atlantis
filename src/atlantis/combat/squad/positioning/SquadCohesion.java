@@ -100,15 +100,15 @@ public class SquadCohesion {
     }
 
     public static double squadMaxRadius(Squad squad) {
-        double base;
+        double base = 0;
 
-        if (We.terran()) {
-            base = 0;
-        }
-        else if (We.protoss()) {
+//        if (We.terran()) {
+//            base = 0;
+//        }
+        if (We.protoss()) {
             base = (squad.size() >= 8 ? 3 : 0);
         }
-        else {
+        else if (We.zerg()) {
             base = Math.min(8, 2 + (squad.size() / 3));
         }
 

@@ -14,7 +14,7 @@ public class TerranFirebat {
             return false;
         }
 
-        if (unit.cooldown() >= 4 || !shouldContinueMeleeFighting(unit)) {
+        if (!shouldContinueMeleeFighting(unit)) {
             AUnit enemy = unit.nearestEnemy();
             boolean shouldRun = (enemy != null && unit.distTo(enemy) <= 1.8);
             if (shouldRun) {
@@ -25,7 +25,7 @@ public class TerranFirebat {
         }
 
         if (
-            unit.hp() >= 33
+            unit.hp() >= 43
                 && unit.cooldown() <= 3
                 && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
                 && unit.friendsNear().medics().inRadius(1.4, unit).notEmpty()
@@ -40,6 +40,10 @@ public class TerranFirebat {
     }
 
     protected static boolean shouldContinueMeleeFighting(AUnit unit) {
+        if (unit.hp() <= 34 || unit.cooldown() >= 4) {
+            return false;
+        }
+
         if (unit.hp() >= 40) {
             return true;
         }

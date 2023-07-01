@@ -12,7 +12,7 @@ public class Unfreezer {
 
     /**
      * Some units can get FROZEN (stuck, unable to move/shoot). It's a known Starcraft bug.
-     * This is my ugly way of fixing this.
+     * This is an ugly way of fixing this.
      */
     public static boolean handleUnfreeze(AUnit unit) {
 //        if (true) return false;

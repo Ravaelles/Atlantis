@@ -31,40 +31,6 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         return false;
     }
 
-    protected static boolean wraiths() {
-        int startProducingWraithsSinceSupply = 90;
-
-//        if (Enemy.zerg()) {
-//            return false;
-//        }
-
-        if (
-            Count.ofType(AUnitType.Terran_Starport) == 0
-        ) {
-            return false;
-        }
-
-        int wraiths = Count.ofType(AUnitType.Terran_Wraith);
-
-        if (wraiths >= 5 && !AGame.canAffordWithReserved(200, 200)) {
-            return false;
-        }
-
-        if (A.supplyUsed() >= startProducingWraithsSinceSupply && wraiths <= 1) {
-            return addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
-        }
-
-        if (A.supplyUsed() <= 160 && wraiths >= startProducingWraithsSinceSupply + wraiths * 15) {
-            return false;
-        }
-
-        if (wraiths >= 6 && !AGame.canAffordWithReserved(150, 150)) {
-            return false;
-        }
-
-        return addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
-    }
-
     protected static boolean ghosts() {
         if (Enemy.zerg()) {
             return false;
@@ -149,17 +115,15 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
     }
 
     private static int minFirebats() {
-//        return 0; // Firebats are broken
-
         if (Enemy.terran()) {
             return 0;
         }
         if (Enemy.protoss()) {
-            return Math.max(3, (Count.medics() / 5 - 1));
+            return Math.max(4, (Count.marines() / 10 + Count.medics() / 5 - 1));
         }
 
         // Zerg
-        return Math.max(3, Count.medics() / 5);
+        return Math.max(4, Count.medics() / 4);
     }
 
     protected static boolean marines() {

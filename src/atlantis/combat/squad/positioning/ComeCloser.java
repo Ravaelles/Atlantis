@@ -56,13 +56,30 @@ public class ComeCloser extends ASquadCohesionManager {
     // =========================================================
 
     private static boolean comeCloser(AUnit unit) {
-        HasPosition squadCenter = unit.squadCenter();
-        if (squadCenter != null) {
-            HasPosition goTo = unit.distToSquadCenter() >= unit.squadRadius()
-                ? squadCenter
-                : unit.translateTilesTowards(2, squadCenter).makeWalkable(6);
-            if (goTo != null && unit.friendsNear().inRadius(3, unit).atMost(2)) {
-                return unit.move(goTo, Actions.MOVE_FORMATION, "Closer", false);
+//        HasPosition squadCenter = unit.squadCenter();
+//        if (squadCenter != null) {
+//            HasPosition goTo = unit.distToSquadCenter() >= unit.squadRadius()
+//                ? squadCenter
+//                : unit.translateTilesTowards(2, squadCenter).makeWalkable(6);
+//            if (goTo != null && unit.friendsNear().inRadius(3, unit).atMost(2)) {
+//                return unit.move(goTo, Actions.MOVE_FORMATION, "Closer", false);
+//            }
+//        }
+
+        if (unit.isMoving()) {
+            unit.setTooltip("Closer...");
+            return true;
+        }
+
+        AUnit friend = unit.squad().selection().exclude(unit).nearestTo(unit);
+        if (friend != null) {
+            /**
+             * ToDo: Without .makeWalkable it is known to infinite crash Starcraft process for some reason...
+             */
+//            APosition goTo = friend.translateTilesTowards(0.3, unit).makeWalkable(3);
+            APosition goTo = friend.translateTilesTowards(0.3, unit).makeWalkable(1);
+            if (goTo != null) {
+                return unit.move(goTo, Actions.MOVE_FORMATION, "Closer");
             }
         }
 
@@ -134,6 +151,10 @@ public class ComeCloser extends ASquadCohesionManager {
             return true;
         }
 
+        if (unit.lastActionLessThanAgo(13, Actions.MOVE_FORMATION)) {
+            return true;
+        }
+
         if (unit.squad() == null) {
             return true;
         }
@@ -168,9 +189,9 @@ public class ComeCloser extends ASquadCohesionManager {
             return false;
         }
 
-        if (unit.distToSquadCenter() >= 15) {
-            return false;
-        }
+//        if (unit.distToSquadCenter() >= 15) {
+//            return false;
+//        }
 
         APosition center = unit.squad().center();
         if (center == null) {
@@ -179,7 +200,7 @@ public class ComeCloser extends ASquadCohesionManager {
 
         double maxDistToSquadCenter = SquadCohesion.squadMaxRadius(unit.squad());
 
-        if (unit.distTo(center) > maxDistToSquadCenter && unit.friendsNear().inRadius(3.5, unit).atMost(5)) {
+        if (unit.distTo(center) > maxDistToSquadCenter && unit.friendsNear().inRadius(3.5, unit).atMost(7)) {
             AUnit nearestFriend = unit.friendsNear().nearestTo(unit);
             if (nearestFriend == null) {
                 return false;

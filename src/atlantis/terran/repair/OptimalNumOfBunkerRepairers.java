@@ -27,13 +27,13 @@ public class OptimalNumOfBunkerRepairers {
                     return 0;
                 }
 
-                int enemiesNear = potentialEnemies.inRadius(10, bunker).count();
+                int enemiesNear = potentialEnemies.inRadius(15, bunker).count();
                 int enemiesFar = potentialEnemies.count() - enemiesNear;
                 double optimalNumber = 0;
 
                 // against PROTOSS
                 if (Enemy.protoss()) {
-                    optimalNumber = enemiesNear + enemiesFar * 0.3;
+                    optimalNumber = enemiesNear * 1.3 + enemiesFar * 0.5;
                 }
                 // against TERRAN
                 else if (Enemy.terran()) {

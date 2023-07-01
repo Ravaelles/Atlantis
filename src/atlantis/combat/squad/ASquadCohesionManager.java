@@ -11,7 +11,7 @@ import atlantis.units.AUnit;
 
 public class ASquadCohesionManager {
 
-    public static boolean handle(AUnit unit) {
+    public static boolean update(AUnit unit) {
 //        if (shouldSkip(unit)) {
 //            return false;
 //        }

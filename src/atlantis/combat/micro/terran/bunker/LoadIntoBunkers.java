@@ -57,11 +57,11 @@ public class LoadIntoBunkers {
                 double enemyDist = unit.distTo(nearestEnemy);
                 double enemyDistToBunker = nearestEnemy.distTo(bunker);
 
-                if (enemyDistToBunker + 1 < unitDistToBunker) {
+                if (enemyDistToBunker + 1.5 < unitDistToBunker) {
                     return false;
                 }
 
-                canLoad = enemyDist < 1.9 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6;
+                canLoad = enemyDist < 2.4 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6;
             }
 
             if (canLoad) {
@@ -81,7 +81,7 @@ public class LoadIntoBunkers {
         AUnit target = unit.target();
 
         if (target != null && target.isBunker()) {
-            return true;
+            return unit.isMoving() ? true : unit.load(target);
         }
         else {
             AUnit bunker = defineBunkerToLoadTo(unit);

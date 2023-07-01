@@ -25,7 +25,8 @@ public class TooClustered {
         if (tooClustered(unit, ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
             APosition goTo = unit.makeFreeOfAnyGroundUnits(4, 0.2, unit);
             if (goTo != null) {
-                return unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false);
+                unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false);
+                return true;
             }
         }
 

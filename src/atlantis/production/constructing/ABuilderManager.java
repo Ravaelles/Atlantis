@@ -21,9 +21,7 @@ public class ABuilderManager {
             return true;
         }
 
-        // Sometimes an ugly thing like this may happen
-        if (We.terran() && builder.isConstructing() && builder.buildUnit() != null && A.everyNthGameFrame(29)) {
-            builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(builder.buildUnit());
+        if (fixTerranConstructionsWithoutBuilder(builder)) {
             return true;
         }
 
@@ -40,7 +38,22 @@ public class ABuilderManager {
     }
 
     // =========================================================
-    
+
+    private static boolean fixTerranConstructionsWithoutBuilder(AUnit builder) {
+        if (
+            We.terran() && builder.isConstructing() && builder.buildUnit() != null
+            && A.everyNthGameFrame(47)
+            && builder.looksIdle()
+        ) {
+            if (Select.ourWorkers().inRadius(1.5, builder.buildUnit()).notEmpty()) {
+                builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(builder.buildUnit());
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static boolean handleConstruction(AUnit builder) {
         Construction construction = ConstructionRequests.constructionFor(builder);
         if (construction != null) {
@@ -218,7 +231,7 @@ public class ABuilderManager {
                 }
 
                 ErrorLogging.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
-            } 
+            }
             return position;
         } else {
             return null;

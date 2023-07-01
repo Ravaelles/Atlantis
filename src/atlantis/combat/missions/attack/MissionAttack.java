@@ -23,7 +23,7 @@ public class MissionAttack extends Mission {
     public boolean update(AUnit unit) {
         unit.setTooltipTactical("#MA");
 
-        return MissionAttackAdvance.advance(unit, this);
+        return MoveToAttackFocusPoint.move(unit, this);
     }
 
     @Override
