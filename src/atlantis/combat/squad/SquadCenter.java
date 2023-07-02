@@ -26,28 +26,28 @@ public class SquadCenter {
 
     // =========================================================
 
-    protected boolean isInvalid(AUnit _centerUnit) {
-        return _centerUnit == null || _centerUnit.isDead() || (!_centerUnit.isTank() && Count.tanks() >= 2);
+    protected boolean isInvalid(AUnit _leader) {
+        return _leader == null || _leader.isDead() || (!_leader.isTank() && Count.tanks() >= 2);
     }
 
-    protected AUnit centerUnit() {
-        int ttl = 67;
-        AUnit centerUnit = cache.get(
-            "centerUnit",
+    protected AUnit leader() {
+        int ttl = 69;
+        AUnit leader = cache.get(
+            "leader",
             ttl,
-            this::defineCenterUnit
+            this::defineleader
         );
 
-        if (centerUnit != null && centerUnit.isAlive() && !centerUnit.isRunning()) {
-            return centerUnit;
+        if (leader != null && leader.isAlive() && !leader.isRunning()) {
+            return leader;
         }
 
-        centerUnit = this.defineCenterUnit();
-        cache.set("centerUnit", ttl, centerUnit);
-        return centerUnit;
+        leader = this.defineleader();
+        cache.set("leader", ttl, leader);
+        return leader;
     }
 
-    protected AUnit defineCenterUnit() {
+    protected AUnit defineleader() {
         if (squad.isEmpty()) {
             return null;
         }

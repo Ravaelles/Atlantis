@@ -41,7 +41,7 @@ public abstract class Squad extends Units {
     /**
      * Unit that is considered to be "center" of this squad.
      */
-    protected AUnit _centerUnit = null;
+    protected AUnit _leader = null;
 
     private SquadCenter squadCenter = new SquadCenter(this);
 
@@ -98,11 +98,11 @@ public abstract class Squad extends Units {
             return null;
         }
 
-        if (squadCenter.isInvalid(_centerUnit)) {
-            _centerUnit = squadCenter.centerUnit();
+        if (squadCenter.isInvalid(_leader)) {
+            _leader = squadCenter.leader();
         }
 
-        return _centerUnit != null ? _centerUnit.position() : null;
+        return _leader != null ? _leader.position() : null;
     }
 
     // =========================================================
@@ -223,8 +223,8 @@ public abstract class Squad extends Units {
         return groundUnits.melee().first();
     }
 
-    public AUnit centerUnit() {
-        return squadCenter.centerUnit();
+    public AUnit leader() {
+        return squadCenter.leader();
     }
 
     public boolean lessThanUnits(int units) {
@@ -293,7 +293,7 @@ public abstract class Squad extends Units {
     public int cohesionPercent() {
         return cacheInteger.get(
             "cohesionPercent",
-            9,
+            3,
             () -> {
                 APosition center = center();
                 if (size() <= 1 || center == null) {
@@ -327,5 +327,9 @@ public abstract class Squad extends Units {
             17,
             () -> SquadCohesion.squadMaxRadius(this)
         );
+    }
+
+    public boolean isLeader(AUnit unit) {
+        return unit.equals(_leader);
     }
 }

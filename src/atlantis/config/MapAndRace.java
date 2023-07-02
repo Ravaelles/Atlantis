@@ -24,18 +24,18 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
 
         // vs PROTOSS cheat-bots
-        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush

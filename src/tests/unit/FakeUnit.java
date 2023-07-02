@@ -296,7 +296,7 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
-    public boolean holdPosition(String tooltip, boolean strategicLevel) {
+    public boolean holdPosition(String tooltip) {
         lastCommand = "Hold";
         target = null;
         targetPosition = null;

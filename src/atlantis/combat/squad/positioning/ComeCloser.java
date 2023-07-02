@@ -3,7 +3,6 @@ package atlantis.combat.squad.positioning;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.map.position.APosition;
-import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
@@ -97,7 +96,7 @@ public class ComeCloser extends ASquadCohesionManager {
             return false;
         }
 
-        if (unit.distToSquadCenter() <= 4 || unit.distToSquadCenter() >= 15) {
+        if (unit.distToLeader() <= 4 || unit.distToLeader() >= 15) {
             return false;
         }
 
@@ -109,7 +108,7 @@ public class ComeCloser extends ASquadCohesionManager {
             if (unit.friendsNear().inRadius(4, unit).atMost(5)) {
                 if (unit.isMoving() && unit.cooldown() == 0) {
                     unit.addLog("TooAhead");
-                    return unit.holdPosition("TooAhead", false);
+                    return unit.holdPosition("TooAhead");
                 }
             }
         }

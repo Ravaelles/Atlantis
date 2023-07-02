@@ -84,14 +84,16 @@ public class ARunningManager {
 
     private boolean handleContinueRunning() {
         if (unit.isRunning()) {
-//            if (unit.lastStoppedRunningLessThanAgo(2)) {
-//                return true;
-//            }
+            if (unit.lastStartedRunningLessThanAgo(5)) {
+//                System.out.println("@ " + A.now() + " - StartedRunning " + unit.idWithHash() + " / " + unit.lastStartedRunningAgo());
+                return true;
+            }
+
             if (
                 unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
                 || unit.lastActionLessThanAgo(8, Actions.RUN_IN_ANY_DIRECTION)
             ) {
-                System.err.println("@ " + A.now() + " - " + unit);
+//                System.err.println("@ " + A.now() + " - " + unit);
                 return true;
             }
         }
@@ -212,7 +214,7 @@ public class ARunningManager {
                     }
                 }
                 else if (unit.isMoving() && unit.isAction(Actions.RUN_ENEMY)) {
-                    unit.holdPosition("Steady", true);
+                    unit.holdPosition("Steady");
                     return true;
                 }
             }

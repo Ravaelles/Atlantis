@@ -17,16 +17,13 @@ import bwapi.TilePosition;
 public class ABuilderManager {
 
     public static boolean update(AUnit builder) {
-        if (AvoidEnemies.avoidEnemiesIfNeeded(builder)) {
+
+        // Don't disturb builder that are already constructing
+        if (builder.isConstructing() || builder.isMorphing()) {
             return true;
         }
 
         if (fixTerranConstructionsWithoutBuilder(builder)) {
-            return true;
-        }
-
-        // Don't disturb builder that are already constructing
-        if (builder.isConstructing() || builder.isMorphing()) {
             return true;
         }
 

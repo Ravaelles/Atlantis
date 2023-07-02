@@ -1,7 +1,6 @@
 package atlantis.combat.retreating;
 
 import atlantis.combat.eval.HeuristicCombatEvaluator;
-import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
@@ -34,7 +33,7 @@ public class ShouldRetreat {
                     }
 
                     // Change unit context to unit
-                    AUnit unit = u.squad() != null ? u.squad().centerUnit() : null;
+                    AUnit unit = u.squad() != null ? u.squad().leader() : null;
                     if (unit == null) {
                         unit = u;
                     }

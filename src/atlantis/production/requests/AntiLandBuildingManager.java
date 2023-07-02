@@ -34,6 +34,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
     @Override
     public boolean shouldBuildNew() {
+//        System.err.println("Expected: " + expected()  + "(" + existingWithUnfinished() + ")");
         return existingWithUnfinished() < expected();
     }
 

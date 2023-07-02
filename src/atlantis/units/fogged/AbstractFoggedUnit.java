@@ -172,7 +172,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     @Override
     public boolean hasPosition() {
-        return _lastPosition != null;
+        return _lastPosition != null && _lastPosition.x() < 32000;
     }
 
 //    public void positionUnknown() {

@@ -25,15 +25,10 @@ public class ASpecialUnitManager {
             return true;
         }
 
-        if (unit.isTank() && TerranTank.update(unit)) {
-            return true;
-        }
-        else if (unit.is(AUnitType.Terran_Medic) && (new TerranMedic()).update(unit)) {
-            return true;
-        }
-        else if (unit.is(AUnitType.Terran_Ghost) && (new TerranGhost()).update(unit)) {
-            return true;
-        }
+        if (unit.isTank() && TerranTank.update(unit)) return true;
+        else if (unit.is(AUnitType.Terran_Medic) && (new TerranMedic(unit)).update()) return true;
+        else if (unit.is(AUnitType.Terran_Wraith) && (new TerranWraith(unit)).update()) return true;
+        else if (unit.is(AUnitType.Terran_Ghost) && (new TerranGhost(unit)).update()) return true;
 
         // === Protoss ========================================
 

@@ -102,23 +102,30 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 //            return SPARTA_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
 //        }
 
-        double base = Enemy.protoss() ? 0.6 : 0.0;
+        double base = 0.0;
+
+        if (We.zerg() && Enemy.protoss()) {
+            base = 0.6;
+        }
 
         if (unit.isTerran()) {
             base += (unit.isTank() ? 2.5 : 0)
                 + (unit.isMedic() ? -2.5 : 0)
                 + (unit.isFirebat() ? -1.5 : 0)
-//                + (unit.isMarine() ? 2 : 0)
-                + (Select.our().inRadius(2, unit).count() / 25.0);
+                + (unit.isRanged() ? 1 : 0)
+                + (Select.our().inRadius(1.5, unit).count() / 25.0);
 
-            if (focus.isAroundChoke()) {
+            if (We.zerg() && focus.isAroundChoke()) {
                 base += (focus.choke().width() <= 3) ? 3.5 : 0;
             }
         }
 
-        return base
-            + letWorkersComeThroughBonus(unit)
-            + rangedDistBonus(unit);
+        return Math.max(
+            (unit.isRanged() ? 3.7 : 0),
+            base
+                + letWorkersComeThroughBonus(unit)
+                + (unit.isDragoon() ? 1.7 : 0)
+        );
     }
 
     private double letWorkersComeThroughBonus(AUnit unit) {
@@ -129,14 +136,6 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         return unit.enemiesNear().combatUnits().isEmpty()
                 && Select.ourWorkers().inRadius(7, unit).atLeast(1)
                 ? 3 : 0;
-    }
-
-    private double rangedDistBonus(AUnit unit) {
-        if (unit.isDragoon()) {
-            return 1.7;
-        }
-
-        return (unit.isRanged() ? 3 : 0);
     }
 
 }

@@ -24,9 +24,9 @@ public class ASquadCohesionManager {
             return true;
         }
 
-        if (TooClustered.handleTooClustered(unit)) {
-            return true;
-        }
+//        if (TooClustered.handleTooClustered(unit)) {
+//            return true;
+//        }
 
         if (SquadCohesion.handleTooLowCohesion(unit)) {
             return true;

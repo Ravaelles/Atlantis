@@ -260,13 +260,12 @@ public interface AUnitOrders {
      * if BWAPI determined that the command would fail. Note There is a small chance for a command to fail
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
-    default boolean holdPosition(String tooltip, boolean strategicLevel) {
+    default boolean holdPosition(String tooltip) {
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println(unit().typeWithHash() + " HOLD @" + A.now() + " / " + tooltip);
         }
 
-        unit().setTooltip(tooltip, strategicLevel)
-                .setAction(Actions.HOLD_POSITION);
+        unit().setTooltip(tooltip).setAction(Actions.HOLD_POSITION);
         return u().holdPosition();
     }
 

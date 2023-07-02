@@ -31,6 +31,7 @@ public class Actions {
     public static final Action MOVE_FOCUS = new Action().setName("MOVE_FOCUS");
     public static final Action MOVE_FOLLOW = new Action().setName("MOVE_FOLLOW");
     public static final Action MOVE_FORMATION = new Action().setName("MOVE_FORMATION");
+    public static final Action MOVE_HEAL = new Action().setName("MOVE_HEAL");
     public static final Action MOVE_MACRO = new Action().setName("MOVE_MACRO");
     public static final Action MOVE_REPAIR = new Action().setName("MOVE_REPAIR");
     public static final Action MOVE_SAFETY = new Action().setName("MOVE_SAFETY");

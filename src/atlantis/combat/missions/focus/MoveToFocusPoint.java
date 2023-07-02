@@ -1,16 +1,14 @@
 package atlantis.combat.missions.focus;
 
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import bwapi.Color;
 
 public abstract class MoveToFocusPoint {
 
-    protected static final double MARGIN = 0.25;
+    protected static final double MARGIN = 0.15;
 
     protected double optimalDist;
     protected double unitToFocus;
@@ -110,7 +108,7 @@ public abstract class MoveToFocusPoint {
     }
 
     private boolean joinSquad(AUnit unit) {
-        if (unit.distToSquadCenter() >= 8 && unit.enemiesNear().isEmpty() && unit.friendsInRadius(2.1).atMost(2)) {
+        if (unit.distToLeader() >= 8 && unit.enemiesNear().isEmpty() && unit.friendsInRadius(2.1).atMost(2)) {
             unit.addLog("JoinSquad");
             return unit.move(unit.squadCenter(), Actions.MOVE_FORMATION, "JoinSquad", false);
         }
@@ -200,22 +198,22 @@ public abstract class MoveToFocusPoint {
         return unitToFocus < (optimalDist - MARGIN);
     }
 
-    protected boolean isTooFarBack() {
-        return unitToFocus + MARGIN >= optimalDist;
+    private boolean isTooFar() {
+        return unitToFocus >= (optimalDist + MARGIN);
     }
 
     /**
      * Unit is too close to its focus point.
      */
     protected boolean tooCloseToFocusPoint() {
+        if (!isAroundChoke()) {
+            return false;
+        }
+
         if (unit.isMelee() && unit.hp() <= 18 && unitToFocus <= 3.5) {
             if (unit.moveAwayFrom(focus, 2, "InjuredSafety", Actions.MOVE_FOCUS)) {
                 return true;
             }
-        }
-
-        if (!isAroundChoke()) {
-            return false;
         }
 
         if (unit.enemiesNear().inRadius(2, unit).isNotEmpty()) {
@@ -233,7 +231,7 @@ public abstract class MoveToFocusPoint {
 //                return unit.move(fromSide, Actions.MOVE_FOCUS, "TooClose" + dist, true);
 //            }
 
-            unit.moveAwayFrom(focus, 0.15, "TooCloze" + dist, Actions.MOVE_FOCUS);
+            unit.moveAwayFrom(focus, 0.1, "TooCloze" + dist, Actions.MOVE_FOCUS);
             return true;
         }
 
@@ -241,12 +239,14 @@ public abstract class MoveToFocusPoint {
     }
 
     protected boolean tooFarBack() {
-        if (isTooFarBack()) {
-            boolean isTooFar = unitToFocus >= (optimalDist + MARGIN);
-            APosition goTo = isTooFar ? focus : focus.translateTilesTowards(0.5, unit);
+        if (isTooFar()) {
+            boolean isTooFar = isTooFar();
+            APosition goTo = isTooFar ? focus : unit.translateTilesTowards(0.1, focus);
 
-            unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
-            return true;
+            if (goTo.isWalkable()) {
+                unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
+                return true;
+            }
         }
 
         return false;

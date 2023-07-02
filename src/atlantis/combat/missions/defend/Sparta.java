@@ -137,6 +137,10 @@ public class Sparta extends MissionDefend {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (main == null) {
+            return true;
+        }
+
         focusPoint = focusPoint();
         if (!focusPoint.isAroundChoke()) {
             unit.addLog("Sparta:---");
@@ -280,7 +284,7 @@ public class Sparta extends MissionDefend {
 
         if (distanceGood) {
             if (shouldHold(unit)) {
-                unit.holdPosition("Sparta", false);
+                unit.holdPosition("Sparta");
             }
             return true;
         }
@@ -293,7 +297,7 @@ public class Sparta extends MissionDefend {
 
         if (1.0 <= dist && dist <= 2.0) {
             if (shouldHold(unit)) {
-                unit.holdPosition("Sparta", false);
+                unit.holdPosition("Sparta");
             }
             return true;
         }

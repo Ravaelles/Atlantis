@@ -37,7 +37,6 @@ public class AWorkerManager {
             }
         }
 
-
 //        // Act as BUILDER
         if (AConstructionManager.isBuilder(worker)) {
             worker.setTooltipTactical("Builder");
@@ -49,6 +48,8 @@ public class AWorkerManager {
             worker.setTooltipTactical("Gather");
             return handleGatherMineralsOrGas(worker);
         }
+
+//        return false;
     }
 
     // =========================================================
@@ -72,8 +73,10 @@ public class AWorkerManager {
      * Assigns given worker unit (which is idle by now at least doesn't have anything to do) to gather minerals.
      */
     private static boolean handleGatherMineralsOrGas(AUnit worker) {
+
         // Don't react if already gathering
-        if (worker.isMiningOrExtractingGas()) {
+        // @Check Surprisingly, isMiningOrExtractingGas is quite slow! looksIdle works faster
+        if (!worker.looksIdle()) {
             worker.setTooltipTactical("Miner");
             return true;
         }
@@ -88,8 +91,7 @@ public class AWorkerManager {
         if (worker.isIdle() || (!worker.isGatheringMinerals() && !worker.isGatheringGas() && !worker.isMoving()
                 && !worker.isConstructing() && !worker.isAttackingOrMovingToAttack() && !worker.isRepairing())) {
             worker.setTooltipTactical("Move ass!");
-            AMineralGathering.gatherResources(worker);
-            return true;
+            return AMineralGathering.gatherResources(worker);
         }
 
         return true;

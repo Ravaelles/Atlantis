@@ -10,7 +10,6 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.SquadTransfers;
-import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -269,7 +268,7 @@ public class AAdvancedPainter extends APainter {
             return;
         }
 //        String extra = " " + unit.idWithHash();
-        String extra = " " + A.dist(unit.distToSquadCenter());
+        String extra = " " + A.dist(unit.distToLeader());
         String squadLetter = unit.squad().letter() + extra;
         paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
     }
@@ -1283,27 +1282,31 @@ public class AAdvancedPainter extends APainter {
         y += 26;
 
         if (Alpha.get().isNotEmpty()) {
-            paintMessage("Squads: ", Color.White, x + 4, y, true);
+            paintMessage("Squads: ", Color.White, x, y, true);
             for (Squad squad : SquadTransfers.allSquads()) {
                 if (squad.size() == 0) {
                     continue;
                 }
-                paintMessage(squad.name() + ": " + squad.size(), squad.isEmpty() ? Color.Red : Color.White, x + 4, y += 12, true);
+                paintMessage(
+                    squad.name() + ": " + squad.size() + "/" + squad.mission().name().substring(0, 3),
+                    squad.isEmpty() ? Color.Red : Color.White,
+                    x, y += 12, true
+                );
             }
         }
     }
 
     private static void paintSquads() {
         for (Squad squad : SquadTransfers.allSquads()) {
-            APosition median = squad.center();
-            if (median != null) {
-                int maxDist = (int) (SquadCohesion.squadMaxRadius(squad) * 32);
+            AUnit centerUnit = squad.leader();
+            if (centerUnit != null) {
+                int maxDist = (int) squad.radius();
 
-                paintCircle(median, maxDist + 1, Color.Cyan);
-                paintCircle(median, maxDist, Color.Cyan);
+                paintCircle(centerUnit, maxDist + 1, Grey);
+                paintCircle(centerUnit, maxDist, Grey);
 
                 setTextSizeMedium();
-                paintTextCentered(median, squad.cohesionPercent() + "%", Color.Teal, 0, -(maxDist / 32.0) + 0.12);
+                paintTextCentered(centerUnit, squad.cohesionPercent() + "%", Color.Teal, 0, -(maxDist / 32.0) + 0.12);
             }
         }
     }

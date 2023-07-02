@@ -5,16 +5,13 @@ import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.tech.ATech;
-import atlantis.production.ProductionOrder;
 import atlantis.production.dynamic.ADynamicTech;
 import atlantis.production.orders.build.AddToQueue;
-import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -22,38 +19,44 @@ import bwapi.UpgradeType;
 public class TerranDynamicTech extends ADynamicTech {
 
     public static void update() {
-        if (A.notNthGameFrame(35)) {
+        if (A.notNthGameFrame(39)) {
             return;
         }
 
+//        System.out.println("Count.tanks() = " + Count.tanks() + " / " + Have.factory());
         if (
-            !ATech.isResearched(TechType.Tank_Siege_Mode) && (
-                Count.tanks() >= 1 || Decisions.wantsToBeAbleToProduceTanksSoon() || A.seconds() >= 600
+            Have.factory() && ATech.isNotResearchedOrPlanned(TechType.Tank_Siege_Mode) && (
+                Count.tanks() >= 1
+                || Decisions.wantsToBeAbleToProduceTanksSoon()
+                || (A.seconds() >= 350 || Count.tanks() >= 2)
             )
         ) {
-            if (Have.factory() && Count.inQueueOrUnfinished(TechType.Tank_Siege_Mode, 6) == 0) {
+            AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).random();
+//            System.err.println("-------- machineShop = " + machineShop);
+            if (machineShop != null) {
+//                System.err.println("Tank_Siege_Mode @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                 AddToQueue.tech(TechType.Tank_Siege_Mode);
                 return;
             }
-//            AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).first();
 //            if (machineShop != null) {
 //                AddToQueue.tech(TechType.Tank_Siege_Mode);
 //                return;
 //            }
         }
 
-        if (Count.ghosts() >= 1) {
+        if (Count.ghosts() >= 1 && ATech.isNotResearchedOrPlanned(TechType.Lockdown)) {
             AddToQueue.tech(TechType.Lockdown);
+            return;
         }
 
         if (OurStrategy.get().goingBio()) {
             if (Count.infantry() >= 8 && AGame.canAffordWithReserved(100, 100)) {
-                if (!ATech.isResearched(TechType.Stim_Packs)) {
+                if (ATech.isNotResearchedOrPlanned(TechType.Stim_Packs)) {
                     AddToQueue.tech(TechType.Stim_Packs);
                     return;
                 }
 
-                if (!ATech.isResearched(UpgradeType.U_238_Shells)) {
+                if (ATech.isNotResearchedOrPlanned(UpgradeType.U_238_Shells)) {
                     AddToQueue.upgrade(UpgradeType.U_238_Shells);
                     return;
                 }

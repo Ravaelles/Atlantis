@@ -13,7 +13,7 @@ public class AvoidCombatBuildingCriticallyClose {
         }
 
         if (shouldHoldGround(unit, combatBuilding)) {
-            unit.holdPosition("HoldHere", false);
+            unit.holdPosition("HoldHere");
             return true;
         }
 

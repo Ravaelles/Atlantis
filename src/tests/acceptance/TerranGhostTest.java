@@ -23,16 +23,16 @@ public class TerranGhostTest extends AbstractTestFakingGame {
     @Test
     public void ghostIsTargetingMechanicalUnitsForLockdown() {
         createWorld(1, () -> {
-                TerranGhost manager1 = new TerranGhost();
-                TerranGhost manager2 = new TerranGhost();
-                TerranGhost manager3 = new TerranGhost();
-                TerranGhost manager4 = new TerranGhost();
-                TerranGhost manager5 = new TerranGhost();
-                manager1.update(ghost1);
-                manager2.update(ghost2);
-                manager3.update(ghost3);
-                manager4.update(ghost4);
-                manager5.update(ghost5);
+                TerranGhost manager1 = new TerranGhost(ghost1);
+                TerranGhost manager2 = new TerranGhost(ghost2);
+                TerranGhost manager3 = new TerranGhost(ghost3);
+                TerranGhost manager4 = new TerranGhost(ghost4);
+                TerranGhost manager5 = new TerranGhost(ghost5);
+                manager1.update();
+                manager2.update();
+                manager3.update();
+                manager4.update();
+                manager5.update();
 
 //                System.out.println("Lockdown targetFor(ghost1) = " + TerranGhost.lockdownTargets.targetFor(ghost1));
 //                System.out.println("Lockdown targetFor(ghost2) = " + TerranGhost.lockdownTargets.targetFor(ghost2));

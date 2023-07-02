@@ -233,7 +233,7 @@ public class AAttackEnemyUnit {
     private static boolean missionAllowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         return unit.mission() == null
             || (unit.isTank() && unit.noCooldown())
-            || (unit.isWraith() && unit.noCooldown() && unit.hp() >= 100)
+            || (unit.isWraith() && unit.isHealthy() && !enemy.isCombatBuilding())
             || unit.mission().allowsToAttackEnemyUnit(unit, enemy);
 //            || (unit.isRanged() && enemy.isMelee());
     }

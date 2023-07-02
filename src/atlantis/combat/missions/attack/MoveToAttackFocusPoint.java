@@ -4,6 +4,7 @@ import atlantis.combat.missions.WeDontKnowWhereEnemyIs;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 
 public class MoveToAttackFocusPoint {
 
@@ -42,6 +43,10 @@ public class MoveToAttackFocusPoint {
     }
 
     private static boolean advance(AUnit unit, AFocusPoint focusPoint) {
+        if (unit.squad().isLeader(unit)) {
+            return AdvanceAsLeader.advanceAsLeader(unit, focusPoint);
+        }
+
         if (
             MoveToAttackAsTerran.handledTerranAdvance(unit)
             || tooLonely(unit, focusPoint)
@@ -53,11 +58,16 @@ public class MoveToAttackFocusPoint {
     }
 
     private static boolean tooLonely(AUnit unit, AFocusPoint focusPoint) {
-        AUnit centerUnit = unit.squad().centerUnit();
-        if (centerUnit == null) {
+        AUnit leader = unit.squad().leader();
+        if (leader == null) {
             return false;
         }
 
-        return unit.distTo(centerUnit) >= 5 && unit.friendsInRadiusCount(3) <= 8;
+        if (unit.distTo(leader) > 5 && unit.friendsInRadiusCount(3) <= 8) {
+            unit.move(leader, Actions.MOVE_FORMATION, "Coordinate");
+            return true;
+        }
+
+        return false;
     }
 }

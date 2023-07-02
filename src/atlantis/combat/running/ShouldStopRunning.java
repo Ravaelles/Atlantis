@@ -2,7 +2,9 @@ package atlantis.combat.running;
 
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ShouldStopRunning {
@@ -11,12 +13,12 @@ public class ShouldStopRunning {
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit(unit));
 //        System.out.println(unit.isRunning() + " // " + unit.runningManager().isRunning() + " // " + unit.action().isRunning());
         if (!unit.isRunning()) {
-            return true;
+            return decisionStopRunning(unit);
         }
 
         if (unit.isFlying() && unit.enemiesNearInRadius(8.2) == 0) {
             unit.setTooltipTactical("SafeEnough");
-            return true;
+            return decisionStopRunning(unit);
         }
 
         if (
@@ -33,12 +35,12 @@ public class ShouldStopRunning {
                 && unit.nearestEnemyDist() >= 3.5
         ) {
             unit.setTooltipTactical("RanTooLong");
-            return true;
+            return decisionStopRunning(unit);
         }
 
         if (We.terran() && unit.isHealthy() && unit.lastUnderAttackLessThanAgo(30)) {
             unit.setTooltipTactical("HealthyNow");
-            return true;
+            return decisionStopRunning(unit);
         }
 
         if (
@@ -46,7 +48,7 @@ public class ShouldStopRunning {
                 && unit.lastStartedRunningMoreThanAgo(15)
                 && !AvoidEnemies.shouldNotAvoidAnyUnit(unit)) {
             unit.setTooltip("StopMan", false);
-            return true;
+            return decisionStopRunning(unit);
         }
 
 //        if (unit.isWounded() && unit.nearestEnemyDist() >= 3) {
@@ -60,10 +62,23 @@ public class ShouldStopRunning {
                 //                && AAvoidUnits.shouldNotAvoidAnyUnit(unit)
                 || AvoidEnemies.shouldNotAvoidAnyUnit(unit)
         ) {
-            unit.setTooltip("StopRun", false);
-            return true;
+            unit.setTooltip("StopRun");
+            return decisionStopRunning(unit);
         }
 
+        return false;
+    }
+
+    private static boolean decisionStopRunning(AUnit unit) {
+        if (unit.hp() <= 20 && unit.isTerranInfantry()) {
+            AUnit nearestMedic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
+            if (nearestMedic != null) {
+                unit.move(nearestMedic, Actions.MOVE_HEAL, "Lazaret");
+                return true;
+            }
+        }
+
+        unit.runningManager().stopRunning();
         return false;
     }
 }

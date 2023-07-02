@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.combat.micro.Micro;
 import atlantis.combat.micro.Microable;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.terran.medic.BodyBlock;
@@ -33,14 +34,21 @@ public class TerranMedic extends Microable {
      */
     private static final HashMap<AUnit, AUnit> medicsToAssignments = new HashMap<>();
     private static final HashMap<AUnit, AUnit> assignmentsToMedics = new HashMap<>();
+    private final AUnit medic;
 
-    public Class[] macroManagers = new Class[] {
-        BodyBlock.class,
-    };
+//    public Micro[] macroManagers = new Micro[] {
+//        new BodyBlock(),
+//    };
 
     // =========================================================
 
-    public boolean update(AUnit medic) {
+    public TerranMedic(AUnit unit) {
+        this.medic = unit;
+    }
+
+    // =========================================================
+
+    public boolean update() {
         if (medic.hp() <= 14 && AvoidEnemies.avoidEnemiesIfNeeded(medic)) {
             return true;
         }

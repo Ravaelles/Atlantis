@@ -19,9 +19,13 @@ public class TerranGhost extends Microable {
 
     // =========================================================
 
-    public boolean update(AUnit unit) {
+    public TerranGhost(AUnit unit) {
         this.unit = unit;
+    }
 
+    // =========================================================
+
+    public boolean update() {
         if (unit.lastTechUsedAgo() <= 5) {
 //            System.out.println(A.now() + " DONT INTERRUPT GHOST ");
             return true;

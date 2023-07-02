@@ -41,7 +41,7 @@ public class StopAndShoot {
                 && unit.lastActionMoreThanAgo(2, Actions.HOLD_POSITION)
             ) {
 //                System.err.println("@ HOLD - " + distToEnemy + " / " + unit);
-                unit.holdPosition("HoldToShoot", false);
+                unit.holdPosition("HoldToShoot");
                 return true;
             }
 

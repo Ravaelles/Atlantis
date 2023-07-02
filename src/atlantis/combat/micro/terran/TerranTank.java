@@ -29,7 +29,7 @@ public class TerranTank {
         return Select.ourCombatUnits().inRadius(6, unit).atMost(4);
     }
 
-    protected static boolean siegeResearched() {
+    public static boolean siegeResearched() {
         return ATech.isResearched(TechType.Tank_Siege_Mode);
     }
 

@@ -43,7 +43,7 @@ public class TerranInfantry {
     // =========================================================
 
     private static boolean goToNearMedic(AUnit unit) {
-        if (unit.isHealthy() && unit.distToSquadCenter() <= 6) {
+        if (unit.isHealthy() && unit.distToLeader() <= 6) {
             return false;
         }
 

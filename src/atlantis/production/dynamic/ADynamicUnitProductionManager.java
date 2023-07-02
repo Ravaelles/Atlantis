@@ -5,6 +5,7 @@ import atlantis.production.dynamic.protoss.*;
 import atlantis.production.dynamic.terran.TerranDynamicBuildingsManager;
 import atlantis.production.dynamic.terran.TerranDynamicTech;
 import atlantis.production.dynamic.terran.TerranDynamicUnitsManager;
+import atlantis.util.We;
 
 
 public class ADynamicUnitProductionManager {
@@ -12,17 +13,17 @@ public class ADynamicUnitProductionManager {
     public static void update() {
         ADynamicWorkerProductionManager.handleDynamicWorkerProduction();
         
-        if (AGame.isPlayingAsTerran()) {
+        if (We.terran()) {
+            TerranDynamicTech.update();
             TerranDynamicUnitsManager.update();
             TerranDynamicBuildingsManager.update();
-            TerranDynamicTech.update();
         }
-        else if (AGame.isPlayingAsProtoss()) {
+        else if (We.protoss()) {
+            ProtossDynamicTech.update();
             ProtossDynamicUnitsManager.update();
             ProtossDynamicBuildingsManager.update();
-            ProtossDynamicTech.update();
         }
-        else if (AGame.isPlayingAsZerg()) {
+        else if (We.zerg()) {
             ZergDynamicUnitsManager.update();
             ZergDynamicBuildingsManager.update();
         }

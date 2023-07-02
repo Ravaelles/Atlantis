@@ -2,6 +2,7 @@ package atlantis.production.requests.zerg;
 
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
@@ -37,8 +38,13 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
             return 6;
         }
 
+        int ourArmyRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
+
+        if (GamePhase.isEarlyGame() && EnemyStrategy.get().isRushOrCheese()) {
+            return 6;
+        }
+
         if (GamePhase.isEarlyGame()) {
-            int ourArmyRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
             if (ourArmyRelativeStrength < 100) {
                 int missingStrengthToEquillibrium = 100 - ourArmyRelativeStrength;
                 int moreNeeded = Math.min(2, (int) Math.ceil(missingStrengthToEquillibrium / 10.0));

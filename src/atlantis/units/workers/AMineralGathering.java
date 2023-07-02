@@ -46,13 +46,17 @@ public class AMineralGathering {
 
     /**
      * Use this method to assign idle workers to gather minerals from optimal mineral field or to gather gas.
+     *
+     * @return
      */
-    public static void gatherResources(AUnit unit) {
+    public static boolean gatherResources(AUnit unit) {
         AUnit mineralField = getMineralFieldToGather(unit);
         if (mineralField != null) {
-            unit.gather(mineralField);
             unit.setTooltipTactical("Gatherer!");
+            return unit.gather(mineralField);
         }
+
+        return false;
     }
 
     // =========================================================

@@ -153,6 +153,9 @@ public class ARepairerManager {
             AUnit nearestWoundedUnit = Select.our().repairable(true).inRadius(maxAllowedDistToRoam, repairer).nearestTo(repairer);
             if (nearestWoundedUnit != null && A.hasMinerals(5)) {
                 repairer.repair(nearestWoundedUnit, "HelpNear" + nearestWoundedUnit.name(), true);
+                if (nearestWoundedUnit.distTo(repairer) > 0.8) {
+                    nearestWoundedUnit.move(repairer, Actions.MOVE_REPAIR, "BeHelped");
+                }
                 return true;
             }
         }

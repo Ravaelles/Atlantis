@@ -36,7 +36,8 @@ public class SquadCohesion {
 
         // Too stacked for cohesion
         if (
-            unit.friendsInRadius(4).count() >= 6
+            unit.friendsInRadius(2).count() >= 3
+            || unit.friendsInRadius(4).count() >= 6
             || unit.friendsInRadius(7).count() >= 20
         ) {
             return false;
@@ -50,26 +51,23 @@ public class SquadCohesion {
 //        unit.setTooltipTactical(A.digit(unit.distToSquadCenter()) + " / " + A.digit(unit.squadRadius()));
         if (unit.outsideSquadRadius() && unit.meleeEnemiesNearCount(4) == 0) {
             String t = "Cohesion";
+            APosition goTo = unit.squadLeader()
+                .translateTilesTowards(2, unit.position());
+//                .makeFreeOfAnyGroundUnits(5, unit.type().dimensionLeft() * 2, unit);
 
-            if (unit.lastActionMoreThanAgo(40, Actions.MOVE_FORMATION)) {
-                APosition goTo = unit.squadCenter()
-                    .translateTilesTowards(2, unit.position())
-                    .makeFreeOfAnyGroundUnits(5, unit.type().dimensionLeft() * 2, unit);
+            if (goTo == null) {
+                return false;
+            }
 
-                if (goTo == null) {
-                    return false;
-                }
+            unit.addLog(t);
 
-                unit.addLog(t);
-
-                if (unit.move(
-                    goTo,
-                    Actions.MOVE_FORMATION,
-                    t,
-                    false
-                )) {
-                    return true;
-                }
+            if (unit.move(
+                goTo,
+                Actions.MOVE_FORMATION,
+                t,
+                false
+            )) {
+                return true;
             }
         }
 

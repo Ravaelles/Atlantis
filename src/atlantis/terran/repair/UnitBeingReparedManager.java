@@ -3,7 +3,7 @@ package atlantis.terran.repair;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
-public class AUnitBeingReparedManager {
+public class UnitBeingReparedManager {
 
     public static boolean handleUnitShouldBeRepaired(AUnit unit) {
         if (!unit.isWounded()) {
@@ -55,11 +55,30 @@ public class AUnitBeingReparedManager {
         }
 
         if (distanceToRepairer <= 1) {
-            unit.holdPosition("Be repaired", false);
+            unit.holdPosition("Be repaired");
             return true;
         }
 
         return false;
     }
 
+    public static boolean handleDontRunWhenBeingRepared(AUnit unit) {
+        if (unit.enemiesNear().melee().inRadius(1.9, unit).canAttack(unit, 5).notEmpty()) {
+            return false;
+        }
+
+        if (
+            !unit.woundPercentMin(50)
+            && unit.enemiesNear().ranged().inRadius(7, unit).notEmpty()
+        ) {
+            return false;
+        }
+
+        AUnit repairer = unit.repairer();
+        if (repairer != null && repairer.distToLessThan(unit, 1.1) && repairer.isRepairing()) {
+            return unit.move(repairer, Actions.MOVE_REPAIR, "BeFixed");
+        }
+
+        return false;
+    }
 }

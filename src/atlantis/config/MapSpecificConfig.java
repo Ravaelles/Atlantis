@@ -22,16 +22,13 @@ public class MapSpecificConfig {
         // =========================================================
         // Marines & Medics v. Zealots
 
-//        if (
-//            MapAndRace.activeMap().startsWith("ums/rav/")
-//                || MapAndRace.activeMap().startsWith("ums/rav/minimaps/")
-//        ) {
-//            if (A.now() <= 1) {
-//                GameSpeed.changeSpeedTo(30);
-//                GameSpeed.changeFrameSkipTo(0);
-//                CameraManager.centerCameraNowOnSquadCenter();
-//            }
-//        }
+        if (MapAndRace.isMap("minimaps/")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedTo(30);
+                GameSpeed.changeFrameSkipTo(0);
+                CameraManager.centerCameraNowOnSquadCenter();
+            }
+        }
 
         // =========================================================
 

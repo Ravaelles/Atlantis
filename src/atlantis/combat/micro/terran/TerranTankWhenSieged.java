@@ -43,7 +43,7 @@ public class TerranTankWhenSieged extends TerranTank {
         if (
             unit.enemiesNear().combatUnits().empty()
                 && unit.lastAttackFrameMoreThanAgo(30 * 3 + (unit.id() % 3))
-                && unit.distToSquadCenter() >= 8
+                && unit.distToLeader() >= 8
         ) {
             return wantsToUnsiege(unit, "Reposition");
         }
@@ -112,7 +112,7 @@ public class TerranTankWhenSieged extends TerranTank {
     private static boolean wantsToUnsiege(AUnit unit, String log) {
         if (
             hasJustSiegedRecently(unit)
-                || unit.lastAttackFrameLessThanAgo(30 * (1 + unit.id() % 5))
+                || unit.lastAttackFrameLessThanAgo(30 * (unit.id() % 4))
         ) {
             return false;
         }

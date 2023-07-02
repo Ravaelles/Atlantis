@@ -26,7 +26,8 @@ public class AvoidCombatBuildings {
 //        APainter.paintCircleFilled(unit, 8, Color.Red);
 //        System.err.println("@ C = " + ShouldRetreat.shouldRetreat(unit));
         if (
-                unit.friendsInRadiusCount(3) >= 6
+                !unit.isAir()
+                && unit.friendsInRadiusCount(3) >= 6
                 && unit.friendsInRadiusCount(5) >= 8
                 && !ShouldRetreat.shouldRetreat(unit)
                 && combatBuildings.combatBuildings(false).inRadius(10, unit).notEmpty()

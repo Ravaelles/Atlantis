@@ -1,5 +1,6 @@
 package atlantis.combat.missions.defend;
 
+import atlantis.combat.micro.terran.TerranTank;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
@@ -27,9 +28,9 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
         if (shouldChangeMissionToAttack() && !TerranMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.ATTACK);
         }
-        else if (shouldChangeMissionToContain() && !TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
+//        else if (shouldChangeMissionToContain() && !TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
+//            changeMissionTo(Missions.CONTAIN);
+//        }
     }
 
     // === ATTACK ==============================================
@@ -40,6 +41,15 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
         }
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
+
+        if (
+            ourRelativeStrength <= 600
+            && EnemyUnits.discovered().combatBuildingsAntiLand().atLeast(2)
+            && Count.tanks() <= 1
+            && !TerranTank.siegeResearched()
+        ) {
+            return false;
+        }
 
         if (ourRelativeStrength >= 350) {
             if (DEBUG) reason = "Comfortably stronger (" + ourRelativeStrength + "%)";
@@ -59,14 +69,14 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
             return true;
         }
 
-        if (ourRelativeStrength < 200) {
-            if (DEBUG) reason = "We are much weaker (" + ourRelativeStrength + "%)";
-            return false;
-        }
-
         if (ourRelativeStrength >= 400) {
             if (DEBUG) reason = "Much stronger (" + ourRelativeStrength + "%)";
             return true;
+        }
+
+        if (ourRelativeStrength < 160) {
+            if (DEBUG) reason = "We are not much stronger (" + ourRelativeStrength + "%)";
+            return false;
         }
 
         if (ourRelativeStrength < 300 && GamePhase.isEarlyGame() && A.resourcesBalance() <= -150) {

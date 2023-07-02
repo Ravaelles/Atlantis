@@ -16,7 +16,7 @@ public class SquadMissionChanger {
             return false;
         }
 
-        unit = squad.centerUnit();
+        unit = squad.leader();
         units = squad.selection();
 
         if (unit == null) {

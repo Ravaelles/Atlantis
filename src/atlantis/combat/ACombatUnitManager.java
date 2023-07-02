@@ -12,7 +12,7 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.running.ShouldStopRunning;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.terran.repair.AUnitBeingReparedManager;
+import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.ASpecialUnitManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -192,7 +192,7 @@ public class ACombatUnitManager {
 //        }
 
         // Handle repair of mechanical units
-        if (AGame.isPlayingAsTerran() && AUnitBeingReparedManager.handleUnitShouldBeRepaired(unit)) {
+        if (AGame.isPlayingAsTerran() && UnitBeingReparedManager.handleUnitShouldBeRepaired(unit)) {
             return true;
         }
 

@@ -9,8 +9,6 @@ import atlantis.combat.running.ARunningManager;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.positioning.SquadCohesion;
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
@@ -2209,7 +2207,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public Selection enemiesNear() {
         return ((Selection) cache.get(
             "enemiesNear",
-            3,
+            5,
             () -> {
                 if (unit().isOur()) {
                     return EnemyUnits.discovered()
@@ -2557,15 +2555,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return friendsNear().inRadius(radius, this).count();
     }
 
-    public double distToSquadCenter() {
-        if (squad == null || squad.center() == null) {
+    public double distToLeader() {
+        if (squad == null || squad.leader() == null) {
             return 0;
         }
 
         return (double) cache.get(
-            "distToSquadCenter",
+            "distToLeader",
             5,
-            () -> squad.center().distTo(this)
+            () -> squad.leader().distTo(this)
         );
     }
 
@@ -2584,7 +2582,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
             "outsideSquadRadius",
             3,
-            () -> distToSquadCenter() > squadRadius()
+            () -> distToLeader() > squadRadius()
         );
     }
 
@@ -2679,5 +2677,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean looksIdle() {
         return isIdle()
             || (!isMoving() && !isAccelerating() && noCooldown());
+    }
+
+    public HasPosition squadLeader() {
+        return squad != null ? squad.leader() : null;
     }
 }
