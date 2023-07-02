@@ -43,13 +43,13 @@ public class AWorkerManager {
             return ABuilderManager.update(worker);
         }
 
-        // Ordinary WORKER
-        else {
-            worker.setTooltipTactical("Gather");
-            return handleGatherMineralsOrGas(worker);
+        if (worker.idIsEven() && handleDynamicRepaisNearby(worker)) {
+            return true;
         }
 
-//        return false;
+        // Ordinary WORKER
+        worker.setTooltipTactical("Gather");
+        return handleGatherMineralsOrGas(worker);
     }
 
     // =========================================================
@@ -165,5 +165,20 @@ public class AWorkerManager {
             }
         }
         return count;
+    }
+
+    private static boolean handleDynamicRepaisNearby(AUnit worker) {
+        if (!A.hasMinerals(15)) {
+            return false;
+        }
+
+        AUnit repairable = worker.friendsNear().mechanical().wounded().inRadius(4, worker).nearestTo(worker);
+
+        if (repairable != null && repairable.isWalkable()) {
+            worker.repair(repairable, "KindGuy", false);
+            return true;
+        }
+
+        return false;
     }
 }

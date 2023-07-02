@@ -86,6 +86,8 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
     }
 
     private static boolean vultures() {
+        if (true) return false;
+
         if (!Decisions.produceVultures()) {
             return false;
         }

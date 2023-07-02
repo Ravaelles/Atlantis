@@ -1,24 +1,22 @@
 package atlantis.combat.squad.positioning;
 
 import atlantis.combat.missions.focus.AFocusPoint;
-import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-public class ComeCloser extends ASquadCohesionManager {
+//public class ComeCloser extends ASquadCohesionManager {
+public class ComeCloser extends Manager {
 
-    public static boolean handleComeCloser(AUnit unit) {
-        if (Enemy.terran() && !We.terran()) {
-            return false;
-        }
-
+    public static Manager handleComeCloser(AUnit unit) {
         if (shouldSkip(unit)) {
-            return false;
+//            return skipped();
+            return null;
         }
 
         if (
@@ -49,40 +47,29 @@ public class ComeCloser extends ASquadCohesionManager {
 ////            maxDistanceToSquadCenter(unit)
 //        }
 
-        return false;
+        return unit.nullManager();;
     }
 
     // =========================================================
 
-    private static boolean comeCloser(AUnit unit) {
-//        HasPosition squadCenter = unit.squadCenter();
-//        if (squadCenter != null) {
-//            HasPosition goTo = unit.distToSquadCenter() >= unit.squadRadius()
-//                ? squadCenter
-//                : unit.translateTilesTowards(2, squadCenter).makeWalkable(6);
-//            if (goTo != null && unit.friendsNear().inRadius(3, unit).atMost(2)) {
-//                return unit.move(goTo, Actions.MOVE_FORMATION, "Closer", false);
-//            }
+    private static Manager comeCloser(AUnit unit) {
+//        if (unit.isMoving()) {
+//            unit.setTooltip("Closer...");
+//            return true;
 //        }
-
-        if (unit.isMoving()) {
-            unit.setTooltip("Closer...");
-            return true;
-        }
 
         AUnit friend = unit.squad().selection().exclude(unit).nearestTo(unit);
         if (friend != null) {
-            /**
-             * ToDo: Without .makeWalkable it is known to infinite crash Starcraft process for some reason...
-             */
+            /** Notice: Without .makeWalkable it is known to infinite crash Starcraft process for some reason... */
 //            APosition goTo = friend.translateTilesTowards(0.3, unit).makeWalkable(3);
             APosition goTo = friend.translateTilesTowards(0.3, unit).makeWalkable(1);
             if (goTo != null) {
-                return unit.move(goTo, Actions.MOVE_FORMATION, "Closer");
+                unit.move(goTo, Actions.MOVE_FORMATION, "Closer");
+                return usedManager(new ComeCloser());
             }
         }
 
-        return false;
+        return null;
     }
 
     // =========================================================
@@ -140,6 +127,14 @@ public class ComeCloser extends ASquadCohesionManager {
 //            return true;
 //        }
 
+        if (unit.lastActionLessThanAgo(13, Actions.MOVE_FORMATION)) {
+            return true;
+        }
+
+        if (Enemy.terran() && !We.terran()) {
+            return true;
+        }
+
         AFocusPoint focusPoint = focusPoint(unit);
 
         if (focusPoint == null) {
@@ -147,10 +142,6 @@ public class ComeCloser extends ASquadCohesionManager {
         }
 
         if (unit.isAir()) {
-            return true;
-        }
-
-        if (unit.lastActionLessThanAgo(13, Actions.MOVE_FORMATION)) {
             return true;
         }
 

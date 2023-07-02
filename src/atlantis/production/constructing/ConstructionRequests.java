@@ -113,23 +113,21 @@ public class ConstructionRequests {
         }
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
-        else {
-            if (AGame.supplyTotal() > 10) {
-                ErrorLogging.printMaxOncePerMinute("Can't find place for `" + building + "`, " + order);
+        if (AGame.supplyTotal() > 10) {
+            ErrorLogging.printMaxOncePerMinute("Can't find place for `" + building + "`, " + order);
 //                A.printStackTrace("Can't find place for `" + building + "`, " + order);
-                if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
-                    ErrorLogging.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
-                }
-                else {
-                    ErrorLogging.printMaxOncePerMinute("(reason not defined - bug)");
-                }
+            if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
+                ErrorLogging.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
             }
-
-            ErrorLogging.printMaxOncePerMinute("Cancel " + building + " (Invalid place)");
-            newConstructionOrder.cancel();
-//            throw new RuntimeException("Can't find place for `" + building + "` ");
-            return false;
+            else {
+                ErrorLogging.printMaxOncePerMinute("(reason not defined - bug)");
+            }
         }
+
+        ErrorLogging.printMaxOncePerMinute("Cancel " + building + " (Invalid place)");
+        newConstructionOrder.cancel();
+//            throw new RuntimeException("Can't find place for `" + building + "` ");
+        return false;
     }
 
     private static boolean handleRequirementsNotFullfilledFor(AUnitType building) {

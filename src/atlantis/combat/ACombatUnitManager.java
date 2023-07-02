@@ -87,6 +87,8 @@ public class ACombatUnitManager {
     }
 
     private static boolean preActions(AUnit unit) {
+        unit.resetManager();
+
         if (unit.lastActionLessThanAgo(15, Actions.RIGHT_CLICK)) {
             unit.setTooltip("Manual", true);
             return true;

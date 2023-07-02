@@ -28,6 +28,9 @@ import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
+import atlantis.units.managers.Manager;
+import atlantis.units.managers.NoManager;
+import atlantis.units.managers.NullManager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -71,6 +74,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Inner BWAPI Unit object that we extend for easier code maintainability.
      */
     private Unit u;
+
+    /**
+     *
+     */
+    private Manager manager;
 
     /**
      * Cache var storing generic Object-type keys.
@@ -143,12 +151,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     // =========================================================
-    // Only for tests
+    // Constructors only used for tests
+
     protected AUnit() {
     }
 
     protected AUnit(FakeUnit unit) {
     }
+
     // =========================================================
 
     protected AUnit(Unit u) {
@@ -169,6 +179,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             AUnitType.Terran_Bunker, AUnitType.Terran_Missile_Turret,
             AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
         );
+    }
+
+    // =========================================================
+
+    public Manager manager() {
+        return manager;
+    }
+
+    public boolean useManager(Manager manager) {
+        this.manager = manager;
+
+        return manager != null;
     }
 
     // =========================================================
@@ -2681,5 +2703,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public HasPosition squadLeader() {
         return squad != null ? squad.leader() : null;
+    }
+
+    public Manager nullManager() {
+        return NullManager.getInstance();
+    }
+
+    public void resetManager() {
+        manager = NoManager.getInstance();
     }
 }

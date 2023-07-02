@@ -231,6 +231,12 @@ public abstract class MoveToFocusPoint {
 //                return unit.move(fromSide, Actions.MOVE_FOCUS, "TooClose" + dist, true);
 //            }
 
+            APosition fromSide = focus.fromSide();
+            if (fromSide != null) {
+                unit.move(focus, Actions.MOVE_FORMATION, "TooClozze" + dist);
+                return true;
+            }
+
             unit.moveAwayFrom(focus, 0.1, "TooCloze" + dist, Actions.MOVE_FOCUS);
             return true;
         }

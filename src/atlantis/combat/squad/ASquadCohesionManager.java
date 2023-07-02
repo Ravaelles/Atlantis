@@ -8,20 +8,21 @@ import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.managers.Manager;
 
-public class ASquadCohesionManager {
+public class ASquadCohesionManager extends Manager {
 
-    public static boolean update(AUnit unit) {
+    public static Manager update(AUnit unit) {
 //        if (shouldSkip(unit)) {
 //            return false;
 //        }
 
         if (A.supplyUsed() >= 150 && ArmyStrength.ourArmyRelativeStrength() >= 50) {
-            return false;
+            return null;
         }
 
-        if (ComeCloser.handleComeCloser(unit)) {
-            return true;
+        if (ComeCloser.handleComeCloser(unit) != null) {
+            return unit.manager();
         }
 
 //        if (TooClustered.handleTooClustered(unit)) {
