@@ -1,5 +1,5 @@
 # Atlantis
-...is an extensive Java framework based on [JBWAPI 1.5.1](https://github.com/JavaBWAPI/JBWAPI).
+...is an extensive Java framework based on [JBWAPI 2.1.0](https://github.com/JavaBWAPI/JBWAPI).
 
 ![image](https://camo.githubusercontent.com/482ac1f85226bd7c4a801e4f2e8533efbf69a463086a37ff5aac3bbbaa663e22/68747470733a2f2f692e6962622e636f2f4c7a3571544d782f41746c616e7469732e706e67)
 
