@@ -20,7 +20,7 @@ public class ProtossShieldBattery extends Manager {
             battery != null && battery.distToMoreThan(unit, 6)
                 && unit.move(battery, Actions.MOVE_SPECIAL, "ToBattery", false)
         ) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

@@ -1,6 +1,5 @@
 package atlantis.protoss;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.managers.Manager;
 import atlantis.units.select.Selection;
@@ -34,14 +33,14 @@ public class ProtossReaver extends Manager {
         if ((enemy = enemiesInRange.canBeAttackedBy(unit, 0).nearestTo(unit)) != null) {
             unit.attackUnit(enemy);
             unit.setTooltipTactical("Tasty" + enemy.name());
-            return usingManager(this);
+            return usedManager(this);
         }
 
         // If no very close enemy, then attack the one most distant
         if ((enemy = enemiesInRange.canBeAttackedBy(unit, 7).nearestTo(unit)) != null) {
             unit.attackUnit(enemy);
             unit.setTooltipTactical("Nice" + enemy.name());
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

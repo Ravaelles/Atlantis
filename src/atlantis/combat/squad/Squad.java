@@ -44,11 +44,11 @@ public abstract class Squad extends Units {
     protected AUnit _leader = null;
 
     private SquadCenter squadCenter = new SquadCenter(this);
+    private SquadCohesion squadCohesion = new SquadCohesion(this);
 
     // =========================================================
 
     public Squad(String name, Mission mission) {
-        super(unit);
         this.name = name;
         this.setMission(mission);
         ASquadManager.squads.add(this);
@@ -325,11 +325,15 @@ public abstract class Squad extends Units {
         return cacheDouble.get(
             "radius",
             17,
-            () -> SquadCohesion.squadMaxRadius(this)
+            () -> squadCohesion.squadMaxRadius()
         );
     }
 
     public boolean isLeader(AUnit unit) {
         return unit.equals(_leader);
+    }
+
+    public boolean isCohesionPercentOkay() {
+        return squadCohesion.isSquadCohesionOkay();
     }
 }

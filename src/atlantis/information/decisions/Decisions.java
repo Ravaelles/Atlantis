@@ -43,9 +43,7 @@ public class Decisions {
                 if (
                     !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Siege_Tank_Tank_Mode, 5)
                         && !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Machine_Shop, 5)
-                ) {
-                    return false;
-                }
+                ) return false;
 
                 return EnemyInfo.startedWithCombatBuilding && OurStrategy.get().goingBio();
             }
@@ -90,17 +88,13 @@ public class Decisions {
 
                 if (vultures == 0 && EnemyUnits.count(Zerg_Zergling) >= 7) return true;
 
-                if (vultures <= 2 && EnemyUnits.count(Protoss_Zealot) >= 6) {
-                    return false;
-                }
+                if (vultures <= 2 && EnemyUnits.count(Protoss_Zealot) >= 6) return false;
 
                 if (
                     GamePhase.isEarlyGame()
                         && vultures <= 3
                         && EnemyUnits.discovered().ofType(Protoss_Zealot).atLeast(5)
-                ) {
-                    return false;
-                }
+                ) return false;
 
                 return (maxFocusOnTanks() && vultures >= 1)
                     || (Enemy.terran() && vultures >= 1)
@@ -148,9 +142,7 @@ public class Decisions {
                     return Count.ourCombatUnits() >= 13;
                 }
 
-                if (Count.medics() <= 3) {
-                    return false;
-                }
+                if (Count.medics() <= 3) return false;
             }
         }
 

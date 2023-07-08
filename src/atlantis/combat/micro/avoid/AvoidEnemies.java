@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class AvoidEnemies extends Manager {
 
-    private  Cache<Units> cache = new Cache<>();
+    private Cache<Units> cache = new Cache<>();
     private AvoidCombatBuildings avoidCombatBuildings;
     private WantsToAvoid wantsToAvoid;
 
@@ -67,7 +67,7 @@ public class AvoidEnemies extends Manager {
         // Only ENEMY WORKERS
         if (
             unit.hpPercent() >= 70
-            && Select.from(enemiesDangerouslyClose).workers().size() == enemiesDangerouslyClose.size()
+                && Select.from(enemiesDangerouslyClose).workers().size() == enemiesDangerouslyClose.size()
         ) {
             unit.addLog("FightWorkers");
             return null;
@@ -82,16 +82,16 @@ public class AvoidEnemies extends Manager {
         return null;
     }
 
-    public  void clearCache() {
+    public void clearCache() {
         cache.clear();
     }
 
     // =========================================================
 
-    private  boolean shouldSkip() {
+    private boolean shouldSkip() {
         if (
             unit.hp() <= 16 && unit.isMelee() && unit.isCombatUnit()
-            && unit.enemiesNear().groundUnits().effVisible().inRadius(1, unit).notEmpty()
+                && unit.enemiesNear().groundUnits().effVisible().inRadius(1, unit).notEmpty()
         ) {
             unit.setTooltipTactical("Kamikaze");
             return true;
@@ -103,7 +103,7 @@ public class AvoidEnemies extends Manager {
 
         if (
             unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
-            && unit.lastStartedAttackMoreThanAgo(8)
+                && unit.lastStartedAttackMoreThanAgo(8)
         ) {
             unit.setTooltipTactical("StartAttack");
             return true;
@@ -112,18 +112,18 @@ public class AvoidEnemies extends Manager {
         return unit.isLoaded();
     }
 
-    private  boolean onlyEnemyCombatBuildingsAreNear(Units enemiesDangerouslyClose) {
+    private boolean onlyEnemyCombatBuildingsAreNear(Units enemiesDangerouslyClose) {
         return Select.from(enemiesDangerouslyClose).combatBuildings(false).size() == enemiesDangerouslyClose.size();
     }
 
-    public  Units unitsToAvoid() {
+    public Units unitsToAvoid() {
         return unitsToAvoid(true);
     }
 
-    public  Units unitsToAvoid(boolean onlyDangerouslyClose) {
+    public Units unitsToAvoid(boolean onlyDangerouslyClose) {
         return cache.get(
             "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
-            0,
+            1,
             () -> {
                 Units enemies = new Units();
 //                System.out.println("enemyUnitsToPotentiallyAvoid() = " + enemyUnitsToPotentiallyAvoid().size());
@@ -150,11 +150,12 @@ public class AvoidEnemies extends Manager {
 
                 if (onlyDangerouslyClose) {
                     return enemies.replaceUnitsWith(
-                            enemies.stream()
-                                    .filter(e -> enemies.valueFor(e) < 0)
-                                    .collect(Collectors.toList())
+                        enemies.stream()
+                            .filter(e -> enemies.valueFor(e) < 0)
+                            .collect(Collectors.toList())
                     );
-                } else {
+                }
+                else {
                     return enemies;
                 }
             }
@@ -171,24 +172,24 @@ public class AvoidEnemies extends Manager {
 //        return 0;
 //    }
 
-    public  boolean shouldAvoidAnyUnit() {
+    public boolean shouldAvoidAnyUnit() {
         return unitsToAvoid().isNotEmpty();
     }
 
-    public  boolean shouldNotAvoidAnyUnit() {
+    public boolean shouldNotAvoidAnyUnit() {
         return !shouldAvoidAnyUnit();
     }
 
     // =========================================================
 
-    protected  List<? extends AUnit> enemyUnitsToPotentiallyAvoid() {
+    protected List<? extends AUnit> enemyUnitsToPotentiallyAvoid() {
         return unit.enemiesNear()
 //                .nonBuildings() // This is because we rely on AvoidCombatBuildings
-                .removeDuplicates()
-                .onlyCompleted()
-                .canAttack(true, true, 4.5)
-                .havingPosition()
-                .list();
+            .removeDuplicates()
+            .onlyCompleted()
+            .canAttack(unit, true, true, 4.5)
+            .havingPosition()
+            .list();
     }
 
 }

@@ -1,6 +1,6 @@
 //package atlantis.combat.micro.managers;
 //
-//import atlantis.combat.micro.AAttackEnemyUnit;
+//import atlantis.combat.micro.attack.AttackNearbyEnemies;
 //import atlantis.combat.missions.focus.AFocusPoint;
 //import atlantis.map.position.APosition;
 //import atlantis.units.AUnit;
@@ -87,7 +87,7 @@
 //
 //        // =========================================================
 //
-////        if (AAttackEnemyUnit.handleAttackNearEnemyUnits()) {
+////        if (AttackNearbyEnemies.handleAttackNearEnemyUnits()) {
 ////            unit.setTooltip("Adv:Attack", true);
 ////            return true;
 ////        }
@@ -150,7 +150,7 @@
 ////            }
 //
 //            if (!unit.isMoving()) {
-//                String canAttack = AAttackEnemyUnit.canAttackEnemiesNowString();
+//                String canAttack = AttackNearbyEnemies.canAttackEnemiesNowString();
 //                if (unit.move(focusPoint, Actions.MOVE_ENGAGE, "Advance" + canAttack, true)) {
 //                    return true;
 //                }

@@ -36,7 +36,7 @@ public class UnitBeingReparedManager extends Manager {
         if (unit.isAir() && unit.isBeingRepaired()) {
             if (!unit.isRunning() && unit.isMoving()) {
                 unit.setTooltip("HoldTheFuckDown");
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 
@@ -55,13 +55,13 @@ public class UnitBeingReparedManager extends Manager {
         // Go to repairer if he's close
         if (distanceToRepairer > 1) {
             if (unit.move(repairer.position(), Actions.MOVE_REPAIR, "To repairer", false)) {
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 
         if (distanceToRepairer <= 1) {
             unit.holdPosition("Be repaired");
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;
@@ -82,7 +82,7 @@ public class UnitBeingReparedManager extends Manager {
         AUnit repairer = unit.repairer();
         if (repairer != null && repairer.distToLessThan(unit, 1.1) && repairer.isRepairing()) {
             unit.move(repairer, Actions.MOVE_REPAIR, "BeFixed");
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

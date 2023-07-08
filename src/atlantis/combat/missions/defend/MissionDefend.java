@@ -79,13 +79,9 @@ public class MissionDefend extends Mission {
             && !"Sparta".equals(unit.tooltip())
         ) {
             if (unit.hp() <= 18) {
-                if (Enemy.protoss()) {
-                    return false;
-                }
+                if (Enemy.protoss()) return false;
 
-                if (unit.hp() <= 10) {
-                    return false;
-                }
+                if (unit.hp() <= 10) return false;
             }
 
             unit.addLog("ProtectBuilding");

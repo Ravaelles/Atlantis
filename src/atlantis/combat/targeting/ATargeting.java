@@ -1,6 +1,6 @@
 package atlantis.combat.targeting;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -11,8 +11,8 @@ import atlantis.util.log.ErrorLogging;
 
 import java.util.List;
 
-import static atlantis.combat.micro.AAttackEnemyUnit.MAX_DIST_TO_ATTACK;
-import static atlantis.combat.micro.AAttackEnemyUnit.reasonNotToAttack;
+import static atlantis.combat.micro.attack.AttackNearbyEnemies.MAX_DIST_TO_ATTACK;
+import static atlantis.combat.micro.attack.AttackNearbyEnemies.reasonNotToAttack;
 
 public class ATargeting {
 
@@ -86,7 +86,7 @@ public class ATargeting {
     }
 
     public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
-        return defineBestEnemyToAttackFor(unit, AAttackEnemyUnit.MAX_DIST_TO_ATTACK);
+        return defineBestEnemyToAttackFor(unit, AttackNearbyEnemies.MAX_DIST_TO_ATTACK);
     }
 
     // =========================================================

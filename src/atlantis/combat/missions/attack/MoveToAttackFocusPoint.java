@@ -27,7 +27,7 @@ public class MoveToAttackFocusPoint extends Manager {
         if (shouldSkip()) return true;
 
         if (advance(unit, focusPoint)) {
-//            unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString());
+//            unit.setTooltipTactical("#MA:Advance" + AttackNearbyEnemies.canAttackEnemiesNowString());
             return true;
         }
 
@@ -40,7 +40,7 @@ public class MoveToAttackFocusPoint extends Manager {
 //        if (unit.lastPositioningActionMoreThanAgo(30)) {
 //        }
 
-        if (ASquadCohesionManager.update() != null) {
+        if (ASquadCohesionManager.handle() != null) {
             return true;
         }
 

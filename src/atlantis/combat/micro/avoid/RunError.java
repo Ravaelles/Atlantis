@@ -1,6 +1,6 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.managers.Manager;
 
@@ -16,7 +16,7 @@ public class RunError {
         unit.addLog("RUN-ERROR");
 
         if (unit.noCooldown()) {
-            AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
+            AttackNearbyEnemies.handleAttackNearEnemyUnits(unit);
             unit.setTooltipTactical("Cant run, fight");
         }
 

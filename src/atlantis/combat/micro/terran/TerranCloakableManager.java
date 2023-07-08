@@ -28,7 +28,7 @@ public class TerranCloakableManager extends Manager {
     @Override
     public Manager handle() {
         if (update()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

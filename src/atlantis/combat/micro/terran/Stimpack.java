@@ -25,7 +25,7 @@ public class Stimpack extends Manager {
     public Manager handle() {
         if (shouldUse()) {
             if (useStim()) {
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 

@@ -23,7 +23,7 @@ public class LoadIntoBunkers extends Manager {
     @Override
     public Manager handle() {
         if (tryLoadingInfantryIntoBunkerIfNeeded()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;
@@ -77,9 +77,7 @@ public class LoadIntoBunkers extends Manager {
                 double enemyDist = unit.distTo(nearestEnemy);
                 double enemyDistToBunker = nearestEnemy.distTo(bunker);
 
-                if (enemyDistToBunker + 1.5 < unitDistToBunker) {
-                    return false;
-                }
+                if (enemyDistToBunker + 1.5 < unitDistToBunker) return false;
 
                 canLoad = enemyDist < 2.4 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6;
             }

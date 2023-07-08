@@ -1,9 +1,12 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
+import atlantis.units.HasUnit;
 
-public class TerranFightInsteadAvoid {
+public class TerranFightInsteadAvoid extends HasUnit {
+
     public TerranFightInsteadAvoid(AUnit unit) {
+        super(unit);
     }
 
     public boolean fightForTerran() {

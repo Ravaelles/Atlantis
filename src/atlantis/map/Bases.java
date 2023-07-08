@@ -312,9 +312,7 @@ public class Bases {
             57,
             () -> {
                 APosition natural = natural();
-                if (natural == null) {
-                    return false;
-                }
+                if (natural == null) return false;
 
                 return Select.ourBuildingsWithUnfinished().bases().inRadius(8, natural).notEmpty();
             }
@@ -327,9 +325,7 @@ public class Bases {
             57,
             () -> {
                 APosition natural = natural();
-                if (natural == null) {
-                    return false;
-                }
+                if (natural == null) return false;
 
                 return Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).inRadius(12, natural).notEmpty();
             }

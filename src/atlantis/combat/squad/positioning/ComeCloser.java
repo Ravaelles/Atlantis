@@ -10,7 +10,6 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-//public class ComeCloser extends ASquadCohesionManager {
 public class ComeCloser extends Manager {
 
     private ComeCloserToTanks comeCloserToTanks;
@@ -18,11 +17,12 @@ public class ComeCloser extends Manager {
 
     public ComeCloser(AUnit unit) {
         super(unit);
-        comeCloserToTanks = new ComeCloserToTanks();
-        terranInfantryComeCloser = new TerranInfantryComeCloser();
+//        comeCloserToTanks = new ComeCloserToTanks();
+//        terranInfantryComeCloser = new TerranInfantryComeCloser();
     }
 
-    public Manager handleComeCloser() {
+    @Override
+    public Manager handle() {
         if (shouldSkip()) {
             return null;
         }
@@ -46,14 +46,14 @@ public class ComeCloser extends Manager {
 //            return true;
 //        }
 
-        AUnit friend = unit.squad().selection().exclude().nearestTo();
+        AUnit friend = unit.squad().selection().exclude(unit).nearestTo(unit);
         if (friend != null) {
             /** Notice: Without .makeWalkable it is known to infinite crash Starcraft process for some reason... */
 //            APosition goTo = friend.translateTilesTowards(0.3, unit).makeWalkable(3);
             APosition goTo = friend.translateTilesTowards(0.3, unit).makeWalkable(1);
             if (goTo != null) {
                 unit.move(goTo, Actions.MOVE_FORMATION, "Closer");
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 
@@ -156,7 +156,7 @@ public class ComeCloser extends Manager {
         double maxDistToSquadCenter = squad.radius();
 
         if (unit.distTo(center) > maxDistToSquadCenter && unit.friendsNear().inRadius(3.5, unit).atMost(7)) {
-            AUnit nearestFriend = unit.friendsNear().nearestTo();
+            AUnit nearestFriend = unit.friendsNear().nearestTo(unit);
             if (nearestFriend == null) {
                 return false;
             }
@@ -169,7 +169,7 @@ public class ComeCloser extends Manager {
             if (unit.move(
                 unit.translateTilesTowards(center, 2).makeWalkable(5),
                 Actions.MOVE_FOCUS,
-                "TooExposed(" + (int) center.distTo() + "/" + (int) unit.distTo(nearestFriend) + ")",
+                "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
                 false
             )) {
                 unit.addLog("TooExposed");

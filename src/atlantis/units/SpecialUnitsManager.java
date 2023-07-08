@@ -11,9 +11,9 @@ import atlantis.protoss.ProtossHighTemplar;
 import atlantis.protoss.ProtossObserver;
 import atlantis.units.managers.Manager;
 
-public class ASpecialUnitManager extends Manager {
+public class SpecialUnitsManager extends Manager {
 
-    public ASpecialUnitManager(AUnit unit) {
+    public SpecialUnitsManager(AUnit unit) {
         super(unit);
     }
 

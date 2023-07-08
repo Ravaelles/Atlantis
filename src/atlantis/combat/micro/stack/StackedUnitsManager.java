@@ -23,7 +23,7 @@ public class StackedUnitsManager extends Manager {
 
         if (nearest != null) {
             if (unit.moveAwayFrom(nearest, minDist / 2, "Stacked", Actions.MOVE_FORMATION)) {
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 

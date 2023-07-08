@@ -1,7 +1,6 @@
 
 package atlantis.protoss;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.AGame;
 import atlantis.information.tech.SpellCoordinator;
@@ -29,9 +28,9 @@ public class ProtossHighTemplar extends Manager {
 
     @Override
     public Manager handle() {
-        if (dontDisturb()) return usingManager(this);
+        if (dontDisturb()) return usedManager(this);
 
-        if (tryMeldingIntoArchon()) return usingManager(this);
+        if (tryMeldingIntoArchon()) return usedManager(this);
 
         if (AGame.everyNthGameFrame(3)) {
             if (handlePsionic()) {
@@ -40,7 +39,7 @@ public class ProtossHighTemplar extends Manager {
 //                        unit.idWithHash() + " casts PSIONIC at " + unit.lastTechPosition()
 //                        + " " + A.dist(unit.lastTechPosition())
 //                );
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 
@@ -48,7 +47,7 @@ public class ProtossHighTemplar extends Manager {
 //            return true;
 //        }
 
-        if (followArmy()) return usingManager(this);
+        if (followArmy()) return usedManager(this);
     }
 
     // =========================================================

@@ -13,7 +13,7 @@ public class SiegeHereDuringMissionDefend extends Manager {
     public Manager handle() {
         if (unit.isMissionDefendOrSparta() && unit.distToFocusPoint() <= minDist()) {
             if (unit.target() == null || unit.target().distTo(unit) < 12) {
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 

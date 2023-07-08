@@ -33,7 +33,7 @@ public class Avoid extends Manager {
 
         if (unit.runningManager().runFrom(enemy.position(), calculateRunDistance(enemy), Actions.RUN_ENEMY, false)) {
 //            unit.setTooltip(getTooltip(enemy));
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return runError.handleErrorRun(unit);

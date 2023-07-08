@@ -13,9 +13,7 @@ public class ShouldFightInsteadAvoidAsZerg {
             "shouldFight",
             1,
             () -> {
-                if (!unit.isZerg()) {
-                    return false;
-                }
+                if (!unit.isZerg()) return false;
 
                 if (asHydra(unit)) return true;
 

@@ -37,7 +37,7 @@ public class MissionContain extends Mission {
 //            return true;
 //        }
 
-        if (ASquadCohesionManager.update()) {
+        if (ASquadCohesionManager.handle()) {
             return true;
         }
 

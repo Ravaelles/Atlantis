@@ -27,7 +27,7 @@ public class ShouldRetreat extends Manager {
     @Override
     public Manager handle() {
         if (shouldRetreat(unit)) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;
@@ -41,13 +41,9 @@ public class ShouldRetreat extends Manager {
             "shouldRetreat:" + unit.id(),
             17,
             () -> {
-                if (A.isUms() && A.supplyUsed() <= 30) {
-                    return false;
-                }
+                if (A.isUms() && A.supplyUsed() <= 30) return false;
 
-                if (unit.isRunning()) {
-                    return false;
-                }
+                if (unit.isRunning()) return false;
 
 //                if (TempDontRetreat.temporarilyDontRetreat()) {
 //                    return false;
@@ -64,9 +60,7 @@ public class ShouldRetreat extends Manager {
 
                 if (terranShouldNotRetreat.shouldNotRetreat() != null) return true;
 
-                if (shouldNotConsiderRetreatingNow(unit)) {
-                    return false;
-                }
+                if (shouldNotConsiderRetreatingNow(unit)) return false;
 
 //                    if (CombatEvaluator.wouldLose()) {
 //                if (situationNotFavorable()) {

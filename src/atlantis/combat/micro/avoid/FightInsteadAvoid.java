@@ -7,7 +7,6 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
@@ -15,7 +14,7 @@ import atlantis.util.cache.Cache;
 
 public class FightInsteadAvoid {
 
-    private  Cache<Boolean> cache = new Cache<>();
+    private Cache<Boolean> cache = new Cache<>();
 
     protected final AUnit unit;
     protected final Units enemies;
@@ -34,7 +33,7 @@ public class FightInsteadAvoid {
     protected final AUnit vulture;
     protected final AUnit ranged;
     protected final AUnit melee;
-    private final TerranFightInsteadAvoid terranFightInsteadAvoid = new TerranFightInsteadAvoid();
+    private final TerranFightInsteadAvoid terranFightInsteadAvoid;
 
     // =========================================================
 
@@ -43,17 +42,19 @@ public class FightInsteadAvoid {
         this.enemies = enemies;
         this.enemiesSelection = Select.from(enemies);
 
+        terranFightInsteadAvoid = new TerranFightInsteadAvoid(unit);
+
         Selection selector = Select.from(enemies);
-        invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effUndetected().first();
-        invisibleCombatUnit = selector.clone().effUndetected().combatUnits().first();
-        lurker = selector.clone().ofType(AUnitType.Zerg_Lurker).first();
-        tankSieged = selector.clone().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first();
-        tanks = selector.clone().tanks().first();
-        vulture = selector.clone().ofType(AUnitType.Terran_Vulture).first();
-        reaver = selector.clone().ofType(AUnitType.Protoss_Reaver).first();
-        combatBuilding = selector.clone().buildings().first();
-        ranged = selector.clone().ranged().first();
-        melee = selector.clone().melee().first();
+        invisibleDT = selector.ofType(AUnitType.Protoss_Dark_Templar).effUndetected().first();
+        invisibleCombatUnit = selector.effUndetected().combatUnits().first();
+        lurker = selector.ofType(AUnitType.Zerg_Lurker).first();
+        tankSieged = selector.ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first();
+        tanks = selector.tanks().first();
+        vulture = selector.ofType(AUnitType.Terran_Vulture).first();
+        reaver = selector.ofType(AUnitType.Protoss_Reaver).first();
+        combatBuilding = selector.buildings().first();
+        ranged = selector.ranged().first();
+        melee = selector.melee().first();
     }
 
     // =========================================================
@@ -64,12 +65,10 @@ public class FightInsteadAvoid {
             3,
             () -> {
                 if (!unit.hasAnyWeapon()) return false;
-                
+
                 if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) return true;
 
-                if (unit.isMelee() && unit.shouldRetreat()) {
-                    return false;
-                }
+                if (unit.isMelee() && unit.shouldRetreat()) return false;
 
                 if (enemies.isEmpty()) {
                     System.err.println("NoEnemies? LooksBugged");
@@ -84,7 +83,7 @@ public class FightInsteadAvoid {
 
                 // Workers
                 if (unit.isWorker()) {
-                    return fightAsWorker(unit, enemies);
+                    return fightAsWorker(enemies);
                 }
 
                 // Combat units
@@ -142,12 +141,12 @@ public class FightInsteadAvoid {
         // vs COMBAT BUILDINGS
         if (
             combatBuilding != null
-            && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)
-            && unit.friendsInRadiusCount(2) >= 2
-            && unit.friendsInRadiusCount(4) >= (unit.isAir() ? 14 : 6)
-            && (!unit.isAir() || unit.woundPercentMax(15))
-            && unit.combatEvalRelative() >= 3.2
-            && (unit.hp() >= 23 || unit.isMelee())
+                && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)
+                && unit.friendsInRadiusCount(2) >= 2
+                && unit.friendsInRadiusCount(4) >= (unit.isAir() ? 14 : 6)
+                && (!unit.isAir() || unit.woundPercentMax(15))
+                && unit.combatEvalRelative() >= 3.2
+                && (unit.hp() >= 23 || unit.isMelee())
         ) {
             unit.addLog("FightBuilding");
             return true;
@@ -164,7 +163,7 @@ public class FightInsteadAvoid {
 
         if (
             lurker != null && (!lurker.isBurrowed() || lurker.isDetected())
-            && unit.noCooldown() && lurker.distToLessThan(unit, 4) && unit.friendsInRadiusCount(3) >= 3
+                && unit.noCooldown() && lurker.distToLessThan(unit, 4) && unit.friendsInRadiusCount(3) >= 3
         ) {
             unit.addLog("FightLurker");
             return true;
@@ -200,7 +199,7 @@ public class FightInsteadAvoid {
         if (
             unit.isMelee()
                 && unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony)
-                    .inRadius(2.8, unit).notEmpty()
+                .inRadius(2.8, unit).notEmpty()
         ) {
             unit.addLog("DefendCannon");
             return true;
@@ -459,6 +458,8 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightAsWorker(Units enemies) {
+        if (enemies.size() >= 3) return false;
+
         if (combatBuilding != null || lurker != null || reaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null) {
             return false;
         }

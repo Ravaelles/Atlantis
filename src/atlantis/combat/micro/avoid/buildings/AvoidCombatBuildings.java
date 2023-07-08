@@ -51,7 +51,7 @@ public class AvoidCombatBuildings extends Manager {
         double doNothingMargin = 0.3;
         if (distTo <= (criticalDist + doNothingMargin)) {
             unit.runningManager().runFrom(combatBuilding, 0.5, Actions.MOVE_AVOID, false);
-            return usingManager(this);
+            return usedManager(this);
         }
         else if (distTo < (criticalDist + doNothingMargin)) {
             // Do nothing

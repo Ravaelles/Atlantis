@@ -9,8 +9,6 @@ import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import bwapi.Color;
 
-import static atlantis.units.AUnitType.Terran_Science_Vessel;
-
 public class TransportUnits extends Manager {
 
     public TransportUnits(AUnit unit) {
@@ -19,19 +17,26 @@ public class TransportUnits extends Manager {
 
     @Override
     public boolean applies() {
-        return true;
+        return unit.isCombatUnit() &&
+            (unit.isMoving() && !unit.isAttackingOrMovingToAttack());
     }
 
     @Override
     public Manager handle() {
+        if (handleLoad()) {
+            return usedManager(this);
+        }
+
         if (unloadFromTransport()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;
     }
 
-    public  boolean unloadFromTransport() {
+    public boolean unloadFromTransport() {
+        if (!unit.isLoaded()) return false;
+
 //        System.out.println("unit.isLoaded() = " + unit.isLoaded());
 //        System.out.println("isBabyInDanger(unit, true) = " + isBabyInDanger(unit, true));
         if (
@@ -40,7 +45,7 @@ public class TransportUnits extends Manager {
                 && unit.lastActionMoreThanAgo(30 * 3, Actions.LOAD)
                 && !isBabyInDanger(unit, true)
         ) {
-            unit.loadedInto().unload();
+            unit.loadedInto().unload(unit);
             unit.setTooltipTactical("Disembark");
             return true;
         }
@@ -48,7 +53,7 @@ public class TransportUnits extends Manager {
         return false;
     }
 
-    public  boolean handleTransporting(AUnit transport, AUnit baby) {
+    public boolean handleTransporting(AUnit transport, AUnit baby) {
         if (transport.isBunker()) {
             return false;
         }
@@ -75,7 +80,11 @@ public class TransportUnits extends Manager {
 
     // =========================================================
 
-    public  boolean handleLoad() {
+    public boolean handleLoad() {
+        if (unit.isLoaded()) {
+            return false;
+        }
+
 //        if (unit.cooldownRemaining() == 0) {
 //            return false;
 //        }
@@ -88,7 +97,7 @@ public class TransportUnits extends Manager {
             AUnit transport = Select.our().transports(true).inRadius(3, unit).nearestTo(unit);
             if (transport != null && transport.hasFreeSpaceFor(unit) && !transport.hasCargo()) {
                 unit.load(transport);
-                transport.load();
+                transport.load(unit);
                 APainter.paintCircleFilled(unit, 7, Color.Blue);
                 unit.setTooltipTactical("Embark!");
                 return true;
@@ -107,7 +116,7 @@ public class TransportUnits extends Manager {
         return false;
     }
 
-    private  boolean shouldLoad() {
+    private boolean shouldLoad() {
         if (!unit.is(AUnitType.Protoss_Reaver, AUnitType.Protoss_High_Templar, AUnitType.Terran_Siege_Tank_Tank_Mode)) {
             return false;
         }
@@ -119,7 +128,7 @@ public class TransportUnits extends Manager {
 
         // Don't load too often
         if (
-                unit.lastActionLessThanAgo(8, Actions.LOAD)
+            unit.lastActionLessThanAgo(8, Actions.LOAD)
                 || unit.lastActionLessThanAgo(8, Actions.UNLOAD)
         ) {
             return false;
@@ -140,7 +149,7 @@ public class TransportUnits extends Manager {
 
     // =========================================================
 
-    private  boolean handleGoToSafety(AUnit transport, AUnit baby) {
+    private boolean handleGoToSafety(AUnit transport, AUnit baby) {
         AUnit nearEnemy = EnemyUnits.discovered().canAttack(baby, 5).nearestTo(transport);
         if (nearEnemy != null) {
             transport.moveAwayFrom(nearEnemy, 8, "ToSafety", Actions.MOVE_SAFETY);
@@ -151,11 +160,11 @@ public class TransportUnits extends Manager {
         return false;
     }
 
-    private  boolean isBabyInDanger(AUnit baby, boolean allowMoreDangerousBehavior) {
+    private boolean isBabyInDanger(AUnit baby, boolean allowMoreDangerousBehavior) {
         double safetyMargin = (allowMoreDangerousBehavior ? 0.5 : 2.5) + baby.woundPercent() / 100;
         boolean enemiesNear = baby.enemiesNear()
-                .canAttack(baby, safetyMargin)
-                .isNotEmpty();
+            .canAttack(baby, safetyMargin)
+            .isNotEmpty();
 
         if (!allowMoreDangerousBehavior && baby.woundPercent() < 75 && enemiesNear) {
             return true;
@@ -168,7 +177,7 @@ public class TransportUnits extends Manager {
         return false;
     }
 
-    private  boolean isTransportInDanger(AUnit transport) {
+    private boolean isTransportInDanger(AUnit transport) {
         if (transport.woundPercent() < 80) {
             return true;
         }
@@ -176,7 +185,7 @@ public class TransportUnits extends Manager {
         return transport.enemiesNear().canAttack(transport, 2.5).isNotEmpty();
     }
 
-    private  boolean followBaby(AUnit transport, AUnit baby) {
+    private boolean followBaby(AUnit transport, AUnit baby) {
         if (!baby.isLoaded() && (baby.isMoving() || transport.distToMoreThan(baby, 0.2))) {
             return transport.move(baby, Actions.MOVE_FOLLOW, "Follow", true);
         }
@@ -184,18 +193,18 @@ public class TransportUnits extends Manager {
         return false;
     }
 
-    private  boolean shouldLoadTheBaby(AUnit transport, AUnit baby) {
+    private boolean shouldLoadTheBaby(AUnit transport, AUnit baby) {
 //        System.out.println(baby.getID() + " baby.isUnderAttack(15) = " + baby.isUnderAttack(15));
         return !baby.isLoaded()
-                && transport.hasFreeSpaceFor(baby)
+            && transport.hasFreeSpaceFor(baby)
 //                && transport.lastActionMoreThanAgo(25, UnitActions.LOAD)
-                && transport.lastActionMoreThanAgo(8, Actions.UNLOAD)
-                && (baby.isUnderAttack(15))
+            && transport.lastActionMoreThanAgo(8, Actions.UNLOAD)
+            && (baby.isUnderAttack(15))
 //                && (baby.cooldownRemaining() > 0 && baby.lastStartedAttackMoreThanAgo(9) && baby.lastFrameOfStartingAttackMoreThanAgo(7))
-                && (!isTransportInDanger(transport) && isBabyInDanger(baby, false));
+            && (!isTransportInDanger(transport) && isBabyInDanger(baby, false));
     }
 
-    private  boolean shouldDropTheBaby(AUnit transport, AUnit baby) {
+    private boolean shouldDropTheBaby(AUnit transport, AUnit baby) {
 //        System.out.println("----");
 //        System.out.println("baby.isLoaded() = " + baby.isLoaded());
 //        System.out.println("transport.hasCargo() = " + transport.hasCargo());
@@ -204,18 +213,18 @@ public class TransportUnits extends Manager {
 //        System.out.println("!isBabyInDanger(baby, false) = " + !isBabyInDanger(baby, false));
 //        System.out.println("transport.lastActionMoreThanAgo(30 * 12, UnitActions.LOAD) = " + transport.lastActionMoreThanAgo(30 * 12, UnitActions.LOAD));
         return baby.isLoaded()
-                && transport.hasCargo()
+            && transport.hasCargo()
 //                && baby.cooldownRemaining() <= 8
-                && transport.lastActionMoreThanAgo(25, Actions.LOAD)
-                && (
-                        isTransportInDanger(transport)
-                        || transport.woundPercent() >= 87
-                        || !isBabyInDanger(baby, true)
-                        || transport.lastActionMoreThanAgo(30 * 12, Actions.LOAD)
-                );
+            && transport.lastActionMoreThanAgo(25, Actions.LOAD)
+            && (
+            isTransportInDanger(transport)
+                || transport.woundPercent() >= 87
+                || !isBabyInDanger(baby, true)
+                || transport.lastActionMoreThanAgo(30 * 12, Actions.LOAD)
+        );
     }
 
-    private  boolean loadTheBaby(AUnit transport, AUnit baby) {
+    private boolean loadTheBaby(AUnit transport, AUnit baby) {
         transport.load(baby);
         baby.load(transport);
         baby.runningManager().stopRunning();
@@ -223,7 +232,7 @@ public class TransportUnits extends Manager {
         return true;
     }
 
-    private  boolean dropTheBaby(AUnit transport) {
+    private boolean dropTheBaby(AUnit transport) {
         AUnit baby = transport.loadedUnits().get(0);
         transport.unload(baby);
         baby.unload(transport);

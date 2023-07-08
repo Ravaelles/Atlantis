@@ -200,9 +200,7 @@ public class EnemyInfo {
             "isDoingEarlyGamePush:",
             30,
             () -> {
-                if (!GamePhase.isEarlyGame()) {
-                    return false;
-                }
+                if (!GamePhase.isEarlyGame()) return false;
 
                 if (Enemy.protoss()) {
                     return EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(6);

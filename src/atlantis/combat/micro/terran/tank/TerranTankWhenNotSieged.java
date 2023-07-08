@@ -53,11 +53,11 @@ public class TerranTankWhenNotSieged extends TerranTank {
 //        }
 
         if ((new SiegeHereDuringMissionDefend(unit)).handle() != null) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         if (handleNearEnemyCombatBuilding() != null) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         if ((new UnitBeingReparedManager(unit)).handleDontRunWhenBeingRepared() != null) {
@@ -149,12 +149,12 @@ public class TerranTankWhenNotSieged extends TerranTank {
                 .isNotEmpty()
         ) {
             if (enemies.groundUnits().inRadius(5 + unit.id() % 4, unit).isEmpty()) {
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 
         if (enemies.inRadius(15, unit).atLeast(2)) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;
@@ -182,14 +182,14 @@ public class TerranTankWhenNotSieged extends TerranTank {
         unit.siege();
         unit.setTooltipTactical(log);
         unit.addLog(log);
-        return usingManager(this);
+        return usedManager(this);
     }
 
     private Manager forceSiege(String log) {
         unit.siege();
         unit.setTooltipTactical(log);
         unit.addLog(log);
-        return usingManager(this, "ForceSiege");
+        return usedManager(this, "ForceSiege");
     }
 
     private Manager handleNearEnemyCombatBuilding() {

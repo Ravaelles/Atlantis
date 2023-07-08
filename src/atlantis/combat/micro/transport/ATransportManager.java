@@ -1,7 +1,5 @@
 package atlantis.combat.micro.transport;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.managers.Manager;
@@ -40,7 +38,7 @@ public class ATransportManager extends Manager {
         }
 
         unit.setTooltipTactical("Chill");
-        return usingManager(this);
+        return usedManager(this);
     }
 
     // =========================================================

@@ -19,7 +19,7 @@ public class WouldBlockChoke extends Manager {
             && unit.distToNearestChokeLessThan(2)
         ) {
             unit.setTooltip("DoNotBlockChoke");
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

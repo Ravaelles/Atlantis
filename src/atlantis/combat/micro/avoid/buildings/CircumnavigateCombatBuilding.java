@@ -24,7 +24,7 @@ public class CircumnavigateCombatBuilding extends Manager {
 
         if (unit.move(goTo, Actions.MOVE_MACRO, "Around!", false)) {
             unit.setTooltip("SmartAround", false);
-            return usingManager(this);
+            return usedManager(this);
         }
         
         return null;

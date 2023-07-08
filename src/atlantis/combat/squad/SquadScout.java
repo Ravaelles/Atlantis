@@ -1,17 +1,15 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
-import atlantis.game.GameLog;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.actions.Actions;
 import bwapi.Color;
 
@@ -58,7 +56,7 @@ public class SquadScout {
     }
 
     private static void engageWorkersNow(AUnit squadScout) {
-        AAttackEnemyUnit.handleAttackNearEnemyUnits(squadScout);
+        AttackNearbyEnemies.handleAttackNearEnemyUnits(squadScout);
         squadScout.setTooltipTactical("MadeContact");
 
         if (EnemyUnits.discovered().atMost(2)) {

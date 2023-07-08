@@ -4,11 +4,26 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-public class ShouldStopRunning {
-    public static boolean shouldStopRunning(AUnit unit) {
+public class ShouldStopRunning extends Manager {
+
+    public ShouldStopRunning(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public Manager handle() {
+        if (check()) {
+            return usedManager(this);
+        }
+
+        return null;
+    }
+
+    public boolean check() {
 //        System.out.println(unit.id() + " // " + unit.isRunning()
 //                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit());
 //        System.out.println(unit.isRunning() + " // " + unit.runningManager().isRunning() + " // " + unit.action().isRunning());
@@ -69,7 +84,7 @@ public class ShouldStopRunning {
         return false;
     }
 
-    private static boolean decisionStopRunning(AUnit unit) {
+    private boolean decisionStopRunning() {
         if (unit.hp() <= 20 && unit.isTerranInfantry()) {
             AUnit nearestMedic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo();
             if (nearestMedic != null) {

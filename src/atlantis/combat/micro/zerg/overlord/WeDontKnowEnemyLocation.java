@@ -21,7 +21,7 @@ public class WeDontKnowEnemyLocation extends Manager {
             unit.setTooltipTactical("Find enemy");
 
             if (AScoutManager.tryFindingEnemy(unit)) {
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 

@@ -23,7 +23,7 @@ public class UnloadFromBunkers extends Manager {
     @Override
     public Manager handle() {
         if (tryUnloadingFromBunkerIfNeeded()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return handleSubmanagers();

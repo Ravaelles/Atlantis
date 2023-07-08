@@ -15,7 +15,7 @@ public class DontThinkAboutUnsieging extends Manager {
             unit.lastActionLessThanAgo(30 * (3 + unit.id() % 4), Actions.SIEGE)
             || unit.lastAttackFrameLessThanAgo(30 * (unit.id() % 4))
         ) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

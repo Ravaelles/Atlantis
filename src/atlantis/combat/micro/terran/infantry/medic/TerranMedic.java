@@ -62,7 +62,7 @@ public class TerranMedic extends Manager {
 
         if (!medic.isIdle() && medic.lastActionLessThanAgo(8, Actions.HEAL)) {
             medic.setTooltip("hEaL");
-            return usingManager(this);
+            return usedManager(this);
         }
 
 //        if (unblockChoke()) {
@@ -74,24 +74,24 @@ public class TerranMedic extends Manager {
 //        }
 
         if (healMostWoundedInRange()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         if (healAnyWoundedNear()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         if (Enemy.protoss() && bodyBlockMelee()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         if (tooFarFromNearestInfantry()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         // If there's no "real" infantry around, go to the nearest Marine, Firebat or Ghost.
         if (handleStickToAssignments()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

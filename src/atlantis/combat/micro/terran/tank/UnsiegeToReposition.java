@@ -16,7 +16,7 @@ public class UnsiegeToReposition extends Manager {
             && allowUnsiegingToReposition()
         ) {
             unit.setTooltip("Reposition");
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

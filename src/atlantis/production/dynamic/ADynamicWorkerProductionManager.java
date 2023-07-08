@@ -66,9 +66,7 @@ public class ADynamicWorkerProductionManager {
 
             if (A.supplyUsed() <= 15 && Count.zerglings() < 4) {
                 int zerglingsInQueue = ProductionQueue.countInQueue(AUnitType.Zerg_Zergling, 2);
-                if (!A.hasMinerals(zerglingsInQueue * 50 + 50)) {
-                    return false;
-                }
+                if (!A.hasMinerals(zerglingsInQueue * 50 + 50)) return false;
             }
         }
 

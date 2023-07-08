@@ -1,4 +1,4 @@
-package atlantis.combat.micro;
+package atlantis.combat.micro.attack;
 
 import atlantis.combat.targeting.ATargeting;
 import atlantis.decions.Decision;
@@ -11,25 +11,33 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
-public class AAttackEnemyUnit {
+public class AttackNearbyEnemies extends Manager {
 
     private static ProcessAttackUnit processAttackUnit;
     public final double MAX_DIST_TO_ATTACK = 25;
 
     public String reasonNotToAttack;
 
-    private AUnit unit;
+//    private AUnit unit;
     private static Cache<AUnit> cache = new Cache<>();
     private static Cache<Object> cacheObject = new Cache<>();
 
     // =========================================================
 
-    public AAttackEnemyUnit(AUnit unit) {
-        this.unit = unit;
+    public AttackNearbyEnemies(AUnit unit) {
+        super(unit);
         processAttackUnit = (new ProcessAttackUnit(unit));
     }
 
     // =========================================================
+
+    public Manager handle() {
+        if (handleAttackNearEnemyUnits(unit)) {
+            return usedManager(this);
+        }
+
+        return null;
+    }
 
     /**
      * Selects the best enemy unit and issues attack order.
@@ -43,16 +51,12 @@ public class AAttackEnemyUnit {
             "handleAttackNearEnemyUnits: " + unit.id(),
             4,
             () -> {
-                AAttackEnemyUnit service = new AAttackEnemyUnit(unit);
+                AttackNearbyEnemies service = new AttackNearbyEnemies(unit);
 
-                if (!service.canAttackNow()) {
-                    return false;
-                }
+                if (!service.canAttackNow()) return false;
 
                 AUnit enemy = service.defineEnemyToAttackFor();
-                if (enemy == null) {
-                    return false;
-                }
+                if (enemy == null) return false;
 
                 return processAttackUnit.processAttackOtherUnit(enemy);
             }
@@ -81,7 +85,7 @@ public class AAttackEnemyUnit {
             return false;
         }
 
-        boolean shouldRetreat = unit.shouldRetreat(unit);
+        boolean shouldRetreat = unit.shouldRetreat();
         if (unit.isMelee() && shouldRetreat) {
             return false;
         }

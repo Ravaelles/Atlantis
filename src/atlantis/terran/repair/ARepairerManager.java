@@ -117,9 +117,7 @@ public class ARepairerManager {
             boolean isCriticallyImportant = unitToRepair.isTank() || unitToRepair.isBunker();
             AUnit worker = repairerFor(unitToRepair, isCriticallyImportant);
             if (worker != null) {
-                if (AGame.isUms() && worker.distTo(unitToRepair) > 10 && !worker.hasPathTo(unitToRepair)) {
-                    return false;
-                }
+                if (AGame.isUms() && worker.distTo(unitToRepair) > 10 && !worker.hasPathTo(unitToRepair)) return false;
 
                 ARepairAssignments.addRepairer(worker, unitToRepair);
                 return true;

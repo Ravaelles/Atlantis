@@ -1,6 +1,6 @@
 package atlantis.units;
 
-import atlantis.combat.micro.Unfreezer;
+import atlantis.combat.micro.generic.Unfreezer;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
 

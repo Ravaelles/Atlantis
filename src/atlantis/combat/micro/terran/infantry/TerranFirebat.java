@@ -1,6 +1,6 @@
 package atlantis.combat.micro.terran.infantry;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -26,7 +26,7 @@ public class TerranFirebat extends Manager {
                 if (unit.runningManager().runFrom(
                     enemy, 1.0, Actions.RUN_ENEMY, false
                 )) {
-                    return usingManager(this);
+                    return usedManager(this);
                 };
             }
         }
@@ -37,9 +37,9 @@ public class TerranFirebat extends Manager {
                 && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
                 && unit.friendsNear().medics().inRadius(1.4, unit).notEmpty()
         ) {
-            if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
+            if (AttackNearbyEnemies.handleAttackNearEnemyUnits(unit)) {
                 unit.setTooltip("Napalm");
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 

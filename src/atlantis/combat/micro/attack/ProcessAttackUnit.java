@@ -1,4 +1,4 @@
-package atlantis.combat.micro;
+package atlantis.combat.micro.attack;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;

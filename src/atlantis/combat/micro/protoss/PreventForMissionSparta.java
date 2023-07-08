@@ -11,7 +11,7 @@ public class PreventForMissionSparta extends Manager {
 
     public Manager handle() {
         if (unit.isMissionSparta()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

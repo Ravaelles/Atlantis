@@ -44,7 +44,7 @@ public class ComeCloserToTanks extends Manager {
 
                 if (goTo != null && unit.move(goTo, Actions.MOVE_FORMATION, "HugTanks", false)) {
                     unit.addLog("HugTanks");
-                    return usingManager(this);
+                    return usedManager(this);
                 }
             }
         }

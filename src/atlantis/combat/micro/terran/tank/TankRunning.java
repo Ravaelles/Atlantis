@@ -17,7 +17,7 @@ public class TankRunning extends Manager {
             if (unit.enemiesNear().groundUnits().inRadius(3, unit).count() >= (unit.hpPercent() >= 50 ? 2 : 1)) {
                 unit.setTooltip("Evacuate");
                 unit.unsiege();
-                return usingManager(this);
+                return usedManager(this);
             }
         }
 

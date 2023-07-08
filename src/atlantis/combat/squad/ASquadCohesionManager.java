@@ -3,7 +3,8 @@ package atlantis.combat.squad;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.squad.positioning.ComeCloser;
 import atlantis.combat.squad.positioning.SquadCohesion;
-import atlantis.combat.squad.positioning.TooClustered;
+import atlantis.combat.squad.positioning.SquadTooLowCohesion;
+import atlantis.combat.squad.positioning.TooBigToThinkOfCohesion;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.map.position.APosition;
@@ -12,38 +13,46 @@ import atlantis.units.managers.Manager;
 
 public class ASquadCohesionManager extends Manager {
 
-    private ComeCloser comeCloser;
-    private SquadCohesion squadCohesion;
+//    private SquadCohesion squadCohesion;
+//    private ComeCloser comeCloser;
+//    private SquadTooLowCohesion squadTooLowCohesion;
 
     public ASquadCohesionManager(AUnit unit) {
         super(unit);
-        comeCloser = new ComeCloser();
-        squadCohesion = new SquadCohesion();
+//        squadCohesion = new SquadCohesion(unit.squad());
+//        comeCloser = new ComeCloser(unit);
+//        squadTooLowCohesion = new SquadTooLowCohesion(unit);
     }
 
-    public Manager update(AUnit unit) {
-//        if (shouldSkip()) {
-//            return false;
-//        }
-
-        if (A.supplyUsed() >= 150 && ArmyStrength.ourArmyRelativeStrength() >= 50) {
-            return null;
-        }
-
-        if (comeCloser.handleComeCloser() != null) {
-            return unit.manager();
-        }
-
-//        if (TooClustered.handleTooClustered()) {
-//            return true;
-//        }
-
-        if (squadCohesion.handleTooLowCohesion() != null) {
-            return unit.manager();
-        }
-
-        return null;
+    @Override
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            TooBigToThinkOfCohesion.class,
+            ComeCloser.class,
+            SquadTooLowCohesion.class,
+        };
     }
+
+    //    @Override
+//    public Manager handle() {
+////        if (shouldSkip()) {
+////            return false;
+////        }
+//
+//        if (comeCloser.handle() != null) {
+//            return unit.manager();
+//        }
+//
+////        if (TooClustered.handleTooClustered()) {
+////            return true;
+////        }
+//
+//        if (squadTooLowCohesion.handle() != null) {
+//            return unit.manager();
+//        }
+//
+//        return null;
+//    }
 
 //    private static boolean shouldSkip(AUnit unit) {
 //        return
@@ -53,9 +62,9 @@ public class ASquadCohesionManager extends Manager {
 //                || (!unit.isMissionDefend() && unit.distToNearestChokeLessThan(6));
 //    }
 
-    protected static AFocusPoint focusPoint(AUnit unit) {
-        return unit.mission().focusPoint();
-    }
+//    protected static AFocusPoint focusPoint(AUnit unit) {
+//        return unit.mission().focusPoint();
+//    }
 
 //    private static boolean handleShouldStickCloser(AUnit unit) {
 //        if (shouldSkipStickCloser()) {
@@ -87,8 +96,8 @@ public class ASquadCohesionManager extends Manager {
 
     // =========================================================
 
-    protected static APosition squadCenter(AUnit unit) {
-        return unit.squad().center();
-    }
+//    protected static APosition squadCenter(AUnit unit) {
+//        return unit.squad().center();
+//    }
 
 }

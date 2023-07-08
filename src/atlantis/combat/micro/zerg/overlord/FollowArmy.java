@@ -25,7 +25,7 @@ public class FollowArmy extends Manager {
                     unit.distTo(medianUnitPosition) > 2.5
                         && unit.move(medianUnitPosition, Actions.MOVE_FOLLOW, "Follow army", true)
                 ) {
-                    return usingManager(this);
+                    return usedManager(this);
                 }
             }
 

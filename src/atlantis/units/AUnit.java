@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.combat.eval.AtlantisJfap;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.margin.UnitRange;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
@@ -275,6 +276,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     private Squad squad;
     private final ARunningManager runningManager = new ARunningManager(this);
+    private final AvoidEnemies avoidEnemiesManager = new AvoidEnemies(this);
 
     private boolean _repairableMechanically = false;
     private boolean _healable = false;
@@ -2709,9 +2711,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return squad != null ? squad.leader() : null;
     }
 
-//    public Manager nullManager() {
-//        return NullManager.getInstance();
-//    }
+    public AvoidEnemies avoidEnemiesManager() {
+        return avoidEnemiesManager;
+    }
 
     public void setManagerUsed(Manager managerUsed) {
         this.manager = managerUsed;

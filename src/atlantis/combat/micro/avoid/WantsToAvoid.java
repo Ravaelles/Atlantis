@@ -1,6 +1,6 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -32,8 +32,8 @@ public class WantsToAvoid extends Manager {
 
 //            unit.addFileLog("NOT shouldAlwaysAvoid");
 //            unit.addLog("NOT shouldAlwaysAvoid");
-            if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
-                return usingManager(this, "ButAttack");
+            if (AttackNearbyEnemies.handleAttackNearEnemyUnits(unit)) {
+                return usedManager(this, "ButAttack");
             }
         }
 

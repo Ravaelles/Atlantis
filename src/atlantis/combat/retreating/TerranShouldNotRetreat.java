@@ -16,17 +16,17 @@ public class TerranShouldNotRetreat extends Manager {
 
         if (unit.isTank() && unit.woundPercentMax(60) && unit.cooldownRemaining() <= 0) {
             unit.setTooltip("BraveTank");
-            return usingManager(this);
+            return usedManager(this);
         }
 
         if (unit.kitingUnit() && unit.isHealthy()) {
             unit.setTooltip("BraveKite");
-            return usingManager(this);
+            return usedManager(this);
         }
 
         if (unit.isStimmed() && (unit.hp() >= 17 || unit.noCooldown()) && unit.enemiesNearInRadius(1.8) <= 2) {
             unit.setTooltip("BraveStim");
-            return usingManager(this);
+            return usedManager(this);
         }
 
 //        if (unit.friendsInRadius(4).count() >= 8) {

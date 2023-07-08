@@ -808,9 +808,7 @@ public class AUnitType implements Comparable<Object> {
             "isMilitaryBuilding",
             -1,
             () -> {
-                if (!isBuilding()) {
-                    return false;
-                }
+                if (!isBuilding()) return false;
                 if (canShootGround && isMilitaryBuildingAntiGround()) return true;
                 else return canShootAir && isMilitaryBuildingAntiAir();
             }
@@ -1159,9 +1157,7 @@ public class AUnitType implements Comparable<Object> {
             "hasNoWeaponAtAll",
             -1,
             () -> {
-                if (isCarrier() || isReaver()) {
-                    return false;
-                }
+                if (isCarrier() || isReaver()) return false;
 
                 return groundWeapon().damageAmount() == 0 && airWeapon().damageAmount() == 0;
             }

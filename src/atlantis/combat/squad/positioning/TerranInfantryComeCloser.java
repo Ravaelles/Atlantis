@@ -31,7 +31,7 @@ public class TerranInfantryComeCloser extends Manager {
         AUnit nearestMedic = Select.ourOfType(AUnitType.Terran_Medic).nearestTo();
         if (nearestMedic.distToMoreThan(unit, 2.3)) {
             unit.setTooltipTactical("LoveMedics");
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

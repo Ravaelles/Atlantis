@@ -108,14 +108,20 @@ public abstract class Manager extends ManagerHelpers {
     /**
      * Indicates this Manager was just used by the unit.
      */
-    public Manager usingManager(Manager manager) {
-        return usingManager(manager, null);
+    public Manager usedManager(Manager manager) {
+        return usedManager(manager, null);
+    }
+
+    public Manager fallbackToUseManager(Class<? extends Manager> classObject) {
+        Manager manager = instantiateManager(classObject);
+
+        return manager.handle();
     }
 
     /**
      * Indicates this Manager was just used by the unit.
      */
-    public Manager usingManager(Manager manager, String message) {
+    public Manager usedManager(Manager manager, String message) {
         if (message != null && !message.equals("")) {
             unit.setManagerUsed(manager, message);
         } else {

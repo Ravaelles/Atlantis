@@ -19,7 +19,7 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
 
         if (shouldHoldGround(combatBuilding)) {
             unit.holdPosition("HoldHere");
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

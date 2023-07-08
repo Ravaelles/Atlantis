@@ -15,7 +15,7 @@ public class GoTowardsMedic extends Manager {
     @Override
     public Manager handle() {
         if (check()) {
-            return usingManager(this);
+            return usedManager(this);
         }
 
         return null;

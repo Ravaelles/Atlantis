@@ -1,7 +1,5 @@
 package atlantis.units;
 
-import atlantis.combat.squad.Squad;
-
 public abstract class HasUnit {
     protected AUnit unit;
 
