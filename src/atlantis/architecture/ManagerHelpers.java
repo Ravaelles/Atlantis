@@ -1,6 +1,4 @@
-package atlantis.units.managers;
-
-import atlantis.units.AUnit;
+package atlantis.architecture;
 
 import java.util.Arrays;
 import java.util.stream.Stream;

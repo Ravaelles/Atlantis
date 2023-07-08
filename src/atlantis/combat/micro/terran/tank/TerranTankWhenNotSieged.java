@@ -7,7 +7,7 @@ import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;

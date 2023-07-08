@@ -3,7 +3,7 @@ package atlantis.combat.micro.zerg.overlord;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.scout.AScoutManager;
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class WeDontKnowEnemyLocation extends Manager {
 

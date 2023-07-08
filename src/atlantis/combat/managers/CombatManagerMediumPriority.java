@@ -2,17 +2,10 @@ package atlantis.combat.managers;
 
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
-import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
-import atlantis.combat.micro.managers.DanceAfterShoot;
-import atlantis.combat.micro.managers.StopAndShoot;
-import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.combat.running.ShouldStopRunning;
 import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.AUnit;
-import atlantis.units.interrupt.DontDisturbInterrupt;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class CombatManagerMediumPriority extends Manager {
 

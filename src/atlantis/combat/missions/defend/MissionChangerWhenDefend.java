@@ -1,17 +1,18 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.game.AGame;
+import atlantis.util.We;
 
 public class MissionChangerWhenDefend {
 
     public  void changeMissionIfNeeded() {
-        if (AGame.isPlayingAsTerran()) {
+        if (We.terran()) {
             TerranMissionChangerWhenDefend.changeMissionIfNeeded();
         }
-        else if (AGame.isPlayingAsProtoss()) {
+        else if (We.protoss()) {
             ProtossMissionChangerWhenDefend.changeMissionIfNeeded();
         }
-        else {
+        else if (We.zerg()) {
             ZergMissionChangerWhenDefend.changeMissionIfNeeded();
         }
     }

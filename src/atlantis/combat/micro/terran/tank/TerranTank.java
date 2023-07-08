@@ -4,8 +4,7 @@ import atlantis.information.tech.ATech;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import bwapi.TechType;
@@ -46,7 +45,7 @@ public class TerranTank extends Manager {
         return Select.ourCombatUnits().inRadius(6, unit).atMost(4);
     }
 
-    public boolean siegeResearched() {
+    public static boolean siegeResearched() {
         return ATech.isResearched(TechType.Tank_Siege_Mode);
     }
 

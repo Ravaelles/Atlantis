@@ -1,9 +1,6 @@
 package atlantis.combat.micro.terran.tank;
 
-import atlantis.combat.missions.Missions;
-import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
 
 public class TerranTankWhenSieged extends TerranTank {
 

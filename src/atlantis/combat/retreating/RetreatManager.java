@@ -1,10 +1,9 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.micro.avoid.FightInsteadAvoid;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 

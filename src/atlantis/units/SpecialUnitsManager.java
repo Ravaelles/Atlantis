@@ -9,7 +9,7 @@ import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.overlord.ZergOverlordManager;
 import atlantis.protoss.ProtossHighTemplar;
 import atlantis.protoss.ProtossObserver;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class SpecialUnitsManager extends Manager {
 

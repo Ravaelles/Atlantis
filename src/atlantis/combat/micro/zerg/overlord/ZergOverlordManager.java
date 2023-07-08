@@ -4,7 +4,7 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.stack.StackedUnitsManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class ZergOverlordManager extends Manager {
 

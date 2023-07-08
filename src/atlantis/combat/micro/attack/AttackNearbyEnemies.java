@@ -4,7 +4,7 @@ import atlantis.combat.targeting.ATargeting;
 import atlantis.decions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;

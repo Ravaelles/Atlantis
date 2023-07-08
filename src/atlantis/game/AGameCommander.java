@@ -1,6 +1,6 @@
 package atlantis.game;
 
-import atlantis.combat.ACombatCommander;
+import atlantis.combat.CombatCommander;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.config.MapSpecificConfig;
 import atlantis.debug.painter.AAdvancedPainter;
@@ -18,6 +18,8 @@ import atlantis.util.CodeProfiler;
  * Top abstraction level entity that issues orders to all other modules (managers).
  */
 public class AGameCommander {
+
+    private CombatCommander combatCommander = new CombatCommander();
 
     /**
      * Executed every time when game has new frame.
@@ -51,7 +53,7 @@ public class AGameCommander {
         // === Combat =======================================================
 
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_COMBAT);
-        ACombatCommander.update();
+        combatCommander.handle();
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_COMBAT);
 
         // === Scout ========================================================
@@ -64,7 +66,6 @@ public class AGameCommander {
 
         CodeProfiler.startMeasuring(CodeProfiler.ASPECT_OTHER);
         ABuildingManager.update();
-        MissionChanger.evaluateGlobalMission();
         EnemyUnitsUpdater.updateFoggedUnits();
         UmsSpecialActionsManager.update();
         AUnitStateManager.update();

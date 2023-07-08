@@ -102,7 +102,7 @@ public abstract class AStrategyResponse {
         return enemyStrategy.isGoingCheese() ? 3 : 2;
     }
 
-    protected void handleAirUnitsDefence() {
+    public void handleAirUnitsDefence() {
 //        OurStrategicBuildings.setAntiAirBuildingsNeeded(5);
 //        AAntiAirBuildingRequests.requestAntiAirQuick(null);
     }

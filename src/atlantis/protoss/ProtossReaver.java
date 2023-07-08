@@ -1,7 +1,7 @@
 package atlantis.protoss;
 
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 import atlantis.units.select.Selection;
 
 public class ProtossReaver extends Manager {

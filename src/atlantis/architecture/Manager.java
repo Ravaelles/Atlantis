@@ -1,15 +1,21 @@
-package atlantis.units.managers;
+package atlantis.architecture;
 
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
+/**
+ * Unit manager. Can contain submanagers (see managers() method).
+ *
+ * If a manager return non-null value in handle(), it will prevent execution of
+ * other managers in this frame.
+ */
 public abstract class Manager extends ManagerHelpers {
 
     protected AUnit unit;
     protected Squad squad;
 
-    protected Class<? extends Manager>[] managers = new Class[] {};
+//    protected Class<? extends Manager>[] managers = new Class[] {};
 
     private Manager[] managerInstances;
 
@@ -28,7 +34,7 @@ public abstract class Manager extends ManagerHelpers {
      * All sub-managers. Order matters.
      */
     protected Class<? extends Manager>[] managers() {
-        return managers;
+        return new Class[] {};
     }
 
     /**
@@ -73,7 +79,7 @@ public abstract class Manager extends ManagerHelpers {
     }
 
     private Manager[] initializeManagerInstances() {
-        managers = managers();
+        Class<? extends Manager>[] managers = managers();
 
         managerInstances = new Manager[managers.length];
 

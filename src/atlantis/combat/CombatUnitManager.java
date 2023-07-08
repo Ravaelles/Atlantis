@@ -3,7 +3,7 @@ package atlantis.combat;
 import atlantis.combat.managers.*;
 import atlantis.units.SpecialUnitsManager;
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class CombatUnitManager extends Manager {
 

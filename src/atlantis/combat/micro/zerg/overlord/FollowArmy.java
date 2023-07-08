@@ -4,7 +4,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class FollowArmy extends Manager {
 

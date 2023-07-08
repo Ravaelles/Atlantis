@@ -3,7 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class AdvanceAsLeader extends Manager {
 

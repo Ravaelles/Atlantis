@@ -8,7 +8,7 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.running.ShouldStopRunning;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.DontDisturbInterrupt;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class CombatManagerTopPriority extends Manager {
 

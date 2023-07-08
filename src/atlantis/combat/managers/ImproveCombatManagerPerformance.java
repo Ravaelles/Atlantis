@@ -2,7 +2,7 @@ package atlantis.combat.managers;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class ImproveCombatManagerPerformance extends Manager {
 

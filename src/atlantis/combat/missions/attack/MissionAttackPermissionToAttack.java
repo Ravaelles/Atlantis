@@ -4,7 +4,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.decions.Decision;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class MissionAttackPermissionToAttack extends Manager {
 

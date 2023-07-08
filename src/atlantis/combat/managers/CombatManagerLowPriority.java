@@ -2,7 +2,7 @@ package atlantis.combat.managers;
 
 import atlantis.combat.missions.Mission;
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 import atlantis.util.log.ErrorLog;
 
 public class CombatManagerLowPriority extends Manager {

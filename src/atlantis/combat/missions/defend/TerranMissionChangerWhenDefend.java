@@ -102,7 +102,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
             return false;
         }
 
-        if (Count.tanks() >= 2 && !ATech.isResearched(Tank_Siege_Mode)) {
+        if (Count.tanks() >= 2 && !TerranTank.siegeResearched()) {
             return false;
         }
 

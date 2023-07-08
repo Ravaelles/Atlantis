@@ -2,7 +2,7 @@ package atlantis.combat.micro.terran.tank;
 
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class DontThinkAboutUnsieging extends Manager {
 

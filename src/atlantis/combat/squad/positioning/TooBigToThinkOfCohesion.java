@@ -3,7 +3,7 @@ package atlantis.combat.squad.positioning;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class TooBigToThinkOfCohesion extends Manager {
 

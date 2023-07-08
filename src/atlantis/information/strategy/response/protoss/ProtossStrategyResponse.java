@@ -35,7 +35,7 @@ public class ProtossStrategyResponse extends AStrategyResponse {
     // === Air units ======================================================
 
     @Override
-    protected void handleAirUnitsDefence() {
+    public void handleAirUnitsDefence() {
         OurStrategicBuildings.setAntiAirBuildingsNeeded(1);
     }
 

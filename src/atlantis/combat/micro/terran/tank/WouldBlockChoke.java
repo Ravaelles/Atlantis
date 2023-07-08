@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.tank;
 
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 

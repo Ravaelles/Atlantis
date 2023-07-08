@@ -1,15 +1,10 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.squad.positioning.ComeCloser;
-import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.combat.squad.positioning.SquadTooLowCohesion;
 import atlantis.combat.squad.positioning.TooBigToThinkOfCohesion;
-import atlantis.game.A;
-import atlantis.information.generic.ArmyStrength;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class ASquadCohesionManager extends Manager {
 

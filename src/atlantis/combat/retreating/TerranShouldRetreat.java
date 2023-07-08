@@ -1,7 +1,7 @@
 package atlantis.combat.retreating;
 
 import atlantis.units.AUnit;
-import atlantis.units.managers.Manager;
+import atlantis.architecture.Manager;
 
 public class TerranShouldRetreat extends Manager {
 
