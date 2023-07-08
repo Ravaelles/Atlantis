@@ -48,7 +48,7 @@ public abstract class Squad extends Units {
     // =========================================================
 
     public Squad(String name, Mission mission) {
-        super();
+        super(unit);
         this.name = name;
         this.setMission(mission);
         ASquadManager.squads.add(this);

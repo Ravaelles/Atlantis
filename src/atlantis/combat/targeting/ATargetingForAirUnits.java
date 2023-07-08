@@ -9,11 +9,11 @@ public class ATargetingForAirUnits {
     protected static AUnit targetForAirUnits(AUnit unit) {
         AUnit target;
 
-        if ((target = targetsCrucial(unit)) != null) {
+        if ((target = targetsCrucial()) != null) {
             return target;
         }
 
-        if ((target = targetsStandard(unit)) != null) {
+        if ((target = targetsStandard()) != null) {
             return target;
         }
 
@@ -43,7 +43,7 @@ public class ATargetingForAirUnits {
 
                     AUnitType.Zerg_Scourge
                 )
-                .inShootRangeOf(unit)
+                .inShootRangeOf()
                 .mostWounded();
         if (target != null) {
             return target;
@@ -63,7 +63,7 @@ public class ATargetingForAirUnits {
                     AUnitType.Zerg_Defiler,
                     AUnitType.Zerg_Guardian
                 )
-                .inShootRangeOf(unit)
+                .inShootRangeOf()
                 .mostWounded();
         if (target != null) {
             return target;
@@ -80,7 +80,7 @@ public class ATargetingForAirUnits {
                     AUnitType.Zerg_Defiler,
                     AUnitType.Zerg_Guardian
                 )
-//                .inShootRangeOf(unit)
+//                .inShootRangeOf()
                 .inRadius(15, unit)
                 .mostWounded();
         if (target != null) {
@@ -99,7 +99,7 @@ public class ATargetingForAirUnits {
 
                     AUnitType.Zerg_Mutalisk
                 )
-//                .inShootRangeOf(unit)
+//                .inShootRangeOf()
                 .inRadius(15, unit)
                 .mostWounded();
         if (target != null) {
@@ -121,7 +121,7 @@ public class ATargetingForAirUnits {
                     AUnitType.Zerg_Guardian,
                     AUnitType.Zerg_Devourer
                 )
-                .inShootRangeOf(unit)
+                .inShootRangeOf()
                 .mostWounded();
         if (target != null) {
             return target;
@@ -132,7 +132,7 @@ public class ATargetingForAirUnits {
 
         target = allEnemies
                 .air()
-                .inShootRangeOf(unit)
+                .inShootRangeOf()
                 .mostWounded();
         if (target != null) {
             return target;
@@ -144,7 +144,7 @@ public class ATargetingForAirUnits {
 //        target = allEnemies
 //                .transports(true)
 //                .inRadius(10, unit)
-//                .nearestTo(unit);
+//                .nearestTo();
 //        if (target != null) {
 //            return target;
 //        }
@@ -154,7 +154,7 @@ public class ATargetingForAirUnits {
 
         target = allEnemies
                 .workers()
-                .inShootRangeOf(unit)
+                .inShootRangeOf()
                 .mostWounded();
         if (target != null) {
             return target;
@@ -174,7 +174,7 @@ public class ATargetingForAirUnits {
         target = allEnemies
                 .workers()
                 .inRadius(50, unit)
-                .nearestTo(unit);
+                .nearestTo();
         if (target != null) {
             return target;
         }
@@ -185,7 +185,7 @@ public class ATargetingForAirUnits {
         target = allEnemies
                 .bases()
                 .inRadius(50, unit)
-                .nearestTo(unit);
+                .nearestTo();
         if (ATargeting.DEBUG) System.out.println("target AA1 = " + target + " // " + unit);
 
         if (target != null) {
@@ -198,7 +198,7 @@ public class ATargetingForAirUnits {
         target = allEnemies
                 .ofType(AUnitType.Zerg_Sunken_Colony)
                 .inRadius(50, unit)
-                .nearestTo(unit);
+                .nearestTo();
         if (ATargeting.DEBUG) System.out.println("target AA2 = " + target + " // " + unit);
 
         if (target != null) {
@@ -212,7 +212,7 @@ public class ATargetingForAirUnits {
             .combatUnits()
                 .notHavingAntiAirWeapon()
                 .inRadius(50, unit)
-                .nearestTo(unit);
+                .nearestTo();
         if (ATargeting.DEBUG) System.out.println("target AA3 = " + target + " // " + unit);
 
         if (target != null) {
@@ -225,7 +225,7 @@ public class ATargetingForAirUnits {
 //        target = allEnemies
 //                .notHavingAntiAirWeapon()
 //                .inRadius(50, unit)
-//                .nearestTo(unit);
+//                .nearestTo();
 //        if (ATargeting.DEBUG) System.out.println("target AA4 = " + target + " // " + unit);
 //
 //        if (target != null) {
@@ -238,7 +238,7 @@ public class ATargetingForAirUnits {
         target = allEnemies
                 .combatUnits()
                 .inRadius(50, unit)
-                .nearestTo(unit);
+                .nearestTo();
         if (ATargeting.DEBUG) System.out.println("target AA5 = " + target + " // " + unit);
 
         if (target != null) {

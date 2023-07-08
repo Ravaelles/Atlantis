@@ -62,10 +62,10 @@ public class SquadTransfers {
 
     private static void transferUnitToSquad(AUnit unit, Squad toSquad) {
         if (unit.squad() != null) {
-            unit.squad().removeUnit(unit);
+            unit.squad().removeUnit();
         }
 
-        toSquad.addUnit(unit);
+        toSquad.addUnit();
         unit.setSquad(toSquad);
     }
 
@@ -73,7 +73,7 @@ public class SquadTransfers {
         Squad squad = unit.squad();
 
         if (squad != null) {
-            squad.removeUnit(unit);
+            squad.removeUnit();
             unit.setSquad(null);
         }
 //        if (unit.isOur() && unit.isCombatUnit()) {

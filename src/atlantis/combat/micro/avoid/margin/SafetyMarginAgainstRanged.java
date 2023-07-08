@@ -1,14 +1,13 @@
 package atlantis.combat.micro.avoid.margin;
 
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Color;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
-
-//    private static final double MIN_DIST_TO_COMBAT_BUILDING = 8.7;
 
     public static double calculate(AUnit defender, AUnit attacker) {
         double criticalDist;
@@ -61,7 +60,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     }
 
     private static double shouldRetreatBonus(AUnit defender) {
-        if (RetreatManager.getCachedShouldRetreat(defender)) {
+        if (ShouldRetreat.shouldRetreat(defender)) {
             return 4.2;
         }
 

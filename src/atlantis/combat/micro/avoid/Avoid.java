@@ -1,6 +1,5 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.combat.micro.avoid.buildings.CircumnavigateCombatBuilding;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
@@ -8,59 +7,66 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Selection;
 import bwapi.Color;
 
-public class Avoid {
+public class Avoid extends Manager {
 
-    public static boolean singleUnit(AUnit unit, AUnit enemy) {
+    private final RunError runError = new RunError(this);
+
+    public Avoid(AUnit unit) {
+        super(unit);
+    }
+
+    public Manager singleUnit(AUnit enemy) {
         APainter.paintCircle(enemy, 16, Color.Orange);
 
         if (enemy.position() == null) {
 //            System.err.println("enemy.position() is NULL for " + enemy);
-            return false;
+            return null;
         }
 
         if (enemy.isCombatBuilding()) {
-            return CircumnavigateCombatBuilding.handle(unit, enemy);
+            return (new CircumnavigateCombatBuilding(unit)).handleAround(enemy);
         }
 
-        if (unit.runningManager().runFrom(enemy.position(), calculateRunDistance(unit, enemy), Actions.RUN_ENEMY, false)) {
-//            unit.setTooltip(getTooltip(unit, enemy));
-            return true;
+        if (unit.runningManager().runFrom(enemy.position(), calculateRunDistance(enemy), Actions.RUN_ENEMY, false)) {
+//            unit.setTooltip(getTooltip(enemy));
+            return usingManager(this);
         }
 
-        return handleErrorRun(unit);
+        return runError.handleErrorRun(unit);
     }
 
-    public static boolean groupOfUnits(AUnit unit, Units enemiesDangerouslyClose) {
-        HasPosition runFrom = defineRunFromForGroupOfUnits(unit, enemiesDangerouslyClose);
-
-        if (runFrom == null) {
-            System.err.println("Run from group is null for " + unit);
-            enemiesDangerouslyClose.print("Group of units to run from");
-            return false;
-        }
-
-        APainter.paintCircle(runFrom, 6, Color.Orange);
-        APainter.paintCircle(runFrom, 4, Color.Orange);
-        APainter.paintCircle(runFrom, 2, Color.Orange);
-
-        if (unit.runningManager().runFrom(
-            runFrom, calculateRunDistance(unit, enemiesDangerouslyClose.first()), Actions.RUN_ENEMIES, false)
-        ) {
-//            APainter.paintCircleFilled(unit.position(), 5, Color.Green);
-//            APainter.paintCircleFilled(runFrom, 5, Color.Red);
-            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");
-            return true;
-        }
-
-        return handleErrorRun(unit);
-    }
+//    public Manager groupOfUnits(Units enemiesDangerouslyClose) {
+//        HasPosition runFrom = defineRunFromForGroupOfUnits(enemiesDangerouslyClose);
+//
+//        if (runFrom == null) {
+//            System.err.println("Run from group is null for " + unit);
+//            enemiesDangerouslyClose.print("Group of units to run from");
+//            return null;
+//        }
+//
+//        APainter.paintCircle(runFrom, 6, Color.Orange);
+//        APainter.paintCircle(runFrom, 4, Color.Orange);
+//        APainter.paintCircle(runFrom, 2, Color.Orange);
+//
+//        if (unit.runningManager().runFrom(
+//            runFrom, calculateRunDistance(enemiesDangerouslyClose.first()), Actions.RUN_ENEMIES, false)
+//        ) {
+////            APainter.paintCircleFilled(unit.position(), 5, Color.Green);
+////            APainter.paintCircleFilled(runFrom, 5, Color.Red);
+//            unit.setTooltip("GroupAvoid(" + A.digit(unit.distTo(runFrom)) + ")");
+//            return usingManager(this);
+//        }
+//
+//        return runError.handleErrorRun(unit);
+//    }
 
     // =========================================================
 
-    private static HasPosition defineRunFromForGroupOfUnits(AUnit unit, Units enemiesDangerouslyClose) {
+    private HasPosition defineRunFromForGroupOfUnits(Units enemiesDangerouslyClose) {
         Selection enemies = enemiesDangerouslyClose.selection().havingPosition();
 
         int takeOnly = unit.isDragoon() ? 2 : 3;
@@ -75,7 +81,7 @@ public class Avoid {
         return enemies.first().translatePercentTowards(15, enemies.second());
     }
 
-    protected static double calculateRunDistance(AUnit unit, AUnit enemy) {
+    protected double calculateRunDistance(AUnit enemy) {
         if (enemy.isCombatBuilding()) {
             return 0.5;
         }
@@ -91,7 +97,7 @@ public class Avoid {
         }
     }
 
-    protected static String getTooltip(AUnit unit, AUnit enemy) {
+    protected String getTooltip(AUnit enemy) {
         String dist = "(" + A.digit(unit.distTo(enemy)) + ")";
 
         if (enemy.isMelee()) {
@@ -103,18 +109,6 @@ public class Avoid {
         else {
             return "MeleeRun" + dist;
         }
-    }
-
-    protected static boolean handleErrorRun(AUnit unit) {
-//        System.err.println("ERROR_RUN for " + unit.nameWithId());
-        unit.addLog("RUN-ERROR");
-
-        if (unit.cooldown() <= 4) {
-            AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
-            unit.setTooltipTactical("Cant run, fight");
-        }
-
-        return true;
     }
 
 }

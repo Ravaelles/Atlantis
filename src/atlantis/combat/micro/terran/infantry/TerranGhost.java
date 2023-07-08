@@ -1,26 +1,26 @@
-package atlantis.combat.micro.terran;
+package atlantis.combat.micro.terran.infantry;
 
 import atlantis.combat.micro.Microable;
 import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.TargetsForUnits;
 import bwapi.TechType;
 
-public class TerranGhost extends Microable {
+public class TerranGhost extends Manager {
 
-    private static final TechType lockdown = TechType.Lockdown;
+    private  final TechType lockdown = TechType.Lockdown;
 
-    public static TargetsForUnits lockdownTargets = new TargetsForUnits();
-    private AUnit unit;
+    public  TargetsForUnits lockdownTargets = new TargetsForUnits();
 
     // =========================================================
 
     public TerranGhost(AUnit unit) {
-        this.unit = unit;
+        super(unit);
     }
 
     // =========================================================

@@ -8,16 +8,16 @@ import atlantis.units.actions.Actions;
 
 public class StopAndShoot {
 
-    private static AUnit unit;
-    private static int unitWeaponRange;
-    private static AUnit target;
-    private static double distToEnemy;
-    private static boolean c1, c2, c3, c4;
+    private  ;
+    private  int unitWeaponRange;
+    private  AUnit target;
+    private  double distToEnemy;
+    private  boolean c1, c2, c3, c4;
 
     /**
      * For ranged unit, once shoot is fired, move slightly away or move towards the target when still have cooldown.
      */
-    public static boolean update(AUnit unit) {
+    public  boolean update() {
         StopAndShoot.unit = unit;
         if (shouldSkip()) {
             return false;
@@ -31,7 +31,7 @@ public class StopAndShoot {
 
         // HOLD
 //        System.err.println(". " + A.now());
-//        CameraManager.centerCameraOn(unit);
+//        CameraManager.centerCameraOn();
         if (shouldStop()) {
 //            GameSpeed.changeSpeedTo(30);
 //            System.err.println("@ STOP & SHOOT - " + distToEnemy + " / " + unit);
@@ -48,7 +48,7 @@ public class StopAndShoot {
             String tooltip = "Stop&Shoot";
             unit.addLog(tooltip);
 //            return unit.attackUnit(target);
-            return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
+            return AAttackEnemyUnit.handleAttackNearEnemyUnits();
         }
 //        else {
 //            GameSpeed.changeSpeedTo(1);
@@ -62,7 +62,7 @@ public class StopAndShoot {
 
     // =========================================================
 
-    private static boolean shouldStop() {
+    private  boolean shouldStop() {
         return (c1 = unit.isMoving())
             && (c2 = unit.cooldown() <= 2)
 //            && unit.combatEvalRelative() > 0.8
@@ -73,14 +73,14 @@ public class StopAndShoot {
 //            && (c4 = unit.lastStartedAttackMoreThanAgo(10));
     }
 
-    private static double minDistToStop() {
-        double bonus = (target.isMoving() ? (target.isFacing(unit) ? -1.4 : 1) : -0.5);
+    private  double minDistToStop() {
+        double bonus = (target.isMoving() ? (target.isFacing() ? -1.4 : 1) : -0.5);
         double minDist = unitWeaponRange + bonus;
 //        System.err.println("   minDist = " + minDist);
         return minDist;
     }
 
-    private static boolean shouldSkip() {
+    private  boolean shouldSkip() {
         if (unit.isMelee()) {
             return true;
         }

@@ -8,21 +8,31 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.Color;
 import bwapi.TechType;
 
 
-public class TerranVulture {
+public class TerranVulture extends Manager {
 
-    public static boolean update(AUnit unit) {
-        return handlePlantMines(unit);
+    public TerranVulture(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isVulture();
+    }
+
+    public boolean update() {
+        return handlePlantMines();
     }
     
     // =========================================================
 
-    private static boolean handlePlantMines(AUnit unit) {
+    private boolean handlePlantMines() {
 
         // Unit gets status "stuck" after mine has been planted, being the only way I know of to
         // define that a mine planting has been finished.
@@ -46,13 +56,13 @@ public class TerranVulture {
             return false;
         }
 
-//        if (fightEnemyUsingMinesNextToThem(unit)) {
+//        if (fightEnemyUsingMinesNextToThem()) {
 //            return true;
 //        }
 
         // Disallow mines close to buildings
-        AUnit nearestBuilding = Select.ourBuildings().nearestTo(unit);
-        if (nearestBuilding != null && nearestBuilding.distTo(unit) <= 7) {
+        AUnit nearestBuilding = Select.ourBuildings().nearestTo();
+        if (nearestBuilding != null && nearestBuilding.distTo() <= 7) {
             unit.setTooltipTactical("Don't mine");
             return false;
         }
@@ -68,7 +78,7 @@ public class TerranVulture {
         }
 
         // Place mines in standard positions
-        if (plantStandardMine(unit)) {
+        if (plantStandardMine()) {
             return true;
         }
         
@@ -77,7 +87,7 @@ public class TerranVulture {
 
     // =========================================================
 
-    private static boolean fightEnemyUsingMinesNextToThem(AUnit unit) {
+    private boolean fightEnemyUsingMinesNextToThem() {
 //        if (unit.hp() <= 45 && !unit.isUnitAction(UnitActions.USING_TECH)) {
 //            return false;
 //        }
@@ -122,7 +132,7 @@ public class TerranVulture {
             if (finalPlace != null) {
                 APainter.paintCircleFilled(enemiesCenter, 24, Color.Red);
                 System.out.println("finalPlace = " + finalPlace);
-                plantMineAt(unit, finalPlace);
+                plantMineAt(finalPlace);
                 unit.setTooltipTactical("UseMine");
                 return true;
             }
@@ -131,11 +141,11 @@ public class TerranVulture {
         return false;
     }
 
-    private static boolean plantStandardMine(AUnit unit) {
+    private boolean plantStandardMine() {
         Selection NearMines = Select.ourOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(8, unit);
         if ((NearMines.count() <= 3 || (unit.minesCount() >= 3 && NearMines.count() <= 4))
                 && NearMines.inRadius(2, unit).atMost(1)) {
-            plantMineAt(unit, unit.position());
+            plantMineAt(unit.position());
             unit.setTooltipTactical("Plant mine");
             return true;
         }
@@ -143,7 +153,7 @@ public class TerranVulture {
         return false;
     }
 
-    private static void plantMineAt(AUnit unit, APosition position) {
+    private void plantMineAt(APosition position) {
         unit.useTech(TechType.Spider_Mines, position);
         unit.setAction(Actions.USING_TECH, TechType.Spider_Mines, position);
     }

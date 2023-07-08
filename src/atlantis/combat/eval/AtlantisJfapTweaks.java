@@ -9,7 +9,7 @@ public class AtlantisJfapTweaks {
     private static final int HYDRA_SINGLE_UNIT_BONUS = 170;
 
     protected static double forHydralisks(double score, AUnit unit) {
-        Selection friendlyHydras = unit.friendsNear().add(unit).ofType(AUnitType.Zerg_Hydralisk);
+        Selection friendlyHydras = unit.friendsNear().add().ofType(AUnitType.Zerg_Hydralisk);
         int hydraBonus = friendlyHydras.count() * HYDRA_SINGLE_UNIT_BONUS;
         score += hydraBonus;
 

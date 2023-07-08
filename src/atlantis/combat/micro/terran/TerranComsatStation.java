@@ -3,22 +3,30 @@ package atlantis.combat.micro.terran;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.TechType;
 import tests.unit.FakeUnit;
 
-public class TerranComsatStation {
+public class TerranComsatStation extends Manager {
 
-    public static boolean update(AUnit comsat) {
+    private final AUnit comsat;
+
+    public TerranComsatStation(AUnit unit) {
+        super(unit);
+        this.comsat = unit;
+    }
+
+    public  boolean update() {
         if (AGame.notNthGameFrame(13)) {
             return false;
         }
 
         if (comsat.energy() >= 50) {
-            return scanLurkers(comsat)
-                    || scanDarkTemplars(comsat)
-                    || scanObservers(comsat);
+            return scanLurkers()
+                    || scanDarkTemplars()
+                    || scanObservers();
         }
 
         return false;
@@ -27,17 +35,17 @@ public class TerranComsatStation {
     // =========================================================
     // Zerg
 
-    private static boolean scanLurkers(AUnit comsat) {
+    private  boolean scanLurkers() {
         for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effUndetected().list()) {
-            if (shouldScanThisLurker(lurker, comsat)) {
-                return scan(comsat, lurker);
+            if (shouldScanThisLurker(lurker)) {
+                return scan(lurker);
             }
         }
 
         return false;
     }
 
-    private static boolean shouldScanThisLurker(AUnit lurker, AUnit comsat) {
+    private  boolean shouldScanThisLurker(AUnit lurker) {
         if (comsat.energy(190)) {
             return true;
         }
@@ -58,7 +66,7 @@ public class TerranComsatStation {
     // =========================================================
     // Protoss
 
-    private static boolean scanDarkTemplars(AUnit comsat) {
+    private  boolean scanDarkTemplars() {
         for (AUnit dt : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Dark_Templar).list()) {
             Selection ourCombatUnits = Select.ourCombatUnits();
             if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
@@ -67,7 +75,7 @@ public class TerranComsatStation {
                     ourCombatUnits.nearestTo(dt).distToLessThan(dt, 6)
                     || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()
                 ) {
-                    return scan(comsat, dt);
+                    return scan(dt);
                 }
             }
         }
@@ -75,21 +83,21 @@ public class TerranComsatStation {
         return false;
     }
 
-    private static boolean scanObservers(AUnit comsat) {
+    private  boolean scanObservers() {
         if (comsat.energy() <= 200) {
             return false;
         }
 
         for (AUnit observer : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Observer).list()) {
-            if (shouldScanThisObserver(observer, comsat)) {
-                return scan(comsat, observer);
+            if (shouldScanThisObserver(observer)) {
+                return scan(observer);
             }
         }
 
         return false;
     }
 
-    private static boolean shouldScanThisObserver(AUnit observer, AUnit comsat) {
+    private  boolean shouldScanThisObserver(AUnit observer) {
         if (comsat.energy() >= 100 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)) {
             return true;
         }
@@ -106,7 +114,7 @@ public class TerranComsatStation {
 
     // =========================================================
 
-    private static boolean scan(AUnit comsat, AUnit unitToScan) {
+    private  boolean scan(AUnit unitToScan) {
         if (!unitToScan.effUndetected()) {
             System.err.println("unitToScan is not effectively cloaked = " + unitToScan.hp());
             return false;

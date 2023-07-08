@@ -5,10 +5,15 @@ import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.squad.ASquadCohesionManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 
-public class MoveToAttackFocusPoint {
+public class MoveToAttackFocusPoint extends Manager {
 
-    public static boolean move(AUnit unit, MissionAttack mission) {
+    public MoveToAttackFocusPoint(AUnit unit) {
+        super(unit);
+    }
+
+    public boolean move(MissionAttack mission) {
         AFocusPoint focusPoint = mission.focusPoint();
 
         // Invalid focus point, no enemy can be found, roam around map
@@ -19,36 +24,36 @@ public class MoveToAttackFocusPoint {
 //            return true;
 //        }
 
-        if (shouldSkip(unit)) return true;
+        if (shouldSkip()) return true;
 
         if (advance(unit, focusPoint)) {
-//            unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString(unit));
+//            unit.setTooltipTactical("#MA:Advance" + AAttackEnemyUnit.canAttackEnemiesNowString());
             return true;
         }
 
         return WeDontKnowWhereEnemyIs.update(mission, unit);
     }
 
-    private static boolean shouldSkip(AUnit unit) {
+    private boolean shouldSkip() {
         if (unit.lastPositioningActionLessThanAgo(13)) return true;
 
 //        if (unit.lastPositioningActionMoreThanAgo(30)) {
 //        }
 
-        if (ASquadCohesionManager.update(unit)) {
+        if (ASquadCohesionManager.update() != null) {
             return true;
         }
 
         return false;
     }
 
-    private static boolean advance(AUnit unit, AFocusPoint focusPoint) {
-        if (unit.squad().isLeader(unit)) {
+    private boolean advance(AFocusPoint focusPoint) {
+        if (unit.squad().isLeader()) {
             return AdvanceAsLeader.advanceAsLeader(unit, focusPoint);
         }
 
         if (
-            MoveToAttackAsTerran.handledTerranAdvance(unit)
+            MoveToAttackAsTerran.handledTerranAdvance()
             || tooLonely(unit, focusPoint)
         ) {
             return true;
@@ -57,7 +62,7 @@ public class MoveToAttackFocusPoint {
         return false;
     }
 
-    private static boolean tooLonely(AUnit unit, AFocusPoint focusPoint) {
+    private boolean tooLonely(AFocusPoint focusPoint) {
         AUnit leader = unit.squad().leader();
         if (leader == null) {
             return false;

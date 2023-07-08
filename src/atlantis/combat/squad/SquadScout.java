@@ -19,7 +19,7 @@ public class SquadScout {
 
     public static boolean handle(AUnit unit) {
         if (unit.equals(unit.squad().squadScout())) {
-            return handleSquadScout(unit);
+            return handleSquadScout();
         }
 
         return false;

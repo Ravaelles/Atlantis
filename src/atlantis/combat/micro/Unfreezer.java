@@ -8,20 +8,20 @@ import bwapi.Color;
 
 public class Unfreezer {
 
-    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 30;
+    public  final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 30;
 
     /**
      * Some units can get FROZEN (stuck, unable to move/shoot). It's a known Starcraft bug.
      * This is an ugly way of fixing this.
      */
-    public static boolean handleUnfreeze(AUnit unit) {
+    public  boolean handleUnfreeze() {
 //        if (true) return false;
 
         if (unit.isRunning() && unit.lastActionFramesAgo() >= (UPDATE_UNIT_POSITION_EVERY_FRAMES + 20)) {
             if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
 //                System.err.println("UNFREEZE #1!");
 //                unit.setTooltip("UNFREEZE!");
-                return unfreeze(unit);
+                return unfreeze();
             }
         }
 
@@ -33,7 +33,7 @@ public class Unfreezer {
 //            if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
 //                System.err.println("UNFREEZE #2!");
 //                unit.setTooltip("UNFREEZE!");
-//                return unfreeze(unit);
+//                return unfreeze();
 //            }
 //        }
 
@@ -42,10 +42,10 @@ public class Unfreezer {
 
     // =========================================================
 
-    public static boolean unfreeze(AUnit unit) {
+    public  boolean unfreeze() {
         unit.runningManager().stopRunning();
 
-//        CameraManager.centerCameraOn(unit);
+//        CameraManager.centerCameraOn();
 
         boolean paintingDisabled = APainter.isDisabled();
         if (paintingDisabled) {

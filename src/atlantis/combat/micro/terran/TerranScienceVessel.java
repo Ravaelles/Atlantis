@@ -15,23 +15,27 @@ import bwapi.TechType;
 
 public class TerranScienceVessel extends MobileDetector {
 
-    public static AUnitType type() {
+    public TerranScienceVessel(AUnit unit) {
+        super(unit);
+    }
+
+    public AUnitType type() {
         return AUnitType.Terran_Science_Vessel;
     }
 
     // =========================================================
 
-    public static boolean update(AUnit unit) {
-        if (useTech(unit)) {
+    public boolean update() {
+        if (useTech()) {
             return true;
         }
 
-        return MobileDetector.update(unit);
+        return MobileDetector.update();
     }
 
     // =========================================================
 
-    private static boolean useTech(AUnit unit) {
+    private boolean useTech() {
         if (unit.energy() <= 74) {
             return false;
         }
@@ -41,13 +45,13 @@ public class TerranScienceVessel extends MobileDetector {
         }
 
         if (unit.energy(75) && ATech.isResearched(TechType.Irradiate)) {
-            if (irradiate(unit)) {
+            if (irradiate()) {
                 unit.setTooltipTactical("Irradiate!");
                 return true;
             }
         }
 
-        if (defensiveMatrix(unit)) {
+        if (defensiveMatrix()) {
             return true;
         }
 
@@ -56,7 +60,7 @@ public class TerranScienceVessel extends MobileDetector {
 
     // =========================================================
 
-    private static boolean defensiveMatrix(AUnit unit) {
+    private boolean defensiveMatrix() {
         if (unit.energy() < 100) {
             return false;
         }
@@ -82,7 +86,7 @@ public class TerranScienceVessel extends MobileDetector {
         return false;
     }
 
-    private static boolean irradiate(AUnit unit) {
+    private boolean irradiate() {
         Selection enemies = Select.enemyCombatUnits().inRadius(10, unit);
         if (enemies.count() >= 5 || (enemies.count() >= 3 && unit.energy(181))) {
             APosition center = enemies.center();
@@ -106,7 +110,7 @@ public class TerranScienceVessel extends MobileDetector {
                 AUnitType.Zerg_Guardian, AUnitType.Zerg_Scourge,
                 AUnitType.Protoss_High_Templar, AUnitType.Protoss_Archon, AUnitType.Protoss_Dark_Archon,
                 AUnitType.Terran_Medic
-        ).effVisible().inRadius(15, unit).mostDistantTo(unit);
+        ).effVisible().inRadius(15, unit).mostDistantTo();
         if (enemy != null) {
             return unit.useTech(TechType.Irradiate, enemy);
         }
@@ -116,7 +120,7 @@ public class TerranScienceVessel extends MobileDetector {
                 AUnitType.Zerg_Zergling, AUnitType.Zerg_Drone,
                 AUnitType.Protoss_Dragoon, AUnitType.Protoss_Zealot,
                 AUnitType.Terran_Marine
-        ).effVisible().inRadius(15, unit).mostDistantTo(unit);
+        ).effVisible().inRadius(15, unit).mostDistantTo();
         if (enemy != null) {
             return unit.useTech(TechType.Irradiate, enemy);
         }
@@ -124,7 +128,7 @@ public class TerranScienceVessel extends MobileDetector {
         return false;
     }
 
-    private static boolean empShockwave(AUnit unit) {
+    private boolean empShockwave() {
         Selection enemies = Select.enemyCombatUnits().inRadius(10, unit);
 
         if (enemies.count() >= 7 || (enemies.count() >= 4 && unit.energy(180))) {

@@ -6,10 +6,10 @@ import atlantis.units.select.Select;
 
 public class ProtossShieldBattery {
 
-//    private static final double MAX_DIST = 3.98;
-    private static final double MAX_DIST = 7.98;
+//    private  final double MAX_DIST = 3.98;
+    private  final double MAX_DIST = 7.98;
 
-    public static boolean update(AUnit shieldBattery) {
+    public  boolean update(AUnit shieldBattery) {
         if (shieldBattery.energy() >= 40 && shieldBattery.isPowered()) {
             shieldBattery.removeTooltip();
             for (AUnit unit : Select.ourRealUnits().inRadius(MAX_DIST, shieldBattery).list()) {

@@ -1,36 +1,41 @@
 package atlantis.combat.micro.avoid.buildings;
 
-import atlantis.game.A;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 
-public class AvoidCombatBuildingCriticallyClose {
+public class AvoidCombatBuildingCriticallyClose extends Manager {
 
-    public static boolean handle(AUnit unit, AUnit combatBuilding) {
-        if (isHoldingTooLong(unit, combatBuilding)) {
-            return handleHoldTooLong(unit, combatBuilding);
-        }
+    private CircumnavigateCombatBuilding circumnavigateCombatBuilding;
 
-        if (shouldHoldGround(unit, combatBuilding)) {
-            unit.holdPosition("HoldHere");
-            return true;
-        }
-
-        return false;
+    public AvoidCombatBuildingCriticallyClose(AUnit unit) {
+        super(unit);
+        circumnavigateCombatBuilding = new CircumnavigateCombatBuilding(unit);
     }
 
-    private static boolean shouldHoldGround(AUnit unit, AUnit combatBuilding) {
+    public Manager handle(AUnit combatBuilding) {
+        if (isHoldingTooLong(combatBuilding)) {
+            return handleHoldTooLong(combatBuilding);
+        }
+
+        if (shouldHoldGround(combatBuilding)) {
+            unit.holdPosition("HoldHere");
+            return usingManager(this);
+        }
+
+        return null;
+    }
+
+    private boolean shouldHoldGround(AUnit combatBuilding) {
         return unit.isMoving()
             && unit.targetPosition() != null
             && unit.targetPosition().distTo(combatBuilding) < 7.25;
     }
 
-    private static boolean isHoldingTooLong(AUnit unit, AUnit combatBuilding) {
+    private boolean isHoldingTooLong(AUnit combatBuilding) {
         return unit.isHoldingPosition() && unit.noCooldown() && unit.lastActionMoreThanAgo(5);
     }
 
-    private static boolean handleHoldTooLong(AUnit unit, AUnit combatBuilding) {
-        return CircumnavigateCombatBuilding.handle(unit, combatBuilding);
+    private Manager handleHoldTooLong(AUnit combatBuilding) {
+        return circumnavigateCombatBuilding.handleAround(combatBuilding);
     }
 }

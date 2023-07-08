@@ -6,7 +6,7 @@ import atlantis.units.select.Select;
 
 public class MissionAttackVsCombatBuildings {
 
-    public static boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
+    public boolean allowsToAttackCombatBuildings(AUnit combatBuilding) {
         if (unit.isTerran()) {
             if (forbiddenForTerranInfantry(unit, combatBuilding)) {
                 return false;
@@ -42,7 +42,7 @@ public class MissionAttackVsCombatBuildings {
             .atLeast(9 * buildings);
     }
 
-    public static boolean forbiddenForTerranInfantry(AUnit unit, AUnit combatBuilding) {
+    public boolean forbiddenForTerranInfantry(AUnit combatBuilding) {
         if (!unit.isTerranInfantry()) {
             return false;
         }

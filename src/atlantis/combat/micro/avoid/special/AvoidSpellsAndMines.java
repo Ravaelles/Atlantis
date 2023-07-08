@@ -8,14 +8,14 @@ import atlantis.units.actions.Actions;
 
 public class AvoidSpellsAndMines {
 
-    public static boolean avoidSpellsAndMines(AUnit unit) {
+    public  boolean avoidSpellsAndMines() {
 
         // === Psionic Storm ========================================
 
-        if (AvoidPsionicStorm.avoidPsionicStorm(unit)) return true;
+        if (AvoidPsionicStorm.avoidPsionicStorm()) return true;
 
         // === Mines ===============================================
 
-        return AvoidMines.handleMines(unit);
+        return AvoidMines.handleMines();
     }
 }

@@ -24,7 +24,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
     private Cache<AFocusPoint> cache = new Cache<>();
 
-    private static APosition _temporaryTarget = null;
+    private APosition _temporaryTarget = null;
 
     public AFocusPoint focusPoint() {
         return cache.getIfValid(

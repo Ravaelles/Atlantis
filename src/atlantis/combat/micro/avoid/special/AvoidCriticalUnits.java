@@ -6,36 +6,36 @@ import atlantis.units.select.Selection;
 
 public class AvoidCriticalUnits {
 
-    public static boolean update(AUnit unit) {
-        if (SuicideAgainstScarabs.update(unit)) {
+    public  boolean update() {
+        if (SuicideAgainstScarabs.update()) {
             return true;
         }
 
-        if (avoidLurkers(unit)) {
+        if (avoidLurkers()) {
             return true;
         }
 
-        if (avoidReavers(unit)) {
+        if (avoidReavers()) {
             return true;
         }
 
-        if (avoidDT(unit)) {
+        if (avoidDT()) {
             return true;
         }
 
-        if (avoidGuardian(unit)) {
+        if (avoidGuardian()) {
             return true;
         }
 
         return false;
     }
 
-    private static boolean avoidReavers(AUnit unit) {
+    private  boolean avoidReavers() {
         if (unit.isAir() || unit.isBuilding()) {
             return false;
         }
 
-        AUnit reaver = unit.enemiesNear().reavers().effUndetected().inRadius(9.4, unit).nearestTo(unit);
+        AUnit reaver = unit.enemiesNear().reavers().effUndetected().inRadius(9.4, unit).nearestTo();
         if (reaver == null) {
             return false;
         }
@@ -51,13 +51,13 @@ public class AvoidCriticalUnits {
         return true;
     }
 
-    private static boolean avoidDT(AUnit unit) {
+    private  boolean avoidDT() {
         if (unit.isAir() || unit.isBuilding()) {
             return false;
         }
 
         AUnit dt = unit.enemiesNear().ofType(AUnitType.Protoss_Dark_Templar).effUndetected()
-            .inRadius(2.5, unit).nearestTo(unit);
+            .inRadius(2.5, unit).nearestTo();
         if (dt == null) {
             return false;
         }
@@ -66,12 +66,12 @@ public class AvoidCriticalUnits {
         return true;
     }
 
-    private static boolean avoidLurkers(AUnit unit) {
+    private  boolean avoidLurkers() {
         if (unit.isAir() || unit.isBuilding()) {
             return false;
         }
 
-        AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(7.7, unit).nearestTo(unit);
+        AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(7.7, unit).nearestTo();
         if (lurker == null) {
             return false;
         }
@@ -80,12 +80,12 @@ public class AvoidCriticalUnits {
         return true;
     }
 
-    private static boolean avoidGuardian(AUnit unit) {
+    private  boolean avoidGuardian() {
         if (unit.isAir() || unit.isBuilding() || unit.canAttackAirUnits()) {
             return false;
         }
 
-        AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(7.7, unit).nearestTo(unit);
+        AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(7.7, unit).nearestTo();
         if (lurker == null) {
             return false;
         }

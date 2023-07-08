@@ -4,6 +4,6 @@ import atlantis.units.AUnit;
 
 public abstract class Micro {
 
-    public abstract boolean update(AUnit unit);
+    public abstract boolean update();
 
 }

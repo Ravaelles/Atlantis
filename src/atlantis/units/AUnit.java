@@ -29,8 +29,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.managers.Manager;
-import atlantis.units.managers.NoManager;
-import atlantis.units.managers.NullManager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -183,15 +181,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // =========================================================
 
+    /**
+     * Last Manager used by this unit. Null means to manager has been used.
+     */
     public Manager manager() {
         return manager;
     }
 
-    public boolean useManager(Manager manager) {
-        this.manager = manager;
-
-        return manager != null;
-    }
+    /**
+     * Indicate that this is the Manager used by the unit at the moment.
+     */
+//    public boolean useManager(Manager manager) {
+//        this.manager = manager;
+//
+//        return manager != null;
+//    }
 
     // =========================================================
 
@@ -570,7 +574,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // ===  Debugging / Painting methods ========================================
 
     private String tooltip;
-//    private int tooltipStartInFrames;
+    private String tooltipForManager;
 
     public AUnit setTooltipTactical(String tooltip) {
         return setTooltip(tooltip, false);
@@ -897,10 +901,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-        if (squad == null && isOur()) {
+//        if (squad == null && isOur()) {
 //            NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
 //            A.printStackTrace("Should not be here");
-        }
+//        }
 
         return squad;
     }
@@ -2412,7 +2416,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return cacheBoolean.get(
             "isBeingHealed",
             6,
-            () -> friendsInRadius(2).ofType(AUnitType.Terran_Medic).havingTarget(this).notEmpty()
+            () -> friendsInRadius(2).ofType(AUnitType.Terran_Medic).havingTargeted(this).notEmpty()
         );
     }
 
@@ -2705,11 +2709,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return squad != null ? squad.leader() : null;
     }
 
-    public Manager nullManager() {
-        return NullManager.getInstance();
+//    public Manager nullManager() {
+//        return NullManager.getInstance();
+//    }
+
+    public void setManagerUsed(Manager managerUsed) {
+        this.manager = managerUsed;
+        this.tooltipForManager = tooltip;
     }
 
-    public void resetManager() {
-        manager = NoManager.getInstance();
+    public void setManagerUsed(Manager managerUsed, String message) {
+        this.manager = managerUsed;
+        this.tooltipForManager = message;
+    }
+
+    public boolean isManager(Manager manager) {
+        return manager.equals(this.manager);
     }
 }

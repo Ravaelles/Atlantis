@@ -4,11 +4,16 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 
-public class ProcessAttackUnit {
+public class ProcessAttackUnit extends Manager {
 
-    public static boolean processAttackUnit(AUnit unit, AUnit target) {
+    public ProcessAttackUnit(AUnit unit) {
+        super(unit);
+    }
+
+    public  boolean processAttackOtherUnit(AUnit target) {
         if (
             target.isFoggedUnitWithKnownPosition()
             && unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false)
@@ -16,7 +21,7 @@ public class ProcessAttackUnit {
             return true;
         }
 
-        if (handleMoveNextToTanksWhenAttackingThem(unit, target)) {
+        if (handleMoveNextToTanksWhenAttackingThem(target)) {
             return true;
         }
 
@@ -35,7 +40,7 @@ public class ProcessAttackUnit {
 //        if (unit.isRanged() && unit.lastActionMoreThanAgo(10, Actions.HOLD_POSITION)) {
 //            int range = unit.weaponRangeAgainst(target);
 //            double dist = unit.distTo(target);
-//            double distBonus = distBonus(unit, target);
+//            double distBonus = distBonus(target);
 //            if (
 //                dist + distBonus < range
 //                    && unit.cooldownRemaining() <= 8
@@ -48,10 +53,10 @@ public class ProcessAttackUnit {
 //        }
 
         // Melee
-        return confirmAttack(unit, target);
+        return confirmAttack(target);
     }
 
-//    private static double distBonus(AUnit unit, AUnit target) {
+//    private  double distBonus(AUnit target) {
 //        if (unit.isOtherUnitFacingThisUnit(target) && (target.isMoving() || target.isAttacking())) {
 //            return -1.6;
 //        }
@@ -59,13 +64,13 @@ public class ProcessAttackUnit {
 //        return -0.5;
 //    }
 
-    private static boolean confirmAttack(AUnit unit, AUnit target) {
+    private  boolean confirmAttack(AUnit target) {
         return unit.attackUnit(target);
     }
 
     // =========================================================
 
-    private static boolean handleMoveNextToTanksWhenAttackingThem(AUnit unit, AUnit enemy) {
+    private  boolean handleMoveNextToTanksWhenAttackingThem(AUnit enemy) {
         if (!enemy.isTank()) {
             return false;
         }
@@ -81,7 +86,7 @@ public class ProcessAttackUnit {
             )
                 && (enemy.distToMoreThan(unit, unit.isMelee() ? 0.8 : 1.15))
                 && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
-                && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
+                && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude().exclude(enemy).atMost(3))
         ) {
             if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) {
                 return false;

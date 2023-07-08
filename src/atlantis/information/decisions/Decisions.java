@@ -88,9 +88,7 @@ public class Decisions {
 //                    return true;
 //                }
 
-                if (vultures == 0 && EnemyUnits.count(Zerg_Zergling) >= 7) {
-                    return true;
-                }
+                if (vultures == 0 && EnemyUnits.count(Zerg_Zergling) >= 7) return true;
 
                 if (vultures <= 2 && EnemyUnits.count(Protoss_Zealot) >= 6) {
                     return false;

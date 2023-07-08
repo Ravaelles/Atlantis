@@ -16,7 +16,7 @@ import atlantis.units.select.Count;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
-    public static void changeMissionIfNeeded() {
+    public  void changeMissionIfNeeded() {
         if (!canChange()) {
             return;
         }
@@ -35,7 +35,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private static boolean changeFromSpartaToDefend() {
+    private  boolean changeFromSpartaToDefend() {
         if (Missions.isGlobalMissionSparta() && Count.basesWithUnfinished() >= 2) {
             return true;
         }
@@ -43,7 +43,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
         return false;
     }
 
-    private static boolean canChange() {
+    private  boolean canChange() {
         if (EnemyInfo.isEnemyNearAnyOurBase()) {
             return false;
         }
@@ -69,7 +69,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
         return true;
     }
 
-    private static boolean shouldChangeMissionToAttack() {
+    private  boolean shouldChangeMissionToAttack() {
         if (ArmyStrength.ourArmyRelativeStrength() >= 200) {
             if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
@@ -78,7 +78,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
         return false;
     }
 
-    private static boolean shouldChangeMissionToContain() {
+    private  boolean shouldChangeMissionToContain() {
         if (ArmyStrength.ourArmyRelativeStrength() < 200) {
             return false;
         }

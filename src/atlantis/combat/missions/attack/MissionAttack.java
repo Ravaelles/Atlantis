@@ -12,7 +12,7 @@ public class MissionAttack extends Mission {
 
     private final MissionAttackPermissionToAttack missionAttackPermissionToAttack = new MissionAttackPermissionToAttack();
 
-    public MissionAttack() {
+    public MissionAttack(AUnit unit) {
         super("Attack");
         focusPointManager = new MissionAttackFocusPoint();
     }
@@ -20,30 +20,30 @@ public class MissionAttack extends Mission {
     // =========================================================
 
     @Override
-    public boolean update(AUnit unit) {
+    public boolean update() {
         unit.setTooltipTactical("#MA");
 
         return MoveToAttackFocusPoint.move(unit, this);
     }
 
     @Override
-    public double optimalDist(AUnit unit) {
+    public double optimalDist() {
         return -1;
     }
 
     // =========================================================
 
-    public Decision permissionToAttack(AUnit unit) {
-        return missionAttackPermissionToAttack.permissionToAttack(unit);
+    public Decision permissionToAttack() {
+        return missionAttackPermissionToAttack.permissionToAttack();
     }
 
     @Override
-    public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+    public boolean allowsToAttackEnemyUnit(AUnit enemy) {
         return MissionAttackVsEnemyUnit.allowsToAttackEnemyUnit(unit, enemy);
     }
 
     @Override
-    public boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
+    public boolean allowsToAttackCombatBuildings(AUnit combatBuilding) {
         return MissionAttackVsCombatBuildings.allowsToAttackCombatBuildings(unit, combatBuilding);
     }
 }

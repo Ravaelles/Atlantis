@@ -10,7 +10,7 @@ import atlantis.information.strategy.GamePhase;
 
 public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
-    public static void changeMissionIfNeeded() {
+    public void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
             changeMissionTo(MissionChanger.defendOrSpartaMission());
         }
@@ -21,7 +21,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === DEFEND ==============================================
 
-    public static boolean shouldChangeMissionToDefend() {
+    public boolean shouldChangeMissionToDefend() {
         if (defendAgainstMassZerglings()) {
             if (DEBUG) reason = "Mass zerglings";
             return true;
@@ -42,7 +42,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private static boolean shouldChangeMissionToContain() {
+    private boolean shouldChangeMissionToContain() {
         if (A.supplyUsed() >= 176) {
             return false;
         }

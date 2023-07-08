@@ -3,24 +3,50 @@ package atlantis.combat.micro.terran;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import bwapi.TechType;
 
-public class TerranCloakableManager {
+import static atlantis.units.AUnitType.Terran_Science_Vessel;
 
-    public static boolean update(AUnit unit) {
+public class TerranCloakableManager extends Manager {
+
+    public TerranCloakableManager(AUnit unit) {
+        super(unit);
+    }
+
+//    @Override
+//    protected Class<? extends Manager>[] managers() {
+//        return null;
+//    }
+
+    @Override
+    public boolean applies() {
+        return unit.is(Terran_Science_Vessel);
+    }
+
+    @Override
+    public Manager handle() {
+        if (update()) {
+            return usingManager(this);
+        }
+
+        return null;
+    }
+
+    public boolean update() {
         if (AGame.notNthGameFrame(7)) {
             return false;
         }
 
         if (unit.canCloak() && ATech.isResearched(TechType.Cloaking_Field)) {
             boolean enemiesNear = unit.enemiesNear()
-                    .canAttack(unit, true, true, 3)
-                    .isNotEmpty();
+                .canAttack(unit, true, true, 3)
+                .isNotEmpty();
             boolean detectorsNear = Select.enemy()
-                    .detectors()
-                    .inRadius(9.1, unit)
-                    .isNotEmpty();
+                .detectors()
+                .inRadius(9.1, unit)
+                .isNotEmpty();
 
             // Not cloaked
             if (!unit.isCloaked()) {

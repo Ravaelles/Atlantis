@@ -7,7 +7,7 @@ import bwapi.Bullet;
 import bwapi.BulletType;
 
 public class AvoidPsionicStorm {
-    static boolean avoidPsionicStorm(AUnit unit) {
+     boolean avoidPsionicStorm() {
         if (unit.isUnderStorm()) {
             for (Bullet bullet : Atlantis.game().getBullets()) {
                 if (bullet.getType().equals(BulletType.Psionic_Storm)) {
@@ -26,7 +26,7 @@ public class AvoidPsionicStorm {
 
     // =========================================================
 
-    protected static boolean handleMoveAwayIfCloserThan(AUnit unit, APosition avoidCenter, double minDist) {
+    protected  boolean handleMoveAwayIfCloserThan(APosition avoidCenter, double minDist) {
         if (unit.distTo(avoidCenter) < minDist) {
             unit.runningManager().runFromAndNotifyOthersToMove(avoidCenter, "PSIONIC-STORM");
             return true;

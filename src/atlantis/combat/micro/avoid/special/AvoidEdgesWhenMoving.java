@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 
 public class AvoidEdgesWhenMoving {
 
-    public static boolean handle(AUnit unit) {
+    public  boolean handle() {
         if (A.isUms()) {
             return false;
         }

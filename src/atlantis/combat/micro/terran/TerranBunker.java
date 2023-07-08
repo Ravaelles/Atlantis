@@ -23,7 +23,7 @@ import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-import static atlantis.production.AbstractDynamicUnits.addToQueueToMaxAtATime;
+import  atlantis.production.AbstractDynamicUnits.addToQueueToMaxAtATime;
 
 public class TerranBunker extends AntiLandBuildingManager {
 
@@ -32,7 +32,7 @@ public class TerranBunker extends AntiLandBuildingManager {
         return AUnitType.Terran_Bunker;
     }
 
-//    public static boolean handleOffensiveBunkers() {
+//    public  boolean handleOffensiveBunkers() {
 ////        if (true) return false;
 //
 //        if (!Have.barracks() || AGame.notNthGameFrame(50)) {
@@ -116,7 +116,7 @@ public class TerranBunker extends AntiLandBuildingManager {
 
     // =========================================================
 
-//    private static boolean handleReinforceMissionAttack() {
+//    private  boolean handleReinforceMissionAttack() {
 //        if (!Missions.isGlobalMissionAttack()) {
 //            return false;
 //        }
@@ -187,7 +187,7 @@ public class TerranBunker extends AntiLandBuildingManager {
 
     // =========================================================
 
-    public static TerranBunker get() {
+    public  TerranBunker get() {
         if (instance == null) {
             return (TerranBunker) (instance = new TerranBunker());
         }

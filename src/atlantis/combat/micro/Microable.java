@@ -8,7 +8,7 @@ public abstract class Microable {
 
 //    public abstract Class[] macroManagers();
 
-    public boolean update(AUnit unit) {
+    public boolean update() {
         return false;
     }
 

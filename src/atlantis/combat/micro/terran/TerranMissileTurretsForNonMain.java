@@ -15,7 +15,7 @@ import atlantis.util.Enemy;
 
 public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
 
-    private static final int MIN_TURRETS_PER_BASE = 2;
+    private  final int MIN_TURRETS_PER_BASE = 2;
 
     public boolean buildIfNeeded() {
         if (!Have.engBay()) {

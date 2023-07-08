@@ -57,19 +57,19 @@ public class AScoutManager {
     private static void update(AUnit scout) {
         scout.setTooltipTactical("Scout...");
 
-        if (AvoidCriticalUnits.update(scout)) {
-            scout.setTooltip("Daaaamn!");
-            return;
-        }
-
-        if (AvoidCombatBuildings.update(scout)) {
-            scout.setTooltip("Eh!");
-            return;
-        }
-
-        if (AvoidEnemies.avoidEnemiesIfNeeded(scout)) {
-            return;
-        }
+//        if (AvoidCriticalUnits.update(scout)) {
+//            scout.setTooltip("Daaaamn!");
+//            return;
+//        }
+//
+//        if (AvoidCombatBuildings.handle(scout)) {
+//            scout.setTooltip("Eh!");
+//            return;
+//        }
+//
+//        if (AvoidEnemies.avoidEnemiesIfNeeded(scout)) {
+//            return;
+//        }
 
         if (scout.isRunning()) {
             nextPositionToScout = null;

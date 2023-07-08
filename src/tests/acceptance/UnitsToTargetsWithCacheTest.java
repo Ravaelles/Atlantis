@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.combat.micro.terran.TerranGhost;
+import atlantis.combat.micro.terran.infantry.TerranGhost;
 import atlantis.game.A;
 import org.junit.Test;
 import tests.unit.FakeUnit;

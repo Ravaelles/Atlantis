@@ -40,7 +40,7 @@ public abstract class MoveToFocusPoint {
             return false;
         }
 
-        if (joinSquad(unit)) {
+        if (joinSquad()) {
             return true;
         }
 
@@ -49,7 +49,7 @@ public abstract class MoveToFocusPoint {
         }
 
         unitToFocus = unit.distTo(focus);
-        optimalDist = optimalDist(unit);
+        optimalDist = optimalDist();
 
         if (unit.isMissionDefendOrSparta() && unit.enemiesNear().inRadius(5, unit).notEmpty()) {
             unit.addLog("DoNotWithdraw");
@@ -60,7 +60,7 @@ public abstract class MoveToFocusPoint {
             String dist = A.dist(unitToFocus);
             if (unit.lastActionMoreThanAgo(35, Actions.MOVE_FOCUS)) {
                 APosition position =
-                    (focus.distTo(unit) <= 6 || (focus.region() != null && focus.region().equals(unit.position().region())))
+                    (focus.distTo() <= 6 || (focus.region() != null && focus.region().equals(unit.position().region())))
                     ? focus.translatePercentTowards(unit, 40) : focus;
 
                 return unit.move(
@@ -84,7 +84,7 @@ public abstract class MoveToFocusPoint {
 
         Selection friends = unit.friendsNear().groundUnits().inRadius(1, unit);
         if (friends.notEmpty()) {
-            AUnit nearest = friends.nearestTo(unit);
+            AUnit nearest = friends.nearestTo();
             if (unit.distTo(nearest) <= 0.1) {
 //                if (nearest.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)) {
 ////                    boolean b = nearest.moveAwayFrom(unit, 0.1, "Separate", Actions.MOVE_FORMATION)
@@ -153,7 +153,7 @@ public abstract class MoveToFocusPoint {
         }
 
         double distToFocusPoint = unit.distToFocusPoint();
-//        double optimalDist = unit.mission().optimalDist(unit);
+//        double optimalDist = unit.mission().optimalDist();
 
         boolean onValidSideOfChoke = isOnValidSideOfChoke(unit, focus);
 //        APainter.paintCircleFilled(unit, 6, onValidSideOfChoke ? Color.Green : Color.Red);

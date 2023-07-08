@@ -2,7 +2,6 @@ package atlantis.units.select;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.terran.repair.ARepairAssignments;
@@ -397,10 +396,10 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection havingTarget(AUnit targetUnit) {
+    public Selection havingTargeted(AUnit targetUnit) {
         return cloneByRemovingIf(
             (unit -> (unit.target() == null || !unit.target().equals(targetUnit))),
-            "havingTarget:" + targetUnit.idWithHash()
+            "havingTargeted:" + targetUnit.idWithHash()
         );
     }
 

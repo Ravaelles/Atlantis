@@ -16,13 +16,13 @@ import atlantis.util.We;
  */
 public class Sparta extends MissionDefend {
 
-    //    public static final double HOLD_DIST_FOR_MELEE = 0.6;
-    private static final double MAX_MELEE_DIST_TO_ATTACK = 1.1;
+    //    public  final double HOLD_DIST_FOR_MELEE = 0.6;
+    private  final double MAX_MELEE_DIST_TO_ATTACK = 1.1;
 
     // =========================================================
 
-    public Sparta() {
-        super();
+    public Sparta(AUnit unit) {
+        super(unit);
         setName("Sparta");
         focusPointManager = new MissionDefendFocusPoint();
     }
@@ -33,7 +33,7 @@ public class Sparta extends MissionDefend {
     public boolean update(AUnit unit) {
         focusPoint = focusPoint();
         if (!focusPoint.isAroundChoke() || unit.hasNoWeaponAtAll()) {
-            return super.update(unit);
+            return super.update();
         }
 
         this.unit = unit;
@@ -279,11 +279,11 @@ public class Sparta extends MissionDefend {
             return false;
         }
 
-        double dist = spartanPoint.distTo(unit);
-        boolean distanceGood = dist <= optimalDist(unit);
+        double dist = spartanPoint.distTo();
+        boolean distanceGood = dist <= optimalDist();
 
         if (distanceGood) {
-            if (shouldHold(unit)) {
+            if (shouldHold()) {
                 unit.holdPosition("Sparta");
             }
             return true;
@@ -296,7 +296,7 @@ public class Sparta extends MissionDefend {
         double dist = unit.distTo(focusPoint);
 
         if (1.0 <= dist && dist <= 2.0) {
-            if (shouldHold(unit)) {
+            if (shouldHold()) {
                 unit.holdPosition("Sparta");
             }
             return true;
@@ -312,7 +312,7 @@ public class Sparta extends MissionDefend {
             && unit.lastActionMoreThanAgo(6);
     }
 
-    public static boolean canUseSpartaMission() {
+    public  boolean canUseSpartaMission() {
         if (We.terran()) {
             return false;
         }

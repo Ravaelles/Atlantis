@@ -3,19 +3,24 @@ package atlantis.combat.missions.attack;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
-public class MoveToAttackAsTerran {
+public class MoveToAttackAsTerran extends Manager {
 
-    public static boolean handledTerranAdvance(AUnit unit) {
+    public MoveToAttackAsTerran(AUnit unit) {
+        super(unit);
+    }
+
+    public boolean handledTerranAdvance() {
         if (unit.isTerranInfantry() && unit.isWounded() && !unit.isMedic() && Count.medics() >= 1) {
             AUnit medic = Select.ourOfType(AUnitType.Terran_Medic)
                 .havingEnergy(20)
                 .inRadius(15, unit)
-                .nearestTo(unit);
+                .nearestTo();
 
-            if (medic != null && (!medic.hasTarget() || medic.target().equals(unit))) {
+            if (medic != null && (!medic.hasTarget() || medic.target().equals())) {
                 return unit.move(medic, Actions.MOVE_FOCUS, "Regenerate", false);
             }
         }

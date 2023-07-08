@@ -8,7 +8,7 @@ import atlantis.units.select.Select;
 import java.util.List;
 
 public class AvoidMines {
-    protected static boolean handleMines(AUnit unit) {
+    protected  boolean handleMines() {
         boolean canShootAtMines = unit.isRanged() && unit.canAttackGroundUnits();
 
         if (!canShootAtMines) {
@@ -28,7 +28,7 @@ public class AvoidMines {
 
             // Our mine
             if (mine.isOur()) {
-                if (mine.isMoving() && mine.distTo(unit) <= 3.5) {
+                if (mine.isMoving() && mine.distTo() <= 3.5) {
                     unit.moveAwayFrom(mine.position(), 2, "Avoid mine!", Actions.MOVE_AVOID);
                     return true;
                 }
@@ -56,16 +56,16 @@ public class AvoidMines {
 
     // =========================================================
 
-    private static boolean handleEnemyMineAsMeleeUnit(AUnit unit, AUnit mine) {
+    private  boolean handleEnemyMineAsMeleeUnit(AUnit mine) {
         unit.moveAwayFrom(mine.position(), 1, "Avoid mine!", Actions.MOVE_AVOID);
 //        APainter.paintLine(unit, mine, Color.Yellow);
         return true;
     }
 
-    private static boolean handleEnemyMineAsRangedUnit(AUnit unit, AUnit mine) {
-//        if (mine.distTo(unit) <= 2.0) {
+    private  boolean handleEnemyMineAsRangedUnit(AUnit mine) {
+//        if (mine.distTo() <= 2.0) {
 //            unit.runningManager().runFrom(mine, 3, Actions.MOVE_AVOID);
-//            unit.setTooltipTactical("AVOID MINE(" + mine.distTo(unit) + ")");
+//            unit.setTooltipTactical("AVOID MINE(" + mine.distTo() + ")");
 //            return true;
 //        }
 

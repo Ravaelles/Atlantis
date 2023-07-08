@@ -4,6 +4,7 @@ import atlantis.combat.targeting.ATargeting;
 import atlantis.decions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -12,17 +13,23 @@ import atlantis.util.cache.Cache;
 
 public class AAttackEnemyUnit {
 
-    //    public static final double MAX_DIST_TO_ATTACK = 17;
-    public static final double MAX_DIST_TO_ATTACK = 60;
+    private static ProcessAttackUnit processAttackUnit;
+    public final double MAX_DIST_TO_ATTACK = 25;
 
-    public static String reasonNotToAttack;
+    public String reasonNotToAttack;
 
+    private AUnit unit;
     private static Cache<AUnit> cache = new Cache<>();
     private static Cache<Object> cacheObject = new Cache<>();
 
-//    public static boolean handleAttackNearEnemyUnits(AUnit unit) {
-//        return handleAttackNearEnemyUnits(unit, MAX_DIST_TO_ATTACK);
-//    }
+    // =========================================================
+
+    public AAttackEnemyUnit(AUnit unit) {
+        this.unit = unit;
+        processAttackUnit = (new ProcessAttackUnit(unit));
+    }
+
+    // =========================================================
 
     /**
      * Selects the best enemy unit and issues attack order.
@@ -36,21 +43,23 @@ public class AAttackEnemyUnit {
             "handleAttackNearEnemyUnits: " + unit.id(),
             4,
             () -> {
-                if (!canAttackNow(unit)) {
+                AAttackEnemyUnit service = new AAttackEnemyUnit(unit);
+
+                if (!service.canAttackNow()) {
                     return false;
                 }
 
-                AUnit enemy = defineEnemyToAttackFor(unit);
+                AUnit enemy = service.defineEnemyToAttackFor();
                 if (enemy == null) {
                     return false;
                 }
 
-                return ProcessAttackUnit.processAttackUnit(unit, enemy);
+                return processAttackUnit.processAttackOtherUnit(enemy);
             }
         );
     }
 
-    private static boolean canAttackNow(AUnit unit) {
+    private boolean canAttackNow() {
         if (unit.hasNoWeaponAtAll()) {
             return false;
         }
@@ -72,7 +81,7 @@ public class AAttackEnemyUnit {
             return false;
         }
 
-        boolean shouldRetreat = unit.shouldRetreat();
+        boolean shouldRetreat = unit.shouldRetreat(unit);
         if (unit.isMelee() && shouldRetreat) {
             return false;
         }
@@ -99,24 +108,24 @@ public class AAttackEnemyUnit {
         return true;
     }
 
-    public static boolean canAttackEnemiesNow(AUnit unit) {
-        if (AAttackEnemyUnit.reasonNotToAttack == null) {
+    public boolean canAttackEnemiesNow() {
+        if (reasonNotToAttack == null) {
             return true;
         }
 
-        return defineEnemyToAttackFor(unit) != null;
+        return defineEnemyToAttackFor() != null;
     }
 
-    public static String canAttackEnemiesNowString(AUnit unit) {
-        return "(" + (AAttackEnemyUnit.canAttackEnemiesNow(unit)
+    public String canAttackEnemiesNowString() {
+        return "(" + (canAttackEnemiesNow()
             ? "v"
-            : "DONT-" + AAttackEnemyUnit.reasonNotToAttack)
+            : "DONT-" + reasonNotToAttack)
             + ")";
     }
 
     // =========================================================
 
-    private static boolean allowedToAttack(AUnit unit) {
+    private boolean allowedToAttack() {
         if (unit.hasNoWeaponAtAll()) {
             reasonNotToAttack = "NoWeapon";
             return false;
@@ -147,14 +156,14 @@ public class AAttackEnemyUnit {
         return true;
     }
 
-    private static AUnit defineEnemyToAttackFor(AUnit unit) {
+    private AUnit defineEnemyToAttackFor() {
         return cache.get(
             "defineEnemyToAttackFor",
             0,
             () -> {
                 reasonNotToAttack = null;
 
-//                if (!allowedToAttack(unit)) {
+//                if (!allowedToAttack()) {
 //                    return null;
 //                }
 
@@ -164,8 +173,8 @@ public class AAttackEnemyUnit {
                 if (enemy == null) {
                     return null;
                 }
-                if (!isValidTargetAndAllowedToAttackUnit(unit, enemy)) {
-//                    System.out.println("Not allowed to attack: " + enemy + " (" + AAttackEnemyUnit.reasonNotToAttack + ")");
+                if (!isValidTargetAndAllowedToAttackUnit(enemy)) {
+//                    System.out.println("Not allowed to attack: " + enemy + " (" + reasonNotToAttack + ")");
                     return null;
                 }
 
@@ -174,8 +183,8 @@ public class AAttackEnemyUnit {
         );
     }
 
-//    public static boolean shouldNotAttack(AUnit unit) {
-////        if (AAvoidUnits.shouldAvoidAnyUnit(unit)) {
+//    public  boolean shouldNotAttack() {
+////        if (AAvoidUnits.shouldAvoidAnyUnit()) {
 ////            return false;
 ////        }
 //
@@ -189,12 +198,12 @@ public class AAttackEnemyUnit {
 //        ;
 //    }
 
-    private static boolean isValidTargetAndAllowedToAttackUnit(AUnit unit, AUnit target) {
+    private boolean isValidTargetAndAllowedToAttackUnit(AUnit target) {
         if (target == null || target.position() == null) {
             return false;
         }
 
-        if (!missionAllowsToAttackEnemyUnit(unit, target)) {
+        if (!missionAllowsToAttackEnemyUnit(target)) {
             reasonNotToAttack = "MissionForbids" + target.name();
             unit.setTooltipTactical(reasonNotToAttack);
             unit.addLog(reasonNotToAttack);
@@ -230,7 +239,7 @@ public class AAttackEnemyUnit {
         return true;
     }
 
-    private static boolean missionAllowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+    private boolean missionAllowsToAttackEnemyUnit(AUnit enemy) {
         return unit.mission() == null
             || (unit.isTank() && unit.noCooldown())
             || (unit.isWraith() && unit.isHealthy() && !enemy.isCombatBuilding())

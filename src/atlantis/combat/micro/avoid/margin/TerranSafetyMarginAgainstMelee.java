@@ -75,7 +75,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         return criticalDist;
     }
 
-    private static double cooldownBonus(AUnit defender) {
+    private  double cooldownBonus(AUnit defender) {
         int cooldown = defender.cooldown();
         if (cooldown >= 4) {
             return cooldown / 6.0;
@@ -88,7 +88,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         return defender.isMoving() ? -0.2 : +0.3;
     }
 
-    private static boolean canIgnoreThisEnemyForNow(AUnit defender, AUnit attacker) {
+    private  boolean canIgnoreThisEnemyForNow(AUnit defender, AUnit attacker) {
         if (attacker.isRanged()) {
             return false;
         }

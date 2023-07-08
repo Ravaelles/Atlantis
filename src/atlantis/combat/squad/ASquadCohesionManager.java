@@ -12,8 +12,17 @@ import atlantis.units.managers.Manager;
 
 public class ASquadCohesionManager extends Manager {
 
-    public static Manager update(AUnit unit) {
-//        if (shouldSkip(unit)) {
+    private ComeCloser comeCloser;
+    private SquadCohesion squadCohesion;
+
+    public ASquadCohesionManager(AUnit unit) {
+        super(unit);
+        comeCloser = new ComeCloser();
+        squadCohesion = new SquadCohesion();
+    }
+
+    public Manager update(AUnit unit) {
+//        if (shouldSkip()) {
 //            return false;
 //        }
 
@@ -21,19 +30,19 @@ public class ASquadCohesionManager extends Manager {
             return null;
         }
 
-        if (ComeCloser.handleComeCloser(unit) != null) {
+        if (comeCloser.handleComeCloser() != null) {
             return unit.manager();
         }
 
-//        if (TooClustered.handleTooClustered(unit)) {
+//        if (TooClustered.handleTooClustered()) {
 //            return true;
 //        }
 
-        if (SquadCohesion.handleTooLowCohesion(unit)) {
-            return true;
+        if (squadCohesion.handleTooLowCohesion() != null) {
+            return unit.manager();
         }
 
-        return false;
+        return null;
     }
 
 //    private static boolean shouldSkip(AUnit unit) {
@@ -49,13 +58,13 @@ public class ASquadCohesionManager extends Manager {
     }
 
 //    private static boolean handleShouldStickCloser(AUnit unit) {
-//        if (shouldSkipStickCloser(unit)) {
+//        if (shouldSkipStickCloser()) {
 //            return false;
 //        }
 //
-//        Selection closeFriends = Select.ourCombatUnits().exclude(unit);
-//        AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
-//        APosition center = squadCenter(unit);
+//        Selection closeFriends = Select.ourCombatUnits().exclude();
+//        AUnit nearestFriend = closeFriends.clone().nearestTo();
+//        APosition center = squadCenter();
 //
 //        if (nearestFriend == null) {
 //            return false;

@@ -1,39 +1,35 @@
-package atlantis.combat.micro.terran;
+package atlantis.combat.micro.terran.infantry.medic;
 
-import atlantis.combat.micro.Micro;
-import atlantis.combat.micro.Microable;
 import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.terran.medic.BodyBlock;
-import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import bwapi.Color;
 import bwapi.TechType;
 
 import java.util.HashMap;
 
-public class TerranMedic extends Microable {
+public class TerranMedic extends Manager {
 
-    public static double BODY_BLOCK_POSITION_ERROR_MARGIN = 0.2;
-    public static double MIN_DIST_TO_ASSIGNMENT = 0.45;
+    public double BODY_BLOCK_POSITION_ERROR_MARGIN = 0.2;
+    public double MIN_DIST_TO_ASSIGNMENT = 0.45;
 
     /**
      * Maximum allowed distance for a medic to heal wounded units that are not their assignment.
      * The idea is to disallow them to move away too much.
      */
-    public static int HEAL_OTHER_UNITS_MAX_DISTANCE = 10;
+    public int HEAL_OTHER_UNITS_MAX_DISTANCE = 10;
 
     /**
      * Specific units that medics should follow in order to heal them as fast as possible
      * when they get wounded.
      */
-    private static final HashMap<AUnit, AUnit> medicsToAssignments = new HashMap<>();
-    private static final HashMap<AUnit, AUnit> assignmentsToMedics = new HashMap<>();
+    private final HashMap<AUnit, AUnit> medicsToAssignments = new HashMap<>();
+    private final HashMap<AUnit, AUnit> assignmentsToMedics = new HashMap<>();
     private final AUnit medic;
 
 //    public Micro[] macroManagers = new Micro[] {
@@ -42,52 +38,68 @@ public class TerranMedic extends Microable {
 
     // =========================================================
 
-    public TerranMedic(AUnit unit) {
-        this.medic = unit;
+    public TerranMedic(AUnit medic) {
+        super(medic);
+        this.medic = medic;
     }
 
     // =========================================================
 
-    public boolean update() {
-        if (medic.hp() <= 14 && AvoidEnemies.avoidEnemiesIfNeeded(medic)) {
-            return true;
-        }
+
+    @Override
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            AvoidEnemies.class,
+        };
+    }
+
+    public Manager handle() {
+        if (!unit.isMedic()) return null;
+
+//        if (medic.hp() <= 14 && AvoidEnemies.avoidEnemiesIfNeeded()) {
+//            return true;
+//        }
 
         if (!medic.isIdle() && medic.lastActionLessThanAgo(8, Actions.HEAL)) {
-            return true;
+            medic.setTooltip("hEaL");
+            return usingManager(this);
         }
 
-//        if (unblockChoke(medic)) {
+//        if (unblockChoke()) {
 //            return true;
 //        }
 
-//        if (healCriticallyWoundedUnits(medic)) {
+//        if (healCriticallyWoundedUnits()) {
 //            return true;
 //        }
 
-        if (healMostWoundedInRange(medic)) {
-            return true;
+        if (healMostWoundedInRange()) {
+            return usingManager(this);
         }
 
-        if (healAnyWoundedNear(medic)) {
-            return true;
+        if (healAnyWoundedNear()) {
+            return usingManager(this);
         }
 
-        if (Enemy.protoss() && bodyBlockMelee(medic)) {
-            return true;
+        if (Enemy.protoss() && bodyBlockMelee()) {
+            return usingManager(this);
         }
 
-        if (tooFarFromNearestInfantry(medic)) {
-            return true;
+        if (tooFarFromNearestInfantry()) {
+            return usingManager(this);
         }
 
         // If there's no "real" infantry around, go to the nearest Marine, Firebat or Ghost.
-        return handleStickToAssignments(medic);
+        if (handleStickToAssignments()) {
+            return usingManager(this);
+        }
+
+        return null;
     }
 
     // =========================================================
 
-    private static boolean bodyBlockMelee(AUnit medic) {
+    private boolean bodyBlockMelee() {
         if (medic.cooldownRemaining() >= 2) {
             return false;
         }
@@ -103,9 +115,9 @@ public class TerranMedic extends Microable {
 
         AUnit nearestFriend = medic.friendsNear()
             .inRadius(4, medic)
-                .excludeTypes(AUnitType.Terran_Medic)
-                .notBeingHealed()
-                .nearestTo(medic);
+            .excludeTypes(AUnitType.Terran_Medic)
+            .notBeingHealed()
+            .nearestTo(medic);
 
         if (nearestFriend == null) {
             return false;
@@ -117,7 +129,7 @@ public class TerranMedic extends Microable {
         }
 
         APosition enemyTarget = nearestEnemy.hasTargetPosition()
-                ? nearestEnemy.targetPosition() : nearestFriend.position();
+            ? nearestEnemy.targetPosition() : nearestFriend.position();
         APosition desiredPosition = enemyTarget.translateTilesTowards(0.4, nearestEnemy);
         if (medic.distToMoreThan(desiredPosition, BODY_BLOCK_POSITION_ERROR_MARGIN) || medic.isIdle()) {
             return medic.move(desiredPosition, Actions.MOVE_MACRO, "Block", false);
@@ -126,12 +138,12 @@ public class TerranMedic extends Microable {
         return false;
     }
 
-//    private static boolean unblockChoke(AUnit medic) {
-//        AChoke choke = Chokes.nearestChoke(medic);
+//    private  boolean unblockChoke() {
+//        AChoke choke = Chokes.nearestChoke();
 //
 //        // We're possibly blocking the choke
 //        if (choke != null && choke.width() <= 3.8 && choke.distToLessThan(medic, choke.width() + 1)) {
-//            AUnit nearestUnit = Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).nearestTo(medic);
+//            AUnit nearestUnit = Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).nearestTo();
 //            if (nearestUnit != null && nearestUnit.distToLessThan(medic, 0.5)) {
 //                return medic.moveAwayFrom(nearestUnit, 0.2, "MoveBitch"); // Get out of the way
 //            }
@@ -140,44 +152,44 @@ public class TerranMedic extends Microable {
 //        return false;
 //    }
 
-    private static boolean tooFarFromNearestInfantry(AUnit medic) {
+    private boolean tooFarFromNearestInfantry() {
         AUnit infantry = Select.ourTerranInfantryWithoutMedics().nearestTo(medic);
         if (infantry != null && infantry.distToMoreThan(medic, 4)) {
             return medic.move(infantry, Actions.MOVE_FOCUS, "SemperFi", false);
         }
 
-        if (infantry == null) {
-            if (AvoidEnemies.avoidEnemiesIfNeeded(medic)) {
-                return true;
-            }
-        }
+//        if (infantry == null) {
+//            if (AvoidEnemies.avoidEnemiesIfNeeded()) {
+//                return true;
+//            }
+//        }
 
         return false;
     }
 
-    private static void healUnit(AUnit medic, AUnit unitToHeal) {
+    private void healUnit(AUnit unitToHeal) {
         if (medic != null && unitToHeal != null && !unitToHeal.equals(medic.target())) {
             medic.useTech(TechType.Healing, unitToHeal);
             medic.setTooltipTactical("Heal");
         }
     }
 
-    private static AUnit medicAssignment(AUnit medic) {
+    private AUnit medicAssignment() {
         AUnit assignment = medicsToAssignments.get(medic);
 
         if (assignment != null && !assignment.isAlive()) {
-            removeAssignment(medic, assignment);
+            removeAssignment(assignment);
             assignment = null;
         }
 
         if (assignment == null) {
-            assignment = createMedicAssignment(medic);
+            assignment = createMedicAssignment();
         }
 
         return assignment;
     }
 
-    private static AUnit createMedicAssignment(AUnit medic) {
+    private AUnit createMedicAssignment() {
         AUnit assignment;
         Selection inSquadSelector = Select.from(medic.squad()).inRadius(20, medic);
 
@@ -186,7 +198,7 @@ public class TerranMedic extends Microable {
 
         assignment = inSquadSelector.clone().ofType(AUnitType.Terran_Firebat).randomWithSeed(medic.id());
         if (assignment != null) {
-            addMedicAssignment(medic, assignment);
+            addMedicAssignment(assignment);
             return assignment;
         }
 
@@ -194,11 +206,11 @@ public class TerranMedic extends Microable {
         // Infantry without any medics assigned
 
         assignment = inSquadSelector.clone()
-                .terranInfantryWithoutMedics()
-                .exclude(assignmentsToMedics.keySet())
-                .randomWithSeed(medic.id());
+            .terranInfantryWithoutMedics()
+            .exclude(assignmentsToMedics.keySet())
+            .randomWithSeed(medic.id());
         if (assignment != null) {
-            addMedicAssignment(medic, assignment);
+            addMedicAssignment(assignment);
             return assignment;
         }
 
@@ -206,29 +218,29 @@ public class TerranMedic extends Microable {
         // Infantry even if already a medic is assigned
 
         assignment = inSquadSelector.clone()
-                .terranInfantryWithoutMedics()
-                .randomWithSeed(medic.id());
+            .terranInfantryWithoutMedics()
+            .randomWithSeed(medic.id());
         if (assignment != null) {
-            addMedicAssignment(medic, assignment);
+            addMedicAssignment(assignment);
             return assignment;
         }
 
         return null;
     }
 
-    private static void addMedicAssignment(AUnit medic, AUnit assignment) {
+    private void addMedicAssignment(AUnit assignment) {
         medicsToAssignments.put(medic, assignment);
         assignmentsToMedics.put(assignment, medic);
         medic.setTooltipTactical("NewAssignment");
     }
 
-    private static void removeAssignment(AUnit medic, AUnit assignment) {
+    private void removeAssignment(AUnit assignment) {
         medicsToAssignments.remove(medic);
         assignmentsToMedics.remove(assignment);
     }
 
-    private static boolean handleStickToAssignments(AUnit medic) {
-        AUnit assignment = medicAssignment(medic);
+    private boolean handleStickToAssignments() {
+        AUnit assignment = medicAssignment();
 
         if (assignment != null && assignment.isAlive()) {
 //            APainter.paintLine(medic, assignment, Color.White);
@@ -249,31 +261,31 @@ public class TerranMedic extends Microable {
         return false;
     }
 
-    private static boolean healCriticallyWoundedUnits(AUnit medic) {
+    private boolean healCriticallyWoundedUnits() {
         if (medic.energy() < 2) {
             return false;
         }
 
         AUnit nearestWoundedInfantry = Select.our()
-                .organic()
-                .criticallyWounded()
-                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
-                .exclude(medic)
-                .notBeingHealed()
-                .nearestTo(medic);
+            .organic()
+            .criticallyWounded()
+            .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
+            .exclude(medic)
+            .notBeingHealed()
+            .nearestTo(medic);
 
         // =========================================================
         // If there's a wounded unit, heal it.
 
         if (nearestWoundedInfantry != null) {
-            healUnit(medic, nearestWoundedInfantry);
+            healUnit(nearestWoundedInfantry);
             return true;
         }
 
         return false;
     }
 
-    private static boolean healMostWoundedInRange(AUnit medic) {
+    private boolean healMostWoundedInRange() {
         if (!medic.energy(5)) {
             return false;
         }
@@ -283,43 +295,52 @@ public class TerranMedic extends Microable {
         }
 
         AUnit nearestWoundedInfantry = Select.our()
-                .organic()
-                .notHavingHp(19)
-                .inRadius(1.99, medic)
-                .exclude(medic)
-                .notBeingHealed()
-                .sortByHealth()
-                .first();
+            .organic()
+            .notHavingHp(19)
+            .inRadius(1.99, medic)
+            .exclude(medic)
+            .notBeingHealed()
+            .sortByHealth()
+            .first();
 
         // =========================================================
         // If there's a wounded unit, heal it.
 
         if (nearestWoundedInfantry != null) {
-            healUnit(medic, nearestWoundedInfantry);
+            healUnit(nearestWoundedInfantry);
+            medic.setTooltip("MostWounded");
             return true;
         }
 
         return false;
     }
 
-    private static boolean healAnyWoundedNear(AUnit medic) {
+    private boolean healAnyWoundedNear() {
         if (!medic.energy(5)) {
             return false;
         }
 
-        AUnit nearestWoundedInfantry = Select.our()
-                .organic()
-                .wounded()
-                .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
-                .exclude(medic)
-//                .notBeingHealed()
-                .nearestTo(medic);
+        Selection potentialTargets = Select.our()
+            .organic()
+            .wounded()
+            .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
+            .exclude(medic);
+
+        AUnit target = potentialTargets
+            .excludeRunning()
+            .notBeingHealed()
+            .nearestTo(medic);
+
+        if (target == null) {
+            target = potentialTargets.nearestTo(medic);
+        }
 
         // =========================================================
         // If there's a wounded unit, heal it.
 
-        if (nearestWoundedInfantry != null) {
-            healUnit(medic, nearestWoundedInfantry);
+        if (target != null) {
+            healUnit(target);
+            medic.setTooltip("AnyWounded");
             return true;
         }
 

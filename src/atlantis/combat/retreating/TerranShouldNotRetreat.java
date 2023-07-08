@@ -1,27 +1,32 @@
 package atlantis.combat.retreating;
 
 import atlantis.units.AUnit;
+import atlantis.units.managers.Manager;
 
-public class TerranRetreat {
+public class TerranShouldNotRetreat extends Manager {
 
-    public static boolean shouldNotRetreat(AUnit unit) {
+    public TerranShouldNotRetreat(AUnit unit) {
+        super(unit);
+    }
+
+    public Manager shouldNotRetreat() {
         if (!unit.isTerran()) {
-            return false;
+            return null;
         }
 
         if (unit.isTank() && unit.woundPercentMax(60) && unit.cooldownRemaining() <= 0) {
             unit.setTooltip("BraveTank");
-            return true;
+            return usingManager(this);
         }
 
         if (unit.kitingUnit() && unit.isHealthy()) {
             unit.setTooltip("BraveKite");
-            return true;
+            return usingManager(this);
         }
 
         if (unit.isStimmed() && (unit.hp() >= 17 || unit.noCooldown()) && unit.enemiesNearInRadius(1.8) <= 2) {
             unit.setTooltip("BraveStim");
-            return true;
+            return usingManager(this);
         }
 
 //        if (unit.friendsInRadius(4).count() >= 8) {
@@ -29,10 +34,10 @@ public class TerranRetreat {
 //            return true;
 //        }
 
-        return false;
+        return null;
     }
 
-    public static boolean shouldRetreat(AUnit unit) {
+    public boolean shouldRetreat() {
         if (unit.isTerranInfantry()) {
             if (!unit.mission().isMissionDefend()) {
                 if (unit.enemiesNear().ranged().notEmpty() && unit.friendsNear().atMost(4) && unit.combatEvalRelative() <= 2) {

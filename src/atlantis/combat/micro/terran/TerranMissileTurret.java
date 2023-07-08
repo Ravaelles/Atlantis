@@ -11,7 +11,7 @@ import atlantis.units.select.Have;
 
 public class TerranMissileTurret extends AntiAirBuildingManager {
 
-    protected static final AUnitType turret = AUnitType.Terran_Missile_Turret;
+    protected  final AUnitType turret = AUnitType.Terran_Missile_Turret;
 
     @Override
     public AUnitType type() {
@@ -60,7 +60,7 @@ public class TerranMissileTurret extends AntiAirBuildingManager {
 
     // =========================================================
 
-    public static TerranMissileTurret get() {
+    public  TerranMissileTurret get() {
         if (instance == null) {
             return (TerranMissileTurret) (instance = new TerranMissileTurret());
         }

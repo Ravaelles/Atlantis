@@ -31,7 +31,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
 //        }
 
         fromSide = focusPoint.fromSide();
-        optimalDist = optimalDist(unit);
+        optimalDist = optimalDist();
         unitToFocus = unit.distTo(focus);
         unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
@@ -45,9 +45,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
     //            if (unit.debug())System.out.println("handleWrongSideOfFocus " + unit);
                 if (
                     handleWrongSideOfFocus(unit, focusPoint) || tooFarBack() || tooCloseToFocusPoint()
-                ) {
-                    return true;
-                }
+                ) return true;
             }
 //        }
 
@@ -123,7 +121,7 @@ public class MoveToDefendFocusPoint extends MoveToFocusPoint {
         return Math.max(
             (unit.isRanged() ? 3.7 : 0),
             base
-                + letWorkersComeThroughBonus(unit)
+                + letWorkersComeThroughBonus()
                 + (unit.isDragoon() ? 1.7 : 0)
         );
     }

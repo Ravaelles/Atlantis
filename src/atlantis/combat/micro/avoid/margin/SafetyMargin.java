@@ -136,7 +136,7 @@ public class SafetyMargin {
     protected static double quicknessBonus(AUnit defender, AUnit attacker) {
 
         // If unit is much slower than enemy, don't run at all. It's better to shoot instead.
-        double quicknessDifference = defender.maxSpeed() - attacker.maxSpeed();
+       double quicknessDifference = defender.maxSpeed() - attacker.maxSpeed();
 
         return -quicknessDifference / (quicknessDifference > 0 ? 2.5 : (attacker.isMelee() ? 0.6 : 1.5));
 //        return Math.min(0, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));

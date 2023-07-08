@@ -1,22 +1,42 @@
 package atlantis.combat.micro.terran.bunker;
 
-import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-public class LoadIntoBunkers {
+public class LoadIntoBunkers extends Manager {
 
-    public static boolean tryLoadingInfantryIntoBunkerIfNeeded(AUnit unit) {
+    public LoadIntoBunkers(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            PreventMaginotLine.class
+        };
+    }
+
+    @Override
+    public Manager handle() {
+        if (tryLoadingInfantryIntoBunkerIfNeeded()) {
+            return usingManager(this);
+        }
+
+        return null;
+    }
+
+    private boolean tryLoadingInfantryIntoBunkerIfNeeded() {
         if (unit.isLoaded()) {
             return false;
         }
 
         if (unit.lastActionLessThanAgo(20, Actions.LOAD)) {
             unit.addLog("Loading");
-            return continueLoadingIntoBunker(unit);
+            return continueLoadingIntoBunker();
         }
 
         // Only Terran infantry get inside
@@ -30,13 +50,13 @@ public class LoadIntoBunkers {
             return false;
         }
 
-        if (UnloadFromBunkers.preventFromActingLikeFrenchOnMaginotLine(unit)) {
-            return false;
-        }
+//        if (UnloadFromBunkers.preventFromActingLikeFrenchOnMaginotLine()) {
+//            return false;
+//        }
 
         // =========================================================
 
-        AUnit bunker = defineBunkerToLoadTo(unit);
+        AUnit bunker = bunkerToLoadTo();
 //        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
 
         if (bunker != null && bunker.hasFreeSpaceFor(unit)) {
@@ -77,14 +97,14 @@ public class LoadIntoBunkers {
         return false;
     }
 
-    private static boolean continueLoadingIntoBunker(AUnit unit) {
+    private boolean continueLoadingIntoBunker() {
         AUnit target = unit.target();
 
         if (target != null && target.isBunker()) {
             return unit.isMoving() ? true : unit.load(target);
         }
         else {
-            AUnit bunker = defineBunkerToLoadTo(unit);
+            AUnit bunker = bunkerToLoadTo();
             if (bunker != null) {
                 return unit.load(bunker);
             }
@@ -93,31 +113,10 @@ public class LoadIntoBunkers {
         }
     }
 
-    // =========================================================
-
-    private static AUnit defineBunkerToLoadTo(AUnit unit) {
+    private AUnit bunkerToLoadTo() {
         return Select.ourOfType(AUnitType.Terran_Bunker)
             .inRadius(15, unit)
             .havingSpaceFree(unit.spaceRequired())
             .nearestTo(unit);
-
-//        System.out.println("bunker = " + bunker);
-//        if (bunker != null) {
-//            AUnit mainBase = Select.main();
-//
-//            // Select the most distance (according to main base) bunker
-//            if (Missions.isGlobalMissionDefend() && mainBase != null) {
-//                AUnit mostDistantBunker = bunkers
-//                        .units()
-//                        .sortByGroundDistTo(mainBase.position(), false)
-//                        .first();
-//                return mostDistantBunker;
-//            }
-//            else {
-//                return bunker;
-//            }
-//        }
-
-//        return bunker;
     }
 }

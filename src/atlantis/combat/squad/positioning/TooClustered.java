@@ -10,7 +10,7 @@ import atlantis.units.select.Selection;
 public class TooClustered {
 
     public static boolean handleTooClustered(AUnit unit) {
-        if (shouldSkip(unit)) {
+        if (shouldSkip()) {
             return false;
         }
 
@@ -19,8 +19,8 @@ public class TooClustered {
         }
 
         Selection ourCombatUnits = Select.ourCombatUnits().inRadius(5, unit);
-        AUnit nearestBuddy = ourCombatUnits.clone().nearestTo(unit);
-        double minDistBetweenUnits = minDistBetweenUnits(unit);
+        AUnit nearestBuddy = ourCombatUnits.clone().nearestTo();
+        double minDistBetweenUnits = minDistBetweenUnits();
 
         if (tooClustered(unit, ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
             APosition goTo = unit.makeFreeOfAnyGroundUnits(4, 0.2, unit);
@@ -52,7 +52,7 @@ public class TooClustered {
     }
 
     private static double minDistBetweenUnits(AUnit unit) {
-        double baseDist = preferedBaseDistToNextUnit(unit);
+        double baseDist = preferedBaseDistToNextUnit();
         int enemiesNear = unit.enemiesNearInRadius(4);
 
         if (enemiesNear <= 1 || unit.noCooldown()) {

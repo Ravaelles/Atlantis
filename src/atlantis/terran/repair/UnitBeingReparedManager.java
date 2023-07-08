@@ -2,83 +2,89 @@ package atlantis.terran.repair;
 
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 
-public class UnitBeingReparedManager {
+public class UnitBeingReparedManager extends Manager {
 
-    public static boolean handleUnitShouldBeRepaired(AUnit unit) {
-        if (!unit.isWounded()) {
-            return false;
+    public UnitBeingReparedManager(AUnit unit) {
+        super(unit);
+    }
+
+    public Manager handleUnitShouldBeRepaired() {
+        if (!unit.isTerran() || !unit.isMechanical() || !unit.isWounded()) {
+            return null;
         }
 
-        if (true) return true;
+//        if (true) return true;
 
         AUnit repairer = ARepairAssignments.getClosestRepairerAssignedTo(unit);
         if (repairer == null) {
-            return false;
+            return null;
         }
 
         double distanceToRepairer = repairer.distTo(unit);
         if (unit.isRunning()) {
-            return false;
+            return null;
         }
 
         if (!unit.isWounded()) {
             ARepairAssignments.removeRepairer(repairer);
-            return false;
+            return null;
         }
 
         // Air units should be repaired thoroughly
         if (unit.isAir() && unit.isBeingRepaired()) {
             if (!unit.isRunning() && unit.isMoving()) {
                 unit.setTooltip("HoldTheFuckDown");
-                return true;
+                return usingManager(this);
             }
         }
 
         // Ignore going closer to repairer if unit is still relatively healthy
         if (!unit.isAir() && unit.hpPercent() > 80 && distanceToRepairer >= 3) {
-            return false;
+            return null;
         }
 
         // =========================================================
 
         if (unit.nearestEnemyDist() <= 1.7) {
             unit.setTooltip("DontRepairEnemy");
-            return false;
+            return null;
         }
 
         // Go to repairer if he's close
         if (distanceToRepairer > 1) {
             if (unit.move(repairer.position(), Actions.MOVE_REPAIR, "To repairer", false)) {
-                return true;
+                return usingManager(this);
             }
         }
 
         if (distanceToRepairer <= 1) {
             unit.holdPosition("Be repaired");
-            return true;
+            return usingManager(this);
         }
 
-        return false;
+        return null;
     }
 
-    public static boolean handleDontRunWhenBeingRepared(AUnit unit) {
+    public Manager handleDontRunWhenBeingRepared() {
         if (unit.enemiesNear().melee().inRadius(1.9, unit).canAttack(unit, 5).notEmpty()) {
-            return false;
+            return null;
         }
 
         if (
             !unit.woundPercentMin(50)
-            && unit.enemiesNear().ranged().inRadius(7, unit).notEmpty()
+                && unit.enemiesNear().ranged().inRadius(7, unit).notEmpty()
         ) {
-            return false;
+            return null;
         }
 
         AUnit repairer = unit.repairer();
         if (repairer != null && repairer.distToLessThan(unit, 1.1) && repairer.isRepairing()) {
-            return unit.move(repairer, Actions.MOVE_REPAIR, "BeFixed");
+            unit.move(repairer, Actions.MOVE_REPAIR, "BeFixed");
+            return usingManager(this);
         }
 
-        return false;
+        return null;
     }
 }

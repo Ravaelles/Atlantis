@@ -13,59 +13,47 @@ import atlantis.util.We;
 //public class ComeCloser extends ASquadCohesionManager {
 public class ComeCloser extends Manager {
 
-    public static Manager handleComeCloser(AUnit unit) {
-        if (shouldSkip(unit)) {
-//            return skipped();
+    private ComeCloserToTanks comeCloserToTanks;
+    private TerranInfantryComeCloser terranInfantryComeCloser;
+
+    public ComeCloser(AUnit unit) {
+        super(unit);
+        comeCloserToTanks = new ComeCloserToTanks();
+        terranInfantryComeCloser = new TerranInfantryComeCloser();
+    }
+
+    public Manager handleComeCloser() {
+        if (shouldSkip()) {
             return null;
         }
 
-        if (
-            isTooFarFromSquadCenter(unit)
-                || ComeCloserToTanks.isTooFarFromTanks(unit)
-                || isTooFarAhead(unit)
-                || isTooFarAhead(unit)
-                || TerranInfantryComeCloser.isTooFarFromMedic(unit)
-        ) {
-            return comeCloser(unit);
+        if (isTooFarFromSquadCenter() || isTooFarAhead()) {
+            return comeCloser();
         }
 
-//        if (shouldGetCloser(unit)) {
-//            return true;
-//        }
+        if (terranInfantryComeCloser.handleTooFarFromMedic() != null) return lastManager();
 
-//        APosition squadCenter = squadCenter(unit);
-//        if (unit.hasPathTo(squadCenter)) {
-////            boolean tooFarFromCenter = unit.distTo(squadCenter) >= maxDistanceToSquadCenter(unit);
-////            if (tooFarFromCenter || tooFarForward) {
-//            if (unit.mission() != null && unit.mission().focusPoint() != null) {
-//                if (tooFarForward(unit, unit.mission().focusPoint(), squadCenter)) {
-//                    return unit.move(squadCenter(unit), UnitActions.MOVE, "TooSpread");
-//                }
-//            }
-//
-//
-////            maxDistanceToSquadCenter(unit)
-//        }
+        if (comeCloserToTanks.handleTooFarFromTanks() != null) return lastManager();
 
-        return unit.nullManager();;
+        return null;
     }
 
     // =========================================================
 
-    private static Manager comeCloser(AUnit unit) {
+    private Manager comeCloser() {
 //        if (unit.isMoving()) {
 //            unit.setTooltip("Closer...");
 //            return true;
 //        }
 
-        AUnit friend = unit.squad().selection().exclude(unit).nearestTo(unit);
+        AUnit friend = unit.squad().selection().exclude().nearestTo();
         if (friend != null) {
             /** Notice: Without .makeWalkable it is known to infinite crash Starcraft process for some reason... */
 //            APosition goTo = friend.translateTilesTowards(0.3, unit).makeWalkable(3);
             APosition goTo = friend.translateTilesTowards(0.3, unit).makeWalkable(1);
             if (goTo != null) {
                 unit.move(goTo, Actions.MOVE_FORMATION, "Closer");
-                return usedManager(new ComeCloser());
+                return usingManager(this);
             }
         }
 
@@ -74,7 +62,7 @@ public class ComeCloser extends Manager {
 
     // =========================================================
 
-    private static boolean isTooFarAhead(AUnit unit) {
+    private boolean isTooFarAhead() {
 //        if (unit.isMoving() && unit.lastActionLessThanAgo(6)) {
 //            return false;
 //        }
@@ -87,10 +75,10 @@ public class ComeCloser extends Manager {
             return false;
         }
 
-        AFocusPoint focusPoint = focusPoint(unit);
+        AFocusPoint focusPoint = focusPoint();
         if (
             focusPoint != null
-            && unit.groundDist(focusPoint) + 3 <= unit.squad().groundDistToFocusPoint()
+                && unit.groundDist(focusPoint) + 3 <= unit.squad().groundDistToFocusPoint()
         ) {
             if (unit.friendsNear().inRadius(4, unit).atMost(5)) {
                 if (unit.isMoving() && unit.cooldown() == 0) {
@@ -103,30 +91,7 @@ public class ComeCloser extends Manager {
         return false;
     }
 
-//    private static boolean tooFarForward(AUnit unit, AFocusPoint focusPoint, APosition squadCenter) {
-//        double unitToFocus = unit.groundDist(focusPoint);
-//        double centerDistToFocus = squadCenter.groundDist(focusPoint);
-//
-//        return unitToFocus - centerDistToFocus <= -5.8;
-//    }
-
-    // =========================================================
-
-//    private static double maxDistanceToSquadCenter(AUnit unit) {
-//        int max = Math.max(2, unit.squadSize() / 5);
-//
-//        if (unit.isSquadScout()) {
-//            max += 1;
-//        }
-//
-//        return max;
-//    }
-
-    private static boolean shouldSkip(AUnit unit) {
-//        if (unit.cooldownAbsolute() > 0) {
-//            return true;
-//        }
-
+    private boolean shouldSkip() {
         if (unit.lastActionLessThanAgo(13, Actions.MOVE_FORMATION)) {
             return true;
         }
@@ -135,7 +100,7 @@ public class ComeCloser extends Manager {
             return true;
         }
 
-        AFocusPoint focusPoint = focusPoint(unit);
+        AFocusPoint focusPoint = focusPoint();
 
         if (focusPoint == null) {
             return false;
@@ -170,7 +135,7 @@ public class ComeCloser extends Manager {
 
     // =========================================================
 
-    public static boolean isTooFarFromSquadCenter(AUnit unit) {
+    public boolean isTooFarFromSquadCenter() {
         if (unit.squad() == null || unit.isTank()) {
             return false;
         }
@@ -188,10 +153,10 @@ public class ComeCloser extends Manager {
             return false;
         }
 
-        double maxDistToSquadCenter = SquadCohesion.squadMaxRadius(unit.squad());
+        double maxDistToSquadCenter = squad.radius();
 
         if (unit.distTo(center) > maxDistToSquadCenter && unit.friendsNear().inRadius(3.5, unit).atMost(7)) {
-            AUnit nearestFriend = unit.friendsNear().nearestTo(unit);
+            AUnit nearestFriend = unit.friendsNear().nearestTo();
             if (nearestFriend == null) {
                 return false;
             }
@@ -204,7 +169,7 @@ public class ComeCloser extends Manager {
             if (unit.move(
                 unit.translateTilesTowards(center, 2).makeWalkable(5),
                 Actions.MOVE_FOCUS,
-                "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
+                "TooExposed(" + (int) center.distTo() + "/" + (int) unit.distTo(nearestFriend) + ")",
                 false
             )) {
                 unit.addLog("TooExposed");
@@ -213,6 +178,10 @@ public class ComeCloser extends Manager {
         }
 
         return false;
+    }
+
+    protected AFocusPoint focusPoint() {
+        return unit.mission().focusPoint();
     }
 
 }

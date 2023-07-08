@@ -8,15 +8,15 @@ import atlantis.units.AUnitType;
 public class NewUnitsToSquadsAssigner {
 
     public static void possibleCombatUnitCreated(AUnit unit) {
-        if (shouldSkipUnit(unit)) {
+        if (shouldSkipUnit()) {
             return;
         }
 
-        Squad squad = chooseSquadFor(unit);
+        Squad squad = chooseSquadFor();
 //        System.out.println("squad = " + squad);
-//        System.out.println("squad.contains(unit) = " + squad.contains(unit) + " // " + unit.name());
-        if (!squad.contains(unit)) {
-            squad.addUnit(unit);
+//        System.out.println("squad.contains() = " + squad.contains() + " // " + unit.name());
+        if (!squad.contains()) {
+            squad.addUnit();
             unit.setSquad(squad);
 //            System.err.println(unit + " assigned, now unit.squad = " + unit.squad());
         }
@@ -27,7 +27,7 @@ public class NewUnitsToSquadsAssigner {
     private static Squad chooseSquadFor(AUnit unit) {
         Alpha alpha = Alpha.get();
 
-        if (assignToDelta(unit)) {
+        if (assignToDelta()) {
             return Delta.get();
         }
 

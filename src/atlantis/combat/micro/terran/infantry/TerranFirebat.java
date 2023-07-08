@@ -1,26 +1,33 @@
-package atlantis.combat.micro.terran;
+package atlantis.combat.micro.terran.infantry;
 
 import atlantis.combat.micro.AAttackEnemyUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
-public class TerranFirebat {
+public class TerranFirebat extends Manager {
 
-    public static boolean update(AUnit unit) {
+    public TerranFirebat(AUnit unit) {
+        super(unit);
+    }
+
+    public  Manager update( ) {
         if (!unit.isFirebat()) {
-            return false;
+            return null;
         }
 
-        if (!shouldContinueMeleeFighting(unit)) {
+        if (!shouldContinueMeleeFighting()) {
             AUnit enemy = unit.nearestEnemy();
             boolean shouldRun = (enemy != null && unit.distTo(enemy) <= 1.8);
             if (shouldRun) {
-                return unit.runningManager().runFrom(
+                if (unit.runningManager().runFrom(
                     enemy, 1.0, Actions.RUN_ENEMY, false
-                );
+                )) {
+                    return usingManager(this);
+                };
             }
         }
 
@@ -32,14 +39,14 @@ public class TerranFirebat {
         ) {
             if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
                 unit.setTooltip("Napalm");
-                return true;
+                return usingManager(this);
             }
         }
 
-        return false;
+        return null;
     }
 
-    protected static boolean shouldContinueMeleeFighting(AUnit unit) {
+    protected  boolean shouldContinueMeleeFighting( ) {
         if (unit.hp() <= 34 || unit.cooldown() >= 4) {
             return false;
         }

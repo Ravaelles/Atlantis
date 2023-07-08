@@ -24,15 +24,15 @@ import java.util.stream.Collectors;
 
 public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
-    private static final int BORDER_TURRETS_MIN_COUNT = 0;
-    private static final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
-//    private static final int BORDER_TURRETS_MIN_COUNT = 4;
-//    private static final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
-    private static final int BORDER_TURRETS_MAX_DIST_BETWEEN = 8;
-    private static final int BORDER_TURRETS_ALLOW_MARGIN = 4;
+    private  final int BORDER_TURRETS_MIN_COUNT = 0;
+    private  final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
+//    private  final int BORDER_TURRETS_MIN_COUNT = 4;
+//    private  final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
+    private  final int BORDER_TURRETS_MAX_DIST_BETWEEN = 8;
+    private  final int BORDER_TURRETS_ALLOW_MARGIN = 4;
 
-    private static Cache<ArrayList<APosition>> cacheList = new Cache<>();
-    private static Cache<APosition> cachePosition = new Cache<>();
+    private  Cache<ArrayList<APosition>> cacheList = new Cache<>();
+    private  Cache<APosition> cachePosition = new Cache<>();
 
     // =========================================================
 
@@ -229,11 +229,11 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
      * by protecting against the land invasion. Therefore against Zerg back the turrets towards the base, so
      * they defend both border and the main at the same time.
      */
-    private static APosition modifyAgainstZerg(HasPosition placeForMapEdgeTurret) {
+    private  APosition modifyAgainstZerg(HasPosition placeForMapEdgeTurret) {
         return placeForMapEdgeTurret.translateTilesTowards(Select.main(), 5);
     }
 
-    private static int totalTurretsForMainBorder() {
+    private  int totalTurretsForMainBorder() {
         int haveMaxAmountAtGameSeconds = 600;
         return Math.max(
                 BORDER_TURRETS_MIN_COUNT,
@@ -241,7 +241,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         );
     }
 
-    private static HasPosition placeForMapEdgeTurret(
+    private  HasPosition placeForMapEdgeTurret(
             Positions<ARegionBoundary> boundaries, APosition nearestTo
     ) {
         if (nearestTo == null) {
@@ -262,7 +262,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         return nearMapEdge.nearestTo(nearestTo);
     }
 
-//    private static boolean protectMainBorders(Positions<ARegionBoundary> boundaries, APosition nearestEnemyBuilding) {
+//    private  boolean protectMainBorders(Positions<ARegionBoundary> boundaries, APosition nearestEnemyBuilding) {
 //        APosition placeForTurret = placeForNextMainTurret(boundaries, nearestEnemyBuilding);
 //        if (placeForTurret != null && Count.inQueueOrUnfinished(turret, 4) <= 3) {
 //            return AddToQueue.withTopPriority(turret, placeForTurret);
@@ -270,7 +270,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 //        return false;
 //    }
 
-//    private static boolean protectMainBorders(Positions<ARegionBoundary> boundaries, APosition nearestEnemyBuilding) {
+//    private  boolean protectMainBorders(Positions<ARegionBoundary> boundaries, APosition nearestEnemyBuilding) {
 //        APosition placeForTurret = placeForNextMainTurret(boundaries, nearestEnemyBuilding);
 //        if (placeForTurret != null && Count.inQueueOrUnfinished(turret, 4) <= 3) {
 //            return AddToQueue.withTopPriority(turret, placeForTurret);
@@ -278,7 +278,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 //        return false;
 //    }
 
-    private static APosition placeForNextMainTurret(
+    private  APosition placeForNextMainTurret(
             Positions<ARegionBoundary> boundaries, APosition nearestEnemyBuilding, ArrayList<APosition> places
     ) {
         int counter = 0;
@@ -301,7 +301,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         }
     }
 
-    private static APosition findBoundaryPointInDistOf(
+    private  APosition findBoundaryPointInDistOf(
             double baseDist, HasPosition position, Positions<ARegionBoundary> boundaries, ArrayList<APosition> places
     ) {
         double currentSearchDist = baseDist;

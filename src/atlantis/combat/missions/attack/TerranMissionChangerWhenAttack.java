@@ -11,7 +11,7 @@ import atlantis.units.select.Count;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
 
-    public static void changeMissionIfNeeded() {
+    public void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
             changeMissionTo(MissionChanger.defendOrSpartaMission());
         }
@@ -22,7 +22,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    public static boolean shouldChangeMissionToContain() {
+    public boolean shouldChangeMissionToContain() {
         if (A.supplyUsed() >= 174) {
             return false;
         }
@@ -36,7 +36,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
         return false;
     }
 
-    public static boolean shouldChangeMissionToDefend() {
+    public boolean shouldChangeMissionToDefend() {
         if (baseUnderSeriousAttack()) {
             if (DEBUG) reason = "Protect base";
             return true;

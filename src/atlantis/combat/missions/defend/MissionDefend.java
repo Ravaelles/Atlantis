@@ -28,7 +28,7 @@ public class MissionDefend extends Mission {
     protected double enemyToBase;
     protected double enemyToFocus;
 
-    public MissionDefend() {
+    public MissionDefend(AUnit unit) {
         super("Defend");
         focusPointManager = new MissionDefendFocusPoint();
         allowsToAttack = new MissionDefendAllowsToAttack(this);
@@ -123,7 +123,7 @@ public class MissionDefend extends Mission {
 //        return enemies.onlyMelee() && unit.hp() >= 18;
     }
 
-    protected static boolean noFocusPoint() {
+    protected  boolean noFocusPoint() {
         if (!Have.base()) {
             return false;
         }
@@ -134,6 +134,6 @@ public class MissionDefend extends Mission {
 
     @Override
     public double optimalDist(AUnit unit) {
-        return (new MoveToDefendFocusPoint()).optimalDist(unit);
+        return (new MoveToDefendFocusPoint()).optimalDist();
     }
 }

@@ -811,9 +811,7 @@ public class AUnitType implements Comparable<Object> {
                 if (!isBuilding()) {
                     return false;
                 }
-                if (canShootGround && isMilitaryBuildingAntiGround()) {
-                    return true;
-                }
+                if (canShootGround && isMilitaryBuildingAntiGround()) return true;
                 else return canShootAir && isMilitaryBuildingAntiAir();
             }
         );

@@ -7,31 +7,36 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 
-public class SquadCohesion {
+public class SquadCohesion extends Manager {
+
+    public SquadCohesion(AUnit unit) {
+        super(unit);
+    }
 
     /**
      * We want to make sure that at least N percent of units are inside X radius of squad center.
      */
-    public static boolean handleTooLowCohesion(AUnit unit) {
+    public Manager handleTooLowCohesion() {
 //        System.out.println(
 //            A.now() + " " + unit
 //                + " // okay="
-//                + isSquadCohesionOkay(unit)
+//                + isSquadCohesionOkay()
 //                + " // perc="
 //                + unit.squad().cohesionPercent()
 //                + " // outs="
 //                + unit.outsideSquadRadius()
 //        );
         if (unit.isVulture() || unit.isAir()) {
-            return false;
+            return null;
         }
 
-//        unit.setTooltipTactical(unit.squad().cohesionPercent() + "%/" + A.trueFalse(unit.outsideSquadRadius()) + "/" + A.trueFalse(isSquadCohesionOkay(unit)));
-        if (isSquadCohesionOkay(unit)) {
-            return false;
+//        unit.setTooltipTactical(unit.squad().cohesionPercent() + "%/" + A.trueFalse(unit.outsideSquadRadius()) + "/" + A.trueFalse(isSquadCohesionOkay()));
+        if (isSquadCohesionOkay()) {
+            return null;
         }
 
         // Too stacked for cohesion
@@ -40,11 +45,11 @@ public class SquadCohesion {
             || unit.friendsInRadius(4).count() >= 6
             || unit.friendsInRadius(7).count() >= 20
         ) {
-            return false;
+            return null;
         }
 
         if (!We.terran() && unit.enemiesNear().units().onlyMelee()) {
-            return false;
+            return null;
         }
 
 //        double maxDist = preferredDistToSquadCenter(unit.squad());
@@ -56,7 +61,7 @@ public class SquadCohesion {
 //                .makeFreeOfAnyGroundUnits(5, unit.type().dimensionLeft() * 2, unit);
 
             if (goTo == null) {
-                return false;
+                return null;
             }
 
             unit.addLog(t);
@@ -67,14 +72,14 @@ public class SquadCohesion {
                 t,
                 false
             )) {
-                return true;
+                return usingManager(this);
             }
         }
 
-        return false;
+        return null;
     }
 
-    private static boolean isSquadCohesionOkay(AUnit unit) {
+    private boolean isSquadCohesionOkay() {
         Squad squad = unit.squad();
         HasPosition squadCenter = unit.squadCenter();
         if (squad == null || squadCenter == null) {
@@ -85,7 +90,7 @@ public class SquadCohesion {
         return cohesionPercent >= minCohesion();
     }
 
-    private static int minCohesion() {
+    private int minCohesion() {
         if (GamePhase.isEarlyGame()) {
             if (A.supplyUsed() <= 25) {
                 return 85;
@@ -97,7 +102,7 @@ public class SquadCohesion {
         return 70;
     }
 
-    public static double squadMaxRadius(Squad squad) {
+    public double squadMaxRadius() {
         double base = 0;
 
 //        if (We.terran()) {

@@ -14,7 +14,7 @@
 //
 ////    private Mission mission;
 ////
-////    public boolean updateUnit(AUnit unit) {
+////    public boolean updateUnit() {
 ////        unit.setTooltip("#Adv");
 ////
 ////        if (unit.distanceTo(mission.focusPoint()) > 6) {
@@ -25,18 +25,18 @@
 ////        return false;
 ////    }
 //
-//    public static boolean moveToFocusPoint(AUnit unit, AFocusPoint focusPoint) {
+//    public  boolean moveToFocusPoint(AFocusPoint focusPoint) {
 //        return moveToFocusPoint(unit, focusPoint, false, false);
 //    }
 //
-////    public static boolean moveToFocusPoint(AUnit unit, AFocusPoint focusPoint) {
+////    public  boolean moveToFocusPoint(AFocusPoint focusPoint) {
 ////        return moveToFocusPoint(unit, focusPoint, true, true);
 ////    }
 //
 //    // =========================================================
 //
-//    private static boolean moveToFocusPoint(
-//            AUnit unit, AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
+//    private  boolean moveToFocusPoint(
+//            , AFocusPoint focusPoint, boolean allowTooClose, boolean allowCloseEnough
 //    ) {
 //        // @Check
 ////        if (unit.isAir()) {
@@ -81,13 +81,13 @@
 //        double distToFocusPoint = unit.distTo(focusPoint);
 //        double margin = Math.max(2.5, unit.squadSize() / 7.0);
 //
-//        if (We.terran() && handledTerranAdvance(unit)) {
+//        if (We.terran() && handledTerranAdvance()) {
 //            return true;
 //        }
 //
 //        // =========================================================
 //
-////        if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
+////        if (AAttackEnemyUnit.handleAttackNearEnemyUnits()) {
 ////            unit.setTooltip("Adv:Attack", true);
 ////            return true;
 ////        }
@@ -150,7 +150,7 @@
 ////            }
 //
 //            if (!unit.isMoving()) {
-//                String canAttack = AAttackEnemyUnit.canAttackEnemiesNowString(unit);
+//                String canAttack = AAttackEnemyUnit.canAttackEnemiesNowString();
 //                if (unit.move(focusPoint, Actions.MOVE_ENGAGE, "Advance" + canAttack, true)) {
 //                    return true;
 //                }
@@ -163,7 +163,7 @@
 //        return false;
 //    }
 //
-//    private static double optimalDistFromFocusPoint(AUnit unit, APosition focusPoint) {
+//    private  double optimalDistFromFocusPoint(APosition focusPoint) {
 //        return 8
 //                - unit.hpPercent() / 66.0
 //                + (unit.isTank() ? 2 : 0)
@@ -172,14 +172,14 @@
 //
 //    // === Terran ======================================================
 //
-//    private static boolean handledTerranAdvance(AUnit unit) {
+//    private  boolean handledTerranAdvance() {
 //        if (unit.isTerranInfantry() && unit.isWounded() && !unit.isMedic() && Count.medics() >= 1) {
 //            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic)
 //                .havingEnergy(20)
 //                .inRadius(15, unit)
-//                .nearestTo(unit);
+//                .nearestTo();
 //
-//            if (medic != null && (!medic.hasTarget() || medic.target().equals(unit))) {
+//            if (medic != null && (!medic.hasTarget() || medic.target().equals())) {
 //                return unit.move(medic, Actions.MOVE_FOCUS, "Regenerate", false);
 //            }
 //        }

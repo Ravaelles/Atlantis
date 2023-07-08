@@ -12,7 +12,7 @@ import atlantis.units.select.Select;
 
 public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
 
-    public static void changeMissionIfNeeded() {
+    public void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
             changeMissionTo(MissionChanger.defendOrSpartaMission());
         }
@@ -23,7 +23,7 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === DEFEND ==============================================
 
-    public static boolean shouldChangeMissionToDefend() {
+    public boolean shouldChangeMissionToDefend() {
         if (defendAgainstMassZerglings()) {
             if (DEBUG) reason = "Mass zerglings";
             return true;
@@ -44,7 +44,7 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private static boolean shouldChangeMissionToContain() {
+    private boolean shouldChangeMissionToContain() {
         if (A.supplyUsed() >= 170) {
             return false;
         }

@@ -6,7 +6,7 @@ import atlantis.units.select.Select;
 
 public class ProtossSpecificBuildingsCommander {
 
-    public static void update() {
+    public  void update() {
         for (AUnit building : Select.ourBuildings().list()) {
 
             if (building.is(AUnitType.Protoss_Shield_Battery)) {

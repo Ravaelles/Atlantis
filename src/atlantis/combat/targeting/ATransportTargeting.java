@@ -10,7 +10,7 @@ public class ATransportTargeting {
                 .transports(true)
                 .canBeAttackedBy(unit, 1)
                 .inRadius(13, unit)
-                .nearestTo(unit);
+                .nearestTo();
 
 //        System.out.println("H");
 //        System.out.println(Select.enemy()
@@ -29,7 +29,7 @@ public class ATransportTargeting {
 //                .transports(true)
 //                .canBeAttackedBy(unit, false, true)
 //                .inRadius(13, unit)
-//                .nearestTo(unit));
+//                .nearestTo());
         if (nearTransport != null) {
             if (nearTransport.enemiesNear().inRadius(5, nearTransport).atMost(3)) {
                 unit.setTooltipTactical("Invasion!");

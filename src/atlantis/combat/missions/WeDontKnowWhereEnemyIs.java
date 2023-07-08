@@ -36,7 +36,7 @@ public class WeDontKnowWhereEnemyIs {
 
         // Go to random INVISIBLE
         if (mission.temporaryTarget() == null || mission.temporaryTarget().isPositionVisible()) {
-            mission.setTemporaryTarget(AMap.randomInvisiblePosition(unit));
+            mission.setTemporaryTarget(AMap.randomInvisiblePosition());
 //            if (temporaryTarget != null) {
 //            System.out.println("Go to invisible " + temporaryTarget);
 //            }
@@ -58,7 +58,7 @@ public class WeDontKnowWhereEnemyIs {
     }
 
     private static boolean handleNearEnemy(Mission mission, AUnit unit) {
-        AUnit nearestEnemy = unit.enemiesNear().canBeAttackedBy(unit, 20).nearestTo(unit);
+        AUnit nearestEnemy = unit.enemiesNear().canBeAttackedBy(unit, 20).nearestTo();
 
         if (nearestEnemy != null) {
             mission.setTemporaryTarget(nearestEnemy.position());
@@ -68,9 +68,7 @@ public class WeDontKnowWhereEnemyIs {
                     unit.setTooltip("TempEnemy", true);
                     return true;
                 }
-                else if (unit.move(mission.temporaryTarget(), Actions.MOVE_EXPLORE, "ExploreNow", false)) {
-                    return true;
-                }
+                else if (unit.move(mission.temporaryTarget(), Actions.MOVE_EXPLORE, "ExploreNow", false)) return true;
             }
         }
 
@@ -78,7 +76,7 @@ public class WeDontKnowWhereEnemyIs {
     }
 
     private static boolean handleAnyEnemy(Mission mission, AUnit unit) {
-        AUnit foggedEnemy = EnemyUnits.discovered().groundUnits().nearestTo(unit);
+        AUnit foggedEnemy = EnemyUnits.discovered().groundUnits().nearestTo();
 
         if (foggedEnemy != null) {
             mission.setTemporaryTarget(foggedEnemy.position());
@@ -90,9 +88,7 @@ public class WeDontKnowWhereEnemyIs {
                 }
                 else if (unit.move(
                     mission.temporaryTarget(), Actions.MOVE_EXPLORE, "FindFogged", false
-                )) {
-                    return true;
-                }
+                )) return true;
             }
         }
 

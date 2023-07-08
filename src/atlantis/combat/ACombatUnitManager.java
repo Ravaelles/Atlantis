@@ -11,19 +11,30 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.running.ShouldStopRunning;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.ASpecialUnitManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.DontDisturbInterrupt;
+import atlantis.units.managers.Manager;
 
-public class ACombatUnitManager {
+public class ACombatUnitManager extends Manager {
+
+    private static RetreatManager retreatManager;
+    private static AvoidEnemies avoidEnemies;
+    private static UnitBeingReparedManager unitBeingReparedManager;
+
+    public ACombatUnitManager(AUnit unit) {
+        super(unit);
+        avoidEnemies = new AvoidEnemies(unit);
+        retreatManager = new RetreatManager(unit);
+        unitBeingReparedManager = new UnitBeingReparedManager(unit);
+    }
 
     public static boolean update(AUnit unit) {
         //if (true)System.out.println("A0 " + unit + " at " + A.now());
 
-        if (preActions(unit)) {
+        if (preActions()) {
             return true;
         }
 
@@ -35,7 +46,7 @@ public class ACombatUnitManager {
 
         // Medics are using dedicated managers.
         // These are stopping standard top priority managers
-        if (ASpecialUnitManager.updateAndOverrideAllOtherManagers(unit)) {
+        if (ASpecialUnitManager.handle()) {
             return true;
         }
 
@@ -49,7 +60,7 @@ public class ACombatUnitManager {
         // === TOP priority ========================================
         // =========================================================
 
-        if (handledTopPriority(unit)) {
+        if (handledTopPriority()) {
             return true;
         }
 
@@ -61,7 +72,7 @@ public class ACombatUnitManager {
 
         // Terran infantry has own managers, but these allow higher
         // level managers to take control.
-        if (ASpecialUnitManager.updateAndAllowTopManagers(unit)) {
+        if (ASpecialUnitManager.updateAndAllowTopManagers()) {
 //            System.out.println("@@ Special - " + unit);
 //            unit.addLog("SpecialManager");
             return true;
@@ -73,7 +84,7 @@ public class ACombatUnitManager {
         // === MEDIUM priority - TACTICAL level ====================
         // =========================================================
 
-        if (handledMediumPriority(unit)) {
+        if (handledMediumPriority()) {
             return true;
         }
 
@@ -83,12 +94,10 @@ public class ACombatUnitManager {
         // === LOW priority - MISSION level =======================
         // =========================================================
 
-        return handleLowPriority(unit);
+        return handleLowPriority();
     }
 
     private static boolean preActions(AUnit unit) {
-        unit.resetManager();
-
         if (unit.lastActionLessThanAgo(15, Actions.RIGHT_CLICK)) {
             unit.setTooltip("Manual", true);
             return true;
@@ -126,53 +135,53 @@ public class ACombatUnitManager {
     // =========================================================
 
     private static boolean handledTopPriority(AUnit unit) {
-        if (AvoidSpellsAndMines.avoidSpellsAndMines(unit)) {
+        if (AvoidSpellsAndMines.avoidSpellsAndMines()) {
             return true;
         }
 
-        if (AvoidCriticalUnits.update(unit)) {
+        if (AvoidCriticalUnits.update()) {
             return true;
         }
 
-        if (DanceAfterShoot.update(unit)) {
+        if (DanceAfterShoot.update()) {
             return true;
         }
 
-        if (StopAndShoot.update(unit)) {
+        if (StopAndShoot.update()) {
             return true;
         }
 
-        if (DontDisturbInterrupt.dontInterruptImportantActions(unit)) {
+        if (DontDisturbInterrupt.dontInterruptImportantActions()) {
             return true;
         }
 
-        if ((unit.isMoving() && !unit.isAttackingOrMovingToAttack()) && TransportUnits.handleLoad(unit)) {
+        if ((unit.isMoving() && !unit.isAttackingOrMovingToAttack()) && TransportUnits.handleLoad()) {
             return true;
         }
 
-        if (unit.isLoaded() && TransportUnits.unloadFromTransport(unit)) {
+        if (unit.isLoaded() && TransportUnits.unloadFromTransport()) {
             return true;
         }
 
         // Handle units getting bugged by Starcraft
-//        if (Unfreezer.handleUnfreeze(unit)) {
+//        if (Unfreezer.handleUnfreeze()) {
 //            return true;
 //        }
 
         if (unit.isRunning()) {
-            if (ShouldStopRunning.shouldStopRunning(unit)) {
+            if (ShouldStopRunning.shouldStopRunning()) {
                 unit.runningManager().stopRunning();
             }
     //        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {
             else if (A.everyNthGameFrame(3)) {
     //            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
-    //            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded(unit) : true;
-                return AvoidEnemies.avoidEnemiesIfNeeded(unit);
+    //            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded() : true;
+                return AvoidEnemies.avoidEnemiesIfNeeded();
             }
         }
 
         // Useful for testing and debugging of shooting/running
-//        if (testUnitBehaviorShootAtOwnUnit(unit)) { return true; };
+//        if (testUnitBehaviorShootAtOwnUnit()) { return true; };
 
         return false;
     }
@@ -184,7 +193,7 @@ public class ACombatUnitManager {
         // - close melee units (Zealots)
         // - ranged units that can shoot at us (Dragoons)
         // - defensive buildings (Cannons)
-        if (AvoidEnemies.avoidEnemiesIfNeeded(unit)) {
+        if (avoidEnemies.avoidEnemiesIfNeeded()) {
             return true;
         }
 
@@ -194,15 +203,17 @@ public class ACombatUnitManager {
 //        }
 
         // Handle repair of mechanical units
-        if (AGame.isPlayingAsTerran() && UnitBeingReparedManager.handleUnitShouldBeRepaired(unit)) {
+        if (unitBeingReparedManager.handleUnitShouldBeRepaired(unit)) {
             return true;
         }
 
-        if (RetreatManager.handleRetreat(unit)) {
+        if (retreatManager.handleRetreat()) {
             return true;
         }
 
-        return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
+        if (AAttackEnemyUnit.handleAttackNearEnemyUnits(unit)) {
+            return true;
+        }
     }
 
     /**
@@ -210,7 +221,7 @@ public class ACombatUnitManager {
      * Meaning no action was needed on *tactical* level - stick to *strategic* level.
      */
     private static boolean handleLowPriority(AUnit unit) {
-//        if (AvoidEdgesWhenMoving.handle(unit)) {
+//        if (AvoidEdgesWhenMoving.handle()) {
 //            return true;
 //        }
 
@@ -219,7 +230,7 @@ public class ACombatUnitManager {
 //            if (unit.debug())System.out.println("F " + unit);
 
             unit.setTooltipTactical(mission.name());
-            return mission.update(unit);
+            return mission.update();
         }
 
 //        if (unit.debug())System.out.println("G " + unit);

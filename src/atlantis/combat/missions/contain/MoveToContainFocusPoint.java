@@ -21,7 +21,7 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
         this.focus = focusPoint;
         fromSide = focusPoint.fromSide();
 
-        optimalDist = optimalDist(unit);
+        optimalDist = optimalDist();
         unitToFocus = unit.distTo(focusPoint);
         unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
         focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
@@ -47,7 +47,7 @@ public class MoveToContainFocusPoint extends MoveToFocusPoint {
     public double optimalDist(AUnit unit) {
         double base = 7.2;
         double ourUnitsNearBonus = Select.our().inRadius(2, unit).count() / 20.0;
-        int workersComeThroughBonus = workersComeThroughBonus(unit);
+        int workersComeThroughBonus = workersComeThroughBonus();
 
         return base
             + (unit.isTank() ? 3.8 : 0)

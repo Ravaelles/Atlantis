@@ -16,7 +16,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
-public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
+public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     public static void changeMissionIfNeeded() {
         if (!canChange()) {
@@ -33,7 +33,7 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private static boolean canChange() {
+    private  boolean canChange() {
         if (EnemyInfo.isEnemyNearAnyOurBase()) {
             return false;
         }
@@ -58,7 +58,7 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
         return true;
     }
 
-    private static boolean shouldChangeMissionToAttack() {
+    private  boolean shouldChangeMissionToAttack() {
         if (A.supplyUsed() >= 195) {
             if (DEBUG) reason = "Maxed out";
             return true;
@@ -76,7 +76,7 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
         return false;
     }
 
-    private static boolean shouldChangeMissionToContain() {
+    private  boolean shouldChangeMissionToContain() {
         if (ArmyStrength.ourArmyRelativeStrength() >= 170) {
             if (DEBUG) reason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;

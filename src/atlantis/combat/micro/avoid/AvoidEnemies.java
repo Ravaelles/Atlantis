@@ -2,59 +2,64 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildings;
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
-import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
-import bwapi.Color;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AvoidEnemies {
+public class AvoidEnemies extends Manager {
 
-    protected static AUnit unit;
-    private static Cache<Units> cache = new Cache<>();
+    private  Cache<Units> cache = new Cache<>();
+    private AvoidCombatBuildings avoidCombatBuildings;
+    private WantsToAvoid wantsToAvoid;
+
+    public AvoidEnemies(AUnit unit) {
+        super(unit);
+        avoidCombatBuildings = new AvoidCombatBuildings(unit);
+        wantsToAvoid = new WantsToAvoid(unit);
+    }
 
     // =========================================================
 
-    public static boolean avoidEnemiesIfNeeded(AUnit unit) {
-        if (shouldSkip(unit)) {
-            return false;
+    public Manager avoidEnemiesIfNeeded() {
+        if (shouldSkip()) {
+            return null;
         }
 
         // =========================================================
 
-        Units enemiesDangerouslyClose = unitsToAvoid(unit);
+        Units enemiesDangerouslyClose = unitsToAvoid();
 
         if (enemiesDangerouslyClose.isEmpty()) {
 //            System.err.println("@ " + A.now() + " - No-one close");
-//            AUnit nearestEnemy = unit.enemiesNear().nearestTo(unit);
+//            AUnit nearestEnemy = unit.enemiesNear().nearestTo();
 //            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
-//                    "C=0(" + (nearestEnemy != null ? A.dist(unit, nearestEnemy) : "-") + ")",
+//                    "C=0(" + (nearestEnemy != null ? A.dist(nearestEnemy) : "-") + ")",
 //                    Color.Green                           );
-            return false;
+            return null;
         }
 
         if (
             onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)
                 || unit.isAir()
                 || unit.hp() <= 40
-                || unit.combatEvalRelative() <= 2.7
+                || unit.combatEvalRelative() < 3.0
         ) {
-            if (AvoidCombatBuildings.update(unit)) {
+            if (avoidCombatBuildings.handle() != null) {
                 unit.addLog("KeepAway");
-                return true;
+                return lastManager();
             }
         }
 
-//        APainter.paintLine(unit, unit.targetPosition(), Color.Grey);
+//        APainter.paintLine(unit.targetPosition(), Color.Grey);
 //        for (AUnit enemy : enemiesDangerouslyClose.list()) {
-//            APainter.paintLine(enemy, unit, Color.Orange);
-////            APainter.paintTextCentered(unit, A.dist(unit, enemy), Color.Yellow);
+//            APainter.paintLine(enemy, Color.Orange);
+////            APainter.paintTextCentered(A.dist(enemy), Color.Yellow);
 //        }
 
         // =========================================================
@@ -65,25 +70,25 @@ public abstract class AvoidEnemies {
             && Select.from(enemiesDangerouslyClose).workers().size() == enemiesDangerouslyClose.size()
         ) {
             unit.addLog("FightWorkers");
-            return false;
+            return null;
         }
 
         else {
-            if (WantsToAvoid.unitOrUnits(unit, enemiesDangerouslyClose)) {
-                return true;
+            if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose) != null) {
+                return lastManager();
             }
         }
 
-        return false;
+        return null;
     }
 
-    public static void clearCache() {
+    public  void clearCache() {
         cache.clear();
     }
 
     // =========================================================
 
-    private static boolean shouldSkip(AUnit unit) {
+    private  boolean shouldSkip() {
         if (
             unit.hp() <= 16 && unit.isMelee() && unit.isCombatUnit()
             && unit.enemiesNear().groundUnits().effVisible().inRadius(1, unit).notEmpty()
@@ -107,38 +112,38 @@ public abstract class AvoidEnemies {
         return unit.isLoaded();
     }
 
-    private static boolean onlyEnemyCombatBuildingsAreNear(Units enemiesDangerouslyClose) {
+    private  boolean onlyEnemyCombatBuildingsAreNear(Units enemiesDangerouslyClose) {
         return Select.from(enemiesDangerouslyClose).combatBuildings(false).size() == enemiesDangerouslyClose.size();
     }
 
-    public static Units unitsToAvoid(AUnit unit) {
-        return unitsToAvoid(unit, true);
+    public  Units unitsToAvoid() {
+        return unitsToAvoid(true);
     }
 
-    public static Units unitsToAvoid(AUnit unit, boolean onlyDangerouslyClose) {
+    public  Units unitsToAvoid(boolean onlyDangerouslyClose) {
         return cache.get(
             "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
             0,
             () -> {
                 Units enemies = new Units();
-//                System.out.println("enemyUnitsToPotentiallyAvoid(unit) = " + enemyUnitsToPotentiallyAvoid(unit).size());
-                for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
+//                System.out.println("enemyUnitsToPotentiallyAvoid() = " + enemyUnitsToPotentiallyAvoid().size());
+                for (AUnit enemy : enemyUnitsToPotentiallyAvoid()) {
                     double safetyMargin = SafetyMargin.calculate(unit, enemy);
 //                    System.err.println(
-//                        enemy + " // " + String.format("%.2f", safetyMargin) + " // " + A.dist(enemy.distTo(unit))
+//                        enemy + " // " + String.format("%.2f", safetyMargin) + " // " + A.dist(enemy.distTo())
 //                    );
-//                    APainter.paintLine(enemy, unit, Color.Yellow);
+//                    APainter.paintLine(enemy, Color.Yellow);
                     enemies.addUnitWithValue(enemy, safetyMargin);
                 }
 //                enemies.print("Enemies to avoid");
 
-//                System.out.println(unit + " enemies near = " + enemyUnitsToPotentiallyAvoid(unit).size());
+//                System.out.println(unit + " enemies near = " + enemyUnitsToPotentiallyAvoid().size());
 
                 if (enemies.isEmpty()) {
                     return new Units();
                 }
 
-//                for (AUnit enemy : enemyUnitsToPotentiallyAvoid(unit)) {
+//                for (AUnit enemy : enemyUnitsToPotentiallyAvoid()) {
 ////                    //System.out.println(enemy + " which is " + A.dist(enemy, unit) + " away");
 //                    System.out.println(enemy + " has value: " + enemies.valueFor(enemy));
 //                }
@@ -156,8 +161,8 @@ public abstract class AvoidEnemies {
         );
     }
 
-//    public static double lowestSafetyMarginForAnyEnemy(AUnit unit) {
-//        Units enemies = unitsToAvoid(unit, false);
+//    public  double lowestSafetyMarginForAnyEnemy() {
+//        Units enemies = unitsToAvoid(false);
 //        if (enemies.isNotEmpty()) {
 //            return enemies.lowestValue();
 //        }
@@ -166,22 +171,22 @@ public abstract class AvoidEnemies {
 //        return 0;
 //    }
 
-    public static boolean shouldAvoidAnyUnit(AUnit unit) {
-        return unitsToAvoid(unit).isNotEmpty();
+    public  boolean shouldAvoidAnyUnit() {
+        return unitsToAvoid().isNotEmpty();
     }
 
-    public static boolean shouldNotAvoidAnyUnit(AUnit unit) {
-        return !shouldAvoidAnyUnit(unit);
+    public  boolean shouldNotAvoidAnyUnit() {
+        return !shouldAvoidAnyUnit();
     }
 
     // =========================================================
 
-    protected static List<? extends AUnit> enemyUnitsToPotentiallyAvoid(AUnit unit) {
+    protected  List<? extends AUnit> enemyUnitsToPotentiallyAvoid() {
         return unit.enemiesNear()
 //                .nonBuildings() // This is because we rely on AvoidCombatBuildings
                 .removeDuplicates()
                 .onlyCompleted()
-                .canAttack(unit, true, true, 4.5)
+                .canAttack(true, true, 4.5)
                 .havingPosition()
                 .list();
     }

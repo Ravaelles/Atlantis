@@ -2,33 +2,38 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
-public class TerranInfantryComeCloser {
+public class TerranInfantryComeCloser extends Manager {
 
-    public static boolean isTooFarFromMedic(AUnit unit) {
+    public TerranInfantryComeCloser(AUnit unit) {
+        super(unit);
+    }
+
+    public Manager handleTooFarFromMedic() {
         if (!unit.isTerranInfantry()) {
-            return false;
+            return null;
         }
         if (Count.medics() == 0) {
-            return false;
+            return null;
         }
         if (unit.enemiesNear().ranged().isEmpty()) {
-            return false;
+            return null;
         }
         if (unit.friendsNear().groundUnits().inRadius(1.5, unit).atLeast(7)) {
-            return false;
+            return null;
         }
 
         // =========================================================
 
-        AUnit nearestMedic = Select.ourOfType(AUnitType.Terran_Medic).nearestTo(unit);
+        AUnit nearestMedic = Select.ourOfType(AUnitType.Terran_Medic).nearestTo();
         if (nearestMedic.distToMoreThan(unit, 2.3)) {
             unit.setTooltipTactical("LoveMedics");
-            return true;
+            return usingManager(this);
         }
 
-        return false;
+        return null;
     }
 }

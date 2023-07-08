@@ -11,6 +11,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.log.ErrorLogging;
@@ -18,20 +19,24 @@ import bwapi.Color;
 
 import java.util.List;
 
-public class TerranCommandCenter {
+public class TerranCommandCenter extends Manager {
 
-    public static boolean update(AUnit building) {
+    public TerranCommandCenter(AUnit unit) {
+        super(unit);
+    }
+
+    public  boolean update() {
         if (AGame.notNthGameFrame(46)) {
             return false;
         }
 
-        boolean baseMinedOut = baseMinedOut(building);
-        if (baseMinedOut && building.isLifted()) {
-            return flyToNewMineralPatches(building);
+        boolean baseMinedOut = baseMinedOut();
+        if (baseMinedOut && unit.isLifted()) {
+            return flyToNewMineralPatches();
         }
         else if (baseMinedOut) {
-            if (building.lastActionMoreThanAgo(3)) {
-                building.lift();
+            if (unit.lastActionMoreThanAgo(3)) {
+                unit.lift();
             }
             return true;
         }
@@ -41,18 +46,18 @@ public class TerranCommandCenter {
 
     // =========================================================
 
-    private static boolean baseMinedOut(AUnit building) {
-        return Select.minerals().inRadius(12, building).isEmpty();
+    private  boolean baseMinedOut() {
+        return Select.minerals().inRadius(12, unit).isEmpty();
     }
 
-    private static boolean flyToNewMineralPatches(AUnit building) {
+    private  boolean flyToNewMineralPatches() {
         if (Env.isTesting()) {
             return false;
         }
 
-        List<AUnit> minerals = Select.minerals().sortDataByDistanceTo(building, true);
+        List<AUnit> minerals = Select.minerals().sortDataByDistanceTo(unit, true);
         Selection bases = Select.ourBuildingsWithUnfinished().ofType(AUnitType.Terran_Command_Center);
-        ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(building);
+        ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(unit);
 
         if (baseLocation == null && !Env.isTesting()) {
             ErrorLogging.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
@@ -60,7 +65,7 @@ public class TerranCommandCenter {
         }
 
         APosition rebaseTo = baseLocation.isPositionVisible()
-            ? baseLocation.makeLandableFor(building)
+            ? baseLocation.makeLandableFor(unit)
             : baseLocation.position();
 
         if (rebaseTo == null && minerals.size() > 0) {
@@ -83,25 +88,25 @@ public class TerranCommandCenter {
                 !rebaseTo.isExplored()
                 || Select.minerals().inRadius(10, rebaseTo).notEmpty()
             ) {
-                if (!building.isLifted() && rebaseTo.distToMoreThan(building, 3)) {
+                if (!unit.isLifted() && rebaseTo.distToMoreThan(unit, 3)) {
 //                    System.err.println("# Lift");
-                    building.lift();
+                    unit.lift();
                     return true;
                 }
                 else {
 //                    if (A.everyNthGameFrame(31)) {
-                    double dist = rebaseTo.distTo(building);
-                    building.setTooltip("Rebase" + A.dist(dist), true);
+                    double dist = rebaseTo.distTo(unit);
+                    unit.setTooltip("Rebase" + A.dist(dist), true);
                     if (dist <= 5) {
-                        rebaseTo = baseLocation.makeLandableFor(building);
+                        rebaseTo = baseLocation.makeLandableFor(unit);
 //                        System.err.println("# Land at " + rebaseTo.toTilePosition());
                         if (rebaseTo != null) {
-                            building.land(rebaseTo.toTilePosition());
+                            unit.land(rebaseTo.toTilePosition());
                             return true;
                         }
                     } else {
 //                        System.err.println("# Fly to " + rebaseTo + " // " + dist);
-                        if (building.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true)) {
+                        if (unit.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true)) {
                             return true;
                         }
                     }

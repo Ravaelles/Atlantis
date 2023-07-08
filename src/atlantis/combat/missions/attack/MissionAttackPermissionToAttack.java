@@ -4,13 +4,15 @@ import atlantis.combat.squad.Squad;
 import atlantis.decions.Decision;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.managers.Manager;
 
-public class MissionAttackPermissionToAttack {
+public class MissionAttackPermissionToAttack extends Manager {
 
-    public MissionAttackPermissionToAttack() {
+    public MissionAttackPermissionToAttack(AUnit unit) {
+        super(unit);
     }
 
-    public Decision permissionToAttack(AUnit unit) {
+    public Decision permissionToAttack() {
         Squad squad = unit.squad();
         HasPosition squadCenter = unit.squadCenter();
 

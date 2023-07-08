@@ -2,21 +2,32 @@ package atlantis.combat.micro.stack;
 
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 
-public class StackedUnitsManager {
+public class StackedUnitsManager extends Manager {
 
-    public static boolean dontStackTooMuch(AUnit unit, double minDist, boolean onlyOfTheSameType) {
+    private double minDist;
+    private boolean onlyOfTheSameType;
+
+    public StackedUnitsManager(AUnit unit, double minDist, boolean onlyOfTheSameType) {
+        super(unit);
+        this.minDist = minDist;
+        this.onlyOfTheSameType = onlyOfTheSameType;
+    }
+
+    @Override
+    public Manager handle() {
         AUnit nearest = (onlyOfTheSameType ? Select.ourOfType(unit.type()) : Select.ourRealUnits())
                 .exclude(unit).inRadius(minDist, unit).nearestTo(unit);
 
         if (nearest != null) {
             if (unit.moveAwayFrom(nearest, minDist / 2, "Stacked", Actions.MOVE_FORMATION)) {
-                return true;
+                return usingManager(this);
             }
         }
 
-        return false;
+        return null;
     }
 
 }

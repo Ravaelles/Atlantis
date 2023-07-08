@@ -24,7 +24,7 @@ public class AtlantisJfap {
             return new double[] { 9874, -9874 };
         }
 
-        return JfapCombatEvaluator.eval(unit);
+        return JfapCombatEvaluator.eval();
     }
 
     public double evaluateCombatSituation() {
@@ -62,7 +62,7 @@ public class AtlantisJfap {
         scores[forUs] = AtlantisJfapTweaks.forHydralisks(scores[forUs], unit);
         double deltaForUs = scores[forUs] - oldForUs;
 
-        AUnit enemy = unit.enemiesNear().nearestTo(unit);
+        AUnit enemy = unit.enemiesNear().nearestTo();
         double deltaForThem = 0;
         if (enemy != null) {
             double oldForThem = scores[forThem];

@@ -110,9 +110,7 @@ public class ABuilderManager {
                     Actions.MOVE_BUILD,
                     "Build " + buildingType.name() + distString,
                     true
-                )) {
-                    return true;
-                }
+                )) return true;
             }
 
             return true;

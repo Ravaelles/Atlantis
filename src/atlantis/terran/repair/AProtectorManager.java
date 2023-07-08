@@ -236,9 +236,7 @@ public class AProtectorManager {
 
             // WOUNDED
             if (target.isWounded() || target.enemiesNear().canAttack(target, 15).notEmpty()) {
-                if (protector.isRepairing()) {
-                    return true;
-                }
+                if (protector.isRepairing()) return true;
 
                 return protector.repair(target, "Protect" + target.name(), true);
 //                return protector.repair(Select.main(), "Protect" + target.name(), true);

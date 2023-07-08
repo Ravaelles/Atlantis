@@ -29,7 +29,7 @@ public class ASquadManager {
 
         // Act with every combat unit
         for (AUnit unit : squad.list()) {
-            ACombatUnitManager.update(unit);
+            ACombatUnitManager.update();
         }
     }
 }

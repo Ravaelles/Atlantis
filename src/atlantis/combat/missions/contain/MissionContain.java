@@ -12,7 +12,7 @@ import atlantis.units.Units;
 
 public class MissionContain extends Mission {
 
-    public MissionContain() {
+    public MissionContain(AUnit unit) {
         super("Contain");
         focusPointManager = new MissionContainFocusPoint();
     }
@@ -22,7 +22,7 @@ public class MissionContain extends Mission {
     @Override
     public boolean update(AUnit unit) {
         AFocusPoint focusPoint = focusPoint();
-        unit.setTooltipTactical("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
+        unit.setTooltipTactical("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo()) : null) + ")");
 
         if (focusPoint == null) {
             MissionChanger.forceMissionAttack("InvalidFocusPoint");
@@ -33,11 +33,11 @@ public class MissionContain extends Mission {
 //            return true;
 //        }
 
-//        if (SquadScout.handle(unit)) {
+//        if (SquadScout.handle()) {
 //            return true;
 //        }
 
-        if (ASquadCohesionManager.update(unit)) {
+        if (ASquadCohesionManager.update()) {
             return true;
         }
 
@@ -49,7 +49,7 @@ public class MissionContain extends Mission {
 
     @Override
     public double optimalDist(AUnit unit) {
-        return (new MoveToContainFocusPoint()).optimalDist(unit);
+        return (new MoveToContainFocusPoint()).optimalDist();
     }
 
     @Override

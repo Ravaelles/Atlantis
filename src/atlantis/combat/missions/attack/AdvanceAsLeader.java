@@ -3,10 +3,15 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.managers.Manager;
 
-public class AdvanceAsLeader {
+public class AdvanceAsLeader extends Manager {
 
-    protected static boolean advanceAsLeader(AUnit unit, AFocusPoint focusPoint) {
+    public AdvanceAsLeader(AUnit unit) {
+        super(unit);
+    }
+
+    protected boolean advanceAsLeader(AFocusPoint focusPoint) {
         if (unit.squad().cohesionPercent() <= 75) {
             return unit.holdPosition("LeaderWait");
         }

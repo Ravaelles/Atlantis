@@ -56,7 +56,7 @@ public class ARunningManager {
 
         handleInvalidRunFromPosition(runFrom);
 
-//        if (handleOnlyCombatBuildingsAreDangerouslyClose(unit)) return true;
+//        if (handleOnlyCombatBuildingsAreDangerouslyClose()) return true;
         if (handleContinueRunning()) return true;
 
         // === Define run to position ==============================
@@ -75,7 +75,7 @@ public class ARunningManager {
 //        System.err.println("=== RUN ERROR =================");
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
-//        System.err.println("Our count = " + Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
+//        System.err.println("Our count = " + Select.ourWithUnfinished().exclude().inRadius(unit.size(), unit).count());
 //        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
 
         unit.setTooltip("Cant run", false);
@@ -143,7 +143,7 @@ public class ARunningManager {
 //        }
 
         Selection friendsTooClose = Select.ourRealUnits()
-            .exclude(unit)
+            .exclude()
             .groundUnits()
             .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
 
@@ -205,7 +205,7 @@ public class ARunningManager {
         Selection combatBuildings = Select.from(dangerous).combatBuildings(false);
         if (dangerous.size() == combatBuildings.size() && unit.enemiesNear().combatUnits().atMost(1)) {
             double minDist = unit.isGhost() ? 9.5 : 7.5;
-            AUnit combatBuilding = combatBuildings.nearestTo(unit);
+            AUnit combatBuilding = combatBuildings.nearestTo();
 
             if (combatBuilding.distToLessThan(unit, minDist)) {
                 if (unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30)) {
@@ -258,7 +258,7 @@ public class ARunningManager {
 
             if (unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false)) {
                 // Make all other units very close to it run as well
-                notifyNearUnitsToMakeSpace(unit);
+                notifyNearUnitsToMakeSpace();
 
                 return true;
             }

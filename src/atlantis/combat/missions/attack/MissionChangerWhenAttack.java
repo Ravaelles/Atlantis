@@ -4,7 +4,7 @@ import atlantis.game.AGame;
 
 public class MissionChangerWhenAttack {
 
-    public static void changeMissionIfNeeded() {
+    public void changeMissionIfNeeded() {
         if (AGame.isPlayingAsTerran()) {
             TerranMissionChangerWhenAttack.changeMissionIfNeeded();
         }
