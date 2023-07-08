@@ -5,7 +5,7 @@ import atlantis.game.A;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class ErrorLogging {
+public class ErrorLog {
 
     private static Map<String, Integer> errors = new TreeMap<>();
 

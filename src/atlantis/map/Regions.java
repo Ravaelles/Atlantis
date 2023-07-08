@@ -1,10 +1,9 @@
 package atlantis.map;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwem.Area;
 
@@ -121,7 +120,7 @@ public class Regions {
         } else if (param instanceof HasPosition) {
             position = ((HasPosition) param).position().p();
         } else {
-            ErrorLogging.printErrorOnce("getRegion failed for " + param);
+            ErrorLog.printErrorOnce("getRegion failed for " + param);
             return null;
         }
 
@@ -129,7 +128,7 @@ public class Regions {
             ARegion region = ARegion.create(AMap.getMap().getArea(position.toTilePosition()));
             return region;
         } catch (Exception e) {
-            ErrorLogging.printErrorOnce("Failed trying to get region for " + position);
+            ErrorLog.printErrorOnce("Failed trying to get region for " + position);
 //            A.printStackTrace();
         }
 

@@ -1,6 +1,6 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.ACombatUnitManager;
+import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.mission.SquadMissionChanger;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -29,7 +29,7 @@ public class ASquadManager {
 
         // Act with every combat unit
         for (AUnit unit : squad.list()) {
-            ACombatUnitManager.update();
+            CombatUnitManager.update();
         }
     }
 }

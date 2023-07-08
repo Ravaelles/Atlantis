@@ -4,7 +4,6 @@ import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.CameraManager;
 import atlantis.map.ABaseLocation;
 import atlantis.map.Bases;
 import atlantis.map.position.APosition;
@@ -14,7 +13,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.managers.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
 import java.util.List;
@@ -60,7 +59,7 @@ public class TerranCommandCenter extends Manager {
         ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(unit);
 
         if (baseLocation == null && !Env.isTesting()) {
-            ErrorLogging.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
+            ErrorLog.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
             return false;
         }
 
@@ -73,7 +72,7 @@ public class TerranCommandCenter extends Manager {
         }
 
         if (rebaseTo == null) {
-            ErrorLogging.printErrorOnce("Null rebaseTo");
+            ErrorLog.printErrorOnce("Null rebaseTo");
             return false;
         }
 

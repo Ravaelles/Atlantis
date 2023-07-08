@@ -39,7 +39,7 @@ import atlantis.util.cache.Cache;
 import atlantis.util.CappedList;
 import atlantis.util.Vector;
 import atlantis.util.Vectors;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
 import atlantis.util.log.LogUnitsToFiles;
 import bwapi.*;
@@ -311,7 +311,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         if (newPosition == null) {
-            ErrorLogging.printErrorOnce("Cannot moveAwayFrom " + position + " for " + name());
+            ErrorLog.printErrorOnce("Cannot moveAwayFrom " + position + " for " + name());
             return false;
         }
 
@@ -1593,12 +1593,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean lastActionMoreThanAgo(int framesAgo) {
         if (unitAction == null && !isWorker()) {
-            ErrorLogging.printErrorOnce("unitAction null for " + this);
+            ErrorLog.printErrorOnce("unitAction null for " + this);
             return true;
         }
 
         if (unitAction == null && isWorker()) {
-            ErrorLogging.printErrorOnce("Null action for worker");
+            ErrorLog.printErrorOnce("Null action for worker");
             return true;
         }
 
@@ -1858,7 +1858,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int squadSize() {
         if (squad() == null) {
             if (!isWorker()) {
-                ErrorLogging.printMaxOncePerMinute("Squad null for " + nameWithId());
+                ErrorLog.printMaxOncePerMinute("Squad null for " + nameWithId());
             }
             return 0;
         }

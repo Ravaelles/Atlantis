@@ -1,6 +1,5 @@
 package atlantis.production.constructing;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -11,7 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 import bwapi.TilePosition;
 
 public class ABuilderManager {
@@ -225,7 +224,7 @@ public class ABuilderManager {
                     return position.translateByTiles(2, 1);
                 }
 
-                ErrorLogging.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
+                ErrorLog.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
             }
             return position;
         } else {

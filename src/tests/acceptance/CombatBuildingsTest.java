@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.combat.ACombatUnitManager;
+import atlantis.combat.CombatUnitManager;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
     public void neverRunsIntoCombatBuildings() {
         createWorld(100, () -> {
             FakeUnit unit = ourFirst;
-            boolean result = ACombatUnitManager.update(unit);
+            boolean result = CombatUnitManager.update(unit);
 
             double distToSunken = distToNearestEnemy(unit);
             boolean isSafe = distToSunken > 7.05;

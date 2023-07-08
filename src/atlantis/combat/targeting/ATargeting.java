@@ -7,7 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 
 import java.util.List;
 
@@ -108,7 +108,7 @@ public class ATargeting {
 //            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo();
             enemy = unit.enemiesNear().realUnitsAndBuildings().canBeAttackedBy(unit, 0).nearestTo();
             if (enemy != null) {
-                ErrorLogging.printErrorOnce("DefineTarget fix for " + unit + ", chosen " + enemy);
+                ErrorLog.printErrorOnce("DefineTarget fix for " + unit + ", chosen " + enemy);
             }
         }
 

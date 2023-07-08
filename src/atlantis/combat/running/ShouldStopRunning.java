@@ -31,6 +31,11 @@ public class ShouldStopRunning extends Manager {
             return decisionStopRunning();
         }
 
+        if (unit.avoidEnemiesManager().shouldNotAvoidAnyUnit()) {
+            unit.setTooltip("JustStop");
+            return decisionStopRunning();
+        }
+
         if (unit.isFlying() && unit.enemiesNearInRadius(8.2) == 0) {
             unit.setTooltipTactical("SafeEnough");
             return decisionStopRunning();
@@ -61,8 +66,9 @@ public class ShouldStopRunning extends Manager {
         if (
             unit.noCooldown()
                 && unit.lastStartedRunningMoreThanAgo(15)
-                && !AvoidEnemies.shouldNotAvoidAnyUnit()) {
-            unit.setTooltip("StopMan", false);
+//                && !AvoidEnemies.shouldNotAvoidAnyUnit()) {
+                && unit.avoidEnemiesManager().shouldNotAvoidAnyUnit()) {
+            unit.setTooltip("StopDawg", false);
             return decisionStopRunning();
         }
 
@@ -74,10 +80,8 @@ public class ShouldStopRunning extends Manager {
             unit.lastStoppedRunningMoreThanAgo(ARunningManager.STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO)
                 && unit.lastStartedRunningMoreThanAgo(ARunningManager.STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO)
                 && !unit.isUnderAttack(unit.isFlying() ? 250 : 5)
-                //                && AAvoidUnits.shouldNotAvoidAnyUnit()
-                || AvoidEnemies.shouldNotAvoidAnyUnit()
         ) {
-            unit.setTooltip("StopRun");
+            unit.setTooltip("MaybeStop");
             return decisionStopRunning();
         }
 
@@ -85,8 +89,8 @@ public class ShouldStopRunning extends Manager {
     }
 
     private boolean decisionStopRunning() {
-        if (unit.hp() <= 20 && unit.isTerranInfantry()) {
-            AUnit nearestMedic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo();
+        if (unit.hp() <= 20 && unit.isTerranInfantry() && !unit.isMedic()) {
+            AUnit nearestMedic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
             if (nearestMedic != null) {
                 unit.move(nearestMedic, Actions.MOVE_HEAL, "Lazaret");
                 return true;

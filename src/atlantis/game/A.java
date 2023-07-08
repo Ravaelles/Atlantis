@@ -6,7 +6,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 import bwapi.Game;
 
 import javax.swing.*;
@@ -544,7 +544,7 @@ public class A {
             fw.write(content + "\n");
             fw.close();
         } catch(IOException exception) {
-            ErrorLogging.printErrorOnce("IOException: " + exception.getMessage());
+            ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
         }
     }
 

@@ -5,7 +5,7 @@ import atlantis.game.AGame;
 import atlantis.production.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -30,7 +30,7 @@ public class ATech {
                     } else if (techOrUpgrade instanceof UpgradeType) {
                         return isResearchedUpgrade((UpgradeType) techOrUpgrade, 1);
                     } else {
-                        ErrorLogging.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
+                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
                         return false;
                     }
                 }
@@ -49,7 +49,7 @@ public class ATech {
                     } else if (techOrUpgrade instanceof UpgradeType) {
                         return Count.inQueueOrUnfinished((UpgradeType) techOrUpgrade, 4) == 0;
                     } else {
-                        ErrorLogging.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
+                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
                         return false;
                     }
                 }

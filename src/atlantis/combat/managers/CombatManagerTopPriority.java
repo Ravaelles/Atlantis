@@ -1,14 +1,11 @@
 package atlantis.combat.managers;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
-import atlantis.combat.micro.generic.Unfreezer;
 import atlantis.combat.micro.managers.DanceAfterShoot;
 import atlantis.combat.micro.managers.StopAndShoot;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.running.ShouldStopRunning;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.DontDisturbInterrupt;
 import atlantis.units.managers.Manager;
@@ -30,8 +27,6 @@ public class CombatManagerTopPriority extends Manager {
             TransportUnits.class,
 //            Unfreezer.class,
             ShouldStopRunning.class,
-            .class,
-            .class,
         };
     }
 

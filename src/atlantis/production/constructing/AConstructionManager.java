@@ -12,7 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -303,7 +303,7 @@ public class AConstructionManager {
 
         if (order.builder() == null) {
             if (Count.workers() >= 3) {
-                ErrorLogging.printMaxOncePerMinute("Weird case, " + order.buildingType() + " has no builder. Cancel.");
+                ErrorLog.printMaxOncePerMinute("Weird case, " + order.buildingType() + " has no builder. Cancel.");
             }
             order.cancel();
             return;
