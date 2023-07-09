@@ -2,7 +2,7 @@ package tests.acceptance;
 
 import atlantis.OnUnitDiscover;
 import atlantis.game.A;
-import atlantis.game.AGameCommander;
+import atlantis.game.AtlantisGameCommander;
 import atlantis.game.OnUnitMorph;
 import atlantis.units.AUnitType;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import tests.unit.FakeUnit;
 
 public class FocusPointTest extends AbstractTestFakingGame {
 
-    private AGameCommander gameCommander;
+    private AtlantisGameCommander gameCommander;
     private FakeUnit assimilator;
     private FakeUnit drone2;
     private FakeUnit drone3;
@@ -23,7 +23,7 @@ public class FocusPointTest extends AbstractTestFakingGame {
 
     @Test
     public void neverRunsIntoCombatBuildings() {
-        gameCommander = new AGameCommander();
+        gameCommander = new AtlantisGameCommander();
 
         createWorld(5, () -> {
 //            System.out.println("\n===================== FRAME = " + A.now() + " ===========================");

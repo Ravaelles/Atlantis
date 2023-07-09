@@ -10,7 +10,7 @@ public class ProtossSpecificBuildingsCommander {
         for (AUnit building : Select.ourBuildings().list()) {
 
             if (building.is(AUnitType.Protoss_Shield_Battery)) {
-                ProtossShieldBattery.update(building);
+                ProtossShieldBattery.handle(building);
             }
 
         }

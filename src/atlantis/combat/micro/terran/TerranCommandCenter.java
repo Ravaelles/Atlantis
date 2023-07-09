@@ -24,23 +24,31 @@ public class TerranCommandCenter extends Manager {
         super(unit);
     }
 
-    public  boolean update() {
+    @Override
+    public boolean applies() {
+        return unit.is(AUnitType.Terran_Command_Center);
+    }
+
+    @Override
+    public Manager handle() {
         if (AGame.notNthGameFrame(46)) {
-            return false;
+            return null;
         }
 
         boolean baseMinedOut = baseMinedOut();
         if (baseMinedOut && unit.isLifted()) {
-            return flyToNewMineralPatches();
+            if (flyToNewMineralPatches()) {
+                return usedManager(this);
+            }
         }
         else if (baseMinedOut) {
             if (unit.lastActionMoreThanAgo(3)) {
                 unit.lift();
             }
-            return true;
+            return usedManager(this);
         }
 
-        return false;
+        return null;
     }
 
     // =========================================================

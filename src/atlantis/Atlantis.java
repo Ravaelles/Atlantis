@@ -39,7 +39,7 @@ public class Atlantis implements BWEventListener {
     /**
      * Top abstraction-level class that governs all units, buildings etc.
      */
-    private AGameCommander gameCommander;
+    private AtlantisGameCommander gameCommander;
 
     // =========================================================
     // Other variables
@@ -80,7 +80,7 @@ public class Atlantis implements BWEventListener {
         setGame(bwClient.getGame());
 
         // Initialize Game Commander, a class to rule them all
-        gameCommander = new AGameCommander();
+        gameCommander = new AtlantisGameCommander();
 
         // Allow user input etc
         setBwapiFlags();
@@ -437,7 +437,7 @@ public class Atlantis implements BWEventListener {
         this.game = game;
     }
 
-    public AGameCommander getGameCommander() {
+    public AtlantisGameCommander getGameCommander() {
         return gameCommander;
     }
 

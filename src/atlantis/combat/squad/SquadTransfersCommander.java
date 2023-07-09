@@ -1,17 +1,20 @@
 package atlantis.combat.squad;
 
+import atlantis.architecture.Commander;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.beta.Beta;
-import atlantis.game.A;
-import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 
 import java.util.ArrayList;
 
-public class SquadTransfers {
-    public static boolean updateSquadTransfers() {
+public class SquadTransfersCommander extends Commander {
+
+    @Override
+    public void handle() {
+        updateSquadTransfers();
+    }
+
+    private static boolean updateSquadTransfers() {
         if (shouldHaveBeta()) {
             handleReinforcements(Beta.get());
         } else {
@@ -62,10 +65,10 @@ public class SquadTransfers {
 
     private static void transferUnitToSquad(AUnit unit, Squad toSquad) {
         if (unit.squad() != null) {
-            unit.squad().removeUnit();
+            unit.squad().removeUnit(unit);
         }
 
-        toSquad.addUnit();
+        toSquad.addUnit(unit);
         unit.setSquad(toSquad);
     }
 
@@ -73,15 +76,11 @@ public class SquadTransfers {
         Squad squad = unit.squad();
 
         if (squad != null) {
-            squad.removeUnit();
+            squad.removeUnit(unit);
             unit.setSquad(null);
         }
 //        if (unit.isOur() && unit.isCombatUnit()) {
 //            System.out.println("unit destroyed " + unit + " // " + (squad != null ? squad.name() : null));
 //        }
-    }
-
-    public static ArrayList<Squad> allSquads() {
-        return (ArrayList<Squad>) ASquadManager.squads.clone();
     }
 }

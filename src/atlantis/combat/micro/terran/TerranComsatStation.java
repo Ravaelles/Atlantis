@@ -1,9 +1,9 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.architecture.Manager;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.TechType;
@@ -18,24 +18,28 @@ public class TerranComsatStation extends Manager {
         this.comsat = unit;
     }
 
-    public  boolean update() {
-        if (AGame.notNthGameFrame(13)) {
-            return false;
-        }
+    @Override
+    public boolean applies() {
+        return comsat.is(AUnitType.Terran_Comsat_Station) && AGame.everyNthGameFrame(13);
+    }
 
+    @Override
+    public Manager handle() {
         if (comsat.energy() >= 50) {
-            return scanLurkers()
+            if (
+                scanLurkers()
                     || scanDarkTemplars()
-                    || scanObservers();
+                    || scanObservers()
+            ) return usedManager(this);
         }
 
-        return false;
+        return null;
     }
 
     // =========================================================
     // Zerg
 
-    private  boolean scanLurkers() {
+    private boolean scanLurkers() {
         for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effUndetected().list()) {
             if (shouldScanThisLurker(lurker)) {
                 return scan(lurker);
@@ -45,7 +49,7 @@ public class TerranComsatStation extends Manager {
         return false;
     }
 
-    private  boolean shouldScanThisLurker(AUnit lurker) {
+    private boolean shouldScanThisLurker(AUnit lurker) {
         if (comsat.energy(190)) {
             return true;
         }
@@ -58,22 +62,22 @@ public class TerranComsatStation extends Manager {
         }
 
         return Select.ourCombatUnits()
-                .excludeTypes(AUnitType.Terran_Medic)
-                .inRadius(12, lurker)
-                .atLeast(minUnitsNear);
+            .excludeTypes(AUnitType.Terran_Medic)
+            .inRadius(12, lurker)
+            .atLeast(minUnitsNear);
     }
 
     // =========================================================
     // Protoss
 
-    private  boolean scanDarkTemplars() {
+    private boolean scanDarkTemplars() {
         for (AUnit dt : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Dark_Templar).list()) {
             Selection ourCombatUnits = Select.ourCombatUnits();
             if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
-                    .atLeast(comsat.energy(150) ? (comsat.energy(190) ? 2 : 4) : 7)) {
+                .atLeast(comsat.energy(150) ? (comsat.energy(190) ? 2 : 4) : 7)) {
                 if (
                     ourCombatUnits.nearestTo(dt).distToLessThan(dt, 6)
-                    || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()
+                        || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()
                 ) {
                     return scan(dt);
                 }
@@ -83,7 +87,7 @@ public class TerranComsatStation extends Manager {
         return false;
     }
 
-    private  boolean scanObservers() {
+    private boolean scanObservers() {
         if (comsat.energy() <= 200) {
             return false;
         }
@@ -97,13 +101,13 @@ public class TerranComsatStation extends Manager {
         return false;
     }
 
-    private  boolean shouldScanThisObserver(AUnit observer) {
+    private boolean shouldScanThisObserver(AUnit observer) {
         if (comsat.energy() >= 100 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)) {
             return true;
         }
 
         if (
-                Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, observer).isNotEmpty()
+            Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, observer).isNotEmpty()
                 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)
         ) {
             return true;
@@ -114,7 +118,7 @@ public class TerranComsatStation extends Manager {
 
     // =========================================================
 
-    private  boolean scan(AUnit unitToScan) {
+    private boolean scan(AUnit unitToScan) {
         if (!unitToScan.effUndetected()) {
             System.err.println("unitToScan is not effectively cloaked = " + unitToScan.hp());
             return false;

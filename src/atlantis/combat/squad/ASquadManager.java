@@ -5,31 +5,28 @@ import atlantis.combat.squad.mission.SquadMissionChanger;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
-import java.util.ArrayList;
-
 /**
  * Commands all existing battle squads.
  */
 public class ASquadManager {
 
-    /** All squads. "Alpha" - main army. After some time "Beta" - always defend main + natural. */
-    protected static ArrayList<Squad> squads = new ArrayList<>();
+    private Squad squad;
 
-    // =========================================================
-    // Manage squads
+    public ASquadManager(Squad squad) {
+        this.squad = squad;
+    }
 
     /**
-     * Acts with all units that are part of given battle squad, according to the SquadMission object and using
-     * proper micro managers.
+     * Acts with all units that are part of given battle squad.
      */
-    public static void update(Squad squad) {
+    public void update() {
         if (A.everyNthGameFrame(11)) {
             SquadMissionChanger.changeSquadMissionIfNeeded(squad);
         }
 
         // Act with every combat unit
-        for (AUnit unit : squad.list()) {
-            CombatUnitManager.update();
+        for (AUnit unit : squad.units().list()) {
+            (new CombatUnitManager(unit)).handle();
         }
     }
 }

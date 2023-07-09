@@ -125,7 +125,7 @@ public class ARunningManager {
     /**
      * Tell other units that might be blocking our escape route to move.
      */
-    private boolean notifyNearUnitsToMakeSpace(AUnit unit) {
+    private boolean notifyNearUnitsToMakeSpace() {
         if (!allowedToNotifyNearUnitsToMakeSpace) {
             return false;
         }
@@ -143,7 +143,7 @@ public class ARunningManager {
 //        }
 
         Selection friendsTooClose = Select.ourRealUnits()
-            .exclude()
+            .exclude(unit)
             .groundUnits()
             .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
 
@@ -190,38 +190,38 @@ public class ARunningManager {
         return reasonableRunToPosition.isPossibleAndReasonablePosition(unit, position, includeNearWalkability, charForIsOk, charForNotOk);
     }
 
-    private boolean handleOnlyCombatBuildingsAreDangerouslyClose(AUnit unit) {
-        if (unit.isRunning()) {
-            return false;
-        }
-
-        // Check if only combat buildings are dangerously close. If so, don't run in any direction.
-        Units dangerous = AvoidEnemies.unitsToAvoid(unit, true);
-
-        if (dangerous.isEmpty()) {
-            return false;
-        }
-
-        Selection combatBuildings = Select.from(dangerous).combatBuildings(false);
-        if (dangerous.size() == combatBuildings.size() && unit.enemiesNear().combatUnits().atMost(1)) {
-            double minDist = unit.isGhost() ? 9.5 : 7.5;
-            AUnit combatBuilding = combatBuildings.nearestTo();
-
-            if (combatBuilding.distToLessThan(unit, minDist)) {
-                if (unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30)) {
-                    if (unit.moveAwayFrom(combatBuilding, 0.3, "Careful", Actions.RUN_ENEMY)) {
-                        return true;
-                    }
-                }
-                else if (unit.isMoving() && unit.isAction(Actions.RUN_ENEMY)) {
-                    unit.holdPosition("Steady");
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
+//    private boolean handleOnlyCombatBuildingsAreDangerouslyClose(AUnit unit) {
+//        if (unit.isRunning()) {
+//            return false;
+//        }
+//
+//        // Check if only combat buildings are dangerously close. If so, don't run in any direction.
+//        Units dangerous = AvoidEnemies.unitsToAvoid(unit, true);
+//
+//        if (dangerous.isEmpty()) {
+//            return false;
+//        }
+//
+//        Selection combatBuildings = Select.from(dangerous).combatBuildings(false);
+//        if (dangerous.size() == combatBuildings.size() && unit.enemiesNear().combatUnits().atMost(1)) {
+//            double minDist = unit.isGhost() ? 9.5 : 7.5;
+//            AUnit combatBuilding = combatBuildings.nearestTo();
+//
+//            if (combatBuilding.distToLessThan(unit, minDist)) {
+//                if (unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30)) {
+//                    if (unit.moveAwayFrom(combatBuilding, 0.3, "Careful", Actions.RUN_ENEMY)) {
+//                        return true;
+//                    }
+//                }
+//                else if (unit.isMoving() && unit.isAction(Actions.RUN_ENEMY)) {
+//                    unit.holdPosition("Steady");
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        return false;
+//    }
 
 //    private boolean distToNearestRegionBoundaryIsOkay(APosition position) {
 //        ARegion region = position.region();

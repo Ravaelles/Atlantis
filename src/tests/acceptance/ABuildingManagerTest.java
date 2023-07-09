@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.production.ABuildingManager;
+import atlantis.production.BuildingCommander;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
@@ -10,7 +10,7 @@ public class ABuildingManagerTest extends AbstractTestFakingGame {
     @Test
     public void iteratesOverBuildings() {
         createWorld(1, () -> {
-            ABuildingManager.update();
+            BuildingCommander.update();
         });
     }
 

@@ -51,7 +51,7 @@ public abstract class Squad extends Units {
     public Squad(String name, Mission mission) {
         this.name = name;
         this.setMission(mission);
-        ASquadManager.squads.add(this);
+        AllSquads.squads.add(this);
     }
 
     // =========================================================
@@ -65,7 +65,7 @@ public abstract class Squad extends Units {
     // === Getters =============================================
 
     public static ArrayList<Squad> getSquads() {
-        return ASquadManager.squads;
+        return AllSquads.squads;
     }
 
     public static HasPosition alphaCenter() {

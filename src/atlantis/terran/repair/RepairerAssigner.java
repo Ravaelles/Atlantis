@@ -3,7 +3,7 @@ package atlantis.terran.repair;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
-import atlantis.terran.TerranFlyingBuildingScoutManager;
+import atlantis.terran.TerranFlyingBuildingScoutCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -48,7 +48,7 @@ public class RepairerAssigner {
                 || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 2))
                 || (
                     unit.isBuilding()
-                        && TerranFlyingBuildingScoutManager.isFlyingBuilding(unit)
+                        && TerranFlyingBuildingScoutCommander.isFlyingBuilding(unit)
                         && unit.lastUnderAttackLessThanAgo(30 * 6)
                 )
 //                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercentMin(40))

@@ -1,20 +1,19 @@
 package atlantis.information.strategy;
 
+import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.response.AStrategyResponseFactory;
+import atlantis.util.CodeProfiler;
 import atlantis.util.Enemy;
 
-public class AStrategyCommander {
+public class AStrategyCommander extends Commander {
     
-    private static final boolean hasBeenInitialized = false;
-    
-    // =========================================================
-
     /**
      * Detect enemy strategy and use our strategy accordingly.
      */
-    public static void update() {
+    public void handle() {
+        CodeProfiler.startMeasuring(CodeProfiler.forCommander(this));
 
         // If we don't know enemy strategy, try to guess it based on enemy buildings/units we know
         if (GamePhase.isEarlyGame() && A.everyNthGameFrame(13)) {
@@ -29,28 +28,28 @@ public class AStrategyCommander {
             }
         }
 
-        // =========================================================
-
         AStrategyResponseFactory.forOurRace().update();
+
+        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_STRATEGY);
     }
     
     // =========================================================
 
-    private static void guessEnemyStrategyWhenEnemyIsProtoss() {
+    private void guessEnemyStrategyWhenEnemyIsProtoss() {
         AStrategy detectedStrategy = ProtossStrategies.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
         }
     }
 
-    private static void guessEnemyStrategyWhenEnemyIsTerran() {
+    private void guessEnemyStrategyWhenEnemyIsTerran() {
         AStrategy detectedStrategy = TerranStrategies.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
         }
     }
 
-    private static void guessEnemyStrategyWhenEnemyIsZerg() {
+    private void guessEnemyStrategyWhenEnemyIsZerg() {
         AStrategy detectedStrategy = ZergStrategies.detectStrategy();
         if (detectedStrategy != null) {
             changeEnemyStrategyTo(detectedStrategy);
@@ -59,7 +58,7 @@ public class AStrategyCommander {
     
     // =========================================================
 
-    private static void changeEnemyStrategyTo(AStrategy strategy) {
+    private void changeEnemyStrategyTo(AStrategy strategy) {
         if (!EnemyStrategy.get().equals(strategy)) {
             AGame.sendMessage("Enemy strategy detected at " + A.seconds() + "s: " + strategy);
         }

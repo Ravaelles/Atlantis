@@ -2,7 +2,7 @@ package tests.acceptance;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
-import atlantis.game.AGameCommander;
+import atlantis.game.AtlantisGameCommander;
 import atlantis.game.OnUnitMorph;
 import atlantis.game.OnUnitRenegade;
 import atlantis.information.enemy.EnemyUnits;
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNull;
 
 public class EnemyUnitsTest extends AbstractTestFakingGame {
 
-    private AGameCommander gameCommander;
+    private AtlantisGameCommander gameCommander;
     private FakeUnit drone1;
     private FakeUnit drone2;
     private FakeUnit drone3;
@@ -30,7 +30,7 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
 
     @Test
     public void neverRunsIntoCombatBuildings() {
-        gameCommander = new AGameCommander();
+        gameCommander = new AtlantisGameCommander();
 
         AtlantisConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
 

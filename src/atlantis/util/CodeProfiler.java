@@ -1,5 +1,8 @@
 package atlantis.util;
 
+import atlantis.architecture.Commander;
+import atlantis.information.strategy.AStrategyCommander;
+
 import java.util.HashMap;
 
 public class CodeProfiler {
@@ -17,6 +20,12 @@ public class CodeProfiler {
     private static final HashMap<String, Long> aspectsStart = new HashMap<>();
     private static final HashMap<String, Double> aspectsLength = new HashMap<>();
     
+    // =========================================================
+
+    public static String forCommander(Commander commander) {
+        String profilerName = classNameToProfilerName(commander.getClass().getName());
+    }
+
     // =========================================================
 
     /**
@@ -68,6 +77,10 @@ public class CodeProfiler {
     private static long now() {
         return System.nanoTime();
 //        return System.currentTimeMillis();
+    }
+
+    private static String classNameToProfilerName(String className) {
+        return className.replace("Commander", "");
     }
 
 }
