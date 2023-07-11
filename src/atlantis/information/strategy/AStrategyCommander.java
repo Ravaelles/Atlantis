@@ -13,7 +13,7 @@ public class AStrategyCommander extends Commander {
      * Detect enemy strategy and use our strategy accordingly.
      */
     public void handle() {
-        CodeProfiler.startMeasuring(CodeProfiler.forCommander(this));
+        CodeProfiler.startMeasuring(this);
 
         // If we don't know enemy strategy, try to guess it based on enemy buildings/units we know
         if (GamePhase.isEarlyGame() && A.everyNthGameFrame(13)) {
@@ -30,7 +30,7 @@ public class AStrategyCommander extends Commander {
 
         AStrategyResponseFactory.forOurRace().update();
 
-        CodeProfiler.endMeasuring(CodeProfiler.ASPECT_STRATEGY);
+        CodeProfiler.endMeasuring(this);
     }
     
     // =========================================================

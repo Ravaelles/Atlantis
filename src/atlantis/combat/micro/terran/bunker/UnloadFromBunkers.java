@@ -7,8 +7,6 @@ import atlantis.units.select.Selection;
 
 public class UnloadFromBunkers extends Manager {
 
-    private final PreventMaginotLine preventMaginotLine = new PreventMaginotLine(this);
-
     public UnloadFromBunkers(AUnit unit) {
         super(unit);
     }

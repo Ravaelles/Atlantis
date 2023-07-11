@@ -11,13 +11,10 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.tech.ATech;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 import atlantis.util.We;
-
-import  bwapi.TechType.Tank_Siege_Mode;
 
 public class TerranMissionChangerWhenDefend extends MissionChanger {
 

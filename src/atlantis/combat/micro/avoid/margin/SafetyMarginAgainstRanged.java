@@ -9,33 +9,37 @@ import bwapi.Color;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
 
-    public static double calculate(AUnit defender, AUnit attacker) {
+    public SafetyMarginAgainstRanged(AUnit defender) {
+        super(defender);
+    }
+
+    public double calculateAgainst(AUnit attacker) {
         double criticalDist;
 
         // GROUND unit
         if (defender.isGroundUnit()) {
-            criticalDist = forGroundUnit(defender, attacker);
+            criticalDist = forGroundUnit(attacker);
 
             if (defender.isGhost()) {
-                criticalDist += bonusForGhost(defender, attacker);
+                criticalDist += bonusForGhost(attacker);
             }
             else if (defender.isWraith()) {
-                criticalDist += bonusForWraith(defender, attacker);
+                criticalDist += bonusForWraith(attacker);
             }
         }
 
         // AIR unit
         else {
-            criticalDist = forAirUnit(defender, attacker);
+            criticalDist = forAirUnit(attacker);
         }
 
         // === For all ==================================
 
-        criticalDist += addBuildingBonus(defender, attacker, criticalDist);
+        criticalDist += addBuildingBonus(attacker, criticalDist);
         criticalDist += shouldRetreatBonus(defender);
-//            addBuildingBonus(defender, attacker, criticalDist)
+//            addBuildingBonus(attacker, criticalDist)
 //        if (attacker.isCombatBuilding()) {
-//            System.out.println(defender + ", CRIT_DIST = " + criticalDist + " // " + addBuildingBonus(defender, attacker, criticalDist));
+//            System.out.println(defender + ", CRIT_DIST = " + criticalDist + " // " + addBuildingBonus(attacker, criticalDist));
 //        }
 
         // ==============================================
@@ -43,7 +47,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         return criticalDist;
     }
 
-    private static double bonusForWraith(AUnit defender, AUnit attacker) {
+    private double bonusForWraith(AUnit attacker) {
         if (attacker.isDragoon()) {
             return 2.3;
         }
@@ -51,7 +55,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         return 1.3;
     }
 
-    private static double bonusForGhost(AUnit defender, AUnit attacker) {
+    private double bonusForGhost(AUnit attacker) {
         if (attacker.isCombatBuilding()) {
             return 7;
         }
@@ -59,7 +63,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         return defender.woundPercent() / 25.0;
     }
 
-    private static double shouldRetreatBonus(AUnit defender) {
+    private double shouldRetreatBonus(AUnit defender) {
         if (ShouldRetreat.shouldRetreat(defender)) {
             return 4.2;
         }
@@ -67,32 +71,32 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         return 0;
     }
 
-    private static double forGroundUnit(AUnit defender, AUnit attacker) {
-        return enemyWeaponRange(defender, attacker)
-                + quicknessBonus(defender, attacker)
-                + lurkerBonus(defender, attacker)
-                + woundedBonus(defender, attacker)
+    private double forGroundUnit(AUnit attacker) {
+        return enemyWeaponRange(attacker)
+                + quicknessBonus(attacker)
+                + lurkerBonus(attacker)
+                + woundedBonus(attacker)
                 + ourUnitsNearBonus(defender)
                 + ourMovementBonus(defender)
-                + enemyMovementBonus(defender, attacker)
-                + scoutBonus(defender, attacker)
-                + combatEvalBonus(defender, attacker)
-                + workerBonus(defender, attacker);
+                + enemyMovementBonus(attacker)
+                + scoutBonus(attacker)
+                + combatEvalBonus(attacker)
+                + workerBonus(attacker);
     }
 
-    private static double forAirUnit(AUnit defender, AUnit attacker) {
+    private double forAirUnit(AUnit attacker) {
         return 3
-                + enemyWeaponRange(defender, attacker)
-                + woundedBonus(defender, attacker)
+                + enemyWeaponRange(attacker)
+                + woundedBonus(attacker)
                 + specialAirUnitBonus(defender)
                 + ourMovementBonus(defender)
-                + enemyMovementBonus(defender, attacker);
-//        return applyAirUnitTweaks(defender, attacker);
+                + enemyMovementBonus(attacker);
+//        return applyAirUnitTweaks(attacker);
     }
 
     // =========================================================
 
-    protected static double woundedBonus(AUnit defender, AUnit attacker) {
+    protected double woundedBonus(AUnit attacker) {
         if (defender.isDragoon() && defender.hpLessThan(25)) {
             return 3.4;
         }
@@ -102,10 +106,10 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             return 0;
         }
 
-        return SafetyMargin.woundedBonus(defender, attacker);
+        return super.woundedBonus(attacker);
     }
 
-    private static double addBuildingBonus(AUnit defender, AUnit attacker, double criticalDist) {
+    private double addBuildingBonus(AUnit attacker, double criticalDist) {
         if (!attacker.isCombatBuilding()) {
             return 0;
         }
@@ -114,7 +118,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         return 1.6 + defender.woundPercent() / 100.0 + (defender.isMoving() ? 0.5 : 0) + (defender.isAir() ? 0.5 : 0);
     }
 
-//    private static double extraMarginAgainstCombatBuilding(AUnit defender, AUnit attacker) {
+//    private double extraMarginAgainstCombatBuilding(AUnit attacker) {
 //        if (defender.isVulture()) {
 //            return 6.4;
 //        } else if (defender.is(AUnitType.Terran_Wraith)) {
@@ -124,7 +128,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 //        return (defender.isAir() ? 5.8 : 1.1);
 //    }
 
-    private static double lurkerBonus(AUnit defender, AUnit attacker) {
+    private double lurkerBonus(AUnit attacker) {
         if (attacker.is(AUnitType.Zerg_Lurker) && attacker.effUndetected()) {
             return 3.6;
         }
@@ -132,11 +136,11 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         return 0;
     }
 
-    private static double scoutBonus(AUnit defender, AUnit attacker) {
+    private double scoutBonus(AUnit attacker) {
         return defender.isScout() ? (5 + defender.woundPercent() / 33) : 0;
     }
 
-    private static double combatEvalBonus(AUnit defender, AUnit attacker) {
+    private double combatEvalBonus(AUnit attacker) {
 //        if (!ACombatEvaluator.isSituationFavorable(defender)) {
 //            return -3;
 //        }

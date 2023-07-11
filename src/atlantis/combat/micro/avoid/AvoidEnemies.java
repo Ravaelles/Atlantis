@@ -37,7 +37,7 @@ public class AvoidEnemies extends Manager {
 
         if (enemiesDangerouslyClose.isEmpty()) {
 //            System.err.println("@ " + A.now() + " - No-one close");
-//            AUnit nearestEnemy = unit.enemiesNear().nearestTo();
+//            AUnit nearestEnemy = unit.enemiesNear().nearestTo(unit);
 //            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
 //                    "C=0(" + (nearestEnemy != null ? A.dist(nearestEnemy) : "-") + ")",
 //                    Color.Green                           );
@@ -128,9 +128,9 @@ public class AvoidEnemies extends Manager {
                 Units enemies = new Units();
 //                System.out.println("enemyUnitsToPotentiallyAvoid() = " + enemyUnitsToPotentiallyAvoid().size());
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid()) {
-                    double safetyMargin = SafetyMargin.calculate(unit, enemy);
+                    double safetyMargin = (new SafetyMargin(unit)).calculateAgainst(enemy);
 //                    System.err.println(
-//                        enemy + " // " + String.format("%.2f", safetyMargin) + " // " + A.dist(enemy.distTo())
+//                        enemy + " // " + String.format("%.2f", safetyMargin) + " // " + A.dist(enemy.distTo(unit))
 //                    );
 //                    APainter.paintLine(enemy, Color.Yellow);
                     enemies.addUnitWithValue(enemy, safetyMargin);

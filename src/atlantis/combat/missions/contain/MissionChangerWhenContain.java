@@ -2,33 +2,49 @@ package atlantis.combat.missions.contain;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.attack.ProtossMissionChangerWhenAttack;
+import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
+import atlantis.combat.missions.attack.ZergMissionChangerWhenAttack;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public abstract class MissionChangerWhenContain extends MissionChanger {
 
-    public static void changeMissionIfNeeded() {
-        if (Missions.recentlyChangedMission()) {
-            return;
+    public static MissionChanger get() {
+        if (We.terran()) {
+            return new TerranMissionChangerWhenContain();
         }
-
-        reason = null;
-
-        if (AGame.isPlayingAsTerran()) {
-            TerranMissionChangerWhenContain.changeMissionIfNeeded();
-            return;
-        }
-        else if (AGame.isPlayingAsProtoss()) {
-            ProtossMissionChangerWhenContain.changeMissionIfNeeded();
-            return;
+        else if (We.protoss()) {
+            return new ProtossMissionChangerWhenContain();
         }
         else {
-            ZergMissionChangerWhenContain.changeMissionIfNeeded();
-            return;
+            return new ZergMissionChangerWhenContain();
         }
     }
+
+//    public void changeMissionIfNeeded() {
+//        if (Missions.recentlyChangedMission()) {
+//            return;
+//        }
+//
+//        reason = null;
+//
+//        if (AGame.isPlayingAsTerran()) {
+//            TerranMissionChangerWhenContain.changeMissionIfNeeded();
+//            return;
+//        }
+//        else if (AGame.isPlayingAsProtoss()) {
+//            ProtossMissionChangerWhenContain.changeMissionIfNeeded();
+//            return;
+//        }
+//        else {
+//            ZergMissionChangerWhenContain.changeMissionIfNeeded();
+//            return;
+//        }
+//    }
 
     // =========================================================
 

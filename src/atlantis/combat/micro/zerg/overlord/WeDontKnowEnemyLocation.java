@@ -1,9 +1,9 @@
 package atlantis.combat.micro.zerg.overlord;
 
-import atlantis.information.enemy.EnemyInfo;
-import atlantis.map.scout.AScoutManager;
-import atlantis.units.AUnit;
 import atlantis.architecture.Manager;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.map.scout.ScoutManager;
+import atlantis.units.AUnit;
 
 public class WeDontKnowEnemyLocation extends Manager {
 
@@ -20,7 +20,7 @@ public class WeDontKnowEnemyLocation extends Manager {
         if (applies()) {
             unit.setTooltipTactical("Find enemy");
 
-            if (AScoutManager.tryFindingEnemy(unit)) {
+            if ((new ScoutManager(unit)).tryFindingEnemy()) {
                 return usedManager(this);
             }
         }

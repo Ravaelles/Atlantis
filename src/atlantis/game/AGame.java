@@ -3,7 +3,7 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
-import atlantis.config.MapSpecificConfig;
+import atlantis.config.MapSpecificCommander;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.units.AUnitType;
 import bwapi.*;
@@ -185,7 +185,7 @@ public class AGame {
      * UMS maps are custom made maps, which may be used to test micro-management.
      */
     public static void setUmsMode() {
-        if (MapSpecificConfig.shouldTreatAsNormalMap()) {
+        if (MapSpecificCommander.shouldTreatAsNormalMap()) {
             return;
         }
 

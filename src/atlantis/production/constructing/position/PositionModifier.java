@@ -1,8 +1,5 @@
 package atlantis.production.constructing.position;
 
-import atlantis.game.CameraManager;
-import atlantis.game.GameSpeed;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.*;
 import atlantis.map.position.APosition;

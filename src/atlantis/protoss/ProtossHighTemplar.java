@@ -1,6 +1,7 @@
 
 package atlantis.protoss;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.AGame;
 import atlantis.information.tech.SpellCoordinator;
@@ -9,7 +10,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import bwapi.TechType;
 
@@ -230,13 +230,13 @@ public class ProtossHighTemplar extends Manager {
 
         AUnit closestOtherHT = lowEnergyHTs.unitWithLowestValue();
         if (closestOtherHT != null) {
-//            if (closestOtherHT.distTo() <= 0.9) {
+//            if (closestOtherHT.distTo(unit) <= 0.9) {
                 unit.useTech(TechType.Archon_Warp, closestOtherHT);
 //                System.out.println("Warp Archon");
                 unit.setTooltipTactical("WarpArchon");
                 closestOtherHT.setTooltipTactical("OhArchon");
 //                GameSpeed.changeSpeedTo(10);
-//                CameraManager.centerCameraOn();
+//                CameraCommander.centerCameraOn();
 //            }
 //            else {
 //                if (!unit.isMoving() && closestOtherHT.lastActionMoreThanAgo(90, UnitActions.USING_TECH)) {

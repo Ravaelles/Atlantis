@@ -1,13 +1,14 @@
 package atlantis.units;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.eval.AtlantisJfap;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.margin.UnitRange;
-import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.running.ARunningManager;
+import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.retreating.ShouldRetreat;
+import atlantis.combat.running.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
@@ -20,7 +21,8 @@ import atlantis.information.tech.SpellCoordinator;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
-import atlantis.map.scout.AScoutManager;
+import atlantis.map.scout.ScoutCommander;
+import atlantis.map.scout.ScoutManager;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
@@ -29,16 +31,15 @@ import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.AMineralGathering;
-import atlantis.util.We;
-import atlantis.util.cache.Cache;
 import atlantis.util.CappedList;
 import atlantis.util.Vector;
 import atlantis.util.Vectors;
+import atlantis.util.We;
+import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
 import atlantis.util.log.LogUnitsToFiles;
@@ -1679,7 +1680,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isScout() {
-        return AScoutManager.isScout(this);
+        return ScoutCommander.isScout(this);
     }
 
     public int getSpaceProvided() {

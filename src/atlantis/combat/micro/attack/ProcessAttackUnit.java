@@ -86,7 +86,7 @@ public class ProcessAttackUnit extends Manager {
             )
                 && (enemy.distToMoreThan(unit, unit.isMelee() ? 0.8 : 1.15))
                 && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
-                && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude().exclude(enemy).atMost(3))
+                && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
         ) {
             if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) {
                 return false;

@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.information.generic.TerranArmyComposition;
 import atlantis.information.decisions.Decisions;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -61,7 +62,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             return false;
         }
 
-        return addToQueueIfNotAlreadyThere(AUnitType.Terran_Ghost);
+        return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Ghost);
     }
 
     protected static boolean medics() {
@@ -78,12 +79,12 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         // =========================================================
 
         if (A.hasGas(25) && Count.medics() == 0 && Count.marines() > 0) {
-            return addToQueueToMaxAtATime(AUnitType.Terran_Medic, 2);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2);
         }
 
         // We have medics, but all of them are depleted from energy
         if (Count.medics() > 0 && Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).isEmpty()) {
-            return addToQueueToMaxAtATime(AUnitType.Terran_Medic, 4);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 4);
         }
 
         if (saveForFactory()) {
@@ -100,14 +101,14 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
             // Firebats
             if (!Enemy.terran()) {
                 if (Count.medics() >= 3 && Count.ourOfTypeWithUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
-                    return addToQueueToMaxAtATime(AUnitType.Terran_Firebat, 2);
+                    return AddToQueue.maxAtATime(AUnitType.Terran_Firebat, 2);
                 }
             }
 
             // Medics
             if (TerranArmyComposition.medicsToInfantryRatioTooLow()) {
 //                produceUnit(barracks.first(), AUnitType.Terran_Medic);
-                return addToQueueToMaxAtATime(AUnitType.Terran_Medic, 4);
+                return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 4);
             }
         }
 
@@ -134,7 +135,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         int marines = Count.marines();
 
         if (!A.supplyUsed(160) && A.hasMinerals(800) && !A.hasGas(120)) {
-            return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 2);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 2);
         }
 
         if (marines >= 4 && A.supplyUsed(150)) {
@@ -142,7 +143,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
         }
 
         if (Enemy.zerg() && A.seconds() >= 300 && marines <= 4) {
-            return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 1);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 1);
         }
 
         if (!A.hasMinerals(200) && marines >= 4 && !A.canAffordWithReserved(50, 0)) {
@@ -166,7 +167,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty() && A.hasMinerals(100 + 50 * barracks.count())) {
-            return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 1);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 1);
 //            AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
 //            return;
         }
@@ -186,7 +187,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
                     AUnit idleBarrack = Select.ourOneNotTrainingUnits(AUnitType.Terran_Barracks);
                     if (idleBarrack != null) {
 //                        return AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
-                        return addToQueueToMaxAtATime(AUnitType.Terran_Marine, 4);
+                        return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 4);
                     }
                     else {
                         break;

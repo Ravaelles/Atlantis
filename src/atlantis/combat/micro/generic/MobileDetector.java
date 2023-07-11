@@ -57,7 +57,7 @@ public class MobileDetector extends Manager {
     protected boolean handleSpreadOut() {
         int minDistBetween = minDistanceBetweenUnits();
 
-        Selection units = Select.ourOfType(unit.type()).inRadius(minDistBetween, unit).exclude();
+        Selection units = Select.ourOfType(unit.type()).inRadius(minDistBetween, unit).exclude(unit);
         if (units.count() > 0) {
             AUnit otherunit = units.nearestTo(unit);
             unit.moveAwayFrom(otherunit.position(), minDistBetween, "SpreadDetectors", Actions.MOVE_FORMATION);

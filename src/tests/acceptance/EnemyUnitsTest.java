@@ -53,7 +53,7 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
                 fifthFrame();
             }
 
-            gameCommander.update();
+            gameCommander.handle();
         });
     }
 

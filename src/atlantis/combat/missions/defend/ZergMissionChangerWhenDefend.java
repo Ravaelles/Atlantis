@@ -18,7 +18,7 @@ import atlantis.units.select.Select;
 
 public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
-    public static void changeMissionIfNeeded() {
+    public void changeMissionIfNeeded() {
         if (!canChange()) {
             return;
         }

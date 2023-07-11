@@ -1,10 +1,10 @@
 package atlantis.production.requests.zerg;
 
 import atlantis.map.position.APosition;
-import atlantis.production.requests.ARequests;
+import atlantis.production.requests.ProductionRequests;
 
 
-public class ZergRequests extends ARequests {
+public class ZergRequests extends ProductionRequests {
 
     @Override
     public void requestDetectorQuick(APosition where) {

@@ -22,7 +22,7 @@ public class MissionContain extends Mission {
     @Override
     public boolean update(AUnit unit) {
         AFocusPoint focusPoint = focusPoint();
-        unit.setTooltipTactical("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo()) : null) + ")");
+        unit.setTooltipTactical("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
 
         if (focusPoint == null) {
             MissionChanger.forceMissionAttack("InvalidFocusPoint");

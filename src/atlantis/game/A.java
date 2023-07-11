@@ -1248,16 +1248,16 @@ public class A {
     }
 
     public static void centerAndPause(APosition position) {
-        CameraManager.centerCameraOn(position);
+        CameraCommander.centerCameraOn(position);
         GameSpeed.pauseGame();
     }
 
     public static void centerAndChangeSpeed(APosition position, int newGameSpeed) {
-        CameraManager.centerCameraOn(position);
+        CameraCommander.centerCameraOn(position);
         GameSpeed.changeSpeedTo(newGameSpeed);
     }
     public static void centerAndPauseAndChangeSpeed(APosition position, int newGameSpeed) {
-        CameraManager.centerCameraOn(position);
+        CameraCommander.centerCameraOn(position);
         GameSpeed.changeSpeedTo(newGameSpeed);
         GameSpeed.pauseGame();
     }

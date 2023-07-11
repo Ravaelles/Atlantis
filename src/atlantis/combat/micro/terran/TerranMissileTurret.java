@@ -60,7 +60,7 @@ public class TerranMissileTurret extends AntiAirBuildingManager {
 
     // =========================================================
 
-    public  TerranMissileTurret get() {
+    public static TerranMissileTurret get() {
         if (instance == null) {
             return (TerranMissileTurret) (instance = new TerranMissileTurret());
         }

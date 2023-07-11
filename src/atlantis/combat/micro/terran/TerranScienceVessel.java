@@ -1,8 +1,8 @@
 
 package atlantis.combat.micro.terran;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.generic.MobileDetector;
-import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -10,7 +10,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
 import bwapi.TechType;
 
 public class TerranScienceVessel extends MobileDetector {
@@ -25,12 +24,12 @@ public class TerranScienceVessel extends MobileDetector {
 
     // =========================================================
 
-    public boolean update() {
+    public Manager handle() {
         if (useTech()) {
-            return true;
+            return usedManager(this);
         }
 
-        return MobileDetector.update();
+        return super.handle();
     }
 
     // =========================================================
@@ -40,7 +39,7 @@ public class TerranScienceVessel extends MobileDetector {
             return false;
         }
 
-        if (unit.lastTechUsedAgo() <= 10) {
+        if (unit.lastTechUsedAgo() <= 15) {
             return true;
         }
 
@@ -110,7 +109,7 @@ public class TerranScienceVessel extends MobileDetector {
                 AUnitType.Zerg_Guardian, AUnitType.Zerg_Scourge,
                 AUnitType.Protoss_High_Templar, AUnitType.Protoss_Archon, AUnitType.Protoss_Dark_Archon,
                 AUnitType.Terran_Medic
-        ).effVisible().inRadius(15, unit).mostDistantTo();
+        ).effVisible().inRadius(15, unit).mostDistantTo(unit);
         if (enemy != null) {
             return unit.useTech(TechType.Irradiate, enemy);
         }

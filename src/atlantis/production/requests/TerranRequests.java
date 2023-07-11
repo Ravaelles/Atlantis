@@ -1,7 +1,7 @@
 package atlantis.production.requests;
 
 
-public class TerranRequests extends ARequests {
+public class TerranRequests extends ProductionRequests {
 
 //    @Override
 //    public void requestDetectorQuick(APosition where) {

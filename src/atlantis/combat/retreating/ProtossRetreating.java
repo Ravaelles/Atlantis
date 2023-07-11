@@ -24,7 +24,7 @@
 //
 //        // =========================================================
 //
-//        AUnit enemy = enemies.nearestTo();
+//        AUnit enemy = enemies.nearestTo(unit);
 //        int enemiesNear = enemies.inRadius(2, unit).count();
 //        int ourCount;
 //        if (enemy != null) {

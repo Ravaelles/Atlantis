@@ -1,21 +1,33 @@
 package atlantis.combat.micro.managers;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
 
-public class DanceAfterShoot {
+public class DanceAfterShoot extends Manager {
+
+    public DanceAfterShoot(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public Manager handle() {
+        if (update()) return usedManager(this);
+
+        return null;
+    }
 
     /**
      * For ranged unit, once shoot is fired, move slightly away or move towards the target when still have cooldown.
      */
-    public  boolean update() {
+    private boolean update() {
         if (shouldSkip()) {
             return false;
         }
 
         AUnit target = unit.target();
-        double dist = target.distTo();
+        double dist = target.distTo(unit);
         int weaponRange = unit.enemyWeaponRangeAgainstThisUnit(target);
 
         String danceAway = "DanceAway-" + unit.cooldownRemaining();
@@ -39,7 +51,7 @@ public class DanceAfterShoot {
         // =========================================================
 
         // Step FORWARD
-        if (shouldDanceTo(unit, target, dist)) {
+        if (shouldDanceTo(target, dist)) {
             unit.addLog(danceTo);
             return unit.move(
                 unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE_TO, danceTo, false

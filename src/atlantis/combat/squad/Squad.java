@@ -51,7 +51,7 @@ public abstract class Squad extends Units {
     public Squad(String name, Mission mission) {
         this.name = name;
         this.setMission(mission);
-        AllSquads.squads.add(this);
+        AllSquads.all().add(this);
     }
 
     // =========================================================
@@ -63,10 +63,6 @@ public abstract class Squad extends Units {
     private APosition _centerUnitPosition = null;
 
     // === Getters =============================================
-
-    public static ArrayList<Squad> getSquads() {
-        return AllSquads.squads;
-    }
 
     public static HasPosition alphaCenter() {
         return Alpha.get() != null ? Alpha.get().center() : null;

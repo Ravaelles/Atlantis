@@ -61,8 +61,8 @@ public class TerranVulture extends Manager {
 //        }
 
         // Disallow mines close to buildings
-        AUnit nearestBuilding = Select.ourBuildings().nearestTo();
-        if (nearestBuilding != null && nearestBuilding.distTo() <= 7) {
+        AUnit nearestBuilding = Select.ourBuildings().nearestTo(unit);
+        if (nearestBuilding != null && nearestBuilding.distTo(unit) <= 7) {
             unit.setTooltipTactical("Don't mine");
             return false;
         }

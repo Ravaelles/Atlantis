@@ -39,8 +39,8 @@ public class ATargetingImportant extends ATargeting {
         target = enemyUnits
                 .air()
                 .excludeTypes(AUnitType.Zerg_Overlord)
-                .inShootRangeOf()
-                .nearestTo();
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C1a = " + target);
             return target;
@@ -68,7 +68,7 @@ public class ATargetingImportant extends ATargeting {
                         AUnitType.Zerg_Sunken_Colony
                 )
                 .canBeAttackedBy(unit, 5)
-                .nearestTo();
+                .nearestTo(unit);
         if (target != null) {
             return combatBuildingOrScvRepairingIt(target);
         }
@@ -79,7 +79,7 @@ public class ATargetingImportant extends ATargeting {
             .ofType(
                 AUnitType.Zerg_Devourer
             )
-//                .inShootRangeOf()
+//                .inShootRangeOf(unit)
             .inRadius(15, unit)
             .mostWounded();
         if (target != null) {
@@ -90,7 +90,7 @@ public class ATargetingImportant extends ATargeting {
             .ofType(
                 AUnitType.Zerg_Mutalisk
             )
-//                .inShootRangeOf()
+//                .inShootRangeOf(unit)
             .inRadius(15, unit)
             .mostWounded();
         if (target != null) {
@@ -104,8 +104,8 @@ public class ATargetingImportant extends ATargeting {
         target = enemyUnits
                 .combatUnits()
                 .excludeTypes(AUnitType.Terran_Medic)
-                .inShootRangeOf()
-                .nearestTo();
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C1b = " + target);
             return target;
@@ -114,8 +114,8 @@ public class ATargetingImportant extends ATargeting {
         // Take into account excluded units above e.g. MEDICS
         target = enemyUnits
                 .ofType(AUnitType.Terran_Medic)
-                .inShootRangeOf()
-                .nearestTo();
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C1c = " + target);
             return target;
@@ -132,7 +132,7 @@ public class ATargetingImportant extends ATargeting {
 
         // Target repairers
         AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, unit)
-                .canBeAttackedBy(unit, 1.7).nearestTo();
+                .canBeAttackedBy(unit, 1.7).nearestTo(unit);
         if (repairer != null) {
             if (ATargeting.DEBUG) System.out.println("C0a = " + repairer);
             return repairer;
@@ -151,9 +151,9 @@ public class ATargetingImportant extends ATargeting {
         target = enemyUnits
                 .combatUnits()
                 .excludeMedics()
-//                .inShootRangeOf()
+//                .inShootRangeOf(unit)
                 .inRadius(7, unit)
-                .nearestTo();
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C4 = " + target);
             return target;
@@ -182,7 +182,7 @@ public class ATargetingImportant extends ATargeting {
         target = enemyUnits
             .workers()
             .inRadius(unit.isMelee() ? 8 : 12, unit)
-            .nearestTo();
+            .nearestTo(unit);
 
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C5b = " + target);
@@ -216,7 +216,7 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Zerg_Greater_Spire
             )
             .inRadius(15, unit)
-            .nearestTo();
+            .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("D6b = " + target);
             return target;

@@ -16,7 +16,7 @@ public class TempDontRetreat {
 //            }
 //
 //            // No enemy can shoot us
-//            if (unit.enemiesNear().inShootRangeOf().empty()) {
+//            if (unit.enemiesNear().inShootRangeOf(unit).empty()) {
 //                unit.addFileLog("TemporarilyDontRetreat");
 //                return true;
 //            }

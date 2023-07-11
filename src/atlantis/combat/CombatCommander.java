@@ -3,7 +3,6 @@ package atlantis.combat;
 import atlantis.architecture.Commander;
 import atlantis.combat.missions.MissionCommander;
 import atlantis.combat.squad.SquadsCommander;
-import atlantis.combat.squad.SquadTransfers;
 
 public class CombatCommander extends Commander {
 

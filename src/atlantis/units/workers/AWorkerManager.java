@@ -15,7 +15,7 @@ public class AWorkerManager {
      * Executed for every worker unit.
      */
     public static boolean update(AUnit worker) {
-//        if (AScoutManager.testRoamingAroundBase(worker)) return true;
+//        if (ScoutManager.testRoamingAroundBase(worker)) return true;
 
         if (workerManagerForbiddenFor(worker)) {
             return false;

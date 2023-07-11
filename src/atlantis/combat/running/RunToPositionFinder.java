@@ -91,7 +91,7 @@ public class RunToPositionFinder {
         double runDistInPixels = showBackRunPixelRadius(running.unit(), runAwayFrom);
 
         if (vectorLength < 0.01) {
-//            CameraManager.centerCameraOn();
+//            CameraCommander.centerCameraOn();
 //            System.err.println("Serious issue: run vectorLength = " + vectorLength);
 //            System.err.println("runner = " + unit + " // " + unit.position());
 //            System.err.println("runAwayFrom = " + runAwayFrom);
@@ -259,8 +259,8 @@ public class RunToPositionFinder {
         boolean isOkay = isWalkable
 //                )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
-//                && Select.ourWithUnfinished().exclude().inRadius(unit.size(), position).count() <= 0
-            && Select.all().inRadius(unit.size() * 1.7, position).exclude().isEmpty()
+//                && Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
+            && Select.all().inRadius(unit.size() * 1.7, position).exclude(unit).isEmpty()
 //                && distToNearestRegionBoundaryIsOkay(position)
             && unit.hasPathTo(position)
             && unit.position().groundDistanceTo(position) <= 12

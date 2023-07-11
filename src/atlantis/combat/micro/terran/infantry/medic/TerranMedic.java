@@ -143,7 +143,7 @@ public class TerranMedic extends Manager {
 //
 //        // We're possibly blocking the choke
 //        if (choke != null && choke.width() <= 3.8 && choke.distToLessThan(medic, choke.width() + 1)) {
-//            AUnit nearestUnit = Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).nearestTo();
+//            AUnit nearestUnit = Select.ourCombatUnits().excludeTypes(AUnitType.Terran_Medic).nearestTo(unit);
 //            if (nearestUnit != null && nearestUnit.distToLessThan(medic, 0.5)) {
 //                return medic.moveAwayFrom(nearestUnit, 0.2, "MoveBitch"); // Get out of the way
 //            }

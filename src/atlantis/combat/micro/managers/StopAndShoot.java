@@ -1,10 +1,10 @@
 package atlantis.combat.micro.managers;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 
 public class StopAndShoot extends Manager {
 
@@ -34,7 +34,7 @@ public class StopAndShoot extends Manager {
 
         // HOLD
 //        System.err.println(". " + A.now());
-//        CameraManager.centerCameraOn();
+//        CameraCommander.centerCameraOn();
         if (shouldStop()) {
 //            GameSpeed.changeSpeedTo(30);
 //            System.err.println("@ STOP & SHOOT - " + distToEnemy + " / " + unit);

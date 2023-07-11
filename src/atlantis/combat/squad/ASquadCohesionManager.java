@@ -66,8 +66,8 @@ public class ASquadCohesionManager extends Manager {
 //            return false;
 //        }
 //
-//        Selection closeFriends = Select.ourCombatUnits().exclude();
-//        AUnit nearestFriend = closeFriends.clone().nearestTo();
+//        Selection closeFriends = Select.ourCombatUnits().exclude(unit);
+//        AUnit nearestFriend = closeFriends.clone().nearestTo(unit);
 //        APosition center = squadCenter();
 //
 //        if (nearestFriend == null) {

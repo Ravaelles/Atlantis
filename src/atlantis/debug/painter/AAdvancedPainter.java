@@ -4,13 +4,12 @@ import atlantis.Atlantis;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
-import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.AllSquads;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.SquadTransfersCommander;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -22,7 +21,8 @@ import atlantis.information.tech.ATech;
 import atlantis.map.*;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.map.scout.AScoutManager;
+import atlantis.map.scout.ScoutCommander;
+import atlantis.map.scout.ScoutManager;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
@@ -35,8 +35,8 @@ import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.terran.repair.ARepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.buildings.AGasManager;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.AWorkerManager;
@@ -386,7 +386,7 @@ public class AAdvancedPainter extends APainter {
 
         paintSideMessage("Combat squad size: " + Alpha.get().size(), Color.Yellow, 0);
 
-        int scouts = AScoutManager.getScouts().size();
+        int scouts = ScoutCommander.allScouts().size();
         color = scouts == 0 ? Color.Grey : (scouts == 1 ? Color.Yellow : Color.Red);
         paintSideMessage("Scouts: " + scouts, color, 0);
 
@@ -1233,7 +1233,7 @@ public class AAdvancedPainter extends APainter {
 //            ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
-            for (ARegionBoundary point : AScoutManager.scoutingAroundBasePoints.arrayList()) {
+            for (ARegionBoundary point : ScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.Yellow);
             }
         }
@@ -1324,7 +1324,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCooldown(AUnit unit) {
-        boolean shouldAvoidAnyUnit = AvoidEnemies.shouldAvoidAnyUnit(unit);
+        boolean shouldAvoidAnyUnit = (new AvoidEnemies(unit)).shouldAvoidAnyUnit();
 
 //        paintUnitProgressBar(unit, 27, 100, Color.Grey);
         paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldAvoidAnyUnit ? Color.Red : Color.Teal);
@@ -1484,7 +1484,7 @@ public class AAdvancedPainter extends APainter {
             paintRectangle(turret.translateByPixels(1, 1), 32, 32, Color.Purple);
             paintTextCentered(turret.translateByPixels(17, 12), "Turret", Color.Purple);
 
-//            CameraManager.centerCameraOn(turret);
+//            CameraCommander.centerCameraOn(turret);
         }
     }
 

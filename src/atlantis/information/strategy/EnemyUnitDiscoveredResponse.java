@@ -7,7 +7,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.Chokes;
-import atlantis.production.requests.ARequests;
+import atlantis.production.requests.ProductionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -72,9 +72,9 @@ public class EnemyUnitDiscoveredResponse {
         if (enemyUnit.is(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
             OurStrategicBuildings.setDetectorsNeeded(2);
 
-            ARequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
+            ProductionRequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
 
-//            ARequests.getInstance().requestDetectorQuick(
+//            ProductionRequests.getInstance().requestDetectorQuick(
 //                    Chokes.natural(Select.mainBase().position()).getCenter()
 //            );
         }

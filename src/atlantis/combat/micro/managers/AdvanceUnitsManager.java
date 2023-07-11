@@ -177,7 +177,7 @@
 //            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic)
 //                .havingEnergy(20)
 //                .inRadius(15, unit)
-//                .nearestTo();
+//                .nearestTo(unit);
 //
 //            if (medic != null && (!medic.hasTarget() || medic.target().equals())) {
 //                return unit.move(medic, Actions.MOVE_FOCUS, "Regenerate", false);

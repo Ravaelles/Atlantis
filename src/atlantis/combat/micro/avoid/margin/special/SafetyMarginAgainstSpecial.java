@@ -1,10 +1,15 @@
 package atlantis.combat.micro.avoid.margin.special;
 
+import atlantis.combat.micro.avoid.margin.SafetyMargin;
 import atlantis.units.AUnit;
 
-public class SafetyMarginAgainstSpecial {
+public class SafetyMarginAgainstSpecial extends SafetyMargin {
 
-    public static double handle(AUnit defender, AUnit attacker) {
+    public SafetyMarginAgainstSpecial(AUnit defender) {
+        super(defender);
+    }
+
+    public double handle(AUnit attacker) {
         if (attacker.isLurker()) {
             return AgainstLurker.vsLurker(defender, attacker);
         }

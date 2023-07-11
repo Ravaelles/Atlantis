@@ -7,18 +7,18 @@ import bwapi.UpgradeType;
 
 public class UnitRange {
 
-    public  int unitRangeBonus() {
+    public static int unitRangeBonus(AUnit unit) {
         if (unit.isEnemy()) {
-            return forEnemy();
+            return forEnemy(unit);
         }
         else if (unit.isOur()) {
-            return forUs();
+            return forUs(unit);
         }
 
         return 0;
     }
 
-    private  int forUs() {
+    private static int forUs(AUnit unit) {
         if (unit.isDragoon()) {
             return ATech.isResearched(UpgradeType.Singularity_Charge) ? 2 : 0;
         }
@@ -34,7 +34,7 @@ public class UnitRange {
         return 0;
     }
 
-    private  int forEnemy(AUnit enemy) {
+    private static int forEnemy(AUnit enemy) {
         if (enemy.isDragoon()) {
             return A.seconds() >= 290 ? 2 : 0;
         }

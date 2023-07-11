@@ -19,7 +19,7 @@ public class TooClustered {
         }
 
         Selection ourCombatUnits = Select.ourCombatUnits().inRadius(5, unit);
-        AUnit nearestBuddy = ourCombatUnits.clone().nearestTo();
+        AUnit nearestBuddy = ourCombatUnits.clone().nearestTo(unit);
         double minDistBetweenUnits = minDistBetweenUnits();
 
         if (tooClustered(unit, ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {

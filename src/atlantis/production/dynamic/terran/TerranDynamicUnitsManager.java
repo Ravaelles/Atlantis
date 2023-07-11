@@ -9,7 +9,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
-import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Terran_Science_Vessel;
 
@@ -66,7 +65,7 @@ public class TerranDynamicUnitsManager extends AbstractDynamicUnits {
         }
 
         if (A.supplyUsed() >= startProducingWraithsSinceSupply && wraiths <= 1) {
-            return addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
+            return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
         }
 
         if (A.supplyUsed() <= 160 && wraiths >= startProducingWraithsSinceSupply + wraiths * 15) {
@@ -77,6 +76,6 @@ public class TerranDynamicUnitsManager extends AbstractDynamicUnits {
             return false;
         }
 
-        return addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
+        return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
     }
 }

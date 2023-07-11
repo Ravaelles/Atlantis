@@ -11,9 +11,6 @@ import atlantis.util.log.ErrorLog;
 
 import java.util.List;
 
-import static atlantis.combat.micro.attack.AttackNearbyEnemies.MAX_DIST_TO_ATTACK;
-import static atlantis.combat.micro.attack.AttackNearbyEnemies.reasonNotToAttack;
-
 public class ATargeting {
 
 //    protected static final boolean DEBUG = true;
@@ -37,14 +34,14 @@ public class ATargeting {
         }
 
         // Used when something went wrong there ^
-        reasonNotToAttack = null;
+        AttackNearbyEnemies.reasonNotToAttack = null;
         return closestUnitFallback(unit, maxDistFromEnemy);
     }
 
     private static AUnit closestUnitFallback(AUnit unit, double maxDistFromEnemy) {
 
         // Workers
-        AUnit worker = Select.enemy().workers().canBeAttackedBy(unit, 0).nearestTo();
+        AUnit worker = Select.enemy().workers().canBeAttackedBy(unit, 0).nearestTo(unit);
         if (worker != null && worker.isAlive()) {
             return worker;
         }
@@ -52,32 +49,32 @@ public class ATargeting {
         // Combat buildings - close
         AUnit combatBuildingClose = Select.enemy()
             .combatBuildings(false)
-            .canBeAttackedBy(unit, unit.isMelee() ? 4 : 8).nearestTo();
+            .canBeAttackedBy(unit, unit.isMelee() ? 4 : 8).nearestTo(unit);
         if (combatBuildingClose != null && combatBuildingClose.isAlive()) {
             return combatBuildingClose;
         }
 
         // Combat units
         AUnit combat = Select.enemy().combatUnits()
-            .nonBuildings().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo();
+            .nonBuildings().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo(unit);
         if (combat != null && combat.isAlive()) {
             return combat;
         }
 
         // Combat buildings - far
-        AUnit combatBuilding = Select.enemy().combatBuildings(false).canBeAttackedBy(unit, maxDistFromEnemy).nearestTo();
+        AUnit combatBuilding = Select.enemy().combatBuildings(false).canBeAttackedBy(unit, maxDistFromEnemy).nearestTo(unit);
         if (combatBuilding != null && combatBuilding.isAlive()) {
             return combatBuilding;
         }
 
         // Normal units
-        AUnit regular = Select.enemy().realUnits().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo();
+        AUnit regular = Select.enemy().realUnits().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo(unit);
         if (regular != null && regular.isAlive()) {
             return regular;
         }
 
         // Buildings
-        AUnit building = Select.enemy().buildings().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo();
+        AUnit building = Select.enemy().buildings().canBeAttackedBy(unit, maxDistFromEnemy).nearestTo(unit);
         if (building != null && building.isAlive()) {
             return building;
         }
@@ -101,12 +98,12 @@ public class ATargeting {
 
         // Somewhat ugly fix for when targeting goes wrong
 //        if (enemy == null) {
-//            enemy = unit.enemiesNear().canBeAttackedBy(unit, 1.2).nearestTo();
+//            enemy = unit.enemiesNear().canBeAttackedBy(unit, 1.2).nearestTo(unit);
 //        }
 
         if (enemy == null) {
-//            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo();
-            enemy = unit.enemiesNear().realUnitsAndBuildings().canBeAttackedBy(unit, 0).nearestTo();
+//            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
+            enemy = unit.enemiesNear().realUnitsAndBuildings().canBeAttackedBy(unit, 0).nearestTo(unit);
             if (enemy != null) {
                 ErrorLog.printErrorOnce("DefineTarget fix for " + unit + ", chosen " + enemy);
             }
@@ -117,8 +114,8 @@ public class ATargeting {
 //            if (possible.atLeast(1) && unit.canAttackGroundUnits()) {
 //                System.err.println(unit + " return NULL target WTF");
 //                possible.print("These could be targetted");
-//                System.err.println("As a fix return: " + possible.nearestTo());
-//                return possible.nearestTo();
+//                System.err.println("As a fix return: " + possible.nearestTo(unit));
+//                return possible.nearestTo(unit);
 //            }
 //            return null;
 //        }
@@ -169,7 +166,7 @@ public class ATargeting {
         }
 
         // Ok, any possible of this type
-        enemy = selectWeakestEnemyOfType(enemyType, unit, MAX_DIST_TO_ATTACK);
+        enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.MAX_DIST_TO_ATTACK);
 //        System.out.println("enemy B3 = " + enemy);
         if (enemy != null) {
             return enemy;
@@ -179,7 +176,7 @@ public class ATargeting {
         // Couldn't find enemy of given type in/near weapon range. Change target
 
         // Nearest enemy
-        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0).nearestTo();
+        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0).nearestTo(unit);
         if (enemy != null) {
             unit.addLog("AttackNearest");
             return enemy;
@@ -200,7 +197,7 @@ public class ATargeting {
 //
 //        double maxDistToEnemy = unit.mission() != null && unit.isMissionDefend() ? 6 : 999;
 //
-//        return Select.enemyRealUnits().canBeAttackedBy(unit, maxDistToEnemy).nearestTo();
+//        return Select.enemyRealUnits().canBeAttackedBy(unit, maxDistToEnemy).nearestTo(unit);
 
         return null;
     }
@@ -256,7 +253,7 @@ public class ATargeting {
 
     private static AUnit handleTanksSpecially(AUnit unit, AUnit weakestEnemy) {
         if (weakestEnemy.enemiesNear().inRadius(2, unit).notEmpty()) {
-            AUnit tankTarget = unit.enemiesNear().combatUnits().canBeAttackedBy(unit, 0).mostDistantTo();
+            AUnit tankTarget = unit.enemiesNear().combatUnits().canBeAttackedBy(unit, 0).mostDistantTo(unit);
             if (tankTarget != null) {
                 return tankTarget;
             }
@@ -323,7 +320,7 @@ public class ATargeting {
         // === AIR UNITS due to their mobility use different targeting logic ===
 
         if (unit.isAir() && unit.canAttackGroundUnits()) {
-            target = ATargetingForAirUnits.targetForAirUnits();
+            target = ATargetingForAirUnits.targetForAirUnits(unit);
 
 //            System.out.println("Air target for " + unit + ": " + target);
 //            if ((target = ATargetingForAirUnits.targetForAirUnits()) != null) {
@@ -335,21 +332,21 @@ public class ATargeting {
 
         // === Crucial units =======================================
 
-        if ((target = ATargetingCrucial.target()) != null) {
+        if ((target = ATargetingCrucial.target(unit)) != null) {
 //            if (ATargeting.DEBUG) System.out.println("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
-        if ((target = ATargetingImportant.target()) != null) {
+        if ((target = ATargetingImportant.target(unit)) != null) {
 //            if (ATargeting.DEBUG) System.out.println("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
-        if ((target = ATargetingStandard.target()) != null) {
+        if ((target = ATargetingStandard.target(unit)) != null) {
 //            if (ATargeting.DEBUG) System.out.println("D = "+ target);
             return target;
         }

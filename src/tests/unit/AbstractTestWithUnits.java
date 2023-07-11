@@ -1,7 +1,6 @@
 package tests.unit;
 
 import atlantis.Atlantis;
-import atlantis.combat.eval.HeuristicCombatEvaluator;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.env.Env;

@@ -1,22 +1,26 @@
 package atlantis.production;
 
+import atlantis.architecture.Commander;
 import atlantis.game.AGame;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.production.dynamic.ADynamicProductionCommander;
 import atlantis.units.buildings.ASupplyManager;
+import atlantis.util.CodeProfiler;
 
 /**
  * Manages construction of new buildings.
  */
-public class AProductionCommander {
+public class ProductionCommander extends Commander {
 
     /**
      * Produce units and buildings according to build orders.
      */
-    public static void update() {
+    public void handler() {
         if (AGame.isUms()) {
             return;
         }
+
+        CodeProfiler.startMeasuring(this);
 
         // Check if need to increase supply and if so, take care of it.
         ASupplyManager.update();
@@ -29,6 +33,8 @@ public class AProductionCommander {
 
         // When it can be applied and makes sense, automatically produce units like workers, factories.
         ADynamicProductionCommander.update();
+
+        CodeProfiler.endMeasuring(this);
     }
 
 }

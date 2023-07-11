@@ -60,7 +60,7 @@ public abstract class MoveToFocusPoint {
             String dist = A.dist(unitToFocus);
             if (unit.lastActionMoreThanAgo(35, Actions.MOVE_FOCUS)) {
                 APosition position =
-                    (focus.distTo() <= 6 || (focus.region() != null && focus.region().equals(unit.position().region())))
+                    (focus.distTo(unit) <= 6 || (focus.region() != null && focus.region().equals(unit.position().region())))
                     ? focus.translatePercentTowards(unit, 40) : focus;
 
                 return unit.move(
@@ -84,7 +84,7 @@ public abstract class MoveToFocusPoint {
 
         Selection friends = unit.friendsNear().groundUnits().inRadius(1, unit);
         if (friends.notEmpty()) {
-            AUnit nearest = friends.nearestTo();
+            AUnit nearest = friends.nearestTo(unit);
             if (unit.distTo(nearest) <= 0.1) {
 //                if (nearest.lastActionLessThanAgo(10, Actions.MOVE_FORMATION)) {
 ////                    boolean b = nearest.moveAwayFrom(unit, 0.1, "Separate", Actions.MOVE_FORMATION)

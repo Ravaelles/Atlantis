@@ -2,7 +2,7 @@ package atlantis.production.requests;
 
 import atlantis.map.position.APosition;
 
-public class ProtossRequests extends ARequests {
+public class ProtossRequests extends ProductionRequests {
 
     @Override
     public void requestDetectorQuick(APosition where) {

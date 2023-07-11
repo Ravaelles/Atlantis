@@ -1,6 +1,7 @@
 package atlantis.architecture;
 
 import atlantis.game.A;
+import atlantis.units.AUnit;
 
 public abstract class Commander {
 
@@ -30,6 +31,15 @@ public abstract class Commander {
     public void handleSubcommanders() {
         for (Commander commander : commanderInstances){
             commander.handle();
+        }
+    }
+
+    protected Manager instantiateManager(Class<? extends Manager> classObject, AUnit unit) {
+        try {
+            return classObject.getDeclaredConstructor().newInstance(unit);
+        } catch (Exception e) {
+            A.printStackTrace("Could not instantiate " + classObject + " / " + e.getMessage());
+            return null;
         }
     }
 

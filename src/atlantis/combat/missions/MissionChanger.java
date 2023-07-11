@@ -66,11 +66,11 @@ public class MissionChanger {
 
     private static void changeMissionIfNeeded() {
         if (Missions.isGlobalMissionAttack()) {
-            MissionChangerWhenAttack.changeMissionIfNeeded();
+            MissionChangerWhenAttack.get().changeMissionIfNeeded();
         } else if (Missions.isGlobalMissionContain()) {
-            MissionChangerWhenContain.changeMissionIfNeeded();
+            MissionChangerWhenContain.get().changeMissionIfNeeded();
         } else if (Missions.isGlobalMissionDefend() || Missions.isGlobalMissionSparta()) {
-            MissionChangerWhenDefend.changeMissionIfNeeded();
+            MissionChangerWhenDefend.get().changeMissionIfNeeded();
         }
     }
 

@@ -58,7 +58,7 @@ public class WeDontKnowWhereEnemyIs {
     }
 
     private static boolean handleNearEnemy(Mission mission, AUnit unit) {
-        AUnit nearestEnemy = unit.enemiesNear().canBeAttackedBy(unit, 20).nearestTo();
+        AUnit nearestEnemy = unit.enemiesNear().canBeAttackedBy(unit, 20).nearestTo(unit);
 
         if (nearestEnemy != null) {
             mission.setTemporaryTarget(nearestEnemy.position());
@@ -76,7 +76,7 @@ public class WeDontKnowWhereEnemyIs {
     }
 
     private static boolean handleAnyEnemy(Mission mission, AUnit unit) {
-        AUnit foggedEnemy = EnemyUnits.discovered().groundUnits().nearestTo();
+        AUnit foggedEnemy = EnemyUnits.discovered().groundUnits().nearestTo(unit);
 
         if (foggedEnemy != null) {
             mission.setTemporaryTarget(foggedEnemy.position());

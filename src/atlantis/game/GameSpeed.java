@@ -80,7 +80,7 @@ public class GameSpeed {
             pauseGame();
             changeSpeedTo(0);
             changeFrameSkipTo(0);
-//            CameraManager.centerCameraNowOnSquadCenter();
+//            CameraCommander.centerCameraNowOnSquadCenter();
             unpauseGame();
         }
     }

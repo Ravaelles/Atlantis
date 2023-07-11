@@ -1,15 +1,12 @@
 package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
-import atlantis.debug.painter.APainter;
-import atlantis.game.CameraManager;
+import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import bwapi.Color;
-import bwapi.Position;
 
 public class ZergPositionFinder extends AbstractPositionFinder {
 
@@ -64,10 +61,10 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 //        APainter.paintCircle(position, 10, Color.Red);
 
         if (building.isBunker()) {
-            CameraManager.centerCameraOn(position);
+            CameraCommander.centerCameraOn(position);
             GameSpeed.changeSpeedTo(100);
         }
-//        CameraManager.centerCameraOn(position);
+//        CameraCommander.centerCameraOn(position);
 
         // Check for CREEP
         if (!isCreepConditionFulfilled(building, position)) {

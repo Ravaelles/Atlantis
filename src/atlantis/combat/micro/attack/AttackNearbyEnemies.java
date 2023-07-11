@@ -13,10 +13,12 @@ import atlantis.util.cache.Cache;
 
 public class AttackNearbyEnemies extends Manager {
 
+    public static final double MAX_DIST_TO_ATTACK = 25;
     private static ProcessAttackUnit processAttackUnit;
-    public final double MAX_DIST_TO_ATTACK = 25;
 
-    public String reasonNotToAttack;
+    public static String reasonNotToAttack;
+
+
 
 //    private AUnit unit;
     private static Cache<AUnit> cache = new Cache<>();

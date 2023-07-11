@@ -72,7 +72,7 @@ public class ATargetingCrucial extends ATargeting {
                 .ofType(AUnitType.Zerg_Defiler)
                 .effVisible()
                 .inRadius(13, unit)
-                .nearestTo();
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR3 = " + target);
             return target;
@@ -80,8 +80,8 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits
                 .ofType(AUnitType.Zerg_Lurker, AUnitType.Terran_Ghost)
-                .inShootRangeOf()
-                .nearestTo();
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR3 = " + target);
             return target;
@@ -90,7 +90,7 @@ public class ATargetingCrucial extends ATargeting {
         target = enemyUnits
                 .ofType(AUnitType.Zerg_Lurker)
                 .inRadius(10, unit)
-                .nearestTo();
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR4 = " + target);
             return target;
@@ -102,7 +102,7 @@ public class ATargetingCrucial extends ATargeting {
         target = enemyUnits
                 .ofType(AUnitType.Protoss_High_Templar)
                 .inRadius(8, unit)
-                .nearestTo();
+                .nearestTo(unit);
 //        System.out.println("target = " + target + " // " + (target != null ? unit.distTo(target) : ""));
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR5 = " + target);
@@ -137,9 +137,9 @@ public class ATargetingCrucial extends ATargeting {
                             AUnitType.Protoss_Observer,
                             AUnitType.Terran_Siege_Tank_Siege_Mode
                     )
-    //                .inShootRangeOf()
+    //                .inShootRangeOf(unit)
                     .inRadius(5, unit)
-                    .nearestTo();
+                    .nearestTo(unit);
             if (target != null) {
                 if (ATargeting.DEBUG) System.out.println("CR7 = " + target);
                 return target;
@@ -167,7 +167,7 @@ public class ATargetingCrucial extends ATargeting {
                         AUnitType.Terran_Siege_Tank_Siege_Mode
                 )
                 .inRadius(8, unit)
-                .nearestTo();
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR9 = " + target);
             return target;
@@ -183,7 +183,7 @@ public class ATargetingCrucial extends ATargeting {
                         AUnitType.Terran_Science_Vessel
                 )
                 .inRadius(groundRange + 2, unit)
-                .nearestTo();
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR10 = " + target);
             return target;
@@ -197,7 +197,7 @@ public class ATargetingCrucial extends ATargeting {
                         AUnitType.Protoss_Archon
                 )
                 .inRadius(groundRange + 2.2, unit)
-                .nearestTo();
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR10b = " + target);
             return target;
@@ -213,8 +213,8 @@ public class ATargetingCrucial extends ATargeting {
                         AUnitType.Zerg_Defiler,
                         AUnitType.Zerg_Guardian
                 )
-                .inShootRangeOf()
-                .nearestTo();
+                .inShootRangeOf(unit)
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR11 = " + target);
             return target;
@@ -238,7 +238,7 @@ public class ATargetingCrucial extends ATargeting {
                         AUnitType.Zerg_Ultralisk
                 )
                 .inRadius(groundRange + 0.7, unit)
-                .nearestTo();
+                .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("CR13 = " + target);
             return target;

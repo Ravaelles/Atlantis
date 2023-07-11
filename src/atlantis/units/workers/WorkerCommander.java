@@ -1,23 +1,26 @@
 package atlantis.units.workers;
 
+import atlantis.architecture.Commander;
 import atlantis.terran.repair.ARepairCommander;
 import atlantis.units.AUnit;
 import atlantis.units.buildings.AGasManager;
 import atlantis.units.select.Select;
+import atlantis.util.CodeProfiler;
 import atlantis.util.We;
 
 /**
  * Manages all worker (SCV, Probe, Drone) actions.
  */
-public class AWorkerCommander {
+public class WorkerCommander extends Commander {
 
     /**
      * Executed only once per frame.
      */
-    public static void update() {
+    public void handle() {
+        CodeProfiler.startMeasuring(this);
 
         // === Handle assigning workers to gas / bases ============================
-        
+
         AGasManager.handleGasBuildings();
         AWorkerTransferManager.transferWorkersBetweenBasesIfNeeded();
 
@@ -32,6 +35,8 @@ public class AWorkerCommander {
         if (We.terran()) {
             ARepairCommander.update();
         }
+
+        CodeProfiler.endMeasuring(this);
     }
 
 }

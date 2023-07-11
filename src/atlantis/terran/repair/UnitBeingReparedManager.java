@@ -10,7 +10,7 @@ public class UnitBeingReparedManager extends Manager {
         super(unit);
     }
 
-    public Manager handleUnitShouldBeRepaired() {
+    public Manager handle() {
         if (!unit.isTerran() || !unit.isMechanical() || !unit.isWounded()) {
             return null;
         }

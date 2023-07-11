@@ -2,13 +2,18 @@ package atlantis.combat.missions.attack;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 
-public class MissionAttackVsCombatBuildings {
+public class MissionAttackVsCombatBuildings extends HasUnit {
+
+    public MissionAttackVsCombatBuildings(AUnit unit) {
+        super(unit);
+    }
 
     public boolean allowsToAttackCombatBuildings(AUnit combatBuilding) {
         if (unit.isTerran()) {
-            if (forbiddenForTerranInfantry(unit, combatBuilding)) {
+            if (forbiddenForTerranInfantry(combatBuilding)) {
                 return false;
             }
 

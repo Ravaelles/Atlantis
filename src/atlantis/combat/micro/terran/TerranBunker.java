@@ -1,7 +1,6 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.missions.Missions;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -13,17 +12,12 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.requests.AntiLandBuildingManager;
-import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
-import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
-import atlantis.util.We;
-
-import  atlantis.production.AbstractDynamicUnits.addToQueueToMaxAtATime;
 
 public class TerranBunker extends AntiLandBuildingManager {
 
@@ -105,7 +99,7 @@ public class TerranBunker extends AntiLandBuildingManager {
             int neededBunkers = expectedBunkers - existingBunkers;
 
             for (int i = 0; i < neededBunkers; i++) {
-                addToQueueToMaxAtATime(type(), neededBunkers);
+                AddToQueue.maxAtATime(type(), neededBunkers);
 //                System.err.println("Requested BUNKER");
             }
             return neededBunkers > 0;
@@ -187,12 +181,12 @@ public class TerranBunker extends AntiLandBuildingManager {
 
     // =========================================================
 
-    public  TerranBunker get() {
-        if (instance == null) {
-            return (TerranBunker) (instance = new TerranBunker());
-        }
-
-        return (TerranBunker) instance;
-    }
+//    public TerranBunker getInstance() {
+//        if (instance == null) {
+//            return (TerranBunker) (instance = new TerranBunker());
+//        }
+//
+//        return (TerranBunker) instance;
+//    }
 
 }

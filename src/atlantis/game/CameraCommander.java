@@ -1,13 +1,14 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
+import atlantis.architecture.Commander;
 import atlantis.combat.squad.Squad;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
-public class CameraManager {
+public class CameraCommander extends Commander {
     
     protected static int SCREEN_WIDTH = 640;
     protected static int SCREEN_HEIGHT = 480;
@@ -16,10 +17,12 @@ public class CameraManager {
 
     // =========================================================
 
-    public static void update() {
+
+    @Override
+    public void handle() {
         AUnit cameraUnit = centerCameraOnUnit();
-        if (A.now() <= 1 || CameraManager.isFocusCameraOnUnit()) {
-            CameraManager.centerCameraOn(cameraUnit);
+        if (A.now() <= 1 || CameraCommander.isFocusCameraOnUnit()) {
+            CameraCommander.centerCameraOn(cameraUnit);
         }
     }
 

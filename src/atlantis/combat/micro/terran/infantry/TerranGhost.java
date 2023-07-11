@@ -1,10 +1,9 @@
 package atlantis.combat.micro.terran.infantry;
 
-import atlantis.combat.micro.Microable;
+import atlantis.architecture.Manager;
 import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;

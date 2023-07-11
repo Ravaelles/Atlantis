@@ -22,9 +22,9 @@ public class ATargetingStandard extends ATargeting {
         // =========================================================
         // WORKERS IN RANGE
 
-        Selection workersInRange = enemyUnits.workers().inShootRangeOf();
+        Selection workersInRange = enemyUnits.workers().inShootRangeOf(unit);
         if (unit.isMelee()) {
-            target = workersInRange.nearestTo();
+            target = workersInRange.nearestTo(unit);
         } else {
             target = workersInRange.randomWithSeed(unit.id());
         }
@@ -41,7 +41,7 @@ public class ATargetingStandard extends ATargeting {
             target = enemyUnits
                     .workers()
                     .inRadius(3, unit)
-                    .nearestTo();
+                    .nearestTo(unit);
             if (target != null) {
                 if (ATargeting.DEBUG) System.out.println("D1b = " + target);
                 return target;
@@ -54,7 +54,7 @@ public class ATargetingStandard extends ATargeting {
         target = enemyUnits
                 .workers()
                 .inRadius(unit.isMelee() ? 8 : 12, unit)
-                .nearestTo();
+                .nearestTo(unit);
 
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("D2 = " + target);
@@ -92,7 +92,7 @@ public class ATargetingStandard extends ATargeting {
         target = enemyUnits
                 .workers()
                 .inRadius(17, unit)
-                .nearestTo();
+                .nearestTo(unit);
         if (target != null && Select.enemies(target.type()).inRadius(3, unit).atLeast(3)) {
             if (target.friendsNear().buildings().inRadius(6, target).notEmpty()) {
                 if (ATargeting.DEBUG) System.out.println("D5 = " + target);
@@ -106,7 +106,7 @@ public class ATargetingStandard extends ATargeting {
         target = enemyBuildings
             .ofType(AUnitType.Protoss_Pylon)
             .inRadius(6, unit)
-            .nearestTo();
+            .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("D6a = " + target);
             return target;
@@ -121,7 +121,7 @@ public class ATargetingStandard extends ATargeting {
             .nonBuildings()
             .excludeMedics()
             .canBeAttackedBy(unit, 15)
-            .nearestTo();
+            .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("D7 = " + target);
             return target;
@@ -132,7 +132,7 @@ public class ATargetingStandard extends ATargeting {
         target = unit.enemiesNear()
             .havingPosition()
             .canBeAttackedBy(unit, 150)
-            .nearestTo();
+            .nearestTo(unit);
 
         if (target != null && ATargeting.DEBUG) System.out.println("D8 = " + target);
         return target;

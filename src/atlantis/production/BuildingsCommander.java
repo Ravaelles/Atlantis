@@ -5,9 +5,9 @@ import atlantis.terran.TerranFlyingBuildingScoutCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
-public class BuildingCommander extends Commander {
+public class BuildingsCommander extends Commander {
 
-    public BuildingCommander() {}
+    public BuildingsCommander() {}
 
     @Override
     protected Class<? extends Commander>[] subcommanders() {

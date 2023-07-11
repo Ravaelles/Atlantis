@@ -33,7 +33,7 @@
 //     * some safe margin. This feature avoids fighting and immediately running away and fighting again.
 //     */
 //    public static boolean isSituationFavorable(AUnit unit) {
-//        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4).nearestTo();
+//        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4).nearestTo(unit);
 //        if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
 //            return true;
 //        }
@@ -48,7 +48,7 @@
 //     * 0.8 means ~20% disadvantage against enemies
 //     */
 //    public static double relativeAdvantage(AUnit unit) {
-//        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4.2).nearestTo();
+//        AUnit nearestEnemy = unit.enemiesNear().canAttack(unit, 4.2).nearestTo(unit);
 //        if (nearestEnemy == null || unit.distTo(nearestEnemy) >= 15) {
 //            return MAX_VALUE;
 //        }

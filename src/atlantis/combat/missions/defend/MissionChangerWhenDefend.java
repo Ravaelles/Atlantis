@@ -1,20 +1,35 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.game.AGame;
+import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.missions.contain.ProtossMissionChangerWhenContain;
+import atlantis.combat.missions.contain.TerranMissionChangerWhenContain;
+import atlantis.combat.missions.contain.ZergMissionChangerWhenContain;
 import atlantis.util.We;
 
 public class MissionChangerWhenDefend {
 
-    public  void changeMissionIfNeeded() {
+    public static MissionChanger get() {
         if (We.terran()) {
-            TerranMissionChangerWhenDefend.changeMissionIfNeeded();
+            return new TerranMissionChangerWhenDefend();
         }
         else if (We.protoss()) {
-            ProtossMissionChangerWhenDefend.changeMissionIfNeeded();
+            return new ProtossMissionChangerWhenDefend();
         }
-        else if (We.zerg()) {
-            ZergMissionChangerWhenDefend.changeMissionIfNeeded();
+        else {
+            return new ZergMissionChangerWhenDefend();
         }
     }
+
+//    public  void changeMissionIfNeeded() {
+//        if (We.terran()) {
+//            TerranMissionChangerWhenDefend.changeMissionIfNeeded();
+//        }
+//        else if (We.protoss()) {
+//            ProtossMissionChangerWhenDefend.changeMissionIfNeeded();
+//        }
+//        else if (We.zerg()) {
+//            ZergMissionChangerWhenDefend.changeMissionIfNeeded();
+//        }
+//    }
 
 }

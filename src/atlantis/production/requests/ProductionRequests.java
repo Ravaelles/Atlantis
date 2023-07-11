@@ -5,11 +5,11 @@ import atlantis.map.position.APosition;
 import atlantis.production.requests.zerg.ZergRequests;
 
 
-public abstract class ARequests {
+public abstract class ProductionRequests {
     
-    private static ARequests instance = null;
+    private static ProductionRequests instance = null;
     
-    public static ARequests getInstance() {
+    public static ProductionRequests getInstance() {
         if (instance == null) {
             if (AGame.isPlayingAsTerran()) {
                 instance = new TerranRequests();

@@ -279,7 +279,7 @@ public class Sparta extends MissionDefend {
             return false;
         }
 
-        double dist = spartanPoint.distTo();
+        double dist = spartanPoint.distTo(unit);
         boolean distanceGood = dist <= optimalDist();
 
         if (distanceGood) {

@@ -31,7 +31,7 @@ public class ShouldFightInsteadAvoidAsZerg {
             return false;
         }
 
-        AUnit ourSunken = unit.friendsNear().sunkens().nearestTo();
+        AUnit ourSunken = unit.friendsNear().sunkens().nearestTo(unit);
         if (ourSunken != null && ourSunken.meleeEnemiesNearCount() >= 2) {
             unit.setTooltip("SaveSunken");
             return true;

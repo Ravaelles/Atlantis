@@ -37,7 +37,7 @@ public class ComeCloserToTanks extends Manager {
 
         // Too far from nearest tank
         if (squad.units().tanks().count() >= 2) {
-            AUnit tank = Select.ourTanks().nearestTo();
+            AUnit tank = Select.ourTanks().nearestTo(unit);
             if (tank != null && !unitIsOvercrowded() && !tankIsOvercrowded(tank)) {
                 APosition goTo = unit.translateTilesTowards(1.5, tank)
                     .makeFreeOfAnyGroundUnits(1.5, 0.25, unit);

@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.tech.ATech;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -79,7 +80,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
 
         int vultures = Count.vultures();
         if (!Decisions.produceVultures() || tanks <= 5 || tanks <= 0.4 * vultures) {
-            return addToQueueIfNotAlreadyThere(AUnitType.Terran_Siege_Tank_Tank_Mode);
+            return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Siege_Tank_Tank_Mode);
         }
 
         return false;
@@ -92,7 +93,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
             return false;
         }
 
-        return addToQueueIfNotAlreadyThere(AUnitType.Terran_Vulture);
+        return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Vulture);
     }
 
     private static boolean goliaths(AUnit factory) {
@@ -102,7 +103,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
 
         if (EnemyStrategy.get().isAirUnits() && Count.withPlanned(AUnitType.Terran_Goliath) <= 20) {
             if (AGame.canAffordWithReserved(150, 100)) {
-                return addToQueueIfNotAlreadyThere(AUnitType.Terran_Goliath);
+                return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Goliath);
             }
         }
 

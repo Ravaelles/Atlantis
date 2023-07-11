@@ -1,20 +1,22 @@
 package atlantis.config;
 
 import atlantis.Atlantis;
+import atlantis.architecture.Commander;
 import atlantis.combat.missions.defend.MissionDefendFocusPoint;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
-import atlantis.game.CameraManager;
+import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 import java.util.Arrays;
 
-public class MapSpecificConfig {
+public class MapSpecificCommander extends Commander {
 
-    public static void updateMapSpecific() {
+    @Override
+    public void handle() {
         if (Env.isParamTweaker() || !Env.isLocal()) {
             return;
         }
@@ -26,7 +28,7 @@ public class MapSpecificConfig {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(30);
                 GameSpeed.changeFrameSkipTo(0);
-                CameraManager.centerCameraNowOnSquadCenter();
+                CameraCommander.centerCameraNowOnSquadCenter();
             }
         }
 
@@ -58,7 +60,7 @@ public class MapSpecificConfig {
                 GameSpeed.changeFrameSkipTo(initFrameSkip);
 
                 if (MapAndRace.isMap("vsGosuRav")) {
-                    CameraManager.centerCameraOn((new MissionDefendFocusPoint()).focusPoint());
+                    CameraCommander.centerCameraOn((new MissionDefendFocusPoint()).focusPoint());
                 }
             }
         }
@@ -84,7 +86,7 @@ public class MapSpecificConfig {
                 GameSpeed.changeSpeedTo(1);
                 GameSpeed.changeFrameSkipTo(0);
             }
-            CameraManager.centerCameraNowOnSquadCenter();
+            CameraCommander.centerCameraNowOnSquadCenter();
         }
 
         // =========================================================
@@ -107,7 +109,7 @@ public class MapSpecificConfig {
                 APainter.disablePainting();
                 GameSpeed.changeSpeedTo(30);
                 GameSpeed.changeFrameSkipTo(0);
-                CameraManager.centerCameraNowOnSquadCenter();
+                CameraCommander.centerCameraNowOnSquadCenter();
 //                GameSpeed.unpauseGame();
             }
         }
@@ -116,7 +118,7 @@ public class MapSpecificConfig {
         // Rebasing
 
         else if (MapAndRace.isMap("rav/T_rebasing")) {
-            CameraManager.centerCameraOn(Select.ourBases().first());
+            CameraCommander.centerCameraOn(Select.ourBases().first());
         }
     }
 
