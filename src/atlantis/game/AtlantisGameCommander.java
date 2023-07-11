@@ -5,10 +5,12 @@ import atlantis.combat.CombatCommander;
 import atlantis.config.MapSpecificCommander;
 import atlantis.debug.painter.PainterCommander;
 import atlantis.information.enemy.EnemyUnitsCommander;
-import atlantis.information.strategy.AStrategyCommander;
+import atlantis.information.strategy.StrategyCommander;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.production.BuildingsCommander;
 import atlantis.production.ProductionCommander;
+import atlantis.production.constructing.ConstructionCommander;
+import atlantis.terran.repair.RepairsCommander;
 import atlantis.units.UmsSpecialActionsManager;
 import atlantis.units.UnitStateCommander;
 import atlantis.units.workers.WorkerCommander;
@@ -25,12 +27,14 @@ public class AtlantisGameCommander extends Commander {
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[] {
             PainterCommander.class,
-            AStrategyCommander.class,
+            StrategyCommander.class,
             WorkerCommander.class,
             CombatCommander.class,
             ProductionCommander.class,
             ScoutCommander.class,
             BuildingsCommander.class,
+            ConstructionCommander.class,
+            RepairsCommander.class,
             EnemyUnitsCommander.class,
             UmsSpecialActionsManager.class,
             UnitStateCommander.class,

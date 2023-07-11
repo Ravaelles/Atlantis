@@ -4,7 +4,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.terran.repair.ARepairAssignments;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -554,7 +554,7 @@ public class Selection extends BaseSelection {
      */
     public Selection notRepairing() {
         return cloneByRemovingIf(
-            (unit -> unit.isRepairing() || ARepairAssignments.isRepairerOfAnyKind(unit)), "notRepairing"
+            (unit -> unit.isRepairing() || RepairAssignments.isRepairerOfAnyKind(unit)), "notRepairing"
         );
     }
 

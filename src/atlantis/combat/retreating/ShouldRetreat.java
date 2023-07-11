@@ -129,7 +129,7 @@ public class ShouldRetreat extends Manager {
         return false;
     }
 
-//    private boolean shouldLargeScaleRetreat(, Selection enemies) {
+//    private boolean shouldLargeScaleRetreat(Selection enemies) {
 //        if (shouldRetreatDueToSquadMostlyRetreating()) {
 //            unit.addLog("SquadMostlyRetreating");
 //            return true;

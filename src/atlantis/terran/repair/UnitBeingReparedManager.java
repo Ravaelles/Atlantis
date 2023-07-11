@@ -17,7 +17,7 @@ public class UnitBeingReparedManager extends Manager {
 
 //        if (true) return true;
 
-        AUnit repairer = ARepairAssignments.getClosestRepairerAssignedTo(unit);
+        AUnit repairer = RepairAssignments.getClosestRepairerAssignedTo(unit);
         if (repairer == null) {
             return null;
         }
@@ -28,7 +28,7 @@ public class UnitBeingReparedManager extends Manager {
         }
 
         if (!unit.isWounded()) {
-            ARepairAssignments.removeRepairer(repairer);
+            RepairAssignments.removeRepairer(repairer);
             return null;
         }
 

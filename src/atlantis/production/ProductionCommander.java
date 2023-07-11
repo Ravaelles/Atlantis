@@ -2,7 +2,7 @@ package atlantis.production;
 
 import atlantis.architecture.Commander;
 import atlantis.game.AGame;
-import atlantis.production.constructing.AConstructionManager;
+import atlantis.production.constructing.ConstructionCommander;
 import atlantis.production.dynamic.ADynamicProductionCommander;
 import atlantis.units.buildings.ASupplyManager;
 import atlantis.util.CodeProfiler;
@@ -29,7 +29,7 @@ public class ProductionCommander extends Commander {
         AProductionManager.update();
 
         // Take care of any unfinished constructions, make sure they have builders assigned etc.
-        AConstructionManager.update();
+        ConstructionCommander.update();
 
         // When it can be applied and makes sense, automatically produce units like workers, factories.
         ADynamicProductionCommander.update();

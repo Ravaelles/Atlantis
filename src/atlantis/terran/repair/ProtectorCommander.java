@@ -1,5 +1,6 @@
 package atlantis.terran.repair;
 
+import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
@@ -12,17 +13,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Protector is a unit that is close to another unit (bunker or tank), ready to repair it,
- * even if it's not wounded (yet) or already repaired.
- */
-public class AProtectorManager {
-
+public class ProtectorCommander extends Commander {
     private static final int MAX_PROTECTORS = 3;
 
     // =========================================================
 
-    public static void handleProtectors() {
+    @Override
+    public void handle() {
         if (AGame.everyNthGameFrame(9)) {
             assignBunkerProtectorsIfNeeded();
 
@@ -31,9 +28,9 @@ public class AProtectorManager {
             }
         }
 
-        for (Iterator<AUnit> iterator = ARepairAssignments.getProtectors().iterator(); iterator.hasNext(); ) {
-            AUnit protector = iterator.next();
-            AProtectorManager.updateProtector(protector);
+        for (Iterator<AUnit> iterator = RepairAssignments.getProtectors().iterator(); iterator.hasNext(); ) {
+            AUnit unit = iterator.next();
+            (new ProtectorManager(unit)).handle();
         }
     }
 
@@ -44,7 +41,7 @@ public class AProtectorManager {
 //            Selection enemies = bunker.enemiesNear().havingWeapon().canAttack(bunker, 10);
 
             // No enemies + bunker healthy
-            ArrayList<AUnit> existingProtectors = ARepairAssignments.protectorsFor(bunker);
+            ArrayList<AUnit> existingProtectors = RepairAssignments.protectorsFor(bunker);
 //            int desiredBunkerProtectors = RepairerAssigner.optimalNumOfRepairersFor(bunker);
             int desiredBunkerProtectors = OptimalNumOfBunkerRepairers.forBunker(bunker);
             int howMany = desiredBunkerProtectors - existingProtectors.size();
@@ -73,7 +70,7 @@ public class AProtectorManager {
         }
 
         for (AUnit protector : toRemove) {
-            ARepairAssignments.removeRepairer(protector);
+            RepairAssignments.removeRepairer(protector);
         }
     }
 
@@ -92,7 +89,7 @@ public class AProtectorManager {
 
     protected static boolean assignUnitsProtectorsIfNeeded() {
         int maxProtectors = maxProtectors();
-        int totalProtectors = ARepairAssignments.countTotalProtectors();
+        int totalProtectors = RepairAssignments.countTotalProtectors();
         if (totalProtectors >= maxProtectors) {
             return false;
         }
@@ -106,7 +103,7 @@ public class AProtectorManager {
             addProtectorsForUnit(tanks.get(i % tanks.size()), 1);
         }
 
-        if (ARepairAssignments.countTotalProtectors() == 0) {
+        if (RepairAssignments.countTotalProtectors() == 0) {
             addProtectorsForUnit(Select.ourOfType(AUnitType.Terran_Medic).last(), 1);
         }
 
@@ -119,7 +116,7 @@ public class AProtectorManager {
 //        int vultures = Select.countOurOfType(AUnitType.Terran_Vulture);
 //        if (vultures >= 2) {
 //            AUnit firstVulture = Select.ourOfType(AUnitType.Terran_Vulture).first();
-//            int protectors = ARepairAssignments.countProtectorsFor(firstVulture);
+//            int protectors = RepairAssignments.countProtectorsFor(firstVulture);
 //            int lackingProtectors = 2 - protectors;
 //            if (lackingProtectors > 0) {
 //                assignProtectorsFor(firstVulture, lackingProtectors);
@@ -132,7 +129,7 @@ public class AProtectorManager {
 //        int tanks = Select.ourTanks().count();
 //        if (tanks >= 2) {
 //            AUnit firstTank = Select.ourTanks().first();
-//            int protectors = ARepairAssignments.countProtectorsFor(firstTank);
+//            int protectors = RepairAssignments.countProtectorsFor(firstTank);
 //            int lackingProtectors = 2 - protectors;
 //            if (lackingProtectors > 0) {
 //                assignProtectorsFor(firstTank, lackingProtectors);
@@ -143,14 +140,14 @@ public class AProtectorManager {
     }
 
     private static boolean removeProtectorsIfNeeded() {
-//        System.out.println("PROT = " + ARepairAssignments.countTotalProtectors() + " // " + MAX_PROTECTORS);
+//        System.out.println("PROT = " + RepairAssignments.countTotalProtectors() + " // " + MAX_PROTECTORS);
 
         int maxProtectors = maxProtectors();
-        if (ARepairAssignments.countTotalProtectors() > maxProtectors) {
-            for (int i = 0; i < ARepairAssignments.countTotalProtectors() - maxProtectors; i++) {
-                AUnit protector = ARepairAssignments.getProtectors().get(ARepairAssignments.getProtectors().size() - 1);
+        if (RepairAssignments.countTotalProtectors() > maxProtectors) {
+            for (int i = 0; i < RepairAssignments.countTotalProtectors() - maxProtectors; i++) {
+                AUnit protector = RepairAssignments.getProtectors().get(RepairAssignments.getProtectors().size() - 1);
                 if (CanAbandonUnitAssignedToRepair.check(protector)) {
-                    ARepairAssignments.removeRepairer(protector);
+                    RepairAssignments.removeRepairer(protector);
                 }
             }
             return true;
@@ -165,7 +162,7 @@ public class AProtectorManager {
             return;
         }
 
-        numberOfProtectorsToAssign = numberOfProtectorsToAssign - ARepairAssignments.countProtectorsFor(unitToProtect);
+        numberOfProtectorsToAssign = numberOfProtectorsToAssign - RepairAssignments.countProtectorsFor(unitToProtect);
 
         if (numberOfProtectorsToAssign <= 0) {
             return;
@@ -177,91 +174,8 @@ public class AProtectorManager {
                 unitToProtect.isBunker() || unitToProtect.isTank()
             );
             if (worker != null) {
-                ARepairAssignments.addProtector(worker, unitToProtect);
+                RepairAssignments.addProtector(worker, unitToProtect);
             }
         }
-    }
-
-    // =========================================================
-
-//    protected static int defineOptimalNumberOfBunkerProtectors() {
-//
-//        // === Mission DEFEND  =================================
-//        if (Missions.isGlobalMissionDefend()) {
-//            if (AGame.isPlayingAsTerran()) {
-//
-//                // === We know enemy strategy ========================================
-//                if (EnemyStrategy.isEnemyStrategyKnown()) {
-//                    int repairersWhenRush = 1
-//                        + (AGame.timeSeconds() > 180 ? 1 : 0)
-//                        + (AGame.timeSeconds() > 200 ? 1 : 0);
-//
-//                    if (EnemyStrategy.get().isGoingCheese()) {
-//                        return repairersWhenRush
-//                            + 2
-//                            + (AGame.timeSeconds() > 210 ? 1 : 0);
-//                    }
-//                    if (EnemyStrategy.get().isRush()) {
-//                        return repairersWhenRush;
-//                    }
-//                }
-//
-//                // === We don't know enemy strategy ==================================
-//                else {
-//                    int enemyRaceBonus = !AGame.isEnemyTerran() && AGame.timeSeconds() > 175 ? 1 : 0;
-//                    return 1 + (AGame.timeSeconds() > 280 ? 1 : 0) + enemyRaceBonus;
-//                }
-//            }
-//
-//            // === Only Terran can repair buildings ==================================
-//            else {
-//                return 0;
-//            }
-//        }
-//
-//        return 0;
-//    }
-
-    // =========================================================
-
-    public static boolean updateProtector(AUnit protector) {
-        if (protector.isRepairing()) {
-            return true;
-        }
-
-        AUnit target = ARepairAssignments.getUnitToProtectFor(protector);
-//        System.out.println("protecting: " + target + "; "  + protector + " (" + protector.action() + ")");
-
-        if (target != null && target.isAlive()) {
-
-            // WOUNDED
-            if (target.isWounded() || target.enemiesNear().canAttack(target, 15).notEmpty()) {
-                if (protector.isRepairing()) return true;
-
-                return protector.repair(target, "Protect" + target.name(), true);
-//                return protector.repair(Select.main(), "Protect" + target.name(), true);
-//                return protector.doRightClickAndYesIKnowIShouldAvoidUsingIt(target);
-            }
-
-            // Bunker fully HEALTHY
-            else {
-                double distanceToUnit = target.distTo(protector);
-                if (distanceToUnit > 0.7 && !protector.isMoving()) {
-                    return protector.move(
-                        target.position(), Actions.MOVE_REPAIR, "ProtectNearer" + target.name(), true
-                    );
-                }
-                else {
-                    protector.setTooltipTactical("Protecting" + target.name());
-                }
-            }
-        }
-        else {
-            protector.setTooltipTactical("Null bunker");
-            ARepairAssignments.removeRepairer(protector);
-            return true;
-        }
-
-        return ARepairerManager.handleIdleRepairer(protector);
     }
 }

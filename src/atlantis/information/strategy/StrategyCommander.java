@@ -7,7 +7,7 @@ import atlantis.information.strategy.response.AStrategyResponseFactory;
 import atlantis.util.CodeProfiler;
 import atlantis.util.Enemy;
 
-public class AStrategyCommander extends Commander {
+public class StrategyCommander extends Commander {
     
     /**
      * Detect enemy strategy and use our strategy accordingly.

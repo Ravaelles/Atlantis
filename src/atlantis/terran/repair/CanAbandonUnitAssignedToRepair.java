@@ -9,9 +9,9 @@ public class CanAbandonUnitAssignedToRepair {
             return true;
         }
 
-        AUnit target = ARepairAssignments.getUnitToRepairFor(unit);
+        AUnit target = RepairAssignments.getUnitToRepairFor(unit);
         if (target == null) {
-            target = ARepairAssignments.getUnitToProtectFor(unit);
+            target = RepairAssignments.getUnitToProtectFor(unit);
         }
 
         if (target == null || target.isNeutral() || !target.isAlive()) {

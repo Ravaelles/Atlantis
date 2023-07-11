@@ -3,7 +3,7 @@ package atlantis.units.workers;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.constructing.AConstructionManager;
+import atlantis.production.constructing.ConstructionCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -15,7 +15,7 @@ import atlantis.util.We;
 
 import java.util.List;
 
-public class AWorkerDefenceManager {
+public class WorkerDefenceManager {
 
     /**
      * Attack other workers, run from enemies etc.
@@ -103,7 +103,7 @@ public class AWorkerDefenceManager {
             return false;
         }
 
-        for (AUnit builder : AConstructionManager.builders()) {
+        for (AUnit builder : ConstructionCommander.builders()) {
             if (builder.hp() < 40 && builder.lastUnderAttackLessThanAgo(30 * 10)) {
                 AUnit nearestPeskyEnemyWorker = Select.enemy().workers().inRadius(3, builder).nearestTo(worker);
                 if (nearestPeskyEnemyWorker != null) {

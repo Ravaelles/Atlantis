@@ -22,10 +22,10 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
 import atlantis.map.scout.ScoutCommander;
-import atlantis.production.constructing.AConstructionManager;
+import atlantis.production.constructing.BuilderManager;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.terran.repair.ARepairAssignments;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
@@ -1032,7 +1032,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * so it will return true.
      */
     public boolean isBuilder() {
-        return AConstructionManager.isBuilder(this);
+        return BuilderManager.isBuilder(this);
     }
 
     /**
@@ -1675,7 +1675,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isRepairerOfAnyKind() {
-        return ARepairAssignments.isRepairerOfAnyKind(this) || ARepairAssignments.isProtector(this);
+        return RepairAssignments.isRepairerOfAnyKind(this) || RepairAssignments.isProtector(this);
     }
 
     public boolean isScout() {
@@ -2615,7 +2615,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isProtector() {
-        return ARepairAssignments.isProtector(this);
+        return RepairAssignments.isProtector(this);
     }
 
     public boolean kitingUnit() {
@@ -2681,7 +2681,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return null;
         }
 
-        return ARepairAssignments.getClosestRepairerAssignedTo(this);
+        return RepairAssignments.getClosestRepairerAssignedTo(this);
     }
 
     public boolean isBeingRepaired() {

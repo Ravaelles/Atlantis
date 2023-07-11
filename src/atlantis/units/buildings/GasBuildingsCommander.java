@@ -1,5 +1,6 @@
 package atlantis.units.buildings;
 
+import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -7,17 +8,18 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.workers.AWorkerManager;
+import atlantis.units.workers.WorkerRepository;
 
 import java.util.Collection;
 
-public class AGasManager {
+public class GasBuildingsCommander extends Commander {
 
     /**
      * If any of our gas extracting buildings needs worker, it will assign exactly one worker per frame (until
      * no more needed).
      */
-    public static void handleGasBuildings() {
+    @Override
+    public void handle() {
         if (AGame.notNthGameFrame(9)) {
             return;
         }
@@ -49,7 +51,7 @@ public class AGasManager {
             
             // More workers than optimal
             else if (realCount > expectedCount) {
-                AUnit worker = AWorkerManager.getRandomWorkerAssignedTo(gasBuilding);
+                AUnit worker = WorkerRepository.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null && worker.isGatheringGas()) {
                     worker.stop("I'm fired!", true);
                 }

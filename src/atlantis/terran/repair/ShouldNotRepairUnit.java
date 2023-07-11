@@ -16,7 +16,7 @@ public class ShouldNotRepairUnit {
                 && unit.lastUnderAttackLessThanAgo(30 * 6)
         )
 //                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercentMin(40))
-            || ARepairerManager.itIsForbiddenToRepairThisUnitNow(unit)
+            || RepairerManager.itIsForbiddenToRepairThisUnitNow(unit)
             || GamePhase.isEarlyGame() && (unit.isBuilding() && !unit.isCombatBuilding() && unit.enemiesNear().atLeast(2));
     }
 }

@@ -19,7 +19,7 @@ public class NewRepairer {
         }
 
         // Try to use one of the protectors if he's non occupied
-        Collection<AUnit> protectors = ARepairAssignments.getProtectors();
+        Collection<AUnit> protectors = RepairAssignments.getProtectors();
         for (Iterator<AUnit> iterator = protectors.iterator(); iterator.hasNext();) {
             AUnit protector = iterator.next();
             if (protector.isUnitActionRepair()) {

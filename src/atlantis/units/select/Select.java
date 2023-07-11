@@ -2,7 +2,7 @@ package atlantis.units.select;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.production.constructing.AConstructionManager;
+import atlantis.production.constructing.BuilderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -820,7 +820,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         Selection selectedUnits = Select.ourWorkers();
         selectedUnits.list().removeIf(unit ->
                 unit.isConstructing() || unit.isRepairing()
-                        || AConstructionManager.isBuilder(unit) || unit.isScout()
+                        || BuilderManager.isBuilder(unit) || unit.isScout()
                         || unit.isRepairerOfAnyKind()
         );
 

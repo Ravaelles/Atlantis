@@ -1,13 +1,11 @@
 package atlantis.terran.repair;
 
-import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 
 import java.util.*;
 
-public class ARepairAssignments {
+public class RepairAssignments {
 
     public static final int MODE_REPAIR_ONLY = 1;
     public static final int MODE_PROTECT = 2;

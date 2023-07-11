@@ -10,14 +10,22 @@ import atlantis.units.select.Select;
 
 import java.util.List;
 
-public class AssignRepairersCommander extends Commander {
+public class NumberOfRepairersCommander extends Commander {
 
     public void handle() {
-        assignRepairersToWoundedUnits();
+        removeExcessiveRepairersIfNeeded();
+
+        if (!OptimalNumOfRepairers.weHaveTooManyRepairersOverall()) {
+            assignRepairersToWoundedUnits();
+        }
     }
 
     protected void assignRepairersToWoundedUnits() {
-        List<AUnit> repairable = Select.our().repairable(true).excludeTypes(AtlantisConfig.WORKER).list();
+        List<AUnit> repairable = Select.our()
+            .repairable(true)
+            .excludeTypes(AtlantisConfig.WORKER)
+            .list();
+
         for (AUnit woundedUnit : repairable) {
 //            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {
 //                System.out.println("Repair TURRET? ");
@@ -47,10 +55,10 @@ public class AssignRepairersCommander extends Commander {
         int allowedRepairers = OptimalNumOfRepairers.MAX_REPAIRERS_AT_ONCE;
 
         if (OptimalNumOfRepairers.weHaveTooManyRepairersOverall()) {
-            for (int i = 0; i < ARepairAssignments.countTotalRepairers() - allowedRepairers; i++) {
-                AUnit repairer = ARepairAssignments.getRepairers().get(ARepairAssignments.getRepairers().size() - 1);
+            for (int i = 0; i < RepairAssignments.countTotalRepairers() - allowedRepairers; i++) {
+                AUnit repairer = RepairAssignments.getRepairers().get(RepairAssignments.getRepairers().size() - 1);
                 if (!CanAbandonUnitAssignedToRepair.check(repairer)) {
-                    ARepairAssignments.removeRepairer(repairer);
+                    RepairAssignments.removeRepairer(repairer);
                 }
 //                System.err.println("Remove excessive repairer " + repairer);
             }
@@ -60,8 +68,8 @@ public class AssignRepairersCommander extends Commander {
         return false;
     }
 
-    public int optimalNumOfRepairersFor(AUnit unit) {
-        int alreadyAssigned = ARepairAssignments.countRepairersForUnit(unit) + ARepairAssignments.countProtectorsFor(unit);
+    public static int optimalNumOfRepairersFor(AUnit unit) {
+        int alreadyAssigned = RepairAssignments.countRepairersForUnit(unit) + RepairAssignments.countProtectorsFor(unit);
         int repairersNeeded = 1;
 
         // === Bunker - very special case ========================================
@@ -71,7 +79,7 @@ public class AssignRepairersCommander extends Commander {
             if (shouldHaveThisManyRepairers > 0) {
 //                System.out.println("Bunker repairers = " + shouldHaveThisManyRepairers);
                 unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
-                AProtectorManager.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
+                ProtectorManager.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
                 return shouldHaveThisManyRepairers;
             }
             else {
@@ -101,7 +109,7 @@ public class AssignRepairersCommander extends Commander {
             if (worker != null) {
                 if (AGame.isUms() && worker.distTo(unitToRepair) > 10 && !worker.hasPathTo(unitToRepair)) return false;
 
-                ARepairAssignments.addRepairer(worker, unitToRepair);
+                RepairAssignments.addRepairer(worker, unitToRepair);
                 return true;
             }
         }

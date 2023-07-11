@@ -32,14 +32,14 @@ import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.production.orders.production.ProductionQueueMode;
 import atlantis.production.requests.zerg.ZergSunkenColony;
-import atlantis.terran.repair.ARepairAssignments;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.buildings.AGasManager;
+import atlantis.units.buildings.GasBuildingsCommander;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.workers.AWorkerManager;
+import atlantis.units.workers.WorkerRepository;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import atlantis.util.MappingCounter;
@@ -391,8 +391,8 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Scouts: " + scouts, color, 0);
 
         if (We.terran()) {
-            paintSideMessage("Repairers: " + ARepairAssignments.countTotalRepairers(), Color.White, 0);
-            paintSideMessage("Protectors: " + ARepairAssignments.countTotalProtectors(), Color.White, 0);
+            paintSideMessage("Repairers: " + RepairAssignments.countTotalRepairers(), Color.White, 0);
+            paintSideMessage("Protectors: " + RepairAssignments.countTotalProtectors(), Color.White, 0);
         }
 
         // =========================================================
@@ -401,7 +401,7 @@ public class AAdvancedPainter extends APainter {
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
         paintSideMessage("Workers: " + Count.workers(), Color.White);
-        paintSideMessage("Gas workers: " + AGasManager.minGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Gas workers: " + GasBuildingsCommander.minGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + ProductionQueue.mineralsReserved(), Color.Grey);
         paintSideMessage("Reserved gas: " + ProductionQueue.gasReserved(), Color.Grey);
     }
@@ -1032,7 +1032,7 @@ public class AAdvancedPainter extends APainter {
             }
 
             // Paint text
-            int workers = AWorkerManager.getHowManyWorkersWorkingNear(building, false);
+            int workers = WorkerRepository.getHowManyWorkersWorkingNear(building, false);
             if (workers > 0) {
                 String workersAssigned = workers + "";
                 paintTextCentered(building.translateByPixels(-5, -36), workersAssigned, Color.Grey);
@@ -1496,7 +1496,7 @@ public class AAdvancedPainter extends APainter {
 
         for (AUnit mineral : Select.minerals().inRadius(8, mainBase).list()) {
             String dist = A.digit(mineral.distTo(mainBase));
-            int assigned = AWorkerManager.countWorkersAssignedTo(mineral);
+            int assigned = WorkerRepository.countWorkersAssignedTo(mineral);
             setTextSizeLarge();
             paintTextCentered(mineral, dist + " (" + assigned + ")", Color.White);
         }

@@ -3,19 +3,14 @@ package atlantis.terran.repair;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 
-public class ARepairerManager extends Manager {
+public class RepairerManager extends Manager {
 
-    public ARepairerManager(AUnit unit) {
+    public RepairerManager(AUnit unit) {
         super(unit);
     }
 
@@ -36,19 +31,19 @@ public class ARepairerManager extends Manager {
     // =========================================================
 
     private Manager handleRepairs() {
-        AUnit target = ARepairAssignments.getUnitToRepairFor(unit);
+        AUnit target = RepairAssignments.getUnitToRepairFor(unit);
 
         if (target == null || !target.isAlive()) {
             unit.setTooltipTactical("TargetRIP");
 //            System.err.println("Invalid repair target: " + target + ", alive:" + (target != null ? target.isAlive() : "-"));
-            ARepairAssignments.removeRepairer(unit);
+            RepairAssignments.removeRepairer(unit);
             return usedManager(this);
         }
 
         // Target is totally healthy
         if (!target.isWounded()) {
             unit.setTooltipTactical("Repaired!");
-            ARepairAssignments.removeRepairer(unit);
+            RepairAssignments.removeRepairer(unit);
             return handleRepairCompletedTryFindingNewTarget();
         }
 
@@ -60,7 +55,7 @@ public class ARepairerManager extends Manager {
         // Target is wounded
         if (!unit.isRepairing() && target.isAlive() && A.hasMinerals(5)) {
             if (unit.lastActionMoreThanAgo(30 * 3, Actions.REPAIR) || unit.isIdle() || unit.isStopped()) {
-                ARepairAssignments.removeRepairer(unit);
+                RepairAssignments.removeRepairer(unit);
                 unit.setTooltipTactical("IdleGTFO");
                 unit.gatherBestResources();
                 return usedManager(this);
@@ -79,9 +74,9 @@ public class ARepairerManager extends Manager {
             return usedManager(this);
         }
 
-        if (!ARepairAssignments.isProtector(unit) && unit.lastActionMoreThanAgo(30 * 2)) {
+        if (!RepairAssignments.isProtector(unit) && unit.lastActionMoreThanAgo(30 * 2)) {
 //            System.err.println("Idle unit, remove. Target was = " + target + " // " + target.hp() + " // " + target.isAlive());
-            ARepairAssignments.removeRepairer(unit);
+            RepairAssignments.removeRepairer(unit);
             unit.setTooltipTactical("GoHome");
             unit.gatherBestResources();
             return usedManager(this);
@@ -126,34 +121,15 @@ public class ARepairerManager extends Manager {
      * try finding new repairable unit.
      */
     private Manager handleRepairCompletedTryFindingNewTarget() {
-        ARepairAssignments.removeRepairer(unit);
+        RepairAssignments.removeRepairer(unit);
 
         AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(15, unit).first();
         if (closestUnitNeedingRepair != null && A.hasMinerals(5)) {
-            ARepairAssignments.addRepairer(unit, closestUnitNeedingRepair);
+            RepairAssignments.addRepairer(unit, closestUnitNeedingRepair);
             unit.repair(closestUnitNeedingRepair, "Extra repair", true);
             return usedManager(this);
         }
 
         return null;
     }
-
-    protected boolean handleIdleRepairer() {
-        if (!unit.isUnitActionRepair() || !unit.isRepairing() || unit.isIdle()) {
-            int maxAllowedDistToRoam = 13;
-
-            // Try finding any repairable and wounded unit Near
-            AUnit nearestWoundedUnit = Select.our().repairable(true).inRadius(maxAllowedDistToRoam, unit).nearestTo(unit);
-            if (nearestWoundedUnit != null && A.hasMinerals(5)) {
-                unit.repair(nearestWoundedUnit, "HelpNear" + nearestWoundedUnit.name(), true);
-                if (nearestWoundedUnit.distTo(unit) > 0.8) {
-                    nearestWoundedUnit.move(unit, Actions.MOVE_REPAIR, "BeHelped");
-                }
-                return true;
-            }
-        }
-        
-        return false;
-    }
-
 }

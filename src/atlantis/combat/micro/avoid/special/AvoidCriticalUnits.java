@@ -10,6 +10,11 @@ public class AvoidCriticalUnits extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.enemiesNear().notEmpty();
+    }
+
+    @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             SuicideAgainstScarabs.class,

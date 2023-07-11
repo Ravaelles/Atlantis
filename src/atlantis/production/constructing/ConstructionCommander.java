@@ -1,5 +1,6 @@
 package atlantis.production.constructing;
 
+import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -18,15 +19,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class AConstructionManager {
-
-    // =========================================================
+public class ConstructionCommander extends Commander {
 
     /**
      * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
      * finished objects etc.
      */
-    public static void update() {
+    public void handle() {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
             checkForConstructionStatusChange(construction, construction.construction());
@@ -40,7 +39,7 @@ public class AConstructionManager {
 
     // =========================================================
 
-    private static void fixForIdleBuilders() {
+    private void fixForIdleBuilders() {
         if (!We.terran()) {
             return;
         }
@@ -74,7 +73,7 @@ public class AConstructionManager {
     /**
      * If builder has died when constructing, replace him with new one.
      */
-    private static void checkIfTerranBuilderGotKilled(Construction construction) {
+    private void checkIfTerranBuilderGotKilled(Construction construction) {
         if (!We.terran()) {
             return;
         }
@@ -104,7 +103,7 @@ public class AConstructionManager {
         }
     }
 
-    private static boolean isItSafeToAssignNewBuilderTo(Construction construction) {
+    private boolean isItSafeToAssignNewBuilderTo(Construction construction) {
         if (construction.buildingType().isBunker()) {
             return true;
         }
@@ -132,7 +131,7 @@ public class AConstructionManager {
     /**
      * If building is completed, mark construction as finished and remove it.
      */
-    private static void checkForConstructionStatusChange(Construction order, AUnit building) {
+    private void checkForConstructionStatusChange(Construction order, AUnit building) {
 //        System.out.println("==============");
 //        System.out.println(order.buildingType());
 //        System.out.println(order.status());
@@ -222,32 +221,6 @@ public class AConstructionManager {
         }
     }
 
-    // =========================================================no
-    // Public class access methods
-
-    /**
-     * Returns true if given worker has been assigned to construct new building or if the constructions is
-     * already in progress.
-     */
-    public static boolean isBuilder(AUnit worker) {
-        if (worker.isConstructing() ||
-            (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)) {
-            return true;
-        }
-
-        for (Construction construction : ConstructionRequests.constructions) {
-            if (worker.equals(construction.builder())) {
-
-                // Pending Protoss buildings allow builder to go away
-                // Terran and Zerg need to use the worker until construction is finished
-                return !AGame.isPlayingAsProtoss() || !ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                    .equals(construction.status());
-            }
-        }
-
-        return false;
-    }
-
     // === Zerg ========================================
 
     /**
@@ -255,7 +228,7 @@ public class AConstructionManager {
      * method looks for constructions for which builder.type and builder.builds.type is the same, meaning that
      * the drone actually became a building (sweet metamorphosis, yay!).
      */
-    private static void handleZergConstructionsWhichBecameBuildings() {
+    private void handleZergConstructionsWhichBecameBuildings() {
         if (AGame.isPlayingAsZerg()) {
             ArrayList<Construction> allOrders = ConstructionRequests.all();
             if (!allOrders.isEmpty()) {
@@ -273,7 +246,7 @@ public class AConstructionManager {
         }
     }
 
-    private static void handleConstructionUnderAttack(Construction order) {
+    private void handleConstructionUnderAttack(Construction order) {
         AUnit building = order.construction();
 
 //        System.out.println("building = " + building);
@@ -296,7 +269,7 @@ public class AConstructionManager {
         }
     }
 
-    private static void handleConstructionThatLooksBugged(Construction order) {
+    private void handleConstructionThatLooksBugged(Construction order) {
         if (order.status() != ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
             return;
         }
@@ -323,7 +296,7 @@ public class AConstructionManager {
         }
     }
 
-    public static ArrayList<AUnit> builders() {
+    public ArrayList<AUnit> builders() {
         ArrayList<AUnit> units = new ArrayList<>();
 
         for (Construction order : ConstructionRequests.constructions) {

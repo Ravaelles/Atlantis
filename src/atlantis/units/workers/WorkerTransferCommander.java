@@ -1,5 +1,6 @@
 package atlantis.units.workers;
 
+import atlantis.architecture.Commander;
 import atlantis.game.AGame;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
@@ -9,12 +10,12 @@ import atlantis.units.select.Select;
 
 import java.util.Collection;
 
-public class AWorkerTransferManager {
+public class WorkerTransferCommander extends Commander {
 
     /**
      * Every base should have similar number of workers, more or less.
      */
-    public static void transferWorkersBetweenBasesIfNeeded() {
+    public void handle() {
 //        if (true) return;
 
         // Don't run every frame
@@ -33,14 +34,14 @@ public class AWorkerTransferManager {
         Units baseWorkersRatios = new Units();
         for (AUnit base : ourBases) {
             if (
-                    base.isLifted()
+                base.isLifted()
                     || base.lastUnderAttackLessThanAgo(30 * 30)
                     || base.enemiesNear().combatUnits().inRadius(15, base).isNotEmpty()
             ) {
                 continue;
             }
 
-            int numOfWorkersNearBase = AWorkerManager.getHowManyWorkersWorkingNear(base, false);
+            int numOfWorkersNearBase = WorkerRepository.getHowManyWorkersWorkingNear(base, false);
             int numOfMineralsNearBase = Select.minerals().inRadius(10, base).count();
             double workersToMineralsRatio = (double) numOfWorkersNearBase / (numOfMineralsNearBase + 0.1);
             baseWorkersRatios.addUnitWithValue(base, workersToMineralsRatio);
@@ -79,20 +80,19 @@ public class AWorkerTransferManager {
         // === Perform worker transfer from base to base ========================================
 
         AUnit worker = Select.ourWorkersThatGather(true)
-                .inRadius(20, baseWithMostWorkers)
-                .nearestTo(baseWithFewestWorkers);
+            .inRadius(20, baseWithMostWorkers)
+            .nearestTo(baseWithFewestWorkers);
 //        System.out.println("transfer worker = " + worker);
         if (worker != null) {
             transferWorkerTo(worker, baseWithFewestWorkers);
         }
     }
 
-    private static void transferWorkerTo(AUnit worker, AUnit baseWithFewestWorkers) {
+    private void transferWorkerTo(AUnit worker, AUnit baseWithFewestWorkers) {
         if (worker.distTo(baseWithFewestWorkers.position()) > 3) {
-            if (worker.move(baseWithFewestWorkers.position(), Actions.TRANSFER, "Transfer", true)) {
-                return;
-            }
-        } else if (worker.isMoving()) {
+            worker.move(baseWithFewestWorkers.position(), Actions.TRANSFER, "Transfer", true);
+        }
+        else if (worker.isMoving()) {
             AMineralGathering.gatherResources(worker);
             worker.setTooltipTactical("Transferred!");
         }
