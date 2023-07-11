@@ -1,5 +1,6 @@
 package atlantis.terran.repair;
 
+import atlantis.architecture.Commander;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnit;
@@ -10,15 +11,16 @@ import atlantis.util.We;
 import java.util.Iterator;
 
 
-public class ARepairCommander {
+public class ARepairCommander extends Commander {
 
-    public static void update() {
+    @Override
+    public void handle() {
         if (!We.terran() || Select.ourOfType(AUnitType.Terran_SCV).empty()) {
             return;
         }
 
         if (AGame.everyNthGameFrame(11)) {
-            RepairerAssigner.removeExcessiveRepairersIfNeeded();
+            removeExcessiveRepairersIfNeeded();
 
             if (!OptimalNumOfRepairers.weHaveTooManyRepairersOverall()) {
                 RepairerAssigner.assignRepairersToWoundedUnits();
@@ -54,7 +56,7 @@ public class ARepairCommander {
                 iterator.remove();
                 continue;
             }
-            ARepairerManager.updateRepairer(repairer);
+            ARepairerManager.handle(repairer);
         }
     }
 

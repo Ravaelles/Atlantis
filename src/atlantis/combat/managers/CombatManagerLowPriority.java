@@ -24,8 +24,8 @@ public class CombatManagerLowPriority extends Manager {
 //            if (unit.debug())System.out.println("F " + unit);
 
         unit.setTooltipTactical(mission.name());
-        if (mission.update(unit)) {
-            return usedManager(this);
+        if (mission.handle(unit) != null) {
+            return unit.manager();
         }
 
         ErrorLog.printMaxOncePerMinute("No combat unit manager for " + unit);

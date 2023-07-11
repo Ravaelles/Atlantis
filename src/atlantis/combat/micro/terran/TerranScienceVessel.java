@@ -119,7 +119,7 @@ public class TerranScienceVessel extends MobileDetector {
                 AUnitType.Zerg_Zergling, AUnitType.Zerg_Drone,
                 AUnitType.Protoss_Dragoon, AUnitType.Protoss_Zealot,
                 AUnitType.Terran_Marine
-        ).effVisible().inRadius(15, unit).mostDistantTo();
+        ).effVisible().inRadius(15, unit).mostDistantTo(unit);
         if (enemy != null) {
             return unit.useTech(TechType.Irradiate, enemy);
         }

@@ -6,7 +6,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -30,10 +29,10 @@ public class Sparta extends MissionDefend {
     // =========================================================
 
     @Override
-    public boolean update(AUnit unit) {
+    public boolean handle(AUnit unit) {
         focusPoint = focusPoint();
         if (!focusPoint.isAroundChoke() || unit.hasNoWeaponAtAll()) {
-            return super.update();
+            return super.handle();
         }
 
         this.unit = unit;
@@ -312,7 +311,7 @@ public class Sparta extends MissionDefend {
             && unit.lastActionMoreThanAgo(6);
     }
 
-    public  boolean canUseSpartaMission() {
+    public static boolean canUseSpartaMission() {
         if (We.terran()) {
             return false;
         }

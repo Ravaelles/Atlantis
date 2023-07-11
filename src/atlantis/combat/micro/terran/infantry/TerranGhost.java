@@ -12,9 +12,9 @@ import bwapi.TechType;
 
 public class TerranGhost extends Manager {
 
-    private  final TechType lockdown = TechType.Lockdown;
+    private static final TechType lockdown = TechType.Lockdown;
 
-    public  TargetsForUnits lockdownTargets = new TargetsForUnits();
+    public static TargetsForUnits lockdownTargets = new TargetsForUnits();
 
     // =========================================================
 
@@ -24,17 +24,19 @@ public class TerranGhost extends Manager {
 
     // =========================================================
 
-    public boolean update() {
+
+    @Override
+    public Manager handle() {
         if (unit.lastTechUsedAgo() <= 5) {
 //            System.out.println(A.now() + " DONT INTERRUPT GHOST ");
-            return true;
+            return usedManager(this);
         }
 
         if (useLockdown()) {
-            return true;
+            return usedManager(this);
         }
 
-        return false;
+        return null;
     }
 
     // =========================================================

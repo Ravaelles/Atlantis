@@ -263,7 +263,7 @@ public class Atlantis implements BWEventListener {
 
     public static void ourNewUnit(AUnit unit) {
         ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-        NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
+        (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
 
 //        System.out.println("NEW UNIT @ " + A.now() + " - " + unit);
 //        System.out.println(unit.mission());

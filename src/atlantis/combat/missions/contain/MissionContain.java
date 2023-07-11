@@ -4,7 +4,7 @@ import atlantis.combat.missions.attack.MissionAttackVsCombatBuildings;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.squad.ASquadCohesionManager;
+import atlantis.combat.squad.SquadCohesionManager;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -20,28 +20,29 @@ public class MissionContain extends Mission {
     // =========================================================
 
     @Override
-    public boolean update(AUnit unit) {
-        AFocusPoint focusPoint = focusPoint();
-        unit.setTooltipTactical("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
-
-        if (focusPoint == null) {
-            MissionChanger.forceMissionAttack("InvalidFocusPoint");
-            return false;
-        }
-
-//        if (handleUnitSafety(unit, true, true)) {
+    public boolean handle(AUnit unit) {
+        return null;
+//        AFocusPoint focusPoint = focusPoint();
+//        unit.setTooltipTactical("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
+//
+//        if (focusPoint == null) {
+//            MissionChanger.forceMissionAttack("InvalidFocusPoint");
+//            return false;
+//        }
+//
+////        if (handleUnitSafety(unit, true, true)) {
+////            return true;
+////        }
+//
+////        if (SquadScout.handle()) {
+////            return true;
+////        }
+//
+//        if (SquadCohesionManager.handle()) {
 //            return true;
 //        }
-
-//        if (SquadScout.handle()) {
-//            return true;
-//        }
-
-        if (ASquadCohesionManager.handle()) {
-            return true;
-        }
-
-        return (new MoveToContainFocusPoint()).move(unit, focusPoint);
+//
+//        return (new MoveToContainFocusPoint()).move(unit, focusPoint);
 
     }
 
@@ -109,9 +110,9 @@ public class MissionContain extends Mission {
         }
 
         // Allow to defend bases
-        if (enemyIsNearAnyOurBuilding(enemy)) {
-            return true;
-        }
+//        if (EnemyInfo.isEnemyNearAnyOurBase(enemy)) {
+//            return true;
+//        }
 
         // Attack enemies near squad center
         if (

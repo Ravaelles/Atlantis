@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 public class TerranFlyingBuildingScoutCommander extends Commander {
 
-    private final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
+    private static final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
 
     public TerranFlyingBuildingScoutCommander() {}
 
@@ -64,7 +64,7 @@ public class TerranFlyingBuildingScoutCommander extends Commander {
         }
     }
 
-    public boolean isFlyingBuilding(AUnit unit) {
+    public static boolean isFlyingBuilding(AUnit unit) {
         return unit.type().isBuilding() && flyingBuildings.contains(unit);
     }
 

@@ -37,7 +37,7 @@ public class MissionDefend extends Mission {
     // =========================================================
 
     @Override
-    public boolean update(AUnit unit) {
+    public boolean handle(AUnit unit) {
         if (AGame.isUms()) {
             return false;
         }

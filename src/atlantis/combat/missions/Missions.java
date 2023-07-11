@@ -54,6 +54,10 @@ public class Missions {
         return globalMission().isMissionSparta();
     }
 
+    public static boolean isGlobalMissionDefendOrSparta() {
+        return isGlobalMissionDefend() || isGlobalMissionSparta();
+    }
+
     public static boolean isGlobalMissionContain() {
         return globalMission().isMissionContain();
     }

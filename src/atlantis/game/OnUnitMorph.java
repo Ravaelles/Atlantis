@@ -52,7 +52,7 @@ public class OnUnitMorph {
             // Add to combat squad if it's military unit
             if (unit.isRealUnit()) {
                 SquadTransfersCommander.removeUnitFromSquads(unit);
-                NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
+                (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
             }
         }
 

@@ -22,7 +22,6 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
 import atlantis.map.scout.ScoutCommander;
-import atlantis.map.scout.ScoutManager;
 import atlantis.production.constructing.AConstructionManager;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
@@ -1910,7 +1909,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (squad == null) {
             if (isCombatUnit() && !isBuilding()) {
                 System.err.println("Empty unit squad for: " + this);
-                NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
+                (new NewUnitsToSquadsAssigner(this)).possibleCombatUnitCreated();
             }
             return Missions.DEFEND;
         }
@@ -2726,7 +2725,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         this.tooltipForManager = message;
     }
 
-    public boolean isManager(Manager manager) {
+    public boolean isActiveManager(Manager manager) {
         return manager.equals(this.manager);
     }
 }

@@ -149,7 +149,7 @@ public class AProtectorManager {
         if (ARepairAssignments.countTotalProtectors() > maxProtectors) {
             for (int i = 0; i < ARepairAssignments.countTotalProtectors() - maxProtectors; i++) {
                 AUnit protector = ARepairAssignments.getProtectors().get(ARepairAssignments.getProtectors().size() - 1);
-                if (ARepairerManager.canSafelyAbandonUnitToBeRepaired(protector)) {
+                if (CanAbandonUnitAssignedToRepair.check(protector)) {
                     ARepairAssignments.removeRepairer(protector);
                 }
             }
@@ -172,7 +172,7 @@ public class AProtectorManager {
         }
 
         for (int i = 0; i < numberOfProtectorsToAssign; i++) {
-            AUnit worker = ARepairerManager.repairerFor(
+            AUnit worker = NewRepairer.repairerFor(
                 unitToProtect,
                 unitToProtect.isBunker() || unitToProtect.isTank()
             );

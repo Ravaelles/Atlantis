@@ -1,20 +1,20 @@
 package atlantis.combat.missions;
 
+import atlantis.architecture.Commander;
+import atlantis.architecture.Manager;
+import atlantis.combat.missions.attack.MissionAttackManager;
 import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.focus.MissionFocusPoint;
-import atlantis.debug.painter.APainter;
 import atlantis.decions.Decision;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import bwapi.Color;
-
 
 /**
  * Represents behavior for squad of units e.g. DEFEND, CONTAIN (enemy at his base), ATTACK etc.
  */
-public abstract class Mission {
+public abstract class Mission extends MissionHelper {
 
     private static Mission instance;
     protected MissionFocusPoint focusPointManager;
@@ -30,14 +30,22 @@ public abstract class Mission {
 
     // =========================================================
 
-    public abstract boolean update(AUnit unit);
+//    public abstract Manager handle(AUnit unit);
+
+    public Manager handle(AUnit unit) {
+        unit.setTooltipTactical("#MA");
+
+        return managerClass(unit).handle();
+    }
+
+    // =========================================================
 
     /**
      * Optimal distance to focus point or -1 if not defined.
      */
     public abstract double optimalDist(AUnit unit);
 
-    // =========================================================
+    protected abstract Manager managerClass(AUnit unit);
 
     public AFocusPoint focusPoint() {
         return focusPointManager.focusPoint();
@@ -77,10 +85,6 @@ public abstract class Mission {
 
     // =========================================================
 
-    protected boolean enemyIsNearAnyOurBuilding(AUnit enemy) {
-        return EnemyInfo.isEnemyNearAnyOurBase();
-    }
-
     // =========================================================
 
     @Override
@@ -102,41 +106,12 @@ public abstract class Mission {
         this.name = name;
     }
 
-    public boolean isMissionContain() {
-        return this.equals(Missions.CONTAIN);
-    }
-
-    public boolean isMissionDefend() {
-        return this.equals(Missions.DEFEND);
-    }
-
-    public boolean isMissionSparta() {
-        return this.equals(Missions.SPARTA);
-    }
-
-    public boolean isMissionDefendOrSparta() {
-        return isMissionSparta() || isMissionDefend();
-    }
-
-    public boolean isMissionAttack() {
-        return this.equals(Missions.ATTACK);
-    }
-
-    public boolean isMissionAttackOrContain() {
-        return isMissionAttack() || isMissionContain();
-    }
-
-    public boolean isMissionUms() {
-        return false;
-//        return this.equals(Missions.UMS);
-    }
-
-    public APosition temporaryTarget() {
-        return temporaryTarget;
-    }
-
-    public void setTemporaryTarget(APosition temporaryTarget) {
-        this.temporaryTarget = temporaryTarget;
-    }
+//    public APosition temporaryTarget() {
+//        return temporaryTarget;
+//    }
+//
+//    public void setTemporaryTarget(APosition temporaryTarget) {
+//        this.temporaryTarget = temporaryTarget;
+//    }
 
 }

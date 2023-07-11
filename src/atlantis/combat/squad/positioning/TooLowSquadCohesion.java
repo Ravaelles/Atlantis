@@ -6,9 +6,9 @@ import atlantis.units.actions.Actions;
 import atlantis.architecture.Manager;
 import atlantis.util.We;
 
-public class SquadTooLowCohesion extends Manager {
+public class TooLowSquadCohesion extends Manager {
 
-    public SquadTooLowCohesion(AUnit unit) {
+    public TooLowSquadCohesion(AUnit unit) {
         super(unit);
     }
 

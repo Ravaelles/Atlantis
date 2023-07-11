@@ -1,13 +1,14 @@
 package atlantis.combat.squad.positioning;
 
+import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.units.AUnit;
 import atlantis.architecture.Manager;
 
-public class TooBigToThinkOfCohesion extends Manager {
+public class DoNotThinkOfImprovingCohesion extends Manager {
 
-    public TooBigToThinkOfCohesion(AUnit unit) {
+    public DoNotThinkOfImprovingCohesion(AUnit unit) {
         super(unit);
     }
 
@@ -20,7 +21,9 @@ public class TooBigToThinkOfCohesion extends Manager {
     }
 
     private boolean check() {
-        return A.supplyUsed() >= 150 && ArmyStrength.ourArmyRelativeStrength() >= 50;
+        return (A.supplyUsed() >= 150 && ArmyStrength.ourArmyRelativeStrength() >= 50)
+            || unit.friendsInRadius(4).groundUnits().count() >= 12
+            || Missions.isGlobalMissionDefendOrSparta();
     }
 }
 

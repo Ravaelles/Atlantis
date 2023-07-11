@@ -1,5 +1,6 @@
 package atlantis.combat.missions.attack;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.missions.Mission;
 import atlantis.decions.Decision;
 import atlantis.units.AUnit;
@@ -10,9 +11,9 @@ import atlantis.units.AUnit;
  */
 public class MissionAttack extends Mission {
 
-    private final MissionAttackPermissionToAttack missionAttackPermissionToAttack = new MissionAttackPermissionToAttack();
+//    private final MissionAttackPermissionToAttack missionAttackPermissionToAttack = new MissionAttackPermissionToAttack();
 
-    public MissionAttack(AUnit unit) {
+    public MissionAttack() {
         super("Attack");
         focusPointManager = new MissionAttackFocusPoint();
     }
@@ -20,30 +21,28 @@ public class MissionAttack extends Mission {
     // =========================================================
 
     @Override
-    public boolean update() {
-        unit.setTooltipTactical("#MA");
-
-        return MoveToAttackFocusPoint.move(unit, this);
+    protected Manager managerClass(AUnit unit) {
+        return new MissionAttackManager(unit);
     }
 
     @Override
-    public double optimalDist() {
+    public double optimalDist(AUnit unit) {
         return -1;
     }
 
     // =========================================================
 
-    public Decision permissionToAttack() {
-        return missionAttackPermissionToAttack.permissionToAttack();
-    }
+//    public Decision permissionToAttack() {
+//        return missionAttackPermissionToAttack.permissionToAttack();
+//    }
 
-    @Override
-    public boolean allowsToAttackEnemyUnit(AUnit enemy) {
-        return MissionAttackVsEnemyUnit.allowsToAttackEnemyUnit(unit, enemy);
-    }
-
-    @Override
-    public boolean allowsToAttackCombatBuildings(AUnit combatBuilding) {
-        return MissionAttackVsCombatBuildings.allowsToAttackCombatBuildings(unit, combatBuilding);
-    }
+//    @Override
+//    public boolean allowsToAttackEnemyUnit(AUnit enemy) {
+//        return MissionAttackVsEnemyUnit.allowsToAttackEnemyUnit(unit, enemy);
+//    }
+//
+//    @Override
+//    public boolean allowsToAttackCombatBuildings(AUnit combatBuilding) {
+//        return MissionAttackVsCombatBuildings.allowsToAttackCombatBuildings(unit, combatBuilding);
+//    }
 }

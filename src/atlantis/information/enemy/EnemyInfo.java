@@ -11,7 +11,6 @@ import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -92,13 +91,31 @@ public class EnemyInfo {
     /**
      * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
      */
-    public static boolean hasDiscoveredAnyCombatUnit() {
+    public static boolean weKnowAboutAnyCombatUnit() {
         return cacheBoolean.get(
-                "hasDiscoveredAnyCombatUnit",
-                30,
+                "weKnowAboutAnyCombatUnit",
+                33,
                 () -> {
                     for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
                         if (enemyUnit.isCombatUnit() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+        );
+    }
+
+    /**
+     * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
+     */
+    public static boolean weKnowAboutAnyRealUnit() {
+        return cacheBoolean.get(
+                "weKnowAboutAnyRealUnit",
+                32,
+                () -> {
+                    for (AUnit enemyUnit : EnemyUnits.discovered().realUnits().list()) {
+                        if (!UnitsArchive.isDestroyed(enemyUnit)) {
                             return true;
                         }
                     }

@@ -1,12 +1,11 @@
 package atlantis.terran.repair;
 
+import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ARepairAssignments {
 
@@ -64,7 +63,7 @@ public class ARepairAssignments {
 
         AUnit unitToRepair = repairersToUnit.get(repairer);
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
-            if (ARepairerManager.canSafelyAbandonUnitToBeRepaired(repairer)) {
+            if (CanAbandonUnitAssignedToRepair.check(repairer)) {
 //                System.err.println("Remove PROTECTOR for " + unitsToRepairers);
                 unitsToRepairers.get(unitToRepair).remove(repairer);
                 repairer.stop("No longer repairer", true);

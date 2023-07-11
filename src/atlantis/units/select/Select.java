@@ -287,7 +287,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static int countOurOfType(AUnitType type) {
         return cacheInt.get(
                 "countOurOfType:" + type.name(),
-                type.isBuilding() ? 0 : 30,
+                type.isBuilding() ? 0 : 37,
                 () -> {
                     int total = 0;
 
