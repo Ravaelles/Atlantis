@@ -1,4 +1,4 @@
-package atlantis.combat.missions.focus;
+package atlantis.combat.advance.focus;
 
 public abstract class MissionFocusPoint {
 

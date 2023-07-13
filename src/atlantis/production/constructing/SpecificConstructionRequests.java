@@ -9,7 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 
-public class ASpecificConstructionManager {
+public class SpecificConstructionRequests {
 
     /**
      * Some buildings like Zerg SUnken Colony need special treatment.

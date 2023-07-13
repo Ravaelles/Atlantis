@@ -3,7 +3,18 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.util.We;
 
-public abstract class MissionChangerWhenAttack {
+public abstract class MissionChangerWhenAttack extends MissionChanger {
+    public abstract boolean shouldChangeMissionToDefend();
+    public abstract boolean shouldChangeMissionToContain();
+
+    public void changeMissionIfNeeded() {
+        if (shouldChangeMissionToDefend()) {
+            changeMissionTo(MissionChanger.defendOrSpartaMission());
+        }
+//        else if (shouldChangeMissionToContain()) {
+//            changeMissionTo(Missions.CONTAIN);
+//        }
+    }
 
     public static MissionChanger get() {
         if (We.terran()) {
@@ -16,19 +27,4 @@ public abstract class MissionChangerWhenAttack {
             return new ZergMissionChangerWhenAttack();
         }
     }
-
-    public abstract void changeMissionIfNeeded();
-
-//    public void changeMissionIfNeeded() {
-//        if (AGame.isPlayingAsTerran()) {
-//            TerranMissionChangerWhenAttack.changeMissionIfNeeded();
-//        }
-//        else if (AGame.isPlayingAsProtoss()) {
-//            ProtossMissionChangerWhenAttack.changeMissionIfNeeded();
-//        }
-//        else {
-//            ZergMissionChangerWhenAttack.changeMissionIfNeeded();
-//        }
-//    }
-
 }

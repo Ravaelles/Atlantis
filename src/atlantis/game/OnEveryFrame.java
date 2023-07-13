@@ -1,6 +1,6 @@
 package atlantis.game;
 
-import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;

@@ -8,17 +8,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 
-public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
-
-    public void changeMissionIfNeeded() {
-        if (shouldChangeMissionToDefend()) {
-            changeMissionTo(MissionChanger.defendOrSpartaMission());
-        }
-        else if (shouldChangeMissionToContain()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
-    }
-
+public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     // === DEFEND ==============================================
 
     public boolean shouldChangeMissionToDefend() {
@@ -42,7 +32,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private boolean shouldChangeMissionToContain() {
+    public boolean shouldChangeMissionToContain() {
         if (A.supplyUsed() >= 176) {
             return false;
         }
@@ -58,10 +48,6 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
         }
 
         return false;
-
-//        int ourCount = Select.ourCombatUnits().count();
-//
-//        return ourCount <= 10 || Select.enemyRealUnits().count() >= ourCount + 2;
     }
 
 }

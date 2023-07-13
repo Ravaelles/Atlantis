@@ -1,5 +1,6 @@
 package atlantis.units.workers;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -15,42 +16,49 @@ import atlantis.util.We;
 
 import java.util.List;
 
-public class WorkerDefenceManager {
+public class WorkerDefenceManager extends Manager {
+    public WorkerDefenceManager(AUnit unit) {
+        super(unit);
+    }
 
     /**
      * Attack other workers, run from enemies etc.
      */
-    public static boolean handleDefenceIfNeeded(AUnit worker) {
-        if (worker.isRepairing()) {
+    public Manager handle() {
+        return act() ? usedManager(this) : null;
+    }
+
+    // =========================================================
+
+    private boolean act() {
+        if (unit.isRepairing()) {
             return false;
         }
 
-        if (worker.enemiesNear().combatUnits().isEmpty()) {
+        if (unit.enemiesNear().combatUnits().isEmpty()) {
             return false;
         }
 
-        if (runFromReaverFix(worker)) {
+        if (runFromReaverFix(unit)) {
             return true;
         }
 
-        if (handleFightEnemyIfNeeded(worker)) {
+        if (handleFightEnemyIfNeeded(unit)) {
             return true;
         }
 
-        if (AvoidEnemies.avoidEnemiesIfNeeded(worker)) {
-            worker.addLog("WorkerAvoid");
+        if ((new AvoidEnemies(unit)).handle() != null) {
+            unit.addLog("WorkerAvoid");
             return true;
         }
 
         // Dynamic Near CSV repairing
-        if (We.terran() && AGame.canAfford(20, 0) && handleRepairNear(worker)) {
+        if (We.terran() && AGame.canAfford(20, 0) && handleRepairNear(unit)) {
             return true;
         }
 
         return false;
     }
-
-    // =========================================================
 
     private static boolean runFromReaverFix(AUnit worker) {
         AUnit reaver = worker.enemiesNear().ofType(AUnitType.Protoss_Reaver).nearestTo(worker);

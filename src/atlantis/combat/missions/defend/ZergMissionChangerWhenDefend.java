@@ -18,22 +18,7 @@ import atlantis.units.select.Select;
 
 public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
-    public void changeMissionIfNeeded() {
-        if (!canChange()) {
-            return;
-        }
-
-        if (shouldChangeMissionToAttack() && !ProtossMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
-            MissionChanger.changeMissionTo(Missions.ATTACK);
-        }
-//        else if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
-//            changeMissionTo(Missions.CONTAIN);
-//        }
-    }
-
-    // === CONTAIN =============================================
-
-    private  boolean canChange() {
+    private boolean canChange() {
         if (EnemyInfo.isEnemyNearAnyOurBase()) {
             return false;
         }
@@ -58,7 +43,13 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
         return true;
     }
 
-    private  boolean shouldChangeMissionToAttack() {
+    // === CONTAIN =============================================
+
+    public boolean shouldChangeMissionToAttack() {
+        if (!canChange()) {
+            return false;
+        }
+
         if (A.supplyUsed() >= 195) {
             if (DEBUG) reason = "Maxed out";
             return true;
@@ -76,7 +67,11 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
         return false;
     }
 
-    private  boolean shouldChangeMissionToContain() {
+    public  boolean shouldChangeMissionToContain() {
+        if (!canChange()) {
+            return false;
+        }
+
         if (ArmyStrength.ourArmyRelativeStrength() >= 170) {
             if (DEBUG) reason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;

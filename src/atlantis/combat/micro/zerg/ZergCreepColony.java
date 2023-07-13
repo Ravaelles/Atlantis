@@ -12,7 +12,7 @@ import atlantis.units.select.Select;
 
 public class ZergCreepColony {
 
-    public  APosition findPosition(AUnitType building, AUnit builder, Construction construction) {
+    public static APosition findPosition(AUnitType building, AUnit builder, Construction construction) {
         AUnit secondBase = Select.naturalOrMain();
         if (secondBase != null) {
             APosition near = secondBase.position();
@@ -31,7 +31,7 @@ public class ZergCreepColony {
     
     // =========================================================
 
-    public  void creepOneIntoSunkenColony() {
+    public static void creepOneIntoSunkenColony() {
         AUnit creepColony = Select.ourBuildings().ofType(AUnitType.Zerg_Creep_Colony).first();
         if (creepColony != null) {
             creepColony.morph(AUnitType.Zerg_Sunken_Colony);

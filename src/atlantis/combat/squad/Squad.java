@@ -1,6 +1,6 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
@@ -14,8 +14,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
-
-import java.util.ArrayList;
 
 /**
  * Represents battle squad (unit squad) that contains multiple battle units (could be one unit as well).

@@ -51,7 +51,7 @@ public class ConstructionRequests {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
 
-        if (ASpecificConstructionManager.handledAsSpecialBuilding(building, order)) {
+        if (SpecificConstructionRequests.handledAsSpecialBuilding(building, order)) {
             return true;
         }
 

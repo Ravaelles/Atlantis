@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.attack.MissionChangerWhenAttack;
 import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
@@ -18,20 +19,9 @@ import atlantis.util.We;
 
 public class TerranMissionChangerWhenDefend extends MissionChanger {
 
-    public  void changeMissionIfNeeded() {
-//        if (A.supplyTotal() <= 100) return;
-
-        if (shouldChangeMissionToAttack() && !TerranMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
-            changeMissionTo(Missions.ATTACK);
-        }
-//        else if (shouldChangeMissionToContain() && !TerranMissionChangerWhenContain.shouldChangeMissionToDefend()) {
-//            changeMissionTo(Missions.CONTAIN);
-//        }
-    }
-
     // === ATTACK ==============================================
 
-    public  boolean shouldChangeMissionToAttack() {
+    public boolean shouldChangeMissionToAttack() {
         if (!shouldChangeMissionToContain()) {
             return false;
         }
@@ -57,7 +47,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
 
     // === CONTAIN =============================================
 
-    public  boolean shouldChangeMissionToContain() {
+    public boolean shouldChangeMissionToContain() {
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
 
         if (A.supplyUsed() >= 130) {
@@ -130,5 +120,4 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
 
         return false;
     }
-
 }

@@ -1,12 +1,9 @@
 package atlantis.combat.missions;
 
-import atlantis.architecture.Commander;
 import atlantis.architecture.Manager;
-import atlantis.combat.missions.attack.MissionAttackManager;
-import atlantis.combat.missions.focus.AFocusPoint;
-import atlantis.combat.missions.focus.MissionFocusPoint;
+import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.decions.Decision;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
@@ -43,7 +40,7 @@ public abstract class Mission extends MissionHelper {
     /**
      * Optimal distance to focus point or -1 if not defined.
      */
-    public abstract double optimalDist(AUnit unit);
+    public abstract double optimalDist();
 
     protected abstract Manager managerClass(AUnit unit);
 

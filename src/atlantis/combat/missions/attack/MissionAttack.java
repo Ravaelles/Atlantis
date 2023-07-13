@@ -26,7 +26,7 @@ public class MissionAttack extends Mission {
     }
 
     @Override
-    public double optimalDist(AUnit unit) {
+    public double optimalDist() {
         return -1;
     }
 

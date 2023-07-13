@@ -6,7 +6,7 @@ import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.AllSquads;
 import atlantis.combat.squad.Squad;

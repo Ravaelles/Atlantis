@@ -1,10 +1,6 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.attack.ProtossMissionChangerWhenAttack;
-import atlantis.combat.missions.contain.MissionChangerWhenContain;
-import atlantis.combat.missions.contain.ProtossMissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -14,28 +10,11 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
-public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
-
-    public  void changeMissionIfNeeded() {
-        if (!canChange()) {
-            return;
-        }
-
-        if (shouldChangeMissionToAttack() && !ProtossMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
-            MissionChanger.changeMissionTo(Missions.ATTACK);
-        }
-        else if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
-
-        if (changeFromSpartaToDefend()) {
-            return;
-        }
-    }
+public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     // === CONTAIN =============================================
 
-    private  boolean changeFromSpartaToDefend() {
+    private boolean changeFromSpartaToDefend() {
         if (Missions.isGlobalMissionSparta() && Count.basesWithUnfinished() >= 2) {
             return true;
         }
@@ -43,7 +22,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
         return false;
     }
 
-    private  boolean canChange() {
+    public boolean canChange() {
         if (EnemyInfo.isEnemyNearAnyOurBase()) {
             return false;
         }
@@ -52,7 +31,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
         if (GamePhase.isEarlyGame()) {
             if (
                 EnemyStrategy.get().isRushOrCheese()
-                && (A.resourcesBalance() < 350 || !ArmyStrength.weAreMuchStronger())
+                    && (A.resourcesBalance() < 350 || !ArmyStrength.weAreMuchStronger())
             ) {
                 return false;
             }
@@ -69,7 +48,9 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
         return true;
     }
 
-    private  boolean shouldChangeMissionToAttack() {
+    public boolean shouldChangeMissionToAttack() {
+        if (!canChange()) return false;
+
         if (ArmyStrength.ourArmyRelativeStrength() >= 200) {
             if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
@@ -78,7 +59,9 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenContain {
         return false;
     }
 
-    private  boolean shouldChangeMissionToContain() {
+    public boolean shouldChangeMissionToContain() {
+        if (!canChange()) return false;
+
         if (ArmyStrength.ourArmyRelativeStrength() < 200) {
             return false;
         }

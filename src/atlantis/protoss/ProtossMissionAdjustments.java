@@ -1,4 +1,4 @@
-package atlantis.combat.missions;
+package atlantis.protoss;
 
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;

@@ -1,15 +1,9 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.missions.ProtossMissionAdjustments;
-import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
-import bwapi.Color;
 
 public class MissionDefendAllowsToAttack {
 

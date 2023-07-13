@@ -10,16 +10,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.select.Select;
 
-public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
-
-    public void changeMissionIfNeeded() {
-        if (shouldChangeMissionToDefend()) {
-            changeMissionTo(MissionChanger.defendOrSpartaMission());
-        }
-//        else if (shouldChangeMissionToContain()) {
-//            changeMissionTo(Missions.CONTAIN);
-//        }
-    }
+public class ZergMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     // === DEFEND ==============================================
 
@@ -44,7 +35,7 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private boolean shouldChangeMissionToContain() {
+    public boolean shouldChangeMissionToContain() {
         if (A.supplyUsed() >= 170) {
             return false;
         }

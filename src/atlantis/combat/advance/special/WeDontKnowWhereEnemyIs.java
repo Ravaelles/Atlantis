@@ -1,8 +1,8 @@
-package atlantis.combat.missions;
+package atlantis.combat.advance.special;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.missions.MissionManager;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -50,7 +50,7 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
     }
 
     private boolean shouldGoToRandomUnexplored() {
-        return !EnemyInfo.weKnowAboutAnyRealUnit() && (focus == null || focus.isPositionVisible());
+        return !EnemyInfo.weKnowAboutAnyRealUnit() && (focusPoint == null || focusPoint.isPositionVisible());
     }
 
 //    private static boolean handleNearEnemy(Mission mission, AUnit unit) {

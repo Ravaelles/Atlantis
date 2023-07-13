@@ -1,10 +1,6 @@
 package atlantis.combat.missions.attack;
 
-import atlantis.combat.missions.ProtossMissionAdjustments;
-import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 
 public class MissionAttackVsEnemyUnit {
 

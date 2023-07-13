@@ -1,14 +1,13 @@
-package atlantis.combat.missions.attack;
+package atlantis.combat.advance;
 
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.architecture.Manager;
 
-public class AdvanceAsLeader extends MissionManager {
+public class AdvanceAsALeader extends MissionManager {
 
-    public AdvanceAsLeader(AUnit unit) {
+    public AdvanceAsALeader(AUnit unit) {
         super(unit);
     }
 
@@ -24,7 +23,6 @@ public class AdvanceAsLeader extends MissionManager {
             return usedManager(this);
         }
 
-        unit.move(focus, Actions.MOVE_FOCUS, "LeaderAdvance");
-        return usedManager(this);
+        return null;
     }
 }

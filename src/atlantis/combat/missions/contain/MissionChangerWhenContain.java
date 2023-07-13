@@ -12,6 +12,17 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public abstract class MissionChangerWhenContain extends MissionChanger {
+    public abstract boolean shouldChangeMissionToDefend();
+    public abstract boolean shouldChangeMissionToAttack();
+
+    public void changeMissionIfNeeded() {
+        if (shouldChangeMissionToDefend()) {
+            changeMissionTo(MissionChanger.defendOrSpartaMission());
+        }
+        else if (shouldChangeMissionToAttack()) {
+            changeMissionTo(Missions.ATTACK);
+        }
+    }
 
     public static MissionChanger get() {
         if (We.terran()) {
@@ -24,52 +35,4 @@ public abstract class MissionChangerWhenContain extends MissionChanger {
             return new ZergMissionChangerWhenContain();
         }
     }
-
-//    public void changeMissionIfNeeded() {
-//        if (Missions.recentlyChangedMission()) {
-//            return;
-//        }
-//
-//        reason = null;
-//
-//        if (AGame.isPlayingAsTerran()) {
-//            TerranMissionChangerWhenContain.changeMissionIfNeeded();
-//            return;
-//        }
-//        else if (AGame.isPlayingAsProtoss()) {
-//            ProtossMissionChangerWhenContain.changeMissionIfNeeded();
-//            return;
-//        }
-//        else {
-//            ZergMissionChangerWhenContain.changeMissionIfNeeded();
-//            return;
-//        }
-//    }
-
-    // =========================================================
-
-    protected static boolean baseUnderSeriousAttack() {
-        AUnit main = Select.main();
-        if (main != null && Select.enemyCombatUnits().inRadius(20, main).atLeast(minEnemiesToDefend())) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static int minEnemiesToDefend() {
-        if (A.supplyUsed() < 30) {
-            return 1;
-        }
-        else if (A.supplyUsed() < 50) {
-            return 2;
-        }
-        else if (A.supplyUsed() < 80) {
-            return 3;
-        }
-        else {
-            return 6;
-        }
-    }
-
 }

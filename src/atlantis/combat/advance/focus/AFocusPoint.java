@@ -1,6 +1,5 @@
-package atlantis.combat.missions.focus;
+package atlantis.combat.advance.focus;
 
-import atlantis.game.A;
 import atlantis.map.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;

@@ -1,7 +1,7 @@
 //package atlantis.combat.micro.managers;
 //
 //import atlantis.combat.micro.attack.AttackNearbyEnemies;
-//import atlantis.combat.missions.focus.AFocusPoint;
+//import atlantis.combat.advance.focus.AFocusPoint;
 //import atlantis.map.position.APosition;
 //import atlantis.units.AUnit;
 //import atlantis.units.AUnitType;

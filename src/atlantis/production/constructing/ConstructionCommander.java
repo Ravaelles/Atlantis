@@ -296,7 +296,7 @@ public class ConstructionCommander extends Commander {
         }
     }
 
-    public ArrayList<AUnit> builders() {
+    public static ArrayList<AUnit> builders() {
         ArrayList<AUnit> units = new ArrayList<>();
 
         for (Construction order : ConstructionRequests.constructions) {

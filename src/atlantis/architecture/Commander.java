@@ -20,6 +20,7 @@ public abstract class Commander {
     /**
      * All sub-commanders. Order matters.
      */
+    @SuppressWarnings("unchecked")
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[] {};
     }

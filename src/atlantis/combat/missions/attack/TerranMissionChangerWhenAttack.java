@@ -1,6 +1,7 @@
 package atlantis.combat.missions.attack;
 
 import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.missions.MissionDecisions;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.game.A;
@@ -9,19 +10,8 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
-public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
-
-    public void changeMissionIfNeeded() {
-        if (shouldChangeMissionToDefend()) {
-            changeMissionTo(MissionChanger.defendOrSpartaMission());
-        }
-//        else if (shouldChangeMissionToContain()) {
-//            changeMissionTo(Missions.CONTAIN);
-//        }
-    }
-
-    // === CONTAIN =============================================
-
+public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
+    @Override
     public boolean shouldChangeMissionToContain() {
         if (A.supplyUsed() >= 174) {
             return false;
@@ -36,8 +26,9 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
         return false;
     }
 
+    @Override
     public boolean shouldChangeMissionToDefend() {
-        if (baseUnderSeriousAttack()) {
+        if (MissionDecisions.baseUnderSeriousAttack()) {
             if (DEBUG) reason = "Protect base";
             return true;
         }
@@ -52,5 +43,4 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenContain {
 
         return false;
     }
-
 }

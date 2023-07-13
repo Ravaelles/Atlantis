@@ -1,11 +1,7 @@
-package atlantis.combat.missions.focus.special;
+package atlantis.combat.advance.special;
 
-import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
-import atlantis.util.We;
 
 public class EnemyWhoBreachedBase {
 

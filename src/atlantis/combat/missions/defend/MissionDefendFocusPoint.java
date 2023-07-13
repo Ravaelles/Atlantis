@@ -1,13 +1,12 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.missions.focus.AFocusPoint;
-import atlantis.combat.missions.focus.MissionFocusPoint;
+import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.focus.special.EnemyWhoBreachedBase;
+import atlantis.combat.advance.special.EnemyWhoBreachedBase;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;
