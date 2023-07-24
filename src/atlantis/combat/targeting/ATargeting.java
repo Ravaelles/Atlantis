@@ -4,6 +4,7 @@ import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -11,13 +12,17 @@ import atlantis.util.log.ErrorLog;
 
 import java.util.List;
 
-public class ATargeting {
+public class ATargeting extends HasUnit {
 
 //    protected static final boolean DEBUG = true;
     protected static final boolean DEBUG = false;
 
     protected static Selection enemyBuildings;
     protected static Selection enemyUnits;
+
+    public ATargeting(AUnit unit) {
+        super(unit);
+    }
 
     /**
      * For given <b>unit</b> it defines the best close range target from enemy units. The target is not
@@ -320,7 +325,7 @@ public class ATargeting {
         // === AIR UNITS due to their mobility use different targeting logic ===
 
         if (unit.isAir() && unit.canAttackGroundUnits()) {
-            target = ATargetingForAirUnits.targetForAirUnits(unit);
+            target = (new ATargetingForAirUnits(unit)).targetForAirUnits();
 
 //            System.out.println("Air target for " + unit + ": " + target);
 //            if ((target = ATargetingForAirUnits.targetForAirUnits()) != null) {

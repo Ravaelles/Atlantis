@@ -11,6 +11,7 @@ import atlantis.production.BuildingsCommander;
 import atlantis.production.ProductionCommander;
 import atlantis.production.constructing.ConstructionCommander;
 import atlantis.terran.repair.RepairsCommander;
+import atlantis.units.SpecialUnitsCommander;
 import atlantis.units.UmsSpecialActionsManager;
 import atlantis.units.UnitStateCommander;
 import atlantis.units.workers.WorkerCommander;
@@ -26,8 +27,6 @@ public class AtlantisGameCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[] {
-            PainterCommander.class,
-            StrategyCommander.class,
             WorkerCommander.class,
             CombatCommander.class,
             ProductionCommander.class,
@@ -35,11 +34,15 @@ public class AtlantisGameCommander extends Commander {
             BuildingsCommander.class,
             ConstructionCommander.class,
             RepairsCommander.class,
-            EnemyUnitsCommander.class,
+            SpecialUnitsCommander.class,
             UmsSpecialActionsManager.class,
             UnitStateCommander.class,
+
+            StrategyCommander.class,
+            EnemyUnitsCommander.class,
             CameraCommander.class,
             MapSpecificCommander.class,
+            PainterCommander.class,
         };
     }
 

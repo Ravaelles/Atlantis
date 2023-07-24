@@ -79,7 +79,7 @@ public class NumberOfRepairersCommander extends Commander {
             if (shouldHaveThisManyRepairers > 0) {
 //                System.out.println("Bunker repairers = " + shouldHaveThisManyRepairers);
                 unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
-                ProtectorManager.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
+                ProtectorCommander.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
                 return shouldHaveThisManyRepairers;
             }
             else {

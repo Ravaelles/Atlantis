@@ -8,9 +8,12 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 
+/**
+ * Currently not used, needs fixing.
+ */
 public class MissionContain extends Mission {
 
-    public MissionContain(AUnit unit) {
+    public MissionContain() {
         super("Contain");
         focusPointManager = new MissionContainFocusPoint();
     }

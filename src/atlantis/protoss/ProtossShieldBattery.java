@@ -6,7 +6,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 public class ProtossShieldBattery extends Manager {
-
     private  final double MAX_DIST = 7.98;
 
     public ProtossShieldBattery(AUnit unit) {

@@ -18,12 +18,12 @@ public class ATargetingCrucial extends ATargeting {
 
         AUnit target;
 
-        if ((target = targetInShootingRange()) != null) {
+        if ((target = targetInShootingRange(unit)) != null) {
 //            System.out.println("CRUCIAL targetInShootingRange = " + target);
             return target;
         }
 
-        if ((target = targetOutsideShootingRange()) != null) {
+        if ((target = targetOutsideShootingRange(unit)) != null) {
             return target;
         }
 

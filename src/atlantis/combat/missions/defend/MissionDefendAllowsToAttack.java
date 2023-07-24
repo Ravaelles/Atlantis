@@ -20,7 +20,7 @@ public class MissionDefendAllowsToAttack {
 
         if (
             unit.canAttackTarget(enemy)
-            || enemy.canAttackTarget()
+            || enemy.canAttackTarget(unit)
             || ourBuildingIsInDanger(unit, enemy)
         ) {
             return true;

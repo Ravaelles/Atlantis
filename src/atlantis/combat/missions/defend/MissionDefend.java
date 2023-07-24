@@ -25,7 +25,7 @@ public class MissionDefend extends Mission {
     protected double enemyToBase;
     protected double enemyToFocus;
 
-    public MissionDefend(AUnit unit) {
+    public MissionDefend() {
         super("Defend");
         focusPointManager = new MissionDefendFocusPoint();
         allowsToAttack = new MissionDefendAllowsToAttack(this);

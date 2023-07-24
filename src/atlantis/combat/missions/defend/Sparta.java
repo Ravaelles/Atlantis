@@ -22,8 +22,8 @@ public class Sparta extends MissionDefend {
 
     // =========================================================
 
-    public Sparta(AUnit unit) {
-        super(unit);
+    public Sparta() {
+        super();
         setName("Sparta");
         focusPointManager = new MissionDefendFocusPoint();
     }
@@ -312,17 +312,16 @@ public class Sparta extends MissionDefend {
 //            && !"HelpWithdraw".equals(unit.tooltip())
 //            && unit.lastActionMoreThanAgo(6);
 //    }
-//
-//    public static boolean canUseSpartaMission() {
-//        if (We.terran()) {
-//            return false;
-//        }
-//
-//        if (We.zerg() && Enemy.protoss()) {
-//            return false;
-//        }
-//
-//        return true;
-//    }
 
+    public static boolean canUseSpartaMission() {
+        if (We.terran()) {
+            return false;
+        }
+
+        if (We.zerg() && Enemy.protoss()) {
+            return false;
+        }
+
+        return true;
+    }
 }

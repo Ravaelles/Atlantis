@@ -6,7 +6,11 @@ import atlantis.units.select.Select;
 
 public class ATargetingImportant extends ATargeting {
 
-    public static AUnit target(AUnit unit) {
+    public ATargetingImportant(AUnit unit) {
+        super(unit);
+    }
+
+    public static AUnit target() {
 
         // =========================================================
         // =========================================================
@@ -30,7 +34,7 @@ public class ATargetingImportant extends ATargeting {
 
     // =========================================================
 
-    private static AUnit targetInShootingRange(AUnit unit) {
+    private static AUnit targetInShootingRange() {
         AUnit target;
 
         // =========================================================
@@ -124,7 +128,7 @@ public class ATargetingImportant extends ATargeting {
         return null;
     }
 
-    private static AUnit combatBuildingOrScvRepairingIt(AUnit unit) {
+    private static AUnit combatBuildingOrScvRepairingIt() {
         if (!unit.isBunker()) {
             if (ATargeting.DEBUG) System.out.println("C0c = " + unit);
             return unit;
@@ -142,7 +146,7 @@ public class ATargetingImportant extends ATargeting {
         return unit;
     }
 
-    private static AUnit targetOutsideShootingRange(AUnit unit) {
+    private static AUnit targetOutsideShootingRange() {
         AUnit target;
 
         // =========================================================

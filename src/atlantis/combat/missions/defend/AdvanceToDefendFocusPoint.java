@@ -104,7 +104,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
         );
     }
 
-    private double letWorkersComeThroughBonus(AUnit unit) {
+    private double letWorkersComeThroughBonus() {
         if (We.protoss() && A.seconds() >= 150) {
             return 0;
         }
