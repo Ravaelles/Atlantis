@@ -2,9 +2,9 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.information.generic.TerranArmyComposition;
-import atlantis.information.decisions.Decisions;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -14,7 +14,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
-public class TerranDynamicInfantry extends TerranDynamicUnitsManager {
+public class TerranDynamicInfantry extends TerranDynamicUnitsCommander {
 
     private static boolean DEBUG = false;
 //    private static boolean DEBUG = true;

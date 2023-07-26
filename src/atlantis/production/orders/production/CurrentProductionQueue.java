@@ -92,7 +92,7 @@ public abstract class CurrentProductionQueue {
                 ProductionQueue.gasNeeded += tech.gasPrice();
             }
 
-            // MISSION - handled in AProductionManager
+            // MISSION - handled in ProductionOrdersCommander
             else if (mission != null && A.supplyAtLeast(order.minSupply())) {
                 continue;
             }

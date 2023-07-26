@@ -1,6 +1,5 @@
 package atlantis.combat.running;
 
-import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 

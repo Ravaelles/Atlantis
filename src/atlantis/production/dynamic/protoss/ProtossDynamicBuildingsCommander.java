@@ -6,17 +6,18 @@ import atlantis.information.decisions.Decisions;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.tech.ATechRequests;
-import atlantis.production.dynamic.ADynamicBuildingsManager;
+import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import bwapi.TechType;
 
 import static atlantis.units.AUnitType.*;
+import static atlantis.util.Helpers.*;
 
-public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
-
-    public static void update() {
+public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander {
+    @Override
+    public void handle() {
         if (AGame.notNthGameFrame(7) || noSupply(25)) {
             return;
         }
@@ -106,17 +107,12 @@ public class ProtossDynamicBuildingsManager extends ADynamicBuildingsManager {
     private static void arbiterTribunal() {
         buildToHaveOne(90, Protoss_Arbiter_Tribunal);
 
-        if (
-            hasFree(Protoss_Arbiter_Tribunal)
-                && has(Protoss_Arbiter)
-        ) {
+        if (hasFree(Protoss_Arbiter_Tribunal) && has(Protoss_Arbiter)) {
             ATechRequests.researchTech(TechType.Stasis_Field);
         }
     }
 
     private static boolean cannons() {
-//        if (true) return;
-
         if (A.notNthGameFrame(47)) {
             return false;
         }

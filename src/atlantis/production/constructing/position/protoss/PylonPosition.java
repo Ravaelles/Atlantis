@@ -1,6 +1,5 @@
 package atlantis.production.constructing.position.protoss;
 
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.map.ABaseLocation;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;

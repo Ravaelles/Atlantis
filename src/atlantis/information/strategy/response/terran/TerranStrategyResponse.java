@@ -1,10 +1,10 @@
 package atlantis.information.strategy.response.terran;
 
 import atlantis.combat.missions.Missions;
+import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.strategy.response.AStrategyResponse;
 
 public class TerranStrategyResponse extends AStrategyResponse {

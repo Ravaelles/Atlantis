@@ -3,7 +3,6 @@ package atlantis.map;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import bwapi.Color;
 import bwapi.Pair;
 import bwapi.Position;
 import bwapi.WalkPosition;

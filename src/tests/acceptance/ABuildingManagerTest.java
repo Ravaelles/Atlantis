@@ -10,7 +10,7 @@ public class ABuildingManagerTest extends AbstractTestFakingGame {
     @Test
     public void iteratesOverBuildings() {
         createWorld(1, () -> {
-            BuildingsCommander.update();
+            (new BuildingsCommander()).handle();
         });
     }
 

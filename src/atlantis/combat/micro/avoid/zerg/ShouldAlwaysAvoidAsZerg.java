@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid.zerg;
 
-import atlantis.units.AUnit;
 import atlantis.architecture.Manager;
+import atlantis.units.AUnit;
 
 public class ShouldAlwaysAvoidAsZerg extends Manager {
 

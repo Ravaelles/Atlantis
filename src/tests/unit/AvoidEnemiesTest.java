@@ -54,7 +54,7 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { drone, ling1, hydra, sunken },
-                    AvoidEnemies.unitsToAvoid(our).array()
+                (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         });
     }
@@ -83,7 +83,7 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
-                    AvoidEnemies.unitsToAvoid(our).array()
+                    (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         });
     }
@@ -114,7 +114,7 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { cannon, sunken, bunker },
-                    AvoidEnemies.unitsToAvoid(our).array()
+                    (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         });
     }
@@ -147,7 +147,7 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                     new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
-                    AvoidEnemies.unitsToAvoid(our).array()
+                    (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         });
     }
@@ -215,7 +215,7 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
             assertContainsAll(
                     new AUnit[] { enemy1, enemy2, enemy3, enemy4, enemy5, enemy6 },
 //                    new AUnit[] { enemy4 },
-                    AvoidEnemies.unitsToAvoid(our).array()
+                    (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         }
     }

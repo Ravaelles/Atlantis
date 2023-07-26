@@ -1,8 +1,8 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class RunError {
     private final Avoid avoid;

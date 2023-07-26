@@ -1,6 +1,5 @@
 package atlantis.combat.micro.avoid.margin;
 
-import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;

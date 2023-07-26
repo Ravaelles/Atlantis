@@ -1,9 +1,9 @@
 package atlantis.combat.squad.positioning;
 
+import atlantis.architecture.Manager;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;

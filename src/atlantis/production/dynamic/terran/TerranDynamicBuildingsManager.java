@@ -5,13 +5,12 @@ import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
 import atlantis.combat.micro.terran.TerranMissileTurretsForNonMain;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.information.decisions.Decisions;
-import atlantis.information.tech.ATech;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.dynamic.ADynamicBuildingsManager;
+import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -22,11 +21,10 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.*;
-import static bwapi.TechType.Tank_Siege_Mode;
 
-public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
+public class TerranDynamicBuildingsManager extends DynamicBuildingsCommander {
 
-    public static void update() {
+    public void handle() {
         if (A.everyNthGameFrame(71)) {
             (new TerranMissileTurretsForMain()).buildIfNeeded();
         }
@@ -34,7 +32,7 @@ public class TerranDynamicBuildingsManager extends ADynamicBuildingsManager {
             (new TerranMissileTurretsForNonMain()).buildIfNeeded();
         }
         if (A.everyNthGameFrame(77)) {
-            TerranBunker.get().handleDefensiveBunkers();
+            ((TerranBunker) TerranBunker.get()).handleDefensiveBunkers();
         }
 
         if (A.everyNthGameFrame(7)) {

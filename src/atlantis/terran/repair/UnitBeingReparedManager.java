@@ -1,8 +1,8 @@
 package atlantis.terran.repair;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 
 public class UnitBeingReparedManager extends Manager {
 

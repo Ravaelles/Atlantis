@@ -337,21 +337,21 @@ public class ATargeting extends HasUnit {
 
         // === Crucial units =======================================
 
-        if ((target = ATargetingCrucial.target(unit)) != null) {
+        if ((target = (new ATargetingCrucial(unit)).target()) != null) {
 //            if (ATargeting.DEBUG) System.out.println("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
-        if ((target = ATargetingImportant.target(unit)) != null) {
+        if ((target = (new ATargetingImportant(unit)).target()) != null) {
 //            if (ATargeting.DEBUG) System.out.println("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
-        if ((target = ATargetingStandard.target(unit)) != null) {
+        if ((target = (new ATargetingStandard(unit)).target()) != null) {
 //            if (ATargeting.DEBUG) System.out.println("D = "+ target);
             return target;
         }

@@ -1,9 +1,9 @@
 package atlantis.combat.micro.protoss;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 
 public class ProtossShieldBattery extends Manager {

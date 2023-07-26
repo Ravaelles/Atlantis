@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.tank;
 
-import atlantis.units.AUnit;
 import atlantis.architecture.Manager;
+import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 
 public class SiegeHereDuringMissionDefend extends Manager {

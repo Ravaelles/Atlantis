@@ -1,8 +1,8 @@
 package atlantis.combat.micro.transport;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 
 import java.util.HashMap;

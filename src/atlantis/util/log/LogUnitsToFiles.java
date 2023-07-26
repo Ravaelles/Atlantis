@@ -1,6 +1,5 @@
 package atlantis.util.log;
 
-import atlantis.Atlantis;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 

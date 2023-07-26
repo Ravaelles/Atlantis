@@ -1,14 +1,10 @@
 package atlantis.combat.missions.attack;
 
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.units.select.Select;
 
 public class ZergMissionChangerWhenAttack extends MissionChangerWhenAttack {
 

@@ -6,8 +6,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.cache.Cache;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
 
 import java.util.ArrayList;
 import java.util.Collections;

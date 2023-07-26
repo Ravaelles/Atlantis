@@ -1,5 +1,6 @@
 package atlantis.units.buildings;
 
+import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -12,14 +13,12 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 
-public class ASupplyManager {
+public class SupplyCommander extends Commander {
+    private int supplyTotal;
+    private int supplyFree;
 
-    private static int supplyTotal;
-    private static int supplyFree;
-
-    // =========================================================
-
-    public static void update() {
+    @Override
+    public void handle() {
         supplyTotal = AGame.supplyTotal();
 
         if (supplyTotal >= 200) {
@@ -80,7 +79,7 @@ public class ASupplyManager {
 
     // =========================================================
 
-    private static void requestAdditionalSupply() {
+    private void requestAdditionalSupply() {
 //        A.printStackTrace("Supply request: " + A.supplyUsed() + " // " + A.supplyTotal());
 
         // Zerg handles supply a bit differently
@@ -94,11 +93,11 @@ public class ASupplyManager {
         }
     }
 
-    private static boolean requestedConstructionOfSupply() {
+    private boolean requestedConstructionOfSupply() {
         return ConstructionRequests.countNotStartedOfType(AtlantisConfig.SUPPLY) > 0;
     }
 
-    private static int requestedConstructionsOfSupply() {
+    private int requestedConstructionsOfSupply() {
         if (We.zerg()) {
 //            return Count.ourOfTypeWithUnfinished(AUnitType.Zerg_Overlord);
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);

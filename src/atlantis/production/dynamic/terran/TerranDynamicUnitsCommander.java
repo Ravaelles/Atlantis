@@ -1,20 +1,22 @@
 package atlantis.production.dynamic.terran;
 
+import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyFlags;
-import atlantis.production.AbstractDynamicUnits;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 
+import static atlantis.production.AbstractDynamicUnits.buildToHave;
 import static atlantis.units.AUnitType.Terran_Science_Vessel;
 
-public class TerranDynamicUnitsManager extends AbstractDynamicUnits {
+public class TerranDynamicUnitsCommander extends Commander {
 
-    public static void update() {
+    @Override
+    public void handle() {
         scienceVessels();
 
         TerranDynamicFactoryUnits.handleFactoryProduction();

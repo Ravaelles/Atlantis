@@ -1,8 +1,8 @@
 package atlantis.combat.micro.terran.tank;
 
+import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class UnsiegeToReposition extends Manager {
 

@@ -1,9 +1,9 @@
 package atlantis.combat.micro.terran.bunker;
 
+import atlantis.architecture.Manager;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.architecture.Manager;
 
 public class PreventMaginotLine extends Manager {
 

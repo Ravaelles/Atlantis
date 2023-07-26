@@ -1,6 +1,5 @@
 package atlantis.units.fogged;
 
-import atlantis.debug.tooltip.Tooltip;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;

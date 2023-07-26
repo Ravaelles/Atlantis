@@ -1,8 +1,8 @@
 package atlantis.combat.micro.zerg.overlord;
 
+import atlantis.architecture.Manager;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class WeKnowEnemyLocation extends Manager {
 

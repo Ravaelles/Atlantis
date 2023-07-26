@@ -1,10 +1,9 @@
 package atlantis.combat.advance.focus;
 
-import atlantis.map.position.APosition;
-import atlantis.units.actions.Actions;
-
 import atlantis.architecture.Manager;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 
 public class TooFarFromChoke extends MoveToFocusPoint {
     public TooFarFromChoke(AUnit unit) {

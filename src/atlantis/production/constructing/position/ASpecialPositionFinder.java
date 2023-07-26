@@ -10,7 +10,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 

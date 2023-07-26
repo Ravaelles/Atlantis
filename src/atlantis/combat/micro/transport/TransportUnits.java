@@ -1,11 +1,11 @@
 package atlantis.combat.micro.transport;
 
+import atlantis.architecture.Manager;
 import atlantis.debug.painter.APainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import bwapi.Color;
 

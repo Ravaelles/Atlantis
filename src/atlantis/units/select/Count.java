@@ -5,8 +5,8 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.cache.Cache;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

@@ -3,8 +3,6 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.attack.MissionChangerWhenAttack;
-import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;

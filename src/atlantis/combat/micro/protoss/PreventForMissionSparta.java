@@ -1,7 +1,7 @@
 package atlantis.combat.micro.protoss;
 
-import atlantis.units.AUnit;
 import atlantis.architecture.Manager;
+import atlantis.units.AUnit;
 
 public class PreventForMissionSparta extends Manager {
 

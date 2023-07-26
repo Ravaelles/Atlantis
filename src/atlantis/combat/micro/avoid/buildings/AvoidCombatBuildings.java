@@ -1,10 +1,10 @@
 package atlantis.combat.micro.avoid.buildings;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Selection;
 
 public class AvoidCombatBuildings extends Manager {

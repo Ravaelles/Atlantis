@@ -2,11 +2,11 @@ package atlantis.combat.retreating;
 
 //import atlantis.combat.eval.HeuristicCombatEvaluator;
 
+import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;

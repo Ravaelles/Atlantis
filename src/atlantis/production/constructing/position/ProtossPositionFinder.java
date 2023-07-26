@@ -1,11 +1,9 @@
 package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.protoss.PylonPosition;

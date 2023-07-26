@@ -1,9 +1,9 @@
 package atlantis.combat.missions.contain;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.missions.attack.MissionAttackVsCombatBuildings;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.attack.MissionAttackVsCombatBuildings;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;

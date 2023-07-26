@@ -2,7 +2,6 @@ package atlantis.util;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import tests.unit.FakeUnit;
 
 import java.util.ArrayList;
 import java.util.Collection;

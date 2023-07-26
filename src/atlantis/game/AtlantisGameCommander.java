@@ -9,7 +9,7 @@ import atlantis.information.strategy.StrategyCommander;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.production.BuildingsCommander;
 import atlantis.production.ProductionCommander;
-import atlantis.production.constructing.ConstructionCommander;
+import atlantis.production.constructing.ConstructionsCommander;
 import atlantis.terran.repair.RepairsCommander;
 import atlantis.units.SpecialUnitsCommander;
 import atlantis.units.UmsSpecialActionsManager;
@@ -23,7 +23,6 @@ import atlantis.units.workers.WorkerCommander;
  * It represents minimal passage of game-time (one game frame).
  */
 public class AtlantisGameCommander extends Commander {
-
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[] {
@@ -32,7 +31,7 @@ public class AtlantisGameCommander extends Commander {
             ProductionCommander.class,
             ScoutCommander.class,
             BuildingsCommander.class,
-            ConstructionCommander.class,
+            ConstructionsCommander.class,
             RepairsCommander.class,
             SpecialUnitsCommander.class,
             UmsSpecialActionsManager.class,
@@ -45,5 +44,4 @@ public class AtlantisGameCommander extends Commander {
             PainterCommander.class,
         };
     }
-
 }

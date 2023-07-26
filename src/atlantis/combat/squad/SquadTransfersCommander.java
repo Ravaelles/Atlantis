@@ -5,8 +5,6 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.beta.Beta;
 import atlantis.units.AUnit;
 
-import java.util.ArrayList;
-
 public class SquadTransfersCommander extends Commander {
 
     @Override

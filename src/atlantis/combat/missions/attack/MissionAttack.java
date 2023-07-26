@@ -2,7 +2,6 @@ package atlantis.combat.missions.attack;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Mission;
-import atlantis.decions.Decision;
 import atlantis.units.AUnit;
 
 /**

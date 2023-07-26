@@ -1,9 +1,5 @@
 package atlantis.combat.micro.avoid.special;
 
-import atlantis.game.A;
-import atlantis.map.position.APosition;
-import atlantis.units.AUnit;
-
 public class AvoidEdgesWhenMoving {
 
 //    public  boolean handle() {

@@ -1,11 +1,5 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.retreating.ShouldRetreat;
-import atlantis.game.A;
-import atlantis.map.position.HasPosition;
-import atlantis.map.position.Positions;
-import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 

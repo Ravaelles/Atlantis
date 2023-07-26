@@ -22,7 +22,7 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
     public void neverRunsIntoCombatBuildings() {
         createWorld(100, () -> {
             FakeUnit unit = ourFirst;
-            boolean result = CombatUnitManager.update(unit);
+            (new CombatUnitManager(unit)).handle();
 
             double distToSunken = distToNearestEnemy(unit);
             boolean isSafe = distToSunken > 7.05;

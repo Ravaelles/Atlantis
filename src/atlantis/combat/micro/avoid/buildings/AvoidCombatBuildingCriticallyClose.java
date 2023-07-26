@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid.buildings;
 
-import atlantis.units.AUnit;
 import atlantis.architecture.Manager;
+import atlantis.units.AUnit;
 
 public class AvoidCombatBuildingCriticallyClose extends Manager {
 

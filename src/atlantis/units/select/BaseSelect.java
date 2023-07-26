@@ -4,9 +4,8 @@ import atlantis.Atlantis;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
 import atlantis.units.AUnit;
-import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
-import bwapi.Player;
+import atlantis.util.cache.Cache;
 import bwapi.Unit;
 
 import java.util.ArrayList;

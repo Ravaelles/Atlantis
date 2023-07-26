@@ -1,8 +1,8 @@
 package atlantis.combat.micro.zerg.overlord;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 
 public class StayAtHome extends Manager {

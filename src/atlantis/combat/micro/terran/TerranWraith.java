@@ -1,8 +1,8 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.architecture.Manager;
 import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class TerranWraith extends Manager {
 

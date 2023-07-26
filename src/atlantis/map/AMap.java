@@ -9,7 +9,6 @@ import atlantis.util.cache.Cache;
 import bwapi.TilePosition;
 import bwem.BWEM;
 import bwem.BWMap;
-import com.sun.jna.platform.win32.WinCrypt;
 
 import java.util.ArrayList;
 

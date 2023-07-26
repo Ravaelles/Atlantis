@@ -1,11 +1,11 @@
 package atlantis.combat.micro.avoid;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildings;
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class AvoidEnemies extends Manager {
 
-    private Cache<Units> cache = new Cache<>();
+    private static Cache<Units> cache = new Cache<>();
     private AvoidCombatBuildings avoidCombatBuildings;
     private WantsToAvoid wantsToAvoid;
 
@@ -82,7 +82,7 @@ public class AvoidEnemies extends Manager {
         return null;
     }
 
-    public void clearCache() {
+    public static void clearCache() {
         cache.clear();
     }
 

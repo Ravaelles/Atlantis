@@ -1,9 +1,9 @@
 package atlantis.combat.advance;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class Advance extends MissionManager {
     public Advance(AUnit unit) {

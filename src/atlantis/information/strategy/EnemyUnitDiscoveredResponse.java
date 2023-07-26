@@ -2,9 +2,9 @@ package atlantis.information.strategy;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.game.A;
+import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.Chokes;
 import atlantis.production.requests.ProductionRequests;

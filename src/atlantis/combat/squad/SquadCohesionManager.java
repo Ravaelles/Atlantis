@@ -2,9 +2,9 @@ package atlantis.combat.squad;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.ComeCloser;
+import atlantis.combat.squad.positioning.DoNotThinkOfImprovingCohesion;
 import atlantis.combat.squad.positioning.TooClustered;
 import atlantis.combat.squad.positioning.TooLowSquadCohesion;
-import atlantis.combat.squad.positioning.DoNotThinkOfImprovingCohesion;
 import atlantis.units.AUnit;
 
 public class SquadCohesionManager extends Manager {

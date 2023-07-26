@@ -1,9 +1,6 @@
 package atlantis.units.interrupt;
 
-import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import bwapi.Color;
 
 public class DontInterruptStartedAttacks {
 

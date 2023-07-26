@@ -62,7 +62,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
         Select.clearCache();
         BaseSelect.clearCache();
-        HeuristicCombatEvaluator.clearCache();
+//        HeuristicCombatEvaluator.clearCache();
         AbstractFoggedUnit.clearCache();
         EnemyInfo.clearCache();
         EnemyUnits.clearCache();

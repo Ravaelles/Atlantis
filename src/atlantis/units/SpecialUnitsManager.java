@@ -1,15 +1,17 @@
 package atlantis.units;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.protoss.PreventForMissionSparta;
 import atlantis.combat.micro.protoss.ProtossShieldBattery;
-import atlantis.combat.micro.terran.*;
+import atlantis.combat.micro.terran.TerranCloakableManager;
+import atlantis.combat.micro.terran.TerranScienceVessel;
+import atlantis.combat.micro.terran.TerranVulture;
 import atlantis.combat.micro.terran.infantry.TerranInfantry;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.overlord.ZergOverlordManager;
 import atlantis.protoss.ProtossHighTemplar;
 import atlantis.protoss.ProtossObserver;
-import atlantis.architecture.Manager;
 
 public class SpecialUnitsManager extends Manager {
 
@@ -47,7 +49,7 @@ public class SpecialUnitsManager extends Manager {
             ATransportManager.class
         };
 
-        return mergeClasses(raceSpecific, generic);
+        return mergeManagers(raceSpecific, generic);
     }
 
 }

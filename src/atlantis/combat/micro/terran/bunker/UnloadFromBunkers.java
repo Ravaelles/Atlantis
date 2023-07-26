@@ -1,8 +1,8 @@
 package atlantis.combat.micro.terran.bunker;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Selection;
 
 public class UnloadFromBunkers extends Manager {

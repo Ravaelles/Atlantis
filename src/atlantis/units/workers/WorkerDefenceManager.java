@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.constructing.ConstructionCommander;
+import atlantis.production.constructing.ConstructionsCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -111,7 +111,7 @@ public class WorkerDefenceManager extends Manager {
             return false;
         }
 
-        for (AUnit builder : ConstructionCommander.builders()) {
+        for (AUnit builder : ConstructionsCommander.builders()) {
             if (builder.hp() < 40 && builder.lastUnderAttackLessThanAgo(30 * 10)) {
                 AUnit nearestPeskyEnemyWorker = Select.enemy().workers().inRadius(3, builder).nearestTo(worker);
                 if (nearestPeskyEnemyWorker != null) {

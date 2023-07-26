@@ -1,11 +1,11 @@
 package atlantis.combat.managers;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class CombatManagerMediumPriority extends Manager {
 

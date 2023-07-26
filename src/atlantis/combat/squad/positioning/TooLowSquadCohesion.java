@@ -1,9 +1,9 @@
 package atlantis.combat.squad.positioning;
 
+import atlantis.architecture.Manager;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.util.We;
 
 public class TooLowSquadCohesion extends Manager {

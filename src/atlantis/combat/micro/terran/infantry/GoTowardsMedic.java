@@ -1,9 +1,9 @@
 package atlantis.combat.micro.terran.infantry;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 
 public class GoTowardsMedic extends Manager {

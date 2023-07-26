@@ -47,12 +47,12 @@ public class ADetectorRequest {
 //            where = MissionDefend.getInstance().focusPoint().translatePercentTowards(AMap.getNaturalLocation(), 32);
 //        }
 //
-//        int numberOfDetectors = ConstructionCommander.countExistingAndPlannedConstructionsInRadius(
+//        int numberOfDetectors = ConstructionsCommander.countExistingAndPlannedConstructionsInRadius(
 //                detectorBuilding, 8, where
 //        );
 //
 //        for (int i = 0; i < 2 - numberOfDetectors; i++) {
-//            ConstructionCommander.requestConstructionOf(detectorBuilding, where);
+//            ConstructionsCommander.requestConstructionOf(detectorBuilding, where);
 //        }
     }
 

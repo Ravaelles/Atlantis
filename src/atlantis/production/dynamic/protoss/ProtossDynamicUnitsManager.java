@@ -24,7 +24,7 @@ import static atlantis.units.AUnitType.Protoss_Dragoon;
 
 public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
-    public static void update() {
+    public void handle() {
         if (AGame.notNthGameFrame(3)) {
             return;
         }

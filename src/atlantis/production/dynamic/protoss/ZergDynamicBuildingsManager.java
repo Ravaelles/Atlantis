@@ -1,17 +1,16 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.game.A;
-import atlantis.production.dynamic.ADynamicBuildingsManager;
-import atlantis.production.orders.build.ZergBuildOrder;
-import atlantis.units.AUnitType;
+import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-import static atlantis.units.AUnitType.*;
+import static atlantis.units.AUnitType.Zerg_Creep_Colony;
+import static atlantis.units.AUnitType.Zerg_Hydralisk_Den;
 
-public class ZergDynamicBuildingsManager extends ADynamicBuildingsManager {
+public class ZergDynamicBuildingsManager extends DynamicBuildingsCommander {
 
-    public static void update() {
+    public void handle() {
 //        buildingsIfNeeded();
 
 //        sunkens();

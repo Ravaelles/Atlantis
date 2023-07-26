@@ -1,9 +1,7 @@
 package atlantis.protoss;
 
-import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 
 public class ProtossMissionAdjustments {

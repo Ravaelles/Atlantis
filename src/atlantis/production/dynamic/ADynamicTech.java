@@ -9,7 +9,6 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class ADynamicTech {
-
     protected static boolean handleResearch(TechType tech) {
         if (ATech.isResearched(tech)) {
             return false;

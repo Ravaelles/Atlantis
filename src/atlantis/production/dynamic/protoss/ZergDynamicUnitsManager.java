@@ -9,12 +9,11 @@ import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 
 
 public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
 
-    public static void update() {
+    public void handle() {
         mutalisks();
         hydras();
         zerglings();

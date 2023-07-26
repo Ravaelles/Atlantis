@@ -14,8 +14,8 @@ import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
+import atlantis.util.cache.Cache;
 
 import static atlantis.units.AUnitType.*;
 

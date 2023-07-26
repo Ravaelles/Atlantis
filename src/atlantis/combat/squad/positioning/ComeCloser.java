@@ -1,9 +1,9 @@
 package atlantis.combat.squad.positioning;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.squad.positioning.terran.TerranInfantryComeCloser;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class ComeCloser extends MissionManager {
     public ComeCloser(AUnit unit) {

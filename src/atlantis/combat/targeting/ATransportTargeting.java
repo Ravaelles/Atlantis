@@ -1,11 +1,16 @@
 package atlantis.combat.targeting;
 
 import atlantis.units.AUnit;
+import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 
-public class ATransportTargeting {
+public class ATransportTargeting extends HasUnit {
 
-    public static AUnit target(AUnit unit) {
+    public ATransportTargeting(AUnit unit) {
+        super(unit);
+    }
+
+    public AUnit target() {
         AUnit nearTransport = Select.enemy()
                 .transports(true)
                 .canBeAttackedBy(unit, 1)

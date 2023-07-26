@@ -2,13 +2,6 @@ package atlantis.combat.missions.contain;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.attack.ProtossMissionChangerWhenAttack;
-import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
-import atlantis.combat.missions.attack.ZergMissionChangerWhenAttack;
-import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public abstract class MissionChangerWhenContain extends MissionChanger {

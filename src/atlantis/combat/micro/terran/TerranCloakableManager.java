@@ -1,9 +1,9 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.architecture.Manager;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import bwapi.TechType;
 

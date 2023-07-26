@@ -1,12 +1,14 @@
 package atlantis.game;
 
-import atlantis.Atlantis;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.debug.tweaker.ParamTweakerFactory;
-import atlantis.information.strategy.*;
+import atlantis.information.strategy.ProtossStrategies;
+import atlantis.information.strategy.StrategyChooser;
+import atlantis.information.strategy.TerranStrategies;
+import atlantis.information.strategy.ZergStrategies;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
 import atlantis.production.orders.build.ABuildOrderLoader;

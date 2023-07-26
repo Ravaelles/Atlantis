@@ -10,7 +10,7 @@ public class ATargetingImportant extends ATargeting {
         super(unit);
     }
 
-    public static AUnit target() {
+    public AUnit target() {
 
         // =========================================================
         // =========================================================
@@ -34,7 +34,7 @@ public class ATargetingImportant extends ATargeting {
 
     // =========================================================
 
-    private static AUnit targetInShootingRange() {
+    private AUnit targetInShootingRange() {
         AUnit target;
 
         // =========================================================
@@ -62,7 +62,7 @@ public class ATargetingImportant extends ATargeting {
                 .canBeAttackedBy(unit, 0)
                 .mostWounded();
         if (target != null) {
-            return combatBuildingOrScvRepairingIt(target);
+            return getThisCombatBuildingOrScvRepairingIt(target);
         }
 
         target = enemyUnits
@@ -74,7 +74,7 @@ public class ATargetingImportant extends ATargeting {
                 .canBeAttackedBy(unit, 5)
                 .nearestTo(unit);
         if (target != null) {
-            return combatBuildingOrScvRepairingIt(target);
+            return getThisCombatBuildingOrScvRepairingIt(target);
         }
 
         // =========================================================
@@ -128,25 +128,25 @@ public class ATargetingImportant extends ATargeting {
         return null;
     }
 
-    private static AUnit combatBuildingOrScvRepairingIt() {
-        if (!unit.isBunker()) {
-            if (ATargeting.DEBUG) System.out.println("C0c = " + unit);
-            return unit;
+    private AUnit getThisCombatBuildingOrScvRepairingIt(AUnit target) {
+        if (!target.isBunker()) {
+            if (ATargeting.DEBUG) System.out.println("C0c = " + target);
+            return target;
         }
 
         // Target repairers
-        AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, unit)
-                .canBeAttackedBy(unit, 1.7).nearestTo(unit);
+        AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, target)
+                .canBeAttackedBy(target, 1.7).nearestTo(target);
         if (repairer != null) {
             if (ATargeting.DEBUG) System.out.println("C0a = " + repairer);
             return repairer;
         }
 
-        if (ATargeting.DEBUG) System.out.println("C0b = " + unit);
-        return unit;
+        if (ATargeting.DEBUG) System.out.println("C0b = " + target);
+        return target;
     }
 
-    private static AUnit targetOutsideShootingRange() {
+    private AUnit targetOutsideShootingRange() {
         AUnit target;
 
         // =========================================================

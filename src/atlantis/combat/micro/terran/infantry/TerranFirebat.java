@@ -1,10 +1,10 @@
 package atlantis.combat.micro.terran.infantry;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 

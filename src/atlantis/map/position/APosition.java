@@ -12,8 +12,6 @@ import bwapi.Position;
 import bwapi.TilePosition;
 import bwapi.WalkPosition;
 
-import java.util.Objects;
-
 /**
  * Atlantis uses wrapper for BWAPI  classes which can't extended due to private constructors.
  * <br /><br />

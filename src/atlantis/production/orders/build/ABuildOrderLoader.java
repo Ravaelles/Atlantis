@@ -1,7 +1,6 @@
 package atlantis.production.orders.build;
 
 import atlantis.config.AtlantisIgniter;
-import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.production.ProductionOrder;

@@ -1,9 +1,5 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
-import atlantis.combat.missions.defend.TerranMissionChangerWhenDefend;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.game.AGame;

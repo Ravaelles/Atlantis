@@ -1,10 +1,10 @@
 package atlantis.combat.micro.terran.tank;
 
+import atlantis.architecture.Manager;
 import atlantis.information.tech.ATech;
 import atlantis.map.AChoke;
 import atlantis.map.Chokes;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import bwapi.TechType;

@@ -11,7 +11,6 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.scout.ScoutCommander;
-import atlantis.map.scout.ScoutManager;
 import atlantis.production.requests.AntiAirBuildingManager;
 import atlantis.production.requests.AntiLandBuildingManager;
 import atlantis.production.requests.zerg.ZergSporeColony;

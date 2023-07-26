@@ -13,7 +13,6 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 

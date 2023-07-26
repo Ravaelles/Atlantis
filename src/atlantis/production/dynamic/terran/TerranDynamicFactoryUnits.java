@@ -2,8 +2,8 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.Decisions;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
@@ -15,7 +15,7 @@ import atlantis.util.Enemy;
 
 import static bwapi.TechType.Tank_Siege_Mode;
 
-public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
+public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
 
     protected static void handleFactoryProduction() {
 //        if (!AGame.canAfford(200, 150) && !AGame.canAffordWithReserved(150, 100)) {

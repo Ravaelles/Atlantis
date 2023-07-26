@@ -1,6 +1,5 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.game.A;
 import atlantis.map.AChoke;
 import atlantis.map.Bases;
 import atlantis.map.Chokes;

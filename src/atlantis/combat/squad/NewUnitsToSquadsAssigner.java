@@ -3,7 +3,6 @@ package atlantis.combat.squad;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.delta.Delta;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 
 public class NewUnitsToSquadsAssigner extends HasUnit {

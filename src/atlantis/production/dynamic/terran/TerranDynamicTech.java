@@ -1,11 +1,11 @@
 package atlantis.production.dynamic.terran;
 
+import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.strategy.OurStrategy;
 import atlantis.information.decisions.Decisions;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.information.tech.ATech;
-import atlantis.production.dynamic.ADynamicTech;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -16,9 +16,8 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 
-public class TerranDynamicTech extends ADynamicTech {
-
-    public static void update() {
+public class TerranDynamicTech extends Commander {
+    public void handle() {
         if (A.notNthGameFrame(39)) {
             return;
         }
@@ -77,5 +76,4 @@ public class TerranDynamicTech extends ADynamicTech {
 //            AddToQueue.upgrade(UpgradeType.Caduceus_Reactor);
         }
     }
-
 }

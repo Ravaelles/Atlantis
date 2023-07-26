@@ -3,14 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.attack.MissionAttackManager;
-import atlantis.game.AGame;
 import atlantis.units.AUnit;
-import atlantis.units.Units;
-import atlantis.units.select.Have;
-import atlantis.units.select.Select;
-import atlantis.util.Enemy;
-import atlantis.util.We;
 
 public class MissionDefend extends Mission {
 

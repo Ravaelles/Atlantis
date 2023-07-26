@@ -1,8 +1,8 @@
 package atlantis.combat.squad.positioning.terran;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.ComeCloserToTanks;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class TerranInfantryComeCloser extends Manager {
     public TerranInfantryComeCloser(AUnit unit) {

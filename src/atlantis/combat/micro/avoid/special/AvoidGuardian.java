@@ -2,7 +2,6 @@ package atlantis.combat.micro.avoid.special;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 
 public class AvoidGuardian extends Manager {
 

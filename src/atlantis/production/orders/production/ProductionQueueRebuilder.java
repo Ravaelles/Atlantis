@@ -1,6 +1,5 @@
 package atlantis.production.orders.production;
 
-import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;

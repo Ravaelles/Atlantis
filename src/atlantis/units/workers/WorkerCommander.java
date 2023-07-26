@@ -1,9 +1,7 @@
 package atlantis.units.workers;
 
 import atlantis.architecture.Commander;
-import atlantis.terran.repair.ProtectorCommander;
 import atlantis.units.buildings.GasBuildingsCommander;
-import atlantis.util.CodeProfiler;
 
 /**
  * Manages all worker (SCV, Probe, Drone) actions.

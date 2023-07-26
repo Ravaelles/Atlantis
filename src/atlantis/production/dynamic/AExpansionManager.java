@@ -3,7 +3,6 @@ package atlantis.production.dynamic;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
@@ -17,7 +16,6 @@ import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;

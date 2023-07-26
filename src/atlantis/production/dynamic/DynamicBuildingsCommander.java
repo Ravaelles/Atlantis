@@ -1,5 +1,6 @@
 package atlantis.production.dynamic;
 
+import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -13,13 +14,12 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.Helpers;
 
+import static atlantis.util.Helpers.hasRequiredUnitFor;
 
-public abstract class ADynamicBuildingsManager extends Helpers {
-
-    public static void update() {
-        
+public abstract class DynamicBuildingsCommander extends Commander {
+    @Override
+    public void handle() {
         // Check if we should automatically build new base, because we have shitload of minerals.
         if (AExpansionManager.shouldBuildNewBase()) {
             AExpansionManager.requestNewBase();

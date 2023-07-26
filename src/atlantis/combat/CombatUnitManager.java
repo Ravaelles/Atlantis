@@ -1,9 +1,9 @@
 package atlantis.combat;
 
-import atlantis.combat.managers.*;
-import atlantis.units.SpecialUnitsManager;
-import atlantis.units.AUnit;
 import atlantis.architecture.Manager;
+import atlantis.combat.managers.*;
+import atlantis.units.AUnit;
+import atlantis.units.SpecialUnitsManager;
 
 public class CombatUnitManager extends Manager {
 

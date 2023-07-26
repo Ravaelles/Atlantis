@@ -14,9 +14,9 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
 
 public class EnemyInfo {
 

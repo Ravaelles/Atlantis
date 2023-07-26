@@ -1,9 +1,9 @@
 package atlantis.protoss;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.architecture.Manager;
 
 public class ProtossObserver extends MobileDetector {
 

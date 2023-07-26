@@ -1,12 +1,10 @@
 package atlantis.combat.running;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.Units;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;

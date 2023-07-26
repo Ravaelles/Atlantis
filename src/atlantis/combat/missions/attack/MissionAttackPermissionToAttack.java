@@ -1,10 +1,10 @@
 package atlantis.combat.missions.attack;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.squad.Squad;
 import atlantis.decions.Decision;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class MissionAttackPermissionToAttack extends Manager {
 

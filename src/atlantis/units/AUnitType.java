@@ -1,7 +1,7 @@
 package atlantis.units;
 
-import atlantis.util.cache.Cache;
 import atlantis.util.MappingCounter;
+import atlantis.util.cache.Cache;
 import bwapi.*;
 
 import java.lang.reflect.Field;

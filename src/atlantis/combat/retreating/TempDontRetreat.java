@@ -1,7 +1,5 @@
 package atlantis.combat.retreating;
 
-import atlantis.units.AUnit;
-
 public class TempDontRetreat {
 
     /**

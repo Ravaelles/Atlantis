@@ -4,8 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.production.constructing.BuilderManager;
-import atlantis.terran.repair.RepairAssignments;
 import atlantis.terran.repair.DynamicRepairsNearby;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 
 public class WorkerManager extends Manager {

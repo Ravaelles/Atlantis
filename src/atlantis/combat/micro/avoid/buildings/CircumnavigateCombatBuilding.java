@@ -1,10 +1,10 @@
 package atlantis.combat.micro.avoid.buildings;
 
+import atlantis.architecture.Manager;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import bwapi.Color;
 
 public class CircumnavigateCombatBuilding extends Manager {

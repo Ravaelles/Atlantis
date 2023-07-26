@@ -29,25 +29,15 @@ public class ProtossHighTemplar extends Manager {
     @Override
     public Manager handle() {
         if (dontDisturb()) return usedManager(this);
-
         if (tryMeldingIntoArchon()) return usedManager(this);
 
         if (AGame.everyNthGameFrame(3)) {
-            if (handlePsionic()) {
-//                System.err.println(
-//                        "On " + A.now() + " " +
-//                        unit.idWithHash() + " casts PSIONIC at " + unit.lastTechPosition()
-//                        + " " + A.dist(unit.lastTechPosition())
-//                );
-                return usedManager(this);
-            }
+            if (handlePsionic()) return usedManager(this);
         }
 
-//        if (AvoidEnemies.avoidEnemiesIfNeeded()) {
-//            return true;
-//        }
-
         if (followArmy()) return usedManager(this);
+
+        return null;
     }
 
     // =========================================================

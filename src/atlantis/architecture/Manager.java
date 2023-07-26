@@ -1,7 +1,6 @@
 package atlantis.architecture;
 
 import atlantis.combat.squad.Squad;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 
 /**
@@ -10,14 +9,9 @@ import atlantis.units.AUnit;
  * If a manager return non-null value in handle(), it will prevent execution of
  * other managers in this frame.
  */
-public abstract class Manager extends ManagerHelpers {
-
+public abstract class Manager extends BaseAbstractManager {
     protected AUnit unit;
     protected Squad squad;
-
-//    protected Class<? extends Manager>[] managers = new Class[] {};
-
-    private Manager[] managerInstances;
 
     // =========================================================
 
@@ -78,30 +72,6 @@ public abstract class Manager extends ManagerHelpers {
         return null;
     }
 
-    private Manager[] initializeManagerInstances() {
-        Class<? extends Manager>[] managers = managers();
-
-        managerInstances = new Manager[managers.length];
-
-        int index = 0;
-        for (Class<? extends Manager> classObject : managers){
-            Manager manager = instantiateManager(classObject);
-
-            managerInstances[index++] = manager;
-        }
-
-        return null;
-    }
-
-    private Manager instantiateManager(Class<? extends Manager> classObject) {
-        try {
-            return classObject.getDeclaredConstructor().newInstance(unit);
-        } catch (Exception e) {
-            A.printStackTrace("Could not instantiate " + classObject + " / " + e.getMessage());
-            return null;
-        }
-    }
-
     // =========================================================
 
     /**
@@ -141,22 +111,5 @@ public abstract class Manager extends ManagerHelpers {
      */
     public Manager continueUsingManager() {
         return unit.manager();
-    }
-
-    // =========================================================
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null) {
-            return false;
-        }
-
-        System.out.println(o.getClass() + " /// " + this.getClass());
-        return o.getClass() == this.getClass();
-    }
-
-    @Override
-    public int hashCode() {
-        return (unit.id() + "," + getClass()).hashCode();
     }
 }

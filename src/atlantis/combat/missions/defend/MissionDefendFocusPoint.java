@@ -2,8 +2,8 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
-import atlantis.combat.missions.Missions;
 import atlantis.combat.advance.special.EnemyWhoBreachedBase;
+import atlantis.combat.missions.Missions;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -16,8 +16,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.cache.Cache;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
 

@@ -1,14 +1,10 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.information.decisions.Decisions;
-import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.ADynamicTech;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
-import bwapi.TechType;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Singularity_Charge;

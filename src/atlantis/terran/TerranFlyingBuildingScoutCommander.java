@@ -1,18 +1,10 @@
 package atlantis.terran;
 
 import atlantis.architecture.Commander;
-import atlantis.architecture.Manager;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.debug.painter.APainter;
 import atlantis.game.AGame;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import bwapi.Color;
 
 import java.util.ArrayList;
 import java.util.Iterator;

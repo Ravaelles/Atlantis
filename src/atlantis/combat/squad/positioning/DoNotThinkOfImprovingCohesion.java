@@ -1,10 +1,10 @@
 package atlantis.combat.squad.positioning;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.units.AUnit;
-import atlantis.architecture.Manager;
 
 public class DoNotThinkOfImprovingCohesion extends Manager {
 

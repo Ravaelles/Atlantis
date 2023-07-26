@@ -8,7 +8,6 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 /**

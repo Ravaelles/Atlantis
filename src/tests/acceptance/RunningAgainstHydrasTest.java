@@ -11,7 +11,7 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
     public void runsFromHydras() {
         createWorld(10, () -> {
             FakeUnit unit = ourFirst;
-            boolean result = CombatUnitManager.update(unit);
+            (new CombatUnitManager(unit)).handle();
 
             FakeUnit enemy = nearestEnemy(unit);
 

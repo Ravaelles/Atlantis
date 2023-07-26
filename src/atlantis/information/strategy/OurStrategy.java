@@ -3,7 +3,6 @@ package atlantis.information.strategy;
 import atlantis.production.orders.production.ProductionQueue;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 public class OurStrategy {
 

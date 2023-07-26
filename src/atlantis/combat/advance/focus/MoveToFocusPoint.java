@@ -1,11 +1,8 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.combat.missions.MissionManager;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Selection;
 
 public abstract class MoveToFocusPoint extends MissionManager {
     protected static final double MARGIN = 0.15;

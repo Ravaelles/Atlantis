@@ -3,7 +3,6 @@ package atlantis.combat.eval;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.units.select.Select;
 import atlantis.util.WeaponUtil;
 
 import java.util.Iterator;

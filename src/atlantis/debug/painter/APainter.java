@@ -2,16 +2,13 @@ package atlantis.debug.painter;
 
 import atlantis.Atlantis;
 import atlantis.config.env.Env;
-import atlantis.map.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.util.ColorUtil;
 import bwapi.Color;
 import bwapi.Game;
 import bwapi.Text;
-import bwapi.WalkPosition;
 
 /**
  * Here you can include code that will draw extra informations over units etc.

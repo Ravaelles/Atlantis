@@ -1,5 +1,6 @@
 package atlantis.combat.managers;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.combat.micro.managers.DanceAfterShoot;
@@ -8,7 +9,6 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.running.ShouldStopRunning;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.DontDisturbInterrupt;
-import atlantis.architecture.Manager;
 
 public class CombatManagerTopPriority extends Manager {
 

@@ -1,9 +1,9 @@
 package atlantis.combat.micro.avoid.special;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.architecture.Manager;
 import atlantis.units.select.Selection;
 
 public class SuicideAgainstScarabs extends Manager {
