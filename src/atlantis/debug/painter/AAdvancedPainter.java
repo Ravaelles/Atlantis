@@ -23,7 +23,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.map.scout.ScoutManager;
-import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;

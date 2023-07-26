@@ -2,7 +2,7 @@ package atlantis.production.requests;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.game.AGame;
-import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.DynamicTrainWorkersCommander;
 import atlantis.production.orders.build.CurrentBuildOrder;

@@ -1,12 +1,6 @@
 package atlantis.architecture;
 
 public class Commander extends BaseAbstractCommander {
-    public Commander() {
-        initializeCommanderInstances();
-    }
-
-    // =========================================================
-
     /**
      * All sub-commanders. Order matters.
      */
@@ -24,8 +18,9 @@ public class Commander extends BaseAbstractCommander {
     }
 
     public void handleSubcommanders() {
-        for (Commander commander : commanderInstances){
+        for (Commander commander : commanderObjects){
             if (commander.applies()) {
+//                System.out.println("Handling COMMANDER: " + commander.getClass());
                 commander.handle();
             }
         }

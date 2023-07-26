@@ -1,6 +1,6 @@
 package atlantis.production.orders.build;
 
-import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;

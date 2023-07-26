@@ -3,7 +3,7 @@ package atlantis.production.orders.build;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
-import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionOrderPriority;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.AUnit;

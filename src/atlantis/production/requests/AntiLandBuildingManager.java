@@ -7,7 +7,7 @@ import atlantis.map.Bases;
 import atlantis.map.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.Requirements;
+import atlantis.production.orders.production.Requirements;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;

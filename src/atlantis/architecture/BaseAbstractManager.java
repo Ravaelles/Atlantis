@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public abstract class BaseAbstractManager {
-    protected Manager[] _managerInstances;
+    protected Manager[] managerObjects;
 
     protected final AUnit unit;
     protected final Squad squad;
@@ -23,18 +23,16 @@ public abstract class BaseAbstractManager {
 
     protected abstract Class<? extends Manager>[] managers();
 
-    protected Manager[] initializeManagerInstances() {
+    protected void initializeManagerInstances() {
         Class<? extends Manager>[] managers = managers();
-        _managerInstances = new Manager[managers.length];
+        managerObjects = new Manager[managers.length];
 
         int index = 0;
         for (Class<? extends Manager> classObject : managers) {
             Manager manager = instantiateManager(classObject);
 
-            _managerInstances[index++] = manager;
+            managerObjects[index++] = manager;
         }
-
-        return null;
     }
 
     public Manager instantiateManager(Class<? extends Manager> classObject) {

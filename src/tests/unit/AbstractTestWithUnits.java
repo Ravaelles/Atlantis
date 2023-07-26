@@ -268,11 +268,11 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         return new FakeUnit(type, x, y);
     }
 
-    protected FakeUnit[] fakeOurs(FakeUnit... fakeUnits) {
-        return fakeUnits;
+    public static FakeUnit[] fakeOurs(FakeUnit... fakeUnits) {
+        return (FakeUnit[]) fakeUnits;
     }
 
-    protected FakeUnit[] fakeEnemies(FakeUnit... fakeUnits) {
+    public static FakeUnit[] fakeEnemies(FakeUnit... fakeUnits) {
         for (FakeUnit unit : fakeUnits) {
             unit.setEnemy();
         }

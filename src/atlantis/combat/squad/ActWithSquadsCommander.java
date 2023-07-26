@@ -4,12 +4,18 @@ import atlantis.architecture.Commander;
 import atlantis.combat.squad.mission.SquadMissionChanger;
 import atlantis.game.A;
 
-public class SquadHandlerCommander extends Commander {
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class ActWithSquadsCommander extends Commander {
 
     @Override
     public void handle() {
         // Act with every combat unit
-        for (Squad squad : AllSquads.all()) {
+        Iterator<Squad> squadsIterator = AllSquads.all().iterator();
+
+        while (squadsIterator.hasNext()) {
+            Squad squad = squadsIterator.next();
             handleSquad(squad);
         }
     }

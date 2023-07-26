@@ -1,8 +1,7 @@
-package atlantis.production;
+package atlantis.production.orders.production;
 
 import atlantis.combat.missions.Mission;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.production.ProductionOrderPriority;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;

@@ -1,7 +1,6 @@
 package atlantis.production.orders.production;
 
 import atlantis.information.strategy.AStrategy;
-import atlantis.production.ProductionOrder;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.AUnitType;
 import bwapi.TechType;

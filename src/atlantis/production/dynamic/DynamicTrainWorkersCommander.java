@@ -4,7 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.production.orders.production.ProductionQueue;

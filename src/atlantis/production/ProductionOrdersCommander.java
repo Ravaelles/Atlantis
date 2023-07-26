@@ -7,6 +7,7 @@ import atlantis.game.A;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.CurrentProductionQueue;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionQueueMode;
 import atlantis.production.requests.ProduceUnitNow;
 import atlantis.units.AUnitType;

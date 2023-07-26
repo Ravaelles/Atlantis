@@ -12,10 +12,10 @@ public class RepairsCommander extends Commander {
         }
 
         return new Class[] {
-            NumberOfRepairersCommander.class,
-            RepairerCommander.class,
+//            NumberOfRepairersCommander.class,
+//            RepairerCommander.class,
             ProtectorCommander.class,
-            EnsureThereAreMineralsForRepairsCommander.class,
+//            EnsureThereAreMineralsForRepairsCommander.class,
         };
     }
 }

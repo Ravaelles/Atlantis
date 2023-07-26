@@ -10,7 +10,7 @@ import atlantis.map.scout.ScoutCommander;
 import atlantis.production.BuildingsCommander;
 import atlantis.production.ProductionCommander;
 import atlantis.production.constructing.ConstructionsCommander;
-import atlantis.terran.repair.RepairsCommander;
+import atlantis.terran.repair.TerranRepairsCommander;
 import atlantis.units.SpecialUnitsCommander;
 import atlantis.units.UmsSpecialActionsManager;
 import atlantis.units.UnitStateCommander;
@@ -32,7 +32,7 @@ public class AtlantisGameCommander extends Commander {
             ScoutCommander.class,
             BuildingsCommander.class,
             ConstructionsCommander.class,
-            RepairsCommander.class,
+            TerranRepairsCommander.class,
             SpecialUnitsCommander.class,
             UmsSpecialActionsManager.class,
             UnitStateCommander.class,
