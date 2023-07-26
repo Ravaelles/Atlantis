@@ -73,6 +73,7 @@ public class UnitStateManager extends Manager {
 //            System.out.println(AGame.getTimeFrames() + " ### "
 //                    + unit._lastAttackOrder + " // " + unit._lastAttackFrame + " // " + unit._lastStartingAttack);
 //        }
-    }
 
+        return null;
+    }
 }

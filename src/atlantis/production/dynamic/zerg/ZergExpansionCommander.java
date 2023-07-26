@@ -1,10 +1,11 @@
 package atlantis.production.dynamic.zerg;
 
+import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.select.Count;
 
-public class ZergExpansionManager {
+public class ZergExpansionCommander extends Commander {
 
 //    private static Cache<Integer> cacheInt = new Cache<>();
     private static int _lastExpandedAt = -1;

@@ -16,10 +16,7 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 
 public class AvoidEnemiesTest extends AbstractTestWithUnits {
-
     public MockedStatic<AGame> aGame;
-    public MockedStatic<EnemyInfo> enemyInformation;
-    public MockedStatic<EnemyUnits> enemyUnitsMock;
 
     @Test
     public void zergUnits() {
@@ -47,7 +44,7 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
                 fake(AUnitType.Zerg_Zergling, 15),
                 fake(AUnitType.Zerg_Zergling, 16),
                 fake(AUnitType.Zerg_Zergling, 17),
-                fake(AUnitType.Zerg_Hydralisk, 18),
+                fake(AUnitType.Zerg_Hydralisk, 19),
                 fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 

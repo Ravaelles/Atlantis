@@ -18,6 +18,8 @@ import static atlantis.util.Helpers.*;
 public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander {
     @Override
     public void handle() {
+        super.handle();
+
         if (AGame.notNthGameFrame(7) || noSupply(25)) {
             return;
         }

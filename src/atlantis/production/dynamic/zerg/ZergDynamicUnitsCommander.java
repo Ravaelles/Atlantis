@@ -1,18 +1,18 @@
 
-package atlantis.production.dynamic.protoss;
+package atlantis.production.dynamic.zerg;
 
+import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
-import atlantis.production.AbstractDynamicUnits;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
 
-public class ZergDynamicUnitsManager extends AbstractDynamicUnits {
-
+public class ZergDynamicUnitsCommander extends Commander {
+    @Override
     public void handle() {
         mutalisks();
         hydras();

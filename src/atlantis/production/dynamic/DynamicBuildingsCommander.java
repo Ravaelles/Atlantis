@@ -1,7 +1,6 @@
 package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
@@ -17,65 +16,22 @@ import atlantis.units.select.Select;
 
 import static atlantis.util.Helpers.hasRequiredUnitFor;
 
-public abstract class DynamicBuildingsCommander extends Commander {
+public class DynamicBuildingsCommander extends Commander {
     @Override
-    public void handle() {
-        // Check if we should automatically build new base, because we have shitload of minerals.
-        if (AExpansionManager.shouldBuildNewBase()) {
-            AExpansionManager.requestNewBase();
-//            System.err.println("New base requested at " + A.seconds() + "s, minerals = " + AGame.minerals());
-        }
-        
-        // If number of bases is bigger than gas buildings, it usually makes sense to build new gas extractor
-        requestGasBuildingIfNeeded();
+    protected Class<? extends Commander>[] subcommanders() {
+        return new Class[] {
+            ExpansionCommander.class,
+            NewGasBuildingCommander.class,
+        };
     }
-    
+
     // =========================================================
 
     protected static AStrategy enemyStrategy() {
         return EnemyStrategy.get();
     }
 
-    /**
-     * Build Refineries/Assimilators/Extractors when it makes sense.
-     */
-    private static void requestGasBuildingIfNeeded() {
-        if (AGame.supplyUsed() <= 18) {
-            return;
-        }
-
-        if (AGame.everyNthGameFrame(37)) {
-            return;
-        }
-        
-        // =========================================================
-        
-        int numberOfBases = Select.ourBases().count();
-        int numberOfGasBuildings = Select.ourWithUnfinished().ofType(AtlantisConfig.GAS_BUILDING).count();
-        if (
-            numberOfBases >= 2
-            && numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350)
-            && ConstructionRequests.countNotStartedOfType(AtlantisConfig.GAS_BUILDING) == 0
-            && hasABaseWithFreeGeyser()
-        ) {
-//            System.err.println("Request GAS BUILDING at supply: " + A.supplyUsed());
-            AddToQueue.withTopPriority(AtlantisConfig.GAS_BUILDING);
-        }
-    }
-
     // =========================================================
-
-//    protected static boolean requestMoreIfAllBusy(AUnitType building, int freeMinerals, int freeGas) {
-//        if (AGame.canAffordWithReserved(freeMinerals, freeGas)) {
-//            Selection buildings = Select.ourOfType(building);
-//
-//            if (buildings.areAllBusy()) {
-//                AddToQueue.withStandardPriority(building);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
     protected static void buildToHaveOne(int minSupply, AUnitType type) {
         if (AGame.supplyUsed() >= minSupply) {
@@ -146,16 +102,6 @@ public abstract class DynamicBuildingsCommander extends Commander {
     }
 
     // =========================================================
-
-    public static boolean hasABaseWithFreeGeyser() {
-        for (AUnit base : Select.ourBases().list()) {
-            if (Select.geysers().inRadius(8, base).isNotEmpty()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     protected static boolean isItSafeToAddTechBuildings() {
         if (EnemyStrategy.get().isRushOrCheese()) {

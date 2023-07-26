@@ -1,8 +1,10 @@
 package atlantis.architecture;
 
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.units.AUnit;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -28,6 +30,10 @@ public abstract class BaseAbstractCommander {
         int index = 0;
         for (Class<? extends Commander> classObject : subcommanders){
             Commander commander = instantiateCommander(classObject);
+            if (commander == null) {
+                System.err.println("COMMANDER INIT null for " + classObject);
+                AGame.exit();
+            }
 
             commanderInstances[index++] = commander;
         }
@@ -35,20 +41,33 @@ public abstract class BaseAbstractCommander {
         return null;
     }
 
-    protected Commander instantiateCommander(Class<? extends Commander> classObject) {
+    public Commander instantiateCommander(Class<? extends Commander> classObject) {
         try {
             return classObject.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            A.printStackTrace("Could not instantiate " + classObject + " / " + e.getMessage());
-            return null;
         }
+        catch (InstantiationException e) {
+            A.printStackTrace("There has to be a constructor in class: " + classObject);
+        }
+        catch (InvocationTargetException e) {
+            System.err.println("There was an error in constructor of class: " + classObject);
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            A.printStackTrace("Could not instantiate " + classObject + " / " + e.getClass() + " / " + e.getMessage());
+        }
+
+        AGame.exit();
+        return null;
     }
 
     // =========================================================
 
-    protected static Class<? extends Commander>[] mergeCommanders(Class[] raceSpecific, Class[] generic) {
-        return (Class<? extends Commander>[]) Stream.concat(
-            Arrays.stream(raceSpecific), Arrays.stream(generic)
-        ).toArray();
+    protected static Class[] mergeCommanders(
+        Class[] raceSpecific, Class[] generic
+    ) {
+        return Stream.concat(
+            Arrays.stream(raceSpecific),
+            Arrays.stream(generic)
+        ).toArray(Class[]::new) ;
     }
 }

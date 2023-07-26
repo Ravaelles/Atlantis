@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.protoss;
+package atlantis.production.dynamic.zerg;
 
 import atlantis.game.A;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
@@ -8,12 +8,11 @@ import atlantis.units.select.Have;
 import static atlantis.units.AUnitType.Zerg_Creep_Colony;
 import static atlantis.units.AUnitType.Zerg_Hydralisk_Den;
 
-public class ZergDynamicBuildingsManager extends DynamicBuildingsCommander {
-
+public class ZergDynamicBuildingsCommander extends DynamicBuildingsCommander {
+    @Override
     public void handle() {
-//        buildingsIfNeeded();
+        super.handle();
 
-//        sunkens();
         hydraDen();
     }
 
@@ -36,9 +35,7 @@ public class ZergDynamicBuildingsManager extends DynamicBuildingsCommander {
             return;
         }
 
-//        if (Count.withPlanned(Zerg_Hydralisk_Den) == 0) {
         buildToHaveOne(Zerg_Hydralisk_Den);
-//        }
     }
 
 }

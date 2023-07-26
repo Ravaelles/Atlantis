@@ -7,6 +7,7 @@ import atlantis.game.OnUnitMorph;
 import atlantis.game.OnUnitRenegade;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
+import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import org.junit.Test;
@@ -16,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class EnemyUnitsTest extends AbstractTestFakingGame {
-
     private AtlantisGameCommander gameCommander;
     private FakeUnit drone1;
     private FakeUnit drone2;

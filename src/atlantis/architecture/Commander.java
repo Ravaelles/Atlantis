@@ -1,8 +1,8 @@
 package atlantis.architecture;
 
-public abstract class Commander extends BaseAbstractCommander {
+public class Commander extends BaseAbstractCommander {
     public Commander() {
-        this.commanderInstances = initializeCommanderInstances();
+        initializeCommanderInstances();
     }
 
     // =========================================================

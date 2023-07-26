@@ -42,11 +42,11 @@ public class ProtossHighTemplar extends Manager {
 
     // =========================================================
 
-    private  boolean dontDisturb() {
+    private boolean dontDisturb() {
 
         // Wants to Warp Archon
         if (
-                unit.lastTechUsed() != null
+            unit.lastTechUsed() != null
                 && unit.lastActionLessThanAgo(50, Actions.USING_TECH)
                 && TechType.Archon_Warp.name().equals(unit.lastTechUsed().name())
                 && unit.lastTechUnit().isAlive()
@@ -71,7 +71,7 @@ public class ProtossHighTemplar extends Manager {
         return false;
     }
 
-    private  boolean handlePsionic() {
+    private boolean handlePsionic() {
         if (unit.energy() < 75) {
             unit.setTooltipTactical("NoEnergy");
             return false;
@@ -93,7 +93,7 @@ public class ProtossHighTemplar extends Manager {
         return actWhenAlmostDead();
     }
 
-    private  boolean usePsionic(AUnit enemy) {
+    private boolean usePsionic(AUnit enemy) {
         if (SpellCoordinator.noOtherSpellAssignedHere(enemy.position(), TechType.Psionic_Storm)) {
             if (!enemy.isUnderStorm()) {
                 unit.useTech(TechType.Psionic_Storm, enemy);
@@ -109,7 +109,7 @@ public class ProtossHighTemplar extends Manager {
         return false;
     }
 
-    private  AUnit veryCondensedEnemy(boolean forceUsage) {
+    private AUnit veryCondensedEnemy(boolean forceUsage) {
         Units condensedEnemies = new Units();
         for (AUnit enemy : Select.enemyRealUnits().inRadius(forceUsage ? 8.8 : 8.8, unit).list()) {
             if (!enemy.isUnderStorm()) {
@@ -131,10 +131,10 @@ public class ProtossHighTemplar extends Manager {
         return null;
     }
 
-    private  AUnit enemyCrucialUnit() {
+    private AUnit enemyCrucialUnit() {
         List<? extends AUnit> enemyCrucialUnits = Select.enemy().ofType(
-                AUnitType.Protoss_Reaver,
-                AUnitType.Terran_Siege_Tank_Siege_Mode
+            AUnitType.Protoss_Reaver,
+            AUnitType.Terran_Siege_Tank_Siege_Mode
         ).inRadius(12, unit).sortDataByDistanceTo(unit, false);
 
         for (AUnit enemy : enemyCrucialUnits) {
@@ -146,19 +146,19 @@ public class ProtossHighTemplar extends Manager {
         return null;
     }
 
-    private  AUnit enemyImportantUnit() {
+    private AUnit enemyImportantUnit() {
         List<? extends AUnit> enemyCrucialUnits = Select.enemy().ofType(
-                AUnitType.Protoss_Carrier,
-                AUnitType.Protoss_Reaver,
-                AUnitType.Terran_Science_Vessel,
-                AUnitType.Terran_Siege_Tank_Tank_Mode,
-                AUnitType.Terran_Siege_Tank_Siege_Mode,
-                AUnitType.Zerg_Defiler
+            AUnitType.Protoss_Carrier,
+            AUnitType.Protoss_Reaver,
+            AUnitType.Terran_Science_Vessel,
+            AUnitType.Terran_Siege_Tank_Tank_Mode,
+            AUnitType.Terran_Siege_Tank_Siege_Mode,
+            AUnitType.Zerg_Defiler
         ).inRadius(8.9, unit).sortDataByDistanceTo(unit, false);
 
         for (AUnit enemy : enemyCrucialUnits) {
             if (
-                    Select.ourRealUnits().inRadius(2, enemy).atMost(2)
+                Select.ourRealUnits().inRadius(2, enemy).atMost(2)
                     && Select.enemyRealUnits().inRadius(3, enemy).atLeast(2)
             ) {
                 return enemy;
@@ -168,7 +168,7 @@ public class ProtossHighTemplar extends Manager {
         return null;
     }
 
-    private  boolean actWhenAlmostDead() {
+    private boolean actWhenAlmostDead() {
         if (unit.hp() <= 31 && unit.energy() >= 75) {
             AUnit condensedEnemy;
             if ((condensedEnemy = veryCondensedEnemy(true)) != null) {
@@ -179,7 +179,7 @@ public class ProtossHighTemplar extends Manager {
         return false;
     }
 
-    private  boolean followArmy() {
+    private boolean followArmy() {
         if (unit.hp() <= 16) {
             return false;
         }
@@ -188,16 +188,16 @@ public class ProtossHighTemplar extends Manager {
         if (center != null) {
             if (Select.our().inRadius(0.3, unit).atLeast(3)) {
                 return unit.moveAwayFrom(
-                        Select.our().exclude(unit).nearestTo(unit),
-                        1,
-                        "Stacked",
-                        Actions.MOVE_FORMATION
+                    Select.our().exclude(unit).nearestTo(unit),
+                    1,
+                    "Stacked",
+                    Actions.MOVE_FORMATION
                 );
             }
 
             if (
                 center.distTo(unit) > 1
-                && unit.move(center, Actions.MOVE_FOLLOW, "Follow army", true)
+                    && unit.move(center, Actions.MOVE_FOLLOW, "Follow army", true)
             ) {
                 return true;
             }
@@ -206,7 +206,7 @@ public class ProtossHighTemplar extends Manager {
         return false;
     }
 
-    private  boolean tryMeldingIntoArchon() {
+    private boolean tryMeldingIntoArchon() {
         if (unit.energy() > 65 && unit.woundPercent() < 60) {
             return false;
         }
@@ -221,10 +221,10 @@ public class ProtossHighTemplar extends Manager {
         AUnit closestOtherHT = lowEnergyHTs.unitWithLowestValue();
         if (closestOtherHT != null) {
 //            if (closestOtherHT.distTo(unit) <= 0.9) {
-                unit.useTech(TechType.Archon_Warp, closestOtherHT);
+            unit.useTech(TechType.Archon_Warp, closestOtherHT);
 //                System.out.println("Warp Archon");
-                unit.setTooltipTactical("WarpArchon");
-                closestOtherHT.setTooltipTactical("OhArchon");
+            unit.setTooltipTactical("WarpArchon");
+            closestOtherHT.setTooltipTactical("OhArchon");
 //                GameSpeed.changeSpeedTo(10);
 //                CameraCommander.centerCameraOn();
 //            }

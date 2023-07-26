@@ -1,5 +1,6 @@
 package atlantis.production.dynamic;
 
+import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -10,7 +11,7 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.map.Bases;
 import atlantis.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.dynamic.zerg.ZergExpansionManager;
+import atlantis.production.dynamic.zerg.ZergExpansionCommander;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.units.select.Count;
@@ -20,14 +21,18 @@ import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
 
-public class AExpansionManager {
+public class ExpansionCommander extends Commander {
+    @Override
+    public void handle() {
+        if (shouldBuildNewBase()) requestNewBase();
+    }
 
-    public static boolean shouldBuildNewBase() {
+    private static boolean shouldBuildNewBase() {
 //        if (true) return false;
 //        if (A.supplyTotal() <= 100) return false;
 
         // Zerg
-        if (We.zerg() && ZergExpansionManager.handleNoZergLarvas()) {
+        if (We.zerg() && ZergExpansionCommander.handleNoZergLarvas()) {
             return true;
         }
 
@@ -137,7 +142,7 @@ public class AExpansionManager {
         return haveEnoughMinerals && (noBaseToConstruct || allowExtraExpansion);
     }
 
-    public static void requestNewBase() {
+    private static void requestNewBase() {
         // ZERG case
         if (AGame.isPlayingAsZerg()) {
             AddToQueue.withStandardPriority(AtlantisConfig.BASE, Select.naturalOrMain());

@@ -22,9 +22,11 @@ import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.*;
 
-public class TerranDynamicBuildingsManager extends DynamicBuildingsCommander {
-
+public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
+    @Override
     public void handle() {
+        super.handle();
+
         if (A.everyNthGameFrame(71)) {
             (new TerranMissileTurretsForMain()).buildIfNeeded();
         }

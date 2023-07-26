@@ -6,27 +6,11 @@ import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import bwapi.Color;
 
+/**
+ * Auxiliary class, helpful when there's need to do something every frame and not spam other classes.
+ */
 public class OnEveryFrame {
-
-//    private static CappedList<Integer> frames = new CappedList<>(4);
-
-    public static void update() {
-//        Selection buildings = EnemyUnits.foggedUnits().buildings();
-
-//        if (buildings.count() > 0) {
-//            buildings.print("Enemy fogged buildings");
-//        }
-
-//        paintMissionAttackFocusPoint();
-
-//        AUnit firstEnemyBuilding = Select.enemyRealUnitsWithBuildings().buildings().first();
-//        AUnit firstEnemyBuilding = buildings.first();
-//        if (firstEnemyBuilding != null) {
-//            CameraCommander.centerCameraOn(firstEnemyBuilding);
-//        }
-
-//        AAdvancedPainter.paintFoggedUnits();
-
+    public static void handle() {
 //        paintMissionAttackFocusPoint();
     }
 

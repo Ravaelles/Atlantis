@@ -129,7 +129,7 @@ public class Atlantis implements BWEventListener {
             CurrentBuildOrder.get().print();
         }
 
-        OnEveryFrame.update();
+        OnEveryFrame.handle();
     }
 
     /**

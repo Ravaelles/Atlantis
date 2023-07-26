@@ -50,7 +50,6 @@ public abstract class BaseAbstractManager {
             return false;
         }
 
-        System.out.println(o.getClass() + " /// " + this.getClass());
         return o.getClass() == this.getClass();
     }
 
