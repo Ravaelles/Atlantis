@@ -5,8 +5,7 @@ import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
-public class ABuildingManagerTest extends AbstractTestFakingGame {
-
+public class BuildingsCommanderTest extends AbstractTestFakingGame {
     @Test
     public void iteratesOverBuildings() {
         createWorld(1, () -> {
@@ -32,5 +31,4 @@ public class ABuildingManagerTest extends AbstractTestFakingGame {
                 fake(AUnitType.Zerg_Sunken_Colony)
         );
     }
-
 }

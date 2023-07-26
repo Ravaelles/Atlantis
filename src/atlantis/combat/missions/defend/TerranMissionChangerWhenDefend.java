@@ -1,6 +1,6 @@
 package atlantis.combat.missions.defend;
 
-import atlantis.combat.micro.terran.tank.TerranTank;
+import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
@@ -30,7 +30,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
             ourRelativeStrength <= 600
             && EnemyUnits.discovered().combatBuildingsAntiLand().atLeast(2)
             && Count.tanks() <= 1
-            && !TerranTank.siegeResearched()
+            && !TankDecisions.siegeResearched()
         ) {
             return false;
         }
@@ -87,7 +87,7 @@ public class TerranMissionChangerWhenDefend extends MissionChanger {
             return false;
         }
 
-        if (Count.tanks() >= 2 && !TerranTank.siegeResearched()) {
+        if (Count.tanks() >= 2 && !TankDecisions.siegeResearched()) {
             return false;
         }
 

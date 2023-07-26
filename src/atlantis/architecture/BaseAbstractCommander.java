@@ -41,7 +41,7 @@ public abstract class BaseAbstractCommander {
         return null;
     }
 
-    public Commander instantiateCommander(Class<? extends Commander> classObject) {
+    protected Commander instantiateCommander(Class<? extends Commander> classObject) {
         try {
             return classObject.getDeclaredConstructor().newInstance();
         }
@@ -62,12 +62,7 @@ public abstract class BaseAbstractCommander {
 
     // =========================================================
 
-    protected static Class[] mergeCommanders(
-        Class[] raceSpecific, Class[] generic
-    ) {
-        return Stream.concat(
-            Arrays.stream(raceSpecific),
-            Arrays.stream(generic)
-        ).toArray(Class[]::new) ;
+    protected static Class[] mergeCommanders(Class[] raceSpecific, Class[] generic) {
+        return Stream.concat(Arrays.stream(raceSpecific), Arrays.stream(generic)).toArray(Class[]::new) ;
     }
 }

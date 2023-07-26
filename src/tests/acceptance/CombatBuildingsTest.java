@@ -17,7 +17,6 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
      * if the unit is 0.1 tiles outside of range of a Sunken Colony, but the
      * eval gets drastically worse once within range.
      */
-
     @Test
     public void neverRunsIntoCombatBuildings() {
         createWorld(100, () -> {

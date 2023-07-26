@@ -1,6 +1,5 @@
 package atlantis.architecture;
 
-import atlantis.combat.squad.Squad;
 import atlantis.units.AUnit;
 
 /**
@@ -10,16 +9,8 @@ import atlantis.units.AUnit;
  * other managers in this frame.
  */
 public abstract class Manager extends BaseAbstractManager {
-    protected AUnit unit;
-    protected Squad squad;
-
-    // =========================================================
-
     public Manager(AUnit unit) {
-        this.unit = unit;
-        this.squad = unit.squad();
-
-        this.managerInstances = initializeManagerInstances();
+        super(unit);
     }
 
     // =========================================================
@@ -62,7 +53,7 @@ public abstract class Manager extends BaseAbstractManager {
     // =========================================================
 
     public Manager handleSubmanagers() {
-        for (Manager manager : managerInstances){
+        for (Manager manager : _managerInstances){
             if (manager.handle() != null) {
                 unit.setManagerUsed(manager);
                 return manager;

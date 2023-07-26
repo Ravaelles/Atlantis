@@ -12,20 +12,16 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
-public class TerranTankWhenNotSieged extends TerranTank {
-
+public class TerranTankWhenNotSieged extends Manager {
     public static final double COMBAT_BUILDING_DIST_SIEGE = 10.8;
-
-//    private TerranTankWhenSieged terranTankWhenSieged;
 
     public TerranTankWhenNotSieged(AUnit unit) {
         super(unit);
-//        this.terranTankWhenSieged = new TerranTankWhenSieged(unit);
     }
 
     @Override
     public boolean applies() {
-        if (!unit.isTankUnsieged() || !siegeResearched()) {
+        if (!unit.isTankUnsieged() || !TankDecisions.siegeResearched()) {
             return false;
         }
 
@@ -42,16 +38,6 @@ public class TerranTankWhenNotSieged extends TerranTank {
 
     @Override
     public Manager handle() {
-//        if (shouldSkip()) {
-//            return null;
-//        }
-
-        // =========================================================
-
-//        if (handleMissionDefend() != null) {
-//            return usingManager(this);
-//        }
-
         if ((new SiegeHereDuringMissionDefend(unit)).handle() != null) {
             return usedManager(this);
         }
@@ -124,7 +110,7 @@ public class TerranTankWhenNotSieged extends TerranTank {
         if (
             focusPoint != null
                 && unit.distTo(focusPoint) <= (Enemy.terran() ? 10 : (6 + unit.id() % 3))
-                && canSiegeHere(true)
+                && TankDecisions.canSiegeHere(unit, true)
         ) {
             return wantsToSiege("ContainSiege");
         }
@@ -198,7 +184,10 @@ public class TerranTankWhenNotSieged extends TerranTank {
 
         if (combatBuilding != null) {
             if (
-                (unit.distToLessThan(combatBuilding, COMBAT_BUILDING_DIST_SIEGE) && canSiegeHere(false))
+                (
+                    unit.distToLessThan(combatBuilding, COMBAT_BUILDING_DIST_SIEGE)
+                        && TankDecisions.canSiegeHere(unit, false)
+                )
                     || unit.distToLessThan(combatBuilding, 8.6)
             ) {
                 return forceSiege("SiegeBuilding" + A.dist(unit, combatBuilding));

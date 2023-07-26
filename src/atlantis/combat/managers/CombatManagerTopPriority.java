@@ -8,7 +8,7 @@ import atlantis.combat.micro.managers.StopAndShoot;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.running.ShouldStopRunning;
 import atlantis.units.AUnit;
-import atlantis.units.interrupt.DontDisturbInterrupt;
+import atlantis.units.interrupt.DontInterruptShootingUnits;
 
 public class CombatManagerTopPriority extends Manager {
 
@@ -23,7 +23,7 @@ public class CombatManagerTopPriority extends Manager {
             AvoidCriticalUnits.class,
             DanceAfterShoot.class,
             StopAndShoot.class,
-            DontDisturbInterrupt.class,
+            DontInterruptShootingUnits.class,
             TransportUnits.class,
 //            Unfreezer.class,
             ShouldStopRunning.class,
@@ -47,7 +47,7 @@ public class CombatManagerTopPriority extends Manager {
 //            return true;
 //        }
 //
-//        if (DontDisturbInterrupt.dontInterruptImportantActions()) {
+//        if (DontInterruptShootingUnits.dontInterruptImportantActions()) {
 //            return true;
 //        }
 //

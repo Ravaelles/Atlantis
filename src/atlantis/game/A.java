@@ -1289,4 +1289,8 @@ public class A {
     public static String currentPath() {
         return (new File("")).getAbsolutePath();
     }
+
+    public static void quit() {
+        AGame.exit();
+    }
 }

@@ -6,9 +6,6 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
 public class BuildingsCommander extends Commander {
-
-    public BuildingsCommander() {}
-
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[] {

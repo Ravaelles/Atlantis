@@ -115,8 +115,8 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
     }
 
     private void fifthFrame() {
-        EnemyUnits.discovered().print("Fogged");
-        Select.enemy().print("Visible enemies");
+//        EnemyUnits.discovered().print("Fogged");
+//        Select.enemy().print("Visible enemies");
 
 //        System.out.println(EnemyUnits.getFoggedUnit(drone3).type());
 //        System.out.println(EnemyUnits.getFoggedUnit(lurkerEgg).type());

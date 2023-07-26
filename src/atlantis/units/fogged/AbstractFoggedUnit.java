@@ -71,7 +71,6 @@ public class AbstractFoggedUnit extends AUnit {
             A.printStackTrace();
         }
 
-//        System.err.println("unit = " + unit + " // " + unit.position());
 //        if (unit.hasPosition()) {
 //        if (u() != null && unit.x() > 0 && unit.y() > 0) {
 //        if (!(unit instanceof AbstractFoggedUnit) || unit.position().isPositionVisible()) {

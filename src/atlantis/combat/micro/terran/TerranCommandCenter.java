@@ -19,7 +19,6 @@ import bwapi.Color;
 import java.util.List;
 
 public class TerranCommandCenter extends Manager {
-
     public TerranCommandCenter(AUnit unit) {
         super(unit);
     }

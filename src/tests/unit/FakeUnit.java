@@ -14,7 +14,6 @@ import bwapi.UnitType;
 import tests.fakes.FakePlayer;
 
 public class FakeUnit extends AUnit {
-
     public static int firstFreeId = 1;
     public int id;
     public AUnitType rawType;

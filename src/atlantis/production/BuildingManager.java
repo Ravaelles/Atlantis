@@ -9,14 +9,13 @@ import atlantis.terran.TerranShouldLiftBuildingManager;
 import atlantis.units.AUnit;
 
 public class BuildingManager extends Manager {
-
     public BuildingManager(AUnit unit) {
         super(unit);
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+        return new Class[] {
             TerranComsatStation.class,
             TerranCommandCenter.class,
             TerranLiftedBuildingManager.class,

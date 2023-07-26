@@ -1,12 +1,23 @@
 package atlantis.units.interrupt;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.Enemy;
 
-public class DontDisturbInterrupt {
+public class DontInterruptShootingUnits extends Manager {
+    public DontInterruptShootingUnits(AUnit unit) {
+        super(unit);
+    }
 
-    public static boolean dontInterruptImportantActions(AUnit unit) {
+    @Override
+    public Manager handle() {
+        if (act()) return usedManager(this);
+
+        return null;
+    }
+
+    private boolean act() {
 //        if (true) return false;
 
 //        System.out.println("unit.meleeEnemiesNear(1.9) = " + unit.meleeEnemiesNear(MELEE_ENEMIES_RANGE));

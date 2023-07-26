@@ -15,7 +15,6 @@ public class CanAbandonUnitAssignedToRepair {
         }
 
         if (target == null || target.isNeutral() || !target.isAlive()) {
-//            System.err.println("unit = " + unit);
 //            System.err.println("target = " + target);
 //            A.printStackTrace("WTF, why here?");
             return true;
