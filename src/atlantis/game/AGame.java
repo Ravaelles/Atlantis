@@ -3,6 +3,7 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
+import atlantis.config.MapAndRace;
 import atlantis.config.MapSpecificCommander;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.units.AUnitType;
@@ -210,6 +211,8 @@ public class AGame {
      * Returns true if user plays as Terran.
      */
     public static boolean isPlayingAsTerran() {
+        if (AtlantisConfig.MY_RACE == null) return "Terran".equals(MapAndRace.OUR_RACE);
+
         return AtlantisConfig.MY_RACE.equals(Race.Terran);
     }
 

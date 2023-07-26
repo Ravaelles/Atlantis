@@ -20,7 +20,6 @@ public class Commander extends BaseAbstractCommander {
     public void handleSubcommanders() {
         for (Commander commander : commanderObjects){
             if (commander.applies()) {
-//                System.out.println("Handling COMMANDER: " + commander.getClass());
                 commander.handle();
             }
         }

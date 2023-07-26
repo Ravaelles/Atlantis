@@ -2,7 +2,7 @@ package tests.acceptance;
 
 import atlantis.combat.CombatCommander;
 import atlantis.production.ProductionCommander;
-import atlantis.production.dynamic.DynamicUnitsProductionCommander;
+import atlantis.production.dynamic.DynamicProductionOfUnitsCommander;
 import org.junit.Test;
 import tests.unit.UnitTestHelper;
 
@@ -17,8 +17,8 @@ public class CommanderTest extends NonAbstractTestFakingGame {
             CombatCommander.class.getDeclaredConstructor();
             CombatCommander.class.getDeclaredConstructor().newInstance();
 
-            DynamicUnitsProductionCommander.class.getDeclaredConstructor();
-            DynamicUnitsProductionCommander.class.getDeclaredConstructor().newInstance();
+            DynamicProductionOfUnitsCommander.class.getDeclaredConstructor();
+            DynamicProductionOfUnitsCommander.class.getDeclaredConstructor().newInstance();
 
             status = true;
         } catch (Exception e) {
@@ -32,7 +32,7 @@ public class CommanderTest extends NonAbstractTestFakingGame {
     public void commanderHandlers() {
         createWorld(3, () -> {
                 (new ProductionCommander()).handle();
-                (new DynamicUnitsProductionCommander()).handle();
+                (new DynamicProductionOfUnitsCommander()).handle();
 
                 assertTrue(true);
             },

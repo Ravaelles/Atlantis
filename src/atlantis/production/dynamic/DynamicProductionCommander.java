@@ -12,7 +12,7 @@ public class DynamicProductionCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[] {
-            DynamicUnitsProductionCommander.class,
+            DynamicProductionOfUnitsCommander.class,
             DynamicBuildingsCommander.class,
         };
     }

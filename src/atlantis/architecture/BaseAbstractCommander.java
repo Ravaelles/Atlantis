@@ -17,15 +17,6 @@ public abstract class BaseAbstractCommander {
 
     protected abstract Class<? extends Commander>[] subcommanders();
 
-    protected Manager instantiateManager(Class<? extends Manager> classObject, AUnit unit) {
-        try {
-            return classObject.getDeclaredConstructor().newInstance(unit);
-        } catch (Exception e) {
-            A.printStackTrace("Could not instantiate " + classObject + " / " + e.getMessage());
-            return null;
-        }
-    }
-
     protected void initializeCommanderInstances() {
         Class<? extends Commander>[] subcommanders = subcommanders();
 

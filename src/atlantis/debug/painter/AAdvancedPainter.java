@@ -128,6 +128,7 @@ public class AAdvancedPainter extends APainter {
         paintCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
+        paintWorkers();
         paintCodeProfiler();
         paintSquads();
 
@@ -1557,6 +1558,14 @@ public class AAdvancedPainter extends APainter {
             extraText,
             color
         );
+    }
+
+    private static void paintWorkers() {
+        for (AUnit unit : Select.ourWorkers().list()){
+            if (!unit.isGatheringMinerals() && !unit.isGatheringGas()) {
+                paintTextCentered(unit, unit.manager().toString(), Grey);
+            }
+        }
     }
 
     public static void paintBases() {

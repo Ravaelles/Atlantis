@@ -16,4 +16,8 @@ public class AllSquads
     public static ArrayList<Squad> all() {
         return allSquads;
     }
+
+    public static ArrayList<Squad> allClone() {
+        return (ArrayList<Squad>) AllSquads.all().clone();
+    }
 }

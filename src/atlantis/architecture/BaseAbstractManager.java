@@ -74,4 +74,8 @@ public abstract class BaseAbstractManager {
     public int hashCode() {
         return (unit.id() + "," + getClass()).hashCode();
     }
+
+    public String toString() {
+        return getClass().getSimpleName().substring(0, 8);
+    }
 }

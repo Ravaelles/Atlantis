@@ -1293,4 +1293,8 @@ public class A {
     public static void quit() {
         AGame.exit();
     }
+
+    public static String ucfirst(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
 }

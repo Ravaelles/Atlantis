@@ -1,6 +1,7 @@
 package atlantis.util;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 
 import java.util.HashMap;
 
@@ -54,7 +55,7 @@ public class CodeProfiler {
     }
 
     public static String forCommander(Commander commander) {
-        return classNameToProfilerName(commander.getClass().getName());
+        return classNameToProfilerName(commander.getClass().getSimpleName());
     }
 
     public static HashMap<String, Double> getAspectsTimeConsumption() {
@@ -91,7 +92,7 @@ public class CodeProfiler {
             profilerName = profilerName.substring(1);
         }
 
-        return profilerName.toLowerCase();
+        return A.ucfirst(profilerName);
     }
 
 }

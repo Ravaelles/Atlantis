@@ -11,16 +11,15 @@ public class ActWithSquadsCommander extends Commander {
 
     @Override
     public void handle() {
-        // Act with every combat unit
-        Iterator<Squad> squadsIterator = AllSquads.all().iterator();
+        ArrayList<Squad> allSquads = AllSquads.allClone();
 
-        while (squadsIterator.hasNext()) {
-            Squad squad = squadsIterator.next();
+        // Act with every squad (which contains combat units)
+        for (Squad squad : allSquads) {
             handleSquad(squad);
         }
     }
 
-    private static void handleSquad(Squad squad) {
+    private void handleSquad(Squad squad) {
         if (A.everyNthGameFrame(11)) {
             SquadMissionChanger.changeSquadMissionIfNeeded(squad);
         }

@@ -2,9 +2,9 @@ package atlantis.production.requests;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.game.AGame;
+import atlantis.production.dynamic.AutoTrainWorkersCommander;
 import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.dynamic.DynamicTrainWorkersCommander;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.units.AUnit;
@@ -73,7 +73,7 @@ public class ProduceUnitNow {
         }
 
         if (isSafeToProduceWorkerAt(base)) {
-            return DynamicTrainWorkersCommander.produceWorker(base);
+            return AutoTrainWorkersCommander.produceWorker(base);
         }
 
         return false;

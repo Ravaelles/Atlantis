@@ -21,7 +21,7 @@ public class BuilderManager extends Manager {
 
     @Override
     public boolean applies() {
-        return isBuilder(unit);
+        return unit.isBuilder();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class BuilderManager extends Manager {
                 // Do nothing - construction is finished
             }
         } else {
-            System.err.println("construction null for " + unit);
+//            System.err.println("construction null for " + unit);
             return false;
         }
         return false;

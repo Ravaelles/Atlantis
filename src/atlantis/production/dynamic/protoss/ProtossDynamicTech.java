@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.game.A;
-import atlantis.production.dynamic.ADynamicTech;
+import atlantis.production.dynamic.DynamicTech;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
@@ -10,7 +10,7 @@ import bwapi.UpgradeType;
 import static bwapi.UpgradeType.Singularity_Charge;
 
 
-public class ProtossDynamicTech extends ADynamicTech {
+public class ProtossDynamicTech extends DynamicTech {
 
     public static boolean update() {
         if (A.notNthGameFrame(71)) {

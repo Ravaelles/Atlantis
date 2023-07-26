@@ -8,7 +8,7 @@ import atlantis.units.select.Select;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-public class ADynamicTech {
+public class DynamicTech {
     protected static boolean handleResearch(TechType tech) {
         if (ATech.isResearched(tech)) {
             return false;

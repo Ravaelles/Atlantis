@@ -2,6 +2,7 @@ package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.ProductionOrder;
@@ -14,9 +15,10 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import bwapi.Color;
 
 
-public class DynamicTrainWorkersCommander extends Commander {
+public class AutoTrainWorkersCommander extends Commander {
     /**
      * Selects the least worker-saturated base to build a worker.
      */
@@ -97,7 +99,7 @@ public class DynamicTrainWorkersCommander extends Commander {
      * Request to produce worker (Zerg Drone, Terran SCV or Protoss Probe) that should be handled according to
      * the race played.
      *
-     * See DynamicTrainWorkersCommander which is also used to produce workers.
+     * See AutoTrainWorkersCommander which is also used to produce workers.
      */
     public static boolean produceWorker(AUnit base) {
         if (!AGame.canAfford(50, 0) || AGame.supplyFree() == 0) {

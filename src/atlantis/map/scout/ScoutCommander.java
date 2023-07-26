@@ -46,8 +46,11 @@ public class ScoutCommander extends Commander {
         try {
             for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
                 AUnit unit = iterator.next();
-                Manager scoutManager = instantiateManager(ScoutManager.class, unit);
-                scoutManager.handle();
+
+                if (unit != null && unit.isAlive()) {
+                    Manager scoutManager = new ScoutManager(unit);
+                    scoutManager.handle();
+                }
             }
         }
         catch (ConcurrentModificationException ignore) { }
