@@ -11,7 +11,6 @@ import atlantis.units.AUnit;
 import atlantis.units.interrupt.DontInterruptShootingUnits;
 
 public class CombatManagerTopPriority extends Manager {
-
     public CombatManagerTopPriority(AUnit unit) {
         super(unit);
     }

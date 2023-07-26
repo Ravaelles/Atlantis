@@ -3,17 +3,19 @@ package atlantis.combat.micro.avoid;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildings;
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
+import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
+import bwapi.Color;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AvoidEnemies extends Manager {
-
     private static Cache<Units> cache = new Cache<>();
     private AvoidCombatBuildings avoidCombatBuildings;
     private WantsToAvoid wantsToAvoid;
@@ -37,10 +39,11 @@ public class AvoidEnemies extends Manager {
 
         if (enemiesDangerouslyClose.isEmpty()) {
 //            System.err.println("@ " + A.now() + " - No-one close");
-//            AUnit nearestEnemy = unit.enemiesNear().nearestTo(unit);
-//            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
-//                    "C=0(" + (nearestEnemy != null ? A.dist(nearestEnemy) : "-") + ")",
-//                    Color.Green                           );
+            AUnit nearestEnemy = unit.enemiesNear().nearestTo(unit);
+            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
+                "C=0(" + (nearestEnemy != null ? A.dist(unit, nearestEnemy) : "-") + ")",
+                Color.Green
+            );
             return null;
         }
 

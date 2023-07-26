@@ -24,8 +24,8 @@ public class TerranInfantry extends Manager {
             TerranMedic.class,
             TerranFirebat.class,
             Stimpack.class,
-//            LoadIntoBunkers.class,
-//            UnloadFromBunkers.class,
+            LoadIntoBunkers.class,
+            UnloadFromBunkers.class,
             GoTowardsMedic.class,
         };
     }
