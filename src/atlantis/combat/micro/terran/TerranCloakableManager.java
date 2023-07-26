@@ -15,14 +15,9 @@ public class TerranCloakableManager extends Manager {
         super(unit);
     }
 
-//    @Override
-//    protected Class<? extends Manager>[] managers() {
-//        return null;
-//    }
-
     @Override
     public boolean applies() {
-        return unit.is(Terran_Science_Vessel);
+        return unit.isWraith();
     }
 
     @Override

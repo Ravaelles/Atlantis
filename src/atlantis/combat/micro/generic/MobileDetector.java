@@ -24,6 +24,10 @@ public class MobileDetector extends Manager {
 
     // =========================================================
 
+    @Override
+    public boolean applies() {
+        return unit.type().isDetectorNonBuilding();
+    }
 
     @Override
     public Manager handle() {

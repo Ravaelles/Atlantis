@@ -54,7 +54,7 @@ public abstract class Manager extends BaseAbstractManager {
 
     public Manager handleSubmanagers() {
         for (Manager manager : managerObjects){
-            if (manager.handle() != null) {
+            if (manager.applies() && manager.handle() != null) {
                 unit.setManagerUsed(manager);
                 return manager;
             }

@@ -18,6 +18,11 @@ public class TerranScienceVessel extends MobileDetector {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return unit.isScienceVessel();
+    }
+
     public AUnitType type() {
         return AUnitType.Terran_Science_Vessel;
     }

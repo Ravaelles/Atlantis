@@ -9,9 +9,13 @@ import atlantis.units.AUnit;
 
 
 public class TerranInfantry extends Manager {
-
     public TerranInfantry(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isTerranInfantry();
     }
 
     @Override
@@ -20,15 +24,9 @@ public class TerranInfantry extends Manager {
             TerranMedic.class,
             TerranFirebat.class,
             Stimpack.class,
-            LoadIntoBunkers.class,
-            UnloadFromBunkers.class,
+//            LoadIntoBunkers.class,
+//            UnloadFromBunkers.class,
             GoTowardsMedic.class,
         };
     }
-
-    @Override
-    public boolean applies() {
-        return unit.isTerranInfantry();
-    }
-
 }

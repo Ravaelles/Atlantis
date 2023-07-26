@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
 import atlantis.combat.micro.avoid.AvoidEnemies;
@@ -77,7 +78,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      *
      */
-    private Manager manager;
+    private Manager manager = new DoNothing(this);
 
     /**
      * Cache var storing generic Object-type keys.
