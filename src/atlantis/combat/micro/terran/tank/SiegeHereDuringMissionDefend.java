@@ -5,9 +5,13 @@ import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 
 public class SiegeHereDuringMissionDefend extends Manager {
-
     public SiegeHereDuringMissionDefend(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isTank();
     }
 
     public Manager handle() {

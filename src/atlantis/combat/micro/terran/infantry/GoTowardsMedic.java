@@ -7,9 +7,13 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class GoTowardsMedic extends Manager {
-
     public GoTowardsMedic(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isTerranInfantryWithoutMedics();
     }
 
     @Override

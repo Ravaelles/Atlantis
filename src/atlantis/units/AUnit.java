@@ -168,7 +168,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         refreshType();
 
         // Repair & Heal
-        this._repairableMechanically = isBuilding() || isVehicle();
+        this._repairableMechanically = isABuilding() || isVehicle();
         this._healable = isInfantry() || isWorker();
 
         // Military building
@@ -372,7 +372,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if given unit is OF TYPE BUILDING.
      */
-    public boolean isBuilding() {
+    public boolean isABuilding() {
         return type().isBuilding() || type().isAddon();
     }
 
@@ -634,7 +634,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * have to specify at least one <b>true</b> to the params.
      */
     public boolean isMilitaryBuilding(boolean canShootGround, boolean canShootAir) {
-        if (!isBuilding()) {
+        if (!isABuilding()) {
             return false;
         }
         if (canShootGround && _isMilitaryBuildingAntiGround) {
@@ -789,7 +789,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        if (isBuilding() && isProtoss() && !isPowered()) {
+        if (isABuilding() && isProtoss() && !isPowered()) {
             return false;
         }
 
@@ -1908,7 +1908,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public Mission mission() {
         if (squad == null) {
-            if (isCombatUnit() && !isBuilding()) {
+            if (isCombatUnit() && !isABuilding()) {
                 System.err.println("Empty unit squad for: " + this);
                 (new NewUnitsToSquadsAssigner(this)).possibleCombatUnitCreated();
             }
@@ -2166,7 +2166,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
             "isRepairable",
             -1,
-            () -> type().isMechanical() || isBuilding()
+            () -> type().isMechanical() || isABuilding()
         );
     }
 
@@ -2177,7 +2177,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public AUnit loadedInto() {
         return (AUnit) cache.get(
             "loadedInto",
-            10,
+            7,
             () -> {
                 if (!isLoaded()) {
                     return null;
@@ -2717,16 +2717,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public void setManagerUsed(Manager managerUsed) {
-        this.manager = managerUsed;
-        this.tooltipForManager = tooltip;
+        setManagerUsed(managerUsed, tooltip);
     }
 
     public void setManagerUsed(Manager managerUsed, String message) {
         this.manager = managerUsed;
         this.tooltipForManager = message;
+
+        addLog(managerUsed.toString());
     }
 
     public boolean isActiveManager(Manager manager) {
         return manager.equals(this.manager);
+    }
+
+    public boolean canLift() {
+        return u().canLift();
     }
 }

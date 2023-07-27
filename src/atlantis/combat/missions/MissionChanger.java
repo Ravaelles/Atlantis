@@ -18,7 +18,7 @@ import atlantis.util.We;
 
 import java.util.ArrayList;
 
-public class MissionChanger {
+public abstract class MissionChanger {
 
     public static final int MISSIONS_ENFORCED_FOR_SECONDS = 20;
 
@@ -60,10 +60,12 @@ public class MissionChanger {
 
         reason = "";
 
-        changeMissionIfNeeded();
+        MissionChanger.changeCurrentMissionIfNeeded();
     }
 
-    private static void changeMissionIfNeeded() {
+    protected abstract void changeMissionIfNeeded();
+
+    private static void changeCurrentMissionIfNeeded() {
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.get().changeMissionIfNeeded();
         } else if (Missions.isGlobalMissionContain()) {

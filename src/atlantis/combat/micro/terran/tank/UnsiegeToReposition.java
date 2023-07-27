@@ -5,9 +5,13 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 
 public class UnsiegeToReposition extends Manager {
-
     public UnsiegeToReposition(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isTankSieged();
     }
 
     public Manager handle() {

@@ -9,9 +9,13 @@ import atlantis.units.select.Select;
 
 
 public class RepairerManager extends Manager {
-
     public RepairerManager(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isRepairerOfAnyKind();
     }
 
     public Manager handle() {
@@ -98,14 +102,14 @@ public class RepairerManager extends Manager {
     }
 
     public static boolean itIsForbiddenToRepairThisUnitNow(AUnit target) {
-        if (target.isBuilding() && target.isCombatBuilding()) {
+        if (target.isABuilding() && target.isCombatBuilding()) {
             if (target.type().isMilitaryBuildingAntiAir()) {
                 return target.enemiesNear().groundUnits().inRadius(4, target).atLeast(2);
             }
             return false;
         }
 
-        if (target.isBuilding() && target.hp() >= 600 && !target.isBase()) {
+        if (target.isABuilding() && target.hp() >= 600 && !target.isBase()) {
             return true;
         }
 

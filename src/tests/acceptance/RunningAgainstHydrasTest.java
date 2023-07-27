@@ -1,6 +1,7 @@
 package tests.acceptance;
 
 import atlantis.combat.CombatUnitManager;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
@@ -11,6 +12,7 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
     public void runsFromHydras() {
         createWorld(10, () -> {
             FakeUnit unit = ourFirst;
+            unit.setSquad(Alpha.get());
             (new CombatUnitManager(unit)).handle();
 
             FakeUnit enemy = nearestEnemy(unit);

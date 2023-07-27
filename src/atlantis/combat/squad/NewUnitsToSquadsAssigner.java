@@ -47,7 +47,7 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
      * Skips buildings, workers and Zerg Larva
      */
     private boolean shouldSkipUnit() {
-        return !unit.isRealUnit() || unit.isWorker() || unit.type().isMine() || unit.isBuilding();
+        return !unit.isRealUnit() || unit.isWorker() || unit.type().isMine() || unit.isABuilding();
     }
 
 }

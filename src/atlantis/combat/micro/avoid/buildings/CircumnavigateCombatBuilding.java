@@ -8,7 +8,6 @@ import atlantis.units.actions.Actions;
 import bwapi.Color;
 
 public class CircumnavigateCombatBuilding extends Manager {
-
     public CircumnavigateCombatBuilding(AUnit unit) {
         super(unit);
     }
@@ -16,7 +15,7 @@ public class CircumnavigateCombatBuilding extends Manager {
     /**
      * Try to go around a defensive building by not running back-and-forth, but sideways.
      */
-    public  Manager handleAround(AUnit combatBuilding) {
+    public Manager handle(AUnit combatBuilding) {
         APosition goTo = findPositionAround(combatBuilding);
 
         APainter.paintLine(unit, goTo, Color.Orange);
@@ -26,11 +25,11 @@ public class CircumnavigateCombatBuilding extends Manager {
             unit.setTooltip("SmartAround", false);
             return usedManager(this);
         }
-        
+
         return null;
     }
 
-    public  APosition findPositionAround(AUnit combatBuilding) {
+    public APosition findPositionAround(AUnit combatBuilding) {
         int roamingRange = 3;
 
         APosition raw = unit.translateTilesTowards(-roamingRange - 0.2, combatBuilding);

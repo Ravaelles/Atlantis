@@ -13,6 +13,11 @@ public class SquadCohesionManager extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
+    }
+
+    @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[] {
             TooClustered.class,

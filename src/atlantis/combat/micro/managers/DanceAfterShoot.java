@@ -6,9 +6,13 @@ import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
 
 public class DanceAfterShoot extends Manager {
-
     public DanceAfterShoot(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isRanged();
     }
 
     @Override
@@ -79,7 +83,7 @@ public class DanceAfterShoot extends Manager {
             && unit.distToMoreThan(target, 3)
             && dist >= (unit.enemyWeaponRangeAgainstThisUnit(target))
             && (
-                (!target.isBuilding() && dist >= 1.6)
+                (!target.isABuilding() && dist >= 1.6)
                 || target.hasNoWeaponAtAll()
             );
     }

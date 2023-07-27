@@ -147,7 +147,7 @@ public class TerranTankWhenNotSieged extends Manager {
     }
 
     protected Manager wantsToSiege(String log) {
-        if ((new WouldBlockChoke(unit)).handle() != null) {
+        if ((new WouldBlockChokeHere(unit)).handle() != null) {
             return null;
         }
 

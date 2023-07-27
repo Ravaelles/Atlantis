@@ -18,6 +18,11 @@ public class ProtectorManager extends Manager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return unit.isProtector();
+    }
+
     public Manager handle() {
         if (act()) return usedManager(this);
 

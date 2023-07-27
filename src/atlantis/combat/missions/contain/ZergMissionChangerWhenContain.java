@@ -10,8 +10,8 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 
 public class ZergMissionChangerWhenContain extends MissionChanger {
-
-    public static void changeMissionIfNeeded() {
+    @Override
+    protected void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
             MissionChanger.changeMissionTo(MissionChanger.defendOrSpartaMission());
         } else if (shouldChangeMissionToAttack()) {

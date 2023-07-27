@@ -273,14 +273,14 @@ public class Selection extends BaseSelection {
 
     public Selection nonBuildings() {
         return cloneByRemovingIf(
-            (unit -> unit.isBuilding()),
+            (unit -> unit.isABuilding()),
             "nonBuildings"
         );
     }
 
     public Selection nonBuildingsOrCombatBuildings() {
         return cloneByRemovingIf(
-            (unit -> unit.isBuilding() && !unit.isCombatBuilding()),
+            (unit -> unit.isABuilding() && !unit.isCombatBuilding()),
             "nonBuildingsOrCombatBuildings"
         );
     }
@@ -405,7 +405,7 @@ public class Selection extends BaseSelection {
 
     public Selection havingTargetedBuildings() {
         return cloneByRemovingIf(
-            (unit -> (unit.target() == null || !unit.target().isBuilding())),
+            (unit -> (unit.target() == null || !unit.target().isABuilding())),
             "havingTargetedBuildings"
         );
     }
@@ -517,7 +517,7 @@ public class Selection extends BaseSelection {
     public Selection repairable(boolean checkIfWounded) {
         return cloneByRemovingIf(
             (unit -> !unit.isCompleted()
-                || (!unit.type().isMechanical() && (!unit.isBuilding() || !unit.isTerran()))
+                || (!unit.type().isMechanical() && (!unit.isABuilding() || !unit.isTerran()))
                 || (checkIfWounded && !unit.isWounded())
             ),
             "repairable:" + A.trueFalse(checkIfWounded)

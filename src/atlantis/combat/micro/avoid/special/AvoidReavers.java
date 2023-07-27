@@ -5,14 +5,18 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
 public class AvoidReavers extends Manager {
-
     public AvoidReavers(AUnit unit) {
         super(unit);
     }
 
     @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
+    }
+
+    @Override
     public Manager handle() {
-        if (unit.isAir() || unit.isBuilding()) {
+        if (unit.isAir() || unit.isABuilding()) {
             return null;
         }
 

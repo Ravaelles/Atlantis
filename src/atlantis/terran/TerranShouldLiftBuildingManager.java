@@ -11,7 +11,7 @@ public class TerranShouldLiftBuildingManager extends Manager {
 
     @Override
     public boolean applies() {
-        return !unit.isLifted() && unit.u().canLift() && unit.isWounded();
+        return !unit.isLifted() && unit.canLift() && unit.isWounded();
     }
 
     public Manager handle() {

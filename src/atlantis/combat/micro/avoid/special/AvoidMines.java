@@ -14,6 +14,11 @@ public class AvoidMines extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
+    }
+
+    @Override
     public Manager handle() {
         if (handleMines()) return usedManager(this);
 

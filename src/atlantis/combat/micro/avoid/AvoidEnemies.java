@@ -26,7 +26,19 @@ public class AvoidEnemies extends Manager {
         wantsToAvoid = new WantsToAvoid(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return true;
+    }
+
     // =========================================================
+
+    @Override
+    public Manager handle() {
+        Manager manager = avoidEnemiesIfNeeded();
+
+        return manager;
+    }
 
     public Manager avoidEnemiesIfNeeded() {
         if (shouldSkip()) {
@@ -55,7 +67,7 @@ public class AvoidEnemies extends Manager {
         ) {
             if (avoidCombatBuildings.handle() != null) {
                 unit.addLog("KeepAway");
-                return lastManager();
+                return usedManager(this);
             }
         }
 
@@ -78,7 +90,7 @@ public class AvoidEnemies extends Manager {
 
         else {
             if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose) != null) {
-                return lastManager();
+                return usedManager(this);
             }
         }
 

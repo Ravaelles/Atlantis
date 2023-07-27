@@ -9,6 +9,11 @@ public class DynamicRepairsNearby extends Manager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return unit.isScv();
+    }
+
     public Manager handle() {
         if (check()) {
             return usedManager(this);

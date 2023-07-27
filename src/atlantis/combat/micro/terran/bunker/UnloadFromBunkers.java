@@ -12,6 +12,11 @@ public class UnloadFromBunkers extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.isLoaded() && unit.loadedInto().isBunker();
+    }
+
+    @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[] {
             PreventMaginotLine.class,

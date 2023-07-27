@@ -12,7 +12,7 @@ public class TerranLiftedBuildingManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isLifted() && unit.isBuilding() && unit.isWounded();
+        return unit.isLifted() && unit.isABuilding() && unit.isWounded();
     }
 
     /**

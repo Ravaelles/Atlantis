@@ -8,7 +8,6 @@ import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
 public class RetreatManager extends Manager {
-
     public static int GLOBAL_RETREAT_COUNTER = 0;
     private static Cache<Boolean> cache = new Cache<>();
 
@@ -20,7 +19,14 @@ public class RetreatManager extends Manager {
 
     // =========================================================
 
-    public boolean handleRetreat() {
+    @Override
+    public Manager handle() {
+        if (handleRetreat()) return usedManager(this);
+
+        return null;
+    }
+
+    protected boolean handleRetreat() {
 //        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFightCached()) {
 //        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFight()) {
 

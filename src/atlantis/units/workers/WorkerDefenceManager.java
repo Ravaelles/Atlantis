@@ -21,6 +21,11 @@ public class WorkerDefenceManager extends Manager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return unit.isWorker();
+    }
+
     /**
      * Attack other workers, run from enemies etc.
      */

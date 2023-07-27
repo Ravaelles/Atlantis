@@ -12,6 +12,11 @@ public class ProtossShieldBattery extends Manager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return unit.is(AUnitType.Protoss_Shield_Battery);
+    }
+
     public Manager handle() {
         AUnit battery = Select.ourWithUnfinished(AUnitType.Protoss_Shield_Battery)
             .havingEnergy(40)

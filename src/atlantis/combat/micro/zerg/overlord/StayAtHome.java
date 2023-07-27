@@ -6,9 +6,13 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class StayAtHome extends Manager {
-
     public StayAtHome(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isOverlord();
     }
 
     public Manager handle() {

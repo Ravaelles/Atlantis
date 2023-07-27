@@ -11,10 +11,8 @@ import atlantis.util.TargetsForUnits;
 import bwapi.TechType;
 
 public class TerranGhost extends Manager {
-
-    private static final TechType lockdown = TechType.Lockdown;
-
     public static TargetsForUnits lockdownTargets = new TargetsForUnits();
+    private static final TechType lockdown = TechType.Lockdown;
 
     // =========================================================
 
@@ -24,6 +22,10 @@ public class TerranGhost extends Manager {
 
     // =========================================================
 
+    @Override
+    public boolean applies() {
+        return unit.isGhost();
+    }
 
     @Override
     public Manager handle() {

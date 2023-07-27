@@ -8,6 +8,11 @@ public class GatherResources extends Manager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return unit.isWorker();
+    }
+
     public Manager handle() {
         if (handleGatherMineralsOrGas()) {
             return usedManager(this);

@@ -6,9 +6,13 @@ import atlantis.units.AUnit;
 import atlantis.units.SpecialUnitsManager;
 
 public class CombatUnitManager extends Manager {
-
     public CombatUnitManager(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isCombatUnit();
     }
 
     @Override

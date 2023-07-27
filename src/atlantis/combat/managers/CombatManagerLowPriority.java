@@ -11,6 +11,11 @@ public class CombatManagerLowPriority extends Manager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return unit.isCombatUnit();
+    }
+
     /**
      * If we're here, mission manager is allowed to take control over this unit.
      * Meaning no action was needed on *tactical* level - stick to *strategic* level.

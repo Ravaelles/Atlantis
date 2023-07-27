@@ -300,7 +300,7 @@ public class FightInsteadAvoid {
 
     // RANGED
     protected boolean fightAsRangedUnit() {
-        if (ranged != null && ranged.isBuilding()) {
+        if (ranged != null && ranged.isABuilding()) {
             return false;
         }
 

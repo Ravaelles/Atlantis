@@ -18,6 +18,11 @@ public class AvoidCombatBuildings extends Manager {
         shouldRetreat = new ShouldRetreat(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return true;
+    }
+
     public  Manager handle() {
         if (unit.isMissionDefendOrSparta()) {
             return null;

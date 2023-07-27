@@ -15,7 +15,7 @@ import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-public class TerranMissionChangerWhenDefend extends MissionChanger {
+public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     // === ATTACK ==============================================
 

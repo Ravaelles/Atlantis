@@ -4,12 +4,16 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
 public class AvoidCombatBuildingCriticallyClose extends Manager {
-
     private CircumnavigateCombatBuilding circumnavigateCombatBuilding;
 
     public AvoidCombatBuildingCriticallyClose(AUnit unit) {
         super(unit);
         circumnavigateCombatBuilding = new CircumnavigateCombatBuilding(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return true;
     }
 
     public Manager handle(AUnit combatBuilding) {
@@ -36,6 +40,6 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
     }
 
     private Manager handleHoldTooLong(AUnit combatBuilding) {
-        return circumnavigateCombatBuilding.handleAround(combatBuilding);
+        return circumnavigateCombatBuilding.handle(combatBuilding);
     }
 }

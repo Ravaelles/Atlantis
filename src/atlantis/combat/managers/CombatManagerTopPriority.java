@@ -16,6 +16,11 @@ public class CombatManagerTopPriority extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.isCombatUnit();
+    }
+
+    @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AvoidSpellsAndMines.class,
@@ -28,65 +33,5 @@ public class CombatManagerTopPriority extends Manager {
             ShouldStopRunning.class,
         };
     }
-
-//    private boolean handledTopPriority() {
-//        if (AvoidSpellsAndMines.avoidSpellsAndMines()) {
-//            return true;
-//        }
-//
-//        if (AvoidCriticalUnits.update()) {
-//            return true;
-//        }
-//
-//        if (DanceAfterShoot.update()) {
-//            return true;
-//        }
-//
-//        if (StopAndShoot.update()) {
-//            return true;
-//        }
-//
-//        if (DontInterruptShootingUnits.dontInterruptImportantActions()) {
-//            return true;
-//        }
-//
-//        if ((unit.isMoving() && !unit.isAttackingOrMovingToAttack()) && TransportUnits.handleLoad()) {
-//            return true;
-//        }
-//
-//        if (unit.isLoaded() && TransportUnits.unloadFromTransport()) {
-//            return true;
-//        }
-//
-//        // Handle units getting bugged by Starcraft
-////        if (Unfreezer.handleUnfreeze()) {
-////            return true;
-////        }
-//
-//        if (unit.isRunning()) {
-//            if (ShouldStopRunning.shouldStopRunning()) {
-//                unit.runningManager().stopRunning();
-//            }
-//            //        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(2)) {
-//            else if (A.everyNthGameFrame(3)) {
-//                //            unit.setTooltip("Running(" + A.digit(unit.distTo(unit.getTargetPosition())) + ")");
-//                //            return A.everyNthGameFrame(2) ? AAvoidUnits.avoidEnemiesIfNeeded() : true;
-//                return AvoidEnemies.avoidEnemiesIfNeeded();
-//            }
-//        }
-//
-//        // Useful for testing and debugging of shooting/running
-////        if (testUnitBehaviorShootAtOwnUnit()) { return true; };
-//
-//        return false;
-//    }
-
-//    public Manager handle() {
-//        if () {
-//            return usedManager(this);
-//        }
-//
-//        return null;
-//    }
 }
 

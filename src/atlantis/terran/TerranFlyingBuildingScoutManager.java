@@ -11,9 +11,13 @@ import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class TerranFlyingBuildingScoutManager extends Manager {
-
     public TerranFlyingBuildingScoutManager(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isABuilding() && unit.isLifted();
     }
 
     public Manager handle() {

@@ -11,6 +11,11 @@ public class DontInterruptShootingUnits extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.isRanged();
+    }
+
+    @Override
     public Manager handle() {
         if (act()) return usedManager(this);
 

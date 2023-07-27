@@ -12,15 +12,9 @@ import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
 public class AttackNearbyEnemies extends Manager {
-
     public static final double MAX_DIST_TO_ATTACK = 25;
-    private static ProcessAttackUnit processAttackUnit;
-
     public static String reasonNotToAttack;
-
-
-
-//    private AUnit unit;
+    private static ProcessAttackUnit processAttackUnit;
     private static Cache<AUnit> cache = new Cache<>();
     private static Cache<Object> cacheObject = new Cache<>();
 
@@ -32,6 +26,11 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     // =========================================================
+
+    @Override
+    public boolean applies() {
+        return unit.hasAnyWeapon();
+    }
 
     public Manager handle() {
         if (handleAttackNearEnemyUnits(unit)) {

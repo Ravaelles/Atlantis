@@ -5,9 +5,13 @@ import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 
 public class TerranWraith extends Manager {
-
     public TerranWraith(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isWraith();
     }
 
     @Override

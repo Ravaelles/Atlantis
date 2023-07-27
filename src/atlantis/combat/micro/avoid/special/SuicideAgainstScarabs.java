@@ -22,7 +22,7 @@ public class SuicideAgainstScarabs extends Manager {
      * is that if there are ANY FRIENDS NEAR. Go ahead and take the bullet.
      */
     protected boolean update() {
-        if (unit.isAir() || unit.isBuilding()) {
+        if (unit.isAir() || unit.isABuilding()) {
             return false;
         }
 

@@ -12,6 +12,11 @@ public class IdleRepairer extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.isScv() && unit.looksIdle();
+    }
+
+    @Override
     public Manager handle() {
         if (!unit.isUnitActionRepair() || !unit.isRepairing() || unit.isIdle()) {
             int maxAllowedDistToRoam = 13;

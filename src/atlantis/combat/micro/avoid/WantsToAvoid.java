@@ -9,7 +9,6 @@ import atlantis.units.Units;
 import atlantis.util.Enemy;
 
 public class WantsToAvoid extends Manager {
-
     private Avoid avoid;
     private ShouldAlwaysAvoidAsZerg shouldAlwaysAvoidAsZerg;
 
@@ -17,6 +16,11 @@ public class WantsToAvoid extends Manager {
         super(unit);
         avoid = new Avoid(unit);
         shouldAlwaysAvoidAsZerg = new ShouldAlwaysAvoidAsZerg(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return true;
     }
 
     public Manager unitOrUnits(Units enemies) {

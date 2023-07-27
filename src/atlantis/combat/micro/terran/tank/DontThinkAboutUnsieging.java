@@ -5,9 +5,13 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class DontThinkAboutUnsieging extends Manager {
-
     public DontThinkAboutUnsieging(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isTankSieged();
     }
 
     public Manager handle() {

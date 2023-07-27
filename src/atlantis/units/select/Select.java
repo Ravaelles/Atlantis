@@ -564,8 +564,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     data.removeIf(
                             u -> (
                                 !u.isCompleted()
-                                || (!u.isBuilding() && !u.isRealUnit())
-                                || (!includeBuildings && u.isBuilding())
+                                || (!u.isABuilding() && !u.isRealUnit())
+                                || (!includeBuildings && u.isABuilding())
                                 || (!includeGroundUnits && u.isGroundUnit())
                                 || (!includeAirUnits && u.isAir())
                             )

@@ -5,10 +5,14 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
-public class WouldBlockChoke extends Manager {
-
-    public WouldBlockChoke(AUnit unit) {
+public class WouldBlockChokeHere extends Manager {
+    public WouldBlockChokeHere(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isTankUnsieged();
     }
 
     public Manager handle() {

@@ -7,9 +7,13 @@ import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
 public class TooLowSquadCohesion extends Manager {
-
     public TooLowSquadCohesion(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
     }
 
     @Override

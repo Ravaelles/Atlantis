@@ -8,15 +8,14 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class ProcessAttackUnit extends Manager {
-
     public ProcessAttackUnit(AUnit unit) {
         super(unit);
     }
 
-    public  boolean processAttackOtherUnit(AUnit target) {
+    public boolean processAttackOtherUnit(AUnit target) {
         if (
             target.isFoggedUnitWithKnownPosition()
-            && unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false)
+                && unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false)
         ) {
             return true;
         }
@@ -64,13 +63,13 @@ public class ProcessAttackUnit extends Manager {
 //        return -0.5;
 //    }
 
-    private  boolean confirmAttack(AUnit target) {
+    private boolean confirmAttack(AUnit target) {
         return unit.attackUnit(target);
     }
 
     // =========================================================
 
-    private  boolean handleMoveNextToTanksWhenAttackingThem(AUnit enemy) {
+    private boolean handleMoveNextToTanksWhenAttackingThem(AUnit enemy) {
         if (!enemy.isTank()) {
             return false;
         }

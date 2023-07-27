@@ -6,7 +6,6 @@ import atlantis.game.AGame;
 import atlantis.units.select.Select;
 
 public class UnitStateManager extends Manager {
-
     private int timeNow;
     private boolean shouldUpdatePosition;
 

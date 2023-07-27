@@ -6,7 +6,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class StackedUnitsManager extends Manager {
-
     private double minDist;
     private boolean onlyOfTheSameType;
 
@@ -14,6 +13,11 @@ public class StackedUnitsManager extends Manager {
         super(unit);
         this.minDist = minDist;
         this.onlyOfTheSameType = onlyOfTheSameType;
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
     }
 
     @Override

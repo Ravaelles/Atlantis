@@ -8,9 +8,13 @@ import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 
 public class CombatManagerMediumPriority extends Manager {
-
     public CombatManagerMediumPriority(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isCombatUnit();
     }
 
     @Override

@@ -6,7 +6,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
 public class PreventMaginotLine extends Manager {
-
     public PreventMaginotLine(AUnit unit) {
         super(unit);
     }

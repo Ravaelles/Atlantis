@@ -6,6 +6,7 @@ import atlantis.combat.micro.protoss.ProtossShieldBattery;
 import atlantis.combat.micro.terran.TerranCloakableManager;
 import atlantis.combat.micro.terran.TerranScienceVessel;
 import atlantis.combat.micro.terran.TerranVulture;
+import atlantis.combat.micro.terran.TerranWraith;
 import atlantis.combat.micro.terran.infantry.TerranInfantry;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.micro.transport.ATransportManager;
@@ -25,6 +26,7 @@ public class SpecialUnitsManager extends Manager {
             raceSpecific = new Class[] {
                 TerranTank.class,
                 TerranInfantry.class,
+                TerranWraith.class,
                 TerranVulture.class,
                 TerranCloakableManager.class,
                 TerranScienceVessel.class,

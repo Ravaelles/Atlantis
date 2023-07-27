@@ -11,12 +11,12 @@ public class ShouldNotRepairUnit {
             || unit.isScout()
             || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 2))
             || (
-            unit.isBuilding()
+            unit.isABuilding()
                 && TerranFlyingBuildingScoutCommander.isFlyingBuilding(unit)
                 && unit.lastUnderAttackLessThanAgo(30 * 6)
         )
 //                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercentMin(40))
             || RepairerManager.itIsForbiddenToRepairThisUnitNow(unit)
-            || GamePhase.isEarlyGame() && (unit.isBuilding() && !unit.isCombatBuilding() && unit.enemiesNear().atLeast(2));
+            || GamePhase.isEarlyGame() && (unit.isABuilding() && !unit.isCombatBuilding() && unit.enemiesNear().atLeast(2));
     }
 }

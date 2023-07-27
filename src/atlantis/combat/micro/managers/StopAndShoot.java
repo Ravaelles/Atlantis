@@ -7,7 +7,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 
 public class StopAndShoot extends Manager {
-
     private int unitWeaponRange;
     private AUnit target;
     private double distToEnemy;
@@ -15,6 +14,11 @@ public class StopAndShoot extends Manager {
 
     public StopAndShoot(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isRanged();
     }
 
     /**

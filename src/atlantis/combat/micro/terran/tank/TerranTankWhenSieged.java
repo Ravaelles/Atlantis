@@ -8,12 +8,20 @@ public class TerranTankWhenSieged extends Manager {
         super(unit);
     }
 
-    protected static Class[] managers = {
-        TankRunning.class,
-        WouldBlockChoke.class,
-        DontThinkAboutUnsieging.class,
-        SiegeHereDuringMissionDefend.class,
-        UnsiegeToReposition.class,
-        SiegeHereDuringMissionDefend.class,
-    };
+    @Override
+    public boolean applies() {
+        return unit.isTankSieged();
+    }
+
+    @Override
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            TankRunning.class,
+            WouldBlockChokeHere.class,
+            DontThinkAboutUnsieging.class,
+            SiegeHereDuringMissionDefend.class,
+            UnsiegeToReposition.class,
+            SiegeHereDuringMissionDefend.class,
+        };
+    }
 }

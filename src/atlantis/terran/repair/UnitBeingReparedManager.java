@@ -5,9 +5,13 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class UnitBeingReparedManager extends Manager {
-
     public UnitBeingReparedManager(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isWounded() && unit.isTerran() && unit.repairer() != null;
     }
 
     public Manager handle() {

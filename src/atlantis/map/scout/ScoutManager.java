@@ -20,7 +20,6 @@ import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class ScoutManager extends Manager {
-
 //    public boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = true;
     public static boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = false;
     public static Positions<ARegionBoundary> scoutingAroundBasePoints = new Positions<>();
@@ -38,6 +37,10 @@ public class ScoutManager extends Manager {
 
     // =========================================================
 
+    @Override
+    public boolean applies() {
+        return unit.isScout();
+    }
 
     @Override
     public Manager handle() {

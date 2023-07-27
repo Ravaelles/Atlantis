@@ -45,6 +45,10 @@ public class TerranMedic extends Manager {
 
     // =========================================================
 
+    @Override
+    public boolean applies() {
+        return unit.isMedic();
+    }
 
     @Override
     protected Class<? extends Manager>[] managers() {

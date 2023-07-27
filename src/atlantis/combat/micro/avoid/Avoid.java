@@ -12,11 +12,15 @@ import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class Avoid extends Manager {
-
     private final RunError runError = new RunError(this);
 
     public Avoid(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return !unit.isABuilding();
     }
 
     public Manager singleUnit(AUnit enemy) {
@@ -28,7 +32,7 @@ public class Avoid extends Manager {
         }
 
         if (enemy.isCombatBuilding()) {
-            return (new CircumnavigateCombatBuilding(unit)).handleAround(enemy);
+            return (new CircumnavigateCombatBuilding(unit)).handle(enemy);
         }
 
         if (unit.runningManager().runFrom(enemy.position(), calculateRunDistance(enemy), Actions.RUN_ENEMY, false)) {

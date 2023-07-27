@@ -4,12 +4,16 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
 public class ShouldAlwaysAvoidAsZerg extends Manager {
-
     private int friendsVeryNear;
     private int meleeEnemiesVeryNear;
 
     public ShouldAlwaysAvoidAsZerg(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isZerg();
     }
 
     public boolean shouldAlwaysAvoid() {

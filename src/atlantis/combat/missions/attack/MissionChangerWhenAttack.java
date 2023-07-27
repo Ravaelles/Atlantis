@@ -5,9 +5,11 @@ import atlantis.util.We;
 
 public abstract class MissionChangerWhenAttack extends MissionChanger {
     public abstract boolean shouldChangeMissionToDefend();
+
     public abstract boolean shouldChangeMissionToContain();
 
-    public void changeMissionIfNeeded() {
+    @Override
+    protected void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
             changeMissionTo(MissionChanger.defendOrSpartaMission());
         }

@@ -9,7 +9,7 @@ public abstract class MissionChangerWhenDefend extends MissionChanger {
     public abstract boolean shouldChangeMissionToContain();
     public abstract boolean shouldChangeMissionToAttack();
 
-    public void changeMissionIfNeeded() {
+    protected final void changeMissionIfNeeded() {
         if (shouldChangeMissionToContain()) {
             changeMissionTo(Missions.CONTAIN);
         }
@@ -17,6 +17,7 @@ public abstract class MissionChangerWhenDefend extends MissionChanger {
             changeMissionTo(Missions.ATTACK);
         }
     }
+
     public static MissionChanger get() {
         if (We.terran()) {
             return new TerranMissionChangerWhenDefend();

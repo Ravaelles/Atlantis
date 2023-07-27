@@ -9,6 +9,11 @@ public class TooFarFromLeader extends Manager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
+    }
+
     public Manager handle() {
         if (check()) {
             return usedManager(this);

@@ -14,9 +14,13 @@ import atlantis.units.actions.Actions;
 import bwapi.Color;
 
 public class SquadScout extends Manager {
-
     public SquadScout(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isSquadScout();
     }
 
     public Manager handle() {

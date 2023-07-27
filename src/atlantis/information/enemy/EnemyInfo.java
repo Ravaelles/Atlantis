@@ -79,7 +79,7 @@ public class EnemyInfo {
                 50,
                 () -> {
                     for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
-                        if (enemyUnit.isBuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                        if (enemyUnit.isABuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
                             return true;
                         }
                     }

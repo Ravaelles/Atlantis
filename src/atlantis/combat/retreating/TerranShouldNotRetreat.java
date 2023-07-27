@@ -4,9 +4,24 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
 public class TerranShouldNotRetreat extends Manager {
-
     public TerranShouldNotRetreat(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isTerran();
+    }
+
+    @Override
+    public Manager handle() {
+        Manager manager = shouldNotRetreat();
+
+        if (manager != null) {
+            return manager;
+        }
+
+        return null;
     }
 
     public Manager shouldNotRetreat() {

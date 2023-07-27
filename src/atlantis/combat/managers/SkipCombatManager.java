@@ -6,7 +6,6 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class SkipCombatManager extends Manager {
-
     public SkipCombatManager(AUnit unit) {
         super(unit);
     }
@@ -40,7 +39,7 @@ public class SkipCombatManager extends Manager {
         }
 
         if (unit.isWorker() && unit.squad() == null) {
-            System.err.println("Worker being ACUM");
+            System.err.println("Worker being executed in CombatManager");
             return true;
         }
 

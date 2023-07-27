@@ -14,6 +14,11 @@ public class BuildingManager extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.isABuilding();
+    }
+
+    @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[] {
             TerranComsatStation.class,

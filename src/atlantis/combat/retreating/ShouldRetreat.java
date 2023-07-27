@@ -15,13 +15,17 @@ import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class ShouldRetreat extends Manager {
-
     private static Cache<Boolean> cache = new Cache<>();
     private static TerranShouldNotRetreat terranShouldNotRetreat;
-    private static TerranShouldRetreat terranShouldRetreat;
+    private static TerranInfantryShouldRetreat terranShouldRetreat;
 
     public ShouldRetreat(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return true;
     }
 
     @Override
@@ -53,7 +57,7 @@ public class ShouldRetreat extends Manager {
 //                Squad squad = unit.squad();
 //                unit = squad != null ? squad.leader() : null;
 
-                terranShouldRetreat = new TerranShouldRetreat(unit);
+                terranShouldRetreat = new TerranInfantryShouldRetreat(unit);
                 terranShouldNotRetreat = new TerranShouldNotRetreat(unit);
 
                 if (terranShouldRetreat.shouldRetreat() != null) return true;

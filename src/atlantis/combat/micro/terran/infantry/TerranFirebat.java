@@ -9,12 +9,16 @@ import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
 public class TerranFirebat extends Manager {
-
     public TerranFirebat(AUnit unit) {
         super(unit);
     }
 
-    public  Manager update( ) {
+    @Override
+    public boolean applies() {
+        return unit.isFirebat();
+    }
+
+    public Manager update() {
         if (!unit.isFirebat()) {
             return null;
         }
@@ -27,7 +31,8 @@ public class TerranFirebat extends Manager {
                     enemy, 1.0, Actions.RUN_ENEMY, false
                 )) {
                     return usedManager(this);
-                };
+                }
+                ;
             }
         }
 
@@ -46,7 +51,7 @@ public class TerranFirebat extends Manager {
         return null;
     }
 
-    protected  boolean shouldContinueMeleeFighting( ) {
+    protected boolean shouldContinueMeleeFighting() {
         if (unit.hp() <= 34 || unit.cooldown() >= 4) {
             return false;
         }

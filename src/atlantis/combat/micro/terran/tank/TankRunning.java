@@ -4,9 +4,13 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
 public class TankRunning extends Manager {
-
     public TankRunning(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isTankSieged();
     }
 
     public Manager handle() {

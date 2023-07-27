@@ -8,7 +8,8 @@ public abstract class MissionChangerWhenContain extends MissionChanger {
     public abstract boolean shouldChangeMissionToDefend();
     public abstract boolean shouldChangeMissionToAttack();
 
-    public void changeMissionIfNeeded() {
+    @Override
+    protected void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
             changeMissionTo(MissionChanger.defendOrSpartaMission());
         }

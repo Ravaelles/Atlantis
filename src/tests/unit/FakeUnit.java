@@ -443,4 +443,8 @@ public class FakeUnit extends AUnit {
         return 0;
     }
 
+    @Override
+    public boolean canLift() {
+        return true;
+    }
 }

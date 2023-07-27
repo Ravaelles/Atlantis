@@ -4,9 +4,13 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
 public class AvoidGuardian extends Manager {
-
     public AvoidGuardian(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
     }
 
     @Override

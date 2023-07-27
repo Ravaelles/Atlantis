@@ -4,14 +4,18 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
 public class AvoidLurkers extends Manager {
-
     public AvoidLurkers(AUnit unit) {
         super(unit);
     }
 
     @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
+    }
+
+    @Override
     public Manager handle() {
-        if (unit.isAir() || unit.isBuilding()) {
+        if (unit.isAir() || unit.isABuilding()) {
             return null;
         }
 

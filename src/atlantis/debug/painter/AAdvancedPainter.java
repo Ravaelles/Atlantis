@@ -252,7 +252,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintLastAction(AUnit unit) {
-        if (!unit.isRealUnit() || unit.isBuilding()) {
+        if (!unit.isRealUnit() || unit.isABuilding()) {
             return;
         }
 
@@ -1145,7 +1145,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().list()) {
-            if (unit.isBuilding() || !unit.isCompleted() || unit.isLoaded()) {
+            if (unit.isABuilding() || !unit.isCompleted() || unit.isLoaded()) {
                 continue;
             }
 

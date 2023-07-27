@@ -11,8 +11,13 @@ public class AvoidDT extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
+    }
+
+    @Override
     public Manager handle() {
-        if (unit.isAir() || unit.isBuilding()) {
+        if (unit.isAir() || unit.isABuilding()) {
             return null;
         }
 
