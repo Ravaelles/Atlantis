@@ -7,6 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 public class TerranFlyingBuildingScoutCommander extends Commander {
@@ -25,9 +26,8 @@ public class TerranFlyingBuildingScoutCommander extends Commander {
             liftABuildingAndFlyAmongStars();
         }
 
-        for (Iterator<AUnit> it = flyingBuildings.iterator(); it.hasNext(); ) {
-            AUnit unit = it.next();
-
+        Collection<AUnit> allFlyingBuildings = (Collection<AUnit>) flyingBuildings.clone();
+        for (AUnit unit : allFlyingBuildings) {
             if (!unit.isAlive()) {
                 flyingBuildings.remove(unit);
                 continue;

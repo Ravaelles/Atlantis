@@ -101,6 +101,25 @@ public class DynamicBuildingsCommander extends Commander {
         return true;
     }
 
+    protected static boolean haveNoExistingOrPlanned(AUnitType type) {
+        if (Count.ofType(type) > 0) {
+            return false;
+        }
+
+        return Count.existingOrInProductionOrInQueue(type) == 0;
+    }
+
+    protected static boolean addWithTopPriorityThisOrItsRequirement(AUnitType target, AUnitType itsRequirement) {
+        if (haveNoExistingOrPlanned(itsRequirement)) {
+            AddToQueue.withHighPriority(itsRequirement);
+            return true;
+        }
+        else {
+            AddToQueue.withTopPriority(target);
+            return true;
+        }
+    }
+
     // =========================================================
 
     protected static boolean isItSafeToAddTechBuildings() {

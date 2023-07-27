@@ -15,7 +15,7 @@ public class TooClustered extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.squad().size() >= 2;
+        return unit.squad().size() >= 2 && unit.friendsNear().inRadius(0.3, unit).groundUnits().atLeast(3);
     }
 
     public Manager handle() {
@@ -26,8 +26,9 @@ public class TooClustered extends Manager {
         if (tooClustered(ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
             APosition goTo = unit.makeFreeOfAnyGroundUnits(4, 0.2, unit);
             if (goTo != null) {
-                unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false);
-                return usedManager(this);
+                if (unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false)) {
+                    return usedManager(this);
+                }
             }
         }
 
@@ -35,6 +36,17 @@ public class TooClustered extends Manager {
     }
 
     // =========================================================
+
+    private boolean tooClustered(
+        Selection ourCombatUnits,
+        AUnit nearestBuddy,
+        double minDistBetweenUnits
+    ) {
+        return nearestBuddy != null
+            && ourCombatUnits.size() >= 5
+            && nearestBuddy.distToLessThan(unit, minDistBetweenUnits)
+            && unit.friendsInRadius(1.5).size() >= 4;
+    }
 
     private double minDistBetweenUnits() {
         double baseDist = preferedBaseDistToNextUnit();
@@ -63,15 +75,5 @@ public class TooClustered extends Manager {
         }
 
         return 0.4;
-    }
-
-    private boolean tooClustered(
-        Selection ourCombatUnits,
-        AUnit nearestBuddy,
-        double minDistBetweenUnits
-    ) {
-        return nearestBuddy != null
-            && ourCombatUnits.size() >= 5
-            && nearestBuddy.distToLessThan(unit, minDistBetweenUnits);
     }
 }

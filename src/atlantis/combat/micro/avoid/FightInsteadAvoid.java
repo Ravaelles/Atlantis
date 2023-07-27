@@ -71,9 +71,10 @@ public class FightInsteadAvoid {
                 if (unit.isMelee() && unit.shouldRetreat()) return false;
 
                 if (enemies.isEmpty()) {
-                    System.err.println("NoEnemies? LooksBugged");
-                    unit.addLog("NoEnemiesReally?");
-                    return true;
+//                    System.err.println("NoEnemies? LooksBugged");
+//                    unit.addLog("NoEnemiesReally?");
+//                    return true;
+                    return false;
                 }
 
                 if (unit.mission() != null && unit.mission().forcesUnitToFight(unit, enemies)) {

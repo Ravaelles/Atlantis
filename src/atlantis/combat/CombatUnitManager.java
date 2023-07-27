@@ -21,7 +21,7 @@ public class CombatUnitManager extends Manager {
             SkipCombatManager.class,
             SpecialUnitsManager.class,
             CombatManagerTopPriority.class,
-            ImproveCombatManagerPerformance.class,
+//            ImproveCombatManagerPerformance.class,
             CombatManagerMediumPriority.class,
             CombatManagerLowPriority.class,
         };

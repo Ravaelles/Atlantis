@@ -166,10 +166,8 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsCommander {
         }
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
-        if (barracks.isNotEmpty() && A.hasMinerals(100 + 50 * barracks.count())) {
+        if (barracks.isNotEmpty() && A.canAffordWithReserved(100 + 50 * barracks.count(), 0)) {
             return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 1);
-//            AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
-//            return;
         }
 
         return trainMarinesForBunkersIfNeeded();

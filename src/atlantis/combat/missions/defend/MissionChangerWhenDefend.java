@@ -10,10 +10,10 @@ public abstract class MissionChangerWhenDefend extends MissionChanger {
     public abstract boolean shouldChangeMissionToAttack();
 
     protected final void changeMissionIfNeeded() {
-        if (shouldChangeMissionToContain()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
-        else if (shouldChangeMissionToAttack()) {
+//        if (shouldChangeMissionToContain()) {
+//            changeMissionTo(Missions.CONTAIN);
+//        }
+        if (shouldChangeMissionToAttack()) {
             changeMissionTo(Missions.ATTACK);
         }
     }

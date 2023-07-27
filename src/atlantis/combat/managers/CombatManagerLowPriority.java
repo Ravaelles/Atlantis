@@ -33,7 +33,7 @@ public class CombatManagerLowPriority extends Manager {
             return unit.manager();
         }
 
-        ErrorLog.printMaxOncePerMinute("No combat unit manager for " + unit);
+//        ErrorLog.printMaxOncePerMinute("No combat unit manager for " + unit);
         return null;
     }
 }

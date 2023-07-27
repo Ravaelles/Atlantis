@@ -14,14 +14,13 @@ public class SquadCohesionManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isGroundUnit();
+        return unit.isGroundUnit() && !DoNotThinkOfImprovingCohesion.dontThink(unit);
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[] {
             TooClustered.class,
-            DoNotThinkOfImprovingCohesion.class,
             ComeCloser.class,
             TooLowSquadCohesion.class,
         };

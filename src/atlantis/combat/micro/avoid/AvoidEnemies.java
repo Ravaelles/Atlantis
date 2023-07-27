@@ -49,15 +49,15 @@ public class AvoidEnemies extends Manager {
 
         Units enemiesDangerouslyClose = unitsToAvoid();
 
-        if (enemiesDangerouslyClose.isEmpty()) {
-//            System.err.println("@ " + A.now() + " - No-one close");
-            AUnit nearestEnemy = unit.enemiesNear().nearestTo(unit);
-            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
-                "C=0(" + (nearestEnemy != null ? A.dist(unit, nearestEnemy) : "-") + ")",
-                Color.Green
-            );
-            return null;
-        }
+//        if (!enemiesDangerouslyClose.isEmpty()) {
+////            System.err.println("@ " + A.now() + " - No-one close");
+//            AUnit nearestEnemy = unit.enemiesNear().nearestTo(unit);
+//            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
+//                "C=" + enemiesDangerouslyClose.size() + "(" + (nearestEnemy != null ? A.dist(unit, nearestEnemy) : "-") + ")",
+//                Color.Green
+//            );
+//            return null;
+//        }
 
         if (
             onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)
@@ -82,6 +82,7 @@ public class AvoidEnemies extends Manager {
         // Only ENEMY WORKERS
         if (
             unit.hpPercent() >= 70
+                && !enemiesDangerouslyClose.isEmpty()
                 && Select.from(enemiesDangerouslyClose).workers().size() == enemiesDangerouslyClose.size()
         ) {
             unit.addLog("FightWorkers");

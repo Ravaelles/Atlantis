@@ -16,8 +16,8 @@ public class TooFarFromChoke extends MoveToFocusPoint {
     }
 
     public Manager handle() {
-        if (act()) {
-            return usedManager(this);
+        if (isTooFar()) {
+            if (act()) return usedManager(this);
         }
 
         return null;

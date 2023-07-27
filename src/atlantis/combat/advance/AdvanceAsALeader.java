@@ -5,7 +5,6 @@ import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 
 public class AdvanceAsALeader extends MissionManager {
-
     public AdvanceAsALeader(AUnit unit) {
         super(unit);
     }

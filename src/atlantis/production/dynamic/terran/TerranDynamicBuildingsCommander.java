@@ -62,13 +62,13 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 //        }
 
         if (A.supplyUsed() >= (Enemy.terran() ? 90 : 50) && enemyStrategy().isGoingHiddenUnits()) {
-            if (haveNotExistingOrPlanned(Terran_Starport)) {
+            if (haveNoExistingOrPlanned(Terran_Starport)) {
                 AddToQueue.withHighPriority(Terran_Starport);
             }
-            if (haveNotExistingOrPlanned(Terran_Science_Facility)) {
+            if (haveNoExistingOrPlanned(Terran_Science_Facility)) {
                 AddToQueue.withHighPriority(Terran_Science_Facility);
             }
-            if (haveNotExistingOrPlanned(Terran_Control_Tower)) {
+            if (haveNoExistingOrPlanned(Terran_Control_Tower)) {
                 AddToQueue.withHighPriority(Terran_Control_Tower);
             }
         }
@@ -92,19 +92,10 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
         }
     }
 
-    private static boolean haveNotExistingOrPlanned(AUnitType type) {
-        if (Count.ofType(type) > 0) {
-            return false;
-        }
-
-        return Count.inQueueOrUnfinished(type, 4) == 0;
-    }
-
     private static boolean armory() {
         if (enemyStrategy().isAirUnits()) {
-            if (haveNotExistingOrPlanned(Terran_Armory)) {
-                AddToQueue.withTopPriority(Terran_Armory);
-                return true;
+            if (haveNoExistingOrPlanned(Terran_Armory)) {
+                return addWithTopPriorityThisOrItsRequirement(Terran_Armory, Terran_Factory);
             }
         }
 

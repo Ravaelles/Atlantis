@@ -24,6 +24,10 @@ public class WantsToAvoid extends Manager {
     }
 
     public Manager unitOrUnits(Units enemies) {
+        if (enemies.isEmpty()) {
+            return null;
+        }
+
         if (shouldNeverAvoidIf(enemies)) {
             return null;
         }
