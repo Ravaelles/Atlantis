@@ -10,7 +10,7 @@ import bwapi.UpgradeType;
 import static bwapi.UpgradeType.Singularity_Charge;
 
 
-public class ProtossDynamicTech extends DynamicTech {
+public class ProtossDynamicTechResearch extends DynamicTech {
 
     public static boolean update() {
         if (A.notNthGameFrame(71)) {

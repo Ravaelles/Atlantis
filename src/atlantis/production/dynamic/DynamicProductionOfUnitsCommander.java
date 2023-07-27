@@ -1,15 +1,14 @@
 package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
-import atlantis.game.A;
 import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
-import atlantis.production.dynamic.protoss.ProtossDynamicTech;
+import atlantis.production.dynamic.protoss.ProtossDynamicTechResearch;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitsManager;
 import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
-import atlantis.production.dynamic.terran.TerranDynamicTech;
+import atlantis.production.dynamic.terran.TerranDynamicTechResearch;
 import atlantis.production.dynamic.terran.TerranDynamicUnitsCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicBuildingsCommander;
-import atlantis.production.dynamic.zerg.ZergDynamicTech;
+import atlantis.production.dynamic.zerg.ZergDynamicTechResearch;
 import atlantis.production.dynamic.zerg.ZergDynamicUnitsCommander;
 import atlantis.util.We;
 
@@ -20,21 +19,21 @@ public class DynamicProductionOfUnitsCommander extends Commander {
 
         if (We.terran()) {
             raceSpecific = new Class[]{
-                TerranDynamicTech.class,
+                TerranDynamicTechResearch.class,
                 TerranDynamicUnitsCommander.class,
                 TerranDynamicBuildingsCommander.class,
             };
         }
         else if (We.protoss()) {
             raceSpecific = new Class[]{
-                ProtossDynamicTech.class,
+                ProtossDynamicTechResearch.class,
                 ProtossDynamicUnitsManager.class,
                 ProtossDynamicBuildingsCommander.class,
             };
         }
         else {
             raceSpecific = new Class[]{
-                ZergDynamicTech.class,
+                ZergDynamicTechResearch.class,
                 ZergDynamicUnitsCommander.class,
                 ZergDynamicBuildingsCommander.class,
             };

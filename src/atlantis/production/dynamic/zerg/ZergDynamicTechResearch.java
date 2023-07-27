@@ -10,7 +10,7 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 
-public class ZergDynamicTech extends Commander {
+public class ZergDynamicTechResearch extends Commander {
     @Override
     public void handle() {
         if (A.notNthGameFrame(35)) {
