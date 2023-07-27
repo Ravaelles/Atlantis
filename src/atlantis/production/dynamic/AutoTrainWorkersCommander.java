@@ -2,12 +2,11 @@ package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.build.ZergBuildOrder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.production.requests.ProduceUnitNow;
 import atlantis.units.AUnit;
@@ -15,7 +14,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import bwapi.Color;
 
 
 public class AutoTrainWorkersCommander extends Commander {

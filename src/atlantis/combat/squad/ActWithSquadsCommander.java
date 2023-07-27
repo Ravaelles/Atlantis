@@ -5,7 +5,6 @@ import atlantis.combat.squad.mission.SquadMissionChanger;
 import atlantis.game.A;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ActWithSquadsCommander extends Commander {
 

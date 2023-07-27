@@ -7,8 +7,6 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import bwapi.TechType;
 
-import static atlantis.units.AUnitType.Terran_Science_Vessel;
-
 public class TerranCloakableManager extends Manager {
 
     public TerranCloakableManager(AUnit unit) {

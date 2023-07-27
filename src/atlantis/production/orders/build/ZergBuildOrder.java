@@ -1,7 +1,7 @@
 package atlantis.production.orders.build;
 
-import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

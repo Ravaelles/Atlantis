@@ -7,7 +7,6 @@ import atlantis.units.select.Select;
 import bwapi.Color;
 
 public class Unfreezer {
-
     public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 30;
 
     /**
@@ -85,5 +84,4 @@ public class Unfreezer {
 
         return false;
     }
-
 }

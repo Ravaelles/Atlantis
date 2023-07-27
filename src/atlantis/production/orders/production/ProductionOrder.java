@@ -7,7 +7,6 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class ProductionOrder {
-    
 //    public static final String BASE_POSITION_NATURAL = "NATURAL";
 //    public static final String BASE_POSITION_MAIN = "MAIN";
 //
@@ -26,7 +25,7 @@ public class ProductionOrder {
     private int minSupply;
 
     /**
-     * AUnit type to be build. Can be null if this production order is for something else than upgrade.
+     * AUnit type to be built. Can be null if this production order is for something else than upgrade.
      */
     private AUnitType unitOrBuilding = null;
 

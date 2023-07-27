@@ -6,7 +6,6 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
-import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class U238 extends Commander {

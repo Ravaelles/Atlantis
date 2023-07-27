@@ -1,7 +1,6 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.combat.micro.terran.tank.TankDecisions;
-import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
