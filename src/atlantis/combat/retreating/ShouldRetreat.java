@@ -49,6 +49,8 @@ public class ShouldRetreat extends Manager {
 
                 if (unit.isRunning()) return false;
 
+                if (unit.isMissionDefend()) return false;
+
 //                if (TempDontRetreat.temporarilyDontRetreat()) {
 //                    return false;
 //                }

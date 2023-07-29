@@ -23,7 +23,7 @@ public class ATechManager extends Helpers {
 
     private static void handleResearchAt(int minSupply, Object techOrUpgrade) {
         AUnitType required = whatMakes(techOrUpgrade);
-        
+
         if (noSupply(minSupply) || !canAfford(ATech.costOf(techOrUpgrade)) || !hasFree(required)) {
             return;
         }
@@ -39,8 +39,9 @@ public class ATechManager extends Helpers {
         } else if (techUpgradeOrUnit instanceof AUnitType) {
             return ((AUnitType) techUpgradeOrUnit).whatBuildsIt();
         } else {
-            AGame.exit("Neither a tech, nor an upgrade.");
-            return null;
+            throw new RuntimeException("Neither a tech, nor an upgrade.");
+//            AGame.exit("Neither a tech, nor an upgrade.");
+//            return null;
         }
     }
 

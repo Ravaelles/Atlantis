@@ -16,6 +16,8 @@ public class AdvanceAsALeader extends MissionManager {
 
     @Override
     public Manager handle() {
+        if (unit.isMissionAttack()) return null;
+
         if (unit.squad().cohesionPercent() <= 75) {
             unit.holdPosition("LeaderWait");
             return usedManager(this);

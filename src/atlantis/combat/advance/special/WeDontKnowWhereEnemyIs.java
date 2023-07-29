@@ -16,7 +16,7 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
 
     public Manager handle(AUnit unit) {
         if (!unit.looksIdle() && unit.isActiveManager(this)) {
-            return continueUsingManager();
+            return continueUsingLastManager();
         }
 
         if (shouldGoToRandomUnexplored()) {

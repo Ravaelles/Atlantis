@@ -19,9 +19,9 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
     // === ATTACK ==============================================
 
     public boolean shouldChangeMissionToAttack() {
-        if (!shouldChangeMissionToContain()) {
-            return false;
-        }
+//        if (!shouldChangeMissionToAttack()) {
+//            return false;
+//        }
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
 

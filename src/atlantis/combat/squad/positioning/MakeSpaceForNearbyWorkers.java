@@ -23,7 +23,11 @@ public class MakeSpaceForNearbyWorkers extends Manager {
         AUnit nearWorker = Select.ourWorkers().inRadius(1.5, unit).first();
 
         if (nearWorker != null) {
-            unit.move(Select.main(), Actions.MOVE_SPACE, "Space4Worker");
+            if (unit.isTankSieged()) {
+                unit.unsiege();
+            } else {
+                unit.move(Select.main(), Actions.MOVE_SPACE, "Space4Worker");
+            }
             return usedManager(this);
         }
 

@@ -12,7 +12,7 @@ import bwapi.UpgradeType;
 import java.util.ArrayList;
 
 public class ATech {
-    
+
     private static final ArrayList<TechType> currentlyResearching = new ArrayList<>();
     private static final ArrayList<UpgradeType> currentlyUpgrading = new ArrayList<>();
     private static final Cache<Boolean> cacheBoolean = new Cache<>();
@@ -30,8 +30,9 @@ public class ATech {
                     } else if (techOrUpgrade instanceof UpgradeType) {
                         return isResearchedUpgrade((UpgradeType) techOrUpgrade, 1);
                     } else {
-                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
-                        return false;
+                        throw new RuntimeException("Neither a tech, nor an upgrade.");
+//                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
+//                        return false;
                     }
                 }
         );
@@ -49,8 +50,9 @@ public class ATech {
                     } else if (techOrUpgrade instanceof UpgradeType) {
                         return Count.inQueueOrUnfinished((UpgradeType) techOrUpgrade, 4) == 0;
                     } else {
-                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
-                        return false;
+                        throw new RuntimeException("Neither a tech, nor an upgrade.");
+//                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
+//                        return false;
                     }
                 }
         );
@@ -70,14 +72,14 @@ public class ATech {
                     // Ignore
                 }
             }
-            
+
             UpgradeType upgrade = (UpgradeType) techOrUpgrade;
             return isResearchedUpgrade(upgrade, level);
         }
     }
-    
+
     // =========================================================
-    
+
     /**
      * Returns level of given upgrade. 0 is initially, it can raise up to 3.
      */
@@ -112,13 +114,13 @@ public class ATech {
         currentlyUpgrading.add(upgrade);
         cacheBoolean.clear();
     }
-    
+
     // =========================================================
-    
+
     private static boolean isResearchedTech(TechType tech) {
         return AGame.getPlayerUs().hasResearched(tech);
     }
-    
+
     private static boolean isResearchedUpgrade(UpgradeType upgrade, int expectedUpgradeLevel) {
         return getUpgradeLevel(upgrade) >= Math.min(expectedUpgradeLevel, 3);
     }

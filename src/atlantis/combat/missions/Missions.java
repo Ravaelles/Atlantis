@@ -136,8 +136,8 @@ public class Missions {
             return;
         }
 
-        currentGlobalMission = mission;
         lastMissionChanged = A.now();
+        currentGlobalMission = mission;
 
         if (A.now() > 50) {
 //            if (mission.isMissionDefend()) {

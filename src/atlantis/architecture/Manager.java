@@ -45,10 +45,6 @@ public abstract class Manager extends BaseAbstractManager {
 
         Manager submanager = handleSubmanagers();
 
-        if (submanager != null) {
-            unit.setManagerUsed(submanager);
-        }
-
         return submanager;
     }
 
@@ -57,7 +53,6 @@ public abstract class Manager extends BaseAbstractManager {
     public Manager handleSubmanagers() {
         for (Manager manager : managerObjects){
             if (manager.applies() && manager.handle() != null) {
-                unit.setManagerUsed(manager);
                 return manager;
             }
         }
@@ -66,13 +61,6 @@ public abstract class Manager extends BaseAbstractManager {
     }
 
     // =========================================================
-
-    /**
-     * Returns the last manager used by the unit.
-     */
-//    public Manager lastManager() {
-//        return unit.manager();
-//    }
 
     /**
      * Indicates this Manager was just used by the unit.
@@ -102,7 +90,7 @@ public abstract class Manager extends BaseAbstractManager {
     /**
      * Auxiliary method indicating that the same Manager should not interrupt the actions from previous frames.
      */
-    public Manager continueUsingManager() {
+    public Manager continueUsingLastManager() {
         return unit.manager();
     }
 }

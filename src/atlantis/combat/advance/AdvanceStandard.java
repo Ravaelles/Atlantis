@@ -12,7 +12,11 @@ public class AdvanceStandard extends MissionManager {
 
     public Manager handle() {
         if (focusPoint != null) {
-            unit.move(focusPoint, Actions.MOVE_FOCUS, "LeaderAdvance");
+            if (unit.isTankSieged()) {
+                unit.unsiege();
+            } else {
+                unit.move(focusPoint, Actions.MOVE_FOCUS, "LeaderAdvance");
+            }
             return usedManager(this);
         }
 

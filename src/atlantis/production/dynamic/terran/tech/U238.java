@@ -13,7 +13,7 @@ public class U238 extends Commander {
     public boolean applies() {
         if (OurStrategy.get().goingBio()) {
             if (Count.infantry() >= 8 && AGame.canAffordWithReserved(100, 100)) {
-                if (ATech.isNotResearchedOrPlanned(AddToQueue.upgrade(UpgradeType.U_238_Shells))) {
+                if (ATech.isNotResearchedOrPlanned(UpgradeType.U_238_Shells)) {
                     return true;
                 }
             }
