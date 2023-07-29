@@ -5,6 +5,7 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class PreventMaginotLine extends Manager {
     public PreventMaginotLine(AUnit unit) {
@@ -32,6 +33,13 @@ public class PreventMaginotLine extends Manager {
         if (dragoons > 0) {
             if (GamePhase.isEarlyGame() && unit.friendsInRadiusCount(5) <= 4 * dragoons) {
                 return false;
+            }
+        }
+
+        if (unit.isMissionDefend()) {
+            AUnit main = Select.main();
+            if (main != null && Select.enemyCombatUnits().inRadius(4, main).notEmpty()) {
+                return true;
             }
         }
 

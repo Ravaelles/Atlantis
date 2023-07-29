@@ -24,22 +24,22 @@ public class OptimalNumOfBunkerRepairers {
                     return 0;
                 }
 
-                int enemiesNear = potentialEnemies.inRadius(15, bunker).count();
+                int enemiesNear = potentialEnemies.inRadius(13, bunker).count();
                 int enemiesFar = potentialEnemies.count() - enemiesNear;
                 double optimalNumber = 0;
 
-                if (thereIsNooneInsideTheBunker(bunker)) {
-                    if (enemiesFar <= 1 && enemiesNear == 0) {
+                if (thereIsAlmostNooneInside(bunker)) {
+                    if (enemiesNear == 0) {
                         return 0;
                     }
-                    if (enemiesFar >= 5) {
+                    if ((enemiesFar + enemiesNear) >= 5 && bunker.loadedUnits().size() > 0) {
                         return 1;
                     }
                 }
 
                 // against PROTOSS
                 if (Enemy.protoss()) {
-                    optimalNumber = enemiesNear * 1.3 + enemiesFar * 0.62;
+                    optimalNumber = enemiesNear * 1.5 + enemiesFar * 0.5;
                 }
                 // against TERRAN
                 else if (Enemy.terran()) {
@@ -96,8 +96,8 @@ public class OptimalNumOfBunkerRepairers {
         return false;
     }
 
-    private static boolean thereIsNooneInsideTheBunker(AUnit bunker) {
-        return bunker.loadedUnits().isEmpty()
+    private static boolean thereIsAlmostNooneInside(AUnit bunker) {
+        return bunker.loadedUnits().size() <= 1
             && bunker.friendsNear().terranInfantryWithoutMedics().inRadius(6, bunker).atMost(1);
     }
 }

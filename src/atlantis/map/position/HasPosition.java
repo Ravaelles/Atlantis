@@ -17,7 +17,9 @@ public interface HasPosition {
     public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 32;
 
     APosition position();
+
     int x();
+
     int y();
 
     // === High-abstraction ========================================
@@ -28,9 +30,10 @@ public interface HasPosition {
     default APosition translatePercentTowards(HasPosition towards, int percentTowards) {
         return translatePercentTowards(percentTowards, towards);
     }
+
     default APosition translatePercentTowards(int percentTowards, HasPosition towards) {
         return PositionHelper.getPositionMovedPercentTowards(
-                this, towards, percentTowards
+            this, towards, percentTowards
         );
     }
 
@@ -40,9 +43,10 @@ public interface HasPosition {
     default APosition translateTilesTowards(HasPosition towards, double tiles) {
         return translateTilesTowards(tiles, towards);
     }
+
     default APosition translateTilesTowards(double tiles, HasPosition towards) {
         return PositionHelper.getPositionMovedTilesTowards(
-                this, towards, tiles
+            this, towards, tiles
         );
     }
 
@@ -68,16 +72,49 @@ public interface HasPosition {
         return new APosition((int) (x() + vector.x), (int) (y() + vector.y));
     }
 
-    default APosition makeWalkable(int maxRadius) {
+    default APosition makeBuildable(int maxRadius) {
+        APosition position = this.position();
+        if (position.isBuildable()) {
+            return position;
+        }
+
         int currentRadius = 0;
         while (currentRadius <= maxRadius) {
             for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
                 for (int dty = -currentRadius; dty <= currentRadius; dty++) {
                     if (
-                            dtx == -currentRadius || dtx == currentRadius
-                                    || dty == -currentRadius || dty == currentRadius
+                        dtx == -currentRadius || dtx == currentRadius
+                            || dty == -currentRadius || dty == currentRadius
                     ) {
-                        APosition position = this.translateByTiles(dtx, dty);
+                        position = this.translateByTiles(dtx, dty);
+                        if (position.isBuildable()) {
+                            return position;
+                        }
+                    }
+                }
+            }
+
+            currentRadius++;
+        }
+
+        return null;
+    }
+
+    default APosition makeWalkable(int maxRadius) {
+        APosition position = this.position();
+        if (position.isWalkable()) {
+            return position;
+        }
+
+        int currentRadius = 0;
+        while (currentRadius <= maxRadius) {
+            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
+                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+                    if (
+                        dtx == -currentRadius || dtx == currentRadius
+                            || dty == -currentRadius || dty == currentRadius
+                    ) {
+                        position = this.translateByTiles(dtx, dty);
                         if (position.isWalkable()) {
                             return position;
                         }
@@ -150,13 +187,13 @@ public interface HasPosition {
             for (double dtx = -currentRadius; dtx <= currentRadius; dtx += step) {
                 for (double dty = -currentRadius; dty <= currentRadius; dty += step) {
                     if (
-                            dtx == -currentRadius || dtx == currentRadius
-                                    || dty == -currentRadius || dty == currentRadius
+                        dtx == -currentRadius || dtx == currentRadius
+                            || dty == -currentRadius || dty == currentRadius
                     ) {
                         APosition position = this.translateByTiles(dtx, dty);
                         if (
                             position.isWalkable()
-                            && our.exclude(exceptUnit).inRadius(closenessMargin, position).empty()
+                                && our.exclude(exceptUnit).inRadius(closenessMargin, position).empty()
                         ) {
                             return position;
                         }

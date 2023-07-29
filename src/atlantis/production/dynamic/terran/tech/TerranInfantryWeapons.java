@@ -21,7 +21,7 @@ public class TerranInfantryWeapons extends Commander {
                         && Count.infantry() >= minInfantry
                         && AGame.canAffordWithReserved(100, 150)
                 ) {
-                    if (ATech.isNotResearchedOrPlanned(AddToQueue.upgrade(UpgradeType.Terran_Infantry_Weapons))) {
+                    if (ATech.isNotResearchedOrPlanned(UpgradeType.Terran_Infantry_Weapons)) {
                         return true;
                     }
                 }

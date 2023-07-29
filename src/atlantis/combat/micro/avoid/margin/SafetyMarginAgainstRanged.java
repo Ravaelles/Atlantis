@@ -114,7 +114,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         }
 
         APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
-        return 1.6 + defender.woundPercent() / 100.0 + (defender.isMoving() ? 0.5 : 0) + (defender.isAir() ? 0.5 : 0);
+        return 1.6 + defender.woundPercent() / 100.0 + (defender.isMoving() ? 0.5 : 0) + (defender.isAir() ? 1.5 : 0);
     }
 
 //    private double extraMarginAgainstCombatBuilding(AUnit attacker) {

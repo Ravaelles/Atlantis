@@ -16,9 +16,9 @@ public class TerranTankWhenSieged extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            DontThinkAboutUnsieging.class,
             TankRunning.class,
             WouldBlockChokeHere.class,
-            DontThinkAboutUnsieging.class,
             SiegeHereDuringMissionDefend.class,
             UnsiegeToReposition.class,
             SiegeHereDuringMissionDefend.class,

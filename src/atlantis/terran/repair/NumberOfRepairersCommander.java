@@ -5,6 +5,7 @@ import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
@@ -53,6 +54,10 @@ public class NumberOfRepairersCommander extends Commander {
 
     public boolean removeExcessiveRepairersIfNeeded() {
         int allowedRepairers = OptimalNumOfRepairers.MAX_REPAIRERS_AT_ONCE;
+
+        if (!A.hasMinerals(5)) {
+            allowedRepairers = Math.max(2, Math.min(3, Count.workers() / 8));
+        }
 
         if (OptimalNumOfRepairers.weHaveTooManyRepairersOverall()) {
             for (int i = 0; i < RepairAssignments.countTotalRepairers() - allowedRepairers; i++) {

@@ -4,6 +4,9 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyFlags;
+import atlantis.production.dynamic.terran.units.ProduceGhosts;
+import atlantis.production.dynamic.terran.units.ProduceMarines;
+import atlantis.production.dynamic.terran.units.ProduceMedicsAndFirebats;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -24,9 +27,9 @@ public class TerranDynamicUnitsCommander extends Commander {
         wraiths();
 
         if (Count.infantry() <= 14 || (Enemy.protoss() && Count.tanks() >= 4) || A.hasMinerals(500)) {
-            TerranDynamicInfantry.ghosts();
-            TerranDynamicInfantry.medics();
-            TerranDynamicInfantry.marines();
+            ProduceGhosts.ghosts();
+            ProduceMedicsAndFirebats.medics();
+            ProduceMarines.marines();
         }
     }
 

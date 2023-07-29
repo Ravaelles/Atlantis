@@ -21,11 +21,10 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ConstructionRequests {
-
     /**
      * List of all unfinished (started or pending) constructions.
      */
-    protected static ConcurrentLinkedQueue<Construction> constructions = new ConcurrentLinkedQueue<>();
+    public static ConcurrentLinkedQueue<Construction> constructions = new ConcurrentLinkedQueue<>();
 
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for

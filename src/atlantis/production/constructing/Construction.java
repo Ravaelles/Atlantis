@@ -15,7 +15,6 @@ import atlantis.util.cache.Cache;
  * Represents construction of a building, including ones not yet started.
  */
 public class Construction implements Comparable<Construction> {
-
     private static Cache<Object> cache = new Cache<>();
 
     private static int _firstFreeId = 1;
@@ -32,7 +31,7 @@ public class Construction implements Comparable<Construction> {
     private ConstructionOrderStatus status;
 
     // =========================================================
-    
+
     public Construction(AUnitType buildingType) {
         this.buildingType = buildingType;
 
@@ -65,7 +64,7 @@ public class Construction implements Comparable<Construction> {
     /**
      * Assigns optimal builder for this building. Worker closest to this place.
      *
-     * @return  AUnit for convenience it returns
+     * @return AUnit for convenience it returns
      */
     protected AUnit assignOptimalBuilder() {
         builder = Select.ourWorkersFreeToBuildOrRepair().nearestTo(positionToBuild);
@@ -80,15 +79,15 @@ public class Construction implements Comparable<Construction> {
         if (construction != null) {
             construction.cancelConstruction();
         }
-        
+
         if (builder != null) {
             builder.cancelConstruction();
             builder = null;
         }
-        
+
         ConstructionRequests.removeOrder(this);
     }
-    
+
     // =========================================================
 
     @Override
@@ -112,7 +111,7 @@ public class Construction implements Comparable<Construction> {
         final Construction other = (Construction) obj;
         return this.ID == other.ID;
     }
-    
+
     @Override
     public int compareTo(Construction o) {
         return Integer.compare(ID, o.ID);
@@ -122,21 +121,21 @@ public class Construction implements Comparable<Construction> {
     public String toString() {
         return "ConstructionOrder{" + "ID=" + ID + ", buildingType=" + buildingType + ", construction=" + construction + ", builder=" + builder + ", positionToBuild=" + positionToBuild + ", productionOrder=" + productionOrder + ", status=" + status + '}';
     }
-    
+
     // =========================================================
-    
+
     public APosition positionToBuildCenter() {
         APosition positionToBuild = buildPosition();
         if (positionToBuild != null) {
             return positionToBuild.translateByPixels(
-                    buildingType().dimensionLeft(), buildingType().dimensionUp()
+                buildingType().dimensionLeft(), buildingType().dimensionUp()
             );
         }
         else {
             return null;
         }
     }
-    
+
     public AUnitType buildingType() {
         return buildingType;
     }
@@ -223,5 +222,9 @@ public class Construction implements Comparable<Construction> {
 
     public boolean notStarted() {
         return ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(status);
+    }
+
+    public static void clearCache() {
+        cache.clear();
     }
 }

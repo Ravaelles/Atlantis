@@ -13,6 +13,12 @@ public class ProcessAttackUnit extends Manager {
     }
 
     public boolean processAttackOtherUnit(AUnit target) {
+        if (unit.isTankSieged() && unit.distToMoreThan(target, 12)) {
+            unit.unsiege();
+            unit.setTooltip("UnsiegeToAttack");
+            return true;
+        }
+
         if (
             target.isFoggedUnitWithKnownPosition()
                 && unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false)

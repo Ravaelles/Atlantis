@@ -84,7 +84,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                         System.err.println("--- Non critical but ugly issue ---");
                         System.err.println("Missing requirement: " + requirement + " for: " + buildType);
                     }
-    //                A.printStackTrace("Missing requirement: " + requirement + " for: " + type());
+                    //                A.printStackTrace("Missing requirement: " + requirement + " for: " + type());
                     return false;
                 }
 
@@ -135,8 +135,10 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
             }
 
             APosition nearTo = Select.main()
-                .translateTilesTowards(We.terran() ? 5 : 9, mainChoke)
-                .makeWalkable(8);
+                .translateTilesTowards(We.terran() ? 7 : 9, mainChoke)
+                .makeBuildable(8)
+                .makeWalkable(4);
+
             AUnit builder = Select.ourWorkers().nearestTo(nearTo);
             return APositionFinder.findStandardPosition(
                 builder, type(), nearTo, 15

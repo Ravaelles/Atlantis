@@ -17,56 +17,18 @@ public class TerranBunkerPositionFinder {
     private static AUnitType bunker = AUnitType.Terran_Bunker;
 
     public static APosition findPosition(AUnit builder, Construction order, HasPosition nearTo) {
-        if (nearTo == null) {
-            nearTo = order.nearTo();
-        }
-
-        if (nearTo != null) {
-//            System.out.println("Near to defined " + order.nearTo());
-//            nearTo = defineNearTo(order);
-            return APositionFinder.findStandardPosition(builder, bunker, nearTo, 15);
-        }
 //        if (nearTo == null) {
 //            nearTo = defineNearTo(order);
-//            nearTo = Select.ourBuildings().first();
 //        }
-
-        // =========================================================
-
-//        if (nearTo != null && Count.bunkers() > 0) {
-//            AUnit otherBunker = Select.ourOfType(bunker).nearestTo(Select.main());
-//            if (otherBunker != null) {
-//                nearTo = otherBunker;
-//            }
-//        }
-
-        // =========================================================
-
-//        if (nearTo == null) {
-//            AUnit existingBunker = Select.ourOfType(AUnitType.Terran_Bunker).first();
-//            if (existingBunker != null) {
-//                nearTo = existingBunker.position();
-//                APosition defendPoint = MissionDefend.getInstance().focusPoint();
-//                if (defendPoint != null) {
-//                    nearTo = nearTo.translatePercentTowards(defendPoint, 15);
-//                }
-//            }
-//            else {
-//                AUnit mainBase = Select.main();
-//                if (mainBase != null) {
-//                    nearTo = Select.main().position();
-//                }
 //
-//                AChoke mainChoke = Chokes.mainChoke();
-//                if (mainChoke != null) {
-//                    int tilesAway = Enemy.zerg() ? 2 : 7;
-//                    nearTo = nearTo.translateTilesTowards(tilesAway, mainChoke);
-//                }
-//            }
+//        if (nearTo == null) {
+//            nearTo = order.nearTo();
+//        }
+////
+//        if (nearTo != null) {
+//            return APositionFinder.findStandardPosition(builder, bunker, nearTo, 15);
 //        }
 
-        // =========================================================
-        // Find position near specified place
 
 //        return APositionFinder.findStandardPosition(builder, bunker, nearTo, 30);
         HasPosition hasPosition = TerranBunker.get().nextBuildingPosition();
@@ -100,7 +62,8 @@ public class TerranBunkerPositionFinder {
         if (locationModifier.equals(PositionModifier.MAIN)) {
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
-                return mainBase.translateTilesTowards(mainChoke, 3.2)
+                return mainBase.translateTilesTowards(mainChoke, 6)
+                    .makeBuildable(8)
                     .makeWalkable(8);
             }
 

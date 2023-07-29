@@ -23,7 +23,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
 import atlantis.map.scout.ScoutCommander;
-import atlantis.production.constructing.BuilderManager;
+import atlantis.production.constructing.builders.BuilderManager;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.terran.repair.RepairAssignments;
@@ -200,7 +200,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //    }
 
     // =========================================================
-
     public static void forgetUnitEntirely(AUnit unit) {
         instances.remove(unit.id());
     }
@@ -318,7 +317,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         if (
             runningManager().isPossibleAndReasonablePosition(this, newPosition)
-            && move(newPosition, action, "Move away", false)
+                && move(newPosition, action, "Move away", false)
 //                && (unit().isAir() || Select.all().groundUnits().inRadius(0.05, newPosition).empty())
         ) {
         }
@@ -2733,5 +2732,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean canLift() {
         return u().canLift();
+    }
+
+    public boolean everyOneInNUnits(int n) {
+        return id() % n == 1;
     }
 }

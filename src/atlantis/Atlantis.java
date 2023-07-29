@@ -70,6 +70,7 @@ public class Atlantis implements BWEventListener {
     public static int LOST_RESOURCES = 0;
 
     // =========================================================
+
     /**
      * It's executed only once, before the first game frame happens.
      */
@@ -109,11 +110,12 @@ public class Atlantis implements BWEventListener {
         while (GameSpeed.isPaused()) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) { }
+            } catch (InterruptedException e) {
+            }
         }
 
         // === All game actions that take place every frame ==================================================
-        
+
         try {
             Atlantis.getInstance().getGameCommander().handle();
         }
@@ -154,6 +156,10 @@ public class Atlantis implements BWEventListener {
             // Apply construction fix: detect new Protoss buildings and remove them from queue.
             if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
                 ProtossConstructionManager.handleWarpingNewBuilding(unit);
+            }
+
+            if (unit.isABuilding()) {
+
             }
         }
     }
@@ -226,7 +232,7 @@ public class Atlantis implements BWEventListener {
 
     /**
      * Called when a unit changes its AUnitType.
-     *
+     * <p>
      * For example, when a Drone transforms into a Hatchery, a Siege Tank uses Siege Mode, or a Vespene Geyser
      * receives a Refinery.
      */
@@ -281,7 +287,8 @@ public class Atlantis implements BWEventListener {
         System.out.println("#####################################");
         if (winner) {
             System.out.println("############ VICTORY! ###############");
-        } else {
+        }
+        else {
             System.out.println("############ Defeat... ##############");
         }
         System.out.println("############ Lost: " + Atlantis.LOST + " ################");
@@ -318,7 +325,7 @@ public class Atlantis implements BWEventListener {
         int resourcesBalance = AGame.killsLossesResourceBalance();
         System.out.println();
         System.out.println(
-                "### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
+            "### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
                 "### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\r\n" +
                 "### Resource killed/lost: " + (resourcesBalance > 0 ? "+" + resourcesBalance : resourcesBalance) + " ###"
         );
@@ -382,6 +389,7 @@ public class Atlantis implements BWEventListener {
 
     // =========================================================
     // Constructors
+
     /**
      * You have to pass AtlantisConfig object to initialize Atlantis.
      */
@@ -403,6 +411,7 @@ public class Atlantis implements BWEventListener {
 
     // =========================================================
     // Start / Pause / Unpause
+
     /**
      * Starts the bot.
      */
@@ -424,6 +433,7 @@ public class Atlantis implements BWEventListener {
     }
 
     // =========================================================
+
     /**
      * This method returns bridge connector between Atlantis and Starcraft, which is a BWMirror object. It
      * provides low-level functionality for functions like canBuildHere etc. For more details, see BWMirror
@@ -443,6 +453,7 @@ public class Atlantis implements BWEventListener {
 
     // =========================================================
     // Utility / Axuliary methods
+
     /**
      * This is convenience that takes any number of arguments and displays them in one line.
      */

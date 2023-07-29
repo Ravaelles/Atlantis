@@ -46,6 +46,10 @@ public class TerranTankWhenNotSieged extends Manager {
             return usedManager(this);
         }
 
+        if (EnemiesToCloseToUnsiegedTank(unit)) {
+            return usedManager(this);
+        }
+
         UnitBeingReparedManager unitBeingReparedManager = new UnitBeingReparedManager(unit);
         if (unitBeingReparedManager.handleDontRunWhenBeingRepared() != null) {
             return usedManager(unitBeingReparedManager);
@@ -64,6 +68,19 @@ public class TerranTankWhenNotSieged extends Manager {
         }
 
         return null;
+    }
+
+    private boolean EnemiesToCloseToUnsiegedTank(AUnit unit) {
+        if (unit.noCooldown() && unit.hp() >= 70) return false;
+
+        Selection enemies = unit.enemiesNear().groundUnits().inRadius(6.5, unit);
+        if (enemies.atLeast(2)) {
+            unit.runningManager().runFrom(enemies.nearestTo(unit), 2, Actions.MOVE_AVOID, false);
+            unit.setTooltip("Careful");
+            return true;
+        }
+
+        return false;
     }
 
     // =========================================================
@@ -85,8 +102,14 @@ public class TerranTankWhenNotSieged extends Manager {
 //    }
 
     private boolean areEnemiesTooClose() {
-        if (unit.enemiesNear().combatUnits().groundUnits().inRadius(5, unit).notEmpty()) {
+        Selection enemies = unit.enemiesNear().combatUnits().groundUnits();
+
+        if (enemies.inRadius(5, unit).notEmpty()) {
             return true;
+        }
+
+        if (enemies.melee().inRadius(12, unit).atLeast(6)) {
+            return unit.everyOneInNUnits(4);
         }
 
         return false;

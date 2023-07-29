@@ -19,6 +19,8 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
     // === ATTACK ==============================================
 
     public boolean shouldChangeMissionToAttack() {
+        if (true) return false;
+
 //        if (!shouldChangeMissionToAttack()) {
 //            return false;
 //        }
@@ -27,9 +29,9 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (
             ourRelativeStrength <= 600
-            && EnemyUnits.discovered().combatBuildingsAntiLand().atLeast(2)
-            && Count.tanks() <= 1
-            && !TankDecisions.siegeResearched()
+                && EnemyUnits.discovered().combatBuildingsAntiLand().atLeast(2)
+                && Count.tanks() <= 1
+                && !TankDecisions.siegeResearched()
         ) {
             return false;
         }

@@ -20,7 +20,7 @@ import atlantis.util.We;
 public abstract class AbstractPositionFinder {
 
     public static String _CONDITION_THAT_FAILED = null;
-//    public static boolean DEBUG = true;
+    //    public static boolean DEBUG = true;
     public static boolean DEBUG = false;
 
     // =========================================================
@@ -43,7 +43,7 @@ public abstract class AbstractPositionFinder {
 
         // Leave entire vertical (same tileX) corridor free for units
         if (
-                position.tx() % 7 <= 1
+            position.tx() % 7 <= 1
                 || (position.tx() + building.dimensionRight() / 32) % 7 <= 1
         ) {
 //        System.out.println(building.name() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
@@ -55,7 +55,7 @@ public abstract class AbstractPositionFinder {
 
         // Leave entire horizontal (same tileY) corridor free for units
         if (
-                position.ty() % 7 <= 1
+            position.ty() % 7 <= 1
                 || (position.ty() + building.dimensionDown() / 32) % 7 <= 0
         ) {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
@@ -110,7 +110,7 @@ public abstract class AbstractPositionFinder {
             HasPosition constructionPosition = order.buildPosition();
 //            System.out.println("another = " + constructionPosition + " // " + order.buildingType());
             if (
-                    position != null && constructionPosition != null
+                position != null && constructionPosition != null
             ) {
 //                System.out.println("OK constructionPosition = " + constructionPosition);
                 double distance = position.distTo(constructionPosition);
@@ -130,7 +130,7 @@ public abstract class AbstractPositionFinder {
                 }
 
                 // Look for two bases that would be built too close one to another
-                if (distance <= 4) {
+                if (distance <= (building.canHaveAddon() ? 4 : 2.5)) {
                     _CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" + building + ", DIST: " + distance + ")";
                     return true;
                 }
@@ -156,7 +156,7 @@ public abstract class AbstractPositionFinder {
         if (base != null) {
             int minDistFromBase = We.terran() ? 3 : (We.zerg() ? 3 : 0);
             if (base.translateByTiles(minDistFromBase, 0).distTo(position) <= 3.5) {
-    //            APainter.paintCircle(position, 10, Color.Red);
+                //            APainter.paintCircle(position, 10, Color.Red);
                 _CONDITION_THAT_FAILED = "Too close to main base";
                 return true;
             }
@@ -178,7 +178,7 @@ public abstract class AbstractPositionFinder {
         for (ABaseLocation base : Bases.baseLocations()) {
             APosition natural = Bases.natural();
             if (
-                    !base.isStartLocation()
+                !base.isStartLocation()
                     && (natural != null && natural.translateByTiles(3, 1).distTo(position) <= 3)
                     && base.translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5
             ) {

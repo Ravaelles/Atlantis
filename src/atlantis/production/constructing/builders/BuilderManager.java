@@ -1,9 +1,12 @@
-package atlantis.production.constructing;
+package atlantis.production.constructing.builders;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
+import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.ConstructionOrderStatus;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
@@ -70,12 +73,15 @@ public class BuilderManager extends Manager {
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
                 return travelToConstruct(construction);
-            } else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
+            }
+            else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
                 // Do nothing - construction is pending
-            } else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
+            }
+            else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 // Do nothing - construction is finished
             }
-        } else {
+        }
+        else {
 //            System.err.println("construction null for " + unit);
             return false;
         }
@@ -104,39 +110,50 @@ public class BuilderManager extends Manager {
 
 //        CameraCommander.centerCameraOn(unit.getPosition());
 
-        // Move unit to the build position
         if (distance > minDistanceToIssueBuildOrder) {
-            if (shouldNotTravelYet(buildingType, distance)) {
-                unit.setTooltipTactical("Wait to build " + buildingType.name() + distString);
-                return false;
-            }
+            return moveToConstruct(construction, buildingType, distance, distString);
+        }
+        else {
+            refreshConstructionPositionIfNeeded(construction, buildingType);
 
-            if (!unit.isMoving()) {
+            return issueBuildOrder(buildingType, construction);
+        }
+    }
+
+    private static void refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
+        if (AbstractPositionFinder.canPhysicallyBuildHere(
+            construction.builder(), buildingType, construction.buildPosition())
+        ) {
+            APosition positionForNewBuilding = construction.findPositionForNewBuilding();
+//            System.out.println("UPDATED positionForNewBuilding = " + positionForNewBuilding);
+            if (positionForNewBuilding != null) {
+                construction.setPositionToBuild(positionForNewBuilding);
+                Construction.clearCache();
+            }
+        }
+    }
+
+    private boolean moveToConstruct(Construction construction, AUnitType buildingType, double distance, String distString) {
+        if (shouldNotTravelYet(buildingType, distance)) {
+            unit.setTooltipTactical("Wait to build " + buildingType.name() + distString);
+            return false;
+        }
+
+        if (!unit.isMoving()) {
 //                if (A.everyNthGameFrame(20)) {
 //                    construction.setPositionToBuild(newPosition);
 //                }
 
 //                    GameSpeed.changeSpeedTo(60);
-                if (unit.move(
-                    construction.positionToBuildCenter(),
-                    Actions.MOVE_BUILD,
-                    "Build " + buildingType.name() + distString,
-                    true
-                )) return true;
-            }
-
-            return true;
+            if (unit.move(
+                construction.positionToBuildCenter(),
+                Actions.MOVE_BUILD,
+                "Build " + buildingType.name() + distString,
+                true
+            )) return true;
         }
 
-        // =========================================================
-        // AUnit is already at the build position
-
-        // If we can afford to construct this building exactly right now, issue build order which should
-        // be immediate as unit is standing just right there
-
-        else {
-            return issueBuildOrder(buildingType, construction);
-        }
+        return true;
     }
 
     private boolean issueBuildOrder(AUnitType buildingType, Construction order) {
@@ -217,30 +234,30 @@ public class BuilderManager extends Manager {
 
         if (
             building.isGasBuilding()
-            && !AbstractPositionFinder.canPhysicallyBuildHere(unit, building, position)
+                && !AbstractPositionFinder.canPhysicallyBuildHere(unit, building, position)
         ) {
             if (AbstractPositionFinder.canPhysicallyBuildHere(
                 unit, building, position.translateByTiles(-1, 0))
             ) {
-                System.out.println("Applied [-1,0] " + building + " position FIX");
+//                System.out.println("Applied [-1,0] " + building + " position FIX");
                 return position.translateByTiles(-1, 0);
             }
             if (AbstractPositionFinder.canPhysicallyBuildHere(
                 unit, building, position.translateByTiles(1, 0))
             ) {
-                System.out.println("Applied [1,0] " + building + " position FIX");
+//                System.out.println("Applied [1,0] " + building + " position FIX");
                 return position.translateByTiles(1, 0);
             }
             if (AbstractPositionFinder.canPhysicallyBuildHere(
                 unit, building, position.translateByTiles(-2, -1))
             ) {
-                System.out.println("Applied [-2,-1] " + building + " position FIX");
+//                System.out.println("Applied [-2,-1] " + building + " position FIX");
                 return position.translateByTiles(-2, -1);
             }
             if (AbstractPositionFinder.canPhysicallyBuildHere(
                 unit, building, position.translateByTiles(2, 1))
             ) {
-                System.out.println("Applied [2,1] " + building + " position FIX");
+//                System.out.println("Applied [2,1] " + building + " position FIX");
                 return position.translateByTiles(2, 1);
             }
 
@@ -266,10 +283,10 @@ public class BuilderManager extends Manager {
 //            }
 
 //            if (ProductionQueue.isAtTheTopOfQueue(building, 1)) {
-                return !AGame.canAfford(
-                         building.getMineralPrice() - 32 - (int) (distance * 1.3) - baseBonus,
-                        building.getGasPrice() - 16 - (int) distance
-                );
+            return !AGame.canAfford(
+                building.getMineralPrice() - 32 - (int) (distance * 1.3) - baseBonus,
+                building.getGasPrice() - 16 - (int) distance
+            );
 //            }
 //
 //            return !AGame.canAffordWithReserved(

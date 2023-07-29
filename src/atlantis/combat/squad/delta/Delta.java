@@ -1,5 +1,6 @@
 package atlantis.combat.squad.delta;
 
+import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
 import atlantis.units.select.Count;
@@ -23,7 +24,10 @@ public class Delta extends Squad {
         return delta;
     }
 
-    // =========================================================
+    @Override
+    public Mission mission() {
+        return Missions.ATTACK;
+    }
 
     @Override
     public int expectedUnits() {

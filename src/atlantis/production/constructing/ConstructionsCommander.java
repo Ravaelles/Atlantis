@@ -1,12 +1,14 @@
 package atlantis.production.constructing;
 
 import atlantis.architecture.Commander;
+import atlantis.combat.missions.GlobalMissionCommander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.builders.TerranKilledBuilderCommander;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -20,6 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ConstructionsCommander extends Commander {
+    @Override
+    protected Class<? extends Commander>[] subcommanders() {
+        return new Class[]{
+            TerranKilledBuilderCommander.class,
+        };
+    }
 
     /**
      * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
@@ -36,6 +44,8 @@ public class ConstructionsCommander extends Commander {
         }
 
         fixForIdleBuilders();
+
+        handleSubcommanders();
     }
 
     // =========================================================
@@ -121,8 +131,8 @@ public class ConstructionsCommander extends Commander {
 
         if (
             EnemyUnits.discovered().combatUnits().inRadius(8, position).empty()
-            || (construction.buildingType().isCombatBuilding() && Select.our().inRadius(7, position).atLeast(2))
-            || A.hasMinerals(700)
+                || (construction.buildingType().isCombatBuilding() && Select.our().inRadius(7, position).atLeast(2))
+                || A.hasMinerals(700)
         ) {
             return true;
         }
@@ -286,7 +296,7 @@ public class ConstructionsCommander extends Commander {
 
         AUnit main = Select.main();
         int timeout = 30 * (
-                11
+            11
                 + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 60 : 15)
                 + ((int) (2.9 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
         );

@@ -30,6 +30,7 @@ public class ATech {
                     } else if (techOrUpgrade instanceof UpgradeType) {
                         return isResearchedUpgrade((UpgradeType) techOrUpgrade, 1);
                     } else {
+                        System.out.println("techOrUpgrade = " + techOrUpgrade);
                         throw new RuntimeException("Neither a tech, nor an upgrade.");
 //                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
 //                        return false;
