@@ -234,7 +234,7 @@ public class FightInsteadAvoid {
             return false;
         }
 
-        if (unit.hp() <= 40 || unit.cooldown() <= 3) {
+        if (unit.hp() <= 40 || (unit.cooldown() <= 3 && !unit.isTank())) {
             return false;
         }
 

@@ -26,14 +26,14 @@ public class TerranTankWhenNotSieged extends Manager {
         }
 
         // Just recently sieged
-        if (
-            unit.lastActionLessThanAgo(30 * (5 + (unit.idIsOdd() ? 4 : 0)), Actions.UNSIEGE)
-                || unit.lastActionLessThanAgo(30 * (5 + (unit.idIsOdd() ? 4 : 0)), Actions.SIEGE)
-        ) {
-            return true;
-        }
+//        if (
+//            unit.lastActionLessThanAgo(30 * (5 + (unit.idIsOdd() ? 4 : 0)), Actions.UNSIEGE)
+//                || unit.lastActionLessThanAgo(30 * (5 + (unit.idIsOdd() ? 4 : 0)), Actions.SIEGE)
+//        ) {
+//            return true;
+//        }
 
-        return false;
+        return true;
     }
 
     @Override

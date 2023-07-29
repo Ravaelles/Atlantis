@@ -30,7 +30,7 @@ public class CircumnavigateCombatBuilding extends Manager {
     }
 
     public APosition findPositionAround(AUnit combatBuilding) {
-        int roamingRange = 3;
+        int roamingRange = unit.isAir() ? 7 : 3;
 
         APosition raw = unit.translateTilesTowards(-roamingRange - 0.2, combatBuilding);
 

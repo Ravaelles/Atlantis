@@ -13,8 +13,8 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     @Override
-    public double optimalDist() {
-        return 4;
+    public boolean applies() {
+        return !unit.isMedic();
     }
 
     public Manager handle() {
@@ -40,6 +40,13 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         }
 
         return false;
+    }
+
+    @Override
+    public double optimalDist() {
+        if (unit.isMedic()) return 0.5;
+        if (unit.isMelee()) return 2;
+        return 4;
     }
 }
 

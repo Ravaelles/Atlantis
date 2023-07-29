@@ -1,5 +1,6 @@
-package atlantis.map;
+package atlantis.map.region;
 
+import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.util.cache.Cache;

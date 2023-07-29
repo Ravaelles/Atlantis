@@ -6,7 +6,7 @@ import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.map.Chokes;
+import atlantis.map.choke.Chokes;
 import atlantis.production.requests.ProductionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

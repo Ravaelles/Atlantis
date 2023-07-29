@@ -18,7 +18,7 @@ public class SiegeMode extends Commander {
         return Have.factory() && ATech.isNotResearchedOrPlanned(TechType.Tank_Siege_Mode) && (
             Count.tanks() >= 1
                 || Decisions.wantsToBeAbleToProduceTanksSoon()
-                || (A.seconds() >= 350 || Count.tanks() >= 2)
+                || A.seconds() >= 350
         );
     }
 

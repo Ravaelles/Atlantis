@@ -2,6 +2,8 @@ package atlantis.map;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;

@@ -1,9 +1,13 @@
-package atlantis.map;
+package atlantis.map.choke;
 
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.AMap;
+import atlantis.map.base.Bases;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.region.ARegion;
+import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
 import atlantis.util.cache.Cache;
 import bwem.ChokePoint;

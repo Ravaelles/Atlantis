@@ -1,8 +1,9 @@
-package atlantis.map;
+package atlantis.map.choke;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.region.ARegion;
 import bwapi.Pair;
 import bwapi.Position;
 import bwapi.WalkPosition;

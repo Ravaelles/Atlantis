@@ -5,7 +5,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.map.Bases;
+import atlantis.map.base.Bases;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;

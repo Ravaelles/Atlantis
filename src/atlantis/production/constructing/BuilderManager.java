@@ -52,13 +52,12 @@ public class BuilderManager extends Manager {
     private boolean fixTerranConstructionsWithoutBuilder() {
         if (
             We.terran() && unit.isConstructing() && unit.buildUnit() != null
-            && A.everyNthGameFrame(47)
+            && A.everyNthGameFrame(67)
             && unit.looksIdle()
+            && Select.ourWorkers().inRadius(1, unit.buildUnit()).isEmpty()
         ) {
-            if (Select.ourWorkers().inRadius(1.5, unit.buildUnit()).notEmpty()) {
-                unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(unit.buildUnit());
-                return true;
-            }
+            unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(unit.buildUnit());
+            return true;
         }
 
         return false;

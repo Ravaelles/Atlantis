@@ -1,7 +1,7 @@
 package atlantis.combat.micro.zerg;
 
-import atlantis.map.AChoke;
-import atlantis.map.Chokes;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.APositionFinder;
@@ -28,7 +28,7 @@ public class ZergCreepColony {
             return null;
         }
     }
-    
+
     // =========================================================
 
     public static void creepOneIntoSunkenColony() {
@@ -37,5 +37,5 @@ public class ZergCreepColony {
             creepColony.morph(AUnitType.Zerg_Sunken_Colony);
         }
     }
-    
+
 }

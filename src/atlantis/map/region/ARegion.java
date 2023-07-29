@@ -1,5 +1,7 @@
-package atlantis.map;
+package atlantis.map.region;
 
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;

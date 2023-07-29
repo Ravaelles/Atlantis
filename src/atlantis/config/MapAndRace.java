@@ -28,7 +28,7 @@ public class MapAndRace {
 
         // === Popular SSCAIT maps =================================
 
-        if (true) return "sscai/(2)HeartbreakRidge.scx";
+//        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
@@ -46,7 +46,7 @@ public class MapAndRace {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Terran ==============================================

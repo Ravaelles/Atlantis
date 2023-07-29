@@ -123,12 +123,12 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 //            AddToQueue.withHighPriority(Terran_Factory);
 //        }
         if (
-                OurStrategy.get().goingBio()
+            OurStrategy.get().goingBio()
                 && (
 //                        (Decisions.wantsToBeAbleToProduceTanksSoon() && Count.WithPlanned(Terran_Factory) == 0)
-                        (Count.withPlanned(Terran_Factory) == 0)
-                        || (A.supplyUsed() >= 30 && Count.withPlanned(Terran_Factory) == 0)
-                )
+                (Count.withPlanned(Terran_Factory) == 0)
+                    || (A.supplyUsed() >= 30 && Count.withPlanned(Terran_Factory) == 0)
+            )
         ) {
 //            System.err.println("Change from BIO to TANKS (" + Count.WithPlanned(Terran_Factory) + ")");
 //            System.err.println("A = " + Count.inProduction(Terran_Factory));
@@ -148,7 +148,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
             Selection factories = Select.ourOfType(Terran_Factory);
 
             int unfinishedFactories =
-                    ConstructionRequests.countNotFinishedOfType(Terran_Factory);
+                ConstructionRequests.countNotFinishedOfType(Terran_Factory);
             int numberOfFactories = factories.size() + unfinishedFactories;
 
             // Proceed only if all factories are busy
@@ -159,7 +159,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
                     return true;
                 }
                 else if (unfinishedFactories >= 1 && AGame.canAfford(
-                        100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
+                    100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
                 )) {
                     AddToQueue.withHighPriority(Terran_Factory);
                     return true;
@@ -176,7 +176,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
         }
 
         if (
-                Count.bases() > Count.withPlanned(Terran_Comsat_Station)
+            Count.bases() > Count.withPlanned(Terran_Comsat_Station)
                 && Count.inQueueOrUnfinished(Terran_Comsat_Station, 5) <= 0
         ) {
             AddToQueue.withStandardPriority(Terran_Comsat_Station);
@@ -199,27 +199,34 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
             return;
         }
 
-        if (
-                Decisions.wantsToBeAbleToProduceTanksSoon()
-                        || (A.supplyUsed(45) && !Have.machineShop())
-                        || AGame.canAffordWithReserved(150, 150)
-                        || A.supplyUsed(70)
-        ) {
-
-            for (AUnit building : Select.ourBuildings().list()) {
-                if (building.type().isFactory() && !building.hasAddon()) {
-                    AUnitType addonType = building.type().getRelatedAddon();
-                    if (addonType != null) {
-
-                        if (AGame.canAfford(addonType) && Count.inQueueOrUnfinished(addonType, 3) <= 1) {
-//                            AddToQueue.withHighPriority(addonType);
-                            building.buildAddon(addonType);
-                            return;
-                        }
-                    }
-                }
+        if (Count.factories() >= 1 && !Have.machineShop()) {
+            if (Count.existingOrInProductionOrInQueue(Terran_Machine_Shop) == 0) {
+                AddToQueue.withHighPriority(Terran_Machine_Shop);
+                return;
             }
         }
+
+//        if (
+//                Decisions.wantsToBeAbleToProduceTanksSoon()
+//                        || (A.supplyUsed(45) && !Have.machineShop())
+//                        || AGame.canAffordWithReserved(150, 150)
+//                        || A.supplyUsed(70)
+//        ) {
+//
+//            for (AUnit building : Select.ourBuildings().list()) {
+//                if (building.type().isFactory() && !building.hasAddon()) {
+//                    AUnitType addonType = building.type().getRelatedAddon();
+//                    if (addonType != null) {
+//
+//                        if (AGame.canAfford(addonType) && Count.inQueueOrUnfinished(addonType, 3) <= 1) {
+////                            AddToQueue.withHighPriority(addonType);
+//                            building.buildAddon(addonType);
+//                            return;
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     private static boolean barracks() {
@@ -230,7 +237,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 //                return false;
 //            }
 
-    //        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
+            //        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
             if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
                 return false;
             }

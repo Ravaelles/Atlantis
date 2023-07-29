@@ -1,4 +1,4 @@
-package atlantis.map;
+package atlantis.map.base;
 
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;

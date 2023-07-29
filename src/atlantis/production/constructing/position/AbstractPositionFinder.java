@@ -2,9 +2,14 @@ package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
-import atlantis.map.*;
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.region.ARegion;
+import atlantis.map.region.ARegionBoundary;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
@@ -13,14 +18,14 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public abstract class AbstractPositionFinder {
-    
+
     public static String _CONDITION_THAT_FAILED = null;
 //    public static boolean DEBUG = true;
     public static boolean DEBUG = false;
 
     // =========================================================
     // Hi-level methods
-    
+
     /**
      * Returns true if game says it's possible to build given building at this position.
      */
@@ -33,7 +38,7 @@ public abstract class AbstractPositionFinder {
         if (building.isBase() || building.isGasBuilding() || building.isCombatBuilding()) {
             return false;
         }
-        
+
         // =========================================================
 
         // Leave entire vertical (same tileX) corridor free for units
@@ -56,10 +61,10 @@ public abstract class AbstractPositionFinder {
             _CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Returns true if game says it's possible to build given building at this position.
      */

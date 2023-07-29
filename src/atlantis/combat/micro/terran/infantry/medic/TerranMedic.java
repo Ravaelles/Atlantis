@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran.infantry.medic;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.map.position.APosition;
+import atlantis.map.choke.IsUnitNearChoke;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -14,7 +15,6 @@ import bwapi.TechType;
 import java.util.HashMap;
 
 public class TerranMedic extends Manager {
-
     public double BODY_BLOCK_POSITION_ERROR_MARGIN = 0.2;
     public double MIN_DIST_TO_ASSIGNMENT = 0.45;
 
@@ -31,10 +31,6 @@ public class TerranMedic extends Manager {
     private final HashMap<AUnit, AUnit> medicsToAssignments = new HashMap<>();
     private final HashMap<AUnit, AUnit> assignmentsToMedics = new HashMap<>();
     private final AUnit medic;
-
-//    public Micro[] macroManagers = new Micro[] {
-//        new BodyBlock(),
-//    };
 
     // =========================================================
 
@@ -58,11 +54,14 @@ public class TerranMedic extends Manager {
     }
 
     public Manager handle() {
-        if (!unit.isMedic()) return null;
-
 //        if (medic.hp() <= 14 && AvoidEnemies.avoidEnemiesIfNeeded()) {
 //            return true;
 //        }
+
+        if (unit.isMissionDefend() && !IsUnitNearChoke.check(unit, 0.5)) {
+            medic.setTooltip("BlockChoke");
+            return null;
+        }
 
         if (!medic.isIdle() && medic.lastActionLessThanAgo(8, Actions.HEAL)) {
             medic.setTooltip("hEaL");
@@ -85,17 +84,19 @@ public class TerranMedic extends Manager {
             return usedManager(this);
         }
 
-        if (Enemy.protoss() && bodyBlockMelee()) {
-            return usedManager(this);
-        }
+        if (unit.isMissionDefend() && !IsUnitNearChoke.check(unit, 4)) {
+            if (Enemy.protoss() && bodyBlockMelee()) {
+                return usedManager(this);
+            }
 
-        if (tooFarFromNearestInfantry()) {
-            return usedManager(this);
-        }
+            if (tooFarFromNearestInfantry()) {
+                return usedManager(this);
+            }
 
-        // If there's no "real" infantry around, go to the nearest Marine, Firebat or Ghost.
-        if (handleStickToAssignments()) {
-            return usedManager(this);
+            // If there's no "real" infantry around, go to the nearest Marine, Firebat or Ghost.
+            if (handleStickToAssignments()) {
+                return usedManager(this);
+            }
         }
 
         return null;

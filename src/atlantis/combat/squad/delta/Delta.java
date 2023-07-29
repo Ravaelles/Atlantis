@@ -8,7 +8,6 @@ import atlantis.units.select.Count;
  * Delta is AIR FORCES battle squad. Only offensive air units belong here.
  */
 public class Delta extends Squad {
-
     protected static Delta delta = null;
 
     private Delta() {

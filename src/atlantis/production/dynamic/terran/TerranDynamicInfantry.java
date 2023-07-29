@@ -70,20 +70,22 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsCommander {
             return false;
         }
 
+        int medics = Count.medics();
         if (!Decisions.shouldMakeTerranBio()) {
-            if (Have.academy() && Count.infantry() >= 4 && Count.medics() <= 0) {
+            if (Have.academy() && Count.infantry() >= 4 && medics <= 0) {
                 return false;
             }
         }
 
         // =========================================================
 
-        if (A.hasGas(25) && Count.medics() == 0 && Count.marines() > 0) {
+        int marines = Count.marines();
+        if (A.hasGas(25) && medics == 0 && marines > 0) {
             return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2);
         }
 
         // We have medics, but all of them are depleted from energy
-        if (Count.medics() > 0 && Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).isEmpty()) {
+        if (medics > 0 && Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).isEmpty()) {
             return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 4);
         }
 
@@ -100,7 +102,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsCommander {
 
             // Firebats
             if (!Enemy.terran()) {
-                if (Count.medics() >= 3 && Count.ourOfTypeWithUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
+                if (marines >= 4 && medics >= 3 && Count.ourOfTypeWithUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
                     return AddToQueue.maxAtATime(AUnitType.Terran_Firebat, 2);
                 }
             }

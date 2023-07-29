@@ -11,7 +11,7 @@ public class UnitBeingReparedManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isWounded() && unit.isTerran() && unit.repairer() != null;
+        return unit.isMechanical() && unit.isWounded() && unit.isTerran() && unit.repairer() != null;
     }
 
     public Manager handle() {
@@ -51,7 +51,7 @@ public class UnitBeingReparedManager extends Manager {
 
         // =========================================================
 
-        if (unit.nearestEnemyDist() <= 1.7) {
+        if (unit.nearestEnemyDist() <= (unit.hp() <= 60 ? 2.8 : 1.7)) {
             unit.setTooltip("DontRepairEnemy");
             return null;
         }

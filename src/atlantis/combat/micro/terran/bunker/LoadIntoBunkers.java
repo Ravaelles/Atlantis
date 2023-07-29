@@ -8,7 +8,6 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class LoadIntoBunkers extends Manager {
-
     public LoadIntoBunkers(AUnit unit) {
         super(unit);
     }
@@ -39,7 +38,7 @@ public class LoadIntoBunkers extends Manager {
             return false;
         }
 
-        if (unit.lastActionLessThanAgo(20, Actions.LOAD)) {
+        if (unit.lastActionLessThanAgo(90, Actions.LOAD)) {
             unit.addLog("Loading");
             return continueLoadingIntoBunker();
         }
@@ -72,22 +71,9 @@ public class LoadIntoBunkers extends Manager {
                 return false;
             }
 
-            boolean canLoad;
+            boolean isItSafeToLoadIntoBunker = isItSafeToLoadIntoBunker(bunker, unitDistToBunker, enemiesNear);
 
-            AUnit nearestEnemy = unit.nearestEnemy();
-            if (nearestEnemy == null) {
-                canLoad = true;
-            }
-            else {
-                double enemyDist = unit.distTo(nearestEnemy);
-                double enemyDistToBunker = nearestEnemy.distTo(bunker);
-
-                if (enemyDistToBunker + 1.5 < unitDistToBunker) return false;
-
-                canLoad = enemyDist < 2.4 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6;
-            }
-
-            if (canLoad) {
+            if (isItSafeToLoadIntoBunker) {
                 unit.load(bunker);
 
                 String t = "GetToDaChoppa";
@@ -98,6 +84,25 @@ public class LoadIntoBunkers extends Manager {
         }
 
         return false;
+    }
+
+    private boolean isItSafeToLoadIntoBunker(AUnit bunker, double unitDistToBunker, Selection enemiesNear) {
+        AUnit nearestEnemy = unit.nearestEnemy();
+        if (nearestEnemy == null) {
+            return true;
+        }
+        else {
+            if (enemiesNear.groundUnits().inRadius(1, bunker).atLeast(5)) {
+                return false;
+            }
+
+            double enemyDist = unit.distTo(nearestEnemy);
+            double enemyDistToBunker = nearestEnemy.distTo(bunker);
+
+            if (enemyDistToBunker + 1.5 < unitDistToBunker) return false;
+
+            return enemyDist < 2.4 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6;
+        }
     }
 
     private boolean continueLoadingIntoBunker() {

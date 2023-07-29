@@ -1,4 +1,4 @@
-package atlantis.map;
+package atlantis.map.region;
 
 import atlantis.map.position.APosition;
 import atlantis.util.Vector;

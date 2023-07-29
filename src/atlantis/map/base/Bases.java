@@ -1,6 +1,7 @@
-package atlantis.map;
+package atlantis.map.base;
 
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;

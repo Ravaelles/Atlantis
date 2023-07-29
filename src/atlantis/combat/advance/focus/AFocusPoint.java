@@ -1,6 +1,6 @@
 package atlantis.combat.advance.focus;
 
-import atlantis.map.AChoke;
+import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;

@@ -307,9 +307,9 @@ public abstract class Squad extends Units {
         return selection();
     }
 
-    public boolean hasHighlyOffensiveRole() {
+    public boolean hasMostlyOffensiveRole() {
         return cacheBoolean.get(
-            "hasHighlyOffensiveRole",
+            "hasMostlyOffensiveRole",
             -1,
             () -> Delta.get().equals(this)
         );

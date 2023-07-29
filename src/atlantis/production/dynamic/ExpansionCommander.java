@@ -8,7 +8,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.map.Bases;
+import atlantis.map.base.Bases;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.zerg.ZergExpansionCommander;
 import atlantis.production.orders.build.AddToQueue;

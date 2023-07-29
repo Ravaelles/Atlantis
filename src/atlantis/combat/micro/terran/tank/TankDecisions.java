@@ -1,8 +1,8 @@
 package atlantis.combat.micro.terran.tank;
 
 import atlantis.information.tech.ATech;
-import atlantis.map.AChoke;
-import atlantis.map.Chokes;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;

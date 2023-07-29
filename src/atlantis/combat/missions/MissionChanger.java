@@ -66,6 +66,10 @@ public abstract class MissionChanger {
     protected abstract void changeMissionIfNeeded();
 
     private static void changeCurrentMissionIfNeeded() {
+        if (Missions.recentlyChangedMission()) {
+            return;
+        }
+
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.get().changeMissionIfNeeded();
         } else if (Missions.isGlobalMissionContain()) {

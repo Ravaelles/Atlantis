@@ -2,9 +2,9 @@ package atlantis.production.requests;
 
 import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.game.A;
-import atlantis.map.AChoke;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.choke.AChoke;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
