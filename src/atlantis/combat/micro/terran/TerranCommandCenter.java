@@ -52,11 +52,11 @@ public class TerranCommandCenter extends Manager {
 
     // =========================================================
 
-    private  boolean baseMinedOut() {
+    private boolean baseMinedOut() {
         return Select.minerals().inRadius(12, unit).isEmpty();
     }
 
-    private  boolean flyToNewMineralPatches() {
+    private boolean flyToNewMineralPatches() {
         if (Env.isTesting()) {
             return false;
         }
@@ -90,34 +90,35 @@ public class TerranCommandCenter extends Manager {
 //        System.out.println("baseLocation.isExplored() = " + baseLocation.isExplored());
 //        System.out.println("minerals = " + Select.minerals().inRadius(10, rebaseTo).notEmpty());
 
-            if (
-                !rebaseTo.isExplored()
+        if (
+            !rebaseTo.isExplored()
                 || Select.minerals().inRadius(10, rebaseTo).notEmpty()
-            ) {
-                if (!unit.isLifted() && rebaseTo.distToMoreThan(unit, 3)) {
+        ) {
+            if (!unit.isLifted() && rebaseTo.distToMoreThan(unit, 3)) {
 //                    System.err.println("# Lift");
-                    unit.lift();
+                unit.lift();
+                return true;
+            }
+
+//                    if (A.everyNthGameFrame(31)) {
+            double dist = rebaseTo.distTo(unit);
+            unit.setTooltip("Rebase" + A.dist(dist), true);
+            if (dist <= 5) {
+                rebaseTo = baseLocation.makeLandableFor(unit);
+                System.err.println("# PREEE Land at " + rebaseTo.toTilePosition());
+                if (rebaseTo != null) {
+                    System.err.println("# Land at " + rebaseTo.toTilePosition());
+                    unit.land(rebaseTo.toTilePosition());
                     return true;
                 }
-                else {
-//                    if (A.everyNthGameFrame(31)) {
-                    double dist = rebaseTo.distTo(unit);
-                    unit.setTooltip("Rebase" + A.dist(dist), true);
-                    if (dist <= 5) {
-                        rebaseTo = baseLocation.makeLandableFor(unit);
-//                        System.err.println("# Land at " + rebaseTo.toTilePosition());
-                        if (rebaseTo != null) {
-                            unit.land(rebaseTo.toTilePosition());
-                            return true;
-                        }
-                    } else {
+            }
+            else {
 //                        System.err.println("# Fly to " + rebaseTo + " // " + dist);
-                        if (unit.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true)) {
-                            return true;
-                        }
-                    }
+                if (unit.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true)) {
+                    return true;
                 }
             }
+        }
 //        }
 
         return false;

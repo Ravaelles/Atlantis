@@ -19,7 +19,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
     // === ATTACK ==============================================
 
     public boolean shouldChangeMissionToAttack() {
-        if (true) return false;
+//        if (true) return false;
 
 //        if (!shouldChangeMissionToAttack()) {
 //            return false;

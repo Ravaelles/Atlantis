@@ -31,6 +31,11 @@ public class UnitBeingReparedManager extends Manager {
             return null;
         }
 
+        if (unit.isAir() && distanceToRepairer <= 2 && unit.isMoving()) {
+            unit.move(repairer, Actions.MOVE_REPAIR, "UnderRepair");
+            return usedManager(this);
+        }
+
         if (!unit.isWounded()) {
             RepairAssignments.removeRepairer(repairer);
             return null;

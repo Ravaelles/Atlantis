@@ -18,7 +18,7 @@ public class AdvanceAsALeader extends MissionManager {
     public Manager handle() {
         if (unit.isMissionAttack()) return null;
 
-        if (unit.squad().cohesionPercent() <= 75) {
+        if (unit.squad().cohesionPercent() <= 78) {
             unit.holdPosition("LeaderWait");
             return usedManager(this);
         }
