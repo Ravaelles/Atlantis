@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.terran.air.RunForYourLife;
 import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 
@@ -17,6 +18,7 @@ public class TerranWraith extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            RunForYourLife.class,
             UnitBeingReparedManager.class
         };
     }

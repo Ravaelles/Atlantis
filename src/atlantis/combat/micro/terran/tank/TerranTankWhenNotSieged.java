@@ -46,8 +46,9 @@ public class TerranTankWhenNotSieged extends Manager {
             return usedManager(this);
         }
 
-        if ((new UnitBeingReparedManager(unit)).handleDontRunWhenBeingRepared() != null) {
-            return lastManager();
+        UnitBeingReparedManager unitBeingReparedManager = new UnitBeingReparedManager(unit);
+        if (unitBeingReparedManager.handleDontRunWhenBeingRepared() != null) {
+            return usedManager(unitBeingReparedManager);
         }
 
         if (areEnemiesTooClose()) {
@@ -55,11 +56,11 @@ public class TerranTankWhenNotSieged extends Manager {
         }
 
         if (handleSiegeBecauseSpecificEnemiesNear() != null) {
-            return lastManager();
+            return usedManager(this);
         }
 
         if (goodDistanceToContainFocusPoint() != null) {
-            return lastManager();
+            return usedManager(this);
         }
 
         return null;
@@ -135,11 +136,13 @@ public class TerranTankWhenNotSieged extends Manager {
                 .isNotEmpty()
         ) {
             if (enemies.groundUnits().inRadius(5 + unit.id() % 4, unit).isEmpty()) {
+                wantsToSiege("KeyEnemy");
                 return usedManager(this);
             }
         }
 
         if (enemies.inRadius(15, unit).atLeast(2)) {
+            wantsToSiege("Enemies!");
             return usedManager(this);
         }
 

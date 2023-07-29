@@ -34,6 +34,10 @@ public class TerranMissileTurret extends AntiAirBuildingManager {
             return false;
         }
 
+        if (Count.existingOrInProductionOrInQueue(type()) >= 3) {
+            return false;
+        }
+
         if (!Have.existingOrPlannedOrInQueue(type(), position, inRadius)) {
             AddToQueue.withTopPriority(type(), position).setMaximumDistance(8);
 //            AAntiAirBuildingRequests.requestCombatBuildingAntiAir(position);

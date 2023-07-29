@@ -97,6 +97,7 @@ public class ConstructionsCommander extends Commander {
                         && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
                 ) {
 //                    System.err.println("     Should be good now!");
+                    construction.setBuilder(builder);
                     builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
                     builder.setTooltipTactical("Resume");
                 }

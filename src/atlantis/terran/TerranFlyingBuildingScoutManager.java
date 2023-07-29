@@ -7,6 +7,7 @@ import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.Color;
 
@@ -57,14 +58,13 @@ public class TerranFlyingBuildingScoutManager extends Manager {
 
     private boolean underAttack() {
         if (unit.lastUnderAttackLessThanAgo(30 * 3)) {
-//            APosition median = Alpha.get().median();
-//            if (median != null) {
-//                unit.moveStrategic(median, Actions.MOVE_SAFETY, "UnderFire");
-//                return true;
-//            }
             AUnit enemy = unit.enemiesNear().canAttack(unit, 3).nearestTo(unit);
             if (enemy != null) {
-                return true;
+                AUnit friend = Select.ourCombatUnits().combatBuildingsAntiAir().nearestTo(unit);
+                if (friend != null) {
+                    unit.move(friend, Actions.MOVE_SAFETY, "UnderFire");
+                    return true;
+                }
             }
         }
         return false;
@@ -99,7 +99,7 @@ public class TerranFlyingBuildingScoutManager extends Manager {
             APosition attackFocusPoint = Missions.ATTACK.focusPoint();
 
             if (attackFocusPoint != null) {
-                focusPoint = focusPoint.translateTilesTowards(8, attackFocusPoint);
+                focusPoint = focusPoint.translateTilesTowards(12, attackFocusPoint);
             }
 
             return focusPoint;

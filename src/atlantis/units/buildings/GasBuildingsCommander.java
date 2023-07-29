@@ -28,17 +28,21 @@ public class GasBuildingsCommander extends Commander {
             return;
         }
 
+        if (Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) >= 1) {
+            return;
+        }
+
         // =========================================================
-        
+
         Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).list();
 
         // =========================================================
-        
+
         for (AUnit gasBuilding : gasBuildings) {
             if (!gasBuilding.isCompleted()) {
                 continue;
             }
-            
+
             int realCount = countWorkersGatheringGasNear(gasBuilding);
             int expectedCount = expectedGasWorkers(gasBuilding, realCount);
 //            System.out.println("OPTIMAL_GAS=" + expectedCount + " // realCount=" + realCount);
@@ -48,7 +52,7 @@ public class GasBuildingsCommander extends Commander {
                 assignBestWorkerToGasBuilding(gasBuilding);
                 break; // Only one worker per execution - prevent weird runs
             }
-            
+
             // More workers than optimal
             else if (realCount > expectedCount) {
                 AUnit worker = WorkerRepository.getRandomWorkerAssignedTo(gasBuilding);
@@ -113,7 +117,7 @@ public class GasBuildingsCommander extends Commander {
         if (Count.workers() <= 8) {
             return 0;
         }
-        
+
         int seconds = A.seconds();
 
         if (seconds < 150 && A.hasGas(100)) {
@@ -156,7 +160,7 @@ public class GasBuildingsCommander extends Commander {
         }
 
         return 3;
-        
+
 //        int totalGasNeeded = 0;
 //        ArrayList<ProductionOrder> nextOrders = ProductionQueue.nextInProductionQueue(
 //                1 + (AGame.timeSeconds() > 300 ? 2 : 0)

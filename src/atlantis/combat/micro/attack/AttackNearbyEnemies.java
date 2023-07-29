@@ -65,7 +65,7 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     private boolean canAttackNow() {
-        if (unit.hasNoWeaponAtAll()) {
+        if (!allowedToAttack()) {
             return false;
         }
 

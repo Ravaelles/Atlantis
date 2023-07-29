@@ -66,7 +66,7 @@ public class AvoidCombatBuildings extends Manager {
 //            System.err.println("@ EEEEEEEEEEEEE");
             if (avoidCombatBuildingCriticallyClose.handle(combatBuilding) != null) {
 //                System.err.println("----->");
-                return lastManager();
+                return usedManager(avoidCombatBuildingCriticallyClose);
             }
         }
 

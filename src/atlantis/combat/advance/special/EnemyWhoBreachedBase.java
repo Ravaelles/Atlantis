@@ -1,12 +1,11 @@
 package atlantis.combat.advance.special;
 
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
 
 public class EnemyWhoBreachedBase {
 
     public static AUnit get() {
-        AUnit enemyWhoBreachedBase = EnemyInfo.enemyNearAnyOurBase(-1);
+        AUnit enemyWhoBreachedBase = atlantis.information.enemy.EnemyWhoBreachedBase.enemyNearAnyOurBase(-1);
         if (enemyWhoBreachedBase != null && enemyWhoBreachedBase.isAlive()) {
 
 //            if (We.zerg()) {

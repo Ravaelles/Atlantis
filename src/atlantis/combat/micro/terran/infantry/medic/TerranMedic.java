@@ -58,10 +58,13 @@ public class TerranMedic extends Manager {
 //            return true;
 //        }
 
-        if (unit.isMissionDefend() && !IsUnitNearChoke.check(unit, 0.5)) {
-            medic.setTooltip("BlockChoke");
-            return null;
-        }
+//        if (
+//            unit.isMissionDefend() && !IsUnitNearChoke.check(unit, 0.5)
+//            && unit.friendsNear().excludeMedics().groundUnits().inRadius(2, unit).atMost(1)
+//        ) {
+//            medic.setTooltip("BlockChoke");
+//            return null;
+//        }
 
         if (!medic.isIdle() && medic.lastActionLessThanAgo(8, Actions.HEAL)) {
             medic.setTooltip("hEaL");
@@ -84,7 +87,7 @@ public class TerranMedic extends Manager {
             return usedManager(this);
         }
 
-        if (unit.isMissionDefend() && !IsUnitNearChoke.check(unit, 4)) {
+//        if (unit.isMissionDefend() && !IsUnitNearChoke.check(unit, 4)) {
             if (Enemy.protoss() && bodyBlockMelee()) {
                 return usedManager(this);
             }
@@ -97,7 +100,7 @@ public class TerranMedic extends Manager {
             if (handleStickToAssignments()) {
                 return usedManager(this);
             }
-        }
+//        }
 
         return null;
     }

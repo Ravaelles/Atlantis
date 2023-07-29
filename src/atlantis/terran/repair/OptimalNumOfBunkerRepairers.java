@@ -17,9 +17,6 @@ public class OptimalNumOfBunkerRepairers {
             "forBunker:" + bunker.id(),
             2,
             () -> {
-                if (thereIsNooneInsideTheBunker(bunker)) {
-                    return 0;
-                }
 
                 Selection potentialEnemies = Select.enemy().combatUnits().inRadius(18, bunker);
 
@@ -31,9 +28,18 @@ public class OptimalNumOfBunkerRepairers {
                 int enemiesFar = potentialEnemies.count() - enemiesNear;
                 double optimalNumber = 0;
 
+                if (thereIsNooneInsideTheBunker(bunker)) {
+                    if (enemiesFar <= 1 && enemiesNear == 0) {
+                        return 0;
+                    }
+                    if (enemiesFar >= 5) {
+                        return 1;
+                    }
+                }
+
                 // against PROTOSS
                 if (Enemy.protoss()) {
-                    optimalNumber = enemiesNear * 1.3 + enemiesFar * 0.5;
+                    optimalNumber = enemiesNear * 1.3 + enemiesFar * 0.62;
                 }
                 // against TERRAN
                 else if (Enemy.terran()) {

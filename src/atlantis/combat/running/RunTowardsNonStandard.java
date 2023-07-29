@@ -24,7 +24,11 @@ public class RunTowardsNonStandard {
 
         if (ARunningManager.unit.isTerranInfantry() && Count.bunkers() > 0) {
             AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).nearestTo(ARunningManager.unit);
-            if (bunker != null && bunker.distToMoreThan(ARunningManager.unit, 5)) {
+            if (
+                bunker != null
+                    && ARunningManager.unit.enemiesNearInRadius(2) == 0
+                    && bunker.distToMoreThan(ARunningManager.unit, 5 + ARunningManager.unit.woundPercent() / 12)
+            ) {
                 return bunker.position();
             }
         }

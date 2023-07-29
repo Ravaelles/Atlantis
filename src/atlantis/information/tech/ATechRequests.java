@@ -15,8 +15,10 @@ public class ATechRequests {
         } else if (techOrUpgrade instanceof UpgradeType) {
             return researchUpgrade((UpgradeType) techOrUpgrade);
         } else {
-            AGame.exit("Neither a tech, nor an upgrade.");
-            return false;
+            System.out.println("techOrUpgrade = " + techOrUpgrade);
+            throw new RuntimeException("Neither a tech, nor an upgrade.");
+//            AGame.exit("Neither a tech, nor an upgrade.");
+//            return false;
         }
     }
 

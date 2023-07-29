@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 
 public class PreventMaginotLine extends Manager {
     public PreventMaginotLine(AUnit unit) {
@@ -11,13 +12,11 @@ public class PreventMaginotLine extends Manager {
     }
 
     @Override
-    public Manager handle() {
-        if (preventFromActingLikeFrenchOnMaginotLine()) return usedManager(this);
+    public boolean applies() {
+        if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) {
+            return false;
+        }
 
-        return null;
-    }
-
-    private boolean preventFromActingLikeFrenchOnMaginotLine() {
         if (
             unit.hpLessThan(21)
                 && unit.enemiesNear().inRadius(4.9 + (unit.idIsOdd() ? 2 : 0), unit).ranged().notEmpty()
@@ -37,15 +36,29 @@ public class PreventMaginotLine extends Manager {
         }
 
         return true;
+    }
 
-//        if (unloadFromBunkers.preventEnemiesFromAttackingNearBuildingsWithoutConsequences()) {
-//            return true;
+    @Override
+    public Manager handle() {
+        if (preventFromActingLikeFrenchOnMaginotLine()) return usedManager(this);
+
+        return null;
+    }
+
+    private boolean preventFromActingLikeFrenchOnMaginotLine() {
+        // Loaded
+        if (unit.isLoaded()) {
+            unit.loadedInto().unloadAll();
+            return true;
+        }
+
+        // Not loaded
+//        else {
+//            if (unit.lastStartedAttackMoreThanAgo(30 * 5) && !unit.looksIdle()) {
+//                return true;
+//            }
 //        }
-//
-//        if (unloadFromBunkers.preventEnemiesFromAttackingWorkersWithoutConsequences()) {
-//            return true;
-//        }
-//
-//        return false;
+
+        return false;
     }
 }

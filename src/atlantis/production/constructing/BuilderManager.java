@@ -38,9 +38,9 @@ public class BuilderManager extends Manager {
             return true;
         }
 
-        if (fixTerranConstructionsWithoutBuilder()) {
-            return true;
-        }
+//        if (fixTerranConstructionsWithoutBuilder()) {
+//            return true;
+//        }
 
         if (handleConstruction()) {
             return true;
@@ -49,19 +49,19 @@ public class BuilderManager extends Manager {
         return false;
     }
 
-    private boolean fixTerranConstructionsWithoutBuilder() {
-        if (
-            We.terran() && unit.isConstructing() && unit.buildUnit() != null
-            && A.everyNthGameFrame(67)
-            && unit.looksIdle()
-            && Select.ourWorkers().inRadius(1, unit.buildUnit()).isEmpty()
-        ) {
-            unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(unit.buildUnit());
-            return true;
-        }
-
-        return false;
-    }
+//    private boolean fixTerranConstructionsWithoutBuilder() {
+//        if (
+//            We.terran() && unit.isConstructing() && unit.buildUnit() != null
+//            && A.everyNthGameFrame(67)
+//            && unit.looksIdle()
+//            && Select.ourWorkers().inRadius(1, unit.buildUnit()).isEmpty()
+//        ) {
+//            unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(unit.buildUnit());
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     private boolean handleConstruction() {
         Construction construction = ConstructionRequests.constructionFor(unit);

@@ -19,6 +19,10 @@ public class TooClustered extends Manager {
     }
 
     public Manager handle() {
+        if (unit.lastActionLessThanAgo(15, Actions.MOVE_FORMATION)) {
+            return null;
+        }
+
         Selection ourCombatUnits = Select.ourCombatUnits().inRadius(5, unit);
         AUnit nearestBuddy = ourCombatUnits.clone().nearestTo(unit);
         double minDistBetweenUnits = minDistBetweenUnits();

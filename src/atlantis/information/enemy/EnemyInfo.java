@@ -11,7 +11,6 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -19,7 +18,6 @@ import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class EnemyInfo {
-
     public static boolean startedWithCombatBuilding = false;
 
     private static Cache<Object> cache = new Cache<>();
@@ -34,40 +32,7 @@ public class EnemyInfo {
     }
 
     public static boolean isEnemyNearAnyOurBase() {
-        return enemyNearAnyOurBase(-1) != null;
-    }
-
-    public static AUnit enemyNearAnyOurBase(int maxDistToBase) {
-        if (maxDistToBase < 0) {
-            maxDistToBase = 12;
-        }
-        int finalMaxDistToBase = maxDistToBase;
-
-        return (AUnit) cache.get(
-                "enemyNearAnyOurBuilding:" + maxDistToBase,
-                45,
-                () -> {
-                    if (!Have.base()) {
-                        return null;
-                    }
-
-                    AUnit nearestEnemy = Select.enemyCombatUnits().excludeTypes(
-                            AUnitType.Terran_Valkyrie,
-                            AUnitType.Protoss_Observer,
-                            AUnitType.Protoss_Corsair,
-                            AUnitType.Zerg_Overlord,
-                            AUnitType.Zerg_Scourge
-                    ).nearestTo(Select.main());
-                    if (nearestEnemy != null) {
-                        return Select.ourBases()
-//                                .inRadius(Enemy.terran() ? 22 : 17, nearestEnemy).atLeast(1)
-                                .inRadius(finalMaxDistToBase, nearestEnemy).atLeast(1)
-                                ? nearestEnemy : null;
-                    }
-
-                    return null;
-                }
-        );
+        return EnemyWhoBreachedBase.enemyNearAnyOurBase(-1) != null;
     }
 
     /**

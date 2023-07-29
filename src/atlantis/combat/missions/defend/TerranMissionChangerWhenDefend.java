@@ -34,7 +34,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return false;
         }
 
-        if (ourRelativeStrength >= 350) {
+        if (ourRelativeStrength >= 350 && !EnemyInfo.isEnemyNearAnyOurBase()) {
             if (DEBUG) reason = "Comfortably stronger (" + ourRelativeStrength + "%)";
             return true;
         }
@@ -45,6 +45,8 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
     // === CONTAIN =============================================
 
     public boolean shouldChangeMissionToContain() {
+        if (true) return false;
+
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
 
         if (A.supplyUsed() >= 130) {

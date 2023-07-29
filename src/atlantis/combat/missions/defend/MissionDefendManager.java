@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.squad.positioning.AllowTimeToReposition;
+import atlantis.combat.squad.positioning.MakeSpaceForNearbyWorkers;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.util.Enemy;
@@ -16,6 +17,7 @@ public class MissionDefendManager extends MissionManager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[] {
+            MakeSpaceForNearbyWorkers.class,
             AllowTimeToReposition.class,
             AdvanceToDefendFocusPoint.class,
         };

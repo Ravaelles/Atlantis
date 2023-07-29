@@ -26,35 +26,5 @@ public class CombatManagerMediumPriority extends Manager {
             AttackNearbyEnemies.class,
         };
     }
-
-//    private boolean handledMediumPriority() {
-//
-//        // Avoid:
-//        // - invisible units (Dark Templars)
-//        // - close melee units (Zealots)
-//        // - ranged units that can shoot at us (Dragoons)
-//        // - defensive buildings (Cannons)
-//        if (avoidEnemies.avoidEnemiesIfNeeded()) {
-//            return true;
-//        }
-//
-//        // If Near enemies would likely defeat us, retreat
-////        if (RetreatManager.shouldRetreat(unit)) {
-////            return true;
-////        }
-//
-//        // Handle repair of mechanical units
-//        if (unitBeingReparedManager.handleUnitShouldBeRepaired(unit)) {
-//            return true;
-//        }
-//
-//        if (retreatManager.handleRetreat()) {
-//            return true;
-//        }
-//
-//        if (AttackNearbyEnemies.handleAttackNearEnemyUnits(unit)) {
-//            return true;
-//        }
-//    }
 }
 
