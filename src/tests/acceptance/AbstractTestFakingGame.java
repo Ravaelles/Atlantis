@@ -67,6 +67,8 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
             e.printStackTrace();
         }
 
+        assert our != null && our[0] != null : "You have to define your units";
+
         // === Mock static classes ========================================
 
         try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {

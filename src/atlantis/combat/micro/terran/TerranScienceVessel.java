@@ -1,8 +1,8 @@
 
 package atlantis.combat.micro.terran;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.generic.MobileDetector;
-import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -10,44 +10,52 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
 import bwapi.TechType;
 
 public class TerranScienceVessel extends MobileDetector {
 
-    public static AUnitType type() {
+    public TerranScienceVessel(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isScienceVessel();
+    }
+
+    public AUnitType type() {
         return AUnitType.Terran_Science_Vessel;
     }
 
     // =========================================================
 
-    public static boolean update(AUnit unit) {
-        if (useTech(unit)) {
-            return true;
+    public Manager handle() {
+        if (useTech()) {
+            return usedManager(this);
         }
 
-        return MobileDetector.update(unit);
+        return super.handle();
     }
 
     // =========================================================
 
-    private static boolean useTech(AUnit unit) {
+    private boolean useTech() {
         if (unit.energy() <= 74) {
             return false;
         }
 
-        if (unit.lastTechUsedAgo() <= 10) {
+        if (unit.lastTechUsedAgo() <= 15) {
             return true;
         }
 
         if (unit.energy(75) && ATech.isResearched(TechType.Irradiate)) {
-            if (irradiate(unit)) {
+            if (irradiate()) {
                 unit.setTooltipTactical("Irradiate!");
                 return true;
             }
         }
 
-        if (defensiveMatrix(unit)) {
+        if (defensiveMatrix()) {
             return true;
         }
 
@@ -56,7 +64,7 @@ public class TerranScienceVessel extends MobileDetector {
 
     // =========================================================
 
-    private static boolean defensiveMatrix(AUnit unit) {
+    private boolean defensiveMatrix() {
         if (unit.energy() < 100) {
             return false;
         }
@@ -82,7 +90,7 @@ public class TerranScienceVessel extends MobileDetector {
         return false;
     }
 
-    private static boolean irradiate(AUnit unit) {
+    private boolean irradiate() {
         Selection enemies = Select.enemyCombatUnits().inRadius(10, unit);
         if (enemies.count() >= 5 || (enemies.count() >= 3 && unit.energy(181))) {
             APosition center = enemies.center();
@@ -124,7 +132,7 @@ public class TerranScienceVessel extends MobileDetector {
         return false;
     }
 
-    private static boolean empShockwave(AUnit unit) {
+    private boolean empShockwave() {
         Selection enemies = Select.enemyCombatUnits().inRadius(10, unit);
 
         if (enemies.count() >= 7 || (enemies.count() >= 4 && unit.energy(180))) {

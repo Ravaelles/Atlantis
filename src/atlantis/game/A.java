@@ -6,7 +6,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 import bwapi.Game;
 
 import javax.swing.*;
@@ -544,7 +544,7 @@ public class A {
             fw.write(content + "\n");
             fw.close();
         } catch(IOException exception) {
-            ErrorLogging.printErrorOnce("IOException: " + exception.getMessage());
+            ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
         }
     }
 
@@ -1248,16 +1248,16 @@ public class A {
     }
 
     public static void centerAndPause(APosition position) {
-        CameraManager.centerCameraOn(position);
+        CameraCommander.centerCameraOn(position);
         GameSpeed.pauseGame();
     }
 
     public static void centerAndChangeSpeed(APosition position, int newGameSpeed) {
-        CameraManager.centerCameraOn(position);
+        CameraCommander.centerCameraOn(position);
         GameSpeed.changeSpeedTo(newGameSpeed);
     }
     public static void centerAndPauseAndChangeSpeed(APosition position, int newGameSpeed) {
-        CameraManager.centerCameraOn(position);
+        CameraCommander.centerCameraOn(position);
         GameSpeed.changeSpeedTo(newGameSpeed);
         GameSpeed.pauseGame();
     }
@@ -1288,5 +1288,13 @@ public class A {
 
     public static String currentPath() {
         return (new File("")).getAbsolutePath();
+    }
+
+    public static void quit() {
+        AGame.exit();
+    }
+
+    public static String ucfirst(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }

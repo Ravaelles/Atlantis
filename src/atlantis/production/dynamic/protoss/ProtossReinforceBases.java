@@ -1,6 +1,6 @@
 package atlantis.production.dynamic.protoss;
 
-import atlantis.map.ABaseLocation;
+import atlantis.map.base.ABaseLocation;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.requests.AntiLandBuildingManager;

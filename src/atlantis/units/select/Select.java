@@ -2,12 +2,12 @@ package atlantis.units.select;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.production.constructing.AConstructionManager;
+import atlantis.production.constructing.BuilderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.util.cache.Cache;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -287,7 +287,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static int countOurOfType(AUnitType type) {
         return cacheInt.get(
                 "countOurOfType:" + type.name(),
-                type.isBuilding() ? 0 : 30,
+                type.isBuilding() ? 0 : 37,
                 () -> {
                     int total = 0;
 
@@ -564,8 +564,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     data.removeIf(
                             u -> (
                                 !u.isCompleted()
-                                || (!u.isBuilding() && !u.isRealUnit())
-                                || (!includeBuildings && u.isBuilding())
+                                || (!u.isABuilding() && !u.isRealUnit())
+                                || (!includeBuildings && u.isABuilding())
                                 || (!includeGroundUnits && u.isGroundUnit())
                                 || (!includeAirUnits && u.isAir())
                             )
@@ -820,7 +820,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         Selection selectedUnits = Select.ourWorkers();
         selectedUnits.list().removeIf(unit ->
                 unit.isConstructing() || unit.isRepairing()
-                        || AConstructionManager.isBuilder(unit) || unit.isScout()
+                        || BuilderManager.isBuilder(unit) || unit.isScout()
                         || unit.isRepairerOfAnyKind()
         );
 

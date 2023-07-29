@@ -1,26 +1,28 @@
 package atlantis.combat.targeting;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 
 import java.util.List;
 
-import static atlantis.combat.micro.AAttackEnemyUnit.MAX_DIST_TO_ATTACK;
-import static atlantis.combat.micro.AAttackEnemyUnit.reasonNotToAttack;
-
-public class ATargeting {
+public class ATargeting extends HasUnit {
 
 //    protected static final boolean DEBUG = true;
     protected static final boolean DEBUG = false;
 
     protected static Selection enemyBuildings;
     protected static Selection enemyUnits;
+
+    public ATargeting(AUnit unit) {
+        super(unit);
+    }
 
     /**
      * For given <b>unit</b> it defines the best close range target from enemy units. The target is not
@@ -37,7 +39,7 @@ public class ATargeting {
         }
 
         // Used when something went wrong there ^
-        reasonNotToAttack = null;
+        AttackNearbyEnemies.reasonNotToAttack = null;
         return closestUnitFallback(unit, maxDistFromEnemy);
     }
 
@@ -86,7 +88,7 @@ public class ATargeting {
     }
 
     public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
-        return defineBestEnemyToAttackFor(unit, AAttackEnemyUnit.MAX_DIST_TO_ATTACK);
+        return defineBestEnemyToAttackFor(unit, AttackNearbyEnemies.MAX_DIST_TO_ATTACK);
     }
 
     // =========================================================
@@ -108,7 +110,7 @@ public class ATargeting {
 //            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
             enemy = unit.enemiesNear().realUnitsAndBuildings().canBeAttackedBy(unit, 0).nearestTo(unit);
             if (enemy != null) {
-                ErrorLogging.printErrorOnce("DefineTarget fix for " + unit + ", chosen " + enemy);
+                ErrorLog.printErrorOnce("DefineTarget fix for " + unit + ", chosen " + enemy);
             }
         }
 
@@ -169,7 +171,7 @@ public class ATargeting {
         }
 
         // Ok, any possible of this type
-        enemy = selectWeakestEnemyOfType(enemyType, unit, MAX_DIST_TO_ATTACK);
+        enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.MAX_DIST_TO_ATTACK);
 //        System.out.println("enemy B3 = " + enemy);
         if (enemy != null) {
             return enemy;
@@ -315,7 +317,7 @@ public class ATargeting {
 
         // =========================================================
 
-//        if ((target = ATargetingForSpecificUnits.target(unit)) != null) {
+//        if ((target = ATargetingForSpecificUnits.target()) != null) {
 //            if (ATargeting.DEBUG) System.out.println("A = "+ target);
 //            return target;
 //        }
@@ -323,10 +325,10 @@ public class ATargeting {
         // === AIR UNITS due to their mobility use different targeting logic ===
 
         if (unit.isAir() && unit.canAttackGroundUnits()) {
-            target = ATargetingForAirUnits.targetForAirUnits(unit);
+            target = (new ATargetingForAirUnits(unit)).targetForAirUnits();
 
 //            System.out.println("Air target for " + unit + ": " + target);
-//            if ((target = ATargetingForAirUnits.targetForAirUnits(unit)) != null) {
+//            if ((target = ATargetingForAirUnits.targetForAirUnits()) != null) {
 //                if (ATargeting.DEBUG) System.out.println("AirTarget = " + target);
 //            }
 
@@ -335,21 +337,21 @@ public class ATargeting {
 
         // === Crucial units =======================================
 
-        if ((target = ATargetingCrucial.target(unit)) != null) {
+        if ((target = (new ATargetingCrucial(unit)).target()) != null) {
 //            if (ATargeting.DEBUG) System.out.println("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
-        if ((target = ATargetingImportant.target(unit)) != null) {
+        if ((target = (new ATargetingImportant(unit)).target()) != null) {
 //            if (ATargeting.DEBUG) System.out.println("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
-        if ((target = ATargetingStandard.target(unit)) != null) {
+        if ((target = (new ATargetingStandard(unit)).target()) != null) {
 //            if (ATargeting.DEBUG) System.out.println("D = "+ target);
             return target;
         }

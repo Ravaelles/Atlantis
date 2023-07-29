@@ -1,39 +1,49 @@
 package atlantis.protoss;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
-public class ProtossReaver {
+public class ProtossReaver extends Manager {
 
-    public static boolean update(AUnit reaver) {
-        if (reaver.scarabCount() <= 0) {
-            reaver.setTooltipTactical("NoScarab");
-            return AvoidEnemies.avoidEnemiesIfNeeded(reaver);
+    public ProtossReaver(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isReaver();
+    }
+
+    @Override
+    public Manager handle() {
+//        if (unit.scarabCount() <= 0) {
+//            unit.setTooltipTactical("NoScarab");
+//            return (new AvoidEnemies.avoidEnemiesIfNeeded(unit);
+//        }
+
+        if (unit.cooldownRemaining() >= 10) {
+            return null;
         }
 
-        if (reaver.cooldownRemaining() >= 10) {
-            return false;
-        }
-
-        Selection enemiesInRange = reaver.enemiesNear();
+        Selection enemiesInRange = unit.enemiesNear();
         AUnit enemy;
 
         // First attack very close enemies
-        if ((enemy = enemiesInRange.canBeAttackedBy(reaver, 0).nearestTo(reaver)) != null) {
-            reaver.attackUnit(enemy);
-            reaver.setTooltipTactical("Tasty" + enemy.name());
-            return true;
+        if ((enemy = enemiesInRange.canBeAttackedBy(unit, 0).nearestTo(unit)) != null) {
+            unit.attackUnit(enemy);
+            unit.setTooltipTactical("Tasty" + enemy.name());
+            return usedManager(this);
         }
 
         // If no very close enemy, then attack the one most distant
-        if ((enemy = enemiesInRange.canBeAttackedBy(reaver, 7).nearestTo(reaver)) != null) {
-            reaver.attackUnit(enemy);
-            reaver.setTooltipTactical("Nice" + enemy.name());
-            return true;
+        if ((enemy = enemiesInRange.canBeAttackedBy(unit, 7).nearestTo(unit)) != null) {
+            unit.attackUnit(enemy);
+            unit.setTooltipTactical("Nice" + enemy.name());
+            return usedManager(this);
         }
 
-        return false;
+        return null;
     }
 
 }

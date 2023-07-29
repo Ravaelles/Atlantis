@@ -1,15 +1,12 @@
 package atlantis.combat.micro.avoid.margin;
 
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
 import static atlantis.units.AUnitType.Zerg_Devourer;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
 
-//    public static double ENEMIES_Near_FACTOR = 0.3;
-//    public static double ENEMIES_Near_MAX_DIST = 1.44;
     public static double INFANTRY_BASE_IF_MEDIC = 0;
     public static int INFANTRY_WOUND_MODIFIER_WITH_MEDIC = 19;
     public static double INFANTRY_BASE_IF_NO_MEDIC = 2.8;
@@ -17,12 +14,16 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_MEDIC = 1.95;
     private static final double INFANTRY_CRITICAL_HEALTH_BONUS_IF_NO_MEDIC = 3.0;
 
-    public static double calculate(AUnit defender, AUnit attacker) {
+    public SafetyMarginAgainstMelee(AUnit defender) {
+        super(defender);
+    }
+
+    public double calculateAgainst(AUnit attacker) {
         double criticalDist = -1;
 
         // === Protoss ===============================================
 
-        if ((criticalDist = forDragoon(defender, attacker)) >= 0) {
+        if ((criticalDist = forDragoon(attacker)) >= 0) {
             return criticalDist;
         }
         else if (defender.isDT()) {
@@ -32,33 +33,33 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         // === Terran ===============================================
 
         else if (defender.isTerranInfantry()) {
-            criticalDist = TerranSafetyMarginAgainstMelee.handleTerranInfantry(defender, attacker);
+            criticalDist = (new TerranSafetyMarginAgainstMelee(defender)).handleTerranInfantry(attacker);
         }
 
         // === Zerg ===============================================
 
         else if (defender.isHydralisk()) {
-            criticalDist = forHydralisk(defender, attacker);
+            criticalDist = forHydralisk(attacker);
         }
 
         // === Standard unit =========================================
 
         if (criticalDist == -1) {
-            criticalDist = baseForMelee(defender, attacker)
-                    + enemyWeaponRange(defender, attacker)
-                    + woundedAgainstMeleeBonus(defender, attacker)
-                    + beastBonus(defender, attacker)
+            criticalDist = baseForMelee(attacker)
+                    + enemyWeaponRange(attacker)
+                    + woundedAgainstMeleeBonus(attacker)
+                    + beastBonus(attacker)
                     + ourUnitsNearBonus(defender)
-                    + workerBonus(defender, attacker)
+                    + workerBonus(attacker)
                     + ourMovementBonus(defender)
-                    + quicknessBonus(defender, attacker)
-                    + enemyMovementBonus(defender, attacker);
+                    + quicknessBonus(attacker)
+                    + enemyMovementBonus(attacker);
 
             // This should be enough as a minimum versus melee units
             criticalDist = Math.min(criticalDist, defender.isDragoon() ? 2.95 : 3.4);
         }
         else {
-            criticalDist += beastBonus(defender, attacker);
+            criticalDist += beastBonus(attacker);
         }
 
         if (defender.isRanged() && attacker.isWorker()) {
@@ -68,7 +69,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return criticalDist;
     }
 
-    private static double forHydralisk(AUnit defender, AUnit attacker) {
+    private double forHydralisk(AUnit attacker) {
         if (!defender.isHydralisk()) {
             return -1;
         }
@@ -80,7 +81,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return defender.woundPercent() / 33;
     }
 
-    protected static double enemyFacingThisUnitBonus(AUnit defender, AUnit attacker) {
+    protected double enemyFacingThisUnitBonus(AUnit attacker) {
         if (defender.isOtherUnitFacingThisUnit(attacker)) {
             return -0.3;
         }
@@ -88,7 +89,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return +0.2;
     }
 
-    private static double forDragoon(AUnit defender, AUnit attacker) {
+    private double forDragoon(AUnit attacker) {
         if (!defender.isDragoon()) {
             return -1;
         }
@@ -113,7 +114,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         return -1;
 
-//        double base = woundedAgainstMeleeBonus(defender, attacker)
+//        double base = woundedAgainstMeleeBonus(attacker)
 //            + beastBonus(defender);
 //        boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
 //
@@ -136,7 +137,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //        ) {
 //            defender.addLog("CoolDragoon_" + defender.lastAttackFrameAgo());
 //            base += (defender.isHealthy() ? 0 : 0.3);
-//            //            criticalDist = handleDragoon(defender, attacker);
+//            //            criticalDist = handleDragoon(attacker);
 //        }
 //
 //
@@ -155,7 +156,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     // =========================================================
 
-//    private static double handleDragoon(AUnit defender, AUnit attacker) {
+//    private double handleDragoon(AUnit attacker) {
 //        if (!defender.isDragoon() || attacker.isDT()) {
 //            return -1;
 //        }
@@ -179,10 +180,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //                        )
 //        ) {
 //            return safer
-//                    + woundedAgainstMeleeBonus(defender, attacker)
+//                    + woundedAgainstMeleeBonus(attacker)
 //                    + ourMovementBonus(defender)
-//                    + quicknessBonus(defender, attacker)
-//                    + enemyMovementBonus(defender, attacker);
+//                    + quicknessBonus(attacker)
+//                    + enemyMovementBonus(attacker);
 //        }
 ////        else if (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 3)) {
 ////            return safe;
@@ -193,7 +194,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     // =========================================================
 
-    private static double enemyMeleeUnitsNearBonus(AUnit defender) {
+    private double enemyMeleeUnitsNearBonus(AUnit defender) {
         if (defender.meleeEnemiesNearCount() >= 2) {
             return 1.8;
         }
@@ -201,11 +202,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return 0;
     }
 
-    private static double baseForMelee(AUnit defender, AUnit attacker) {
+    private double baseForMelee(AUnit attacker) {
         return attacker.isZealot() ? 0.5 : 0.7;
     }
 
-    protected static double enemyUnitsNearBonus(AUnit defender) {
+    protected double enemyUnitsNearBonus(AUnit defender) {
         if (defender.enemiesNear().ofType(Protoss_Zealot).inRadius(2, defender).atLeast(3)) {
             return 2.3;
         }
@@ -217,7 +218,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return 0;
     }
 
-    protected static double beastBonus(AUnit defender, AUnit attacker) {
+    protected double beastBonus(AUnit attacker) {
         if (defender.isAir() && attacker.is(Zerg_Devourer)) {
             return 1.2;
         }
@@ -233,7 +234,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return 0;
     }
 
-    protected static double woundedAgainstMeleeBonus(AUnit defender, AUnit attacker) {
+    protected double woundedAgainstMeleeBonus(AUnit attacker) {
 //        if (attacker.isRanged()) {
 //            return 2;
 //        }

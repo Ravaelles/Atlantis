@@ -6,7 +6,11 @@ import atlantis.units.select.Select;
 
 public class ATargetingImportant extends ATargeting {
 
-    public static AUnit target(AUnit unit) {
+    public ATargetingImportant(AUnit unit) {
+        super(unit);
+    }
+
+    public AUnit target() {
 
         // =========================================================
         // =========================================================
@@ -17,11 +21,11 @@ public class ATargetingImportant extends ATargeting {
 
         AUnit target;
 
-        if ((target = targetInShootingRange(unit)) != null) {
+        if ((target = targetInShootingRange()) != null) {
             return target;
         }
 
-        if ((target = targetOutsideShootingRange(unit)) != null) {
+        if ((target = targetOutsideShootingRange()) != null) {
             return target;
         }
 
@@ -30,7 +34,7 @@ public class ATargetingImportant extends ATargeting {
 
     // =========================================================
 
-    private static AUnit targetInShootingRange(AUnit unit) {
+    private AUnit targetInShootingRange() {
         AUnit target;
 
         // =========================================================
@@ -58,7 +62,7 @@ public class ATargetingImportant extends ATargeting {
                 .canBeAttackedBy(unit, 0)
                 .mostWounded();
         if (target != null) {
-            return combatBuildingOrScvRepairingIt(target);
+            return getThisCombatBuildingOrScvRepairingIt(target);
         }
 
         target = enemyUnits
@@ -70,7 +74,7 @@ public class ATargetingImportant extends ATargeting {
                 .canBeAttackedBy(unit, 5)
                 .nearestTo(unit);
         if (target != null) {
-            return combatBuildingOrScvRepairingIt(target);
+            return getThisCombatBuildingOrScvRepairingIt(target);
         }
 
         // =========================================================
@@ -124,25 +128,25 @@ public class ATargetingImportant extends ATargeting {
         return null;
     }
 
-    private static AUnit combatBuildingOrScvRepairingIt(AUnit unit) {
-        if (!unit.isBunker()) {
-            if (ATargeting.DEBUG) System.out.println("C0c = " + unit);
-            return unit;
+    private AUnit getThisCombatBuildingOrScvRepairingIt(AUnit target) {
+        if (!target.isBunker()) {
+            if (ATargeting.DEBUG) System.out.println("C0c = " + target);
+            return target;
         }
 
         // Target repairers
-        AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, unit)
-                .canBeAttackedBy(unit, 1.7).nearestTo(unit);
+        AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, target)
+                .canBeAttackedBy(target, 1.7).nearestTo(target);
         if (repairer != null) {
             if (ATargeting.DEBUG) System.out.println("C0a = " + repairer);
             return repairer;
         }
 
-        if (ATargeting.DEBUG) System.out.println("C0b = " + unit);
-        return unit;
+        if (ATargeting.DEBUG) System.out.println("C0b = " + target);
+        return target;
     }
 
-    private static AUnit targetOutsideShootingRange(AUnit unit) {
+    private AUnit targetOutsideShootingRange() {
         AUnit target;
 
         // =========================================================

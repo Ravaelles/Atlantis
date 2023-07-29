@@ -1,7 +1,7 @@
 package atlantis.combat.micro.generic;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -10,41 +10,58 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 
-public class MobileDetector {
+public class MobileDetector extends Manager {
 
-    protected static AUnit unitAssignedToMainSquad = null;
-    protected static AUnit unitForSquadScout = null;
-    protected static AUnit unitForBase = null;
+    protected AUnit unitAssignedToMainSquad = null;
+    protected AUnit unitForSquadScout = null;
+    protected AUnit unitForBase = null;
 
     // =========================================================
 
-    public static boolean update(AUnit unit) {
-        if (handleSpreadOut(unit)) {
-            return true;
-        }
-
-        if (detectInvisibleUnitsClosestToBase(unit)) {
-            return true;
-        }
-
-        if (followArmy(unit, false)) {
-            return true;
-        }
-
-        if (followSquadScout(unit)) {
-            return true;
-        }
-
-        return followArmy(unit, true);
+    public MobileDetector(AUnit unit) {
+        super(unit);
     }
 
     // =========================================================
 
-    protected static boolean handleSpreadOut(AUnit unit) {
-        int minDistBetween = minDistanceBetweenUnits(unit);
+    @Override
+    public boolean applies() {
+        return unit.type().isDetectorNonBuilding();
+    }
 
-        Selection units = Select.ourOfType(unit.type())
-                .inRadius(minDistBetween, unit).exclude(unit);
+    @Override
+    public Manager handle() {
+        if (update()) return usedManager(this);
+
+        return null;
+    }
+
+    protected boolean update() {
+        if (handleSpreadOut()) {
+            return true;
+        }
+
+        if (detectInvisibleUnitsClosestToBase()) {
+            return true;
+        }
+
+        if (followArmy( false)) {
+            return true;
+        }
+
+        if (followSquadScout()) {
+            return true;
+        }
+
+        return followArmy(true);
+    }
+
+    // =========================================================
+
+    protected boolean handleSpreadOut() {
+        int minDistBetween = minDistanceBetweenUnits();
+
+        Selection units = Select.ourOfType(unit.type()).inRadius(minDistBetween, unit).exclude(unit);
         if (units.count() > 0) {
             AUnit otherunit = units.nearestTo(unit);
             unit.moveAwayFrom(otherunit.position(), minDistBetween, "SpreadDetectors", Actions.MOVE_FORMATION);
@@ -54,11 +71,11 @@ public class MobileDetector {
         return false;
     }
 
-    private static int minDistanceBetweenUnits(AUnit unit) {
-        return We.protoss() ? 15 : 3;
+    private int minDistanceBetweenUnits() {
+        return We.protoss() ? 15 : 4;
     }
 
-    protected static boolean followSquadScout(AUnit unit) {
+    protected boolean followSquadScout() {
         if (!unit.is(unitForSquadScout)) {
             return false;
         }
@@ -75,7 +92,7 @@ public class MobileDetector {
         return false;
     }
 
-    protected static boolean followArmy(AUnit unit, boolean shouldFollowItsSquad) {
+    protected boolean followArmy(boolean shouldFollowItsSquad) {
         if (!shouldFollowItsSquad && !unit.is(unitAssignedToMainSquad)) {
             return false;
         }
@@ -92,7 +109,7 @@ public class MobileDetector {
         return false;
     }
 
-    protected static boolean detectInvisibleUnitsClosestToBase(AUnit unit) {
+    protected boolean detectInvisibleUnitsClosestToBase() {
         if (Select.main() == null) {
             return false;
         }
@@ -117,7 +134,7 @@ public class MobileDetector {
         return false;
     }
 
-    protected static AUnit enemyDangerousHiddenUnit() {
+    protected AUnit enemyDangerousHiddenUnit() {
         AUnit invisibleUnit = Select.enemy().effUndetected().combatUnits().nearestTo(Select.main());
         if (invisibleUnit != null) {
             return invisibleUnit;
@@ -135,5 +152,5 @@ public class MobileDetector {
 
         return Select.enemy().effUndetected().nearestTo(Select.main());
     }
-    
+
 }

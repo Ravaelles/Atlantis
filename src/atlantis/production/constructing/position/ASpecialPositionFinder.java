@@ -1,23 +1,22 @@
 package atlantis.production.constructing.position;
 
 import atlantis.game.A;
-import atlantis.map.ABaseLocation;
-import atlantis.map.AChoke;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.choke.AChoke;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 
 public class ASpecialPositionFinder {
 
     private static Cache<APosition> cache = new Cache<>();
-    
+
     // =========================================================
 
     /**
@@ -132,14 +131,14 @@ public class ASpecialPositionFinder {
 //        else {
 //            baseLocationToExpand = Bases.expansionBaseLocationMostDistantToEnemy();
 //        }
-        
+
         if (near == null) {
             if (ourBasesCount <= 2) {
                 System.err.println("baseLocationToExpand is null");
             }
             return null;
         }
-        
+
 //        APosition near = APosition.create(baseLocationToExpand.position()).translateByPixels(-64, -48);
 //        near = APosition.create(baseLocationToExpand.position());
         construction.setMaxDistance(3);

@@ -1,8 +1,6 @@
 package atlantis;
 
-import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.UmsSpecialActionsManager;
 
 public class OnUnitDiscover {
 

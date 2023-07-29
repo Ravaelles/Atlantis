@@ -1,12 +1,11 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
-import atlantis.combat.squad.SquadTransfers;
+import atlantis.combat.squad.SquadTransfersCommander;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
-import atlantis.terran.repair.ARepairAssignments;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
@@ -18,7 +17,7 @@ public class OnUnitDestroyed {
 
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {
-            ARepairAssignments.removeRepairer(unit);
+            RepairAssignments.removeRepairer(unit);
             ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
             if (!unit.type().isGasBuilding()) {
                 Atlantis.LOST++;
@@ -45,7 +44,7 @@ public class OnUnitDestroyed {
             UnitsArchive.paintKilledUnits();
         }
 
-        SquadTransfers.removeUnitFromSquads(unit);
+        SquadTransfersCommander.removeUnitFromSquads(unit);
     }
 
 }

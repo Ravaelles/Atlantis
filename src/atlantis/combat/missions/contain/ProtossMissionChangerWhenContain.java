@@ -1,7 +1,5 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
@@ -11,17 +9,9 @@ import atlantis.information.strategy.GamePhase;
 
 public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain {
 
-    public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToDefend()) {
-            MissionChanger.changeMissionTo(MissionChanger.defendOrSpartaMission());
-        } else if (shouldChangeMissionToAttack()) {
-            MissionChanger.changeMissionTo(Missions.ATTACK);
-        }
-    }
-
     // === DEFEND ==============================================
 
-    public static boolean shouldChangeMissionToDefend() {
+    public boolean shouldChangeMissionToDefend() {
         if (ArmyStrength.ourArmyRelativeStrength() <= 199) {
             if (RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && A.resourcesBalance() <= 300) {
                 if (DEBUG) reason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
@@ -59,7 +49,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
 
     // === ATTACK ==============================================
 
-    private static boolean shouldChangeMissionToAttack() {
+    public boolean shouldChangeMissionToAttack() {
         if (A.supplyUsed() >= 190) {
             if (DEBUG) reason = "Supply blocked";
             return true;

@@ -1,6 +1,5 @@
 package atlantis.util.log;
 
-import atlantis.Atlantis;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
@@ -18,6 +17,9 @@ public class LogUnitsToFiles {
 
         String file = "logs/units/" + (unit.isOur() ? "Our_" : "Enemy_") + unit.nameWithId() + ".txt";
         String content = String.format("%5d", A.now()) + ": " + message + "\n";
+
+        // Print to stderr
+//        System.err.println(content);
 
         handleClearTheFileIfNeeded(file, message);
 

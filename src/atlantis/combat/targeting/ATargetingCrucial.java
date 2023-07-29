@@ -7,7 +7,11 @@ import atlantis.units.select.Selection;
 
 public class ATargetingCrucial extends ATargeting {
 
-    public static AUnit target(AUnit unit) {
+    public ATargetingCrucial(AUnit unit) {
+        super(unit);
+    }
+
+    public AUnit target() {
 
         // =========================================================
         // =========================================================
@@ -18,12 +22,12 @@ public class ATargetingCrucial extends ATargeting {
 
         AUnit target;
 
-        if ((target = targetInShootingRange(unit)) != null) {
+        if ((target = targetInShootingRange()) != null) {
 //            System.out.println("CRUCIAL targetInShootingRange = " + target);
             return target;
         }
 
-        if ((target = targetOutsideShootingRange(unit)) != null) {
+        if ((target = targetOutsideShootingRange()) != null) {
             return target;
         }
 
@@ -32,7 +36,7 @@ public class ATargetingCrucial extends ATargeting {
 
     // =========================================================
 
-    private static AUnit targetInShootingRange(AUnit unit) {
+    private AUnit targetInShootingRange() {
         AUnit target;
 
         double groundRange = unit.groundWeaponRange();
@@ -123,7 +127,7 @@ public class ATargetingCrucial extends ATargeting {
         return null;
     }
 
-    private static AUnit targetOutsideShootingRange(AUnit unit) {
+    private AUnit targetOutsideShootingRange() {
         AUnit target;
         double groundRange = unit.groundWeaponRange();
 
@@ -223,7 +227,7 @@ public class ATargetingCrucial extends ATargeting {
         // =========================================================
         // Special case - SHUTTLE
 
-        if ((target = ATransportTargeting.target(unit)) != null) {
+        if ((target = (new ATransportTargeting(unit)).target()) != null) {
             if (ATargeting.DEBUG) System.out.println("CR12 = " + target);
             return target;
         }

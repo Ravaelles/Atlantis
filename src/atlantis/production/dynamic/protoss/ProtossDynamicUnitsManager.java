@@ -24,7 +24,7 @@ import static atlantis.units.AUnitType.Protoss_Dragoon;
 
 public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
-    public static void update() {
+    public void handle() {
         if (AGame.notNthGameFrame(3)) {
             return;
         }
@@ -120,11 +120,11 @@ public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
 
         if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
 //            trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
-            return addToQueueToMaxAtATime(Protoss_Dragoon, 5);
+            return AddToQueue.maxAtATime(Protoss_Dragoon, 5);
         }
 
         if (A.hasGas(100) && A.supplyUsed() <= 38) {
-            return addToQueueToMaxAtATime(Protoss_Dragoon, 5);
+            return AddToQueue.maxAtATime(Protoss_Dragoon, 5);
         }
 
 //        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {

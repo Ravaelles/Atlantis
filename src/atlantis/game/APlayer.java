@@ -5,7 +5,6 @@ import bwapi.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class APlayer implements Comparable<APlayer> {
 

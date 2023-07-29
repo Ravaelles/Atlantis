@@ -11,7 +11,7 @@ import atlantis.util.We;
 public class ChangeSquadToDefend extends SquadMissionChanger {
 
     public static boolean shouldChangeToDefend(Squad squad) {
-        boolean offensiveRole = squad.hasHighlyOffensiveRole();
+        boolean offensiveRole = squad.hasMostlyOffensiveRole();
 
         if (!offensiveRole) {
             if (
@@ -70,7 +70,7 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
     }
 
     private static boolean backOffFromLurkers(Squad squad) {
-        AUnit unit = squad.centerUnit();
+        AUnit unit = squad.leader();
         if (unit == null) {
             return false;
         }
@@ -100,7 +100,7 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
     }
 
     private static boolean weakerThanEnemy(Squad squad) {
-        AUnit unit = squad.centerUnit();
+        AUnit unit = squad.leader();
         if (unit == null) {
             return false;
         }

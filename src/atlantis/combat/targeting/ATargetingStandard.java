@@ -1,14 +1,16 @@
 package atlantis.combat.targeting;
 
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ATargetingStandard extends ATargeting {
+    public ATargetingStandard(AUnit unit) {
+        super(unit);
+    }
 
-    public static AUnit target(AUnit unit) {
+    public AUnit target() {
 
         // =========================================================
         // =========================================================

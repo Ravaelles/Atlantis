@@ -2,15 +2,15 @@ package atlantis.production.requests;
 
 import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.game.A;
-import atlantis.map.AChoke;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.choke.AChoke;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.Requirements;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.production.ProductionQueue;
+import atlantis.production.orders.production.Requirements;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
@@ -34,6 +34,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
     @Override
     public boolean shouldBuildNew() {
+//        System.err.println("Expected: " + expected()  + "(" + existingWithUnfinished() + ")");
         return existingWithUnfinished() < expected();
     }
 

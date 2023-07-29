@@ -2,8 +2,10 @@ package atlantis.information.tech;
 
 import atlantis.config.env.Env;
 import atlantis.game.AGame;
-import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrder;
+import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -13,14 +15,14 @@ public class ATech {
     
     private static final ArrayList<TechType> currentlyResearching = new ArrayList<>();
     private static final ArrayList<UpgradeType> currentlyUpgrading = new ArrayList<>();
-    private static final Cache<Boolean> cache = new Cache<>();
+    private static final Cache<Boolean> cacheBoolean = new Cache<>();
 
     // =========================================================
 
     public static boolean isResearched(Object techOrUpgrade) {
-        return cache.get(
+        return cacheBoolean.get(
                 "isResearched:" + techOrUpgrade,
-                40,
+                31,
                 () -> {
                     if (techOrUpgrade instanceof TechType) {
                         TechType tech = (TechType) techOrUpgrade;
@@ -28,7 +30,26 @@ public class ATech {
                     } else if (techOrUpgrade instanceof UpgradeType) {
                         return isResearchedUpgrade((UpgradeType) techOrUpgrade, 1);
                     } else {
-                        AGame.exit("Neither a tech, nor an upgrade.");
+                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
+                        return false;
+                    }
+                }
+        );
+    }
+
+    public static boolean isNotResearchedOrPlanned(Object techOrUpgrade) {
+        return cacheBoolean.get(
+                "isNotResearchedOrPlanned:" + techOrUpgrade,
+                11,
+                () -> {
+                    if (isResearched(techOrUpgrade)) return false;
+
+                    if (techOrUpgrade instanceof TechType) {
+                        return Count.inQueueOrUnfinished((TechType) techOrUpgrade, 4) == 0;
+                    } else if (techOrUpgrade instanceof UpgradeType) {
+                        return Count.inQueueOrUnfinished((UpgradeType) techOrUpgrade, 4) == 0;
+                    } else {
+                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
                         return false;
                     }
                 }
@@ -84,12 +105,12 @@ public class ATech {
 
     public static void markAsBeingResearched(TechType tech) {
         currentlyResearching.add(tech);
-        cache.clear();
+        cacheBoolean.clear();
     }
 
     public static void markAsBeingUpgraded(UpgradeType upgrade) {
         currentlyUpgrading.add(upgrade);
-        cache.clear();
+        cacheBoolean.clear();
     }
     
     // =========================================================

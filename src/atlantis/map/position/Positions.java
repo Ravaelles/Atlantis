@@ -1,7 +1,6 @@
 package atlantis.map.position;
 
 import atlantis.game.A;
-import atlantis.units.select.Select;
 import bwapi.Position;
 
 import java.util.*;

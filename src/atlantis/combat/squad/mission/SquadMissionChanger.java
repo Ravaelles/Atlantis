@@ -5,18 +5,17 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
 public class SquadMissionChanger {
-
     protected static AUnit unit;
     protected static Selection units;
 
     // =========================================================
 
     public static boolean changeSquadMissionIfNeeded(Squad squad) {
-        if (squad.hasHighlyOffensiveRole()) {
+        if (squad.hasMostlyOffensiveRole()) {
             return false;
         }
 
-        unit = squad.centerUnit();
+        unit = squad.leader();
         units = squad.selection();
 
         if (unit == null) {
@@ -32,7 +31,4 @@ public class SquadMissionChanger {
 
         return false;
     }
-
-    // =========================================================
-
 }

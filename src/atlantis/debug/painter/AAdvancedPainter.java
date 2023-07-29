@@ -1,16 +1,15 @@
 package atlantis.debug.painter;
 
 import atlantis.Atlantis;
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
-import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
+import atlantis.combat.squad.AllSquads;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.SquadTransfers;
-import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -19,32 +18,38 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
-import atlantis.map.*;
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.map.scout.AScoutManager;
-import atlantis.production.ProductionOrder;
+import atlantis.map.region.ARegion;
+import atlantis.map.region.ARegionBoundary;
+import atlantis.map.scout.ScoutCommander;
+import atlantis.map.scout.ScoutManager;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.TerranPositionFinder;
 import atlantis.production.orders.production.CurrentProductionQueue;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.production.orders.production.ProductionQueueMode;
 import atlantis.production.requests.zerg.ZergSunkenColony;
-import atlantis.terran.repair.ARepairAssignments;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.buildings.GasBuildingsCommander;
 import atlantis.units.fogged.AbstractFoggedUnit;
-import atlantis.units.buildings.AGasManager;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.workers.AWorkerManager;
+import atlantis.units.workers.WorkerRepository;
 import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import atlantis.util.MappingCounter;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 import atlantis.util.log.LogMessage;
 import bwapi.Color;
 import bwapi.TechType;
@@ -128,8 +133,10 @@ public class AAdvancedPainter extends APainter {
         paintCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
+        paintWorkers();
         paintCodeProfiler();
         paintSquads();
+        paintManagers();
 
         setTextSizeMedium();
         CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
@@ -142,7 +149,7 @@ public class AAdvancedPainter extends APainter {
             paintTextCentered(unit, unit.type().toString(), Color.White, 0, -0.2);
 
             if (unit.buildType() != null) {
-                paintTextCentered(unit, "Build: " + unit.buildType().toString(), Green, 0,0.1);
+                paintTextCentered(unit, "Build: " + unit.buildType().toString(), Green, 0, 0.1);
             }
         }
     }
@@ -239,18 +246,18 @@ public class AAdvancedPainter extends APainter {
             LogMessage message = unit.log().messages().get(i);
 //            unit.paintInfo(message.createdAtFrames() + "-" + message.message(), Color.Grey, offset);
             paintTextCentered(
-                    unit,
-                    message.createdAtFrames() + "-" + message.message(),
+                unit,
+                message.createdAtFrames() + "-" + message.message(),
 //                    Color.Grey,
-                    Color.Yellow,
-                    0,
-                    (baseOffset + (8 * (counter++))) / 32.0
+                Color.Yellow,
+                0,
+                (baseOffset + (8 * (counter++))) / 32.0
             );
         }
     }
 
     private static void paintLastAction(AUnit unit) {
-        if (!unit.isRealUnit() || unit.isBuilding()) {
+        if (!unit.isRealUnit() || unit.isABuilding()) {
             return;
         }
 
@@ -268,10 +275,9 @@ public class AAdvancedPainter extends APainter {
         if (!unit.isAlive() || unit.squad() == null) {
             return;
         }
-//        String extra = " " + unit.idWithHash();
-        String extra = " " + A.dist(unit.distToSquadCenter());
-        String squadLetter = unit.squad().letter() + extra;
-        paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
+//        String extra = " " + A.dist(unit.distToLeader());
+//        String squadLetter = unit.squad().letter() + extra;
+//        paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
     }
 
     private static void paintTargets(AUnit unit) {
@@ -340,14 +346,16 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Army strength: " + armyStrength + "%", armyStrength >= 100 ? Green : Color.Red);
         paintSideMessage("Enemy strategy: " + (EnemyStrategy.isEnemyStrategyKnown()
                 ? EnemyStrategy.get().toString() : "Unknown"),
-                EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
+            EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
 
         Mission mission = Missions.globalMission();
         if (mission.isMissionDefend()) {
             color = Color.White;
-        } else if (mission.isMissionContain()) {
+        }
+        else if (mission.isMissionContain()) {
             color = Color.Teal;
-        } else {
+        }
+        else {
             color = Color.Orange;
         }
         paintSideMessage("Global mission: " + mission.name() + " (" + Missions.counter() + ")", color);
@@ -355,9 +363,11 @@ public class AAdvancedPainter extends APainter {
         mission = Alpha.get().mission();
         if (mission.isMissionDefend()) {
             color = Color.White;
-        } else if (mission.isMissionContain()) {
+        }
+        else if (mission.isMissionContain()) {
             color = Color.Teal;
-        } else {
+        }
+        else {
             color = Color.Orange;
         }
         paintSideMessage("Alpha mission: " + Alpha.get().mission().name(), color);
@@ -386,13 +396,13 @@ public class AAdvancedPainter extends APainter {
 
         paintSideMessage("Combat squad size: " + Alpha.get().size(), Color.Yellow, 0);
 
-        int scouts = AScoutManager.getScouts().size();
+        int scouts = ScoutCommander.allScouts().size();
         color = scouts == 0 ? Color.Grey : (scouts == 1 ? Color.Yellow : Color.Red);
         paintSideMessage("Scouts: " + scouts, color, 0);
 
         if (We.terran()) {
-            paintSideMessage("Repairers: " + ARepairAssignments.countTotalRepairers(), Color.White, 0);
-            paintSideMessage("Protectors: " + ARepairAssignments.countTotalProtectors(), Color.White, 0);
+            paintSideMessage("Repairers: " + RepairAssignments.countTotalRepairers(), Color.White, 0);
+            paintSideMessage("Protectors: " + RepairAssignments.countTotalProtectors(), Color.White, 0);
         }
 
         // =========================================================
@@ -401,7 +411,7 @@ public class AAdvancedPainter extends APainter {
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
         paintSideMessage("Workers: " + Count.workers(), Color.White);
-        paintSideMessage("Gas workers: " + AGasManager.minGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Gas workers: " + GasBuildingsCommander.minGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + ProductionQueue.mineralsReserved(), Color.Grey);
         paintSideMessage("Reserved gas: " + ProductionQueue.gasReserved(), Color.Grey);
     }
@@ -411,7 +421,7 @@ public class AAdvancedPainter extends APainter {
         double combatEval = unit.combatEvalRelative();
 //        double combatEval = unit.combatEvalAbsolute();
         String combatStrength = ColorUtil.getColorString(Color.Red) +
-                (combatEval >= 9876 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
+            (combatEval >= 9876 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
 //                (combatEval >= 0 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
         paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
     }
@@ -604,8 +614,8 @@ public class AAdvancedPainter extends APainter {
         int counter = 1;
         for (ProductionOrder order : produceNow) {
             paintSideMessage(
-                    String.format("%02d", order.minSupply()) + " - " + order.name(),
-                    order.hasWhatRequired() ? (order.currentlyInProduction() ? Green : Color.Yellow) : Color.Red
+                String.format("%02d", order.minSupply()) + " - " + order.name(),
+                order.hasWhatRequired() ? (order.currentlyInProduction() ? Green : Color.Yellow) : Color.Red
             );
             if (++counter >= 10) {
                 break;
@@ -694,11 +704,11 @@ public class AAdvancedPainter extends APainter {
                 if (construction.builder() != null) {
                     String builder = (construction.builder().idWithHash() + " " + builderDist);
                     paintSideMessage(
-                            construction.buildingType().name()
+                        construction.buildingType().name()
                             + ", " + construction.buildPosition()
                             + ", " + status + ", " + builder,
-                            color,
-                            yOffset
+                        color,
+                        yOffset
                     );
                 }
             }
@@ -727,10 +737,11 @@ public class AAdvancedPainter extends APainter {
     private static void paintConstructionPlace(APosition positionToBuild, AUnitType buildingType, String text, Color color) {
         if (positionToBuild == null) {
             if (Select.main() != null) {
-                ErrorLogging.printErrorOnce(buildingType + " has no position to build");
+                ErrorLog.printErrorOnce(buildingType + " has no position to build");
 //                throw new Exception("That's unacceptable, lad!");
                 return;
-            } else {
+            }
+            else {
                 return;
             }
         }
@@ -744,19 +755,19 @@ public class AAdvancedPainter extends APainter {
 
         // Draw X
         paintLine(
-                positionToBuild.translateByPixels(buildingType.getTileWidth() * 32, 0),
-                positionToBuild.translateByPixels(0, buildingType.getTileHeight() * 32),
-                color
+            positionToBuild.translateByPixels(buildingType.getTileWidth() * 32, 0),
+            positionToBuild.translateByPixels(0, buildingType.getTileHeight() * 32),
+            color
         );
         paintLine(positionToBuild,
-                buildingType.getTileWidth() * 32,
-                buildingType.getTileHeight() * 32,
-                color
+            buildingType.getTileWidth() * 32,
+            buildingType.getTileHeight() * 32,
+            color
         );
 
         // Draw text
         paintTextCentered(
-                positionToBuild.translateByPixels(buildingType.dimensionLeft(), 69), text, color
+            positionToBuild.translateByPixels(buildingType.dimensionLeft(), 69), text, color
         );
     }
 
@@ -833,7 +844,7 @@ public class AAdvancedPainter extends APainter {
             if ("ATTACK_UNIT".equals(action)) {
                 action += ":" + unit.target().type();
             }
-            paintTextCentered(unit.translateByTiles(0, 1),"#" + unit.id() + " " + action, Color.Cyan);
+            paintTextCentered(unit.translateByTiles(0, 1), "#" + unit.id() + " " + action, Color.Cyan);
 
             // BUILDER
 //            if (AtlantisConstructingManager.isBuilder(unit)) {
@@ -891,11 +902,11 @@ public class AAdvancedPainter extends APainter {
 //        paintLine(unit, unit.targetPosition(), Color.Blue); // Where unit is running to
 
         paintRectangleFilled(unit.translateByPixels(0, -flagHeight - dy),
-                flagWidth, flagHeight, flagColor); // White flag
+            flagWidth, flagHeight, flagColor); // White flag
         paintRectangle(unit.translateByPixels(0, -flagHeight - dy),
-                flagWidth, flagHeight, Color.Grey); // Flag border
+            flagWidth, flagHeight, Color.Grey); // Flag border
         paintRectangleFilled(unit.translateByPixels(-1, flagHeight - dy),
-                2, flagHeight, Color.Grey); // Flag stick
+            2, flagHeight, Color.Grey); // Flag stick
     }
 
     /**
@@ -922,19 +933,19 @@ public class AAdvancedPainter extends APainter {
 
             // Paint box
             bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop).p(),
-                    new APosition(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight).p(),
-                    Color.Blue,
-                    true
+                new APosition(labelLeft, labelTop).p(),
+                new APosition(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight).p(),
+                Color.Blue,
+                true
             );
             //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth * labelProgress / 100, labelTop + labelHeight), Color.Blue, true, false);
 
             // Paint box borders
             bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop).p(),
-                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight).p(),
-                    Color.Black,
-                    false
+                new APosition(labelLeft, labelTop).p(),
+                new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight).p(),
+                Color.Black,
+                false
             );
             //bwapi.drawBox(new APosition(labelLeft, labelTop), new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight), Color.Black, false, false);
 
@@ -955,8 +966,8 @@ public class AAdvancedPainter extends APainter {
             stringToDisplay = labelProgress + "%";
 
             paintTextCentered(
-                    new APosition(labelLeft + labelMaxWidth * 50 / 100 + 2, labelTop + 2),
-                    stringToDisplay, progressColor
+                new APosition(labelLeft + labelMaxWidth * 50 / 100 + 2, labelTop + 2),
+                stringToDisplay, progressColor
             );
 
             // =========================================================
@@ -967,13 +978,13 @@ public class AAdvancedPainter extends APainter {
 
             // Paint building name
             paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 7),
-                    name, Color.White);
+                name, Color.White);
 
             // Builder status
             AUnit builder = order.builder();
             boolean builderProblem = builder == null || !builder.isAlive();
             paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 15),
-                    builderProblem ? "NO BUILDER" : "", builderProblem ? Color.Red : Green);
+                builderProblem ? "NO BUILDER" : "", builderProblem ? Color.Red : Green);
         }
 
         setTextSizeSmall();
@@ -1005,18 +1016,18 @@ public class AAdvancedPainter extends APainter {
 
             // Paint box
             bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop).p(),
-                    new APosition(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight).p(),
-                    color,
-                    true
+                new APosition(labelLeft, labelTop).p(),
+                new APosition(labelLeft + labelMaxWidth * hpProgress / 100, labelTop + labelHeight).p(),
+                color,
+                true
             );
 
             // Paint box borders
             bwapi.drawBoxMap(
-                    new APosition(labelLeft, labelTop).p(),
-                    new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight).p(),
-                    Color.Black,
-                    false
+                new APosition(labelLeft, labelTop).p(),
+                new APosition(labelLeft + labelMaxWidth, labelTop + labelHeight).p(),
+                Color.Black,
+                false
             );
         }
     }
@@ -1032,7 +1043,7 @@ public class AAdvancedPainter extends APainter {
             }
 
             // Paint text
-            int workers = AWorkerManager.getHowManyWorkersWorkingNear(building, false);
+            int workers = WorkerRepository.getHowManyWorkersWorkingNear(building, false);
             if (workers > 0) {
                 String workersAssigned = workers + "";
                 paintTextCentered(building.translateByPixels(-5, -36), workersAssigned, Color.Grey);
@@ -1055,10 +1066,10 @@ public class AAdvancedPainter extends APainter {
             if (building.isTrainingAnyUnit()) {
                 AUnitType unitType = building.trainingQueue().get(0);
                 paintBuildingActionProgress(
-                        building,
-                        unitType.name(),
-                        building.remainingTrainTime(),
-                        unitType.totalTrainTime()
+                    building,
+                    unitType.name(),
+                    building.remainingTrainTime(),
+                    unitType.totalTrainTime()
                 );
             }
 
@@ -1066,10 +1077,10 @@ public class AAdvancedPainter extends APainter {
             else if (building.isResearching()) {
                 TechType techType = building.whatIsResearching();
                 paintBuildingActionProgress(
-                        building,
-                        techType.name(),
-                        building.remainingResearchTime(),
-                        techType.researchTime()
+                    building,
+                    techType.name(),
+                    building.remainingResearchTime(),
+                    techType.researchTime()
                 );
             }
 
@@ -1077,10 +1088,10 @@ public class AAdvancedPainter extends APainter {
             else if (building.isResearching()) {
                 UpgradeType upgradeType = building.whatIsUpgrading();
                 paintBuildingActionProgress(
-                        building,
-                        upgradeType.name(),
-                        building.remainingUpgradeTime(),
-                        upgradeType.upgradeTime()
+                    building,
+                    upgradeType.name(),
+                    building.remainingUpgradeTime(),
+                    upgradeType.upgradeTime()
                 );
             }
         }
@@ -1097,17 +1108,17 @@ public class AAdvancedPainter extends APainter {
 
         // Paint box
         paintRectangleFilled(
-                new APosition(labelLeft, labelTop), (int) (labelMaxWidth * operationProgress), labelHeight, Color.Grey
+            new APosition(labelLeft, labelTop), (int) (labelMaxWidth * operationProgress), labelHeight, Color.Grey
         );
 
         // Paint box borders
         paintRectangle(
-                new APosition(labelLeft, labelTop), labelMaxWidth, labelHeight, Color.Black
+            new APosition(labelLeft, labelTop), labelMaxWidth, labelHeight, Color.Black
         );
 
         // Display label
         paintTextCentered(
-                new APosition(labelLeft + labelMaxWidth / 2, labelTop + 2), text, Color.White
+            new APosition(labelLeft + labelMaxWidth / 2, labelTop + 2), text, Color.White
         );
     }
 
@@ -1139,7 +1150,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintTooltipsOverUnits() {
         for (AUnit unit : Select.our().list()) {
-            if (unit.isBuilding() || !unit.isCompleted() || unit.isLoaded()) {
+            if (unit.isABuilding() || !unit.isCompleted() || unit.isLoaded()) {
                 continue;
             }
 
@@ -1148,7 +1159,8 @@ public class AAdvancedPainter extends APainter {
 
                 if (unit.hasTooltip()) {
                     string += unit.tooltip();
-                } else {
+                }
+                else {
                     string += "---";
                 }
 
@@ -1186,14 +1198,14 @@ public class AAdvancedPainter extends APainter {
             APosition topLeft;
             AUnitType type = foggedEnemy.type();
             topLeft = foggedEnemy.translateByPixels(
-                    -type.dimensionLeft(),
-                    -type.dimensionUp()
+                -type.dimensionLeft(),
+                -type.dimensionUp()
             );
             paintRectangle(
-                    foggedEnemy.position(),
-                    type.dimensionRight() / 32,
-                    type.dimensionDown() / 32,
-                    Color.Grey
+                foggedEnemy.position(),
+                type.dimensionRight() / 32,
+                type.dimensionDown() / 32,
+                Color.Grey
             );
             paintText(topLeft, type.name() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
         }
@@ -1212,7 +1224,7 @@ public class AAdvancedPainter extends APainter {
             for (int y = tileY - 10; y <= tileY + 10; y++) {
                 APosition position = APosition.create(x, y);
                 boolean canBuild = TerranPositionFinder.doesPositionFulfillAllConditions(
-                        worker, AUnitType.Terran_Supply_Depot, position
+                    worker, AUnitType.Terran_Supply_Depot, position
                 );
 
                 paintCircleFilled(position, 4, canBuild ? Green : Color.Red);
@@ -1233,7 +1245,7 @@ public class AAdvancedPainter extends APainter {
 //            ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
-            for (ARegionBoundary point : AScoutManager.scoutingAroundBasePoints.arrayList()) {
+            for (ARegionBoundary point : ScoutManager.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Color.Yellow);
             }
         }
@@ -1245,7 +1257,7 @@ public class AAdvancedPainter extends APainter {
     static void paintCodeProfiler() {
         int counter = 0;
         double maxValue = A.getMaxElement(
-                CodeProfiler.getAspectsTimeConsumption().values()
+            CodeProfiler.getAspectsTimeConsumption().values()
         );
 
         for (String aspectTitle : CodeProfiler.getAspectsTimeConsumption().keySet()) {
@@ -1283,27 +1295,31 @@ public class AAdvancedPainter extends APainter {
         y += 26;
 
         if (Alpha.get().isNotEmpty()) {
-            paintMessage("Squads: ", Color.White, x + 4, y, true);
-            for (Squad squad : SquadTransfers.allSquads()) {
+            paintMessage("Squads: ", Color.White, x, y, true);
+            for (Squad squad : AllSquads.all()) {
                 if (squad.size() == 0) {
                     continue;
                 }
-                paintMessage(squad.name() + ": " + squad.size(), squad.isEmpty() ? Color.Red : Color.White, x + 4, y += 12, true);
+                paintMessage(
+                    squad.name() + ": " + squad.size() + "/" + squad.mission().name().substring(0, 3),
+                    squad.isEmpty() ? Color.Red : Color.White,
+                    x, y += 12, true
+                );
             }
         }
     }
 
     private static void paintSquads() {
-        for (Squad squad : SquadTransfers.allSquads()) {
-            APosition median = squad.center();
-            if (median != null) {
-                int maxDist = (int) (SquadCohesion.squadMaxRadius(squad) * 32);
+        for (Squad squad : AllSquads.all()) {
+            AUnit centerUnit = squad.leader();
+            if (centerUnit != null) {
+                int maxDist = (int) squad.radius();
 
-                paintCircle(median, maxDist + 1, Color.Cyan);
-                paintCircle(median, maxDist, Color.Cyan);
+                paintCircle(centerUnit, maxDist + 1, Grey);
+                paintCircle(centerUnit, maxDist, Grey);
 
                 setTextSizeMedium();
-                paintTextCentered(median, squad.cohesionPercent() + "%", Color.Teal, 0, -(maxDist / 32.0) + 0.12);
+                paintTextCentered(centerUnit, squad.cohesionPercent() + "%", Color.Teal, 0, -(maxDist / 32.0) + 0.12);
             }
         }
     }
@@ -1320,7 +1336,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCooldown(AUnit unit) {
-        boolean shouldAvoidAnyUnit = AvoidEnemies.shouldAvoidAnyUnit(unit);
+        boolean shouldAvoidAnyUnit = (new AvoidEnemies(unit)).shouldAvoidAnyUnit();
 
 //        paintUnitProgressBar(unit, 27, 100, Color.Grey);
         paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldAvoidAnyUnit ? Color.Red : Color.Teal);
@@ -1480,7 +1496,7 @@ public class AAdvancedPainter extends APainter {
             paintRectangle(turret.translateByPixels(1, 1), 32, 32, Color.Purple);
             paintTextCentered(turret.translateByPixels(17, 12), "Turret", Color.Purple);
 
-//            CameraManager.centerCameraOn(turret);
+//            CameraCommander.centerCameraOn(turret);
         }
     }
 
@@ -1492,7 +1508,7 @@ public class AAdvancedPainter extends APainter {
 
         for (AUnit mineral : Select.minerals().inRadius(8, mainBase).list()) {
             String dist = A.digit(mineral.distTo(mainBase));
-            int assigned = AWorkerManager.countWorkersAssignedTo(mineral);
+            int assigned = WorkerRepository.countWorkersAssignedTo(mineral);
             setTextSizeLarge();
             paintTextCentered(mineral, dist + " (" + assigned + ")", Color.White);
         }
@@ -1555,6 +1571,21 @@ public class AAdvancedPainter extends APainter {
         );
     }
 
+    private static void paintWorkers() {
+        for (AUnit unit : Select.ourWorkers().list()) {
+            if (!unit.isGatheringMinerals() && !unit.isGatheringGas()) {
+                paintTextCentered(unit, unit.manager().toString(), Grey, 0, -0.6);
+            }
+        }
+    }
+
+    private static void paintManagers() {
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            Color color = unit.looksIdle() ? Color.Purple : Grey;
+            paintTextCentered(unit, unit.manager().toString(), color, 0, -0.6);
+        }
+    }
+
     public static void paintBases() {
         AUnit main = Select.main();
         for (ABaseLocation base : Bases.baseLocations()) {
@@ -1572,7 +1603,6 @@ public class AAdvancedPainter extends APainter {
         }
 
         paintRectangle(
-//                position.translateByPixels(-2 * 32, (int) -1.5 * 32),
             position,
             4 * 32, 3 * 32, color
         );

@@ -4,20 +4,19 @@ import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.map.AChoke;
+import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.cache.Cache;
 import atlantis.util.Enemy;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
 
 public class EnemyInfo {
 
@@ -80,7 +79,7 @@ public class EnemyInfo {
                 50,
                 () -> {
                     for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
-                        if (enemyUnit.isBuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                        if (enemyUnit.isABuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
                             return true;
                         }
                     }
@@ -92,13 +91,31 @@ public class EnemyInfo {
     /**
      * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
      */
-    public static boolean hasDiscoveredAnyCombatUnit() {
+    public static boolean weKnowAboutAnyCombatUnit() {
         return cacheBoolean.get(
-                "hasDiscoveredAnyCombatUnit",
-                30,
+                "weKnowAboutAnyCombatUnit",
+                33,
                 () -> {
                     for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
                         if (enemyUnit.isCombatUnit() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+        );
+    }
+
+    /**
+     * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
+     */
+    public static boolean weKnowAboutAnyRealUnit() {
+        return cacheBoolean.get(
+                "weKnowAboutAnyRealUnit",
+                32,
+                () -> {
+                    for (AUnit enemyUnit : EnemyUnits.discovered().realUnits().list()) {
+                        if (!UnitsArchive.isDestroyed(enemyUnit)) {
                             return true;
                         }
                     }
@@ -200,9 +217,7 @@ public class EnemyInfo {
             "isDoingEarlyGamePush:",
             30,
             () -> {
-                if (!GamePhase.isEarlyGame()) {
-                    return false;
-                }
+                if (!GamePhase.isEarlyGame()) return false;
 
                 if (Enemy.protoss()) {
                     return EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(6);

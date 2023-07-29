@@ -2,11 +2,12 @@ package tests.acceptance;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
-import atlantis.game.AGameCommander;
+import atlantis.game.AtlantisGameCommander;
 import atlantis.game.OnUnitMorph;
 import atlantis.game.OnUnitRenegade;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
+import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import org.junit.Test;
@@ -16,8 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class EnemyUnitsTest extends AbstractTestFakingGame {
-
-    private AGameCommander gameCommander;
+    private AtlantisGameCommander gameCommander;
     private FakeUnit drone1;
     private FakeUnit drone2;
     private FakeUnit drone3;
@@ -30,7 +30,7 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
 
     @Test
     public void neverRunsIntoCombatBuildings() {
-        gameCommander = new AGameCommander();
+        gameCommander = new AtlantisGameCommander();
 
         AtlantisConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
 
@@ -53,7 +53,7 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
                 fifthFrame();
             }
 
-            gameCommander.update();
+            gameCommander.handle();
         });
     }
 
@@ -115,8 +115,8 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
     }
 
     private void fifthFrame() {
-        EnemyUnits.discovered().print("Fogged");
-        Select.enemy().print("Visible enemies");
+//        EnemyUnits.discovered().print("Fogged");
+//        Select.enemy().print("Visible enemies");
 
 //        System.out.println(EnemyUnits.getFoggedUnit(drone3).type());
 //        System.out.println(EnemyUnits.getFoggedUnit(lurkerEgg).type());

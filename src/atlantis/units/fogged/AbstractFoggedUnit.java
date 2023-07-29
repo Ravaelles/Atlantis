@@ -1,6 +1,5 @@
 package atlantis.units.fogged;
 
-import atlantis.debug.tooltip.Tooltip;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
@@ -72,7 +71,6 @@ public class AbstractFoggedUnit extends AUnit {
             A.printStackTrace();
         }
 
-//        System.err.println("unit = " + unit + " // " + unit.position());
 //        if (unit.hasPosition()) {
 //        if (u() != null && unit.x() > 0 && unit.y() > 0) {
 //        if (!(unit instanceof AbstractFoggedUnit) || unit.position().isPositionVisible()) {
@@ -172,7 +170,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     @Override
     public boolean hasPosition() {
-        return _lastPosition != null;
+        return _lastPosition != null && _lastPosition.x() < 32000;
     }
 
 //    public void positionUnknown() {

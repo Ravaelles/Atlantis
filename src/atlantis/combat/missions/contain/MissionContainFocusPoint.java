@@ -1,18 +1,17 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.combat.missions.focus.AFocusPoint;
-import atlantis.combat.missions.focus.MissionFocusPoint;
+import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.map.AChoke;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.choke.AChoke;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
-import atlantis.util.cache.Cache;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
 
 public class MissionContainFocusPoint extends MissionFocusPoint {
 
@@ -151,13 +150,13 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 //    private APosition containPointIfEnemyBaseIsKnown(APosition enemyBase) {
 //        AChoke chokepoint = Chokes.natural(enemyBase);
 //        if (chokepoint != null) {
-////            CameraManager.centerCameraOn(chokepoint.getCenter());
+////            CameraCommander.centerCameraOn(chokepoint.getCenter());
 //            return chokepoint.center();
 //        }
 //
 //        ABaseLocation natural = Bases.natural(enemyBase.position());
 //        if (natural != null) {
-////            CameraManager.centerCameraOn(natural);
+////            CameraCommander.centerCameraOn(natural);
 //            return natural.position();
 //        }
 //

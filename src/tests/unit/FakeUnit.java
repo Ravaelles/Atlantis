@@ -14,7 +14,6 @@ import bwapi.UnitType;
 import tests.fakes.FakePlayer;
 
 public class FakeUnit extends AUnit {
-
     public static int firstFreeId = 1;
     public int id;
     public AUnitType rawType;
@@ -296,7 +295,7 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
-    public boolean holdPosition(String tooltip, boolean strategicLevel) {
+    public boolean holdPosition(String tooltip) {
         lastCommand = "Hold";
         target = null;
         targetPosition = null;
@@ -444,4 +443,8 @@ public class FakeUnit extends AUnit {
         return 0;
     }
 
+    @Override
+    public boolean canLift() {
+        return true;
+    }
 }

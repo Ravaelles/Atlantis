@@ -1,14 +1,12 @@
 package atlantis.production.orders.production;
 
 import atlantis.information.strategy.AStrategy;
-import atlantis.production.ProductionOrder;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 /**

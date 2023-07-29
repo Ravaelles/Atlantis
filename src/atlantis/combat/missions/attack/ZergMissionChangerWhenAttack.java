@@ -1,29 +1,16 @@
 package atlantis.combat.missions.attack;
 
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.units.select.Select;
 
-public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
-
-    public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToDefend()) {
-            changeMissionTo(MissionChanger.defendOrSpartaMission());
-        }
-//        else if (shouldChangeMissionToContain()) {
-//            changeMissionTo(Missions.CONTAIN);
-//        }
-    }
+public class ZergMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     // === DEFEND ==============================================
 
-    public static boolean shouldChangeMissionToDefend() {
+    public boolean shouldChangeMissionToDefend() {
         if (defendAgainstMassZerglings()) {
             if (DEBUG) reason = "Mass zerglings";
             return true;
@@ -44,7 +31,7 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private static boolean shouldChangeMissionToContain() {
+    public boolean shouldChangeMissionToContain() {
         if (A.supplyUsed() >= 170) {
             return false;
         }

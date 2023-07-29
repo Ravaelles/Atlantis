@@ -1,11 +1,6 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.Atlantis;
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.attack.ProtossMissionChangerWhenAttack;
-import atlantis.combat.missions.contain.MissionChangerWhenContain;
-import atlantis.combat.missions.contain.ProtossMissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -14,26 +9,10 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 
-public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
+public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
-    public static void changeMissionIfNeeded() {
-        if (!canChange()) {
-            return;
-        }
-
-        if (shouldChangeMissionToAttack() && !ProtossMissionChangerWhenAttack.shouldChangeMissionToDefend()) {
-            MissionChanger.changeMissionTo(Missions.ATTACK);
-        }
-//        else if (shouldChangeMissionToContain() && !ProtossMissionChangerWhenContain.shouldChangeMissionToDefend()) {
-//            changeMissionTo(Missions.CONTAIN);
-//        }
-    }
-
-    // === CONTAIN =============================================
-
-    private static boolean canChange() {
+    private boolean canChange() {
         if (EnemyInfo.isEnemyNearAnyOurBase()) {
             return false;
         }
@@ -58,7 +37,13 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
         return true;
     }
 
-    private static boolean shouldChangeMissionToAttack() {
+    // === CONTAIN =============================================
+
+    public boolean shouldChangeMissionToAttack() {
+        if (!canChange()) {
+            return false;
+        }
+
         if (A.supplyUsed() >= 195) {
             if (DEBUG) reason = "Maxed out";
             return true;
@@ -76,7 +61,11 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenContain {
         return false;
     }
 
-    private static boolean shouldChangeMissionToContain() {
+    public  boolean shouldChangeMissionToContain() {
+        if (!canChange()) {
+            return false;
+        }
+
         if (ArmyStrength.ourArmyRelativeStrength() >= 170) {
             if (DEBUG) reason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;

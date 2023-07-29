@@ -1,8 +1,8 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
-import atlantis.game.A;
-import jbweb.*;
+import jbweb.JBWEB;
+import jbweb.Stations;
 
 public class InitJBWEB {
 

@@ -1,27 +1,14 @@
 package atlantis.combat.missions.attack;
 
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 
-public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
-
-    public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToDefend()) {
-            changeMissionTo(MissionChanger.defendOrSpartaMission());
-        }
-        else if (shouldChangeMissionToContain()) {
-            changeMissionTo(Missions.CONTAIN);
-        }
-    }
-
+public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     // === DEFEND ==============================================
 
-    public static boolean shouldChangeMissionToDefend() {
+    public boolean shouldChangeMissionToDefend() {
         if (defendAgainstMassZerglings()) {
             if (DEBUG) reason = "Mass zerglings";
             return true;
@@ -42,7 +29,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
 
     // === CONTAIN =============================================
 
-    private static boolean shouldChangeMissionToContain() {
+    public boolean shouldChangeMissionToContain() {
         if (A.supplyUsed() >= 176) {
             return false;
         }
@@ -58,10 +45,6 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenContain {
         }
 
         return false;
-
-//        int ourCount = Select.ourCombatUnits().count();
-//
-//        return ourCount <= 10 || Select.enemyRealUnits().count() >= ourCount + 2;
     }
 
 }

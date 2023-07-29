@@ -6,14 +6,18 @@ import atlantis.util.Enemy;
 
 public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
-    protected static double handleTerranInfantry(AUnit defender, AUnit attacker) {
-        if (canIgnoreThisEnemyForNow(defender, attacker)) {
+    public TerranSafetyMarginAgainstMelee(AUnit defender) {
+        super(defender);
+    }
+
+    protected double handleTerranInfantry(AUnit attacker) {
+        if (canIgnoreThisEnemyForNow(attacker)) {
             return 2;
         }
 
         // =========================================================
 
-        double criticalDist = enemyFacingThisUnitBonus(defender, attacker);
+        double criticalDist = enemyFacingThisUnitBonus(attacker);
 
 //        if (true) return 3;
 
@@ -23,13 +27,13 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         if (medicInRange) {
             if (defender.isHealthy() && defender.enemiesNearInRadius(3) <= 1) {
                 defender.setTooltipTactical("Healthy");
-                return SafetyMarginAgainstMelee.enemyUnitsNearBonus(defender);
+                return enemyUnitsNearBonus(defender);
             }
 
             criticalDist += SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC
 //                    + ourMovementBonus(defender)
-//                    + enemyMovementBonus(defender, attacker)
-                    + SafetyMarginAgainstMelee.woundedAgainstMeleeBonus(defender, attacker);
+//                    + enemyMovementBonus(attacker)
+                    + woundedAgainstMeleeBonus(attacker);
 
             defender.setTooltipTactical("HasMedic");
         }
@@ -39,11 +43,11 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         else {
             criticalDist += SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC
                     + ourMovementBonus(defender)
-                    + (1.2 * SafetyMargin.enemyMovementBonus(defender, attacker))
-//                    + SafetyMargin.enemyMovementBonus(defender, attacker)
-//                    + (defender.hasCooldown() ? enemyMovementBonus(defender, attacker) : 0)
-                    + SafetyMargin.workerBonus(defender, attacker)
-                    + Math.min(1.2, SafetyMarginAgainstMelee.woundedAgainstMeleeBonus(defender, attacker));
+                    + (1.2 * enemyMovementBonus(attacker))
+//                    + SafetyMargin.enemyMovementBonus(attacker)
+//                    + (defender.hasCooldown() ? enemyMovementBonus(attacker) : 0)
+                    + workerBonus(attacker)
+                    + Math.min(1.2, woundedAgainstMeleeBonus(attacker));
 
 //            criticalDist = Math.min(criticalDist, defender.isWounded() ? 2.9 : 2.8);
 
@@ -75,7 +79,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         return criticalDist;
     }
 
-    private static double cooldownBonus(AUnit defender) {
+    private  double cooldownBonus(AUnit defender) {
         int cooldown = defender.cooldown();
         if (cooldown >= 4) {
             return cooldown / 6.0;
@@ -84,11 +88,11 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         return 0;
     }
 
-    protected static double ourMovementBonus(AUnit defender) {
+    protected double ourMovementBonus(AUnit defender) {
         return defender.isMoving() ? -0.2 : +0.3;
     }
 
-    private static boolean canIgnoreThisEnemyForNow(AUnit defender, AUnit attacker) {
+    private  boolean canIgnoreThisEnemyForNow(AUnit attacker) {
         if (attacker.isRanged()) {
             return false;
         }

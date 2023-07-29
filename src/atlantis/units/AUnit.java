@@ -1,16 +1,17 @@
 package atlantis.units;
 
+import atlantis.architecture.Manager;
+import atlantis.architecture.generic.DoNothing;
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.margin.UnitRange;
-import atlantis.combat.missions.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.running.ARunningManager;
 import atlantis.combat.retreating.ShouldRetreat;
+import atlantis.combat.running.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.positioning.SquadCohesion;
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
@@ -21,11 +22,11 @@ import atlantis.information.tech.SpellCoordinator;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
-import atlantis.map.scout.AScoutManager;
-import atlantis.production.constructing.AConstructionManager;
+import atlantis.map.scout.ScoutCommander;
+import atlantis.production.constructing.BuilderManager;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.terran.repair.ARepairAssignments;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
@@ -34,12 +35,12 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.AMineralGathering;
-import atlantis.util.We;
-import atlantis.util.cache.Cache;
 import atlantis.util.CappedList;
 import atlantis.util.Vector;
 import atlantis.util.Vectors;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.We;
+import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
 import atlantis.util.log.LogUnitsToFiles;
 import bwapi.*;
@@ -73,6 +74,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Inner BWAPI Unit object that we extend for easier code maintainability.
      */
     private Unit u;
+
+    /**
+     *
+     */
+    private Manager manager = new DoNothing(this);
 
     /**
      * Cache var storing generic Object-type keys.
@@ -145,12 +151,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     // =========================================================
-    // Only for tests
+    // Constructors only used for tests
+
     protected AUnit() {
     }
 
     protected AUnit(FakeUnit unit) {
     }
+
     // =========================================================
 
     protected AUnit(Unit u) {
@@ -160,7 +168,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         refreshType();
 
         // Repair & Heal
-        this._repairableMechanically = isBuilding() || isVehicle();
+        this._repairableMechanically = isABuilding() || isVehicle();
         this._healable = isInfantry() || isWorker();
 
         // Military building
@@ -172,6 +180,24 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Spore_Colony
         );
     }
+
+    // =========================================================
+
+    /**
+     * Last Manager used by this unit. Null means to manager has been used.
+     */
+    public Manager manager() {
+        return manager;
+    }
+
+    /**
+     * Indicate that this is the Manager used by the unit at the moment.
+     */
+//    public boolean useManager(Manager manager) {
+//        this.manager = manager;
+//
+//        return manager != null;
+//    }
 
     // =========================================================
 
@@ -251,6 +277,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     private Squad squad;
     private final ARunningManager runningManager = new ARunningManager(this);
+    private final AvoidEnemies avoidEnemiesManager = new AvoidEnemies(this);
 
     private boolean _repairableMechanically = false;
     private boolean _healable = false;
@@ -285,7 +312,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         if (newPosition == null) {
-            ErrorLogging.printErrorOnce("Cannot moveAwayFrom " + position + " for " + name());
+            ErrorLog.printErrorOnce("Cannot moveAwayFrom " + position + " for " + name());
             return false;
         }
 
@@ -345,7 +372,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if given unit is OF TYPE BUILDING.
      */
-    public boolean isBuilding() {
+    public boolean isABuilding() {
         return type().isBuilding() || type().isAddon();
     }
 
@@ -550,7 +577,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // ===  Debugging / Painting methods ========================================
 
     private String tooltip;
-//    private int tooltipStartInFrames;
+    private String tooltipForManager;
 
     public AUnit setTooltipTactical(String tooltip) {
         return setTooltip(tooltip, false);
@@ -607,7 +634,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * have to specify at least one <b>true</b> to the params.
      */
     public boolean isMilitaryBuilding(boolean canShootGround, boolean canShootAir) {
-        if (!isBuilding()) {
+        if (!isABuilding()) {
             return false;
         }
         if (canShootGround && _isMilitaryBuildingAntiGround) {
@@ -762,7 +789,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        if (isBuilding() && isProtoss() && !isPowered()) {
+        if (isABuilding() && isProtoss() && !isPowered()) {
             return false;
         }
 
@@ -877,10 +904,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-        if (squad == null && isOur()) {
+//        if (squad == null && isOur()) {
 //            NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
 //            A.printStackTrace("Should not be here");
-        }
+//        }
 
         return squad;
     }
@@ -1006,7 +1033,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * so it will return true.
      */
     public boolean isBuilder() {
-        return AConstructionManager.isBuilder(this);
+        return BuilderManager.isBuilder(this);
     }
 
     /**
@@ -1567,12 +1594,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean lastActionMoreThanAgo(int framesAgo) {
         if (unitAction == null && !isWorker()) {
-            ErrorLogging.printErrorOnce("unitAction null for " + this);
+            ErrorLog.printErrorOnce("unitAction null for " + this);
             return true;
         }
 
         if (unitAction == null && isWorker()) {
-            ErrorLogging.printErrorOnce("Null action for worker");
+            ErrorLog.printErrorOnce("Null action for worker");
             return true;
         }
 
@@ -1649,11 +1676,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isRepairerOfAnyKind() {
-        return ARepairAssignments.isRepairerOfAnyKind(this) || ARepairAssignments.isProtector(this);
+        return RepairAssignments.isRepairerOfAnyKind(this) || RepairAssignments.isProtector(this);
     }
 
     public boolean isScout() {
-        return AScoutManager.isScout(this);
+        return ScoutCommander.isScout(this);
     }
 
     public int getSpaceProvided() {
@@ -1832,7 +1859,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int squadSize() {
         if (squad() == null) {
             if (!isWorker()) {
-                ErrorLogging.printMaxOncePerMinute("Squad null for " + nameWithId());
+                ErrorLog.printMaxOncePerMinute("Squad null for " + nameWithId());
             }
             return 0;
         }
@@ -1881,9 +1908,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public Mission mission() {
         if (squad == null) {
-            if (isCombatUnit() && !isBuilding()) {
+            if (isCombatUnit() && !isABuilding()) {
                 System.err.println("Empty unit squad for: " + this);
-                NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
+                (new NewUnitsToSquadsAssigner(this)).possibleCombatUnitCreated();
             }
             return Missions.DEFEND;
         }
@@ -2139,7 +2166,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
             "isRepairable",
             -1,
-            () -> type().isMechanical() || isBuilding()
+            () -> type().isMechanical() || isABuilding()
         );
     }
 
@@ -2150,7 +2177,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public AUnit loadedInto() {
         return (AUnit) cache.get(
             "loadedInto",
-            10,
+            7,
             () -> {
                 if (!isLoaded()) {
                     return null;
@@ -2209,7 +2236,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public Selection enemiesNear() {
         return ((Selection) cache.get(
             "enemiesNear",
-            3,
+            5,
             () -> {
                 if (unit().isOur()) {
                     return EnemyUnits.discovered()
@@ -2392,7 +2419,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return cacheBoolean.get(
             "isBeingHealed",
             6,
-            () -> friendsInRadius(2).ofType(AUnitType.Terran_Medic).havingTarget(this).notEmpty()
+            () -> friendsInRadius(2).ofType(AUnitType.Terran_Medic).havingTargeted(this).notEmpty()
         );
     }
 
@@ -2557,15 +2584,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return friendsNear().inRadius(radius, this).count();
     }
 
-    public double distToSquadCenter() {
-        if (squad == null || squad.center() == null) {
+    public double distToLeader() {
+        if (squad == null || squad.leader() == null) {
             return 0;
         }
 
         return (double) cache.get(
-            "distToSquadCenter",
+            "distToLeader",
             5,
-            () -> squad.center().distTo(this)
+            () -> squad.leader().distTo(this)
         );
     }
 
@@ -2584,12 +2611,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (boolean) cache.get(
             "outsideSquadRadius",
             3,
-            () -> distToSquadCenter() > squadRadius()
+            () -> distToLeader() > squadRadius()
         );
     }
 
     public boolean isProtector() {
-        return ARepairAssignments.isProtector(this);
+        return RepairAssignments.isProtector(this);
     }
 
     public boolean kitingUnit() {
@@ -2655,7 +2682,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return null;
         }
 
-        return ARepairAssignments.getClosestRepairerAssignedTo(this);
+        return RepairAssignments.getClosestRepairerAssignedTo(this);
     }
 
     public boolean isBeingRepaired() {
@@ -2679,5 +2706,32 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean looksIdle() {
         return isIdle()
             || (!isMoving() && !isAccelerating() && noCooldown());
+    }
+
+    public HasPosition squadLeader() {
+        return squad != null ? squad.leader() : null;
+    }
+
+    public AvoidEnemies avoidEnemiesManager() {
+        return avoidEnemiesManager;
+    }
+
+    public void setManagerUsed(Manager managerUsed) {
+        setManagerUsed(managerUsed, tooltip);
+    }
+
+    public void setManagerUsed(Manager managerUsed, String message) {
+        this.manager = managerUsed;
+        this.tooltipForManager = message;
+
+        addLog(managerUsed.toString());
+    }
+
+    public boolean isActiveManager(Manager manager) {
+        return manager.equals(this.manager);
+    }
+
+    public boolean canLift() {
+        return u().canLift();
     }
 }

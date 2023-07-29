@@ -1,6 +1,7 @@
 package atlantis.information.enemy;
 
-import atlantis.units.*;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;

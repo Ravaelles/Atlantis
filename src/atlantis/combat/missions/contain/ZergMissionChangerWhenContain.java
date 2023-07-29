@@ -3,17 +3,15 @@ package atlantis.combat.missions.contain;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.attack.ZergMissionChangerWhenAttack;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.units.select.Select;
 
 public class ZergMissionChangerWhenContain extends MissionChanger {
-
-    public static void changeMissionIfNeeded() {
+    @Override
+    protected void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
             MissionChanger.changeMissionTo(MissionChanger.defendOrSpartaMission());
         } else if (shouldChangeMissionToAttack()) {

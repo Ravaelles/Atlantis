@@ -1,56 +1,72 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.micro.avoid.FightInsteadAvoid;
-import atlantis.information.generic.ArmyStrength;
+import atlantis.architecture.Manager;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
-public class RetreatManager {
-
+public class RetreatManager extends Manager {
     public static int GLOBAL_RETREAT_COUNTER = 0;
     private static Cache<Boolean> cache = new Cache<>();
 
     // =========================================================
 
-    public static boolean handleRetreat(AUnit unit) {
-        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFightCached(unit)) {
-            if (TempDontRetreat.temporarilyDontRetreat(unit)) {
-                return false;
-            }
-
-            Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
-            HasPosition runAwayFrom = nearEnemies.center();
-            if (runAwayFrom == null) {
-                runAwayFrom = nearEnemies.first();
-            }
-
-            if (runAwayFrom == null && nearEnemies.notEmpty()) {
-                System.err.println("Retreat runAwayFrom is NULL, despite:");
-                nearEnemies.print("nearEnemies");
-            }
-
-            if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
-                unit.addLog("RetreatedFrom" + runAwayFrom);
-                return true;
-            }
-        }
-
-        return false;
+    public RetreatManager(AUnit unit) {
+        super(unit);
     }
 
     // =========================================================
 
-    public static boolean getCachedShouldRetreat(AUnit unit) {
-        return cache.has("shouldRetreat:" + unit.id()) && cache.get("shouldRetreat:" + unit.id());
+    @Override
+    public Manager handle() {
+        if (handleRetreat()) return usedManager(this);
+
+        return null;
     }
+
+    protected boolean handleRetreat() {
+//        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFightCached()) {
+//        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFight()) {
+
+        return cache.get(
+            "handleRetreat",
+            9,
+            () -> {
+                if (ShouldRetreat.shouldRetreat(unit)) {
+                    Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
+                    HasPosition runAwayFrom = nearEnemies.center();
+                    if (runAwayFrom == null) {
+                        runAwayFrom = nearEnemies.first();
+                    }
+
+                    if (runAwayFrom == null && nearEnemies.notEmpty()) {
+                        System.err.println("Retreat runAwayFrom is NULL, despite:");
+                        nearEnemies.print("nearEnemies");
+                    }
+
+                    if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
+                        unit.addLog("RetreatedFrom" + runAwayFrom);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        );
+    }
+
+    // =========================================================
+
+//    public boolean getCachedShouldRetreat() {
+//        return cache.has("shouldRetreat:" + unit.id()) && cache.get("shouldRetreat:" + unit.id());
+//    }
 
     /**
      * Calculated per unit squad, not per unit.
      */
-//    public static boolean shouldNotEngageCombatBuilding(AUnit unit) {
+//    public  boolean shouldNotEngageCombatBuilding () {
 //        if (unit.squad() == null) {
 //            return false;
 //        }

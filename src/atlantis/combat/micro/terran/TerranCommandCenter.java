@@ -1,66 +1,77 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.architecture.Manager;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.CameraManager;
-import atlantis.map.ABaseLocation;
-import atlantis.map.Bases;
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.base.Bases;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
 import java.util.List;
 
-public class TerranCommandCenter {
+public class TerranCommandCenter extends Manager {
+    public TerranCommandCenter(AUnit unit) {
+        super(unit);
+    }
 
-    public static boolean update(AUnit building) {
+    @Override
+    public boolean applies() {
+        return unit.is(AUnitType.Terran_Command_Center);
+    }
+
+    @Override
+    public Manager handle() {
         if (AGame.notNthGameFrame(46)) {
-            return false;
+            return null;
         }
 
-        boolean baseMinedOut = baseMinedOut(building);
-        if (baseMinedOut && building.isLifted()) {
-            return flyToNewMineralPatches(building);
+        boolean baseMinedOut = baseMinedOut();
+        if (baseMinedOut && unit.isLifted()) {
+            if (flyToNewMineralPatches()) {
+                return usedManager(this);
+            }
         }
         else if (baseMinedOut) {
-            if (building.lastActionMoreThanAgo(3)) {
-                building.lift();
+            if (unit.lastActionMoreThanAgo(3)) {
+                unit.lift();
             }
-            return true;
+            return usedManager(this);
         }
 
-        return false;
+        return null;
     }
 
     // =========================================================
 
-    private static boolean baseMinedOut(AUnit building) {
-        return Select.minerals().inRadius(12, building).isEmpty();
+    private  boolean baseMinedOut() {
+        return Select.minerals().inRadius(12, unit).isEmpty();
     }
 
-    private static boolean flyToNewMineralPatches(AUnit building) {
+    private  boolean flyToNewMineralPatches() {
         if (Env.isTesting()) {
             return false;
         }
 
-        List<AUnit> minerals = Select.minerals().sortDataByDistanceTo(building, true);
+        List<AUnit> minerals = Select.minerals().sortDataByDistanceTo(unit, true);
         Selection bases = Select.ourBuildingsWithUnfinished().ofType(AUnitType.Terran_Command_Center);
-        ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(building);
+        ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(unit);
 
         if (baseLocation == null && !Env.isTesting()) {
-            ErrorLogging.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
+            ErrorLog.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
             return false;
         }
 
         APosition rebaseTo = baseLocation.isPositionVisible()
-            ? baseLocation.makeLandableFor(building)
+            ? baseLocation.makeLandableFor(unit)
             : baseLocation.position();
 
         if (rebaseTo == null && minerals.size() > 0) {
@@ -68,7 +79,7 @@ public class TerranCommandCenter {
         }
 
         if (rebaseTo == null) {
-            ErrorLogging.printErrorOnce("Null rebaseTo");
+            ErrorLog.printErrorOnce("Null rebaseTo");
             return false;
         }
 
@@ -83,25 +94,25 @@ public class TerranCommandCenter {
                 !rebaseTo.isExplored()
                 || Select.minerals().inRadius(10, rebaseTo).notEmpty()
             ) {
-                if (!building.isLifted() && rebaseTo.distToMoreThan(building, 3)) {
+                if (!unit.isLifted() && rebaseTo.distToMoreThan(unit, 3)) {
 //                    System.err.println("# Lift");
-                    building.lift();
+                    unit.lift();
                     return true;
                 }
                 else {
 //                    if (A.everyNthGameFrame(31)) {
-                    double dist = rebaseTo.distTo(building);
-                    building.setTooltip("Rebase" + A.dist(dist), true);
+                    double dist = rebaseTo.distTo(unit);
+                    unit.setTooltip("Rebase" + A.dist(dist), true);
                     if (dist <= 5) {
-                        rebaseTo = baseLocation.makeLandableFor(building);
+                        rebaseTo = baseLocation.makeLandableFor(unit);
 //                        System.err.println("# Land at " + rebaseTo.toTilePosition());
                         if (rebaseTo != null) {
-                            building.land(rebaseTo.toTilePosition());
+                            unit.land(rebaseTo.toTilePosition());
                             return true;
                         }
                     } else {
 //                        System.err.println("# Fly to " + rebaseTo + " // " + dist);
-                        if (building.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true)) {
+                        if (unit.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true)) {
                             return true;
                         }
                     }

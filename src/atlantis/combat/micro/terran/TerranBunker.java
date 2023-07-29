@@ -1,29 +1,23 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.combat.missions.Missions;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.map.AChoke;
-import atlantis.map.Chokes;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.requests.AntiLandBuildingManager;
-import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
-import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
-import atlantis.util.We;
-
-import static atlantis.production.AbstractDynamicUnits.addToQueueToMaxAtATime;
 
 public class TerranBunker extends AntiLandBuildingManager {
 
@@ -32,7 +26,7 @@ public class TerranBunker extends AntiLandBuildingManager {
         return AUnitType.Terran_Bunker;
     }
 
-//    public static boolean handleOffensiveBunkers() {
+//    public  boolean handleOffensiveBunkers() {
 ////        if (true) return false;
 //
 //        if (!Have.barracks() || AGame.notNthGameFrame(50)) {
@@ -105,7 +99,7 @@ public class TerranBunker extends AntiLandBuildingManager {
             int neededBunkers = expectedBunkers - existingBunkers;
 
             for (int i = 0; i < neededBunkers; i++) {
-                addToQueueToMaxAtATime(type(), neededBunkers);
+                AddToQueue.maxAtATime(type(), neededBunkers);
 //                System.err.println("Requested BUNKER");
             }
             return neededBunkers > 0;
@@ -116,7 +110,7 @@ public class TerranBunker extends AntiLandBuildingManager {
 
     // =========================================================
 
-//    private static boolean handleReinforceMissionAttack() {
+//    private  boolean handleReinforceMissionAttack() {
 //        if (!Missions.isGlobalMissionAttack()) {
 //            return false;
 //        }
@@ -187,12 +181,12 @@ public class TerranBunker extends AntiLandBuildingManager {
 
     // =========================================================
 
-    public static TerranBunker get() {
-        if (instance == null) {
-            return (TerranBunker) (instance = new TerranBunker());
-        }
-
-        return (TerranBunker) instance;
-    }
+//    public TerranBunker getInstance() {
+//        if (instance == null) {
+//            return (TerranBunker) (instance = new TerranBunker());
+//        }
+//
+//        return (TerranBunker) instance;
+//    }
 
 }

@@ -1,21 +1,20 @@
 package atlantis.production.constructing;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.ProductionOrder;
-import atlantis.production.Requirements;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
+import atlantis.production.orders.production.Requirements;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLogging;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,7 +51,7 @@ public class ConstructionRequests {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
 
-        if (ASpecificConstructionManager.handledAsSpecialBuilding(building, order)) {
+        if (SpecificConstructionRequests.handledAsSpecialBuilding(building, order)) {
             return true;
         }
 
@@ -77,7 +76,7 @@ public class ConstructionRequests {
 
         if (newConstructionOrder.builder() == null) {
             if (AGame.supplyUsed() >= 7 && Count.bases() > 0 && Count.workers() > 0) {
-                ErrorLogging.printMaxOncePerMinute("Builder is null, got damn it!");
+                ErrorLog.printMaxOncePerMinute("Builder is null, got damn it!");
             }
             return false;
         }
@@ -113,23 +112,21 @@ public class ConstructionRequests {
         }
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
-        else {
-            if (AGame.supplyTotal() > 10) {
-                ErrorLogging.printMaxOncePerMinute("Can't find place for `" + building + "`, " + order);
+        if (AGame.supplyTotal() > 10) {
+            ErrorLog.printMaxOncePerMinute("Can't find place for `" + building + "`, " + order);
 //                A.printStackTrace("Can't find place for `" + building + "`, " + order);
-                if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
-                    ErrorLogging.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
-                }
-                else {
-                    ErrorLogging.printMaxOncePerMinute("(reason not defined - bug)");
-                }
+            if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
+                ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
             }
-
-            ErrorLogging.printMaxOncePerMinute("Cancel " + building + " (Invalid place)");
-            newConstructionOrder.cancel();
-//            throw new RuntimeException("Can't find place for `" + building + "` ");
-            return false;
+            else {
+                ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
+            }
         }
+
+        ErrorLog.printMaxOncePerMinute("Cancel " + building + " (Invalid place)");
+        newConstructionOrder.cancel();
+//            throw new RuntimeException("Can't find place for `" + building + "` ");
+        return false;
     }
 
     private static boolean handleRequirementsNotFullfilledFor(AUnitType building) {
@@ -150,14 +147,14 @@ public class ConstructionRequests {
             return true;
         }
 
-        ErrorLogging.printMaxOncePerMinute(
+        ErrorLog.printMaxOncePerMinute(
             "Uhmmm... shouldn't reach here. "
                 + "EXISTING_BUILDING=" + Count.existing(building)
                 + ", IN_PROD_BUILDING" + Count.inProductionOrInQueue(building)
                 + "EXISTING_REQ=" + Count.existing(requiredBuilding)
                 + ", IN_PROD_REQ" + Count.inProductionOrInQueue(requiredBuilding)
         );
-        ErrorLogging.printMaxOncePerMinute(building + " // " + requiredBuilding);
+        ErrorLog.printMaxOncePerMinute(building + " // " + requiredBuilding);
         return false;
     }
 

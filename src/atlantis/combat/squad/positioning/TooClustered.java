@@ -1,5 +1,6 @@
 package atlantis.combat.squad.positioning;
 
+import atlantis.architecture.Manager;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -7,52 +8,48 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-public class TooClustered {
+public class TooClustered extends Manager {
+    public TooClustered(AUnit unit) {
+        super(unit);
+    }
 
-    public static boolean handleTooClustered(AUnit unit) {
-        if (shouldSkip(unit)) {
-            return false;
-        }
+    @Override
+    public boolean applies() {
+        return unit.squad().size() >= 2 && unit.friendsNear().inRadius(0.3, unit).groundUnits().atLeast(3);
+    }
 
-        if (unit.lastActionLessThanAgo(13, Actions.MOVE_FORMATION)) {
-            return true;
-        }
-
+    public Manager handle() {
         Selection ourCombatUnits = Select.ourCombatUnits().inRadius(5, unit);
         AUnit nearestBuddy = ourCombatUnits.clone().nearestTo(unit);
-        double minDistBetweenUnits = minDistBetweenUnits(unit);
+        double minDistBetweenUnits = minDistBetweenUnits();
 
-        if (tooClustered(unit, ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
+        if (tooClustered(ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
             APosition goTo = unit.makeFreeOfAnyGroundUnits(4, 0.2, unit);
             if (goTo != null) {
-                unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false);
-                return true;
+                if (unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false)) {
+                    return usedManager(this);
+                }
             }
         }
 
-        return false;
+        return null;
     }
 
     // =========================================================
 
-    private static boolean shouldSkip(AUnit unit) {
-//        if (unit.isAir()) {
-//            return true;
-//        }
-
-//        if (unit.mission() != null && unit.mission().isMissionAttack()) {
-//            return true;
-//        }
-
-        if (unit.squad().size() <= 1 || unit.isMoving()) {
-            return true;
-        }
-
-        return false;
+    private boolean tooClustered(
+        Selection ourCombatUnits,
+        AUnit nearestBuddy,
+        double minDistBetweenUnits
+    ) {
+        return nearestBuddy != null
+            && ourCombatUnits.size() >= 5
+            && nearestBuddy.distToLessThan(unit, minDistBetweenUnits)
+            && unit.friendsInRadius(1.5).size() >= 4;
     }
 
-    private static double minDistBetweenUnits(AUnit unit) {
-        double baseDist = preferedBaseDistToNextUnit(unit);
+    private double minDistBetweenUnits() {
+        double baseDist = preferedBaseDistToNextUnit();
         int enemiesNear = unit.enemiesNearInRadius(4);
 
         if (enemiesNear <= 1 || unit.noCooldown()) {
@@ -72,22 +69,11 @@ public class TooClustered {
         return baseDist;
     }
 
-    private static double preferedBaseDistToNextUnit(AUnit unit) {
+    private double preferedBaseDistToNextUnit() {
         if (unit.isTank()) {
             return 0.8;
         }
 
         return 0.4;
-    }
-
-    private static boolean tooClustered(
-        AUnit unit,
-        Selection ourCombatUnits,
-        AUnit nearestBuddy,
-        double minDistBetweenUnits
-    ) {
-        return nearestBuddy != null
-            && ourCombatUnits.size() >= 5
-            && nearestBuddy.distToLessThan(unit, minDistBetweenUnits);
     }
 }

@@ -4,8 +4,6 @@ import atlantis.combat.missions.Mission;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
-import atlantis.production.ProductionOrder;
-import atlantis.production.Requirements;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -92,7 +90,7 @@ public abstract class CurrentProductionQueue {
                 ProductionQueue.gasNeeded += tech.gasPrice();
             }
 
-            // MISSION - handled in AProductionManager
+            // MISSION - handled in ProductionOrdersCommander
             else if (mission != null && A.supplyAtLeast(order.minSupply())) {
                 continue;
             }

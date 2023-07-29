@@ -1,6 +1,6 @@
 package atlantis.production.constructing.position;
 
-import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

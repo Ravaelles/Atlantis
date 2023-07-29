@@ -1,8 +1,8 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
-import atlantis.map.AChoke;
-import atlantis.map.Chokes;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;

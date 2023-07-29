@@ -2,18 +2,23 @@ package atlantis.combat.targeting;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.HasUnit;
 import atlantis.units.select.Selection;
 
-public class ATargetingForAirUnits {
+public class ATargetingForAirUnits extends HasUnit {
 
-    protected static AUnit targetForAirUnits(AUnit unit) {
+    public ATargetingForAirUnits(AUnit unit) {
+        super(unit);
+    }
+
+    protected AUnit targetForAirUnits() {
         AUnit target;
 
-        if ((target = targetsCrucial(unit)) != null) {
+        if ((target = targetsCrucial()) != null) {
             return target;
         }
 
-        if ((target = targetsStandard(unit)) != null) {
+        if ((target = targetsStandard()) != null) {
             return target;
         }
 
@@ -22,7 +27,7 @@ public class ATargetingForAirUnits {
 
     // =========================================================
 
-    private static AUnit targetsCrucial(AUnit unit) {
+    private AUnit targetsCrucial() {
         AUnit target;
 
         Selection allEnemies = ATargeting.enemyUnits.withEnemyFoggedUnits()
@@ -34,17 +39,17 @@ public class ATargetingForAirUnits {
         // Target CRUCIAL AIR units
 
         target = allEnemies
-                .air()
-                .ofType(
-                    AUnitType.Protoss_Observer,
-                    AUnitType.Protoss_Arbiter,
+            .air()
+            .ofType(
+                AUnitType.Protoss_Observer,
+                AUnitType.Protoss_Arbiter,
 
-                    AUnitType.Terran_Science_Vessel,
+                AUnitType.Terran_Science_Vessel,
 
-                    AUnitType.Zerg_Scourge
-                )
-                .inShootRangeOf(unit)
-                .mostWounded();
+                AUnitType.Zerg_Scourge
+            )
+            .inShootRangeOf(unit)
+            .mostWounded();
         if (target != null) {
             return target;
         }
@@ -53,36 +58,36 @@ public class ATargetingForAirUnits {
         // Target REAVERS + HT + TANKS + DEFILERS
 
         target = allEnemies
-                .ofType(
-                    AUnitType.Protoss_Reaver,
-                    AUnitType.Protoss_High_Templar,
+            .ofType(
+                AUnitType.Protoss_Reaver,
+                AUnitType.Protoss_High_Templar,
 
-                    AUnitType.Terran_Siege_Tank_Siege_Mode,
-                    AUnitType.Terran_Siege_Tank_Tank_Mode,
+                AUnitType.Terran_Siege_Tank_Siege_Mode,
+                AUnitType.Terran_Siege_Tank_Tank_Mode,
 
-                    AUnitType.Zerg_Defiler,
-                    AUnitType.Zerg_Guardian
-                )
-                .inShootRangeOf(unit)
-                .mostWounded();
+                AUnitType.Zerg_Defiler,
+                AUnitType.Zerg_Guardian
+            )
+            .inShootRangeOf(unit)
+            .mostWounded();
         if (target != null) {
             return target;
         }
 
         target = allEnemies
-                .ofType(
-                    AUnitType.Protoss_Reaver,
-                    AUnitType.Protoss_High_Templar,
+            .ofType(
+                AUnitType.Protoss_Reaver,
+                AUnitType.Protoss_High_Templar,
 
-                    AUnitType.Terran_Siege_Tank_Siege_Mode,
-                    AUnitType.Terran_Siege_Tank_Tank_Mode,
+                AUnitType.Terran_Siege_Tank_Siege_Mode,
+                AUnitType.Terran_Siege_Tank_Tank_Mode,
 
-                    AUnitType.Zerg_Defiler,
-                    AUnitType.Zerg_Guardian
-                )
+                AUnitType.Zerg_Defiler,
+                AUnitType.Zerg_Guardian
+            )
 //                .inShootRangeOf(unit)
-                .inRadius(15, unit)
-                .mostWounded();
+            .inRadius(15, unit)
+            .mostWounded();
         if (target != null) {
             return target;
         }
@@ -91,17 +96,17 @@ public class ATargetingForAirUnits {
         // Target DT + Mutalisks
 
         target = allEnemies
-                .ofType(
-                    AUnitType.Protoss_Dark_Templar,
-                    AUnitType.Protoss_Archon,
+            .ofType(
+                AUnitType.Protoss_Dark_Templar,
+                AUnitType.Protoss_Archon,
 
-                    AUnitType.Terran_Ghost,
+                AUnitType.Terran_Ghost,
 
-                    AUnitType.Zerg_Mutalisk
-                )
+                AUnitType.Zerg_Mutalisk
+            )
 //                .inShootRangeOf(unit)
-                .inRadius(15, unit)
-                .mostWounded();
+            .inRadius(15, unit)
+            .mostWounded();
         if (target != null) {
             return target;
         }
@@ -110,19 +115,19 @@ public class ATargetingForAirUnits {
         // Target IMPORTANT AIR units
 
         target = allEnemies
-                .air()
-                .ofType(
-                    AUnitType.Protoss_Carrier,
-                    AUnitType.Protoss_Shuttle,
+            .air()
+            .ofType(
+                AUnitType.Protoss_Carrier,
+                AUnitType.Protoss_Shuttle,
 
-                    AUnitType.Terran_Battlecruiser,
-                    AUnitType.Terran_Dropship,
+                AUnitType.Terran_Battlecruiser,
+                AUnitType.Terran_Dropship,
 
-                    AUnitType.Zerg_Guardian,
-                    AUnitType.Zerg_Devourer
-                )
-                .inShootRangeOf(unit)
-                .mostWounded();
+                AUnitType.Zerg_Guardian,
+                AUnitType.Zerg_Devourer
+            )
+            .inShootRangeOf(unit)
+            .mostWounded();
         if (target != null) {
             return target;
         }
@@ -131,9 +136,9 @@ public class ATargetingForAirUnits {
         // Target ANY AIR units
 
         target = allEnemies
-                .air()
-                .inShootRangeOf(unit)
-                .mostWounded();
+            .air()
+            .inShootRangeOf(unit)
+            .mostWounded();
         if (target != null) {
             return target;
         }
@@ -153,9 +158,9 @@ public class ATargetingForAirUnits {
         // Target WORKERS
 
         target = allEnemies
-                .workers()
-                .inShootRangeOf(unit)
-                .mostWounded();
+            .workers()
+            .inShootRangeOf(unit)
+            .mostWounded();
         if (target != null) {
             return target;
         }
@@ -163,7 +168,7 @@ public class ATargetingForAirUnits {
         return null;
     }
 
-    private static AUnit targetsStandard(AUnit unit) {
+    private AUnit targetsStandard() {
         AUnit target;
 
         Selection allEnemies = ATargeting.enemyUnits.withEnemyFoggedUnits().removeDuplicates();
@@ -172,9 +177,9 @@ public class ATargetingForAirUnits {
         // Target WORKERS
 
         target = allEnemies
-                .workers()
-                .inRadius(50, unit)
-                .nearestTo(unit);
+            .workers()
+            .inRadius(50, unit)
+            .nearestTo(unit);
         if (target != null) {
             return target;
         }
@@ -183,9 +188,9 @@ public class ATargetingForAirUnits {
         // Target DISTANT BASES, hoping to find workers
 
         target = allEnemies
-                .bases()
-                .inRadius(50, unit)
-                .nearestTo(unit);
+            .bases()
+            .inRadius(50, unit)
+            .nearestTo(unit);
         if (ATargeting.DEBUG) System.out.println("target AA1 = " + target + " // " + unit);
 
         if (target != null) {
@@ -196,9 +201,9 @@ public class ATargetingForAirUnits {
         // Target DEFENSIVE BUILDINGS
 
         target = allEnemies
-                .ofType(AUnitType.Zerg_Sunken_Colony)
-                .inRadius(50, unit)
-                .nearestTo(unit);
+            .ofType(AUnitType.Zerg_Sunken_Colony)
+            .inRadius(50, unit)
+            .nearestTo(unit);
         if (ATargeting.DEBUG) System.out.println("target AA2 = " + target + " // " + unit);
 
         if (target != null) {
@@ -210,9 +215,9 @@ public class ATargetingForAirUnits {
 
         target = allEnemies
             .combatUnits()
-                .notHavingAntiAirWeapon()
-                .inRadius(50, unit)
-                .nearestTo(unit);
+            .notHavingAntiAirWeapon()
+            .inRadius(50, unit)
+            .nearestTo(unit);
         if (ATargeting.DEBUG) System.out.println("target AA3 = " + target + " // " + unit);
 
         if (target != null) {
@@ -236,9 +241,9 @@ public class ATargetingForAirUnits {
         // Target ANY COMBAT UNITS
 
         target = allEnemies
-                .combatUnits()
-                .inRadius(50, unit)
-                .nearestTo(unit);
+            .combatUnits()
+            .inRadius(50, unit)
+            .nearestTo(unit);
         if (ATargeting.DEBUG) System.out.println("target AA5 = " + target + " // " + unit);
 
         if (target != null) {

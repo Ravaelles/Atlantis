@@ -1,5 +1,8 @@
 package atlantis.util;
 
+import atlantis.architecture.Commander;
+import atlantis.game.A;
+
 import java.util.HashMap;
 
 public class CodeProfiler {
@@ -23,11 +26,15 @@ public class CodeProfiler {
      * Indicates that from now on, until endMeasuring is executed, the bot is calculating things related
      * to <b>title</b>.
      * <br />Used for determining total time that it took to handle given type of activity e.g.
-     * `production related stuff`. Displayed in full painting mode (press 3 in game) as relative 
+     * `production related stuff`. Displayed in full painting mode (press 3 in game) as relative
      * time-consumptions bars.
      */
     public static void startMeasuring(String title) {
         measureAspect(title);
+    }
+
+    public static void startMeasuring(Commander commander) {
+        measureAspect(forCommander(commander));
     }
 
     /**
@@ -43,10 +50,18 @@ public class CodeProfiler {
         }
     }
 
+    public static void endMeasuring(Commander commander) {
+        endMeasuring(forCommander(commander));
+    }
+
+    public static String forCommander(Commander commander) {
+        return classNameToProfilerName(commander.getClass().getSimpleName());
+    }
+
     public static HashMap<String, Double> getAspectsTimeConsumption() {
         return aspectsLength;
     }
-    
+
     public static double getTotalFrameLength() {
         double total = 0;
         for (Double value : aspectsLength.values()) {
@@ -68,6 +83,16 @@ public class CodeProfiler {
     private static long now() {
         return System.nanoTime();
 //        return System.currentTimeMillis();
+    }
+
+    private static String classNameToProfilerName(String className) {
+        String profilerName = className.replace("Commander", "");
+
+        if (profilerName.charAt(0) == 'A' && Character.isUpperCase(profilerName.charAt(1))) {
+            profilerName = profilerName.substring(1);
+        }
+
+        return A.ucfirst(profilerName);
     }
 
 }

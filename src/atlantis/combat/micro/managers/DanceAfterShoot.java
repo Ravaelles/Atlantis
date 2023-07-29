@@ -1,16 +1,32 @@
 package atlantis.combat.micro.managers;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
 
-public class DanceAfterShoot {
+public class DanceAfterShoot extends Manager {
+    public DanceAfterShoot(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isRanged();
+    }
+
+    @Override
+    public Manager handle() {
+        if (update()) return usedManager(this);
+
+        return null;
+    }
 
     /**
      * For ranged unit, once shoot is fired, move slightly away or move towards the target when still have cooldown.
      */
-    public static boolean update(AUnit unit) {
-        if (shouldSkip(unit)) {
+    private boolean update() {
+        if (shouldSkip()) {
             return false;
         }
 
@@ -24,7 +40,7 @@ public class DanceAfterShoot {
         // === Ranged vs ranged case ===============================
 
 //        if (unit.isRanged() && target.isRanged()) {
-//            boolean lesserRange = weaponRange < target.weaponRangeAgainst(unit);
+//            boolean lesserRange = weaponRange < target.weaponRangeAgainst();
 //            if (lesserRange && dist >= 3.8) {
 //                unit.addLog(danceTo);
 //                return unit.move(
@@ -39,7 +55,7 @@ public class DanceAfterShoot {
         // =========================================================
 
         // Step FORWARD
-        if (shouldDanceTo(unit, target, dist)) {
+        if (shouldDanceTo(target, dist)) {
             unit.addLog(danceTo);
             return unit.move(
                 unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE_TO, danceTo, false
@@ -61,18 +77,18 @@ public class DanceAfterShoot {
 
     // =========================================================
 
-    private static boolean shouldDanceTo(AUnit unit, AUnit target, double dist) {
+    private  boolean shouldDanceTo(AUnit target, double dist) {
         return target.isVisibleUnitOnMap()
             && target.effVisible()
             && unit.distToMoreThan(target, 3)
             && dist >= (unit.enemyWeaponRangeAgainstThisUnit(target))
             && (
-                (!target.isBuilding() && dist >= 1.6)
+                (!target.isABuilding() && dist >= 1.6)
                 || target.hasNoWeaponAtAll()
             );
     }
 
-    private static boolean shouldSkip(AUnit unit) {
+    private  boolean shouldSkip() {
 //        if (true) return true;
 
         if (unit.isMelee()) {

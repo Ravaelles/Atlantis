@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran;
 
+import atlantis.architecture.Manager;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -8,66 +9,74 @@ import atlantis.units.select.Selection;
 import bwapi.TechType;
 import tests.unit.FakeUnit;
 
-public class TerranComsatStation {
+public class TerranComsatStation extends Manager {
+    public TerranComsatStation(AUnit unit) {
+        super(unit);
+    }
 
-    public static boolean update(AUnit comsat) {
-        if (AGame.notNthGameFrame(13)) {
-            return false;
+    @Override
+    public boolean applies() {
+        return unit.is(AUnitType.Terran_Comsat_Station) && AGame.everyNthGameFrame(13);
+    }
+
+    @Override
+    public Manager handle() {
+        if (unit.energy() >= 50) {
+            if (
+                scanLurkers()
+                    || scanDarkTemplars()
+                    || scanObservers()
+                    || scanWraiths()
+            ) return usedManager(this);
         }
 
-        if (comsat.energy() >= 50) {
-            return scanLurkers(comsat)
-                    || scanDarkTemplars(comsat)
-                    || scanObservers(comsat);
-        }
-
-        return false;
+        return null;
     }
 
     // =========================================================
-    // Zerg
+    // vs Zerg
 
-    private static boolean scanLurkers(AUnit comsat) {
+    private boolean scanLurkers() {
         for (AUnit lurker : Select.enemies(AUnitType.Zerg_Lurker).effUndetected().list()) {
-            if (shouldScanThisLurker(lurker, comsat)) {
-                return scan(comsat, lurker);
+            if (shouldScanThisLurker(lurker)) {
+                return scan(lurker);
             }
         }
 
         return false;
     }
 
-    private static boolean shouldScanThisLurker(AUnit lurker, AUnit comsat) {
-        if (comsat.energy(190)) {
+    private boolean shouldScanThisLurker(AUnit lurker) {
+        if (unit.energy(190)) {
             return true;
         }
 
-        int minUnitsNear = (comsat.energy(160) ? 3 : (comsat.energy(60) ? 4 : 6));
+        int minUnitsNear = (unit.energy(160) ? 3 : (unit.energy(60) ? 4 : 6));
 
-        if (comsat.energy(100) && Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker).isNotEmpty()) {
+        if (unit.energy(100) && Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker).isNotEmpty()) {
 //            System.err.println("Scan " + lurker + " because buildings are close");
             return true;
         }
 
         return Select.ourCombatUnits()
-                .excludeTypes(AUnitType.Terran_Medic)
-                .inRadius(12, lurker)
-                .atLeast(minUnitsNear);
+            .excludeTypes(AUnitType.Terran_Medic)
+            .inRadius(12, lurker)
+            .atLeast(minUnitsNear);
     }
 
     // =========================================================
-    // Protoss
+    // vs Protoss
 
-    private static boolean scanDarkTemplars(AUnit comsat) {
+    private boolean scanDarkTemplars() {
         for (AUnit dt : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Dark_Templar).list()) {
             Selection ourCombatUnits = Select.ourCombatUnits();
             if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
-                    .atLeast(comsat.energy(150) ? (comsat.energy(190) ? 2 : 4) : 7)) {
+                .atLeast(unit.energy(150) ? (unit.energy(190) ? 2 : 4) : 7)) {
                 if (
                     ourCombatUnits.nearestTo(dt).distToLessThan(dt, 6)
-                    || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()
+                        || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()
                 ) {
-                    return scan(comsat, dt);
+                    return scan(dt);
                 }
             }
         }
@@ -75,27 +84,27 @@ public class TerranComsatStation {
         return false;
     }
 
-    private static boolean scanObservers(AUnit comsat) {
-        if (comsat.energy() <= 200) {
+    private boolean scanObservers() {
+        if (unit.energy() <= 200) {
             return false;
         }
 
         for (AUnit observer : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Observer).list()) {
-            if (shouldScanThisObserver(observer, comsat)) {
-                return scan(comsat, observer);
+            if (shouldScanThisObserver(observer)) {
+                return scan(observer);
             }
         }
 
         return false;
     }
 
-    private static boolean shouldScanThisObserver(AUnit observer, AUnit comsat) {
-        if (comsat.energy() >= 100 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)) {
+    private boolean shouldScanThisObserver(AUnit observer) {
+        if (unit.energy() >= 100 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)) {
             return true;
         }
 
         if (
-                Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, observer).isNotEmpty()
+            Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, observer).isNotEmpty()
                 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)
         ) {
             return true;
@@ -105,8 +114,33 @@ public class TerranComsatStation {
     }
 
     // =========================================================
+    // vs Terran
 
-    private static boolean scan(AUnit comsat, AUnit unitToScan) {
+    private boolean scanWraiths() {
+        return genericScanUnit(AUnitType.Terran_Wraith);
+    }
+
+    private boolean scanGhosts() {
+        return genericScanUnit(AUnitType.Terran_Ghost);
+    }
+
+    // =========================================================
+
+    private boolean genericScanUnit(AUnitType type) {
+        for (AUnit enemy : Select.enemies(type).effUndetected().list()) {
+            boolean shouldScan = enemy.enemiesNear()
+                .inRadius(6, enemy)
+                .canAttack(enemy, 1)
+                .atLeast(2);
+            if (shouldScan) {
+                return scan(enemy);
+            }
+        }
+
+        return false;
+    }
+
+    private boolean scan(AUnit unitToScan) {
         if (!unitToScan.effUndetected()) {
             System.err.println("unitToScan is not effectively cloaked = " + unitToScan.hp());
             return false;
@@ -120,8 +154,8 @@ public class TerranComsatStation {
         if (!(unitToScan instanceof FakeUnit)) {
 //            System.err.println("=== COMSAT SCAN on " + unitToScan + ", energy = " + comsat.energy() + " ===");
         }
-        comsat.setTooltipTactical("Scanning " + unitToScan.name());
-        return comsat.useTech(TechType.Scanner_Sweep, unitToScan);
+        unit.setTooltipTactical("Scanning " + unitToScan.name());
+        return unit.useTech(TechType.Scanner_Sweep, unitToScan);
     }
 
 }

@@ -1,9 +1,5 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.attack.TerranMissionChangerWhenAttack;
-import atlantis.combat.missions.defend.TerranMissionChangerWhenDefend;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -15,21 +11,22 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 
-public class TerranMissionChangerWhenContain extends MissionChanger {
+public class TerranMissionChangerWhenContain extends MissionChangerWhenContain {
 
-    public static void changeMissionIfNeeded() {
-        if (shouldChangeMissionToDefend() && !TerranMissionChangerWhenDefend.shouldChangeMissionToContain()) {
-            Missions.forceGlobalMissionDefend(reason);
-        }
-
-        else if (shouldChangeMissionToAttack() && !TerranMissionChangerWhenAttack.shouldChangeMissionToContain()) {
-            Missions.forceGlobalMissionAttack(reason);
-        }
-    }
+//    public static void changeMissionIfNeeded() {
+//        if (shouldChangeMissionToDefend() && !TerranMissionChangerWhenDefend.shouldChangeMissionToContain()) {
+//            Missions.forceGlobalMissionDefend(reason);
+//        }
+//
+//        else if (shouldChangeMissionToAttack() && !TerranMissionChangerWhenAttack.shouldChangeMissionToContain()) {
+//            Missions.forceGlobalMissionAttack(reason);
+//        }
+//    }
 
     // =========================================================
 
-    public static boolean shouldChangeMissionToDefend() {
+    @Override
+    public boolean shouldChangeMissionToDefend() {
         if (GamePhase.isEarlyGame()) {
             if (Enemy.protoss() && EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(4)) {
                 if (Count.medics() <= 4) {
@@ -67,7 +64,8 @@ public class TerranMissionChangerWhenContain extends MissionChanger {
         return false;
     }
 
-    protected static boolean shouldChangeMissionToAttack() {
+    @Override
+    public boolean shouldChangeMissionToAttack() {
         if (A.supplyUsed() >= 190) {
             if (DEBUG) reason = "Supply blocked";
             return true;

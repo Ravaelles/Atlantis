@@ -2,9 +2,10 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.Decisions;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
+import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -14,7 +15,7 @@ import atlantis.util.Enemy;
 
 import static bwapi.TechType.Tank_Siege_Mode;
 
-public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
+public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
 
     protected static void handleFactoryProduction() {
 //        if (!AGame.canAfford(200, 150) && !AGame.canAffordWithReserved(150, 100)) {
@@ -79,18 +80,20 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
 
         int vultures = Count.vultures();
         if (!Decisions.produceVultures() || tanks <= 5 || tanks <= 0.4 * vultures) {
-            return addToQueueIfNotAlreadyThere(AUnitType.Terran_Siege_Tank_Tank_Mode);
+            return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Siege_Tank_Tank_Mode);
         }
 
         return false;
     }
 
     private static boolean vultures() {
+        if (true) return false;
+
         if (!Decisions.produceVultures()) {
             return false;
         }
 
-        return addToQueueIfNotAlreadyThere(AUnitType.Terran_Vulture);
+        return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Vulture);
     }
 
     private static boolean goliaths(AUnit factory) {
@@ -100,7 +103,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsManager {
 
         if (EnemyStrategy.get().isAirUnits() && Count.withPlanned(AUnitType.Terran_Goliath) <= 20) {
             if (AGame.canAffordWithReserved(150, 100)) {
-                return addToQueueIfNotAlreadyThere(AUnitType.Terran_Goliath);
+                return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Goliath);
             }
         }
 

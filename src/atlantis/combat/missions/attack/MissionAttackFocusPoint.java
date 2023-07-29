@@ -1,30 +1,27 @@
 package atlantis.combat.missions.attack;
 
-import atlantis.combat.missions.focus.AFocusPoint;
-import atlantis.combat.missions.focus.MissionFocusPoint;
+import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.GamePhase;
-import atlantis.map.AChoke;
+import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
-import bwapi.Color;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
 
     private Cache<AFocusPoint> cache = new Cache<>();
 
-    private static APosition _temporaryTarget = null;
+    private APosition _temporaryTarget = null;
 
     public AFocusPoint focusPoint() {
         return cache.getIfValid(

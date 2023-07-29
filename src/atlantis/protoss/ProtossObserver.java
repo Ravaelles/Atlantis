@@ -1,19 +1,28 @@
 package atlantis.protoss;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
 public class ProtossObserver extends MobileDetector {
 
-    public static AUnitType type() {
-        return AUnitType.Protoss_Observer;
+    public ProtossObserver(AUnit unit) {
+        super(unit);
     }
 
-    // =========================================================
+    @Override
+    public boolean applies() {
+        return unit.isObserver();
+    }
 
-    public static boolean update(AUnit observer) {
-        return MobileDetector.update(observer);
+    @Override
+    public Manager handle() {
+        return super.handle();
+    }
+
+    public  AUnitType type() {
+        return AUnitType.Protoss_Observer;
     }
 
 }

@@ -1,28 +1,37 @@
 package atlantis.combat.micro.avoid.zerg;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
-public class ShouldAlwaysAvoidAsZerg {
+public class ShouldAlwaysAvoidAsZerg extends Manager {
+    private int friendsVeryNear;
+    private int meleeEnemiesVeryNear;
 
-    private static int friendsVeryNear;
-    private static int meleeEnemiesVeryNear;
+    public ShouldAlwaysAvoidAsZerg(AUnit unit) {
+        super(unit);
+    }
 
-    public static boolean shouldAlwaysAvoid(AUnit unit) {
-        if (shouldSkip(unit)) {
+    @Override
+    public boolean applies() {
+        return unit.isZerg();
+    }
+
+    public boolean shouldAlwaysAvoid() {
+        if (shouldSkip()) {
             return false;
         }
 
         friendsVeryNear = unit.friendsInRadiusCount(2);
         meleeEnemiesVeryNear = unit.meleeEnemiesNearCount(3);
 
-        if (asZergling(unit)) {
+        if (asZergling()) {
             return true;
         }
 
         return false;
     }
 
-    private static boolean asZergling(AUnit unit) {
+    private boolean asZergling() {
         if (!unit.isZergling()) {
             return false;
         }
@@ -30,7 +39,7 @@ public class ShouldAlwaysAvoidAsZerg {
         return unit.hp() <= 22 && friendsVeryNear <= 65 && meleeEnemiesVeryNear > 0;
     }
 
-    private static boolean shouldSkip(AUnit unit) {
+    private boolean shouldSkip() {
         return !unit.isZerg();
     }
 }

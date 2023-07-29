@@ -3,18 +3,22 @@ package atlantis.combat.squad;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.delta.Delta;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
+import atlantis.units.HasUnit;
 
-public class NewUnitsToSquadsAssigner {
+public class NewUnitsToSquadsAssigner extends HasUnit {
 
-    public static void possibleCombatUnitCreated(AUnit unit) {
-        if (shouldSkipUnit(unit)) {
+    public NewUnitsToSquadsAssigner(AUnit unit) {
+        super(unit);
+    }
+
+    public void possibleCombatUnitCreated() {
+        if (shouldSkipUnit()) {
             return;
         }
 
-        Squad squad = chooseSquadFor(unit);
+        Squad squad = chooseSquadFor();
 //        System.out.println("squad = " + squad);
-//        System.out.println("squad.contains(unit) = " + squad.contains(unit) + " // " + unit.name());
+//        System.out.println("squad.contains() = " + squad.contains() + " // " + unit.name());
         if (!squad.contains(unit)) {
             squad.addUnit(unit);
             unit.setSquad(squad);
@@ -24,17 +28,17 @@ public class NewUnitsToSquadsAssigner {
 
     // =========================================================
 
-    private static Squad chooseSquadFor(AUnit unit) {
+    private Squad chooseSquadFor() {
         Alpha alpha = Alpha.get();
 
-        if (assignToDelta(unit)) {
+        if (assignToDelta()) {
             return Delta.get();
         }
 
         return alpha;
     }
 
-    private static boolean assignToDelta(AUnit unit) {
+    private boolean assignToDelta() {
         return (unit.isAir() && !unit.type().isTransport())
             || unit.type().isDetectorNonBuilding();
     }
@@ -42,8 +46,8 @@ public class NewUnitsToSquadsAssigner {
     /**
      * Skips buildings, workers and Zerg Larva
      */
-    private static boolean shouldSkipUnit(AUnit unit) {
-        return !unit.isRealUnit() || unit.isWorker() || unit.type().isMine() || unit.isBuilding();
+    private boolean shouldSkipUnit() {
+        return !unit.isRealUnit() || unit.isWorker() || unit.type().isMine() || unit.isABuilding();
     }
 
 }

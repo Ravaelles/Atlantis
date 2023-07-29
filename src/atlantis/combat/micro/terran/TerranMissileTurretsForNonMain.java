@@ -1,9 +1,8 @@
 package atlantis.combat.micro.terran;
 
-import atlantis.game.A;
-import atlantis.map.AChoke;
-import atlantis.map.Bases;
-import atlantis.map.Chokes;
+import atlantis.map.choke.AChoke;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
@@ -15,7 +14,7 @@ import atlantis.util.Enemy;
 
 public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
 
-    private static final int MIN_TURRETS_PER_BASE = 2;
+    private  final int MIN_TURRETS_PER_BASE = 2;
 
     public boolean buildIfNeeded() {
         if (!Have.engBay()) {

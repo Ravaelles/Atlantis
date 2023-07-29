@@ -1,6 +1,7 @@
 package tests.acceptance;
 
-import atlantis.combat.ACombatUnitManager;
+import atlantis.combat.CombatUnitManager;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.Test;
@@ -17,12 +18,12 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
      * if the unit is 0.1 tiles outside of range of a Sunken Colony, but the
      * eval gets drastically worse once within range.
      */
-
     @Test
     public void neverRunsIntoCombatBuildings() {
         createWorld(100, () -> {
             FakeUnit unit = ourFirst;
-            boolean result = ACombatUnitManager.update(unit);
+            unit.setSquad(Alpha.get());
+            (new CombatUnitManager(unit)).handle();
 
             double distToSunken = distToNearestEnemy(unit);
             boolean isSafe = distToSunken > 7.05;

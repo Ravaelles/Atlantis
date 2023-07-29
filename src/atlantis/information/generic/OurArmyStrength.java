@@ -1,6 +1,5 @@
 package atlantis.information.generic;
 
-import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 

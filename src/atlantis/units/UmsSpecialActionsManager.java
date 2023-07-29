@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.architecture.Commander;
 import atlantis.debug.painter.APainter;
 import atlantis.game.AGame;
 import atlantis.units.actions.Actions;
@@ -10,20 +11,22 @@ import bwapi.Color;
 /**
  * Special manager for UMS maps (Use Map Settings type of maps). Great for testing macro on custom maps.
  */
-public class UmsSpecialActionsManager {
+public class UmsSpecialActionsManager extends Commander {
 
     public static AUnit NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = null;
 
     // =========================================================
 
-    public static void update() {
+    public void handle() {
         if (AGame.isUms()) {
             goToBeaconsIfNeeded();
             goToNewCompanionsButStillNeutral();
         }
     }
 
-    private static boolean goToNewCompanionsButStillNeutral() {
+    // =========================================================
+
+    private boolean goToNewCompanionsButStillNeutral() {
         if (NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US != null) {
             AUnit goToRenegade = NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US;
 
@@ -41,7 +44,7 @@ public class UmsSpecialActionsManager {
         return false;
     }
 
-    private static boolean goToBeaconsIfNeeded() {
+    private boolean goToBeaconsIfNeeded() {
         Selection ours = Select.our();
         Selection beacons = Select.neutral().ofType(
                 AUnitType.Special_Terran_Beacon,

@@ -2,17 +2,15 @@ package atlantis.map.position;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
-import atlantis.map.AChoke;
+import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
-import atlantis.map.ARegion;
-import atlantis.map.Regions;
+import atlantis.map.region.ARegion;
+import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
 import bwapi.Point;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwapi.WalkPosition;
-
-import java.util.Objects;
 
 /**
  * Atlantis uses wrapper for BWAPI  classes which can't extended due to private constructors.
@@ -22,7 +20,7 @@ import java.util.Objects;
  * BWMirror if you work with the source code rather than the .jar library release.
  * <br /><br />
  * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
- * you can create them here or reference original Position class via p() method. 
+ * you can create them here or reference original Position class via p() method.
  * <br /><br />
  * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
  */
@@ -30,7 +28,7 @@ import java.util.Objects;
 public class APosition extends Point<Position> implements HasPosition, Comparable<Point<Position>> {
 
     private final Position p;
-    
+
     // =========================================================
 
     public APosition(APosition position) {
@@ -91,7 +89,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
             return position;
 //        }
     }
-    
+
     /**
      * <b>Notice:</b> whenever possible, use APosition instead of Position.
      *
@@ -300,7 +298,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
     public int hashCode() {
         return this.p.hashCode();
     }
-    
+
 //    public int compareTo(Position o) {
     @Override
     public int compareTo(Point o) {
@@ -324,7 +322,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         int otherY = ((HasPosition) obj).y();
         return this.x == otherX && this.y == otherY;
     }
-    
+
     /**
      * Returns true if given position has land connection to given position.
      */
@@ -339,14 +337,14 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
     public boolean isCloseToMapBounds() {
         int px = p.getX();
         int py = p.getY();
-        
+
         if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
             return true;
         }
         else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
             return true;
         }
-        
+
         if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
             return true;
         }

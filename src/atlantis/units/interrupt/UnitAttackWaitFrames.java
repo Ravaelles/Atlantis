@@ -1,6 +1,5 @@
 package atlantis.units.interrupt;
 
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 

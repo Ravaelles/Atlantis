@@ -54,6 +54,10 @@ public class Missions {
         return globalMission().isMissionSparta();
     }
 
+    public static boolean isGlobalMissionDefendOrSparta() {
+        return isGlobalMissionDefend() || isGlobalMissionSparta();
+    }
+
     public static boolean isGlobalMissionContain() {
         return globalMission().isMissionContain();
     }
@@ -160,7 +164,7 @@ public class Missions {
     }
 
     public static boolean recentlyChangedMission() {
-        return lastMissionChangedAgo() <= 30 * 3;
+        return lastMissionChangedAgo() <= 30 * 8;
     }
 
     public static int counter() {

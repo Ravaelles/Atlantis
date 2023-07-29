@@ -1,6 +1,5 @@
 package atlantis.combat.running;
 
-import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 
@@ -21,10 +20,14 @@ public class RunShowBackToEnemy {
     // =========================================================
 
     protected boolean shouldRunByShowingBackToEnemy() {
+//        if (true) return true;
 //        if (true) return false;
 
         if (
-            runningManager.unit.nearestEnemyDist() >= 3.9
+            (
+                runningManager.unit.nearestEnemyDist() >= 2.9
+//                || runningManager.unit.nearestEnemyDist() <= 1.7
+            )
             && runningManager.unit.enemiesNearInRadius(4.9) <= 1
         ) {
             return true;

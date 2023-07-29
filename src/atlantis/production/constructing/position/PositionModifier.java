@@ -1,10 +1,11 @@
 package atlantis.production.constructing.position;
 
-import atlantis.game.CameraManager;
-import atlantis.game.GameSpeed;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.*;
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.base.Bases;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;

@@ -1,15 +1,16 @@
 package atlantis.combat.missions.contain;
 
-import atlantis.combat.missions.attack.MissionAttackVsCombatBuildings;
-import atlantis.combat.missions.focus.AFocusPoint;
+import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.squad.ASquadCohesionManager;
-import atlantis.game.A;
+import atlantis.combat.missions.attack.MissionAttackVsCombatBuildings;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 
+/**
+ * Currently not used, needs fixing.
+ */
 public class MissionContain extends Mission {
 
     public MissionContain() {
@@ -20,37 +21,18 @@ public class MissionContain extends Mission {
     // =========================================================
 
     @Override
-    public boolean update(AUnit unit) {
-        AFocusPoint focusPoint = focusPoint();
-        unit.setTooltipTactical("#Contain(" + (focusPoint != null ? A.digit(focusPoint.distTo(unit)) : null) + ")");
+    protected Manager managerClass(AUnit unit) {
+        return new MissionContainManager(unit);
+    }
 
-        if (focusPoint == null) {
-            MissionChanger.forceMissionAttack("InvalidFocusPoint");
-            return false;
-        }
 
-//        if (handleUnitSafety(unit, true, true)) {
-//            return true;
-//        }
-
-//        if (SquadScout.handle(unit)) {
-//            return true;
-//        }
-
-        if (ASquadCohesionManager.update(unit)) {
-            return true;
-        }
-
-        return (new MoveToContainFocusPoint()).move(unit, focusPoint);
-
+    @Override
+    public double optimalDist() {
+        return 6;
+//        return (new MoveToContainFocusPoint()).optimalDist();
     }
 
     // =========================================================
-
-    @Override
-    public double optimalDist(AUnit unit) {
-        return (new MoveToContainFocusPoint()).optimalDist(unit);
-    }
 
     @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
@@ -68,7 +50,10 @@ public class MissionContain extends Mission {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (unit.isTerranInfantry() && MissionAttackVsCombatBuildings.forbiddenForTerranInfantry(unit, enemy)) {
+        if (
+            unit.isTerranInfantry()
+            && (new MissionAttackVsCombatBuildings(unit)).forbiddenForTerranInfantry(enemy)
+        ) {
             return false;
         }
 
@@ -109,9 +94,9 @@ public class MissionContain extends Mission {
         }
 
         // Allow to defend bases
-        if (enemyIsNearAnyOurBuilding(enemy)) {
-            return true;
-        }
+//        if (EnemyInfo.isEnemyNearAnyOurBase(enemy)) {
+//            return true;
+//        }
 
         // Attack enemies near squad center
         if (

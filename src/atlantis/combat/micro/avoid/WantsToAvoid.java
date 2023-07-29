@@ -1,28 +1,48 @@
 package atlantis.combat.micro.avoid;
 
-import atlantis.combat.micro.AAttackEnemyUnit;
+import atlantis.architecture.Manager;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.util.Enemy;
 
-public class WantsToAvoid {
+public class WantsToAvoid extends Manager {
+    private Avoid avoid;
+    private ShouldAlwaysAvoidAsZerg shouldAlwaysAvoidAsZerg;
 
-    public static boolean unitOrUnits(AUnit unit, Units enemies) {
-        if (shouldNeverAvoidIf(unit, enemies)) {
-            return false;
+    public WantsToAvoid(AUnit unit) {
+        super(unit);
+        avoid = new Avoid(unit);
+        shouldAlwaysAvoidAsZerg = new ShouldAlwaysAvoidAsZerg(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return true;
+    }
+
+    public Manager unitOrUnits(Units enemies) {
+        if (enemies.isEmpty()) {
+            return null;
+        }
+
+        if (shouldNeverAvoidIf(enemies)) {
+            return null;
         }
 
         // =========================================================
 
-        if (!shouldAlwaysAvoid(unit, enemies)) {
-//                APainter.paintCircle(unit, 10, Color.Green);
-//                APainter.paintCircle(unit, 11, Color.Green);
+        if (!attackInsteadAvoid(enemies)) {
+//                APainter.paintCircle(10, Color.Green);
+//                APainter.paintCircle(11, Color.Green);
 
 //            unit.addFileLog("NOT shouldAlwaysAvoid");
 //            unit.addLog("NOT shouldAlwaysAvoid");
-            return AAttackEnemyUnit.handleAttackNearEnemyUnits(unit);
+            if (AttackNearbyEnemies.handleAttackNearEnemyUnits(unit)) {
+                return usedManager(this, "ButAttack");
+            }
         }
 
         // =========================================================
@@ -31,24 +51,24 @@ public class WantsToAvoid {
 //            A.printStackTrace();
 //        }
 
-        return Avoid.singleUnit(unit, enemies.first());
+        return avoid.singleUnit(enemies.first());
 
 //        if (enemies.size() == 1) {
-//            return Avoid.singleUnit(unit, enemies.first());
+//            return Avoid.singleUnit(enemies.first());
 //        }
 //        else {
-//            return Avoid.groupOfUnits(unit, enemies);
+//            return Avoid.groupOfUnits(enemies);
 //        }
     }
 
     // =========================================================
 
-    private static boolean shouldAlwaysAvoid(AUnit unit, Units enemies) {
+    private boolean attackInsteadAvoid(Units enemies) {
         if (!unit.hasAnyWeapon()) {
             return false;
         }
 
-        if (ShouldAlwaysAvoidAsZerg.shouldAlwaysAvoid(unit)) {
+        if (shouldAlwaysAvoidAsZerg.shouldAlwaysAvoid()) {
             return true;
         }
 
@@ -73,7 +93,7 @@ public class WantsToAvoid {
 
         if (
             unit.isInfantry()
-            && unit.enemiesNear().ofType(AUnitType.Zerg_Lurker).inRadius(7.2, unit).effUndetected().notEmpty()
+                && unit.enemiesNear().ofType(AUnitType.Zerg_Lurker).inRadius(7.2, unit).effUndetected().notEmpty()
         ) {
             unit.setTooltip("Aaa-LURKER!");
             return true;
@@ -81,7 +101,7 @@ public class WantsToAvoid {
 
         if (
             unit.isInfantry()
-            && unit.enemiesNear().ofType(AUnitType.Protoss_Reaver).inRadius(9.2, unit).effUndetected().notEmpty()
+                && unit.enemiesNear().ofType(AUnitType.Protoss_Reaver).inRadius(9.2, unit).effUndetected().notEmpty()
         ) {
             unit.setTooltip("Aaa-LURKER!");
             return true;
@@ -102,7 +122,7 @@ public class WantsToAvoid {
         return true;
     }
 
-    private static boolean shouldNeverAvoidIf(AUnit unit, Units enemies) {
+    private boolean shouldNeverAvoidIf(Units enemies) {
         if (unit.isWorker() && enemies.onlyMelee()) {
             return unit.hp() >= 40;
         }

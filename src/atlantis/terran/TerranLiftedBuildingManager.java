@@ -1,40 +1,36 @@
 package atlantis.terran;
 
-import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.game.AGame;
-import atlantis.map.position.APosition;
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+public class TerranLiftedBuildingManager extends Manager {
 
-public class TerranLiftedBuildingManager {
-
-    public static void update() {
-        for (Iterator<AUnit> it = Select.ourBuildings().list().iterator(); it.hasNext(); ) {
-            AUnit building = it.next();
-
-            if (!building.isLifted()) {
-                continue;
-            }
-
-            updateLiftedBuilding(building);
-        }
+    public TerranLiftedBuildingManager(AUnit unit) {
+        super(unit);
     }
 
-    // =========================================================
+    @Override
+    public boolean applies() {
+        return unit.isLifted() && unit.isABuilding() && unit.isWounded();
+    }
 
     /**
      * Buildings will be lifted:
      * - when under attack,
-     * - when base runs out of minerals and we fly to a new location
+     * - when base runs out of minerals, we fly to a new location
      */
-    private static void updateLiftedBuilding(AUnit building) {
+    @Override
+    public Manager handle() {
+        if (unit.lastUnderAttackLessThanAgo(30 * 5)) {
+            AUnit enemy = unit.enemiesNear().canAttack(unit, 3).nearestTo(unit);
+            if (enemy != null) {
+                unit.setTooltip("IntoSafety");
+                unit.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, false);
+                return usedManager(this);
+            }
+        }
 
+        return null;
     }
-
 }

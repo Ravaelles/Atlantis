@@ -1,144 +1,111 @@
 package atlantis.terran;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.debug.painter.APainter;
-import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.Color;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-public class TerranFlyingBuildingScoutManager {
-
-    private static final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
-
-    // =========================================================
-
-    public static void update() {
-        if (AGame.isUms()) {
-            return;
-        }
-
-        if (needNewFlyingBuilding()) {
-            liftABuildingAndFlyAmongStars();
-        }
-
-        updateIfBuildingNeedsToBeLifted();
-
-        for (Iterator<AUnit> it = flyingBuildings.iterator(); it.hasNext(); ) {
-            if (updateFlyingBuilding(it.next())) {
-                return;
-            }
-        }
+public class TerranFlyingBuildingScoutManager extends Manager {
+    public TerranFlyingBuildingScoutManager(AUnit unit) {
+        super(unit);
     }
 
-    // =========================================================
-
-    private static void updateIfBuildingNeedsToBeLifted() {
-        for (AUnit building : Select.ourBuildings().list()) {
-            if (!building.u().canLift()) {
-                continue;
-            }
-
-            if (!building.isLifted() && building.isUnderAttack(20) && building.hpPercent() <= 36) {
-                building.lift();
-                return;
-            }
-
-            if (building.isLifted() && building.lastUnderAttackLessThanAgo(30 * 4)) {
-                APosition median = Alpha.get().median();
-                if (median != null) {
-                    building.moveStrategic(median, Actions.MOVE_ENGAGE, "AwayFromAlpha");
-                    return;
-                }
-            }
-        }
+    @Override
+    public boolean applies() {
+        return unit.isABuilding() && unit.isLifted();
     }
 
-    private static boolean updateFlyingBuilding(AUnit flyingBuilding) {
-        if (!flyingBuilding.isAlive()) {
-            flyingBuildings.remove(flyingBuilding);
-            return true;
+    public Manager handle() {
+        if (updateFlyingBuilding()) {
+            return usedManager(this);
         }
 
-        APainter.paintCircle(flyingBuilding, new int[] { 7, 10, 13, 16 }, Color.Grey);
+        return null;
+    }
 
-        Selection combatBuildings = flyingBuilding.enemiesNear()
-            .combatBuildingsAntiAir()
-            .inRadius(7.8, flyingBuilding);
-        if (combatBuildings.notEmpty()) {
-            return flyingBuilding.moveAwayFrom(flyingBuilding, 3, "BloodyBuilding", Actions.MOVE_SAFETY);
-        }
+    private boolean updateFlyingBuilding() {
+        APainter.paintCircle(unit, new int[]{7, 10, 13, 16}, Color.Grey);
 
-        if (flyingBuilding.lastUnderAttackLessThanAgo(30 * 3)) {
-//            APosition median = Alpha.get().median();
-//            if (median != null) {
-//                flyingBuilding.moveStrategic(median, Actions.MOVE_SAFETY, "UnderFire");
-//                return true;
-//            }
-            AUnit enemy = flyingBuilding.enemiesNear().canAttack(flyingBuilding, 3).nearestTo(flyingBuilding);
-            if (enemy != null) {
-                return flyingBuilding.moveAwayFrom(flyingBuilding, 3, "UnderFire", Actions.MOVE_SAFETY);
-            }
-        }
+        if (avoidCombatBuildings()) return unit.moveAwayFrom(unit, 3, "BloodyBuilding", Actions.MOVE_SAFETY);
 
-        APosition focusPoint = flyingBuildingFocusPoint();
+        if (underAttack()) return unit.moveAwayFrom(unit, 3, "UnderFire", Actions.MOVE_SAFETY);
 
-        // Move towards focus point if needed
-        if (focusPoint != null) {
-            double distToFocusPoint = focusPoint.distTo(flyingBuilding);
-
-            if (distToFocusPoint > 2) {
-                flyingBuilding.moveStrategic(focusPoint, Actions.MOVE_SPECIAL, "Fly baby!");
-                return true;
-            }
-        }
+        if (goToFocusPoint()) return true;
 
         return false;
     }
 
-    private static APosition flyingBuildingFocusPoint() {
-        APosition containFocusPoint = Missions.globalMission().focusPoint();
-        APosition attackFocusPoint = Missions.ATTACK.focusPoint();
+    private boolean goToFocusPoint() {
+        APosition focusPoint = flyingBuildingFocusPoint();
 
-        if (containFocusPoint != null && attackFocusPoint != null) {
-            return containFocusPoint.translateTilesTowards(attackFocusPoint, 6);
+        // Move towards focus point if needed
+        if (focusPoint != null) {
+            double distToFocusPoint = focusPoint.distTo(unit);
+
+            if (distToFocusPoint > 0.5) {
+                unit.moveStrategic(focusPoint, Actions.MOVE_SPECIAL, "Fly baby!");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean underAttack() {
+        if (unit.lastUnderAttackLessThanAgo(30 * 3)) {
+//            APosition median = Alpha.get().median();
+//            if (median != null) {
+//                unit.moveStrategic(median, Actions.MOVE_SAFETY, "UnderFire");
+//                return true;
+//            }
+            AUnit enemy = unit.enemiesNear().canAttack(unit, 3).nearestTo(unit);
+            if (enemy != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean avoidCombatBuildings() {
+        Selection combatBuildings = unit.enemiesNear()
+            .combatBuildingsAntiAir()
+            .inRadius(7.8, unit);
+
+        if (combatBuildings.notEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+//    private APosition flyingBuildingFocusPoint() {
+//        APosition containFocusPoint = Missions.globalMission().focusPoint();
+//        APosition attackFocusPoint = Missions.ATTACK.focusPoint();
+//
+//        if (containFocusPoint != null && attackFocusPoint != null) {
+//            return containFocusPoint.translateTilesTowards(attackFocusPoint, 4);
+//        }
+//
+//        return containFocusPoint;
+////        return Select.ourTanks().first().position();
+//    }
+
+    private APosition flyingBuildingFocusPoint() {
+        APosition focusPoint = Alpha.get().median();
+        if (focusPoint != null) {
+            APosition attackFocusPoint = Missions.ATTACK.focusPoint();
+
+            if (attackFocusPoint != null) {
+                focusPoint = focusPoint.translateTilesTowards(8, attackFocusPoint);
+            }
+
+            return focusPoint;
         }
 
-        return containFocusPoint;
-//        return Select.ourTanks().first().position();
+        return null;
     }
-
-    // =========================================================
-
-    private static boolean needNewFlyingBuilding() {
-        if (!flyingBuildings.isEmpty()) {
-            return false;
-        }
-
-        return Select.ourWithUnfinished(AUnitType.Terran_Machine_Shop).atLeast(1)
-                || Select.ourTanks().atLeast(3);
-    }
-
-    private static void liftABuildingAndFlyAmongStars() {
-        AUnit flying = Select.ourOfType(AUnitType.Terran_Barracks).free().first();
-        if (flying != null) {
-            flying.lift();
-            flyingBuildings.add(flying);
-        }
-    }
-
-    // =========================================================
-
-    public static boolean isFlyingBuilding(AUnit unit) {
-        return unit.type().isBuilding() && flyingBuildings.contains(unit);
-    }
-
 }
+

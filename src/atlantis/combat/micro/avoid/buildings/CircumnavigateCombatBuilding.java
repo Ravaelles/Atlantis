@@ -1,32 +1,36 @@
 package atlantis.combat.micro.avoid.buildings;
 
+import atlantis.architecture.Manager;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import bwapi.Color;
 
-public class CircumnavigateCombatBuilding {
+public class CircumnavigateCombatBuilding extends Manager {
+    public CircumnavigateCombatBuilding(AUnit unit) {
+        super(unit);
+    }
 
     /**
      * Try to go around a defensive building by not running back-and-forth, but sideways.
      */
-    public static boolean handle(AUnit unit, AUnit combatBuilding) {
-        APosition goTo = findPositionAround(unit, combatBuilding);
+    public Manager handle(AUnit combatBuilding) {
+        APosition goTo = findPositionAround(combatBuilding);
 
         APainter.paintLine(unit, goTo, Color.Orange);
         APainter.paintCircle(goTo, 4, Color.Orange);
 
         if (unit.move(goTo, Actions.MOVE_MACRO, "Around!", false)) {
             unit.setTooltip("SmartAround", false);
-            return true;
+            return usedManager(this);
         }
-        
-        return false;
+
+        return null;
     }
 
-    public static APosition findPositionAround(AUnit unit, AUnit combatBuilding) {
-        int roamingRange = 3;
+    public APosition findPositionAround(AUnit combatBuilding) {
+        int roamingRange = unit.isAir() ? 7 : 3;
 
         APosition raw = unit.translateTilesTowards(-roamingRange - 0.2, combatBuilding);
 

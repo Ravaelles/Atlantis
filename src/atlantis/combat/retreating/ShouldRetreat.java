@@ -1,7 +1,8 @@
 package atlantis.combat.retreating;
 
-import atlantis.combat.eval.HeuristicCombatEvaluator;
-import atlantis.combat.squad.Squad;
+//import atlantis.combat.eval.HeuristicCombatEvaluator;
+
+import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
@@ -13,81 +14,104 @@ import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
-public class ShouldRetreat {
-
+public class ShouldRetreat extends Manager {
     private static Cache<Boolean> cache = new Cache<>();
+    private static TerranShouldNotRetreat terranShouldNotRetreat;
+    private static TerranInfantryShouldRetreat terranShouldRetreat;
+
+    public ShouldRetreat(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return true;
+    }
+
+    @Override
+    public Manager handle() {
+        if (shouldRetreat(unit)) {
+            return usedManager(this);
+        }
+
+        return null;
+    }
 
     /**
      * If chances to win the skirmish with the Near enemy units aren't favorable, avoid fight and retreat.
      */
-    public static boolean shouldRetreat(AUnit u) {
+    public static boolean shouldRetreat(final AUnit unit) {
         return cache.get(
-                "shouldRetreat:" + u.id(),
-                11,
-                () -> {
-                    if (A.isUms() && A.supplyUsed() <= 30) {
-                        return false;
-                    }
+            "shouldRetreat:" + unit.id(),
+            17,
+            () -> {
+                if (A.isUms() && A.supplyUsed() <= 30) return false;
 
-                    if (u.isRunning()) {
-                        return false;
-                    }
+                if (unit.isRunning()) return false;
 
-                    // Change unit context to unit
-                    AUnit unit = u.squad() != null ? u.squad().centerUnit() : null;
-                    if (unit == null) {
-                        unit = u;
-                    }
+//                if (TempDontRetreat.temporarilyDontRetreat()) {
+//                    return false;
+//                }
 
-                    if (shouldNotConsiderRetreatingNow(unit)) {
-                        return false;
-                    }
+                // Change unit context to unit
+//                Squad squad = unit.squad();
+//                unit = squad != null ? squad.leader() : null;
 
-//                    if (CombatEvaluator.wouldLose(unit)) {
-                    if (!HeuristicCombatEvaluator.isSituationFavorable(unit)) {
-//                        System.out.println(
-//                            u + " would lose.  REL="
-//                                + CombatEvaluator.eval(unit, true)
-//                                + ", ABS=" + CombatEvaluator.eval(unit, false)
-//                        );
-                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
-                        return true;
-                    }
+                terranShouldRetreat = new TerranInfantryShouldRetreat(unit);
+                terranShouldNotRetreat = new TerranShouldNotRetreat(unit);
 
-                    Selection enemies = enemies(unit);
+                if (terranShouldRetreat.shouldRetreat() != null) return true;
 
-                    if (shouldSmallScaleRetreat(unit, enemies)) {
-                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
-                        return true;
-                    }
-//                    if (shouldLargeScaleRetreat(unit, enemies)) {
+                if (terranShouldNotRetreat.shouldNotRetreat() != null) return true;
+
+                if (shouldNotConsiderRetreatingNow(unit)) return false;
+
+//                    if (CombatEvaluator.wouldLose()) {
+//                if (situationNotFavorable()) {
+////                        System.out.println(
+////                            u + " would lose.  REL="
+////                                + CombatEvaluator.eval(true)
+////                                + ", ABS=" + CombatEvaluator.eval(false)
+////                        );
+//                    RetreatManager.GLOBAL_RETREAT_COUNTER++;
+//                    return usedManager(this, "situationNotFavorable");
+//                }
+
+                Selection enemies = enemies(unit);
+
+                if (shouldSmallScaleRetreat(unit, enemies)) {
+                    RetreatManager.GLOBAL_RETREAT_COUNTER++;
+                    return true;
+                }
+
+//                    if (shouldLargeScaleRetreat(enemies)) {
 //                        RetreatManager.GLOBAL_RETREAT_COUNTER++;
 //                        return true;
 //                    }
 
-//                    if (shouldRetreatDueToSquadMostlyRetreating(unit)) {
+//                    if (shouldRetreatDueToSquadMostlyRetreating()) {
 //                        unit.addLog("SquadMostlyRetreating");
 //                        return true;
 //                    }
 
-                    if ("Retreat".equals(unit.tooltip())) {
-                        unit.removeTooltip();
-                    }
-
-                    return false;
+                if ("Retreat".equals(unit.tooltip())) {
+                    unit.removeTooltip();
                 }
+
+                return false;
+            }
         );
     }
 
     private static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
-        if (unit.isMelee()) {
-            if (We.protoss() && ProtossRetreating.shouldSmallScaleRetreat(unit, enemies)) {
-                return true;
-            }
-            else if (We.zerg() && ZergRetreating.shouldSmallScaleRetreat(unit, enemies)) {
-                return true;
-            }
-        }
+//        if (unit.isMelee()) {
+//            if (We.protoss() && ProtossRetreating.shouldSmallScaleRetreat(enemies)) {
+//                return true;
+//            }
+//            else if (We.zerg() && ZergRetreating.shouldSmallScaleRetreat(enemies)) {
+//                return true;
+//            }
+//        }
 
         if (We.protoss()) {
             if (unit.isRanged() && unit.shieldDamageAtMost(13)) {
@@ -109,18 +133,18 @@ public class ShouldRetreat {
         return false;
     }
 
-//    private static boolean shouldLargeScaleRetreat(AUnit unit, Selection enemies) {
-//        if (shouldRetreatDueToSquadMostlyRetreating(unit)) {
+//    private boolean shouldLargeScaleRetreat(Selection enemies) {
+//        if (shouldRetreatDueToSquadMostlyRetreating()) {
 //            unit.addLog("SquadMostlyRetreating");
 //            return true;
 //        }
 //
-////        boolean isSituationFavorable = OldUnusedCombatEvaluator.isSituationFavorable(unit);
+////        boolean isSituationFavorable = OldUnusedCombatEvaluator.isSituationFavorable();
 ////
 ////        if (!isSituationFavorable) {
 ////            unit._lastRetreat = AGame.now();
 ////            unit.setTooltipTactical("Retreat");
-////            MissionChanger.notifyThatUnitRetreated(unit);
+////            MissionChanger.notifyThatUnitRetreated();
 ////            APosition averageEnemyPosition = enemies.units().average();
 ////
 ////            if (unit.position().equals(averageEnemyPosition)) {
@@ -137,7 +161,7 @@ public class ShouldRetreat {
 //        return false;
 //    }
 
-//    private static boolean shouldRetreatDueToSquadMostlyRetreating(AUnit unit) {
+//    private boolean shouldRetreatDueToSquadMostlyRetreating() {
 //        Squad squad = unit.squad();
 //        if (squad == null || squad.size() <= 1 || unit.isMissionDefendOrSparta()) {
 //            return false;
@@ -158,18 +182,10 @@ public class ShouldRetreat {
         }
 
         if (unit.isMissionSparta()) {
-//            if (unit.mission().allowsToRetreat(unit)) {
+//            if (unit.mission().allowsToRetreat()) {
 //                System.err.println("Sparta allowed " + unit + " to retreat (HP=" + unit.hp() + ")");
 //            }
             return !unit.mission().allowsToRetreat(unit);
-        }
-
-        if (TerranRetreat.shouldRetreat(unit)) {
-            return true;
-        }
-
-        if (TerranRetreat.shouldNotRetreat(unit)) {
-            return true;
         }
 
         if (unit.enemiesNear().tanks().inRadius(5, unit).notEmpty()) {
@@ -193,14 +209,14 @@ public class ShouldRetreat {
         if (unit.isMissionDefend() &&
             (
                 (Have.main() && unit.distToLessThan(main, 14))
-                || Select.ourOfType(AUnitType.Zerg_Sunken_Colony).inRadius(4.9, unit).isNotEmpty()
+                    || Select.ourOfType(AUnitType.Zerg_Sunken_Colony).inRadius(4.9, unit).isNotEmpty()
             )
         ) {
             return unit.hp() >= 17;
         }
 
         if (unit.type().isReaver()) {
-            return unit.enemiesNear().isEmpty() && unit.cooldownRemaining() <= 7;
+            if (unit.enemiesNear().isEmpty() && unit.cooldownRemaining() <= 7) return true;
         }
 
         return false;
@@ -209,7 +225,9 @@ public class ShouldRetreat {
     // =========================================================
 
     private static Selection enemies(AUnit unit) {
-        return HeuristicCombatEvaluator.opposingUnits(unit);
+        return unit.enemiesNear()
+            .ranged()
+            .canAttack(unit, 6);
     }
 
 }

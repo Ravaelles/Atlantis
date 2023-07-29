@@ -1,20 +1,23 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
+import atlantis.units.HasUnit;
 
-public class TerranFightInsteadAvoid {
-    public TerranFightInsteadAvoid() {
+public class TerranFightInsteadAvoid extends HasUnit {
+
+    public TerranFightInsteadAvoid(AUnit unit) {
+        super(unit);
     }
 
-    public boolean fightForTerran(AUnit unit) {
+    public boolean fightForTerran() {
         if (!unit.isTerran()) {
             return false;
         }
 
-        return fightForTerranInfantry(unit) || fightForAirUnit(unit);
+        return fightForTerranInfantry() || fightForAirUnit();
     }
 
-    private boolean fightForAirUnit(AUnit unit) {
+    private boolean fightForAirUnit() {
         if (!unit.isAir()) return false;
 
         if (unit.isMissionDefend() && unit.hp() >= 26 && unit.cooldown() <= 4) {
@@ -25,7 +28,7 @@ public class TerranFightInsteadAvoid {
         return false;
     }
 
-    protected boolean fightForTerranInfantry(AUnit unit) {
+    protected boolean fightForTerranInfantry() {
         if (!unit.isMarine() && !unit.isGhost() && !unit.isFirebat()) {
             return false;
         }

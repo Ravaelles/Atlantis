@@ -3,7 +3,6 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.units.AUnit;
 import atlantis.units.UmsSpecialActionsManager;
-import bwapi.Unit;
 
 public class OnUnitRenegade {
 

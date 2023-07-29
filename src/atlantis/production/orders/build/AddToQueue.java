@@ -1,12 +1,15 @@
 package atlantis.production.orders.build;
 
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
-import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionOrderPriority;
 import atlantis.production.orders.production.ProductionQueue;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -117,5 +120,45 @@ public class AddToQueue {
 
     private static int indexForPriority(ProductionOrderPriority priority) {
         return ProductionQueue.countOrdersWithPriorityAtLeast(priority);
+    }
+
+    protected static boolean addToQueue(AUnitType type) {
+//        if (AGame.supplyFree() == 0) {
+//            return false;
+//        }
+
+//        if (!AGame.canAffordWithReserved(Math.max(80, type.getMineralPrice()), type.getGasPrice())) {
+//            return false;
+//        }
+
+        withStandardPriority(type);
+        return true;
+    }
+
+    public static boolean addToQueueIfNotAlreadyThere(AUnitType type) {
+        if (ProductionQueue.countInQueue(type, 5) == 0) {
+            return addToQueue(type);
+        }
+
+        return false;
+    }
+
+    public static boolean maxAtATime(AUnitType type, int maxAtATime) {
+        if (ProductionQueue.countInQueue(type, 20) < maxAtATime) {
+            return addToQueue(type);
+        }
+
+        return false;
+    }
+
+    public static boolean addToQueueIfHaveFreeBuilding(AUnitType type) {
+        AUnitType building = type.whatBuildsIt();
+        for (AUnit buildingProducing : Select.ourOfType(building).list()) {
+            if (!buildingProducing.isTrainingAnyUnit() && AGame.canAffordWithReserved(type)) {
+                addToQueue(type);
+                return true;
+            }
+        }
+        return false;
     }
 }

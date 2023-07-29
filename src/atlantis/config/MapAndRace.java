@@ -12,9 +12,9 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-    public static final String ENEMY_RACE = "Protoss";
+//    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Zerg";
+    public static final String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -24,7 +24,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 

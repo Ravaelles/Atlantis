@@ -1,8 +1,8 @@
 package atlantis.map.position;
 
-import atlantis.map.ABaseLocation;
-import atlantis.map.AChoke;
-import atlantis.map.ARegionBoundary;
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.choke.AChoke;
+import atlantis.map.region.ARegionBoundary;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
@@ -35,7 +35,7 @@ public class PositionUtil {
         }
 
         // === Convert object1 to position or unit ====================
-        
+
         Position fromPosition = null;
         Unit fromUnit = null;
 
@@ -82,9 +82,9 @@ public class PositionUtil {
         if (fromPosition == null && fromUnit == null) {
             throw new RuntimeException("Invalid class for argument `from`: " + object1);
         }
-        
+
         // === Convert object2 to position or unit ===================
-        
+
         Position toPosition = null;
         Unit toUnit = null;
 
@@ -127,7 +127,7 @@ public class PositionUtil {
             System.err.println("Invalid class for argument `to`: " + object2);
             return 999;
         }
-        
+
         // =========================================================
 
         // From is UNIT

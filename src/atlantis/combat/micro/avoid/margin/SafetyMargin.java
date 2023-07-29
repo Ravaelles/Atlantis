@@ -1,14 +1,17 @@
 package atlantis.combat.micro.avoid.margin;
 
 import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstSpecial;
-import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import bwapi.Color;
 
 public class SafetyMargin {
+    
+    protected AUnit defender;
+
+    public SafetyMargin(AUnit defender) {
+        this.defender = defender;
+    }
 
     /**
      * Margin of defender safety against the attacker weapon range.
@@ -23,7 +26,7 @@ public class SafetyMargin {
      * Defending Dragoon is 5.5 tiles away from attacking Zealot (MELEE unit, range 1).
      * Margin =  5.5 - 1 = 4.5  tiles
      */
-    public static double calculate(AUnit defender, AUnit attacker) {
+    public double calculateAgainst(AUnit attacker) {
         if (attacker == null) {
             throw new RuntimeException("Attacker is null");
         }
@@ -31,15 +34,15 @@ public class SafetyMargin {
         double base = BaseSafetyMargin.baseSafetyDistance(defender, attacker);
         double calculated;
 
-        if ((calculated = SafetyMarginAgainstSpecial.handle(defender, attacker)) != -1) {
+        if ((calculated = (new SafetyMarginAgainstSpecial(defender)).handle(attacker)) != -1) {
             // Do nothing
-//            System.out.println("SafetyMarginSpecial = " + calculated + " / " + A.dist(defender, attacker));
+//            System.out.println("SafetyMarginSpecial = " + calculated + " / " + A.dist(attacker));
         }
         else if (attacker.isMelee()) {
-            calculated = SafetyMarginAgainstMelee.calculate(defender, attacker);
+            calculated = (new SafetyMarginAgainstMelee(defender)).calculateAgainst(attacker);
         }
         else {
-            calculated = SafetyMarginAgainstRanged.calculate(defender, attacker);
+            calculated = (new SafetyMarginAgainstRanged(defender)).calculateAgainst(attacker);
         }
 
 //        System.out.println("================ " + attacker);
@@ -51,22 +54,22 @@ public class SafetyMargin {
 //        System.out.println(defender.idWithHash() + ": MARGIN: " + safetyMargin);
 
 //        Color color = safetyMargin < 0 ? Color.Red : Color.Green;
-//        APainter.paintLine(defender, attacker, color);
-//        APainter.paintTextCentered(defender, A.formatDecimalPlaces(calculated, 1), color, 0.6, 0);
+//        APainter.paintLine(attacker, color);
+//        APainter.paintTextCentered(A.formatDecimalPlaces(calculated, 1), color, 0.6, 0);
 
         return safetyMargin;
     }
 
     // =========================================================
 
-    protected static double enemyWeaponRange(AUnit defender, AUnit attacker) {
+    protected double enemyWeaponRange(AUnit attacker) {
 //        System.out.println(attacker.type() + ".enemyWeaponRange(" + defender.type() + ") = " + attacker.enemyWeaponRange(defender));
 //        System.out.println(defender.type() + ".enemyWeaponRange(" + attacker.type() + ") = " + defender.enemyWeaponRange(attacker));
 
         return defender.enemyWeaponRangeAgainstThisUnit(attacker) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 
-    protected static double enemyMovementBonus(AUnit defender, AUnit attacker) {
+    protected double enemyMovementBonus(AUnit attacker) {
 //         || defender.isOtherUnitFacingThisUnit(attacker)
 
         if (attacker.isMoving()) {
@@ -106,15 +109,15 @@ public class SafetyMargin {
 //        }
     }
 
-    protected static double ourMovementBonus(AUnit defender) {
+    protected double ourMovementBonus(AUnit defender) {
         return defender.isMoving() ? (defender.isRunning() ? -1.8 : 0) : 0.8;
     }
 
-    protected static double ourUnitsNearBonus(AUnit defender) {
+    protected double ourUnitsNearBonus(AUnit defender) {
         return Select.ourRealUnits().inRadius(0.5, defender).count() / 1.5;
     }
 
-    protected static double woundedBonus(AUnit defender, AUnit attacker) {
+    protected double woundedBonus(AUnit attacker) {
         if (defender.isTerranInfantry()) {
             if (Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).inRadius(2, defender).isNotEmpty()) {
                 return 0;
@@ -129,20 +132,20 @@ public class SafetyMargin {
         return (defender.woundPercent() * (applyExtraModifier ? 2 : 1)) / 32.0;
     }
 
-    protected static double specialAirUnitBonus(AUnit defender) {
+    protected double specialAirUnitBonus(AUnit defender) {
         return defender.type().isTransport() ? 4 : (defender.is(AUnitType.Terran_Science_Vessel) ? 3 : 0);
     }
 
-    protected static double quicknessBonus(AUnit defender, AUnit attacker) {
+    protected double quicknessBonus(AUnit attacker) {
 
         // If unit is much slower than enemy, don't run at all. It's better to shoot instead.
-        double quicknessDifference = defender.maxSpeed() - attacker.maxSpeed();
+       double quicknessDifference = defender.maxSpeed() - attacker.maxSpeed();
 
         return -quicknessDifference / (quicknessDifference > 0 ? 2.5 : (attacker.isMelee() ? 0.6 : 1.5));
 //        return Math.min(0, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
     }
 
-    protected static double workerBonus(AUnit defender, AUnit attacker) {
+    protected double workerBonus(AUnit attacker) {
         if (defender.isWorker()) {
             return 1.5 + (defender.isBuilder() ? 2.2 : 0);
         }

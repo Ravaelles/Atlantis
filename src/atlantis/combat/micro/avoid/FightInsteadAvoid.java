@@ -14,7 +14,7 @@ import atlantis.util.cache.Cache;
 
 public class FightInsteadAvoid {
 
-    private static Cache<Boolean> cache = new Cache<>();
+    private Cache<Boolean> cache = new Cache<>();
 
     protected final AUnit unit;
     protected final Units enemies;
@@ -33,7 +33,7 @@ public class FightInsteadAvoid {
     protected final AUnit vulture;
     protected final AUnit ranged;
     protected final AUnit melee;
-    private final TerranFightInsteadAvoid terranFightInsteadAvoid = new TerranFightInsteadAvoid();
+    private final TerranFightInsteadAvoid terranFightInsteadAvoid;
 
     // =========================================================
 
@@ -42,17 +42,19 @@ public class FightInsteadAvoid {
         this.enemies = enemies;
         this.enemiesSelection = Select.from(enemies);
 
+        terranFightInsteadAvoid = new TerranFightInsteadAvoid(unit);
+
         Selection selector = Select.from(enemies);
-        invisibleDT = selector.clone().ofType(AUnitType.Protoss_Dark_Templar).effUndetected().first();
-        invisibleCombatUnit = selector.clone().effUndetected().combatUnits().first();
-        lurker = selector.clone().ofType(AUnitType.Zerg_Lurker).first();
-        tankSieged = selector.clone().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first();
-        tanks = selector.clone().tanks().first();
-        vulture = selector.clone().ofType(AUnitType.Terran_Vulture).first();
-        reaver = selector.clone().ofType(AUnitType.Protoss_Reaver).first();
-        combatBuilding = selector.clone().buildings().first();
-        ranged = selector.clone().ranged().first();
-        melee = selector.clone().melee().first();
+        invisibleDT = selector.ofType(AUnitType.Protoss_Dark_Templar).effUndetected().first();
+        invisibleCombatUnit = selector.effUndetected().combatUnits().first();
+        lurker = selector.ofType(AUnitType.Zerg_Lurker).first();
+        tankSieged = selector.ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first();
+        tanks = selector.tanks().first();
+        vulture = selector.ofType(AUnitType.Terran_Vulture).first();
+        reaver = selector.ofType(AUnitType.Protoss_Reaver).first();
+        combatBuilding = selector.buildings().first();
+        ranged = selector.ranged().first();
+        melee = selector.melee().first();
     }
 
     // =========================================================
@@ -62,18 +64,17 @@ public class FightInsteadAvoid {
             "shouldFight:" + unit.idWithHash(),
             3,
             () -> {
-                if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) {
-                    return true;
-                }
+                if (!unit.hasAnyWeapon()) return false;
 
-                if (unit.isMelee() && unit.shouldRetreat()) {
-                    return false;
-                }
+                if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) return true;
+
+                if (unit.isMelee() && unit.shouldRetreat()) return false;
 
                 if (enemies.isEmpty()) {
-                    System.err.println("NoEnemies? LooksBugged");
-                    unit.addLog("NoEnemiesReally?");
-                    return true;
+//                    System.err.println("NoEnemies? LooksBugged");
+//                    unit.addLog("NoEnemiesReally?");
+//                    return true;
+                    return false;
                 }
 
                 if (unit.mission() != null && unit.mission().forcesUnitToFight(unit, enemies)) {
@@ -83,7 +84,7 @@ public class FightInsteadAvoid {
 
                 // Workers
                 if (unit.isWorker()) {
-                    return fightAsWorker(unit, enemies);
+                    return fightAsWorker(enemies);
                 }
 
                 // Combat units
@@ -99,21 +100,21 @@ public class FightInsteadAvoid {
         );
     }
 
-    public static boolean shouldFightCached(AUnit unit) {
-        String key = "shouldFight:" + unit.idWithHash();
-        return cache.has(key) ? cache.get(key) : false;
-    }
+//    public  boolean shouldFightCached() {
+//        String key = "shouldFight:" + unit.idWithHash();
+//        return cache.has(key) ? cache.get(key) : false;
+//    }
 
     // =========================================================
 
     protected boolean fightAsCombatUnit() {
-        if (fightBecauseWayTooManyUnitsNear(unit)) {
+        if (fightBecauseWayTooManyUnitsNear()) {
             unit.addLog("FightStacked");
             return true;
         }
 
         if (ShouldRetreat.shouldRetreat(unit)) {
-            if (finishOffAlmostDeadTarget(unit)) {
+            if (finishOffAlmostDeadTarget()) {
                 unit.addLog("FatalityTo" + unit.target().type());
                 return true;
             }
@@ -134,36 +135,36 @@ public class FightInsteadAvoid {
             }
         }
 
-        if (terranFightInsteadAvoid.fightForTerran(unit)) {
+        if (terranFightInsteadAvoid.fightForTerran()) {
             return true;
         }
 
         // vs COMBAT BUILDINGS
         if (
             combatBuilding != null
-            && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)
-            && unit.friendsInRadiusCount(2) >= 2
-            && unit.friendsInRadiusCount(4) >= (unit.isAir() ? 14 : 6)
-            && (!unit.isAir() || unit.woundPercentMax(15))
-            && unit.combatEvalRelative() >= 3.2
-            && (unit.hp() >= 23 || unit.isMelee())
+                && unit.mission().allowsToAttackCombatBuildings(unit, combatBuilding)
+                && unit.friendsInRadiusCount(2) >= 2
+                && unit.friendsInRadiusCount(4) >= (unit.isAir() ? 14 : 6)
+                && (!unit.isAir() || unit.woundPercentMax(15))
+                && unit.combatEvalRelative() >= 3.2
+                && (unit.hp() >= 23 || unit.isMelee())
         ) {
             unit.addLog("FightBuilding");
             return true;
         }
 
-//        if (combatBuilding != null && fightBecauseWayTooManyUnitsNear(unit)) {
+//        if (combatBuilding != null && fightBecauseWayTooManyUnitsNear()) {
 //            return true;
 //        }
 
-//        if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable(unit)) {
-//        if (enemies.onlyMelee() && ACombatEvaluator.isSituationFavorable(unit)) {
+//        if (enemies.onlyRanged() && ACombatEvaluator.isSituationFavorable()) {
+//        if (enemies.onlyMelee() && ACombatEvaluator.isSituationFavorable()) {
 //            return true;
 //        }
 
         if (
             lurker != null && (!lurker.isBurrowed() || lurker.isDetected())
-            && unit.noCooldown() && lurker.distToLessThan(unit, 4) && unit.friendsInRadiusCount(3) >= 3
+                && unit.noCooldown() && lurker.distToLessThan(unit, 4) && unit.friendsInRadiusCount(3) >= 3
         ) {
             unit.addLog("FightLurker");
             return true;
@@ -188,18 +189,18 @@ public class FightInsteadAvoid {
             System.err.println("Worker in fightInImportantCases");
         }
 
-        if (forDragoon(unit)) {
+        if (forDragoon()) {
             return true;
         }
 
-        if (terranFightInsteadAvoid.fightForTerran(unit)) {
+        if (terranFightInsteadAvoid.fightForTerran()) {
             return true;
         }
 
         if (
             unit.isMelee()
                 && unit.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon, AUnitType.Zerg_Sunken_Colony)
-                    .inRadius(2.8, unit).notEmpty()
+                .inRadius(2.8, unit).notEmpty()
         ) {
             unit.addLog("DefendCannon");
             return true;
@@ -211,29 +212,29 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        if (forbidMeleeUnitsAbandoningCloseTargets(unit)) {
+        if (forbidMeleeUnitsAbandoningCloseTargets()) {
             unit.setTooltipTactical("DontLeave");
             return true;
         }
 
-        if (forbidAntiAirAbandoningCloseTargets(unit)) {
+        if (forbidAntiAirAbandoningCloseTargets()) {
             unit.setTooltipTactical("DontAbandonCloseTargetz");
             return true;
         }
 
-        if (forWraith(unit)) {
+        if (forWraith()) {
             return true;
         }
 
         return false;
     }
 
-    private boolean forWraith(AUnit unit) {
+    private boolean forWraith() {
         if (!unit.isWraith()) {
             return false;
         }
 
-        if (unit.hp() <= 40 || unit.cooldown() <= 3) {
+        if (unit.hp() <= 40 || (unit.cooldown() <= 3 && !unit.isTank())) {
             return false;
         }
 
@@ -262,7 +263,7 @@ public class FightInsteadAvoid {
         return false;
     }
 
-    private boolean forDragoon(AUnit unit) {
+    private boolean forDragoon() {
         if (!unit.isDragoon()) {
             return false;
         }
@@ -300,7 +301,7 @@ public class FightInsteadAvoid {
 
     // RANGED
     protected boolean fightAsRangedUnit() {
-        if (ranged != null && ranged.isBuilding()) {
+        if (ranged != null && ranged.isABuilding()) {
             return false;
         }
 
@@ -366,7 +367,7 @@ public class FightInsteadAvoid {
 
     // =========================================================
 
-    private boolean finishOffAlmostDeadTarget(AUnit unit) {
+    private boolean finishOffAlmostDeadTarget() {
         if (unit.cooldownRemaining() >= 5) {
             return false;
         }
@@ -379,7 +380,7 @@ public class FightInsteadAvoid {
         return false;
     }
 
-//    private boolean handleTerranInfantryShouldFight(AUnit unit) {
+//    private boolean handleTerranInfantryShouldFight() {
 //        if (!unit.isTerranInfantry()) {
 //            return false;
 //        }
@@ -394,9 +395,9 @@ public class FightInsteadAvoid {
 //        return medicNear || (!unit.isWounded() && ranged == null && unit.friendsInRadiusCount(1) >= 4);
 //    }
 
-    protected boolean forbidMeleeUnitsAbandoningCloseTargets(AUnit unit) {
+    protected boolean forbidMeleeUnitsAbandoningCloseTargets() {
         return unit.isMelee()
-//                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting(unit))
+//                && (!unit.isFirebat() || TerranFirebat.shouldContinueMeleeFighting())
             && (
             unit.isDT()
                 || (unit.hp() <= 30 && unit.enemiesNear().ranged().inRadius(6, unit).notEmpty())
@@ -406,14 +407,14 @@ public class FightInsteadAvoid {
         );
     }
 
-    protected boolean forbidAntiAirAbandoningCloseTargets(AUnit unit) {
+    protected boolean forbidAntiAirAbandoningCloseTargets() {
         return unit.isAirUnitAntiAir()
             && unit.enemiesNear()
             .canBeAttackedBy(unit, 3)
             .isNotEmpty();
     }
 
-    protected boolean fightBecauseWayTooManyUnitsNear(AUnit unit) {
+    protected boolean fightBecauseWayTooManyUnitsNear() {
         if (!We.terran() || unit.isAir()) {
             return false;
         }
@@ -457,7 +458,9 @@ public class FightInsteadAvoid {
         return isStacked;
     }
 
-    protected boolean fightAsWorker(AUnit unit, Units enemies) {
+    protected boolean fightAsWorker(Units enemies) {
+        if (enemies.size() >= 3) return false;
+
         if (combatBuilding != null || lurker != null || reaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null) {
             return false;
         }

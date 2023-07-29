@@ -39,7 +39,7 @@ public class Atlantis implements BWEventListener {
     /**
      * Top abstraction-level class that governs all units, buildings etc.
      */
-    private AGameCommander gameCommander;
+    private AtlantisGameCommander gameCommander;
 
     // =========================================================
     // Other variables
@@ -80,7 +80,7 @@ public class Atlantis implements BWEventListener {
         setGame(bwClient.getGame());
 
         // Initialize Game Commander, a class to rule them all
-        gameCommander = new AGameCommander();
+        gameCommander = new AtlantisGameCommander();
 
         // Allow user input etc
         setBwapiFlags();
@@ -115,7 +115,7 @@ public class Atlantis implements BWEventListener {
         // === All game actions that take place every frame ==================================================
         
         try {
-            Atlantis.getInstance().getGameCommander().update();
+            Atlantis.getInstance().getGameCommander().handle();
         }
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
@@ -129,7 +129,7 @@ public class Atlantis implements BWEventListener {
             CurrentBuildOrder.get().print();
         }
 
-        OnEveryFrame.update();
+        OnEveryFrame.handle();
     }
 
     /**
@@ -263,7 +263,7 @@ public class Atlantis implements BWEventListener {
 
     public static void ourNewUnit(AUnit unit) {
         ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-        NewUnitsToSquadsAssigner.possibleCombatUnitCreated(unit);
+        (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
 
 //        System.out.println("NEW UNIT @ " + A.now() + " - " + unit);
 //        System.out.println(unit.mission());
@@ -437,7 +437,7 @@ public class Atlantis implements BWEventListener {
         this.game = game;
     }
 
-    public AGameCommander getGameCommander() {
+    public AtlantisGameCommander getGameCommander() {
         return gameCommander;
     }
 

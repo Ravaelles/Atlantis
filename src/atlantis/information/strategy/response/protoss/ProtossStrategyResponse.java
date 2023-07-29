@@ -1,9 +1,9 @@
 package atlantis.information.strategy.response.protoss;
 
 import atlantis.combat.missions.Missions;
+import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
-import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.response.AStrategyResponse;
 
@@ -35,7 +35,7 @@ public class ProtossStrategyResponse extends AStrategyResponse {
     // === Air units ======================================================
 
     @Override
-    protected void handleAirUnitsDefence() {
+    public void handleAirUnitsDefence() {
         OurStrategicBuildings.setAntiAirBuildingsNeeded(1);
     }
 

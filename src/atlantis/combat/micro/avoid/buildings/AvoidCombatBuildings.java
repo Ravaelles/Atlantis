@@ -1,47 +1,62 @@
 package atlantis.combat.micro.avoid.buildings;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.retreating.ShouldRetreat;
-import atlantis.debug.painter.APainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import bwapi.Color;
 
-public class AvoidCombatBuildings {
+public class AvoidCombatBuildings extends Manager {
 
-    public static boolean update(AUnit unit) {
+    private AvoidCombatBuildingCriticallyClose avoidCombatBuildingCriticallyClose;
+    private ShouldRetreat shouldRetreat;
+
+    public AvoidCombatBuildings(AUnit unit) {
+        super(unit);
+        avoidCombatBuildingCriticallyClose = new AvoidCombatBuildingCriticallyClose(unit);
+        shouldRetreat = new ShouldRetreat(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return true;
+    }
+
+    public  Manager handle() {
         if (unit.isMissionDefendOrSparta()) {
-            return false;
+            return null;
         }
 
         Selection combatBuildings = EnemyUnits.discovered().combatBuildings(false);
 
         AUnit combatBuilding = combatBuildings.inRadius(12, unit).canAttack(unit, 6).nearestTo(unit);
         if (combatBuilding == null) {
-//            APainter.paintCircleFilled(unit, 8, Color.Green);
-            return false;
+//            APainter.paintCircleFilled(8, Color.Green);
+            return null;
         }
 
-//        APainter.paintCircleFilled(unit, 8, Color.Red);
+//        APainter.paintCircleFilled(8, Color.Red);
 //        System.err.println("@ C = " + ShouldRetreat.shouldRetreat(unit));
         if (
-                unit.friendsInRadiusCount(3) >= 6
+                !unit.isAir()
+                && unit.friendsInRadiusCount(3) >= 6
                 && unit.friendsInRadiusCount(5) >= 8
-                && !ShouldRetreat.shouldRetreat(unit)
+                && !shouldRetreat.shouldRetreat(unit)
                 && combatBuildings.combatBuildings(false).inRadius(10, unit).notEmpty()
         ) {
 //            unit.setTooltip("@ D YOLO " + unit);
-            return false;
+            return null;
         }
 
 //        double criticalDist = 9.8 + (unit.isAir() ? 2.5 : 0);
-        double criticalDist = criticalDist(unit, combatBuilding);
+        double criticalDist = criticalDist(combatBuilding);
         double distTo = combatBuilding.distTo(unit);
 
         double doNothingMargin = 0.3;
         if (distTo <= (criticalDist + doNothingMargin)) {
-            return unit.runningManager().runFrom(combatBuilding, 0.5, Actions.MOVE_AVOID, false);
+            unit.runningManager().runFrom(combatBuilding, 0.5, Actions.MOVE_AVOID, false);
+            return usedManager(this);
         }
         else if (distTo < (criticalDist + doNothingMargin)) {
             // Do nothing
@@ -49,16 +64,16 @@ public class AvoidCombatBuildings {
 //        else if (distTo <= criticalDist && unit.isMoving() && !unit.isRunning() && unit.target() == null) {
         else if (distTo <= criticalDist) {
 //            System.err.println("@ EEEEEEEEEEEEE");
-            if (AvoidCombatBuildingCriticallyClose.handle(unit, combatBuilding)) {
+            if (avoidCombatBuildingCriticallyClose.handle(combatBuilding) != null) {
 //                System.err.println("----->");
-                return true;
+                return lastManager();
             }
         }
 
-        return false;
+        return null;
     }
 
-    private static double criticalDist(AUnit unit, AUnit combatBuilding) {
+    private  double criticalDist(AUnit combatBuilding) {
         return 9.1
             + (combatBuilding.isSunken() ? 1.6 : 0)
             + (unit.isAir() ? 0.9 : 0) + (unit.isMoving() ? 0.9 : 0)

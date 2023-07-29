@@ -1,15 +1,26 @@
 package atlantis.protoss;
 
-import atlantis.game.A;
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
-public class ProtossShieldBattery {
+public class ProtossShieldBattery extends Manager {
+    private  final double MAX_DIST = 7.98;
 
-//    private static final double MAX_DIST = 3.98;
-    private static final double MAX_DIST = 7.98;
+    public ProtossShieldBattery(AUnit unit) {
+        super(unit);
+    }
 
-    public static boolean update(AUnit shieldBattery) {
+    @Override
+    public boolean applies() {
+        return unit.is(AUnitType.Protoss_Shield_Battery);
+    }
+
+    @Override
+    public Manager handle() {
+        AUnit shieldBattery = unit;
+
         if (shieldBattery.energy() >= 40 && shieldBattery.isPowered()) {
             shieldBattery.removeTooltip();
             for (AUnit unit : Select.ourRealUnits().inRadius(MAX_DIST, shieldBattery).list()) {
@@ -30,12 +41,12 @@ public class ProtossShieldBattery {
                     String t = "Recharge";
                     shieldBattery.setTooltipTactical(t + ":" + unit.name());
                     unit.addLog(t);
-                    return true;
+                    return usedManager(this);
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
 }

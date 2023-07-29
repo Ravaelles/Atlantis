@@ -2,27 +2,28 @@ package atlantis.combat.micro.avoid.zerg;
 
 import atlantis.units.AUnit;
 import atlantis.util.Enemy;
+import atlantis.util.cache.Cache;
 
 public class ShouldFightInsteadAvoidAsZerg {
 
+    private static Cache<Boolean> cache = new Cache<>();
+
     public static boolean shouldFight(AUnit unit) {
-        if (!unit.isZerg()) {
-            return false;
-        }
+        return cache.get(
+            "shouldFight",
+            1,
+            () -> {
+                if (!unit.isZerg()) return false;
 
-        if (asHydra(unit)) {
-            return true;
-        }
+                if (asHydra(unit)) return true;
 
-        if (asZergling(unit)) {
-            return true;
-        }
+                if (asZergling(unit)) return true;
 
-        if (protectOurSunken(unit)) {
-            return true;
-        }
+                if (protectOurSunken(unit)) return true;
 
-        return false;
+                return false;
+            }
+        );
     }
 
     private static boolean protectOurSunken(AUnit unit) {

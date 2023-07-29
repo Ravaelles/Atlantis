@@ -2,10 +2,9 @@ package atlantis.units.select;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.terran.repair.ARepairAssignments;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -274,14 +273,14 @@ public class Selection extends BaseSelection {
 
     public Selection nonBuildings() {
         return cloneByRemovingIf(
-            (unit -> unit.isBuilding()),
+            (unit -> unit.isABuilding()),
             "nonBuildings"
         );
     }
 
     public Selection nonBuildingsOrCombatBuildings() {
         return cloneByRemovingIf(
-            (unit -> unit.isBuilding() && !unit.isCombatBuilding()),
+            (unit -> unit.isABuilding() && !unit.isCombatBuilding()),
             "nonBuildingsOrCombatBuildings"
         );
     }
@@ -397,16 +396,16 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection havingTarget(AUnit targetUnit) {
+    public Selection havingTargeted(AUnit targetUnit) {
         return cloneByRemovingIf(
             (unit -> (unit.target() == null || !unit.target().equals(targetUnit))),
-            "havingTarget:" + targetUnit.idWithHash()
+            "havingTargeted:" + targetUnit.idWithHash()
         );
     }
 
     public Selection havingTargetedBuildings() {
         return cloneByRemovingIf(
-            (unit -> (unit.target() == null || !unit.target().isBuilding())),
+            (unit -> (unit.target() == null || !unit.target().isABuilding())),
             "havingTargetedBuildings"
         );
     }
@@ -518,7 +517,7 @@ public class Selection extends BaseSelection {
     public Selection repairable(boolean checkIfWounded) {
         return cloneByRemovingIf(
             (unit -> !unit.isCompleted()
-                || (!unit.type().isMechanical() && (!unit.isBuilding() || !unit.isTerran()))
+                || (!unit.type().isMechanical() && (!unit.isABuilding() || !unit.isTerran()))
                 || (checkIfWounded && !unit.isWounded())
             ),
             "repairable:" + A.trueFalse(checkIfWounded)
@@ -555,7 +554,7 @@ public class Selection extends BaseSelection {
      */
     public Selection notRepairing() {
         return cloneByRemovingIf(
-            (unit -> unit.isRepairing() || ARepairAssignments.isRepairerOfAnyKind(unit)), "notRepairing"
+            (unit -> unit.isRepairing() || RepairAssignments.isRepairerOfAnyKind(unit)), "notRepairing"
         );
     }
 

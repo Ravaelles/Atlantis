@@ -3,7 +3,7 @@ package atlantis.keyboard;
 import atlantis.config.AtlantisConfig;
 import atlantis.debug.painter.APainter;
 import atlantis.game.AGame;
-import atlantis.game.CameraManager;
+import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
@@ -60,7 +60,7 @@ public class AKeyboard implements NativeKeyListener {
 
             // Key "c" / "C"
             case 46:
-                CameraManager.toggleFocusCameraOnFirstCombatUnit();
+                CameraCommander.toggleFocusCameraOnFirstCombatUnit();
                 break;
 
 //            // Key "o" / "O"

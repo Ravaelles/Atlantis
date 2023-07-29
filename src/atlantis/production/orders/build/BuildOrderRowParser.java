@@ -5,7 +5,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.ProductionOrder;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.NameUtil;
 import bwapi.TechType;

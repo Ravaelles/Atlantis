@@ -1,6 +1,6 @@
 package atlantis.combat.micro.transport;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -8,55 +8,65 @@ import atlantis.units.select.Select;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ATransportManager {
+public class ATransportManager extends Manager {
 
-    private static Map<AUnit, AUnit> passengersToTransports = new HashMap<>();
-    private static Map<AUnit, AUnit> transportsToPassengers = new HashMap<>();
+    private  Map<AUnit, AUnit> passengersToTransports = new HashMap<>();
+    private  Map<AUnit, AUnit> transportsToPassengers = new HashMap<>();
 
-    public static boolean handleTransportUnit(AUnit transport) {
-        if (transport.isBunker()) {
-            return false;
-        }
+    public ATransportManager(AUnit unit) {
+        super(unit);
+    }
 
-        AUnit baby = babyToCarry(transport);
+    @Override
+    public boolean applies() {
+        return unit.type().isTransportExcludeOverlords();
+    }
+
+    @Override
+    protected Class<? extends Manager>[] managers() {
+        return new Class[] {
+            TransportUnits.class,
+        };
+    }
+
+    @Override
+    public Manager handle() {
+        AUnit baby = babyToCarry();
         if (baby != null) {
-            return TransportUnits.handleTransporting(transport, baby);
+            TransportUnits transportUnits = new TransportUnits(unit);
+            return transportUnits.handleTransporting(unit, baby) ? transportUnits : null;
         }
 
-        if (shouldAvoidEnemy(transport)) {
-            return true;
-        }
-
-        transport.setTooltipTactical("Chill");
-        return true;
+        unit.setTooltipTactical("Chill");
+        return usedManager(this);
     }
 
     // =========================================================
 
-    private static boolean shouldAvoidEnemy(AUnit transport) {
-        if ((!transport.hasCargo() && hasTransportUnitAnyAssignment(transport)) && transport.woundPercent() > 70) {
-            return false;
-        }
+//    private  boolean shouldAvoidEnemy() {
+//        if ((!.hasCargo() && hasTransportUnitAnyAssignment()) && .woundPercent() > 70) {
+//            return false;
+//        }
+//
+//        return AvoidEnemies.avoidEnemiesIfNeeded();
+//    }
 
-        return AvoidEnemies.avoidEnemiesIfNeeded(transport);
-    }
-
-    private static AUnit babyToCarry(AUnit transport) {
-        if (hasTransportUnitAnyAssignment(transport)) {
-            return getUnitAssignedToTransport(transport);
+    private  AUnit babyToCarry() {
+        if (hasTransportUnitAnyAssignment()) {
+            return getUnitAssignedToTransport();
         }
-//        if (transport.hasCargo()) {
-//            return transport.loadedUnits().get(0);
+//        if (.hasCargo()) {
+//            return .loadedUnits().get(0);
 //        }
 
         AUnit crucialBaby = Select.ourOfType(
                 AUnitType.Protoss_Reaver,
                 AUnitType.Terran_Siege_Tank_Tank_Mode,
                 AUnitType.Terran_Siege_Tank_Siege_Mode
-        ).unloaded().inRadius(35, transport).randomWithSeed(transport.id());
+        ).unloaded().inRadius(35, unit).randomWithSeed(unit.id());
 
         if (crucialBaby != null && !hasTransportAssigned(crucialBaby)) {
-            makeAssignment(transport, crucialBaby);
+            makeAssignment(crucialBaby);
             return crucialBaby;
         }
 
@@ -64,22 +74,22 @@ public class ATransportManager {
                 AUnitType.Protoss_Reaver,
                 AUnitType.Terran_Siege_Tank_Tank_Mode,
                 AUnitType.Terran_Siege_Tank_Siege_Mode
-        ).unloaded().nearestTo(transport);
+        ).unloaded().nearestTo(unit);
 
         if (crucialBaby != null && !hasTransportAssigned(crucialBaby)) {
-            makeAssignment(transport, crucialBaby);
+            makeAssignment(crucialBaby);
             return crucialBaby;
         }
 
         return null;
     }
 
-    private static void makeAssignment(AUnit transport, AUnit passenger) {
-        passengersToTransports.put(passenger, transport);
-        transportsToPassengers.put(transport, passenger);
+    private  void makeAssignment(AUnit passenger) {
+        passengersToTransports.put(passenger, unit);
+        transportsToPassengers.put(unit, passenger);
     }
 
-    public static boolean hasNearTransportAssigned(AUnit passenger) {
+    public  boolean hasNearTransportAssigned(AUnit passenger) {
         if (hasTransportAssigned(passenger)) {
             return passenger.distToLessThan(getTransportAssignedToUnit(passenger), 3);
         }
@@ -87,11 +97,11 @@ public class ATransportManager {
         return false;
     }
 
-    public static AUnit getTransportAssignedToUnit(AUnit passenger) {
+    public  AUnit getTransportAssignedToUnit(AUnit passenger) {
         return passengersToTransports.get(passenger);
     }
 
-    private static boolean hasTransportAssigned(AUnit passenger) {
+    private  boolean hasTransportAssigned(AUnit passenger) {
 //        System.out.println("A: " + passengersToTransports.containsKey(passenger));
         if (passengersToTransports.containsKey(passenger)) {
 //            System.out.println("B: " + passengersToTransports.get(passenger));
@@ -100,12 +110,12 @@ public class ATransportManager {
         return passengersToTransports.containsKey(passenger) && passengersToTransports.get(passenger).isAlive();
     }
 
-    private static AUnit getUnitAssignedToTransport(AUnit transport) {
-        return transportsToPassengers.get(transport);
+    private  AUnit getUnitAssignedToTransport() {
+        return transportsToPassengers.get(unit);
     }
 
-    private static boolean hasTransportUnitAnyAssignment(AUnit transport) {
-        return transportsToPassengers.containsKey(transport) && transportsToPassengers.get(transport).isAlive();
+    private  boolean hasTransportUnitAnyAssignment() {
+        return transportsToPassengers.containsKey(unit) && transportsToPassengers.get(unit).isAlive();
     }
 
 }

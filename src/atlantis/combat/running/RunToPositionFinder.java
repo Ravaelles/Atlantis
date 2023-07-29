@@ -91,7 +91,7 @@ public class RunToPositionFinder {
         double runDistInPixels = showBackRunPixelRadius(running.unit(), runAwayFrom);
 
         if (vectorLength < 0.01) {
-//            CameraManager.centerCameraOn(unit);
+//            CameraCommander.centerCameraOn();
 //            System.err.println("Serious issue: run vectorLength = " + vectorLength);
 //            System.err.println("runner = " + unit + " // " + unit.position());
 //            System.err.println("runAwayFrom = " + runAwayFrom);
@@ -177,7 +177,7 @@ public class RunToPositionFinder {
 //        // ========================================================================
 //
 //        APosition unitPosition = unit.position();
-//        int radius = runAnyDirectionInitialRadius(unit);
+//        int radius = runAnyDirectionInitialRadius();
 //        APosition bestPosition = null;
 //        while (bestPosition == null && radius >= 0.3) {
 //            bestPosition = findRunPositionInAnyDirection(unitPosition, runAwayFrom, radius);

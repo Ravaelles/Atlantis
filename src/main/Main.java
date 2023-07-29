@@ -8,11 +8,10 @@ import atlantis.util.ProcessHelper;
 
 /**
  * This is the main class of the bot. Here everything starts.
- *
+ * <p>
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-
     /**
      * Sets up Atlantis config and runs the bot.
      */
@@ -47,5 +46,4 @@ public class Main {
         // Starts bot.
         atlantis.run();
     }
-
 }

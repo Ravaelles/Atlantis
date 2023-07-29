@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid.special;
 
+import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -7,8 +8,24 @@ import atlantis.units.select.Select;
 
 import java.util.List;
 
-public class AvoidMines {
-    protected static boolean handleMines(AUnit unit) {
+public class AvoidMines extends Manager {
+    public AvoidMines(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isGroundUnit();
+    }
+
+    @Override
+    public Manager handle() {
+        if (handleMines()) return usedManager(this);
+
+        return null;
+    }
+
+    protected boolean handleMines() {
         boolean canShootAtMines = unit.isRanged() && unit.canAttackGroundUnits();
 
         if (!canShootAtMines) {
@@ -37,13 +54,13 @@ public class AvoidMines {
             // Enemy mine
             else {
                 if (canShootAtMines) {
-                    if (handleEnemyMineAsRangedUnit(unit, mine)) {
+                    if (handleEnemyMineAsRangedUnit(mine)) {
                         unit.setTooltipTactical("ShootMine");
                         return true;
                     }
                 }
                 else {
-                    if (handleEnemyMineAsMeleeUnit(unit, mine)) {
+                    if (handleEnemyMineAsMeleeUnit(mine)) {
                         unit.setTooltipTactical("AvoidMine");
                         return true;
                     }
@@ -56,13 +73,13 @@ public class AvoidMines {
 
     // =========================================================
 
-    private static boolean handleEnemyMineAsMeleeUnit(AUnit unit, AUnit mine) {
+    private boolean handleEnemyMineAsMeleeUnit(AUnit mine) {
         unit.moveAwayFrom(mine.position(), 1, "Avoid mine!", Actions.MOVE_AVOID);
-//        APainter.paintLine(unit, mine, Color.Yellow);
+//        APainter.paintLine(mine, Color.Yellow);
         return true;
     }
 
-    private static boolean handleEnemyMineAsRangedUnit(AUnit unit, AUnit mine) {
+    private boolean handleEnemyMineAsRangedUnit(AUnit mine) {
 //        if (mine.distTo(unit) <= 2.0) {
 //            unit.runningManager().runFrom(mine, 3, Actions.MOVE_AVOID);
 //            unit.setTooltipTactical("AVOID MINE(" + mine.distTo(unit) + ")");
