@@ -1,4 +1,4 @@
-package atlantis.combat.micro.terran;
+package atlantis.combat.micro.terran.wraith;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
@@ -21,7 +21,7 @@ public class TerranWraith extends Manager {
         return new Class[]{
             RunForYourLife.class,
             UnitBeingReparedManager.class,
-//            AttackNearbyEnemies.class,
+            AttackAsWraith.class,
         };
     }
 

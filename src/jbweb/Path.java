@@ -62,7 +62,8 @@ public class Path {
                 Tile tile = new Tile(x, y);
                 if (JBWEB.walkGrid[y][x]) {
                     tile.setWalkable(true);
-                } else {
+                }
+                else {
                     tile.setWalkable(false);
                 }
                 tileRow.add(tile);
@@ -87,7 +88,7 @@ public class Path {
         } while (check != source);
 
         // HACK: Try to make it more accurate to positions instead of tiles
-        Position correctionSource = new Position(tiles.get(tiles.size()-2)); // Second to last tile
+        Position correctionSource = new Position(tiles.get(tiles.size() - 2)); // Second to last tile
         Position correctionTarget = new Position(tiles.get(1)); // Second tile
         dist += s.getDistance(correctionSource.toTilePosition());
         dist += t.getDistance(correctionTarget.toTilePosition());
@@ -103,8 +104,8 @@ public class Path {
         Pair<TilePosition, TilePosition> pathPoints = new Pair<>(source, target);
         if (unitPathCache.indexList.get(pathPoints) == null) {
             if (unitPathCache.pathCache.size() == maxCacheSize) {
-                Path last = unitPathCache.pathCache.get(unitPathCache.pathCache.size()-1);
-                unitPathCache.pathCache.remove(unitPathCache.pathCache.size()-1);
+                Path last = unitPathCache.pathCache.get(unitPathCache.pathCache.size() - 1);
+                unitPathCache.pathCache.remove(unitPathCache.pathCache.size() - 1);
                 unitPathCache.indexList.remove(new Pair<>(last.getSource(), last.getTarget()));
             }
         }
@@ -126,8 +127,8 @@ public class Path {
         }
 
         // If not reachable based on previous paths to this area
-        System.out.println("target = " + target);
-        System.out.println("JBWEB.mapBWEM.getMap().getArea(target) = " + JBWEB.mapBWEM.getMap().getArea(target));
+//        System.out.println("target = " + target);
+//        System.out.println("JBWEB.mapBWEM.getMap().getArea(target) = " + JBWEB.mapBWEM.getMap().getArea(target));
         if (target.isValid(JBWEB.game) && JBWEB.mapBWEM.getMap().getArea(target) != null && wall.wallWalkable(new TilePosition(source.x, source.y))) {
             System.out.println("unitPathCache = " + unitPathCache);
             System.out.println("unitPathCache.notReachableThisFrame = " + unitPathCache.notReachableThisFrame);
@@ -191,8 +192,8 @@ public class Path {
         direction.add(new TilePosition(0, -1));
 
         if (source.equals(target)
-                || source.equals(new TilePosition(0, 0))
-                || target.equals(new TilePosition(0, 0)))
+            || source.equals(new TilePosition(0, 0))
+            || target.equals(new TilePosition(0, 0)))
             return;
 
         TilePosition[][] parentGrid = new TilePosition[256][256];
@@ -226,7 +227,7 @@ public class Path {
 
                     // Check diagonal collisions where necessary
                     if ((d.x == 1 || d.x == -1) && (d.y == 1 || d.y == -1) && (!wall.wallWalkable(new TilePosition(tile.x + d.x, tile.y))
-                            || !wall.wallWalkable(new TilePosition(tile.x, tile.y + d.y)))) {
+                        || !wall.wallWalkable(new TilePosition(tile.x, tile.y + d.y)))) {
                         continue;
                     }
 

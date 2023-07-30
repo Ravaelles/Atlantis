@@ -10,7 +10,6 @@ import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 import static org.junit.Assert.*;
 
 public class AUnitTest extends AbstractTestFakingGame {
-
     private FakeUnit zealot;
     private FakeUnit firebat;
     private FakeUnit cannon;
@@ -143,20 +142,76 @@ public class AUnitTest extends AbstractTestFakingGame {
         });
     }
 
+    @Test
+    public void weaponRangeForTank() {
+        FakeUnit our = fake(AUnitType.Terran_Siege_Tank_Siege_Mode, 10);
+        FakeUnit ling1, ling2, drone, den;
+
+        FakeUnit[] enemies = fakeEnemies(
+            den = fake(AUnitType.Zerg_Hydralisk_Den, 11),
+            drone = fake(AUnitType.Zerg_Drone, 12),
+            fake(AUnitType.Zerg_Guardian, 12.5),
+            ling1 = fake(AUnitType.Zerg_Zergling, 19),
+            ling2 = fake(AUnitType.Zerg_Zergling, 23)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertFalse(our.hasWeaponRangeToAttack(den, 0));
+            assertTrue(our.hasWeaponRangeToAttack(ling1, 0));
+            assertFalse(our.hasWeaponRangeToAttack(ling2, 0));
+            assertFalse(our.hasWeaponRangeToAttack(ling2, 0.9));
+            assertTrue(our.hasWeaponRangeToAttack(ling2, 1.0));
+        });
+    }
+
+    @Test
+    public void weaponRangeForWraith() {
+        FakeUnit our = fake(AUnitType.Terran_Wraith, 10);
+        FakeUnit ling1, ling2, drone, den;
+
+        FakeUnit[] enemies = fakeEnemies(
+            den = fake(AUnitType.Zerg_Hydralisk_Den, 11),
+            fake(AUnitType.Zerg_Guardian, 12.5),
+            ling1 = fake(AUnitType.Zerg_Zergling, 14),
+            drone = fake(AUnitType.Zerg_Drone, 15),
+            ling2 = fake(AUnitType.Zerg_Zergling, 19)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertTrue(our.hasWeaponRangeToAttack(den, 0));
+            assertTrue(our.canAttackTarget(den, true, true, true, 0));
+
+            assertTrue(our.hasWeaponRangeToAttack(ling1, 0));
+            assertTrue(our.canAttackTarget(ling1, true, true, true, 0));
+
+            assertTrue(our.hasWeaponRangeToAttack(drone, 0));
+            assertTrue(our.canAttackTarget(drone, true, true, true, 0));
+
+            assertFalse(our.hasWeaponRangeToAttack(ling2, 0));
+            assertFalse(our.canAttackTarget(ling2, true, true, true, 0));
+
+            assertFalse(our.hasWeaponRangeToAttack(ling2, 3.9));
+            assertFalse(our.canAttackTarget(ling2, true, true, true, 3.9));
+
+            assertTrue(our.hasWeaponRangeToAttack(ling2, 4.0));
+            assertTrue(our.canAttackTarget(ling2, true, true, true, 4.0));
+        });
+    }
+
     // =========================================================
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                firebat = fake(AUnitType.Terran_Firebat, 11),
-                fake(AUnitType.Terran_Siege_Tank_Siege_Mode, 12)
+            firebat = fake(AUnitType.Terran_Firebat, 11),
+            fake(AUnitType.Terran_Siege_Tank_Siege_Mode, 12)
         );
     }
 
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 16;
         return fakeEnemies(
-                zealot = fake(AUnitType.Protoss_Zealot, enemyTy),
-                fake(AUnitType.Protoss_Dragoon, enemyTy + 1)
+            zealot = fake(AUnitType.Protoss_Zealot, enemyTy),
+            fake(AUnitType.Protoss_Dragoon, enemyTy + 1)
         );
     }
 

@@ -6,7 +6,7 @@ import atlantis.combat.micro.protoss.ProtossShieldBattery;
 import atlantis.combat.micro.terran.TerranCloakableManager;
 import atlantis.combat.micro.terran.TerranScienceVessel;
 import atlantis.combat.micro.terran.TerranVulture;
-import atlantis.combat.micro.terran.TerranWraith;
+import atlantis.combat.micro.terran.wraith.TerranWraith;
 import atlantis.combat.micro.terran.infantry.TerranInfantry;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.micro.transport.ATransportManager;
@@ -23,7 +23,7 @@ public class SpecialUnitsManager extends Manager {
         Class[] raceSpecific;
 
         if (unit.isTerran()) {
-            raceSpecific = new Class[] {
+            raceSpecific = new Class[]{
                 TerranTank.class,
                 TerranInfantry.class,
                 TerranWraith.class,
@@ -33,7 +33,7 @@ public class SpecialUnitsManager extends Manager {
             };
         }
         else if (unit.isProtoss()) {
-            raceSpecific = new Class[] {
+            raceSpecific = new Class[]{
                 PreventForMissionSparta.class,
                 ProtossShieldBattery.class,
                 ProtossObserver.class,
@@ -41,12 +41,12 @@ public class SpecialUnitsManager extends Manager {
             };
         }
         else {
-            raceSpecific = new Class[] {
+            raceSpecific = new Class[]{
                 ZergOverlordManager.class,
             };
         }
 
-        Class[] generic = new Class[] {
+        Class[] generic = new Class[]{
             ATransportManager.class
         };
 

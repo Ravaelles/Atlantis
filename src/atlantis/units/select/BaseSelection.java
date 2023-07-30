@@ -1,6 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.units.AUnit;
+import atlantis.util.Callback;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,5 +71,4 @@ public class BaseSelection {
 
         return new Selection(newData, null);
     }
-
 }

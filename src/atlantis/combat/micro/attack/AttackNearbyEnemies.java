@@ -29,7 +29,7 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     public Manager handle() {
-        if (handleAttackNearEnemyUnits(unit)) {
+        if (handleAttackNearEnemyUnits()) {
             return usedManager(this);
         }
 
@@ -43,12 +43,12 @@ public class AttackNearbyEnemies extends Manager {
      * an attack or just attacking the enemy<br />
      * <b>false</b> if no valid enemy to attack could be found
      */
-    public static boolean handleAttackNearEnemyUnits(AUnit unit) {
+    public boolean handleAttackNearEnemyUnits() {
         return (boolean) cacheObject.getIfValid(
             "handleAttackNearEnemyUnits: " + unit.id(),
             4,
             () -> {
-                AttackNearbyEnemies instance = new AttackNearbyEnemies(unit);
+                AttackNearbyEnemies instance = getInstance(unit);
 
                 if (!instance.canAttackNow()) return false;
 
@@ -58,6 +58,10 @@ public class AttackNearbyEnemies extends Manager {
                 return processAttackUnit.processAttackOtherUnit(enemy);
             }
         );
+    }
+
+    protected AttackNearbyEnemies getInstance(AUnit unit) {
+        return new AttackNearbyEnemies(unit);
     }
 
     private boolean canAttackNow() {
@@ -87,9 +91,9 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     protected AUnit defineEnemyToAttackFor() {
-        return cache.get(
+        return cache.getIfValid(
             "defineEnemyToAttackFor",
-            0,
+            2,
             () -> {
                 reasonNotToAttack = null;
 
@@ -97,7 +101,7 @@ public class AttackNearbyEnemies extends Manager {
 //                    return null;
 //                }
 
-                AUnit enemy = ATargeting.defineBestEnemyToAttackFor(unit, MAX_DIST_TO_ATTACK);
+                AUnit enemy = bestTargetToAttack();
 //                System.out.println("enemy = " + enemy);
 
                 if (enemy == null) {
@@ -111,6 +115,10 @@ public class AttackNearbyEnemies extends Manager {
                 return enemy;
             }
         );
+    }
+
+    protected AUnit bestTargetToAttack() {
+        return ATargeting.defineBestEnemyToAttackFor(unit, MAX_DIST_TO_ATTACK);
     }
 
 //    public  boolean shouldNotAttack() {

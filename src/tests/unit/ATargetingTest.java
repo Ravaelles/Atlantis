@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ATargetingTest extends AbstractTestWithUnits {
 
@@ -20,20 +20,20 @@ public class ATargetingTest extends AbstractTestWithUnits {
         FakeUnit drone, ling1, hydra, sunken, ling2;
 
         FakeUnit[] enemies = fakeEnemies(
-                drone = fake(AUnitType.Zerg_Drone, 12),
-                fake(AUnitType.Zerg_Larva, 11),
-                fake(AUnitType.Zerg_Egg, 11),
-                fake(AUnitType.Zerg_Hatchery, 11),
-                fake(AUnitType.Zerg_Lurker_Egg, 11),
-                fake(AUnitType.Zerg_Cocoon, 11),
+            drone = fake(AUnitType.Zerg_Drone, 12),
+            fake(AUnitType.Zerg_Larva, 11),
+            fake(AUnitType.Zerg_Egg, 11),
+            fake(AUnitType.Zerg_Hatchery, 11),
+            fake(AUnitType.Zerg_Lurker_Egg, 11),
+            fake(AUnitType.Zerg_Cocoon, 11),
 //                fake(AUnitType.Zerg_Creep_Colony, 12),
 //                fake(AUnitType.Zerg_Spore_Colony, 12),
-                fake(AUnitType.Zerg_Creep_Colony, 12),
-                fake(AUnitType.Zerg_Drone, 13),
-                fake(AUnitType.Zerg_Drone, 14),
-                fake(AUnitType.Zerg_Hydralisk, 18),
-                fake(AUnitType.Zerg_Zergling, 19),
-                fake(AUnitType.Zerg_Sunken_Colony, 28)
+            fake(AUnitType.Zerg_Creep_Colony, 12),
+            fake(AUnitType.Zerg_Drone, 13),
+            fake(AUnitType.Zerg_Drone, 14),
+            fake(AUnitType.Zerg_Hydralisk, 18),
+            fake(AUnitType.Zerg_Zergling, 19),
+            fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
@@ -48,27 +48,27 @@ public class ATargetingTest extends AbstractTestWithUnits {
 
         FakeUnit[] enemies = fakeEnemies(
 //                drone = fake(AUnitType.Zerg_Drone, 12),
-                fake(AUnitType.Zerg_Larva, 11),
-                fake(AUnitType.Zerg_Egg, 11),
-                fake(AUnitType.Zerg_Hatchery, 11),
-                fake(AUnitType.Zerg_Lurker_Egg, 11),
-                fake(AUnitType.Zerg_Cocoon, 11),
-                fake(AUnitType.Zerg_Creep_Colony, 12),
+            fake(AUnitType.Zerg_Larva, 11),
+            fake(AUnitType.Zerg_Egg, 11),
+            fake(AUnitType.Zerg_Hatchery, 11),
+            fake(AUnitType.Zerg_Lurker_Egg, 11),
+            fake(AUnitType.Zerg_Cocoon, 11),
+            fake(AUnitType.Zerg_Creep_Colony, 12),
 //                fake(AUnitType.Zerg_Spore_Colony, 12),
 //                fake(AUnitType.Zerg_Drone, 13),
-                fake(AUnitType.Zerg_Drone, 16),
+            fake(AUnitType.Zerg_Drone, 16),
 //                ling1 = fake(AUnitType.Zerg_Zergling, 12.5),
-                hydra = fake(AUnitType.Zerg_Hydralisk, 14),
-                sunken = fake(AUnitType.Zerg_Sunken_Colony, 13.9),
-                fake(AUnitType.Zerg_Creep_Colony, 11),
+            hydra = fake(AUnitType.Zerg_Hydralisk, 14),
+            sunken = fake(AUnitType.Zerg_Sunken_Colony, 13.9),
+            fake(AUnitType.Zerg_Creep_Colony, 11),
 //                ling2 = fake(AUnitType.Zerg_Zergling, 12.9),
 //                fake(AUnitType.Zerg_Zergling, 13),
 //                fake(AUnitType.Zerg_Zergling, 14),
-                fake(AUnitType.Zerg_Zergling, 15),
-                fake(AUnitType.Zerg_Zergling, 16),
-                fake(AUnitType.Zerg_Zergling, 17),
-                fake(AUnitType.Zerg_Hydralisk, 18),
-                fake(AUnitType.Zerg_Sunken_Colony, 28)
+            fake(AUnitType.Zerg_Zergling, 15),
+            fake(AUnitType.Zerg_Zergling, 16),
+            fake(AUnitType.Zerg_Zergling, 17),
+            fake(AUnitType.Zerg_Hydralisk, 18),
+            fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {

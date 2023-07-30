@@ -23,7 +23,7 @@ public class CombatManagerMediumPriority extends Manager {
             AvoidEnemies.class,
             UnitBeingReparedManager.class,
             RetreatManager.class,
-            AttackNearbyEnemies.class,
+//            AttackNearbyEnemies.class,
         };
     }
 }

@@ -30,9 +30,9 @@ public class CircumnavigateCombatBuilding extends Manager {
     }
 
     public APosition findPositionAround(AUnit combatBuilding) {
-        int roamingRange = unit.isAir() ? 7 : 3;
+        int roamingRange = unit.isAir() ? 7 : 4;
 
-        APosition raw = unit.translateTilesTowards(-roamingRange - 0.2, combatBuilding);
+        APosition raw = unit.translateTilesTowards(-roamingRange - 0.4, combatBuilding);
 
         // Now we randomize the position to implement "circling around" the combat building
         return raw.randomizePosition(roamingRange);

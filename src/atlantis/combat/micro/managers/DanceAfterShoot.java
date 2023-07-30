@@ -12,7 +12,7 @@ public class DanceAfterShoot extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isRanged();
+        return unit.isRanged() && !unit.isWraith();
     }
 
     @Override
@@ -77,18 +77,18 @@ public class DanceAfterShoot extends Manager {
 
     // =========================================================
 
-    private  boolean shouldDanceTo(AUnit target, double dist) {
+    private boolean shouldDanceTo(AUnit target, double dist) {
         return target.isVisibleUnitOnMap()
             && target.effVisible()
             && unit.distToMoreThan(target, 3)
             && dist >= (unit.enemyWeaponRangeAgainstThisUnit(target))
             && (
-                (!target.isABuilding() && dist >= 1.6)
+            (!target.isABuilding() && dist >= 1.6)
                 || target.hasNoWeaponAtAll()
-            );
+        );
     }
 
-    private  boolean shouldSkip() {
+    private boolean shouldSkip() {
 //        if (true) return true;
 
         if (unit.isMelee()) {

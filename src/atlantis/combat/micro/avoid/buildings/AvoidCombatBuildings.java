@@ -58,8 +58,8 @@ public class AvoidCombatBuildings extends Manager {
         double doNothingMargin = 0.3;
 
         if (distTo <= criticalDist) {
-//            System.err.println("@ EEEEEEEEEEEEE");
-            if (thereIsNoSafetyMarginAtAll(combatBuilding)) return usedManager(avoidCombatBuildingCriticallyClose);
+//            if (thereIsNoSafetyMarginAtAll(combatBuilding)) return usedManager(avoidCombatBuildingCriticallyClose);
+            return barelyAnySafetyLeft(combatBuilding);
         }
         else if (holdPositionToShoot(combatBuilding) != null) {
             return usedManager(this);
@@ -68,9 +68,9 @@ public class AvoidCombatBuildings extends Manager {
             return stillSomePlaceLeft(combatBuilding);
         }
         else if (distTo < (criticalDist + doNothingMargin)) {
-            return barelyAnySafetyLeft(combatBuilding);
+            if (thereIsNoSafetyMarginAtAll(combatBuilding)) return usedManager(avoidCombatBuildingCriticallyClose);
+//            return barelyAnySafetyLeft(combatBuilding);
         }
-//        else if (distTo <= criticalDist && unit.isMoving() && !unit.isRunning() && unit.target() == null) {
 
         return null;
     }
@@ -101,11 +101,24 @@ public class AvoidCombatBuildings extends Manager {
     }
 
     private Manager barelyAnySafetyLeft(AUnit combatBuilding) {
-        if (unit.isRunning() || unit.isAttacking()) {
-            return null;
-        }
+//        if (unit.isRunning() || unit.isAttacking()) {
+//            return null;
+//        }
 
-        return null;
+        if (unit.isAir()) {
+            APosition runFrom = combatBuilding.position();
+
+            if (unit.hp() >= 60 && A.chance(80)) {
+                runFrom = runFrom.position().randomizePosition(6);
+            }
+
+            unit.runningManager().runFrom(runFrom, 6, Actions.MOVE_AVOID, false);
+            return usedManager(this);
+        }
+        else {
+            unit.runningManager().runFrom(combatBuilding, 0.1, Actions.MOVE_AVOID, false);
+            return usedManager(this);
+        }
     }
 
     private Manager stillSomePlaceLeft(AUnit combatBuilding) {
@@ -122,8 +135,8 @@ public class AvoidCombatBuildings extends Manager {
     private double criticalDist(AUnit combatBuilding) {
         return 9.1
             + (combatBuilding.isSunken() ? 1.6 : 0)
-            + (unit.isAir() ? 0.6 : 0) + (unit.isMoving() ? 0.9 : 0)
-            + unit.woundPercent() / 70;
+            + (unit.isAir() ? 0.6 : 0) + (unit.isMoving() ? 1.25 : 0)
+            + unit.woundPercent() / 50;
     }
 
 }

@@ -42,7 +42,7 @@ public class TerranFirebat extends Manager {
                 && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
                 && unit.friendsNear().medics().inRadius(1.4, unit).notEmpty()
         ) {
-            if (AttackNearbyEnemies.handleAttackNearEnemyUnits(unit)) {
+            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
                 unit.setTooltip("Napalm");
                 return usedManager(this);
             }

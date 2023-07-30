@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ATargeting extends HasUnit {
 
-//    protected static final boolean DEBUG = true;
+    //    protected static final boolean DEBUG = true;
     protected static final boolean DEBUG = false;
 
     protected static Selection enemyBuildings;
@@ -109,7 +109,7 @@ public class ATargeting extends HasUnit {
         if (enemy == null) {
 //            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
             enemy = unit.enemiesNear().realUnitsAndBuildings().canBeAttackedBy(unit, 0).nearestTo(unit);
-            if (enemy != null) {
+            if (enemy != null && !unit.isAir()) {
                 ErrorLog.printErrorOnce("DefineTarget fix for " + unit + ", chosen " + enemy);
             }
         }
@@ -224,8 +224,8 @@ public class ATargeting extends HasUnit {
     private static AUnit selectWeakestEnemyOfType(AUnitType type, AUnit ourUnit, double extraRange) {
 //        Selection targets = ourUnit.enemiesNear()
         Selection targets = enemyUnits
-                .ofType(type)
-                .canBeAttackedBy(ourUnit, extraRange);
+            .ofType(type)
+            .canBeAttackedBy(ourUnit, extraRange);
 //                .hasPathFrom(ourUnit);
 
         // It makes sense to focus fire on units that have lot of HP
@@ -287,15 +287,15 @@ public class ATargeting extends HasUnit {
 
         AUnit target;
         enemyBuildings = Select.enemyRealUnits(true, false, true)
-                .buildings()
-                .inRadius(maxDistFromEnemy, unit)
-                .canBeAttackedBy(unit, maxDistFromEnemy);
+            .buildings()
+            .inRadius(maxDistFromEnemy, unit)
+            .canBeAttackedBy(unit, maxDistFromEnemy);
         enemyUnits = Select.enemyRealUnitsWithBuildings()
-                .nonBuildingsOrCombatBuildings()
-                .inRadius(maxDistFromEnemy, unit)
-                .maxGroundDist(maxDistFromEnemy, unit)
-                .effVisibleOrFoggedWithKnownPosition()
-                .canBeAttackedBy(unit, maxDistFromEnemy);
+            .nonBuildingsOrCombatBuildings()
+            .inRadius(maxDistFromEnemy, unit)
+            .maxGroundDist(maxDistFromEnemy, unit)
+            .effVisibleOrFoggedWithKnownPosition()
+            .canBeAttackedBy(unit, maxDistFromEnemy);
 
 //        Select.enemyRealUnits().print();
 //        enemyBuildings.print();
@@ -325,7 +325,7 @@ public class ATargeting extends HasUnit {
         // === AIR UNITS due to their mobility use different targeting logic ===
 
         if (unit.isAir() && unit.canAttackGroundUnits()) {
-            target = (new ATargetingForAirUnits(unit)).targetForAirUnits();
+            target = (new ATargetingForAirUnits(unit)).targetForAirUnit();
 
 //            System.out.println("Air target for " + unit + ": " + target);
 //            if ((target = ATargetingForAirUnits.targetForAirUnits()) != null) {

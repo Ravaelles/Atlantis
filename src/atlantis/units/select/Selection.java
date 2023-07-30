@@ -9,9 +9,11 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.fogged.AbstractFoggedUnit;
+import atlantis.util.Callback;
 import atlantis.util.cache.CachePathKey;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Selection extends BaseSelection {
@@ -711,6 +713,7 @@ public class Selection extends BaseSelection {
             target, true, true, false, safetyMargin
         ), "canAttack:" + target.idWithHash() + ":" + safetyMargin);
     }
+
 
     public Selection inShootRangeOf(AUnit attacker) {
         return canBeAttackedBy(attacker, 0);

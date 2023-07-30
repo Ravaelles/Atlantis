@@ -135,6 +135,11 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public boolean isAccelerating() {
+        return false;
+    }
+
+    @Override
     public boolean isLoaded() {
         return loaded;
     }
@@ -331,7 +336,8 @@ public class FakeUnit extends AUnit {
         lastCommand = "Move";
         if (target instanceof FakeUnit) {
             this.target = (FakeUnit) target;
-        } else {
+        }
+        else {
             this.target = null;
         }
         targetPosition = target.position();

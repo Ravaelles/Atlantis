@@ -40,7 +40,7 @@ public class WantsToAvoid extends Manager {
 
 //            unit.addFileLog("NOT shouldAlwaysAvoid");
 //            unit.addLog("NOT shouldAlwaysAvoid");
-            if (AttackNearbyEnemies.handleAttackNearEnemyUnits(unit)) {
+            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
                 return usedManager(this, "ButAttack");
             }
         }

@@ -16,7 +16,7 @@ public class RunError {
         unit.addLog("RUN-ERROR");
 
         if (unit.noCooldown()) {
-            AttackNearbyEnemies.handleAttackNearEnemyUnits(unit);
+            (new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits();
             unit.setTooltipTactical("Cant run, fight");
         }
 

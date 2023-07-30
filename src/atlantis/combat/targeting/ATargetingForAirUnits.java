@@ -1,17 +1,44 @@
 package atlantis.combat.targeting;
 
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ATargetingForAirUnits extends HasUnit {
+    protected boolean onlyEnemiesInRangeAreAllowed;
+    protected Selection possibleTargets;
 
     public ATargetingForAirUnits(AUnit unit) {
-        super(unit);
+        this(unit, false);
     }
 
-    protected AUnit targetForAirUnits() {
+    public ATargetingForAirUnits(AUnit unit, boolean onlyEnemiesInRangeAreAllowed) {
+        super(unit);
+        this.onlyEnemiesInRangeAreAllowed = onlyEnemiesInRangeAreAllowed;
+
+        assert (unit.isAir());
+
+        possibleTargets = definePossibleTargets();
+    }
+
+    protected Selection definePossibleTargets() {
+        Selection baseEnemies = onlyEnemiesInRangeAreAllowed ?
+            Select.enemyRealUnits(true, true, true).canBeAttackedBy(unit, 0)
+            : EnemyUnits.discovered().canBeAttackedBy(unit, 25);
+
+        baseEnemies = baseEnemies.excludeTypes(
+            AUnitType.Terran_Missile_Turret, AUnitType.Zerg_Spore_Colony, AUnitType.Protoss_Photon_Cannon
+        );
+
+        return baseEnemies
+            .removeDuplicates()
+            .effVisible();
+    }
+
+    public AUnit targetForAirUnit() {
         AUnit target;
 
         if ((target = targetsCrucial()) != null) {
@@ -27,18 +54,13 @@ public class ATargetingForAirUnits extends HasUnit {
 
     // =========================================================
 
-    private AUnit targetsCrucial() {
+    protected AUnit targetsCrucial() {
         AUnit target;
-
-        Selection allEnemies = ATargeting.enemyUnits.withEnemyFoggedUnits()
-            .removeDuplicates()
-            .effVisible()
-            .canBeAttackedBy(unit, 20);
 
         // =========================================================
         // Target CRUCIAL AIR units
 
-        target = allEnemies
+        target = possibleTargets
             .air()
             .ofType(
                 AUnitType.Protoss_Observer,
@@ -57,7 +79,7 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target REAVERS + HT + TANKS + DEFILERS
 
-        target = allEnemies
+        target = possibleTargets
             .ofType(
                 AUnitType.Protoss_Reaver,
                 AUnitType.Protoss_High_Templar,
@@ -74,7 +96,7 @@ public class ATargetingForAirUnits extends HasUnit {
             return target;
         }
 
-        target = allEnemies
+        target = possibleTargets
             .ofType(
                 AUnitType.Protoss_Reaver,
                 AUnitType.Protoss_High_Templar,
@@ -95,7 +117,7 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target DT + Mutalisks
 
-        target = allEnemies
+        target = possibleTargets
             .ofType(
                 AUnitType.Protoss_Dark_Templar,
                 AUnitType.Protoss_Archon,
@@ -114,7 +136,7 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target IMPORTANT AIR units
 
-        target = allEnemies
+        target = possibleTargets
             .air()
             .ofType(
                 AUnitType.Protoss_Carrier,
@@ -135,7 +157,7 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target ANY AIR units
 
-        target = allEnemies
+        target = possibleTargets
             .air()
             .inShootRangeOf(unit)
             .mostWounded();
@@ -146,7 +168,7 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target TRANSPORT
 
-//        target = allEnemies
+//        target = possibleTargets
 //                .transports(true)
 //                .inRadius(10, unit)
 //                .nearestTo(unit);
@@ -157,7 +179,7 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target WORKERS
 
-        target = allEnemies
+        target = possibleTargets
             .workers()
             .inShootRangeOf(unit)
             .mostWounded();
@@ -168,17 +190,14 @@ public class ATargetingForAirUnits extends HasUnit {
         return null;
     }
 
-    private AUnit targetsStandard() {
+    protected AUnit targetsStandard() {
         AUnit target;
-
-        Selection allEnemies = ATargeting.enemyUnits.withEnemyFoggedUnits().removeDuplicates();
 
         // =========================================================
         // Target WORKERS
 
-        target = allEnemies
+        target = possibleTargets
             .workers()
-            .inRadius(50, unit)
             .nearestTo(unit);
         if (target != null) {
             return target;
@@ -187,9 +206,8 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target DISTANT BASES, hoping to find workers
 
-        target = allEnemies
+        target = possibleTargets
             .bases()
-            .inRadius(50, unit)
             .nearestTo(unit);
         if (ATargeting.DEBUG) System.out.println("target AA1 = " + target + " // " + unit);
 
@@ -200,9 +218,8 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target DEFENSIVE BUILDINGS
 
-        target = allEnemies
+        target = possibleTargets
             .ofType(AUnitType.Zerg_Sunken_Colony)
-            .inRadius(50, unit)
             .nearestTo(unit);
         if (ATargeting.DEBUG) System.out.println("target AA2 = " + target + " // " + unit);
 
@@ -213,10 +230,9 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target COMBAT UNITS THAT CAN'T SHOOT AT US
 
-        target = allEnemies
+        target = possibleTargets
             .combatUnits()
             .notHavingAntiAirWeapon()
-            .inRadius(50, unit)
             .nearestTo(unit);
         if (ATargeting.DEBUG) System.out.println("target AA3 = " + target + " // " + unit);
 
@@ -227,7 +243,7 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target ANY COMBAT UNITS
 
-//        target = allEnemies
+//        target = possibleTargets
 //                .notHavingAntiAirWeapon()
 //                .inRadius(50, unit)
 //                .nearestTo(unit);
@@ -240,11 +256,12 @@ public class ATargetingForAirUnits extends HasUnit {
         // =========================================================
         // Target ANY COMBAT UNITS
 
-        target = allEnemies
-            .combatUnits()
-            .inRadius(50, unit)
-            .nearestTo(unit);
-        if (ATargeting.DEBUG) System.out.println("target AA5 = " + target + " // " + unit);
+        if (!onlyEnemiesInRangeAreAllowed) {
+            target = possibleTargets
+                .combatUnits()
+                .nearestTo(unit);
+            if (ATargeting.DEBUG) System.out.println("target AA5 = " + target + " // " + unit);
+        }
 
         if (target != null) {
             return target;
@@ -252,5 +269,4 @@ public class ATargetingForAirUnits extends HasUnit {
 
         return null;
     }
-
 }

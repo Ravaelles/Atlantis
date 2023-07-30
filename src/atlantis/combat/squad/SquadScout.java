@@ -60,7 +60,7 @@ public class SquadScout extends Manager {
     }
 
     private boolean engageWorkersNow(AUnit squadScout) {
-        if (AttackNearbyEnemies.handleAttackNearEnemyUnits(squadScout)) {
+        if ((new AttackNearbyEnemies(squadScout)).handleAttackNearEnemyUnits()) {
             squadScout.setTooltipTactical("MadeContact");
 
             if (EnemyUnits.discovered().atMost(2)) {
