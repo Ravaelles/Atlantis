@@ -16,7 +16,6 @@ public abstract class Mission extends MissionHelper {
     private static Mission instance;
     protected MissionFocusPoint focusPointManager;
     private String name;
-    protected APosition temporaryTarget = null;
 
     // =========================================================
 

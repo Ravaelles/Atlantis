@@ -24,7 +24,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
@@ -55,6 +55,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/M&M_v_Hydras.scx"; // M&M v Hydras
 //        if (true) return "ums/rav/T_v_Sunkens.scx"; // M&M + Tank + Wraith v Sunkens
 //        if (true) return "ums/rav/M_v_1Ling.scm"; // 1 Marine v 1 Zergling
+        if (true) return "ums/rav/Wraiths_v_Base2.scm"; // Wraiths v Reavers & HT & Observer
 
         // vs Protoss
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots

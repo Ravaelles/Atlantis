@@ -61,7 +61,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
     /**
      * <b>Notice:</b> whenever possible, use APosition instead of Position.
-     *
+     * <p>
      * Atlantis uses wrapper for bridge native classes.<br />
      * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
      * you can create them here or reference original Position class via p() method.
@@ -71,28 +71,32 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 //            return instances.get(p);
 //        }
 //        else {
-            APosition position = null;
+        APosition position = null;
 
-            if (p instanceof APosition) {
-                position = new APosition((APosition) p);
-            } else if (p instanceof HasPosition) {
-                position = new APosition(((HasPosition) p).position());
-            } else if (p instanceof Position) {
-                position = new APosition((Position) p);
-            } else if (p instanceof WalkPosition) {
-                position = new APosition(((WalkPosition) p).toPosition());
-            } else {
-                throw new RuntimeException("APosition::create invalid param " + p);
-            }
+        if (p instanceof APosition) {
+            position = new APosition((APosition) p);
+        }
+        else if (p instanceof HasPosition) {
+            position = new APosition(((HasPosition) p).position());
+        }
+        else if (p instanceof Position) {
+            position = new APosition((Position) p);
+        }
+        else if (p instanceof WalkPosition) {
+            position = new APosition(((WalkPosition) p).toPosition());
+        }
+        else {
+            throw new RuntimeException("APosition::create invalid param " + p);
+        }
 
 //            instances.put(p, position);
-            return position;
+        return position;
 //        }
     }
 
     /**
      * <b>Notice:</b> whenever possible, use APosition instead of Position.
-     *
+     * <p>
      * Atlantis uses wrapper for bridge native classes.<br />
      * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
      * you can create them here or reference original Position class via p() method.
@@ -299,7 +303,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         return this.p.hashCode();
     }
 
-//    public int compareTo(Position o) {
+    //    public int compareTo(Position o) {
     @Override
     public int compareTo(Point o) {
         int compare = Integer.compare(x, y);
@@ -353,8 +357,8 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
     public APosition randomizePosition(int maxTiles) {
         return APosition.create(
-            tx() - maxTiles + A.rand(0, 2 * maxTiles),
-            ty() - maxTiles + A.rand(0, 2 * maxTiles)
+            tx() - (A.chance(50) ? 0 : maxTiles + A.rand(0, 2 * maxTiles)),
+            ty() - (A.chance(50) ? 0 : maxTiles + A.rand(0, 2 * maxTiles))
         ).makeValid();
     }
 

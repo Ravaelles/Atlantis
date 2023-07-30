@@ -35,11 +35,11 @@ public class MissionAttack extends Mission {
 //        return missionAttackPermissionToAttack.permissionToAttack();
 //    }
 
-//    @Override
-//    public boolean allowsToAttackEnemyUnit(AUnit enemy) {
-//        return MissionAttackVsEnemyUnit.allowsToAttackEnemyUnit(unit, enemy);
-//    }
-//
+    @Override
+    public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        return (new MissionAttackVsEnemyUnit(unit)).allowsToAttackEnemyUnit(enemy);
+    }
+
 //    @Override
 //    public boolean allowsToAttackCombatBuildings(AUnit combatBuilding) {
 //        return MissionAttackVsCombatBuildings.allowsToAttackCombatBuildings(unit, combatBuilding);
