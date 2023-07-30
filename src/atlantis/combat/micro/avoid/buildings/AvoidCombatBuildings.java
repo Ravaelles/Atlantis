@@ -5,6 +5,7 @@ import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
+import atlantis.production.dynamic.terran.tech.SiegeMode;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
@@ -22,6 +23,8 @@ public class AvoidCombatBuildings extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isTankUnsieged() && SiegeMode.isResearched()) return false;
+
         return true;
     }
 
@@ -55,7 +58,7 @@ public class AvoidCombatBuildings extends Manager {
         double criticalDist = criticalDist(combatBuilding);
         double distTo = combatBuilding.distTo(unit);
 
-        double doNothingMargin = 0.3;
+        double doNothingMargin = 1.5;
 
         if (distTo <= criticalDist) {
 //            if (thereIsNoSafetyMarginAtAll(combatBuilding)) return usedManager(avoidCombatBuildingCriticallyClose);
@@ -108,8 +111,8 @@ public class AvoidCombatBuildings extends Manager {
         if (unit.isAir()) {
             APosition runFrom = combatBuilding.position();
 
-            if (unit.hp() >= 60 && A.chance(80)) {
-                runFrom = runFrom.position().randomizePosition(6);
+            if (unit.hp() >= 60 || A.chance(10)) {
+                runFrom = runFrom.position().randomizePosition(3);
             }
 
             unit.runningManager().runFrom(runFrom, 6, Actions.MOVE_AVOID, false);
@@ -124,11 +127,11 @@ public class AvoidCombatBuildings extends Manager {
     private Manager stillSomePlaceLeft(AUnit combatBuilding) {
         APosition runFrom = combatBuilding.position();
 
-        if (A.chance(50)) {
-            runFrom = runFrom.position().randomizePosition(6);
-        }
+//        if (A.chance(70)) {
+        runFrom = runFrom.position().randomizePosition(5 + unit.id() % 4);
+//        }
 
-        unit.runningManager().runFrom(runFrom, 0.5, Actions.MOVE_AVOID, false);
+        unit.runningManager().runFrom(runFrom, 6, Actions.MOVE_AVOID, false);
         return usedManager(this);
     }
 

@@ -15,6 +15,8 @@ public class TooClustered extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.friendsNear().buildings().inRadius(3, unit).notEmpty()) return false;
+
         return unit.squad().size() >= 2 && unit.friendsNear().inRadius(0.3, unit).groundUnits().atLeast(3);
     }
 

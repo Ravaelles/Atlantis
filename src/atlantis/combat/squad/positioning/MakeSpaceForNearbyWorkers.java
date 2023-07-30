@@ -1,6 +1,8 @@
 package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.terran.tank.TerranTank;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -16,6 +18,10 @@ public class MakeSpaceForNearbyWorkers extends Manager {
             return false;
         }
 
+        if (unit.isMissionAttack()) return false;
+
+        if (unit.isTank() && A.seconds() % 4 <= 2) return false;
+
         return true;
     }
 
@@ -24,7 +30,9 @@ public class MakeSpaceForNearbyWorkers extends Manager {
 
         if (nearWorker != null) {
             if (unit.isTankSieged()) {
-                unit.unsiege();
+                if (TerranTank.wantsToUnsiege(unit)) {
+                    return usedManager(this);
+                }
             }
             else {
                 AUnit main = Select.main();

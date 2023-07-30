@@ -2,6 +2,8 @@ package atlantis.combat.squad.mission;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
+import atlantis.game.A;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -11,12 +13,14 @@ import atlantis.util.We;
 public class ChangeSquadToDefend extends SquadMissionChanger {
 
     public static boolean shouldChangeToDefend(Squad squad) {
-        boolean offensiveRole = squad.hasMostlyOffensiveRole();
+        if (squad.leader().combatEvalRelative() >= 1.2) return false;
+        if (ArmyStrength.ourArmyRelativeStrength() >= 170) return false;
 
+        boolean offensiveRole = squad.hasMostlyOffensiveRole();
         if (!offensiveRole) {
             if (
                 medicsExhausted(squad)
-                || tooFewUnitsAndNotEarlyGame(squad)
+                    || tooFewUnitsAndNotEarlyGame(squad)
             ) {
                 return true;
             }
@@ -116,6 +120,10 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
         if (!We.terran()) {
             return false;
         }
+
+        if (A.supplyUsed() >= 150) return false;
+
+        if (ArmyStrength.ourArmyRelativeStrength() >= 250) return false;
 
         Selection medics = squad.selection().medics();
         if (medics.atLeast(2) && medics.havingEnergy(30).isEmpty()) {

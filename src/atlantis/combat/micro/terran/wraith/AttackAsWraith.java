@@ -47,7 +47,7 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     }
 
     private AUnit defineTarget() {
-        AUnit target = Select.enemyRealUnits().effVisible().inShootRangeOf(unit).nearestTo(unit);
+        AUnit target = Select.enemyRealUnits().effVisible().inRadius(4.5, unit).nearestTo(unit);
         if (target != null) {
             return target;
         }

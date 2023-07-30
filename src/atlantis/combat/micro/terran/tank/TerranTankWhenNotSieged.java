@@ -158,13 +158,13 @@ public class TerranTankWhenNotSieged extends Manager {
                 .inRadius(maxDist, unit)
                 .isNotEmpty()
         ) {
-            if (enemies.groundUnits().inRadius(5 + unit.id() % 4, unit).isEmpty()) {
+            if (enemies.groundUnits().inRadius(5 + unit.id() % 4, unit).notEmpty()) {
                 wantsToSiege("KeyEnemy");
                 return usedManager(this);
             }
         }
 
-        if (enemies.inRadius(15, unit).atLeast(2)) {
+        if (enemies.effVisible().inRadius(15, unit).atLeast(2)) {
             wantsToSiege("Enemies!");
             return usedManager(this);
         }
@@ -176,6 +176,8 @@ public class TerranTankWhenNotSieged extends Manager {
         if ((new WouldBlockChokeHere(unit)).handle() != null) {
             return null;
         }
+
+        if (unit.lastStartedRunningLessThanAgo(30 * 5)) return null;
 
         if (!Enemy.terran()) {
             if (unit.friendsNear().tanksSieged().inRadius(1.2, unit).isNotEmpty()) {

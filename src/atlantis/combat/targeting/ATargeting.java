@@ -258,7 +258,11 @@ public class ATargeting extends HasUnit {
 
     private static AUnit handleTanksSpecially(AUnit unit, AUnit weakestEnemy) {
         if (weakestEnemy.enemiesNear().inRadius(2, unit).notEmpty()) {
-            AUnit tankTarget = unit.enemiesNear().combatUnits().canBeAttackedBy(unit, 0).mostDistantTo(unit);
+            AUnit tankTarget = unit.enemiesNear()
+                .combatUnits()
+                .effVisible()
+                .canBeAttackedBy(unit, 0)
+                .mostDistantTo(unit);
             if (tankTarget != null) {
                 return tankTarget;
             }

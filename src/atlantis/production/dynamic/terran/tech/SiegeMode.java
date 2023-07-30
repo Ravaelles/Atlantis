@@ -39,4 +39,8 @@ public class SiegeMode extends Commander {
             }
         }
     }
+
+    public static boolean isResearched() {
+        return ATech.isResearched(TechType.Tank_Siege_Mode);
+    }
 }

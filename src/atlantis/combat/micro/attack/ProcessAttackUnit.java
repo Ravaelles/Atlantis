@@ -1,6 +1,7 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -14,9 +15,8 @@ public class ProcessAttackUnit extends Manager {
 
     public boolean processAttackOtherUnit(AUnit target) {
         if (unit.isTankSieged() && unit.distToMoreThan(target, 12)) {
-            unit.unsiege();
             unit.setTooltip("UnsiegeToAttack");
-            return true;
+            return TerranTank.wantsToUnsiege(unit);
         }
 
         if (
