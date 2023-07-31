@@ -20,21 +20,32 @@ public class ProduceMarines {
         }
 
         int marines = Count.marines();
+        int tanks = Count.tanks();
 
         if (marines <= 1) {
-            return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 1);
-        }
-
-        if (!A.supplyUsed(160) && A.hasMinerals(800) && !A.hasGas(120)) {
             return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 2);
         }
 
-        if (marines >= 4 && A.supplyUsed(150)) {
+        int infantry = Count.infantry();
+
+        if (tanks <= 2 && infantry >= 10 && (!A.hasMinerals(550) || !A.hasGas(100))) {
+            if (Enemy.zerg() && Count.bunkers() >= 1) return false;
+        }
+
+        if (!A.supplyUsed(160) && A.hasMinerals(800)) {
+            return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 3);
+        }
+
+        if (marines <= 10 && A.hasMinerals(600)) {
+            return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 3);
+        }
+
+        if (marines >= 8 && A.supplyUsed(170) && !A.hasMinerals(800)) {
             return false;
         }
 
         if (Enemy.zerg() && A.seconds() >= 300 && marines <= 4) {
-            return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 1);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 3);
         }
 
         if (!A.hasMinerals(200) && marines >= 4 && !A.canAffordWithReserved(50, 0)) {

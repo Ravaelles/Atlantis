@@ -23,8 +23,6 @@ public class AvoidCombatBuildings extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isTankUnsieged() && SiegeMode.isResearched()) return false;
-
         return true;
     }
 
@@ -40,6 +38,9 @@ public class AvoidCombatBuildings extends Manager {
 //            APainter.paintCircleFilled(8, Color.Green);
             return null;
         }
+
+        if (unit.isTankUnsieged() && handleForTank(combatBuilding) != null) return usedManager(this);
+        ;
 
 //        APainter.paintCircleFilled(8, Color.Red);
 //        System.err.println("@ C = " + ShouldRetreat.shouldRetreat(unit));
@@ -73,6 +74,18 @@ public class AvoidCombatBuildings extends Manager {
         else if (distTo < (criticalDist + doNothingMargin)) {
             if (thereIsNoSafetyMarginAtAll(combatBuilding)) return usedManager(avoidCombatBuildingCriticallyClose);
 //            return barelyAnySafetyLeft(combatBuilding);
+        }
+
+        return null;
+    }
+
+    private Manager handleForTank(AUnit combatBuilding) {
+        if (SiegeMode.isResearched()) return null;
+
+        if (unit.isTankUnsieged() && combatBuilding.distTo(unit) < 11) {
+            unit.setTooltip("SiegeVsBuilding");
+            unit.siege();
+            return usedManager(this);
         }
 
         return null;

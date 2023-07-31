@@ -89,7 +89,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
                 + (unit.isMedic() ? -2.5 : 0)
                 + (unit.isFirebat() ? -1.5 : 0)
                 + (unit.isRanged() ? 1 : 0)
-                + (Select.our().inRadius(1.5, unit).count() / 25.0);
+                + Math.min(4, (Select.our().combatUnits().inRadius(8, unit).count() / 6));
 
             if (We.zerg() && focusPoint.isAroundChoke()) {
                 base += (focusPoint.choke().width() <= 3) ? 3.5 : 0;

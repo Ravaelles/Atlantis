@@ -90,22 +90,12 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Natural / main choke ================
 
-//                if (Count.ourCombatUnits() >= 12) {
-//                    if (Bases.hasBaseAtNatural()) {
-                    if (Bases.hasBunkerAtNatural()) {
-                        focus = atNaturalChoke();
-                        if (focus != null) {
-                            return focus;
-                        }
+                if (Bases.hasBunkerAtNatural() || Bases.hasBaseAtNatural()) {
+                    focus = atNaturalChoke();
+                    if (focus != null) {
+                        return focus;
                     }
-
-                    else {
-                        focus = atMainChoke();
-                        if (focus != null) {
-                            return focus;
-                        }
-                    }
-//                }
+                }
 
                 // === Terran bunker ===========================================
 
@@ -117,7 +107,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                         if (mainChoke != null) {
                             point = mainChoke.center().translateTilesTowards(3, bunker);
                             tooltip = "Bunker & Choke";
-                        } else {
+                        }
+                        else {
                             point = bunker.translateTilesTowards(-3, mainBase);
                             tooltip = "Bunker";
                         }
@@ -127,6 +118,13 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                             mainBase,
                             tooltip
                         );
+                    }
+                }
+
+                else {
+                    focus = atMainChoke();
+                    if (focus != null) {
+                        return focus;
                     }
                 }
 

@@ -50,7 +50,7 @@ public class AttackNearbyEnemies extends Manager {
             () -> {
                 AttackNearbyEnemies instance = getInstance(unit);
 
-                if (!instance.canAttackNow()) return false;
+                if (!allowedToAttack.canAttackNow()) return false;
 
                 AUnit enemy = instance.defineEnemyToAttackFor();
                 if (enemy == null) return false;
@@ -62,15 +62,6 @@ public class AttackNearbyEnemies extends Manager {
 
     protected AttackNearbyEnemies getInstance(AUnit unit) {
         return new AttackNearbyEnemies(unit);
-    }
-
-    private boolean canAttackNow() {
-        return allowedToAttack.canAttackNow();
-    }
-
-    public boolean canAttackEnemiesNow() {
-
-        return allowedToAttack.canAttackEnemiesNow();
     }
 
     public String canAttackEnemiesNowString() {

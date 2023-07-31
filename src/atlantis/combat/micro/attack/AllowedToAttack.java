@@ -22,6 +22,14 @@ public class AllowedToAttack {
             return false;
         }
 
+        if (
+            unit.isMelee()
+                && unit.noCooldown()
+                && unit.enemiesNear().inRadius(2, unit).canBeAttackedBy(unit, 0).notEmpty()
+        ) {
+            return true;
+        }
+
         // === Mission =============================================
 
         Decision decision = unit.mission().permissionToAttack(unit);

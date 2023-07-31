@@ -3,6 +3,7 @@ package atlantis.combat.squad.positioning;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.game.A;
+import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -21,6 +22,8 @@ public class MakeSpaceForNearbyWorkers extends Manager {
         if (unit.isMissionAttack()) return false;
 
         if (unit.isTank() && A.seconds() % 4 <= 2) return false;
+
+        if (Chokes.nearestChoke(unit).distTo(unit) >= 7) return false;
 
         return true;
     }

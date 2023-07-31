@@ -143,7 +143,12 @@ public class TerranTankWhenNotSieged extends Manager {
     }
 
     private Manager handleSiegeBecauseSpecificEnemiesNear() {
-        Selection enemies = unit.enemiesNear().groundUnits().nonBuildings().nonWorkers();
+        Selection enemies = unit.enemiesNear().groundUnits().nonBuildings().nonWorkers().effVisible();
+
+        if (!Enemy.terran()) {
+            enemies = enemies.visibleOnMap();
+        }
+
         AUnit enemy = unit.nearestEnemy();
 
         double maxDist = enemy != null && enemy.isMoving() && unit.isOtherUnitFacingThisUnit(enemy) ? 14.5 : 11.98;
@@ -158,13 +163,13 @@ public class TerranTankWhenNotSieged extends Manager {
                 .inRadius(maxDist, unit)
                 .isNotEmpty()
         ) {
-            if (enemies.groundUnits().inRadius(5 + unit.id() % 4, unit).notEmpty()) {
+            if (enemies.inRadius(5 + unit.id() % 4, unit).notEmpty()) {
                 wantsToSiege("KeyEnemy");
                 return usedManager(this);
             }
         }
 
-        if (enemies.effVisible().inRadius(15, unit).atLeast(2)) {
+        if (enemies.inRadius(15, unit).atLeast(2)) {
             wantsToSiege("Enemies!");
             return usedManager(this);
         }

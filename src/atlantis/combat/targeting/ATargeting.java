@@ -108,7 +108,11 @@ public class ATargeting extends HasUnit {
 
         if (enemy == null) {
 //            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
-            enemy = unit.enemiesNear().realUnitsAndBuildings().canBeAttackedBy(unit, 0).nearestTo(unit);
+            enemy = unit.enemiesNear()
+                .realUnitsAndBuildings()
+                .effVisible()
+                .canBeAttackedBy(unit, 0)
+                .nearestTo(unit);
             if (enemy != null && !unit.isAir()) {
                 ErrorLog.printErrorOnce("DefineTarget fix for " + unit + ", chosen " + enemy);
             }
