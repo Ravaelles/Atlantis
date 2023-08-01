@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran.bunker;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 
 public class MoveToBunkerWhenCantLoadIntoIt extends Manager {
     public MoveToBunkerWhenCantLoadIntoIt(AUnit unit) {
@@ -11,9 +12,9 @@ public class MoveToBunkerWhenCantLoadIntoIt extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isHealthy() && unit.noCooldown()) {
-            return false;
-        }
+        if (unit.isHealthy() && unit.noCooldown()) return false;
+
+        if (Count.bunkers() == 0) return false;
 
         return unit.target() != null && unit.target().isBunker() && unit.isMarine();
     }

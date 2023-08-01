@@ -31,18 +31,30 @@ public class UnitBeingReparedManager extends Manager {
             return null;
         }
 
-        if (unit.isAir() && distanceToRepairer <= 2 && unit.isMoving()) {
-            unit.move(repairer, Actions.MOVE_REPAIR, "UnderRepair");
-            return usedManager(this);
-        }
-
         if (!unit.isWounded()) {
             RepairAssignments.removeRepairer(repairer);
             return null;
         }
 
+        if (
+            unit.isTank()
+                && distanceToRepairer <= 1
+                && unit.hp() <= 60
+        ) {
+            if (unit.enemiesNear().groundUnits().countInRadius(7, unit) > 0) {
+                return null;
+            }
+
+            if (unit.isMoving()) {
+                unit.holdPosition("UnderRepair");
+                return usedManager(this);
+            }
+
+            return null;
+        }
+
         // Air units should be repaired thoroughly
-        if (unit.isAir() && unit.isBeingRepaired()) {
+        if (unit.isAir() && (unit.isBeingRepaired() || unit.distTo(repairer) > 0.2)) {
             if (!unit.isRunning() && unit.isMoving()) {
                 unit.setTooltip("HoldTheFuckDown");
                 return usedManager(this);

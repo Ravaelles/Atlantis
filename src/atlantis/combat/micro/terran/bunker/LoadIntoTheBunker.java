@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -15,6 +16,8 @@ public class LoadIntoTheBunker extends Manager {
     @Override
     public boolean applies() {
         if (unit.isLoaded()) return false;
+
+        if (Count.bunkers() == 0) return false;
 
         // Only Terran infantry get inside
         if (!unit.isMarine() && !unit.isGhost()) {

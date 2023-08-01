@@ -1,7 +1,7 @@
 package atlantis.combat.squad.positioning.terran;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.positioning.ComeCloserToTanks;
+import atlantis.combat.squad.positioning.HugTanks;
 import atlantis.units.AUnit;
 
 public class TerranInfantryComeCloser extends Manager {
@@ -18,7 +18,7 @@ public class TerranInfantryComeCloser extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             TooFarFromMedic.class,
-            ComeCloserToTanks.class,
+            HugTanks.class,
         };
     }
 }

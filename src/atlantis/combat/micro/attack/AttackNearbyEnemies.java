@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 public class AttackNearbyEnemies extends Manager {
     public static final double MAX_DIST_TO_ATTACK = 25;
@@ -50,10 +51,16 @@ public class AttackNearbyEnemies extends Manager {
             () -> {
                 AttackNearbyEnemies instance = getInstance(unit);
 
-                if (!allowedToAttack.canAttackNow()) return false;
+                if (!allowedToAttack.canAttackNow()) {
+//                    ErrorLog.printMaxOncePerMinute("Not allowed to attack now (" + unit + ")");
+                    return false;
+                }
 
                 AUnit enemy = instance.defineEnemyToAttackFor();
-                if (enemy == null) return false;
+
+                if (enemy == null) {
+                    return false;
+                }
 
                 return processAttackUnit.processAttackOtherUnit(enemy);
             }

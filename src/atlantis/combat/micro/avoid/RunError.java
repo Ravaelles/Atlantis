@@ -4,11 +4,9 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 
-public class RunError {
-    private final Avoid avoid;
-
-    public RunError(Avoid avoid) {
-        this.avoid = avoid;
+public class RunError extends Manager {
+    public RunError(AUnit unit) {
+        super(unit);
     }
 
     protected Manager handleErrorRun(AUnit unit) {
@@ -16,8 +14,11 @@ public class RunError {
         unit.addLog("RUN-ERROR");
 
         if (unit.noCooldown()) {
-            (new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits();
-            unit.setTooltipTactical("Cant run, fight");
+            AttackNearbyEnemies attackNearbyEnemies = new AttackNearbyEnemies(unit);
+            if (attackNearbyEnemies.handleAttackNearEnemyUnits()) {
+                unit.setTooltipTactical("Cant run, fight");
+                return usedManager(attackNearbyEnemies, "RunErrorAttack");
+            }
         }
 
         return null;

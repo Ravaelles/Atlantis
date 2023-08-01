@@ -12,9 +12,9 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-//    public static final String ENEMY_RACE = "Protoss";
+    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
-    public static final String ENEMY_RACE = "Zerg";
+//    public static final String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -24,12 +24,12 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -56,7 +56,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/T_v_Sunkens.scx"; // M&M + Tank + Wraith v Sunkens
 //        if (true) return "ums/rav/M_v_1Ling.scm"; // 1 Marine v 1 Zergling
 //        if (true) return "ums/rav/Wraiths_v_Base.scx"; // Wraiths v CC & Turret & Workers
-        if (true) return "ums/rav/Wraiths_v_Base2.scm"; // Wraiths v Hatchery & Spore & Workers
+//        if (true) return "ums/rav/Wraiths_v_Base2.scm"; // Wraiths v Hatchery & Spore & Workers
 
         // vs Protoss
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots

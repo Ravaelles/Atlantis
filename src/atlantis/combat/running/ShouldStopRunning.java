@@ -14,8 +14,14 @@ public class ShouldStopRunning extends Manager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.isRunning();
+    }
+
+    @Override
     public Manager handle() {
         if (check()) {
+            unit.runningManager().stopRunning();
             return usedManager(this);
         }
 
@@ -32,11 +38,13 @@ public class ShouldStopRunning extends Manager {
 
         if (unit.avoidEnemiesManager().shouldNotAvoidAnyUnit()) {
             unit.setTooltip("JustStop");
+            unit.addLog("JustStop");
             return decisionStopRunning();
         }
 
         if (unit.isFlying() && unit.enemiesNearInRadius(8.2) == 0) {
             unit.setTooltipTactical("SafeEnough");
+            unit.addLog("SafeEnough");
             return decisionStopRunning();
         }
 
@@ -44,6 +52,7 @@ public class ShouldStopRunning extends Manager {
             unit.isAction(Actions.RUN_IN_ANY_DIRECTION)
                 && unit.lastActionLessThanAgo(20)
         ) {
+            unit.addLog("InAnyDir");
             unit.setTooltipTactical("InAnyDir");
             return false;
         }
@@ -54,11 +63,13 @@ public class ShouldStopRunning extends Manager {
                 && unit.nearestEnemyDist() >= 3.5
         ) {
             unit.setTooltipTactical("RanTooLong");
+            unit.addLog("RanTooLong");
             return decisionStopRunning();
         }
 
         if (We.terran() && unit.isHealthy() && unit.lastUnderAttackLessThanAgo(30)) {
             unit.setTooltipTactical("HealthyNow");
+            unit.addLog("HealthyNow");
             return decisionStopRunning();
         }
 
@@ -68,6 +79,7 @@ public class ShouldStopRunning extends Manager {
 //                && !AvoidEnemies.shouldNotAvoidAnyUnit()) {
                 && unit.avoidEnemiesManager().shouldNotAvoidAnyUnit()) {
             unit.setTooltip("StopDawg", false);
+            unit.addLog("StopDawg");
             return decisionStopRunning();
         }
 
@@ -81,6 +93,7 @@ public class ShouldStopRunning extends Manager {
                 && !unit.isUnderAttack(unit.isFlying() ? 250 : 5)
         ) {
             unit.setTooltip("MaybeStop");
+            unit.addLog("MaybeStop");
             return decisionStopRunning();
         }
 
@@ -88,13 +101,13 @@ public class ShouldStopRunning extends Manager {
     }
 
     private boolean decisionStopRunning() {
-        if (unit.hp() <= 20 && unit.isTerranInfantry() && !unit.isMedic()) {
-            AUnit nearestMedic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
-            if (nearestMedic != null) {
-                unit.move(nearestMedic, Actions.MOVE_HEAL, "Lazaret");
-                return true;
-            }
-        }
+//        if (unit.hp() <= 20 && unit.isTerranInfantry() && !unit.isMedic()) {
+//            AUnit nearestMedic = Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).nearestTo(unit);
+//            if (nearestMedic != null) {
+//                unit.move(nearestMedic, Actions.MOVE_HEAL, "Lazaret");
+//                return true;
+//            }
+//        }
 
         unit.runningManager().stopRunning();
         return false;

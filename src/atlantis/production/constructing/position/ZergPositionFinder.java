@@ -5,6 +5,10 @@ import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
+import atlantis.production.constructing.position.conditions.OtherConstructionTooClose;
+import atlantis.production.constructing.position.conditions.TooCloseToMineralsOrGeyser;
+import atlantis.production.constructing.position.conditions.TooCloseToMainBase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -15,7 +19,6 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * <b>nearTo</b>
      * position.<br />
      * It checks if buildings aren't too close one to another and things like that.
-     *
      */
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _CONDITION_THAT_FAILED = null;
@@ -53,6 +56,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Hi-level
+
     /**
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
@@ -74,24 +78,24 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, building, position)) {
+        if (!CanPhysicallyBuildHere.canPhysicallyBuildHere(builder, building, position)) {
 //            System.out.println(builder + " / " + ConstructionBuildPositionFinder.building + " / " + position);
             _CONDITION_THAT_FAILED = "CAN'T PHYSICALLY BUILD";
             return false;
         }
 
-        if (isTooCloseToMainBase(building, position)) {
+        if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) {
             return false;
         }
 
         // If other buildings too close
-        if (isOtherConstructionTooClose(builder, building, position)) {
+        if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) {
             _CONDITION_THAT_FAILED = "BUILDINGS TOO CLOSE";
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (isTooCloseToMineralsOrGeyser(building, position)) {
+        if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) {
             _CONDITION_THAT_FAILED = "TOO CLOSE TO MINERALS OR GEYSER";
             return false;
         }
@@ -106,8 +110,8 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
     private static boolean isCreepConditionFulfilled(AUnitType building, APosition position) {
         return Atlantis.game().hasCreep(position.toTilePosition())
-                || building.equals(AUnitType.Zerg_Hatchery)
-                || building.equals(AUnitType.Zerg_Extractor);
+            || building.equals(AUnitType.Zerg_Hatchery)
+            || building.equals(AUnitType.Zerg_Extractor);
     }
 
 }

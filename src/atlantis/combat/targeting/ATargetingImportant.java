@@ -41,10 +41,10 @@ public class ATargetingImportant extends ATargeting {
         // Target AIR UNITS IN RANGE
 
         target = enemyUnits
-                .air()
-                .excludeTypes(AUnitType.Zerg_Overlord)
-                .inShootRangeOf(unit)
-                .nearestTo(unit);
+            .air()
+            .excludeTypes(AUnitType.Zerg_Overlord)
+            .inShootRangeOf(unit)
+            .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C1a = " + target);
             return target;
@@ -54,25 +54,25 @@ public class ATargetingImportant extends ATargeting {
         // Defensive buildings IN RANGE
 
         target = Select.enemy()
-                .ofType(
-                        AUnitType.Protoss_Photon_Cannon,
-                        AUnitType.Terran_Bunker,
-                        AUnitType.Zerg_Sunken_Colony
-                )
-                .canBeAttackedBy(unit, 0)
-                .mostWounded();
+            .ofType(
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Terran_Bunker,
+                AUnitType.Zerg_Sunken_Colony
+            )
+            .canBeAttackedBy(unit, 0)
+            .mostWounded();
         if (target != null) {
             return getThisCombatBuildingOrScvRepairingIt(target);
         }
 
         target = enemyUnits
-                .ofType(
-                        AUnitType.Protoss_Photon_Cannon,
-                        AUnitType.Terran_Bunker,
-                        AUnitType.Zerg_Sunken_Colony
-                )
-                .canBeAttackedBy(unit, 5)
-                .nearestTo(unit);
+            .ofType(
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Terran_Bunker,
+                AUnitType.Zerg_Sunken_Colony
+            )
+            .canBeAttackedBy(unit, 5)
+            .nearestTo(unit);
         if (target != null) {
             return getThisCombatBuildingOrScvRepairingIt(target);
         }
@@ -106,10 +106,10 @@ public class ATargetingImportant extends ATargeting {
 
         // Ignore MEDICS
         target = enemyUnits
-                .combatUnits()
-                .excludeTypes(AUnitType.Terran_Medic)
-                .inShootRangeOf(unit)
-                .nearestTo(unit);
+            .combatUnits()
+            .excludeTypes(AUnitType.Terran_Medic)
+            .inShootRangeOf(unit)
+            .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C1b = " + target);
             return target;
@@ -117,9 +117,9 @@ public class ATargetingImportant extends ATargeting {
 
         // Take into account excluded units above e.g. MEDICS
         target = enemyUnits
-                .ofType(AUnitType.Terran_Medic)
-                .inShootRangeOf(unit)
-                .nearestTo(unit);
+            .ofType(AUnitType.Terran_Medic)
+            .inShootRangeOf(unit)
+            .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C1c = " + target);
             return target;
@@ -136,7 +136,7 @@ public class ATargetingImportant extends ATargeting {
 
         // Target repairers
         AUnit repairer = Select.enemy().workers().notGathering().inRadius(2, target)
-                .canBeAttackedBy(target, 1.7).nearestTo(target);
+            .canBeAttackedBy(target, 1.7).nearestTo(target);
         if (repairer != null) {
             if (ATargeting.DEBUG) System.out.println("C0a = " + repairer);
             return repairer;
@@ -153,11 +153,11 @@ public class ATargetingImportant extends ATargeting {
         // Target COMBAT UNITS IN RANGE
 
         target = enemyUnits
-                .combatUnits()
-                .excludeMedics()
+            .combatUnits()
+            .excludeMedics()
 //                .inShootRangeOf(unit)
-                .inRadius(7, unit)
-                .nearestTo(unit);
+            .inRadius(7, unit)
+            .nearestTo(unit);
         if (target != null) {
             if (ATargeting.DEBUG) System.out.println("C4 = " + target);
             return target;
@@ -167,17 +167,17 @@ public class ATargetingImportant extends ATargeting {
         // Including unfinished defensive buildings
 
         target = Select.enemy()
-                .ofType(
-                        AUnitType.Protoss_Photon_Cannon,
-                        AUnitType.Zerg_Sunken_Colony,
+            .ofType(
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Zerg_Sunken_Colony,
 //                        AUnitType.Zerg_Creep_Colony,
-                        AUnitType.Zerg_Spore_Colony,
-                        AUnitType.Terran_Bunker,
-                        AUnitType.Terran_Missile_Turret
-                )
-                .inRadius(14, unit)
-                .canBeAttackedBy(unit, 0)
-                .mostWounded();
+                AUnitType.Zerg_Spore_Colony,
+                AUnitType.Terran_Bunker,
+                AUnitType.Terran_Missile_Turret
+            )
+            .inRadius(14, unit)
+            .canBeAttackedBy(unit, 0)
+            .mostWounded();
 
         if (target != null && ATargeting.DEBUG) System.out.println("C5 = " + target);
 
@@ -212,10 +212,10 @@ public class ATargetingImportant extends ATargeting {
             .ofType(
                 AUnitType.Protoss_Fleet_Beacon,
                 AUnitType.Protoss_Templar_Archives,
-                AUnitType.Terran_Armory,
+//                AUnitType.Terran_Armory,
 //                AUnitType.Terran_Engineering_Bay,
 //                AUnitType.Terran_Academy,
-                AUnitType.Zerg_Spawning_Pool,
+//                AUnitType.Zerg_Spawning_Pool,
                 AUnitType.Zerg_Spire,
                 AUnitType.Zerg_Greater_Spire
             )

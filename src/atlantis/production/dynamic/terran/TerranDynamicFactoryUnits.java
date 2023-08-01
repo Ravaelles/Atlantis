@@ -87,13 +87,15 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
     }
 
     private static boolean vultures() {
-        if (true) return false;
+        return false;
 
-        if (!Decisions.produceVultures()) {
-            return false;
-        }
-
-        return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Vulture);
+//        if (true) return false;
+//
+//        if (!Decisions.produceVultures()) {
+//            return false;
+//        }
+//
+//        return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Vulture);
     }
 
     private static boolean goliaths(AUnit factory) {

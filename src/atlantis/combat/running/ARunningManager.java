@@ -55,6 +55,7 @@ public class ARunningManager {
         handleInvalidRunFromPosition(runFrom);
 
 //        if (handleOnlyCombatBuildingsAreDangerouslyClose()) return true;
+
         if (handleContinueRunning()) return true;
 
         // === Define run to position ==============================
@@ -89,7 +90,7 @@ public class ARunningManager {
 
             if (
                 unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
-                || unit.lastActionLessThanAgo(8, Actions.RUN_IN_ANY_DIRECTION)
+                    || unit.lastActionLessThanAgo(8, Actions.RUN_IN_ANY_DIRECTION)
             ) {
 //                System.err.println("@ " + A.now() + " - " + unit);
                 return true;

@@ -31,7 +31,7 @@ import atlantis.map.scout.ScoutManager;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.position.TerranPositionFinder;
+import atlantis.production.constructing.position.PositionFulfillsAllConditions;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionQueue;
@@ -767,7 +767,7 @@ public class AAdvancedPainter extends APainter {
 
         // Draw text
         paintTextCentered(
-            positionToBuild.translateByPixels(buildingType.dimensionLeft(), 69), text, color
+            positionToBuild.translateByPixels(buildingType.dimensionLeftPx(), 69), text, color
         );
     }
 
@@ -782,7 +782,7 @@ public class AAdvancedPainter extends APainter {
 
             APosition unitPosition = unit.position();
             APosition targetPosition = unit.targetPosition();
-            int unitRadius = unit.type().dimensionLeft();
+            int unitRadius = unit.type().dimensionLeftPx();
 
             // STARTING ATTACK
 //            if (unit.isStartingAttack()) {
@@ -1198,13 +1198,13 @@ public class AAdvancedPainter extends APainter {
             APosition topLeft;
             AUnitType type = foggedEnemy.type();
             topLeft = foggedEnemy.translateByPixels(
-                -type.dimensionLeft(),
-                -type.dimensionUp()
+                -type.dimensionLeftPx(),
+                -type.dimensionUpPx()
             );
             paintRectangle(
                 foggedEnemy.position(),
-                type.dimensionRight() / 32,
-                type.dimensionDown() / 32,
+                type.dimensionRightPx() / 32,
+                type.dimensionDownPx() / 32,
                 Color.Grey
             );
             paintText(topLeft, type.name() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);
@@ -1223,7 +1223,7 @@ public class AAdvancedPainter extends APainter {
         for (int x = tileX - 10; x <= tileX + 10; x++) {
             for (int y = tileY - 10; y <= tileY + 10; y++) {
                 APosition position = APosition.create(x, y);
-                boolean canBuild = TerranPositionFinder.doesPositionFulfillAllConditions(
+                boolean canBuild = PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
                     worker, AUnitType.Terran_Supply_Depot, position
                 );
 

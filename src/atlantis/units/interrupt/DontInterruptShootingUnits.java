@@ -12,13 +12,19 @@ public class DontInterruptShootingUnits extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+        
+        if (!unit.isAttacking()) return false;
+
+        if (!unit.isRanged()) return false;
+
         if (unit.isWraith()) {
             if (unit.hp() < 110 || unit.enemiesNear().buildings().canAttack(unit, 10).notEmpty()) {
                 return false;
             }
         }
 
-        return unit.isRanged();
+        return true;
     }
 
     @Override

@@ -13,7 +13,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
 public class TerranTankWhenNotSieged extends Manager {
-    public static final double COMBAT_BUILDING_DIST_SIEGE = 10.8;
+    public static final double COMBAT_BUILDING_DIST_SIEGE = 11.9;
 
     public TerranTankWhenNotSieged(AUnit unit) {
         super(unit);
@@ -221,7 +221,7 @@ public class TerranTankWhenNotSieged extends Manager {
                     unit.distToLessThan(combatBuilding, COMBAT_BUILDING_DIST_SIEGE)
                         && TankDecisions.canSiegeHere(unit, false)
                 )
-                    || unit.distToLessThan(combatBuilding, 8.6)
+                    || unit.distToLessThan(combatBuilding, 10.6)
             ) {
                 return forceSiege("SiegeBuilding" + A.dist(unit, combatBuilding));
             }

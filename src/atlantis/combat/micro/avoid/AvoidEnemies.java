@@ -59,17 +59,18 @@ public class AvoidEnemies extends Manager {
 //            return null;
 //        }
 
-        if (
-            onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)
-                || unit.isAir()
-                || unit.hp() <= 40
-                || unit.combatEvalRelative() < 3.0
-        ) {
-            if (avoidCombatBuildings.handle() != null) {
-                unit.addLog("KeepAway");
-                return usedManager(this);
-            }
-        }
+        // @Check commented out, this should be handled by a manager
+//        if (
+//            onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)
+//                || unit.isAir()
+//                || unit.hp() <= 40
+//                || unit.combatEvalRelative() < 3.0
+//        ) {
+//            if (avoidCombatBuildings.handle() != null) {
+//                unit.addLog("KeepAway");
+//                return usedManager(this);
+//            }
+//        }
 
 //        APainter.paintLine(unit.targetPosition(), Color.Grey);
 //        for (AUnit enemy : enemiesDangerouslyClose.list()) {

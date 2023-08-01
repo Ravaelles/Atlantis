@@ -18,11 +18,18 @@ public abstract class MoveToFocusPoint extends MissionManager {
     public MoveToFocusPoint(AUnit unit) {
         super(unit);
 
-        fromSide = focusPoint.fromSide();
-        optimalDist = optimalDist();
-        unitToFocus = unit.distTo(focusPoint);
-        unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
-        focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
+        if (focusPoint != null) {
+            fromSide = focusPoint.fromSide();
+            optimalDist = optimalDist();
+            unitToFocus = unit.distTo(focusPoint);
+            unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
+            focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
+        }
+    }
+
+    @Override
+    public boolean applies() {
+        return focusPoint != null;
     }
 
     // =========================================================

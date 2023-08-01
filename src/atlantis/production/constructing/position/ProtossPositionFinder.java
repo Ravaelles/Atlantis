@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.position.conditions.*;
 import atlantis.production.constructing.position.protoss.PylonPosition;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
@@ -21,10 +22,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      * <b>nearTo</b>
      * position.<br />
      * It checks if buildings aren't too close one to another and things like that.
-     *
      */
-    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance)
-    {
+    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _CONDITION_THAT_FAILED = null;
         int initSearchRadius = 0;
 
@@ -97,33 +96,33 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         // =========================================================
 
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!canPhysicallyBuildHere(builder, building, position)) {
+        if (!CanPhysicallyBuildHere.canPhysicallyBuildHere(builder, building, position)) {
             _CONDITION_THAT_FAILED = "Can't physically build here";
             return false;
         }
 
         // Leave entire horizontal (same tileX) and vertical (same tileY) corridors free for units to pass
         // So disallow building in e.g. 1, 5, 9, 13, 16 horizontally and 3, 7, 11, 15, 19 vertically
-        if (isForbiddenByStreetGrid(builder, building, position)) {
+        if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) {
             return false;
         }
 
         // If other buildings too close
-        if (isOtherConstructionTooClose(builder, building, position)) {
+        if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) {
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (isTooCloseToMineralsOrGeyser(building, position)) {
+        if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) {
             return false;
         }
 
-        if (isOverlappingBaseLocation(building, position)) {
+        if (OverlappingBaseLocation.isOverlappingBaseLocation(building, position)) {
             return false;
         }
 
         // Overlapping a choke point can make it impossible to pass
-        if (isTooCloseToChoke(building, position)) {
+        if (TooCloseToChoke.isTooCloseToChoke(building, position)) {
             return false;
         }
 
@@ -132,7 +131,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             return false;
         }
 
-        if (isTooCloseToRegionBoundaries(position)) {
+        if (TooCloseToRegionBoundaries.isTooCloseToRegionBoundaries(position)) {
             return false;
         }
 
@@ -165,7 +164,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         }
         else if (AGame.supplyUsed() < 140) {
             pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(2, position).count();
-        } else {
+        }
+        else {
             pylonsNear = -1;
         }
 
@@ -175,8 +175,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
     private static boolean isPowerConditionFulfilled(AUnitType building, APosition position) {
         return Atlantis.game().hasPower(position.toTilePosition())
-                || building.isPylon()
-                || building.equals(AUnitType.Protoss_Nexus);
+            || building.isPylon()
+            || building.equals(AUnitType.Protoss_Nexus);
     }
 
 }

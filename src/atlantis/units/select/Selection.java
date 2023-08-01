@@ -114,6 +114,20 @@ public class Selection extends BaseSelection {
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */
+    public int countInRadius(double maxDist, HasPosition unitOrPosition) {
+        return Select.cacheInt.get(
+            addToCachePath("countInRadius:" + maxDist + ":" + unitOrPosition),
+            0,
+            () -> cloneByRemovingIf(
+                (u -> u.distTo(unitOrPosition) > maxDist),
+                maxDist + ":" + unitOrPosition
+            ).count()
+        );
+    }
+
+    /**
+     * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
+     */
     public Selection maxGroundDist(double maxDist, AUnit unit) {
         if (unit.isAir()) {
             return this;

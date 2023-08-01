@@ -2,6 +2,7 @@ package atlantis.combat;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.managers.*;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.SpecialUnitsManager;
 
@@ -24,6 +25,7 @@ public class CombatUnitManager extends Manager {
 //            ImproveCombatManagerPerformance.class,
             CombatManagerMediumPriority.class,
             CombatManagerLowPriority.class,
+            AttackNearbyEnemies.class,
         };
     }
 

@@ -2,8 +2,10 @@ package atlantis.combat.squad;
 
 import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.mission.SquadMissionChanger;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import bwapi.Color;
 
 /**
  * Commands all existing battle squads.
@@ -27,6 +29,12 @@ public class ASquadManager {
         // Act with every combat unit
         for (AUnit unit : squad.units().list()) {
             (new CombatUnitManager(unit)).handle();
+
+//            AAdvancedPainter.paintTextCentered(
+//                unit.position().translateByTiles(0, 0.6),
+//                A.now() + "-" + unit.manager().toString(),
+//                Color.Teal
+//            );
         }
     }
 }

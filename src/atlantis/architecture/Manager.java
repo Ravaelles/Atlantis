@@ -4,7 +4,7 @@ import atlantis.units.AUnit;
 
 /**
  * Unit manager. Can contain submanagers (see managers() method).
- *
+ * <p>
  * If a manager return non-null value in handle(), it will prevent execution of
  * other managers in this frame.
  */
@@ -19,13 +19,13 @@ public abstract class Manager extends BaseAbstractManager {
      * All sub-managers. Order matters.
      */
     protected Class<? extends Manager>[] managers() {
-        return new Class[] {};
+        return new Class[]{};
     }
 
     /**
      * @return True if given manager can be applied to <b>unit</b>. False otherwise. Allows to quickly exit
      * if e.g. given manager is for Protoss and we play as Terran.<br>
-     *
+     * <p>
      * Notice: there may be multiple other factors why given manager won't be used, think of this as of "authorize"
      * method, where it doesn't make sense at all to trigger this manager e.g.
      * - manager for Vulture behavior and current unit is Marine - in that case we want to return false here
@@ -51,9 +51,9 @@ public abstract class Manager extends BaseAbstractManager {
     // =========================================================
 
     public Manager handleSubmanagers() {
-        for (Manager manager : managerObjects){
-            if (manager.applies() && manager.handle() != null) {
-                return manager;
+        for (Manager submanager : submanagerObjects) {
+            if (submanager.applies() && submanager.handle() != null) {
+                return submanager;
             }
         }
 
@@ -81,7 +81,8 @@ public abstract class Manager extends BaseAbstractManager {
     public Manager usedManager(Manager manager, String message) {
         if (message != null && !message.isEmpty()) {
             unit.setManagerUsed(manager, message);
-        } else {
+        }
+        else {
             unit.setManagerUsed(manager);
         }
         return manager;

@@ -869,19 +869,31 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
-    public int dimensionLeft() {
+    /**
+     * In pixels (1 tile = 32px)
+     */
+    public int dimensionLeftPx() {
         return ut.dimensionLeft();
     }
 
-    public int dimensionRight() {
+    /**
+     * In pixels (1 tile = 32px)
+     */
+    public int dimensionRightPx() {
         return ut.dimensionRight();
     }
 
-    public int dimensionUp() {
+    /**
+     * In pixels (1 tile = 32px)
+     */
+    public int dimensionUpPx() {
         return ut.dimensionUp();
     }
 
-    public int dimensionDown() {
+    /**
+     * In pixels (1 tile = 32px)
+     */
+    public int dimensionDownPx() {
         return ut.dimensionDown();
     }
 

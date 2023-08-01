@@ -19,7 +19,7 @@ public class SquadCohesionManager extends Manager {
 
     @Override
     protected Class<? extends Manager>[] managers() {
-        return new Class[] {
+        return new Class[]{
             TooClustered.class,
             ComeCloser.class,
             TooLowSquadCohesion.class,

@@ -12,10 +12,11 @@ import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class Avoid extends Manager {
-    private final RunError runError = new RunError(this);
+    private final RunError runError;
 
     public Avoid(AUnit unit) {
         super(unit);
+        runError = new RunError(unit);
     }
 
     @Override

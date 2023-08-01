@@ -3,7 +3,6 @@ package atlantis.combat.micro.attack;
 import atlantis.decions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -19,6 +18,10 @@ public class AllowedToAttack {
 
     protected boolean canAttackNow() {
         if (!allowedToAttack()) {
+            return false;
+        }
+
+        if ((new AsTerranForbiddenToAttack(unit)).asTerranForbiddenToAttack()) {
             return false;
         }
 
@@ -43,7 +46,10 @@ public class AllowedToAttack {
             return true;
         }
 
-        if (unit.lastActionLessThanAgo(70, Actions.RUN_RETREAT)) {
+        if (
+            unit.lastActionLessThanAgo(70, Actions.RUN_RETREAT)
+                && (unit.isMelee() || unit.hasCooldown() || unit.hp() <= 20)
+        ) {
             return false;
         }
 
@@ -95,14 +101,14 @@ public class AllowedToAttack {
             return false;
         }
 
-        if (unit.isTerranInfantry() && Count.medics() >= 2) {
-            if (!unit.medicInHealRange() && (unit.isWounded() || unit.combatEvalRelative() < 1.5)) {
-//                if (unit.cooldownRemaining() >= 2) {
-                AttackNearbyEnemies.reasonNotToAttack = "NoMedics";
-                return false;
-//                }
-            }
-        }
+//        if (unit.isTerranInfantry() && Count.medics() >= 2) {
+//            if (!unit.medicInHealRange() && (unit.hp() <= 17 || unit.combatEvalRelative() < 1.5)) {
+////                if (unit.cooldownRemaining() >= 2) {
+//                AttackNearbyEnemies.reasonNotToAttack = "NoMedics";
+//                return false;
+////                }
+//            }
+//        }
 
         // @Problematic - Vultures dont attack from far
 //        if (Count.ourCombatUnits() >= 5 && unit.outsideSquadRadius()) {

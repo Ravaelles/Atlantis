@@ -1,5 +1,6 @@
 package atlantis.combat.squad;
 
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -35,59 +36,71 @@ public class SquadCenter {
         AUnit leader = cache.get(
             "leader",
             ttl,
-            this::defineleader
+            this::defineLeader
         );
 
         if (leader != null && leader.isAlive() && !leader.isRunning()) {
             return leader;
         }
 
-        leader = this.defineleader();
+        leader = this.defineLeader();
         cache.set("leader", ttl, leader);
         return leader;
     }
 
-    protected AUnit defineleader() {
+    protected AUnit defineLeader() {
         if (squad.isEmpty()) {
             return null;
         }
 
-        ArrayList<Integer> xCoords = new ArrayList<>();
-        ArrayList<Integer> yCoords = new ArrayList<>();
+        Selection units = Alpha.get().units();
+        AUnit building = Select.ourBuildings().first();
 
-        for (AUnit unit : squad.list()) {
-            xCoords.add(unit.x());
-            yCoords.add(unit.y());
+        if (units.tanks().atLeast(2)) {
+            return units.tanks().mostDistantTo(building);
         }
 
-        Collections.sort(xCoords);
-        Collections.sort(yCoords);
-
-        APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
-        Selection potentials = Select.ourCombatUnits()
-            .nonBuildings()
+        return units
             .groundUnits()
-            .excludeMedics();
+            .excludeMedics()
+            .mostDistantTo(building);
 
-        AUnit nearestToMedian = potentials
-            .havingAtLeastHp(25)
-            .nearestTo(median);
-
-        if (nearestToMedian == null) {
-            nearestToMedian = potentials.nearestTo(median);
-        }
-
-        if (nearestToMedian != null && We.terran()) {
-            if (Count.tanks() >= 2) {
-                return Select.ourTanks().nearestTo(nearestToMedian);
-            }
-
-            if (Count.medics() >= 2) {
-                return Select.ourOfType(AUnitType.Terran_Medic).nearestTo(nearestToMedian);
-            }
-        }
-
-        return nearestToMedian;
+//        ArrayList<Integer> xCoords = new ArrayList<>();
+//        ArrayList<Integer> yCoords = new ArrayList<>();
+//
+//        for (AUnit unit : squad.list()) {
+//            xCoords.add(unit.x());
+//            yCoords.add(unit.y());
+//        }
+//
+//        Collections.sort(xCoords);
+//        Collections.sort(yCoords);
+//
+//        APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
+//        Selection potentials = Alpha.get()
+//            .units()
+//            .groundUnits()
+//            .excludeMedics();
+//
+//        AUnit nearestToMedian = potentials
+//            .havingAtLeastHp(25)
+//            .nearestTo(median);
+//
+//        if (nearestToMedian == null) {
+//            nearestToMedian = potentials.nearestTo(median);
+//        }
+//
+//        if (nearestToMedian != null && We.terran()) {
+//            if (Count.tanks() >= 2) {
+//                return Select.ourTanks().nearestTo(nearestToMedian);
+//            }
+//
+//            if (Count.medics() >= 2) {
+//                return Select.ourOfType(AUnitType.Terran_Medic).nearestTo(nearestToMedian);
+//            }
+//        }
+//
+//        return nearestToMedian;
     }
 
 }

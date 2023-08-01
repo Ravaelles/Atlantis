@@ -8,7 +8,7 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.APositionFinder;
-import atlantis.production.constructing.position.AbstractPositionFinder;
+import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -114,14 +114,14 @@ public class BuilderManager extends Manager {
             return moveToConstruct(construction, buildingType, distance, distString);
         }
         else {
-            refreshConstructionPositionIfNeeded(construction, buildingType);
+//            refreshConstructionPositionIfNeeded(construction, buildingType);
 
             return issueBuildOrder(buildingType, construction);
         }
     }
 
     private static void refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
-        if (AbstractPositionFinder.canPhysicallyBuildHere(
+        if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
             construction.builder(), buildingType, construction.buildPosition())
         ) {
             APosition positionForNewBuilding = construction.findPositionForNewBuilding();
@@ -234,27 +234,27 @@ public class BuilderManager extends Manager {
 
         if (
             building.isGasBuilding()
-                && !AbstractPositionFinder.canPhysicallyBuildHere(unit, building, position)
+                && !CanPhysicallyBuildHere.canPhysicallyBuildHere(unit, building, position)
         ) {
-            if (AbstractPositionFinder.canPhysicallyBuildHere(
+            if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
                 unit, building, position.translateByTiles(-1, 0))
             ) {
 //                System.out.println("Applied [-1,0] " + building + " position FIX");
                 return position.translateByTiles(-1, 0);
             }
-            if (AbstractPositionFinder.canPhysicallyBuildHere(
+            if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
                 unit, building, position.translateByTiles(1, 0))
             ) {
 //                System.out.println("Applied [1,0] " + building + " position FIX");
                 return position.translateByTiles(1, 0);
             }
-            if (AbstractPositionFinder.canPhysicallyBuildHere(
+            if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
                 unit, building, position.translateByTiles(-2, -1))
             ) {
 //                System.out.println("Applied [-2,-1] " + building + " position FIX");
                 return position.translateByTiles(-2, -1);
             }
-            if (AbstractPositionFinder.canPhysicallyBuildHere(
+            if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
                 unit, building, position.translateByTiles(2, 1))
             ) {
 //                System.out.println("Applied [2,1] " + building + " position FIX");
