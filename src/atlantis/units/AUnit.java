@@ -597,9 +597,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this;
     }
 
+    public AUnit setTooltipAndLog(String tooltip) {
+        setTooltip(tooltip);
+        addLog(tooltip);
+        return this;
+    }
+
     public AUnit setTooltip(String tooltip) {
         this.tooltip = tooltip;
-//        System.out.println(A.now() + " - " + this.tooltip);
         return this;
     }
 
@@ -2400,6 +2405,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             "isHydralisk",
             -1,
             () -> is(AUnitType.Zerg_Hydralisk)
+        );
+    }
+
+    public boolean isCommandCenter() {
+        return cacheBoolean.get(
+            "isCommandCenter",
+            -1,
+            () -> is(AUnitType.Terran_Command_Center)
         );
     }
 

@@ -58,6 +58,11 @@ public class ABaseLocation implements HasPosition {
         return position.getY();
     }
 
+    @Override
+    public String toString() {
+        return "BaseLocation at " + position + " (start_loc:" + isStartLocation() + ")";
+    }
+
     // =========================================================
 
 //    public boolean isIsland() {

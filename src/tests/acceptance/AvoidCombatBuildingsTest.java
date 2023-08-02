@@ -9,8 +9,7 @@ import tests.unit.FakeUnit;
 
 import static org.junit.Assert.assertTrue;
 
-public class CombatBuildingsTest extends AbstractTestFakingGame {
-
+public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
     private FakeUnit sunken;
 
     /**
@@ -32,13 +31,13 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
 
             if (!isSafe || alwaysShow) {
                 System.out.println(A.now() + " -       " + unit.tooltip()
-                        + "\n   " + unit.lastCommand()
-                        + ",\n   tx:" + unit.tx()
-                        + ",\n   dist_to_sunken:" + A.dist(distToSunken)
-                        + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
-                        + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
-                        + "\n   marine eval = " + unit.combatEvalRelative()
-                        + "\n   sunken eval = " + sunken.combatEvalRelative()
+                    + "\n   " + unit.lastCommand()
+                    + ",\n   tx:" + unit.tx()
+                    + ",\n   dist_to_sunken:" + A.dist(distToSunken)
+                    + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
+                    + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
+                    + "\n   marine eval = " + unit.combatEvalRelative()
+                    + "\n   sunken eval = " + sunken.combatEvalRelative()
                 );
                 System.out.println("_______________________________________");
             }
@@ -51,7 +50,7 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Marine, 10)
+            fake(AUnitType.Terran_Marine, 10)
 //                fake(AUnitType.Terran_Marine, 11),
 //                fake(AUnitType.Terran_Marine, 11),
 //                fake(AUnitType.Terran_Marine, 11),
@@ -65,8 +64,8 @@ public class CombatBuildingsTest extends AbstractTestFakingGame {
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 19;
         return fakeEnemies(
-                sunken = fake(AUnitType.Zerg_Sunken_Colony, enemyTy),
-                fake(AUnitType.Zerg_Sunken_Colony, enemyTy + 10)
+            sunken = fake(AUnitType.Zerg_Sunken_Colony, enemyTy),
+            fake(AUnitType.Zerg_Sunken_Colony, enemyTy + 10)
         );
     }
 

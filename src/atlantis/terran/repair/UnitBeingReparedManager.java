@@ -11,7 +11,7 @@ public class UnitBeingReparedManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isMechanical() && unit.isWounded() && unit.isTerran() && unit.repairer() != null;
+        return unit.isMechanical() && unit.isWounded() && unit.isTerran() && unit.repairer() != null && unit.enemiesNear().groundUnits().inRadius(7, unit).isEmpty();
     }
 
     public Manager handle() {

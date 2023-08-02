@@ -117,13 +117,17 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
         // Rebasing
 
-        else if (MapAndRace.isMap("rav/T_rebasing")) {
-            CameraCommander.centerCameraOn(Select.ourBases().first());
+        else if (MapAndRace.isMap("T_rebasing")) {
+            if (A.now() <= 3) {
+                CameraCommander.centerCameraOn(Select.ourBases().first());
+                GameSpeed.changeSpeedTo(0);
+                GameSpeed.changeFrameSkipTo(0);
+            }
         }
     }
 
     public static boolean shouldTreatAsNormalMap() {
-        String[] umsMapsTreatedAsNormal = new String[] {
+        String[] umsMapsTreatedAsNormal = new String[]{
             "ums/vsGosuComputer.scx",
             "ums/rav/vsGosuRav.scx"
         };

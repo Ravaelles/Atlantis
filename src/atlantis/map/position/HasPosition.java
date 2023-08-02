@@ -129,8 +129,8 @@ public interface HasPosition {
     }
 
     default APosition makeLandableFor(AUnit building) {
-        int maxRadius = 1;
         int currentRadius = 0;
+        int maxRadius = 8;
         while (currentRadius <= maxRadius) {
             for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
                 for (int dty = -currentRadius; dty <= currentRadius; dty++) {
@@ -271,6 +271,10 @@ public interface HasPosition {
      */
     default int tx() {
         return x() / 32;
+    }
+
+    default double txWithPrecision() {
+        return x() / 32.0;
     }
 
     /**

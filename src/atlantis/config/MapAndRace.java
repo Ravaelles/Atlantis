@@ -29,7 +29,7 @@ public class MapAndRace {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -75,7 +75,7 @@ public class MapAndRace {
 //@        if (true) return "ums/rav/M&M_v_M&M_2.scx"; // Standing in lines, shooting at another
 //@        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
 //@        if (true) return "ums/rav/M&M_v_T.scx"; // Terran bio engaging with units that keep on adding
-//@        if (true) return "ums/rav/T_rebasing.scm";
+        if (true) return "ums/rav/T_rebasing.scm"; // CC that mines out, tests proper rebasing process
 //@        if (true) return "ums/rav/Tanks_v_DT.scx";
 //@        if (true) return "ums/rav/Tanks_v_DT_2.scx";
 //        if (true) return "ums/rav/Tanks_v_Lurkers.scx"; // Tanks & Marines vs Lurkers
