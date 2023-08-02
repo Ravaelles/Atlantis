@@ -14,7 +14,7 @@ public class PreventMaginotLine extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) {
+        if (unit.lastActionLessThanAgo(30 * 3, Actions.LOAD)) {
             return false;
         }
 
@@ -25,7 +25,7 @@ public class PreventMaginotLine extends Manager {
             return false;
         }
 
-        if (unit.enemiesNear().inRadius(3.5, unit).notEmpty()) {
+        if (unit.enemiesNear().inRadius(2.4 + unit.id() % 3, unit).notEmpty()) {
             return false;
         }
 
@@ -36,12 +36,12 @@ public class PreventMaginotLine extends Manager {
             }
         }
 
-        if (unit.isMissionDefend()) {
-            AUnit main = Select.main();
-            if (main != null && Select.enemyCombatUnits().inRadius(4, main).notEmpty()) {
-                return true;
-            }
-        }
+//        if (unit.isMissionDefend()) {
+//            AUnit main = Select.main();
+//            if (main != null && Select.enemyCombatUnits().inRadius(4, main).notEmpty()) {
+//                return true;
+//            }
+//        }
 
         return true;
     }

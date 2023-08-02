@@ -38,6 +38,10 @@ public class TerranTankWhenNotSieged extends Manager {
 
     @Override
     public Manager handle() {
+        if (new AvoidCloseEnemiesAsTank(unit).handle() != null) {
+            return usedManager(this);
+        }
+
         if ((new SiegeHereDuringMissionDefend(unit)).handle() != null) {
             return usedManager(this);
         }

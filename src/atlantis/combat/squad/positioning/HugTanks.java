@@ -1,7 +1,6 @@
 package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -30,8 +29,9 @@ public class HugTanks extends Manager {
         }
 
         // Too far from nearest tank
-        if (squad.units().tanks().count() >= 1) {
-            if (goToNearestTank()) {
+        AUnit nearestTank = Select.ourTanks().nearestTo(unit);
+        if (nearestTank != null && unit.distTo(nearestTank) > 4.5) {
+            if (goToNearestTank(nearestTank)) {
                 return usedManager(this);
             }
         }
@@ -39,21 +39,15 @@ public class HugTanks extends Manager {
         return null;
     }
 
-    private boolean goToNearestTank() {
-        AUnit tank = Select.ourTanks().nearestTo(unit);
-//        if (tank != null && !tankIsOvercrowded(tank)) {
-        if (tank != null) {
-//            APosition goTo = unit.translateTilesTowards(1.5, tank)
-//                .makeFreeOfAnyGroundUnits(1.5, 0.25, unit);
-            HasPosition goTo = tank;
-
-            if (goTo != null && unit.move(goTo, Actions.MOVE_FORMATION, "HugTanks", false)) {
-                unit.addLog("HugTanks");
-                return true;
-            }
+    private boolean goToNearestTank(AUnit tank) {
+        if (tank == null) {
+            return false;
         }
 
-        return false;
+        HasPosition goTo = tank;
+        unit.move(goTo, Actions.MOVE_FORMATION, "HugTanks", false);
+        unit.addLog("HugTanks");
+        return true;
     }
 
     protected boolean unitIsOvercrowded() {

@@ -95,10 +95,6 @@ public class AttackNearbyEnemies extends Manager {
             () -> {
                 reasonNotToAttack = null;
 
-//                if (!allowedToAttack()) {
-//                    return null;
-//                }
-
                 AUnit enemy = bestTargetToAttack();
 //                System.out.println("enemy = " + enemy);
 
@@ -118,19 +114,4 @@ public class AttackNearbyEnemies extends Manager {
     protected AUnit bestTargetToAttack() {
         return ATargeting.defineBestEnemyToAttackFor(unit, MAX_DIST_TO_ATTACK);
     }
-
-//    public  boolean shouldNotAttack() {
-////        if (AAvoidUnits.shouldAvoidAnyUnit()) {
-////            return false;
-////        }
-//
-//        return unit.isUnitUnableToDoAnyDamage()
-//
-//                // =========================================================
-//                // =========================================================
-//                // THESE SHOULDNT BE USED! RESPECT DECISIONS OF TOP SUPERIOR MANAGER!!!
-////                || unit.lastActionLessThanAgo(4, UnitActions.ATTACK_UNIT)
-////                || (unit.isTankUnsieged() && (!unit.isMoving() && unit.woundPercent() > 15));
-//        ;
-//    }
 }

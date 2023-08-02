@@ -21,10 +21,6 @@ public class AllowedToAttack {
             return false;
         }
 
-        if ((new AsTerranForbiddenToAttack(unit)).asTerranForbiddenToAttack()) {
-            return false;
-        }
-
         if (
             unit.isMelee()
                 && unit.noCooldown()

@@ -17,9 +17,8 @@ public class MapSpecificCommander extends Commander {
 
     @Override
     public void handle() {
-        if (Env.isParamTweaker() || !Env.isLocal()) {
-            return;
-        }
+        if (Env.isParamTweaker() || !Env.isLocal()) return;
+        if (!A.isUms()) return;
 
         // =========================================================
         // Marines & Medics v. Zealots
@@ -121,6 +120,14 @@ public class MapSpecificCommander extends Commander {
             if (A.now() <= 3) {
                 CameraCommander.centerCameraOn(Select.ourBases().first());
                 GameSpeed.changeSpeedTo(0);
+                GameSpeed.changeFrameSkipTo(0);
+            }
+        }
+
+        else if (MapAndRace.isMap("TBall_v_HydraLings")) {
+            if (A.now() <= 3) {
+                CameraCommander.centerCameraOn(Select.ourBases().first());
+                GameSpeed.changeSpeedTo(1);
                 GameSpeed.changeFrameSkipTo(0);
             }
         }

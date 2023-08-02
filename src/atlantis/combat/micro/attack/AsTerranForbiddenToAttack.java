@@ -11,7 +11,7 @@ public class AsTerranForbiddenToAttack extends HasUnit {
         super(unit);
     }
 
-    boolean asTerranForbiddenToAttack() {
+    public boolean asTerranForbiddenToAttack() {
         if (unit.isMissionDefend()) return false;
 
         if (unit.isAir()) return false;
@@ -30,6 +30,7 @@ public class AsTerranForbiddenToAttack extends HasUnit {
         if (enemiesNear.inRadius(unit.groundWeaponRange(), unit).notEmpty() && unit.noCooldown()) {
             return false;
         }
+        
         if (nearestTank.distTo(enemiesNear.nearestTo(nearestTank)) <= 12) return false;
 
         return true;

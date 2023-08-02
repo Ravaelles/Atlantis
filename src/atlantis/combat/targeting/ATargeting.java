@@ -305,6 +305,10 @@ public class ATargeting extends HasUnit {
             .effVisibleOrFoggedWithKnownPosition()
             .canBeAttackedBy(unit, maxDistFromEnemy);
 
+        if (unit.isMissionDefend()) {
+            enemyUnits = enemyUnits.visibleOnMap();
+        }
+
 //        Select.enemyRealUnits().print();
 //        enemyBuildings.print();
 //        enemyUnits.print();
