@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -53,6 +54,8 @@ public class LoadIntoTheBunker extends Manager {
     public Manager handle() {
         AUnit bunker = bunkerToLoadTo();
 //        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
+
+        if (unit.lastActionLessThanAgo(5, Actions.LOAD)) return usedManager(this);
 
         if (bunker != null && bunker.hasFreeSpaceFor(unit)) {
             double unitDistToBunker = bunker.distTo(unit);

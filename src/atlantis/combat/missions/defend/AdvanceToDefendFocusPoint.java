@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.ContainFocusPoint;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
+import atlantis.combat.squad.positioning.EarlyGameTooClustered;
 import atlantis.combat.squad.positioning.TooClustered;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -18,6 +19,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            EarlyGameTooClustered.class,
             TooClustered.class,
             ContainFocusPoint.class,
         };

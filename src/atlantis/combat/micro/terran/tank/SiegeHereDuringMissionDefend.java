@@ -17,6 +17,8 @@ public class SiegeHereDuringMissionDefend extends Manager {
     public Manager handle() {
         if (unit.isMissionDefendOrSparta() && unit.distToFocusPoint() <= minDist()) {
             if (unit.target() == null || unit.target().distTo(unit) < 12) {
+                unit.siege();
+                unit.setTooltipAndLog("SiegeHereDuringMissionDefend");
                 return usedManager(this);
             }
         }

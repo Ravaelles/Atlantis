@@ -1,5 +1,6 @@
 package atlantis.map.choke;
 
+import atlantis.config.MapAndRace;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
@@ -29,9 +30,9 @@ public class Chokes {
      */
     public static AChoke mainChoke() {
         return (AChoke) cache.get(
-                "mainChoke",
-                -1,
-                () -> AChoke.create(JBWEB.getMainChoke())
+            "mainChoke",
+            -1,
+            () -> AChoke.create(JBWEB.getMainChoke())
 //                    AUnit mainBase = Select.mainBase();
 //                    if (mainBase == null) {
 //                        return null;
@@ -81,16 +82,18 @@ public class Chokes {
      */
     public static AChoke natural() {
         return (AChoke) cache.get(
-                "natural",
-                -1,
-                () -> {
+            "natural",
+            -1,
+            () -> {
+                if (!MapAndRace.isMap("7th")) {
                     AChoke choke = AChoke.create(JBWEB.getNaturalChoke());
                     if (choke != null) {
                         return choke;
                     }
-
-                    return nearestChoke(Bases.natural());
                 }
+
+                return nearestChoke(Bases.natural());
+            }
         );
     }
 
@@ -100,29 +103,29 @@ public class Chokes {
         }
 
         return (AChoke) cache.get(
-                "natural:" + relativeTo.toStringPixels(),
-                403,
-                () -> {
-                    ARegion naturalRegion = Regions.getRegion(Bases.natural(relativeTo.position()));
-                    if (naturalRegion == null) {
-                        System.err.println("Can't find region for natural base");
-                        AGame.setUmsMode();
-                        return null;
-                    }
-
-                    AChoke chokeForMainBase = mainChoke();
-                    if (chokeForMainBase == null) {
-                        return null;
-                    }
-
-                    for (AChoke choke : naturalRegion.chokes()) {
-                        if (choke.center().distTo(chokeForMainBase) > 1) {
-                            return choke;
-                        }
-                    }
-
+            "natural:" + relativeTo.toStringPixels(),
+            403,
+            () -> {
+                ARegion naturalRegion = Regions.getRegion(Bases.natural(relativeTo.position()));
+                if (naturalRegion == null) {
+                    System.err.println("Can't find region for natural base");
+                    AGame.setUmsMode();
                     return null;
                 }
+
+                AChoke chokeForMainBase = mainChoke();
+                if (chokeForMainBase == null) {
+                    return null;
+                }
+
+                for (AChoke choke : naturalRegion.chokes()) {
+                    if (choke.center().distTo(chokeForMainBase) > 1) {
+                        return choke;
+                    }
+                }
+
+                return null;
+            }
         );
     }
 
@@ -132,8 +135,8 @@ public class Chokes {
         }
 
         return (AChoke) cache.get(
-                "nearestChoke:" + position.toStringPixels(),
-                -1,
+            "nearestChoke:" + position.toStringPixels(),
+            -1,
             () -> {
                 double nearestDist = 99999;
                 AChoke nearest = null;
@@ -157,18 +160,18 @@ public class Chokes {
      */
     public static List<AChoke> chokes() {
         return (List<AChoke>) cache.get(
-                "chokes",
-                -1,
-                () -> {
-                    List<AChoke> chokes = new ArrayList<>();
-                    for (ChokePoint chokePoint : AMap.getMap().chokes()) {
-                        AChoke choke = AChoke.create(chokePoint);
-                        if (isOk(choke)) {
-                            chokes.add(choke);
-                        }
+            "chokes",
+            -1,
+            () -> {
+                List<AChoke> chokes = new ArrayList<>();
+                for (ChokePoint chokePoint : AMap.getMap().chokes()) {
+                    AChoke choke = AChoke.create(chokePoint);
+                    if (isOk(choke)) {
+                        chokes.add(choke);
                     }
-                    return chokes;
                 }
+                return chokes;
+            }
         );
     }
 
@@ -183,9 +186,9 @@ public class Chokes {
         }
 
         return (AChoke) cache.get(
-                "enemyMainChoke",
-                151,
-                () -> nearestChoke(enemyMain)
+            "enemyMainChoke",
+            151,
+            () -> nearestChoke(enemyMain)
         );
     }
 
@@ -196,9 +199,9 @@ public class Chokes {
         }
 
         return (AChoke) cache.get(
-                "enemyNaturalChoke",
-                101,
-                () -> natural(enemyNatural)
+            "enemyNaturalChoke",
+            101,
+            () -> natural(enemyNatural)
         );
     }
 

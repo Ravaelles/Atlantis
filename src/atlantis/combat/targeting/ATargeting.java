@@ -283,8 +283,9 @@ public class ATargeting extends HasUnit {
         // Quit early if no target at all
         if (
             unit.enemiesNear()
-//                .effVisible()
+                .visibleOnMap()
                 .inRadius(maxDistFromEnemy, unit)
+                .effVisible()
                 .isEmpty()
         ) {
 //            System.err.println("selectUnitToAttackByType maxDistFromEnemy = " + maxDistFromEnemy);
@@ -296,19 +297,17 @@ public class ATargeting extends HasUnit {
 
         AUnit target;
         enemyBuildings = Select.enemyRealUnits(true, false, true)
+            .visibleOnMap()
             .buildings()
             .inRadius(maxDistFromEnemy, unit)
             .canBeAttackedBy(unit, maxDistFromEnemy);
         enemyUnits = Select.enemyRealUnitsWithBuildings()
+            .visibleOnMap()
             .nonBuildingsOrCombatBuildings()
             .inRadius(maxDistFromEnemy, unit)
             .maxGroundDist(maxDistFromEnemy, unit)
             .effVisibleOrFoggedWithKnownPosition()
             .canBeAttackedBy(unit, maxDistFromEnemy);
-
-        if (!unit.isMissionAttack()) {
-            enemyUnits = enemyUnits.visibleOnMap();
-        }
 
 //        Select.enemyRealUnits().print();
 //        enemyBuildings.print();

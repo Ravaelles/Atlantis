@@ -18,8 +18,7 @@ public class OptimalNumOfBunkerRepairers {
             "forBunker:" + bunker.id(),
             2,
             () -> {
-
-                Selection potentialEnemies = Select.enemy().combatUnits().inRadius(18, bunker);
+                Selection potentialEnemies = Select.enemy().combatUnits().inRadius(23, bunker);
 
                 if (potentialEnemies.empty()) {
                     return 0;
@@ -29,7 +28,7 @@ public class OptimalNumOfBunkerRepairers {
                 int enemiesFar = potentialEnemies.count() - enemiesNear;
                 double optimalNumber = 0;
 
-                if (thereIsAlmostNooneInside(bunker)) {
+                if (thereIsAlmostNooneInside(bunker) && A.seconds() >= 300) {
                     if (enemiesNear == 0) {
                         return 0;
                     }

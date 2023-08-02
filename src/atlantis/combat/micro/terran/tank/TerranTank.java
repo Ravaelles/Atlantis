@@ -17,7 +17,7 @@ public class TerranTank extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            TerranTankWhenNotSieged.class,
+            TerranTankWhenUnsieged.class,
             TerranTankWhenSieged.class,
         };
     }

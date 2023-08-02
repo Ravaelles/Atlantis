@@ -12,9 +12,9 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-//    public static final String ENEMY_RACE = "Protoss";
+    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
-    public static final String ENEMY_RACE = "Zerg";
+//    public static final String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -24,7 +24,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
@@ -37,7 +37,7 @@ public class MapAndRace {
         // vs PROTOSS cheat-bots
 //        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
-//        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
+        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
 //@        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
@@ -46,7 +46,7 @@ public class MapAndRace {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Terran ==============================================
@@ -57,7 +57,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/M_v_1Ling.scm"; // 1 Marine v 1 Zergling
 //        if (true) return "ums/rav/Wraiths_v_Base.scx"; // Wraiths v CC & Turret & Workers
 //        if (true) return "ums/rav/Wraiths_v_Base2.scm"; // Wraiths v Hatchery & Spore & Workers
-        if (true) return "ums/rav/TBall_v_HydraLings.scx"; // Tanks & Marines v Hydras & Lings
+//        if (true) return "ums/rav/TBall_v_HydraLings.scx"; // Tanks & Marines v Hydras & Lings
 
         // vs Protoss
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots

@@ -12,10 +12,10 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
-public class TerranTankWhenNotSieged extends Manager {
+public class TerranTankWhenUnsieged extends Manager {
     public static final double COMBAT_BUILDING_DIST_SIEGE = 11.9;
 
-    public TerranTankWhenNotSieged(AUnit unit) {
+    public TerranTankWhenUnsieged(AUnit unit) {
         super(unit);
     }
 
@@ -38,15 +38,15 @@ public class TerranTankWhenNotSieged extends Manager {
 
     @Override
     public Manager handle() {
-        if (new AvoidCloseEnemiesAsTank(unit).handle() != null) {
-            return usedManager(this);
-        }
-
         if ((new SiegeHereDuringMissionDefend(unit)).handle() != null) {
             return usedManager(this);
         }
 
-        if (handleNearEnemyCombatBuilding() != null) {
+        if (handleNearEnemyBuilding() != null) {
+            return usedManager(this);
+        }
+
+        if (handleSiegeBecauseSpecificEnemiesNear() != null) {
             return usedManager(this);
         }
 
@@ -61,10 +61,6 @@ public class TerranTankWhenNotSieged extends Manager {
 
         if (areEnemiesTooClose()) {
             return null;
-        }
-
-        if (handleSiegeBecauseSpecificEnemiesNear() != null) {
-            return usedManager(this);
         }
 
         if (goodDistanceToContainFocusPoint() != null) {
@@ -155,14 +151,18 @@ public class TerranTankWhenNotSieged extends Manager {
 
         AUnit enemy = unit.nearestEnemy();
 
-        double maxDist = enemy != null && enemy.isMoving() && unit.isOtherUnitFacingThisUnit(enemy) ? 14.5 : 11.98;
+        double maxDist = enemy != null && enemy.isMoving() && unit.isOtherUnitFacingThisUnit(enemy) ? 15.5 : 11.98;
         if (
             enemies
-                .clone()
                 .ofType(
-                    AUnitType.Protoss_Dragoon, AUnitType.Zerg_Hydralisk,
+                    AUnitType.Protoss_Dragoon,
+                    AUnitType.Protoss_Reaver,
+                    AUnitType.Protoss_High_Templar,
                     AUnitType.Terran_Siege_Tank_Tank_Mode,
-                    AUnitType.Terran_Siege_Tank_Siege_Mode
+                    AUnitType.Terran_Siege_Tank_Siege_Mode,
+                    AUnitType.Zerg_Hydralisk,
+                    AUnitType.Zerg_Defiler,
+                    AUnitType.Zerg_Lurker
                 )
                 .inRadius(maxDist, unit)
                 .isNotEmpty()
@@ -215,7 +215,7 @@ public class TerranTankWhenNotSieged extends Manager {
         return usedManager(this, "ForceSiege");
     }
 
-    private Manager handleNearEnemyCombatBuilding() {
+    private Manager handleNearEnemyBuilding() {
         AUnit combatBuilding = Select.enemy().combatBuildings(false).inRadius(COMBAT_BUILDING_DIST_SIEGE, unit).nearestTo(unit);
 //        unit.setTooltip("Buildz:" + Select.enemy().combatBuildings().count());
 
@@ -228,6 +228,15 @@ public class TerranTankWhenNotSieged extends Manager {
                     || unit.distToLessThan(combatBuilding, 10.6)
             ) {
                 return forceSiege("SiegeBuilding" + A.dist(unit, combatBuilding));
+            }
+        }
+
+        // Siege regular buildings
+        if (combatBuilding == null && unit.idIsEven()) {
+            AUnit enemyBuilding = Select.enemy().buildings().inRadius(10.9, unit).nearestTo(unit);
+
+            if (enemyBuilding != null) {
+                return forceSiege("RegularBuilding");
             }
         }
 

@@ -99,7 +99,9 @@ public class Bases {
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
             if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation) || !baseLocation.isExplored()) {
-                return baseLocation;
+                if (hasBaseMinerals(baseLocation)) {
+                    return baseLocation;
+                }
             }
         }
 
@@ -111,6 +113,10 @@ public class Bases {
         }
 
         return null;
+    }
+
+    public static boolean hasBaseMinerals(HasPosition baseLocation) {
+        return Select.minerals().inRadius(8, baseLocation).count() > 0;
     }
 
     /**
@@ -181,32 +187,32 @@ public class Bases {
      */
     public static List<ABaseLocation> baseLocations() {
         return (List<ABaseLocation>) cache.get(
-                "baseLocations",
-                -1,
-                () -> Stations.allBases()
-                        .stream()
-                        .map(base -> ABaseLocation.create(base.getBWEMBase()))
-                        .collect(Collectors.toList())
+            "baseLocations",
+            -1,
+            () -> Stations.allBases()
+                .stream()
+                .map(base -> ABaseLocation.create(base.getBWEMBase()))
+                .collect(Collectors.toList())
 
 //                () -> AMap.getMap()
 //                        .getBases()
 //                        .stream()
 //                        .map(base -> ABaseLocation.create(base))
-                        // This won't work - fog of war :- (
+            // This won't work - fog of war :- (
 //                        .filter(base -> Select.minerals().inRadius(8, base).atLeast(6))
 //                        .collect(Collectors.toList())
         );
     }
 
-    public static List<ABaseLocation> nonStartingLocations(){
+    public static List<ABaseLocation> nonStartingLocations() {
         return (List<ABaseLocation>) cache.get(
-                "nonStartingLocations",
-                10,
-                () -> AMap.getMap()
-                        .getStartingLocations()
-                        .stream()
-                        .map(tilePosition -> ABaseLocation.create(tilePosition))
-                        .collect(Collectors.toList())
+            "nonStartingLocations",
+            10,
+            () -> AMap.getMap()
+                .getStartingLocations()
+                .stream()
+                .map(tilePosition -> ABaseLocation.create(tilePosition))
+                .collect(Collectors.toList())
         );
     }
 
@@ -219,14 +225,14 @@ public class Bases {
         AUnit mainBase = Select.main();
 
         return (List<ABaseLocation>) cache.get(
-                "startingLocations:" + excludeOurStartLocation,
-                -1,
-                () -> AMap.getMap()
-                            .getStartingLocations()
-                            .stream()
-                            .map(tilePosition -> ABaseLocation.create(tilePosition))
-                            .filter(base -> base.distToMoreThan(mainBase, 10))
-                            .collect(Collectors.toList())
+            "startingLocations:" + excludeOurStartLocation,
+            -1,
+            () -> AMap.getMap()
+                .getStartingLocations()
+                .stream()
+                .map(tilePosition -> ABaseLocation.create(tilePosition))
+                .filter(base -> base.distToMoreThan(mainBase, 10))
+                .collect(Collectors.toList())
         );
 //                    ArrayList<ABaseLocation> startingLocations = new ArrayList<>();
 //                    for (ABaseLocation baseLocation : AMap.getBaseLocations()) {
@@ -288,21 +294,21 @@ public class Bases {
 
     public static APosition enemyNatural() {
         return (APosition) cache.get(
-                "enemyNatural",
-                60,
-                () -> {
-                    AUnit enemyBase = EnemyUnits.enemyBase();
-                    if (enemyBase == null) {
-                        return null;
-                    }
-
-                    ABaseLocation baseLocation = natural(enemyBase.position());
-                    if (baseLocation != null) {
-                        return baseLocation.position().translateByTiles(2, 0);
-                    }
-
+            "enemyNatural",
+            60,
+            () -> {
+                AUnit enemyBase = EnemyUnits.enemyBase();
+                if (enemyBase == null) {
                     return null;
                 }
+
+                ABaseLocation baseLocation = natural(enemyBase.position());
+                if (baseLocation != null) {
+                    return baseLocation.position().translateByTiles(2, 0);
+                }
+
+                return null;
+            }
         );
     }
 

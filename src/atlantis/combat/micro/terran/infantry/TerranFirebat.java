@@ -28,11 +28,10 @@ public class TerranFirebat extends Manager {
             boolean shouldRun = (enemy != null && unit.distTo(enemy) <= 1.8);
             if (shouldRun) {
                 if (unit.runningManager().runFrom(
-                    enemy, 1.0, Actions.RUN_ENEMY, false
+                    enemy, 2, Actions.RUN_ENEMY, false
                 )) {
                     return usedManager(this);
                 }
-                ;
             }
         }
 
@@ -52,12 +51,13 @@ public class TerranFirebat extends Manager {
     }
 
     protected boolean shouldContinueMeleeFighting() {
-        if (unit.hp() <= 34 || unit.cooldown() >= 4) {
-            return false;
-        }
-
         if (unit.hp() >= 40) {
             return true;
+        }
+
+        int minHp = Enemy.protoss() ? 37 : 28;
+        if (unit.hp() <= minHp || unit.cooldown() >= 3) {
+            return false;
         }
 
         int medics = Select.ourOfType(AUnitType.Terran_Medic)

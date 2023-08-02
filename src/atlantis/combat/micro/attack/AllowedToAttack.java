@@ -17,6 +17,10 @@ public class AllowedToAttack {
     }
 
     protected boolean canAttackNow() {
+        if ((new AsTerranForbiddenToAttack(unit)).isForbidden()) {
+            return false;
+        }
+
         if (!allowedToAttack()) {
             return false;
         }
