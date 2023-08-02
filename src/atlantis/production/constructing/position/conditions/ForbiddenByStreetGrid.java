@@ -8,6 +8,8 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ForbiddenByStreetGrid {
+    private static final int GRID_VALUE = 8;
+
     /**
      * Returns true if game says it's possible to build given building at this position.
      */
@@ -25,20 +27,20 @@ public class ForbiddenByStreetGrid {
 
         // Leave entire vertical (same tileX) corridor free for units
         if (
-            position.tx() % 7 <= 1
-                || (position.tx() + building.dimensionRightPx() / 32) % 7 <= 1
+            position.tx() % GRID_VALUE <= 1
+                || (position.tx() + building.dimensionRightPx() / 32) % GRID_VALUE <= 1
         ) {
-//        System.out.println(building.name() + "   " + position.getTileX() + " // (" + position.getTileX() % 7 + ") // "
+//        System.out.println(building.name() + "   " + position.getTileX() + " // (" + position.getTileX() % GRID_VALUE + ") // "
 //                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
-//                (position.getTileX() + building.getDimensionRight() / 32) % 7 + ")");
+//                (position.getTileX() + building.getDimensionRight() / 32) % GRID_VALUE + ")");
             AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
             return true;
         }
 
         // Leave entire horizontal (same tileY) corridor free for units
         if (
-            position.ty() % 7 <= 1
-                || (position.ty() + building.dimensionDownPx() / 32) % 7 <= 0
+            position.ty() % GRID_VALUE <= 1
+                || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 0
         ) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;

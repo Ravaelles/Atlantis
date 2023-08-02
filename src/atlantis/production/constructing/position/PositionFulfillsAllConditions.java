@@ -29,9 +29,9 @@ public class PositionFulfillsAllConditions {
 
         // Leave entire horizontal (same tileX) and vertical (same tileY) corridors free for units to pass
         // So disallow building in e.g. 1, 5, 9, 13, 16 horizontally and 3, 7, 11, 15, 19 vertically
-//        if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) {
-//            return false;
-//        }
+        if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) {
+            return false;
+        }
 
         if (!HasEnoughSidesFreeFromOtherBuildings.check(builder, building, position)) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Must leave enough free space for units to pass";
