@@ -111,6 +111,7 @@ public class ATargeting extends HasUnit {
             enemy = unit.enemiesNear()
                 .realUnitsAndBuildings()
                 .effVisible()
+                .visibleOnMap()
                 .canBeAttackedBy(unit, 0)
                 .nearestTo(unit);
             if (enemy != null && !unit.isAir()) {
@@ -305,7 +306,7 @@ public class ATargeting extends HasUnit {
             .effVisibleOrFoggedWithKnownPosition()
             .canBeAttackedBy(unit, maxDistFromEnemy);
 
-        if (unit.isMissionDefend()) {
+        if (!unit.isMissionAttack()) {
             enemyUnits = enemyUnits.visibleOnMap();
         }
 

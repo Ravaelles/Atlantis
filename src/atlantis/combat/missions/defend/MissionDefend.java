@@ -6,7 +6,6 @@ import atlantis.combat.missions.Mission;
 import atlantis.units.AUnit;
 
 public class MissionDefend extends Mission {
-
     protected AUnit unit;
     protected AUnit main;
     protected AFocusPoint focusPoint;

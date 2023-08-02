@@ -11,6 +11,11 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return focusPoint.isAroundChoke();
+    }
+
     public Manager handle() {
         if (handleWrongSideOfFocus()) {
             return usedManager(this);

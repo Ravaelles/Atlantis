@@ -34,9 +34,8 @@ public class TooClustered extends Manager {
         if (tooClustered(ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
             APosition goTo = unit.makeFreeOfAnyGroundUnits(4, 0.2, unit);
             if (goTo != null) {
-                if (unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false)) {
-                    return usedManager(this);
-                }
+                unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false);
+                return usedManager(this);
             }
         }
 

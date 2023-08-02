@@ -10,15 +10,10 @@ public class ContainFocusPoint extends MissionManager {
     }
 
     @Override
-    public boolean applies() {
-        return focusPoint.isAroundChoke();
-    }
-
-    @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             OnWrongSideOfFocusPoint.class,
-            TooFarFromChoke.class,
+            TooFarFromFocusPoint.class,
             TooCloseToFocusPoint.class,
         };
     }

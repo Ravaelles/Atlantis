@@ -5,8 +5,8 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
-public class TooFarFromChoke extends MoveToFocusPoint {
-    public TooFarFromChoke(AUnit unit) {
+public class TooFarFromFocusPoint extends MoveToFocusPoint {
+    public TooFarFromFocusPoint(AUnit unit) {
         super(unit);
     }
 

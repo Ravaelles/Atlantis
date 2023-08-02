@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.architecture.Commander;
 import atlantis.combat.missions.defend.MissionDefendFocusPoint;
 import atlantis.config.env.Env;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.CameraCommander;
@@ -18,7 +19,7 @@ public class MapSpecificCommander extends Commander {
     @Override
     public void handle() {
         if (Env.isParamTweaker() || !Env.isLocal()) return;
-        if (!A.isUms()) return;
+//        if (!A.isUms()) return;
 
         // =========================================================
         // Marines & Medics v. Zealots
@@ -52,9 +53,10 @@ public class MapSpecificCommander extends Commander {
                 || MapAndRace.isMap("exp_skilltest")
                 || MapAndRace.isMap("7th")
         ) {
-            int initFrameSkip = 30;
+            int initFrameSkip = 80;
 
             if (A.seconds() <= 1) {
+                AAdvancedPainter.disablePainting();
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(initFrameSkip);
 

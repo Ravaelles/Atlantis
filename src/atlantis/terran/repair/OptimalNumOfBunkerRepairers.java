@@ -3,6 +3,7 @@ package atlantis.terran.repair;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -73,6 +74,10 @@ public class OptimalNumOfBunkerRepairers {
                     else if (!A.hasMinerals(1)) {
                         return 1;
                     }
+                }
+
+                if (!A.hasMinerals(2)) {
+                    return Math.max(2, Math.min(4, (int) optimalNumber));
                 }
 
                 return Math.min(7, (int) Math.floor(optimalNumber));

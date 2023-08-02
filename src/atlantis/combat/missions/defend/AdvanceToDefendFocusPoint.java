@@ -15,13 +15,6 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
         super(unit);
     }
 
-//    @Override
-//    public Manager handle() {
-//        if (move()) return usedManager(this);
-//
-//        return null;
-//    }
-
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
@@ -30,47 +23,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
         };
     }
 
-//    protected boolean advance() {
-//        focus = unit.mission().focusPoint();
-//
-//        if (focus == null || !focus.hasPosition()) {
-////            System.err.println("Null focus point for " + unit + " in Advance");
-//            System.err.println("unit.mission() = " + unit.mission());
-//            A.printStackTrace("Null focus point for " + unit + " in Advance");
-//            return false;
-//        }
-//
-////        if (unit.enemiesNear().inRadius(5, unit).notEmpty()) {
-////            if (!unit.isZergling() || unit.hp() >= 20) {
-////                unit.addLog("DontWithdraw");
-////                return false;
-////            }
-////        }
-//
-//        if (unitToFocus > (optimalDist + MARGIN)) {
-//            String dist = A.dist(unitToFocus);
-//
-//            if (unit.lastActionMoreThanAgo(20, Actions.MOVE_FOCUS)) {
-//                APosition position =
-//                    (unit.distTo(focus) <= 6 ||
-//                    (
-//                        focus.region() != null && focus.region().equals(unit.position().region()))
-//                        ? focus.translatePercentTowards(unit, 40) : focus
-//                    );
-//                return unit.move(
-//                    position,
-//                    Actions.MOVE_FOCUS,
-//                    "ToFocus" + dist,
-//                    true
-//                );
-//            }
-//        }
-//
-//        return false;
-//    }
-
     // =========================================================
-
 
     public double optimalDist() {
 //        if (unit.isZealot()) {

@@ -12,7 +12,6 @@ import atlantis.units.Units;
  * Represents behavior for squad of units e.g. DEFEND, CONTAIN (enemy at his base), ATTACK etc.
  */
 public abstract class Mission extends MissionHelper {
-
     private static Mission instance;
     protected MissionFocusPoint focusPointManager;
     private String name;

@@ -36,6 +36,7 @@ public class MakeSpaceForNearbyWorkers extends Manager {
         AUnit nearWorker = Select.ourWorkers().inRadius(1.5, unit).first();
 
         if (nearWorker != null) {
+            unit.setTooltipAndLog("Space4Worker");
             if (unit.isTankSieged()) {
                 if (TerranTank.wantsToUnsiege(unit)) {
                     return usedManager(this);

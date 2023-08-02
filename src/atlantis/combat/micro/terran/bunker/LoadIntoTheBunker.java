@@ -2,6 +2,7 @@ package atlantis.combat.micro.terran.bunker;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -23,6 +24,14 @@ public class LoadIntoTheBunker extends Manager {
         if (!unit.isMarine() && !unit.isGhost()) {
             return false;
         }
+
+        if (
+            GamePhase.isEarlyGame()
+                && unit.noCooldown()
+                && unit.hpMoreThan(20)
+                && unit.enemiesNear().ranged().empty()
+                && unit.nearestEnemyDist() >= 2
+        ) return false;
 
         // Without enemies around, don't do anything
         Selection enemiesNear = unit.enemiesNear().havingWeapon().inRadius(9, unit).canAttack(unit, 10);

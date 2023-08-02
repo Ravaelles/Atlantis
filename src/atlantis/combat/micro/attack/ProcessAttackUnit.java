@@ -19,10 +19,8 @@ public class ProcessAttackUnit extends Manager {
             return TerranTank.wantsToUnsiege(unit);
         }
 
-        if (
-            target.isFoggedUnitWithKnownPosition()
-                && unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false)
-        ) {
+        if (target.isFoggedUnitWithKnownPosition()) {
+            unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false);
             return true;
         }
 
@@ -58,7 +56,8 @@ public class ProcessAttackUnit extends Manager {
 //        }
 
         // Melee
-        return confirmAttack(target);
+        confirmAttack(target);
+        return true;
     }
 
 //    private  double distBonus(AUnit target) {
