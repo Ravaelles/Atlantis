@@ -3,6 +3,7 @@ package atlantis.combat.micro.attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -49,6 +50,10 @@ public class AttackNearbyEnemies extends Manager {
             "handleAttackNearEnemyUnits: " + unit.id(),
             4,
             () -> {
+                if (unit.isAttacking() && unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) {
+                    return true;
+                }
+
                 AttackNearbyEnemies instance = getInstance(unit);
 
                 if (!allowedToAttack.canAttackNow()) {
@@ -76,17 +81,6 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     // =========================================================
-
-    protected boolean allowedToAttack() {
-
-        // @Problematic - Vultures dont attack from far
-//        if (Count.ourCombatUnits() >= 5 && unit.outsideSquadRadius()) {
-//            reasonNotToAttack = "Outside";
-//            return false;
-//        }
-
-        return allowedToAttack.allowedToAttack();
-    }
 
     protected AUnit defineEnemyToAttackFor() {
         return cache.getIfValid(

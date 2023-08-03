@@ -177,7 +177,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 
         if (
             Count.bases() > Count.withPlanned(Terran_Comsat_Station)
-                && Count.inQueueOrUnfinished(Terran_Comsat_Station, 5) <= 0
+                && Count.inQueueOrUnfinished(Terran_Comsat_Station, 10) <= 0
         ) {
             AddToQueue.withStandardPriority(Terran_Comsat_Station);
         }
@@ -191,16 +191,16 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
             return;
         }
 
-        if (
-            GamePhase.isEarlyGame()
-                && Count.vultures() <= 3
-                && EnemyUnits.discovered().ofType(Protoss_Zealot).atLeast(5)
-        ) {
-            return;
-        }
+//        if (
+//            GamePhase.isEarlyGame()
+//                && Count.vultures() <= 3
+//                && EnemyUnits.discovered().ofType(Protoss_Zealot).atLeast(5)
+//        ) {
+//            return;
+//        }
 
-        if (Count.factories() >= 1 && !Have.machineShop()) {
-            if (Count.existingOrInProductionOrInQueue(Terran_Machine_Shop) == 0) {
+        if (Count.factories() > Count.ofType(Terran_Machine_Shop)) {
+            if (Count.existingOrInProductionOrInQueue(Terran_Machine_Shop) <= 1) {
                 AddToQueue.withHighPriority(Terran_Machine_Shop);
                 return;
             }

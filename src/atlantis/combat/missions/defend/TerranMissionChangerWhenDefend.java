@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -25,7 +26,11 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            return false;
 //        }
 
-        if (A.supplyUsed() <= 100 && Count.tanks() <= 4) return false;
+        if (
+            A.supplyUsed() <= 90
+                && AGame.killsLossesResourceBalance() <= 600
+                && Count.tanks() <= 3
+        ) return false;
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
 

@@ -1,6 +1,7 @@
 package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.CameraCommander;
@@ -20,7 +21,7 @@ import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class ScoutManager extends Manager {
-//    public boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = true;
+    //    public boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = true;
     public static boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = false;
     public static Positions<ARegionBoundary> scoutingAroundBasePoints = new Positions<>();
 
@@ -50,15 +51,11 @@ public class ScoutManager extends Manager {
 //            unit.setTooltip("Daaaamn!");
 //            return;
 //        }
-//
-//        if (AvoidCombatBuildings.handle()) {
-//            unit.setTooltip("Eh!");
-//            return;
-//        }
-//
-//        if (AvoidEnemies.avoidEnemiesIfNeeded()) {
-//            return;
-//        }
+
+        AvoidEnemies avoidEnemies = new AvoidEnemies(unit);
+        if (avoidEnemies.handle() != null) {
+            return usedManager(avoidEnemies);
+        }
 
         if (unit.isRunning()) {
             nextPositionTounit = null;
@@ -92,7 +89,7 @@ public class ScoutManager extends Manager {
 
     private boolean handleScoutFreeBases() {
         if (nextPositionTounit != null && !nextPositionTounit.isPositionVisible()) {
-            return unit.move(nextPositionTounit, Actions.MOVE_SCOUT, "unitBases" + A.now(), true);
+            return unit.move(nextPositionTounit, Actions.MOVE_SCOUT, "ScoutBases" + A.now(), true);
         }
 
         AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
@@ -127,9 +124,10 @@ public class ScoutManager extends Manager {
         HasPosition startingLocation;
         if (unit.is(AUnitType.Zerg_Overlord) || ScoutCommander.allScouts().size() > 1) {
             startingLocation = Bases.startingLocationBasedOnIndex(
-                    unit.getUnitIndexInBwapi()// UnitUtil.getUnitIndex()
+                unit.getUnitIndexInBwapi()// UnitUtil.getUnitIndex()
             );
-        } else {
+        }
+        else {
             startingLocation = Bases.nearestUnexploredStartingLocation(unit.position());
         }
 
@@ -137,7 +135,7 @@ public class ScoutManager extends Manager {
 
         if (
             startingLocation != null
-            && unit.move(startingLocation, Actions.MOVE_EXPLORE, "Explore", true)
+                && unit.move(startingLocation, Actions.MOVE_EXPLORE, "Explore", true)
         ) {
             return true;
         }
@@ -179,10 +177,11 @@ public class ScoutManager extends Manager {
             defineNextPolygonPointForEnemyBaseRoamingUnit();
             if (
                 unitingAroundBaseLastPolygonPoint != null
-                && unit.move(unitingAroundBaseLastPolygonPoint, Actions.MOVE_EXPLORE, "RoamAround", true)
+                    && unit.move(unitingAroundBaseLastPolygonPoint, Actions.MOVE_EXPLORE, "RoamAround", true)
             ) {
                 return true;
-            } else {
+            }
+            else {
                 unit.setTooltipTactical("Can't find polygon point");
             }
         }
@@ -196,7 +195,7 @@ public class ScoutManager extends Manager {
         APosition baseLocation = Bases.nearestUnexploredStartingLocation(unit.position());
         if (
             baseLocation != null
-            && unit.move(baseLocation.position(), Actions.MOVE_EXPLORE, "Explore next base", true)
+                && unit.move(baseLocation.position(), Actions.MOVE_EXPLORE, "Explore next base", true)
         ) {
             return;
         }
@@ -238,7 +237,8 @@ public class ScoutManager extends Manager {
 
             if (goTo == null || unitingAroundBaseWasInterrupted) {
                 goTo = useNearestBoundaryPoint(enemyBaseRegion);
-            } else {
+            }
+            else {
                 if (unit.distTo(goTo) <= 1.8) {
                     unitingAroundBaseNextPolygonIndex = (unitingAroundBaseNextPolygonIndex + deltaIndex)
                         % scoutingAroundBasePoints.size();
@@ -268,7 +268,7 @@ public class ScoutManager extends Manager {
             double groundDistance = center.distTo(position);
 
             if (
-                    position.isWalkable()
+                position.isWalkable()
                     && groundDistance >= 2
                     && groundDistance <= 17
             ) {

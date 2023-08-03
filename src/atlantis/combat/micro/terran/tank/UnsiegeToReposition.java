@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran.tank;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 
 public class UnsiegeToReposition extends Manager {
     public UnsiegeToReposition(AUnit unit) {
@@ -11,13 +12,15 @@ public class UnsiegeToReposition extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTankSieged();
+        return unit.isTankSieged()
+            && unit.noCooldown()
+            && unit.lastActionMoreThanAgo(30 * 6, Actions.SIEGE);
     }
 
     public Manager handle() {
         if (
             noEnemiesNear()
-            && allowUnsiegingToReposition()
+                && allowUnsiegingToReposition()
         ) {
             unit.setTooltip("Reposition");
             return usedManager(this);

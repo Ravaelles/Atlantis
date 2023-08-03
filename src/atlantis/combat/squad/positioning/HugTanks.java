@@ -31,7 +31,8 @@ public class HugTanks extends Manager {
         // Too far from nearest tank
         AUnit nearestTank = Select.ourTanks().nearestTo(unit);
         if (nearestTank != null && unit.distTo(nearestTank) > 4.5) {
-            if (goToNearestTank(nearestTank)) {
+            if (!tankIsOvercrowded(nearestTank)) {
+                goToNearestTank(nearestTank);
                 return usedManager(this);
             }
         }
@@ -55,8 +56,8 @@ public class HugTanks extends Manager {
             || unit.friendsInRadius(4).groundUnits().atLeast(10);
     }
 
-//    protected boolean tankIsOvercrowded(AUnit tank) {
-//        return tank.friendsInRadius(2).groundUnits().atLeast(5)
+    protected boolean tankIsOvercrowded(AUnit tank) {
+        return tank.friendsInRadius(2).groundUnits().atLeast(5);
 //            || tank.friendsInRadius(4).groundUnits().atLeast(9);
-//    }
+    }
 }

@@ -2,7 +2,6 @@ package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -13,14 +12,23 @@ public class CircumnavigateCombatBuilding extends Manager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        if (
+            unit.isGroundUnit() && (
+                unit.squadSize() >= 3 || unit.friendsNear().groundUnits().inRadius(2, unit).atLeast(4)
+            )
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Try to go around a defensive building by not running back-and-forth, but sideways.
      */
     public Manager handle(AUnit combatBuilding) {
-        if (unit.isGroundUnit() && A.seconds() >= 600) {
-            return null;
-        }
-
         APosition goTo = findPositionAround(combatBuilding);
 
         APainter.paintLine(unit, goTo, Color.Orange);

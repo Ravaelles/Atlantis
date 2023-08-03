@@ -73,7 +73,7 @@ public class TerranTankWhenUnsieged extends Manager {
     private boolean EnemiesToCloseToUnsiegedTank(AUnit unit) {
         if (unit.noCooldown() && unit.hp() >= 70) return false;
 
-        Selection enemies = unit.enemiesNear().groundUnits().inRadius(6.5, unit);
+        Selection enemies = unit.enemiesNear().groundUnits().combatUnits().inRadius(6.5, unit);
         if (enemies.atLeast(2)) {
             unit.runningManager().runFrom(enemies.nearestTo(unit), 2, Actions.MOVE_AVOID, false);
             unit.setTooltip("Careful");
