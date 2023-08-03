@@ -39,6 +39,18 @@ public class HasEnoughSidesFreeFromOtherBuildings {
                 && !BuildingTileHelper.tileDownFrom(building, position).isWalkable()
         ) return false;
 
+        if (building.isBunker()) {
+            if (
+                !BuildingTileHelper.tileRightFrom(building, position.translateByTiles(1, 0)).isWalkable()
+                    && !BuildingTileHelper.tileLeftFrom(building, position.translateByTiles(01, 0)).isWalkable()
+            ) return false;
+
+            if (
+                !BuildingTileHelper.tileUpFrom(building, position.translateByTiles(0, -1)).isWalkable()
+                    && !BuildingTileHelper.tileDownFrom(building, position.translateByTiles(0, 1)).isWalkable()
+            ) return false;
+        }
+
         return true;
     }
 }

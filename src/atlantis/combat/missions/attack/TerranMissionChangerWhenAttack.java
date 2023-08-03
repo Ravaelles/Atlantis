@@ -2,7 +2,10 @@ package atlantis.combat.missions.attack;
 
 import atlantis.combat.missions.MissionDecisions;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.production.dynamic.terran.tech.SiegeMode;
+import atlantis.units.select.Count;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
     @Override
@@ -27,6 +30,11 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
+        if (enemyHasDefensiveBuildingsAndWeDontHaveEnoughTanks()) {
+            if (DEBUG) reason = "Not enough tanks to break defences";
+            return true;
+        }
+
 //        if (
 //            EnemyInfo.hiddenUnitsCount() >= 2
 //                && Count.ofType(AUnitType.Terran_Science_Vessel) == 0
@@ -34,6 +42,14 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 //            if (DEBUG) reason = "Hidden unitz";
 //            return true;
 //        }
+
+        return false;
+    }
+
+    private boolean enemyHasDefensiveBuildingsAndWeDontHaveEnoughTanks() {
+        if (A.supplyUsed() <= 120 && EnemyUnits.discovered().combatBuildingsAntiLand().notEmpty()) {
+            if (Count.tanks() <= 3 || !SiegeMode.isResearched()) return true;
+        }
 
         return false;
     }

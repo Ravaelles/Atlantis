@@ -14,13 +14,9 @@ public class CircumnavigateCombatBuilding extends Manager {
 
     @Override
     public boolean applies() {
-        if (
-            unit.isGroundUnit() && (
-                unit.squadSize() >= 3 || unit.friendsNear().groundUnits().inRadius(2, unit).atLeast(4)
-            )
-        ) {
-            return false;
-        }
+        if (unit.isGroundUnit()) return false;
+
+        if (unit.woundPercent() >= 40) return false;
 
         return true;
     }

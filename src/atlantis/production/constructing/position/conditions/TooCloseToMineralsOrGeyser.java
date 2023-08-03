@@ -33,9 +33,12 @@ public class TooCloseToMineralsOrGeyser {
 
             AUnit geyser = Select.geysers().nearestTo(position);
 //            System.out.println("Select.geysers() = " + Select.geysers().count());
-            if (geyser != null && geyser.distTo(position) <= (building.isPylon() ? 5 : (building.isSupplyUnit() ? 8 : 6))) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to geyser";
-                return true;
+            if (geyser != null) {
+                int minDistToGeyser = building.isPylon() ? 5 : (building.isSupplyUnit() ? 8 : 6);
+                if (geyser.distTo(position) <= minDistToGeyser) {
+                    AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to geyser";
+                    return true;
+                }
             }
 
             AUnit gasBuilding = Select.geyserBuildings().nearestTo(position);

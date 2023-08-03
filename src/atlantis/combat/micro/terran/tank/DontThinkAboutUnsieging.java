@@ -11,13 +11,14 @@ public class DontThinkAboutUnsieging extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTankSieged();
+        return unit.isTankSieged() && unit.hp() >= 60;
     }
 
     public Manager handle() {
         if (
-            unit.lastActionLessThanAgo(30 * (5 + unit.id() % 4), Actions.SIEGE)
-                || unit.lastAttackFrameLessThanAgo(30 * (unit.id() % 4))
+            unit.hasCooldown()
+                || unit.lastActionLessThanAgo(30 * (5 + unit.id() % 4), Actions.SIEGE)
+                || unit.lastAttackFrameLessThanAgo(30 * (2 + unit.id() % 4))
         ) {
             return usedManager(this);
         }

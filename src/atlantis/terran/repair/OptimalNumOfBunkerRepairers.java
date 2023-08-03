@@ -18,7 +18,7 @@ public class OptimalNumOfBunkerRepairers {
             "forBunker:" + bunker.id(),
             2,
             () -> {
-                Selection potentialEnemies = Select.enemy().combatUnits().inRadius(23, bunker);
+                Selection potentialEnemies = Select.enemy().combatUnits().inRadius(26, bunker);
 
                 if (potentialEnemies.empty()) {
                     return 0;
@@ -28,9 +28,9 @@ public class OptimalNumOfBunkerRepairers {
                 int enemiesFar = potentialEnemies.count() - enemiesNear;
                 double optimalNumber = 0;
 
-                if (thereIsAlmostNooneInside(bunker) && A.seconds() >= 300) {
-                    if (enemiesNear == 0) {
-                        return 0;
+                if (thereIsAlmostNooneInside(bunker)) {
+                    if (enemiesNear == 0 && enemiesFar == 0) {
+                        return A.seconds() <= 300 ? 1 : 0;
                     }
                     if ((enemiesFar + enemiesNear) >= 5 && bunker.loadedUnits().size() > 0) {
                         return 1;
@@ -39,7 +39,7 @@ public class OptimalNumOfBunkerRepairers {
 
                 // against PROTOSS
                 if (Enemy.protoss()) {
-                    optimalNumber = enemiesNear * 1.5 + enemiesFar * 0.5;
+                    optimalNumber = enemiesNear * 1.8 + enemiesFar * 0.75;
                 }
                 // against TERRAN
                 else if (Enemy.terran()) {
@@ -47,7 +47,7 @@ public class OptimalNumOfBunkerRepairers {
                 }
                 // against ZERG
                 else if (Enemy.zerg()) {
-                    optimalNumber = enemiesNear * 0.65 + enemiesFar * 0.45;
+                    optimalNumber = enemiesNear * 0.65 + enemiesFar * 0.5;
                 }
 
                 if (bunker.hp() < 250) {
@@ -56,8 +56,7 @@ public class OptimalNumOfBunkerRepairers {
 
                 Selection enemiesVeryNear = potentialEnemies.inRadius(4, bunker);
                 if (
-                    enemiesVeryNear.atMost(2)
-                        && thereIsAnotherBunkerNearbyThatIsInBiggerDanger(bunker)
+                    enemiesVeryNear.atMost(2) && thereIsAnotherBunkerNearbyThatIsInBiggerDanger(bunker)
                 ) {
                     optimalNumber = 1 + (bunker.isHealthy() ? 0 : (bunker.woundPercent() / 25));
                 }

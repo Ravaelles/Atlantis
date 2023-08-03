@@ -1,12 +1,14 @@
 package atlantis.terran.repair;
 
 import atlantis.architecture.Commander;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import bwapi.Color;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,6 +56,7 @@ public class ProtectorCommander extends Commander {
 
             // Bunker damaged or enemies nearby
             else if (howMany > 0) {
+                AAdvancedPainter.paintTextCentered(bunker, howMany + "", Color.Orange);
                 addProtectorsForUnit(bunker, howMany);
             }
         }

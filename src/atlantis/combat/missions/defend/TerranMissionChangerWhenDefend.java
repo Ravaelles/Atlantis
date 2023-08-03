@@ -29,7 +29,6 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (
             A.supplyUsed() <= 90
                 && AGame.killsLossesResourceBalance() <= 600
-                && Count.tanks() <= 3
         ) return false;
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
