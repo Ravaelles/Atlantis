@@ -261,7 +261,7 @@ public class BuilderManager extends Manager {
                 return position.translateByTiles(2, 1);
             }
 
-            ErrorLog.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
+//            ErrorLog.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
         }
 
         return position;

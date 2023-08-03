@@ -1,6 +1,7 @@
 package atlantis.combat.missions.attack;
 
 import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.missions.defend.MissionChangerWhenDefend;
 import atlantis.util.We;
 
 public abstract class MissionChangerWhenAttack extends MissionChanger {
@@ -10,7 +11,7 @@ public abstract class MissionChangerWhenAttack extends MissionChanger {
 
     @Override
     public void changeMissionIfNeeded() {
-        if (shouldChangeMissionToDefend()) {
+        if (shouldChangeMissionToDefend() && !MissionChangerWhenDefend.get().shouldChangeMissionToAttack()) {
             changeMissionTo(MissionChanger.defendOrSpartaMission());
         }
 //        else if (shouldChangeMissionToContain()) {

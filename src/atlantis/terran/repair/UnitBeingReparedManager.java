@@ -38,7 +38,7 @@ public class UnitBeingReparedManager extends Manager {
 
         if (
             unit.isTank()
-                && distanceToRepairer <= 1
+                && distanceToRepairer <= 0.1
                 && unit.hp() <= 60
         ) {
             if (unit.enemiesNear().groundUnits().countInRadius(7, unit) > 0) {
@@ -54,15 +54,16 @@ public class UnitBeingReparedManager extends Manager {
         }
 
         // Air units should be repaired thoroughly
-        if (unit.isAir() && (unit.isBeingRepaired() || unit.distTo(repairer) > 0.2)) {
+        if (unit.isAir() && (unit.isBeingRepaired() || unit.distTo(repairer) > 0.05)) {
             if (!unit.isRunning() && unit.isMoving()) {
-                unit.setTooltip("HoldTheFuckDown");
+//                unit.setTooltip("HoldTheFuckDown");
+                unit.holdPosition("HoldTheFuckDown");
                 return usedManager(this);
             }
         }
 
         // Ignore going closer to repairer if unit is still relatively healthy
-        if (!unit.isAir() && unit.hpPercent() > 80 && distanceToRepairer >= 3) {
+        if (!unit.isAir() && unit.hpPercent() > 70 && distanceToRepairer >= 3) {
             return null;
         }
 
@@ -74,18 +75,14 @@ public class UnitBeingReparedManager extends Manager {
         }
 
         // Go to repairer if he's close
-        if (distanceToRepairer > 1) {
+        if (distanceToRepairer > 0.2) {
             if (unit.move(repairer.position(), Actions.MOVE_REPAIR, "To repairer", false)) {
                 return usedManager(this);
             }
         }
 
-        if (distanceToRepairer <= 1) {
-            unit.holdPosition("Be repaired");
-            return usedManager(this);
-        }
-
-        return null;
+        unit.holdPosition("Be repaired");
+        return usedManager(this);
     }
 
     public Manager handleDontRunWhenBeingRepared() {
