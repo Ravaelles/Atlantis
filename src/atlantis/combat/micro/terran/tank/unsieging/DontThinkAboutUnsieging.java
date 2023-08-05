@@ -1,4 +1,4 @@
-package atlantis.combat.micro.terran.tank;
+package atlantis.combat.micro.terran.tank.unsieging;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
@@ -17,7 +17,7 @@ public class DontThinkAboutUnsieging extends Manager {
     public Manager handle() {
         if (
             unit.hasCooldown()
-                || unit.lastActionLessThanAgo(30 * (5 + unit.id() % 4), Actions.SIEGE)
+                || unit.lastActionLessThanAgo(30 * (2 + unit.id() % 6), Actions.SIEGE)
                 || unit.lastAttackFrameLessThanAgo(30 * (2 + unit.id() % 4))
         ) {
             return usedManager(this);

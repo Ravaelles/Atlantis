@@ -9,6 +9,9 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class HugTanks extends Manager {
+    public static final int MAX_DIST_FROM_TANK = 8;
+    public static final int MIN_DIST_FROM_TANK = 4;
+
     public HugTanks(AUnit unit) {
         super(unit);
     }
@@ -18,7 +21,7 @@ public class HugTanks extends Manager {
         return We.terran()
             && !unit.isAir()
             && Count.tanks() > 0
-            && unit.friendsNear().tanks().inRadius(5, unit).empty();
+            && !unitIsOvercrowded();
     }
 
     @Override
@@ -37,20 +40,20 @@ public class HugTanks extends Manager {
         return null;
     }
 
-    private boolean shouldGoToTank(AUnit nearestTank) {
-        double distToTank = unit.distTo(nearestTank);
+    private boolean shouldGoToTank(AUnit tank) {
+        double distToTank = unit.distTo(tank);
 
-        if (distToTank < 4.5) return false;
+        if (distToTank > MAX_DIST_FROM_TANK) return true;
+
+        if (tankIsOvercrowded(tank)) return false;
+
+        if (distToTank < MIN_DIST_FROM_TANK) return false;
 
         if (
             unit.isHealthy()
                 && unit.combatEvalRelative() >= 2.5
                 && unit.lastUnderAttackMoreThanAgo(30 * 10)
         ) return false;
-
-        if (tankIsOvercrowded(nearestTank)) return false;
-
-        if (distToTank >= 8) return true;
 
         return false;
     }
@@ -68,11 +71,11 @@ public class HugTanks extends Manager {
 
     protected boolean unitIsOvercrowded() {
         return unit.friendsInRadius(2).groundUnits().atLeast(5)
-            || unit.friendsInRadius(4).groundUnits().atLeast(10);
+            && unit.friendsInRadius(4).groundUnits().atLeast(10);
     }
 
     protected boolean tankIsOvercrowded(AUnit tank) {
-        return tank.friendsInRadius(2).groundUnits().atLeast(5);
-//            || tank.friendsInRadius(4).groundUnits().atLeast(9);
+        return tank.friendsInRadius(2).groundUnits().atLeast(7)
+            || tank.friendsInRadius(4).groundUnits().atLeast(13);
     }
 }

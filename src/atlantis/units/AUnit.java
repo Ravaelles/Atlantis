@@ -2593,6 +2593,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return 999;
     }
 
+    public double nearestFriendlyTankDist() {
+        AUnit tank = friendsNear().tanks().nearestTo(this);
+
+        if (tank != null) {
+            return distTo(tank);
+        }
+
+        return 999;
+    }
+
     public Selection friendsInRadius(double radius) {
         return friendsNear().inRadius(radius, this);
     }

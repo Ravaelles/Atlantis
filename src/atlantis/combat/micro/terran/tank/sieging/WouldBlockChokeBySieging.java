@@ -1,12 +1,13 @@
-package atlantis.combat.micro.terran.tank;
+package atlantis.combat.micro.terran.tank.sieging;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.terran.tank.TerranTankWhenUnsieged;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
-public class WouldBlockChokeHere extends Manager {
-    public WouldBlockChokeHere(AUnit unit) {
+public class WouldBlockChokeBySieging extends Manager {
+    public WouldBlockChokeBySieging(AUnit unit) {
         super(unit);
     }
 
@@ -19,7 +20,7 @@ public class WouldBlockChokeHere extends Manager {
         if (
             !Enemy.terran()
                 && unit.isMissionAttack()
-                && Select.enemy().combatBuildings(false).inRadius(TerranTankWhenUnsieged.COMBAT_BUILDING_DIST_SIEGE, unit).empty()
+                && Select.enemy().combatBuildings(false).inRadius(8, unit).empty()
                 && unit.distToNearestChokeLessThan(2)
         ) {
             unit.setTooltip("DoNotBlockChoke");

@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
+import atlantis.units.select.Count;
 
 public class TerranFightInsteadAvoid extends HasUnit {
 
@@ -31,6 +32,13 @@ public class TerranFightInsteadAvoid extends HasUnit {
     protected boolean fightForTerranInfantry() {
         if (!unit.isMarine() && !unit.isGhost() && !unit.isFirebat()) {
             return false;
+        }
+
+        if (unit.isAttacking() && Count.tanks() >= 2) {
+            double tankDist = unit.nearestFriendlyTankDist();
+
+            if (tankDist <= 2) return true;
+            if (tankDist >= 4) return false;
         }
 
         double combatEval = unit.combatEvalRelative();

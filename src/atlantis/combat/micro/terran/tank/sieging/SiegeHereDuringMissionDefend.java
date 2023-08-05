@@ -1,6 +1,7 @@
-package atlantis.combat.micro.terran.tank;
+package atlantis.combat.micro.terran.tank.sieging;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 
@@ -11,7 +12,7 @@ public class SiegeHereDuringMissionDefend extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTank();
+        return Missions.isGlobalMissionDefend() && unit.isTank();
     }
 
     public Manager handle() {

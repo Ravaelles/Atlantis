@@ -13,11 +13,11 @@ public class TankDecisions {
         return ATech.isResearched(TechType.Tank_Siege_Mode);
     }
 
-    protected static boolean tooLonely(AUnit unit) {
+    public static boolean tooLonely(AUnit unit) {
         return Select.ourCombatUnits().inRadius(6, unit).atMost(4);
     }
 
-    protected static boolean canSiegeHere(AUnit unit, boolean checkTooLonely) {
+    public static boolean canSiegeHere(AUnit unit, boolean checkTooLonely) {
         if (checkTooLonely && tooLonely(unit)) {
             return false;
         }
