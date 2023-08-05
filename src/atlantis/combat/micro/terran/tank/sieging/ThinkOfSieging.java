@@ -20,11 +20,11 @@ public class ThinkOfSieging extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            RunCauseEnemiesAreTooCloseToUnsiegedTank.class,
+            SiegeAgainstCombatBuildings.class,
             UnitBeingReparedManager.class,
             SiegeHereDuringMissionDefend.class,
             SiegeBecauseSpecificEnemiesNear.class,
-            RunCauseEnemiesAreTooCloseToUnsiegedTank.class,
-            SiegeAgainstCombatBuildings.class,
             SiegeAgainstRegularBuildings.class,
             SiegeAgainstRegularEnemies.class,
             GoodDistanceToContainFocusPoint.class,

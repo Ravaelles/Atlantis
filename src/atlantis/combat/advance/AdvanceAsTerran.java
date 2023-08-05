@@ -14,7 +14,7 @@ public class AdvanceAsTerran extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTerran();
+        return unit.isTerran() && unit.mission().focusPoint() != null;
     }
 
     @Override
