@@ -2,7 +2,7 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.squad.positioning.terran.TerranInfantryComeCloser;
+import atlantis.combat.squad.positioning.terran.TerranEnsureBall;
 import atlantis.units.AUnit;
 
 public class ComeCloser extends MissionManager {
@@ -30,7 +30,7 @@ public class ComeCloser extends MissionManager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             TooFarFromLeader.class,
-            TerranInfantryComeCloser.class,
+            TerranEnsureBall.class,
             TooFarFromSquadCenter.class,
         };
     }

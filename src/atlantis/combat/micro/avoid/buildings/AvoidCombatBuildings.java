@@ -8,12 +8,15 @@ import atlantis.map.position.APosition;
 import atlantis.production.dynamic.terran.tech.SiegeMode;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 
 public class AvoidCombatBuildings extends Manager {
-
     private AvoidCombatBuildingCriticallyClose avoidCombatBuildingCriticallyClose;
     private ShouldRetreat shouldRetreat;
+
+    private Selection combatBuildings;
+    private AUnit combatBuilding;
 
     public AvoidCombatBuildings(AUnit unit) {
         super(unit);
@@ -23,24 +26,24 @@ public class AvoidCombatBuildings extends Manager {
 
     @Override
     public boolean applies() {
-        return true;
+        if (unit.isMissionDefendOrSparta()) {
+            return false;
+        }
+
+        if (Count.tanks() >= 2 && unit.isInfantry() && A.supplyUsed() <= 150 && unit.combatEvalRelative() <= 3.5) {
+            return true;
+        }
+
+        if (unit.combatEvalRelative() >= 2.5 && unit.hp() >= 30 && unit.woundPercent() <= 40) return false;
+
+        combatBuildings = EnemyUnits.discovered().combatBuildings(false);
+        combatBuilding = combatBuildings.inRadius(12, unit).canAttack(unit, 4.5).nearestTo(unit);
+
+        return combatBuilding != null;
     }
 
     public Manager handle() {
-        if (unit.isMissionDefendOrSparta()) {
-            return null;
-        }
-
-        Selection combatBuildings = EnemyUnits.discovered().combatBuildings(false);
-
-        AUnit combatBuilding = combatBuildings.inRadius(12, unit).canAttack(unit, 6).nearestTo(unit);
-        if (combatBuilding == null) {
-//            APainter.paintCircleFilled(8, Color.Green);
-            return null;
-        }
-
         if (unit.isTankUnsieged() && handleForTank(combatBuilding) != null) return usedManager(this);
-        ;
 
 //        APainter.paintCircleFilled(8, Color.Red);
 //        System.err.println("@ C = " + ShouldRetreat.shouldRetreat(unit));

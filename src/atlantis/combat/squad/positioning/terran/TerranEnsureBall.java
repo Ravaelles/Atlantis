@@ -4,8 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.HugTanks;
 import atlantis.units.AUnit;
 
-public class TerranInfantryComeCloser extends Manager {
-    public TerranInfantryComeCloser(AUnit unit) {
+public class TerranEnsureBall extends Manager {
+    public TerranEnsureBall(AUnit unit) {
         super(unit);
     }
 

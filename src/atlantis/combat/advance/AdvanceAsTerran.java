@@ -8,7 +8,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class AdvanceAsTerran extends Manager {
-
     public AdvanceAsTerran(AUnit unit) {
         super(unit);
     }
@@ -19,19 +18,9 @@ public class AdvanceAsTerran extends Manager {
     }
 
     @Override
-    public Manager handle() {
-        if (unit.isTerranInfantry() && unit.isWounded() && !unit.isMedic() && Count.medics() >= 2) {
-            AUnit medic = Select.ourOfType(AUnitType.Terran_Medic)
-                .havingEnergy(20)
-                .inRadius(15, unit)
-                .nearestTo(unit);
-
-            if (medic != null && (!medic.hasTarget() || medic.target().equals(unit))) {
-                unit.move(medic, Actions.MOVE_FOCUS, "Regenerate", false);
-                return usedManager(this);
-            }
-        }
-
-        return null;
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            BeCloseToLeader.class,
+        };
     }
 }

@@ -13,19 +13,8 @@ public class GoTowardsMedic extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTerranInfantryWithoutMedics();
-    }
+        if (!unit.isTerranInfantryWithoutMedics()) return false;
 
-    @Override
-    public Manager handle() {
-        if (check()) {
-            return usedManager(this);
-        }
-
-        return null;
-    }
-
-    public boolean check() {
         if (unit.isHealthy() && unit.distToLeader() <= 6) {
             return false;
         }
@@ -42,6 +31,19 @@ public class GoTowardsMedic extends Manager {
             return false;
         }
 
+        return true;
+    }
+
+    @Override
+    public Manager handle() {
+        if (check()) {
+            return usedManager(this);
+        }
+
+        return null;
+    }
+
+    public boolean check() {
         AUnit medic = Select.ourOfType(AUnitType.Terran_Medic)
             .inRadius(8, unit)
             .havingEnergy(25)

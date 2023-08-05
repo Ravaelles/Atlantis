@@ -14,7 +14,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
 import bwapi.TilePosition;
 
 public class BuilderManager extends Manager {
@@ -121,7 +120,7 @@ public class BuilderManager extends Manager {
     }
 
     private static void refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
-        if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
+        if (CanPhysicallyBuildHere.check(
             construction.builder(), buildingType, construction.buildPosition())
         ) {
             APosition positionForNewBuilding = construction.findPositionForNewBuilding();
@@ -234,27 +233,27 @@ public class BuilderManager extends Manager {
 
         if (
             building.isGasBuilding()
-                && !CanPhysicallyBuildHere.canPhysicallyBuildHere(unit, building, position)
+                && !CanPhysicallyBuildHere.check(unit, building, position)
         ) {
-            if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
+            if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(-1, 0))
             ) {
 //                System.out.println("Applied [-1,0] " + building + " position FIX");
                 return position.translateByTiles(-1, 0);
             }
-            if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
+            if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(1, 0))
             ) {
 //                System.out.println("Applied [1,0] " + building + " position FIX");
                 return position.translateByTiles(1, 0);
             }
-            if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
+            if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(-2, -1))
             ) {
 //                System.out.println("Applied [-2,-1] " + building + " position FIX");
                 return position.translateByTiles(-2, -1);
             }
-            if (CanPhysicallyBuildHere.canPhysicallyBuildHere(
+            if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(2, 1))
             ) {
 //                System.out.println("Applied [2,1] " + building + " position FIX");

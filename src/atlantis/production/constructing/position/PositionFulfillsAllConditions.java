@@ -39,7 +39,7 @@ public class PositionFulfillsAllConditions {
         }
 
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!CanPhysicallyBuildHere.canPhysicallyBuildHere(builder, building, position)) return false;
+        if (!CanPhysicallyBuildHere.check(builder, building, position)) return false;
 
         // If other buildings too close
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return false;

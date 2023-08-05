@@ -78,7 +78,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
-        if (!CanPhysicallyBuildHere.canPhysicallyBuildHere(builder, building, position)) {
+        if (!CanPhysicallyBuildHere.check(builder, building, position)) {
 //            System.out.println(builder + " / " + ConstructionBuildPositionFinder.building + " / " + position);
             _CONDITION_THAT_FAILED = "CAN'T PHYSICALLY BUILD";
             return false;

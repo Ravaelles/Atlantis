@@ -15,6 +15,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
@@ -81,7 +82,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Try going near any enemy building
-        AUnit visibleEnemyBuilding = EnemyUnits.discovered().buildings().last();
+        Selection enemiesDiscovered = EnemyUnits.discovered().havingWeapon();
+        AUnit visibleEnemyBuilding = enemiesDiscovered.buildings().last();
         if (visibleEnemyBuilding != null) {
             return new AFocusPoint(
                 visibleEnemyBuilding,
@@ -92,7 +94,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Try going to any known enemy unit
         HasPosition alphaCenter = Alpha.alphaCenter();
-        AUnit anyEnemyLandUnit = EnemyUnits.discovered().groundUnits().effVisible().realUnits().nearestTo(
+        AUnit anyEnemyLandUnit = enemiesDiscovered.groundUnits().effVisible().realUnits().nearestTo(
             alphaCenter != null ? alphaCenter : Select.our().first()
         );
 //        AUnit anyEnemyLandUnit = EnemyUnits.visibleAndFogged().combatUnits().groundUnits().first();
@@ -104,7 +106,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
-        AUnit anyEnemyAirUnit = EnemyUnits.discovered().air().effVisible().nearestTo(
+        AUnit anyEnemyAirUnit = enemiesDiscovered.air().effVisible().nearestTo(
             alphaCenter != null ? alphaCenter : Select.our().first()
         );
         if (anyEnemyAirUnit != null) {

@@ -11,7 +11,7 @@ public class CanPhysicallyBuildHere {
     /**
      * Returns true if game says it's possible to build given building at this position.
      */
-    public static boolean canPhysicallyBuildHere(AUnit builder, AUnitType building, APosition position) {
+    public static boolean check(AUnit builder, AUnitType building, APosition position) {
         if (position == null) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "POSITION IS NULL";
             return false;

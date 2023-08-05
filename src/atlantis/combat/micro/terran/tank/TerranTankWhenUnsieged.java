@@ -42,7 +42,7 @@ public class TerranTankWhenUnsieged extends Manager {
             return usedManager(this);
         }
 
-        if (handleNearEnemyBuilding() != null) {
+        if (handleNearbyCombatBuildings() != null) {
             return usedManager(this);
         }
 
@@ -50,7 +50,7 @@ public class TerranTankWhenUnsieged extends Manager {
             return usedManager(this);
         }
 
-        if (EnemiesToCloseToUnsiegedTank(unit)) {
+        if (EnemiesTooCloseToUnsiegedTank(unit)) {
             return usedManager(this);
         }
 
@@ -63,9 +63,12 @@ public class TerranTankWhenUnsieged extends Manager {
             return null;
         }
 
-        if (siegeAgainstEnemiesFromFar()) {
-            return usedManager(this);
-        }
+//        if (siegeAgainstEnemiesFromFar()) {
+//            return usedManager(this);
+//        }
+
+        // Siege regular buildings
+        if (handleSiegeAgainstRegularBuildings() != null) return forceSiege("RegularBuilding");
 
         if (goodDistanceToContainFocusPoint() != null) {
             return usedManager(this);
@@ -90,7 +93,7 @@ public class TerranTankWhenUnsieged extends Manager {
         return false;
     }
 
-    private boolean EnemiesToCloseToUnsiegedTank(AUnit unit) {
+    private boolean EnemiesTooCloseToUnsiegedTank(AUnit unit) {
         if (unit.noCooldown() && unit.hp() >= 125) return false;
 
         Selection enemies = unit.enemiesNear().groundUnits().combatUnits().inRadius(6.5, unit);
@@ -230,7 +233,7 @@ public class TerranTankWhenUnsieged extends Manager {
         return usedManager(this, "ForceSiege");
     }
 
-    private Manager handleNearEnemyBuilding() {
+    private Manager handleNearbyCombatBuildings() {
         AUnit combatBuilding = Select.enemy().combatBuildings(false).inRadius(COMBAT_BUILDING_DIST_SIEGE, unit).nearestTo(unit);
 //        unit.setTooltip("Buildz:" + Select.enemy().combatBuildings().count());
 
@@ -246,12 +249,16 @@ public class TerranTankWhenUnsieged extends Manager {
             }
         }
 
-        // Siege regular buildings
-        if (combatBuilding == null && unit.id() % 4 == 0) {
+        return null;
+    }
+
+    private Manager handleSiegeAgainstRegularBuildings() {
+        if (unit.id() % 5 == 0 || unit.lastStartedAttackMoreThanAgo(30 * 40)) {
             AUnit enemyBuilding = Select.enemy().buildings().inRadius(9.9, unit).nearestTo(unit);
 
             if (enemyBuilding != null) {
-                return forceSiege("RegularBuilding");
+                wantsToSiege("SiegeBuilding");
+                return usedManager(this);
             }
         }
 

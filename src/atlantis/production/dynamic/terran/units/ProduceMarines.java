@@ -29,7 +29,7 @@ public class ProduceMarines {
         int infantry = Count.infantry();
 
         if (tanks >= 5) {
-            if (A.canAfford(450 + infantry * 10, 0)) return false;
+            if (!A.canAfford(450 + infantry * 10, 0)) return false;
         }
 
         if (tanks <= 2 && infantry >= 10 && (!A.hasMinerals(550) || !A.hasGas(100))) {

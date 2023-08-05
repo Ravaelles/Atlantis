@@ -69,25 +69,21 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     }
 
     public static boolean isNotEnoughPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
-        boolean canThisBuildingHaveAddon = building.canHaveAddon();
-        boolean isBase = building.isBase();
+        if (
+            building.canHaveAddon()
+                && !building.isBase()
+                && !CanPhysicallyBuildHere.check(builder, building, position.translateByTiles(2, 0))
+        ) {
+            _CONDITION_THAT_FAILED = "MY_ADDON_COULDNT_BE_BUILT_HERE";
+            return true;
+        }
 
         // === Compare against existing buildings ========================================
 
+        // Check for other buildings' addons
         for (AUnit otherBuilding : Select.ourBuildingsWithUnfinished().inRadius(8, position).list()) {
-//            double distance = otherBuilding.distTo(position);
-
-            // Check for this building's addon if needed
-            if (canThisBuildingHaveAddon && !isBase) {
-                if (!CanPhysicallyBuildHere.canPhysicallyBuildHere(builder, building, position.translateByTiles(2, 0))) {
-                    _CONDITION_THAT_FAILED = "MY_ADDON_COULDNT_BE_BUILT_HERE";
-                    return true;
-                }
-            }
-
-            // Check for other buildings' addons
-            if (!isBase && otherBuilding.canHaveAddon()) {
-                if (!CanPhysicallyBuildHere.canPhysicallyBuildHere(builder, building, position.translateByTiles(-2, 0))) {
+            if (otherBuilding.canHaveAddon()) {
+                if (!CanPhysicallyBuildHere.check(builder, building, position.translateByTiles(-2, 0))) {
                     _CONDITION_THAT_FAILED = "WOULD_COLLIDE_WITH_ANOTHER_BUILDING_ADDON";
                     return true;
                 }

@@ -16,7 +16,10 @@ public class MoveToBunkerWhenCantLoadIntoIt extends Manager {
 
         if (Count.bunkers() == 0) return false;
 
-        return unit.target() != null && unit.target().isBunker() && unit.isMarine();
+        return unit.target() != null
+            && unit.target().isBunker()
+            && unit.isMarine()
+            && unit.target().distToLessThan(unit.target(), 15);
     }
 
     @Override

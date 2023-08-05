@@ -12,19 +12,35 @@ public class BeCloseToLeader extends MissionManager {
 
     @Override
     public boolean applies() {
-        return !unit.isAir() && !squad.isLeader(unit) && unit.enemiesNearInRadius(7) == 0;
+        return !unit.isAir()
+            && !squad.isLeader(unit)
+            && (unit.noCooldown() && unit.enemiesNearInRadius(7) == 0);
     }
 
     @Override
     public Manager handle() {
-        if (
-            squad.cohesionPercent() <= 70
-                && unit.friendsInRadiusCount(1) <= 4
-        ) {
+        if (shouldGetBackToLeader()) {
             unit.move(squad.leader(), Actions.MOVE_FORMATION, "CloserToLeader");
             return usedManager(this);
         }
 
         return null;
+    }
+
+    private boolean shouldGetBackToLeader() {
+        AUnit leader = squad.leader();
+
+        if (unit.distTo(leader) >= 9) return true;
+
+        if (leader.friendsNear().inRadius(2, leader).count() >= 7) {
+            return false;
+        }
+
+        if (
+            squad.cohesionPercent() <= 70
+            && unit.friendsInRadiusCount(1) <= 4
+        ) return true;
+
+        return false;
     }
 }
