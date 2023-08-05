@@ -21,7 +21,7 @@ public class WouldBlockChokeBySieging extends Manager {
             !Enemy.terran()
                 && unit.isMissionAttack()
                 && Select.enemy().combatBuildings(false).inRadius(8, unit).empty()
-                && unit.distToNearestChokeLessThan(2)
+                && unit.distToNearestChokeLessThan(3.3)
         ) {
             unit.setTooltip("DoNotBlockChoke");
             return usedManager(this);

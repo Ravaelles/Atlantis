@@ -11,7 +11,7 @@ public class TerranEnsureBall extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTerranInfantry() && unit.friendsNear().groundUnits().inRadius(2, unit).atMost(7);
+        return unit.isTerranInfantry();
     }
 
     @Override

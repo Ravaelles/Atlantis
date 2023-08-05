@@ -9,8 +9,8 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class HugTanks extends Manager {
-    public static final int MAX_DIST_FROM_TANK = 8;
-    public static final int MIN_DIST_FROM_TANK = 4;
+    public static final int MAX_DIST_FROM_TANK = 5;
+    public static final int MIN_DIST_FROM_TANK = 2;
 
     public HugTanks(AUnit unit) {
         super(unit);
@@ -20,7 +20,7 @@ public class HugTanks extends Manager {
     public boolean applies() {
         return We.terran()
             && !unit.isAir()
-            && Count.tanks() > 0
+            && Count.tanks() >= 2
             && !unitIsOvercrowded();
     }
 
@@ -70,8 +70,8 @@ public class HugTanks extends Manager {
     }
 
     protected boolean unitIsOvercrowded() {
-        return unit.friendsInRadius(2).groundUnits().atLeast(5)
-            && unit.friendsInRadius(4).groundUnits().atLeast(10);
+        return unit.friendsInRadius(2).groundUnits().atLeast(6)
+            && unit.friendsInRadius(4).groundUnits().atLeast(13);
     }
 
     protected boolean tankIsOvercrowded(AUnit tank) {

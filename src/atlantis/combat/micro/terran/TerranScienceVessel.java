@@ -2,6 +2,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
@@ -13,7 +14,6 @@ import atlantis.units.select.Selection;
 import bwapi.TechType;
 
 public class TerranScienceVessel extends MobileDetector {
-
     public TerranScienceVessel(AUnit unit) {
         super(unit);
     }
@@ -23,6 +23,13 @@ public class TerranScienceVessel extends MobileDetector {
         return unit.isScienceVessel();
     }
 
+    @Override
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            AvoidEnemies.class,
+        };
+    }
+
     public AUnitType type() {
         return AUnitType.Terran_Science_Vessel;
     }
@@ -30,11 +37,14 @@ public class TerranScienceVessel extends MobileDetector {
     // =========================================================
 
     public Manager handle() {
+        Manager submanager = handleSubmanagers();
+        if (submanager != null) return usedManager(submanager);
+
         if (useTech()) {
             return usedManager(this);
         }
 
-        return super.handle();
+        return null;
     }
 
     // =========================================================
@@ -96,13 +106,15 @@ public class TerranScienceVessel extends MobileDetector {
             APosition center = enemies.center();
             if (center != null) {
                 center = Select.enemyCombatUnits().inRadius(3, center).center();
-            } else {
+            }
+            else {
                 center = enemies.random().position();
             }
 
             if (center != null) {
                 return unit.useTech(TechType.Irradiate, center);
-            } else {
+            }
+            else {
                 System.err.println("Irradiate center is NULL / " + enemies.count());
                 return unit.useTech(TechType.Irradiate, enemies.first());
             }
@@ -110,10 +122,10 @@ public class TerranScienceVessel extends MobileDetector {
 
         // Crucial enemies
         AUnit enemy = Select.enemy().ofType(
-                AUnitType.Zerg_Lurker, AUnitType.Zerg_Mutalisk, AUnitType.Zerg_Ultralisk, AUnitType.Zerg_Defiler,
-                AUnitType.Zerg_Guardian, AUnitType.Zerg_Scourge,
-                AUnitType.Protoss_High_Templar, AUnitType.Protoss_Archon, AUnitType.Protoss_Dark_Archon,
-                AUnitType.Terran_Medic
+            AUnitType.Zerg_Lurker, AUnitType.Zerg_Mutalisk, AUnitType.Zerg_Ultralisk, AUnitType.Zerg_Defiler,
+            AUnitType.Zerg_Guardian, AUnitType.Zerg_Scourge,
+            AUnitType.Protoss_High_Templar, AUnitType.Protoss_Archon, AUnitType.Protoss_Dark_Archon,
+            AUnitType.Terran_Medic
         ).effVisible().inRadius(15, unit).mostDistantTo(unit);
         if (enemy != null) {
             return unit.useTech(TechType.Irradiate, enemy);
@@ -121,9 +133,9 @@ public class TerranScienceVessel extends MobileDetector {
 
         // Regular enemies
         enemy = Select.enemy().ofType(
-                AUnitType.Zerg_Zergling, AUnitType.Zerg_Drone,
-                AUnitType.Protoss_Dragoon, AUnitType.Protoss_Zealot,
-                AUnitType.Terran_Marine
+            AUnitType.Zerg_Zergling, AUnitType.Zerg_Drone,
+            AUnitType.Protoss_Dragoon, AUnitType.Protoss_Zealot,
+            AUnitType.Terran_Marine
         ).effVisible().inRadius(15, unit).mostDistantTo(unit);
         if (enemy != null) {
             return unit.useTech(TechType.Irradiate, enemy);
@@ -139,7 +151,8 @@ public class TerranScienceVessel extends MobileDetector {
             APosition center = enemies.center();
             if (center != null) {
                 center = Select.enemyCombatUnits().inRadius(3, center).center();
-            } else {
+            }
+            else {
                 center = enemies.random().position();
             }
 

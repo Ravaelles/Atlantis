@@ -34,11 +34,15 @@ public class TerranFightInsteadAvoid extends HasUnit {
             return false;
         }
 
-        if (unit.isAttacking() && Count.tanks() >= 2) {
+        if (unit.isAttacking() && Count.tanks() >= 1) {
             double tankDist = unit.nearestFriendlyTankDist();
 
             if (tankDist <= 2) return true;
-            if (tankDist >= 4) return false;
+            if (tankDist >= 5) return false;
+
+            if (unit.enemiesNear().combatBuildingsAntiLand().inRadius(8, unit).notEmpty()) {
+                return false;
+            }
         }
 
         double combatEval = unit.combatEvalRelative();

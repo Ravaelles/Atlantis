@@ -11,7 +11,7 @@ public class DontThinkAboutUnsieging extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTankSieged() && unit.hp() >= 60;
+        return unit.isTankSieged() && unit.hp() >= 60 && unit.distToLessThan(unit.squadLeader(), 8);
     }
 
     public Manager handle() {

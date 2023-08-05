@@ -1,6 +1,7 @@
 package atlantis.combat.targeting;
 
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.targeting.tanks.ATargetingForTanks;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -94,6 +95,10 @@ public class ATargeting extends HasUnit {
     // =========================================================
 
     private static AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
+        if (unit.isTank()) {
+            return (new ATargetingForTanks(unit)).defineTarget();
+        }
+
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
 //        System.out.println("defineTarget = " + enemy);
 
@@ -138,13 +143,6 @@ public class ATargeting extends HasUnit {
 //        AUnit weakestEnemy = selectWeakestEnemyOfType(enemy.type(), unit);
         AUnit weakestEnemy = enemy;
 //        System.out.println("weakestEnemy = " + weakestEnemy + "\n");
-
-        if (weakestEnemy != null && unit.isTank()) {
-            AUnit tank = handleTanksSpecially(unit, weakestEnemy);
-            if (tank != null) {
-                return tank;
-            }
-        }
 
         return weakestEnemy;
     }

@@ -50,7 +50,10 @@ public class AttackNearbyEnemies extends Manager {
             "handleAttackNearEnemyUnits: " + unit.id(),
             4,
             () -> {
-                if (unit.isAttacking() && unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) {
+                if (unit.isAttacking() && (
+                    unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
+                        || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)
+                )) {
                     return true;
                 }
 
