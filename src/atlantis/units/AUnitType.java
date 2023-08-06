@@ -909,6 +909,25 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public double addonWidthInPx() {
+        return (double) cache.get(
+            "addonWidthInPx",
+            -1,
+            () -> {
+                if (is(AUnitType.Terran_Factory)) return calculateAddonWidthInPx(Terran_Machine_Shop);
+                if (is(AUnitType.Terran_Command_Center)) return calculateAddonWidthInPx(Terran_Comsat_Station);
+                if (is(AUnitType.Terran_Starport)) return calculateAddonWidthInPx(Terran_Control_Tower);
+                if (is(AUnitType.Terran_Science_Facility)) return calculateAddonWidthInPx(Terran_Physics_Lab);
+
+                return 0;
+            }
+        );
+    }
+
+    private int calculateAddonWidthInPx(AUnitType addon) {
+        return addon.dimensionLeftPx() + addon.dimensionRightPx();
+    }
+
     /**
      * Returns most default addon for Terran building like Machine Shop for Factory, Comsat Station for
      * Command Center or null if building can't have addon.

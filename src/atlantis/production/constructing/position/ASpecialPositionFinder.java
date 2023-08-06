@@ -27,6 +27,8 @@ public class ASpecialPositionFinder {
         for (AUnit base : Select.ourBases().list()) {
             AUnit geyser = Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
 
+            System.out.println("geyser = " + geyser);
+
             if (geyser != null && geyser.distTo(base) < 12) {
                 return geyser.translateByPixels(-64, -32);
             }
@@ -42,37 +44,37 @@ public class ASpecialPositionFinder {
      */
     public static APosition findPositionForBase(AUnitType building, AUnit builder, Construction construction) {
         return cache.get(
-                "findPositionForBase:" + builder + "," + construction.id(),
-                53,
-                () -> {
-                    String modifier = construction.productionOrder() != null ?
-                            construction.productionOrder().getModifier() : null;
+            "findPositionForBase:" + builder + "," + construction.id(),
+            53,
+            () -> {
+                String modifier = construction.productionOrder() != null ?
+                    construction.productionOrder().getModifier() : null;
 
-                    APosition position = null;
-                    if (modifier != null) {
-                        position = positionModifierToPosition(modifier, building, builder, construction);
-                    }
-
-                    if (position == null) {
-                        System.err.println("");
-                        System.err.println(construction.productionOrder());
-                        System.err.println(construction.maxDistance());
-                        System.err.println("=== Base location error /" + modifier + "/ ===");
-
-                        position = positionModifierToPosition("", building, builder, construction);
-                        if (position != null) {
-                            System.err.println("Used fix to build base anywhere.");
-                        }
-                    }
-
-                    APosition result = findPositionForBase_nearestFreeBase(building, builder, construction);
-
-                    if (result != null) {
-                        cache.clear();
-                    }
-
-                    return result;
+                APosition position = null;
+                if (modifier != null) {
+                    position = positionModifierToPosition(modifier, building, builder, construction);
                 }
+
+                if (position == null) {
+                    System.err.println("");
+                    System.err.println(construction.productionOrder());
+                    System.err.println(construction.maxDistance());
+                    System.err.println("=== Base location error /" + modifier + "/ ===");
+
+                    position = positionModifierToPosition("", building, builder, construction);
+                    if (position != null) {
+                        System.err.println("Used fix to build base anywhere.");
+                    }
+                }
+
+                APosition result = findPositionForBase_nearestFreeBase(building, builder, construction);
+
+                if (result != null) {
+                    cache.clear();
+                }
+
+                return result;
+            }
         );
     }
 
@@ -148,7 +150,7 @@ public class ASpecialPositionFinder {
 //        System.out.println(builder + " / " + building + " / " +  APosition.createFrom(baseLocationToExpand.getPosition()));
 
         return APositionFinder.findStandardPosition(
-                builder, building, near, construction.maxDistance()
+            builder, building, near, construction.maxDistance()
         );
     }
 

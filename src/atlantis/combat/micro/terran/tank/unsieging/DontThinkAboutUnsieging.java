@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran.tank.unsieging;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.Enemy;
 
 public class DontThinkAboutUnsieging extends Manager {
     public DontThinkAboutUnsieging(AUnit unit) {
@@ -11,7 +12,11 @@ public class DontThinkAboutUnsieging extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTankSieged() && unit.hp() >= 60 && unit.distToLessThan(unit.squadLeader(), 8);
+        if (!unit.isTankSieged()) return false;
+
+        if (Enemy.terran()) return false;
+
+        return unit.hp() >= 60 && unit.distToLessThan(unit.squadLeader(), 8);
     }
 
     public Manager handle() {

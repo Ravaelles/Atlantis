@@ -49,9 +49,9 @@ public class APositionFinder {
      * <b>maxDistance</b> build tiles from given position.
      */
     public static APosition findPositionForNew(
-            AUnit builder, AUnitType building,
-            Construction construction,
-            HasPosition nearTo, double maxDistance
+        AUnit builder, AUnitType building,
+        Construction construction,
+        HasPosition nearTo, double maxDistance
     ) {
 //        totalRequests++;
 
@@ -66,7 +66,7 @@ public class APositionFinder {
 
         if (building.isGasBuilding()) {
             return ASpecialPositionFinder.findPositionForGasBuilding(building);
-        } 
+        }
 
         // =========================================================
         // BASE
@@ -93,7 +93,7 @@ public class APositionFinder {
 
         else if (building.is(AUnitType.Zerg_Creep_Colony)) {
             return ZergCreepColony.findPosition(building, builder, construction);
-        } 
+        }
 
         // =========================================================
         // STANDARD BUILDINGS
@@ -107,7 +107,8 @@ public class APositionFinder {
                 else {
                     if (Count.bases() >= 3) {
                         nearTo = Select.ourBases().random();
-                    } else {
+                    }
+                    else {
                         nearTo = Select.main().position();
                     }
                 }
@@ -129,47 +130,47 @@ public class APositionFinder {
 
             // =========================================================
             // Standard place
-            
+
             return findStandardPosition(builder, building, nearTo, maxDistance);
         }
     }
-    
+
     // =========================================================
-    
+
     /**
      * Returns standard build position for building near given position.
      */
     public static APosition findStandardPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         return cache.get(
-                "findStandardPosition:" + building + "," + nearTo + "," + builder,
-                41,
-                () -> {
-                    // ===========================================================
-                    // = Handle standard building position according to the race =
-                    // = as every race uses completely different approach        =
-                    // ===========================================================
+            "findStandardPosition:" + building + "," + nearTo + "," + builder,
+            41,
+            () -> {
+                // ===========================================================
+                // = Handle standard building position according to the race =
+                // = as every race uses completely different approach        =
+                // ===========================================================
 
-                    // Terran
-                    if (AGame.isPlayingAsTerran()) {
-                        return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-                    }
-
-                    // Protoss
-                    else if (AGame.isPlayingAsProtoss()) {
-                        return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-                    }
-
-                    // Zerg
-                    else if (AGame.isPlayingAsZerg()) {
-                        return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-                    }
-
-                    else {
-                        System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
-                        System.exit(-1);
-                        return null;
-                    }
+                // Terran
+                if (AGame.isPlayingAsTerran()) {
+                    return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
                 }
+
+                // Protoss
+                else if (AGame.isPlayingAsProtoss()) {
+                    return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+                }
+
+                // Zerg
+                else if (AGame.isPlayingAsZerg()) {
+                    return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+                }
+
+                else {
+                    System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
+                    System.exit(-1);
+                    return null;
+                }
+            }
         );
     }
 

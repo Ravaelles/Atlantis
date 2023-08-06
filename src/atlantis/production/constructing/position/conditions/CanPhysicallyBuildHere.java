@@ -1,11 +1,14 @@
 package atlantis.production.constructing.position.conditions;
 
 import atlantis.Atlantis;
+import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
+import bwapi.Color;
 
 public class CanPhysicallyBuildHere {
     /**
@@ -19,6 +22,10 @@ public class CanPhysicallyBuildHere {
         if (builder == null) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "BUILDER IS NULL";
             return false;
+        }
+
+        if (building.isGasBuilding()) {
+            AAdvancedPainter.paintCircleFilled(position, 5, Color.Red);
         }
 
         if (!position.isPositionVisible()) {

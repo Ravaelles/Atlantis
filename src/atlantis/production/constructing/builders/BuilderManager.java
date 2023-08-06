@@ -1,8 +1,10 @@
 package atlantis.production.constructing.builders;
 
 import atlantis.architecture.Manager;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
@@ -14,6 +16,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
+import bwapi.Color;
 import bwapi.TilePosition;
 
 public class BuilderManager extends Manager {
@@ -103,7 +107,7 @@ public class BuilderManager extends Manager {
 
         // =========================================================
 
-        double minDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.6 : 1.1;
+        double minDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 2.6 : 1.1;
         double distance = unit.distTo(buildPositionCenter);
         String distString = "(" + A.digit(distance) + ")";
 
@@ -113,7 +117,9 @@ public class BuilderManager extends Manager {
             return moveToConstruct(construction, buildingType, distance, distString);
         }
         else {
-//            refreshConstructionPositionIfNeeded(construction, buildingType);
+            if (A.everyNthGameFrame(77)) {
+                refreshConstructionPositionIfNeeded(construction, buildingType);
+            }
 
             return issueBuildOrder(buildingType, construction);
         }
@@ -260,7 +266,11 @@ public class BuilderManager extends Manager {
                 return position.translateByTiles(2, 1);
             }
 
-//            ErrorLog.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
+//            if (building.isGasBuilding()) {
+//                GameSpeed.pauseGame();
+//            }
+
+            ErrorLog.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
         }
 
         return position;

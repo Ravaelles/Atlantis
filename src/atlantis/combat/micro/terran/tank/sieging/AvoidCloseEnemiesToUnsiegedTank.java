@@ -5,10 +5,10 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 
-public class RunCauseEnemiesAreTooCloseToUnsiegedTank extends Manager {
+public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
     private Selection enemies;
 
-    public RunCauseEnemiesAreTooCloseToUnsiegedTank(AUnit unit) {
+    public AvoidCloseEnemiesToUnsiegedTank(AUnit unit) {
         super(unit);
     }
 

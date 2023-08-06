@@ -87,6 +87,14 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
     }
 
     private static boolean vultures() {
+//        return false;
+
+        if (Enemy.terran()) {
+            if (Count.ofType(AUnitType.Terran_Vulture) < 2 || (A.hasMinerals(600) && !A.hasGas(100))) {
+                return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, 5);
+            }
+        }
+
         return false;
 
 //        if (true) return false;

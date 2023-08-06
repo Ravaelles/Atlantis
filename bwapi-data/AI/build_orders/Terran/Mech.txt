@@ -21,25 +21,13 @@ Improvised Build Order
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-8 - Supply Depot
-10 - Barracks
-12 - Supply Depot
-16 - Refinery
-//18 - Machine Shop
-//20 - Machine Shop
-21 - Supply Depot
-23 - Barracks
-24 - Factory
-24 - Academy
-28 - Tank
-28 - Barracks
-29 - Siege Mode
-31 - Tank
-34 - Factory
-36 - Tank
-42 - Tank
-40 - Starport
-42 - Wraith
-46 - Wraith
-46 - Science Facility
-50 - Science Vessel
+9 - Supply Depot
+11 - Barracks
+11 - Refinery
+16 - Supply Depot
+16 - Factory
+18 - Machine Shop
+18 - Bunker - @MAIN_CHOKE
+18 - Factory
+23 - Supply Depot
+23 - Machine Shop

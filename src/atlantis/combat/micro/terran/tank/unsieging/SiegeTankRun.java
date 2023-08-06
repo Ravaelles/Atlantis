@@ -1,10 +1,11 @@
-package atlantis.combat.micro.terran.tank;
+package atlantis.combat.micro.terran.tank.unsieging;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.units.AUnit;
 
-public class TankRunning extends Manager {
-    public TankRunning(AUnit unit) {
+public class SiegeTankRun extends Manager {
+    public SiegeTankRun(AUnit unit) {
         super(unit);
     }
 

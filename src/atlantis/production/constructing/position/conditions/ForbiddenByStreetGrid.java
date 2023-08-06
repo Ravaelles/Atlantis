@@ -8,7 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ForbiddenByStreetGrid {
-    private static final int GRID_VALUE = 8;
+    private static final int GRID_VALUE = 7;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -27,8 +27,9 @@ public class ForbiddenByStreetGrid {
 
         // Leave entire vertical (same tileX) corridor free for units
         if (
-            position.tx() % GRID_VALUE <= 1
-                || (position.tx() + building.dimensionRightPx() / 32) % GRID_VALUE <= 1
+            buildingLeftTx(building, position) % GRID_VALUE <= 1 || buildingRightTx(building, position) % GRID_VALUE <= 0
+//            position.tx() % GRID_VALUE <= 1
+//                || (position.tx() + building.dimensionRightPx() / 32) % GRID_VALUE <= 1
         ) {
 //        System.out.println(building.name() + "   " + position.getTileX() + " // (" + position.getTileX() % GRID_VALUE + ") // "
 //                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
@@ -47,5 +48,15 @@ public class ForbiddenByStreetGrid {
         }
 
         return false;
+    }
+
+    private static int buildingLeftTx(AUnitType building, APosition position) {
+        return position.tx() - building.dimensionLeftPx() / 32;
+    }
+
+    private static int buildingRightTx(AUnitType building, APosition position) {
+        double addonBonus = building.addonWidthInPx();
+
+        return (int) (position.tx() + (building.dimensionRightPx() + addonBonus) / 32);
     }
 }

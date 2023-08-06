@@ -13,9 +13,11 @@ public class StrategyChooser {
 
         if (We.protoss()) {
             strategy = ProtossStrategies.initForProtoss();
-        } else if (We.terran()) {
+        }
+        else if (We.terran()) {
             strategy = initForTerran();
-        } else {
+        }
+        else {
             strategy = initForZerg();
         }
 
@@ -37,8 +39,8 @@ public class StrategyChooser {
 //            return TerranStrategies.TERRAN_Nada_2_Fac;
         }
         else if (Enemy.terran()) {
-            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
-//            return TerranStrategies.TERRAN_Mech;
+            return TerranStrategies.TERRAN_Mech;
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
         }
         else {
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;

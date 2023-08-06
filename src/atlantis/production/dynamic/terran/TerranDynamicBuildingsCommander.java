@@ -200,7 +200,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 //        }
 
         if (Count.factories() > Count.ofType(Terran_Machine_Shop)) {
-            if (Count.existingOrInProductionOrInQueue(Terran_Machine_Shop) <= 1) {
+            if (Count.inProductionOrInQueue(Terran_Machine_Shop) <= 1) {
                 AddToQueue.withHighPriority(Terran_Machine_Shop);
                 return;
             }
@@ -231,6 +231,8 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 
     private static boolean barracks() {
         int barracks = Count.withPlanned(Terran_Barracks);
+
+        if (barracks >= 1 && Enemy.terran()) return false;
 
         if (!A.hasMinerals(650)) {
 //            if (barracks >= 3) {

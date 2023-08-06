@@ -261,15 +261,6 @@ public class ConstructionsCommander extends Commander {
     private void handleConstructionUnderAttack(Construction order) {
         AUnit building = order.construction();
 
-//        System.out.println("building = " + building);
-//        if (building != null) {
-//            System.out.println("building.isCompleted() = " + building.isCompleted());
-//            System.out.println("lastUnderAttack = " + building.lastUnderAttackAgo());
-//        }
-//         else {
-//            System.out.println(order);
-//        }
-
         // If unfinished building is under attack
         if (building != null && !building.isCompleted() && building.lastUnderAttackLessThanAgo(20)) {
 

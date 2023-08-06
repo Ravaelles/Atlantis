@@ -20,6 +20,9 @@ public class ProduceMarines {
         }
 
         int marines = Count.marines();
+
+        if (Enemy.terran() && (marines >= 4 && !A.hasMinerals(700 + 100 * marines))) return false;
+
         int tanks = Count.tanks();
 
         if (marines <= 1) {

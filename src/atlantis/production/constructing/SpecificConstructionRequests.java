@@ -2,7 +2,7 @@ package atlantis.production.constructing;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.game.AGame;
-import atlantis.production.constructing.position.TerranAddonManager;
+import atlantis.production.constructing.position.TerranAddonBuilder;
 import atlantis.production.orders.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -27,45 +27,45 @@ public class SpecificConstructionRequests {
         if (!AGame.isPlayingAsTerran()) {
             return false;
         }
-        
+
         if (building.isAddon()) {
-            TerranAddonManager.buildNewAddon(building, order);
+            TerranAddonBuilder.buildNewAddon(building, order);
             return true;
         }
-        
+
         return false;
     }
-    
+
     // === Zerg ========================================
 
     private static boolean handledZergSpecialBuilding(AUnitType building, ProductionOrder order) {
         if (!AGame.isPlayingAsZerg()) {
             return false;
         }
-        
+
         if (building.equals(AUnitType.Zerg_Sunken_Colony)) {
             ZergCreepColony.creepOneIntoSunkenColony();
             return true;
         }
-        
+
         else if (building.is(AUnitType.Zerg_Lair)) {
             morphFromZergBuildingInto(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair);
             return true;
         }
-        
+
         else if (building.is(AUnitType.Zerg_Hive)) {
             morphFromZergBuildingInto(AUnitType.Zerg_Lair, AUnitType.Zerg_Hive);
             return true;
         }
-        
+
         else if (building.is(AUnitType.Zerg_Greater_Spire)) {
             morphFromZergBuildingInto(AUnitType.Zerg_Spire, AUnitType.Zerg_Greater_Spire);
             return true;
         }
-        
+
         return false;
     }
-    
+
     private static void morphFromZergBuildingInto(AUnitType from, AUnitType into) {
         AUnit building = Select.ourBuildings().ofType(from).first();
         if (building == null) {
@@ -75,5 +75,5 @@ public class SpecificConstructionRequests {
             building.morph(into);
         }
     }
-    
+
 }

@@ -5,14 +5,12 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
-
-public class TerranAddonManager {
-
+public class TerranAddonBuilder {
     public static void buildNewAddon(AUnitType addon, ProductionOrder order) {
         AUnit parentBuilding = Select.ourBuildings().ofType(addon.whatBuildsIt()).free().first();
         if (parentBuilding != null) {
             parentBuilding.buildAddon(addon);
         }
     }
-    
+
 }
