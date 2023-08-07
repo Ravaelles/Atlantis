@@ -20,6 +20,11 @@ public class RetreatManager extends Manager {
     // =========================================================
 
     @Override
+    public boolean applies() {
+        return unit.enemiesNear().canAttack(unit, 10).notEmpty();
+    }
+
+    @Override
     public Manager handle() {
         if (handleRetreat()) return usedManager(this);
 
