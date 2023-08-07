@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class SiegeAgainstRegularEnemies extends Manager {
     public SiegeAgainstRegularEnemies(AUnit unit) {
@@ -19,11 +20,11 @@ public class SiegeAgainstRegularEnemies extends Manager {
 
         if (
             enemies.inRadius(15, unit).atLeast(2)
-                && enemies.inRadius(2, unit).empty()
-                && enemies.inRadius(5, unit).atMost(1)
                 && unit.friendsNear().inRadius(5, unit).count() >= 7
         ) {
-            return true;
+            if (Enemy.terran()) return true;
+
+            return enemies.inRadius(2.8, unit).empty() && enemies.inRadius(5.5, unit).atMost(1);
         }
 
         return false;

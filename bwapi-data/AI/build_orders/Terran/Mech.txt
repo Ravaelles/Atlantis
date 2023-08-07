@@ -23,7 +23,7 @@ Improvised Build Order
 @ - Name - Modifier
 9 - Supply Depot
 11 - Barracks
-11 - Refinery
+12 - Refinery
 16 - Supply Depot
 16 - Factory
 18 - Machine Shop

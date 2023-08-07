@@ -1,5 +1,6 @@
 package atlantis.map.region;
 
+import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -42,7 +43,7 @@ public class Regions {
     /**
      * @fix
      * @broken due to BWTA Polygon gone from the bridge :- ( It was working in BWMirror.
-     *
+     * <p>
      * Can be used to avoid getting to close to the region edges, which may cause unit to get stuck.
      */
 //    public static double getDistanceToAnyRegionPolygonPoint(APosition unitPosition) {
@@ -90,18 +91,17 @@ public class Regions {
 //    }
 
     // =========================================================
-
     public static List<ARegion> regions() {
         return (List<ARegion>) cache.get(
-                "regions",
-                -1,
-                () -> {
-                    ArrayList<ARegion> regions = new ArrayList<>();
-                    for (Area area : AMap.getMap().getAreas()) {
-                        regions.add(ARegion.create(area));
-                    }
-                    return regions;
+            "regions",
+            -1,
+            () -> {
+                ArrayList<ARegion> regions = new ArrayList<>();
+                for (Area area : AMap.getMap().getAreas()) {
+                    regions.add(ARegion.create(area));
                 }
+                return regions;
+            }
         );
     }
 
@@ -116,11 +116,14 @@ public class Regions {
 
         if (param instanceof Position) {
             position = (Position) param;
-        } else if (param instanceof ARegion) {
+        }
+        else if (param instanceof ARegion) {
             position = ((ARegion) param).center().p();
-        } else if (param instanceof HasPosition) {
+        }
+        else if (param instanceof HasPosition) {
             position = ((HasPosition) param).position().p();
-        } else {
+        }
+        else {
             ErrorLog.printErrorOnce("getRegion failed for " + param);
             return null;
         }

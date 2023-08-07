@@ -9,6 +9,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class LoadIntoTheBunker extends Manager {
     public LoadIntoTheBunker(AUnit unit) {
@@ -86,7 +87,8 @@ public class LoadIntoTheBunker extends Manager {
     }
 
     private double maxDistanceToLoad() {
-        return 2.9 + unit.id() % 4 + (A.seconds() <= 400 ? 20 : 0);
+        double base = Enemy.terran() ? 5.5 : 2.9;
+        return base + unit.id() % 4 + (A.seconds() <= 400 ? 20 : 0);
     }
 
     private boolean isItSafeToLoadIntoBunker(AUnit bunker, double unitDistToBunker) {

@@ -24,18 +24,15 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     }
 
     private boolean isTooFar() {
-        return unitToFocus >= (optimalDist + MARGIN);
+        return evaluateDistFromFocusPoint() == DistFromFocus.TOO_FAR;
     }
 
     protected boolean act() {
-        if (isTooFar()) {
-            boolean isTooFar = isTooFar();
-            APosition goTo = isTooFar ? focusPoint : unit.translateTilesTowards(0.1, focusPoint);
+        APosition goTo = unit.distTo(focusPoint) <= 3 ? unit.translateTilesTowards(0.15, focusPoint) : focusPoint;
 
-            if (goTo.isWalkable()) {
-                unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
-                return true;
-            }
+        if (goTo.isWalkable()) {
+            unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
+            return true;
         }
 
         return false;

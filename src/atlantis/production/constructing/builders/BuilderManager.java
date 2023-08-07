@@ -1,24 +1,11 @@
 package atlantis.production.constructing.builders;
 
 import atlantis.architecture.Manager;
-import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.GameSpeed;
-import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.position.APositionFinder;
-import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
-import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
-import bwapi.Color;
-import bwapi.TilePosition;
 
 public class BuilderManager extends Manager {
     public BuilderManager(AUnit unit) {
@@ -44,10 +31,6 @@ public class BuilderManager extends Manager {
             return true;
         }
 
-//        if (fixTerranConstructionsWithoutBuilder()) {
-//            return true;
-//        }
-
         if (handleConstruction()) {
             return true;
         }
@@ -55,27 +38,13 @@ public class BuilderManager extends Manager {
         return false;
     }
 
-//    private boolean fixTerranConstructionsWithoutBuilder() {
-//        if (
-//            We.terran() && unit.isConstructing() && unit.buildUnit() != null
-//            && A.everyNthGameFrame(67)
-//            && unit.looksIdle()
-//            && Select.ourWorkers().inRadius(1, unit.buildUnit()).isEmpty()
-//        ) {
-//            unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(unit.buildUnit());
-//            return true;
-//        }
-//
-//        return false;
-//    }
-
     private boolean handleConstruction() {
         Construction construction = ConstructionRequests.constructionFor(unit);
         if (construction != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
-                return travelToConstruct(construction);
+                return (new TravelToConstruct(unit)).travel(construction);
             }
             else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
                 // Do nothing - construction is pending
@@ -88,229 +57,6 @@ public class BuilderManager extends Manager {
 //            System.err.println("construction null for " + unit);
             return false;
         }
-        return false;
-    }
-
-    private boolean travelToConstruct(Construction construction) {
-        APosition buildPosition = construction.buildPosition();
-        APosition buildPositionCenter = construction.positionToBuildCenter();
-        AUnitType buildingType = construction.buildingType();
-
-        if (unit == null) {
-            throw new RuntimeException("unit empty");
-        }
-        if (buildPosition == null) {
-            System.err.println("buildPosition is null (travelToConstruct " + buildingType + ")");
-            construction.cancel();
-            return false;
-        }
-
-        // =========================================================
-
-        double minDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 2.6 : 1.1;
-        double distance = unit.distTo(buildPositionCenter);
-        String distString = "(" + A.digit(distance) + ")";
-
-//        CameraCommander.centerCameraOn(unit.getPosition());
-
-        if (distance > minDistanceToIssueBuildOrder) {
-            return moveToConstruct(construction, buildingType, distance, distString);
-        }
-        else {
-            if (A.everyNthGameFrame(77)) {
-                refreshConstructionPositionIfNeeded(construction, buildingType);
-            }
-
-            return issueBuildOrder(buildingType, construction);
-        }
-    }
-
-    private static void refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
-        if (CanPhysicallyBuildHere.check(
-            construction.builder(), buildingType, construction.buildPosition())
-        ) {
-            APosition positionForNewBuilding = construction.findPositionForNewBuilding();
-//            System.out.println("UPDATED positionForNewBuilding = " + positionForNewBuilding);
-            if (positionForNewBuilding != null) {
-                construction.setPositionToBuild(positionForNewBuilding);
-                Construction.clearCache();
-            }
-        }
-    }
-
-    private boolean moveToConstruct(Construction construction, AUnitType buildingType, double distance, String distString) {
-        if (shouldNotTravelYet(buildingType, distance)) {
-            unit.setTooltipTactical("Wait to build " + buildingType.name() + distString);
-            return false;
-        }
-
-        if (!unit.isMoving()) {
-//                if (A.everyNthGameFrame(20)) {
-//                    construction.setPositionToBuild(newPosition);
-//                }
-
-//                    GameSpeed.changeSpeedTo(60);
-            if (unit.move(
-                construction.positionToBuildCenter(),
-                Actions.MOVE_BUILD,
-                "Build " + buildingType.name() + distString,
-                true
-            )) return true;
-        }
-
-        return true;
-    }
-
-    private boolean issueBuildOrder(AUnitType buildingType, Construction order) {
-        if (We.protoss()) {
-            AUnit newBuilding = Select.ourUnfinished()
-                .ofType(order.buildingType())
-                .inRadius(2, unit).nearestTo(unit);
-            if (newBuilding != null) {
-                order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
-                order.setBuilder(null);
-                unit.stop("Finished!", true);
-                return false;
-            }
-        }
-
-        if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
-//            System.err.println("buildPosition PRE = " + order.buildPosition());
-            APosition buildPosition = refreshBuildPosition(order);
-//            APosition buildPosition = order.buildPosition();
-
-            if (buildPosition == null) {
-                return false;
-            }
-
-//            System.err.println("buildPosition POST = " + buildPosition);
-//            System.err.println("buildPosition.translateByTiles(1, 1) = " + buildPosition.translateByTiles(1, 1));
-
-            moveOtherUnitsOutOfConstructionPlace(buildPosition.translateByTiles(1, 1));
-
-            // If place is ok, unit isn't constructing and we can afford it, issue the build command.
-            buildPosition = applyGasBuildingFixIfNeeded(buildPosition, buildingType);
-            TilePosition buildTilePosition = new TilePosition(
-                buildPosition.tx(), buildPosition.ty()
-            );
-
-//            if (Select.ourWithUnfinishedOfType(AtlantisConfig.GAS_BUILDING).inRadius(3, buildPosition).notEmpty()) {
-//                order.cancel();
-//                return false;
-//            }
-
-            if (!unit.isConstructing() || unit.isIdle() || AGame.now() % 7 == 0) {
-                unit.build(buildingType, buildTilePosition);
-                return true;
-            }
-        }
-
-        return true;
-    }
-
-    private APosition refreshBuildPosition(Construction order) {
-        if (Select.ourWorkers().inRadius(1.8, order.buildPosition()).atLeast(2)) {
-            return APositionFinder.findStandardPosition(
-                order.builder(), order.buildingType(), order.buildPosition(), 10
-            );
-//            return APositionFinder.findPositionForNew(
-//                order.unit(), order.buildingType(), order
-//            );
-        }
-
-        return order.buildPosition();
-    }
-
-    private void moveOtherUnitsOutOfConstructionPlace(APosition buildPosition) {
-        for (AUnit unit : unit.friendsNear().inRadius(2.3, buildPosition).exclude(unit).list()) {
-            unit.moveAwayFrom(buildPosition, 1, "Construction!", Actions.MOVE_SPECIAL);
-        }
-    }
-
-    /**
-     * From reasons impossible to explain sometimes it happens that we need to build Extractor
-     * one tile left from the top left position. Sometimes not. This method takes care of
-     * these cases and ensures the position is valid.
-     */
-    private APosition applyGasBuildingFixIfNeeded(APosition position, AUnitType building) {
-        if (position == null) {
-            return null;
-        }
-
-        if (building.isGasBuilding() && Select.geysers().inRadius(3, position).isEmpty()) {
-            ErrorLog.printMaxOncePerMinute(
-                "There are no geysers in radius 3 of " + position + " for " + building
-                    + "\nThis indicates a problem with initial position of the gas building."
-            );
-        }
-
-        if (
-            building.isGasBuilding()
-                && !CanPhysicallyBuildHere.check(unit, building, position)
-        ) {
-            if (CanPhysicallyBuildHere.check(
-                unit, building, position.translateByTiles(-1, 0))
-            ) {
-//                System.out.println("Applied [-1,0] " + building + " position FIX");
-                return position.translateByTiles(-1, 0);
-            }
-            if (CanPhysicallyBuildHere.check(
-                unit, building, position.translateByTiles(1, 0))
-            ) {
-//                System.out.println("Applied [1,0] " + building + " position FIX");
-                return position.translateByTiles(1, 0);
-            }
-            if (CanPhysicallyBuildHere.check(
-                unit, building, position.translateByTiles(-2, -1))
-            ) {
-//                System.out.println("Applied [-2,-1] " + building + " position FIX");
-                return position.translateByTiles(-2, -1);
-            }
-            if (CanPhysicallyBuildHere.check(
-                unit, building, position.translateByTiles(2, 1))
-            ) {
-//                System.out.println("Applied [2,1] " + building + " position FIX");
-                return position.translateByTiles(2, 1);
-            }
-
-//            if (building.isGasBuilding()) {
-//                GameSpeed.pauseGame();
-//            }
-
-            ErrorLog.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
-        }
-
-        return position;
-    }
-
-    // =========================================================
-
-    private boolean shouldNotTravelYet(AUnitType building, double distance) {
-//        if (AGame.timeSeconds() < 300 && !building.isBase()) {
-        if (AGame.timeSeconds() < 300) {
-            int baseBonus = building.isBase() ? 80 : 0;
-//            return !AGame.canAfford(
-
-//            if (building.is(AUnitType.Zerg_Spawning_Pool)) {
-//                System.out.println(
-//                    "mineralsRes=" + CurrentProductionQueue.resourcesReserved()[0]
-//                    + ", queuePos=" + ProductionQueue.positionInQueue(building)
-//                );
-//            }
-
-//            if (ProductionQueue.isAtTheTopOfQueue(building, 1)) {
-            return !AGame.canAfford(
-                building.getMineralPrice() - 32 - (int) (distance * 1.3) - baseBonus,
-                building.getGasPrice() - 16 - (int) distance
-            );
-//            }
-//
-//            return !AGame.canAffordWithReserved(
-//                     building.getMineralPrice() - 32 - (int) (distance * 1.3),
-//                    building.getGasPrice() - 16 - (int) distance
-//            );
-        }
-
         return false;
     }
 

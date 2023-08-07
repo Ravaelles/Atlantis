@@ -18,6 +18,7 @@ public class AvoidCriticalUnits extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             SuicideAgainstScarabs.class,
+            AvoidTanksSieged.class,
             AvoidLurkers.class,
             AvoidReavers.class,
             AvoidDT.class,

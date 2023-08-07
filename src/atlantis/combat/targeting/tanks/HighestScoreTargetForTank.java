@@ -37,10 +37,10 @@ public class HighestScoreTargetForTank extends HasUnit {
         double score = 0;
 
         // Friendly fire
-        score -= enemy.friendsNear().groundUnits().inRadius(1.25, enemy).count() * 50;
+        score -= enemy.friendsNear().groundUnits().nonBuildings().inRadius(1.25, enemy).count() * 50;
 
         // All enemies affected
-        score += enemy.enemiesNear().groundUnits().inRadius(1.25, enemy).count() * 30;
+        score += enemy.enemiesNear().groundUnits().nonBuildings().inRadius(1.25, enemy).count() * 30;
 
         // Direct damage to the unit targeted
         int killBonus = 100;

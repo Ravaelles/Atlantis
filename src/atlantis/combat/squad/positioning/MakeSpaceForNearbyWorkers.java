@@ -27,7 +27,7 @@ public class MakeSpaceForNearbyWorkers extends Manager {
         if (A.seconds() % 6 <= 3) return false;
 
         AChoke choke = Chokes.nearestChoke(unit);
-        if (choke != null && choke.distTo(unit) >= 7) return false;
+        if (choke != null && choke.distTo(unit) >= 5) return false;
 
         return true;
     }

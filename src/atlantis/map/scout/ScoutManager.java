@@ -168,6 +168,8 @@ public class ScoutManager extends Manager {
 //        APosition enemyBase = Select.main().position();
 
         if (enemy != null) {
+            if (enemy.position().x >= 3200) return false;
+
             enemyBaseRegion = enemy.region();
 
             if (scoutingAroundBasePoints.isEmpty()) {

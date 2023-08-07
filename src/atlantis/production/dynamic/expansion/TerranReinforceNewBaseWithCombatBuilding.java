@@ -34,16 +34,10 @@ public class TerranReinforceNewBaseWithCombatBuilding extends ReinforceNewBaseWi
 
         APosition bunkerPosition = basePosition;
 
-        System.err.println("Main position: " + Select.main());
-        System.out.println("this basePosition = " + basePosition);
-
         AChoke choke = Chokes.nearestChoke(basePosition);
-        System.out.println("choke = " + choke);
         if (choke != null) {
             bunkerPosition = basePosition.translateTilesTowards(choke, 5);
         }
-
-        System.err.println("Reinforcing base with bunker at " + bunkerPosition);
 
         AddToQueue.withTopPriority(Terran_Bunker, bunkerPosition);
     }

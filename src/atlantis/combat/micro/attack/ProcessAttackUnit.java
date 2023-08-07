@@ -20,8 +20,13 @@ public class ProcessAttackUnit extends Manager {
         }
 
         if (target.isFoggedUnitWithKnownPosition()) {
-            unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false);
-            return true;
+            if (unit.distTo(target) > unit.weaponRangeAgainst(target)) {
+                unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false);
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         if (handleMoveNextToTanksWhenAttackingThem(target)) {

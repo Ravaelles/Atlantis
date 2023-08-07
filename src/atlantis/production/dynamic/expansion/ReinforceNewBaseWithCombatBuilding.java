@@ -29,7 +29,7 @@ public abstract class ReinforceNewBaseWithCombatBuilding extends Commander {
         Construction futureBase = ConstructionRequests.getNotStartedOfType(AtlantisConfig.BASE);
 
         if (futureBase == null) {
-            ErrorLog.printMaxOncePerMinute("ReinforceNewBaseWithCombatBuilding: futureBase == null");
+//            ErrorLog.printMaxOncePerMinute("ReinforceNewBaseWithCombatBuilding: futureBase == null");
             return null;
         }
 

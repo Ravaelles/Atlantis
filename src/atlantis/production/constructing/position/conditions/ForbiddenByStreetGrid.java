@@ -27,7 +27,7 @@ public class ForbiddenByStreetGrid {
 
         // Leave entire vertical (same tileX) corridor free for units
         if (
-            buildingLeftTx(building, position) % GRID_VALUE <= 1 || buildingRightTx(building, position) % GRID_VALUE <= 0
+            buildingLeftTx(building, position) % GRID_VALUE <= 1 || buildingRightTx(building, position) % GRID_VALUE <= 1
 //            position.tx() % GRID_VALUE <= 1
 //                || (position.tx() + building.dimensionRightPx() / 32) % GRID_VALUE <= 1
         ) {
@@ -41,7 +41,7 @@ public class ForbiddenByStreetGrid {
         // Leave entire horizontal (same tileY) corridor free for units
         if (
             position.ty() % GRID_VALUE <= 1
-                || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 0
+                || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 1
         ) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;
