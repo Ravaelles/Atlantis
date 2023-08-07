@@ -39,6 +39,8 @@ public class ExpansionCommander extends Commander {
     }
 
     protected static boolean shouldBuildNewBase() {
+        if (We.terran() && Count.tanks() <= 0 && !A.hasMinerals(550)) return false;
+
 //        if (true) return false;
 //        if (A.supplyTotal() <= 100) return false;
 

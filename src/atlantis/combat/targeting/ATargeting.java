@@ -95,7 +95,7 @@ public class ATargeting extends HasUnit {
     // =========================================================
 
     private static AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
-        if (unit.isTank()) {
+        if (unit.isTankSieged()) {
             return (new ATargetingForTanks(unit)).defineTarget();
         }
 
