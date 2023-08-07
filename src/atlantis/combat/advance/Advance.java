@@ -13,10 +13,10 @@ public class Advance extends MissionManager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            WeDontKnowWhereEnemyIs.class,
             AdvanceAsTerran.class,
             AdvanceAsALeader.class,
             AdvanceStandard.class,
-            WeDontKnowWhereEnemyIs.class,
         };
     }
 }

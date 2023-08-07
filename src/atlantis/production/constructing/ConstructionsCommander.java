@@ -287,9 +287,9 @@ public class ConstructionsCommander extends Commander {
 
         AUnit main = Select.main();
         int timeout = 30 * (
-            11
-                + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 60 : 15)
-                + ((int) (2.9 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
+            8
+                + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 40 : 11)
+                + ((int) (2.7 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
         );
 
         if (AGame.now() - order.timeOrdered() > timeout) {

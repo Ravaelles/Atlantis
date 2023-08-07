@@ -27,9 +27,8 @@ public class ForbiddenByStreetGrid {
 
         // Leave entire vertical (same tileX) corridor free for units
         if (
-            buildingLeftTx(building, position) % GRID_VALUE <= 1 || buildingRightTx(building, position) % GRID_VALUE <= 1
-//            position.tx() % GRID_VALUE <= 1
-//                || (position.tx() + building.dimensionRightPx() / 32) % GRID_VALUE <= 1
+            buildingLeftTx(building, position) % GRID_VALUE <= 1
+                || buildingRightTx(building, position) % GRID_VALUE <= 1
         ) {
 //        System.out.println(building.name() + "   " + position.getTileX() + " // (" + position.getTileX() % GRID_VALUE + ") // "
 //                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +

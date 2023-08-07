@@ -14,8 +14,9 @@ public class BeCloseToLeader extends MissionManager {
     public boolean applies() {
         return !unit.isAir()
             && !squad.isLeader(unit)
-            && (unit.noCooldown() && unit.enemiesNearInRadius(7) == 0)
-            && unit.mission().focusPoint() != null;
+            && unit.mission().focusPoint() != null
+            && unit.friendsInRadiusCount(3) <= 9
+            && (unit.noCooldown() && unit.enemiesNearInRadius(7) == 0);
     }
 
     @Override

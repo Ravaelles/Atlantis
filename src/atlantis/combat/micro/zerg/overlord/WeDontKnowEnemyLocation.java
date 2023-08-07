@@ -6,7 +6,6 @@ import atlantis.map.scout.ScoutManager;
 import atlantis.units.AUnit;
 
 public class WeDontKnowEnemyLocation extends Manager {
-
     public WeDontKnowEnemyLocation(AUnit unit) {
         super(unit);
     }

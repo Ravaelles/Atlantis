@@ -63,7 +63,9 @@ public class AttackNearbyEnemies extends Manager {
                     unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
                         || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)
                 )) {
-                    return true;
+                    if (unit.target() != null) {
+                        return true;
+                    }
                 }
 
                 AttackNearbyEnemies instance = getInstance(unit);
@@ -75,7 +77,7 @@ public class AttackNearbyEnemies extends Manager {
 
                 AUnit enemy = instance.defineEnemyToAttackFor();
 
-                if (enemy == null) {
+                if (enemy == null || enemy.effUndetected()) {
                     return false;
                 }
 

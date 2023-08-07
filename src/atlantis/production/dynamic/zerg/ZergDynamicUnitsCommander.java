@@ -5,6 +5,8 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
+import atlantis.production.dynamic.zerg.units.ProduceHydras;
+import atlantis.production.dynamic.zerg.units.ProduceZerglings;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -14,8 +16,8 @@ public class ZergDynamicUnitsCommander extends Commander {
     @Override
     public void handle() {
         mutalisks();
-        hydras();
-        zerglings();
+        ProduceHydras.hydras();
+        ProduceZerglings.zerglings();
     }
 
     // =========================================================
@@ -41,59 +43,6 @@ public class ZergDynamicUnitsCommander extends Commander {
                 AddToQueue.withStandardPriority(AUnitType.Zerg_Mutalisk);
             }
         }
-    }
-
-    private static boolean hydras() {
-        if (!Have.a(AUnitType.Zerg_Hydralisk_Den)) {
-            return false;
-        }
-
-        int hydras = Count.hydralisks();
-
-        if (larvas() == 0) {
-            return false;
-        }
-
-        if (hydras <= 2 || AGame.canAffordWithReserved(50, 0)) {
-            AddToQueue.withStandardPriority(AUnitType.Zerg_Hydralisk);
-            return true;
-        }
-
-        return false;
-    }
-
-    private static boolean zerglings() {
-        if (!Have.a(AUnitType.Zerg_Spawning_Pool)) {
-            return false;
-        }
-
-        int zerglings = Count.zerglings();
-
-        if (zerglings >= 2 && larvas() == 0) {
-            return false;
-        }
-
-        if (Have.hydraliskDen()) {
-            if (!A.hasMinerals(210) && zerglings >= 4) {
-                return false;
-            }
-        }
-
-        if (!Decisions.shouldMakeZerglings()) {
-            return false;
-        }
-
-        if (
-            zerglings <= 50
-                && larvas(1)
-                && (zerglings <= 3 || AGame.canAffordWithReserved(50, 0))
-        ) {
-//            System.err.println(A.now() + " zergling enqueued");
-            AddToQueue.withStandardPriority(AUnitType.Zerg_Zergling);
-            return true;
-        }
-
-        return false;
     }
 
     // =========================================================

@@ -50,7 +50,7 @@ public class OptimalNumOfBunkerRepairers {
                     optimalNumber = enemiesNear * 0.65 + enemiesFar * 0.5;
                 }
 
-                if (bunker.hp() < 250) {
+                if (bunker.hp() < 300) {
                     optimalNumber += 2;
                 }
 

@@ -9,9 +9,13 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class WeDontKnowWhereEnemyIs extends MissionManager {
-
     public WeDontKnowWhereEnemyIs(AUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return !EnemyInfo.hasDiscoveredAnyBuilding();
     }
 
     public Manager handle(AUnit unit) {

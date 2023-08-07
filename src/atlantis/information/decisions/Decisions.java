@@ -3,7 +3,7 @@ package atlantis.information.decisions;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
-import atlantis.information.decisions.zerg.ShouldMakeZerglings;
+import atlantis.production.dynamic.zerg.units.ProduceZerglings;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
@@ -62,7 +62,7 @@ public class Decisions {
         return cache.get(
             "shouldMakeTerranBio",
             97,
-            () -> ShouldMakeZerglings.should()
+            () -> ProduceZerglings.zerglings()
         );
     }
 
@@ -185,7 +185,7 @@ public class Decisions {
         if (GamePhase.isEarlyGame()) {
             if (
                 enemyStrategyIsRushOrCheese()
-                && zealots < minZealotsAgainstEnemyRush()
+                    && zealots < minZealotsAgainstEnemyRush()
             ) {
                 return true;
             }

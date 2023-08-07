@@ -251,6 +251,10 @@ public class Count {
         return ofType(AUnitType.Zerg_Larva);
     }
 
+    public static boolean larvas(int minLarvas) {
+        return larvas() >= minLarvas;
+    }
+
     public static int turrets() {
         return ofType(AUnitType.Terran_Missile_Turret);
     }

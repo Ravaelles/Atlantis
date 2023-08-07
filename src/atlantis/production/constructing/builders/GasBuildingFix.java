@@ -23,19 +23,27 @@ public class GasBuildingFix extends HasUnit {
             return null;
         }
 
-        if (building.isGasBuilding() && Select.geysers().inRadius(3, position).isEmpty()) {
-            ErrorLog.printMaxOncePerMinute(
-                "There are no geysers in radius 3 of " + position + " for " + building
-                    + "\nThis indicates a problem with initial position of the gas building."
-            );
-
-            AUnit geyser = Select.geysers().nearestTo(position);
+        // Fix geyser position problem
+        if (building.isGasBuilding() && Select.geysers().inRadius(2, position).isEmpty()) {
+            AUnit geyser = Select.geysers().inRadius(12, position).nearestTo(position);
             if (geyser != null) {
-                ErrorLog.printErrorOnce("Nearest geyser dist = " + geyser.distTo(position));
+                position = geyser.position();
             }
-            else {
-                ErrorLog.printErrorOnce("No geyser is known!");
-            }
+        }
+
+        if (building.isGasBuilding() && Select.geysers().inRadius(3, position).isEmpty()) {
+//            ErrorLog.printMaxOncePerMinute(
+//                "There are no geysers in radius 3 of " + position + " for " + building
+//                    + "\nThis indicates a problem with initial position of the gas building."
+//            );
+//
+//            AUnit geyser = Select.geysers().nearestTo(position);
+//            if (geyser != null) {
+//                ErrorLog.printErrorOnce("Nearest geyser dist = " + geyser.distTo(position));
+//            }
+//            else {
+//                ErrorLog.printErrorOnce("No geyser is known!");
+//            }
 
             return null;
         }

@@ -12,6 +12,11 @@ public class AdvanceStandard extends MissionManager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return unit.squad().isLeader(unit);
+    }
+
     public Manager handle() {
         if (focusPoint != null) {
             if (unit.isTankSieged()) {

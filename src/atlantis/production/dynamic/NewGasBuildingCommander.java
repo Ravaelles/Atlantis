@@ -43,7 +43,7 @@ public class NewGasBuildingCommander extends Commander {
 
     private static boolean hasABaseWithFreeGeyser() {
         for (AUnit base : Select.ourBases().list()) {
-            if (Select.geysers().inRadius(8, base).isNotEmpty()) {
+            if (Select.geysers().inRadius(13, base).isNotEmpty()) {
                 return true;
             }
         }

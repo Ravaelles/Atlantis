@@ -99,6 +99,8 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
     }
 
     private static boolean armory() {
+        if (!Have.factory()) return false;
+
         if (enemyStrategy().isAirUnits()) {
             if (haveNoExistingOrPlanned(Terran_Armory)) {
                 return addWithTopPriorityThisOrItsRequirement(Terran_Armory, Terran_Factory);
@@ -116,11 +118,13 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
         int minSupply = Enemy.zerg() ? 60 : 90;
 
         if (A.supplyUsed() >= minSupply && Have.factory() && Have.notEvenPlanned(Terran_Starport)) {
-            AddToQueue.withStandardPriority(Terran_Starport);
+            AddToQueue.maxAtATime(Terran_Starport, A.hasMinerals(800) ? 2 : 1);
         }
     }
 
     private static boolean factoryIfBioOnly() {
+        if (!Have.barracks()) return false;
+
         if (A.supplyUsed() <= 30 || !A.hasGas(90) || Have.factory()) {
             return false;
         }
@@ -150,6 +154,8 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
      * If all factories are busy (training units) request new ones.
      */
     private static boolean factories() {
+        if (!Have.barracks()) return false;
+
         if (AGame.canAffordWithReserved(160, 120)) {
             Selection factories = Select.ourOfType(Terran_Factory);
 

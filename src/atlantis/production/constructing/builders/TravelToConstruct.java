@@ -146,16 +146,16 @@ public class TravelToConstruct extends HasUnit {
     }
 
     private APosition refreshBuildPosition(Construction order) {
-        if (Select.ourWorkers().inRadius(1.8, order.buildPosition()).atLeast(2)) {
-            return APositionFinder.findStandardPosition(
-                order.builder(), order.buildingType(), order.buildPosition(), 10
-            );
+//        if (Select.ourWorkers().inRadius(1.8, order.buildPosition()).atLeast(2)) {
+        return APositionFinder.findStandardPosition(
+            order.builder(), order.buildingType(), order.buildPosition(), 15
+        );
 //            return APositionFinder.findPositionForNew(
 //                order.unit(), order.buildingType(), order
 //            );
-        }
+//        }
 
-        return order.buildPosition();
+//        return order.buildPosition();
     }
 
     private void moveOtherUnitsOutOfConstructionPlace(APosition buildPosition) {
