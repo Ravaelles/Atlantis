@@ -36,7 +36,7 @@ public class TerranReinforceNewBaseWithCombatBuilding extends ReinforceNewBaseWi
 
         AChoke choke = Chokes.nearestChoke(basePosition);
         if (choke != null) {
-            bunkerPosition = basePosition.translateTilesTowards(choke, 5);
+            bunkerPosition = choke.translateTilesTowards(basePosition, 5);
         }
 
         AddToQueue.withTopPriority(Terran_Bunker, bunkerPosition);

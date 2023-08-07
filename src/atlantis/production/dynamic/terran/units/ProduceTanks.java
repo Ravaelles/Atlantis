@@ -22,8 +22,8 @@ public class ProduceTanks {
         int tanks = Select.ourWithUnfinished().tanks().count();
         boolean canAffordWithReserved = canAffordWithReserved();
 
-        if (!Enemy.terran() && tanks >= 6) {
-            if (!canAffordWithReserved) {
+        if (!Enemy.terran() && tanks >= 8) {
+            if (!canAffordWithReserved && !A.canAfford(600, 200)) {
                 return false;
             }
         }
@@ -45,12 +45,12 @@ public class ProduceTanks {
         }
 
         if (Enemy.protoss() && tanks >= 4 && Count.scienceVessels() == 0) {
-            return canAffordWithReserved;
+            if (canAffordWithReserved) AddToQueue.maxAtATime(AUnitType.Terran_Siege_Tank_Tank_Mode, 6);
         }
 
 //        int vultures = Count.vultures();
         if (!Decisions.produceVultures() || tanks <= 5 || A.canAfford(700, 250)) {
-            return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Siege_Tank_Tank_Mode);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Siege_Tank_Tank_Mode, 6);
         }
 
         return false;

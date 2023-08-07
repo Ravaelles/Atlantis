@@ -24,7 +24,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
@@ -35,7 +35,7 @@ public class MapAndRace {
         // === Gosu bots - advanced single player cheating bots ====
 
         // vs PROTOSS cheat-bots
-//        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
@@ -52,7 +52,7 @@ public class MapAndRace {
         // === Terran ==============================================
 
         // vs Zerg
-        if (true) return "ums/rav/TankBall_v_Zerg.scx"; // Tanks & Marines v Zerg Base
+//        if (true) return "ums/rav/TankBall_v_Zerg.scx"; // Tanks & Marines v Zerg Base
 //        if (true) return "ums/rav/TBall_v_HydraLings.scx"; // Tanks & Marines v Hydras & Lings
 //        if (true) return "ums/rav/M&M_v_Hydras.scx"; // M&M v Hydras
 //        if (true) return "ums/rav/T_v_Sunkens.scx"; // M&M + Tank + Wraith v Sunkens
@@ -159,5 +159,9 @@ public class MapAndRace {
 
     public static boolean isMap(String mapPartialName) {
         return activeMap().contains(mapPartialName);
+    }
+
+    public static boolean isMapGosu() {
+        return isMap("7th.scx") || isMap("/exp_");
     }
 }

@@ -121,12 +121,14 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
             return null;
         }
 
+        APosition nearTo = null;
+
         // === Main choke ===========================================
 
         AChoke mainChoke = Chokes.mainChoke();
         if (bases <= 1 && mainChoke != null) {
             if (We.terran() && Enemy.terran()) {
-                APosition nearTo = mainChoke.translateTilesTowards(3, Select.main())
+                nearTo = mainChoke.translateTilesTowards(3, Select.main())
                     .makeWalkable(8);
                 AUnit builder = Select.ourWorkers().nearestTo(nearTo);
                 return APositionFinder.findStandardPosition(
@@ -134,15 +136,12 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                 );
             }
 
-            APosition nearTo = Select.main()
+            nearTo = Select.main()
                 .translateTilesTowards(We.terran() ? 7 : 9, mainChoke)
                 .makeBuildable(8)
                 .makeWalkable(4);
 
-            AUnit builder = Select.ourWorkers().nearestTo(nearTo);
-            return APositionFinder.findStandardPosition(
-                builder, type(), nearTo, 15
-            );
+            return findPositionNear(nearTo);
 
 //            return PositionModifier.toPosition(
 //                PositionModifier.MAIN_CHOKE, type(), null, null
@@ -158,12 +157,13 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                 if (naturalBase != null) {
                     AChoke naturalChoke = Chokes.natural();
                     if (naturalChoke != null) {
+//                        nearTo = naturalChoke.position();
 //                        return naturalChoke.translatePercentTowards(10, naturalBase);
                         int distFromChoke = naturalChoke.width() <= 4 ? 5 : 4;
-                        return naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
+                        nearTo = naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
                     }
 
-                    return naturalBase;
+                    return findPositionNear(nearTo);
                 }
             }
         }
@@ -171,7 +171,6 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
         // =========================================================
 
         AUnitType building = type();
-        APosition nearTo = null;
 
 //        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
 
@@ -196,6 +195,14 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
         }
 
         return nearTo;
+    }
+
+    private HasPosition findPositionNear(APosition nearTo) {
+        AUnit builder = Select.ourWorkers().nearestTo(nearTo);
+
+        return APositionFinder.findStandardPosition(
+            builder, type(), nearTo, 15
+        );
     }
 
     // =========================================================

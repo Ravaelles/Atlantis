@@ -2,6 +2,8 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.squad.alpha.Alpha;
+import atlantis.config.MapAndRace;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
@@ -27,9 +29,11 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //        }
 
         if (
-            A.supplyUsed() <= 90
-                && AGame.killsLossesResourceBalance() <= 600
+            A.supplyUsed() <= 100
+                && AGame.killsLossesResourceBalance() <= (MapAndRace.isMapGosu() ? 2000 : 600)
         ) return false;
+
+        if (MapAndRace.isMapGosu() && Alpha.get().size() <= 25) return false;
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
 
