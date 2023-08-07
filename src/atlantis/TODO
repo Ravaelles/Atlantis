@@ -1,0 +1,9 @@
+- Refinery trying to be built as regular building, probably because two orders at the same supply
+
+.- tanks sieging vs Wraith with TooFarFromFocus
+
+.- no tanks nor other units produced even having 5k minerals and 2k gas and factories with addons
+
+- ReinforceNewBaseWithCombatBuilding: futureBase == null
+
+- does it make sense to focus on wraith if tanks will go there?

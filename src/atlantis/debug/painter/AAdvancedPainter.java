@@ -50,6 +50,7 @@ import atlantis.util.ColorUtil;
 import atlantis.util.MappingCounter;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.Log;
 import atlantis.util.log.LogMessage;
 import bwapi.Color;
 import bwapi.TechType;
@@ -242,14 +243,17 @@ public class AAdvancedPainter extends APainter {
     private static void paintLog(AUnit unit) {
         int baseOffset = 13;
         int counter = 0;
-        for (int i = unit.log().messages().size() - 1; i >= 0; i--) {
-            LogMessage message = unit.log().messages().get(i);
+
+//        Log log = unit.log(); // Custom logs
+        Log log = unit.managerLogs(); // Manager history logs
+
+        for (int i = log.messages().size() - 1; i >= 0; i--) {
+            LogMessage message = log.messages().get(i);
 //            unit.paintInfo(message.createdAtFrames() + "-" + message.message(), Color.Grey, offset);
             paintTextCentered(
                 unit,
                 message.createdAtFrames() + "-" + message.message(),
-//                    Color.Grey,
-                Color.Yellow,
+                i == 0 ? Color.Yellow : (i == 1 ? Color.White : Color.Grey),
                 0,
                 (baseOffset + (8 * (counter++))) / 32.0
             );

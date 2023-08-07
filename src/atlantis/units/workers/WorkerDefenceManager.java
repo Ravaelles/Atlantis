@@ -44,6 +44,17 @@ public class WorkerDefenceManager extends Manager {
             return false;
         }
 
+        // Don't run from little dangerous enemies
+        if (unit.hp() >= 35) {
+            Selection baseEnemies = unit.enemiesNear().ofType(
+                AUnitType.Protoss_Scout, AUnitType.Protoss_Arbiter,
+                AUnitType.Terran_Wraith, AUnitType.Terran_Science_Vessel
+            );
+            if (baseEnemies.inRadius(6, unit).atMost(3)) {
+                return false;
+            }
+        }
+
         if (runFromReaverFix(unit)) {
             return true;
         }
@@ -206,13 +217,13 @@ public class WorkerDefenceManager extends Manager {
         }
 
         if (Select.enemyCombatUnits().ofType(
-                AUnitType.Terran_Siege_Tank_Siege_Mode,
-                AUnitType.Terran_Siege_Tank_Tank_Mode,
-                AUnitType.Zerg_Lurker,
-                AUnitType.Zerg_Ultralisk,
-                AUnitType.Protoss_Archon,
-                AUnitType.Protoss_Dark_Templar,
-                AUnitType.Protoss_Reaver
+            AUnitType.Terran_Siege_Tank_Siege_Mode,
+            AUnitType.Terran_Siege_Tank_Tank_Mode,
+            AUnitType.Zerg_Lurker,
+            AUnitType.Zerg_Ultralisk,
+            AUnitType.Protoss_Archon,
+            AUnitType.Protoss_Dark_Templar,
+            AUnitType.Protoss_Reaver
 //                AUnitType.Protoss_Zealot
         ).inRadius(8, worker).count() >= 1) {
             return false;
@@ -223,7 +234,7 @@ public class WorkerDefenceManager extends Manager {
 //            if ((worker.hp() <= 20 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
             if (
                 worker.hp() <= 20
-                || (worker.hp() <= 54 && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty())
+                    || (worker.hp() <= 54 && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty())
             ) {
                 worker.setTooltipTactical("Aaargh!");
                 worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, true);
@@ -236,12 +247,12 @@ public class WorkerDefenceManager extends Manager {
 
         // FIGHT against COMBAT UNITS
         List<AUnit> enemies = worker.enemiesNear()
-                .canBeAttackedBy(worker, 2)
-                .list();
+            .canBeAttackedBy(worker, 2)
+            .list();
         for (AUnit enemy : enemies) {
             if (
                 worker.hp() <= 20
-                || (worker.hp() <= 39 && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty())
+                    || (worker.hp() <= 39 && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty())
             ) {
                 worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, false);
                 return true;

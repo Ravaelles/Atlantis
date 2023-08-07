@@ -11,6 +11,8 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
+import atlantis.production.dynamic.expansion.ExpansionStatus;
+import atlantis.production.dynamic.expansion.ReinforceNewBaseWithCombatBuilding;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -35,6 +37,10 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
         }
         if (A.everyNthGameFrame(77)) {
             ((TerranBunker) TerranBunker.get()).handleDefensiveBunkers();
+
+            if (ExpansionStatus.isBaseUnderConstruction()) {
+                ReinforceNewBaseWithCombatBuilding.create().handle();
+            }
         }
 
         if (A.everyNthGameFrame(7)) {

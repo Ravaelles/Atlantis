@@ -55,7 +55,7 @@ public class ForbiddenByStreetGrid {
     }
 
     private static int buildingRightTx(AUnitType building, APosition position) {
-        double addonBonus = building.addonWidthInPx();
+        int addonBonus = building.addonWidthInPx();
 
         return (int) (position.tx() + (building.dimensionRightPx() + addonBonus) / 32);
     }

@@ -909,8 +909,8 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
-    public double addonWidthInPx() {
-        return (double) cache.get(
+    public int addonWidthInPx() {
+        return (int) cache.get(
             "addonWidthInPx",
             -1,
             () -> {
@@ -932,30 +932,29 @@ public class AUnitType implements Comparable<Object> {
      * Returns most default addon for Terran building like Machine Shop for Factory, Comsat Station for
      * Command Center or null if building can't have addon.
      */
-    public AUnitType getRelatedAddon() {
-        return (AUnitType) cache.get(
-            "getRelatedAddon",
-            -1,
-            () -> {
-                if (this.equals(Terran_Factory)) {
-                    return Terran_Machine_Shop;
-                }
-                else if (this.equals(Terran_Command_Center)) {
-                    return Terran_Comsat_Station;
-                }
-                else if (this.equals(Terran_Starport)) {
-                    return Terran_Control_Tower;
-                }
-                else if (this.equals(Terran_Science_Facility)) {
-                    return Terran_Physics_Lab;
-                }
-                else {
-                    return null;
-                }
-            }
-        );
-    }
-
+//    public AUnitType getRelatedAddon() {
+//        return (AUnitType) cache.get(
+//            "getRelatedAddon",
+//            -1,
+//            () -> {
+//                if (this.equals(Terran_Factory)) {
+//                    return Terran_Machine_Shop;
+//                }
+//                else if (this.equals(Terran_Command_Center)) {
+//                    return Terran_Comsat_Station;
+//                }
+//                else if (this.equals(Terran_Starport)) {
+//                    return Terran_Control_Tower;
+//                }
+//                else if (this.equals(Terran_Science_Facility)) {
+//                    return Terran_Physics_Lab;
+//                }
+//                else {
+//                    return null;
+//                }
+//            }
+//        );
+//    }
     public boolean isDangerousGroundUnit() {
         return (boolean) cache.get(
             "isDangerousGroundUnit",

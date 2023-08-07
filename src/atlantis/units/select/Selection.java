@@ -519,6 +519,10 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection combatBuildingsAnti(AUnit unit) {
+        return unit.isGroundUnit() ? combatBuildingsAntiLand() : combatBuildingsAntiAir();
+    }
+
     public Selection onlyCompleted() {
         return cloneByRemovingIf(
             (unit -> !unit.isCompleted()), "onlyCompleted"

@@ -48,15 +48,15 @@ public class PositionFulfillsAllConditions {
 
         if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return false;
 
+        // Overlapping a choke point can make it impossible to pass
+        if (TooCloseToChoke.isTooCloseToChoke(building, position)) return false;
+
         if (building.isMissileTurret()) return true;
 
         if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) return false;
 
         // Can't be too close to minerals or to geyser, because would slow down production
         if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) return false;
-
-        // Overlapping a choke point can make it impossible to pass
-        if (TooCloseToChoke.isTooCloseToChoke(building, position)) return false;
 
         // All conditions are fullfilled, return this position
         return true;

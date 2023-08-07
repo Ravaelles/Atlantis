@@ -19,9 +19,9 @@ public class Count {
 
     public static int ourCombatUnits() {
         return cache.get(
-                "ourCombatUnits",
-                0,
-                () -> Select.ourCombatUnits().count()
+            "ourCombatUnits",
+            0,
+            () -> Select.ourCombatUnits().count()
         );
     }
 
@@ -98,42 +98,42 @@ public class Count {
     public static int inProduction(AUnitType type) {
         if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
             return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
-                    + Select.ourUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count()
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Sunken_Colony);
+                + Select.ourUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count()
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Sunken_Colony);
         }
         else if (type.equals(AUnitType.Zerg_Spore_Colony)) {
             return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
-                    + Select.ourUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Spore_Colony);
+                + Select.ourUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Spore_Colony);
         }
         else if (type.equals(AUnitType.Zerg_Creep_Colony)) {
             return Select.ourWithUnfinished().ofType(type).count()
-                    + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
-                    + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
+                + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+                + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
         }
         else if (type.isPrimaryBase()) {
             return Select.ourUnfinished().bases().count()
-                    + ConstructionRequests.countNotStartedOfType(type)
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Lair)
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Hive);
+                + ConstructionRequests.countNotStartedOfType(type)
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Lair)
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Hive);
         }
         else if (type.isBase() && !type.isPrimaryBase()) {
             return Select.ourUnfinished().ofType(type).count()
-                    + ConstructionRequests.countNotStartedOfType(type);
+                + ConstructionRequests.countNotStartedOfType(type);
         }
         else {
             return Select.ourUnfinished().ofType(type).count()
-                    + ConstructionRequests.countNotStartedOfType(type);
+                + ConstructionRequests.countNotStartedOfType(type);
         }
     }
 
     public static int existing(AUnitType type) {
         if (type.equals(AUnitType.Zerg_Creep_Colony)) {
             return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony)
-                    + Select.countOurOfType(AUnitType.Zerg_Creep_Colony)
-                    + Select.countOurOfType(AUnitType.Zerg_Spore_Colony);
+                + Select.countOurOfType(AUnitType.Zerg_Creep_Colony)
+                + Select.countOurOfType(AUnitType.Zerg_Spore_Colony);
         }
         else if (type.isPrimaryBase()) {
             return Select.ourOfType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive).count();
@@ -176,9 +176,9 @@ public class Count {
 
     public static int workers() {
         return cache.get(
-                "workers",
-                5,
-                () -> Select.ourWorkers().count()
+            "workers",
+            5,
+            () -> Select.ourWorkers().count()
         );
     }
 
@@ -208,9 +208,9 @@ public class Count {
 
     public static int bases() {
         return cache.get(
-                "bases",
-                0,
-                () -> Select.ourBases().count()
+            "bases",
+            0,
+            () -> Select.ourBases().count()
         );
     }
 
@@ -253,6 +253,10 @@ public class Count {
 
     public static int turrets() {
         return ofType(AUnitType.Terran_Missile_Turret);
+    }
+
+    public static int wraiths() {
+        return ofType(AUnitType.Terran_Wraith);
     }
 
     public static int ourStrictlyAntiAir() {

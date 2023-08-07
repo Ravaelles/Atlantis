@@ -106,6 +106,8 @@ public class AvoidEnemies extends Manager {
     // =========================================================
 
     private boolean shouldSkip() {
+        if (isUnitCloakedAndRelativelySafe()) return true;
+
         if (
             unit.hp() <= 16 && unit.isMelee() && unit.isCombatUnit()
                 && unit.enemiesNear().groundUnits().effVisible().inRadius(1, unit).notEmpty()
@@ -127,6 +129,12 @@ public class AvoidEnemies extends Manager {
         }
 
         return unit.isLoaded();
+    }
+
+    private boolean isUnitCloakedAndRelativelySafe() {
+        return unit.effUndetected()
+            && unit.enemiesNear().combatBuildingsAnti(unit).inRadius(9, unit).empty()
+            && unit.enemiesNear().detectors().inRadius(11, unit).empty();
     }
 
     private boolean onlyEnemyCombatBuildingsAreNear(Units enemiesDangerouslyClose) {

@@ -10,6 +10,11 @@ public class ContainFocusPoint extends MissionManager {
     }
 
     @Override
+    public boolean applies() {
+        return unit.enemiesNear().inRadius(10, unit).empty();
+    }
+
+    @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             OnWrongSideOfFocusPoint.class,

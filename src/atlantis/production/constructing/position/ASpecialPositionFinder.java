@@ -27,8 +27,6 @@ public class ASpecialPositionFinder {
         for (AUnit base : Select.ourBases().list()) {
             AUnit geyser = Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
 
-            System.out.println("geyser = " + geyser);
-
             if (geyser != null && geyser.distTo(base) < 12) {
                 return geyser.translateByPixels(-64, -32);
             }

@@ -2,13 +2,12 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.production.dynamic.terran.units.ProduceGhosts;
 import atlantis.production.dynamic.terran.units.ProduceMarines;
 import atlantis.production.dynamic.terran.units.ProduceMedicsAndFirebats;
+import atlantis.production.dynamic.terran.units.ProduceWraiths;
 import atlantis.production.orders.build.AddToQueue;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
@@ -24,7 +23,7 @@ public class TerranDynamicUnitsCommander extends Commander {
 
         TerranDynamicFactoryUnits.handleFactoryProduction();
 
-        wraiths();
+        ProduceWraiths.wraiths();
 
         if (Count.infantry() <= 14 || (Enemy.protoss() && Count.tanks() >= 4) || A.hasMinerals(500)) {
             ProduceGhosts.ghosts();
@@ -50,37 +49,4 @@ public class TerranDynamicUnitsCommander extends Commander {
         buildToHave(Terran_Science_Vessel, limit);
     }
 
-    protected static boolean wraiths() {
-        int startProducingWraithsSinceSupply = 90;
-
-//        if (Enemy.zerg()) {
-//            return false;
-//        }
-
-        if (
-            Count.ofType(AUnitType.Terran_Starport) == 0
-        ) {
-            return false;
-        }
-
-        int wraiths = Count.ofType(AUnitType.Terran_Wraith);
-
-        if (wraiths >= 5 && !AGame.canAffordWithReserved(200, 200)) {
-            return false;
-        }
-
-        if (A.supplyUsed() >= startProducingWraithsSinceSupply && wraiths <= 1) {
-            return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
-        }
-
-        if (A.supplyUsed() <= 160 && wraiths >= startProducingWraithsSinceSupply + wraiths * 15) {
-            return false;
-        }
-
-        if (wraiths >= 6 && !AGame.canAffordWithReserved(150, 150)) {
-            return false;
-        }
-
-        return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
-    }
 }

@@ -8,6 +8,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.dynamic.expansion.ExpansionCommander;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -19,7 +20,7 @@ import static atlantis.util.Helpers.hasRequiredUnitFor;
 public class DynamicBuildingsCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
-        return new Class[] {
+        return new Class[]{
             ExpansionCommander.class,
             NewGasBuildingCommander.class,
         };

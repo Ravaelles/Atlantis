@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.combat.micro.terran.tank.unsieging.ShouldUnsiegeToMove;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
@@ -15,12 +16,13 @@ import bwapi.*;
 public interface AUnitOrders {
 
     Unit u();
+
     AUnit unit();
 
     int DEBUG_MIN_FRAMES = 0;
 
     boolean DEBUG_ALL = false;
-//    boolean DEBUG_ALL = true;
+    //    boolean DEBUG_ALL = true;
     boolean DEBUG_COMBAT = false;
 //    boolean DEBUG_COMBAT = true;
 
@@ -175,7 +177,7 @@ public interface AUnitOrders {
 
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / " +  tooltip);
+            System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / " + tooltip);
         }
         if (target == null) {
             System.err.println("Null move position for " + this.unit().typeWithHash());
@@ -224,6 +226,11 @@ public interface AUnitOrders {
         APosition currentTarget = unit().targetPosition();
 
         if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
+            if (unit().isSieged() && ShouldUnsiegeToMove.shouldUnsiege(unit())) {
+                unit().unsiege();
+                return true;
+            }
+
 //            if (unit().isFirstCombatUnit()) {
 //                System.out.println(A.now() + " move");
 //            }
@@ -249,7 +256,7 @@ public interface AUnitOrders {
      */
     default boolean patrol(APosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         unit().setTooltip(tooltip, strategicLevel)
-                .setAction(Actions.PATROL);
+            .setAction(Actions.PATROL);
         return u().patrol(target.p());
     }
 
@@ -282,7 +289,7 @@ public interface AUnitOrders {
         }
 
         unit().setTooltip(tooltip, strategicLevel)
-                .setAction(Actions.STOP);
+            .setAction(Actions.STOP);
         return u().stop();
     }
 
@@ -297,7 +304,7 @@ public interface AUnitOrders {
      */
     default boolean follow(AUnit target, String tooltip, boolean strategicLevel) {
         unit().setTooltip(tooltip, strategicLevel)
-                .setAction(Actions.MOVE_FOLLOW);
+            .setAction(Actions.MOVE_FOLLOW);
         return u().follow(target.u());
     }
 
@@ -316,7 +323,8 @@ public interface AUnitOrders {
 
         if (target.type().isMineralField()) {
             unit().setAction(Actions.GATHER_MINERALS);
-        } else {
+        }
+        else {
             unit().setAction(Actions.GATHER_GAS);
         }
 
@@ -380,7 +388,7 @@ public interface AUnitOrders {
 
         if (!unit().isRepairing()) {
             if (unit().distToMoreThan(target, 1.05) && !unit().isMoving()) {
-    //            u().move(target.position());
+                //            u().move(target.position());
                 // A fix to avoid stucking SCVs that go to repair in line.
                 // We send them in slightly different places, hoping they don't stuck in line
 
@@ -689,7 +697,6 @@ public interface AUnitOrders {
 //        unit().setLastUnitOrderNow();
 //        return u().useTech(tech);
 //    }
-
     default boolean useTech(TechType tech, APosition target) {
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
             System.out.println("TECH_2 @" + A.now() + " / " + unit().typeWithHash());

@@ -1,4 +1,4 @@
-package atlantis.production.dynamic;
+package atlantis.production.dynamic.expansion;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
@@ -22,12 +22,23 @@ import atlantis.util.We;
 import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class ExpansionCommander extends Commander {
-    @Override
-    public void handle() {
-        if (shouldBuildNewBase()) requestNewBase();
+//    protected ReinforceNewBaseWithCombatBuilding baseReinforcer;
+
+    public ExpansionCommander() {
+//        baseReinforcer = ReinforceNewBaseWithCombatBuilding.create();
     }
 
-    private static boolean shouldBuildNewBase() {
+    @Override
+    public void handle() {
+        if (shouldBuildNewBase()) prepareForNewBase();
+    }
+
+    protected void prepareForNewBase() {
+        requestNewBase();
+//        baseReinforcer.handle();
+    }
+
+    protected static boolean shouldBuildNewBase() {
 //        if (true) return false;
 //        if (A.supplyTotal() <= 100) return false;
 
@@ -42,9 +53,9 @@ public class ExpansionCommander extends Commander {
             We.terran()
                 && GamePhase.isEarlyGame()
                 && (
-                    ArmyStrength.ourArmyRelativeStrength() <= 80
-                        || EnemyUnits.count(Protoss_Zealot) >= 5
-                        || !Have.factory()
+                ArmyStrength.ourArmyRelativeStrength() <= 80
+                    || EnemyUnits.count(Protoss_Zealot) >= 5
+                    || !Have.factory()
             )
         ) {
             return false;
@@ -144,7 +155,7 @@ public class ExpansionCommander extends Commander {
 
     private static void requestNewBase() {
         // ZERG case
-        if (AGame.isPlayingAsZerg()) {
+        if (We.zerg()) {
             AddToQueue.withStandardPriority(AtlantisConfig.BASE, Select.naturalOrMain());
         }
 

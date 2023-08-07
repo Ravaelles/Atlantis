@@ -12,10 +12,11 @@ public class TerranDynamicTechResearch extends Commander {
 
     @Override
     protected Class<? extends Commander>[] subcommanders() {
-        return new Class[] {
+        return new Class[]{
             SiegeMode.class,
             Stimpacks.class,
             U238.class,
+            CloakingField.class,
             Lockdown.class,
             TerranInfantryWeapons.class,
             TerranInfantryArmor.class,

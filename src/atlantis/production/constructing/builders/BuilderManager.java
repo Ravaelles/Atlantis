@@ -237,6 +237,13 @@ public class BuilderManager extends Manager {
             return null;
         }
 
+        if (building.isGasBuilding() && Select.geysers().inRadius(3, position).isEmpty()) {
+            ErrorLog.printMaxOncePerMinute(
+                "There are no geysers in radius 3 of " + position + " for " + building
+                    + "\nThis indicates a problem with initial position of the gas building."
+            );
+        }
+
         if (
             building.isGasBuilding()
                 && !CanPhysicallyBuildHere.check(unit, building, position)

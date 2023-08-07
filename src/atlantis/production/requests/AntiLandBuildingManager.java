@@ -159,7 +159,8 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                     AChoke naturalChoke = Chokes.natural();
                     if (naturalChoke != null) {
 //                        return naturalChoke.translatePercentTowards(10, naturalBase);
-                        return naturalChoke.translateTilesTowards(4, naturalBase);
+                        int distFromChoke = naturalChoke.width() <= 4 ? 5 : 4;
+                        return naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
                     }
 
                     return naturalBase;

@@ -13,12 +13,12 @@ public class TooCloseToChoke {
         }
 
         for (AChoke choke : Chokes.chokes()) {
-            if (choke.width() >= 7) {
+            if (choke.width() >= 5) {
                 continue;
             }
 
             double distToChoke = choke.center().distTo(position) - choke.width();
-            if (distToChoke <= 3.3) {
+            if (distToChoke <= 3.8) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "Overlaps choke (" + distToChoke + ")";
                 return true;
             }

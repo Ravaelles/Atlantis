@@ -30,6 +30,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.units.detected.IsOurUnitUndetected;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.select.Count;
@@ -93,6 +94,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     protected AUnitType _lastType = null;
     private Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
+    private Log managerLogs = new Log(30 * 30, 5);
     private Action unitAction = Actions.INIT;
     private Action _prevAction = null;
 
@@ -1212,6 +1214,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Unit is effectvely cloaked and we can't attack it. Need to detect it first.
      */
     public boolean effUndetected() {
+        if (isOur()) return IsOurUnitUndetected.check(this);
+
         return (!isDetected() || hp() == 0);
 
 //        if ((!isCloaked() && !isBurrowed()) || ensnared() || plagued()) {
@@ -1766,6 +1770,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int lastStartedAttackAgo() {
         return A.ago(_lastStartedAttack);
+    }
+
+    public int lastSiegedAgo() {
+        return lastActionAgo(Actions.SIEGE);
+    }
+
+    public int lastUnsiegedAgo() {
+        return lastActionAgo(Actions.UNSIEGE);
     }
 
     public int lastRetreatedAgo() {
@@ -2502,6 +2514,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return log;
     }
 
+    /**
+     * History of changes of Managers used by this unit.
+     */
+    public Log managerLogs() {
+        return managerLogs;
+    }
+
     public int friendlyZealotsNearCount(double maxDist) {
         return friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(maxDist, this).count();
     }
@@ -2748,6 +2767,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public void setManagerUsed(Manager managerUsed, String message) {
+        if (!manager().equals(managerUsed)) {
+            managerLogs.addMessage(managerUsed.toString(), this);
+        }
+
         this.manager = managerUsed;
         this.tooltipForManager = message;
 

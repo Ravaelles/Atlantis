@@ -31,11 +31,20 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     public Manager handle() {
+        if (this.equals(unit.manager()) && justHandledRecently()) {
+            return usedManager(this);
+        }
+
         if (handleAttackNearEnemyUnits()) {
             return usedManager(this);
         }
 
         return null;
+    }
+
+    private boolean justHandledRecently() {
+        return unit.lastActionLessThanAgo(8, Actions.ATTACK_UNIT)
+            || unit.lastActionLessThanAgo(8, Actions.MOVE_ATTACK);
     }
 
     /**
