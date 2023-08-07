@@ -27,7 +27,7 @@ public class AGame {
     private static APlayer _our = null; // Cached our APlayer
 
     // =========================================================
-    
+
     /**
      * Quits the game gently, killing all processes and cleaning up.
      */
@@ -152,7 +152,7 @@ public class AGame {
      */
     public static List<APlayer> getPlayers() {
         List<APlayer> players = new ArrayList<>();
-        for (Player p : game().getPlayers()){
+        for (Player p : game().getPlayers()) {
             players.add(APlayer.create(p));
         }
         return players;
@@ -197,9 +197,10 @@ public class AGame {
             MissionChanger.forceMissionAttack("UmsAlwaysAttack");
         }
     }
-    
+
     // =========================================================
     // Auxiliary
+
     /**
      * Returns random int number from range [min, max], both inclusive.
      */
@@ -220,6 +221,8 @@ public class AGame {
      * Returns true if user plays as Protoss.
      */
     public static boolean isPlayingAsProtoss() {
+        if (AtlantisConfig.MY_RACE == null) return "Protoss".equals(MapAndRace.OUR_RACE);
+
         return AtlantisConfig.MY_RACE.equals(Race.Protoss);
     }
 
@@ -227,6 +230,8 @@ public class AGame {
      * Returns true if user plays as Zerg.
      */
     public static boolean isPlayingAsZerg() {
+        if (AtlantisConfig.MY_RACE == null) return "Zerg".equals(MapAndRace.OUR_RACE);
+
         return AGame.getPlayerUs().getRace().equals(Race.Zerg);
 //        return AtlantisConfig.MY_RACE.equals(Race.Zerg);
     }
@@ -301,8 +306,8 @@ public class AGame {
         int[] reservedInQueue = CurrentProductionQueue.resourcesReserved();
 
         return canAfford(
-                minerals + reservedInQueue[0],
-                gas + reservedInQueue[1]
+            minerals + reservedInQueue[0],
+            gas + reservedInQueue[1]
         );
     }
 
@@ -328,6 +333,7 @@ public class AGame {
 
     // =========================================================
     // Utility
+
     /**
      * Sends in-game message that will be visible by other APlayers.
      */

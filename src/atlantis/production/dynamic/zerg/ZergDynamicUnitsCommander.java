@@ -10,7 +10,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-
 public class ZergDynamicUnitsCommander extends Commander {
     @Override
     public void handle() {

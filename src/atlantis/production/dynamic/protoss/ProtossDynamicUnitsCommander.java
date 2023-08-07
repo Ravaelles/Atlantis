@@ -1,6 +1,7 @@
 
 package atlantis.production.dynamic.protoss;
 
+import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
@@ -8,7 +9,6 @@ import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.GamePhase;
-import atlantis.production.AbstractDynamicUnits;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
@@ -19,11 +19,10 @@ import atlantis.units.select.Select;
 
 import java.util.List;
 
+import static atlantis.production.AbstractDynamicUnits.*;
 import static atlantis.units.AUnitType.Protoss_Dragoon;
 
-
-public class ProtossDynamicUnitsManager extends AbstractDynamicUnits {
-
+public class ProtossDynamicUnitsCommander extends Commander {
     public void handle() {
         if (AGame.notNthGameFrame(3)) {
             return;

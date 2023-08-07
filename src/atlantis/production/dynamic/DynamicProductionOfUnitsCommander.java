@@ -3,7 +3,7 @@ package atlantis.production.dynamic;
 import atlantis.architecture.Commander;
 import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicTechResearch;
-import atlantis.production.dynamic.protoss.ProtossDynamicUnitsManager;
+import atlantis.production.dynamic.protoss.ProtossDynamicUnitsCommander;
 import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
 import atlantis.production.dynamic.terran.TerranDynamicTechResearch;
 import atlantis.production.dynamic.terran.TerranDynamicUnitsCommander;
@@ -27,7 +27,7 @@ public class DynamicProductionOfUnitsCommander extends Commander {
         else if (We.protoss()) {
             raceSpecific = new Class[]{
                 ProtossDynamicTechResearch.class,
-                ProtossDynamicUnitsManager.class,
+                ProtossDynamicUnitsCommander.class,
                 ProtossDynamicBuildingsCommander.class,
             };
         }

@@ -9,7 +9,7 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class DynamicTech {
-    protected static boolean handleResearch(TechType tech) {
+    public static boolean handleResearch(TechType tech) {
         if (ATech.isResearched(tech)) {
             return false;
         }
@@ -28,7 +28,7 @@ public class DynamicTech {
         return false;
     }
 
-    protected static boolean handleUpgrade(UpgradeType upgrade) {
+    public static boolean handleUpgrade(UpgradeType upgrade) {
         if (ATech.isResearched(upgrade)) {
             return false;
         }
@@ -46,20 +46,20 @@ public class DynamicTech {
         return false;
     }
 
-    protected static boolean canAfford(TechType tech) {
+    public static boolean canAfford(TechType tech) {
         return AGame.canAffordWithReserved(tech.mineralPrice(), tech.gasPrice());
     }
 
-    protected static boolean canAffordWithMargin(TechType tech) {
+    public static boolean canAffordWithMargin(TechType tech) {
         int margin = 100;
         return AGame.canAffordWithReserved(tech.mineralPrice() + margin, tech.gasPrice() + margin);
     }
 
-    protected static boolean canAfford(UpgradeType upgrade) {
+    public static boolean canAfford(UpgradeType upgrade) {
         return AGame.canAffordWithReserved(upgrade.mineralPrice(), upgrade.gasPrice());
     }
 
-    protected static boolean canAffordWithMargin(UpgradeType upgrade) {
+    public static boolean canAffordWithMargin(UpgradeType upgrade) {
         int margin = 150;
         return AGame.canAffordWithReserved(upgrade.mineralPrice() + margin, upgrade.gasPrice() + margin);
     }

@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.protoss;
 
+import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.production.dynamic.DynamicTech;
 import atlantis.production.orders.build.AddToQueue;
@@ -10,7 +11,7 @@ import bwapi.UpgradeType;
 import static bwapi.UpgradeType.Singularity_Charge;
 
 
-public class ProtossDynamicTechResearch extends DynamicTech {
+public class ProtossDynamicTechResearch extends Commander {
 
     public static boolean update() {
         if (A.notNthGameFrame(71)) {
@@ -22,13 +23,13 @@ public class ProtossDynamicTechResearch extends DynamicTech {
         }
 
         if (Count.zealots() >= 10) {
-            return handleUpgrade(UpgradeType.Leg_Enhancements);
+            return DynamicTech.handleUpgrade(UpgradeType.Leg_Enhancements);
         }
         if (Count.ourCombatUnits() >= 16) {
-            return handleUpgrade(UpgradeType.Protoss_Ground_Weapons);
+            return DynamicTech.handleUpgrade(UpgradeType.Protoss_Ground_Weapons);
         }
         else if (Count.ourCombatUnits() >= 25) {
-            return handleUpgrade(UpgradeType.Protoss_Ground_Armor);
+            return DynamicTech.handleUpgrade(UpgradeType.Protoss_Ground_Armor);
         }
 
         return false;
