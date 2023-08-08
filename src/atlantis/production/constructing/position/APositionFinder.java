@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -53,7 +54,9 @@ public class APositionFinder {
         Construction construction,
         HasPosition nearTo, double maxDistance
     ) {
-//        totalRequests++;
+        if (nearTo == null && building.isSupplyDepot() && A.chance(75)) {
+            nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).random();
+        }
 
         if (building.isBunker() && maxDistance <= 5) {
             maxDistance = 10;

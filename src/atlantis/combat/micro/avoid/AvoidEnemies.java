@@ -220,8 +220,13 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public String toString() {
-        AUnit enemy = enemies.first();
-        String enemyString = enemy == null ? "NULL" : (enemy + "/" + enemy.getClass().getSimpleName());
+        String enemyString = "NULL";
+
+        if (enemies != null && !enemies.isEmpty()) {
+            AUnit enemy = enemies.first();
+            enemyString = (enemy + "/" + enemy.getClass().getSimpleName());
+        }
+
         return "AvoidEnemies(" + enemyString + ')';
     }
 }

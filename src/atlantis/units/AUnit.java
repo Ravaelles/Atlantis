@@ -2150,6 +2150,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isTerranInfantryWithoutMedics();
     }
 
+    public boolean isCarrier() {
+        return type().isCarrier();
+    }
+
     public boolean isLurker() {
         return type().isLurker();
     }
@@ -2160,6 +2164,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean hpMoreThan(int max) {
         return hp() > max;
+    }
+
+    public boolean isSupplyDepot() {
+        return type().is(AUnitType.Terran_Supply_Depot);
     }
 
     public boolean isSunken() {
@@ -2787,5 +2795,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean everyOneInNUnits(int n) {
         return id() % n == 1;
+    }
+
+    public boolean isCrucialUnit() {
+        return isTank() || isReaver() || isLurker() || isCarrier();
     }
 }

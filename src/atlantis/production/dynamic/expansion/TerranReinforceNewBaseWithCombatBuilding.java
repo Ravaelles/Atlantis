@@ -20,7 +20,7 @@ public class TerranReinforceNewBaseWithCombatBuilding extends ReinforceNewBaseWi
         if (Count.inProductionOrInQueue(Terran_Bunker) > 0) return false;
 
         if (basePosition != null) {
-            return Select.ourOfType(Terran_Bunker).inRadius(10, basePosition).empty();
+            return Select.ourOfType(Terran_Bunker).inRadius(15, basePosition).empty();
         }
 
         return true;

@@ -5,6 +5,8 @@ import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyNearBases;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
@@ -33,7 +35,21 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint defineFocusPoint() {
+        AUnit main = Select.main();
         AUnit our = Select.our().first();
+
+        // === Enemies that breached into base =====================
+
+        AUnit enemyInBase = EnemyWhoBreachedBase.get();
+        if (enemyInBase != null && (enemyInBase.friendsInRadiusCount(5) >= 1 || enemyInBase.isCrucialUnit())) {
+            return new AFocusPoint(
+                enemyInBase,
+                "EnemyBreachedBase"
+            );
+        }
+
+        // =========================================================
+
         if (A.supplyUsed() <= 1) {
             AUnit enemy = Select.enemy().first();
 
@@ -54,7 +70,6 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Try going near any enemy building
         AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
-        AUnit main = Select.main();
         if (
             enemyBuilding != null
                 && enemyBuilding.position() != null

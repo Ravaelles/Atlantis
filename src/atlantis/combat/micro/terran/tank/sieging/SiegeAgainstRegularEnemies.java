@@ -16,6 +16,8 @@ public class SiegeAgainstRegularEnemies extends Manager {
         // Only one in three tanks should siege
         if (unit.id() % 3 != 0 || Count.tanks() <= 3) return false;
 
+        if (unit.friendsNear().tankSupport().inRadius(5, unit).count() <= 8) return false;
+
         Selection enemies = unit.enemiesNear();
 
         if (

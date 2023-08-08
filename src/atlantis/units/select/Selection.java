@@ -412,6 +412,13 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection tankSupport() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isTerranInfantryWithoutMedics() && !unit.isVulture() && !unit.isGoliath()),
+            "tankSupport"
+        );
+    }
+
     public Selection havingTargeted(AUnit targetUnit) {
         return cloneByRemovingIf(
             (unit -> (unit.target() == null || !unit.target().equals(targetUnit))),

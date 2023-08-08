@@ -14,7 +14,7 @@ import atlantis.util.Enemy;
 
 public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
 
-    private  final int MIN_TURRETS_PER_BASE = 2;
+    private final int MIN_TURRETS_PER_BASE = 2;
 
     public boolean buildIfNeeded() {
         if (!Have.engBay()) {
@@ -52,13 +52,15 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
         int maxDist = 12;
 
         for (AUnit base : Select.ourBases().list()) {
+            if (base.isLifted()) continue;
+
             int existing = Count.existingOrPlannedBuildingsNear(type(), maxDist, base.position());
 
             if (existing < MIN_TURRETS_PER_BASE) {
                 APosition minerals = Select.minerals().inRadius(maxDist, base).center();
                 if (minerals != null) {
                     AddToQueue.withHighPriority(type(), base.translateTilesTowards(4, minerals))
-                            .setMaximumDistance(maxDist);
+                        .setMaximumDistance(maxDist);
                     return true;
                 }
             }

@@ -32,7 +32,7 @@ public class EnemyInfo {
     }
 
     public static boolean isEnemyNearAnyOurBase() {
-        return EnemyWhoBreachedBase.enemyNearAnyOurBase(-1) != null;
+        return EnemyNearBases.enemyNearAnyOurBase(-1) != null;
     }
 
     /**
@@ -40,16 +40,16 @@ public class EnemyInfo {
      */
     public static boolean hasDiscoveredAnyBuilding() {
         return cacheBoolean.get(
-                "hasDiscoveredAnyBuilding",
-                50,
-                () -> {
-                    for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
-                        if (enemyUnit.isABuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
-                            return true;
-                        }
+            "hasDiscoveredAnyBuilding",
+            50,
+            () -> {
+                for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
+                    if (enemyUnit.isABuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                        return true;
                     }
-                    return false;
                 }
+                return false;
+            }
         );
     }
 
@@ -58,16 +58,16 @@ public class EnemyInfo {
      */
     public static boolean weKnowAboutAnyCombatUnit() {
         return cacheBoolean.get(
-                "weKnowAboutAnyCombatUnit",
-                33,
-                () -> {
-                    for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
-                        if (enemyUnit.isCombatUnit() && !UnitsArchive.isDestroyed(enemyUnit)) {
-                            return true;
-                        }
+            "weKnowAboutAnyCombatUnit",
+            33,
+            () -> {
+                for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
+                    if (enemyUnit.isCombatUnit() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                        return true;
                     }
-                    return false;
                 }
+                return false;
+            }
         );
     }
 
@@ -76,24 +76,24 @@ public class EnemyInfo {
      */
     public static boolean weKnowAboutAnyRealUnit() {
         return cacheBoolean.get(
-                "weKnowAboutAnyRealUnit",
-                32,
-                () -> {
-                    for (AUnit enemyUnit : EnemyUnits.discovered().realUnits().list()) {
-                        if (!UnitsArchive.isDestroyed(enemyUnit)) {
-                            return true;
-                        }
+            "weKnowAboutAnyRealUnit",
+            32,
+            () -> {
+                for (AUnit enemyUnit : EnemyUnits.discovered().realUnits().list()) {
+                    if (!UnitsArchive.isDestroyed(enemyUnit)) {
+                        return true;
                     }
-                    return false;
                 }
+                return false;
+            }
         );
     }
 
     public static boolean hasDiscoveredEnemyBase() {
         return cacheBoolean.get(
-                "hasDiscoveredEnemyBase",
-                60,
-                () -> EnemyUnits.enemyBase() != null
+            "hasDiscoveredEnemyBase",
+            60,
+            () -> EnemyUnits.enemyBase() != null
         );
     }
 
@@ -114,49 +114,49 @@ public class EnemyInfo {
 
     public static APosition enemyLocationOrGuess() {
         return (APosition) cache.get(
-                "enemyLocationOrGuess",
-                50,
-                () -> {
-                    AUnit enemyBase = EnemyUnits.enemyBase();
-                    if (enemyBase != null) {
-                        return enemyBase.position();
-                    }
-
-                    AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
-                    if (enemyBuilding != null) {
-                        return enemyBuilding.position();
-                    }
-
-                    AChoke enemyChoke = Chokes.enemyMainChoke();
-                    if (enemyChoke != null) {
-                        return enemyChoke.position();
-                    }
-
-                    APosition position = Bases.nearestUnexploredStartingLocation(Select.our().first());
-                    if (position != null) {
-                        return position;
-                    }
-
-                    return AMap.randomInvisiblePosition(Select.our().first());
+            "enemyLocationOrGuess",
+            50,
+            () -> {
+                AUnit enemyBase = EnemyUnits.enemyBase();
+                if (enemyBase != null) {
+                    return enemyBase.position();
                 }
+
+                AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+                if (enemyBuilding != null) {
+                    return enemyBuilding.position();
+                }
+
+                AChoke enemyChoke = Chokes.enemyMainChoke();
+                if (enemyChoke != null) {
+                    return enemyChoke.position();
+                }
+
+                APosition position = Bases.nearestUnexploredStartingLocation(Select.our().first());
+                if (position != null) {
+                    return position;
+                }
+
+                return AMap.randomInvisiblePosition(Select.our().first());
+            }
         );
     }
 
     public static boolean hasDefensiveLandBuilding(boolean onlyCompleted) {
         return cacheBoolean.get(
-                "hasDefensiveLandBuilding:" + onlyCompleted,
-                30,
-                () -> {
-                    Selection selection = EnemyUnits.foggedUnits()
-                            .combatBuildings(false)
-                            .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony);
+            "hasDefensiveLandBuilding:" + onlyCompleted,
+            30,
+            () -> {
+                Selection selection = EnemyUnits.foggedUnits()
+                    .combatBuildings(false)
+                    .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony);
 
-                    if (onlyCompleted) {
-                        selection = selection.onlyCompleted();
-                    }
-
-                    return selection.atLeast(1);
+                if (onlyCompleted) {
+                    selection = selection.onlyCompleted();
                 }
+
+                return selection.atLeast(1);
+            }
         );
     }
 

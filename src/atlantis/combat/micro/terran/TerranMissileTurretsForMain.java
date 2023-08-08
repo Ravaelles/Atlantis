@@ -24,15 +24,15 @@ import java.util.stream.Collectors;
 
 public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
-    private  final int BORDER_TURRETS_MIN_COUNT = 0;
-    private  final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
-//    private  final int BORDER_TURRETS_MIN_COUNT = 4;
+    private final int BORDER_TURRETS_MIN_COUNT = 0;
+    private final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
+    //    private  final int BORDER_TURRETS_MIN_COUNT = 4;
 //    private  final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
-    private  final int BORDER_TURRETS_MAX_DIST_BETWEEN = 8;
-    private  final int BORDER_TURRETS_ALLOW_MARGIN = 4;
+    private final int BORDER_TURRETS_MAX_DIST_BETWEEN = 8;
+    private final int BORDER_TURRETS_ALLOW_MARGIN = 4;
 
-    private  Cache<ArrayList<APosition>> cacheList = new Cache<>();
-    private  Cache<APosition> cachePosition = new Cache<>();
+    private Cache<ArrayList<APosition>> cacheList = new Cache<>();
+    private Cache<APosition> cachePosition = new Cache<>();
 
     // =========================================================
 
@@ -76,11 +76,14 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
             return false;
         }
 
+        AUnit main = Select.main();
+        if (main != null && main.isLifted()) return false;
+
         // =========================================================
 
         APosition forMainBase = positionForMainBaseTurret();
         if (
-                forMainBase != null
+            forMainBase != null
                 && Count.existingOrPlannedBuildingsNear(turret, 6, forMainBase) < turretsForMain
         ) {
             AddToQueue.withHighPriority(turret, forMainBase).setMaximumDistance(12);
@@ -148,7 +151,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         for (int i = 0; i < turretsProtectingMainBorders.size(); i++) {
             APosition place = turretsProtectingMainBorders.get(i);
             if (
-                    place != null
+                place != null
                     && Count.inQueueOrUnfinished(turret, 8) <= BORDER_TURRETS_MIN_COUNT
                     && Count.existingOrPlannedBuildingsNear(turret, BORDER_TURRETS_ALLOW_MARGIN + 1.1, place) == 0
             ) {
@@ -163,18 +166,18 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
     private APosition positionForMainBaseTurret() {
         return cachePosition.get(
-                "positionForMainBaseTurret",
-                30,
-                () -> {
-                    APosition enemyLocation = EnemyInfo.enemyLocationOrGuess();
-                    AUnit mineralNearestToEnemy = Select.minerals().inRadius(12, Select.main()).nearestTo(enemyLocation);
+            "positionForMainBaseTurret",
+            30,
+            () -> {
+                APosition enemyLocation = EnemyInfo.enemyLocationOrGuess();
+                AUnit mineralNearestToEnemy = Select.minerals().inRadius(12, Select.main()).nearestTo(enemyLocation);
 
-                    if (mineralNearestToEnemy != null) {
-                        return mineralNearestToEnemy.translateTilesTowards(6, enemyLocation);
-                    }
-
-                    return null;
+                if (mineralNearestToEnemy != null) {
+                    return mineralNearestToEnemy.translateTilesTowards(6, enemyLocation);
                 }
+
+                return null;
+            }
         );
     }
 
@@ -229,27 +232,27 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
      * by protecting against the land invasion. Therefore against Zerg back the turrets towards the base, so
      * they defend both border and the main at the same time.
      */
-    private  APosition modifyAgainstZerg(HasPosition placeForMapEdgeTurret) {
+    private APosition modifyAgainstZerg(HasPosition placeForMapEdgeTurret) {
         return placeForMapEdgeTurret.translateTilesTowards(Select.main(), 5);
     }
 
-    private  int totalTurretsForMainBorder() {
+    private int totalTurretsForMainBorder() {
         int haveMaxAmountAtGameSeconds = 600;
         return Math.max(
-                BORDER_TURRETS_MIN_COUNT,
-                BORDER_TURRETS_TOTAL_OVER_TIME * Math.min(1, A.seconds() / haveMaxAmountAtGameSeconds)
+            BORDER_TURRETS_MIN_COUNT,
+            BORDER_TURRETS_TOTAL_OVER_TIME * Math.min(1, A.seconds() / haveMaxAmountAtGameSeconds)
         );
     }
 
-    private  HasPosition placeForMapEdgeTurret(
-            Positions<ARegionBoundary> boundaries, APosition nearestTo
+    private HasPosition placeForMapEdgeTurret(
+        Positions<ARegionBoundary> boundaries, APosition nearestTo
     ) {
         if (nearestTo == null) {
             return null;
         }
 
         Positions<ARegionBoundary> nearMapEdge = new Positions<>(
-                boundaries.list()
+            boundaries.list()
                 .stream().filter(b -> b.position().nearMapEdge(3.8))
                 .collect(Collectors.toList())
         );
@@ -278,8 +281,8 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 //        return false;
 //    }
 
-    private  APosition placeForNextMainTurret(
-            Positions<ARegionBoundary> boundaries, APosition nearestEnemyBuilding, ArrayList<APosition> places
+    private APosition placeForNextMainTurret(
+        Positions<ARegionBoundary> boundaries, APosition nearestEnemyBuilding, ArrayList<APosition> places
     ) {
         int counter = 0;
         ARegionBoundary centralPoint = boundaries.nearestTo(nearestEnemyBuilding); // Region boundary nearest to enemy
@@ -301,8 +304,8 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         }
     }
 
-    private  APosition findBoundaryPointInDistOf(
-            double baseDist, HasPosition position, Positions<ARegionBoundary> boundaries, ArrayList<APosition> places
+    private APosition findBoundaryPointInDistOf(
+        double baseDist, HasPosition position, Positions<ARegionBoundary> boundaries, ArrayList<APosition> places
     ) {
         double currentSearchDist = baseDist;
         while (currentSearchDist <= 3.2 * baseDist) {
