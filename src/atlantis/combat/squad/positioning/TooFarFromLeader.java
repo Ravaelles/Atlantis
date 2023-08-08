@@ -28,7 +28,11 @@ public class TooFarFromLeader extends Manager {
             return false;
         }
 
-        if (unit.distTo(leader) > 6 && unit.friendsInRadiusCount(3) <= 8) {
+        if (
+            unit.distTo(leader) > 6
+                && unit.friendsInRadiusCount(3) <= 8
+                && leader.friendsInRadiusCount(4) <= 10
+        ) {
             unit.move(leader, Actions.MOVE_FORMATION, "Coordinate");
             return true;
         }

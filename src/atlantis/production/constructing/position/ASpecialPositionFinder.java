@@ -20,23 +20,6 @@ public class ASpecialPositionFinder {
     // =========================================================
 
     /**
-     * Returns build position for next Refinery/Assimilator/Extractor. It will be chosen for the oldest base
-     * that doesn't have gas extracting building.
-     */
-    protected static APosition findPositionForGasBuilding(AUnitType building) {
-        for (AUnit base : Select.ourBases().list()) {
-            AUnit geyser = Select.neutral().ofType(AUnitType.Resource_Vespene_Geyser).nearestTo(base);
-
-            if (geyser != null && geyser.distTo(base) < 12) {
-                return geyser.translateByPixels(-64, -32);
-            }
-        }
-
-//        System.err.println("Couldn't find geyser for " + building);
-        return null;
-    }
-
-    /**
      * Returns build position for next base. It will usually be next free BaseLocation that doesn't have base
      * built.
      */

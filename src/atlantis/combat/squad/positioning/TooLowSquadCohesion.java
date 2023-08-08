@@ -72,8 +72,8 @@ public class TooLowSquadCohesion extends Manager {
 
     private boolean improveCohesion() {
         String t = "Cohesion";
-        APosition goTo = unit.squadLeader()
-            .translateTilesTowards(2, unit.position());
+        APosition goTo = unit.squadLeader().position();
+//            .translateTilesTowards(2, unit.position());
 //                .makeFreeOfAnyGroundUnits(5, unit.type().dimensionLeft() * 2, unit);
 
         if (goTo == null) {

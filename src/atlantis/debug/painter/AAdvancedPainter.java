@@ -276,6 +276,10 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintSquad(AUnit unit) {
+        if (unit.hasSquad() && unit.squad().isLeader(unit)) {
+            paintFlag(unit, Color.Teal);
+        }
+
         if (!unit.isAlive() || unit.squad() == null) {
             return;
         }
@@ -613,7 +617,7 @@ public class AAdvancedPainter extends APainter {
 
         // === Display units that should be produced right now or any time ==================
 
-        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ENTIRE_QUEUE);
+        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.ordersToProduceNow(ProductionQueueMode.ENTIRE_QUEUE);
 //        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         int counter = 1;
         for (ProductionOrder order : produceNow) {
@@ -898,10 +902,15 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintWhiteFlagWhenRunning(AUnit unit) {
+        Color flagColor = ShouldRetreat.shouldRetreat(unit) ? Color.Red : Color.White;
+
+        paintFlag(unit, flagColor);
+    }
+
+    protected static void paintFlag(AUnit unit, Color flagColor) {
         int flagWidth = 15;
         int flagHeight = 8;
         int dy = 12;
-        Color flagColor = ShouldRetreat.shouldRetreat(unit) ? Color.Red : Color.White;
 
 //        paintLine(unit, unit.targetPosition(), Color.Blue); // Where unit is running to
 

@@ -10,7 +10,7 @@ public class TerranShouldNotRetreat extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTerran();
+        return unit.isTerran() && unit.enemiesNear().havingWeapon().notEmpty();
     }
 
     @Override
@@ -25,10 +25,6 @@ public class TerranShouldNotRetreat extends Manager {
     }
 
     public Manager shouldNotRetreat() {
-        if (!unit.isTerran()) {
-            return null;
-        }
-
         if (unit.isTank() && unit.woundPercentMax(60) && unit.cooldownRemaining() <= 0) {
             unit.setTooltip("BraveTank");
             return usedManager(this);

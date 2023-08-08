@@ -7,3 +7,9 @@
 - ReinforceNewBaseWithCombatBuilding: futureBase == null
 
 - does it make sense to focus on wraith if tanks will go there?
+
+
+
+- units idle INIT
+
+- AttackNearby causing Wraiths to freeze

@@ -23,11 +23,11 @@ public abstract class CurrentProductionQueue {
      * Returns list of orders (units and upgrades) that we should produce now.
      * This method iterates over all production orders, taken from the active build orders
      * and returns those we can afford at this moment.
-     *
+     * <p>
      * Notice that dynamic actions (like requesting a detector quickly) may insert
      * a unit dynamically with top priority.
      */
-    public static ArrayList<ProductionOrder> thingsToProduce(ProductionQueueMode mode) {
+    public static ArrayList<ProductionOrder> ordersToProduceNow(ProductionQueueMode mode) {
         ArrayList<ProductionOrder> queue = new ArrayList<>();
         int[] resourcesNeededForNotStartedBuildings = ConstructionRequests.resourcesNeededForNotStarted();
         ProductionQueue.mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
@@ -56,7 +56,7 @@ public abstract class CurrentProductionQueue {
             // ===  Protoss fix: wait for at least one Pylon ============
 
             if (
-                    We.protoss()
+                We.protoss()
                     && mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD
                     && (unitOrBuilding != null && !unitOrBuilding.isPylon())
                     && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Pylon) == 0
@@ -99,7 +99,7 @@ public abstract class CurrentProductionQueue {
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
 
             if (
-                    mode == ProductionQueueMode.ENTIRE_QUEUE || hasRequirements
+                mode == ProductionQueueMode.ENTIRE_QUEUE || hasRequirements
             ) {
                 if (unitOrBuilding != null && !A.hasFreeSupply(unitOrBuilding.supplyNeeded())) {
                     continue;
@@ -153,7 +153,7 @@ public abstract class CurrentProductionQueue {
     }
 
     public static int[] resourcesReserved() {
-        return new int[] { ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded };
+        return new int[]{ProductionQueue.mineralsNeeded, ProductionQueue.gasNeeded};
     }
 
     public static void remove(ProductionOrder order) {

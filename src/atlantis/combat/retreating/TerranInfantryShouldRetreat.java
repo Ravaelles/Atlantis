@@ -15,8 +15,13 @@ public class TerranInfantryShouldRetreat extends Manager {
     }
 
     public Manager shouldRetreat() {
+        if (!applies()) return null;
+
         if (!unit.mission().isMissionDefend()) {
-            if (unit.enemiesNear().ranged().notEmpty() && unit.friendsNear().atMost(4) && unit.combatEvalRelative() <= 2) {
+            if (
+                unit.enemiesNear().ranged().notEmpty()
+                    && unit.friendsNear().atMost(4) && unit.combatEvalRelative() <= 2
+            ) {
                 unit.setTooltipTactical("BewareRanged");
                 return usedManager(this);
             }

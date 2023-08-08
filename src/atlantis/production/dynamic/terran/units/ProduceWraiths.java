@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 
 public class ProduceWraiths {
     public static boolean wraiths() {
@@ -29,6 +30,12 @@ public class ProduceWraiths {
             return false;
         }
 
-        return AddToQueue.maxAtATime(AUnitType.Terran_Wraith, 5);
+        return produce();
+    }
+
+    private static boolean produce() {
+        int maxAtATime = Math.min(5, Select.ourOfType(AUnitType.Terran_Starport).free().count());
+        
+        return AddToQueue.maxAtATime(AUnitType.Terran_Wraith, maxAtATime);
     }
 }

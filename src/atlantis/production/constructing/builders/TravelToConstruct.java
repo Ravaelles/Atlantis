@@ -56,6 +56,8 @@ public class TravelToConstruct extends HasUnit {
     }
 
     private static void refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
+        if (buildingType.isGasBuilding()) return;
+
         if (!CanPhysicallyBuildHere.check(
             construction.builder(), buildingType, construction.buildPosition())
         ) {
@@ -146,6 +148,8 @@ public class TravelToConstruct extends HasUnit {
     }
 
     private APosition refreshBuildPosition(Construction order) {
+        if (order.buildingType().isGasBuilding()) return order.buildPosition();
+
 //        if (Select.ourWorkers().inRadius(1.8, order.buildPosition()).atLeast(2)) {
         return APositionFinder.findStandardPosition(
             order.builder(), order.buildingType(), order.buildPosition(), 15

@@ -8,7 +8,7 @@ import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionQueue;
-import atlantis.production.requests.ProduceUnitNow;
+import atlantis.production.requests.produce.ProduceWorker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -26,11 +26,11 @@ public class AutoTrainWorkersCommander extends Commander {
             return;
         }
 
-        ProduceUnitNow.produceWorker();
+        ProduceWorker.produceWorker();
     }
 
     // =========================================================
-    
+
     public static boolean shouldTrainWorkers() {
         if (AGame.supplyFree() == 0 || !AGame.hasMinerals(50)) {
             return false;
@@ -96,7 +96,7 @@ public class AutoTrainWorkersCommander extends Commander {
     /**
      * Request to produce worker (Zerg Drone, Terran SCV or Protoss Probe) that should be handled according to
      * the race played.
-     *
+     * <p>
      * See AutoTrainWorkersCommander which is also used to produce workers.
      */
     public static boolean produceWorker(AUnit base) {
@@ -115,9 +115,9 @@ public class AutoTrainWorkersCommander extends Commander {
         // If we're here it means all bases are busy. Try queue request
         for (AUnit anotherBase : Select.ourBases().reverse().list()) {
             if (
-                    anotherBase.remainingTrainTime() <= 4
-                            && anotherBase.hasNothingInQueue()
-                            && AGame.supplyFree() >= 2
+                anotherBase.remainingTrainTime() <= 4
+                    && anotherBase.hasNothingInQueue()
+                    && AGame.supplyFree() >= 2
             ) {
 //                System.err.println(
 //                    "At supply " + A.supplyUsed() + " produce worker " +
@@ -131,9 +131,9 @@ public class AutoTrainWorkersCommander extends Commander {
 
         return false;
     }
-    
+
     // =========================================================
-        
+
     public static boolean isAutoProduceWorkersActive(int workers) {
         int autoProduceMinWorkers = BuildOrderSettings.autoProduceWorkersMinWorkers();
         if (A.supplyUsed() < autoProduceMinWorkers) {

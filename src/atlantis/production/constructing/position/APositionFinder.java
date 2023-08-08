@@ -65,7 +65,7 @@ public class APositionFinder {
         // GAS extracting buildings
 
         if (building.isGasBuilding()) {
-            return ASpecialPositionFinder.findPositionForGasBuilding(building);
+            return GasBuildingPositionFinder.findPositionForGasBuilding(building, nearTo);
         }
 
         // =========================================================

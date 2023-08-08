@@ -30,7 +30,7 @@ public class SiegeAgainstCombatBuildings extends Manager {
                 unit.distToLessThan(combatBuilding, COMBAT_BUILDING_DIST_SIEGE)
                     && TankDecisions.canSiegeHere(unit, false)
             )
-                || unit.distToLessThan(combatBuilding, 9.8)
+                || unit.distToLessThan(combatBuilding, 7.8)
         ) {
             return usedManager(ForceSiege.forceSiegeNow(this, "SiegeBuilding" + A.dist(unit, combatBuilding)));
         }

@@ -19,6 +19,7 @@ public class AvoidEnemies extends Manager {
     private static Cache<Units> cache = new Cache<>();
     private AvoidCombatBuildings avoidCombatBuildings;
     private WantsToAvoid wantsToAvoid;
+    private Units enemies;
 
     public AvoidEnemies(AUnit unit) {
         super(unit);
@@ -150,7 +151,7 @@ public class AvoidEnemies extends Manager {
             "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
             1,
             () -> {
-                Units enemies = new Units();
+                enemies = new Units();
 //                System.out.println("enemyUnitsToPotentiallyAvoid() = " + enemyUnitsToPotentiallyAvoid().size());
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid()) {
                     double safetyMargin = (new SafetyMargin(unit)).calculateAgainst(enemy);
@@ -217,4 +218,10 @@ public class AvoidEnemies extends Manager {
             .list();
     }
 
+    @Override
+    public String toString() {
+        AUnit enemy = enemies.first();
+        String enemyString = enemy == null ? "NULL" : (enemy + "/" + enemy.getClass().getSimpleName());
+        return "AvoidEnemies(" + enemyString + ')';
+    }
 }
