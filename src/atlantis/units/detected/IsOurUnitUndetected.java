@@ -17,7 +17,7 @@ public class IsOurUnitUndetected {
         int lastCloakedAgo = Math.max(unit.lastActionAgo(Actions.CLOAK), unit.lastActionAgo(Actions.BURROW)) + 30;
 
         if (unit.lastUnderAttackLessThanAgo(lastCloakedAgo)) {
-            System.err.println("Our unit " + unit + " is under attack, so it's not undetected. / cloaked = " + unit.isCloaked());
+//            System.err.println("Our unit " + unit + " is under attack, so it's not undetected. / cloaked = " + unit.isCloaked());
             return false;
         }
 

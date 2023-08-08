@@ -5,7 +5,6 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class PreventMaginotLine extends Manager {
     public PreventMaginotLine(AUnit unit) {

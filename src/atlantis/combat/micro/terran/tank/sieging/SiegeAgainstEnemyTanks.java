@@ -2,7 +2,6 @@ package atlantis.combat.micro.terran.tank.sieging;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 

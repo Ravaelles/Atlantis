@@ -2,11 +2,11 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
-import atlantis.combat.advance.special.EnemyWhoBreachedBase;
 import atlantis.combat.missions.Missions;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.Chokes;
@@ -90,12 +90,21 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Natural / main choke ================
 
-                if (Bases.hasBunkerAtNatural() || Bases.hasBaseAtNatural()) {
-                    focus = atNaturalChoke();
-                    if (focus != null) {
-                        return focus;
-                    }
+                AUnit bunkerAtNatural = Bases.hasBunkerAtNatural();
+                if (bunkerAtNatural != null) {
+                    return new AFocusPoint(
+                        bunkerAtNatural,
+                        mainBase,
+                        "Bunker@Natural"
+                    );
                 }
+
+//                if (Bases.hasBunkerAtNatural() || Bases.hasBaseAtNatural()) {
+//                    focus = atNaturalChoke();
+//                    if (focus != null) {
+//                        return focus;
+//                    }
+//                }
 
                 // === Terran bunker ===========================================
 

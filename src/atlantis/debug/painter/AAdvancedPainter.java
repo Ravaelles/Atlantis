@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.terran.TerranBunker;
-import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
+import atlantis.production.dynamic.expansion.TerranMissileTurretsForMain;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;

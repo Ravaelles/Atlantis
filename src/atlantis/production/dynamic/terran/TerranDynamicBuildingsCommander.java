@@ -1,21 +1,12 @@
 package atlantis.production.dynamic.terran;
 
-import atlantis.combat.micro.terran.TerranBunker;
-import atlantis.combat.micro.terran.TerranMissileTurretsForMain;
-import atlantis.combat.micro.terran.TerranMissileTurretsForNonMain;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.decisions.Decisions;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
-import atlantis.production.dynamic.expansion.ExpansionStatus;
-import atlantis.production.dynamic.expansion.ReinforceNewBaseWithCombatBuilding;
+import atlantis.production.dynamic.expansion.TerranReinforceBaseWithCombatBuildings;
 import atlantis.production.orders.build.AddToQueue;
-import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -29,19 +20,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
     public void handle() {
         super.handle();
 
-        if (A.everyNthGameFrame(71)) {
-            (new TerranMissileTurretsForMain()).buildIfNeeded();
-        }
-        if (A.everyNthGameFrame(73)) {
-            (new TerranMissileTurretsForNonMain()).buildIfNeeded();
-        }
-        if (A.everyNthGameFrame(77)) {
-            ((TerranBunker) TerranBunker.get()).handleDefensiveBunkers();
-
-            if (ExpansionStatus.isBaseUnderConstruction()) {
-                ReinforceNewBaseWithCombatBuilding.create().handle();
-            }
-        }
+        TerranReinforceBaseWithCombatBuildings.get().handle();
 
         if (A.everyNthGameFrame(7)) {
             comsats();

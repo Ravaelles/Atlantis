@@ -29,7 +29,7 @@ public class TerranVulture extends Manager {
     public boolean update() {
         return handlePlantMines();
     }
-    
+
     // =========================================================
 
     private boolean handlePlantMines() {
@@ -66,12 +66,12 @@ public class TerranVulture extends Manager {
             unit.setTooltipTactical("Don't mine");
             return false;
         }
-        
+
         // If enemies are too close don't do it
 //        if (Select.enemyRealUnits().inRadius(6, unit).count() > 0) {
 //            return false;
 //        }
-        
+
         // If too many our units around, don't mine
         if (Select.ourCombatUnits().inRadius(7, unit).count() >= 4) {
             return false;
@@ -81,7 +81,7 @@ public class TerranVulture extends Manager {
         if (plantStandardMine()) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -94,9 +94,9 @@ public class TerranVulture extends Manager {
 
         // First define closest enemy
         AUnit nearestEnemy = unit.enemiesNear().ofType(
-                AUnitType.Terran_Siege_Tank_Siege_Mode,
-                AUnitType.Terran_Siege_Tank_Tank_Mode,
-                AUnitType.Protoss_Dragoon
+            AUnitType.Terran_Siege_Tank_Siege_Mode,
+            AUnitType.Terran_Siege_Tank_Tank_Mode,
+            AUnitType.Protoss_Dragoon
         ).inRadius(8, unit).nearestTo(unit);
 
         if (nearestEnemy != null) {
@@ -104,11 +104,11 @@ public class TerranVulture extends Manager {
 
             // Define center of other enemy units Near
             HasPosition enemiesCenter = nearestEnemy
-                    .friendsNear()
-                    .groundUnits()
-                    .inRadius(2, nearestEnemy)
-                    .center()
-                    .makeWalkable(5);
+                .friendsNear()
+                .groundUnits()
+                .inRadius(2, nearestEnemy)
+                .center()
+                .makeWalkable(5);
 
             APosition finalPlace = enemiesCenter.position();
 
@@ -144,7 +144,7 @@ public class TerranVulture extends Manager {
     private boolean plantStandardMine() {
         Selection NearMines = Select.ourOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(8, unit);
         if ((NearMines.count() <= 3 || (unit.minesCount() >= 3 && NearMines.count() <= 4))
-                && NearMines.inRadius(2, unit).atMost(1)) {
+            && NearMines.inRadius(2, unit).atMost(1)) {
             plantMineAt(unit.position());
             unit.setTooltipTactical("Plant mine");
             return true;

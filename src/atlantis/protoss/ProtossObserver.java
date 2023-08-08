@@ -21,7 +21,7 @@ public class ProtossObserver extends MobileDetector {
         return super.handle();
     }
 
-    public  AUnitType type() {
+    public AUnitType type() {
         return AUnitType.Protoss_Observer;
     }
 

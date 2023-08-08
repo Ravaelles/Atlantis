@@ -2,7 +2,6 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -18,7 +17,7 @@ public class EarlyGameTooClustered extends Manager {
     @Override
     public boolean applies() {
         if (true) return false;
-        
+
         if (A.seconds() <= 300 && unit.isMissionDefend() && unit.friendsNear().inRadius(2, unit).notEmpty()) {
             return true;
         }

@@ -22,10 +22,10 @@ import atlantis.util.We;
 import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class ExpansionCommander extends Commander {
-//    protected ReinforceNewBaseWithCombatBuilding baseReinforcer;
+//    protected ReinforceBaseWithCombatBuildings baseReinforcer;
 
     public ExpansionCommander() {
-//        baseReinforcer = ReinforceNewBaseWithCombatBuilding.create();
+//        baseReinforcer = ReinforceBaseWithCombatBuildings.create();
     }
 
     @Override

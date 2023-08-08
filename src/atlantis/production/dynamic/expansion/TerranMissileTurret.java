@@ -1,4 +1,4 @@
-package atlantis.combat.micro.terran;
+package atlantis.production.dynamic.expansion;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -11,7 +11,7 @@ import atlantis.units.select.Have;
 
 public class TerranMissileTurret extends AntiAirBuildingManager {
 
-    protected  final AUnitType turret = AUnitType.Terran_Missile_Turret;
+    protected final AUnitType turret = AUnitType.Terran_Missile_Turret;
 
     @Override
     public AUnitType type() {

@@ -18,7 +18,7 @@ public class UnloadFromBunkers extends Manager {
 
     @Override
     protected Class<? extends Manager>[] managers() {
-        return new Class[] {
+        return new Class[]{
             PreventMaginotLine.class,
         };
     }
@@ -51,7 +51,7 @@ public class UnloadFromBunkers extends Manager {
 
         if (
 //            preventMaginotLine.preventFromActingLikeFrenchOnMaginotLine(unit)
-                tooFarToAttackTheTargetFromBunker()
+            tooFarToAttackTheTargetFromBunker()
                 || noEnemiesNear()
         ) {
             return unloadFromBunker();

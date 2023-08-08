@@ -23,7 +23,6 @@ import atlantis.util.We;
 import static atlantis.units.AUnitType.Protoss_Forge;
 
 public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
-
     protected static AntiLandBuildingManager instance = null;
 
     // =========================================================

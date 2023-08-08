@@ -20,7 +20,7 @@ public class BuildingManager extends Manager {
 
     @Override
     protected Class<? extends Manager>[] managers() {
-        return new Class[] {
+        return new Class[]{
             TerranComsatStation.class,
             TerranCommandCenter.class,
             TerranLiftedBuildingManager.class,

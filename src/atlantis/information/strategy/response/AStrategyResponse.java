@@ -1,7 +1,7 @@
 package atlantis.information.strategy.response;
 
 import atlantis.combat.micro.terran.TerranBunker;
-import atlantis.combat.micro.terran.TerranMissileTurret;
+import atlantis.production.dynamic.expansion.TerranMissileTurret;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.game.AGame;
@@ -40,7 +40,7 @@ public abstract class AStrategyResponse {
     public static AStrategyResponse get() {
         return AStrategyResponseFactory.forOurRace();
     }
-    
+
     // =========================================================
 
     public void updateEnemyStrategyChanged() {
@@ -86,13 +86,13 @@ public abstract class AStrategyResponse {
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
         System.out.println("GENERIC RUSH - shouldn't be called, use race-specific");
-        
+
         Missions.forceGlobalMissionDefend("Rush defence");
 
         if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
             return false;
         }
-        
+
         OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;
     }
@@ -112,11 +112,11 @@ public abstract class AStrategyResponse {
         if (enemyStrategy == null) {
             return false;
         }
-        
+
         if (ScoutCommander.hasAnyScoutBeenKilled()) {
             return false;
         }
-        
+
         // =========================================================
 
         return !enemyStrategy.isRush() && !enemyStrategy.isGoingCheese();

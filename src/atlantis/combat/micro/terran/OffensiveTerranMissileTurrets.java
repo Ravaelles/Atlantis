@@ -5,6 +5,8 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.dynamic.expansion.TerranMissileTurret;
+import atlantis.production.dynamic.expansion.TerranMissileTurretsForNonMain;
 import atlantis.units.select.Have;
 
 public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMain {

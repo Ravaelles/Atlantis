@@ -20,37 +20,10 @@ import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
 public class TerranBunker extends AntiLandBuildingManager {
-
     @Override
     public AUnitType type() {
         return AUnitType.Terran_Bunker;
     }
-
-//    public  boolean handleOffensiveBunkers() {
-////        if (true) return false;
-//
-//        if (!Have.barracks() || AGame.notNthGameFrame(50)) {
-//            return false;
-//        }
-//
-//        if (handleNaturalBunker()) {
-//            return true;
-//        }
-//
-//        if (handleMainBunker()) {
-//            return true;
-//        }
-////
-////        if (handleMissionContain()) {
-////            return true;
-////        }
-//
-////        if (handleReinforceMissionAttack()) {
-////            return true;
-////        }
-//
-//        return false;
-//    }
 
     @Override
     public int expected() {
@@ -82,30 +55,6 @@ public class TerranBunker extends AntiLandBuildingManager {
         }
 
         return super.handleBuildNew();
-    }
-
-    public boolean handleDefensiveBunkers() {
-        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
-            return false;
-        }
-
-        if (!EnemyInfo.isDoingEarlyGamePush()) {
-            return false;
-        }
-
-        int existingBunkers = Count.existingOrInProductionOrInQueue(type());
-        int expectedBunkers = expected();
-        if (existingBunkers < expectedBunkers) {
-            int neededBunkers = expectedBunkers - existingBunkers;
-
-            for (int i = 0; i < neededBunkers; i++) {
-                AddToQueue.maxAtATime(type(), neededBunkers);
-//                System.err.println("Requested BUNKER");
-            }
-            return neededBunkers > 0;
-        }
-
-        return false;
     }
 
     // =========================================================

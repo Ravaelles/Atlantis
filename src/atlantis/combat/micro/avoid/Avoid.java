@@ -1,7 +1,6 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.buildings.CircumnavigateCombatBuilding;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;

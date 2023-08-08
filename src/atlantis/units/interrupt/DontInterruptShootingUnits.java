@@ -13,7 +13,7 @@ public class DontInterruptShootingUnits extends Manager {
     @Override
     public boolean applies() {
 //        if (true) return false;
-        
+
         if (!unit.isAttacking()) return false;
 
         if (!unit.isRanged()) return false;

@@ -66,9 +66,9 @@ public class RepairerManager extends Manager {
             }
 
             unit.repair(
-                    target,
-                    "Repair " + target.nameWithId() + "(" + unit.lastActionFramesAgo() + ")",
-                    true
+                target,
+                "Repair " + target.nameWithId() + "(" + unit.lastActionFramesAgo() + ")",
+                true
             );
             return usedManager(this);
         }
@@ -92,7 +92,7 @@ public class RepairerManager extends Manager {
     private boolean handleRepairerSafety() {
         if (
             (!unit.isRepairing() || unit.hpPercent() <= 30)
-            && (new AvoidEnemies(unit)).avoidEnemiesIfNeeded() != null
+                && (new AvoidEnemies(unit)).avoidEnemiesIfNeeded() != null
         ) {
             unit.setTooltipTactical("FuckThisJob");
             return true;

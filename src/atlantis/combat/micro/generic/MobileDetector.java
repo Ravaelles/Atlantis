@@ -45,7 +45,7 @@ public class MobileDetector extends Manager {
             return true;
         }
 
-        if (followArmy( false)) {
+        if (followArmy(false)) {
             return true;
         }
 

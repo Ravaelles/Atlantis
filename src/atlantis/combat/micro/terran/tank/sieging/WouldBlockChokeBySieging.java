@@ -1,12 +1,10 @@
 package atlantis.combat.micro.terran.tank.sieging;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.terran.tank.TerranTankWhenUnsieged;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
 public class WouldBlockChokeBySieging extends Manager {

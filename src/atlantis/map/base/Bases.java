@@ -325,15 +325,17 @@ public class Bases {
         );
     }
 
-    public static boolean hasBunkerAtNatural() {
-        return (boolean) cache.get(
+    public static AUnit hasBunkerAtNatural() {
+        return (AUnit) cache.get(
             "hasBunkerAtNatural",
             57,
             () -> {
                 APosition natural = natural();
                 if (natural == null) return false;
 
-                return Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).inRadius(12, natural).notEmpty();
+                return Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker)
+                    .inRadius(12, natural)
+                    .nearestTo(natural);
             }
         );
     }

@@ -5,7 +5,6 @@ import atlantis.combat.targeting.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLog;
 
 public class AttackNearbyEnemies extends Manager {
     public static final double MAX_DIST_TO_ATTACK = 25;

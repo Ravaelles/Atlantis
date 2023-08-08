@@ -1,4 +1,4 @@
-package atlantis.combat.micro.terran;
+package atlantis.production.dynamic.expansion;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;

@@ -3,25 +3,26 @@ package atlantis.terran.repair;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
 
 public class UnitBeingReparedManager extends Manager {
+    private AUnit repairer;
+    private Selection enemiesNear;
+
     public UnitBeingReparedManager(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return unit.isMechanical() && unit.isWounded() && unit.isTerran() && unit.repairer() != null && unit.enemiesNear().groundUnits().inRadius(7, unit).isEmpty();
+        return unit.isMechanical()
+            && unit.isWounded()
+            && unit.isTerran()
+            && (repairer = unit.repairer()) != null
+            && (enemiesNear = unit.enemiesNear().groundUnits().canAttack(unit, 2.6)).isEmpty();
     }
 
     public Manager handle() {
-        if (!unit.isTerran() || !unit.isMechanical() || !unit.isWounded()) {
-            return null;
-        }
-
-//        if (true) return true;
-
-        AUnit repairer = RepairAssignments.getClosestRepairerAssignedTo(unit);
         if (repairer == null) {
             return null;
         }
@@ -41,10 +42,6 @@ public class UnitBeingReparedManager extends Manager {
                 && distanceToRepairer <= 0.1
                 && unit.hp() <= 60
         ) {
-            if (unit.enemiesNear().groundUnits().countInRadius(7, unit) > 0) {
-                return null;
-            }
-
             if (unit.isMoving()) {
                 unit.holdPosition("UnderRepair");
                 return usedManager(this);
@@ -83,26 +80,5 @@ public class UnitBeingReparedManager extends Manager {
 
         unit.holdPosition("Be repaired");
         return usedManager(this);
-    }
-
-    public Manager handleDontRunWhenBeingRepared() {
-        if (unit.enemiesNear().melee().inRadius(1.9, unit).canAttack(unit, 5).notEmpty()) {
-            return null;
-        }
-
-        if (
-            !unit.woundPercentMin(50)
-                && unit.enemiesNear().ranged().inRadius(7, unit).notEmpty()
-        ) {
-            return null;
-        }
-
-        AUnit repairer = unit.repairer();
-        if (repairer != null && repairer.distToLessThan(unit, 1.1) && repairer.isRepairing()) {
-            unit.move(repairer, Actions.MOVE_REPAIR, "BeFixed");
-            return usedManager(this);
-        }
-
-        return null;
     }
 }

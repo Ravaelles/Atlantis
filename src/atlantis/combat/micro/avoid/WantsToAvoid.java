@@ -1,12 +1,8 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.util.Enemy;
 
 public class WantsToAvoid extends Manager {
     private Avoid avoid;
