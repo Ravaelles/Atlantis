@@ -19,7 +19,7 @@ public class CombatManagerLowPriority extends Manager {
      * If we're here, mission manager is allowed to take control over this unit.
      * Meaning no action was needed on *tactical* level - stick to *strategic* level.
      */
-    public Manager handle() {
+    protected Manager handle() {
         Mission mission = unit.mission();
         if (mission == null) {
             return null;

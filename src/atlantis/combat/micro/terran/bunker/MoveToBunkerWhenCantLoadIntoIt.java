@@ -23,7 +23,7 @@ public class MoveToBunkerWhenCantLoadIntoIt extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit bunker = unit.target();
 
         if (bunker == null) {

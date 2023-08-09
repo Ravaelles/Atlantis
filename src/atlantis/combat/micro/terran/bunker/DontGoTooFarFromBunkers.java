@@ -19,7 +19,7 @@ public class DontGoTooFarFromBunkers extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (shouldNotLeaveBunker()) {
             return usedManager(this);
         }

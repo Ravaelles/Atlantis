@@ -21,7 +21,7 @@ public class AutoTrainWorkersCommander extends Commander {
      * Selects the least worker-saturated base to build a worker.
      */
     @Override
-    public void handle() {
+    protected void handle() {
         if (!shouldTrainWorkers()) {
             return;
         }

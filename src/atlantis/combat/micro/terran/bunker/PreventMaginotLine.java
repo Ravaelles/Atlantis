@@ -46,7 +46,7 @@ public class PreventMaginotLine extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (preventFromActingLikeFrenchOnMaginotLine()) return usedManager(this);
 
         return null;

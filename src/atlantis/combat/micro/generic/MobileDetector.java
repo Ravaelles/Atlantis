@@ -30,7 +30,7 @@ public class MobileDetector extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (update()) return usedManager(this);
 
         return null;

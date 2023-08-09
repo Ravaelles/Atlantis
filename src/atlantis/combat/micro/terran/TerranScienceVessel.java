@@ -36,7 +36,7 @@ public class TerranScienceVessel extends MobileDetector {
 
     // =========================================================
 
-    public Manager handle() {
+    protected Manager handle() {
         Manager submanager = handleSubmanagers();
         if (submanager != null) return usedManager(submanager);
 

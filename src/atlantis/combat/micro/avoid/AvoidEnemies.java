@@ -32,7 +32,7 @@ public class AvoidEnemies extends Manager {
     // =========================================================
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         Manager manager = avoidEnemiesIfNeeded();
 
         return manager;

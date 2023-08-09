@@ -23,7 +23,7 @@ public class StackedUnitsManager extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit nearest = (onlyOfTheSameType ? Select.ourOfType(unit.type()) : Select.ourRealUnits())
             .exclude(unit).inRadius(minDist, unit).nearestTo(unit);
 

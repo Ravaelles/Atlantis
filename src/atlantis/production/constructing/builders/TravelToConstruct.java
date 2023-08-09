@@ -55,8 +55,10 @@ public class TravelToConstruct extends HasUnit {
         }
     }
 
-    private static void refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
-        if (buildingType.isGasBuilding()) return;
+    private static APosition refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
+        if (
+            buildingType.isGasBuilding() || buildingType.isBase()
+        ) return construction.buildPosition();
 
         if (!CanPhysicallyBuildHere.check(
             construction.builder(), buildingType, construction.buildPosition())
@@ -68,6 +70,8 @@ public class TravelToConstruct extends HasUnit {
                 Construction.clearCache();
             }
         }
+
+        return construction.buildPosition();
     }
 
     private boolean moveToConstruct(Construction construction, AUnitType buildingType, double distance, String distString) {
@@ -108,8 +112,8 @@ public class TravelToConstruct extends HasUnit {
 
         if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
 //            System.err.println("buildPosition PRE = " + order.buildPosition());
-            APosition buildPosition = refreshBuildPosition(order);
-//            APosition buildPosition = order.buildPosition();
+//            APosition buildPosition = refreshBuildPosition(order);
+            APosition buildPosition = refreshConstructionPositionIfNeeded(order, buildingType);
 
             if (buildPosition == null) {
                 return false;
@@ -147,20 +151,20 @@ public class TravelToConstruct extends HasUnit {
         return true;
     }
 
-    private APosition refreshBuildPosition(Construction order) {
-        if (order.buildingType().isGasBuilding()) return order.buildPosition();
-
-//        if (Select.ourWorkers().inRadius(1.8, order.buildPosition()).atLeast(2)) {
-        return APositionFinder.findStandardPosition(
-            order.builder(), order.buildingType(), order.buildPosition(), 15
-        );
-//            return APositionFinder.findPositionForNew(
-//                order.unit(), order.buildingType(), order
-//            );
-//        }
-
-//        return order.buildPosition();
-    }
+//    private APosition refreshBuildPosition(Construction order) {
+//        if (order.buildingType().isGasBuilding()) return order.buildPosition();
+//
+////        if (Select.ourWorkers().inRadius(1.8, order.buildPosition()).atLeast(2)) {
+//        return APositionFinder.findStandardPosition(
+//            order.builder(), order.buildingType(), order.buildPosition(), 15
+//        );
+////            return APositionFinder.findPositionForNew(
+////                order.unit(), order.buildingType(), order
+////            );
+////        }
+//
+////        return order.buildPosition();
+//    }
 
     private void moveOtherUnitsOutOfConstructionPlace(APosition buildPosition) {
         for (AUnit unit : unit.friendsNear().inRadius(2.3, buildPosition).exclude(unit).list()) {

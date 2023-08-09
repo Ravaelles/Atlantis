@@ -42,7 +42,7 @@ public class AvoidCombatBuildings extends Manager {
         return combatBuilding != null;
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.isTankUnsieged() && handleForTank(combatBuilding) != null) return usedManager(this);
 
 //        APainter.paintCircleFilled(8, Color.Red);

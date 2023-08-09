@@ -17,7 +17,7 @@ public class TooFarFromMedic extends Manager {
         return Count.medics() >= 2 && unit.isTerranInfantryWithoutMedics();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).nearestTo(unit);
         if (medic != null && medic.distToMoreThan(unit, maxDistToMedic())) {
             unit.move(medic, Actions.MOVE_FORMATION, "HugMedic");

@@ -25,14 +25,14 @@ public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMai
 
     // =========================================================
 
-    protected boolean handleReinforceMissionAttack() {
-        HasPosition squadCenter = Squad.alphaCenter();
-        if (squadCenter == null) {
-            return false;
-        }
-
-        return TerranMissileTurret.get().handleReinforcePosition(squadCenter, 14);
-    }
+//    protected boolean handleReinforceMissionAttack() {
+//        HasPosition squadCenter = Squad.alphaCenter();
+//        if (squadCenter == null) {
+//            return false;
+//        }
+//
+//        return TerranMissileTurret.get().handleReinforcePosition(squadCenter, 14);
+//    }
 
     protected boolean handleReinforceMissionContain() {
         APosition focusPoint = Missions.globalMission().focusPoint();

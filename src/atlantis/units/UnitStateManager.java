@@ -17,7 +17,7 @@ public class UnitStateManager extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (shouldUpdatePosition) {
             unit._lastX = unit.x();
             unit._lastY = unit.y();

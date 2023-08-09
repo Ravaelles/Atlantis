@@ -9,7 +9,7 @@ public class DoNothing extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         return null;
     }
 }

@@ -15,7 +15,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         return 4;
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (isTooFar()) {
             if (act()) return usedManager(this);
         }

@@ -16,7 +16,7 @@ public class DontRunWhenBeingRepared extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.enemiesNear().melee().inRadius(1.9, unit).canAttack(unit, 5).notEmpty()) {
             return null;
         }

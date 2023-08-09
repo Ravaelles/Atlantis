@@ -24,7 +24,7 @@ public class SiegeAgainstCombatBuildings extends Manager {
         return combatBuilding != null;
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (
             (
                 unit.distToLessThan(combatBuilding, COMBAT_BUILDING_DIST_SIEGE)

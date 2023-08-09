@@ -17,7 +17,7 @@ public class UmsSpecialActionsManager extends Commander {
 
     // =========================================================
 
-    public void handle() {
+    protected void handle() {
         if (AGame.isUms()) {
             goToBeaconsIfNeeded();
             goToNewCompanionsButStillNeutral();

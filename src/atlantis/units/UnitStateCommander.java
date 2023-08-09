@@ -6,7 +6,7 @@ import atlantis.units.select.Select;
 public class UnitStateCommander extends Commander {
 
     @Override
-    public void handle() {
+    protected void handle() {
         for (AUnit unit : Select.ourWithUnfinishedUnits()) {
             (new UnitStateManager(unit)).handle();
         }

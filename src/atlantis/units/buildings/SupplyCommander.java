@@ -18,7 +18,7 @@ public class SupplyCommander extends Commander {
     private int supplyFree;
 
     @Override
-    public void handle() {
+    protected void handle() {
         supplyTotal = AGame.supplyTotal();
 
         if (supplyTotal >= 200) {

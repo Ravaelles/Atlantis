@@ -32,7 +32,7 @@ public class TerranInfantryWeapons extends Commander {
     }
 
     @Override
-    public void handle() {
+    protected void handle() {
         AddToQueue.upgrade(UpgradeType.Terran_Infantry_Weapons);
     }
 }

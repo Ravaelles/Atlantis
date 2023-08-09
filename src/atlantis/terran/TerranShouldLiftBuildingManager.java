@@ -14,7 +14,7 @@ public class TerranShouldLiftBuildingManager extends Manager {
         return !unit.isLifted() && unit.canLift() && unit.isWounded();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.isUnderAttack(40) && unit.hpPercent() <= 38) {
             unit.lift();
             unit.setTooltip("LiftMeUp");

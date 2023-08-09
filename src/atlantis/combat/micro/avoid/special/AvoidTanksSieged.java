@@ -16,7 +16,7 @@ public class AvoidTanksSieged extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit tankSieged = unit.enemiesNear().tanksSieged().inRadius(13.1, unit).nearestTo(unit);
         if (tankSieged == null) {
             return null;

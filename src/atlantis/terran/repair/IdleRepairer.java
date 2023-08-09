@@ -17,7 +17,7 @@ public class IdleRepairer extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (!unit.isUnitActionRepair() || !unit.isRepairing() || unit.isIdle()) {
             int maxAllowedDistToRoam = 13;
 

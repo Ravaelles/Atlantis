@@ -16,7 +16,7 @@ public class ContinueLoadingIntoBunker extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit target = unit.target();
 
         if (target != null && target.isBunker()) {

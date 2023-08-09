@@ -26,7 +26,7 @@ public class StopAndShoot extends Manager {
      * For ranged unit, once shoot is fired, move slightly away or move towards the target when still have cooldown.
      */
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (shouldSkip()) {
             return null;
         }

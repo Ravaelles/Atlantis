@@ -340,7 +340,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     @Override
     public String toString() {
-        return idWithHash() + " " + type().name();
+        return idWithHash() + " " + type().name() + " @" + position();
     }
 
     @Override

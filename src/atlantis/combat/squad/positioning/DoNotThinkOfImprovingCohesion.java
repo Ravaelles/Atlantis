@@ -12,7 +12,7 @@ public class DoNotThinkOfImprovingCohesion {
 //        super(unit);
 //    }
 //
-//    public Manager handle() {
+//    protected Manager handle() {
 //        if (dontThink(unit)) {
 //            return usedManager(this);
 //        }

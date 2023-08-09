@@ -25,7 +25,7 @@ public class EarlyGameTooClustered extends Manager {
         return false;
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.lastActionLessThanAgo(5, Actions.MOVE_FORMATION)) {
             return null;
         }

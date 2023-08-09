@@ -19,7 +19,7 @@ public class AvoidMines extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (handleMines()) return usedManager(this);
 
         return null;

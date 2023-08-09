@@ -12,7 +12,7 @@ public class TooFarFromSquadCenter extends MissionManager {
         super(unit);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (isTooFarFromSquadCenter()) {
             return usedManager(this);
         }

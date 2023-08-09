@@ -18,7 +18,7 @@ public class RepairerManager extends Manager {
         return unit.isRepairerOfAnyKind();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (!unit.isScv()) {
             throw new RuntimeException(unit + " is not SCV!");
         }

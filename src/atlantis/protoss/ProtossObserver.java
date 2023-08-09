@@ -17,7 +17,7 @@ public class ProtossObserver extends MobileDetector {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         return super.handle();
     }
 

@@ -25,7 +25,7 @@ public class HugTanks extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.isMissionDefend()) {
             return null;
         }

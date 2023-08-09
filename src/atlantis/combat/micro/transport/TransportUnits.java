@@ -22,7 +22,7 @@ public class TransportUnits extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (handleLoad()) {
             return usedManager(this);
         }

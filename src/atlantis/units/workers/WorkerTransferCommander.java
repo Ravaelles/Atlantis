@@ -15,7 +15,7 @@ public class WorkerTransferCommander extends Commander {
     /**
      * Every base should have similar number of workers, more or less.
      */
-    public void handle() {
+    protected void handle() {
 //        if (true) return;
 
         // Don't run every frame

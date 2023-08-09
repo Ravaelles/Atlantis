@@ -117,7 +117,7 @@ public class Atlantis implements BWEventListener {
         // === All game actions that take place every frame ==================================================
 
         try {
-            Atlantis.getInstance().getGameCommander().handle();
+            Atlantis.getInstance().getGameCommander().invoke();
         }
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================

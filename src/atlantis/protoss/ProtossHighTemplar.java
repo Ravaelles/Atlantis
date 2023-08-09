@@ -27,7 +27,7 @@ public class ProtossHighTemplar extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (dontDisturb()) return usedManager(this);
         if (tryMeldingIntoArchon()) return usedManager(this);
 

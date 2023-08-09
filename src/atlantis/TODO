@@ -8,3 +8,7 @@
 - units idle INIT
 
 - AttackNearby causing Wraiths to freeze
+
+
+dont refresh base positon
+limit buners to 1, currentlyu no check

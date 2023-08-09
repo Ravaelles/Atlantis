@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class ActWithSquadsCommander extends Commander {
 
     @Override
-    public void handle() {
+    protected void handle() {
         ArrayList<Squad> allSquads = AllSquads.allClone();
 
         // Act with every squad (which contains combat units)

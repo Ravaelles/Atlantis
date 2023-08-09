@@ -25,7 +25,7 @@ public class CloakingField extends Commander {
     }
 
     @Override
-    public void handle() {
+    protected void handle() {
         AddToQueue.tech(Cloaking_Field);
     }
 }

@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 public class RepairerCommander  extends Commander {
     @Override
-    public void handle() {
+    protected void handle() {
         for (Iterator<AUnit> iterator = RepairAssignments.getRepairers().iterator(); iterator.hasNext();) {
             AUnit repairer = iterator.next();
 

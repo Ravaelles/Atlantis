@@ -18,7 +18,7 @@ import static atlantis.units.AUnitType.Terran_Science_Vessel;
 public class TerranDynamicUnitsCommander extends Commander {
 
     @Override
-    public void handle() {
+    protected void handle() {
         scienceVessels();
 
         TerranDynamicFactoryUnits.handleFactoryProduction();

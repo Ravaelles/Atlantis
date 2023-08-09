@@ -30,7 +30,7 @@ public class ScoutCommander extends Commander {
      * If we don't have unit scout assigns one of workers to become one and then, <b>scouts and harasses</b>
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
-    public void handle() {
+    protected void handle() {
         CodeProfiler.startMeasuring(this);
 
         // === Handle UMS ==========================================
@@ -49,7 +49,7 @@ public class ScoutCommander extends Commander {
 
                 if (unit != null && unit.isAlive()) {
                     Manager scoutManager = new ScoutManager(unit);
-                    scoutManager.handle();
+                    scoutManager.invoke();
                 }
             }
         }

@@ -23,7 +23,7 @@ public class SiegeMode extends Commander {
     }
 
     @Override
-    public void handle() {
+    protected void handle() {
         AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).random();
 //            System.err.println("-------- machineShop = " + machineShop);
         if (machineShop != null) {

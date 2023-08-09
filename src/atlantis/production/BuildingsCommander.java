@@ -14,11 +14,11 @@ public class BuildingsCommander extends Commander {
     }
 
     @Override
-    public void handle() {
+    protected void handle() {
         super.handle();
 
         for (AUnit unit : Select.ourBuildings().list()) {
-            (new BuildingManager(unit)).handle();
+            (new BuildingManager(unit)).invoke();
         }
     }
 

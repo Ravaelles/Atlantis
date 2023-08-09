@@ -23,7 +23,7 @@ public class ProtectorManager extends Manager {
         return unit.isProtector();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (act()) return usedManager(this);
 
         return idleProtector();

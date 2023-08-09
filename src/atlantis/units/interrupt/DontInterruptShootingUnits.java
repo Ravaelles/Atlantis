@@ -28,7 +28,7 @@ public class DontInterruptShootingUnits extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (act()) return usedManager(this);
 
         return null;

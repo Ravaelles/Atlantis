@@ -29,7 +29,7 @@ public class AttackNearbyEnemies extends Manager {
         return unit.hasAnyWeapon();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (this.equals(unit.manager()) && justHandledRecently()) {
             return usedManager(this);
         }

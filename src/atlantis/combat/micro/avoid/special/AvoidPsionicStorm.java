@@ -13,7 +13,7 @@ public class AvoidPsionicStorm extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.isUnderStorm()) {
             for (Bullet bullet : Atlantis.game().getBullets()) {
                 if (bullet.getType().equals(BulletType.Psionic_Storm)) {

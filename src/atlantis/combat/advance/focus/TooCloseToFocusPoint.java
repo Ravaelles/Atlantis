@@ -16,7 +16,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         return !unit.isMedic();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (isTooClose()) {
             act();
             return usedManager(this);

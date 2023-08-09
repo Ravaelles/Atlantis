@@ -30,7 +30,7 @@ public class ATransportManager extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit baby = babyToCarry();
         if (baby != null) {
             TransportUnits transportUnits = new TransportUnits(unit);

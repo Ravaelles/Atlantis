@@ -29,7 +29,7 @@ public class ExpansionCommander extends Commander {
     }
 
     @Override
-    public void handle() {
+    protected void handle() {
         if (shouldBuildNewBase()) prepareForNewBase();
     }
 

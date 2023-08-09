@@ -13,7 +13,7 @@ public class TerranKilledBuilderCommander extends Commander {
     }
 
     @Override
-    public void handle() {
+    protected void handle() {
         for (AUnit building : Select.ourUnfinishedBuildings().list()) {
             if (!building.type().isAddon() && isNotBeingConstructed(building)) {
                 assignWorkerToBuildingWithoutABuilder(building);

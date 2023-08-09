@@ -20,7 +20,7 @@ public class BeCloseToLeader extends MissionManager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (shouldGetBackToLeader()) {
             unit.move(squad.leader(), Actions.MOVE_FORMATION, "CloserToLeader");
             return usedManager(this);

@@ -19,7 +19,7 @@ public class CameraCommander extends Commander {
 
 
     @Override
-    public void handle() {
+    protected void handle() {
         AUnit cameraUnit = centerCameraOnUnit();
         if (A.now() <= 1 || CameraCommander.isFocusCameraOnUnit()) {
             CameraCommander.centerCameraOn(cameraUnit);

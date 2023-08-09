@@ -27,7 +27,7 @@ public class TooClustered extends Manager {
         return unit.squad().size() >= 2 && unit.friendsNear().inRadius(0.3, unit).groundUnits().atLeast(3);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.lastActionLessThanAgo(15, Actions.MOVE_FORMATION)) {
             return null;
         }

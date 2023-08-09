@@ -13,7 +13,7 @@ import java.util.List;
 
 public class NumberOfRepairersCommander extends Commander {
     @Override
-    public void handle() {
+    protected void handle() {
         removeExcessiveRepairersIfNeeded();
 
         if (!OptimalNumOfRepairers.weHaveTooManyRepairersOverall()) {

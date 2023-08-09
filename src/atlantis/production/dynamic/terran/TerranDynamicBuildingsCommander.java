@@ -5,7 +5,8 @@ import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
-import atlantis.production.dynamic.expansion.TerranReinforceBaseWithCombatBuildings;
+import atlantis.production.dynamic.expansion.ReinforceBasesWithCombatBuildings;
+import atlantis.production.dynamic.expansion.TerranReinforceBasesWithCombatBuildings;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -17,10 +18,10 @@ import static atlantis.units.AUnitType.*;
 
 public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
     @Override
-    public void handle() {
+    protected void handle() {
         super.handle();
 
-        TerranReinforceBaseWithCombatBuildings.get().handle();
+        ReinforceBasesWithCombatBuildings.get().invoke();
 
         if (A.everyNthGameFrame(7)) {
             comsats();
@@ -119,9 +120,6 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
                     || (A.supplyUsed() >= 30 && Count.withPlanned(Terran_Factory) == 0)
             )
         ) {
-//            System.err.println("Change from BIO to TANKS (" + Count.WithPlanned(Terran_Factory) + ")");
-//            System.err.println("A = " + Count.inProduction(Terran_Factory));
-//            System.err.println("B = " + Count.inQueue(Terran_Factory, 5));
             AddToQueue.withHighPriority(Terran_Factory);
             return true;
         }

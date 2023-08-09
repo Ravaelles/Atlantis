@@ -4,7 +4,7 @@ import atlantis.architecture.Commander;
 
 public class PainterCommander extends Commander {
     @Override
-    public void handle() {
+    protected void handle() {
         AAdvancedPainter.paint();
     }
 }

@@ -28,7 +28,7 @@ public class SiegeAgainstRegularBuildings extends Manager {
         return enemyBuilding != null;
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         return usedManager(WantsToSiege.wantsToSiegeNow(this, "SiegeBuilding"));
     }
 }

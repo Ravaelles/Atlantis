@@ -10,7 +10,7 @@ import atlantis.units.select.Select;
 
 public class NewGasBuildingCommander extends Commander {
     @Override
-    public void handle() {
+    protected void handle() {
         requestGasBuildingIfNeeded();
     }
 

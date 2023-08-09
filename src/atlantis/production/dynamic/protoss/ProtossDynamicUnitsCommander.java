@@ -23,7 +23,7 @@ import static atlantis.production.AbstractDynamicUnits.*;
 import static atlantis.units.AUnitType.Protoss_Dragoon;
 
 public class ProtossDynamicUnitsCommander extends Commander {
-    public void handle() {
+    protected void handle() {
         if (AGame.notNthGameFrame(3)) {
             return;
         }

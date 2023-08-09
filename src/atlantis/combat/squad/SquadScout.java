@@ -23,7 +23,7 @@ public class SquadScout extends Manager {
         return unit.isSquadScout();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.isSquadScout()) {
             return handleSquadScout();
         }

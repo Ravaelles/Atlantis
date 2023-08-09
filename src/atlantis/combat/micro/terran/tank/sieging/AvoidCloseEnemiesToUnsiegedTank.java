@@ -21,7 +21,7 @@ public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
         return enemies.atLeast(1);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         unit.runningManager().runFrom(
             enemies.nearestTo(unit), 2, Actions.MOVE_AVOID, false
         );

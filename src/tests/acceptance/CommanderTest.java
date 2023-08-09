@@ -31,8 +31,8 @@ public class CommanderTest extends NonAbstractTestFakingGame {
     @Test
     public void commanderHandlers() {
         createWorld(3, () -> {
-                (new ProductionCommander()).handle();
-                (new DynamicProductionOfUnitsCommander()).handle();
+                (new ProductionCommander()).invoke();
+                (new DynamicProductionOfUnitsCommander()).invoke();
 
                 assertTrue(true);
             },

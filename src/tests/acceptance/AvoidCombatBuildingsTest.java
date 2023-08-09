@@ -22,7 +22,7 @@ public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
         createWorld(100, () -> {
             FakeUnit unit = ourFirst;
             unit.setSquad(Alpha.get());
-            (new CombatUnitManager(unit)).handle();
+            (new CombatUnitManager(unit)).invoke();
 
             double distToSunken = distToNearestEnemy(unit);
             boolean isSafe = distToSunken > 7.05;

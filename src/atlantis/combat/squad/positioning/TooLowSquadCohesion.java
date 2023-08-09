@@ -17,7 +17,7 @@ public class TooLowSquadCohesion extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (isCohesionTooLow()) {
             improveCohesion();
             return usedManager(this);

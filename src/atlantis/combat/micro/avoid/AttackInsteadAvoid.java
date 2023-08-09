@@ -60,7 +60,7 @@ public class AttackInsteadAvoid extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AttackNearbyEnemies attackNearbyEnemies = new AttackNearbyEnemies(unit);
         if (attackNearbyEnemies.handleAttackNearEnemyUnits()) {
             return usedManager(attackNearbyEnemies, "AvoidButAttack");

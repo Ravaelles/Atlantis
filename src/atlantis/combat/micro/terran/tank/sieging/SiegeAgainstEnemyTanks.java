@@ -15,7 +15,7 @@ public class SiegeAgainstEnemyTanks extends Manager {
         return true;
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         Selection enemies = unit.enemiesNear().groundUnits().nonBuildings().nonWorkers().effVisible();
 
         if (!Enemy.terran()) {

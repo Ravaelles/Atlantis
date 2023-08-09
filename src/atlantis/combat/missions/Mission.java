@@ -30,7 +30,7 @@ public abstract class Mission extends MissionHelper {
     public Manager handle(AUnit unit) {
         unit.setTooltipTactical("#MA");
 
-        return managerClass(unit).handle();
+        return managerClass(unit).invoke();
     }
 
     // =========================================================

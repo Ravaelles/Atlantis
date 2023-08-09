@@ -8,7 +8,7 @@ public class MissionContainManager extends Manager {
         super(unit);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (act()) {
             return usedManager(this);
         }

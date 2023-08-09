@@ -17,7 +17,7 @@ public class ShouldStopRunning extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (check()) {
             unit.runningManager().stopRunning();
             return usedManager(this);

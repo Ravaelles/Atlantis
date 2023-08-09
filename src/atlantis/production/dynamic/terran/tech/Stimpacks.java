@@ -23,7 +23,7 @@ public class Stimpacks extends Commander {
     }
 
     @Override
-    public void handle() {
+    protected void handle() {
         AddToQueue.tech(TechType.Stim_Packs);
     }
 }

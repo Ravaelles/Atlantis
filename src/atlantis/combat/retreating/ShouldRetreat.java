@@ -29,7 +29,7 @@ public class ShouldRetreat extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (shouldRetreat(unit)) {
             return usedManager(this);
         }

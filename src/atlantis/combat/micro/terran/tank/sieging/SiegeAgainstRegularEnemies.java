@@ -33,7 +33,7 @@ public class SiegeAgainstRegularEnemies extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         return usedManager(WantsToSiege.wantsToSiegeNow(this, "Enemies!"));
     }
 }

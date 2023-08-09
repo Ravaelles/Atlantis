@@ -19,7 +19,7 @@ public class DontThinkAboutUnsieging extends Manager {
         return unit.hp() >= 60 && unit.distToLessThan(unit.squadLeader(), 8);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (
             unit.hasCooldown()
                 || unit.lastActionLessThanAgo(30 * (2 + unit.id() % 6), Actions.SIEGE)

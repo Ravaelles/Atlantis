@@ -1,5 +1,6 @@
 package atlantis.production.orders.production;
 
+import atlantis.architecture.Commander;
 import atlantis.combat.missions.Missions;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.requests.produce.ProduceBuilding;
@@ -8,14 +9,15 @@ import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-public class ProductionOrderHandler {
+public class ProductionOrderHandler extends Commander {
     private ProductionOrder order;
 
     public ProductionOrderHandler(ProductionOrder order) {
         this.order = order;
     }
 
-    public void handle() {
+    @Override
+    protected void handle() {
 
         // Produce UNIT
         if (order.unitType() != null) {

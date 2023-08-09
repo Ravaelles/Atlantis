@@ -13,7 +13,7 @@ public class PreventForMissionSparta extends Manager {
         return unit.isGroundUnit();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.isMissionSparta()) {
             return usedManager(this);
         }

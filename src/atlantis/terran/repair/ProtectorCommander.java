@@ -20,7 +20,7 @@ public class ProtectorCommander extends Commander {
     // =========================================================
 
     @Override
-    public void handle() {
+    protected void handle() {
         if (AGame.everyNthGameFrame(9)) {
             assignBunkerProtectorsIfNeeded();
 

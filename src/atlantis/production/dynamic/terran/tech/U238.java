@@ -23,7 +23,7 @@ public class U238 extends Commander {
     }
 
     @Override
-    public void handle() {
+    protected void handle() {
         AddToQueue.upgrade(UpgradeType.U_238_Shells);
     }
 }

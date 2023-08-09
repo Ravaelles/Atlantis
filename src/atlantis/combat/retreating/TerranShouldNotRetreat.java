@@ -14,7 +14,7 @@ public class TerranShouldNotRetreat extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         Manager manager = shouldNotRetreat();
 
         if (manager != null) {

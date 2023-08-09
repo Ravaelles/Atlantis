@@ -14,7 +14,7 @@ public class SiegeTankRun extends Manager {
         return unit.isTankSieged();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (
             unit.lastUnderAttackLessThanAgo(30)
                 && (unit.hp() >= 100 || unit.enemiesNearInRadius(2) <= 2)

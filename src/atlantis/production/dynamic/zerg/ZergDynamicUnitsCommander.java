@@ -14,7 +14,7 @@ import atlantis.units.select.Have;
 
 public class ZergDynamicUnitsCommander extends Commander {
     @Override
-    public void handle() {
+    protected void handle() {
         mutalisks();
         ProduceHydras.hydras();
         ProduceZerglings.zerglings();

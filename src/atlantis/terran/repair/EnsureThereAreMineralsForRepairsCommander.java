@@ -5,7 +5,7 @@ import atlantis.production.orders.production.ProductionQueue;
 
 public class EnsureThereAreMineralsForRepairsCommander extends Commander {
     @Override
-    public void handle() {
+    protected void handle() {
         int totalRepairers = RepairAssignments.countTotalRepairers();
         int minMineralsForRepairers = totalRepairers * 20;
         if (totalRepairers >= 1 && ProductionQueue.mineralsReserved() <= minMineralsForRepairers) {

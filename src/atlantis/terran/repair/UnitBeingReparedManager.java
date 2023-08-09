@@ -22,7 +22,7 @@ public class UnitBeingReparedManager extends Manager {
             && (enemiesNear = unit.enemiesNear().groundUnits().canAttack(unit, 2.6)).isEmpty();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (repairer == null) {
             return null;
         }

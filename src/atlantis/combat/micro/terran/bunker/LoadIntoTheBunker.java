@@ -52,7 +52,7 @@ public class LoadIntoTheBunker extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit bunker = bunkerToLoadTo();
 //        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
 

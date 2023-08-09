@@ -25,7 +25,7 @@ public class RetreatManager extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (handleRetreat()) return usedManager(this);
 
         return null;

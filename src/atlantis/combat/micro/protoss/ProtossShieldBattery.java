@@ -17,7 +17,7 @@ public class ProtossShieldBattery extends Manager {
         return unit.is(AUnitType.Protoss_Shield_Battery);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         AUnit battery = Select.ourWithUnfinished(AUnitType.Protoss_Shield_Battery)
             .havingEnergy(40)
             .nearestTo(unit);

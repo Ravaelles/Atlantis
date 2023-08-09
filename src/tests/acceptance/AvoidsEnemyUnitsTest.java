@@ -22,7 +22,7 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
         createWorld(100, () -> {
             FakeUnit unit = ourFirst;
             unit.setSquad(Alpha.get());
-            (new CombatUnitManager(unit)).handle();
+            (new CombatUnitManager(unit)).invoke();
 
             double distToZealot = distToNearestEnemy(unit);
             boolean isSafe = distToZealot > 1.7;

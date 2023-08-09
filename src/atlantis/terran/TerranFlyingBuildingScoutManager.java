@@ -21,7 +21,7 @@ public class TerranFlyingBuildingScoutManager extends Manager {
         return unit.isABuilding() && unit.isLifted();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (updateFlyingBuilding()) {
             return usedManager(this);
         }

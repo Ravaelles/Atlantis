@@ -13,7 +13,7 @@ public class Lockdown extends Commander {
     }
 
     @Override
-    public void handle() {
+    protected void handle() {
         AddToQueue.tech(TechType.Lockdown);
     }
 }

@@ -14,7 +14,7 @@ public class AvoidLurkers extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.isAir() || unit.isABuilding()) {
             return null;
         }

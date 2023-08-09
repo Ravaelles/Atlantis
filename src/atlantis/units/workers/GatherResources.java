@@ -13,7 +13,7 @@ public class GatherResources extends Manager {
         return unit.isWorker();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (handleGatherMineralsOrGas()) {
             return usedManager(this);
         }

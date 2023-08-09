@@ -22,7 +22,7 @@ public class Stimpack extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (shouldUse()) {
             if (useStim()) {
                 return usedManager(this);

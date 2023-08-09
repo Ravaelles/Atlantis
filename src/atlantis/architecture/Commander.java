@@ -13,7 +13,15 @@ public class Commander extends BaseAbstractCommander {
         return true;
     }
 
-    public void handle() {
+    public void invoke() {
+        if (applies()) {
+            handle();
+        }
+
+        handleSubcommanders();
+    }
+
+    protected void handle() {
         handleSubcommanders();
     }
 

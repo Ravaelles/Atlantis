@@ -20,7 +20,7 @@ public class TerranComsatStation extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.energy() >= 50) {
             if (
                 scanLurkers()

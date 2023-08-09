@@ -41,9 +41,9 @@ public class BaseSelect<T extends AUnit> {
 
                 for (Unit u : AGame.getPlayerUs().getUnits()) {
                     AUnit unit = AUnit.getById(u);
-                    if (unit.isAlive()) {
-                        data.add(unit);
-                    }
+                    data.add(unit);
+//                    if (unit.isAlive()) {
+//                    }
                 }
 
                 return data;

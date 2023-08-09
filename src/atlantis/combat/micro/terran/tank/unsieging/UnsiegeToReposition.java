@@ -17,7 +17,7 @@ public class UnsiegeToReposition extends Manager {
             && unit.lastActionMoreThanAgo(30 * 6, Actions.SIEGE);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (
             noEnemiesNear()
                 && allowUnsiegingToReposition()

@@ -52,7 +52,7 @@ public class TerranMedic extends Manager {
         };
     }
 
-    public Manager handle() {
+    protected Manager handle() {
 //        if (medic.hp() <= 14 && AvoidEnemies.avoidEnemiesIfNeeded()) {
 //            return true;
 //        }

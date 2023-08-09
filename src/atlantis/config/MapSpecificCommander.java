@@ -17,7 +17,7 @@ import java.util.Arrays;
 public class MapSpecificCommander extends Commander {
 
     @Override
-    public void handle() {
+    protected void handle() {
         if (Env.isParamTweaker() || !Env.isLocal()) return;
 //        if (!A.isUms()) return;
 

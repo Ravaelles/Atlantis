@@ -43,10 +43,8 @@ public class TerranBunkersInMain extends Commander {
     }
 
     @Override
-    public void handle() {
-        if (applies()) {
-            // to-do: handle bunkers in main
-        }
+    protected void handle() {
+        // to-do: handle bunkers in main
     }
 
     private static AUnitType type() {

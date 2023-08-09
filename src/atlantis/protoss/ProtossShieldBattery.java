@@ -18,7 +18,7 @@ public class ProtossShieldBattery extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit shieldBattery = unit;
 
         if (shieldBattery.energy() >= 40 && shieldBattery.isPowered()) {

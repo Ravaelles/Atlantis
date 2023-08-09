@@ -17,14 +17,14 @@ public class AdvanceStandard extends MissionManager {
         return unit.squad().isLeader(unit);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (focusPoint != null) {
             if (unit.isTankSieged()) {
                 TerranTank.wantsToUnsiege(unit);
             }
             else {
                 AttackNearbyEnemies attackNearbyEnemies = new AttackNearbyEnemies(unit);
-                if (attackNearbyEnemies.handle() != null) {
+                if (attackNearbyEnemies.invoke() != null) {
                     return usedManager(attackNearbyEnemies);
                 }
 

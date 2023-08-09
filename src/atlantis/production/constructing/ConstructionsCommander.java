@@ -34,7 +34,7 @@ public class ConstructionsCommander extends Commander {
      * finished objects etc.
      */
     @Override
-    public void handle() {
+    protected void handle() {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
             checkForConstructionStatusChange(construction, construction.construction());

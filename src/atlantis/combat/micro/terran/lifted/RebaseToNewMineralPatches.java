@@ -26,7 +26,7 @@ public class RebaseToNewMineralPatches extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (flyToNewMineralPatches()) {
             return usedManager(this);
         }

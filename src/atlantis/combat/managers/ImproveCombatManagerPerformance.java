@@ -14,7 +14,7 @@ public class ImproveCombatManagerPerformance extends Manager {
         return unit.isCombatUnit();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.enemiesNear().empty() && A.notNthGameFrame(5)) {
             return usedManager(this);
         }

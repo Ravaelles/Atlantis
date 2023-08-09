@@ -15,8 +15,8 @@ public class RunForYourLife extends Manager {
     }
 
     @Override
-    public Manager handle() {
-        if ((new AvoidEnemies(unit)).handle() != null) return usedManager(this);
+    protected Manager handle() {
+        if ((new AvoidEnemies(unit)).invoke() != null) return usedManager(this);
 
         return null;
     }

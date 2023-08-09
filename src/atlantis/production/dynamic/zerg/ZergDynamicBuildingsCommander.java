@@ -10,7 +10,7 @@ import static atlantis.units.AUnitType.Zerg_Hydralisk_Den;
 
 public class ZergDynamicBuildingsCommander extends DynamicBuildingsCommander {
     @Override
-    public void handle() {
+    protected void handle() {
         super.handle();
 
         hydraDen();

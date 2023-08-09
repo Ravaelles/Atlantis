@@ -18,7 +18,7 @@ public class BuilderManager extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (update()) return usedManager(this);
 
         return null;

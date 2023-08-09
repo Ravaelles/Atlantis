@@ -13,7 +13,7 @@ public class GlobalMissionCommander extends Commander {
 //    }
 
     @Override
-    public void handle() {
+    protected void handle() {
         MissionChanger.evaluateGlobalMission();
 
         // Global mission is de facto Alpha squad's mission

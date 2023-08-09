@@ -29,7 +29,7 @@ public class WorkerDefenceManager extends Manager {
     /**
      * Attack other workers, run from enemies etc.
      */
-    public Manager handle() {
+    protected Manager handle() {
         return act() ? usedManager(this) : null;
     }
 
@@ -63,7 +63,7 @@ public class WorkerDefenceManager extends Manager {
             return true;
         }
 
-        if ((new AvoidEnemies(unit)).handle() != null) {
+        if ((new AvoidEnemies(unit)).invoke() != null) {
             unit.addLog("WorkerAvoid");
             return true;
         }

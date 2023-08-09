@@ -19,7 +19,7 @@ public class GasBuildingsCommander extends Commander {
      * no more needed).
      */
     @Override
-    public void handle() {
+    protected void handle() {
         if (AGame.notNthGameFrame(9)) {
             return;
         }

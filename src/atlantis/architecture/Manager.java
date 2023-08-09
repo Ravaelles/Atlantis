@@ -34,14 +34,23 @@ public abstract class Manager extends BaseAbstractManager {
         return true;
     }
 
+    public Manager invoke() {
+        if (!applies()) return null;
+
+        Manager manager = handle();
+        if (manager != null) {
+            return manager;
+        }
+
+        return handleSubmanagers();
+    }
+
     /**
      * @return TRUE if the manager was applied, an action was taken, meaning further execution should be stopped.
      * FALSE if the manager was not applied. Further execution down the stack should be proceeded.
      */
-    public Manager handle() {
-        if (!applies()) {
-            return null;
-        }
+    protected Manager handle() {
+        if (!applies()) return null;
 
         Manager submanager = handleSubmanagers();
 

@@ -15,13 +15,11 @@ public class WeDontKnowEnemyLocation extends Manager {
         return !EnemyInfo.hasDiscoveredAnyBuilding();
     }
 
-    public Manager handle() {
-        if (applies()) {
-            unit.setTooltipTactical("Find enemy");
+    protected Manager handle() {
+        unit.setTooltipTactical("Find enemy");
 
-            if ((new ScoutManager(unit)).tryFindingEnemy()) {
-                return usedManager(this);
-            }
+        if ((new ScoutManager(unit)).tryFindingEnemy()) {
+            return usedManager(this);
         }
 
         return null;

@@ -15,7 +15,7 @@ public class AvoidReavers extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit reaver = unit.enemiesNear().reavers().inRadius(9.9, unit).nearestTo(unit);
         if (reaver == null) {
             return null;

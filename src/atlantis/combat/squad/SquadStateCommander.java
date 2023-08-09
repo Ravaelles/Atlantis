@@ -5,7 +5,7 @@ import atlantis.architecture.Commander;
 public class SquadStateCommander extends Commander {
 
     @Override
-    public void handle() {
+    protected void handle() {
 //        makeSureSquadObjectsAreInitialized();
     }
 

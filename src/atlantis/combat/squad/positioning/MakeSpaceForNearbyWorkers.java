@@ -32,7 +32,7 @@ public class MakeSpaceForNearbyWorkers extends Manager {
         return true;
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         AUnit nearWorker = Select.ourWorkers().inRadius(1.5, unit).first();
 
         if (nearWorker != null) {

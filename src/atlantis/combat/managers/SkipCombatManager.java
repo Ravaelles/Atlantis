@@ -10,7 +10,7 @@ public class SkipCombatManager extends Manager {
         super(unit);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (preActions()) {
             return usedManager(this);
         }

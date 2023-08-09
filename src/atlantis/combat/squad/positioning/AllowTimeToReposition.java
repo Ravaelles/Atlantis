@@ -8,7 +8,7 @@ public class AllowTimeToReposition extends Manager {
         super(unit);
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (!unit.looksIdle() && unit.lastPositioningActionLessThanAgo(13)) {
             return usedManager(this);
         }

@@ -15,7 +15,7 @@ public class SiegeHereDuringMissionDefend extends Manager {
         return Missions.isGlobalMissionDefend() && unit.isTank();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.isMissionDefendOrSparta() && unit.distToFocusPoint() <= minDist()) {
             if (unit.target() == null || unit.target().distTo(unit) < 12) {
                 unit.siege();

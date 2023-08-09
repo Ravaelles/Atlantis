@@ -14,7 +14,7 @@ public class LandBuildingThatLifted extends Manager {
 //        return unit.isLifted() && unit.isBase();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (land()) {
             return usedManager(this);
         }

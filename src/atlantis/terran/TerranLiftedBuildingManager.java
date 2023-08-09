@@ -21,7 +21,7 @@ public class TerranLiftedBuildingManager extends Manager {
      * - when base runs out of minerals, we fly to a new location
      */
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.lastUnderAttackLessThanAgo(30 * 5)) {
             AUnit enemy = unit.enemiesNear().canAttack(unit, 3).nearestTo(unit);
             if (enemy != null) {

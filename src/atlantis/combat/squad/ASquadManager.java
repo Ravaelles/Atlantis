@@ -28,7 +28,7 @@ public class ASquadManager {
 
         // Act with every combat unit
         for (AUnit unit : squad.units().list()) {
-            (new CombatUnitManager(unit)).handle();
+            (new CombatUnitManager(unit)).invoke();
 
 //            AAdvancedPainter.paintTextCentered(
 //                unit.position().translateByTiles(0, 0.6),

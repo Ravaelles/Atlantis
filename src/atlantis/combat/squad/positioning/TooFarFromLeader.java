@@ -14,7 +14,7 @@ public class TooFarFromLeader extends Manager {
         return unit.isGroundUnit();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (check()) {
             return usedManager(this);
         }

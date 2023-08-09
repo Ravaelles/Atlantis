@@ -15,7 +15,7 @@ public class DynamicRepairsNearby extends Manager {
         return unit.isScv() && (unit.id() % 3 == 0 || unit.isRepairerOfAnyKind()) && !unit.isRepairing();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         if (check()) {
             return usedManager(this);
         }

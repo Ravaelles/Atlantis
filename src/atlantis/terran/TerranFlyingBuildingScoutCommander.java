@@ -17,7 +17,7 @@ public class TerranFlyingBuildingScoutCommander extends Commander {
     public TerranFlyingBuildingScoutCommander() {}
 
     @Override
-    public void handle() {
+    protected void handle() {
         if (AGame.isUms()) {
             return;
         }
