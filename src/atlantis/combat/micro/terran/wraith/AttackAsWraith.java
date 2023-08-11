@@ -14,8 +14,6 @@ public class AttackAsWraith extends AttackNearbyEnemies {
         return unit.isWraith()
             && unit.hp() >= 90
             && (
-//            unit.lastStartedAttackMoreThanAgo(30 * 5)
-//                ||
             (
                 unit.enemiesNear().canAttack(unit, 2.5).empty()
                     && unit.enemiesNear().canAttack(unit, 6).notEmpty()
@@ -24,15 +22,7 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     }
 
     @Override
-    protected AttackAsWraith getInstance(AUnit unit) {
-        return this;
-    }
-
-    @Override
     protected AUnit bestTargetToAttack() {
-//        ATargetingForAirUnits targeting = new ATargetingForAirUnits(unit, true);
-//        AUnit target = targeting.targetForAirUnit();
-
         AUnit target = defineTarget();
 
 //        if (target != null) {
@@ -56,16 +46,8 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     }
 
     private boolean shouldStopMovingToAttack(AUnit target) {
-//        if (unit.isMoving()) {
-//            return true;
-//        }
-
-//        System.out.println(unit.enemiesNear().buildings().canAttack(unit, 3.5).size());
         if (unit.enemiesNear().buildings().canAttack(unit, 3.5).notEmpty()) {
-//            System.err.println("HOLD");
             return true;
-//            if (unit.isMoving() || unit.isAccelerating()) {
-//            }
         }
 
         if (unit.distTo(target) <= 4.9) {

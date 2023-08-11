@@ -17,8 +17,6 @@ public class ARunningManager {
     //    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
-    public static double NOTIFY_UNITS_MAKE_SPACE = 0.75;
-    public static double NOTIFY_UNITS_IN_RADIUS = 0.2;
 
 
     protected final AUnit unit;
@@ -49,6 +47,10 @@ public class ARunningManager {
 
     //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
+        if (runFrom instanceof AUnit) {
+            unit.setRunningFrom((AUnit) runFrom);
+        }
+
         this.runFrom = runFrom;
         this.allowedToNotifyNearUnitsToMakeSpace = allowedToNotifyNearUnitsToMakeSpace;
 
@@ -117,59 +119,6 @@ public class ARunningManager {
         }
 
         return runAwayFrom;
-    }
-
-    // =========================================================
-
-    /**
-     * Tell other units that might be blocking our escape route to move.
-     */
-    private boolean notifyNearUnitsToMakeSpace() {
-        if (!allowedToNotifyNearUnitsToMakeSpace) {
-            return false;
-        }
-
-        if (We.protoss() && unit.friendsNear().inRadius(0.3, unit).atMost(1)) {
-            return false;
-        }
-
-        if (unit.isFlying() || unit.isLoaded()) {
-            return false;
-        }
-
-//        if (unit.enemiesNear().melee().inRadius(4, unit).empty()) {
-//            return false;
-//        }
-
-        Selection friendsTooClose = Select.ourRealUnits()
-            .exclude(unit)
-            .groundUnits()
-            .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
-
-        if (friendsTooClose.count() <= 1) {
-            return false;
-        }
-
-        for (AUnit otherUnit : friendsTooClose.list()) {
-            if (canBeNotifiedToMakeSpace(otherUnit)) {
-                AUnit runFrom = otherUnit.enemiesNear().nearestTo(otherUnit);
-                if (runFrom == null || !runFrom.hasPosition()) {
-                    continue;
-                }
-
-//                System.err.println(otherUnit + " // notified by " + unit + " (" + unit.hp() + ")");
-
-                otherUnit.runningManager().runFrom(runFrom, NOTIFY_UNITS_MAKE_SPACE, Actions.MOVE_SPACE, true);
-                APainter.paintCircleFilled(unit, 10, Color.Yellow);
-                APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
-                otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit), false);
-            }
-        }
-        return true;
-    }
-
-    private boolean canBeNotifiedToMakeSpace(AUnit unit) {
-        return !unit.isRunning() && !unit.type().isReaver() && unit.lastStartedRunningMoreThanAgo(3);
     }
 
     // =========================================================
@@ -257,7 +206,9 @@ public class ARunningManager {
 
             if (unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false)) {
                 // Make all other units very close to it run as well
-                notifyNearUnitsToMakeSpace();
+                if (allowedToNotifyNearUnitsToMakeSpace) {
+                    (new NotifyNearUnitsToMakeSpaceToRun(unit)).notifyNearUnits();
+                }
 
                 return true;
             }

@@ -1,4 +1,4 @@
-package atlantis.units;
+package atlantis.units.special;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.protoss.PreventForMissionSparta;
@@ -13,6 +13,7 @@ import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.overlord.ZergOverlordManager;
 import atlantis.protoss.ProtossHighTemplar;
 import atlantis.protoss.ProtossObserver;
+import atlantis.units.AUnit;
 
 public class SpecialUnitsManager extends Manager {
     public SpecialUnitsManager(AUnit unit) {

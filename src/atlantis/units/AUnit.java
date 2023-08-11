@@ -12,7 +12,6 @@ import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.running.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
@@ -99,6 +98,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Action _prevAction = null;
 
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
+    private AUnit runningFrom = null;
     private int _lastActionReceived = 0;
     public int _lastAttackOrder;
     public int _lastAttackFrame;
@@ -2799,5 +2799,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isCrucialUnit() {
         return isTank() || isReaver() || isLurker() || isCarrier();
+    }
+
+    public void setRunningFrom(AUnit enemy) {
+        this.runningFrom = enemy;
+    }
+
+    public AUnit runningFrom() {
+        return this.runningFrom;
     }
 }

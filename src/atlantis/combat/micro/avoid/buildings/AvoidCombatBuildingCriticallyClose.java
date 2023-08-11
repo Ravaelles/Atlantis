@@ -4,11 +4,11 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
 public class AvoidCombatBuildingCriticallyClose extends Manager {
-    private CircumnavigateCombatBuilding circumnavigateCombatBuilding;
+    private final AUnit combatBuilding;
 
-    public AvoidCombatBuildingCriticallyClose(AUnit unit) {
+    public AvoidCombatBuildingCriticallyClose(AUnit unit, AUnit combatBuilding) {
         super(unit);
-        circumnavigateCombatBuilding = new CircumnavigateCombatBuilding(unit);
+        this.combatBuilding = combatBuilding;
     }
 
     @Override
@@ -16,11 +16,8 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
         return true;
     }
 
-    public Manager handle(AUnit combatBuilding) {
-        if (isHoldingTooLong(combatBuilding)) {
-            return handleHoldTooLong(combatBuilding);
-        }
-
+    @Override
+    protected Manager handle() {
         if (shouldHoldGround(combatBuilding)) {
             unit.holdPosition("HoldHere");
             return usedManager(this);
@@ -37,9 +34,5 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
 
     private boolean isHoldingTooLong(AUnit combatBuilding) {
         return unit.isHoldingPosition() && unit.noCooldown() && unit.lastActionMoreThanAgo(5);
-    }
-
-    private Manager handleHoldTooLong(AUnit combatBuilding) {
-        return circumnavigateCombatBuilding.handle(combatBuilding);
     }
 }

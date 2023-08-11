@@ -5,7 +5,6 @@ import atlantis.combat.missions.Mission;
 import atlantis.units.AUnit;
 
 public class CombatManagerLowPriority extends Manager {
-
     public CombatManagerLowPriority(AUnit unit) {
         super(unit);
     }
@@ -17,7 +16,8 @@ public class CombatManagerLowPriority extends Manager {
 
     /**
      * If we're here, mission manager is allowed to take control over this unit.
-     * Meaning no action was needed on *tactical* level - stick to *strategic* level.
+     * Meaning no action was needed on *tactical* level - stick to *strategic* level,
+     * which is controlled by mission managers (MissionDefend / Attack / Contain etc.).
      */
     protected Manager handle() {
         Mission mission = unit.mission();
@@ -25,14 +25,7 @@ public class CombatManagerLowPriority extends Manager {
             return null;
         }
 
-//            if (unit.debug())System.out.println("F " + unit);
-
         unit.setTooltipTactical(mission.name());
-        if (mission.handle(unit) != null) {
-            return unit.manager();
-        }
-
-//        ErrorLog.printMaxOncePerMinute("No combat unit manager for " + unit);
-        return null;
+        return mission.handleManagerClass(unit);
     }
 }

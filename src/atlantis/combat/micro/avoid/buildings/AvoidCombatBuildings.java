@@ -12,7 +12,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 
 public class AvoidCombatBuildings extends Manager {
-    private AvoidCombatBuildingCriticallyClose avoidCombatBuildingCriticallyClose;
     private ShouldRetreat shouldRetreat;
 
     private Selection combatBuildings;
@@ -20,7 +19,6 @@ public class AvoidCombatBuildings extends Manager {
 
     public AvoidCombatBuildings(AUnit unit) {
         super(unit);
-        avoidCombatBuildingCriticallyClose = new AvoidCombatBuildingCriticallyClose(unit);
         shouldRetreat = new ShouldRetreat(unit);
     }
 
@@ -75,8 +73,8 @@ public class AvoidCombatBuildings extends Manager {
             return stillSomePlaceLeft(combatBuilding);
         }
         else if (distTo < (criticalDist + doNothingMargin)) {
-            if (thereIsNoSafetyMarginAtAll(combatBuilding)) return usedManager(avoidCombatBuildingCriticallyClose);
-//            return barelyAnySafetyLeft(combatBuilding);
+            Manager manager = thereIsNoSafetyMarginAtAll(combatBuilding);
+            if (manager != null) return usedManager(manager);
         }
 
         return null;
@@ -111,19 +109,16 @@ public class AvoidCombatBuildings extends Manager {
         return null;
     }
 
-    private boolean thereIsNoSafetyMarginAtAll(AUnit combatBuilding) {
-        if (avoidCombatBuildingCriticallyClose.handle(combatBuilding) != null) {
-//                System.err.println("----->");
-            return true;
+    private Manager thereIsNoSafetyMarginAtAll(AUnit combatBuilding) {
+        AvoidCombatBuildingCriticallyClose avoidCombatBuildingCriticallyClose = new AvoidCombatBuildingCriticallyClose(unit, combatBuilding);
+        if (avoidCombatBuildingCriticallyClose.invoke() != null) {
+            return avoidCombatBuildingCriticallyClose;
         }
-        return false;
+
+        return null;
     }
 
     private Manager barelyAnySafetyLeft(AUnit combatBuilding) {
-//        if (unit.isRunning() || unit.isAttacking()) {
-//            return null;
-//        }
-
         if (unit.isAir()) {
             APosition runFrom = combatBuilding.position();
 
@@ -141,14 +136,15 @@ public class AvoidCombatBuildings extends Manager {
     }
 
     private Manager stillSomePlaceLeft(AUnit combatBuilding) {
-        APosition runFrom = combatBuilding.position();
-
-//        if (A.chance(70)) {
-        runFrom = runFrom.position().randomizePosition(5 + unit.id() % 4);
-//        }
-
-        unit.runningManager().runFrom(runFrom, 6, Actions.MOVE_AVOID, false);
-        return usedManager(this);
+        return (new CircumnavigateCombatBuilding(unit, combatBuilding)).invoke();
+//        APosition runFrom = combatBuilding.position();
+//
+////        if (A.chance(70)) {
+//        runFrom = runFrom.position().randomizePosition(5 + unit.id() % 4);
+////        }
+//
+//        unit.runningManager().runFrom(runFrom, 6, Actions.MOVE_AVOID, false);
+//        return usedManager(this);
     }
 
     private double criticalDist(AUnit combatBuilding) {

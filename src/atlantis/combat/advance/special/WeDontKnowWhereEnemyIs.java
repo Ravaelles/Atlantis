@@ -18,7 +18,7 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
         return !EnemyInfo.hasDiscoveredAnyBuilding();
     }
 
-    public Manager handle(AUnit unit) {
+    protected Manager handle(AUnit unit) {
         if (!unit.looksIdle() && unit.isActiveManager(this)) {
             return continueUsingLastManager();
         }

@@ -20,6 +20,7 @@ public class TerranWraith extends Manager {
         return new Class[]{
             RunForYourLife.class,
             UnitBeingReparedManager.class,
+            AttackTargetInRangeIfRanTooLong.class,
             AttackAsWraith.class,
         };
     }

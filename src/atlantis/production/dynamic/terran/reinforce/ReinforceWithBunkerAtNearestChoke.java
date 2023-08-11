@@ -44,16 +44,16 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
         if (ConstructionRequests.hasNotStartedNear(Terran_Bunker, positionForBunker, searchRadius)) {
             return false;
         }
-//        System.out.println(
-//            "ZA = " + Select.ourWithUnfinishedOfType(Terran_Bunker).count()
-//            + " / ZA1st = " + Select.ourWithUnfinishedOfType(Terran_Bunker).first()
-//            + " / ZB = " + ConstructionRequests.notStartedOfType(Terran_Bunker).size()
-//            + " ///// " +
-//            "A = " + existing.count()
-//            + " / " +
-//            "B = " + ConstructionRequests.hasNotStartedNear(Terran_Bunker, positionForBunker, searchRadius)
-//            + " / " + positionForBunker
-//        );
+        System.out.println(
+            "ZA = " + Select.ourWithUnfinishedOfType(Terran_Bunker).count()
+                + " / ZA1st = " + Select.ourWithUnfinishedOfType(Terran_Bunker).first()
+                + " / ZB = " + ConstructionRequests.notStartedOfType(Terran_Bunker).size()
+                + " ///// " +
+                "A = " + existing.count()
+                + " / " +
+                "B = " + ConstructionRequests.hasNotStartedNear(Terran_Bunker, positionForBunker, searchRadius)
+                + " / " + positionForBunker
+        );
 
         return positionForBunker != null;
     }

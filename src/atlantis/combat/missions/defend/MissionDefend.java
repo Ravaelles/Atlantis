@@ -10,12 +10,12 @@ public class MissionDefend extends Mission {
     protected AUnit main;
     protected AFocusPoint focusPoint;
     protected MissionDefendAllowsToAttack allowsToAttack;
-    protected double focusPointToBase;
-    protected double unitToEnemy;
-    protected double unitToFocus;
-    protected double unitToBase;
-    protected double enemyToBase;
-    protected double enemyToFocus;
+//    protected double focusPointToBase;
+//    protected double unitToEnemy;
+//    protected double unitToFocus;
+//    protected double unitToBase;
+//    protected double enemyToBase;
+//    protected double enemyToFocus;
 
     public MissionDefend() {
         super("Defend");

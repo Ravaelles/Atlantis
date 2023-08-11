@@ -25,11 +25,7 @@ public abstract class Mission extends MissionHelper {
 
     // =========================================================
 
-//    public abstract Manager handle(AUnit unit);
-
-    public Manager handle(AUnit unit) {
-        unit.setTooltipTactical("#MA");
-
+    public Manager handleManagerClass(AUnit unit) {
         return managerClass(unit).invoke();
     }
 

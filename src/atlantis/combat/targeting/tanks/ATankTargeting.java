@@ -6,8 +6,8 @@ import atlantis.units.HasUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ATargetingForTanks extends HasUnit {
-    public ATargetingForTanks(AUnit unit) {
+public class ATankTargeting extends HasUnit {
+    public ATankTargeting(AUnit unit) {
         super(unit);
     }
 

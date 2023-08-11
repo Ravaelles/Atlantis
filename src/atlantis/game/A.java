@@ -93,8 +93,8 @@ public class A {
     }
 
     /**
-     * @return exception stack converted to String (each trace in new line)
      * @param maxLines maximum number of lines of result String
+     * @return exception stack converted to String (each trace in new line)
      */
     public static String convertStackToString(int maxLines, StackTraceElement[] stackTrace) {
         String result = "";
@@ -118,7 +118,7 @@ public class A {
 
     /**
      * @param percentChance is chance percentage of some action, e.g. 87.2 means some event occurs with 87.2%
-     * probability
+     *                      probability
      * @return true if given random event occured
      */
     public static boolean chance(double percentChance) {
@@ -127,7 +127,6 @@ public class A {
 
     /**
      * @return random integer number from range [min, max]
-	 *
      */
     public static int rand(int min, int max) {
         return min + random.nextInt(max - min + 1);
@@ -139,9 +138,9 @@ public class A {
     }
 
     /**
-     * @return String representing a number with given decimal places e.g. (3.1415, 2) will give "3.14"
-     * @param number number that you want to format
+     * @param number        number that you want to format
      * @param decimalPlaces how many digits will be after '.'
+     * @return String representing a number with given decimal places e.g. (3.1415, 2) will give "3.14"
      */
     public static String formatDecimalPlaces(double number, int decimalPlaces) {
         String zeros = "";
@@ -159,7 +158,8 @@ public class A {
         for (Component component : container.getComponents()) {
             if (component instanceof Container) {
                 setAllBackgroundsColorsOfComponent((Container) component, desiredBackgroundColor);
-            } else {
+            }
+            else {
                 component.setBackground(desiredBackgroundColor);
             }
         }
@@ -176,7 +176,8 @@ public class A {
         for (Component component : container.getComponents()) {
             if (component instanceof Container) {
                 setAllBackgroundsColorsOfComponent((Container) component, desiredBackgroundColor);
-            } else {
+            }
+            else {
                 component.setBackground(desiredBackgroundColor);
             }
         }
@@ -190,7 +191,8 @@ public class A {
         for (Component component : container.getComponents()) {
             if (component instanceof Container) {
                 setAllBackgroundsColorsOfComponent((Container) component, desiredBackgroundColor);
-            } else if (component instanceof Button || component instanceof JButton) {
+            }
+            else if (component instanceof Button || component instanceof JButton) {
                 component.setBackground(desiredBackgroundColor);
             }
         }
@@ -205,7 +207,8 @@ public class A {
         for (Component component : container.getComponents()) {
             if (component instanceof Container) {
                 setAllForegroundsColorsOfComponent((Container) component, desiredForegroundColor);
-            } else {
+            }
+            else {
                 component.setForeground(desiredForegroundColor);
             }
         }
@@ -215,13 +218,14 @@ public class A {
      * Makes sure each object in given panel (and its children) has specified color.
      */
     public static void setAllButtonsOfComponent(Container container, Color backgroundColor, Color fontColor,
-            Border border) {
+                                                Border border) {
         for (Component component : container.getComponents()) {
             if (component instanceof JButton) {
                 component.setBackground(backgroundColor);
                 component.setForeground(fontColor);
                 ((JButton) component).setBorder(border);
-            } else if (component instanceof JPanel) {
+            }
+            else if (component instanceof JPanel) {
                 setAllButtonsOfComponent((JButton) component, backgroundColor, fontColor, border);
             }
         }
@@ -240,7 +244,7 @@ public class A {
     public static boolean isImage(String extension) {
         extension = extension.toLowerCase();
         return extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg") || extension.equals("bmp")
-                || extension.equals("gif");
+            || extension.equals("gif");
     }
 
     /**
@@ -262,7 +266,7 @@ public class A {
      */
     public static void displayException(Exception e, String title, String preText) {
         A.displayError(title,
-                preText + "\n\n" + e.getMessage() + "\n\n" + A.convertStackToString(10, e.getStackTrace()));
+            preText + "\n\n" + e.getMessage() + "\n\n" + A.convertStackToString(10, e.getStackTrace()));
     }
 
     /**
@@ -351,7 +355,8 @@ public class A {
             }
             if (part.length() < 2) {
                 result += "0" + part;
-            } else {
+            }
+            else {
                 result += part;
             }
         }
@@ -364,7 +369,8 @@ public class A {
     public static String removeLastChar(String inputString) {
         if (inputString.length() > 1) {
             return inputString.substring(0, inputString.length() - 1);
-        } else {
+        }
+        else {
             return "";
         }
     }
@@ -382,7 +388,7 @@ public class A {
     public static String getTodayAsString() {
         GregorianCalendar today = new GregorianCalendar();
         return today.get(GregorianCalendar.YEAR) + "-" + today.get(GregorianCalendar.MONTH) + "-"
-                + today.get(GregorianCalendar.DAY_OF_MONTH);
+            + today.get(GregorianCalendar.DAY_OF_MONTH);
     }
 
     /**
@@ -392,7 +398,7 @@ public class A {
         GregorianCalendar yesterday = new GregorianCalendar();
         yesterday.add(GregorianCalendar.DAY_OF_MONTH, -1);
         return yesterday.get(GregorianCalendar.YEAR) + "-" + yesterday.get(GregorianCalendar.MONTH) + "-"
-                + yesterday.get(GregorianCalendar.DAY_OF_MONTH);
+            + yesterday.get(GregorianCalendar.DAY_OF_MONTH);
     }
 
     /**
@@ -402,7 +408,7 @@ public class A {
         GregorianCalendar today = new GregorianCalendar();
         String hour = today.get(GregorianCalendar.HOUR_OF_DAY) + "";
         return (hour.length() < 2 ? ("0" + hour) : hour) + ":" + today.get(GregorianCalendar.MINUTE) + ":"
-                + today.get(GregorianCalendar.SECOND);
+            + today.get(GregorianCalendar.SECOND);
     }
 
     /**
@@ -425,7 +431,8 @@ public class A {
                 result.add(cut);
                 string = string.substring(indexOfChar + 1);
                 pointer = 0;
-            } else {
+            }
+            else {
                 pointer++;
             }
         }
@@ -485,7 +492,8 @@ public class A {
 
         if (fileName.lastIndexOf("\\") == -1) {
             return fileName.substring(0, fileName.lastIndexOf("."));
-        } else {
+        }
+        else {
             return fileName.substring(fileName.lastIndexOf("\\"), fileName.lastIndexOf("."));
         }
     }
@@ -512,12 +520,13 @@ public class A {
             out.print(stringToWrite);
             if (closeTheStream) {
                 out.close();
-            } else {
+            }
+            else {
                 return out;
             }
         } catch (Exception e) {
             A.displayException(e, "Error", "Error while saving to file\n" + "Path(\"" + filePath
-                    + "\", \"" + stringToWrite + "\")");
+                + "\", \"" + stringToWrite + "\")");
         }
         return null;
     }
@@ -530,7 +539,7 @@ public class A {
             out.close();
         } catch (Exception e) {
             A.displayException(e, "Error", "Error while appending to file\n" + "Path(\"" + filePath
-                    + "\", \"" + stringToWrite + "\")");
+                + "\", \"" + stringToWrite + "\")");
         }
         return null;
     }
@@ -540,10 +549,10 @@ public class A {
             if (!fileExists(filePath)) {
                 content = String.join(";", headers) + "\n" + content;
             }
-            FileWriter fw = new FileWriter(filePath,true);
+            FileWriter fw = new FileWriter(filePath, true);
             fw.write(content + "\n");
             fw.close();
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
         }
     }
@@ -561,7 +570,8 @@ public class A {
         for (File file : directory.listFiles()) {
             if (!file.isDirectory()) {
                 total++;
-            } else {
+            }
+            else {
                 total += countNumberOfFiles(file);
             }
         }
@@ -582,7 +592,8 @@ public class A {
                 if (getFileExtension(file).equals(extension)) {
                     total++;
                 }
-            } else {
+            }
+            else {
                 total += countNumberOfFiles(file);
             }
         }
@@ -595,11 +606,14 @@ public class A {
     public static String convertSecondsToDisplayableFormat(int numberOfSeconds) {
         if (numberOfSeconds < 60) {
             return numberOfSeconds + "s";
-        } else if (numberOfSeconds < 3600) {
+        }
+        else if (numberOfSeconds < 3600) {
             return numberOfSeconds / 60 + "m " + convertSecondsToDisplayableFormat(numberOfSeconds % 60);
-        } else if (numberOfSeconds < 86400) {
+        }
+        else if (numberOfSeconds < 86400) {
             return numberOfSeconds / 3600 + "h " + convertSecondsToDisplayableFormat(numberOfSeconds % 3600);
-        } else {
+        }
+        else {
             return numberOfSeconds / 86400 + "d " + convertSecondsToDisplayableFormat(numberOfSeconds % 86400);
         }
     }
@@ -615,8 +629,8 @@ public class A {
         System.out.println();
         System.out.println(totalToProcess + " objects have been processed.");
         System.out.println("Processing took " + convertSecondsToDisplayableFormat((int) (timeEnd - timeStart) / 1000)
-                + " seconds  (" + String.format("%.2f", (double) (timeEnd - timeStart) / (1000 * totalToProcess))
-                + "s per file)");
+            + " seconds  (" + String.format("%.2f", (double) (timeEnd - timeStart) / (1000 * totalToProcess))
+            + "s per file)");
         System.out.println("################################################");
         System.out.println();
     }
@@ -628,9 +642,9 @@ public class A {
     public static void displayETA(long timeStart, int alreadyProcessed, int totalToProcess) {
         double seconds = ((double) (System.currentTimeMillis() - timeStart) / (1000 * alreadyProcessed));
         String eta = A
-                .convertSecondsToDisplayableFormat((int) ((totalToProcess - alreadyProcessed) * seconds));
+            .convertSecondsToDisplayableFormat((int) ((totalToProcess - alreadyProcessed) * seconds));
         System.out.println("It took " + String.format("%.1f", seconds) + "s. " + alreadyProcessed * 100
-                / totalToProcess + "% objects (" + alreadyProcessed + "/" + totalToProcess + ") ready. ETA: " + eta);
+            / totalToProcess + "% objects (" + alreadyProcessed + "/" + totalToProcess + ") ready. ETA: " + eta);
     }
 
     /**
@@ -641,7 +655,8 @@ public class A {
         for (String string : collection) {
             if (occurences.containsKey(string)) {
                 occurences.put(string, occurences.get(string) + 1);
-            } else {
+            }
+            else {
                 occurences.put(string, 1);
             }
         }
@@ -827,7 +842,6 @@ public class A {
     /**
      * Returns String value, according to the relative comparison of the provided value to the possible range
      * e.g. we can assign letters from A to Z for numbers 1-10.
-	 *
      */
     public static String assignStringForValue(double value, double max, double min, String[] strings) {
         value -= min;
@@ -839,7 +853,8 @@ public class A {
         for (i = 1; i < ranges; i++) {
             if (value > (max * (ranges - i) / ranges)) {
                 return strings[strings.length - i];
-            } else {
+            }
+            else {
             }
         }
         return strings[0];
@@ -881,7 +896,6 @@ public class A {
 
     /**
      * Returns median of given double list.
-	 *
      */
     public static double median(Collection<Double> list) {
         return median(list, true);
@@ -891,8 +905,7 @@ public class A {
      * Returns median of given double list.
      *
      * @param mathematicMedian If true it will return normal median. If it is set to false and number of
-     * elements is even the center (but lesser) element will be returned e.g. for [1 2 3 4] it would return 2.
-	 *
+     *                         elements is even the center (but lesser) element will be returned e.g. for [1 2 3 4] it would return 2.
      */
     public static double median(Collection<Double> list, boolean mathematicMedian) {
         if (list.isEmpty()) {
@@ -910,9 +923,11 @@ public class A {
         int size = sorted.size();
         if (size % 2 == 0) {
             return sorted.get(sorted.size() / 2);
-        } else if (mathematicMedian) {
+        }
+        else if (mathematicMedian) {
             return (sorted.get(sorted.size() / 2) + sorted.get(sorted.size() / 2 + 1)) / 2;
-        } else {
+        }
+        else {
             return (sorted.get(sorted.size() / 2));
         }
     }
@@ -920,7 +935,6 @@ public class A {
     /**
      * Returns index of option chosen according to the option weights. Higher the weight is, greater the
      * chance for the option to be chosen.
-	 *
      */
     public static int chooseOptionRandomlyWithWeights(boolean areValuesNormalizedToOne, double... weights) {
         double[] normalized;
@@ -938,7 +952,8 @@ public class A {
                 normalized[counter] = value / total;
                 counter++;
             }
-        } else {
+        }
+        else {
             normalized = weights;
         }
 
@@ -947,7 +962,8 @@ public class A {
         for (double weight : normalized) {
             if (randomValue < weight) {
                 return index;
-            } else {
+            }
+            else {
                 randomValue -= weight;
                 index++;
             }
@@ -968,12 +984,12 @@ public class A {
         HashMap<Object, Double> normalized = new HashMap<Object, Double>();
 
         double total = 0;
-        for (Iterator<Double> it = map.values().iterator(); it.hasNext();) {
+        for (Iterator<Double> it = map.values().iterator(); it.hasNext(); ) {
             double value = it.next();
             total += value;
         }
 
-        for (Iterator<? extends Object> it = map.keySet().iterator(); it.hasNext();) {
+        for (Iterator<? extends Object> it = map.keySet().iterator(); it.hasNext(); ) {
             Object key = it.next();
             normalized.put(key, map.get(key) / total);
         }
@@ -985,7 +1001,6 @@ public class A {
      * Returns index-th element of the given set or null if there's no element "at" given index.
      *
      * @return
-	 *
      */
     public static Object getSetElement(Set<?> set, int index) {
         int counter = 0;
@@ -999,7 +1014,6 @@ public class A {
 
     /**
      * Returns the first key from the given map or null if map is empty.
-	 *
      */
     public static Object getFirstMapElement(Map<?, ?> map) {
         for (Object object : map.keySet()) {
@@ -1256,6 +1270,7 @@ public class A {
         CameraCommander.centerCameraOn(position);
         GameSpeed.changeSpeedTo(newGameSpeed);
     }
+
     public static void centerAndPauseAndChangeSpeed(APosition position, int newGameSpeed) {
         CameraCommander.centerCameraOn(position);
         GameSpeed.changeSpeedTo(newGameSpeed);
@@ -1263,7 +1278,10 @@ public class A {
     }
 
     public static void sleep(int ms) {
-        try { TimeUnit.MILLISECONDS.sleep(ms); } catch (InterruptedException e) {}
+        try {
+            TimeUnit.MILLISECONDS.sleep(ms);
+        } catch (InterruptedException e) {
+        }
     }
 
     public static int reservedMinerals() {
@@ -1296,5 +1314,9 @@ public class A {
 
     public static String ucfirst(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static String substring(String str, int start, int end) {
+        return str.substring(start, Math.min(end, str.length()));
     }
 }

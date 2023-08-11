@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class TerranMissileTurretsForMain extends TerranMissileTurret {
-
     private final int BORDER_TURRETS_MIN_COUNT = 0;
     private final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
     //    private  final int BORDER_TURRETS_MIN_COUNT = 4;
@@ -33,6 +32,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
 
     private Cache<ArrayList<APosition>> cacheList = new Cache<>();
     private Cache<APosition> cachePosition = new Cache<>();
+    private static AUnit main;
 
     // =========================================================
 
@@ -76,7 +76,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
             return false;
         }
 
-        AUnit main = Select.main();
+        AUnit main = mainBase();
         if (main != null && main.isLifted()) return false;
 
         // =========================================================
@@ -91,6 +91,14 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
         }
 
         return false;
+    }
+
+    private AUnit mainBase() {
+        if (main != null) {
+            return main;
+        }
+
+        return main = Select.ourBases().nearestTo(InitialMainPosition.initialMainPosition());
     }
 
     private int optimalMainBaseTurrets() {
@@ -126,7 +134,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     }
 
     private boolean turretForMainChoke() {
-        APosition place = Chokes.mainChoke().translateTilesTowards(5, Select.main());
+        APosition place = Chokes.mainChoke().translateTilesTowards(5, mainBase());
         if (place != null) {
             if (Count.existingOrPlannedBuildingsNear(turret, 5, place) == 0) {
                 AddToQueue.withHighPriority(turret, place).setMaximumDistance(12);
@@ -170,7 +178,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
             30,
             () -> {
                 APosition enemyLocation = EnemyInfo.enemyLocationOrGuess();
-                AUnit mineralNearestToEnemy = Select.minerals().inRadius(12, Select.main()).nearestTo(enemyLocation);
+                AUnit mineralNearestToEnemy = Select.minerals().inRadius(12, mainBase()).nearestTo(enemyLocation);
 
                 if (mineralNearestToEnemy != null) {
                     return mineralNearestToEnemy.translateTilesTowards(6, enemyLocation);
@@ -192,7 +200,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
                     return places;
                 }
 
-                ARegion region = Select.main().position().region();
+                ARegion region = mainBase().position().region();
                 if (region == null) {
                     return places;
                 }
@@ -233,7 +241,7 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
      * they defend both border and the main at the same time.
      */
     private APosition modifyAgainstZerg(HasPosition placeForMapEdgeTurret) {
-        return placeForMapEdgeTurret.translateTilesTowards(Select.main(), 5);
+        return placeForMapEdgeTurret.translateTilesTowards(mainBase(), 5);
     }
 
     private int totalTurretsForMainBorder() {

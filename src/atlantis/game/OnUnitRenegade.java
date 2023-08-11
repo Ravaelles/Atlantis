@@ -2,7 +2,7 @@ package atlantis.game;
 
 import atlantis.Atlantis;
 import atlantis.units.AUnit;
-import atlantis.units.UmsSpecialActionsManager;
+import atlantis.units.special.ums.GoToNeutralNewCompanions;
 
 public class OnUnitRenegade {
 
@@ -26,7 +26,7 @@ public class OnUnitRenegade {
 
             if (!unit.type().isGasBuildingOrGeyser() && !unit.type().isMineralField()) {
 //                System.out.println("NEW RENEGADE FOR US " + unit.name());
-                UmsSpecialActionsManager.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
+                GoToNeutralNewCompanions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
             }
         }
 

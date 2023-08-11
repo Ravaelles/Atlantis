@@ -35,7 +35,11 @@ public class MapAndRace {
         // === Gosu bots - advanced single player cheating bots ====
 
         // vs PROTOSS cheat-bots
-        if (true) return "ums/7th.scx"; // v. AI Protoss player, that can kill CSv constructing
+        /**
+         * vs AI Protoss player - ♥‿♥ - My favorite map for testing,
+         * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
+         */
+//        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
@@ -49,7 +53,7 @@ public class MapAndRace {
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
-        // === Terran ==============================================
+        // === Maps for testing as Terran ==========================
 
         // vs Zerg
 //        if (true) return "ums/rav/TankBall_v_Zerg.scx"; // Tanks & Marines v Zerg Base
@@ -97,15 +101,17 @@ public class MapAndRace {
         // vs Terran
 //        if (true) return "ums/rav/Wraiths_v_Base.scx";
 //@        if (true) return "ums/rav/Bunker_v_M&M.scx";
+        if (true) return "ums/rav/Tanks_v_Tanks_in_line.scx";
+//        if (true) return "ums/rav/Tanks_v_Tanks_with_choke.scx";
 
-        // === Zerg ================================================
+        // === Maps for testing as Zerg ============================
 
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 //        if (true) return "ums/Muta Micro_ Python.scm"; // Need good squad management
 //        if (true) return "ums/vulture_v_zerglings.scx"; // 1 Vulture v entire map of Lings
 //@        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
 
-        // === Protoss ============================================
+        // === Maps for testing as Protoss ========================
 
 //        if (true) return "ums/rav/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";

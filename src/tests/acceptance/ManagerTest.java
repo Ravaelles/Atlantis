@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.SpecialUnitsManager;
+import atlantis.units.special.SpecialUnitsManager;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -25,8 +25,7 @@ public class ManagerTest extends NonAbstractTestFakingGame {
             SpecialUnitsManager.class.getDeclaredConstructor(AUnit.class).newInstance(comsat);
 
             status = true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

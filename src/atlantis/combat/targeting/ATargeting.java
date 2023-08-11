@@ -1,7 +1,7 @@
 package atlantis.combat.targeting;
 
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.targeting.tanks.ATargetingForTanks;
+import atlantis.combat.targeting.tanks.ATankTargeting;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -96,7 +96,7 @@ public class ATargeting extends HasUnit {
 
     private static AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
         if (unit.isTankSieged()) {
-            return (new ATargetingForTanks(unit)).defineTarget();
+            return (new ATankTargeting(unit)).defineTarget();
         }
 
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
@@ -335,10 +335,10 @@ public class ATargeting extends HasUnit {
         // === AIR UNITS due to their mobility use different targeting logic ===
 
         if (unit.isAir() && unit.canAttackGroundUnits()) {
-            target = (new ATargetingForAirUnits(unit)).targetForAirUnit();
+            target = (new AAirUnitsTargeting(unit)).targetForAirUnit();
 
 //            System.out.println("Air target for " + unit + ": " + target);
-//            if ((target = ATargetingForAirUnits.targetForAirUnits()) != null) {
+//            if ((target = AAirUnitsTargeting.targetForAirUnits()) != null) {
 //                if (ATargeting.DEBUG) System.out.println("AirTarget = " + target);
 //            }
 

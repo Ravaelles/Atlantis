@@ -35,7 +35,9 @@ public class Avoid extends Manager {
 //            return (new CircumnavigateCombatBuilding(unit)).handle(enemy);
 //        }
 
-        if (unit.runningManager().runFrom(enemy.position(), calculateRunDistance(enemy), Actions.RUN_ENEMY, false)) {
+        if (unit.runningManager().runFrom(
+            enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, false
+        )) {
 //            unit.setTooltip(getTooltip(enemy));
             return usedManager(this);
         }

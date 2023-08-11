@@ -11,6 +11,7 @@ import atlantis.information.strategy.TerranStrategies;
 import atlantis.information.strategy.ZergStrategies;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
+import atlantis.production.dynamic.expansion.InitialMainPosition;
 import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.select.Select;
@@ -54,6 +55,8 @@ public class OnStart {
 
         // Set strategy and unit production sequence (Build Order) to use. It can be later changed dynamically.
         initStrategyAndBuildOrder();
+
+        InitialMainPosition.remember();
 
         try {
             AInitialActions.executeInitialActions();
@@ -106,13 +109,12 @@ public class OnStart {
                     AGame.exit();
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println();
             System.err.println("#######################################################");
             System.err.println(
                 "Make sure that Starcraft/" + ABuildOrderLoader.BUILD_ORDERS_PATH
-                + " contains build_orders directory,"
+                    + " contains build_orders directory,"
             );
             System.err.println("copy it from Atlantis/build_orders");
             System.err.println("#######################################################");

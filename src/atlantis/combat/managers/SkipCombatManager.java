@@ -43,13 +43,6 @@ public class SkipCombatManager extends Manager {
             return true;
         }
 
-        if (unit.lastActionLessThanAgo(120, Actions.PATROL) || unit.isPatrolling()) {
-            if (A.now() > 90) {
-                unit.setTooltipTactical("#Manual");
-                return true;
-            }
-        }
-
         return false;
     }
 }

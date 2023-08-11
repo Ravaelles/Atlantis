@@ -7,15 +7,15 @@ import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-public class ATargetingForAirUnits extends HasUnit {
+public class AAirUnitsTargeting extends HasUnit {
     protected boolean onlyEnemiesInRangeAreAllowed;
     protected Selection possibleTargets;
 
-    public ATargetingForAirUnits(AUnit unit) {
+    public AAirUnitsTargeting(AUnit unit) {
         this(unit, false);
     }
 
-    public ATargetingForAirUnits(AUnit unit, boolean onlyEnemiesInRangeAreAllowed) {
+    public AAirUnitsTargeting(AUnit unit, boolean onlyEnemiesInRangeAreAllowed) {
         super(unit);
         this.onlyEnemiesInRangeAreAllowed = onlyEnemiesInRangeAreAllowed;
 

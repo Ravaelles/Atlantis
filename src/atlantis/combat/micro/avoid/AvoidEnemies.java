@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildings;
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
@@ -26,7 +27,7 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        return true;
+        return unit.enemiesNear().canAttack(unit, 6).notEmpty();
     }
 
     // =========================================================
@@ -47,35 +48,6 @@ public class AvoidEnemies extends Manager {
 
         Units enemiesDangerouslyClose = unitsToAvoid();
 
-//        if (!enemiesDangerouslyClose.isEmpty()) {
-////            System.err.println("@ " + A.now() + " - No-one close");
-//            AUnit nearestEnemy = unit.enemiesNear().nearestTo(unit);
-//            APainter.paintTextCentered(unit.position().translateByTiles(0, -1),
-//                "C=" + enemiesDangerouslyClose.size() + "(" + (nearestEnemy != null ? A.dist(unit, nearestEnemy) : "-") + ")",
-//                Color.Green
-//            );
-//            return null;
-//        }
-
-        // @Check commented out, this should be handled by a manager
-//        if (
-//            onlyEnemyCombatBuildingsAreNear(enemiesDangerouslyClose)
-//                || unit.isAir()
-//                || unit.hp() <= 40
-//                || unit.combatEvalRelative() < 3.0
-//        ) {
-//            if (avoidCombatBuildings.handle() != null) {
-//                unit.addLog("KeepAway");
-//                return usedManager(this);
-//            }
-//        }
-
-//        APainter.paintLine(unit.targetPosition(), Color.Grey);
-//        for (AUnit enemy : enemiesDangerouslyClose.list()) {
-//            APainter.paintLine(enemy, Color.Orange);
-////            APainter.paintTextCentered(A.dist(enemy), Color.Yellow);
-//        }
-
         // =========================================================
 
         // Only ENEMY WORKERS
@@ -84,7 +56,7 @@ public class AvoidEnemies extends Manager {
                 && !enemiesDangerouslyClose.isEmpty()
                 && Select.from(enemiesDangerouslyClose).workers().size() == enemiesDangerouslyClose.size()
         ) {
-            unit.addLog("FightWorkers");
+//            unit.addLog("FightWorkers");
             return null;
         }
 
@@ -133,10 +105,6 @@ public class AvoidEnemies extends Manager {
         return unit.effUndetected()
             && unit.enemiesNear().combatBuildingsAnti(unit).inRadius(9, unit).empty()
             && unit.enemiesNear().detectors().inRadius(11, unit).empty();
-    }
-
-    private boolean onlyEnemyCombatBuildingsAreNear(Units enemiesDangerouslyClose) {
-        return Select.from(enemiesDangerouslyClose).combatBuildings(false).size() == enemiesDangerouslyClose.size();
     }
 
     public Units unitsToAvoid() {
@@ -219,9 +187,10 @@ public class AvoidEnemies extends Manager {
     public String toString() {
         String enemyString = "NULL";
 
-        if (enemies != null && !enemies.isEmpty()) {
-            AUnit enemy = enemies.first();
-            enemyString = (enemy + "/" + enemy.getClass().getSimpleName());
+        if (unit.runningFrom() != null) {
+            AUnit enemy = unit.runningFrom();
+            enemyString = A.substring(enemy.getClass().getSimpleName(), 0, 10);
+//            enemyString = (enemy + "/" + enemy.getClass().getSimpleName());
         }
 
         return "AvoidEnemies(" + enemyString + ')';

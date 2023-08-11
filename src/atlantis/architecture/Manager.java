@@ -59,7 +59,7 @@ public abstract class Manager extends BaseAbstractManager {
 
     // =========================================================
 
-    public Manager handleSubmanagers() {
+    protected Manager handleSubmanagers() {
         for (Manager submanager : submanagerObjects) {
             if (submanager.applies() && submanager.handle() != null) {
                 return submanager;
