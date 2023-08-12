@@ -27,7 +27,7 @@ public class AChoke implements HasPosition {
     private APosition firstPoint;
     private APosition lastPoint;
 
-    public static AChoke create(ChokePoint chokepoint) {
+    public static AChoke from(ChokePoint chokepoint) {
         if (chokepoint == null) {
             return null;
         }
@@ -85,9 +85,9 @@ public class AChoke implements HasPosition {
     @Override
     public String toString() {
         return "Choke{" +
-                "width=" + A.digit(width) +
+            "width=" + A.digit(width) +
 //                ",center=" + center +
-                '}';
+            '}';
     }
 
     // =========================================================
@@ -99,8 +99,8 @@ public class AChoke implements HasPosition {
 
     private APosition calculateCenter() {
         return new APosition(
-                (sides[0].x + sides[1].x) / 2,
-                (sides[0].y + sides[1].y) / 2
+            (sides[0].x + sides[1].x) / 2,
+            (sides[0].y + sides[1].y) / 2
         );
     }
 
@@ -113,8 +113,8 @@ public class AChoke implements HasPosition {
         WalkPosition p2 = wp.get(0);
         double d_max = -1.0D;
 
-        for(int i = 0; i < wp.size(); ++i) {
-            for(int j = i + 1; j < wp.size(); ++j) {
+        for (int i = 0; i < wp.size(); ++i) {
+            for (int j = i + 1; j < wp.size(); ++j) {
                 double d = (wp.get(i)).getDistance(wp.get(j));
                 if (d > d_max) {
                     d_max = d;
@@ -124,7 +124,7 @@ public class AChoke implements HasPosition {
             }
         }
 
-        return new Position[] { p1.toPosition(), p2.toPosition() };
+        return new Position[]{p1.toPosition(), p2.toPosition()};
     }
 
     private List<APosition> createPerpendicular() {
@@ -148,8 +148,8 @@ public class AChoke implements HasPosition {
     public Pair<ARegion, ARegion> regions() {
         Pair<Area, Area> regions = choke.getAreas();
         Pair<ARegion, ARegion> aRegions = new Pair<>(
-                ARegion.create(regions.getLeft()),
-                ARegion.create(regions.getRight())
+            ARegion.create(regions.getLeft()),
+            ARegion.create(regions.getRight())
         );
 
         return aRegions;
