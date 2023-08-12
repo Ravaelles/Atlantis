@@ -1,7 +1,7 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
-import atlantis.combat.squad.SquadTransfersCommander;
+import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.orders.production.ProductionQueueRebuilder;

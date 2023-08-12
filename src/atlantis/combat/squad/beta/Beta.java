@@ -29,8 +29,8 @@ public class Beta extends Squad {
     @Override
     public int expectedUnits() {
         return Math.max(
-                1,
-                Math.min(4, Count.ourCombatUnits() / 13)
+            1,
+            Math.min(4, Count.ourCombatUnits() / 13)
         );
     }
 
@@ -38,4 +38,8 @@ public class Beta extends Squad {
         return get().size();
     }
 
+    @Override
+    public void handleReinforcements() {
+        (new BetaReinforcements(this)).handleReinforcements();
+    }
 }

@@ -1,7 +1,7 @@
 package atlantis.game;
 
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
-import atlantis.combat.squad.SquadTransfersCommander;
+import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.config.AtlantisConfig;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitsUpdater;
@@ -38,7 +38,7 @@ public class OnUnitMorph {
             if (unit.type().isGasBuilding()) {
                 for (Construction order : ConstructionRequests.all()) {
                     if (order.buildingType().equals(AtlantisConfig.GAS_BUILDING)
-                            && order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                        && order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                         order.setConstruction(unit);
                         break;
                     }

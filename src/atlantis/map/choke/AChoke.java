@@ -27,6 +27,14 @@ public class AChoke implements HasPosition {
     private APosition firstPoint;
     private APosition lastPoint;
 
+    /**
+     * Index of this choke in path to enemy base, counting from our first building (which is main).
+     * -1 means that this choke is not in path to enemy base.
+     * 0 means that this choke is the first one in path to enemy base.
+     * 1 means that this choke is the second one in path to enemy base and so on.
+     */
+    private int pathToEnemyBaseIndex = -1;
+
     public static AChoke from(ChokePoint chokepoint) {
         if (chokepoint == null) {
             return null;
@@ -74,7 +82,7 @@ public class AChoke implements HasPosition {
         if (this == o) return true;
         if (!(o instanceof AChoke)) return false;
         AChoke that = (AChoke) o;
-        return choke.equals(that.choke);
+        return x() == that.x() && y() == that.y();
     }
 
     @Override
@@ -179,4 +187,11 @@ public class AChoke implements HasPosition {
         return choke;
     }
 
+    public void setPathToEnemyBaseIndex(int index) {
+        this.pathToEnemyBaseIndex = index;
+    }
+
+    public int pathToEnemyBaseIndex() {
+        return pathToEnemyBaseIndex;
+    }
 }

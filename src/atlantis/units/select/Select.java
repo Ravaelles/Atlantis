@@ -666,21 +666,25 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * first discovered base.
      */
     public static AUnit main() {
-        String cachePath;
-        AUnit base = cacheUnit.get(
-            cachePath = "main",
-            30,
+        return cacheUnit.getIfValid(
+            "main",
+            73,
             () -> {
                 List<AUnit> bases = ourBases().list();
                 return bases.isEmpty() ? Select.ourBuildings().first() : (bases.get(0).isAlive() ? bases.get(0) : null);
             }
         );
+    }
 
-        if (base != null && base.isAlive()) {
-            return base;
-        }
-
-        return null;
+    /**
+     * Returns first building. The advantage over Select.main() is that it always works
+     */
+    public static AUnit firstBuilding() {
+        return cacheUnit.get(
+            "firstBuilding",
+            91,
+            () -> Select.ourBuildings().first()
+        );
     }
 
     public static boolean haveMain() {

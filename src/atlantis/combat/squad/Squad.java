@@ -6,6 +6,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.delta.Delta;
 import atlantis.combat.squad.positioning.SquadCohesion;
+import atlantis.combat.squad.transfers.SquadReinforcements;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -231,56 +232,56 @@ public abstract class Squad extends Units {
 
     public double distToCenter(AUnit unit) {
         return cacheDouble.get(
-                "distToCenter",
-                5,
-                () -> {
-                    APosition center = center();
-                    if (center == null) {
-                        return 0.0;
-                    }
-
-                    return unit.distTo(center());
+            "distToCenter",
+            5,
+            () -> {
+                APosition center = center();
+                if (center == null) {
+                    return 0.0;
                 }
+
+                return unit.distTo(center());
+            }
         );
     }
 
     public double distToFocusPoint() {
         return cacheDouble.get(
-                "distToFocusPoint",
-                5,
-                () -> {
-                    Mission mission = mission();
-                    if (mission == null) {
-                        return 0;
-                    }
-
-                    AFocusPoint focusPoint = mission.focusPoint();
-                    if (focusPoint == null) {
-                        return 0;
-                    }
-
-                    return (double) focusPoint.distTo(center());
+            "distToFocusPoint",
+            5,
+            () -> {
+                Mission mission = mission();
+                if (mission == null) {
+                    return 0;
                 }
+
+                AFocusPoint focusPoint = mission.focusPoint();
+                if (focusPoint == null) {
+                    return 0;
+                }
+
+                return (double) focusPoint.distTo(center());
+            }
         );
     }
 
     public double groundDistToFocusPoint() {
         return cacheDouble.get(
-                "groundDistToFocusPoint",
-                8,
-                () -> {
-                    Mission mission = mission();
-                    if (mission == null) {
-                        return 0;
-                    }
-
-                    AFocusPoint focusPoint = mission.focusPoint();
-                    if (focusPoint == null) {
-                        return 0;
-                    }
-
-                    return focusPoint.groundDist(center());
+            "groundDistToFocusPoint",
+            8,
+            () -> {
+                Mission mission = mission();
+                if (mission == null) {
+                    return 0;
                 }
+
+                AFocusPoint focusPoint = mission.focusPoint();
+                if (focusPoint == null) {
+                    return 0;
+                }
+
+                return focusPoint.groundDist(center());
+            }
         );
     }
 
@@ -329,5 +330,9 @@ public abstract class Squad extends Units {
 
     public boolean isCohesionPercentOkay() {
         return squadCohesion.isSquadCohesionOkay();
+    }
+
+    public void handleReinforcements() {
+        (new SquadReinforcements(this)).handleReinforcements();
     }
 }

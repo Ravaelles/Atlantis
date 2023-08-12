@@ -136,8 +136,15 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     private boolean turretForMainChoke() {
         APosition place = Chokes.mainChoke().translateTilesTowards(5, mainBase());
         if (place != null) {
-            if (Count.existingOrPlannedBuildingsNear(turret, 5, place) == 0) {
+            int existing = Count.existingOrPlannedBuildingsNear(turret, 5, place);
+
+            if (existing == 0) {
                 AddToQueue.withHighPriority(turret, place).setMaximumDistance(12);
+                return true;
+            }
+
+            if (existing <= 1 && A.hasMinerals(350)) {
+                AddToQueue.withStandardPriority(turret, place).setMaximumDistance(12);
                 return true;
             }
         }

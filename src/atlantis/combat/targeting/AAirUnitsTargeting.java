@@ -41,6 +41,18 @@ public class AAirUnitsTargeting extends HasUnit {
     public AUnit targetForAirUnit() {
         AUnit target;
 
+        // =========================================================
+
+        AUnit enemyWhoBreachedBase = EnemyUnits.enemyWhoBreachedBase();
+        if (
+            enemyWhoBreachedBase != null
+                && unit.canAttackTarget(enemyWhoBreachedBase, false, true)
+        ) {
+            return enemyWhoBreachedBase;
+        }
+
+        // =========================================================
+
         if ((target = targetsCrucial()) != null) {
             return target;
         }

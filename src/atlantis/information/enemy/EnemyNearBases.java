@@ -9,47 +9,63 @@ import atlantis.util.cache.Cache;
 
 public class EnemyNearBases {
     private static Cache<Object> cache = new Cache<>();
+    private static Selection enemies;
+    private static Selection ourBuildings;
+    private static int maxDist;
 
     public static AUnit enemyNearAnyOurBase(int maxDistToBase) {
         if (maxDistToBase < 0) {
             maxDistToBase = 12;
         }
-        int finalMaxDistToBase = maxDistToBase;
+        maxDist = maxDistToBase;
 
         return (AUnit) cache.getIfValid(
-            "enemyNearAnyOurBuilding:" + maxDistToBase,
+            "enemyNearAnyOurBuilding:" + maxDist,
             47,
             () -> {
                 if (!Have.base()) {
                     return null;
                 }
 
-                Selection enemies = Select.enemyCombatUnits().havingWeapon().excludeTypes(
-                    AUnitType.Terran_Medic,
+                enemies = Select.enemyCombatUnits().havingWeapon().excludeTypes(
                     AUnitType.Terran_Science_Vessel,
                     AUnitType.Terran_Valkyrie,
-                    AUnitType.Protoss_Observer,
                     AUnitType.Protoss_Corsair,
-                    AUnitType.Zerg_Overlord,
                     AUnitType.Zerg_Scourge
                 );
-                Selection ourBuildings = Select.ourBuildings();
+                ourBuildings = Select.ourBuildings();
+
+                AUnit enemy = isNearBase(Select.main());
+                if (enemy != null) {
+                    return enemy;
+                }
 
                 for (AUnit base : Select.ourBases().list()) {
-                    AUnit nearestEnemy = enemies.nearestTo(base);
-                    if (nearestEnemy != null) {
-                        if (nearestEnemy.distToLessThan(base, finalMaxDistToBase)) {
-                            return nearestEnemy;
-                        }
-
-                        if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 6) {
-                            return nearestEnemy;
-                        }
+                    if ((enemy = isNearBase(base)) != null) {
+                        return enemy;
                     }
                 }
 
                 return null;
             }
         );
+    }
+
+    private static AUnit isNearBase(AUnit base) {
+        if (base == null) return null;
+
+        AUnit nearestEnemy = enemies.nearestTo(base);
+
+        if (nearestEnemy != null) {
+            if (nearestEnemy.distToLessThan(base, maxDist)) {
+                return nearestEnemy;
+            }
+
+            if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 6) {
+                return nearestEnemy;
+            }
+        }
+
+        return null;
     }
 }

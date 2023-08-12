@@ -99,7 +99,7 @@ public class TerranFlyingBuildingScoutManager extends Manager {
             APosition attackFocusPoint = Missions.ATTACK.focusPoint();
 
             if (attackFocusPoint != null) {
-                focusPoint = focusPoint.translateTilesTowards(12, attackFocusPoint);
+                focusPoint = focusPoint.translateTilesTowards(16, attackFocusPoint);
             }
 
             return focusPoint;

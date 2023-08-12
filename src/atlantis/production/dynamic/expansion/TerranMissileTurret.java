@@ -47,7 +47,9 @@ public class TerranMissileTurret extends AntiAirBuildingManager {
         return false;
     }
 
-    protected boolean exceededExistingAndInProduction() {
+    public boolean exceededExistingAndInProduction() {
+        if (Count.inProductionOrInQueue(type()) >= 3) return false;
+
         int existing = Count.existingOrInProductionOrInQueue(type());
         if (existing >= 12) {
             return true;
