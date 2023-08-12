@@ -419,7 +419,7 @@ public class AAdvancedPainter extends APainter {
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
         paintSideMessage("Workers: " + Count.workers(), Color.White);
-        paintSideMessage("Gas workers: " + GasBuildingsCommander.minGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Gas workers per b: " + GasBuildingsCommander.minGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + ProductionQueue.mineralsReserved(), Color.Grey);
         paintSideMessage("Reserved gas: " + ProductionQueue.gasReserved(), Color.Grey);
     }
