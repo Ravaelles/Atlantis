@@ -9,11 +9,11 @@ public class GamePhase {
     }
 
     public static boolean isMidGame() {
-        return 360 < A.seconds() && A.seconds() <= 800;
+        return 360 < A.seconds() && A.seconds() < 800;
     }
 
     public static boolean isLateGame() {
-        return A.seconds() < 800;
+        return A.seconds() >= 800;
     }
 
 }

@@ -32,7 +32,7 @@ public class Chokes {
         return (AChoke) cache.get(
             "mainChoke",
             -1,
-            () -> AChoke.create(JBWEB.getMainChoke())
+            () -> AChoke.from(JBWEB.getMainChoke())
 //                    AUnit mainBase = Select.mainBase();
 //                    if (mainBase == null) {
 //                        return null;
@@ -86,7 +86,7 @@ public class Chokes {
             -1,
             () -> {
                 if (!MapAndRace.isMap("7th")) {
-                    AChoke choke = AChoke.create(JBWEB.getNaturalChoke());
+                    AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
                     if (choke != null) {
                         return choke;
                     }
@@ -165,7 +165,7 @@ public class Chokes {
             () -> {
                 List<AChoke> chokes = new ArrayList<>();
                 for (ChokePoint chokePoint : AMap.getMap().chokes()) {
-                    AChoke choke = AChoke.create(chokePoint);
+                    AChoke choke = AChoke.from(chokePoint);
                     if (isOk(choke)) {
                         chokes.add(choke);
                     }

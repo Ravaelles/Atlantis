@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.tank.sieging;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.terran.tank.unsieging.kursk.SiegeAgainstEnemyTanks;
 import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -20,11 +21,11 @@ public class ThinkOfSieging extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            SiegeAgainstEnemyTanks.class,
             AvoidCloseEnemiesToUnsiegedTank.class,
             SiegeAgainstCombatBuildings.class,
             UnitBeingReparedManager.class,
             SiegeHereDuringMissionDefend.class,
-            SiegeAgainstEnemyTanks.class,
             SiegeBecauseSpecificEnemiesNear.class,
             SiegeAgainstRegularBuildings.class,
             SiegeAgainstRegularEnemies.class,

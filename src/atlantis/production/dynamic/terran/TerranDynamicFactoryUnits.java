@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.terran.units.ProduceTanks;
+import atlantis.production.dynamic.terran.units.ProduceVultures;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -35,31 +36,11 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
         if (ProduceTanks.tanks(factory)) {
 //            return true;
         }
-        if (vultures()) {
+        if (ProduceVultures.vultures()) {
 //            return true;
         }
 
         return false;
-    }
-
-    private static boolean vultures() {
-//        return false;
-
-        if (Enemy.terran()) {
-            if (Count.ofType(AUnitType.Terran_Vulture) < 2 || (A.hasMinerals(600) && !A.hasGas(100))) {
-                return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, 5);
-            }
-        }
-
-        return false;
-
-//        if (true) return false;
-//
-//        if (!Decisions.produceVultures()) {
-//            return false;
-//        }
-//
-//        return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Vulture);
     }
 
     private static boolean goliaths(AUnit factory) {

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.bunker;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -13,7 +14,7 @@ public class PreventMaginotLine extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.lastActionLessThanAgo(30 * 3, Actions.LOAD)) {
+        if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) {
             return false;
         }
 
@@ -47,25 +48,21 @@ public class PreventMaginotLine extends Manager {
 
     @Override
     protected Manager handle() {
-        if (preventFromActingLikeFrenchOnMaginotLine()) return usedManager(this);
-
-        return null;
+        return preventFromActingLikeFrenchOnMaginotLine();
     }
 
-    private boolean preventFromActingLikeFrenchOnMaginotLine() {
+    private Manager preventFromActingLikeFrenchOnMaginotLine() {
         // Loaded
         if (unit.isLoaded()) {
             unit.loadedInto().unloadAll();
-            return true;
+            return usedManager(this);
         }
 
-        // Not loaded
-//        else {
-//            if (unit.lastStartedAttackMoreThanAgo(30 * 5) && !unit.looksIdle()) {
-//                return true;
-//            }
-//        }
+        if (!unit.isAttacking() && !unit.isMoving()) {
+            (new AttackNearbyEnemies(unit)).invoke();
+            return usedManager(this);
+        }
 
-        return false;
+        return null;
     }
 }

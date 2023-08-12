@@ -18,6 +18,8 @@ public class TankDecisions {
     }
 
     public static boolean canSiegeHere(AUnit unit, boolean checkTooLonely) {
+        if (unit.hasSiegedRecently() && unit.enemiesNear().inRadius(14, unit).empty()) return false;
+
         if (checkTooLonely && tooLonely(unit)) {
             return false;
         }
@@ -41,8 +43,4 @@ public class TankDecisions {
 
         return unit.friendsNear().tanksSieged().inRadius(1, unit).isEmpty();
     }
-
-//    protected boolean hasJustSiegedRecently() {
-//        return unit.lastActionLessThanAgo(30 * 9, Actions.SIEGE);
-//    }
 }

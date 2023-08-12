@@ -11,20 +11,25 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     }
 
     @Override
-    public double optimalDist() {
-        return 4;
+    public boolean applies() {
+        if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_FAR) {
+            if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;
+
+            return true;
+        }
+
+        return false;
     }
 
     protected Manager handle() {
-        if (isTooFar()) {
-            if (act()) return usedManager(this);
-        }
+        if (act()) return usedManager(this);
 
         return null;
     }
 
-    private boolean isTooFar() {
-        return evaluateDistFromFocusPoint() == DistFromFocus.TOO_FAR;
+    @Override
+    public double optimalDist() {
+        return 4;
     }
 
     protected boolean act() {

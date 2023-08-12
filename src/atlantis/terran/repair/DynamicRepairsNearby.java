@@ -31,6 +31,8 @@ public class DynamicRepairsNearby extends Manager {
         AUnit repairable = unit.friendsNear().mechanical().wounded().inRadius(4, unit).nearestTo(unit);
 
         if (repairable != null && repairable.isWalkable()) {
+            if (ShouldNotRepairUnit.shouldNotRepairUnit(repairable)) return false;
+
             unit.repair(repairable, "KindGuy", false);
 
             if (repairable.looksIdle()) {

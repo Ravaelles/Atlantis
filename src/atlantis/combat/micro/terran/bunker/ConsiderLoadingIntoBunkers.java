@@ -2,6 +2,7 @@ package atlantis.combat.micro.terran.bunker;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 
 public class ConsiderLoadingIntoBunkers extends Manager {
     public ConsiderLoadingIntoBunkers(AUnit unit) {
@@ -10,7 +11,11 @@ public class ConsiderLoadingIntoBunkers extends Manager {
 
     @Override
     public boolean applies() {
-        return !unit.isLoaded();
+        if (unit.isLoaded()) return false;
+        if (Count.bunkers() == 0) return false;
+        if (!unit.isMarine() && !unit.isGhost()) return false;
+
+        return true;
     }
 
     @Override

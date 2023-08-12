@@ -23,9 +23,9 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
 import atlantis.map.scout.ScoutCommander;
-import atlantis.production.constructing.builders.BuilderManager;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.builders.BuilderManager;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
@@ -2273,7 +2273,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                         .inRadius(15, this)
                         .exclude(this);
                 }
-                else if (unit().isEnemy()) {
+                else if (unit().isEnemy() || (unit().type().isAddon() && unit().isNeutral())) {
 //                        System.out.println("------- for enemy -------- ");
 //                        System.out.println(Select.ourRealUnits().size());
 //                        System.out.println(Select.ourRealUnits().inRadius(15, this).size());
@@ -2807,5 +2807,24 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public AUnit runningFrom() {
         return this.runningFrom;
+    }
+
+    public boolean hasSiegedRecently() {
+        return lastActionLessThanAgo(30 * 6 + unit().id() % 3, Actions.SIEGE);
+    }
+
+    public boolean hasUnsiegedRecently() {
+        return lastActionLessThanAgo(30 * 6 + unit().id() % 3, Actions.UNSIEGE);
+    }
+
+    public boolean hasSiegedOrUnsiegedRecently() {
+        return hasSiegedRecently() || hasUnsiegedRecently();
+    }
+
+    public int lastSiegeUnsiegedAgo() {
+        return Math.max(
+            lastActionAgo(Actions.SIEGE),
+            lastActionAgo(Actions.UNSIEGE)
+        );
     }
 }

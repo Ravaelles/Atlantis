@@ -46,23 +46,26 @@ public interface AUnitOrders {
         }
 
         if (target.u() == null) {
-            // This likes to happen to sieged tanks. What matters is that we return false here.
-//            if (!unit().isTankSieged()) {
-//                if (Env.isLocal()) A.printStackTrace();
+            move(target, Actions.MOVE_ATTACK, null, false);
+            return true;
 
-            if (unit().distTo(target) >= 12.5) {
-                return move(target, Actions.MOVE_ATTACK, null, false);
-            }
-            else {
-                System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
-                System.err.println("target = " + target.getClass());
-                System.err.println("toString = " + target.toString());
-                System.err.println("isVisibleUnitOnMap " + target.isVisibleUnitOnMap());
-                System.err.println("hasPosition = " + target.hasPosition());
-                System.err.println("isPositionVisible = " + target.isPositionVisible());
-            }
+//            // This likes to happen to sieged tanks. What matters is that we return false here.
+////            if (!unit().isTankSieged()) {
+////                if (Env.isLocal()) A.printStackTrace();
+//
+//            if (unit().distTo(target) >= 12.5) {
+//                return move(target, Actions.MOVE_ATTACK, null, false);
 //            }
-            return false;
+//            else {
+//                System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
+//                System.err.println("target = " + target.getClass());
+//                System.err.println("toString = " + target.toString());
+//                System.err.println("isVisibleUnitOnMap " + target.isVisibleUnitOnMap());
+//                System.err.println("hasPosition = " + target.hasPosition());
+//                System.err.println("isPositionVisible = " + target.isPositionVisible());
+//            }
+////            }
+//            return false;
         }
 
         if (!target.isDetected()) {

@@ -62,7 +62,7 @@ public class AttackNearbyEnemies extends Manager {
                     unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
                         || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)
                 )) {
-                    if (unit.target() != null) {
+                    if (unit.target() != null && unit.hasPosition() && !unit.looksIdle()) {
                         return true;
                     }
                 }

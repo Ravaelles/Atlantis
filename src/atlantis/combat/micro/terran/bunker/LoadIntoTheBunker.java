@@ -20,11 +20,8 @@ public class LoadIntoTheBunker extends Manager {
     public boolean applies() {
         if (unit.isLoaded()) return false;
 
-        if (Count.bunkers() == 0) return false;
-
-        // Only Terran infantry get inside
-        if (!unit.isMarine() && !unit.isGhost()) {
-            return false;
+        if (Enemy.terran() && unit.isMissionDefend()) {
+            return true;
         }
 
         if (

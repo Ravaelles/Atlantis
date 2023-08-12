@@ -13,20 +13,21 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
 
     @Override
     public boolean applies() {
-        return !unit.isMedic();
+//        if (unit.isMedic()) return false;
+
+        if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_CLOSE) {
+            if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;
+
+            return true;
+        }
+
+        return false;
     }
 
     protected Manager handle() {
-        if (isTooClose()) {
-            act();
-            return usedManager(this);
-        }
+        if (act()) return usedManager(this);
 
         return null;
-    }
-
-    private boolean isTooClose() {
-        return evaluateDistFromFocusPoint() == DistFromFocus.TOO_CLOSE;
     }
 
     protected boolean act() {
