@@ -107,18 +107,12 @@ public class TerranMedic extends Manager {
     // =========================================================
 
     private boolean bodyBlockMelee() {
-        if (medic.cooldownRemaining() >= 2) {
-            return false;
-        }
+        if (medic.cooldownRemaining() >= 2) return false;
 
-        if (medic.friendsInRadiusCount(1.2) <= 0) {
-            return false;
-        }
+        if (medic.friendsInRadiusCount(1.2) <= 0) return false;
 
         Selection meleeEnemies = medic.enemiesNear().melee().inRadius(2.3, medic);
-        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 2) {
-            return false;
-        }
+        if (meleeEnemies.count() == 0 || meleeEnemies.count() >= 2) return false;
 
         AUnit nearestFriend = medic.friendsNear()
             .inRadius(4, medic)
@@ -126,14 +120,10 @@ public class TerranMedic extends Manager {
             .notBeingHealed()
             .nearestTo(medic);
 
-        if (nearestFriend == null) {
-            return false;
-        }
+        if (nearestFriend == null) return false;
 
         AUnit nearestEnemy = meleeEnemies.visibleOnMap().inRadius(4, medic).nearestTo(medic);
-        if (nearestEnemy == null) {
-            return false;
-        }
+        if (nearestEnemy == null) return false;
 
         APosition enemyTarget = nearestEnemy.hasTargetPosition()
             ? nearestEnemy.targetPosition() : nearestFriend.position();
@@ -269,9 +259,7 @@ public class TerranMedic extends Manager {
     }
 
     private boolean healCriticallyWoundedUnits() {
-        if (medic.energy() < 2) {
-            return false;
-        }
+        if (medic.energy() < 2) return false;
 
         AUnit nearestWoundedInfantry = Select.our()
             .organic()
@@ -293,13 +281,9 @@ public class TerranMedic extends Manager {
     }
 
     private boolean healMostWoundedInRange() {
-        if (!medic.energy(5)) {
-            return false;
-        }
+        if (!medic.energy(5)) return false;
 
-        if (medic.lastActionLessThanAgo(10, Actions.HEAL)) {
-            return false;
-        }
+        if (medic.lastActionLessThanAgo(10, Actions.HEAL)) return false;
 
         AUnit nearestWoundedInfantry = Select.our()
             .organic()
@@ -323,9 +307,7 @@ public class TerranMedic extends Manager {
     }
 
     private boolean healAnyWoundedNear() {
-        if (!medic.energy(5)) {
-            return false;
-        }
+        if (!medic.energy(5)) return false;
 
         Selection potentialTargets = Select.our()
             .organic()

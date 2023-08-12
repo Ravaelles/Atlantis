@@ -86,9 +86,7 @@ public class AvoidEnemies extends Manager {
             return true;
         }
 
-        if (unit.enemiesNear().combatBuildings(false).notEmpty()) {
-            return false;
-        }
+        if (unit.enemiesNear().combatBuildings(false).notEmpty()) return false;
 
         if (
             unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)

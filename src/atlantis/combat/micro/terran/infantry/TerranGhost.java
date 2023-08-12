@@ -48,9 +48,7 @@ public class TerranGhost extends Manager {
 //            return false; // I wish ;__:
 //        }
 
-        if (!unit.energy(100) || !ATech.isResearched(lockdown)) {
-            return false;
-        }
+        if (!unit.energy(100) || !ATech.isResearched(lockdown)) return false;
 
         AUnit lockdownTarget = defineLockdownTarget();
 //        System.out.println("lockdownTarget = " + lockdownTarget);

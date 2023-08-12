@@ -20,26 +20,18 @@ public class TankDecisions {
     public static boolean canSiegeHere(AUnit unit, boolean checkTooLonely) {
         if (unit.hasSiegedRecently() && unit.enemiesNear().inRadius(14, unit).empty()) return false;
 
-        if (checkTooLonely && tooLonely(unit)) {
-            return false;
-        }
+        if (checkTooLonely && tooLonely(unit)) return false;
 
-        if (tooManyTanksInOnePlace(unit)) {
-            return false;
-        }
+        if (tooManyTanksInOnePlace(unit)) return false;
 
         AChoke choke = Chokes.nearestChoke(unit.position());
-        if (choke == null) {
-            return true;
-        }
+        if (choke == null) return true;
 
         return (unit.distTo(choke.center()) - choke.width()) >= 2.6 || (choke.width() >= 3.8);
     }
 
     private static boolean tooManyTanksInOnePlace(AUnit unit) {
-        if (Enemy.terran()) {
-            return false;
-        }
+        if (Enemy.terran()) return false;
 
         return unit.friendsNear().tanksSieged().inRadius(1, unit).isEmpty();
     }

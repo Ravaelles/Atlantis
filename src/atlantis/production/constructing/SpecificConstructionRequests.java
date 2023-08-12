@@ -15,18 +15,14 @@ public class SpecificConstructionRequests {
      * Some buildings like Zerg SUnken Colony need special treatment.
      */
     protected static boolean handledAsSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (handledTerranSpecialBuilding(building, order)) {
-            return true;
-        }
+        if (handledTerranSpecialBuilding(building, order)) return true;
         return handledZergSpecialBuilding(building, order);
     }
 
     // === Terran ========================================    
 
     private static boolean handledTerranSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (!AGame.isPlayingAsTerran()) {
-            return false;
-        }
+        if (!AGame.isPlayingAsTerran()) return false;
 
         if (building.isAddon()) {
             TerranAddonBuilder.buildNewAddon(building, order);
@@ -39,9 +35,7 @@ public class SpecificConstructionRequests {
     // === Zerg ========================================
 
     private static boolean handledZergSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (!AGame.isPlayingAsZerg()) {
-            return false;
-        }
+        if (!AGame.isPlayingAsZerg()) return false;
 
         if (building.equals(AUnitType.Zerg_Sunken_Colony)) {
             ZergCreepColony.creepOneIntoSunkenColony();

@@ -37,21 +37,13 @@ public class MobileDetector extends Manager {
     }
 
     protected boolean update() {
-        if (handleSpreadOut()) {
-            return true;
-        }
+        if (handleSpreadOut()) return true;
 
-        if (detectInvisibleUnitsClosestToBase()) {
-            return true;
-        }
+        if (detectInvisibleUnitsClosestToBase()) return true;
 
-        if (followArmy(false)) {
-            return true;
-        }
+        if (followArmy(false)) return true;
 
-        if (followSquadScout()) {
-            return true;
-        }
+        if (followSquadScout()) return true;
 
         return followArmy(true);
     }
@@ -76,9 +68,7 @@ public class MobileDetector extends Manager {
     }
 
     protected boolean followSquadScout() {
-        if (!unit.is(unitForSquadScout)) {
-            return false;
-        }
+        if (!unit.is(unitForSquadScout)) return false;
 
         AUnit scout = Alpha.get().squadScout();
         if (scout != null) {
@@ -93,9 +83,7 @@ public class MobileDetector extends Manager {
     }
 
     protected boolean followArmy(boolean shouldFollowItsSquad) {
-        if (!shouldFollowItsSquad && !unit.is(unitAssignedToMainSquad)) {
-            return false;
-        }
+        if (!shouldFollowItsSquad && !unit.is(unitAssignedToMainSquad)) return false;
 
         HasPosition goTo = unit.squadCenter();
         if (goTo != null) {
@@ -110,17 +98,11 @@ public class MobileDetector extends Manager {
     }
 
     protected boolean detectInvisibleUnitsClosestToBase() {
-        if (Select.main() == null) {
-            return false;
-        }
+        if (Select.main() == null) return false;
 
-        if (!unit.equals(Select.ourOfType(unit.type()).first())) {
-            return false;
-        }
+        if (!unit.equals(Select.ourOfType(unit.type()).first())) return false;
 
-        if (!unit.is(unitForBase)) {
-            return false;
-        }
+        if (!unit.is(unitForBase)) return false;
 
         AUnit dangerousInvisibleEnemy = enemyDangerousHiddenUnit();
         if (dangerousInvisibleEnemy != null) {

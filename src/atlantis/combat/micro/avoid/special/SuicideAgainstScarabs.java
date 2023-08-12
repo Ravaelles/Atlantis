@@ -22,15 +22,11 @@ public class SuicideAgainstScarabs extends Manager {
      * is that if there are ANY FRIENDS NEAR. Go ahead and take the bullet.
      */
     protected boolean update() {
-        if (unit.isAir() || unit.isABuilding()) {
-            return false;
-        }
+        if (unit.isAir() || unit.isABuilding()) return false;
 
         AUnit scarabAimedAtUnit = unit.allUnitsNear().ofType(AUnitType.Protoss_Scarab)
             .havingTargeted(unit).nearestTo(unit);
-        if (scarabAimedAtUnit == null) {
-            return false;
-        }
+        if (scarabAimedAtUnit == null) return false;
 
 //        System.err.println();
 //        System.err.println("#### SCARAB SUICIDE unit   = " + unit);
@@ -57,9 +53,7 @@ public class SuicideAgainstScarabs extends Manager {
     }
 
     private boolean shouldMoveTowardsScarab(AUnit scarab, Selection friendsNear) {
-        if (friendsNear.count() == 0) {
-            return false;
-        }
+        if (friendsNear.count() == 0) return false;
 
         return true;
     }

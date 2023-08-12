@@ -6,13 +6,13 @@ import atlantis.util.We;
 /**
  * Make Zealots stand in one line and defend narrow choke point like in 300.
  * That's why this is Sparta!!!
- *
+ * <p>
  * ToDo: Broken after series of refactors.
  */
 public class Sparta extends MissionDefend {
 
     //    public  final double HOLD_DIST_FOR_MELEE = 0.6;
-    private  final double MAX_MELEE_DIST_TO_ATTACK = 1.1;
+    private final double MAX_MELEE_DIST_TO_ATTACK = 1.1;
 
     // =========================================================
 
@@ -308,13 +308,9 @@ public class Sparta extends MissionDefend {
 //    }
 
     public static boolean canUseSpartaMission() {
-        if (We.terran()) {
-            return false;
-        }
+        if (We.terran()) return false;
 
-        if (We.zerg() && Enemy.protoss()) {
-            return false;
-        }
+        if (We.zerg() && Enemy.protoss()) return false;
 
         return true;
     }

@@ -109,9 +109,7 @@ public class RepairerManager extends Manager {
             return false;
         }
 
-        if (target.isABuilding() && target.hp() >= 600 && !target.isBase()) {
-            return true;
-        }
+        if (target.isABuilding() && target.hp() >= 600 && !target.isBase()) return true;
 
         return false;
 //

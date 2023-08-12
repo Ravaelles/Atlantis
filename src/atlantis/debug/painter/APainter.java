@@ -44,7 +44,8 @@ public class APainter {
     public static void togglePainting() {
         if (paintingMode == MODE_NO_PAINTING) {
             paintingMode = MODE_FULL_PAINTING;
-        } else {
+        }
+        else {
             paintingMode = MODE_NO_PAINTING;
         }
     }
@@ -72,7 +73,8 @@ public class APainter {
 
         if (yOffset == 0) {
             AAdvancedPainter.sideMessageTopCounter++;
-        } else {
+        }
+        else {
             AAdvancedPainter.sideMessageBottomCounter++;
         }
     }
@@ -80,13 +82,16 @@ public class APainter {
     public static void paintMessage(String text, Color color, int x, int y, boolean screenCoord) {
         if (screenCoord) {
             bwapi.drawTextScreen(new APosition(x, y).p(), ColorUtil.getColorString(color) + text);
-        } else {
+        }
+        else {
             bwapi.drawTextMap(new APosition(x, y).p(), ColorUtil.getColorString(color) + text);
         }
     }
 
     public static void paintRectangle(HasPosition position, int width, int height, Color color) {
-        if (isDisabled()) { return; }
+        if (isDisabled()) {
+            return;
+        }
 
         if (position == null) {
             return;
@@ -95,7 +100,9 @@ public class APainter {
     }
 
     public static void paintRectangleFilled(APosition position, int width, int height, Color color) {
-        if (isDisabled()) { return; }
+        if (isDisabled()) {
+            return;
+        }
 
         if (position == null) {
             return;
@@ -114,7 +121,9 @@ public class APainter {
     }
 
     public static void paintCircle(HasPosition position, int radius, Color color) {
-        if (isDisabled()) { return; }
+        if (isDisabled()) {
+            return;
+        }
 
         if (position == null || position.position() == null) {
             return;
@@ -123,7 +132,9 @@ public class APainter {
     }
 
     public static void paintCircleFilled(HasPosition position, int radius, Color color) {
-        if (isDisabled()) { return; }
+        if (isDisabled()) {
+            return;
+        }
 
         if (position == null || position.position() == null) {
             return;
@@ -136,7 +147,9 @@ public class APainter {
     }
 
     public static void paintLine(HasPosition start, int dx, int dy, Color color) {
-        if (isDisabled()) { return; }
+        if (isDisabled()) {
+            return;
+        }
 
         bwapi.drawLineMap(start.position().p(), start.translateByPixels(dx, dy).p(), color);
     }
@@ -149,9 +162,7 @@ public class APainter {
 //    }
 
     public static boolean paintLine(AUnit unit, AUnit end, Color color) {
-        if (unit == null || end == null || isDisabled()) {
-            return false;
-        }
+        if (unit == null || end == null || isDisabled()) return false;
         bwapi.drawLineMap(unit.position().p(), end.position().p(), color);
         return true;
     }
@@ -173,8 +184,8 @@ public class APainter {
 
     public static void paintTextCentered(HasPosition position, String text, Color color, double tileDX, double tileDY) {
         paintTextCentered(
-                position.translateByPixels((int) (tileDX * 32), (int) (tileDY * 32)),
-                text, color, false
+            position.translateByPixels((int) (tileDX * 32), (int) (tileDY * 32)),
+            text, color, false
         );
     }
 
@@ -193,11 +204,12 @@ public class APainter {
 
         if (screenCoords) {
             bwapi.drawTextScreen(position.translateByPixels((int) (-2.7 * text.length()), -2).p(),
-                    ColorUtil.getColorString(color) + text
+                ColorUtil.getColorString(color) + text
             );
-        } else {
+        }
+        else {
             bwapi.drawTextMap(position.translateByPixels((int) (-2.7 * text.length()), -2).p(),
-                    ColorUtil.getColorString(color) + text
+                ColorUtil.getColorString(color) + text
             );
         }
     }

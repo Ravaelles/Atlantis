@@ -46,9 +46,7 @@ public class AddToQueue {
     }
 
     public static boolean tech(TechType tech) {
-        if (Count.inQueueOrUnfinished(tech, 8) > 0) {
-            return false;
-        }
+        if (Count.inQueueOrUnfinished(tech, 8) > 0) return false;
 
         ProductionOrder productionOrder = new ProductionOrder(tech, 0);
 
@@ -61,9 +59,7 @@ public class AddToQueue {
     }
 
     public static boolean upgrade(UpgradeType upgrade) {
-        if (Count.inQueueOrUnfinished(upgrade, 3) > 0) {
-            return false;
-        }
+        if (Count.inQueueOrUnfinished(upgrade, 3) > 0) return false;
 
         ProductionQueue.addToQueue(0, new ProductionOrder(upgrade, 0));
         return true;

@@ -34,9 +34,7 @@ public class BeCloseToLeader extends MissionManager {
 
         if (unit.distTo(leader) >= 9) return true;
 
-        if (leader.friendsNear().inRadius(2, leader).count() >= 7) {
-            return false;
-        }
+        if (leader.friendsNear().inRadius(2, leader).count() >= 7) return false;
 
         if (
             squad.cohesionPercent() <= 70

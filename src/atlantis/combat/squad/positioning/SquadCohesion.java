@@ -16,9 +16,7 @@ public class SquadCohesion extends HasSquad {
 
     public boolean isSquadCohesionOkay() {
         HasPosition squadCenter = squad.center();
-        if (squad == null || squadCenter == null) {
-            return true;
-        }
+        if (squad == null || squadCenter == null) return true;
 
         int cohesionPercent = squad.cohesionPercent();
         return cohesionPercent >= minCohesion();

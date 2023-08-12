@@ -42,9 +42,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
                 && EnemyUnits.discovered().combatBuildingsAntiLand().atLeast(2)
                 && Count.tanks() <= 1
                 && !TankDecisions.siegeResearched()
-        ) {
-            return false;
-        }
+        ) return false;
 
         if (ourRelativeStrength >= 350 && !EnemyInfo.isEnemyNearAnyOurBase()) {
             if (DEBUG) reason = "Comfortably stronger (" + ourRelativeStrength + "%)";
@@ -76,13 +74,9 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return false;
         }
 
-        if (ourRelativeStrength < 300 && GamePhase.isEarlyGame() && A.resourcesBalance() <= -150) {
-            return false;
-        }
+        if (ourRelativeStrength < 300 && GamePhase.isEarlyGame() && A.resourcesBalance() <= -150) return false;
 
-        if (ourRelativeStrength < 300 && EnemyStrategy.get().isRushOrCheese() && A.supplyUsed() <= 110) {
-            return false;
-        }
+        if (ourRelativeStrength < 300 && EnemyStrategy.get().isRushOrCheese() && A.supplyUsed() <= 110) return false;
 
         if (We.terran() && Enemy.protoss()) {
             if (Missions.counter() >= 2 && A.supplyUsed() <= 90 && A.seconds() <= 60 * 7) {
@@ -96,13 +90,9 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
             }
         }
 
-        if (EnemyInfo.hiddenUnitsCount() >= 2 && Count.ofType(AUnitType.Terran_Science_Vessel) == 0) {
-            return false;
-        }
+        if (EnemyInfo.hiddenUnitsCount() >= 2 && Count.ofType(AUnitType.Terran_Science_Vessel) == 0) return false;
 
-        if (Count.tanks() >= 2 && !TankDecisions.siegeResearched()) {
-            return false;
-        }
+        if (Count.tanks() >= 2 && !TankDecisions.siegeResearched()) return false;
 
         // === Might be TRUE ===========================================
 

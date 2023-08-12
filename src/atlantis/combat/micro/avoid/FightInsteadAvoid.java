@@ -135,9 +135,7 @@ public class FightInsteadAvoid {
             }
         }
 
-        if (terranFightInsteadAvoid.fightForTerran()) {
-            return true;
-        }
+        if (terranFightInsteadAvoid.fightForTerran()) return true;
 
         // vs COMBAT BUILDINGS
         if (
@@ -189,13 +187,9 @@ public class FightInsteadAvoid {
             System.err.println("Worker in fightInImportantCases");
         }
 
-        if (forDragoon()) {
-            return true;
-        }
+        if (forDragoon()) return true;
 
-        if (terranFightInsteadAvoid.fightForTerran()) {
-            return true;
-        }
+        if (terranFightInsteadAvoid.fightForTerran()) return true;
 
         if (
             unit.isMelee()
@@ -222,21 +216,15 @@ public class FightInsteadAvoid {
             return true;
         }
 
-        if (forWraith()) {
-            return true;
-        }
+        if (forWraith()) return true;
 
         return false;
     }
 
     private boolean forWraith() {
-        if (!unit.isWraith()) {
-            return false;
-        }
+        if (!unit.isWraith()) return false;
 
-        if (unit.hp() <= 40 || (unit.cooldown() <= 3 && !unit.isTank())) {
-            return false;
-        }
+        if (unit.hp() <= 40 || (unit.cooldown() <= 3 && !unit.isTank())) return false;
 
         if (
             unit.enemiesNear().effVisible().inRadius(12, unit).ofType(
@@ -264,9 +252,7 @@ public class FightInsteadAvoid {
     }
 
     private boolean forDragoon() {
-        if (!unit.isDragoon()) {
-            return false;
-        }
+        if (!unit.isDragoon()) return false;
 
         if (unit.cooldownRemaining() <= 3) {
             int secondsWithoutAttack = (int) (2 + unit.woundPercent() / 13);
@@ -301,9 +287,7 @@ public class FightInsteadAvoid {
 
     // RANGED
     protected boolean fightAsRangedUnit() {
-        if (ranged != null && ranged.isABuilding()) {
-            return false;
-        }
+        if (ranged != null && ranged.isABuilding()) return false;
 
         if (unit.isRanged() && melee != null && ranged == null) {
 //            if (unit.hp() >= 40 && unit.lastAttackFrameMoreThanAgo(30 * 5)) {
@@ -368,14 +352,11 @@ public class FightInsteadAvoid {
     // =========================================================
 
     private boolean finishOffAlmostDeadTarget() {
-        if (unit.cooldownRemaining() >= 5) {
-            return false;
-        }
+        if (unit.cooldownRemaining() >= 5) return false;
 
         AUnit target = unit.target();
-        if (target != null && target.type().totalCost() >= 70 && target.hp() <= (unit.damageAgainst(target) - 1)) {
+        if (target != null && target.type().totalCost() >= 70 && target.hp() <= (unit.damageAgainst(target) - 1))
             return true;
-        }
 
         return false;
     }
@@ -415,9 +396,7 @@ public class FightInsteadAvoid {
     }
 
     protected boolean fightBecauseWayTooManyUnitsNear() {
-        if (!We.terran() || unit.isAir()) {
-            return false;
-        }
+        if (!We.terran() || unit.isAir()) return false;
 
         Selection our = unit.friendsNear().combatUnits();
         int allCount = unit.allUnitsNear().inRadius(0.8, unit).effVisible().count();
@@ -461,9 +440,8 @@ public class FightInsteadAvoid {
     protected boolean fightAsWorker(Units enemies) {
         if (enemies.size() >= 3) return false;
 
-        if (combatBuilding != null || lurker != null || reaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null) {
+        if (combatBuilding != null || lurker != null || reaver != null || tankSieged != null || melee != null || invisibleCombatUnit != null)
             return false;
-        }
 
         return unit.hpPercent() > 75 && unit.distToLessThan(Select.main(), 12);
     }

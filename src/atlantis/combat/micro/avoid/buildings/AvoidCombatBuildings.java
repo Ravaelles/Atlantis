@@ -24,13 +24,10 @@ public class AvoidCombatBuildings extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isMissionDefendOrSparta()) {
-            return false;
-        }
+        if (unit.isMissionDefendOrSparta()) return false;
 
-        if (Count.tanks() >= 2 && unit.isInfantry() && A.supplyUsed() <= 150 && unit.combatEvalRelative() <= 3.5) {
+        if (Count.tanks() >= 2 && unit.isInfantry() && A.supplyUsed() <= 150 && unit.combatEvalRelative() <= 3.5)
             return true;
-        }
 
         if (unit.combatEvalRelative() >= 2.5 && unit.hp() >= 30 && unit.woundPercent() <= 40) return false;
 

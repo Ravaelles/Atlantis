@@ -36,13 +36,9 @@ public class Requirements {
     }
 
     public static boolean hasRequirements(AUnitType type) {
-        if (type == null) {
-            return true;
-        }
+        if (type == null) return true;
 
-        if (type.hasRequiredUnit() && Count.ofType(type.whatIsRequired()) == 0) {
-            return false;
-        }
+        if (type.hasRequiredUnit() && Count.ofType(type.whatIsRequired()) == 0) return false;
 
         MappingCounter<AUnitType> requiredUnits = type.requiredUnits();
         for (AUnitType requiredType : requiredUnits.keys()) {
@@ -76,9 +72,7 @@ public class Requirements {
         }
 
         AUnitType required = AUnitType.from(tech.requiredUnit());
-        if (required != null && Count.ofType(AUnitType.from(tech.requiredUnit())) == 0) {
-            return false;
-        }
+        if (required != null && Count.ofType(AUnitType.from(tech.requiredUnit())) == 0) return false;
         return true;
     }
 
@@ -90,9 +84,7 @@ public class Requirements {
         }
 
         AUnitType required = AUnitType.from(upgrade.whatsRequired());
-        if (required != null && Count.ofType(required) == 0) {
-            return false;
-        }
+        if (required != null && Count.ofType(required) == 0) return false;
         return true;
     }
 

@@ -91,59 +91,37 @@ public class StopAndShoot extends Manager {
     }
 
     private boolean shouldSkip() {
-        if (unit.isMelee()) {
-            return true;
-        }
+        if (unit.isMelee()) return true;
 
-        if (unit.hpLessThan(19)) {
-            return true;
-        }
+        if (unit.hpLessThan(19)) return true;
 
-        if (unit.isTank() || unit.isVulture()) {
-            return true;
-        }
+        if (unit.isTank() || unit.isVulture()) return true;
 
 //        if (!unit.isAttacking()) {
 //            return true;
 //        }
 
-        if (unit.cooldownRemaining() >= 4) {
-            return true;
-        }
+        if (unit.cooldownRemaining() >= 4) return true;
 
-        if (unit.isMissionSparta()) {
-            return true;
-        }
+        if (unit.isMissionSparta()) return true;
 
         AUnit target = unit.target();
-        if (target == null) {
-            return true;
-        }
+        if (target == null) return true;
 
         // Allow to load into bunkers and transports
-        if (target.isOur()) {
-            return true;
-        }
+        if (target.isOur()) return true;
 
-        if (unit.isRetreating()) {
-            return true;
-        }
+        if (unit.isRetreating()) return true;
 
-        if (unit.combatEvalRelative() < 0.8) {
-            return true;
-        }
+        if (unit.combatEvalRelative() < 0.8) return true;
 
 //        if (unit.isMissionDefendOrSparta() && unit.friendsNear().buildings().empty()) {
 //            return true;
 //        }
 
-        if (unit.friendsInRadius(13).ofType(AUnitType.Terran_Bunker).notEmpty()) {
-            return false;
-        }
+        if (unit.friendsInRadius(13).ofType(AUnitType.Terran_Bunker).notEmpty()) return false;
 
-        if (unit.allUnitsNear().groundUnits().inRadius(1, unit).atLeast(3)) {
-            return false;
-        }
+        if (unit.allUnitsNear().groundUnits().inRadius(1, unit).atLeast(3)) return false;
 
 //        if (!unit.hasBiggerWeaponRangeThan(target)) {
 //            return true;

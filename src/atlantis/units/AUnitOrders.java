@@ -503,9 +503,7 @@ public interface AUnitOrders {
     default boolean lift() {
         unit().setAction(Actions.LIFT);
 
-        if (Env.isTesting()) {
-            return true;
-        }
+        if (Env.isTesting()) return true;
 
         return u().lift();
     }

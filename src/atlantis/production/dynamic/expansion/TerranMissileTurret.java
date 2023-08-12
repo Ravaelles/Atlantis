@@ -26,17 +26,11 @@ public class TerranMissileTurret extends AntiAirBuildingManager {
     // =========================================================
 
     protected boolean handleReinforcePosition(HasPosition position, double inRadius) {
-        if (position == null) {
-            return false;
-        }
+        if (position == null) return false;
 
-        if (!AGame.canAffordWithReserved(75, 0)) {
-            return false;
-        }
+        if (!AGame.canAffordWithReserved(75, 0)) return false;
 
-        if (Count.existingOrInProductionOrInQueue(type()) >= 3) {
-            return false;
-        }
+        if (Count.existingOrInProductionOrInQueue(type()) >= 3) return false;
 
         if (!Have.existingOrPlannedOrInQueue(type(), position, inRadius)) {
             AddToQueue.withTopPriority(type(), position).setMaximumDistance(8);
@@ -51,9 +45,7 @@ public class TerranMissileTurret extends AntiAirBuildingManager {
         if (Count.inProductionOrInQueue(type()) >= 3) return false;
 
         int existing = Count.existingOrInProductionOrInQueue(type());
-        if (existing >= 12) {
-            return true;
-        }
+        if (existing >= 12) return true;
 
         if (existing >= 6) {
             if (!A.hasMinerals(250)) {

@@ -10,16 +10,12 @@ import atlantis.units.select.Have;
 
 public class ProduceZerglings {
     public static boolean zerglings() {
-        if (!Have.a(AUnitType.Zerg_Spawning_Pool)) {
-            return false;
-        }
+        if (!Have.a(AUnitType.Zerg_Spawning_Pool)) return false;
 
         int zerglings = Count.zerglings();
         int larvas = Count.larvas();
 
-        if (zerglings >= 2 && larvas == 0) {
-            return false;
-        }
+        if (zerglings >= 2 && larvas == 0) return false;
 
         if (Have.hydraliskDen()) {
             if (!A.hasMinerals(210) && zerglings >= 4) {

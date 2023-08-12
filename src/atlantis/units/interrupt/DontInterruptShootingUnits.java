@@ -42,9 +42,7 @@ public class DontInterruptShootingUnits extends Manager {
 //        if (unit.hp() <= (Enemy.protoss() ? 18 : 8) * enemiesMultiplier) {
 //            APainter.paintCircleFilled(unit, 10, Color.Purple);
 //            System.err.println(unit.hp() + " < " + (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNear(MELEE_ENEMIES_RANGE));
-        if (unit.isWounded() && unit.hp() <= (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearCount()) {
-            return false;
-        }
+        if (unit.isWounded() && unit.hp() <= (Enemy.protoss() ? 18 : 8) * unit.meleeEnemiesNearCount()) return false;
 
         // Allow to use tech
         if (unit.lastActionLessThanAgo(3, Actions.USING_TECH)) {

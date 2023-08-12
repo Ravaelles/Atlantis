@@ -33,9 +33,7 @@ public class Stimpack extends Manager {
     }
 
     private boolean shouldUse() {
-        if (unit.hp() <= 20 || unit.isStimmed()) {
-            return false;
-        }
+        if (unit.hp() <= 20 || unit.isStimmed()) return false;
 
         Selection enemies = unit.enemiesNear().inRadius(9, unit);
 
@@ -47,9 +45,7 @@ public class Stimpack extends Manager {
             }
         }
 
-        if (Enemy.protoss() && unit.hp() >= 40 && unit.id() % 3 == 0 && unit.enemiesNearInRadius(4) >= 2) {
-            return true;
-        }
+        if (Enemy.protoss() && unit.hp() >= 40 && unit.id() % 3 == 0 && unit.enemiesNearInRadius(4) >= 2) return true;
 
         return false;
     }

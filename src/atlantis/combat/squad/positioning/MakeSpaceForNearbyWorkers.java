@@ -20,9 +20,7 @@ public class MakeSpaceForNearbyWorkers extends Manager {
 
         if (unit.friendsNear().groundUnits().nonBuildings().countInRadius(1, unit) <= 1) return false;
 
-        if (unit.enemiesNearInRadius(12) > 0) {
-            return false;
-        }
+        if (unit.enemiesNearInRadius(12) > 0) return false;
 
         if (A.seconds() % 6 <= 3) return false;
 

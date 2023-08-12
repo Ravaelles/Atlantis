@@ -24,9 +24,7 @@ public class ShouldMakeTerranBio {
 
         // === True ===========================================
 
-        if (A.hasMinerals(680)) {
-            return true;
-        }
+        if (A.hasMinerals(680)) return true;
 
         if (EnemyInfo.isDoingEarlyGamePush()) {
             reason = "EnemyInfo.isDoingEarlyGamePush";
@@ -78,9 +76,7 @@ public class ShouldMakeTerranBio {
     private static boolean wantsToReturnTrue() {
         int minInfantry = Enemy.terran() ? 6 : 18;
 
-        if (infantry <= minInfantry || Count.medics() <= 2 || ArmyStrength.weAreMuchWeaker()) {
-            return true;
-        }
+        if (infantry <= minInfantry || Count.medics() <= 2 || ArmyStrength.weAreMuchWeaker()) return true;
 
 //        if (infantry <= 12) {
 //            return true;

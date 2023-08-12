@@ -29,9 +29,7 @@ public class ProcessAttackUnit extends Manager {
             }
         }
 
-        if (handleMoveNextToTanksWhenAttackingThem(target)) {
-            return true;
-        }
+        if (handleMoveNextToTanksWhenAttackingThem(target)) return true;
 
         // Come closer when attacking enemy bases
         if (target.isBase() && unit.hasCooldown() && unit.distToMoreThan(target, 2.8)) {
@@ -80,9 +78,7 @@ public class ProcessAttackUnit extends Manager {
     // =========================================================
 
     private boolean handleMoveNextToTanksWhenAttackingThem(AUnit enemy) {
-        if (!enemy.isTank()) {
-            return false;
-        }
+        if (!enemy.isTank()) return false;
 
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (

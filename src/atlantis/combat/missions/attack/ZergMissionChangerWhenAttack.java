@@ -32,9 +32,7 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenAttack {
     // === CONTAIN =============================================
 
     public boolean shouldChangeMissionToContain() {
-        if (A.supplyUsed() >= 170) {
-            return false;
-        }
+        if (A.supplyUsed() >= 170) return false;
 
         if (ArmyStrength.weAreWeaker()) {
             if (DEBUG) reason = "We are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
@@ -53,7 +51,8 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
         if (EnemyUnits.discovered().combatBuildings(false).atLeast(2)) {
             if (ArmyStrength.ourArmyRelativeStrength() <= 350) {
-                if (DEBUG) reason = "Caution with defensive buildings (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                if (DEBUG)
+                    reason = "Caution with defensive buildings (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
                 return true;
             }
         }

@@ -15,9 +15,7 @@ import atlantis.util.Enemy;
 
 public class ProduceTanks {
     public static boolean tanks(AUnit factory) {
-        if (!Have.machineShop() || !Have.factory()) {
-            return false;
-        }
+        if (!Have.machineShop() || !Have.factory()) return false;
 
         int tanks = Select.ourWithUnfinished().tanks().count();
         boolean canAffordWithReserved = canAffordWithReserved();

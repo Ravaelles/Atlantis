@@ -36,13 +36,9 @@ public class WorkerDefenceManager extends Manager {
     // =========================================================
 
     private boolean act() {
-        if (unit.isRepairing()) {
-            return false;
-        }
+        if (unit.isRepairing()) return false;
 
-        if (unit.enemiesNear().combatUnits().isEmpty()) {
-            return false;
-        }
+        if (unit.enemiesNear().combatUnits().isEmpty()) return false;
 
         // Don't run from little dangerous enemies
         if (unit.hp() >= 35) {
@@ -55,13 +51,9 @@ public class WorkerDefenceManager extends Manager {
             }
         }
 
-        if (runFromReaverFix(unit)) {
-            return true;
-        }
+        if (runFromReaverFix(unit)) return true;
 
-        if (handleFightEnemyIfNeeded(unit)) {
-            return true;
-        }
+        if (handleFightEnemyIfNeeded(unit)) return true;
 
         if ((new AvoidEnemies(unit)).invoke() != null) {
             unit.addLog("WorkerAvoid");
@@ -69,9 +61,7 @@ public class WorkerDefenceManager extends Manager {
         }
 
         // Dynamic Near CSV repairing
-        if (We.terran() && AGame.canAfford(20, 0) && handleRepairNear(unit)) {
-            return true;
-        }
+        if (We.terran() && AGame.canAfford(20, 0) && handleRepairNear(unit)) return true;
 
         return false;
     }
@@ -92,40 +82,26 @@ public class WorkerDefenceManager extends Manager {
      * Sometimes workers need to fight.
      */
     private static boolean handleFightEnemyIfNeeded(AUnit worker) {
-        if (shouldNotFight(worker)) {
-            return false;
-        }
+        if (shouldNotFight(worker)) return false;
 
         // DESTROY ENEMY BUILDINGS that are being built close to main base.
-        if (handleEnemyBuildingsOffensive(worker)) {
-            return true;
-        }
+        if (handleEnemyBuildingsOffensive(worker)) return true;
 
         // FIGHT against enemy WORKERS, worker rushes etc
-        if (handleEnemyWorkersNear(worker)) {
-            return true;
-        }
+        if (handleEnemyWorkersNear(worker)) return true;
 
-        if (We.terran() && handleProtectScvBusyConstructing(worker)) {
-            return true;
-        }
+        if (We.terran() && handleProtectScvBusyConstructing(worker)) return true;
 
         // Fight against ZERGLINGS
-        if (handleFightEnemyCombatUnits(worker)) {
-            return true;
-        }
+        if (handleFightEnemyCombatUnits(worker)) return true;
 
         return false;
     }
 
     private static boolean handleProtectScvBusyConstructing(AUnit worker) {
-        if (Count.ourCombatUnits() >= 1) {
-            return false;
-        }
+        if (Count.ourCombatUnits() >= 1) return false;
 
-        if (worker.id() % 6 != 0 || worker.hp() <= 13) {
-            return false;
-        }
+        if (worker.id() % 6 != 0 || worker.hp() <= 13) return false;
 
         for (AUnit builder : ConstructionsCommander.builders()) {
             if (builder.hp() < 40 && builder.lastUnderAttackLessThanAgo(30 * 10)) {
@@ -145,24 +121,14 @@ public class WorkerDefenceManager extends Manager {
 //            return true;
 //        }
 
-        if (A.supplyUsed() >= 40) {
-            return true;
-        }
+        if (A.supplyUsed() >= 40) return true;
 
-        if (worker.enemiesNear().empty() || worker.enemiesNear().inRadius(4, worker).empty()) {
-            return true;
-        }
+        if (worker.enemiesNear().empty() || worker.enemiesNear().inRadius(4, worker).empty()) return true;
 
-        if (Enemy.protoss() && worker.hp() <= 22) {
-            return true;
-        }
-        else if (worker.hp() <= 18) {
-            return true;
-        }
+        if (Enemy.protoss() && worker.hp() <= 22) return true;
+        else if (worker.hp() <= 18) return true;
 
-        if (worker.isBuilder() || worker.isConstructing()) {
-            return true;
-        }
+        if (worker.isBuilder() || worker.isConstructing()) return true;
 
 //        boolean isNearBase = Select.ourBases().inRadius(20, worker).atLeast(1);
 //        if (!isNearBase) {
@@ -173,9 +139,7 @@ public class WorkerDefenceManager extends Manager {
     }
 
     private static boolean handleRepairNear(AUnit worker) {
-        if (!worker.isWounded() || (worker.id() % 5 != 0 && !worker.isRepairing())) {
-            return false;
-        }
+        if (!worker.isWounded() || (worker.id() % 5 != 0 && !worker.isRepairing())) return false;
 
         AUnit wounded = Select.ourWorkers().wounded().inRadius(3, worker).nearestTo(worker);
 
@@ -199,22 +163,16 @@ public class WorkerDefenceManager extends Manager {
     }
 
     private static boolean handleFightEnemyCombatUnits(AUnit worker) {
-        if (worker.hp() <= 20) {
-            return false;
-        }
+        if (worker.hp() <= 20) return false;
 
         if (worker.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
             return attackNearestEnemy(worker);
         }
 
-        if (worker.distToMoreThan(Select.main(), 9)) {
-            return false;
-        }
+        if (worker.distToMoreThan(Select.main(), 9)) return false;
 
 //        if (Count.workers() <= 8 || Select.our().inRadius(4, worker).atMost(2)) {
-        if (Count.workers() <= 8) {
-            return false;
-        }
+        if (Count.workers() <= 8) return false;
 
         if (Select.enemyCombatUnits().ofType(
             AUnitType.Terran_Siege_Tank_Siege_Mode,
@@ -225,9 +183,7 @@ public class WorkerDefenceManager extends Manager {
             AUnitType.Protoss_Dark_Templar,
             AUnitType.Protoss_Reaver
 //                AUnitType.Protoss_Zealot
-        ).inRadius(8, worker).count() >= 1) {
-            return false;
-        }
+        ).inRadius(8, worker).count() >= 1) return false;
 
         // FIGHT against ZERGLINGS
         for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).list()) {
@@ -266,9 +222,7 @@ public class WorkerDefenceManager extends Manager {
 
     private static boolean attackNearestEnemy(AUnit worker) {
         AUnit enemy = worker.enemiesNear().canBeAttackedBy(worker, 8).nearestTo(worker);
-        if (enemy == null) {
-            return false;
-        }
+        if (enemy == null) return false;
 
         worker.setTooltip("Protect", true);
         worker.attackUnit(enemy);
@@ -287,9 +241,7 @@ public class WorkerDefenceManager extends Manager {
     }
 
     private static boolean handleEnemyBuildingsOffensive(AUnit worker) {
-        if (A.isUms() || (A.seconds() >= 40 && Count.ourCombatUnits() >= 6)) {
-            return false;
-        }
+        if (A.isUms() || (A.seconds() >= 40 && Count.ourCombatUnits() >= 6)) return false;
 
         for (AUnit enemyBuilding : Select.enemy().buildings().inRadius(20, worker).list()) {
             worker.attackUnit(enemyBuilding);

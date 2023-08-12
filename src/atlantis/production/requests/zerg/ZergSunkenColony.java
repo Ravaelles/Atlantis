@@ -66,9 +66,7 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
         if (
             Count.inProductionOrInQueue(AUnitType.Zerg_Creep_Colony) >= 2
                 || Count.inProductionOrInQueue(AUnitType.Zerg_Sunken_Colony) >= 2
-        ) {
-            return false;
-        }
+        ) return false;
 
         if (creepColonies >= 1) {
             if (!A.hasMinerals(150)) {
@@ -91,9 +89,7 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
      */
     public boolean handleExistingCreepColonyIfNeeded() {
         int creepColonies = Count.creepColonies();
-        if (creepColonies <= 0) {
-            return false;
-        }
+        if (creepColonies <= 0) return false;
 
         for (AUnit colony : Select.ourOfType(AUnitType.Zerg_Creep_Colony).list()) {
 //            if (existingWithUnfinished() < expected()) {

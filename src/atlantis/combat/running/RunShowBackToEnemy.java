@@ -28,10 +28,8 @@ public class RunShowBackToEnemy {
                 runningManager.unit.nearestEnemyDist() >= 2.9
 //                || runningManager.unit.nearestEnemyDist() <= 1.7
             )
-            && runningManager.unit.enemiesNearInRadius(4.9) <= 1
-        ) {
-            return true;
-        }
+                && runningManager.unit.enemiesNearInRadius(4.9) <= 1
+        ) return true;
 
         return runningManager.unit.isFlying();
     }

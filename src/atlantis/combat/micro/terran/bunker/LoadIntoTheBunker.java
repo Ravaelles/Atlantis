@@ -20,9 +20,7 @@ public class LoadIntoTheBunker extends Manager {
     public boolean applies() {
         if (unit.isLoaded()) return false;
 
-        if (Enemy.terran() && unit.isMissionDefend()) {
-            return true;
-        }
+        if (Enemy.terran() && unit.isMissionDefend()) return true;
 
         if (
             GamePhase.isEarlyGame()
@@ -34,9 +32,7 @@ public class LoadIntoTheBunker extends Manager {
 
         // Without enemies around, don't do anything
         Selection enemiesNear = unit.enemiesNear().havingWeapon().inRadius(9, unit).canAttack(unit, 10);
-        if (enemiesNear.excludeMedics().empty()) {
-            return false;
-        }
+        if (enemiesNear.excludeMedics().empty()) return false;
 
         return true;
     }
@@ -90,9 +86,7 @@ public class LoadIntoTheBunker extends Manager {
 
     private boolean isItSafeToLoadIntoBunker(AUnit bunker, double unitDistToBunker) {
         AUnit nearestEnemy = unit.nearestEnemy();
-        if (nearestEnemy == null) {
-            return true;
-        }
+        if (nearestEnemy == null) return true;
         else {
             Selection enemiesNear = bunker.enemiesNear();
 

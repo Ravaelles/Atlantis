@@ -99,15 +99,9 @@ public class Construction implements Comparable<Construction> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         final Construction other = (Construction) obj;
         return this.ID == other.ID;
     }

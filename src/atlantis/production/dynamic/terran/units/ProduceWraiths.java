@@ -9,33 +9,27 @@ import atlantis.units.select.Select;
 
 public class ProduceWraiths {
     public static boolean wraiths() {
-        if (Count.ofType(AUnitType.Terran_Starport) == 0) {
-            return false;
-        }
+        if (Count.ofType(AUnitType.Terran_Starport) == 0) return false;
 
         boolean produceWraiths = A.supplyUsed() >= 90;
 
         int wraiths = Count.ofType(AUnitType.Terran_Wraith);
         boolean canAffordWithReserved = AGame.canAffordWithReserved(150, 100);
 
-        if (wraiths >= 5 && !canAffordWithReserved) {
-            return false;
-        }
+        if (wraiths >= 5 && !canAffordWithReserved) return false;
 
         if (produceWraiths && wraiths <= 1) {
             return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
         }
 
-        if (wraiths >= 12) {
-            return false;
-        }
+        if (wraiths >= 12) return false;
 
         return produce();
     }
 
     private static boolean produce() {
         int maxAtATime = Math.min(5, Select.ourOfType(AUnitType.Terran_Starport).free().count());
-        
+
         return AddToQueue.maxAtATime(AUnitType.Terran_Wraith, maxAtATime);
     }
 }

@@ -6,6 +6,7 @@ import atlantis.map.region.ARegionBoundary;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
+import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwapi.Unit;
 import jbweb.JBWEB;
@@ -24,13 +25,13 @@ public class PositionUtil {
 //        if (true) throw new RuntimeException("PositionUtil.distanceTo was used");
 
         if (object1 == null || object2 == null) {
-            System.err.println("object1");
-            System.err.println(object1);
-            System.err.println("object2");
-            System.err.println(object2);
-//            throw new RuntimeException("distanceTo got null");
-            System.err.println("distanceTo got null");
-//            A.printStackTrace("distanceTo got null");
+            ErrorLog.printMaxOncePerMinute(
+                "object1\n" +
+                    object1 + "\n" +
+                    "object2\n" +
+                    object2 + "\n" +
+                    "distanceTo got null"
+            );
             return 999;
         }
 

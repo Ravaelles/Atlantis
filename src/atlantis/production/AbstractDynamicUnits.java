@@ -22,9 +22,7 @@ public class AbstractDynamicUnits extends Helpers {
     }
 
     public static boolean trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {
-        if (noSupply(minSupply)) {
-            return false;
-        }
+        if (noSupply(minSupply)) return false;
 
         return trainIfPossible(type, onlyOneAtTime, type.getMineralPrice(), type.getGasPrice());
     }
@@ -38,9 +36,7 @@ public class AbstractDynamicUnits extends Helpers {
     }
 
     public static boolean trainIfPossible(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
-        if (!AGame.canAffordWithReserved(hasMinerals, hasGas)) {
-            return false;
-        }
+        if (!AGame.canAffordWithReserved(hasMinerals, hasGas)) return false;
 
         if (onlyOneAtTime) {
             if (type.isBuilding() && ConstructionRequests.hasRequestedConstructionOf(type)) {

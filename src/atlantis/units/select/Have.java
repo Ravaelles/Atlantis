@@ -35,9 +35,7 @@ public class Have {
     public static boolean existingOrPlanned(AUnitType building, HasPosition position, double inRadius) {
         assert building.isBuilding();
 
-        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) {
-            return true;
-        }
+        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) return true;
 
         return Select.ourWithUnfinished(building).inRadius(inRadius, position).atLeast(1);
     }
@@ -45,13 +43,9 @@ public class Have {
     public static boolean existingOrPlannedOrInQueue(AUnitType building, HasPosition position, double inRadius) {
         assert building.isBuilding();
 
-        if (ProductionQueue.isAtTheTopOfQueue(building, 2)) {
-            return true;
-        }
+        if (ProductionQueue.isAtTheTopOfQueue(building, 2)) return true;
 
-        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) {
-            return true;
-        }
+        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) return true;
 
         return Select.ourWithUnfinished(building).inRadius(inRadius, position).atLeast(1);
     }

@@ -105,9 +105,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
     private static boolean factoryIfBioOnly() {
         if (!Have.barracks()) return false;
 
-        if (A.supplyUsed() <= 30 || !A.hasGas(90) || Have.factory()) {
-            return false;
-        }
+        if (A.supplyUsed() <= 30 || !A.hasGas(90) || Have.factory()) return false;
 
 //        if (OurDecisions.haveFactories() && Count.factories() < 2) {
 //            AddToQueue.withHighPriority(Terran_Factory);
@@ -242,9 +240,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
             }
         }
 
-        if (barracks >= 10) {
-            return false;
-        }
+        if (barracks >= 10) return false;
 
         if (A.canAffordWithReserved(150, 0) || A.hasMinerals(650)) {
             return buildIfAllBusyButCanAfford(Terran_Barracks, 0, 0);

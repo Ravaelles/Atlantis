@@ -17,21 +17,15 @@ public class AllowedToAttack {
     }
 
     protected boolean canAttackNow() {
-        if ((new AsTerranForbiddenToAttack(unit)).isForbidden()) {
-            return false;
-        }
+        if ((new AsTerranForbiddenToAttack(unit)).isForbidden()) return false;
 
-        if (!allowedToAttack()) {
-            return false;
-        }
+        if (!allowedToAttack()) return false;
 
         if (
             unit.isMelee()
                 && unit.noCooldown()
                 && unit.enemiesNear().inRadius(2, unit).canBeAttackedBy(unit, 0).notEmpty()
-        ) {
-            return true;
-        }
+        ) return true;
 
         // === Mission =============================================
 
@@ -42,30 +36,22 @@ public class AllowedToAttack {
 
         // =========================================================
 
-        if (unit.looksIdle() && unit.noCooldown()) {
-            return true;
-        }
+        if (unit.looksIdle() && unit.noCooldown()) return true;
 
         if (
             unit.lastActionLessThanAgo(70, Actions.RUN_RETREAT)
                 && (unit.isMelee() || unit.hasCooldown() || unit.hp() <= 20)
-        ) {
-            return false;
-        }
+        ) return false;
 
         boolean shouldRetreat = unit.shouldRetreat();
-        if (unit.isMelee() && shouldRetreat) {
-            return false;
-        }
+        if (unit.isMelee() && shouldRetreat) return false;
 
         if (
             unit.isZergling()
                 && (
                 (Enemy.protoss() && unit.hp() <= 19) || shouldRetreat
             )
-        ) {
-            return false;
-        }
+        ) return false;
 
         if (unit.isMelee()) {
             Selection combatBuildings = Select.ourCombatUnits().buildings();
@@ -81,9 +67,7 @@ public class AllowedToAttack {
     }
 
     public boolean canAttackEnemiesNow() {
-        if (AttackNearbyEnemies.reasonNotToAttack == null) {
-            return true;
-        }
+        if (AttackNearbyEnemies.reasonNotToAttack == null) return true;
 
         return attackNearbyEnemies.defineEnemyToAttackFor() != null;
     }
@@ -127,9 +111,7 @@ public class AllowedToAttack {
     }
 
     protected boolean isValidTargetAndAllowedToAttackUnit(AUnit target) {
-        if (target == null || target.position() == null) {
-            return false;
-        }
+        if (target == null || target.position() == null) return false;
 
         if (!missionAllowsToAttackEnemyUnit(target)) {
             AttackNearbyEnemies.reasonNotToAttack = "MissionForbids" + target.name();

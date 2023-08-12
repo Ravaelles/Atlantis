@@ -214,17 +214,13 @@ public interface HasPosition {
     }
 
     default boolean distToLessThan(HasPosition otherPosition, double maxDist) {
-        if (otherPosition == null) {
-            return false;
-        }
+        if (otherPosition == null) return false;
 
         return distTo(otherPosition) <= maxDist;
     }
 
     default boolean distToMoreThan(HasPosition otherPosition, double minDist) {
-        if (otherPosition == null) {
-            return false;
-        }
+        if (otherPosition == null) return false;
 
         return distTo(otherPosition) >= minDist;
     }

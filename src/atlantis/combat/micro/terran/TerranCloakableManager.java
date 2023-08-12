@@ -30,9 +30,7 @@ public class TerranCloakableManager extends Manager {
     }
 
     public boolean update() {
-        if (AGame.notNthGameFrame(7)) {
-            return false;
-        }
+        if (AGame.notNthGameFrame(7)) return false;
 
         if (unit.canCloak() && ATech.isResearched(TechType.Cloaking_Field)) {
             enemiesThatCanAttackThisUnit = unit.enemiesNear()

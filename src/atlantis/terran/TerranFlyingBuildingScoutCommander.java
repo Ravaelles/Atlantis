@@ -14,7 +14,8 @@ public class TerranFlyingBuildingScoutCommander extends Commander {
 
     private static final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
 
-    public TerranFlyingBuildingScoutCommander() {}
+    public TerranFlyingBuildingScoutCommander() {
+    }
 
     @Override
     protected void handle() {
@@ -40,12 +41,10 @@ public class TerranFlyingBuildingScoutCommander extends Commander {
     // =========================================================
 
     private boolean needNewFlyingBuilding() {
-        if (!flyingBuildings.isEmpty()) {
-            return false;
-        }
+        if (!flyingBuildings.isEmpty()) return false;
 
         return Select.ourWithUnfinished(AUnitType.Terran_Machine_Shop).atLeast(1)
-                || Select.ourTanks().atLeast(3);
+            || Select.ourTanks().atLeast(3);
     }
 
     private void liftABuildingAndFlyAmongStars() {

@@ -27,9 +27,7 @@ public class DanceAfterShoot extends Manager {
      * For ranged unit, once shoot is fired, move slightly away or move towards the target when still have cooldown.
      */
     private boolean update() {
-        if (shouldSkip()) {
-            return false;
-        }
+        if (shouldSkip()) return false;
 
         AUnit target = unit.target();
         double dist = target.distTo(unit);
@@ -92,13 +90,9 @@ public class DanceAfterShoot extends Manager {
     private boolean shouldSkip() {
 //        if (true) return true;
 
-        if (unit.isMelee()) {
-            return true;
-        }
+        if (unit.isMelee()) return true;
 
-        if (unit.target() == null) {
-            return true;
-        }
+        if (unit.target() == null) return true;
 
 //        if (unit.target() == null || !unit.target().isRealUnit()) {
 //            return true;
@@ -109,34 +103,24 @@ public class DanceAfterShoot extends Manager {
 //        }
 
         // Can start shooting
-        if (unit.cooldownRemaining() <= 3) {
-            return true;
-        }
+        if (unit.cooldownRemaining() <= 3) return true;
 
-        if (unit.isMissionSparta()) {
-            return true;
-        }
+        if (unit.isMissionSparta()) return true;
 
         int lastAttackFrameAgo = unit.lastAttackFrameAgo();
         int cooldownAbsolute = unit.cooldownAbsolute();
 
         int minStop = UnitAttackWaitFrames.effectiveStopFrames(unit.type());
 
-        if (lastAttackFrameAgo <= minStop || lastAttackFrameAgo >= cooldownAbsolute) {
-            return true;
-        }
+        if (lastAttackFrameAgo <= minStop || lastAttackFrameAgo >= cooldownAbsolute) return true;
 //        if (unit.lastAttackFrameMoreThanAgo(unit.cooldownAbsolute() - 3)) {
 //            return true;
 //        }
 
         // In process of shooting
-        if ((unit.cooldownRemaining() + minStop) >= cooldownAbsolute) {
-            return true;
-        }
+        if ((unit.cooldownRemaining() + minStop) >= cooldownAbsolute) return true;
 
-        if (!unit.isAttacking() && unit.noCooldown()) {
-            return true;
-        }
+        if (!unit.isAttacking() && unit.noCooldown()) return true;
 
 //        System.out.println("unit.lastAttackFrameAgo = " + lastAttackFrameAgo + " // " + minStop);
         return false;

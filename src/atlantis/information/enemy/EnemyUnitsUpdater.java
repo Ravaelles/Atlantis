@@ -22,9 +22,7 @@ public class EnemyUnitsUpdater extends EnemyUnits {
     }
 
     private static boolean updateTypeAndPositionOfFoggedUnitBasenOnVisibleAUnit(AUnit enemy) {
-        if (enemy.type().isGasBuildingOrGeyser()) {
-            return true;
-        }
+        if (enemy.type().isGasBuildingOrGeyser()) return true;
 
         if (enemy instanceof AbstractFoggedUnit) {
             System.err.println("updateTypeAndPositionOfFoggedUnitBasenOnVisibleAUnit got AbstractFoggedUnit: " + enemy);
@@ -64,18 +62,18 @@ public class EnemyUnitsUpdater extends EnemyUnits {
 //            }
 
 //            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible() && foggedUnit.u() == null) {
-            if (
+        if (
 //                foggedUnit.u() == null
-                    foggedUnit.hasPosition()
-                    && foggedUnit.position().isPositionVisible()
+            foggedUnit.hasPosition()
+                && foggedUnit.position().isPositionVisible()
 //                    && (foggedUnit.u() == null && !foggedUnit.isCloaked() && !foggedUnit.isDetected())
 //                    && (!foggedUnit.isCloaked() && !foggedUnit.isDetected())
-            ) {
+        ) {
 //                System.out.println(">> Fogged unit no longer present at this visible position " + foggedUnit);
 //                foggedUnit.forceRemoveKnownPosition();
 //                foggedUnit.forceRemoveKnownPosition();
-                foggedUnit.foggedUnitNoLongerWhereItWasBefore();
-            }
+            foggedUnit.foggedUnitNoLongerWhereItWasBefore();
+        }
 
 //            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible() && foggedUnit.u() == null) {
 //                System.out.println(">> Fogged unit is no longer visible, remove position " + foggedUnit);

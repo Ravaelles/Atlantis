@@ -84,9 +84,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
             return false;
         }
 
-        if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) {
-            return false;
-        }
+        if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) return false;
 
         // If other buildings too close
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) {

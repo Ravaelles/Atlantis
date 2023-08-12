@@ -19,13 +19,9 @@ public class TerranBunkersInMain extends Commander {
 
     @Override
     public boolean applies() {
-        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
-            return false;
-        }
+        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) return false;
 
-        if (!EnemyInfo.isDoingEarlyGamePush()) {
-            return false;
-        }
+        if (!EnemyInfo.isDoingEarlyGamePush()) return false;
 
         int existingBunkers = Count.existingOrInProductionOrInQueue(type());
         int expectedBunkers = terranBunker.expected();

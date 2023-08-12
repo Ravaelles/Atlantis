@@ -8,20 +8,14 @@ import atlantis.units.select.Select;
 
 public class TooCloseToMineralsOrGeyser {
     public static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
-        if (building.isCombatBuilding()) {
-            return false;
-        }
+        if (building.isCombatBuilding()) return false;
 
-        if (Select.main() == null) {
-            return false;
-        }
+        if (Select.main() == null) return false;
 
         // We have problem only if building is both close to base and to minerals or to geyser
         AUnit nearestBase = Select.ourBases().nearestTo(position);
 
-        if (nearestBase == null) {
-            return false;
-        }
+        if (nearestBase == null) return false;
 
         double distToBase = nearestBase.translateByTiles(2, 0).distTo(position);
         if (distToBase <= 10) {

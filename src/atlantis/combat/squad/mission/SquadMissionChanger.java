@@ -11,23 +11,15 @@ public class SquadMissionChanger {
     // =========================================================
 
     public static boolean changeSquadMissionIfNeeded(Squad squad) {
-        if (squad.hasMostlyOffensiveRole()) {
-            return false;
-        }
+        if (squad.hasMostlyOffensiveRole()) return false;
 
         unit = squad.leader();
         units = squad.selection();
 
-        if (unit == null) {
-            return false;
-        }
+        if (unit == null) return false;
 
-        if (ChangeSquadToDefend.shouldChangeToDefend(squad)) {
-            return true;
-        }
-        else if (ChangeSquadToDefault.shouldChangeToDefault(squad)) {
-            return true;
-        }
+        if (ChangeSquadToDefend.shouldChangeToDefend(squad)) return true;
+        else if (ChangeSquadToDefault.shouldChangeToDefault(squad)) return true;
 
         return false;
     }

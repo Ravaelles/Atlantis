@@ -47,9 +47,7 @@ public class TerranComsatStation extends Manager {
     }
 
     private boolean shouldScanThisLurker(AUnit lurker) {
-        if (unit.energy(190)) {
-            return true;
-        }
+        if (unit.energy(190)) return true;
 
         int minUnitsNear = (unit.energy(160) ? 3 : (unit.energy(60) ? 4 : 6));
 
@@ -85,9 +83,7 @@ public class TerranComsatStation extends Manager {
     }
 
     private boolean scanObservers() {
-        if (unit.energy() <= 200) {
-            return false;
-        }
+        if (unit.energy() <= 200) return false;
 
         for (AUnit observer : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Observer).list()) {
             if (shouldScanThisObserver(observer)) {
@@ -99,16 +95,12 @@ public class TerranComsatStation extends Manager {
     }
 
     private boolean shouldScanThisObserver(AUnit observer) {
-        if (unit.energy() >= 100 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)) {
-            return true;
-        }
+        if (unit.energy() >= 100 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)) return true;
 
         if (
             Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, observer).isNotEmpty()
                 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)
-        ) {
-            return true;
-        }
+        ) return true;
 
         return false;
     }

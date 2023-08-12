@@ -187,9 +187,7 @@ public class ARunningManager {
 //    }
 
     private boolean makeUnitRun(Action action) {
-        if (unit == null) {
-            return false;
-        }
+        if (unit == null) return false;
 
         if (runTo == null) {
             stopRunning();

@@ -28,9 +28,7 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     private boolean handleWrongSideOfFocus() {
-        if (unit.isAir()) {
-            return false;
-        }
+        if (unit.isAir()) return false;
 
         APosition withdrawTo = focusPoint.fromSide();
 

@@ -453,12 +453,8 @@ public class AUnitType implements Comparable<Object> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null) return false;
 
         if (obj instanceof AUnitType) {
             AUnitType other = (AUnitType) obj;
@@ -1421,21 +1417,13 @@ public class AUnitType implements Comparable<Object> {
     }
 
     private boolean isValidUnitRequirement(AUnitType requirement, AUnitType unit) {
-        if (requirement.isPylon()) {
-            return false;
-        }
+        if (requirement.isPylon()) return false;
 
-        if (!unit.isBuilding() && requirement.isBuilding()) {
-            return false;
-        }
+        if (!unit.isBuilding() && requirement.isBuilding()) return false;
 
-        if (isBuilding() && (requirement.isBuilding() && requirement.isBase())) {
-            return false;
-        }
+        if (isBuilding() && (requirement.isBuilding() && requirement.isBase())) return false;
 
-        if (isBuilding() && requirement.isWorker()) {
-            return false;
-        }
+        if (isBuilding() && requirement.isWorker()) return false;
 
         return true;
     }

@@ -7,9 +7,7 @@ import atlantis.units.select.Select;
 public class MissionDecisions {
     public static boolean baseUnderSeriousAttack() {
         AUnit main = Select.main();
-        if (main != null && Select.enemyCombatUnits().inRadius(20, main).atLeast(minEnemiesToDefend())) {
-            return true;
-        }
+        if (main != null && Select.enemyCombatUnits().inRadius(20, main).atLeast(minEnemiesToDefend())) return true;
 
         return false;
     }

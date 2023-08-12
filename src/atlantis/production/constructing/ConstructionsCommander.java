@@ -116,9 +116,7 @@ public class ConstructionsCommander extends Commander {
     }
 
     private boolean isItSafeToAssignNewBuilderTo(Construction construction) {
-        if (construction.buildingType().isBunker()) {
-            return true;
-        }
+        if (construction.buildingType().isBunker()) return true;
 
         HasPosition position = construction.construction() != null
             ? construction.construction() : construction.buildPosition();
@@ -133,9 +131,7 @@ public class ConstructionsCommander extends Commander {
             EnemyUnits.discovered().combatUnits().inRadius(8, position).empty()
                 || (construction.buildingType().isCombatBuilding() && Select.our().inRadius(7, position).atLeast(2))
                 || A.hasMinerals(700)
-        ) {
-            return true;
-        }
+        ) return true;
 
         return false;
     }

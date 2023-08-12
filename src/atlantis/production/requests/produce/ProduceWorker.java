@@ -12,9 +12,7 @@ import atlantis.util.We;
 public class ProduceWorker {
     public static boolean produceWorker() {
         AUnit base = Select.ourOneNotTrainingUnits(AtlantisConfig.BASE);
-        if (base == null) {
-            return false;
-        }
+        if (base == null) return false;
 
         if (We.zerg()) {
 //            if (AGame.supplyUsed() <= 9) {

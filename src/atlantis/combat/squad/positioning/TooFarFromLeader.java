@@ -24,9 +24,7 @@ public class TooFarFromLeader extends Manager {
 
     private boolean check() {
         AUnit leader = squad.leader();
-        if (leader == null) {
-            return false;
-        }
+        if (leader == null) return false;
 
         if (
             unit.distTo(leader) > 6

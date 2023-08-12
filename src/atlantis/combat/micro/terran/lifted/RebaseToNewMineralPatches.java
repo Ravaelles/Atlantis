@@ -18,9 +18,7 @@ public class RebaseToNewMineralPatches extends Manager {
 
     @Override
     public boolean applies() {
-        if (AGame.notNthGameFrame(37)) {
-            return false;
-        }
+        if (AGame.notNthGameFrame(37)) return false;
 
         return unit.isCommandCenter() && (unit.isLifted() || isBaseMinedOut());
     }
@@ -35,9 +33,7 @@ public class RebaseToNewMineralPatches extends Manager {
     }
 
     private boolean flyToNewMineralPatches() {
-        if (Env.isTesting()) {
-            return false;
-        }
+        if (Env.isTesting()) return false;
 
         ABaseLocation newBase = defineNewBaseLocation();
 

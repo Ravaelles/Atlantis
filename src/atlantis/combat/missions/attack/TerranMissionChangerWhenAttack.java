@@ -11,9 +11,7 @@ import atlantis.units.select.Count;
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
     @Override
     public boolean shouldChangeMissionToContain() {
-        if (A.supplyUsed() >= 174) {
-            return false;
-        }
+        if (A.supplyUsed() >= 174) return false;
 
 //        if (OurStrategy.get().goingBio()) {
         if (!ArmyStrength.weAreMuchStronger()) {

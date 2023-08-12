@@ -97,9 +97,8 @@ public class ProtossDynamicUnitsCommander extends Commander {
     }
 
     private static boolean dragoons() {
-        if (Have.notEvenPlanned(AUnitType.Protoss_Gateway) || Have.notEvenPlanned(AUnitType.Protoss_Cybernetics_Core)) {
+        if (Have.notEvenPlanned(AUnitType.Protoss_Gateway) || Have.notEvenPlanned(AUnitType.Protoss_Cybernetics_Core))
             return false;
-        }
 
 //        if (!A.hasGas(50) && !A.hasMinerals(125)) {
 //            return;
@@ -109,13 +108,9 @@ public class ProtossDynamicUnitsCommander extends Commander {
             Decisions.needToProduceZealotsNow()
                 && !A.hasGas(50)
 //                && !A.hasMinerals(225)
-        ) {
-            return false;
-        }
+        ) return false;
 
-        if (!A.hasMineralsAndGas(700, 250) && !A.canAffordWithReserved(125, 50)) {
-            return false;
-        }
+        if (!A.hasMineralsAndGas(700, 250) && !A.canAffordWithReserved(125, 50)) return false;
 
         if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
 //            trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
@@ -179,9 +174,8 @@ public class ProtossDynamicUnitsCommander extends Commander {
             }
         }
 
-        if (A.hasGas(50) && !A.hasMinerals(225) && Have.cyberneticsCore() && Count.dragoons() <= 2 && Count.zealots() >= 1) {
+        if (A.hasGas(50) && !A.hasMinerals(225) && Have.cyberneticsCore() && Count.dragoons() <= 2 && Count.zealots() >= 1)
             return true;
-        }
 
         return false;
     }

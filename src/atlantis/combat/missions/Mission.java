@@ -62,9 +62,7 @@ public abstract class Mission extends MissionHelper {
 
     // Template method
     public boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
-        if (unit.isInfantry() && unit.hp() <= 39) {
-            return false;
-        }
+        if (unit.isInfantry() && unit.hp() <= 39) return false;
 
         return unit.friendsNearCount() >= 7;
     }

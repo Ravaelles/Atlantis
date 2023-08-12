@@ -14,17 +14,13 @@ public class MissionDefendAllowsToAttack {
     }
 
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (mission.focusPoint == null || mission.main == null) {
-            return true;
-        }
+        if (mission.focusPoint == null || mission.main == null) return true;
 
         if (
             unit.canAttackTarget(enemy)
-            || enemy.canAttackTarget(unit)
-            || ourBuildingIsInDanger(unit, enemy)
-        ) {
-            return true;
-        }
+                || enemy.canAttackTarget(unit)
+                || ourBuildingIsInDanger(unit, enemy)
+        ) return true;
 
         boolean regionsAreDifferent = unit.position().region().equals(enemy.position().region());
 
@@ -43,11 +39,9 @@ public class MissionDefendAllowsToAttack {
 
         if (
             unit.isMelee()
-            && sunkens.inRadius(15, enemy).notEmpty()
-            && sunkens.inRadius(7, enemy).empty()
-        ) {
-            return false;
-        }
+                && sunkens.inRadius(15, enemy).notEmpty()
+                && sunkens.inRadius(7, enemy).empty()
+        ) return false;
 
         // =========================================================
 
@@ -57,9 +51,9 @@ public class MissionDefendAllowsToAttack {
         if (
             (
                 enemy.isMelee()
-                || (unit.squadSize() >= 4 && friends <= 1)
+                    || (unit.squadSize() >= 4 && friends <= 1)
             )
-            && !unit.enemiesNear().inRadius(9, unit).onlyMelee()
+                && !unit.enemiesNear().inRadius(9, unit).onlyMelee()
         ) {
             unit.setTooltip("TooScarce");
             return false;
@@ -83,9 +77,7 @@ public class MissionDefendAllowsToAttack {
             }
         }
 
-        if (ourBuildings.combatBuildings(true).notEmpty()) {
-            return true;
-        }
+        if (ourBuildings.combatBuildings(true).notEmpty()) return true;
 
         return false;
     }

@@ -14,20 +14,14 @@ public class PreventMaginotLine extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) {
-            return false;
-        }
+        if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) return false;
 
         if (
             unit.hpLessThan(21)
                 && unit.enemiesNear().inRadius(4.9 + (unit.idIsOdd() ? 2 : 0), unit).ranged().notEmpty()
-        ) {
-            return false;
-        }
+        ) return false;
 
-        if (unit.enemiesNear().inRadius(2.4 + unit.id() % 3, unit).notEmpty()) {
-            return false;
-        }
+        if (unit.enemiesNear().inRadius(2.4 + unit.id() % 3, unit).notEmpty()) return false;
 
         int dragoons = unit.enemiesNear().ofType(AUnitType.Protoss_Dragoon).inRadius(7, unit).count();
         if (dragoons > 0) {

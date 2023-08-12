@@ -17,9 +17,7 @@ public class TerranStrategyResponse extends AStrategyResponse {
             }
         }
 
-        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
-            return false;
-        }
+        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
 
         OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;

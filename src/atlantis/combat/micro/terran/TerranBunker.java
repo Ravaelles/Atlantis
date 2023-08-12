@@ -36,17 +36,13 @@ public class TerranBunker extends AntiLandBuildingManager {
 
     @Override
     public boolean handleBuildNew() {
-        if (!Have.barracks()) {
-            return false;
-        }
+        if (!Have.barracks()) return false;
 
         if (
             GamePhase.isEarlyGame()
                 && OurStrategy.get().isRushOrCheese()
                 && EnemyUnits.discovered().combatUnits().atMost(Enemy.zerg() ? 10 : 5)
-        ) {
-            return false;
-        }
+        ) return false;
 
         if (Count.bases() >= 2) {
             if (handleNaturalBunker()) {
@@ -88,9 +84,7 @@ public class TerranBunker extends AntiLandBuildingManager {
 //    }
 
     private boolean handleNaturalBunker() {
-        if (Count.bases() < 2) {
-            return false;
-        }
+        if (Count.bases() < 2) return false;
 
         AChoke naturalChoke = Chokes.natural();
         AUnit naturalBase = Select.ourBases().second();
@@ -104,14 +98,10 @@ public class TerranBunker extends AntiLandBuildingManager {
     }
 
     private boolean handleMissionContain() {
-        if (!Missions.isGlobalMissionContain()) {
-            return false;
-        }
+        if (!Missions.isGlobalMissionContain()) return false;
 
         APosition focusPoint = Missions.globalMission().focusPoint();
-        if (focusPoint == null) {
-            return false;
-        }
+        if (focusPoint == null) return false;
 
         return reinforcePosition(focusPoint, true);
     }

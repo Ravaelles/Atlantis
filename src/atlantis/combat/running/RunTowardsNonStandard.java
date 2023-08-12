@@ -40,60 +40,38 @@ public class RunTowardsNonStandard {
      * Running behavior which will make unit run toward main base.
      */
     protected boolean shouldRunTowardsBase() {
-        if (ARunningManager.unit.isFlying()) {
-            return false;
-        }
+        if (ARunningManager.unit.isFlying()) return false;
 
         AUnit main = Select.main();
 
-        if (main == null) {
-            return false;
-        }
+        if (main == null) return false;
 
-        if (OurStrategy.get().isRushOrCheese() && A.seconds() <= 300) {
-            return false;
-        }
+        if (OurStrategy.get().isRushOrCheese() && A.seconds() <= 300) return false;
 
-        if (!ARunningManager.unit.hasPathTo(main)) {
-            return false;
-        }
+        if (!ARunningManager.unit.hasPathTo(main)) return false;
 
         double distToMain = ARunningManager.unit.distTo(main);
 
-        if (main == null) {
-            return false;
-        }
+        if (main == null) return false;
 
         int meleeEnemiesNearCount = ARunningManager.unit.meleeEnemiesNearCount(4);
-        if (distToMain >= 40 || (distToMain > 15 && meleeEnemiesNearCount == 0 && ARunningManager.unit.isMissionDefend())) {
+        if (distToMain >= 40 || (distToMain > 15 && meleeEnemiesNearCount == 0 && ARunningManager.unit.isMissionDefend()))
             return true;
-        }
 
-        if (A.seconds() >= 380) {
-            return false;
-        }
+        if (A.seconds() >= 380) return false;
 
-        if (ARunningManager.unit.isScout()) {
-            return false;
-        }
+        if (ARunningManager.unit.isScout()) return false;
 
         // If already close to the base, don't run towards it, no point
-        if (distToMain < 50) {
-            return false;
-        }
+        if (distToMain < 50) return false;
 
-        if (meleeEnemiesNearCount >= 1) {
-            return false;
-        }
+        if (meleeEnemiesNearCount >= 1) return false;
 
         // Only run towards our main if our army isn't too numerous, otherwise units gonna bump upon each other
-        if (Count.ourCombatUnits() > 10) {
-            return false;
-        }
+        if (Count.ourCombatUnits() > 10) return false;
 
-        if (ARunningManager.unit.lastStartedRunningLessThanAgo(30) && ARunningManager.unit.lastStoppedRunningLessThanAgo(30)) {
+        if (ARunningManager.unit.lastStartedRunningLessThanAgo(30) && ARunningManager.unit.lastStoppedRunningLessThanAgo(30))
             return false;
-        }
 
         if (Count.ourCombatUnits() <= 10 || ARunningManager.unit.isNearEnemyBuilding()) {
             if (ARunningManager.unit.meleeEnemiesNearCount(3) == 0) {

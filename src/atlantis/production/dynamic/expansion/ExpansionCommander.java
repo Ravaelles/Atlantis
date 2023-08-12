@@ -45,9 +45,7 @@ public class ExpansionCommander extends Commander {
 //        if (A.supplyTotal() <= 100) return false;
 
         // Zerg
-        if (We.zerg() && ZergExpansionCommander.handleNoZergLarvas()) {
-            return true;
-        }
+        if (We.zerg() && ZergExpansionCommander.handleNoZergLarvas()) return true;
 
         // =========================================================
 
@@ -59,20 +57,14 @@ public class ExpansionCommander extends Commander {
                     || EnemyUnits.count(Protoss_Zealot) >= 5
                     || !Have.factory()
             )
-        ) {
-            return false;
-        }
+        ) return false;
 
         int bases = Count.bases();
         int basesInProduction = Count.inProductionOrInQueue(AtlantisConfig.BASE);
 
-        if (bases >= 5 || basesInProduction >= 1) {
-            return false;
-        }
+        if (bases >= 5 || basesInProduction >= 1) return false;
 
-        if (Count.inQueue(AtlantisConfig.BASE, 6) > 0) {
-            return false;
-        }
+        if (Count.inQueue(AtlantisConfig.BASE, 6) > 0) return false;
 
 //        if (ProductionQueue.size() >= 3) {
 //            return false;
@@ -106,29 +98,21 @@ public class ExpansionCommander extends Commander {
 
         // =========================================================
 
-        if (bases >= 3 && Count.workers() <= 17 * (bases + basesInProduction)) {
-            return false;
-        }
+        if (bases >= 3 && Count.workers() <= 17 * (bases + basesInProduction)) return false;
 
         boolean hasPlentyOfMinerals = AGame.hasMinerals(580);
         int minMinerals = 100 + (AGame.isPlayingAsZerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AGame.canAffordWithReserved(minMinerals, 0)) {
-            return false;
-        }
+        if (!AGame.canAffordWithReserved(minMinerals, 0)) return false;
 
         // === False again ===========================================
 
         // If we have plenty of minerals, then every new base is only a hazard
-        if (!AGame.canAffordWithReserved(minMinerals, 1200)) {
-            return false;
-        }
+        if (!AGame.canAffordWithReserved(minMinerals, 1200)) return false;
 
         int inConstruction = ProductionQueue.countInQueue(AtlantisConfig.BASE, 8);
-        if (inConstruction >= 1) {
-            return false;
-        }
+        if (inConstruction >= 1) return false;
 
         // === Force decent army before 3rd base =========================================
 
@@ -141,9 +125,7 @@ public class ExpansionCommander extends Commander {
 
         // === Check if we have almost as many bases as base locations; if so, exit ======
 
-        if (bases >= Bases.baseLocations().size() - 2) {
-            return false;
-        }
+        if (bases >= Bases.baseLocations().size() - 2) return false;
 
         int numberOfUnfinishedBases = ConstructionRequests.countNotFinishedOfType(AtlantisConfig.BASE);
 

@@ -293,9 +293,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Unit will move by given distance (in build tiles) from given position.
      */
     public boolean moveAwayFrom(HasPosition position, double moveDistance, String tooltip, Action action) {
-        if (position == null || moveDistance < 0.01) {
-            return false;
-        }
+        if (position == null || moveDistance < 0.01) return false;
 
         int dx = position.x() - x();
         int dy = position.y() - y();
@@ -641,12 +639,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * have to specify at least one <b>true</b> to the params.
      */
     public boolean isMilitaryBuilding(boolean canShootGround, boolean canShootAir) {
-        if (!isABuilding()) {
-            return false;
-        }
-        if (canShootGround && _isMilitaryBuildingAntiGround) {
-            return true;
-        }
+        if (!isABuilding()) return false;
+        if (canShootGround && _isMilitaryBuildingAntiGround) return true;
         else return canShootAir && _isMilitaryBuildingAntiAir;
     }
 
@@ -763,28 +757,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         boolean includeCooldown,
         double extraMargin
     ) {
-        if (hasNoWeaponAtAll()) {
-            return false;
-        }
+        if (hasNoWeaponAtAll()) return false;
 
-        if (target.isFoggedUnitWithUnknownPosition()) {
-            return false;
-        }
+        if (target.isFoggedUnitWithUnknownPosition()) return false;
 
         // Target CLOAKED
-        if (checkVisibility && target.effUndetected()) {
-            return false;
-        }
+        if (checkVisibility && target.effUndetected()) return false;
 
         // Target is GROUND unit
-        if (target.isGroundUnit() && (!canAttackGroundUnits() || (includeCooldown && cooldownRemaining() >= 4))) {
+        if (target.isGroundUnit() && (!canAttackGroundUnits() || (includeCooldown && cooldownRemaining() >= 4)))
             return false;
-        }
 
         // Target is AIR unit
-        if (target.isAir() && (!canAttackAirUnits() || (includeCooldown && cooldownRemaining() >= 4))) {
-            return false;
-        }
+        if (target.isAir() && (!canAttackAirUnits() || (includeCooldown && cooldownRemaining() >= 4))) return false;
 
         // Shooting RANGE
         if (checkShootingRange && !hasWeaponRangeToAttack(target, extraMargin)) {
@@ -792,13 +777,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return false;
         }
 
-        if (isRanged() && target.isUnderDarkSwarm()) {
-            return false;
-        }
+        if (isRanged() && target.isUnderDarkSwarm()) return false;
 
-        if (isABuilding() && isProtoss() && !isPowered()) {
-            return false;
-        }
+        if (isABuilding() && isProtoss() && !isPowered()) return false;
 
         return true;
     }
@@ -828,14 +809,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return distToLessThan(targetUnit, 7);
         }
 
-        if (!targetUnit.isDetected() || targetUnit.position() == null) {
-            return false;
-        }
+        if (!targetUnit.isDetected() || targetUnit.position() == null) return false;
 
         WeaponType weaponAgainstThisUnit = weaponAgainst(targetUnit);
-        if (weaponAgainstThisUnit == WeaponType.None) {
-            return false;
-        }
+        if (weaponAgainstThisUnit == WeaponType.None) return false;
 
         double dist = this.distTo(targetUnit);
 //        System.out.println("ThisUnit = " + this);
@@ -875,17 +852,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean distToLessThan(AUnit target, double maxDist) {
-        if (target == null) {
-            return false;
-        }
+        if (target == null) return false;
 
         return distTo(target) <= maxDist;
     }
 
     public boolean distToMoreThan(AUnit target, double minDist) {
-        if (target == null) {
-            return false;
-        }
+        if (target == null) return false;
 
         return distTo(target) >= minDist;
     }
@@ -1059,9 +1032,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to the enemy.
      */
     public boolean isEnemy() {
-        if (u == null) {
-            return true;
-        }
+        if (u == null) return true;
 
         return AGame.getPlayerUs().isEnemy(player());
     }
@@ -1070,9 +1041,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if this unit belongs to us.
      */
     public boolean isOur() {
-        if (u == null || player() == null) {
-            return false;
-        }
+        if (u == null || player() == null) return false;
 
         return player().equals(AGame.getPlayerUs());
     }
@@ -1275,9 +1244,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isBurrowed() {
-        if (u == null) {
-            return true;
-        }
+        if (u == null) return true;
 
         return u.isBurrowed();
     }
@@ -1334,9 +1301,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         // In-game solutions sucks ass badly
 //        return u.isUnderAttack();
 
-        if (_lastHitPoints.size() < inLastFrames) {
-            return false;
-        }
+        if (_lastHitPoints.size() < inLastFrames) return false;
 
         return hp() < _lastHitPoints.get(inLastFrames - 1);
     }
@@ -1451,9 +1416,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true for flying Terran building.
      */
     public boolean isLifted() {
-        if (u == null) {
-            return false;
-        }
+        if (u == null) return false;
         return u.isLifted();
     }
 
@@ -1461,30 +1424,22 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if unit is inside bunker or dropship/shuttle.
      */
     public boolean isLoaded() {
-        if (u == null) {
-            return false;
-        }
+        if (u == null) return false;
         return u.isLoaded();
     }
 
     public boolean isUnderDisruptionWeb() {
-        if (u == null) {
-            return false;
-        }
+        if (u == null) return false;
         return u.isUnderDisruptionWeb();
     }
 
     public boolean isUnderDarkSwarm() {
-        if (u == null) {
-            return false;
-        }
+        if (u == null) return false;
         return u.isUnderDarkSwarm();
     }
 
     public boolean isUnderStorm() {
-        if (u == null) {
-            return false;
-        }
+        if (u == null) return false;
         return u.isUnderStorm();
     }
 
@@ -1633,9 +1588,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean lastActionLessThanAgo(int framesAgo, Action unitAction) {
-        if (unitAction == null) {
-            return false;
-        }
+        if (unitAction == null) return false;
 
         return lastActionAgo(unitAction) <= framesAgo;
     }
@@ -1829,9 +1782,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isOtherUnitFacingThisUnit(AUnit otherUnit) {
-        if (otherUnit.hasNoU()) {
-            return false;
-        }
+        if (otherUnit.hasNoU()) return false;
 
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector otherUnitLookingVector = Vectors.vectorFromAngle(otherUnit.getAngle(), positionDifference.length());
@@ -1846,9 +1797,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isFacing(AUnit otherUnit) {
-        if (otherUnit.hasNoU()) {
-            return false;
-        }
+        if (otherUnit.hasNoU()) return false;
 
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector thisUnitLookingVector = Vectors.vectorFromAngle(this.getAngle(), positionDifference.length());
@@ -2053,9 +2002,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean recentlyAcquiredTargetToAttack() {
-        if (target() == null) {
-            return false;
-        }
+        if (target() == null) return false;
 
         int targetAcquiredAgo = lastTargetToAttackAcquiredAgo();
 
@@ -2082,9 +2029,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isSquadScout() {
-        if (squad() == null || A.isUms() || Count.ourCombatUnits() <= 7) {
-            return false;
-        }
+        if (squad() == null || A.isUms() || Count.ourCombatUnits() <= 7) return false;
 
         return equals(squad().squadScout()) && Missions.CONTAIN.equals(squadMission());
     }
@@ -2481,17 +2426,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean shieldDamageAtMost(int maxDamage) {
-        if (!We.protoss()) {
-            return false;
-        }
+        if (!We.protoss()) return false;
 
         return shields() + maxDamage >= maxShields();
     }
 
     public boolean shieldDamageAtLeast(int minDamage) {
-        if (!We.protoss()) {
-            return false;
-        }
+        if (!We.protoss()) return false;
 
         return shields() + minDamage <= maxShields();
     }
@@ -2548,37 +2489,27 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isMissionSparta() {
-        if (mission() == null) {
-            return false;
-        }
+        if (mission() == null) return false;
         return mission().equals(Missions.SPARTA);
     }
 
     public boolean isMissionDefend() {
-        if (mission() == null) {
-            return false;
-        }
+        if (mission() == null) return false;
         return mission().equals(Missions.DEFEND);
     }
 
     public boolean isMissionDefendOrSparta() {
-        if (mission() == null) {
-            return false;
-        }
+        if (mission() == null) return false;
         return isMissionDefend() || isMissionSparta();
     }
 
     public boolean isMissionAttack() {
-        if (mission() == null) {
-            return false;
-        }
+        if (mission() == null) return false;
         return mission().isMissionAttack();
     }
 
     public boolean isMissionContain() {
-        if (mission() == null) {
-            return false;
-        }
+        if (mission() == null) return false;
         return mission().isMissionContain();
     }
 

@@ -16,7 +16,7 @@ public class MissionDefendManager extends MissionManager {
 
     @Override
     protected Class<? extends Manager>[] managers() {
-        return new Class[] {
+        return new Class[]{
             MakeSpaceForNearbyWorkers.class,
             AllowTimeToReposition.class,
             AdvanceToDefendFocusPoint.class,
@@ -30,11 +30,9 @@ public class MissionDefendManager extends MissionManager {
 //        return allowsToAttack.allowsToAttackEnemyUnit(unit, enemy);
 //    }
 
-//    @Override
+    //    @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
-        if (We.terran()) {
-            return false;
-        }
+        if (We.terran()) return false;
 
         if (
             unit.isMelee()
@@ -51,9 +49,8 @@ public class MissionDefendManager extends MissionManager {
             return true;
         }
 
-        if (unit.hpLessThan(36) && unit.friendsNearCount() <= 2 && unit.lastAttackFrameMoreThanAgo(30 * 4)) {
+        if (unit.hpLessThan(36) && unit.friendsNearCount() <= 2 && unit.lastAttackFrameMoreThanAgo(30 * 4))
             return false;
-        }
 
         if (unit.isHydralisk()) {
             if (unit.woundPercentMin(60) || unit.meleeEnemiesNearCount(2) >= 2) {
@@ -66,13 +63,9 @@ public class MissionDefendManager extends MissionManager {
                 && enemies.onlyMelee() && unit.hp() >= 40
                 && unit.lastAttackFrameMoreThanAgo(30 * 4)
                 && unit.nearestEnemyDist() >= 2.8
-        ) {
-            return true;
-        }
+        ) return true;
 
-        if (unit.isRanged() && (unit.isHealthy() || unit.shieldDamageAtMost(10))) {
-            return true;
-        }
+        if (unit.isRanged() && (unit.isHealthy() || unit.shieldDamageAtMost(10))) return true;
 
 //        if (unit.isMelee() && unit.friendsNear().inRadius(1.3, unit).atLeast(3)) {
 //            return true;

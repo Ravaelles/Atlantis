@@ -37,9 +37,7 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
         if (choke != null) {
             positionForBunker = choke.translateTilesTowards(initialPositionToReinforce, 5);
         }
-        if (positionForBunker == null) {
-            return false;
-        }
+        if (positionForBunker == null) return false;
 
         Selection bunkersWithUnfinished = Select.ourWithUnfinishedOfType(Terran_Bunker);
 
@@ -55,9 +53,7 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
                 return false;
             }
         }
-        if (ConstructionRequests.hasNotStartedNear(Terran_Bunker, positionForBunker, searchRadius)) {
-            return false;
-        }
+        if (ConstructionRequests.hasNotStartedNear(Terran_Bunker, positionForBunker, searchRadius)) return false;
 
 //        System.out.println(
 //            "Existing = " + bunkersWithUnfinished.count()

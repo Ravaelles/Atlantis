@@ -24,9 +24,7 @@ public class UnitAttackWaitFrames {
 //                && unit.lastFrameOfStartingAttackAgo() < (unit.cooldownAbsolute() / 3)
 //                && (unit.lastFrameOfStartingAttackAgo() + stopFrames(unit.type())) > A.now();
 
-        if (unit.lastFrameOfStartingAttackAgo() >= effectiveStopFrames(unit.type())) {
-            return true;
-        }
+        if (unit.lastFrameOfStartingAttackAgo() >= effectiveStopFrames(unit.type())) return true;
 
         return unit.cooldownRemaining() > 0 && unit.isAttackingOrMovingToAttack();
     }

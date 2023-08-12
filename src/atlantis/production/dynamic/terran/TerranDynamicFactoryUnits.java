@@ -44,9 +44,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
     }
 
     private static boolean goliaths(AUnit factory) {
-        if (!Have.armory()) {
-            return false;
-        }
+        if (!Have.armory()) return false;
 
         if (EnemyStrategy.get().isAirUnits() && Count.withPlanned(AUnitType.Terran_Goliath) <= 20) {
             if (AGame.canAffordWithReserved(150, 100)) {

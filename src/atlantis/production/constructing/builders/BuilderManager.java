@@ -27,13 +27,9 @@ public class BuilderManager extends Manager {
     private boolean update() {
 
         // Don't disturb unit that are already constructing
-        if (unit.isConstructing() || unit.isMorphing()) {
-            return true;
-        }
+        if (unit.isConstructing() || unit.isMorphing()) return true;
 
-        if (handleConstruction()) {
-            return true;
-        }
+        if (handleConstruction()) return true;
 
         return false;
     }
@@ -68,9 +64,7 @@ public class BuilderManager extends Manager {
      */
     public static boolean isBuilder(AUnit worker) {
         if (worker.isConstructing() ||
-            (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)) {
-            return true;
-        }
+            (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)) return true;
 
         for (Construction construction : ConstructionRequests.constructions) {
             if (worker.equals(construction.builder())) {

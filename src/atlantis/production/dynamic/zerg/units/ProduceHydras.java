@@ -8,15 +8,11 @@ import atlantis.units.select.Have;
 
 public class ProduceHydras {
     public static boolean hydras() {
-        if (!Have.a(AUnitType.Zerg_Hydralisk_Den)) {
-            return false;
-        }
+        if (!Have.a(AUnitType.Zerg_Hydralisk_Den)) return false;
 
         int hydras = Count.hydralisks();
 
-        if (Count.larvas() == 0) {
-            return false;
-        }
+        if (Count.larvas() == 0) return false;
 
         if (hydras <= 2 || AGame.canAffordWithReserved(50, 0)) {
             AddToQueue.withStandardPriority(AUnitType.Zerg_Hydralisk);

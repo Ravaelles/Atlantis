@@ -10,14 +10,10 @@ import bwapi.UpgradeType;
 
 public class DynamicTech {
     public static boolean handleResearch(TechType tech) {
-        if (ATech.isResearched(tech)) {
-            return false;
-        }
+        if (ATech.isResearched(tech)) return false;
 
 //        if (!canAffordWithMargin(tech)) {
-        if (!AGame.canAfford(tech)) {
-            return false;
-        }
+        if (!AGame.canAfford(tech)) return false;
 
         AUnit building = Select.ourOfType(AUnitType.from(tech.whatResearches())).free().first();
         if (building != null) {
@@ -29,14 +25,10 @@ public class DynamicTech {
     }
 
     public static boolean handleUpgrade(UpgradeType upgrade) {
-        if (ATech.isResearched(upgrade)) {
-            return false;
-        }
+        if (ATech.isResearched(upgrade)) return false;
 
 //        if (!canAffordWithMargin(upgrade)) {
-        if (!canAfford(upgrade)) {
-            return false;
-        }
+        if (!canAfford(upgrade)) return false;
 
         AUnit building = Select.ourOfType(AUnitType.from(upgrade.whatUpgrades())).free().first();
         if (building != null) {

@@ -8,9 +8,7 @@ import atlantis.units.AUnitType;
 
 public class TooCloseToChoke {
     public static boolean isTooCloseToChoke(AUnitType building, APosition position) {
-        if (building.isBase() || building.isCombatBuilding()) {
-            return false;
-        }
+        if (building.isBase() || building.isCombatBuilding()) return false;
 
         for (AChoke choke : Chokes.chokes()) {
             if (choke.width() >= 5) {

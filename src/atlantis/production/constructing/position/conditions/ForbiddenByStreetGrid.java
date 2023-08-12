@@ -14,14 +14,10 @@ public class ForbiddenByStreetGrid {
      * Returns true if game says it's possible to build given building at this position.
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
-        if (We.protoss() && A.supplyTotal() <= 10) {
-            return false;
-        }
+        if (We.protoss() && A.supplyTotal() <= 10) return false;
 
         // Special buildings can be build anywhere
-        if (building.isBase() || building.isGasBuilding() || building.isCombatBuilding()) {
-            return false;
-        }
+        if (building.isBase() || building.isGasBuilding() || building.isCombatBuilding()) return false;
 
         // =========================================================
 

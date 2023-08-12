@@ -30,9 +30,7 @@ public class ProtectorManager extends Manager {
     }
 
     private boolean act() {
-        if (unit.isRepairing()) {
-            return true;
-        }
+        if (unit.isRepairing()) return true;
 
         target = RepairAssignments.getUnitToProtectFor(unit);
 //        System.out.println("protecting: " + target + "; "  + unit + " (" + unit.action() + ")");

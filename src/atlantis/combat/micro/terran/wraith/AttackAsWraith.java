@@ -46,13 +46,9 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     }
 
     private boolean shouldStopMovingToAttack(AUnit target) {
-        if (unit.enemiesNear().buildings().canAttack(unit, 3.5).notEmpty()) {
-            return true;
-        }
+        if (unit.enemiesNear().buildings().canAttack(unit, 3.5).notEmpty()) return true;
 
-        if (unit.distTo(target) <= 4.9) {
-            return true;
-        }
+        if (unit.distTo(target) <= 4.9) return true;
 
         return false;
     }

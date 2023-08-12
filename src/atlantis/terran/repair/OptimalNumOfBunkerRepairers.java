@@ -84,17 +84,13 @@ public class OptimalNumOfBunkerRepairers {
 
     private static boolean thereIsAnotherBunkerNearbyThatIsInBiggerDanger(AUnit bunker) {
         AUnit otherBunker = Select.ourOfType(AUnitType.Terran_Bunker).inRadius(12, bunker).nearestTo(bunker);
-        if (otherBunker == null) {
-            return false;
-        }
+        if (otherBunker == null) return false;
 
         int radius = 9;
 
         int thisBunkerEnemies = bunker.enemiesNearInRadius(radius);
         int otherBunkerEnemies = otherBunker.enemiesNearInRadius(radius);
-        if (otherBunkerEnemies >= 2 && thisBunkerEnemies < otherBunkerEnemies) {
-            return true;
-        }
+        if (otherBunkerEnemies >= 2 && thisBunkerEnemies < otherBunkerEnemies) return true;
 
         return false;
     }

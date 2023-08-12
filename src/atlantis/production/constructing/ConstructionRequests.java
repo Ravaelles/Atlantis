@@ -50,9 +50,7 @@ public class ConstructionRequests {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
 
-        if (SpecificConstructionRequests.handledAsSpecialBuilding(building, order)) {
-            return true;
-        }
+        if (SpecificConstructionRequests.handledAsSpecialBuilding(building, order)) return true;
 
         if (!Requirements.hasRequirements(building)) {
             return handleRequirementsNotFullfilledFor(building);
@@ -129,9 +127,7 @@ public class ConstructionRequests {
     }
 
     private static boolean handleRequirementsNotFullfilledFor(AUnitType building) {
-        if (We.protoss() && AGame.supplyTotal() <= 10) {
-            return false;
-        }
+        if (We.protoss() && AGame.supplyTotal() <= 10) return false;
 
         AUnitType requiredBuilding = building.whatIsRequired();
 

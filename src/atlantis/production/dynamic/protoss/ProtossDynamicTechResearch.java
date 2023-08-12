@@ -14,13 +14,9 @@ import static bwapi.UpgradeType.Singularity_Charge;
 public class ProtossDynamicTechResearch extends Commander {
 
     public static boolean update() {
-        if (A.notNthGameFrame(71)) {
-            return false;
-        }
+        if (A.notNthGameFrame(71)) return false;
 
-        if (singularityCharge()) {
-            return true;
-        }
+        if (singularityCharge()) return true;
 
         if (Count.zealots() >= 10) {
             return DynamicTech.handleUpgrade(UpgradeType.Leg_Enhancements);

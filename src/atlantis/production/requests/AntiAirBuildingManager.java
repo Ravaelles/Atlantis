@@ -26,9 +26,7 @@ public abstract class AntiAirBuildingManager extends DynamicBuildingManager {
     }
 
     public boolean handleBuildNew() {
-        if (We.terran()) {
-            return false;
-        }
+        if (We.terran()) return false;
 
         if (shouldBuildNew()) {
 //            System.err.println("ENQUEUE NEW Spore Colony");
@@ -56,7 +54,7 @@ public abstract class AntiAirBuildingManager extends DynamicBuildingManager {
         if (at == null) {
             for (AUnit base : Select.ourBases().list()) {
                 int numberOfAntiAirBuildingsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
-                        buildType, 8, base.position()
+                    buildType, 8, base.position()
                 );
 
                 for (int i = 0; i < expected() - numberOfAntiAirBuildingsNearBase; i++) {

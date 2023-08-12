@@ -22,13 +22,9 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
      * Tell other units that might be blocking our escape route to move.
      */
     public boolean notifyNearUnits() {
-        if (We.protoss() && unit.friendsNear().inRadius(0.3, unit).atMost(1)) {
-            return false;
-        }
+        if (We.protoss() && unit.friendsNear().inRadius(0.3, unit).atMost(1)) return false;
 
-        if (unit.isFlying() || unit.isLoaded()) {
-            return false;
-        }
+        if (unit.isFlying() || unit.isLoaded()) return false;
 
 //        if (unit.enemiesNear().melee().inRadius(4, unit).empty()) {
 //            return false;
@@ -39,9 +35,7 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
             .exclude(unit)
             .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
 
-        if (friendsTooClose.count() <= 1) {
-            return false;
-        }
+        if (friendsTooClose.count() <= 1) return false;
 
         for (AUnit otherUnit : friendsTooClose.list()) {
             if (canBeNotifiedToMakeSpace(otherUnit)) {

@@ -92,14 +92,10 @@ public class ProtectorCommander extends Commander {
     protected static boolean assignUnitsProtectorsIfNeeded() {
         int maxProtectors = maxProtectors();
         int totalProtectors = RepairAssignments.countTotalProtectors();
-        if (totalProtectors >= maxProtectors) {
-            return false;
-        }
+        if (totalProtectors >= maxProtectors) return false;
 
         List<AUnit> tanks = Select.ourTanks().list();
-        if (tanks.isEmpty()) {
-            return false;
-        }
+        if (tanks.isEmpty()) return false;
 
         for (int i = 0; i < maxProtectors - totalProtectors; i++) {
             addProtectorsForUnit(tanks.get(i % tanks.size()), 1);

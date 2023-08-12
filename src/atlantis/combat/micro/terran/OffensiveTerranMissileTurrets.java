@@ -12,13 +12,9 @@ import atlantis.units.select.Have;
 public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMain {
 
     public boolean buildIfNeeded() {
-        if (!Have.engBay()) {
-            return false;
-        }
+        if (!Have.engBay()) return false;
 
-        if (handleReinforceMissionContain()) {
-            return true;
-        }
+        if (handleReinforceMissionContain()) return true;
 
         return false;
     }
@@ -36,13 +32,9 @@ public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMai
 
     protected boolean handleReinforceMissionContain() {
         APosition focusPoint = Missions.globalMission().focusPoint();
-        if (focusPoint == null || !Have.main()) {
-            return false;
-        }
+        if (focusPoint == null || !Have.main()) return false;
 
-        if (Alpha.count() <= 12) {
-            return false;
-        }
+        if (Alpha.count() <= 12) return false;
 
         return handleReinforcePosition(containReinforcePoint(focusPoint), 9);
     }

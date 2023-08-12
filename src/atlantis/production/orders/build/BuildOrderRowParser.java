@@ -194,9 +194,7 @@ public class BuildOrderRowParser {
         if (row.length >= 1) {
             return row[0].charAt(0) == '#';
         }
-        else {
-            return false;
-        }
+        else return false;
     }
 
     /**
@@ -230,7 +228,7 @@ public class BuildOrderRowParser {
         }
 
         return row.length == 0 || row[0].isEmpty() || row[0].equals("")
-                || row[0].equals("Number") || row[0].equals("@") || row[0].equals("Order") || row[0].equals(";");
+            || row[0].equals("Number") || row[0].equals("@") || row[0].equals("Order") || row[0].equals(";");
     }
 
     /**
@@ -246,11 +244,14 @@ public class BuildOrderRowParser {
         String settingKey;
         if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MIN_SUPPLY")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
-        } else if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
+        }
+        else if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
-        } else if (commandLine.startsWith(settingKey = "#SCOUT_IS_NTH_WORKER")) {
+        }
+        else if (commandLine.startsWith(settingKey = "#SCOUT_IS_NTH_WORKER")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
-        } else if (commandLine.startsWith(settingKey = "#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
+        }
+        else if (commandLine.startsWith(settingKey = "#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
         }
 //        else if (commandLine.contains("MISSION - ")) {

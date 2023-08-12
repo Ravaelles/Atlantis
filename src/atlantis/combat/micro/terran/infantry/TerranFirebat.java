@@ -51,23 +51,17 @@ public class TerranFirebat extends Manager {
     }
 
     protected boolean shouldContinueMeleeFighting() {
-        if (unit.hp() >= 40) {
-            return true;
-        }
+        if (unit.hp() >= 40) return true;
 
         int minHp = Enemy.protoss() ? 37 : 28;
-        if (unit.hp() <= minHp || unit.cooldown() >= 3) {
-            return false;
-        }
+        if (unit.hp() <= minHp || unit.cooldown() >= 3) return false;
 
         int medics = Select.ourOfType(AUnitType.Terran_Medic)
             .havingEnergy(30)
             .inRadius(1.85, unit)
             .count();
 
-        if (medics >= 1) {
-            return true;
-        }
+        if (medics >= 1) return true;
 
         int enemies = Select.enemyCombatUnits().canAttack(unit, 0).count();
         int enemyModifier = Enemy.zerg() ? 25 : 40;

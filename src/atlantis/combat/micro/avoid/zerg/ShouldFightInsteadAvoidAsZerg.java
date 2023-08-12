@@ -27,9 +27,7 @@ public class ShouldFightInsteadAvoidAsZerg {
     }
 
     private static boolean protectOurSunken(AUnit unit) {
-        if (unit.hasCooldown()) {
-            return false;
-        }
+        if (unit.hasCooldown()) return false;
 
         AUnit ourSunken = unit.friendsNear().sunkens().nearestTo(unit);
         if (ourSunken != null && ourSunken.meleeEnemiesNearCount() >= 2) {
@@ -41,9 +39,7 @@ public class ShouldFightInsteadAvoidAsZerg {
     }
 
     private static boolean asHydra(AUnit unit) {
-        if (!unit.isHydralisk() || unit.hasCooldown()) {
-            return false;
-        }
+        if (!unit.isHydralisk() || unit.hasCooldown()) return false;
 
         if (unit.isHealthy()) {
             unit.setTooltip("Keke");
@@ -59,9 +55,7 @@ public class ShouldFightInsteadAvoidAsZerg {
     }
 
     private static boolean asZergling(AUnit unit) {
-        if (!unit.isZergling()) {
-            return false;
-        }
+        if (!unit.isZergling()) return false;
 
         int meleeEnemiesVeryNear = unit.meleeEnemiesNearCount(1.2);
 

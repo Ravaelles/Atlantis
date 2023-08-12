@@ -30,9 +30,7 @@ public class DontGoTooFarFromBunkers extends Manager {
     public boolean shouldNotLeaveBunker() {
         AUnit bunker = Select.our().bunkers().nearestTo(unit);
 
-        if (bunker == null) {
-            return false;
-        }
+        if (bunker == null) return false;
 
 
         if (unit.distTo(bunker) >= 15) {

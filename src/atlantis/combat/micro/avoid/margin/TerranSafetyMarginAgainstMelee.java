@@ -33,7 +33,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
             criticalDist += SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC
 //                    + ourMovementBonus(defender)
 //                    + enemyMovementBonus(attacker)
-                    + woundedAgainstMeleeBonus(attacker);
+                + woundedAgainstMeleeBonus(attacker);
 
             defender.setTooltipTactical("HasMedic");
         }
@@ -42,12 +42,12 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
         else {
             criticalDist += SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC
-                    + ourMovementBonus(defender)
-                    + (1.2 * enemyMovementBonus(attacker))
+                + ourMovementBonus(defender)
+                + (1.2 * enemyMovementBonus(attacker))
 //                    + SafetyMargin.enemyMovementBonus(attacker)
 //                    + (defender.hasCooldown() ? enemyMovementBonus(attacker) : 0)
-                    + workerBonus(attacker)
-                    + Math.min(1.2, woundedAgainstMeleeBonus(attacker));
+                + workerBonus(attacker)
+                + Math.min(1.2, woundedAgainstMeleeBonus(attacker));
 
 //            criticalDist = Math.min(criticalDist, defender.isWounded() ? 2.9 : 2.8);
 
@@ -79,7 +79,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         return criticalDist;
     }
 
-    private  double cooldownBonus(AUnit defender) {
+    private double cooldownBonus(AUnit defender) {
         int cooldown = defender.cooldown();
         if (cooldown >= 4) {
             return cooldown / 6.0;
@@ -92,19 +92,13 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         return defender.isMoving() ? -0.2 : +0.3;
     }
 
-    private  boolean canIgnoreThisEnemyForNow(AUnit attacker) {
-        if (attacker.isRanged()) {
-            return false;
-        }
+    private boolean canIgnoreThisEnemyForNow(AUnit attacker) {
+        if (attacker.isRanged()) return false;
 
         double distTo = defender.distTo(attacker);
-        if (distTo >= 4) {
-            return true;
-        }
+        if (distTo >= 4) return true;
 
-        if (distTo >= 2 && !defender.isOtherUnitFacingThisUnit(attacker)) {
-            return true;
-        }
+        if (distTo >= 2 && !defender.isOtherUnitFacingThisUnit(attacker)) return true;
 
         return false;
     }

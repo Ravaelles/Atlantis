@@ -15,9 +15,7 @@ import atlantis.util.Enemy;
 
 public class ProduceMedicsAndFirebats {
     public static boolean medics() {
-        if (Count.ofType(AUnitType.Terran_Academy) == 0) {
-            return false;
-        }
+        if (Count.ofType(AUnitType.Terran_Academy) == 0) return false;
 
         int medics = Count.medics();
         if (!Decisions.shouldMakeTerranBio()) {
@@ -38,13 +36,9 @@ public class ProduceMedicsAndFirebats {
             return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 4);
         }
 
-        if (TerranDynamicInfantry.needToSaveForFactory()) {
-            return false;
-        }
+        if (TerranDynamicInfantry.needToSaveForFactory()) return false;
 
-        if (!AGame.canAffordWithReserved(60, 30)) {
-            return false;
-        }
+        if (!AGame.canAffordWithReserved(60, 30)) return false;
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty()) {

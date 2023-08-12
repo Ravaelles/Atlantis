@@ -36,9 +36,7 @@ public class UnsiegeToReposition extends Manager {
     }
 
     private boolean allowUnsiegingToReposition() {
-        if (unit.cooldownRemaining() == 0 && (A.now() % (1 + unit.id()) <= 1)) {
-            return true;
-        }
+        if (unit.cooldownRemaining() == 0 && (A.now() % (1 + unit.id()) <= 1)) return true;
 
         return false;
     }

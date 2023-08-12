@@ -7,7 +7,7 @@ import atlantis.units.select.Count;
 
 public class ZergExpansionCommander extends Commander {
 
-//    private static Cache<Integer> cacheInt = new Cache<>();
+    //    private static Cache<Integer> cacheInt = new Cache<>();
     private static int _lastExpandedAt = -1;
 
     // =========================================================
@@ -19,9 +19,7 @@ public class ZergExpansionCommander extends Commander {
             }
         }
 
-        if (lastExpandedLessThanSecondsAgo(10)) {
-            return false;
-        }
+        if (lastExpandedLessThanSecondsAgo(10)) return false;
 
 //        A.seconds() >= 200 &&
         if (AGame.canAffordWithReserved(265, 0)) {

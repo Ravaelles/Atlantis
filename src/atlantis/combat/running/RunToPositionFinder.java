@@ -63,9 +63,7 @@ public class RunToPositionFinder {
         APainter.paintLine(running.unit(), running.runTo(), Color.Brown);
         running.unit().setTooltip("ShowBack");
 
-        if (running.runTo() != null) {
-            return true;
-        }
+        if (running.runTo() != null) return true;
         return false;
     }
 
@@ -226,19 +224,13 @@ public class RunToPositionFinder {
     public boolean isPossibleAndReasonablePosition(
         AUnit unit, APosition position, boolean includeNearWalkability, String charForIsOk, String charForNotOk
     ) {
-        if (position == null) {
-            return false;
-        }
+        if (position == null) return false;
 
-        if (unit.isFlying()) {
-            return true;
-        }
+        if (unit.isFlying()) return true;
 
         position = position.makeWalkable(1);
 
-        if (position == null) {
-            return false;
-        }
+        if (position == null) return false;
 
 //        System.out.println("position.isWalkable() = " + position.isWalkable());
 //        System.out.println("unit.hasPathTo(position) = " + unit.hasPathTo(position));
@@ -246,7 +238,7 @@ public class RunToPositionFinder {
         int walkRadius = 32;
 
         boolean nearbyWalkable = unit.isFlying() || position.isCloseToMapBounds() || (
-                position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
+            position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
                 && position.translateByPixels(walkRadius, walkRadius).isWalkable()
                 && position.translateByPixels(walkRadius, -walkRadius).isWalkable()
                 && position.translateByPixels(-walkRadius, -walkRadius).isWalkable()

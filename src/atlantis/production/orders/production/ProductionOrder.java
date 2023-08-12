@@ -58,10 +58,10 @@ public class ProductionOrder {
     private boolean currentlyInProduction = false;
 
     /**
-     * Contains first column 
+     * Contains first column
      */
     private String rawFirstColumnInFile;
-    
+
     /**
      * Number of row columns of line in build orders file.
      */
@@ -88,7 +88,6 @@ public class ProductionOrder {
 //    private boolean blocking = false;
 
     // =========================================================
-
     public ProductionOrder(AUnitType unitOrBuilding, int minSupply) {
         this(unitOrBuilding, null, null, null, minSupply);
     }
@@ -123,15 +122,11 @@ public class ProductionOrder {
 
     // =========================================================
     // Override
-    
+
     @Override
     public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (!(object instanceof ProductionOrder)) {
-            return false;
-        }
+        if (object == null) return false;
+        if (!(object instanceof ProductionOrder)) return false;
         return ((ProductionOrder) object).id == id;
     }
 
@@ -162,13 +157,17 @@ public class ProductionOrder {
     public String name() {
         if (unitOrBuilding != null) {
             return unitOrBuilding.name();
-        } else if (upgrade != null) {
+        }
+        else if (upgrade != null) {
             return upgrade.toString().replace("_", " ");
-        } else if (tech != null) {
+        }
+        else if (tech != null) {
             return tech.toString().replace("_", " ");
-        } else if (mission != null) {
+        }
+        else if (mission != null) {
             return mission.toString().replace("_", " ");
-        } else {
+        }
+        else {
             return "Unknown - BUG";
         }
     }
@@ -184,9 +183,9 @@ public class ProductionOrder {
 //
 //        return clone;
 //    }
-    
+
     // === Getters =============================================
-    
+
     public int mineralPrice() {
         if (unitOrBuilding != null) {
             return unitOrBuilding.getMineralPrice();

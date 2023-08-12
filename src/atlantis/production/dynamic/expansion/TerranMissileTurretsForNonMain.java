@@ -17,13 +17,9 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
     private final int MIN_TURRETS_PER_BASE = 2;
 
     public boolean buildIfNeeded() {
-        if (!Have.engBay()) {
-            return false;
-        }
+        if (!Have.engBay()) return false;
 
-        if (Count.bases() == 1) {
-            return false;
-        }
+        if (Count.bases() == 1) return false;
 
         if (handleReinforcePosition(turretForNatural(), 7)) {
 //            System.out.println("Requested TURRET for NATURAL");
@@ -41,13 +37,9 @@ public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
     // =========================================================
 
     private boolean handleTurretForAllBases() {
-        if (!Enemy.zerg()) {
-            return false;
-        }
+        if (!Enemy.zerg()) return false;
 
-        if (exceededExistingAndInProduction()) {
-            return false;
-        }
+        if (exceededExistingAndInProduction()) return false;
 
         int maxDist = 12;
 

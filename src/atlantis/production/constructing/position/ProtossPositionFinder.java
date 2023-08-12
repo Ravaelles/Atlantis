@@ -103,37 +103,23 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // Leave entire horizontal (same tileX) and vertical (same tileY) corridors free for units to pass
         // So disallow building in e.g. 1, 5, 9, 13, 16 horizontally and 3, 7, 11, 15, 19 vertically
-        if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) {
-            return false;
-        }
+        if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
 
         // If other buildings too close
-        if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) {
-            return false;
-        }
+        if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return false;
 
         // Can't be too close to minerals or to geyser, because would slow down production
-        if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) {
-            return false;
-        }
+        if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) return false;
 
-        if (OverlappingBaseLocation.isOverlappingBaseLocation(building, position)) {
-            return false;
-        }
+        if (OverlappingBaseLocation.isOverlappingBaseLocation(building, position)) return false;
 
         // Overlapping a choke point can make it impossible to pass
-        if (TooCloseToChoke.isTooCloseToChoke(building, position)) {
-            return false;
-        }
+        if (TooCloseToChoke.isTooCloseToChoke(building, position)) return false;
 
         // Let's spread pylons a bit initially so they power more space
-        if (building.isPylon() && isTooCloseToOtherPylons(position)) {
-            return false;
-        }
+        if (building.isPylon() && isTooCloseToOtherPylons(position)) return false;
 
-        if (TooCloseToRegionBoundaries.isTooCloseToRegionBoundaries(position)) {
-            return false;
-        }
+        if (TooCloseToRegionBoundaries.isTooCloseToRegionBoundaries(position)) return false;
 
         // All conditions are fullfilled, return this position
         if (DEBUG) APainter.paintCircle(position, 5, Color.Green);

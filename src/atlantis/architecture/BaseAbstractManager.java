@@ -63,9 +63,7 @@ public abstract class BaseAbstractManager {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null) {
-            return false;
-        }
+        if (o == null) return false;
 
         return o.getClass() == this.getClass();
     }

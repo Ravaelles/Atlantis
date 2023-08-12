@@ -170,9 +170,7 @@ public class EnemyInfo {
     }
 
     public static boolean isProxyBuilding(AUnit enemyBuilding) {
-        if (A.seconds() >= 400 || !We.haveBase()) {
-            return false;
-        }
+        if (A.seconds() >= 400 || !We.haveBase()) return false;
 
         return Select.main().distToLessThan(enemyBuilding, 20);
     }

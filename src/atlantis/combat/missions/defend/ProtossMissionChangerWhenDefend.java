@@ -15,17 +15,13 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     // === CONTAIN =============================================
 
     private boolean changeFromSpartaToDefend() {
-        if (Missions.isGlobalMissionSparta() && Count.basesWithUnfinished() >= 2) {
-            return true;
-        }
+        if (Missions.isGlobalMissionSparta() && Count.basesWithUnfinished() >= 2) return true;
 
         return false;
     }
 
     public boolean canChange() {
-        if (EnemyInfo.isEnemyNearAnyOurBase()) {
-            return false;
-        }
+        if (EnemyInfo.isEnemyNearAnyOurBase()) return false;
 
 //        if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {
         if (GamePhase.isEarlyGame()) {
@@ -62,13 +58,9 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     public boolean shouldChangeMissionToContain() {
         if (!canChange()) return false;
 
-        if (ArmyStrength.ourArmyRelativeStrength() < 200) {
-            return false;
-        }
+        if (ArmyStrength.ourArmyRelativeStrength() < 200) return false;
 
-        if (EnemyInfo.isEnemyNearAnyOurBase()) {
-            return false;
-        }
+        if (EnemyInfo.isEnemyNearAnyOurBase()) return false;
 
 //        if ((GamePhase.isEarlyGame() && A.resourcesBalance() >= 300)) {
 //            if (DEBUG) reason = "resources balance is good";

@@ -13,7 +13,7 @@ public class Unfreezer {
      * Some units can get FROZEN (stuck, unable to move/shoot). It's a known Starcraft bug.
      * This is an ugly way of fixing this.
      */
-    public  boolean handleUnfreeze(AUnit unit) {
+    public boolean handleUnfreeze(AUnit unit) {
 //        if (true) return false;
 
         if (unit.isRunning() && unit.lastActionFramesAgo() >= (UPDATE_UNIT_POSITION_EVERY_FRAMES + 20)) {
@@ -41,7 +41,7 @@ public class Unfreezer {
 
     // =========================================================
 
-    public  boolean unfreeze(AUnit unit) {
+    public boolean unfreeze(AUnit unit) {
         unit.runningManager().stopRunning();
 
 //        CameraCommander.centerCameraOn();
@@ -57,22 +57,12 @@ public class Unfreezer {
 //        GameSpeed.changeSpeedTo(70);
 //        GameSpeed.pauseGame();
 
-        if (Select.main() != null && unit.moveTactical(Select.main(), Actions.MOVE_UNFREEZE, "Unfreeze")) {
-            return true;
-        }
+        if (Select.main() != null && unit.moveTactical(Select.main(), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
 
-        if (unit.moveTactical(unit.translateByPixels(8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) {
-            return true;
-        }
-        if (unit.moveTactical(unit.translateByPixels(-8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) {
-            return true;
-        }
-        if (unit.moveTactical(unit.translateByPixels(0, 8), Actions.MOVE_UNFREEZE, "Unfreeze")) {
-            return true;
-        }
-        if (unit.moveTactical(unit.translateByPixels(0, -8), Actions.MOVE_UNFREEZE, "Unfreeze")) {
-            return true;
-        }
+        if (unit.moveTactical(unit.translateByPixels(8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
+        if (unit.moveTactical(unit.translateByPixels(-8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
+        if (unit.moveTactical(unit.translateByPixels(0, 8), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
+        if (unit.moveTactical(unit.translateByPixels(0, -8), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
 //        } else {
 //            unit.holdPosition("Unfreeze");
 //            unit.stop("Unfreeze");

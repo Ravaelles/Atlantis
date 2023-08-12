@@ -21,22 +21,16 @@ public class TooFarFromSquadCenter extends MissionManager {
     }
 
     private boolean isTooFarFromSquadCenter() {
-        if (unit.squad() == null || unit.isTank()) {
-            return false;
-        }
+        if (unit.squad() == null || unit.isTank()) return false;
 
-        if (unit.isMissionAttack()) {
-            return false;
-        }
+        if (unit.isMissionAttack()) return false;
 
 //        if (unit.distToSquadCenter() >= 15) {
 //            return false;
 //        }
 
         APosition center = unit.squad().center();
-        if (center == null) {
-            return false;
-        }
+        if (center == null) return false;
 
         double maxDistToSquadCenter = squad.radius();
 

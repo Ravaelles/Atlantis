@@ -59,9 +59,7 @@ public class HugTanks extends Manager {
     }
 
     private boolean goToNearestTank(AUnit tank) {
-        if (tank == null) {
-            return false;
-        }
+        if (tank == null) return false;
 
         HasPosition goTo = tank;
         unit.move(goTo, Actions.MOVE_FORMATION, "HugTanks", false);

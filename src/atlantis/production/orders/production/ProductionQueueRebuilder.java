@@ -75,8 +75,8 @@ public class ProductionQueueRebuilder {
         counterFromBO.incrementValueFor(type);
 
         int shouldHaveThisManyUnits = (type.isWorker() ? 4 : 0)
-                + (type.isBase() ? (type.isPrimaryBase() ? 1 : 0) : 0)
-                + (type.isOverlord() ? 1 : 0) + counterFromBO.getValueFor(type);
+            + (type.isBase() ? (type.isPrimaryBase() ? 1 : 0) : 0)
+            + (type.isOverlord() ? 1 : 0) + counterFromBO.getValueFor(type);
 
         int weHaveThisManyUnits = Count.existingOrInProduction(type);
 
@@ -91,9 +91,7 @@ public class ProductionQueueRebuilder {
 //                    + weHaveThisManyUnits + ") < need(" + shouldHaveThisManyUnits + ")");
 ////                    + "),   (notStarted = " + ConstructionRequests.countNotStartedConstructionsOfType(type) + ")");
 //        }
-        if (weHaveThisManyUnits < shouldHaveThisManyUnits) {
-            return true;
-        }
+        if (weHaveThisManyUnits < shouldHaveThisManyUnits) return true;
 
         return false;
     }

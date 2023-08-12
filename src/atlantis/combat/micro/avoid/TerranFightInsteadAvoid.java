@@ -11,9 +11,7 @@ public class TerranFightInsteadAvoid extends HasUnit {
     }
 
     public boolean fightForTerran() {
-        if (!unit.isTerran()) {
-            return false;
-        }
+        if (!unit.isTerran()) return false;
 
         return fightForTerranInfantry() || fightForAirUnit();
     }
@@ -30,9 +28,7 @@ public class TerranFightInsteadAvoid extends HasUnit {
     }
 
     protected boolean fightForTerranInfantry() {
-        if (!unit.isMarine() && !unit.isGhost() && !unit.isFirebat()) {
-            return false;
-        }
+        if (!unit.isMarine() && !unit.isGhost() && !unit.isFirebat()) return false;
 
         if (unit.isAttacking() && Count.tanks() >= 1) {
             double tankDist = unit.nearestFriendlyTankDist();
@@ -56,9 +52,7 @@ public class TerranFightInsteadAvoid extends HasUnit {
             unit.isMissionDefend()
                 && unit.lastStartedAttackLessThanAgo(40)
                 && unit.meleeEnemiesNearCount(2.4) > 0
-        ) {
-            return false;
-        }
+        ) return false;
 
         if (
             unit.hp() >= 38
@@ -98,9 +92,7 @@ public class TerranFightInsteadAvoid extends HasUnit {
             return true;
         }
 
-        if (combatEval < 0.7) {
-            return false;
-        }
+        if (combatEval < 0.7) return false;
 
         return false;
     }

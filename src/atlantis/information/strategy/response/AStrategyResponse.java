@@ -20,19 +20,13 @@ import atlantis.util.We;
 public abstract class AStrategyResponse {
 
     public boolean update() {
-        if (AGame.notNthGameFrame(17)) {
-            return false;
-        }
+        if (AGame.notNthGameFrame(17)) return false;
 
         // Anti-LAND
-        if (antiLandManager().handleBuildNew()) {
-            return true;
-        }
+        if (antiLandManager().handleBuildNew()) return true;
 
         // Anti-AIR
-        if (antiAirManager().handleBuildNew()) {
-            return true;
-        }
+        if (antiAirManager().handleBuildNew()) return true;
 
         return false;
     }
@@ -89,9 +83,7 @@ public abstract class AStrategyResponse {
 
         Missions.forceGlobalMissionDefend("Rush defence");
 
-        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
-            return false;
-        }
+        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
 
         OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;
@@ -109,13 +101,9 @@ public abstract class AStrategyResponse {
     // =========================================================
 
     protected boolean shouldSkipAntiRushCombatBuilding(AStrategy enemyStrategy) {
-        if (enemyStrategy == null) {
-            return false;
-        }
+        if (enemyStrategy == null) return false;
 
-        if (ScoutCommander.hasAnyScoutBeenKilled()) {
-            return false;
-        }
+        if (ScoutCommander.hasAnyScoutBeenKilled()) return false;
 
         // =========================================================
 

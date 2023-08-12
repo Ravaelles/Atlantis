@@ -32,9 +32,7 @@ public class AutoTrainWorkersCommander extends Commander {
     // =========================================================
 
     public static boolean shouldTrainWorkers() {
-        if (AGame.supplyFree() == 0 || !AGame.hasMinerals(50)) {
-            return false;
-        }
+        if (AGame.supplyFree() == 0 || !AGame.hasMinerals(50)) return false;
 
 //        if ((A.supplyUsed() <= 154 && !AGame.canAffordWithReserved(50, 0))) {
 //            return false;
@@ -75,9 +73,7 @@ public class AutoTrainWorkersCommander extends Commander {
 
         // Check if not TOO MANY WORKERS
         int workers = Select.ourWorkers().count();
-        if (workers >= (25 * Select.ourBuildingsWithUnfinished().bases().count())) {
-            return false;
-        }
+        if (workers >= (25 * Select.ourBuildingsWithUnfinished().bases().count())) return false;
 
         // =========================================================
         // Check if AUTO-PRODUCTION of WORKERS is active.
@@ -100,9 +96,7 @@ public class AutoTrainWorkersCommander extends Commander {
      * See AutoTrainWorkersCommander which is also used to produce workers.
      */
     public static boolean produceWorker(AUnit base) {
-        if (!AGame.canAfford(50, 0) || AGame.supplyFree() == 0) {
-            return false;
-        }
+        if (!AGame.canAfford(50, 0) || AGame.supplyFree() == 0) return false;
 
         if (We.zerg()) {
             return ZergBuildOrder.produceZergUnit(AtlantisConfig.WORKER);
@@ -136,9 +130,7 @@ public class AutoTrainWorkersCommander extends Commander {
 
     public static boolean isAutoProduceWorkersActive(int workers) {
         int autoProduceMinWorkers = BuildOrderSettings.autoProduceWorkersMinWorkers();
-        if (A.supplyUsed() < autoProduceMinWorkers) {
-            return false;
-        }
+        if (A.supplyUsed() < autoProduceMinWorkers) return false;
 
         int autoProduceMaxWorkers = BuildOrderSettings.autoProduceWorkersMaxWorkers();
         return workers < autoProduceMaxWorkers;

@@ -15,9 +15,7 @@ import atlantis.util.Enemy;
 
 public class ProduceMarines {
     public static boolean marines() {
-        if (Count.ofType(AUnitType.Terran_Barracks) == 0) {
-            return false;
-        }
+        if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
 
         int marines = Count.marines();
 
@@ -47,17 +45,13 @@ public class ProduceMarines {
             return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 3);
         }
 
-        if (marines >= 8 && A.supplyUsed(170) && !A.hasMinerals(800)) {
-            return false;
-        }
+        if (marines >= 8 && A.supplyUsed(170) && !A.hasMinerals(800)) return false;
 
         if (Enemy.zerg() && A.seconds() >= 300 && marines <= 4) {
             return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 3);
         }
 
-        if (!A.hasMinerals(200) && marines >= 4 && !A.canAffordWithReserved(50, 0)) {
-            return false;
-        }
+        if (!A.hasMinerals(200) && marines >= 4 && !A.canAffordWithReserved(50, 0)) return false;
 
         if (!Decisions.shouldMakeTerranBio()) {
             if (TerranDynamicInfantry.DEBUG)

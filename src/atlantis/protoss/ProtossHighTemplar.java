@@ -180,9 +180,7 @@ public class ProtossHighTemplar extends Manager {
     }
 
     private boolean followArmy() {
-        if (unit.hp() <= 16) {
-            return false;
-        }
+        if (unit.hp() <= 16) return false;
 
         APosition center = Alpha.get().center();
         if (center != null) {
@@ -207,9 +205,7 @@ public class ProtossHighTemplar extends Manager {
     }
 
     private boolean tryMeldingIntoArchon() {
-        if (unit.energy() > 65 && unit.woundPercent() < 60) {
-            return false;
-        }
+        if (unit.energy() > 65 && unit.woundPercent() < 60) return false;
 
         Units lowEnergyHTs = new Units();
         for (AUnit other : Select.ourOfType(AUnitType.Protoss_High_Templar).inRadius(8, unit).list()) {

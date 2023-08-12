@@ -95,9 +95,7 @@ public class ScoutManager extends Manager {
         AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
         APosition position = enemyBuilding != null ? enemyBuilding.position() : unit.position();
         nextPositionTounit = Bases.nearestUnexploredStartingLocation(position);
-        if (nextPositionTounit != null) {
-            return false;
-        }
+        if (nextPositionTounit != null) return false;
 
         nextPositionTounit = Bases.randomInvisibleStartingLocation();
         return false;
@@ -107,16 +105,12 @@ public class ScoutManager extends Manager {
      * We don't know any enemy building, unit nearest starting location.
      */
     public boolean tryFindingEnemy() {
-        if (unit == null) {
-            return true;
-        }
+        if (unit == null) return true;
         unit.setTooltipTactical("Find enemy");
 
         // Define center point for our searches
         AUnit ourMainBase = Select.main();
-        if (ourMainBase == null && A.notUms()) {
-            return false;
-        }
+        if (ourMainBase == null && A.notUms()) return false;
 
         // =========================================================
         // Get nearest unexplored starting location and go there
@@ -136,12 +130,8 @@ public class ScoutManager extends Manager {
         if (
             startingLocation != null
                 && unit.move(startingLocation, Actions.MOVE_EXPLORE, "Explore", true)
-        ) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        ) return true;
+        else return false;
     }
 
     /**

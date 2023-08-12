@@ -43,8 +43,8 @@ public class AbstractFoggedUnit extends AUnit {
 
     public static AbstractFoggedUnit from(AUnit enemyUnit) {
         return enemyUnit instanceof FakeUnit
-                ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
-                : FoggedUnit.from(enemyUnit);
+            ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
+            : FoggedUnit.from(enemyUnit);
     }
 
     // =========================================================
@@ -141,9 +141,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !(other instanceof AUnit)) {
-            return false;
-        }
+        if (other == null || !(other instanceof AUnit)) return false;
 
         return id() == ((AUnit) other).id();
 
@@ -230,8 +228,8 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " "
-                + nameWithId() + " at " + _lastPosition
-                + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
+            + nameWithId() + " at " + _lastPosition
+            + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
     }
 
     // =========================================================

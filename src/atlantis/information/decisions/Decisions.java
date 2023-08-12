@@ -150,20 +150,14 @@ public class Decisions {
     }
 
     public static boolean buildRoboticsFacility() {
-        if (Have.roboticsFacility() || Have.notEvenPlanned(Protoss_Forge)) {
-            return false;
-        }
+        if (Have.roboticsFacility() || Have.notEvenPlanned(Protoss_Forge)) return false;
 
         if (EnemyInfo.hasHiddenUnits()) {
 //            System.err.println("roboticsFacility because hasHiddenUnits");
             return true;
         }
-        if (A.supplyUsed() <= 44 && enemyStrategyIsRushOrCheese()) {
-            return false;
-        }
-        if (A.supplyUsed() <= 46 && Have.cannon()) {
-            return false;
-        }
+        if (A.supplyUsed() <= 44 && enemyStrategyIsRushOrCheese()) return false;
+        if (A.supplyUsed() <= 46 && Have.cannon()) return false;
 
 //        System.err.println("----- buildRoboticsFacility OK" );
 //        System.err.println("EnemyStrategy.get().isRushOrCheese() = " + EnemyStrategy.get().isRushOrCheese());

@@ -20,13 +20,9 @@ public class AttackInsteadAvoid extends Manager {
 
     @Override
     public boolean applies() {
-        if (!unit.hasAnyWeapon()) {
-            return false;
-        }
+        if (!unit.hasAnyWeapon()) return false;
 
-        if (shouldAlwaysAvoidAsZerg.shouldAlwaysAvoid()) {
-            return false;
-        }
+        if (shouldAlwaysAvoidAsZerg.shouldAlwaysAvoid()) return false;
 
         if (
             unit.isInfantry()

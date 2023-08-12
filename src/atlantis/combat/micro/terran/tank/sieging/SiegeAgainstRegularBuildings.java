@@ -13,9 +13,7 @@ public class SiegeAgainstRegularBuildings extends Manager {
 
     @Override
     public boolean applies() {
-        if ((new WouldBlockChokeBySieging(unit)).handle() != null) {
-            return false;
-        }
+        if ((new WouldBlockChokeBySieging(unit)).handle() != null) return false;
 
         if (
             unit.id() % 5 == 0

@@ -57,9 +57,7 @@ public class DynamicBuildingsCommander extends Commander {
     }
 
     protected static boolean buildIfAllBusyButCanAfford(AUnitType type, int extraMinerals, int extraGas) {
-        if (Count.inProductionOrInQueue(type) > 0) {
-            return false;
-        }
+        if (Count.inProductionOrInQueue(type) > 0) return false;
 
         if (Select.ourOfType(type).areAllBusy()) {
             return buildIfHaveMineralsAndGas(type, true, type.getMineralPrice() + extraMinerals, type.getGasPrice() + extraGas);
@@ -69,9 +67,7 @@ public class DynamicBuildingsCommander extends Commander {
     }
 
     protected static boolean buildIfHaveMineralsAndGas(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
-        if (!AGame.canAfford(hasMinerals, hasGas)) {
-            return false;
-        }
+        if (!AGame.canAfford(hasMinerals, hasGas)) return false;
 
         return buildNow(type, onlyOneAtTime);
     }
@@ -89,9 +85,7 @@ public class DynamicBuildingsCommander extends Commander {
     }
 
     protected static boolean buildNow(AUnitType type, boolean onlyOneAtTime) {
-        if (onlyOneAtTime && ConstructionRequests.hasRequestedConstructionOf(type)) {
-            return false;
-        }
+        if (onlyOneAtTime && ConstructionRequests.hasRequestedConstructionOf(type)) return false;
 
         if (!hasRequiredUnitFor(type)) {
             buildToHaveOne(type.whatIsRequired());
@@ -103,9 +97,7 @@ public class DynamicBuildingsCommander extends Commander {
     }
 
     protected static boolean haveNoExistingOrPlanned(AUnitType type) {
-        if (Count.ofType(type) > 0) {
-            return false;
-        }
+        if (Count.ofType(type) > 0) return false;
 
         return Count.existingOrInProductionOrInQueue(type) == 0;
     }
@@ -131,9 +123,7 @@ public class DynamicBuildingsCommander extends Commander {
         }
 
         AUnit enemyUnitInMainBase = EnemyInfo.enemyUnitInMainBase();
-        if (enemyUnitInMainBase == null || enemyUnitInMainBase.effUndetected()) {
-            return false;
-        }
+        if (enemyUnitInMainBase == null || enemyUnitInMainBase.effUndetected()) return false;
 
         return true;
     }

@@ -15,21 +15,15 @@ public class GoTowardsMedic extends Manager {
     public boolean applies() {
         if (!unit.isTerranInfantryWithoutMedics()) return false;
 
-        if (unit.isHealthy() && unit.distToLeader() <= 6) {
-            return false;
-        }
+        if (unit.isHealthy() && unit.distToLeader() <= 6) return false;
 
-        if (unit.cooldownRemaining() <= 3 || unit.hp() >= 26) {
-            return false;
-        }
+        if (unit.cooldownRemaining() <= 3 || unit.hp() >= 26) return false;
 
 //        if (unit.enemiesNear().canAttack(unit, 7).isNotEmpty()) {
 //            return false;
 //        }
 
-        if (unit.friendsInRadius(10).bunkers().notEmpty() && unit.enemiesNearInRadius(2.7) > 0) {
-            return false;
-        }
+        if (unit.friendsInRadius(10).bunkers().notEmpty() && unit.enemiesNearInRadius(2.7) > 0) return false;
 
         return true;
     }

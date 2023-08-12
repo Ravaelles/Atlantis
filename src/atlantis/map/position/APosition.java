@@ -315,12 +315,8 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null) return false;
 
         int otherX = ((HasPosition) obj).x();
         int otherY = ((HasPosition) obj).y();
@@ -342,16 +338,10 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         int px = p.getX();
         int py = p.getY();
 
-        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
-            return true;
-        }
-        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
-            return true;
-        }
+        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) return true;
+        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) return true;
 
-        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
-            return true;
-        }
+        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) return true;
         else return py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
     }
 

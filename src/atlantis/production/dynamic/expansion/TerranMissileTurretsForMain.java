@@ -37,13 +37,9 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     // =========================================================
 
     public boolean buildIfNeeded() {
-        if (A.supplyUsed() <= 20) {
-            return false;
-        }
+        if (A.supplyUsed() <= 20) return false;
 
-        if (!Have.engBay() || !Have.base()) {
-            return false;
-        }
+        if (!Have.engBay() || !Have.base()) return false;
 
         if (turretForMainChoke()) {
 //            System.out.println("Requested TURRET for MAIN CHOKE");
@@ -68,13 +64,9 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     private boolean turretsForMainBase() {
         int turretsForMain = optimalMainBaseTurrets();
 
-        if (turretsForMain <= 0) {
-            return false;
-        }
+        if (turretsForMain <= 0) return false;
 
-        if (exceededExistingAndInProduction()) {
-            return false;
-        }
+        if (exceededExistingAndInProduction()) return false;
 
         AUnit main = mainBase();
         if (main != null && main.isLifted()) return false;
@@ -153,13 +145,9 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     }
 
     private boolean turretsForMainRegionBorders() {
-        if (true) {
-            return false;
-        }
+        if (true) return false;
 
-        if (exceededExistingAndInProduction()) {
-            return false;
-        }
+        if (exceededExistingAndInProduction()) return false;
 
         ArrayList<APosition> turretsProtectingMainBorders = positionsForTurretsNearMainBorder();
 

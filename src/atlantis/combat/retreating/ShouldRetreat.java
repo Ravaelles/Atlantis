@@ -179,9 +179,7 @@ public class ShouldRetreat extends Manager {
 //    }
 
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
-        if (A.supplyUsed() >= 182) {
-            return true;
-        }
+        if (A.supplyUsed() >= 182) return true;
 
         if (unit.isMissionSparta()) {
 //            if (unit.mission().allowsToRetreat()) {

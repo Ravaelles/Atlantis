@@ -52,9 +52,7 @@ public class TerranVulture extends Manager {
         // === Use mines section ======================================================
 
         // If out of mines or mines ain't researched, don't do anything.
-        if (unit.minesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines)) {
-            return false;
-        }
+        if (unit.minesCount() <= 0 || !ATech.isResearched(TechType.Spider_Mines)) return false;
 
 //        if (fightEnemyUsingMinesNextToThem()) {
 //            return true;
@@ -73,14 +71,10 @@ public class TerranVulture extends Manager {
 //        }
 
         // If too many our units around, don't mine
-        if (Select.ourCombatUnits().inRadius(7, unit).count() >= 4) {
-            return false;
-        }
+        if (Select.ourCombatUnits().inRadius(7, unit).count() >= 4) return false;
 
         // Place mines in standard positions
-        if (plantStandardMine()) {
-            return true;
-        }
+        if (plantStandardMine()) return true;
 
         return false;
     }

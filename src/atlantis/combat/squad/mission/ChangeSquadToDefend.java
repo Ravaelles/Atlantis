@@ -50,9 +50,7 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
     }
 
     private static boolean asTerranFacingHugeEnemySquad(Squad squad) {
-        if (!We.terran()) {
-            return false;
-        }
+        if (!We.terran()) return false;
 
         int tanks = units.tanks().count();
         int infantry = units.terranInfantryWithoutMedics().count();
@@ -75,9 +73,7 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
 
     private static boolean backOffFromLurkers(Squad squad) {
         AUnit unit = squad.leader();
-        if (unit == null) {
-            return false;
-        }
+        if (unit == null) return false;
 
         if (
             unit.enemiesNear().lurkers().inRadius(7, unit).notEmpty()
@@ -90,9 +86,7 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
     }
 
     private static boolean tooManyUnitsWoundedAsTerran(Squad squad) {
-        if (!We.terran()) {
-            return false;
-        }
+        if (!We.terran()) return false;
 
         Selection units = squad.selection();
         double injuredRatio = (double) units.wounded().count() / units.count();
@@ -105,9 +99,7 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
 
     private static boolean weakerThanEnemy(Squad squad) {
         AUnit unit = squad.leader();
-        if (unit == null) {
-            return false;
-        }
+        if (unit == null) return false;
 
         if (unit.combatEvalRelative() < 0.7) {
             return changeMissionToDefend(squad, "Weaker than enemy (" + unit.combatEvalRelative() + ")");
@@ -117,9 +109,7 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
     }
 
     private static boolean medicsExhausted(Squad squad) {
-        if (!We.terran()) {
-            return false;
-        }
+        if (!We.terran()) return false;
 
         if (A.supplyUsed() >= 150) return false;
 

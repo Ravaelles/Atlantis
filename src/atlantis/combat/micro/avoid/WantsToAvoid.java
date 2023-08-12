@@ -56,13 +56,9 @@ public class WantsToAvoid extends Manager {
             return unit.hp() >= 40;
         }
 
-        if (unit.isTank() && unit.cooldownRemaining() <= 0) {
-            return true;
-        }
+        if (unit.isTank() && unit.cooldownRemaining() <= 0) return true;
 
-        if (unit.isWorker() || unit.isAir()) {
-            return false;
-        }
+        if (unit.isWorker() || unit.isAir()) return false;
 
         return false;
     }

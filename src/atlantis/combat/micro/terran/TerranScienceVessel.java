@@ -50,13 +50,9 @@ public class TerranScienceVessel extends MobileDetector {
     // =========================================================
 
     private boolean useTech() {
-        if (unit.energy() <= 74) {
-            return false;
-        }
+        if (unit.energy() <= 74) return false;
 
-        if (unit.lastTechUsedAgo() <= 15) {
-            return true;
-        }
+        if (unit.lastTechUsedAgo() <= 15) return true;
 
         if (unit.energy(75) && ATech.isResearched(TechType.Irradiate)) {
             if (irradiate()) {
@@ -65,9 +61,7 @@ public class TerranScienceVessel extends MobileDetector {
             }
         }
 
-        if (defensiveMatrix()) {
-            return true;
-        }
+        if (defensiveMatrix()) return true;
 
         return false;
     }
@@ -75,9 +69,7 @@ public class TerranScienceVessel extends MobileDetector {
     // =========================================================
 
     private boolean defensiveMatrix() {
-        if (unit.energy() < 100) {
-            return false;
-        }
+        if (unit.energy() < 100) return false;
 
         Selection targets = unit.friendsNear().wounded();
         if (unit.energy() < 200 && Count.tanks() > 0) {

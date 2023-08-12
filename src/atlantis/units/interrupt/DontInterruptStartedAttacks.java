@@ -10,14 +10,10 @@ public class DontInterruptStartedAttacks {
     public static boolean shouldNotInterrupt(AUnit unit) {
 //        if (true) return false;
 
-        if (unit.lastActionMoreThanAgo(15)) {
-            return false;
-        }
+        if (unit.lastActionMoreThanAgo(15)) return false;
 
         AUnit target = unit.target();
-        if (target != null && target.isCombatBuilding() && unit.friendsInRadiusCount(4) <= 7) {
-            return false;
-        }
+        if (target != null && target.isCombatBuilding() && unit.friendsInRadiusCount(4) <= 7) return false;
 
         if (unit.isVulture()) {
             if (unit.hp() >= 22 && unit.isBraking() && unit.isAttackingOrMovingToAttack() && unit.lastAttackFrameAgo() >= 40) {
@@ -36,9 +32,7 @@ public class DontInterruptStartedAttacks {
 //        }
 
 //        if (unit.hp() <= 20 || !unit.isAttackingOrMovingToAttack()) {
-        if (!unit.isAttackingOrMovingToAttack()) {
-            return false;
-        }
+        if (!unit.isAttackingOrMovingToAttack()) return false;
 
 //        if (unit.hp() <= 40 && unit.enemiesNear().ofType(AUnitType.Protoss_Zealot).inRadius(2.8, unit).atLeast(2)) {
 //            return false;

@@ -29,13 +29,11 @@ public class AvoidPsionicStorm extends Manager {
         return null;
     }
 
-    protected  boolean handleMoveAwayIfCloserThan(APosition avoidCenter, double minDist) {
+    protected boolean handleMoveAwayIfCloserThan(APosition avoidCenter, double minDist) {
         if (unit.distTo(avoidCenter) < minDist) {
             unit.runningManager().runFromAndNotifyOthersToMove(avoidCenter, "PSIONIC-STORM");
             return true;
         }
-        else {
-            return false;
-        }
+        else return false;
     }
 }

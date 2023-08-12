@@ -64,18 +64,21 @@ public class JBWEB {
                     if (Math.abs(denominator) < 16000.0) {
                         slope = 0;
                         yInt = yMean;
-                    } else {
+                    }
+                    else {
                         slope = (sumY2 - sumY * yMean) / denominator;
                         yInt = yMean - slope * xMean;
                     }
-                } else {
+                }
+                else {
                     denominator = sumX2 - sumX * xMean;
 
                     // Handle vertical line error
                     if (Math.abs(denominator) < 1.0) {
                         slope = Double.MAX_VALUE;
                         yInt = yMean;
-                    } else {
+                    }
+                    else {
                         slope = (sumXY - sumX * yMean) / denominator;
                         yInt = yMean - slope * xMean;
                     }
@@ -112,9 +115,9 @@ public class JBWEB {
             for (Base base : area.getBases()) {
                 // Must have gas, be accesible and at least 5 mineral patches
                 if (base.isStartingLocation()
-                        || base.getGeysers().isEmpty()
-                        || area.getAccessibleNeighbors().isEmpty()
-                        || base.getMinerals().size() < 5)
+                    || base.getGeysers().isEmpty()
+                    || area.getAccessibleNeighbors().isEmpty()
+                    || base.getMinerals().size() < 5)
                     continue;
 
                 double dist = getGroundDistance(base.getCenter(), mainPosition);
@@ -149,7 +152,7 @@ public class JBWEB {
             double distBest = Double.MAX_VALUE;
             for (ChokePoint choke : mainArea.getChokePoints()) {
                 double dist = getGroundDistance(choke.getCenter().toPosition(), mainPosition);
-                if (dist < distBest && findNode(naturalChokes, choke) == naturalChokes.get(naturalChokes.size()-1)) {
+                if (dist < distBest && findNode(naturalChokes, choke) == naturalChokes.get(naturalChokes.size() - 1)) {
                     mainChoke = choke;
                     distBest = dist;
                 }
@@ -161,7 +164,7 @@ public class JBWEB {
             double distBest = Double.MAX_VALUE;
             for (ChokePoint choke : naturalArea.getChokePoints()) {
                 double dist = getGroundDistance(choke.getCenter().toPosition(), mainPosition);
-                if (dist < distBest && findNode(mainChokes, choke) != mainChokes.get(mainChokes.size()-1)) {
+                if (dist < distBest && findNode(mainChokes, choke) != mainChokes.get(mainChokes.size() - 1)) {
                     mainChoke = choke;
                     distBest = dist;
                 }
@@ -221,7 +224,7 @@ public class JBWEB {
                     boolean wrongArea = false;
                     for (ChokePoint choke : area.getChokePoints()) {
                         if ((!choke.isBlocked() && choke.getNodePosition(ChokePoint.Node.END1).getDistance(choke.getNodePosition(ChokePoint.Node.END2)) <= 2)
-                                || findNode(nonChokes, choke) != nonChokes.get(nonChokes.size()-1)) {
+                            || findNode(nonChokes, choke) != nonChokes.get(nonChokes.size() - 1)) {
                             wrongArea = true;
                         }
                     }
@@ -239,9 +242,9 @@ public class JBWEB {
                 distBest = Double.MAX_VALUE;
                 for (ChokePoint choke : naturalArea.getChokePoints()) {
                     if (choke.getCenter() == mainChoke.getCenter()
-                            || choke.isBlocked()
-                            || choke.getGeometry().size() <= 3
-                            || (choke.getAreas().getFirst() != second && choke.getAreas().getSecond() != second)) {
+                        || choke.isBlocked()
+                        || choke.getGeometry().size() <= 3
+                        || (choke.getAreas().getFirst() != second && choke.getAreas().getSecond() != second)) {
                         continue;
                     }
 
@@ -288,7 +291,7 @@ public class JBWEB {
     /// Draws all JBWEB::Walls, JBWEB::Stations, and JBWEB::Blocks when called. Call this every frame if you need debugging information.
     public static void draw() {
         WalkPosition mouse = new WalkPosition(game.getMousePosition().x + game.getScreenPosition().x,
-                game.getMousePosition().y + game.getScreenPosition().y);
+            game.getMousePosition().y + game.getScreenPosition().y);
         Area mouseArea = mouse.isValid(game) ? mapBWEM.getMap().getArea(mouse) : null;
         boolean k1 = game.getKeyState(Key.K_1);
         boolean k2 = game.getKeyState(Key.K_2);
@@ -388,8 +391,8 @@ public class JBWEB {
             }
         }
 
-        for (Area area : mapBWEM.getMap().getAreas()){
-            for (ChokePoint choke : area.getChokePoints()){
+        for (Area area : mapBWEM.getMap().getAreas()) {
+            for (ChokePoint choke : area.getChokePoints()) {
                 List<TilePosition> tileGeography = new ArrayList<>();
                 for (WalkPosition geo : choke.getGeometry()) {
                     tileGeography.add(geo.toTilePosition());
@@ -493,7 +496,7 @@ public class JBWEB {
                 if (!t.isValid(game)) {
                     continue;
                 }
-                if (overlapGrid[x][y] > 0){
+                if (overlapGrid[x][y] > 0) {
                     return true;
                 }
             }
@@ -534,7 +537,7 @@ public class JBWEB {
                     continue;
                 }
                 if (usedGrid[x][y] != UnitType.None)
-                return usedGrid[x][y];
+                    return usedGrid[x][y];
             }
         }
         return UnitType.None;
@@ -558,18 +561,16 @@ public class JBWEB {
             }
         }
 
-        if (type.isResourceDepot() && !game.canBuildHere(location, type)) {
-            return false;
-        }
+        if (type.isResourceDepot() && !game.canBuildHere(location, type)) return false;
 
         for (int x = location.x; x < location.x + type.tileWidth(); x++) {
             for (int y = location.y; y < location.y + type.tileHeight(); y++) {
 
                 TilePosition tile = new TilePosition(x, y);
                 if (!tile.isValid(game)
-                        || !game.isBuildable(tile)
-                        || !game.isWalkable(tile.toWalkPosition())
-                        || isUsed(tile, 1, 1) != UnitType.None) {
+                    || !game.isBuildable(tile)
+                    || !game.isWalkable(tile.toWalkPosition())
+                    || isUsed(tile, 1, 1) != UnitType.None) {
                     return false;
                 }
             }
@@ -661,8 +662,8 @@ public class JBWEB {
 
         // If not valid still, return DBL_MAX
         if (!start.isValid(game) || !end.isValid(game) || mapBWEM.getMap().getArea(new WalkPosition(start)) == null ||
-                mapBWEM.getMap().getArea(new WalkPosition(end)) == null ||
-                !mapBWEM.getMap().getArea(new WalkPosition(start)).isAccessibleFrom((mapBWEM.getMap().getArea(new WalkPosition(end))))) {
+            mapBWEM.getMap().getArea(new WalkPosition(end)) == null ||
+            !mapBWEM.getMap().getArea(new WalkPosition(start)).isAccessibleFrom((mapBWEM.getMap().getArea(new WalkPosition(end))))) {
             return Double.MAX_VALUE;
         }
 
@@ -728,8 +729,8 @@ public class JBWEB {
         int dy1 = (int) ((n2.y - n1.y) * length / dist);
         int dx2 = (int) ((n1.x - n2.x) * length / dist);
         int dy2 = (int) ((n1.y - n2.y) * length / dist);
-        int x1 = (int) ((n1.x + n2.x)/2);
-        int y1 = (int) ((n1.y + n2.y)/2);
+        int x1 = (int) ((n1.x + n2.x) / 2);
+        int y1 = (int) ((n1.y + n2.y) / 2);
         Position direction1 = new Position(-dy1 + x1, dx1 + y1);
         Position direction2 = new Position(-dy2 + x1, dx2 + y1);
         return new Pair<>(direction1, direction2);
@@ -748,9 +749,11 @@ public class JBWEB {
 
             if (type.tileWidth() == 4) {
                 placements = block.getLargeTiles();
-            } else if (type.tileWidth() == 3) {
+            }
+            else if (type.tileWidth() == 3) {
                 placements = block.getMediumTiles();
-            } else {
+            }
+            else {
                 placements = block.getSmallTiles();
             }
 

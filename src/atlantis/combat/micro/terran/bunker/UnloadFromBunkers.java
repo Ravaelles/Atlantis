@@ -33,17 +33,11 @@ public class UnloadFromBunkers extends Manager {
     }
 
     public boolean tryUnloadingFromBunkerIfNeeded() {
-        if (!unit.isLoaded()) {
-            return false;
-        }
+        if (!unit.isLoaded()) return false;
 
-        if (unit.lastActionLessThanAgo(30 * 2, Actions.LOAD)) {
-            return false;
-        }
+        if (unit.lastActionLessThanAgo(30 * 2, Actions.LOAD)) return false;
 
-        if (unit.enemiesNearInRadius(3) > 0) {
-            return false;
-        }
+        if (unit.enemiesNearInRadius(3) > 0) return false;
 
 //        if (preventEnemiesFromAttackingNearBuildingsWithoutConsequences()) {
 //            return true;

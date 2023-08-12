@@ -63,9 +63,7 @@ public class Missions {
     }
 
     public static boolean isGlobalMissionAttack() {
-        if (AGame.isUms()) {
-            return true;
-        }
+        if (AGame.isUms()) return true;
 
         return globalMission().isMissionAttack();
     }
@@ -119,11 +117,15 @@ public class Missions {
         mission = mission.toUpperCase().replace("MISSION=", "");
         mission = mission.toUpperCase().replace("MISSION:", "");
         switch (mission) {
-            case "ATTACK" : return ATTACK;
-            case "CONTAIN" : return CONTAIN;
-            case "DEFEND" : return DEFEND;
+            case "ATTACK":
+                return ATTACK;
+            case "CONTAIN":
+                return CONTAIN;
+            case "DEFEND":
+                return DEFEND;
 //            default : AGame.exit("Invalid mission: " + mission); return null;
-            default : return null;
+            default:
+                return null;
         }
     }
 
@@ -150,7 +152,7 @@ public class Missions {
             if (MissionChanger.DEBUG) {
                 System.out.println(
                     "CHANGED MISSION AT " + A.seconds() + " TO: " + mission.name()
-                    + ", reason: " + reason
+                        + ", reason: " + reason
                 );
 
 //                A.printStackTrace("Changing mission to " + mission);
@@ -174,7 +176,8 @@ public class Missions {
     public static Mission prevMission() {
         if (MissionChanger.missionHistory.size() >= 2) {
             return MissionChanger.missionHistory.get(MissionChanger.missionHistory.size() - 2);
-        } else {
+        }
+        else {
             return null;
         }
     }

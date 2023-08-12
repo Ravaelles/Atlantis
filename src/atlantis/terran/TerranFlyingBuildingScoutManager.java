@@ -75,9 +75,7 @@ public class TerranFlyingBuildingScoutManager extends Manager {
             .combatBuildingsAntiAir()
             .inRadius(7.8, unit);
 
-        if (combatBuildings.notEmpty()) {
-            return true;
-        }
+        if (combatBuildings.notEmpty()) return true;
         return false;
     }
 

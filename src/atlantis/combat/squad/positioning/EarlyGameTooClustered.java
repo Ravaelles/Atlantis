@@ -18,9 +18,8 @@ public class EarlyGameTooClustered extends Manager {
     public boolean applies() {
         if (true) return false;
 
-        if (A.seconds() <= 300 && unit.isMissionDefend() && unit.friendsNear().inRadius(2, unit).notEmpty()) {
+        if (A.seconds() <= 300 && unit.isMissionDefend() && unit.friendsNear().inRadius(2, unit).notEmpty())
             return true;
-        }
 
         return false;
     }
