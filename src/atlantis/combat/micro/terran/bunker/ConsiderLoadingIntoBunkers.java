@@ -14,6 +14,7 @@ public class ConsiderLoadingIntoBunkers extends Manager {
         if (unit.isLoaded()) return false;
         if (Count.bunkers() == 0) return false;
         if (!unit.isMarine() && !unit.isGhost()) return false;
+        if (unit.isMissionDefend() && unit.hasCooldown()) return true;
 
         return true;
     }

@@ -1,11 +1,15 @@
 package atlantis.production.constructing.position;
 
+import atlantis.config.AtlantisConfig;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.log.ErrorLog;
 
 public class GasBuildingPositionFinder {
     /**
@@ -13,6 +17,17 @@ public class GasBuildingPositionFinder {
      * that doesn't have gas extracting building.
      */
     protected static APosition findPositionForGasBuilding(AUnitType building, HasPosition nearTo) {
+//        System.err.println(
+//            "Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) = "
+//                + Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING)
+//        );
+
+        if (Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) >= 1) {
+//            A.printStackTrace("Too many refineries");
+            ErrorLog.printMaxOncePerMinute("Too many refineries, don't build for now");
+            return null;
+        }
+
         for (AUnit base : Select.ourBases().list()) {
             Selection geysers = Select.geysers();
 

@@ -28,11 +28,14 @@ public abstract class ReinforceBasesWithCombatBuildings extends Commander {
 //        if (A.everyNthGameFrame(77)) {
 //            (new TerranBunkersInMain()).handle();
 //        }
-        if (A.everyNthGameFrame(71)) {
-            (new TerranMissileTurretsForMain()).buildIfNeeded();
-        }
-        if (A.everyNthGameFrame(73)) {
-            (new TerranMissileTurretsForNonMain()).buildIfNeeded();
+
+        if (We.terran()) {
+            if (A.everyNthGameFrame(71)) {
+                (new TerranMissileTurretsForMain()).buildIfNeeded();
+            }
+            if (A.everyNthGameFrame(73)) {
+                (new TerranMissileTurretsForNonMain()).buildIfNeeded();
+            }
         }
 
         reinforceAllBasesIncludingUnfinishedOnes();

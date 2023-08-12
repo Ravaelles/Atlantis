@@ -732,7 +732,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * flying targets and Corsairs can't attack ground targets.
      */
     public boolean canAttackTarget(AUnit target) {
-        return canAttackTarget(target, true, true, false, 0);
+        return canAttackTarget(target, false, true);
     }
 
     public boolean canAttackTarget(

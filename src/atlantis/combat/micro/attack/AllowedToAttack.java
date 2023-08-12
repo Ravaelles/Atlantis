@@ -27,12 +27,6 @@ public class AllowedToAttack {
                 && unit.enemiesNear().inRadius(2, unit).canBeAttackedBy(unit, 0).notEmpty()
         ) return true;
 
-        // === Mission =============================================
-
-        Decision decision = unit.mission().permissionToAttack(unit);
-        if (decision.notIndifferent()) {
-            return decision.toTrueOrFalse();
-        }
 
         // =========================================================
 
@@ -106,6 +100,16 @@ public class AllowedToAttack {
                 return false;
             }
         }
+
+        Decision decision = unit.mission().permissionToAttack(unit);
+        if (decision.notIndifferent()) {
+            return decision.toTrueOrFalse();
+        }
+
+//        Decision decision = unit.mission().allowsToAttackEnemyUnit(unit);
+//        if (decision.notIndifferent()) {
+//            return decision.toTrueOrFalse();
+//        }
 
         return true;
     }

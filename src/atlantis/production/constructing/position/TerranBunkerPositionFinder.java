@@ -17,20 +17,13 @@ public class TerranBunkerPositionFinder {
     private static AUnitType bunker = AUnitType.Terran_Bunker;
 
     public static APosition findPosition(AUnit builder, Construction order, HasPosition nearTo) {
-//        if (nearTo == null) {
-//            nearTo = defineNearTo(order);
-//        }
-//
-//        if (nearTo == null) {
-//            nearTo = order.nearTo();
-//        }
-////
+
+        // @TODO: This is a problem. Leave the logic for TerranBunker as it is now...
 //        if (nearTo != null) {
-//            return APositionFinder.findStandardPosition(builder, bunker, nearTo, 15);
+//            return APositionFinder.findStandardPosition(builder, bunker, nearTo, 12);
 //        }
 
 
-//        return APositionFinder.findStandardPosition(builder, bunker, nearTo, 30);
         HasPosition hasPosition = TerranBunker.get().nextBuildingPosition();
         return hasPosition != null ? hasPosition.position() : null;
     }

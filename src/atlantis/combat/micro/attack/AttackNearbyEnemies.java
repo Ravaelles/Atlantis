@@ -54,39 +54,46 @@ public class AttackNearbyEnemies extends Manager {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public boolean handleAttackNearEnemyUnits() {
-        return (boolean) cacheObject.getIfValid(
-            "handleAttackNearEnemyUnits: " + unit.id(),
-            4,
-            () -> {
-                if (unit.isAttacking() && (
-                    unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
-                        || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)
-                )) {
-                    if (unit.target() != null && unit.hasPosition() && !unit.looksIdle()) {
-                        return true;
-                    }
+//        return (boolean) cacheObject.getIfValid(
+//            "handleAttackNearEnemyUnits: " + unit.id(),
+//            4,
+//            () -> {
+
+        if (unit.isAttacking() && (
+            unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
+                || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)
+        )) {
+            if (unit.target() != null && unit.hasPosition() && !unit.looksIdle()) {
+                if (unit.mission().allowsToAttackEnemyUnit(unit, unit.target())) {
+                    return true;
                 }
-
-                AttackNearbyEnemies instance = getInstance(unit);
-
-                if (!allowedToAttack.canAttackNow()) {
-//                    ErrorLog.printMaxOncePerMinute("Not allowed to attack now (" + unit + ")");
-                    return false;
-                }
-
-                AUnit enemy = instance.defineEnemyToAttackFor();
-
-                if (enemy == null || enemy.effUndetected()) {
-                    return false;
-                }
-
-                return processAttackUnit.processAttackOtherUnit(enemy);
             }
-        );
-    }
+        }
 
-    protected AttackNearbyEnemies getInstance(AUnit unit) {
-        return new AttackNearbyEnemies(unit);
+        if (!allowedToAttack.canAttackNow()) {
+//                    ErrorLog.printMaxOncePerMinute("Not allowed to attack now (" + unit + ")");
+            return false;
+        }
+
+        // =========================================================
+
+        AUnit enemy = (new AttackNearbyEnemies(unit)).defineEnemyToAttackFor();
+
+        if (enemy == null || !unit.canAttackTarget(enemy)) {
+            return false;
+        }
+
+        // =========================================================
+
+        if (unit.mission().allowsToAttackEnemyUnit(unit, enemy)) {
+            return processAttackUnit.processAttackOtherUnit(enemy);
+        }
+        else {
+            return false;
+        }
+
+//            }
+//        );
     }
 
     public String canAttackEnemiesNowString() {

@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.expansion;
 
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.AStrategy;
@@ -94,6 +95,10 @@ public class TerranMissileTurretsForMain extends TerranMissileTurret {
     }
 
     private int optimalMainBaseTurrets() {
+        return baseNumOfTurrets() + (AGame.minerals() / 700);
+    }
+
+    private static int baseNumOfTurrets() {
         AStrategy enemyStrategy = EnemyInfo.strategy();
 
         if (Enemy.zerg()) {

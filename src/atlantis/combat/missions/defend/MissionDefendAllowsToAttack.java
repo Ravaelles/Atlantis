@@ -1,40 +1,37 @@
 package atlantis.combat.missions.defend;
 
+import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-public class MissionDefendAllowsToAttack {
-
-    protected MissionDefend mission;
-
-    public MissionDefendAllowsToAttack(MissionDefend missionDefend) {
-        this.mission = missionDefend;
+public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit {
+    public MissionDefendAllowsToAttack(AUnit unit) {
+        super(unit);
     }
 
-    public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        if (mission.focusPoint == null || mission.main == null) return true;
+    public boolean allowsToAttackEnemyUnit(AUnit enemy) {
+        if (focusPoint == null) return true;
+
+        if (enemy.effUndetected()) return false;
 
         if (
-            unit.canAttackTarget(enemy)
+            unit.isInWeaponRangeByGame(enemy)
                 || enemy.canAttackTarget(unit)
                 || ourBuildingIsInDanger(unit, enemy)
         ) return true;
 
-        boolean regionsAreDifferent = unit.position().region().equals(enemy.position().region());
-
-//        APainter.paintCircleFilled(unit, 6, !regionsAreDifferent ? Color.Green : Color.Red);
-
-        if (!regionsAreDifferent) {
-            return whenDifferentRegions(unit, enemy);
+        if (focusPoint.regionsMatch(enemy)) {
+            return whenTargetInSameRegion(unit, enemy);
         }
         else {
-            return whenSameRegion(unit, enemy);
+            return whenTargetInDifferentRegions(unit, enemy);
         }
     }
 
-    private boolean whenSameRegion(AUnit unit, AUnit enemy) {
+    private boolean whenTargetInSameRegion(AUnit unit, AUnit enemy) {
         Selection sunkens = Select.ourOfType(AUnitType.Zerg_Sunken_Colony);
 
         if (
@@ -42,8 +39,6 @@ public class MissionDefendAllowsToAttack {
                 && sunkens.inRadius(15, enemy).notEmpty()
                 && sunkens.inRadius(7, enemy).empty()
         ) return false;
-
-        // =========================================================
 
         // =========================================================
 
@@ -65,7 +60,7 @@ public class MissionDefendAllowsToAttack {
             || (friends >= 5 && unit.woundPercentMax(15));
     }
 
-    private boolean whenDifferentRegions(AUnit unit, AUnit enemy) {
+    private boolean whenTargetInDifferentRegions(AUnit unit, AUnit enemy) {
         return false;
     }
 

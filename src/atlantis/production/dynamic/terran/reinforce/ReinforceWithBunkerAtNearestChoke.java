@@ -17,12 +17,12 @@ import static atlantis.units.AUnitType.Terran_Bunker;
 public class ReinforceWithBunkerAtNearestChoke extends Commander {
     private HasPosition initialPositionToReinforce;
     private HasPosition positionForBunker;
+    private APosition natural;
 
     public ReinforceWithBunkerAtNearestChoke(HasPosition position) {
         this.initialPositionToReinforce = position;
 
-        APosition natural = Bases.natural();
-        if (natural != null && position.distToLessThan(natural, 6)) {
+        if (isForNatural()) {
             this.initialPositionToReinforce = natural;
         }
     }
@@ -34,9 +34,11 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
 
         positionForBunker = initialPositionToReinforce;
         AChoke choke = Chokes.nearestChoke(initialPositionToReinforce);
+
         if (choke != null) {
-            positionForBunker = choke.translateTilesTowards(initialPositionToReinforce, 5);
+            positionForBunker = choke.translateTilesTowards(initialPositionToReinforce, 3.4);
         }
+
         if (positionForBunker == null) return false;
 
         Selection bunkersWithUnfinished = Select.ourWithUnfinishedOfType(Terran_Bunker);
@@ -78,5 +80,11 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
 
     private void haveBunkerAtTheNearestChoke() {
         AddToQueue.withTopPriority(Terran_Bunker, positionForBunker);
+    }
+
+    private boolean isForNatural() {
+        natural = Bases.natural();
+
+        return natural != null && initialPositionToReinforce.distToLessThan(natural, 6);
     }
 }

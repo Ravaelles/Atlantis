@@ -3,6 +3,7 @@ package atlantis.map.position;
 import atlantis.Atlantis;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
+import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -300,6 +301,18 @@ public interface HasPosition {
 //            }
 //        }
         return false;
+    }
+
+    default boolean regionsMatch(HasPosition other) {
+        if (other == null || other.position() == null || !other.hasPosition()) return false;
+
+        if (!hasPosition()) return false;
+
+        ARegion region = position().region();
+
+        if (region == null) return false;
+
+        return region.equals(other.position().region());
     }
 
     static HasPosition nearestPositionFreeFromUnits(Positions<HasPosition> points, AUnit nearestTo) {

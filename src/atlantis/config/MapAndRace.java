@@ -39,7 +39,7 @@ public class MapAndRace {
          * vs AI Protoss player - ♥‿♥ - My favorite map for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-        if (true) return "ums/7th.scx";
+//        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_as_protoss.scx"; // Protoss v. AI Protoss player
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
@@ -50,7 +50,7 @@ public class MapAndRace {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Maps for testing as Terran ==========================

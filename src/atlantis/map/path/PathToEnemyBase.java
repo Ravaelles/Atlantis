@@ -26,12 +26,13 @@ public class PathToEnemyBase {
 
     private static CPPath definePath() {
         AUnit enemy = EnemyUnits.nearestEnemyBuilding();
+        AUnit ourBuilding = Select.ourBuildings().first();
 
-        if (enemy == null || !enemy.hasPosition()) {
+        if (enemy == null || !enemy.hasPosition() || ourBuilding == null) {
             return null;
         }
 
-        CPPath path = AMap.getMap().getPath(Select.ourBuildings().first().position().p(), enemy.position().p());
+        CPPath path = AMap.getMap().getPath(ourBuilding.position().p(), enemy.position().p());
         return path;
     }
 

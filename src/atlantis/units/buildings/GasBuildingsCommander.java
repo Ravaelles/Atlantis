@@ -47,7 +47,7 @@ public class GasBuildingsCommander extends Commander {
             int expectedCount = expectedGasWorkers(gasBuilding, realCount);
 //            System.out.println("OPTIMAL_GAS=" + expectedCount + " // realCount=" + realCount);
 
-            // Less workers gathering gas than optimal
+            // Fewer workers gathering gas than optimal
             if (realCount < expectedCount) {
                 assignBestWorkerToGasBuilding(gasBuilding);
                 break; // Only one worker per execution - prevent weird runs

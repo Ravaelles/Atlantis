@@ -74,8 +74,6 @@ public abstract class Mission extends MissionHelper {
 
     // =========================================================
 
-    // =========================================================
-
     @Override
     public String toString() {
         return "Mission " + name;
