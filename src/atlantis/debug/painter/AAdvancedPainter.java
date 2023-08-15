@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.terran.TerranBunker;
-import atlantis.production.dynamic.expansion.TerranMissileTurretsForMain;
+import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
@@ -419,7 +419,7 @@ public class AAdvancedPainter extends APainter {
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
         paintSideMessage("Workers: " + Count.workers(), Color.White);
-        paintSideMessage("Gas workers per b: " + GasBuildingsCommander.minGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Gas workers per b: " + GasBuildingsCommander.defineGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + ProductionQueue.mineralsReserved(), Color.Grey);
         paintSideMessage("Reserved gas: " + ProductionQueue.gasReserved(), Color.Grey);
     }
@@ -986,7 +986,6 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             // Display name of unit
-            // @TODO BUG_NULL happens with destroyed Turret in vsGosu
             String name = (building.buildType() != null ? building.buildType().name() : "-BUG_NULL");
 
             // Paint building name
@@ -1268,6 +1267,12 @@ public class AAdvancedPainter extends APainter {
      * Paints bars showing CPU time usage by game aspect (like "Production", "Combat", "Workers", "Scouting").
      */
     static void paintCodeProfiler() {
+        /**
+         * Disabled after Commander refactoring, needs to be manually invoked in every handle() method,
+         * but there are missing for Commanders that only invoke other subcommanders.
+         */
+        if (true) return;
+
         int counter = 0;
         double maxValue = A.getMaxElement(
             CodeProfiler.getAspectsTimeConsumption().values()
@@ -1501,7 +1506,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintTurretsInMain() {
-        ArrayList<APosition> turrets = (new TerranMissileTurretsForMain()).positionsForTurretsNearMainBorder();
+        ArrayList<APosition> turrets = (new TurretsForMain()).positionsForTurretsNearMainBorder();
 //        System.out.println("turrets = " + turrets.size());
         for (APosition turret : turrets) {
 //            System.out.println("turret = " + turret);
