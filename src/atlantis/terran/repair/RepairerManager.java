@@ -71,7 +71,7 @@ public class RepairerManager extends Manager {
                     && target.isRunning()
                     && target.enemiesNear().groundUnits().canAttack(target, 1.4).notEmpty()
             ) {
-                unit.runningManager().runFrom(target, 0.3, Actions.MOVE_SPACE, false);
+                unit.runningManager().runFrom(target, 0.30, Actions.MOVE_SPACE, false);
                 return usedManager(this);
             }
 

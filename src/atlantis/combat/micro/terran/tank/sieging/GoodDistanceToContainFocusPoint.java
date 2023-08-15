@@ -21,11 +21,19 @@ public class GoodDistanceToContainFocusPoint extends Manager {
         APosition focusPoint = Missions.globalMission().focusPoint();
         if (
             focusPoint != null
-                && unit.distTo(focusPoint) <= (Enemy.terran() ? 10 : (6 + unit.id() % 3))
+                && goodDistance(focusPoint)
                 && TankDecisions.canSiegeHere(unit, true)
         ) return true;
 
         return false;
+    }
+
+    private boolean goodDistance(APosition focusPoint) {
+        if (Enemy.terran()) {
+            return unit.distTo(focusPoint) <= 2 || unit.lastActionMoreThanAgo(30 * 2);
+        }
+
+        return unit.distTo(focusPoint) <= (Enemy.terran() ? 10 : (6 + unit.id() % 3));
     }
 
     @Override

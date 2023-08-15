@@ -14,9 +14,9 @@ public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.noCooldown() || unit.hp() >= 130) return false;
+        if (unit.noCooldown() || unit.hp() >= 135) return false;
 
-        enemies = unit.enemiesNear().groundUnits().combatUnits().inRadius(6.5, unit);
+        enemies = unit.enemiesNear().groundUnits().canAttack(unit, 1.4 + unit.woundPercent() / 70.0);
 
         return enemies.atLeast(1);
     }

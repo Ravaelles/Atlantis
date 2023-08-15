@@ -13,14 +13,17 @@ public class SiegeAgainstRegularBuildings extends Manager {
 
     @Override
     public boolean applies() {
-        if ((new WouldBlockChokeBySieging(unit)).handle() != null) return false;
+        if ((new WouldBlockChokeBySieging(unit)).invoke() != null) return false;
+
+        if (unit.lastSiegeUnsiegedAgo() <= 30 * 9) return false;
 
         if (
             unit.id() % 5 == 0
                 ||
                 (unit.isHealthy() && unit.lastStartedAttackMoreThanAgo(30 * 40))
         ) {
-            enemyBuilding = Select.enemy().buildings().inRadius(9.9, unit).nearestTo(unit);
+            enemyBuilding =
+                Select.enemy().buildings().visibleOnMap().inRadius(7.9 + unit.id() % 4, unit).nearestTo(unit);
         }
 
         return enemyBuilding != null;

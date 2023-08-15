@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ProtectorCommander extends Commander {
-    private static final int MAX_PROTECTORS = 3;
+    private static final int MAX_PROTECTORS = 5;
 
     // =========================================================
 
@@ -79,11 +79,13 @@ public class ProtectorCommander extends Commander {
     private static int maxProtectors() {
         int workers = Count.workers();
 
-        if (!A.hasMinerals(1) && workers <= 20) {
-            return 3;
-        }
-        else if (!A.hasMinerals(10)) {
-            return Math.min(workers / 2, MAX_PROTECTORS);
+        if (workers <= 20) {
+            if (!A.hasMinerals(1)) {
+                return 3;
+            }
+            else if (!A.hasMinerals(10)) {
+                return Math.min(workers / 2, MAX_PROTECTORS);
+            }
         }
 
         return MAX_PROTECTORS;

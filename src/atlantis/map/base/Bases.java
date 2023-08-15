@@ -329,10 +329,10 @@ public class Bases {
             57,
             () -> {
                 APosition natural = natural();
-                if (natural == null) return false;
+                if (natural == null) return null;
 
                 return Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker)
-                    .inRadius(12, natural)
+                    .inRadius(9, natural)
                     .nearestTo(natural);
             }
         );

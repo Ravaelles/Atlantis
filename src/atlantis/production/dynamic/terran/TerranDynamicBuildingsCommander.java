@@ -38,6 +38,8 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
             machineShop();
             BuildFactory.factories();
             starport();
+            academy();
+            engBay();
 
             barracks();
         }
@@ -102,6 +104,22 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 
         if (A.supplyUsed() >= minSupply && Have.factory() && Have.notEvenPlanned(Terran_Starport)) {
             AddToQueue.maxAtATime(Terran_Starport, A.hasMinerals(800) ? 2 : 1);
+        }
+    }
+
+    private static void academy() {
+        if (!A.supplyUsed(50) || Have.academy() || Count.withPlanned(Terran_Academy) > 0) return;
+
+        if (Count.marines() >= 3 && A.hasMinerals(350)) {
+            AddToQueue.withStandardPriority(Terran_Academy);
+        }
+    }
+
+    private static void engBay() {
+        if (Have.engBay() || Count.withPlanned(Terran_Engineering_Bay) > 0) return;
+
+        if (A.supplyUsed(60) || A.seconds() >= 500) {
+            AddToQueue.withStandardPriority(Terran_Engineering_Bay);
         }
     }
 

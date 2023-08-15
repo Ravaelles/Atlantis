@@ -16,6 +16,7 @@ public class BeCloseToLeader extends MissionManager {
             && !squad.isLeader(unit)
             && unit.mission().focusPoint() != null
             && unit.friendsInRadiusCount(3) <= 9
+            && unit.friendsInRadiusCount(1.3) <= 4
             && (unit.noCooldown() && unit.enemiesNearInRadius(7) == 0);
     }
 

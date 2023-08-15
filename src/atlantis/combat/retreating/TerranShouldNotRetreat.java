@@ -10,7 +10,7 @@ public class TerranShouldNotRetreat extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTerran() && unit.enemiesNear().havingWeapon().notEmpty();
+        return unit.isTerran() && unit.enemiesNear().visibleOnMap().notEmpty();
     }
 
     @Override

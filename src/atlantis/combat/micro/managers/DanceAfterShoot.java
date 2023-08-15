@@ -12,8 +12,10 @@ public class DanceAfterShoot extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
-        return unit.isRanged() && !unit.isWraith();
+        return unit.isRanged()
+            && !unit.isWraith()
+            && !unit.isTank()
+            && unit.enemiesNear().ranged().inRadius(6, unit).empty();
     }
 
     @Override

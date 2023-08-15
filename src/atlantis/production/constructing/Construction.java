@@ -113,6 +113,9 @@ public class Construction implements Comparable<Construction> {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         final Construction other = (Construction) obj;
+
+        if (buildingType == null || positionToBuild == null) return false;
+
         return this.ID == other.ID
             || (this.buildingType.equals(other.buildingType) && positionToBuild.equals(other.positionToBuild));
     }

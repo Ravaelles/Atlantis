@@ -8,7 +8,7 @@ public class WantsToSiege {
     public static Manager wantsToSiegeNow(Manager manager, String tooltip) {
         AUnit unit = manager.unit();
 
-        if ((new WouldBlockChokeBySieging(unit)).handle() != null) {
+        if ((new WouldBlockChokeBySieging(unit)).invoke() != null) {
             return null;
         }
 

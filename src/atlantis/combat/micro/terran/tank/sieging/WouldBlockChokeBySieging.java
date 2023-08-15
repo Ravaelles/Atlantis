@@ -44,8 +44,6 @@ public class WouldBlockChokeBySieging extends Manager {
     }
 
     protected Manager handle() {
-        if (!applies()) return null;
-
         unit.setTooltip("DoNotBlockChoke");
         return usedManager(this);
     }
