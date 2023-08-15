@@ -45,7 +45,7 @@ public class ScoutManager extends Manager {
 
     @Override
     protected Manager handle() {
-        unit.setTooltipTactical("unit...");
+        unit.setTooltipTactical("Scout...");
 
 //        if (AvoidCriticalUnits.update()) {
 //            unit.setTooltip("Daaaamn!");
@@ -53,7 +53,7 @@ public class ScoutManager extends Manager {
 //        }
 
         AvoidEnemies avoidEnemies = new AvoidEnemies(unit);
-        if (avoidEnemies.invoke() != null) {
+        if (avoidEnemies.invoke() != null && !unit.looksIdle()) {
             return usedManager(avoidEnemies);
         }
 

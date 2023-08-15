@@ -5,10 +5,8 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import bwapi.Color;
-import bwem.ChokePoint;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Auxiliary class, helpful when there's need to do something every frame and not spam other classes.
@@ -21,7 +19,7 @@ public class OnEveryFrame {
     }
 
     private static void pathToEnemyBase() {
-        paintPathToEnemyBase(PathToEnemyBase.nodesToEnemyBase());
+        paintPathToEnemyBase(PathToEnemyBase.chokesLeadingToEnemyBase());
     }
 
     private static void paintPathToEnemyBase(ArrayList<AChoke> chokes) {

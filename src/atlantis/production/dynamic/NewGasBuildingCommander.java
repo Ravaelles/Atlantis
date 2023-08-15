@@ -6,6 +6,7 @@ import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class NewGasBuildingCommander extends Commander {
@@ -29,7 +30,8 @@ public class NewGasBuildingCommander extends Commander {
         // =========================================================
 
         int numberOfBases = Select.ourBases().count();
-        int numberOfGasBuildings = Select.ourWithUnfinished().ofType(AtlantisConfig.GAS_BUILDING).count();
+//        int numberOfGasBuildings = Select.ourWithUnfinished().ofType(AtlantisConfig.GAS_BUILDING).count();
+        int numberOfGasBuildings = Count.withPlanned(AtlantisConfig.GAS_BUILDING);
         if (
             numberOfBases >= 2
                 && numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350)

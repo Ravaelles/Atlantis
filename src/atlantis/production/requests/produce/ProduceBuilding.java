@@ -1,6 +1,6 @@
 package atlantis.production.requests.produce;
 
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.NewConstructionRequest;
 import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.production.orders.production.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -18,7 +18,7 @@ public class ProduceBuilding {
             ProduceAddon.produceAddon(type);
         }
         else {
-            ConstructionRequests.requestConstructionOf(order);
+            NewConstructionRequest.requestConstructionOf(order);
         }
     }
 }

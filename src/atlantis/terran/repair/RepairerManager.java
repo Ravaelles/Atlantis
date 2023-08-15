@@ -65,6 +65,16 @@ public class RepairerManager extends Manager {
                 return usedManager(this);
             }
 
+            // Don't interrupt tanks when running
+            if (
+                target.isTankUnsieged()
+                    && target.isRunning()
+                    && target.enemiesNear().groundUnits().canAttack(target, 1.4).notEmpty()
+            ) {
+                unit.runningManager().runFrom(target, 0.3, Actions.MOVE_SPACE, false);
+                return usedManager(this);
+            }
+
             unit.repair(
                 target,
                 "Repair " + target.nameWithId() + "(" + unit.lastActionFramesAgo() + ")",

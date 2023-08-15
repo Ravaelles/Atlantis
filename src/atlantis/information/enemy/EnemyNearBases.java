@@ -57,7 +57,7 @@ public class EnemyNearBases {
         AUnit nearestEnemy = enemies.nearestTo(base);
 
         if (nearestEnemy != null) {
-            if (nearestEnemy.distToLessThan(base, maxDist)) {
+            if (nearestEnemy.distToLessThan(base, maxDist) || base.regionsMatch(nearestEnemy)) {
                 return nearestEnemy;
             }
 

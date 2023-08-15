@@ -6,6 +6,7 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
+import atlantis.util.We;
 
 public class BuilderManager extends Manager {
     public BuilderManager(AUnit unit) {
@@ -63,16 +64,18 @@ public class BuilderManager extends Manager {
      * already in progress.
      */
     public static boolean isBuilder(AUnit worker) {
-        if (worker.isConstructing() ||
-            (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)) return true;
+        if (
+            worker.isConstructing()
+                || (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)
+        ) return true;
 
         for (Construction construction : ConstructionRequests.constructions) {
             if (worker.equals(construction.builder())) {
 
                 // Pending Protoss buildings allow unit to go away
                 // Terran and Zerg need to use the worker until construction is finished
-                return !AGame.isPlayingAsProtoss() || !ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                    .equals(construction.status());
+                return !We.protoss()
+                    || !ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS.equals(construction.status());
             }
         }
 

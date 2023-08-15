@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.terran.reinforce;
+package atlantis.production.dynamic.reinforce;
 
 import atlantis.architecture.Commander;
 import atlantis.map.base.Bases;
@@ -11,6 +11,7 @@ import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
 
@@ -43,7 +44,8 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
 
         Selection bunkersWithUnfinished = Select.ourWithUnfinishedOfType(Terran_Bunker);
 
-        if (bunkersWithUnfinished.count() >= (Count.basesWithUnfinished())) return false;
+        int maxBunkers = Enemy.terran() ? 1 : Count.basesWithUnfinished() + 1;
+        if (bunkersWithUnfinished.count() >= maxBunkers) return false;
 
         int searchRadius = 7;
         Selection existing = bunkersWithUnfinished.inRadius(searchRadius, positionForBunker);

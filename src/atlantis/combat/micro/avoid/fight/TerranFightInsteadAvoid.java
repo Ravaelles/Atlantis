@@ -1,4 +1,4 @@
-package atlantis.combat.micro.avoid;
+package atlantis.combat.micro.avoid.fight;
 
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;

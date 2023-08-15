@@ -840,12 +840,14 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects our workers that are free to construct building or repair a unit. That means they mustn't
      * repait any other unit or construct other building.
      */
-    public static Selection ourWorkersFreeToBuildOrRepair() {
+    public static Selection ourWorkersFreeToBuildOrRepair(boolean allowRepairers) {
         Selection selectedUnits = Select.ourWorkers();
         selectedUnits.list().removeIf(unit ->
-            unit.isConstructing() || unit.isRepairing()
-                || BuilderManager.isBuilder(unit) || unit.isScout()
-                || unit.isRepairerOfAnyKind()
+                unit.isConstructing()
+                    || BuilderManager.isBuilder(unit)
+                    || unit.isScout()
+                    || (!allowRepairers && (unit.isRepairing()))
+//                || (!allowRepairers && (unit.isRepairing() || unit.isRepairerOfAnyKind()))
         );
 
         return selectedUnits;

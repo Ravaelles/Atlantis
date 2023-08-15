@@ -1,15 +1,13 @@
-package atlantis.combat.micro.terran;
+package atlantis.production.dynamic.reinforce.terran.turrets;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.dynamic.expansion.TerranMissileTurret;
-import atlantis.production.dynamic.expansion.TerranMissileTurretsForNonMain;
 import atlantis.units.select.Have;
 
-public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMain {
+public class OffensiveTurrets extends TurretsForNonMain {
 
     public boolean buildIfNeeded() {
         if (!Have.engBay()) return false;
@@ -27,7 +25,7 @@ public class OffensiveTerranMissileTurrets extends TerranMissileTurretsForNonMai
 //            return false;
 //        }
 //
-//        return TerranMissileTurret.get().handleReinforcePosition(squadCenter, 14);
+//        return TerranTurret.get().handleReinforcePosition(squadCenter, 14);
 //    }
 
     protected boolean handleReinforceMissionContain() {

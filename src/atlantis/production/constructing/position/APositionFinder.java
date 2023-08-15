@@ -14,7 +14,6 @@ import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class APositionFinder {
-
     public static Cache<APosition> cache = new Cache<>();
 
     // =========================================================
@@ -145,7 +144,7 @@ public class APositionFinder {
      */
     public static APosition findStandardPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         return cache.get(
-            "findStandardPosition:" + building + "," + nearTo + "," + builder,
+            "findStandardPosition:" + building + "," + nearTo + "," + builder + "," + A.digit(maxDistance),
             41,
             () -> {
                 // ===========================================================

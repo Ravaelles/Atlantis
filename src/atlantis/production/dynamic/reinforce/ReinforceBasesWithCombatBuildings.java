@@ -1,9 +1,12 @@
-package atlantis.production.dynamic.expansion;
+package atlantis.production.dynamic.reinforce;
 
 import atlantis.architecture.Commander;
-import atlantis.combat.micro.terran.TerranBunkersInMain;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
+import atlantis.production.dynamic.expansion.AllBasePositions;
+import atlantis.production.dynamic.reinforce.terran.TerranReinforceBasesWithCombatBuildings;
+import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
+import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForNonMain;
 import atlantis.util.We;
 
 public abstract class ReinforceBasesWithCombatBuildings extends Commander {
@@ -31,10 +34,10 @@ public abstract class ReinforceBasesWithCombatBuildings extends Commander {
 
         if (We.terran()) {
             if (A.everyNthGameFrame(71)) {
-                (new TerranMissileTurretsForMain()).buildIfNeeded();
+                (new TurretsForMain()).buildIfNeeded();
             }
             if (A.everyNthGameFrame(73)) {
-                (new TerranMissileTurretsForNonMain()).buildIfNeeded();
+                (new TurretsForNonMain()).buildIfNeeded();
             }
         }
 

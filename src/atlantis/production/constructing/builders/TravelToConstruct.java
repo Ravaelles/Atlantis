@@ -60,9 +60,7 @@ public class TravelToConstruct extends HasUnit {
             buildingType.isGasBuilding() || buildingType.isBase()
         ) return construction.buildPosition();
 
-        if (!CanPhysicallyBuildHere.check(
-            construction.builder(), buildingType, construction.buildPosition())
-        ) {
+        if (shouldRefreshConstructionPosition(construction, buildingType)) {
             APosition positionForNewBuilding = construction.findPositionForNewBuilding();
 //            System.out.println("UPDATED positionForNewBuilding = " + positionForNewBuilding);
             if (positionForNewBuilding != null) {
@@ -72,6 +70,11 @@ public class TravelToConstruct extends HasUnit {
         }
 
         return construction.buildPosition();
+    }
+
+    private static boolean shouldRefreshConstructionPosition(Construction construction, AUnitType buildingType) {
+        return !CanPhysicallyBuildHere.check(construction.builder(), buildingType, construction.buildPosition())
+            || (construction.builder().looksIdle() && AGame.everyNthGameFrame(31));
     }
 
     private boolean moveToConstruct(Construction construction, AUnitType buildingType, double distance, String distString) {

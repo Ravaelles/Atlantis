@@ -18,8 +18,21 @@ public class AdvanceAsALeader extends MissionManager {
     protected Manager handle() {
         if (unit.isMissionAttack()) return null;
 
-        if (unit.squad().cohesionPercent() <= 78) {
-            unit.holdPosition("LeaderWait");
+        int cohesionPercent = unit.squad().cohesionPercent();
+        int friendsNear = unit.friendsInRadius(7).count();
+
+        if (cohesionPercent <= 84 && friendsNear <= squad.size() * 0.7) {
+            unit.holdPosition("LeaderWaitA");
+            return usedManager(this);
+        }
+
+        if (cohesionPercent <= 74 && friendsNear <= squad.size() * 0.8) {
+            unit.holdPosition("LeaderWaitB");
+            return usedManager(this);
+        }
+
+        if (cohesionPercent <= 69) {
+            unit.holdPosition("LeaderWaitC");
             return usedManager(this);
         }
 

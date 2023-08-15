@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.expansion;
+package atlantis.production.dynamic.reinforce.terran.turrets;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -11,6 +11,7 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
+import atlantis.production.dynamic.expansion.InitialMainPosition;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -23,7 +24,7 @@ import atlantis.util.cache.Cache;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class TerranMissileTurretsForMain extends TerranMissileTurret {
+public class TurretsForMain extends TerranTurret {
     private final int BORDER_TURRETS_MIN_COUNT = 0;
     private final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
     //    private  final int BORDER_TURRETS_MIN_COUNT = 4;

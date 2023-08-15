@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.expansion;
+package atlantis.production.dynamic.reinforce.terran.turrets;
 
 import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
@@ -12,8 +12,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
-public class TerranMissileTurretsForNonMain extends TerranMissileTurret {
-
+public class TurretsForNonMain extends TerranTurret {
     private final int MIN_TURRETS_PER_BASE = 2;
 
     public boolean buildIfNeeded() {

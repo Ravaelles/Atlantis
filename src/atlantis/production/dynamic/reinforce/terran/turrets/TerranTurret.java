@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.expansion;
+package atlantis.production.dynamic.reinforce.terran.turrets;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -9,7 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-public class TerranMissileTurret extends AntiAirBuildingManager {
+public class TerranTurret extends AntiAirBuildingManager {
 
     protected final AUnitType turret = AUnitType.Terran_Missile_Turret;
 
@@ -58,11 +58,11 @@ public class TerranMissileTurret extends AntiAirBuildingManager {
 
     // =========================================================
 
-    public static TerranMissileTurret get() {
+    public static TerranTurret get() {
         if (instance == null) {
-            return (TerranMissileTurret) (instance = new TerranMissileTurret());
+            return (TerranTurret) (instance = new TerranTurret());
         }
 
-        return (TerranMissileTurret) instance;
+        return (TerranTurret) instance;
     }
 }

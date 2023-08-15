@@ -1,16 +1,14 @@
-package atlantis.production.dynamic.expansion;
+package atlantis.production.dynamic.reinforce.terran;
 
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
-import atlantis.production.dynamic.terran.reinforce.ReinforceWithBunkerAtNearestChoke;
+import atlantis.production.dynamic.reinforce.ReinforceBasesWithCombatBuildings;
+import atlantis.production.dynamic.reinforce.ReinforceWithBunkerAtNearestChoke;
 import atlantis.units.select.Count;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
 
 public class TerranReinforceBasesWithCombatBuildings extends ReinforceBasesWithCombatBuildings {
-    public TerranReinforceBasesWithCombatBuildings() {
-    }
-
     @Override
     public boolean applies() {
         if (!super.applies()) return false;

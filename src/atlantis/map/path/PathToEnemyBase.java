@@ -1,12 +1,10 @@
 package atlantis.map.path;
 
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import bwapi.Color;
 import bwem.CPPath;
 import bwem.ChokePoint;
 
@@ -14,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class PathToEnemyBase {
-    public static ArrayList<AChoke> nodesToEnemyBase() {
+    public static ArrayList<AChoke> chokesLeadingToEnemyBase() {
         CPPath path = definePath();
 
         if (path == null) {

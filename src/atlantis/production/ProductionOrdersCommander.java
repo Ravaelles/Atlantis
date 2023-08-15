@@ -19,7 +19,10 @@ public class ProductionOrdersCommander extends Commander {
     @Override
     protected void handle() {
         // Get sequence of units (Production Orders) based on current build order
-        ArrayList<ProductionOrder> queue = CurrentProductionQueue.ordersToProduceNow(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
+        ArrayList<ProductionOrder> queue = CurrentProductionQueue.ordersToProduceNow(
+            ProductionQueueMode.WITH_REQUIREMENTS_FULFILLED
+        );
+        
         for (ProductionOrder order : queue) {
             AUnitType base = AtlantisConfig.BASE;
 

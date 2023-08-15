@@ -4,12 +4,14 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.builders.GetOptimalBuilder;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.orders.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 /**
  * Represents construction of a building, including ones not yet started.
@@ -67,7 +69,15 @@ public class Construction implements Comparable<Construction> {
      * @return AUnit for convenience it returns
      */
     protected AUnit assignOptimalBuilder() {
-        builder = Select.ourWorkersFreeToBuildOrRepair().nearestTo(positionToBuild);
+        AUnit optimalBuilder = GetOptimalBuilder.forPosition(this, productionOrder);
+
+        if (optimalBuilder != null) {
+//            System.out.println("@ " + A.now() + " - optimalBuilder " + optimalBuilder);
+            builder = optimalBuilder;
+        }
+        else {
+            ErrorLog.printMaxOncePerMinute("No optimal builder for " + buildingType);
+        }
 
         return builder;
     }
@@ -103,7 +113,8 @@ public class Construction implements Comparable<Construction> {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         final Construction other = (Construction) obj;
-        return this.ID == other.ID;
+        return this.ID == other.ID
+            || (this.buildingType.equals(other.buildingType) && positionToBuild.equals(other.positionToBuild));
     }
 
     @Override

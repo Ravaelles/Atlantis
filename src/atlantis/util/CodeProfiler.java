@@ -5,8 +5,10 @@ import atlantis.game.A;
 
 import java.util.HashMap;
 
+/**
+ * Currently obsolete.
+ */
 public class CodeProfiler {
-    
     public static final String ASPECT_PRODUCTION = "production";
     public static final String ASPECT_COMBAT = "combat";
     public static final String ASPECT_PAINTING = "painting";
@@ -14,12 +16,12 @@ public class CodeProfiler {
     public static final String ASPECT_SCOUTING = "scouting";
     public static final String ASPECT_STRATEGY = "strategy";
     public static final String ASPECT_WORKERS = "workers";
-    
+
     // =========================================================
 
     private static final HashMap<String, Long> aspectsStart = new HashMap<>();
     private static final HashMap<String, Double> aspectsLength = new HashMap<>();
-    
+
     // =========================================================
 
     /**
@@ -69,7 +71,7 @@ public class CodeProfiler {
         }
         return (int) Math.pow(total / 12, 0.35);
     }
-    
+
     // =========================================================
 
     private static void measureAspect(String title) {

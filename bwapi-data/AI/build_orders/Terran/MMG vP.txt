@@ -33,7 +33,6 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 9 - Supply Depot
 11 - Barracks
 14 - Supply Depot
-//18 - Bunker - @MAIN_CHOKE
 18 - Refinery
 19 - Academy
 20 - Bunker - @MAIN

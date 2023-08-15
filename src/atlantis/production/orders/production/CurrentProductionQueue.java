@@ -57,7 +57,7 @@ public abstract class CurrentProductionQueue {
 
             if (
                 We.protoss()
-                    && mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD
+                    && mode == ProductionQueueMode.WITH_REQUIREMENTS_FULFILLED
                     && (unitOrBuilding != null && !unitOrBuilding.isPylon())
                     && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Pylon) == 0
             ) {

@@ -5,7 +5,6 @@ import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
 public class ShouldFightInsteadAvoidAsZerg {
-
     private static Cache<Boolean> cache = new Cache<>();
 
     public static boolean shouldFight(AUnit unit) {

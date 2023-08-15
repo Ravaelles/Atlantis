@@ -2,7 +2,7 @@ package atlantis.production.orders.production;
 
 public enum ProductionQueueMode {
 
-    ONLY_WHAT_CAN_AFFORD,
+    WITH_REQUIREMENTS_FULFILLED,
     ENTIRE_QUEUE
 
 }

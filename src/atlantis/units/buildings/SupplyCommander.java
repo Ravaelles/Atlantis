@@ -13,6 +13,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 
+import static atlantis.units.AUnitType.Terran_Factory;
+
 public class SupplyCommander extends Commander {
     private int supplyTotal;
     private int supplyFree;
@@ -25,14 +27,18 @@ public class SupplyCommander extends Commander {
             return;
         }
 
+        int requestedConstructionsOfSupply = requestedConstructionsOfSupply();
+
+        if (requestedConstructionsOfSupply >= 3) return;
+
         if (!A.hasFreeSupply(1) && A.supplyUsed() <= 170 && A.hasMinerals(300)) {
-            if (requestedConstructionsOfSupply() <= 2) {
+            if (requestedConstructionsOfSupply <= 2) {
                 requestAdditionalSupply();
                 return;
             }
         }
 
-        if (requestedConstructionsOfSupply() >= 1 && A.supplyTotal() <= 50) {
+        if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 50) {
             return;
         }
 
@@ -47,29 +53,34 @@ public class SupplyCommander extends Commander {
         if (supplyTotal >= BuildOrderSettings.autoSupplyManagerWhenSupplyExceeds()) {
             supplyFree = AGame.supplyFree();
 
-            int suppliesBeingBuilt = requestedConstructionsOfSupply();
+            int suppliesBeingBuilt = requestedConstructionsOfSupply;
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
             if (supplyTotal <= 11) {
                 if (supplyFree <= 2 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
-            } else if (supplyTotal <= 20) {
+            }
+            else if (supplyTotal <= 20) {
                 if (supplyFree <= 3 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
-            } else if (supplyTotal <= 43) {
+            }
+            else if (supplyTotal <= 43) {
                 if (supplyFree <= 5 && noSuppliesBeingBuilt) {
                     requestAdditionalSupply();
                 }
-            } else if (supplyTotal <= 70) {
+            }
+            else if (supplyTotal <= 70) {
                 if (supplyFree <= 8 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
                 }
-            } else if (supplyTotal <= 170) {
+            }
+            else if (supplyTotal <= 170) {
                 if (supplyFree <= 12 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
                 }
-            } else if (supplyTotal <= 200) {
+            }
+            else if (supplyTotal <= 200) {
                 if (supplyFree <= 25 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
                 }
@@ -81,6 +92,8 @@ public class SupplyCommander extends Commander {
 
     private void requestAdditionalSupply() {
 //        A.printStackTrace("Supply request: " + A.supplyUsed() + " // " + A.supplyTotal());
+
+        if (requestedConstructionsOfSupply() >= 2) return;
 
         // Zerg handles supply a bit differently
         if (AGame.isPlayingAsZerg()) {
@@ -104,6 +117,7 @@ public class SupplyCommander extends Commander {
         }
 
         return Count.inProductionOrInQueue(AtlantisConfig.SUPPLY);
+//        return ConstructionRequests.countNotFinishedOfType(AtlantisConfig.SUPPLY);
 
 //        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
 //

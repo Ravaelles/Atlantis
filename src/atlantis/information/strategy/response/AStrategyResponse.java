@@ -1,7 +1,7 @@
 package atlantis.information.strategy.response;
 
 import atlantis.combat.micro.terran.TerranBunker;
-import atlantis.production.dynamic.expansion.TerranMissileTurret;
+import atlantis.production.dynamic.reinforce.terran.turrets.TerranTurret;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.game.AGame;
@@ -128,7 +128,7 @@ public abstract class AStrategyResponse {
             return ZergSporeColony.get();
         }
         else if (We.terran()) {
-            return TerranMissileTurret.get();
+            return TerranTurret.get();
         }
 
         return AntiAirBuildingManager.get();

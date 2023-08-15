@@ -22,7 +22,7 @@ public class GasBuildingPositionFinder {
 //                + Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING)
 //        );
 
-        if (Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) >= 1) {
+        if (Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) >= 2) {
 //            A.printStackTrace("Too many refineries");
             ErrorLog.printMaxOncePerMinute("Too many refineries, don't build for now");
             return null;

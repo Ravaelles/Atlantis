@@ -447,6 +447,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return hpPercent() >= minPercent;
     }
 
+    public double woundHp() {
+        return maxHp() - hp();
+    }
+
     public double woundPercent() {
         return 100 - 100.0 * hp() / maxHp();
     }

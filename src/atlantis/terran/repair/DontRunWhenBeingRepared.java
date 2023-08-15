@@ -29,7 +29,11 @@ public class DontRunWhenBeingRepared extends Manager {
         }
 
         AUnit repairer = unit.repairer();
-        if (repairer != null && repairer.distToLessThan(unit, 1.1) && repairer.isRepairing()) {
+        if (
+            repairer != null
+                && unit.woundHp() >= 10
+                && repairer.distToLessThan(unit, 1.1) && repairer.isRepairing()
+        ) {
             unit.move(repairer, Actions.MOVE_REPAIR, "BeFixed");
             return usedManager(this);
         }

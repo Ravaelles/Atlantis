@@ -3,10 +3,12 @@ package atlantis.production.dynamic.terran;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.services.AreWeGoingBio;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
-import atlantis.production.dynamic.expansion.ReinforceBasesWithCombatBuildings;
-import atlantis.production.dynamic.expansion.TerranReinforceBasesWithCombatBuildings;
+import atlantis.production.dynamic.reinforce.ReinforceBasesWithCombatBuildings;
+import atlantis.production.dynamic.reinforce.terran.turrets.TurretNeededHere;
+import atlantis.production.dynamic.terran.buildings.BuildFactory;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -22,6 +24,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
         super.handle();
 
         ReinforceBasesWithCombatBuildings.get().invoke();
+        (new TurretNeededHere()).invoke();
 
         if (A.everyNthGameFrame(7)) {
             comsats();
@@ -33,7 +36,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
         if (A.everyNthGameFrame(9)) {
             armory();
             machineShop();
-            factories();
+            BuildFactory.factories();
             starport();
 
             barracks();
@@ -125,38 +128,6 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
         return false;
     }
 
-    /**
-     * If all factories are busy (training units) request new ones.
-     */
-    private static boolean factories() {
-        if (!Have.barracks()) return false;
-
-        if (AGame.canAffordWithReserved(160, 120)) {
-            Selection factories = Select.ourOfType(Terran_Factory);
-
-            int unfinishedFactories =
-                ConstructionRequests.countNotFinishedOfType(Terran_Factory);
-            int numberOfFactories = factories.size() + unfinishedFactories;
-
-            // Proceed only if all factories are busy
-            if (numberOfFactories >= 1 && factories.areAllBusy()) {
-
-                if (unfinishedFactories == 0) {
-                    AddToQueue.withHighPriority(Terran_Factory);
-                    return true;
-                }
-                else if (unfinishedFactories >= 1 && AGame.canAfford(
-                    100 + 200 * unfinishedFactories, 100 + 100 * unfinishedFactories
-                )) {
-                    AddToQueue.withHighPriority(Terran_Factory);
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     private static void comsats() {
         if (!Have.academy()) {
             return;
@@ -185,6 +156,10 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 //        ) {
 //            return;
 //        }
+
+        if (AreWeGoingBio.check() && AreWeGoingBio.doNotFocusOnTanksForNow()) {
+            return;
+        }
 
         if (Count.factories() > Count.ofType(Terran_Machine_Shop)) {
             if (Count.inProductionOrInQueue(Terran_Machine_Shop) <= 1) {
@@ -219,7 +194,9 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
     private static boolean barracks() {
         int barracks = Count.withPlanned(Terran_Barracks);
 
-        if (barracks >= 1 && Enemy.terran()) return false;
+        if (barracks >= 10) return false;
+
+        if (barracks >= 2 && Enemy.terran()) return false;
 
         if (!A.hasMinerals(650)) {
 //            if (barracks >= 3) {
@@ -239,8 +216,6 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
                 return false;
             }
         }
-
-        if (barracks >= 10) return false;
 
         if (A.canAffordWithReserved(150, 0) || A.hasMinerals(650)) {
             return buildIfAllBusyButCanAfford(Terran_Barracks, 0, 0);

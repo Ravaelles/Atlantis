@@ -3,14 +3,13 @@ package atlantis.production.orders.build;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.production.ProductionOrder;
-import atlantis.production.orders.production.ProductionOrderPriority;
-import atlantis.production.orders.production.ProductionQueue;
+import atlantis.production.orders.production.*;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -69,6 +68,11 @@ public class AddToQueue {
 
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         assert type != null;
+
+        if (CurrentProductionQueue.ordersToProduceNow(ProductionQueueMode.WITH_REQUIREMENTS_FULFILLED).size() >= 20) {
+            ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
+            return null;
+        }
 
         if (We.protoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
             if (A.seconds() < 200) {
