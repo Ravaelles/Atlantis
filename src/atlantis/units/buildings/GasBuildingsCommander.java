@@ -23,6 +23,8 @@ public class GasBuildingsCommander extends Commander {
             return;
         }
 
+        controlNumberOfWorkersGatheringGasAtEachBuilding();
+
         if (tooEarlyForAnotherGasBuilding()) {
             return;
         }
@@ -34,19 +36,17 @@ public class GasBuildingsCommander extends Commander {
 
 //        System.out.println("@ " + A.now() + " - GAS - " + Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) +
 //            " / " + AtlantisConfig.GAS_BUILDING);
+    }
 
-        // =========================================================
-
+    private static void controlNumberOfWorkersGatheringGasAtEachBuilding() {
         Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).list();
 
-        // =========================================================
-
         for (AUnit gasBuilding : gasBuildings) {
-            if (!gasBuilding.isCompleted()) {
-                continue;
-            }
+//            if (!gasBuilding.isCompleted()) {
+//                continue;
+//            }
 
-            int realCount = countWorkersGatheringGasNear(gasBuilding);
+            int realCount = CountGasWorkers.countWorkersGatheringGasFor(gasBuilding);
             int expectedCount = expectedGasWorkers(gasBuilding, realCount);
 //            System.out.println("OPTIMAL_GAS=" + expectedCount + " // realCount=" + realCount);
 
@@ -98,18 +98,6 @@ public class GasBuildingsCommander extends Commander {
         worker.setTooltipTactical("Gas");
     }
 
-    private static int countWorkersGatheringGasNear(AUnit gasBuilding) {
-        int total = 0;
-
-        for (AUnit worker : Select.ourWorkers().inRadius(12, gasBuilding).list()) {
-            if (worker.isGatheringGas()) {
-                total++;
-            }
-        }
-
-        return total;
-    }
-
     private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
         return Select.ourWorkers().gatheringMinerals(true).nearestTo(gasBuilding);
     }
@@ -123,16 +111,16 @@ public class GasBuildingsCommander extends Commander {
             return 0;
         }
 
-        if (workers <= 15 && !A.hasMinerals(150)) {
+        if (workers <= 13 && !A.hasMinerals(150)) {
             return 1;
         }
 
         int seconds = A.seconds();
 
-        if (seconds < 150 && A.hasGas(100)) {
+        if (seconds < 150 && A.hasGas(170)) {
             return 1;
         }
-        else if (seconds < 250 && A.hasGas(100)) {
+        else if (seconds < 250 && A.hasGas(250)) {
             return 2;
         }
         else {

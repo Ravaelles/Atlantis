@@ -40,6 +40,7 @@ import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.buildings.CountGasWorkers;
 import atlantis.units.buildings.GasBuildingsCommander;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
@@ -1050,15 +1051,20 @@ public class AAdvancedPainter extends APainter {
     static void paintWorkersAssignedToBuildings() {
         setTextSizeLarge();
         for (AUnit building : Select.ourBuildings().list()) {
-            if (!building.isBase() && !building.type().isGasBuilding()) {
-                continue;
+            if (building.isBase()) {
+                int workers = WorkerRepository.getHowManyWorkersWorkingNear(building, false);
+                if (workers > 0) {
+                    String workersAssigned = workers + "";
+                    paintTextCentered(building.translateByPixels(-5, -36), workersAssigned, Color.Grey);
+                }
             }
 
-            // Paint text
-            int workers = WorkerRepository.getHowManyWorkersWorkingNear(building, false);
-            if (workers > 0) {
-                String workersAssigned = workers + "";
-                paintTextCentered(building.translateByPixels(-5, -36), workersAssigned, Color.Grey);
+            else if (building.type().isGasBuilding()) {
+                paintTextCentered(
+                    building.translateByPixels(-5, -15),
+                    CountGasWorkers.countWorkersGatheringGasFor(building) + "",
+                    Grey
+                );
             }
         }
         setTextSizeSmall();

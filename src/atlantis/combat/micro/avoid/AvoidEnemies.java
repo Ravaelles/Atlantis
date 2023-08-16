@@ -27,7 +27,10 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.enemiesNear().canAttack(unit, 6).notEmpty();
+        if (unit.enemiesNear().canAttack(unit, 6).empty()) return false;
+        if (shouldSkip()) return false;
+
+        return true;
     }
 
     // =========================================================
@@ -40,12 +43,6 @@ public class AvoidEnemies extends Manager {
     }
 
     public Manager avoidEnemiesIfNeeded() {
-        if (shouldSkip()) {
-            return null;
-        }
-
-        // =========================================================
-
         Units enemiesDangerouslyClose = unitsToAvoid();
 
         // =========================================================

@@ -10,8 +10,15 @@ import java.util.Iterator;
 
 public class NewRepairer {
     public static AUnit repairerFor(AUnit unitToRepair, boolean criticallyImportant) {
+        Selection workers = Select.ourWorkers()
+            .notCarrying()
+            .notRepairing()
+            .notGatheringGas()
+            .notConstructing()
+            .notScout();
+
         if (criticallyImportant) {
-            Selection candidates = Select.ourWorkers().notRepairing();
+            Selection candidates = workers.notRepairing();
             if (!OurStrategy.get().isRush()) {
                 candidates = candidates.notScout().notConstructing();
             }
@@ -20,7 +27,7 @@ public class NewRepairer {
 
         // Try to use one of the protectors if he's non occupied
         Collection<AUnit> protectors = RepairAssignments.getProtectors();
-        for (Iterator<AUnit> iterator = protectors.iterator(); iterator.hasNext();) {
+        for (Iterator<AUnit> iterator = protectors.iterator(); iterator.hasNext(); ) {
             AUnit protector = iterator.next();
             if (protector.isUnitActionRepair()) {
                 iterator.remove();
@@ -33,12 +40,7 @@ public class NewRepairer {
 
         // If no free protector was found, return normal worker.
         else {
-            return Select.ourWorkers()
-                .notCarrying()
-                .notRepairing()
-                .notGatheringGas()
-                .notConstructing()
-                .notScout()
+            return workers
                 .exclude(unitToRepair)
                 .nearestTo(unitToRepair);
         }

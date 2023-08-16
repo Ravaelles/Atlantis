@@ -25,6 +25,7 @@ public class NumberOfRepairersCommander extends Commander {
         List<AUnit> repairable = Select.our()
             .repairable(true)
             .excludeTypes(AtlantisConfig.WORKER)
+            .notScout()
             .list();
 
         for (AUnit woundedUnit : repairable) {
