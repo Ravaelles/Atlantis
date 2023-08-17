@@ -74,6 +74,19 @@ public class Log {
 
     // =========================================================
 
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("Log{\n");
+
+        for (LogMessage logMessage : messages) {
+            result.append("    ").append(logMessage.message()).append(",\n");
+        }
+
+        return result + "}";
+    }
+
+    // =========================================================
+
     private void removeOldMessages() {
         messages.removeIf(LogMessage::expired);
     }

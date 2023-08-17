@@ -401,6 +401,11 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection crucialUnits() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isCrucialUnit()), "crucialUnits");
+    }
+
     public Selection criticallyWounded() {
         return cloneByRemovingIf(
             (unit -> unit.hp() >= 20), "criticallyWounded");

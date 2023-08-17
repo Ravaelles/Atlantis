@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.reinforce;
+package atlantis.production.dynamic.reinforce.terran;
 
 import atlantis.architecture.Commander;
 import atlantis.map.base.Bases;

@@ -32,7 +32,9 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                 for (int tileY = yMin; tileY <= yMax; tileY++) {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
-                        if (PositionFulfillsAllConditions.doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
+                        if (PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
+                            builder, building, constructionPosition
+                        )) {
 
                             if (building.isCombatBuilding()) {
                                 // Turret fix - make sure to build in the same region

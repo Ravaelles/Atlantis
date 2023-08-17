@@ -59,7 +59,7 @@ public class AvoidEnemies extends Manager {
 
         else {
             if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose) != null) {
-                return usedManager(this);
+                return usedManager(unit.manager());
             }
         }
 
@@ -148,16 +148,6 @@ public class AvoidEnemies extends Manager {
         );
     }
 
-//    public  double lowestSafetyMarginForAnyEnemy() {
-//        Units enemies = unitsToAvoid(false);
-//        if (enemies.isNotEmpty()) {
-//            return enemies.lowestValue();
-//        }
-//
-////        return 9876;
-//        return 0;
-//    }
-
     public boolean shouldAvoidAnyUnit() {
         return unitsToAvoid().isNotEmpty();
     }
@@ -170,7 +160,6 @@ public class AvoidEnemies extends Manager {
 
     protected List<? extends AUnit> enemyUnitsToPotentiallyAvoid() {
         return unit.enemiesNear()
-//                .nonBuildings() // This is because we rely on AvoidCombatBuildings
             .removeDuplicates()
             .onlyCompleted()
             .canAttack(unit, true, true, 4.5)
@@ -184,8 +173,7 @@ public class AvoidEnemies extends Manager {
 
         if (unit.runningFrom() != null) {
             AUnit enemy = unit.runningFrom();
-            enemyString = A.substring(enemy.getClass().getSimpleName(), 0, 10);
-//            enemyString = (enemy + "/" + enemy.getClass().getSimpleName());
+            enemyString = A.substring(enemy.type().name(), 0, 10);
         }
 
         return "AvoidEnemies(" + enemyString + ')';

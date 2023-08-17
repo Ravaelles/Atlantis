@@ -58,7 +58,7 @@ public class RepairerManager extends Manager {
 
         // Target is wounded
         if (!unit.isRepairing() && target.isAlive() && A.hasMinerals(5)) {
-            if (unit.lastActionMoreThanAgo(30 * 3, Actions.REPAIR) || unit.isIdle() || unit.isStopped()) {
+            if (unit.lastActionMoreThanAgo(30 * 3, Actions.REPAIR) || unit.isIdle() || unit.looksIdle()) {
                 RepairAssignments.removeRepairer(unit);
                 unit.setTooltipTactical("IdleGTFO");
                 unit.gatherBestResources();
@@ -71,7 +71,7 @@ public class RepairerManager extends Manager {
                     && target.isRunning()
                     && target.enemiesNear().groundUnits().canAttack(target, 1.4).notEmpty()
             ) {
-                unit.runningManager().runFrom(target, 0.30, Actions.MOVE_SPACE, false);
+                unit.runningManager().runFrom(target, 0.50, Actions.MOVE_SPACE, false);
                 return usedManager(this);
             }
 

@@ -2103,6 +2103,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isCarrier();
     }
 
+    public boolean isDefiler() {
+        return type().isDefiler();
+    }
+
     public boolean isLurker() {
         return type().isLurker();
     }
@@ -2393,6 +2397,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public boolean isDarkTemplar() {
+        return cacheBoolean.get(
+            "isDarkTemplar",
+            -1,
+            () -> is(AUnitType.Protoss_Dark_Templar)
+        );
+    }
+
     public boolean isObserver() {
         return cacheBoolean.get(
             "isObserver",
@@ -2519,6 +2531,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isReaver() {
         return type().isReaver();
+    }
+
+    public boolean isHighTemplar() {
+        return type().isHighTemplar();
     }
 
     public boolean recentlyMoved() {
@@ -2733,7 +2749,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isCrucialUnit() {
-        return isTank() || isReaver() || isLurker() || isCarrier();
+        return isTank()
+
+            || isReaver()
+            || isArchon()
+            || isHighTemplar()
+            || isDT()
+            || isCarrier()
+
+            || isDefiler()
+            || isUltralisk()
+            || isLurker();
     }
 
     public void setRunningFrom(AUnit enemy) {

@@ -54,7 +54,11 @@ public class EnemyNearBases {
     private static AUnit isNearBase(AUnit base) {
         if (base == null) return null;
 
-        AUnit nearestEnemy = enemies.nearestTo(base);
+        AUnit nearestEnemy;
+
+        // === Crucial ============================================
+
+        nearestEnemy = enemies.crucialUnits().nearestTo(base);
 
         if (nearestEnemy != null) {
             if (nearestEnemy.distToLessThan(base, maxDist) || base.regionsMatch(nearestEnemy)) {
@@ -65,6 +69,22 @@ public class EnemyNearBases {
                 return nearestEnemy;
             }
         }
+
+        // === Regular enemies =====================================
+
+        nearestEnemy = enemies.nearestTo(base);
+
+        if (nearestEnemy != null) {
+            if (nearestEnemy.distToLessThan(base, maxDist) || base.regionsMatch(nearestEnemy)) {
+                return nearestEnemy;
+            }
+
+            if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 6) {
+                return nearestEnemy;
+            }
+        }
+
+        // =========================================================
 
         return null;
     }

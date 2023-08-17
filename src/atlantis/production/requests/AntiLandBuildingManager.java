@@ -114,7 +114,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
     @Override
     public HasPosition nextBuildingPosition() {
-        int bases = Count.bases();
+        int bases = Count.basesWithUnfinished();
 
         if (bases == 0 || Select.main() == null) {
             return null;
@@ -152,7 +152,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
         if (bases >= 2) {
             APosition naturalPosition = Bases.natural();
             if (naturalPosition != null) {
-                AUnit naturalBase = Select.ourBases().inRadius(8, naturalPosition).first();
+                AUnit naturalBase = Select.ourWithUnfinished().bases().inRadius(8, naturalPosition).first();
                 if (naturalBase != null) {
                     AChoke naturalChoke = Chokes.natural();
                     if (naturalChoke != null) {

@@ -72,4 +72,9 @@ public class LogMessage {
     public int createdAtFrames() {
         return createdAtFrames;
     }
+
+    @Override
+    public String toString() {
+        return message;
+    }
 }

@@ -11,7 +11,7 @@ public class RepairerCommander  extends Commander {
         for (Iterator<AUnit> iterator = RepairAssignments.getRepairers().iterator(); iterator.hasNext();) {
             AUnit repairer = iterator.next();
 
-            if (repairer.isProtector()) {
+            if (repairer.isProtector() && (repairer.isRepairing() || repairer.lastActionLessThanAgo(30 * 1))) {
                 continue;
             }
 

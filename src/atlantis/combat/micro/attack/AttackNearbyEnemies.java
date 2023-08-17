@@ -26,6 +26,8 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
+
         return unit.hasAnyWeapon();
     }
 

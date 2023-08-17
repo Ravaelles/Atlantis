@@ -7,6 +7,7 @@ import atlantis.information.strategy.services.AreWeGoingBio;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.dynamic.reinforce.ReinforceBasesWithCombatBuildings;
+import atlantis.production.dynamic.reinforce.terran.turrets.ReinforceBunkersWithTurrets;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretNeededHere;
 import atlantis.production.dynamic.terran.buildings.BuildFactory;
 import atlantis.production.orders.build.AddToQueue;
@@ -24,6 +25,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
         super.handle();
 
         ReinforceBasesWithCombatBuildings.get().invoke();
+        (new ReinforceBunkersWithTurrets()).invoke();
         (new TurretNeededHere()).invoke();
 
         if (A.everyNthGameFrame(7)) {

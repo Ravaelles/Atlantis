@@ -589,6 +589,14 @@ public class AUnitType implements Comparable<Object> {
         return is(Protoss_Reaver);
     }
 
+    public boolean isHighTemplar() {
+        return is(Protoss_High_Templar);
+    }
+
+    public boolean isDarkTemplar() {
+        return is(Protoss_Dark_Templar);
+    }
+
     public boolean isCannon() {
         return is(Protoss_Photon_Cannon);
     }
@@ -1366,6 +1374,14 @@ public class AUnitType implements Comparable<Object> {
             "isLurker",
             -1,
             () -> is(Zerg_Lurker)
+        );
+    }
+
+    public boolean isDefiler() {
+        return (boolean) cache.get(
+            "isDefiler",
+            -1,
+            () -> is(Zerg_Defiler)
         );
     }
 
