@@ -1214,7 +1214,7 @@ public class A {
     /**
      * Returns false once per n game frames.
      */
-    public static boolean notNthGameFrame(int n) {
+    public static boolean everyFrameExceptNthFrame(int n) {
         return Atlantis.game().getFrameCount() % n != 0;
     }
 
