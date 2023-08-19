@@ -12,7 +12,13 @@ public class ProduceVultures {
 
         int vultures = Count.withPlanned(AUnitType.Terran_Vulture);
 
-        if (vultures == 0) return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, 1);
+        if (vultures == 0) {
+            int maxAtATime = Math.min(
+                Count.factories(),
+                Count.marines() <= 8 ? 2 : 1
+            );
+            return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, maxAtATime);
+        }
 
         if (Enemy.terran()) {
             if (vultures * 2 >= Count.marines() && !A.hasMinerals(750)) return false;

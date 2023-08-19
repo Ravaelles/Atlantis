@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.reinforce.terran.turrets;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -14,7 +15,8 @@ import static atlantis.units.AUnitType.Terran_Missile_Turret;
 public class ReinforceBunkersWithTurrets extends Commander {
     @Override
     public boolean applies() {
-        return Have.engBay() && Count.bunkers() > 0 && Count.inProductionOrInQueue(Terran_Missile_Turret) <= 1;
+        return A.everyNthGameFrame(111) && Have.engBay() && Count.bunkers() > 0
+            && Count.inProductionOrInQueue(Terran_Missile_Turret) <= 1;
     }
 
     @Override

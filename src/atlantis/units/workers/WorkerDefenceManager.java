@@ -36,8 +36,9 @@ public class WorkerDefenceManager extends Manager {
     // =========================================================
 
     private boolean act() {
+        if (runFromReaverFix(unit)) return true;
+        
         if (unit.isRepairing()) return false;
-
         if (unit.enemiesNear().combatUnits().isEmpty()) return false;
 
         // Don't run from little dangerous enemies
@@ -50,8 +51,6 @@ public class WorkerDefenceManager extends Manager {
                 return false;
             }
         }
-
-        if (runFromReaverFix(unit)) return true;
 
         if (handleFightEnemyIfNeeded(unit)) return true;
 

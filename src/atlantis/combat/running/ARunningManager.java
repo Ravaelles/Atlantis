@@ -13,8 +13,6 @@ import atlantis.util.We;
 import bwapi.Color;
 
 public class ARunningManager {
-
-    //    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
 

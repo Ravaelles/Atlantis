@@ -11,7 +11,7 @@ import atlantis.units.select.Select;
 
 import java.util.List;
 
-public class NumberOfRepairersCommander extends Commander {
+public class NewRepairsCommander extends Commander {
     @Override
     protected void handle() {
         removeExcessiveRepairersIfNeeded();

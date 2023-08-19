@@ -10,7 +10,7 @@ public class OptimalNumOfRepairers {
     // =========================================================
 
     public static boolean hasUnitTooManyRepairers(AUnit unit) {
-        return RepairAssignments.countRepairersForUnit(unit) >= NumberOfRepairersCommander.optimalNumOfRepairersFor(unit);
+        return RepairAssignments.countRepairersForUnit(unit) >= NewRepairsCommander.optimalNumOfRepairersFor(unit);
     }
 
     public static boolean weHaveTooManyRepairersOverall() {

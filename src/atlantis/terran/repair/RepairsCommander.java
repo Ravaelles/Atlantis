@@ -8,11 +8,11 @@ public class RepairsCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         if (!We.terran()) {
-            return new Class[] {};
+            return new Class[]{};
         }
 
-        return new Class[] {
-            NumberOfRepairersCommander.class,
+        return new Class[]{
+            NewRepairsCommander.class,
             RepairerCommander.class,
             ProtectorCommander.class,
             EnsureThereAreMineralsForRepairsCommander.class,

@@ -32,9 +32,9 @@ public class ProduceTanks {
             }
         }
 
-        if (Count.infantry() >= 6 && Count.medics() <= 1) {
-            return canAffordWithReserved;
-        }
+//        if (Count.infantry() >= 6 && Count.medics() <= 1) {
+//            return canAffordWithReserved;
+//        }
 
         if (Enemy.terran() && tanks >= 1 && !SiegeMode.isResearched()) {
             if (!canAffordWithReserved) {

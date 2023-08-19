@@ -2,8 +2,8 @@ package atlantis.production.requests;
 
 import atlantis.combat.micro.terran.TerranBunker;
 import atlantis.game.A;
-import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
+import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -135,11 +135,18 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                 );
             }
 
-            nearTo = Select.main()
-//                .translateTilesTowards(We.terran() ? 7 : 9, Select.main())
-                .translatePercentTowards(35, mainChoke)
-                .makeBuildable(8)
-                .makeWalkable(4);
+            if (Enemy.terran()) {
+                nearTo = mainChoke
+                    .translateTilesTowards(5, Select.main())
+                    .makeBuildable(8)
+                    .makeWalkable(4);
+            }
+            else {
+                nearTo = Select.main()
+                    .translateTilesTowards(6, mainChoke)
+                    .makeBuildable(8)
+                    .makeWalkable(4);
+            }
 
             return findPositionNear(nearTo);
 

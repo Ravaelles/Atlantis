@@ -25,7 +25,7 @@ public class SiegeBecauseSpecificEnemiesNear extends Manager {
 
         AUnit enemy = unit.nearestEnemy();
 
-        double maxDist = enemy != null && enemy.isMoving() && unit.isOtherUnitFacingThisUnit(enemy) ? 13.5 : 11.98;
+        double maxDist = enemy != null && enemy.isMoving() ? 14.5 : 11.98;
         if (
             enemies
                 .ofType(
@@ -39,7 +39,7 @@ public class SiegeBecauseSpecificEnemiesNear extends Manager {
                 .inRadius(maxDist, unit)
                 .notEmpty()
         ) {
-            if (enemies.inRadius(2 + unit.id() % 4, unit).notEmpty()) {
+            if (unit.id() % 5 == 0 || enemies.inRadius(2 + unit.id() % 4, unit).notEmpty()) {
                 return usedManager(WantsToSiege.wantsToSiegeNow(this, "KeyEnemy"));
             }
         }

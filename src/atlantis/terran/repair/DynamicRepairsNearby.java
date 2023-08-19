@@ -34,7 +34,7 @@ public class DynamicRepairsNearby extends Manager {
             unit.repair(repairable, "KindGuy", false);
 
             if (repairable.looksIdle()) {
-                repairable.move(unit, Actions.MOVE_REPAIR, "ToRepairer");
+                repairable.repair(unit, "ToRepairer", false);
             }
 
             return true;

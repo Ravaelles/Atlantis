@@ -69,6 +69,11 @@ public class AddToQueue {
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         assert type != null;
 
+        // Too many requests of this type
+        if (Count.inQueue(type, 10) >= 4) {
+            return null;
+        }
+
         if (CurrentProductionQueue.ordersToProduceNow(ProductionQueueMode.WITH_REQUIREMENTS_FULFILLED).size() >= 20) {
             ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
             return null;

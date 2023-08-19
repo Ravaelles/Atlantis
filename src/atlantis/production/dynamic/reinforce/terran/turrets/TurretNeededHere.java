@@ -16,7 +16,7 @@ public class TurretNeededHere extends Commander {
     public boolean applies() {
         return We.terran()
             && A.hasMinerals(500)
-            && A.everyNthGameFrame(63)
+            && A.everyNthGameFrame(83)
             && Have.engBay()
             && Count.inProductionOrInQueue(Terran_Missile_Turret) <= (A.hasMinerals(700) ? 3 : 1);
 //            && EnemyInfo.hasLotOfAirUnits();

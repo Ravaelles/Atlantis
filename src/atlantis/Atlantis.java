@@ -1,6 +1,7 @@
 package atlantis;
 
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
+import atlantis.config.env.Env;
 import atlantis.game.*;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.enemy.UnitsArchive;
@@ -8,6 +9,7 @@ import atlantis.production.constructing.ProtossConstructionManager;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.util.ProcessHelper;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;
@@ -273,6 +275,8 @@ public class Atlantis implements BWEventListener {
     public static void ourNewUnit(AUnit unit) {
         ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
         (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
+
+        if (Env.isLocal() && unit.isBunker() && Count.bunkers() == 1) CameraCommander.centerCameraOn(unit);
 
 //        System.out.println("NEW UNIT @ " + A.now() + " - " + unit);
 //        System.out.println(unit.mission());

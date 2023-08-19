@@ -38,6 +38,11 @@ public class RepairerManager extends Manager {
     private Manager handleRepairs() {
         AUnit target = RepairAssignments.getUnitToRepairFor(unit);
 
+        if (target == null || unit.isIdle() || (!unit.isRepairing() && !unit.isMoving())) {
+            RepairAssignments.removeRepairer(unit);
+            return null;
+        }
+
         if (ShouldNotRepairUnit.shouldNotRepairUnit(target)) {
             RepairAssignments.removeRepairer(unit);
             return null;

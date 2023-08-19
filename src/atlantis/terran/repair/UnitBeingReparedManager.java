@@ -78,7 +78,10 @@ public class UnitBeingReparedManager extends Manager {
             }
         }
 
-        unit.holdPosition("Be repaired");
+        if (!unit.isAttacking()) {
+            unit.holdPosition("Be repaired");
+        }
+        
         return usedManager(this);
     }
 }

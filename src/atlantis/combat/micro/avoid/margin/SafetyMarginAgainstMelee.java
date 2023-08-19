@@ -46,14 +46,14 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         if (criticalDist == -1) {
             criticalDist = baseForMelee(attacker)
-                    + enemyWeaponRange(attacker)
-                    + woundedAgainstMeleeBonus(attacker)
-                    + beastBonus(attacker)
-                    + ourUnitsNearBonus(defender)
-                    + workerBonus(attacker)
-                    + ourMovementBonus(defender)
-                    + quicknessBonus(attacker)
-                    + enemyMovementBonus(attacker);
+                + enemyWeaponRange(attacker)
+                + woundedAgainstMeleeBonus(attacker)
+                + beastBonus(attacker)
+                + ourUnitsNearBonus(defender)
+                + workerBonus(attacker)
+                + ourMovementBonus(defender)
+                + quicknessBonus(attacker)
+                + enemyMovementBonus(attacker);
 
             // This should be enough as a minimum versus melee units
             criticalDist = Math.min(criticalDist, defender.isDragoon() ? 2.95 : 3.4);
@@ -113,84 +113,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         }
 
         return -1;
-
-//        double base = woundedAgainstMeleeBonus(attacker)
-//            + beastBonus(defender);
-//        boolean enemyFacingUs = defender.isOtherUnitFacingThisUnit(attacker);
-//
-//        if (attacker.isWorker() && attacker.hp() >= 30) {
-//            base += 0.5;
-//        }
-//
-//        else if (!enemyFacingUs && defender.shieldDamageAtMost(40)) {
-//            base -= 1.5;
-//        }
-//
-//        else if (
-//                (attacker.hp() <= 16 || defender.shieldDamageAtMost(38))
-//                        && (
-//                        !enemyFacingUs
-//                                || defender.lastAttackFrameMoreThanAgo(130)
-//                                || (defender.lastAttackFrameMoreThanAgo(90) && attacker.hpPercent(30))
-//                                || (defender.lastAttackFrameMoreThanAgo(40) && defender.lastUnderAttackMoreThanAgo(150))
-//                )
-//        ) {
-//            defender.addLog("CoolDragoon_" + defender.lastAttackFrameAgo());
-//            base += (defender.isHealthy() ? 0 : 0.3);
-//            //            criticalDist = handleDragoon(attacker);
-//        }
-//
-//
-//        // =========================================================
-//
-//        base = Math.max(0, base);
-//        base = Math.min(defender.isMissionDefend() ? (1 + defender.woundPercent() / 100) : 2.4, base);
-//        return base;
-//
-////        if (Missions.isGlobalMissionDefend()) {
-////            return base;
-////        }
-////
-////        return -1;
     }
-
-    // =========================================================
-
-//    private double handleDragoon(AUnit attacker) {
-//        if (!defender.isDragoon() || attacker.isDT()) {
-//            return -1;
-//        }
-//
-//        double min = -0.5;
-//        double safer = 1.2;
-//
-//        if (defender.shieldDamageAtMost(12)) {
-//            return min;
-//        } else if (
-//                defender.hasNotMovedInAWhile()
-//                        && defender.shieldDamageAtMost(30)
-////                        && defender.lastUnderAttackMoreThanAgo(60)
-//        ) {
-//            return safer;
-//        } else if (
-//                defender.shieldDamageAtMost(40) &&
-//                        (
-//                                defender.lastAttackFrameMoreThanAgo(80)
-////                                        || defender.lastUnderAttackMoreThanAgo(90)
-//                        )
-//        ) {
-//            return safer
-//                    + woundedAgainstMeleeBonus(attacker)
-//                    + ourMovementBonus(defender)
-//                    + quicknessBonus(attacker)
-//                    + enemyMovementBonus(attacker);
-//        }
-////        else if (defender.hp() >= 21 && defender.lastAttackFrameMoreThanAgo(30 * 3)) {
-////            return safe;
-////        }
-//
-//        return -1;
-//    }
 
     // =========================================================
 
@@ -203,7 +126,12 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     private double baseForMelee(AUnit attacker) {
-        return attacker.isZealot() ? 0.5 : 0.7;
+        double base = 0.7;
+        if (attacker.isZealot()) base = 0.5;
+
+        if (defender.isVulture()) base += 0.5;
+
+        return base;
     }
 
     protected double enemyUnitsNearBonus(AUnit defender) {
@@ -258,9 +186,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 }
                 return defender.woundPercent() / INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC;
             }
-        } else if (defender.isAir()) {
+        }
+        else if (defender.isAir()) {
             return defender.woundPercent() / 10;
-        } else if (defender.isVulture()) {
+        }
+        else if (defender.isVulture()) {
             return defender.woundPercent() / 30;
         }
 
