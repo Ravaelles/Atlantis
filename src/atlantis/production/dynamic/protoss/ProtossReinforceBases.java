@@ -12,7 +12,7 @@ import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 import static atlantis.units.AUnitType.Protoss_Pylon;
 
 public class ProtossReinforceBases {
-    public static boolean handle() {
+    public static boolean invoke() {
         for (AUnit base : Select.ourBases().list()) {
             HasPosition nearTo = ABaseLocation.mineralsCenter(base);
             int cannonsNearby = Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 12, nearTo);

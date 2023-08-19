@@ -33,7 +33,7 @@ public class ProduceMarines {
             if (!A.canAfford(450 + infantry * 10, 0)) return false;
         }
 
-        if (tanks <= 2 && infantry >= 10 && (!A.hasMinerals(650))) {
+        if (tanks <= 2 && marines >= 10 && (!A.hasMinerals(650))) {
             if (Enemy.zerg() && Count.bunkers() >= 1) return false;
         }
 

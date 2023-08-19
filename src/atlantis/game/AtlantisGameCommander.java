@@ -3,6 +3,7 @@ package atlantis.game;
 import atlantis.architecture.Commander;
 import atlantis.combat.CombatCommander;
 import atlantis.config.MapSpecificCommander;
+import atlantis.debug.DebugCommander;
 import atlantis.debug.painter.PainterCommander;
 import atlantis.information.enemy.EnemyUnitsCommander;
 import atlantis.information.strategy.StrategyCommander;
@@ -42,6 +43,8 @@ public class AtlantisGameCommander extends Commander {
             CameraCommander.class,
             MapSpecificCommander.class,
             PainterCommander.class,
+
+            DebugCommander.class,
         };
     }
 }

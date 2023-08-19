@@ -13,6 +13,7 @@ import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
+import static atlantis.units.AUnitType.Terran_Science_Facility;
 import static atlantis.units.AUnitType.Terran_Science_Vessel;
 
 public class TerranDynamicUnitsCommander extends Commander {
@@ -35,6 +36,13 @@ public class TerranDynamicUnitsCommander extends Commander {
     // =========================================================
 
     private static void scienceVessels() {
+        if (!Have.notEvenPlanned(Terran_Science_Facility)) {
+            if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
+                AddToQueue.withTopPriority(Terran_Science_Facility);
+            }
+            return;
+        }
+
         if (Have.notEvenPlanned(Terran_Science_Vessel)) {
             if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
                 AddToQueue.withTopPriority(Terran_Science_Vessel);

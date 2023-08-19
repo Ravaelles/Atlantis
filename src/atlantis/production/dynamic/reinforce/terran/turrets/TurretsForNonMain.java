@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.reinforce.terran.turrets;
 
+import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.Chokes;
@@ -16,8 +17,8 @@ public class TurretsForNonMain extends TerranTurret {
     private final int MIN_TURRETS_PER_BASE = 2;
 
     public boolean buildIfNeeded() {
+        if (A.notNthGameFrame(73)) return false;
         if (!Have.engBay()) return false;
-
         if (Count.bases() == 1) return false;
 
         if (handleReinforcePosition(turretForNatural(), 7)) {

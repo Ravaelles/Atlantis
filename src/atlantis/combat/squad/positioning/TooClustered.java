@@ -41,7 +41,8 @@ public class TooClustered extends Manager {
 //                return usedManager(this);
 //            }
 
-            unit.moveAwayFrom(nearestBuddy, 0.15, Actions.MOVE_FORMATION, "SpreadOut");
+            double moveDistance = (unit.idIsOdd() || A.everyNthGameFrame(3)) ? 4.5 : 0.4;
+            unit.moveAwayFrom(nearestBuddy, moveDistance, Actions.MOVE_FORMATION, "SpreadOut");
             return usedManager(this);
         }
 

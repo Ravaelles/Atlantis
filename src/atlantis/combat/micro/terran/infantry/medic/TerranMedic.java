@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran.infantry.medic;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.map.position.APosition;
+import atlantis.production.constructing.position.conditions.TooCloseToBunker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -49,6 +50,7 @@ public class TerranMedic extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AvoidEnemies.class,
+            UnitTooCloseToBunker.class,
         };
     }
 

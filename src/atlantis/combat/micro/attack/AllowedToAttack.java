@@ -17,16 +17,14 @@ public class AllowedToAttack {
     }
 
     protected boolean canAttackNow() {
-        if ((new AsTerranForbiddenToAttack(unit)).isForbidden()) return false;
-
-        if (!allowedToAttack()) return false;
-
         if (
             unit.isMelee()
                 && unit.noCooldown()
                 && unit.enemiesNear().inRadius(2, unit).canBeAttackedBy(unit, 0).notEmpty()
         ) return true;
 
+        if ((new AsTerranForbiddenToAttack(unit)).isForbidden()) return false;
+        if (!allowedToAttack()) return false;
 
         // =========================================================
 
@@ -94,7 +92,11 @@ public class AllowedToAttack {
 //            return false;
 //        }
 
-        if (unit.hasSquad() && unit.squad().cohesionPercent() <= 80 && unit.isAttackingOrMovingToAttack()) {
+        if (
+            unit.hasSquad()
+                && unit.squad().cohesionPercent() <= 80
+                && unit.isAttackingOrMovingToAttack()
+        ) {
             if (unit.enemiesNear().ranged().notEmpty() && unit.lastStartedAttackMoreThanAgo(90)) {
                 AttackNearbyEnemies.reasonNotToAttack = "Cautious";
                 return false;

@@ -48,13 +48,13 @@ public class TerranComsatTest extends AbstractTestWithUnits {
         );
 
         setupEnemyLurkers(ours, () -> {
-            updateComsat(comsat, 200);
-
-            assertEquals(lurker2, comsat.target);
-
             updateComsat(comsat, 140);
 
             assertEquals(null, comsat.target);
+
+            updateComsat(comsat, 200);
+
+            assertEquals(lurker2, comsat.target);
 
             updateComsat(comsat, 90);
 

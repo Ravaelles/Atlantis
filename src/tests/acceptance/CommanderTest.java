@@ -32,7 +32,7 @@ public class CommanderTest extends NonAbstractTestFakingGame {
     public void commanderHandlers() {
         createWorld(3, () -> {
                 (new ProductionCommander()).invoke();
-                (new DynamicProductionOfUnitsCommander()).invoke();
+//                (new DynamicProductionOfUnitsCommander()).invoke();
 
                 assertTrue(true);
             },

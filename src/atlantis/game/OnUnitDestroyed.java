@@ -2,6 +2,7 @@ package atlantis.game;
 
 import atlantis.Atlantis;
 import atlantis.combat.squad.transfers.SquadTransfersCommander;
+import atlantis.debug.OurWorkerWasKilled;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
@@ -10,7 +11,6 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
 public class OnUnitDestroyed {
-
     public static void update(AUnit unit) {
 //        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
 //        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.name());
@@ -23,6 +23,8 @@ public class OnUnitDestroyed {
                 Atlantis.LOST++;
                 Atlantis.LOST_RESOURCES += unit.type().getTotalResources();
             }
+
+            OurWorkerWasKilled.onWorkedKilled(unit);
         }
 //        else if (unit.isEnemy() && unit.isRealUnit()) {
         else if (unit.isEnemy()) {

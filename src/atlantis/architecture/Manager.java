@@ -61,7 +61,7 @@ public abstract class Manager extends BaseAbstractManager {
 
     protected Manager handleSubmanagers() {
         for (Manager submanager : submanagerObjects) {
-            if (submanager.applies() && submanager.handle() != null) {
+            if (submanager.invoke() != null) {
                 return submanager;
             }
         }
@@ -81,7 +81,7 @@ public abstract class Manager extends BaseAbstractManager {
     public Manager fallbackToUseManager(Class<? extends Manager> classObject) {
         Manager manager = instantiateManager(classObject);
 
-        return manager.handle();
+        return manager.invoke();
     }
 
     /**

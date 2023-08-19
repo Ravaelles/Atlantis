@@ -69,6 +69,6 @@ public class ProtectorManager extends Manager {
     private Manager idleProtector() {
         if (target.isBunker()) return null;
 
-        return (new IdleRepairer(unit)).handle();
+        return (new IdleRepairer(unit)).invoke();
     }
 }

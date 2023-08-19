@@ -25,6 +25,10 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     protected AUnit bestTargetToAttack() {
         AUnit target = defineTarget();
 
+        if (target == null || !target.hasPosition()) {
+            return null;
+        }
+
 //        if (target != null) {
 //            System.out.println("target = " + target + " / " + unit.distTo(target) + " / " + unit.groundWeaponRange());
 //        }

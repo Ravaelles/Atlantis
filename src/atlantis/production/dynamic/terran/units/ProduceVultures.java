@@ -10,7 +10,9 @@ public class ProduceVultures {
     public static boolean vultures() {
 //        return false;
 
-        int vultures = Count.ofType(AUnitType.Terran_Vulture);
+        int vultures = Count.withPlanned(AUnitType.Terran_Vulture);
+
+        if (vultures == 0) return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, 1);
 
         if (Enemy.terran()) {
             if (vultures * 2 >= Count.marines() && !A.hasMinerals(750)) return false;

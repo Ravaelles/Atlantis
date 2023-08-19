@@ -37,9 +37,9 @@ public class SiegeBecauseSpecificEnemiesNear extends Manager {
                     AUnitType.Zerg_Lurker
                 )
                 .inRadius(maxDist, unit)
-                .isNotEmpty()
+                .notEmpty()
         ) {
-            if (enemies.inRadius(5 + unit.id() % 4, unit).notEmpty()) {
+            if (enemies.inRadius(2 + unit.id() % 4, unit).notEmpty()) {
                 return usedManager(WantsToSiege.wantsToSiegeNow(this, "KeyEnemy"));
             }
         }

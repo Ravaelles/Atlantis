@@ -491,7 +491,11 @@ public class Selection extends BaseSelection {
     }
 
     public Selection notHavingAntiAirWeapon() {
-        return cloneByRemovingIf(u -> !u.canAttackAirUnits(), "notHavingAntiAirWeapon");
+        return cloneByRemovingIf(u -> u.canAttackAirUnits(), "notHavingAntiAirWeapon");
+    }
+
+    public Selection havingAntiAirWeapon() {
+        return cloneByRemovingIf(u -> !u.canAttackAirUnits(), "havingAntiAirWeapon");
     }
 
     public int totalHp() {
@@ -594,6 +598,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection notProtector() {
+        return cloneByRemovingIf(
+            (AUnit::isProtector), "notProtector"
+        );
+    }
+
     /**
      * Selects these transport/bunker units which have still enough room inside.
      */
@@ -682,7 +692,7 @@ public class Selection extends BaseSelection {
      */
     public Selection notScout() {
         return cloneByRemovingIf(
-            (AUnit::isScout), "notScout");
+            (u -> u.isScout() || u.isFlyingScout()), "notScout");
     }
 
     /**

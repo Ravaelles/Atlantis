@@ -49,6 +49,8 @@ public class PositionFulfillsAllConditions {
         // Overlapping a choke point can make it impossible to pass
         if (TooCloseToChoke.isTooCloseToChoke(building, position)) return false;
 
+        if (TooCloseToBunker.isTooCloseToBunker(building, position)) return false;
+
         if (building.isMissileTurret()) return true;
 
         if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) return false;

@@ -13,6 +13,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.production.dynamic.expansion.InitialMainPosition;
 import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class TurretsForMain extends TerranTurret {
-    private final int BORDER_TURRETS_MIN_COUNT = 0;
+    private final int BORDER_TURRETS_MIN_COUNT = 1;
     private final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
     //    private  final int BORDER_TURRETS_MIN_COUNT = 4;
 //    private  final int BORDER_TURRETS_TOTAL_OVER_TIME = 7;
@@ -39,8 +40,10 @@ public class TurretsForMain extends TerranTurret {
     // =========================================================
 
     public boolean buildIfNeeded() {
-        if (A.supplyUsed() <= 20) return false;
+        if (true) return false;
 
+        if (A.notNthGameFrame(71)) return false;
+        if (A.supplyUsed() <= 20) return false;
         if (!Have.engBay() || !Have.base()) return false;
 
         if (turretForMainChoke()) {
@@ -67,7 +70,6 @@ public class TurretsForMain extends TerranTurret {
         int turretsForMain = optimalMainBaseTurrets();
 
         if (turretsForMain <= 0) return false;
-
         if (exceededExistingAndInProduction()) return false;
 
         AUnit main = mainBase();
@@ -80,7 +82,10 @@ public class TurretsForMain extends TerranTurret {
             forMainBase != null
                 && Count.existingOrPlannedBuildingsNear(turret, 6, forMainBase) < turretsForMain
         ) {
-            AddToQueue.withHighPriority(turret, forMainBase).setMaximumDistance(12);
+            ProductionOrder productionOrder = AddToQueue.withHighPriority(turret, forMainBase);
+            if (productionOrder != null) {
+                productionOrder.setMaximumDistance(12);
+            }
             return true;
         }
 
@@ -135,14 +140,18 @@ public class TurretsForMain extends TerranTurret {
         APosition place = Chokes.mainChoke().translateTilesTowards(5, mainBase());
         if (place != null) {
             int existing = Count.existingOrPlannedBuildingsNear(turret, 5, place);
+            ProductionOrder productionOrder = null;
 
             if (existing == 0) {
-                AddToQueue.withHighPriority(turret, place).setMaximumDistance(12);
-                return true;
+                productionOrder = AddToQueue.withHighPriority(turret, place);
             }
 
             if (existing <= 1 && A.hasMinerals(350)) {
-                AddToQueue.withStandardPriority(turret, place).setMaximumDistance(12);
+                productionOrder = AddToQueue.withStandardPriority(turret, place);
+            }
+
+            if (productionOrder != null) {
+                productionOrder.setMaximumDistance(12);
                 return true;
             }
         }
@@ -151,8 +160,10 @@ public class TurretsForMain extends TerranTurret {
     }
 
     private boolean turretsForMainRegionBorders() {
-        if (true) return false;
+//        if (true) return false;
 
+        if (A.notNthGameFrame(113)) return false;
+        if (!A.hasMinerals(570)) return false;
         if (exceededExistingAndInProduction()) return false;
 
         ArrayList<APosition> turretsProtectingMainBorders = positionsForTurretsNearMainBorder();

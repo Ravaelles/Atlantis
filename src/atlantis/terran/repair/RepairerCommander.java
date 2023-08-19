@@ -5,10 +5,10 @@ import atlantis.units.AUnit;
 
 import java.util.Iterator;
 
-public class RepairerCommander  extends Commander {
+public class RepairerCommander extends Commander {
     @Override
     protected void handle() {
-        for (Iterator<AUnit> iterator = RepairAssignments.getRepairers().iterator(); iterator.hasNext();) {
+        for (Iterator<AUnit> iterator = RepairAssignments.getRepairers().iterator(); iterator.hasNext(); ) {
             AUnit repairer = iterator.next();
 
             if (repairer.isProtector() && (repairer.isRepairing() || repairer.lastActionLessThanAgo(30 * 1))) {
@@ -21,6 +21,7 @@ public class RepairerCommander  extends Commander {
                 continue;
             }
 
+            (new RepairerManager(repairer)).invoke();
             (new RepairerManager(repairer)).handle();
         }
     }

@@ -42,7 +42,7 @@ public class TerranTurret extends AntiAirBuildingManager {
     }
 
     public boolean exceededExistingAndInProduction() {
-        if (Count.inProductionOrInQueue(type()) >= 3) return false;
+        if (Count.withPlanned(type()) >= 2) return true;
 
         int existing = Count.existingOrInProductionOrInQueue(type());
         if (existing >= 12) return true;

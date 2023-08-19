@@ -13,9 +13,17 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
     }
 
     public boolean allowsToAttackEnemyUnit(AUnit enemy) {
-        if (focusPoint == null) return true;
+        if (enemy == null) {
+            throw new RuntimeException("aaa");
+//            if (true) return true;
+        }
 
-        if (enemy.effUndetected()) return false;
+        if (!enemy.hasPosition() || enemy.effUndetected()) {
+//            System.out.println("enemy.effUndetected() = " + enemy.effUndetected());
+//            System.out.println("enemy.hasPosition() = " + enemy.hasPosition());
+            return false;
+        }
+        if (focusPoint == null) return true;
 
         if (
             unit.isInWeaponRangeByGame(enemy)
@@ -23,12 +31,14 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
                 || ourBuildingIsInDanger(unit, enemy)
         ) return true;
 
-        if (focusPoint.regionsMatch(enemy)) {
-            return whenTargetInSameRegion(unit, enemy);
-        }
-        else {
-            return whenTargetInDifferentRegions(unit, enemy);
-        }
+        return true;
+
+//        if (focusPoint.regionsMatch(enemy)) {
+//            return whenTargetInSameRegion(unit, enemy);
+//        }
+//        else {
+//            return whenTargetInDifferentRegions(unit, enemy);
+//        }
     }
 
     private boolean whenTargetInSameRegion(AUnit unit, AUnit enemy) {

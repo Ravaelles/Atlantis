@@ -14,7 +14,7 @@ import static atlantis.units.AUnitType.Terran_Missile_Turret;
 public class ReinforceBunkersWithTurrets extends Commander {
     @Override
     public boolean applies() {
-        return Have.engBay() && Count.bunkers() > 0;
+        return Have.engBay() && Count.bunkers() > 0 && Count.inProductionOrInQueue(Terran_Missile_Turret) <= 1;
     }
 
     @Override

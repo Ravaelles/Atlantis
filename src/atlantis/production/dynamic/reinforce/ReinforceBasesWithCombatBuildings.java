@@ -33,18 +33,16 @@ public abstract class ReinforceBasesWithCombatBuildings extends Commander {
 //        }
 
         if (We.terran()) {
-            if (A.everyNthGameFrame(71)) {
-                (new TurretsForMain()).buildIfNeeded();
-            }
-            if (A.everyNthGameFrame(73)) {
-                (new TurretsForNonMain()).buildIfNeeded();
-            }
+            (new TurretsForMain()).buildIfNeeded();
+            (new TurretsForNonMain()).buildIfNeeded();
         }
 
         reinforceAllBasesIncludingUnfinishedOnes();
     }
 
     private void reinforceAllBasesIncludingUnfinishedOnes() {
+        if (A.notNthGameFrame(79)) return;
+
         for (HasPosition position : AllBasePositions.allBases(true, true)) {
             if (position != null) makeSureIsReinforced(position);
         }

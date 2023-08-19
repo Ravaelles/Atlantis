@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.architecture.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.margin.UnitRange;
 import atlantis.combat.missions.Mission;
@@ -26,6 +27,7 @@ import atlantis.map.scout.ScoutCommander;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.builders.BuilderManager;
+import atlantis.terran.TerranFlyingBuildingScoutCommander;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
@@ -1598,6 +1600,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int lastActionAgo(Action unitAction) {
+        if (unitAction == null) {
+            return 99998;
+        }
+
         String cacheKey = "_last" + unitAction.name();
 
         if (!cacheInt.has(cacheKey)) {
@@ -1651,6 +1657,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isScout() {
         return ScoutCommander.isScout(this);
+    }
+
+    public boolean isFlyingScout() {
+        return TerranFlyingBuildingScoutCommander.isFlyingBuilding(this);
     }
 
     public int getSpaceProvided() {
@@ -2080,11 +2090,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public double combatEvalRelative() {
-        // New Jfap solution
-        return (new AtlantisJfap(this, true)).evaluateCombatSituation();
+        return (double) cache.get(
+            "combatEvalRelative",
+            1,
+            () -> {
+                // New Jfap solution
+                return (new AtlantisJfap(this, true)).evaluateCombatSituation();
 
-        // Old manual implementation
-//        return ACombatEvaluator.relativeAdvantage(this);
+                // Old manual implementation
+//                return ACombatEvaluator.relativeAdvantage(this);
+            }
+        );
     }
 
     public boolean isMedic() {
@@ -2740,6 +2756,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return manager.equals(this.manager);
     }
 
+    public boolean isActiveManager(Class aClass) {
+        return manager.getClass().equals(aClass);
+    }
+
     public boolean canLift() {
         return u().canLift();
     }
@@ -2788,4 +2808,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             lastActionAgo(Actions.UNSIEGE)
         );
     }
+
+    public APosition lastPosition() {
+        return APosition.createFromPixels(_lastX, _lastY);
+    }
+
+    public boolean hasChangedPositionRecently() {
+        return !position().equals(lastPosition());
+    }
+
 }

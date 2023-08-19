@@ -1504,7 +1504,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "canAttackGround",
             -1,
-            () -> groundWeapon().damageAmount() > 0 || isReaver() || isBunker()
+            () -> groundWeapon().damageAmount() > 0 || isReaver() || isBunker() || isCarrier()
         );
     }
 
@@ -1512,7 +1512,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "canAttackAir",
             -1,
-            () -> airWeapon().damageAmount() > 0 || isBunker()
+            () -> airWeapon().damageAmount() > 0 || isBunker() || isCarrier()
         );
     }
 

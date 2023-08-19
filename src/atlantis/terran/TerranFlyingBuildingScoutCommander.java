@@ -34,7 +34,7 @@ public class TerranFlyingBuildingScoutCommander extends Commander {
                 continue;
             }
 
-            (new TerranFlyingBuildingScoutManager(unit)).handle();
+            (new TerranFlyingBuildingScoutManager(unit)).invoke();
         }
     }
 
@@ -56,7 +56,7 @@ public class TerranFlyingBuildingScoutCommander extends Commander {
     }
 
     public static boolean isFlyingBuilding(AUnit unit) {
-        return unit.type().isBuilding() && flyingBuildings.contains(unit);
+        return flyingBuildings.contains(unit);
     }
 
 }

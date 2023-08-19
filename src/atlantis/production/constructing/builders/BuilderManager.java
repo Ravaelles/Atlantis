@@ -19,10 +19,17 @@ public class BuilderManager extends Manager {
     }
 
     @Override
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            AbandonAsBuilderIfAttacked.class,
+        };
+    }
+
+    @Override
     protected Manager handle() {
         if (update()) return usedManager(this);
 
-        return null;
+        return handleSubmanagers();
     }
 
     private boolean update() {

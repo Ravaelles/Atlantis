@@ -22,27 +22,21 @@ import atlantis.util.We;
 import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class ExpansionCommander extends Commander {
-//    protected ReinforceBaseWithCombatBuildings baseReinforcer;
-
     public ExpansionCommander() {
-//        baseReinforcer = ReinforceBaseWithCombatBuildings.create();
     }
 
     @Override
     protected void handle() {
+//        System.err.println("ExpansionCommander.handle() @ " + A.now());
         if (shouldBuildNewBase()) prepareForNewBase();
     }
 
     protected void prepareForNewBase() {
         requestNewBase();
-//        baseReinforcer.handle();
     }
 
     protected static boolean shouldBuildNewBase() {
         if (We.terran() && Count.tanks() <= 0 && !A.hasMinerals(550)) return false;
-
-//        if (true) return false;
-//        if (A.supplyTotal() <= 100) return false;
 
         // Zerg
         if (We.zerg() && ZergExpansionCommander.handleNoZergLarvas()) return true;

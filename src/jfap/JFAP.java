@@ -121,7 +121,8 @@ public class JFAP extends AJFAP {
         if (remainingShields > 0) {
             fu.shields = remainingShields;
             return;
-        } else if (fu.shields > 0) {
+        }
+        else if (fu.shields > 0) {
             damage -= fu.shields + (fu.shieldArmor << 8);
             fu.shields = 0;
         }
@@ -130,7 +131,8 @@ public class JFAP extends AJFAP {
         if (damageType == DamageType.Concussive) {
             if (fu.unitSize == UnitSizeType.Large) damage = damage / 4;
             else if (fu.unitSize == UnitSizeType.Medium) damage = damage / 2;
-        } else if (damageType == DamageType.Explosive) {
+        }
+        else if (damageType == DamageType.Explosive) {
             if (fu.unitSize == UnitSizeType.Small) damage = damage / 2;
             else if (fu.unitSize == UnitSizeType.Medium) damage = (damage * 3) / 4;
         }
@@ -143,9 +145,9 @@ public class JFAP extends AJFAP {
 
     private boolean isSuicideUnit(AUnitType ut) {
         return (ut == AUnitType.Zerg_Scourge ||
-                ut == AUnitType.Terran_Vulture_Spider_Mine ||
-                ut == AUnitType.Zerg_Infested_Terran ||
-                ut == AUnitType.Protoss_Scarab);
+            ut == AUnitType.Terran_Vulture_Spider_Mine ||
+            ut == AUnitType.Zerg_Infested_Terran ||
+            ut == AUnitType.Protoss_Scarab);
     }
 
     // Thanks and credits to @bmnielsen for kiting code sim
@@ -170,7 +172,8 @@ public class JFAP extends AJFAP {
                         closestEnemy = enemy;
                     }
                 }
-            } else if (fu.groundDamage > 0) {
+            }
+            else if (fu.groundDamage > 0) {
                 final int d = distButNotReally(fu, enemy);
                 if ((closestEnemy == null || d < closestDist) && d >= fu.groundMinRange) {
                     closestDist = d;
@@ -198,7 +201,8 @@ public class JFAP extends AJFAP {
             if (closestEnemy.flying) {
                 dealDamage(closestEnemy, fu.airDamage, fu.airDamageType);
                 fu.attackCooldownRemaining = fu.airCooldown;
-            } else {
+            }
+            else {
                 dealDamage(closestEnemy, fu.groundDamage, fu.groundDamageType);
                 fu.attackCooldownRemaining = fu.groundCooldown;
                 if (fu.elevation != -1 && closestEnemy.elevation != -1 && closestEnemy.elevation > fu.elevation) {
@@ -210,13 +214,16 @@ public class JFAP extends AJFAP {
                 unitDeath(closestEnemy, enemyUnits);
             }
             didSomething = true;
-        } else if (closestEnemy != null && Math.sqrt(closestDist) > fu.speed) {
+        }
+        else if (closestEnemy != null && Math.sqrt(closestDist) > fu.speed) {
             final int dx = closestEnemy.x - fu.x;
             final int dy = closestEnemy.y - fu.y;
             fu.x += (int) (dx * (fu.speed / Math.sqrt(dx * dx + dy * dy)));
             fu.y += (int) (dy * (fu.speed / Math.sqrt(dx * dx + dy * dy)));
             didSomething = true;
         }
+
+//        System.out.println("Unit x " + fu.x / 32);
     }
 
     private void medicsim(JFAPUnit fu, Set<JFAPUnit> player12) {
@@ -252,7 +259,8 @@ public class JFAP extends AJFAP {
                         closestEnemy = enemy;
                     }
                 }
-            } else if (fu.groundDamage > 0) {
+            }
+            else if (fu.groundDamage > 0) {
                 int d = distButNotReally(fu, enemy);
                 if ((closestEnemy == null || d < closestDist) && d >= fu.groundMinRange) {
                     closestDist = d;
@@ -269,7 +277,8 @@ public class JFAP extends AJFAP {
             }
             didSomething = true;
             return true;
-        } else if (closestEnemy != null && Math.sqrt(closestDist) > fu.speed) {
+        }
+        else if (closestEnemy != null && Math.sqrt(closestDist) > fu.speed) {
             final int dx = closestEnemy.x - fu.x;
             final int dy = closestEnemy.y - fu.y;
             fu.x += (int) (dx * (fu.speed / Math.sqrt(dx * dx + dy * dy)));
@@ -284,7 +293,8 @@ public class JFAP extends AJFAP {
         if (isSuicideUnit(ju.unitType)) {
             final boolean unitDied = suicideSim(ju, player2);
             if (unitDied) unit.remove();
-        } else if (ju.unitType == AUnitType.Terran_Medic) medicsim(ju, player1);
+        }
+        else if (ju.unitType == AUnitType.Terran_Medic) medicsim(ju, player1);
         else unitSim(ju, player2);
     }
 
@@ -294,7 +304,8 @@ public class JFAP extends AJFAP {
         if (fu.race == Race.Zerg) {
             if (fu.health < fu.maxHealth) fu.health += 4;
             if (fu.health > fu.maxHealth) fu.health = fu.maxHealth;
-        } else if (fu.race == Race.Protoss) {
+        }
+        else if (fu.race == Race.Protoss) {
             if (fu.shields < fu.maxShields) fu.shields += 7;
             if (fu.shields > fu.maxShields) fu.shields = fu.maxShields;
         }

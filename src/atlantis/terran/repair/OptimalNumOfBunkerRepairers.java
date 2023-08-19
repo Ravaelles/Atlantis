@@ -39,7 +39,7 @@ public class OptimalNumOfBunkerRepairers {
 
                 // against PROTOSS
                 if (Enemy.protoss()) {
-                    optimalNumber = enemiesNear * 1.8 + enemiesFar * 0.75;
+                    optimalNumber = enemiesNear * 2 + enemiesFar * 0.95;
                 }
                 // against TERRAN
                 else if (Enemy.terran()) {

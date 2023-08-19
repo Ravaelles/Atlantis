@@ -36,7 +36,7 @@ public class Vector extends Vector2d {
 
     public Vector rotate(double angle) {
         double x1 = (double) (x * Math.cos(angle) - y * Math.sin(angle));
-        double y1 = (double) (x * Math.sin(angle) + y * Math.cos(angle)) ;
+        double y1 = (double) (x * Math.sin(angle) + y * Math.cos(angle));
 
         return new Vector(x1, y1);
     }
@@ -51,5 +51,19 @@ public class Vector extends Vector2d {
         return vector;
 
 //        return new Vector(x + extraLength * x * x / length, y);
+    }
+
+    public Vector normalizeTo1() {
+        normalize();
+        return this;
+    }
+
+    public Vector multiplyVector(double factor) {
+        this.scale(factor);
+        return this;
+    }
+
+    public void print(String vector) {
+        System.err.println(vector + ": [" + x + ", " + y + "]");
     }
 }

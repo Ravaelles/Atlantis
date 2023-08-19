@@ -108,6 +108,7 @@ public class ShouldStopRunning extends Manager {
 //        }
 
         unit.runningManager().stopRunning();
+        unit.holdPosition("StopRunning");
         return false;
     }
 }

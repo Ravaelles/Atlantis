@@ -36,7 +36,7 @@ public class TerranFirebat extends Manager {
         }
 
         if (
-            unit.hp() >= 43
+            (unit.hp() >= 43 || unit.lastStartedAttackAgo() >= 30 * 10)
                 && unit.cooldown() <= 3
                 && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
                 && unit.friendsNear().medics().inRadius(1.4, unit).notEmpty()

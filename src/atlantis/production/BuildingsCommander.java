@@ -8,15 +8,13 @@ import atlantis.units.select.Select;
 public class BuildingsCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
-        return new Class[] {
+        return new Class[]{
             TerranFlyingBuildingScoutCommander.class,
         };
     }
 
     @Override
     protected void handle() {
-        super.handle();
-
         for (AUnit unit : Select.ourBuildings().list()) {
             (new BuildingManager(unit)).invoke();
         }

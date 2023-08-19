@@ -6,7 +6,7 @@ public class Commander extends BaseAbstractCommander {
      */
     @SuppressWarnings("unchecked")
     protected Class<? extends Commander>[] subcommanders() {
-        return new Class[] {};
+        return new Class[]{};
     }
 
     public boolean applies() {
@@ -14,6 +14,19 @@ public class Commander extends BaseAbstractCommander {
     }
 
     public void invoke() {
+//        System.err.println("INVOKE " + getClass().getSimpleName());
+
+        if (applies()) {
+            handle();
+        }
+
+        handleSubcommanders();
+    }
+
+    private void invokeFromParent(Commander parentCommander) {
+//        System.err.println("-- invoke " + getClass().getSimpleName()
+//            + "\n            from " + parentCommander.getClass().getSimpleName());
+
         if (applies()) {
             handle();
         }
@@ -26,10 +39,8 @@ public class Commander extends BaseAbstractCommander {
     }
 
     public void handleSubcommanders() {
-        for (Commander commander : commanderObjects){
-            if (commander.applies()) {
-                commander.handle();
-            }
+        for (Commander commander : commanderObjects) {
+            commander.invokeFromParent(this);
         }
     }
 }

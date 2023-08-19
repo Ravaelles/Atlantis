@@ -7,9 +7,7 @@ import atlantis.game.OnUnitMorph;
 import atlantis.game.OnUnitRenegade;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
-import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -135,26 +133,26 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Marine, 10)
+            fake(AUnitType.Terran_Marine, 10)
         );
     }
 
     protected FakeUnit[] generateEnemies() {
         return fakeEnemies(
-                drone1 = fake(AUnitType.Zerg_Drone),
-                drone2 = fake(AUnitType.Zerg_Drone),
-                drone3 = fake(AUnitType.Zerg_Drone),
-                drone4 = fake(AUnitType.Zerg_Drone),
-                drone5 = fake(AUnitType.Zerg_Drone),
-                drone6 = fake(AUnitType.Zerg_Drone),
-                lurkerEgg = fake(AUnitType.Zerg_Lurker_Egg),
-                larva = fake(AUnitType.Zerg_Larva)
+            drone1 = fake(AUnitType.Zerg_Drone),
+            drone2 = fake(AUnitType.Zerg_Drone),
+            drone3 = fake(AUnitType.Zerg_Drone),
+            drone4 = fake(AUnitType.Zerg_Drone),
+            drone5 = fake(AUnitType.Zerg_Drone),
+            drone6 = fake(AUnitType.Zerg_Drone),
+            lurkerEgg = fake(AUnitType.Zerg_Lurker_Egg),
+            larva = fake(AUnitType.Zerg_Larva)
         );
     }
 
     protected FakeUnit[] generateNeutral() {
-        return new FakeUnit[] {
-                geyser = fake(AUnitType.Resource_Vespene_Geyser)
+        return new FakeUnit[]{
+            geyser = fake(AUnitType.Resource_Vespene_Geyser)
         };
     }
 

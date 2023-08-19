@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.fight.FightInsteadAvoid;
+import atlantis.combat.micro.avoid.terran.ShouldAlwaysAvoidAsTerran;
 import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -10,11 +11,13 @@ import atlantis.units.Units;
 import atlantis.util.Enemy;
 
 public class AttackInsteadAvoid extends Manager {
+    private ShouldAlwaysAvoidAsTerran shouldAlwaysAvoidAsTerran;
     private ShouldAlwaysAvoidAsZerg shouldAlwaysAvoidAsZerg;
     private final Units enemies;
 
     public AttackInsteadAvoid(AUnit unit, Units enemies) {
         super(unit);
+        shouldAlwaysAvoidAsTerran = new ShouldAlwaysAvoidAsTerran(unit);
         shouldAlwaysAvoidAsZerg = new ShouldAlwaysAvoidAsZerg(unit);
         this.enemies = enemies;
     }
@@ -23,6 +26,12 @@ public class AttackInsteadAvoid extends Manager {
     public boolean applies() {
         if (!unit.hasAnyWeapon()) return false;
 
+//        System.err.println(
+//            "### " + unit.type() + "(" + unit.idWithHash() + ").combatEvalRelative() = " + unit.combatEvalRelative()
+//        );
+
+        if (unit.combatEvalRelative() < 0.6) return false;
+        if (shouldAlwaysAvoidAsTerran.shouldAlwaysAvoid()) return false;
         if (shouldAlwaysAvoidAsZerg.shouldAlwaysAvoid()) return false;
 
         if (
@@ -58,6 +67,8 @@ public class AttackInsteadAvoid extends Manager {
 
     @Override
     protected Manager handle() {
+        if (unit.combatEvalRelative() <= 0.6) return null;
+
         AttackNearbyEnemies attackNearbyEnemies = new AttackNearbyEnemies(unit);
         if (attackNearbyEnemies.handleAttackNearEnemyUnits()) {
             return usedManager(attackNearbyEnemies, "AvoidButAttack");

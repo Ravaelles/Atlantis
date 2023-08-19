@@ -4,6 +4,7 @@ import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -20,6 +21,9 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
     @Test
     public void marinesAreAvoidingZealots() {
         createWorld(100, () -> {
+//            Select.our().print();
+//            Select.enemy().print();
+
             FakeUnit unit = ourFirst;
             unit.setSquad(Alpha.get());
             (new CombatUnitManager(unit)).invoke();
@@ -30,8 +34,8 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
 //            boolean alwaysShow = true;
 
             if (!isSafe || alwaysShow) {
-                System.out.println(A.now() + " -       " + unit.tooltip()
-                    + "\n   " + unit.manager() + " / " + unit.lastCommand()
+                System.out.println(A.now() + " - " + unit.manager()
+                    + "\n   tooltip: " + unit.tooltip() + " / " + unit.lastCommand()
                     + ",\n   tx:" + unit.txWithPrecision() + ", dist_to_zealot:" + A.dist(distToZealot)
                     + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
                     + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)

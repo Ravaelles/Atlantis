@@ -18,7 +18,7 @@ import static atlantis.util.Helpers.*;
 public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander {
     @Override
     protected void handle() {
-        super.handle();
+        super.invoke();
 
         if (AGame.notNthGameFrame(7) || noSupply(25)) {
             return;
@@ -119,7 +119,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander 
 
         if (Count.inProductionOrInQueue(Protoss_Photon_Cannon) >= 2) return false;
 
-        if (ProtossReinforceBases.handle()) return true;
+        if (ProtossReinforceBases.invoke()) return true;
 
         return false;
     }

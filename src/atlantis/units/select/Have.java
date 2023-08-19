@@ -96,6 +96,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Factory) > 0;
     }
 
+    public static boolean scienceFacility() {
+        return Count.ofType(AUnitType.Terran_Science_Facility) > 0;
+    }
+
     public static boolean machineShop() {
         return have(AUnitType.Terran_Machine_Shop);
     }

@@ -194,11 +194,6 @@ public class ScoutManager extends Manager {
     }
 
     private void defineNextPolygonPointForEnemyBaseRoamingUnit() {
-//        if ((new AvoidEnemies(unit)).handle() != null) {
-//            unit.setTooltipTactical("ChangeOfPlans");
-//            return;
-//        }
-
         unitingAroundBaseLastPolygonPoint = nextPointAroundEnemyBase();
 
         if (APainter.paintingMode == APainter.MODE_FULL_PAINTING) {

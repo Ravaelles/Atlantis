@@ -123,9 +123,11 @@ public class Atlantis implements BWEventListener {
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
         catch (Exception e) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("### AN ERROR HAS OCCURRED ###");
-//            System.err.println("### AN ERROR HAS OCCURRED ###");
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("### AN ERROR HAS OCCURRED ###");
 //            A.printStackTrace("### AN ERROR HAS OCCURRED ###");
+            System.err.println("### AN ERROR HAS OCCURRED ###");
+//            if (true) throw e;
+            e.printStackTrace();
         }
 
         if (A.notUms() && A.now() == 1) {

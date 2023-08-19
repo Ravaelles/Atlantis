@@ -22,7 +22,7 @@ public class ProductionOrdersCommander extends Commander {
         ArrayList<ProductionOrder> queue = CurrentProductionQueue.ordersToProduceNow(
             ProductionQueueMode.WITH_REQUIREMENTS_FULFILLED
         );
-        
+
         for (ProductionOrder order : queue) {
             AUnitType base = AtlantisConfig.BASE;
 

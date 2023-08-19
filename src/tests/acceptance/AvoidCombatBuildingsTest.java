@@ -4,6 +4,7 @@ import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -19,15 +20,18 @@ public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
      */
     @Test
     public void neverRunsIntoCombatBuildings() {
-        createWorld(100, () -> {
+        createWorld(50, () -> {
+//            Select.our().print();
+//            Select.enemy().print();
+
             FakeUnit unit = ourFirst;
             unit.setSquad(Alpha.get());
             (new CombatUnitManager(unit)).invoke();
 
             double distToSunken = distToNearestEnemy(unit);
             boolean isSafe = distToSunken > 7.05;
-//            boolean alwaysShow = false;
-            boolean alwaysShow = true;
+            boolean alwaysShow = false;
+//            boolean alwaysShow = true;
 
             if (!isSafe || alwaysShow) {
                 System.out.println(A.now()
@@ -35,7 +39,7 @@ public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
                     + "\n   Manager : " + unit.manager()
                     + "\n   Managers: " + unit.managerLogs().toString()
                     + "\n   Command : " + unit.lastCommand()
-                    + ",\n   tx     :" + unit.tx()
+                    + ",\n   tx     :" + unit.txWithPrecision()
                     + ",\n   dist_to_sunken:" + A.dist(distToSunken)
                     + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
                     + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)

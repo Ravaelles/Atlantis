@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -16,7 +17,7 @@ public class TerranComsatStation extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.is(AUnitType.Terran_Comsat_Station) && AGame.everyNthGameFrame(13);
+        return unit.is(AUnitType.Terran_Comsat_Station) && (AGame.everyNthGameFrame(13) || Env.isTesting());
     }
 
     @Override
@@ -49,12 +50,16 @@ public class TerranComsatStation extends Manager {
     private boolean shouldScanThisLurker(AUnit lurker) {
         if (unit.energy(190)) return true;
 
-        int minUnitsNear = (unit.energy(160) ? 3 : (unit.energy(60) ? 4 : 6));
-
-        if (unit.energy(100) && Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker).isNotEmpty()) {
+        if (
+            unit.energy(50)
+                && Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker).isNotEmpty()
+                && lurker.friendsNear().canAttack(lurker, 7).atLeast(2)
+        ) {
 //            System.err.println("Scan " + lurker + " because buildings are close");
             return true;
         }
+
+        int minUnitsNear = (unit.energy(160) ? 3 : (unit.energy(60) ? 4 : 6));
 
         return Select.ourCombatUnits()
             .excludeTypes(AUnitType.Terran_Medic)
@@ -83,7 +88,7 @@ public class TerranComsatStation extends Manager {
     }
 
     private boolean scanObservers() {
-        if (unit.energy() <= 200) return false;
+        if (unit.energy() <= 150) return false;
 
         for (AUnit observer : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Observer).list()) {
             if (shouldScanThisObserver(observer)) {
@@ -95,7 +100,7 @@ public class TerranComsatStation extends Manager {
     }
 
     private boolean shouldScanThisObserver(AUnit observer) {
-        if (unit.energy() >= 100 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)) return true;
+        if (Select.ourRealUnits().inRadius(9, observer).havingAntiAirWeapon().atLeast(6)) return true;
 
         if (
             Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, observer).isNotEmpty()

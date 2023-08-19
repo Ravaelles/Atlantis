@@ -130,19 +130,19 @@ public class FocusPointTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Marine, 10)
+            fake(AUnitType.Terran_Marine, 10)
         );
     }
 
     protected FakeUnit[] generateEnemies() {
         return fakeEnemies(
-                assimilator = fakeEnemy(AUnitType.Protoss_Assimilator, 11)
+            assimilator = fakeEnemy(AUnitType.Protoss_Assimilator, 11)
         );
     }
 
     protected FakeUnit[] generateNeutral() {
-        return new FakeUnit[] {
-                geyser = fake(AUnitType.Resource_Vespene_Geyser, 9)
+        return new FakeUnit[]{
+            geyser = fake(AUnitType.Resource_Vespene_Geyser, 9)
         };
     }
 

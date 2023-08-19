@@ -18,6 +18,7 @@ public class RepairerManager extends Manager {
         return unit.isRepairerOfAnyKind();
     }
 
+    @Override
     protected Manager handle() {
         if (!unit.isScv()) {
             throw new RuntimeException(unit + " is not SCV!");
@@ -36,6 +37,11 @@ public class RepairerManager extends Manager {
 
     private Manager handleRepairs() {
         AUnit target = RepairAssignments.getUnitToRepairFor(unit);
+
+        if (ShouldNotRepairUnit.shouldNotRepairUnit(target)) {
+            RepairAssignments.removeRepairer(unit);
+            return null;
+        }
 
         if (target == null || !target.isAlive()) {
             unit.setTooltipTactical("TargetRIP");

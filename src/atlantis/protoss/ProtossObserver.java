@@ -18,7 +18,7 @@ public class ProtossObserver extends MobileDetector {
 
     @Override
     protected Manager handle() {
-        return super.handle();
+        return super.invoke();
     }
 
     public AUnitType type() {

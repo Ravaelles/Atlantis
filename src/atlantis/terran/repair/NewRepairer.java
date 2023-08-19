@@ -13,6 +13,7 @@ public class NewRepairer {
         Selection workers = Select.ourWorkers()
             .notCarrying()
             .notRepairing()
+            .notProtector()
             .notGatheringGas()
             .notConstructing()
             .notScout();

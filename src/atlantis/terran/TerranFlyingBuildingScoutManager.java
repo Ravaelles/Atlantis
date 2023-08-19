@@ -3,8 +3,10 @@ package atlantis.terran;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -22,6 +24,8 @@ public class TerranFlyingBuildingScoutManager extends Manager {
     }
 
     protected Manager handle() {
+        printUnderAttackAgo();
+
         if (updateFlyingBuilding()) {
             return usedManager(this);
         }
@@ -36,7 +40,23 @@ public class TerranFlyingBuildingScoutManager extends Manager {
 
         if (underAttack()) return unit.moveAwayFrom(unit, 3, Actions.MOVE_SAFETY, "UnderFire");
 
+        if (woundedAndAntiAirUnitsNear()) return true;
+
         if (goToFocusPoint()) return true;
+
+        return false;
+    }
+
+    private boolean woundedAndAntiAirUnitsNear() {
+        if (!unit.woundPercentMin(10)) return false;
+
+        Selection antiAirEnemies = unit.enemiesNear().havingAntiAirWeapon().canAttack(unit, 0.2);
+        if (antiAirEnemies.notEmpty()) {
+            unit.moveAwayFrom(
+                antiAirEnemies.nearestTo(unit), 2, Actions.MOVE_SAFETY, "OopsAntiAir"
+            );
+            return true;
+        }
 
         return false;
     }
@@ -57,15 +77,26 @@ public class TerranFlyingBuildingScoutManager extends Manager {
     }
 
     private boolean underAttack() {
-        if (unit.lastUnderAttackLessThanAgo(30 * 3)) {
-            AUnit enemy = unit.enemiesNear().canAttack(unit, 3).nearestTo(unit);
-            if (enemy != null) {
-                AUnit friend = Select.ourCombatUnits().combatBuildingsAntiAir().nearestTo(unit);
-                if (friend != null) {
-                    unit.move(friend, Actions.MOVE_SAFETY, "UnderFire");
-                    return true;
-                }
+        if (unit.lastUnderAttackLessThanAgo(30 * 4)) {
+//            AUnit enemy = unit.enemiesNear().canAttack(unit, 3).nearestTo(unit);
+//            if (enemy != null) {
+            HasPosition moveTo = null;
+
+            AUnit friend = Select.ourCombatUnits().nearestTo(unit);
+            if (friend != null && friend.distTo(unit) > 3) {
+                moveTo = friend;
             }
+
+            if (moveTo == null) {
+                moveTo = Select.main();
+            }
+
+            if (moveTo != null) {
+                unit.move(friend, Actions.MOVE_SAFETY, "UnderFire");
+                return true;
+            }
+//            }
+            System.err.println("Weird, no friend to move to?");
         }
         return false;
     }
@@ -104,6 +135,13 @@ public class TerranFlyingBuildingScoutManager extends Manager {
         }
 
         return null;
+    }
+
+    private void printUnderAttackAgo() {
+        int underAttackAgo = unit.lastUnderAttackAgo();
+        if (underAttackAgo <= 30 * 30) {
+            AAdvancedPainter.paintTextCentered(unit, "AttackedAgo: " + underAttackAgo, Color.Grey);
+        }
     }
 }
 

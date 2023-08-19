@@ -68,11 +68,23 @@ public class WorkerDefenceManager extends Manager {
 
     private static boolean runFromReaverFix(AUnit worker) {
         AUnit reaver = worker.enemiesNear().ofType(AUnitType.Protoss_Reaver).nearestTo(worker);
-        if (reaver != null && reaver.distToLessThan(worker, 10)) {
-            worker.runningManager().runFrom(reaver, 5, Actions.RUN_ENEMY, true);
-            worker.setTooltip("OhFuckReaver!", true);
-            worker.addLog("OhFuckReaver!");
-            return true;
+        if (reaver != null) {
+            double distTo = reaver.distTo(worker);
+
+            if (distTo <= 9) {
+                worker.runningManager().runFrom(reaver, 5, Actions.RUN_ENEMY, true);
+                worker.setTooltip("OhFuckReaver!", true);
+                worker.addLog("OhFuckReaver!");
+                return true;
+            }
+
+            if (distTo <= 12) {
+                AUnit distantBase = Select.ourBases().inRadius(30, worker).mostDistantTo(worker);
+                if (distantBase != null && distantBase.distTo(worker) >= 14) {
+                    worker.move(distantBase, Actions.MOVE_AVOID, "RunToAnotherBase");
+                    return true;
+                }
+            }
         }
 
         return false;

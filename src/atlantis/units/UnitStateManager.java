@@ -1,11 +1,11 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.generic.Unfreezer;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
 
 public class UnitStateManager extends Manager {
+    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 30;
     private int timeNow;
     private boolean shouldUpdatePosition;
 
@@ -13,7 +13,7 @@ public class UnitStateManager extends Manager {
         super(unit);
 
         timeNow = AGame.now();
-        shouldUpdatePosition = AGame.everyNthGameFrame(Unfreezer.UPDATE_UNIT_POSITION_EVERY_FRAMES);
+        shouldUpdatePosition = AGame.everyNthGameFrame(UPDATE_UNIT_POSITION_EVERY_FRAMES);
     }
 
     @Override

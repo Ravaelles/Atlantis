@@ -15,7 +15,6 @@ public class TerranTankWhenUnsieged extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isTankUnsieged() || !TankDecisions.siegeResearched()) return false;
-
         if (recentlySiegedOrUngieged()) return false;
 
         return true;

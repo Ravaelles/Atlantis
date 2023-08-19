@@ -1,10 +1,8 @@
 package atlantis.production.dynamic.terran;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.services.AreWeGoingBio;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.dynamic.reinforce.ReinforceBasesWithCombatBuildings;
 import atlantis.production.dynamic.reinforce.terran.turrets.ReinforceBunkersWithTurrets;
@@ -13,8 +11,6 @@ import atlantis.production.dynamic.terran.buildings.BuildFactory;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.*;
@@ -22,7 +18,7 @@ import static atlantis.units.AUnitType.*;
 public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
     @Override
     protected void handle() {
-        super.handle();
+//        super.invoke();
 
         ReinforceBasesWithCombatBuildings.get().invoke();
         (new ReinforceBunkersWithTurrets()).invoke();

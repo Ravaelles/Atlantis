@@ -16,6 +16,13 @@ public class ConsiderLoadingIntoBunkers extends Manager {
         if (Count.bunkers() == 0) return false;
         if (!unit.isMarine() && !unit.isGhost()) return false;
 
+        boolean noBunkerVeryNear = unit.friendsNear().bunkers().inRadius(2, unit).empty();
+
+        if (unit.hp() >= 20 && noBunkerVeryNear && unit.noCooldown()) {
+            if (unit.enemiesNear().inRadius(1.8, unit).notEmpty()) return false;
+            if (unit.friendsInRadius(0.25).nonBuildings().count() >= 2) return false;
+        }
+
         if (unit.hpMoreThan(20)) {
             double distToFocusPoint = unit.distToFocusPoint();
             if (distToFocusPoint >= 8 && unit.enemiesNear().inRadius(14, unit).empty()) return false;

@@ -83,10 +83,10 @@ public class SelectionTest extends AbstractTestWithUnits {
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon);
 
         FakeUnit[] fakeEnemies = fakeEnemies(
-                cannon,
-                fake(AUnitType.Protoss_Zealot),
-                fake(AUnitType.Zerg_Sunken_Colony),
-                fake(AUnitType.Zerg_Larva)
+            cannon,
+            fake(AUnitType.Protoss_Zealot),
+            fake(AUnitType.Zerg_Sunken_Colony),
+            fake(AUnitType.Zerg_Larva)
         );
 
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Protoss_Dragoon));
@@ -97,6 +97,34 @@ public class SelectionTest extends AbstractTestWithUnits {
 //        enemies.print();
 
         assertEquals(6, enemies.size());
+    }
+
+    @Test
+    public void testVariousMethods() {
+        usingFakeOurs(() -> {
+            Select.our().print();
+
+            Selection our = Select.our();
+            AUnit zealot = our.first();
+            AUnit muta = our.ofType(AUnitType.Zerg_Mutalisk).first();
+
+            assertEquals(5, our.havingAntiAirWeapon().size());
+            assertEquals(17, our.notHavingAntiAirWeapon().size());
+
+            assertEquals(11, our.havingGroundWeapon().size());
+
+            assertEquals(0, zealot.friendsInRadius(4.9).size());
+            assertEquals(1, our.inRadius(4.9, zealot).size());
+            assertEquals(3, zealot.friendsInRadius(5.0).size());
+            assertEquals(4, our.inRadius(5.0, zealot).size());
+
+            assertEquals(1, zealot.friendsNear().canAttack(zealot, 0).size());
+            assertEquals(3, zealot.friendsNear().canAttack(zealot, 4.0).size());
+
+//            muta.friendsNear().canBeAttackedBy(muta, 1).print("Test");
+            assertEquals(4, muta.friendsNear().canBeAttackedBy(muta, 1).size());
+            assertEquals(9, muta.friendsNear().canBeAttackedBy(muta, 2).size());
+        });
     }
 
 }

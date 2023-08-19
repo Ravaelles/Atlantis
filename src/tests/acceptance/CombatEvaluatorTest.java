@@ -52,7 +52,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
     }
 
     @Test
-    public void marineVsSunken() {
+    public void marinesVsSunken() {
         createWorld(1, () -> {
                 FakeUnit enemy = nearestEnemy(marine);
 
@@ -65,8 +65,10 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //                System.out.println("-- ourEval = " + ourEval);
 //                System.out.println("-- enemyEval = " + enemyEval);
 
-                assertTrue(valueAround(0.65, ourEval));
-                assertTrue(valueAround(1.5, enemyEval));
+                assertTrue(ourEval < 0.9);
+                assertTrue(enemyEval > 1.1);
+//                assertTrue(valueAround(0.65, ourEval));
+//                assertTrue(valueAround(1.5, enemyEval));
             },
             () -> fakeOurs(
                 fake(AUnitType.Terran_Marine, 10),
@@ -76,6 +78,60 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             ),
             () -> fakeEnemies(
                 sunken = fake(AUnitType.Zerg_Sunken_Colony, 13)
+            )
+        );
+    }
+
+    @Test
+    public void marineVsSunkenClose() {
+        createWorld(1, () -> {
+                FakeUnit enemy = nearestEnemy(marine);
+
+                double ourEval;
+                double enemyEval;
+
+                ourEval = marine.combatEvalRelative();
+                enemyEval = enemy.combatEvalRelative();
+
+//                System.out.println("-- ourEval = " + ourEval);
+//                System.out.println("-- enemyEval = " + enemyEval);
+
+                assertTrue(ourEval < 0.2);
+                assertTrue(enemyEval > 3);
+            },
+            () -> fakeOurs(
+                marine = fake(AUnitType.Terran_Marine, 10)
+            ),
+            () -> fakeEnemies(
+//                sunken = fake(AUnitType.Zerg_Sunken_Colony, 16.99)
+                sunken = fake(AUnitType.Zerg_Sunken_Colony, 19.0)
+            )
+        );
+    }
+
+    @Test
+    public void marineVsSunkenFar() {
+        createWorld(1, () -> {
+                FakeUnit enemy = nearestEnemy(marine);
+
+                double ourEval;
+                double enemyEval;
+
+                ourEval = marine.combatEvalRelative();
+                enemyEval = enemy.combatEvalRelative();
+
+//                System.out.println("-- ourEval = " + ourEval);
+//                System.out.println("-- enemyEval = " + enemyEval);
+
+                assertTrue(valueAround(1, ourEval));
+                assertTrue(valueAround(1, enemyEval));
+            },
+            () -> fakeOurs(
+                marine = fake(AUnitType.Terran_Marine, 10)
+            ),
+            () -> fakeEnemies(
+//                sunken = fake(AUnitType.Zerg_Sunken_Colony, 16.99)
+                sunken = fake(AUnitType.Zerg_Sunken_Colony, 23.5)
             )
         );
     }

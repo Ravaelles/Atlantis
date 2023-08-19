@@ -27,12 +27,13 @@ public class AttackNearbyEnemies extends Manager {
     @Override
     public boolean applies() {
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
+        if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
 
         return unit.hasAnyWeapon();
     }
 
     protected Manager handle() {
-        if (this.equals(unit.manager()) && justHandledRecently()) {
+        if (this.equals(unit.manager()) && justHandledRecently() && !unit.looksIdle()) {
             return usedManager(this);
         }
 
@@ -61,20 +62,25 @@ public class AttackNearbyEnemies extends Manager {
 //            4,
 //            () -> {
 
+        if (unit.target() != null) {
+            if (!unit.mission().allowsToAttackEnemyUnit(unit, unit.target())) return false;
+        }
+
+        if (!allowedToAttack.canAttackNow()) return false;
+
         if (unit.isAttacking() && (
             unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
                 || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)
         )) {
-            if (unit.target() != null && unit.hasPosition() && !unit.looksIdle()) {
-                if (unit.mission().allowsToAttackEnemyUnit(unit, unit.target())) {
-                    return true;
-                }
+            if (unit.target() != null && unit.hasPosition() && (!unit.looksIdle() || unit.hasCooldown())) {
+                return true;
             }
-        }
 
-        if (!allowedToAttack.canAttackNow()) {
-//                    ErrorLog.printMaxOncePerMinute("Not allowed to attack now (" + unit + ")");
-            return false;
+//            if (unit.target() != null && unit.hasPosition() && !unit.looksIdle()) {
+//                if (unit.mission().allowsToAttackEnemyUnit(unit, unit.target())) {
+//                    return true;
+//                }
+//            }
         }
 
         // =========================================================

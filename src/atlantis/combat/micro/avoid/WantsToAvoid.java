@@ -29,7 +29,7 @@ public class WantsToAvoid extends Manager {
         // =========================================================
 
         AttackInsteadAvoid attackInsteadAvoid = new AttackInsteadAvoid(unit, enemies);
-        if (attackInsteadAvoid.applies() && attackInsteadAvoid.handle() != null) {
+        if (attackInsteadAvoid.invoke() != null) {
             return usedManager(attackInsteadAvoid);
         }
 

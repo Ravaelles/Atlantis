@@ -2,13 +2,12 @@ package atlantis.combat.micro.generic;
 
 import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
+import atlantis.units.UnitStateManager;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import bwapi.Color;
 
 public class Unfreezer {
-    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 30;
-
     /**
      * Some units can get FROZEN (stuck, unable to move/shoot). It's a known Starcraft bug.
      * This is an ugly way of fixing this.
@@ -16,7 +15,7 @@ public class Unfreezer {
     public boolean handleUnfreeze(AUnit unit) {
 //        if (true) return false;
 
-        if (unit.isRunning() && unit.lastActionFramesAgo() >= (UPDATE_UNIT_POSITION_EVERY_FRAMES + 20)) {
+        if (unit.isRunning() && unit.lastActionFramesAgo() >= (UnitStateManager.UPDATE_UNIT_POSITION_EVERY_FRAMES + 20)) {
             if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
 //                System.err.println("UNFREEZE #1!");
 //                unit.setTooltip("UNFREEZE!");

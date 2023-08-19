@@ -49,7 +49,7 @@ public class MapAndRace {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Maps for testing as Terran ==========================
@@ -64,7 +64,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/Wraiths_v_Base2.scm"; // Wraiths v Hatchery & Spore & Workers
 
         // vs Protoss
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";

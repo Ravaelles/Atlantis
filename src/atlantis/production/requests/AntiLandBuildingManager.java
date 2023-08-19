@@ -136,7 +136,8 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
             }
 
             nearTo = Select.main()
-                .translateTilesTowards(We.terran() ? 7 : 9, mainChoke)
+//                .translateTilesTowards(We.terran() ? 7 : 9, Select.main())
+                .translatePercentTowards(35, mainChoke)
                 .makeBuildable(8)
                 .makeWalkable(4);
 
