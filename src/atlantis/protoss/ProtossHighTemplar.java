@@ -188,8 +188,7 @@ public class ProtossHighTemplar extends Manager {
                 return unit.moveAwayFrom(
                     Select.our().exclude(unit).nearestTo(unit),
                     1,
-                    "Stacked",
-                    Actions.MOVE_FORMATION
+                    Actions.MOVE_FORMATION, "Stacked"
                 );
             }
 

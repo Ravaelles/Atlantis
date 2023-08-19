@@ -5,7 +5,6 @@ import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
-import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -171,7 +170,7 @@ public class TravelToConstruct extends HasUnit {
 
     private void moveOtherUnitsOutOfConstructionPlace(APosition buildPosition) {
         for (AUnit unit : unit.friendsNear().inRadius(2.3, buildPosition).exclude(unit).list()) {
-            unit.moveAwayFrom(buildPosition, 1, "Construction!", Actions.MOVE_SPECIAL);
+            unit.moveAwayFrom(buildPosition, 1, Actions.MOVE_SPECIAL, "Construction!");
         }
     }
 

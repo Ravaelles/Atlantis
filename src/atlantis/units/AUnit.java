@@ -292,7 +292,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Unit will move by given distance (in build tiles) from given position.
      */
-    public boolean moveAwayFrom(HasPosition position, double moveDistance, String tooltip, Action action) {
+    public boolean moveAwayFrom(HasPosition position, double moveDistance, Action action, String tooltip) {
         if (position == null || moveDistance < 0.01) return false;
 
         int dx = position.x() - x();
@@ -2709,7 +2709,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean looksIdle() {
-        return isIdle()
+        return (isIdle() && !isMoving())
             || (!isMoving() && !isAccelerating() && noCooldown());
     }
 

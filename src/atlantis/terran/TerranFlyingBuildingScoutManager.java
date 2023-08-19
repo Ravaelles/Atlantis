@@ -32,9 +32,9 @@ public class TerranFlyingBuildingScoutManager extends Manager {
     private boolean updateFlyingBuilding() {
         APainter.paintCircle(unit, new int[]{7, 10, 13, 16}, Color.Grey);
 
-        if (avoidCombatBuildings()) return unit.moveAwayFrom(unit, 3, "BloodyBuilding", Actions.MOVE_SAFETY);
+        if (avoidCombatBuildings()) return unit.moveAwayFrom(unit, 3, Actions.MOVE_SAFETY, "BloodyBuilding");
 
-        if (underAttack()) return unit.moveAwayFrom(unit, 3, "UnderFire", Actions.MOVE_SAFETY);
+        if (underAttack()) return unit.moveAwayFrom(unit, 3, Actions.MOVE_SAFETY, "UnderFire");
 
         if (goToFocusPoint()) return true;
 

@@ -65,12 +65,12 @@ public class DanceAfterShoot extends Manager {
         // Big step BACK
         else if (dist <= weaponRange - 1.2 && !target.isCombatBuilding()) {
             unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.9, danceAway, Actions.MOVE_DANCE_AWAY);
+            return unit.moveAwayFrom(target, 0.9, Actions.MOVE_DANCE_AWAY, danceAway);
         }
         // Small step BACK
         else if (dist <= weaponRange - 0.45 && !target.isCombatBuilding()) {
             unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.35, danceAway, Actions.MOVE_DANCE_AWAY);
+            return unit.moveAwayFrom(target, 0.35, Actions.MOVE_DANCE_AWAY, danceAway);
         }
 
         return false;

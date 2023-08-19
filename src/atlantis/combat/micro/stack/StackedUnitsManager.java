@@ -28,7 +28,7 @@ public class StackedUnitsManager extends Manager {
             .exclude(unit).inRadius(minDist, unit).nearestTo(unit);
 
         if (nearest != null) {
-            if (unit.moveAwayFrom(nearest, minDist / 2, "Stacked", Actions.MOVE_FORMATION)) {
+            if (unit.moveAwayFrom(nearest, minDist / 2, Actions.MOVE_FORMATION, "Stacked")) {
                 return usedManager(this);
             }
         }

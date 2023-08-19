@@ -30,7 +30,7 @@ public class EarlyGameTooClustered extends Manager {
         }
 
         if (isTooClustered()) {
-            unit.moveAwayFrom(nearestBuddy, 1, "MoreSpace", Actions.MOVE_FORMATION);
+            unit.moveAwayFrom(nearestBuddy, 1, Actions.MOVE_FORMATION, "MoreSpace");
             return usedManager(this);
         }
 

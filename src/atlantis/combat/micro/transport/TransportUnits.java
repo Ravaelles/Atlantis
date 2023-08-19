@@ -135,7 +135,7 @@ public class TransportUnits extends Manager {
     private boolean handleGoToSafety(AUnit transport, AUnit baby) {
         AUnit nearEnemy = EnemyUnits.discovered().canAttack(baby, 5).nearestTo(transport);
         if (nearEnemy != null) {
-            transport.moveAwayFrom(nearEnemy, 8, "ToSafety", Actions.MOVE_SAFETY);
+            transport.moveAwayFrom(nearEnemy, 8, Actions.MOVE_SAFETY, "ToSafety");
             APainter.paintLine(transport, transport.targetPosition(), Color.White);
             return true;
         }

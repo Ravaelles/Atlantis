@@ -42,7 +42,7 @@ public class AvoidMines extends Manager {
             // Our mine
             if (mine.isOur()) {
                 if (mine.isMoving() && mine.distTo(unit) <= 3.5) {
-                    unit.moveAwayFrom(mine.position(), 2, "Avoid mine!", Actions.MOVE_AVOID);
+                    unit.moveAwayFrom(mine.position(), 2, Actions.MOVE_AVOID, "Avoid mine!");
                     return true;
                 }
             }
@@ -70,7 +70,7 @@ public class AvoidMines extends Manager {
     // =========================================================
 
     private boolean handleEnemyMineAsMeleeUnit(AUnit mine) {
-        unit.moveAwayFrom(mine.position(), 1, "Avoid mine!", Actions.MOVE_AVOID);
+        unit.moveAwayFrom(mine.position(), 1, Actions.MOVE_AVOID, "Avoid mine!");
 //        APainter.paintLine(mine, Color.Yellow);
         return true;
     }

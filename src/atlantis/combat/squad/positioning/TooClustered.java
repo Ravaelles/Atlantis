@@ -2,7 +2,6 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -36,11 +35,14 @@ public class TooClustered extends Manager {
         double minDistBetweenUnits = minDistBetweenUnits();
 
         if (tooClustered(ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
-            APosition goTo = unit.makeFreeOfAnyGroundUnits(4, 0.2, unit);
-            if (goTo != null) {
-                unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false);
-                return usedManager(this);
-            }
+//            APosition goTo = unit.makeFreeOfAnyGroundUnits(4, 0.2, unit);
+//            if (goTo != null) {
+//                unit.move(goTo, Actions.MOVE_FORMATION, "SpreadOut", false);
+//                return usedManager(this);
+//            }
+
+            unit.moveAwayFrom(nearestBuddy, 0.15, Actions.MOVE_FORMATION, "SpreadOut");
+            return usedManager(this);
         }
 
         return null;

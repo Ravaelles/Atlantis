@@ -9,6 +9,7 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
+import atlantis.util.log.ErrorLog;
 import bwapi.*;
 
 /**
@@ -122,9 +123,9 @@ public class Atlantis implements BWEventListener {
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
         catch (Exception e) {
-            System.err.println("### AN ERROR HAS OCCURRED ###");
-//            throw e;
-            e.printStackTrace();
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("### AN ERROR HAS OCCURRED ###");
+//            System.err.println("### AN ERROR HAS OCCURRED ###");
+//            A.printStackTrace("### AN ERROR HAS OCCURRED ###");
         }
 
         if (A.notUms() && A.now() == 1) {

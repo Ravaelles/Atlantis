@@ -16,16 +16,18 @@ public class ConsiderLoadingIntoBunkers extends Manager {
         if (Count.bunkers() == 0) return false;
         if (!unit.isMarine() && !unit.isGhost()) return false;
 
-        double distToFocusPoint = unit.distToFocusPoint();
-        if (distToFocusPoint >= 8 && unit.enemiesNear().inRadius(14, unit).empty()) return false;
-        if (unit.enemiesNear().inRadius(8, unit).empty() && !Enemy.terran()) return false;
+        if (unit.hpMoreThan(20)) {
+            double distToFocusPoint = unit.distToFocusPoint();
+            if (distToFocusPoint >= 8 && unit.enemiesNear().inRadius(14, unit).empty()) return false;
+            if (unit.enemiesNear().inRadius(8, unit).empty() && !Enemy.terran()) return false;
 
-        if (unit.isMissionDefend()) {
-            if (
-                unit.hasCooldown()
-                    || (unit.hp() <= 20 && unit.enemiesNear().canAttack(unit, 3).notEmpty())
-            ) {
-                return true;
+            if (unit.isMissionDefend()) {
+                if (
+                    unit.hasCooldown()
+                        || (unit.hp() <= 20 && unit.enemiesNear().canAttack(unit, 3).notEmpty())
+                ) {
+                    return true;
+                }
             }
         }
 
