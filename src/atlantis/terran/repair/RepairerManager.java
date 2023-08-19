@@ -38,21 +38,9 @@ public class RepairerManager extends Manager {
     private Manager handleRepairs() {
         AUnit target = RepairAssignments.getUnitToRepairFor(unit);
 
-        if (target == null || unit.isIdle() || (!unit.isRepairing() && !unit.isMoving())) {
+        if (shouldRemoveRepairer(target)) {
             RepairAssignments.removeRepairer(unit);
             return null;
-        }
-
-        if (ShouldNotRepairUnit.shouldNotRepairUnit(target)) {
-            RepairAssignments.removeRepairer(unit);
-            return null;
-        }
-
-        if (target == null || !target.isAlive()) {
-            unit.setTooltipTactical("TargetRIP");
-//            System.err.println("Invalid repair target: " + target + ", alive:" + (target != null ? target.isAlive() : "-"));
-            RepairAssignments.removeRepairer(unit);
-            return usedManager(this);
         }
 
         // Target is totally healthy
@@ -88,8 +76,7 @@ public class RepairerManager extends Manager {
 
             unit.repair(
                 target,
-                "Repair " + target.nameWithId() + "(" + unit.lastActionFramesAgo() + ")",
-                true
+                "Repair " + target.nameWithId() + "(" + unit.lastActionFramesAgo() + ")"
             );
             return usedManager(this);
         }
@@ -108,6 +95,15 @@ public class RepairerManager extends Manager {
         }
 
         return null;
+    }
+
+    private boolean shouldRemoveRepairer(AUnit target) {
+        if (target == null || !target.isAlive()) return true;
+        if ((unit.looksIdle() && !unit.isProtector()) || (!unit.isRepairing() && !unit.isMoving())) return true;
+        if (unit.lastActionMoreThanAgo(10, Actions.REPAIR)) return true;
+        if (ShouldNotRepairUnit.shouldNotRepairUnit(target)) return true;
+
+        return false;
     }
 
     private boolean handleRepairerSafety() {
@@ -149,7 +145,7 @@ public class RepairerManager extends Manager {
         AUnit closestUnitNeedingRepair = Select.our().repairable(true).inRadius(15, unit).first();
         if (closestUnitNeedingRepair != null && A.hasMinerals(5)) {
             RepairAssignments.addRepairer(unit, closestUnitNeedingRepair);
-            unit.repair(closestUnitNeedingRepair, "Extra repair", true);
+            unit.repair(closestUnitNeedingRepair, "Extra repair");
             return usedManager(this);
         }
 

@@ -23,7 +23,7 @@ public abstract class MissionChanger {
     public static final int MISSIONS_ENFORCED_FOR_SECONDS = 20;
 
     public static final boolean DEBUG = true;
-//    public static final boolean DEBUG = false;
+    //    public static final boolean DEBUG = false;
     public static String reason = "";
 
     protected static ArrayList<Mission> missionHistory = new ArrayList<>();
@@ -34,7 +34,7 @@ public abstract class MissionChanger {
      * Takes care of current strategy.
      */
     public static void evaluateGlobalMission() {
-        if (A.notNthGameFrame(26)) {
+        if (A.everyFrameExceptNthFrame(26)) {
             return;
         }
 
@@ -72,9 +72,11 @@ public abstract class MissionChanger {
 
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.get().changeMissionIfNeeded();
-        } else if (Missions.isGlobalMissionContain()) {
+        }
+        else if (Missions.isGlobalMissionContain()) {
             MissionChangerWhenContain.get().changeMissionIfNeeded();
-        } else if (Missions.isGlobalMissionDefend() || Missions.isGlobalMissionSparta()) {
+        }
+        else if (Missions.isGlobalMissionDefend() || Missions.isGlobalMissionSparta()) {
             MissionChangerWhenDefend.get().changeMissionIfNeeded();
         }
     }
@@ -130,7 +132,8 @@ public abstract class MissionChanger {
     public static void forceMissionSpartaOrDefend(String reason) {
         if (Sparta.canUseSpartaMission()) {
             Missions.forceGlobalMissionSparta(reason);
-        } else {
+        }
+        else {
             Missions.forceGlobalMissionDefend(reason);
         }
     }

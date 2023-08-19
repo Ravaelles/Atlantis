@@ -42,7 +42,7 @@ public class TurretsForMain extends TerranTurret {
     public boolean buildIfNeeded() {
         if (true) return false;
 
-        if (A.notNthGameFrame(71)) return false;
+        if (A.everyFrameExceptNthFrame(71)) return false;
         if (A.supplyUsed() <= 20) return false;
         if (!Have.engBay() || !Have.base()) return false;
 
@@ -162,7 +162,7 @@ public class TurretsForMain extends TerranTurret {
     private boolean turretsForMainRegionBorders() {
 //        if (true) return false;
 
-        if (A.notNthGameFrame(113)) return false;
+        if (A.everyFrameExceptNthFrame(113)) return false;
         if (!A.hasMinerals(570)) return false;
         if (exceededExistingAndInProduction()) return false;
 

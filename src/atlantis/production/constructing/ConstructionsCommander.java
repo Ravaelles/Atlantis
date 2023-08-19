@@ -1,7 +1,6 @@
 package atlantis.production.constructing;
 
 import atlantis.architecture.Commander;
-import atlantis.combat.missions.GlobalMissionCommander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -55,7 +54,7 @@ public class ConstructionsCommander extends Commander {
             return;
         }
 
-        if (A.notNthGameFrame(27)) {
+        if (A.everyFrameExceptNthFrame(27)) {
             return;
         }
 

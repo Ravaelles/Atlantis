@@ -17,7 +17,7 @@ public class TurretsForNonMain extends TerranTurret {
     private final int MIN_TURRETS_PER_BASE = 2;
 
     public boolean buildIfNeeded() {
-        if (A.notNthGameFrame(73)) return false;
+        if (A.everyFrameExceptNthFrame(73)) return false;
         if (!Have.engBay()) return false;
         if (Count.bases() == 1) return false;
 

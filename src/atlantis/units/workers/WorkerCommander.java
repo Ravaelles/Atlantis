@@ -9,10 +9,12 @@ import atlantis.units.buildings.GasBuildingsCommander;
 public class WorkerCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
-        return new Class[] {
+        return new Class[]{
             GasBuildingsCommander.class,
             WorkerTransferCommander.class,
             WorkerHandlerCommander.class,
+
+            CrucialRepairsNearbyCommander.class,
         };
     }
 }

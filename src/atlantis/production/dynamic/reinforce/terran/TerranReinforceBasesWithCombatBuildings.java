@@ -2,7 +2,6 @@ package atlantis.production.dynamic.reinforce.terran;
 
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.reinforce.ReinforceBasesWithCombatBuildings;
@@ -27,10 +26,10 @@ public class TerranReinforceBasesWithCombatBuildings extends ReinforceBasesWithC
     }
 
     private boolean handleEarlyGameTrouble() {
-        if (A.notNthGameFrame(97)) return false;
+        if (A.everyFrameExceptNthFrame(97)) return false;
 
         if (ArmyStrength.ourArmyRelativeStrength() <= 70) {
-            if (Count.bunkers() <= 1) {
+            if (Count.bunkers() <= 2) {
                 (new ReinforceWithBunkerAtNearestChoke(Chokes.mainChoke())).invoke();
                 return true;
             }

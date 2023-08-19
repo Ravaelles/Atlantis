@@ -11,15 +11,11 @@ public class ImproveCombatManagerPerformance extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isCombatUnit();
+        return A.everyFrameExceptNthFrame(9) && unit.isCombatUnit() && unit.enemiesNear().empty();
     }
 
     protected Manager handle() {
-        if (unit.enemiesNear().empty() && A.notNthGameFrame(5)) {
-            return usedManager(this);
-        }
-
-        return null;
+        return usedManager(this);
     }
 }
 

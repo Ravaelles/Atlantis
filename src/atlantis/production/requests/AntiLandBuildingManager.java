@@ -135,7 +135,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
                 );
             }
 
-            if (Enemy.terran()) {
+            if (Count.bunkers() > 0) {
                 nearTo = mainChoke
                     .translateTilesTowards(5, Select.main())
                     .makeBuildable(8)

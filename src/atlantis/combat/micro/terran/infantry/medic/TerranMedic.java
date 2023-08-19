@@ -50,7 +50,7 @@ public class TerranMedic extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AvoidEnemies.class,
-            UnitTooCloseToBunker.class,
+//            UnitTooCloseToBunker.class,
         };
     }
 
@@ -86,6 +86,11 @@ public class TerranMedic extends Manager {
 
         if (healAnyWoundedNear()) {
             return usedManager(this);
+        }
+
+        UnitTooCloseToBunker unitTooCloseToBunker = new UnitTooCloseToBunker(unit);
+        if (unitTooCloseToBunker.invoke() != null) {
+            return usedManager(unitTooCloseToBunker);
         }
 
 //        if (unit.isMissionDefend() && !IsUnitNearChoke.check(unit, 4)) {

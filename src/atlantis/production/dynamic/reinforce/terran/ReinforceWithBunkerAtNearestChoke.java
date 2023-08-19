@@ -17,7 +17,7 @@ import static atlantis.units.AUnitType.Terran_Bunker;
 
 public class ReinforceWithBunkerAtNearestChoke extends Commander {
     private HasPosition initialPositionToReinforce;
-    private HasPosition positionForBunker;
+    private HasPosition position;
     private APosition natural;
 
     public ReinforceWithBunkerAtNearestChoke(HasPosition position) {
@@ -33,31 +33,32 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
         if (Count.barracks() <= 0) return false;
         if (Count.inProductionOrInQueue(Terran_Bunker) > 0) return false;
 
-        positionForBunker = initialPositionToReinforce;
+        position = initialPositionToReinforce;
         AChoke choke = Chokes.nearestChoke(initialPositionToReinforce);
 
         if (choke != null) {
-            positionForBunker = choke.translateTilesTowards(initialPositionToReinforce, 3.4);
+            position = choke.translateTilesTowards(initialPositionToReinforce, 3.4);
         }
 
-        if (positionForBunker == null) return false;
+        if (position == null) return false;
+        if (Select.ourWithUnfinishedOfType(Terran_Bunker).inRadius(4, position).notEmpty()) return false;
+        int searchRadius = 7;
+        if (ConstructionRequests.hasNotStartedNear(Terran_Bunker, position, searchRadius)) return false;
 
         Selection bunkersWithUnfinished = Select.ourWithUnfinishedOfType(Terran_Bunker);
 
-        int maxBunkers = Enemy.terran() ? 1 : Count.basesWithUnfinished() + 1;
+        int maxBunkers = Enemy.terran() ? 1 : Count.basesWithUnfinished() + 2;
         if (bunkersWithUnfinished.count() >= maxBunkers) return false;
 
-        int searchRadius = 7;
-        Selection existing = bunkersWithUnfinished.inRadius(searchRadius, positionForBunker);
+        Selection existing = bunkersWithUnfinished.inRadius(searchRadius, position);
         if (existing.notEmpty()) {
             if (
-                existing.first().position().region() == positionForBunker.position().region()
-                    || existing.inRadius(searchRadius, positionForBunker).notEmpty()
+                existing.first().position().region() == position.position().region()
+                    || existing.inRadius(searchRadius, position).notEmpty()
             ) {
                 return false;
             }
         }
-        if (ConstructionRequests.hasNotStartedNear(Terran_Bunker, positionForBunker, searchRadius)) return false;
 
 //        System.out.println(
 //            "Existing = " + bunkersWithUnfinished.count()
@@ -66,22 +67,22 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
 //                + " ///// " +
 //                "ExistCount = " + existing.count()
 //                + " / " +
-//                "NotStartCount = " + ConstructionRequests.hasNotStartedNear(Terran_Bunker, positionForBunker,
+//                "NotStartCount = " + ConstructionRequests.hasNotStartedNear(Terran_Bunker, position,
 //                searchRadius)
-//                + " / @ " + positionForBunker
+//                + " / @ " + position
 //        );
 
-        return positionForBunker != null;
+        return position != null;
     }
 
     @Override
     protected void handle() {
-        System.out.println("Reinforce " + initialPositionToReinforce + " with BUNKER at " + positionForBunker);
+//        System.err.println("Reinforce " + initialPositionToReinforce + " with BUNKER at " + position);
         haveBunkerAtTheNearestChoke();
     }
 
     private void haveBunkerAtTheNearestChoke() {
-        AddToQueue.withTopPriority(Terran_Bunker, positionForBunker);
+        AddToQueue.withTopPriority(Terran_Bunker, position);
     }
 
     private boolean isForNatural() {

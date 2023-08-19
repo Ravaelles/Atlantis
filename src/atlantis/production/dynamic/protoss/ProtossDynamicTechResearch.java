@@ -14,7 +14,7 @@ import static bwapi.UpgradeType.Singularity_Charge;
 public class ProtossDynamicTechResearch extends Commander {
 
     public static boolean update() {
-        if (A.notNthGameFrame(71)) return false;
+        if (A.everyFrameExceptNthFrame(71)) return false;
 
         if (singularityCharge()) return true;
 

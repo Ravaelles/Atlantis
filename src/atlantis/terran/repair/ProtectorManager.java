@@ -45,7 +45,7 @@ public class ProtectorManager extends Manager {
         if (target.isWounded() || target.enemiesNear().canAttack(target, 15).notEmpty()) {
             if (unit.isRepairing()) return true;
 
-            return unit.repair(target, "Protect" + target.name(), true);
+            return unit.repair(target, "Protect" + target.name());
 //                return unit.repair(Select.main(), "Protect" + target.name(), true);
 //                return unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(target);
         }

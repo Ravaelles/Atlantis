@@ -115,7 +115,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander 
     }
 
     private static boolean cannons() {
-        if (A.notNthGameFrame(47)) return false;
+        if (A.everyFrameExceptNthFrame(47)) return false;
 
         if (Count.inProductionOrInQueue(Protoss_Photon_Cannon) >= 2) return false;
 

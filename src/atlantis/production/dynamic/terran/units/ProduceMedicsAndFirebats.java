@@ -60,11 +60,11 @@ public class ProduceMedicsAndFirebats {
     }
 
     private static int minFirebats() {
-        if (Enemy.terran()) {
-            return 0;
-        }
+        if (Enemy.terran()) return 0;
+        if (Count.marines() <= 7) return 0;
+
         if (Enemy.protoss()) {
-            return Math.max(4, (Count.marines() / 10 + Count.medics() / 5 - 1));
+            return Math.max(4, (Count.marines() / 10 + Count.medics() / 6 - 1));
         }
 
         // Zerg

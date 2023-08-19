@@ -18,6 +18,13 @@ public class BuildFactory {
     public static boolean factories() {
         if (!Have.barracks()) return false;
 
+        int existing = Count.existing(Terran_Factory);
+
+        if (
+            existing >= 1 && !A.canAfford(300, 175)
+                && Count.vultures() <= 1 && Count.tanks() <= 1
+        ) return false;
+        
         int inProgress = Count.inProductionOrInQueue(Terran_Factory);
 
         if (inProgress == 0 && !Have.factory() && A.canAfford(230, 115)) {

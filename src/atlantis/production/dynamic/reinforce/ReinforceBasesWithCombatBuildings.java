@@ -41,7 +41,7 @@ public abstract class ReinforceBasesWithCombatBuildings extends Commander {
     }
 
     private void reinforceAllBasesIncludingUnfinishedOnes() {
-        if (A.notNthGameFrame(79)) return;
+        if (A.everyFrameExceptNthFrame(79)) return;
 
         for (HasPosition position : AllBasePositions.allBases(true, true)) {
             if (position != null) makeSureIsReinforced(position);

@@ -36,7 +36,7 @@ public class RepairAssignments {
 
     public static AUnit getClosestRepairerAssignedTo(AUnit wounded) {
         if (
-                unitsToRepairers.size() > OptimalNumOfRepairers.MAX_REPAIRERS_AT_ONCE
+            unitsToRepairers.size() > OptimalNumOfRepairers.MAX_REPAIRERS_AT_ONCE
                 || unitsToRepairers.size() >= (0.5 * Select.ourWorkers().count())
         ) {
             return null;
@@ -68,7 +68,9 @@ public class RepairAssignments {
 //                System.err.println("Remove PROTECTOR for " + unitsToRepairers);
                 unitsToRepairers.get(unitToRepair).remove(repairer);
                 repairer.stop("No longer repairer", true);
-                if (addLogs) { repairer.addLog("No longer repairer of " + unitToRepair); }
+                if (addLogs) {
+                    repairer.addLog("No longer repairer of " + unitToRepair);
+                }
                 repairersToUnit.remove(repairer);
                 repairersToModes.remove(repairer);
             }
@@ -76,7 +78,9 @@ public class RepairAssignments {
     }
 
     public static void addProtector(AUnit protector, AUnit unit) {
-        if (addLogs) { protector.addLog("Added PROTECTOR of " + unit); }
+        if (addLogs) {
+            protector.addLog("Added PROTECTOR of " + unit);
+        }
 //        System.out.println("Added PROTECTOR of " + unit);
 
         addRepairer(protector, unit);
@@ -88,7 +92,9 @@ public class RepairAssignments {
             throw new RuntimeException(repairer + "is not SCV in addRepairer!");
         }
 
-        if (addLogs) { unitToRepair.addLog("Added Repairer (" + repairer.idWithHash() + ") of " + unitToRepair); }
+        if (addLogs) {
+            unitToRepair.addLog("Added Repairer (" + repairer.idWithHash() + ") of " + unitToRepair);
+        }
 
         repairersToUnit.put(repairer, unitToRepair);
         repairersToModes.put(repairer, MODE_REPAIR_ONLY);
@@ -96,6 +102,8 @@ public class RepairAssignments {
             unitsToRepairers.put(unitToRepair, new ArrayList<>());
         }
         unitsToRepairers.get(unitToRepair).add(repairer);
+
+        repairer.repair(unitToRepair, null);
     }
 
     public static int countProtectorsFor(AUnit unit) {

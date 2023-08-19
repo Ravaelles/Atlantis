@@ -55,34 +55,6 @@ public class TerranBunker extends AntiLandBuildingManager {
 
     // =========================================================
 
-//    private  boolean handleReinforceMissionAttack() {
-//        if (!Missions.isGlobalMissionAttack()) {
-//            return false;
-//        }
-//
-//        APosition squadCenter = Squad.alphaCenter();
-//        if (squadCenter == null) {
-//            return false;
-//        }
-//
-//        boolean hasTurretNear = Select.ourOfTypeWithUnfinished(AUnitType.Terran_Bunker)
-//                .inRadius(13, squadCenter).atLeast(1);
-//        if (!hasTurretNear) {
-//            AAntiAirBuildingRequests.requestCombatBuildingAntiAir(squadCenter);
-//        }
-//    }
-
-//    private boolean handleMainBunker() {
-//        if (!Enemy.terran() && AGame.timeSeconds() >= 300 && Count.bunkers() < 2) {
-//            AChoke choke = Chokes.mainChoke();
-//            if (choke != null) {
-//                return reinforcePosition(choke.translateTilesTowards(5, Select.main()), false);
-//            }
-//        }
-//
-//        return false;
-//    }
-
     private boolean handleNaturalBunker() {
         if (Count.bases() < 2) return false;
 

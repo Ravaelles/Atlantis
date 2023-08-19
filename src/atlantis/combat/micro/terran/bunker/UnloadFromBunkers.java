@@ -13,7 +13,7 @@ public class UnloadFromBunkers extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isLoaded() && unit.loadedInto().isBunker();
+        return unit.isLoaded() && unit.loadedInto().isBunker() && unit.hp() >= 18;
     }
 
     @Override

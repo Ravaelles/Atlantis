@@ -24,52 +24,60 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
         (new ReinforceBunkersWithTurrets()).invoke();
         (new TurretNeededHere()).invoke();
 
-        if (A.everyNthGameFrame(7)) {
+        if (A.everyNthGameFrame(13)) {
             comsats();
-            scienceFacilities();
-
+            barracks();
             factoryIfBioOnly();
         }
 
-        if (A.everyNthGameFrame(9)) {
+        if (A.everyNthGameFrame(33)) {
             armory();
+            academy();
+        }
+
+        if (A.everyNthGameFrame(37)) {
             machineShop();
             BuildFactory.factories();
-            starport();
-            academy();
-            engBay();
+        }
 
-            barracks();
+        if (A.everyNthGameFrame(67)) {
+            engBay();
+            starport();
+            scienceFacilities();
         }
     }
 
     // =========================================================
 
     private static void scienceFacilities() {
-//        if (!ATech.isResearched(Tank_Siege_Mode)) {
-//            return;
-//        }
+        if (
+            Have.a(Terran_Science_Facility)
+                || !Have.a(Terran_Starport)
+                || Count.withPlanned(Terran_Science_Facility) > 0
+        ) {
+            return;
+        }
 
         if (A.supplyUsed() >= (Enemy.terran() ? 90 : 50) && enemyStrategy().isGoingHiddenUnits()) {
             if (haveNoExistingOrPlanned(Terran_Starport)) {
                 AddToQueue.withHighPriority(Terran_Starport);
+                return;
             }
             if (haveNoExistingOrPlanned(Terran_Science_Facility)) {
                 AddToQueue.withHighPriority(Terran_Science_Facility);
+                return;
             }
             if (haveNoExistingOrPlanned(Terran_Control_Tower)) {
                 AddToQueue.withHighPriority(Terran_Control_Tower);
+                return;
             }
-        }
-
-        if (Have.a(Terran_Science_Facility)) {
-            return;
         }
 
         int scienceFacilities = Count.existingOrInProductionOrInQueue(Terran_Science_Facility);
         if (A.supplyUsed() >= 60) {
             if (scienceFacilities == 0) {
                 AddToQueue.withHighPriority(Terran_Science_Facility);
+                return;
             }
         }
 
@@ -77,6 +85,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
             int covertOps = Count.existingOrInProductionOrInQueue(Terran_Covert_Ops);
             if (covertOps == 0) {
                 AddToQueue.withHighPriority(Terran_Covert_Ops);
+                return;
             }
         }
     }

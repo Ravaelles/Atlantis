@@ -13,7 +13,7 @@ import bwapi.UpgradeType;
 public class ZergDynamicTechResearch extends Commander {
     @Override
     protected void handle() {
-        if (A.notNthGameFrame(35)) {
+        if (A.everyFrameExceptNthFrame(35)) {
             return;
         }
 

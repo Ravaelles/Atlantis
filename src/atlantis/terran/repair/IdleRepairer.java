@@ -24,7 +24,7 @@ public class IdleRepairer extends Manager {
             // Try finding any repairable and wounded unit Near
             AUnit nearestWoundedUnit = Select.our().repairable(true).inRadius(maxAllowedDistToRoam, unit).nearestTo(unit);
             if (nearestWoundedUnit != null && A.hasMinerals(5)) {
-                unit.repair(nearestWoundedUnit, "HelpNear" + nearestWoundedUnit.name(), true);
+                unit.repair(nearestWoundedUnit, "HelpNear" + nearestWoundedUnit.name());
                 if (nearestWoundedUnit.distTo(unit) > 0.8) {
                     nearestWoundedUnit.move(unit, Actions.MOVE_REPAIR, "BeHelped");
                 }

@@ -373,13 +373,13 @@ public interface AUnitOrders {
      * is a small chance for a command to fail after it has been passed to Broodwar. See also isRepairing,
      * canRepair
      */
-    default boolean repair(AUnit target, String tooltip, boolean strategicLevel) {
+    default boolean repair(AUnit target, String tooltip) {
         if (target == null) {
             System.err.println("Null repair target");
             return false;
         }
 
-        unit().setTooltip(tooltip, strategicLevel);
+        unit().setTooltip(tooltip);
 
         if (unit().isRepairing() && unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
 //            System.err.println(this + " avoid double command / " + unit().getLastCommand() + " // " + unit().target());

@@ -37,7 +37,7 @@ public class WorkerDefenceManager extends Manager {
 
     private boolean act() {
         if (runFromReaverFix(unit)) return true;
-        
+
         if (unit.isRepairing()) return false;
         if (unit.enemiesNear().combatUnits().isEmpty()) return false;
 
@@ -155,8 +155,8 @@ public class WorkerDefenceManager extends Manager {
         AUnit wounded = Select.ourWorkers().wounded().inRadius(3, worker).nearestTo(worker);
 
         if (wounded != null && A.hasMinerals(5) && wounded.isWounded() && wounded.isAlive() && !wounded.isBuilder()) {
-            worker.repair(wounded, "BuddyRepair!", true);
-            wounded.repair(worker, "BuddyRepair!", true);
+            worker.repair(wounded, "BuddyRepair!");
+            wounded.repair(worker, "BuddyRepair!");
 //            if (!worker.isRepairing()) {
 //            }
 //            if (!wounded.isRepairing()) {

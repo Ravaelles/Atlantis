@@ -6,8 +6,10 @@ import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHe
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.cache.Cache;
 
 public class TerranPositionFinder extends AbstractPositionFinder {
+    private static Cache<APosition> cache = new Cache<>();
 
     /**
      * Returns best position for given <b>building</b>, maximum <b>maxDistance</b> build tiles from
@@ -17,10 +19,18 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      */
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo,
                                                     double maxDistance) {
+        int cacheForFrames = building.isCombatBuilding() ? 11 : 47;
+        return cache.get(
+            "findStandardPositionFor:" + building.id() + "," + nearTo.toStringPixels(),
+            cacheForFrames,
+            () -> findNewPosition(builder, building, nearTo, maxDistance)
+        );
+    }
+
+    private static APosition findNewPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _CONDITION_THAT_FAILED = null;
 
         int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
-//        int searchRadius = 0;
         maxDistance = limitMaxDistanceForImportantBuildings(maxDistance, building);
 
         while (searchRadius < maxDistance) {
