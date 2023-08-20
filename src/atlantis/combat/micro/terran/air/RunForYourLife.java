@@ -11,7 +11,7 @@ public class RunForYourLife extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isAir() && unit.hp() <= 40;
+        return unit.isAir() && unit.hp() <= 50 && unit.enemiesNear().canAttack(unit, 5.1).notEmpty();
     }
 
     @Override

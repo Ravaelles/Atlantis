@@ -27,10 +27,10 @@ public class ProduceMarines {
             return AddToQueue.maxAtATime(AUnitType.Terran_Marine, 2);
         }
 
-        int infantry = Count.infantry();
+//        int infantry = Count.infantry();
 
         if (tanks >= 5) {
-            if (!A.canAfford(450 + infantry * 10, 0)) return false;
+            if (!A.canAfford(450 + marines * 15, 0)) return false;
         }
 
         if (tanks <= 2 && marines >= 10 && (!A.hasMinerals(650))) {

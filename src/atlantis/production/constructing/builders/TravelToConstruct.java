@@ -50,7 +50,7 @@ public class TravelToConstruct extends HasUnit {
                 refreshConstructionPositionIfNeeded(construction, buildingType);
             }
 
-            return issueBuildOrder(buildingType, construction);
+            return issueBuildOrder(construction);
         }
     }
 
@@ -99,10 +99,12 @@ public class TravelToConstruct extends HasUnit {
         return true;
     }
 
-    private boolean issueBuildOrder(AUnitType buildingType, Construction order) {
+    private boolean issueBuildOrder(Construction order) {
+        AUnitType buildingType = order.buildingType();
+        
         if (We.protoss()) {
             AUnit newBuilding = Select.ourUnfinished()
-                .ofType(order.buildingType())
+                .ofType(buildingType)
                 .inRadius(2, unit).nearestTo(unit);
             if (newBuilding != null) {
                 order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);

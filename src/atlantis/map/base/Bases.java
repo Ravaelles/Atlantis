@@ -276,7 +276,7 @@ public class Bases {
         }
 
         // If any enemy unit is Near
-        if (Select.enemy().inRadius(14, baseLocation.position()).count() > 0) return false;
+        if (Select.enemy().inRadius(14, baseLocation.position()).effVisible().count() >= 2) return false;
 
         // Check for planned constructions
         for (Construction construction : ConstructionRequests.all()) {

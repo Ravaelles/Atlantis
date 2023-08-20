@@ -18,6 +18,8 @@ public class ConsiderLoadingIntoBunkers extends Manager {
 
         boolean noBunkerVeryNear = unit.friendsNear().bunkers().inRadius(3, unit).empty();
 
+        if (!noBunkerVeryNear && unit.distToFocusPoint() <= 4) return true;
+
         if (unit.hp() >= 20 && noBunkerVeryNear && unit.noCooldown()) {
             if (unit.enemiesNear().inRadius(1.6, unit).notEmpty()) return false;
             if (unit.friendsInRadius(0.2).nonBuildings().count() >= 3) return false;

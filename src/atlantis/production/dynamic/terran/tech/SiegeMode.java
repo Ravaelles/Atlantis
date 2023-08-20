@@ -10,16 +10,23 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 import bwapi.TechType;
 
 public class SiegeMode extends Commander {
     @Override
     public boolean applies() {
-        return Have.factory() && ATech.isNotResearchedOrPlanned(TechType.Tank_Siege_Mode) && (
-            Count.tanks() >= 1
-                || Decisions.wantsToBeAbleToProduceTanksSoon()
-                || A.seconds() >= 350
-        );
+        return Have.factory() && ATech.isNotResearchedOrPlanned(TechType.Tank_Siege_Mode) && shouldResearchNow();
+    }
+
+    private static boolean shouldResearchNow() {
+        int tanks = Count.tanks();
+
+        if (Enemy.terran()) {
+            return tanks >= 1;
+        }
+
+        return tanks >= 2 || (tanks >= 1 && A.seconds() >= 430);
     }
 
     @Override

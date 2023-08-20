@@ -71,16 +71,16 @@ public class WorkerDefenceManager extends Manager {
             double distTo = reaver.distTo(worker);
 
             if (distTo <= 9) {
-                worker.runningManager().runFrom(reaver, 5, Actions.RUN_ENEMY, true);
+                worker.runningManager().runFrom(reaver, 10, Actions.RUN_ENEMY, true);
                 worker.setTooltip("OhFuckReaver!", true);
                 worker.addLog("OhFuckReaver!");
                 return true;
             }
 
             if (distTo <= 12) {
-                AUnit distantBase = Select.ourBases().inRadius(30, worker).mostDistantTo(worker);
-                if (distantBase != null && distantBase.distTo(worker) >= 14) {
-                    worker.move(distantBase, Actions.MOVE_AVOID, "RunToAnotherBase");
+                AUnit goTo = Select.minerals().inRadius(40, worker).mostDistantTo(worker);
+                if (goTo != null && goTo.distTo(worker) >= 2) {
+                    worker.move(goTo, Actions.MOVE_AVOID, "RunToAnotherBase");
                     return true;
                 }
             }

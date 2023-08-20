@@ -77,7 +77,7 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
 
     @Override
     protected void handle() {
-//        System.err.println("Reinforce " + initialPositionToReinforce + " with BUNKER at " + position);
+        System.err.println("Reinforce " + initialPositionToReinforce + " with BUNKER at " + position);
         haveBunkerAtTheNearestChoke();
     }
 

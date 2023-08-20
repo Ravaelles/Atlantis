@@ -1,6 +1,7 @@
 package atlantis.terran.repair;
 
 import atlantis.architecture.Commander;
+import atlantis.terran.repair.repairer.RepairerManager;
 import atlantis.units.AUnit;
 
 import java.util.Iterator;
@@ -22,7 +23,6 @@ public class RepairerCommander extends Commander {
             }
 
             (new RepairerManager(repairer)).invoke();
-            (new RepairerManager(repairer)).handle();
         }
     }
 }

@@ -30,7 +30,7 @@ public class RepairAssignments {
         return repairersToUnit.get(repairer);
     }
 
-    public static AUnit getUnitToRepairFor(AUnit repairer) {
+    public static AUnit unitToRepairForSCV(AUnit repairer) {
         return repairersToUnit.get(repairer);
     }
 

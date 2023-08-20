@@ -80,7 +80,7 @@ public class WorkerTransferCommander extends Commander {
         // === Perform worker transfer from base to base ========================================
 
         AUnit worker = Select.ourWorkersThatGather(true)
-            .inRadius(20, baseWithMostWorkers)
+            .inRadius(16, baseWithMostWorkers)
             .nearestTo(baseWithFewestWorkers);
 //        System.out.println("transfer worker = " + worker);
         if (worker != null) {
@@ -88,14 +88,29 @@ public class WorkerTransferCommander extends Commander {
         }
     }
 
+    /**
+     * We're issuing Gather command instead of Move, because then workers can bypass stacked combat units.
+     */
     private void transferWorkerTo(AUnit worker, AUnit baseWithFewestWorkers) {
-        if (worker.distTo(baseWithFewestWorkers.position()) > 3) {
+        AUnit mineral = Select.minerals().inRadius(10, baseWithFewestWorkers).first();
+
+        if (mineral == null) return;
+
+        if (worker.distTo(mineral) > 8) {
             worker.move(baseWithFewestWorkers.position(), Actions.TRANSFER, "Transfer", true);
         }
-        else if (worker.isMoving()) {
+        else {
             AMineralGathering.gatherResources(worker);
             worker.setTooltipTactical("Transferred!");
         }
+
+//        if (worker.distTo(baseWithFewestWorkers.position()) > 5) {
+//            worker.move(baseWithFewestWorkers.position(), Actions.TRANSFER, "Transfer", true);
+//        }
+//        else if (worker.isMoving()) {
+//            AMineralGathering.gatherResources(worker);
+//            worker.setTooltipTactical("Transferred!");
+//        }
     }
 
 }

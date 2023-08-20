@@ -7,7 +7,7 @@ public class CanAbandonUnitAssignedToRepair {
     public static boolean check(AUnit unit) {
         if (!unit.isAlive()) return true;
 
-        AUnit target = RepairAssignments.getUnitToRepairFor(unit);
+        AUnit target = RepairAssignments.unitToRepairForSCV(unit);
         if (target == null) {
             target = RepairAssignments.getUnitToProtectFor(unit);
         }

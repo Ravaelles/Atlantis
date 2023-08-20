@@ -3,6 +3,7 @@ package atlantis.terran.repair;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 
 public class DynamicRepairsNearby extends Manager {
     public DynamicRepairsNearby(AUnit unit) {
@@ -28,12 +29,24 @@ public class DynamicRepairsNearby extends Manager {
         AUnit repairable = unit.friendsNear().mechanical().wounded().inRadius(4, unit).nearestTo(unit);
 
         if (repairable != null && repairable.isWalkable()) {
-            if (ShouldNotRepairUnit.shouldNotRepairUnit(repairable)) return false;
+            if (ShouldNotRepairUnit.shouldNotRepairUnit(unit, repairable)) return false;
 
-            unit.repair(repairable, "KindGuy");
+            RepairAssignments.addRepairer(unit, repairable);
+            if (!unit.isRepairing()) {
+                unit.repair(unit, "DynaRepair");
+            }
+
+            unit.setTooltip("KindGuy");
 
             if (repairable.looksIdle()) {
-                repairable.repair(unit, "ToRepairer");
+                if (repairable.isScv()) {
+                    repairable.repair(unit, "LoveBack");
+                    return true;
+                }
+
+                if (repairable.distTo(unit) > 0.3) {
+                    repairable.move(unit, Actions.MOVE_REPAIR, "ToRepairer");
+                }
             }
 
             return true;

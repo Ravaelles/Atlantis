@@ -33,7 +33,7 @@ public class NewRepairsCommander extends Commander {
 //                System.out.println("Repair TURRET? ");
 //            }
 
-            if (ShouldNotRepairUnit.shouldNotRepairUnit(woundedUnit)) {
+            if (ShouldNotRepairUnit.shouldNotRepairUnit(null, woundedUnit)) {
                 continue;
             }
 

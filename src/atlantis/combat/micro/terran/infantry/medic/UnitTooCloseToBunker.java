@@ -18,8 +18,8 @@ public class UnitTooCloseToBunker extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.distTo(bunker) < 2.8 && bunker.loadedUnits().size() >= 3) {
-            unit.moveAwayFrom(bunker, 2, Actions.MOVE_SPACE, "TooCloseToBunker");
+        if (unit.distTo(bunker) < 1.8 && bunker.loadedUnits().size() >= 3) {
+            unit.moveAwayFrom(bunker, 0.5, Actions.MOVE_SPACE, "TooCloseToBunker");
             return usedManager(this);
         }
 

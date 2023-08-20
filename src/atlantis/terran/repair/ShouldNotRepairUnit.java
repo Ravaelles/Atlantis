@@ -2,24 +2,27 @@ package atlantis.terran.repair;
 
 import atlantis.information.strategy.GamePhase;
 import atlantis.terran.FlyingBuildingScoutCommander;
+import atlantis.terran.repair.repairer.RepairerManager;
 import atlantis.units.AUnit;
 
 public class ShouldNotRepairUnit {
-    public static boolean shouldNotRepairUnit(AUnit unit) {
-        if (unit == null) return false;
+    public static boolean shouldNotRepairUnit(AUnit unit, AUnit target) {
+        if (target == null) return false;
 
-        return !unit.isRepairable()
-            || (unit.isAir() && unit.hp() >= 91 && unit.friendsNear().workers().notRepairing().empty())
-            || unit.isScout()
-            || unit.isFlyingScout()
-            || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 2))
+        return !target.isRepairable()
+            || (target.isAir() && target.hp() >= 91 && target.friendsNear().workers().notRepairing().empty())
+            || target.isScout()
+            || target.isFlyingScout()
+            || (target.isRunning() && target.lastStoppedRunningLessThanAgo(30 * 2))
             || (
-            unit.isABuilding()
-                && FlyingBuildingScoutCommander.isFlyingBuilding(unit)
-                && unit.lastUnderAttackLessThanAgo(30 * 6)
+            target.isABuilding()
+                && FlyingBuildingScoutCommander.isFlyingBuilding(target)
+                && target.lastUnderAttackLessThanAgo(30 * 6)
         )
-//                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercentMin(40))
-            || RepairerManager.itIsForbiddenToRepairThisUnitNow(unit)
-            || GamePhase.isEarlyGame() && (unit.isABuilding() && !unit.isCombatBuilding() && unit.enemiesNear().atLeast(2));
+//                || (target.isBuilding() && !target.isCombatBuilding() && !target.woundPercentMin(40))
+            || RepairerManager.itIsForbiddenToRepairThisUnitNow(unit, target)
+            || GamePhase.isEarlyGame() && (
+            target.isABuilding() && !target.isCombatBuilding() && target.enemiesNear().atLeast(2)
+        );
     }
 }

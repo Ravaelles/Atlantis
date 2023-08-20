@@ -48,11 +48,20 @@ public class Construction implements Comparable<Construction> {
      */
     public APosition findPositionForNewBuilding() {
         return (APosition) cache.get(
-            "buildingType,builder:" + builder.id(),
+            "findPositionForNewBuilding:" + genericCacheKey(),
             57,
             () -> APositionFinder.findPositionForNew(builder, buildingType, this)
         );
-//        return APositionFinder.findPositionForNew(builder, buildingType, this);
+    }
+
+    private String genericCacheKey() {
+        String cacheKey = "";
+
+        if (builder != null) cacheKey += builder.id() + ",";
+        if (buildingType != null) cacheKey += buildingType.id() + ",";
+        if (construction != null) cacheKey += construction.position();
+
+        return cacheKey;
     }
 
     /**

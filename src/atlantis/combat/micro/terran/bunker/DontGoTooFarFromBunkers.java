@@ -15,7 +15,13 @@ public class DontGoTooFarFromBunkers extends Manager {
 
     @Override
     public boolean applies() {
-        return GamePhase.isEarlyGame() && unit.isMissionDefend() && Count.bunkers() > 0;
+        if (GamePhase.isEarlyGame() && unit.isMissionDefend() && Count.bunkers() > 0) {
+            if (unit.isWounded() && unit.meleeEnemiesNearCount() >= 1) return false;
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -31,7 +37,6 @@ public class DontGoTooFarFromBunkers extends Manager {
         AUnit bunker = Select.our().bunkers().nearestTo(unit);
 
         if (bunker == null) return false;
-
 
         if (unit.distTo(bunker) >= 15) {
             if (!unit.lastActionLessThanAgo(3)) {

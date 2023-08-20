@@ -11,7 +11,9 @@ public class AttackTargetInRangeIfRanTooLong extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.noCooldown() && unit.lastStartedRunningAgo() < unit.lastStartedAttackAgo();
+        return unit.noCooldown()
+            && unit.lastStartedRunningAgo() < unit.lastStartedAttackAgo()
+            && unit.enemiesNear().effVisible().notEmpty();
     }
 
     protected Manager handle() {

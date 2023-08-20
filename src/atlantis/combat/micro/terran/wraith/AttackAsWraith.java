@@ -12,7 +12,7 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     @Override
     public boolean applies() {
         return unit.isWraith()
-            && unit.hp() >= 90
+//            && unit.hp() >= 90
             && (
             (
                 unit.enemiesNear().canAttack(unit, 2.5).empty()
