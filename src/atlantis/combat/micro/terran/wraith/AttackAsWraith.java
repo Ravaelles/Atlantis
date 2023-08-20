@@ -18,6 +18,7 @@ public class AttackAsWraith extends AttackNearbyEnemies {
                 unit.enemiesNear().canAttack(unit, 2.5).empty()
                     && unit.enemiesNear().canAttack(unit, 6).notEmpty()
             )
+                && TerranWraith.noAntiAirBuildingNearby(unit)
         );
     }
 
@@ -33,9 +34,9 @@ public class AttackAsWraith extends AttackNearbyEnemies {
 //            System.out.println("target = " + target + " / " + unit.distTo(target) + " / " + unit.groundWeaponRange());
 //        }
 
-        if (target != null && shouldStopMovingToAttack(target)) {
-            unit.holdPosition("HoldToAttack");
-        }
+//        if (target != null && shouldStopMovingToAttack(target)) {
+//            unit.holdPosition("HoldToAttack");
+//        }
 
         return target;
     }

@@ -12,7 +12,7 @@ public class TerranWraith extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isWraith();
+        return unit.isWraith() && TerranWraith.noAntiAirBuildingNearby(unit);
     }
 
     @Override
@@ -20,9 +20,17 @@ public class TerranWraith extends Manager {
         return new Class[]{
             RunForYourLife.class,
             UnitBeingReparedManager.class,
+            ChangeLocationIfRanTooLong.class,
             AttackTargetInRangeIfRanTooLong.class,
-            AttackAsWraith.class,
+//            AttackAsWraith.class,
+            MoveAsLooksIdle.class,
         };
     }
 
+    public static boolean noAntiAirBuildingNearby(AUnit unit) {
+        return unit.enemiesNear()
+            .combatBuildingsAntiAir()
+            .inRadius(8.9 + Math.max(2.5, unit.woundPercent() / 35), unit)
+            .empty();
+    }
 }

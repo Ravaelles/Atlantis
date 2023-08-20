@@ -23,7 +23,7 @@ public class SiegeMode extends Commander {
         int tanks = Count.tanks();
 
         if (Enemy.terran()) {
-            return tanks >= 1;
+            return tanks >= 1 || A.seconds() >= 360;
         }
 
         return tanks >= 2 || (tanks >= 1 && A.seconds() >= 430);
@@ -34,7 +34,7 @@ public class SiegeMode extends Commander {
         AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).random();
 //            System.err.println("-------- machineShop = " + machineShop);
         if (machineShop != null) {
-//                System.err.println("Tank_Siege_Mode @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            System.err.println("Tank_Siege_Mode @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             AddToQueue.tech(TechType.Tank_Siege_Mode);
         }
 

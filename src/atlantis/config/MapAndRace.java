@@ -39,7 +39,7 @@ public class MapAndRace {
          * vs AI Protoss player - ♥‿♥ - My favorite map for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-        if (true) return "ums/7th.scx";
+//        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
@@ -64,7 +64,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/Wraiths_v_Base2.scm"; // Wraiths v Hatchery & Spore & Workers
 
         // vs Protoss
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
@@ -98,9 +98,9 @@ public class MapAndRace {
 //        if (true) return "ums/rav/M&M_v_Cannons.scx";
 
         // vs Terran
-//        if (true) return "ums/rav/Wraiths_v_Base.scx";
+        if (true) return "ums/rav/Wraiths_v_Base.scx";
 //@        if (true) return "ums/rav/Bunker_v_M&M.scx";
-        if (true) return "ums/rav/Tanks_v_Tanks_in_line.scx";
+//        if (true) return "ums/rav/Tanks_v_Tanks_in_line.scx";
 //        if (true) return "ums/rav/Tanks_v_Tanks_with_choke.scx";
 
         // === Maps for testing as Zerg ============================

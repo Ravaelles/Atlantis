@@ -1,13 +1,14 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.terran.wraith.MoveAsLooksIdle;
 import atlantis.combat.targeting.ATargeting;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
 public class AttackNearbyEnemies extends Manager {
-    public static final double MAX_DIST_TO_ATTACK = 25;
     private static Cache<AUnit> cache = new Cache<>();
     private static Cache<Object> cacheObject = new Cache<>();
     public static String reasonNotToAttack;
@@ -22,12 +23,38 @@ public class AttackNearbyEnemies extends Manager {
         allowedToAttack = (new AllowedToAttack(this, unit));
     }
 
+    public static double maxDistToAttack(AUnit unit) {
+        return unit.isAir() ? 999 : 25;
+    }
+
     // =========================================================
 
     @Override
     public boolean applies() {
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
         if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
+        if (unit.isWraith()) {
+            if (
+                unit.lastActionMoreThanAgo(10)
+                    && unit.enemiesNear().notEmpty()
+                    && A.chance(10)
+                    && unit.lastActionMoreThanAgo(30 * 3, Actions.MOVE_SPECIAL)
+            ) {
+                MoveAsLooksIdle moveAsLooksIdle = new MoveAsLooksIdle(unit);
+                moveAsLooksIdle.invoke();
+                usedManager(moveAsLooksIdle);
+                return false;
+            }
+
+//            if (unit.looksIdle() && unit.lastActionMoreThanAgo(20) && A.chance(10)) return true;
+            if (A.chance(5)) return true;
+
+            return false;
+//            if (unit.lastAttackFrameMoreThanAgo(70)) return false;
+//
+//            if (A.chance(50)) return false;
+        }
+
 
         return unit.hasAnyWeapon();
     }
@@ -61,6 +88,8 @@ public class AttackNearbyEnemies extends Manager {
 //            "handleAttackNearEnemyUnits: " + unit.id(),
 //            4,
 //            () -> {
+
+        if (!applies()) return false;
 
         if (unit.target() != null) {
             if (!unit.mission().allowsToAttackEnemyUnit(unit, unit.target())) return false;
@@ -134,6 +163,6 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     protected AUnit bestTargetToAttack() {
-        return ATargeting.defineBestEnemyToAttackFor(unit, MAX_DIST_TO_ATTACK);
+        return ATargeting.defineBestEnemyToAttackFor(unit, maxDistToAttack(unit));
     }
 }

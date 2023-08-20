@@ -89,7 +89,7 @@ public class ATargeting extends HasUnit {
     }
 
     public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
-        return defineBestEnemyToAttackFor(unit, AttackNearbyEnemies.MAX_DIST_TO_ATTACK);
+        return defineBestEnemyToAttackFor(unit, AttackNearbyEnemies.maxDistToAttack(unit));
     }
 
     // =========================================================
@@ -174,7 +174,7 @@ public class ATargeting extends HasUnit {
         }
 
         // Ok, any possible of this type
-        enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.MAX_DIST_TO_ATTACK);
+        enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.maxDistToAttack(unit));
 //        System.out.println("enemy B3 = " + enemy);
         if (enemy != null) {
             return enemy;

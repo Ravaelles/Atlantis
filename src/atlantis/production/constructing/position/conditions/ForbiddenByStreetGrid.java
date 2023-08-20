@@ -36,7 +36,7 @@ public class ForbiddenByStreetGrid {
         // Leave entire horizontal (same tileY) corridor free for units
         if (
             position.ty() % GRID_VALUE <= 1
-                || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 1
+                || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 0
         ) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
             return true;

@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class BeCloseToLeader extends MissionManager {
     public BeCloseToLeader(AUnit unit) {
@@ -33,9 +34,8 @@ public class BeCloseToLeader extends MissionManager {
     private boolean shouldGetBackToLeader() {
         AUnit leader = squad.leader();
 
+        if (!isLeaderOvercrowded(leader)) return false;
         if (unit.distTo(leader) >= 9) return true;
-
-        if (leader.friendsNear().inRadius(2, leader).count() >= 7) return false;
 
         if (
             squad.cohesionPercent() <= 70
@@ -43,5 +43,10 @@ public class BeCloseToLeader extends MissionManager {
         ) return true;
 
         return false;
+    }
+
+    private static boolean isLeaderOvercrowded(AUnit leader) {
+//        return leader.friendsNear().inRadius(2, leader).count() >= 7
+        return Select.all().inRadius(1, leader).count() >= 7;
     }
 }

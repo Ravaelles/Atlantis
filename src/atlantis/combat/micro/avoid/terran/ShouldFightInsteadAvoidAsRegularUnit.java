@@ -10,11 +10,11 @@ public class ShouldFightInsteadAvoidAsRegularUnit extends Manager {
 
     @Override
     public boolean applies() {
-//        System.err.println("unit.combatEvalRelative() = " + unit.combatEvalRelative());
         return unit.isHealthy()
+            && unit.isGroundUnit()
             && unit.hasAnyWeapon()
             && unit.noCooldown()
-            && unit.lastStartedRunningAgo() < unit.lastStartedAttackAgo()
+            && unit.lastStartedRunningAgo() < unit.lastAttackFrameAgo()
             && unit.combatEvalRelative() >= 0.6;
     }
 

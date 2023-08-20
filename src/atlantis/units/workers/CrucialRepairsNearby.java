@@ -45,6 +45,10 @@ public class CrucialRepairsNearby extends Manager {
             return repairIfNtTooManyRepairersAlready(target, "SaveBunker");
         }
 
+        if (target.distTo(unit) < 1.4) {
+            return repairIfNtTooManyRepairersAlready(target, "HelpHim");
+        }
+
         return false;
     }
 

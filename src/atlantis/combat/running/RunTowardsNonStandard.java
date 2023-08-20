@@ -18,11 +18,11 @@ public class RunTowardsNonStandard {
     }
 
     protected HasPosition shouldRunTowardsBunker() {
-        if (!We.terran() || !GamePhase.isEarlyGame()) {
+        if (!We.terran() || !GamePhase.isEarlyGame() || Count.bunkers() == 0) {
             return null;
         }
 
-        if (ARunningManager.unit.isTerranInfantry() && Count.bunkers() > 0) {
+        if (ARunningManager.unit.isTerranInfantry()) {
             AUnit bunker = Select.ourOfType(AUnitType.Terran_Bunker).nearestTo(ARunningManager.unit);
             if (
                 bunker != null
@@ -45,6 +45,8 @@ public class RunTowardsNonStandard {
         AUnit main = Select.main();
 
         if (main == null) return false;
+
+        if (ARunningManager.unit.isAir() && main.distTo(ARunningManager.unit) < 12) return true;
 
         if (OurStrategy.get().isRushOrCheese() && A.seconds() <= 300) return false;
 

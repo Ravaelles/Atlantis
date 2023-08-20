@@ -24,12 +24,17 @@ public class AvoidCombatBuildings extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isMissionDefendOrSparta()) return false;
+        if (unit.isAir()) return true;
 
-        if (Count.tanks() >= 2 && unit.isInfantry() && A.supplyUsed() <= 150 && unit.combatEvalRelative() <= 3.5)
-            return true;
+        if (unit.isMissionDefendOrSparta() && unit.isGroundUnit()) return false;
 
-        if (unit.combatEvalRelative() >= 2.5 && unit.hp() >= 30 && unit.woundPercent() <= 40) return false;
+        if (
+            A.supplyUsed() <= 150 && unit.isInfantry() && Count.tanks() >= 2 && unit.combatEvalRelative() <= 3.5
+        ) return true;
+
+        if (
+            unit.isGroundUnit() && unit.combatEvalRelative() >= 2.5 && unit.hp() >= 30 && unit.woundPercent() <= 40
+        ) return false;
 
         combatBuildings = EnemyUnits.discovered().combatBuildings(false);
         combatBuilding = combatBuildings.inRadius(12, unit).canAttack(unit, 4.5).nearestTo(unit);
