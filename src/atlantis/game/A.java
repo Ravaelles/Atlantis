@@ -1022,9 +1022,9 @@ public class A {
         return null;
     }
 
-    public static double getMaxElement(Collection<Double> collection) {
-        double max = -9999999;
-        for (double number : collection) {
+    public static int getMaxElement(Collection<Integer> collection) {
+        int max = -9999999;
+        for (int number : collection) {
             if (max < number) {
                 max = number;
             }
