@@ -1,7 +1,7 @@
 package atlantis.units.buildings;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
@@ -12,8 +12,6 @@ import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
-
-import static atlantis.units.AUnitType.Terran_Factory;
 
 public class SupplyCommander extends Commander {
     private int supplyTotal;
@@ -102,12 +100,12 @@ public class SupplyCommander extends Commander {
 
         // Terran + Protoss
         else {
-            AddToQueue.withHighPriority(AtlantisConfig.SUPPLY);
+            AddToQueue.withHighPriority(AtlantisRaceConfig.SUPPLY);
         }
     }
 
     private boolean requestedConstructionOfSupply() {
-        return ConstructionRequests.countNotStartedOfType(AtlantisConfig.SUPPLY) > 0;
+        return ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.SUPPLY) > 0;
     }
 
     private int requestedConstructionsOfSupply() {
@@ -116,10 +114,10 @@ public class SupplyCommander extends Commander {
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }
 
-        return Count.inProductionOrInQueue(AtlantisConfig.SUPPLY);
-//        return ConstructionRequests.countNotFinishedOfType(AtlantisConfig.SUPPLY);
+        return Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY);
+//        return ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
 
-//        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisConfig.SUPPLY);
+//        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisRaceConfig.SUPPLY);
 //
 //        // =========================================================
 //        // Terran + Protoss

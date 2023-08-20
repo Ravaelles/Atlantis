@@ -1,7 +1,6 @@
 package atlantis.production.constructing.position;
 
-import atlantis.config.AtlantisConfig;
-import atlantis.game.A;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -18,11 +17,11 @@ public class GasBuildingPositionFinder {
      */
     protected static APosition findPositionForGasBuilding(AUnitType building, HasPosition nearTo) {
 //        System.err.println(
-//            "Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) = "
-//                + Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING)
+//            "Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) = "
+//                + Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING)
 //        );
 
-        if (Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) >= 2) {
+        if (Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) >= 2) {
 //            A.printStackTrace("Too many refineries");
             ErrorLog.printMaxOncePerMinute("Too many refineries, don't build for now");
             return null;

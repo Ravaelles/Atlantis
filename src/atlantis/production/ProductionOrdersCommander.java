@@ -1,7 +1,7 @@
 package atlantis.production;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.CurrentProductionQueue;
@@ -24,7 +24,7 @@ public class ProductionOrdersCommander extends Commander {
         );
 
         for (ProductionOrder order : queue) {
-            AUnitType base = AtlantisConfig.BASE;
+            AUnitType base = AtlantisRaceConfig.BASE;
 
             if (ConstructionRequests.countNotStartedOfType(base) > 0) {
                 if (!A.hasMinerals(base.getMineralPrice() + order.mineralPrice())) {

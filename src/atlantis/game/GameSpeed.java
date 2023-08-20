@@ -31,7 +31,7 @@ public class GameSpeed {
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
 
-    // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
+    // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisRaceConfig
     private static boolean dynamicSlowdownIsAllowed = false;
     private static boolean dynamicSlowdownIsActive = false;
 
@@ -62,17 +62,17 @@ public class GameSpeed {
         }
 
         if (
-                !oneTimeSlowdownUsed
-                        && AGame.now() > 60
-                        && gameSpeed == 0
-                        && frameSkip >= 30
+            !oneTimeSlowdownUsed
+                && AGame.now() > 60
+                && gameSpeed == 0
+                && frameSkip >= 30
 //                        && Count.ourCombatUnits() >= 5
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
 //                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Select.enemyCombatUnits().atLeast(2)
-                        && EnemyInfo.hasDiscoveredEnemyBase()
-                        && Alpha.get().squadScout() != null
-                        && Alpha.get().squadScout().isWounded()
+                && EnemyInfo.hasDiscoveredEnemyBase()
+                && Alpha.get().squadScout() != null
+                && Alpha.get().squadScout().isWounded()
 //                        && Missions.isGlobalMissionContain()
         ) {
             oneTimeSlowdownUsed = true;
@@ -86,7 +86,7 @@ public class GameSpeed {
     }
 
     /**
-     * Decreases game speed to the value specified in AtlantisConfig when action happens.
+     * Decreases game speed to the value specified in AtlantisRaceConfig when action happens.
      */
     public static void allowToDynamicallySlowdownGameOnFirstFighting() {
         dynamicSlowdownIsAllowed = true;
@@ -166,14 +166,16 @@ public class GameSpeed {
         if (deltaSpeed < 0) {
             if (gameSpeed > 1) {
                 speed = 1;
-            } else {
+            }
+            else {
                 speed = 0;
             }
         }
         else {
             if (gameSpeed == 0) {
                 speed = 1;
-            } else {
+            }
+            else {
                 speed = gameSpeed + deltaSpeed;
             }
         }

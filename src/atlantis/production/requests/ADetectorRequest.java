@@ -1,6 +1,6 @@
 package atlantis.production.requests;
 
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.build.AddToQueue;
@@ -18,10 +18,10 @@ public class ADetectorRequest {
     public static void requestDetectorImmediately(APosition where) {
         AUnitType detectorBuilding = null;
         if (We.terran()) {
-            detectorBuilding = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
+            detectorBuilding = AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_AIR;
         }
         else if (We.protoss()) {
-            detectorBuilding = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
+            detectorBuilding = AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND;
         }
         else {
             // Zerg has Overlords, they should be handling this situation
@@ -73,7 +73,7 @@ public class ADetectorRequest {
 //
         for (AUnit base : Select.ourBases().list()) {
             int numberOfDetectorsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
-                    detectorBuilding, 15, base.position()
+                detectorBuilding, 15, base.position()
             );
 
             for (int i = 0; i <= 2 - numberOfDetectorsNearBase; i++) {

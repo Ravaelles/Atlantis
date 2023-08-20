@@ -1,5 +1,8 @@
 package atlantis.architecture;
 
+import atlantis.debug.profiler.CodeProfiler;
+import atlantis.game.A;
+
 public class Commander extends BaseAbstractCommander {
     /**
      * All sub-commanders. Order matters.
@@ -14,22 +17,18 @@ public class Commander extends BaseAbstractCommander {
     }
 
     public void invoke() {
+        if (A.now() == lastFrameInvoked) return;
+        lastFrameInvoked = A.now();
+
 //        System.err.println("INVOKE " + getClass().getSimpleName());
 
-        if (applies()) {
-            handle();
-        }
-
-        handleSubcommanders();
-    }
-
-    private void invokeFromParent(Commander parentCommander) {
-//        System.err.println("-- invoke " + getClass().getSimpleName()
-//            + "\n            from " + parentCommander.getClass().getSimpleName());
+        CodeProfiler.startMeasuring(this);
 
         if (applies()) {
             handle();
         }
+
+        CodeProfiler.endMeasuring(this);
 
         handleSubcommanders();
     }
@@ -40,7 +39,7 @@ public class Commander extends BaseAbstractCommander {
 
     public void handleSubcommanders() {
         for (Commander commander : commanderObjects) {
-            commander.invokeFromParent(this);
+            commander.invoke();
         }
     }
 }

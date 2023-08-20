@@ -1,10 +1,10 @@
 package atlantis.production.dynamic.expansion;
 
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.units.select.Count;
 
 public class ExpansionStatus {
     public static boolean isBaseUnderConstruction() {
-        return Count.inProductionOrInQueue(AtlantisConfig.BASE) > 0;
+        return Count.inProductionOrInQueue(AtlantisRaceConfig.BASE) > 0;
     }
 }

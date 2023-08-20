@@ -1,7 +1,7 @@
 package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.build.BuildOrderSettings;
@@ -99,11 +99,11 @@ public class AutoTrainWorkersCommander extends Commander {
         if (!AGame.canAfford(50, 0) || AGame.supplyFree() == 0) return false;
 
         if (We.zerg()) {
-            return ZergBuildOrder.produceZergUnit(AtlantisConfig.WORKER);
+            return ZergBuildOrder.produceZergUnit(AtlantisRaceConfig.WORKER);
         }
 
         if (base != null) {
-            return base.train(AtlantisConfig.WORKER);
+            return base.train(AtlantisRaceConfig.WORKER);
         }
 
         // If we're here it means all bases are busy. Try queue request
@@ -115,10 +115,10 @@ public class AutoTrainWorkersCommander extends Commander {
             ) {
 //                System.err.println(
 //                    "At supply " + A.supplyUsed() + " produce worker " +
-//                        "(" + Count.ourOfTypeWithUnfinished(AtlantisConfig.WORKER) + ")"
+//                        "(" + Count.ourOfTypeWithUnfinished(AtlantisRaceConfig.WORKER) + ")"
 //                );
 
-                anotherBase.train(AtlantisConfig.WORKER);
+                anotherBase.train(AtlantisRaceConfig.WORKER);
                 return true;
             }
         }

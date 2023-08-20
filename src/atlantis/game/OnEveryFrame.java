@@ -1,52 +1,45 @@
 package atlantis.game;
 
-import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.map.choke.AChoke;
-import atlantis.map.path.PathToEnemyBase;
-import atlantis.map.position.APosition;
-import bwapi.Color;
+import atlantis.Atlantis;
+import atlantis.debug.profiler.CodeProfiler;
+import atlantis.production.orders.build.CurrentBuildOrder;
 
-import java.util.ArrayList;
-
-/**
- * Auxiliary class, helpful when there's need to do something every frame and not spam other classes.
- */
 public class OnEveryFrame {
-    public static void handle() {
-//        paintMissionAttackFocusPoint();
+    public static void update() {
+        CodeProfiler.startMeasuringTotalFrame();
 
-        pathToEnemyBase();
-    }
-
-    private static void pathToEnemyBase() {
-        paintPathToEnemyBase(PathToEnemyBase.chokesLeadingToEnemyBase());
-    }
-
-    private static void paintPathToEnemyBase(ArrayList<AChoke> chokes) {
-        int chokeIndex = 0;
-        APosition prevPoint = null;
-
-        for (AChoke choke : chokes) {
-            AAdvancedPainter.paintChoke(choke, Color.Orange, "Milestone=" + chokeIndex);
-
-            if (prevPoint != null) {
-                AAdvancedPainter.paintLine(prevPoint, choke.center(), Color.Orange);
+        // === Handle PAUSE ================================================
+        // If game is paused wait 100ms - pause is handled by PauseBreak button
+        while (GameSpeed.isPaused()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
             }
-            prevPoint = choke.center();
-
-            chokeIndex++;
         }
+
+        // === All game actions that take place every frame ==================================================
+
+        try {
+            AGame.cacheFrameNow();
+            Atlantis.getInstance().getGameCommander().invoke();
+        }
+
+        // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
+        catch (Exception e) {
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("### AN ERROR HAS OCCURRED ###");
+//            A.printStackTrace("### AN ERROR HAS OCCURRED ###");
+            System.err.println("### AN ERROR HAS OCCURRED ###");
+//            if (true) throw e;
+            e.printStackTrace();
+        }
+
+        if (A.notUms() && A.now() == 1) {
+            CurrentBuildOrder.get().print();
+        }
+
+        OnEveryFrameHelper.handle();
+
+        CodeProfiler.endMeasuringTotalFrame();
+//        CodeProfiler.printSummary();
     }
-
-//    private static void paintMissionAttackFocusPoint() {
-//        AFocusPoint focusPoint = Alpha.get().mission().focusPoint();
-//        AUnit unit = Alpha.get().first();
-//
-//        if (focusPoint != null) {
-//            APainter.paintLine(unit, focusPoint, Color.Cyan);
-//        }
-
-//        AAdvancedPainter.paintSideMessage("Focus: x:" + focusPoint.x() + ", y:" + focusPoint.y(), Color.Yellow);
-//    }
-
 }

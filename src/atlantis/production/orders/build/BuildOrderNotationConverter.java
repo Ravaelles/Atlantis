@@ -1,6 +1,6 @@
 //package atlantis.production.orders;
 //
-//import atlantis.config.AtlantisConfig;
+//import atlantis.config.AtlantisRaceConfig;
 //import atlantis.production.orders.production.ProductionOrder;
 //
 //import java.util.ArrayList;
@@ -71,7 +71,7 @@
 //
 //            // Insert additional worker build order
 //            if (orderSupplyRequired < 0 || currentSupply < orderSupplyRequired) {
-//                ProductionOrder workerOrder = new ProductionOrder(AtlantisConfig.WORKER);
+//                ProductionOrder workerOrder = new ProductionOrder(AtlantisRaceConfig.WORKER);
 //                newInitialQueue.add(workerOrder);
 //            }
 //

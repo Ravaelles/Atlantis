@@ -6,17 +6,19 @@ import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
+import atlantis.util.We;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
 
 public class ZergDynamicTechResearch extends Commander {
     @Override
-    protected void handle() {
-        if (A.everyFrameExceptNthFrame(35)) {
-            return;
-        }
+    public boolean applies() {
+        return We.zerg() && A.everyNthGameFrame(39);
+    }
 
+    @Override
+    protected void handle() {
         if (Count.ghosts() >= 2) {
             AddToQueue.tech(TechType.Lockdown);
         }

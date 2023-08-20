@@ -43,14 +43,14 @@ public class AKeyboard implements NativeKeyListener {
     }
 
     // =========================================================
-    
+
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
 //        System.out.println("Key pressed code: " + e.getKeyCode());
         consumeEvent(e);
-        
+
         switch (e.getKeyCode()) {
-            
+
             // Key "Escape"
             case 1:
                 System.out.println();
@@ -67,23 +67,30 @@ public class AKeyboard implements NativeKeyListener {
 //            case 24 : case 42:
 
             // Key "p" / "P"
-            case 25 : case 41:
+            case 25:
+            case 41:
                 APainter.togglePainting();
                 break;
 
             // 3653 - PauseBreak, 57 - Space, 29 - Right Control
-            case 3653: case 57: case 29:
+            case 3653:
+            case 57:
+            case 29:
                 GameSpeed.pauseModeToggle();
                 break;
 
             // Keys "-" and NumPad "-" and "["
-            case 12: case 3658: case 26:
+            case 12:
+            case 3658:
+            case 26:
                 GameSpeed.changeSpeedBy(+40);
 //                System.out.println("Notice: SPEED SLOWER (" + GameSpeed.gameSpeed + ")");
                 break;
 
             // Keys "+" and NumPad "+" and "]"
-            case 13: case 3662: case 27:
+            case 13:
+            case 3662:
+            case 27:
                 GameSpeed.changeSpeedBy(-40);
 //                System.out.println("Notice: SPEED FASTER (" + GameSpeed.gameSpeed + ")");
                 break;
@@ -143,7 +150,10 @@ public class AKeyboard implements NativeKeyListener {
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
         switch (e.getKeyCode()) {
-            case 3653: case 57: case 29: consumeEvent(e);
+            case 3653:
+            case 57:
+            case 29:
+                consumeEvent(e);
         }
     }
 
@@ -156,8 +166,7 @@ public class AKeyboard implements NativeKeyListener {
             Field f = NativeInputEvent.class.getDeclaredField("reserved");
             f.setAccessible(true);
             f.setShort(e, (short) 0x01);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -179,12 +188,12 @@ public class AKeyboard implements NativeKeyListener {
     public void nativeKeyTyped(NativeKeyEvent e) {
 //        String keyAsString = e.getKeyText(e.getKeyCode());
     }
-    
+
     // =========================================================
 
     private void changePaintingMode(int mode) {
         APainter.paintingMode = mode;
-        
+
         String string;
         switch (mode) {
             case APainter.MODE_NO_PAINTING:
@@ -200,8 +209,8 @@ public class AKeyboard implements NativeKeyListener {
                 string = "Paint mode error";
                 break;
         }
-        
+
         AGame.sendMessage(string);
     }
-    
+
 }

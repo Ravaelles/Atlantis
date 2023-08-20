@@ -1,6 +1,6 @@
 package atlantis.units.select;
 
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.production.constructing.builders.BuilderManager;
 import atlantis.units.AUnit;
@@ -145,7 +145,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     );
                 }
                 else {
-                    return ourOfType(AtlantisConfig.BASE);
+                    return ourOfType(AtlantisRaceConfig.BASE);
                 }
             }
         );

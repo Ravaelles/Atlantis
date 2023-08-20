@@ -1,6 +1,6 @@
 package atlantis.production.dynamic.expansion;
 
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
@@ -19,7 +19,7 @@ public class AllBasePositions {
         }
 
         if (includeNotFinished) {
-            for (Construction construction : ConstructionRequests.notStartedOfType(AtlantisConfig.BASE)) {
+            for (Construction construction : ConstructionRequests.notStartedOfType(AtlantisRaceConfig.BASE)) {
                 APosition position = construction.buildPosition();
                 positions.add(position);
             }

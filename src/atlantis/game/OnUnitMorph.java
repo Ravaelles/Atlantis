@@ -2,7 +2,7 @@ package atlantis.game;
 
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.transfers.SquadTransfersCommander;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.production.constructing.Construction;
@@ -37,7 +37,7 @@ public class OnUnitMorph {
             // Detect morphed gas building meaning construction has just started
             if (unit.type().isGasBuilding()) {
                 for (Construction order : ConstructionRequests.all()) {
-                    if (order.buildingType().equals(AtlantisConfig.GAS_BUILDING)
+                    if (order.buildingType().equals(AtlantisRaceConfig.GAS_BUILDING)
                         && order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                         order.setConstruction(unit);
                         break;

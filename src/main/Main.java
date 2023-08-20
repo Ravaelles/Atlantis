@@ -24,7 +24,7 @@ public class Main {
             ProcessHelper.killChaosLauncherProcess();
 
             // Dynamically modify bwapi.ini file, change race and enemy race.
-            // If you want to change your/enemy race, edit AtlantisConfig constants.
+            // If you want to change your/enemy race, edit AtlantisRaceConfig constants.
             AtlantisIgniter.modifyBwapiFileIfNeeded();
 
             // Listen for keyboard events
@@ -36,7 +36,7 @@ public class Main {
 
         // =============================================================
         // =============================================================
-        // ==== See AtlantisConfig class to customize execution ========
+        // ==== See AtlantisRaceConfig class to customize execution ========
         // =============================================================
         // =============================================================
 

@@ -1,10 +1,10 @@
 package atlantis.debug.painter;
 
 import atlantis.Atlantis;
+import atlantis.debug.profiler.CodeProfiler;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.terran.TerranBunker;
-import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
@@ -32,6 +32,7 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.PositionFulfillsAllConditions;
+import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionQueue;
@@ -46,7 +47,6 @@ import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.WorkerRepository;
-import atlantis.util.CodeProfiler;
 import atlantis.util.ColorUtil;
 import atlantis.util.MappingCounter;
 import atlantis.util.We;
@@ -96,7 +96,7 @@ public class AAdvancedPainter extends APainter {
         sideMessageBottomCounter = 0;
 
         // === PARTIAL PAINTING ====================================
-//        CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
+//        // CodeProfiler.startMeasuring(// CodeProfiler.ASPECT_PAINTING);
         setTextSizeMedium();
 
         paintSidebarInfo();
@@ -1273,25 +1273,27 @@ public class AAdvancedPainter extends APainter {
      * Paints bars showing CPU time usage by game aspect (like "Production", "Combat", "Workers", "Scouting").
      */
     static void paintCodeProfiler() {
-        /**
-         * Disabled after Commander refactoring, needs to be manually invoked in every handle() method,
-         * but there are missing for Commanders that only invoke other subcommanders.
-         */
-        if (true) return;
+//        /**
+//         * Disabled after Commander refactoring, needs to be manually invoked in every handle() method,
+//         * but there are missing for Commanders that only invoke other subcommanders.
+//         */
+//        if (true) return;
+
+//        double maxValue = A.getMaxElement(
+        // CodeProfiler.getAspectsTimeConsumption().values()
+//        );
+
+        Map<String, Integer> aspectsLength = CodeProfiler.aspectLengthSorted();
+        int maxValue = A.getMaxElement(aspectsLength.values());
 
         int counter = 0;
-        double maxValue = A.getMaxElement(
-            CodeProfiler.getAspectsTimeConsumption().values()
-        );
-
-        for (String aspectTitle : CodeProfiler.getAspectsTimeConsumption().keySet()) {
+        for (String aspectTitle : aspectsLength.keySet()) {
+            int value = aspectsLength.get(aspectTitle);
             int x = timeConsumptionLeftOffset;
-            int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++;
-
-            int value = CodeProfiler.getAspectsTimeConsumption().get(aspectTitle).intValue();
+            int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter;
 
             // Draw aspect time consumption bar
-            int barWidth = (int) (timeConsumptionBarMaxWidth * value / maxValue);
+            int barWidth = maxValue == 0 ? 30 : (int) (timeConsumptionBarMaxWidth * value / maxValue);
             if (barWidth < 3) {
                 barWidth = 3;
             }
@@ -1304,12 +1306,14 @@ public class AAdvancedPainter extends APainter {
 
             // Draw aspect label
             paintMessage(aspectTitle, Color.White, x + 4, y + 1, true);
+
+            if (counter++ >= 6) break;
         }
 
         // Paint total time
         int x = timeConsumptionLeftOffset;
         int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++ + 3;
-        int frameLength = (int) CodeProfiler.getTotalFrameLength();
+        int frameLength = CodeProfiler.totalFrameLength();
         paintMessage("Length: " + frameLength, Color.White, x + 4, y + 1, true);
 
         paintSquadsInfo(x, y);

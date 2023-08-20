@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
 import atlantis.game.OnUnitMorph;
@@ -30,7 +30,7 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
     public void neverRunsIntoCombatBuildings() {
         gameCommander = new AtlantisGameCommander();
 
-        AtlantisConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
+        AtlantisRaceConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
 
         createWorld(5, () -> {
 //            System.out.println("\n===================== FRAME = " + A.now() + " ===========================");

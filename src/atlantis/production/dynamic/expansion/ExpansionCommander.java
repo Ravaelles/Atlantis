@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.expansion;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
@@ -54,11 +54,11 @@ public class ExpansionCommander extends Commander {
         ) return false;
 
         int bases = Count.bases();
-        int basesInProduction = Count.inProductionOrInQueue(AtlantisConfig.BASE);
+        int basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 
         if (bases >= 5 || basesInProduction >= 1) return false;
 
-        if (Count.inQueue(AtlantisConfig.BASE, 6) > 0) return false;
+        if (Count.inQueue(AtlantisRaceConfig.BASE, 6) > 0) return false;
 
 //        if (ProductionQueue.size() >= 3) {
 //            return false;
@@ -105,7 +105,7 @@ public class ExpansionCommander extends Commander {
         // If we have plenty of minerals, then every new base is only a hazard
         if (!AGame.canAffordWithReserved(minMinerals, 1200)) return false;
 
-        int inConstruction = ProductionQueue.countInQueue(AtlantisConfig.BASE, 8);
+        int inConstruction = ProductionQueue.countInQueue(AtlantisRaceConfig.BASE, 8);
         if (inConstruction >= 1) return false;
 
         // === Force decent army before 3rd base =========================================
@@ -121,7 +121,7 @@ public class ExpansionCommander extends Commander {
 
         if (bases >= Bases.baseLocations().size() - 2) return false;
 
-        int numberOfUnfinishedBases = ConstructionRequests.countNotFinishedOfType(AtlantisConfig.BASE);
+        int numberOfUnfinishedBases = ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.BASE);
 
         boolean haveEnoughMinerals = AGame.hasMinerals(minMinerals);
 //        boolean haveEnoughBases = bases >= 4 && AGame.isPlayingAsZerg() && Select.ourLarva().count() >= 2;
@@ -134,12 +134,12 @@ public class ExpansionCommander extends Commander {
     private static void requestNewBase() {
         // ZERG case
         if (We.zerg()) {
-            AddToQueue.withStandardPriority(AtlantisConfig.BASE, Select.naturalOrMain());
+            AddToQueue.withStandardPriority(AtlantisRaceConfig.BASE, Select.naturalOrMain());
         }
 
         // TERRAN + PROTOSS
         else {
-            ProductionOrder productionOrder = AddToQueue.withHighPriority(AtlantisConfig.BASE);
+            ProductionOrder productionOrder = AddToQueue.withHighPriority(AtlantisRaceConfig.BASE);
             if (Count.bases() <= 1) {
                 productionOrder.setModifier("NATURAL");
             }

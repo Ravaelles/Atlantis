@@ -3,11 +3,12 @@ package atlantis.production.dynamic.terran;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.production.dynamic.terran.tech.*;
+import atlantis.util.We;
 
 public class TerranDynamicTechResearch extends Commander {
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(39);
+        return We.terran() && A.everyNthGameFrame(39);
     }
 
     @Override

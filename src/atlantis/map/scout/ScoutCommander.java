@@ -10,7 +10,7 @@ import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.CodeProfiler;
+
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class ScoutCommander extends Commander {
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
     protected void handle() {
-        CodeProfiler.startMeasuring(this);
+        // CodeProfiler.startMeasuring(this);
 
         // === Handle UMS ==========================================
 
@@ -44,7 +44,7 @@ public class ScoutCommander extends Commander {
         manageScoutAssigned();
 
         try {
-            for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+            for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext(); ) {
                 AUnit unit = iterator.next();
 
                 if (unit != null && unit.isAlive()) {
@@ -52,10 +52,10 @@ public class ScoutCommander extends Commander {
                     scoutManager.invoke();
                 }
             }
+        } catch (ConcurrentModificationException ignore) {
         }
-        catch (ConcurrentModificationException ignore) { }
 
-        CodeProfiler.endMeasuring(this);
+        // CodeProfiler.endMeasuring(this);
     }
 
     // =========================================================
@@ -134,7 +134,7 @@ public class ScoutCommander extends Commander {
     }
 
     private void removeDeadScouts() {
-        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext(); ) {
             AUnit scout = iterator.next();
             if (!scout.isAlive()) {
 //                System.out.println("Remove dead scout " + scout);

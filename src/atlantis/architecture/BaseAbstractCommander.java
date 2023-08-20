@@ -2,15 +2,30 @@ package atlantis.architecture;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.AtlantisGameCommander;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 public abstract class BaseAbstractCommander {
+    /**
+     * Commanders can have subcommanders. This is the hierarchy level of this commander e.g.
+     * 0 - top Commander (AtlantisGameCommander)
+     * 1 - Commanders just below, children of AtlantisGameCommander
+     * 2 - children of 1
+     */
+//    protected int hierarchy = 0;
+//    protected Commander parent;
+    protected boolean shouldProfile;
+
+
     protected Commander[] commanderObjects;
+    protected int lastFrameInvoked = -1;
 
     public BaseAbstractCommander() {
+        shouldProfile = Arrays.asList(AtlantisGameCommander.topLevelSubcommanders()).contains(this.getClass());
+
         initializeCommanderInstances();
     }
 
@@ -22,34 +37,32 @@ public abstract class BaseAbstractCommander {
         commanderObjects = new Commander[subcommanders.length];
 
         int index = 0;
-        for (Class<? extends Commander> classObject : subcommanders){
+        for (Class<? extends Commander> classObject : subcommanders) {
             try {
-                Commander commander = instantiateCommander(classObject);
+                Commander commander = instantiateCommander(classObject, (Commander) this);
                 if (commander == null) {
                     System.err.println("COMMANDER INIT null for " + classObject);
                     AGame.exit();
                 }
 
                 commanderObjects[index++] = commander;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.err.println("Exception /" + e.getClass() + "/ trying to init /" + classObject + "/");
             }
         }
     }
 
-    protected Commander instantiateCommander(Class<? extends Commander> classObject) {
+    protected Commander instantiateCommander(Class<? extends Commander> classObject, Commander parent) {
         try {
-            return classObject.getDeclaredConstructor().newInstance();
-        }
-        catch (InstantiationException e) {
+            Commander newInstance = classObject.getDeclaredConstructor().newInstance();
+
+            return newInstance;
+        } catch (InstantiationException e) {
             A.printStackTrace("There has to be a constructor in:\n" + classObject);
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             System.err.println("There was an error in constructor of:\n" + classObject);
             e.printStackTrace();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             A.printStackTrace("Could not instantiate " + classObject + " / " + e.getClass() + " / " + e.getMessage());
         }
 
@@ -60,6 +73,10 @@ public abstract class BaseAbstractCommander {
     // =========================================================
 
     protected static Class[] mergeCommanders(Class[] raceSpecific, Class[] generic) {
-        return Stream.concat(Arrays.stream(raceSpecific), Arrays.stream(generic)).toArray(Class[]::new) ;
+        return Stream.concat(Arrays.stream(raceSpecific), Arrays.stream(generic)).toArray(Class[]::new);
+    }
+
+    public boolean shouldProfile() {
+        return shouldProfile;
     }
 }

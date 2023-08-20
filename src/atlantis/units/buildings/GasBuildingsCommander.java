@@ -1,7 +1,7 @@
 package atlantis.units.buildings;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
@@ -30,16 +30,16 @@ public class GasBuildingsCommander extends Commander {
         }
 
 //        if (ConstructionRequests.countNotFinishedOfType(Terran_Factory) >= 1) {
-        if (Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) >= 1) {
+        if (Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
             return;
         }
 
-//        System.out.println("@ " + A.now() + " - GAS - " + Count.inProductionOrInQueue(AtlantisConfig.GAS_BUILDING) +
-//            " / " + AtlantisConfig.GAS_BUILDING);
+//        System.out.println("@ " + A.now() + " - GAS - " + Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) +
+//            " / " + AtlantisRaceConfig.GAS_BUILDING);
     }
 
     private static void controlNumberOfWorkersGatheringGasAtEachBuilding() {
-        Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisConfig.GAS_BUILDING).list();
+        Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisRaceConfig.GAS_BUILDING).list();
 
         for (AUnit gasBuilding : gasBuildings) {
 //            if (!gasBuilding.isCompleted()) {
@@ -70,7 +70,7 @@ public class GasBuildingsCommander extends Commander {
     // =========================================================
 
     private static boolean tooEarlyForAnotherGasBuilding() {
-        if (Count.existingOrInProduction(AtlantisConfig.GAS_BUILDING) >= 1) {
+        if (Count.existingOrInProduction(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
             if (!A.hasMinerals(200) || A.supplyTotal() <= 30) {
                 return true;
             }

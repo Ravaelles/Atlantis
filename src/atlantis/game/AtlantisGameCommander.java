@@ -24,8 +24,7 @@ import atlantis.units.workers.WorkerCommander;
  * It represents minimal passage of game-time (one game frame).
  */
 public class AtlantisGameCommander extends Commander {
-    @Override
-    protected Class<? extends Commander>[] subcommanders() {
+    public static Class<? extends Commander>[] topLevelSubcommanders() {
         return new Class[]{
             SpecialActionsCommander.class,
             WorkerCommander.class,
@@ -46,5 +45,10 @@ public class AtlantisGameCommander extends Commander {
 
             DebugCommander.class,
         };
+    }
+
+    @Override
+    protected Class<? extends Commander>[] subcommanders() {
+        return topLevelSubcommanders();
     }
 }

@@ -11,10 +11,10 @@ public class DynamicProductionCommander extends Commander {
 
     @Override
     protected Class<? extends Commander>[] subcommanders() {
-        return new Class[] {
-            DynamicProductionOfUnitsCommander.class,
+        return new Class[]{
+            DynamicUnitProducerCommander.class,
             DynamicBuildingsCommander.class,
         };
     }
-    
+
 }

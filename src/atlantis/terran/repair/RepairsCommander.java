@@ -15,7 +15,7 @@ public class RepairsCommander extends Commander {
             NewRepairsCommander.class,
             RepairerCommander.class,
             ProtectorCommander.class,
-            EnsureThereAreMineralsForRepairsCommander.class,
+            DontRepairWithoutMineralsCommander.class,
         };
     }
 }

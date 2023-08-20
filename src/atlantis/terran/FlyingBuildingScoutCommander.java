@@ -8,14 +8,9 @@ import atlantis.units.select.Select;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
-public class TerranFlyingBuildingScoutCommander extends Commander {
-
+public class FlyingBuildingScoutCommander extends Commander {
     private static final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
-
-    public TerranFlyingBuildingScoutCommander() {
-    }
 
     @Override
     protected void handle() {
@@ -34,7 +29,7 @@ public class TerranFlyingBuildingScoutCommander extends Commander {
                 continue;
             }
 
-            (new TerranFlyingBuildingScoutManager(unit)).invoke();
+            (new FlyingBuildingScoutManager(unit)).invoke();
         }
     }
 

@@ -3,6 +3,7 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.MapAndRace;
 import atlantis.config.MapSpecificCommander;
 import atlantis.production.orders.production.CurrentProductionQueue;
@@ -20,11 +21,10 @@ import static atlantis.Atlantis.game;
  * <br /><b>It's worth to study this class carefully as it contains some really useful methods.</b>
  */
 public class AGame {
-
     private static boolean umsMode = false; // Should be set to `true` on UMS (custom) maps
     private static APlayer _enemy = null; // Cached enemy APlayer
-    private static APlayer _neutral = null; // Cached neutral APlayer
     private static APlayer _our = null; // Cached our APlayer
+    private static int _framesNow = 0; // Cached current frames count
 
     // =========================================================
 
@@ -73,7 +73,11 @@ public class AGame {
      * Returns number of game frames elapsed.
      */
     public static int now() {
-        return Atlantis.game().getFrameCount();
+        return _framesNow;
+    }
+
+    public static void cacheFrameNow() {
+        _framesNow = Atlantis.game().getFrameCount();
     }
 
     /**
@@ -212,28 +216,28 @@ public class AGame {
      * Returns true if user plays as Terran.
      */
     public static boolean isPlayingAsTerran() {
-        if (AtlantisConfig.MY_RACE == null) return "Terran".equals(MapAndRace.OUR_RACE);
+        if (AtlantisRaceConfig.MY_RACE == null) return "Terran".equals(MapAndRace.OUR_RACE);
 
-        return AtlantisConfig.MY_RACE.equals(Race.Terran);
+        return AtlantisRaceConfig.MY_RACE.equals(Race.Terran);
     }
 
     /**
      * Returns true if user plays as Protoss.
      */
     public static boolean isPlayingAsProtoss() {
-        if (AtlantisConfig.MY_RACE == null) return "Protoss".equals(MapAndRace.OUR_RACE);
+        if (AtlantisRaceConfig.MY_RACE == null) return "Protoss".equals(MapAndRace.OUR_RACE);
 
-        return AtlantisConfig.MY_RACE.equals(Race.Protoss);
+        return AtlantisRaceConfig.MY_RACE.equals(Race.Protoss);
     }
 
     /**
      * Returns true if user plays as Zerg.
      */
     public static boolean isPlayingAsZerg() {
-        if (AtlantisConfig.MY_RACE == null) return "Zerg".equals(MapAndRace.OUR_RACE);
+        if (AtlantisRaceConfig.MY_RACE == null) return "Zerg".equals(MapAndRace.OUR_RACE);
 
         return AGame.getPlayerUs().getRace().equals(Race.Zerg);
-//        return AtlantisConfig.MY_RACE.equals(Race.Zerg);
+//        return AtlantisRaceConfig.MY_RACE.equals(Race.Zerg);
     }
 
     /**

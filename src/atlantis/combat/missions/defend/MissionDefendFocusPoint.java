@@ -3,7 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.missions.Missions;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
@@ -181,7 +181,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //
 //                // === Gather around defensive buildings ===================
 //
-//                AUnit defBuilding = Select.ourOfTypeWithUnfinished(AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
+//                AUnit defBuilding = Select.ourOfTypeWithUnfinished(AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
 //                if (defBuilding != null) {
 //                    return defBuilding.translateTilesTowards(mainBase.position(), 5);
 //                }
@@ -205,7 +205,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
     private AFocusPoint atAnyBase() {
         //                    AChoke natural = Chokes.natural();
-        AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisConfig.BASE).mostDistantTo(Select.main());
+        AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisRaceConfig.BASE).mostDistantTo(Select.main());
         if (lastBase != null) {
 
             // === At natural =========================================

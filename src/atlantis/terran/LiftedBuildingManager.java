@@ -4,9 +4,9 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
-public class TerranLiftedBuildingManager extends Manager {
+public class LiftedBuildingManager extends Manager {
 
-    public TerranLiftedBuildingManager(AUnit unit) {
+    public LiftedBuildingManager(AUnit unit) {
         super(unit);
     }
 

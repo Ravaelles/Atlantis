@@ -1,17 +1,16 @@
 package atlantis;
 
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
+import atlantis.config.AtlantisConfig;
 import atlantis.config.env.Env;
 import atlantis.game.*;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.constructing.ProtossConstructionManager;
-import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.util.ProcessHelper;
-import atlantis.util.log.ErrorLog;
 import bwapi.*;
 
 /**
@@ -95,11 +94,11 @@ public class Atlantis implements BWEventListener {
     }
 
     private void setBwapiFlags() {
-//        game.setLocalSpeed(AtlantisConfig.GAME_SPEED);  // Change in-game speed (0 - fastest, 20 - normal)
-//        game.setFrameSkip(AtlantisConfig.FRAME_SKIP);   // Number of GUI frames to skip
-        game.setGUI(false);                             // Turn off GUI - will speed up game considerably
-        game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
-//        game.enableFlag(Flag.CompleteMapInformation);   // See entire map - must be disabled for real games
+//        game.setLocalSpeed(AtlantisRaceConfig.GAME_SPEED);  // Change in-game speed (0 - fastest, 20 - normal)
+//        game.setFrameSkip(AtlantisRaceConfig.FRAME_SKIP);   // Number of GUI frames to skip
+        game.setGUI(!AtlantisConfig.DISABLE_GUI);             // Turn off GUI - speeds up game considerably
+        game.enableFlag(Flag.UserInput);                      // Without this flag you can't control units with mouse
+//        game.enableFlag(Flag.CompleteMapInformation);       // See entire map - must be disabled for real games
     }
 
     /**
@@ -107,36 +106,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
-
-        // === Handle PAUSE ================================================
-        // If game is paused wait 100ms - pause is handled by PauseBreak button
-        while (GameSpeed.isPaused()) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-            }
-        }
-
-        // === All game actions that take place every frame ==================================================
-
-        try {
-            Atlantis.getInstance().getGameCommander().invoke();
-        }
-
-        // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
-        catch (Exception e) {
-//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("### AN ERROR HAS OCCURRED ###");
-//            A.printStackTrace("### AN ERROR HAS OCCURRED ###");
-            System.err.println("### AN ERROR HAS OCCURRED ###");
-//            if (true) throw e;
-            e.printStackTrace();
-        }
-
-        if (A.notUms() && A.now() == 1) {
-            CurrentBuildOrder.get().print();
-        }
-
-        OnEveryFrame.handle();
+        OnEveryFrame.update();
     }
 
     /**
@@ -398,7 +368,7 @@ public class Atlantis implements BWEventListener {
     // Constructors
 
     /**
-     * You have to pass AtlantisConfig object to initialize Atlantis.
+     * You have to pass AtlantisRaceConfig object to initialize Atlantis.
      */
     public Atlantis() {
         instance = this; // Save static reference to this instance, act like a singleton.

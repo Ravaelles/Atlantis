@@ -139,7 +139,7 @@ public class TravelToConstruct extends HasUnit {
                 buildPosition.tx(), buildPosition.ty()
             );
 
-//            if (Select.ourWithUnfinishedOfType(AtlantisConfig.GAS_BUILDING).inRadius(3, buildPosition).notEmpty()) {
+//            if (Select.ourWithUnfinishedOfType(AtlantisRaceConfig.GAS_BUILDING).inRadius(3, buildPosition).notEmpty()) {
 //                order.cancel();
 //                return false;
 //            }

@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.architecture.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.margin.UnitRange;
 import atlantis.combat.missions.Mission;
@@ -27,7 +26,7 @@ import atlantis.map.scout.ScoutCommander;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.builders.BuilderManager;
-import atlantis.terran.TerranFlyingBuildingScoutCommander;
+import atlantis.terran.FlyingBuildingScoutCommander;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
@@ -1660,7 +1659,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isFlyingScout() {
-        return TerranFlyingBuildingScoutCommander.isFlyingBuilding(this);
+        return FlyingBuildingScoutCommander.isFlyingBuilding(this);
     }
 
     public int getSpaceProvided() {
@@ -2173,7 +2172,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit loadedInto() {
-        return (AUnit) cache.get(
+        return (AUnit) cache.getIfValid(
             "loadedInto",
             7,
             () -> {
@@ -2817,4 +2816,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return !position().equals(lastPosition());
     }
 
+    public boolean loadedIntoBunker() {
+        if (!isLoaded()) return false;
+        AUnit loadedInto = loadedInto();
+
+        return loadedInto != null && loadedInto.isBunker();
+    }
 }

@@ -1,7 +1,7 @@
 package atlantis.production.constructing;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
@@ -166,7 +166,7 @@ public class ConstructionsCommander extends Commander {
             if (builder != null) {
 
                 // If builder has changed its type and became Zerg Extractor
-                if (!builder.is(AtlantisConfig.WORKER)) {
+                if (!builder.is(AtlantisRaceConfig.WORKER)) {
 
                     // Happens for Extractor
                     if (builder.buildType() == null || builder.buildType().equals(AUnitType.None)) {

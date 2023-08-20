@@ -3,7 +3,7 @@ package atlantis.terran.repair;
 import atlantis.architecture.Commander;
 import atlantis.production.orders.production.ProductionQueue;
 
-public class EnsureThereAreMineralsForRepairsCommander extends Commander {
+public class DontRepairWithoutMineralsCommander extends Commander {
     @Override
     protected void handle() {
         int totalRepairers = RepairAssignments.countTotalRepairers();

@@ -13,19 +13,21 @@ public class We {
 
     public static Race race() {
         return (Race) cache.get(
-                "race",
-                -1,
-                () -> {
-                    if (AGame.isPlayingAsProtoss()) {
-                        return Race.Protoss;
-                    }
-                    else if (AGame.isPlayingAsTerran()) {
-                        return Race.Terran;
-                    }
-                    else {
-                        return Race.Zerg;
-                    }
+            "race",
+            -1,
+            () -> {
+                if (AGame.isPlayingAsProtoss()) {
+                    return Race.Protoss;
                 }
+                else if (AGame.isPlayingAsTerran()) {
+                    return Race.Terran;
+                }
+                else if (AGame.isPlayingAsZerg()) {
+                    return Race.Zerg;
+                }
+                System.err.println("Unable to identify race");
+                return null;
+            }
         );
     }
 

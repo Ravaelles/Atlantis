@@ -1,6 +1,6 @@
 package atlantis.production.dynamic.expansion;
 
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
@@ -21,7 +21,7 @@ public class PendingNextBase {
     }
 
     public static APosition notStartedBase() {
-        Construction futureBase = ConstructionRequests.getNotStartedOfType(AtlantisConfig.BASE);
+        Construction futureBase = ConstructionRequests.getNotStartedOfType(AtlantisRaceConfig.BASE);
 
         if (futureBase == null) {
 //            ErrorLog.printMaxOncePerMinute("ReinforceBaseWithCombatBuildings: futureBase == null");

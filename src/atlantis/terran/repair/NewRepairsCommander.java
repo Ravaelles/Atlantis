@@ -1,7 +1,7 @@
 package atlantis.terran.repair;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
@@ -24,7 +24,7 @@ public class NewRepairsCommander extends Commander {
     protected void assignRepairersToWoundedUnits() {
         List<AUnit> repairable = Select.our()
             .repairable(true)
-            .excludeTypes(AtlantisConfig.WORKER)
+            .excludeTypes(AtlantisRaceConfig.WORKER)
             .notScout()
             .list();
 

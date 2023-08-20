@@ -11,12 +11,17 @@ import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
 import static atlantis.units.AUnitType.Terran_Science_Facility;
 import static atlantis.units.AUnitType.Terran_Science_Vessel;
 
 public class TerranDynamicUnitsCommander extends Commander {
+    @Override
+    public boolean applies() {
+        return We.terran();
+    }
 
     @Override
     protected void handle() {

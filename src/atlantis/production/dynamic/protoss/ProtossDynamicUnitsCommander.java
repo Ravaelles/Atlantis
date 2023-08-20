@@ -16,6 +16,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 import java.util.List;
 
@@ -23,6 +24,11 @@ import static atlantis.production.AbstractDynamicUnits.*;
 import static atlantis.units.AUnitType.Protoss_Dragoon;
 
 public class ProtossDynamicUnitsCommander extends Commander {
+    @Override
+    public boolean applies() {
+        return We.protoss();
+    }
+
     protected void handle() {
         if (AGame.notNthGameFrame(3)) {
             return;

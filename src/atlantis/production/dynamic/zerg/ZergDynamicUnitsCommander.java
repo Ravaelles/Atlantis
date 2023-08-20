@@ -11,8 +11,14 @@ import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.We;
 
 public class ZergDynamicUnitsCommander extends Commander {
+    @Override
+    public boolean applies() {
+        return We.zerg();
+    }
+
     @Override
     protected void handle() {
         mutalisks();

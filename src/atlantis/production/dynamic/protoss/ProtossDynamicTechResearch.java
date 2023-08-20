@@ -6,16 +6,19 @@ import atlantis.production.dynamic.DynamicTech;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Singularity_Charge;
 
 
 public class ProtossDynamicTechResearch extends Commander {
+    @Override
+    public boolean applies() {
+        return We.protoss() && A.everyNthGameFrame(71);
+    }
 
     public static boolean update() {
-        if (A.everyFrameExceptNthFrame(71)) return false;
-
         if (singularityCharge()) return true;
 
         if (Count.zealots() >= 10) {

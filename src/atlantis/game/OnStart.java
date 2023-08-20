@@ -1,6 +1,6 @@
 package atlantis.game;
 
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
@@ -33,12 +33,12 @@ public class OnStart {
 
         handleCheckIfUmsMap();
 
-        // Atlantis can modify ChaosLauncher's config files treating AtlantisConfig as the source-of-truth
+        // Atlantis can modify ChaosLauncher's config files treating AtlantisRaceConfig as the source-of-truth
         AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();
 
-        // Validate AtlantisConfig and exit if it's invalid
+        // Validate AtlantisRaceConfig and exit if it's invalid
         if (Env.isLocal()) {
-            AtlantisConfig.validate();
+            AtlantisRaceConfig.validate();
         }
 
         // Game speed mode that starts fast, slows down when units are attacking
@@ -105,7 +105,7 @@ public class OnStart {
                     System.out.println("Use build order: `" + CurrentBuildOrder.get() + "`");
                 }
                 else {
-                    System.err.println("Invalid (empty) build order in AtlantisConfig!");
+                    System.err.println("Invalid (empty) build order in AtlantisRaceConfig!");
                     AGame.exit();
                 }
             }

@@ -2,7 +2,7 @@ package tests.unit;
 
 import atlantis.Atlantis;
 import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.game.AGame;
@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
-import org.mockito.invocation.InvocationOnMock;
 import tests.acceptance.AbstractTestFakingGame;
 
 import java.lang.reflect.Field;
@@ -50,7 +49,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     @Before
     public void before() {
-        Env.readEnvFile(new String[] {});
+        Env.readEnvFile(new String[]{});
 
         if (!(this instanceof AbstractTestFakingGame)) {
             useFakeTime(0); // This needs to be 0 so every modulo division returns 0
@@ -147,13 +146,13 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     }
 
     protected void mockAtlantisConfig() {
-        AtlantisConfig.MY_RACE = Race.Zerg;
-        AtlantisConfig.BASE = AUnitType.Terran_Command_Center;
-        AtlantisConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
-        AtlantisConfig.WORKER = AUnitType.Terran_SCV;
-        AtlantisConfig.BARRACKS = AUnitType.Terran_Barracks;
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
-        AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
+        AtlantisRaceConfig.MY_RACE = Race.Zerg;
+        AtlantisRaceConfig.BASE = AUnitType.Terran_Command_Center;
+        AtlantisRaceConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
+        AtlantisRaceConfig.WORKER = AUnitType.Terran_SCV;
+        AtlantisRaceConfig.BARRACKS = AUnitType.Terran_Barracks;
+        AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
+        AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
     }
 
     protected void mockGameObject() {
@@ -233,7 +232,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     }
 
     protected void usingFakeOurAndFakeEnemies(FakeUnit our, FakeUnit[] enemies, Runnable runnable) {
-        usingFakeOursEnemiesAndNeutral(new FakeUnit[]{ our }, enemies, new FakeUnit[]{}, runnable);
+        usingFakeOursEnemiesAndNeutral(new FakeUnit[]{our}, enemies, new FakeUnit[]{}, runnable);
     }
 
     protected void usingFakeOursEnemiesAndNeutral(
@@ -295,7 +294,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
                 System.err.println(o);
             }
             System.err.println("\nActual: (" + actual.length + ")");
-            for (Object o : actual ) {
+            for (Object o : actual) {
                 System.err.println(o);
             }
         }

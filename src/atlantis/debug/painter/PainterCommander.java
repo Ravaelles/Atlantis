@@ -7,4 +7,9 @@ public class PainterCommander extends Commander {
     protected void handle() {
         AAdvancedPainter.paint();
     }
+
+    @Override
+    public boolean shouldProfile() {
+        return false;
+    }
 }

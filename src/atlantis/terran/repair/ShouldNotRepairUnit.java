@@ -1,7 +1,7 @@
 package atlantis.terran.repair;
 
 import atlantis.information.strategy.GamePhase;
-import atlantis.terran.TerranFlyingBuildingScoutCommander;
+import atlantis.terran.FlyingBuildingScoutCommander;
 import atlantis.units.AUnit;
 
 public class ShouldNotRepairUnit {
@@ -15,7 +15,7 @@ public class ShouldNotRepairUnit {
             || (unit.isRunning() && unit.lastStoppedRunningLessThanAgo(30 * 2))
             || (
             unit.isABuilding()
-                && TerranFlyingBuildingScoutCommander.isFlyingBuilding(unit)
+                && FlyingBuildingScoutCommander.isFlyingBuilding(unit)
                 && unit.lastUnderAttackLessThanAgo(30 * 6)
         )
 //                || (unit.isBuilding() && !unit.isCombatBuilding() && !unit.woundPercentMin(40))
