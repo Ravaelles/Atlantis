@@ -6,16 +6,14 @@ import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class Avoid extends Manager {
-    private final RunError runError;
+    protected AUnit enemy;
 
     public Avoid(AUnit unit) {
         super(unit);
-        runError = new RunError(unit);
     }
 
     @Override
@@ -24,28 +22,14 @@ public class Avoid extends Manager {
     }
 
     public Manager singleUnit(AUnit enemy) {
-        APainter.paintCircle(enemy, 16, Color.Orange);
+        this.enemy = enemy;
 
-        if (enemy.position() == null) {
-//            System.err.println("enemy.position() is NULL for " + enemy);
-            return null;
-        }
-
-//        if (enemy.isCombatBuilding()) {
-//            return (new CircumnavigateCombatBuilding(unit)).handle(enemy);
-//        }
-
-        if (unit.runningManager().runFrom(
-            enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, false
-        )) {
-//            unit.setTooltip(getTooltip(enemy));
-            return usedManager(this);
-        }
-
-        return runError.handleErrorRun(unit);
+        return (new AvoidSingleEnemy(unit, enemy)).avoid();
     }
 
 //    public Manager groupOfUnits(Units enemiesDangerouslyClose) {
+//        this.enemy = enemy;
+//
 //        HasPosition runFrom = defineRunFromForGroupOfUnits(enemiesDangerouslyClose);
 //
 //        if (runFrom == null) {
@@ -87,22 +71,6 @@ public class Avoid extends Manager {
         return enemies.first().translatePercentTowards(15, enemies.second());
     }
 
-    protected double calculateRunDistance(AUnit enemy) {
-        if (enemy.isCombatBuilding()) {
-            return 0.5;
-        }
-
-        if (unit.isVulture()) {
-            return 4.5;
-        }
-        else if (unit.isInfantry()) {
-            return 2.7;
-        }
-        else {
-            return 3.5;
-        }
-    }
-
     protected String getTooltip(AUnit enemy) {
         String dist = "(" + A.digit(unit.distTo(enemy)) + ")";
 
@@ -117,4 +85,8 @@ public class Avoid extends Manager {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Avoid(" + enemy.type() + ")";
+    }
 }

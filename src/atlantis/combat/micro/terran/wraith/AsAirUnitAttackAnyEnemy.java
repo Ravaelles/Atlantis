@@ -4,14 +4,14 @@ import atlantis.architecture.Manager;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 
-public class AsAirUnitAttackNearEnemy extends Manager {
-    public AsAirUnitAttackNearEnemy(AUnit unit) {
+public class AsAirUnitAttackAnyEnemy extends Manager {
+    public AsAirUnitAttackAnyEnemy(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return unit.isAir() && unit.hasAnyWeapon();
+        return unit.isAir() && unit.noCooldown() && unit.hasAnyWeapon();
     }
 
     @Override

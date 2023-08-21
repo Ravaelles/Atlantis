@@ -40,7 +40,7 @@ public class ShouldStopRunning extends Manager {
             return decisionStopRunning();
         }
 
-        if (unit.isFlying() && unit.enemiesNearInRadius(8.2) == 0) {
+        if (unit.isFlying() && unit.enemiesNearInRadius(7.5) == 0) {
             unit.setTooltipTactical("SafeEnough");
             unit.addLog("SafeEnough");
             return decisionStopRunning();

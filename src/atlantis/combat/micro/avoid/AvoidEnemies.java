@@ -1,7 +1,6 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildings;
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -15,13 +14,11 @@ import java.util.stream.Collectors;
 
 public class AvoidEnemies extends Manager {
     private static Cache<Units> cache = new Cache<>();
-    private AvoidCombatBuildings avoidCombatBuildings;
     private WantsToAvoid wantsToAvoid;
     private Units enemies;
 
     public AvoidEnemies(AUnit unit) {
         super(unit);
-        avoidCombatBuildings = new AvoidCombatBuildings(unit);
         wantsToAvoid = new WantsToAvoid(unit);
     }
 

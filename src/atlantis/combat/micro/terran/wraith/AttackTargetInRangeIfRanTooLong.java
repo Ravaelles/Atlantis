@@ -5,64 +5,21 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
-public class AttackTargetInRangeIfRanTooLong extends Manager {
+public class AttackTargetInRangeIfRanTooLong extends AttackTargetInRange {
     public AttackTargetInRangeIfRanTooLong(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return unit.noCooldown()
-            && (unit.lastStartedAttackAgo() > 85 || unit.lastStartedRunningAgo() < unit.lastStartedAttackAgo())
-            && unit.enemiesNear().effVisible().notEmpty()
-            && (unit.hp() >= 80 || (unit.hp() >= 45 && TerranWraith.noAntiAirBuildingNearby(unit)));
-    }
+        if (unit.enemiesNear().inShootRangeOf(unit).empty()) return false;
 
-    protected Manager handle() {
-        Selection targets = unit.enemiesNear().canBeAttackedBy(unit, -0.4);
+        if (unit.noCooldown() && unit.lastStartedRunningLessThanAgo(30 * 3) && unit.hp() >= 70) return true;
 
-        if (A.chance(10) || unit.lastStartedAttackLessThanAgo(30 * 7)) {
-            if (A.chance(50) || unit.lastStartedRunningAgo() + 30 * 8 >= unit.lastStartedAttackAgo()) {
-                if (tryAttacking(targets.combatUnits())) {
-                    return usedManager(this, "AttackNearUnit");
-                }
-            }
-        }
-
-        if (tryAttacking(targets.combatBuildingsAntiLand())) {
-            return usedManager(this, "AttackNearBuilding");
-        }
-
-        if (tryAttacking(targets.workers())) {
-            return usedManager(this, "AttackNearWorker");
-        }
-
-        if (tryAttacking(targets.buildings())) {
-            return usedManager(this, "AttackNearBuilding");
-        }
-
-        return null;
-    }
-
-    private boolean tryAttacking(Selection targets) {
-        if (targets.empty()) return false;
-
-//        if (unit.isMoving() && A.chance(20)) {
-//            unit.holdPosition("HoldToAttack");
-//            return true;
-//        }
-
-        AUnit target;
-
-        if (unit.hp() <= 80 || A.chance(60)) {
-            target = targets.random();
-        }
-        else {
-            target = targets.mostWounded();
-        }
-
-        unit.attackUnit(target);
-        return true;
+        return
+            (unit.lastStartedAttackAgo() > 85 || unit.lastStartedRunningAgo() < unit.lastStartedAttackAgo())
+                && unit.enemiesNear().effVisible().notEmpty()
+                && (unit.hp() >= 80 || (unit.hp() >= 45 && TerranWraith.noAntiAirBuildingNearby(unit)));
     }
 }
 

@@ -11,14 +11,15 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 
-public class AvoidCombatBuildings extends Manager {
+public class AvoidCombatBuilding extends Manager {
     private ShouldRetreat shouldRetreat;
 
     private Selection combatBuildings;
     private AUnit combatBuilding;
 
-    public AvoidCombatBuildings(AUnit unit) {
+    public AvoidCombatBuilding(AUnit unit, AUnit combatBuilding) {
         super(unit);
+        this.combatBuilding = combatBuilding;
         shouldRetreat = new ShouldRetreat(unit);
     }
 
@@ -97,8 +98,12 @@ public class AvoidCombatBuildings extends Manager {
     private Manager holdPositionToShoot(AUnit combatBuilding) {
         Selection enemiesToAttack = unit.enemiesNear().canBeAttackedBy(unit, 0);
         if (enemiesToAttack.notEmpty()) {
-            if (unit.isMoving() && !unit.isRunning()) {
-                unit.holdPosition("HoldToShoot");
+            if (
+                unit.isMoving()
+                    && !unit.isRunning()
+                    && unit.lastStartedRunningLessThanAgo(30 * 7)
+            ) {
+                unit.holdPosition("Hold&Shoot");
             }
             return usedManager(this);
         }

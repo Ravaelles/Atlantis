@@ -9,11 +9,9 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.fogged.AbstractFoggedUnit;
-import atlantis.util.Callback;
 import atlantis.util.cache.CachePathKey;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Selection extends BaseSelection {
@@ -722,6 +720,13 @@ public class Selection extends BaseSelection {
 
     public Selection excludeRunning() {
         return cloneByRemovingIf(AUnit::isRunning, "excludeRunning");
+    }
+
+    public Selection farFromAntiAirBuildings(double minDistToBuilding) {
+        return cloneByRemovingIf((unit -> {
+            AUnit nearestAntiAirBuilding = EnemyUnits.discovered().combatBuildingsAntiAir().nearestTo(unit);
+            return nearestAntiAirBuilding != null && nearestAntiAirBuilding.distTo(unit) < minDistToBuilding;
+        }), "farFromAntiAirBuildings:" + minDistToBuilding);
     }
 
     public Selection hasPathFrom(HasPosition fromPosition) {

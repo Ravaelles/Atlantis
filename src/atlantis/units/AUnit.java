@@ -2822,4 +2822,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         return loadedInto != null && loadedInto.isBunker();
     }
+
+    public boolean didntShootRecently(int minSeconds) {
+        return lastAttackFrameMoreThanAgo(30 * minSeconds);
+    }
+
+    public boolean ranRecently(int minSeconds) {
+        return lastStartedRunningLessThanAgo(30 * minSeconds);
+    }
 }

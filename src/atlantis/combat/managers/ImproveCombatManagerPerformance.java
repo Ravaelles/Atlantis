@@ -11,7 +11,8 @@ public class ImproveCombatManagerPerformance extends Manager {
 
     @Override
     public boolean applies() {
-        return A.everyFrameExceptNthFrame(9) && unit.isCombatUnit() && unit.enemiesNear().empty();
+        return false;
+//        return !unit.looksIdle() && A.everyFrameExceptNthFrame(A.rand(2, 15)) && unit.isCombatUnit() && unit.enemiesNear().empty();
     }
 
     protected Manager handle() {

@@ -13,7 +13,7 @@ public class MissionAttackManager extends Manager {
 
     @Override
     protected Class<? extends Manager>[] managers() {
-        return new Class[] {
+        return new Class[]{
             AllowTimeToReposition.class,
             SquadCohesionManager.class,
             Advance.class,

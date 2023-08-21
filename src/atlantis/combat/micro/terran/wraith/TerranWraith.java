@@ -20,17 +20,13 @@ public class TerranWraith extends Manager {
         return new Class[]{
             RunForYourLife.class,
             UnitBeingReparedManager.class,
-            ChangeLocationIfRanTooLong.class,
-            AttackTargetInRangeIfRanTooLong.class,
-//            AttackAsWraith.class,
-            MoveAsLooksIdle.class,
         };
     }
 
     public static boolean noAntiAirBuildingNearby(AUnit unit) {
         return unit.enemiesNear()
             .combatBuildingsAntiAir()
-            .inRadius(8.9 + Math.max(2.5, unit.woundPercent() / 35), unit)
+            .inRadius(7.7 + Math.max(2.5, unit.woundPercent() / 35), unit)
             .empty();
     }
 }

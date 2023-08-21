@@ -1,8 +1,11 @@
 package atlantis.combat.micro.terran.wraith;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class AttackAsWraith extends AttackNearbyEnemies {
     public AttackAsWraith(AUnit unit) {
@@ -11,8 +14,12 @@ public class AttackAsWraith extends AttackNearbyEnemies {
 
     @Override
     public boolean applies() {
-        return unit.isWraith()
-//            && unit.hp() >= 90
+        if (!unit.isWraith()) return false;
+
+        if (unit.hp() >= 110 || unit.looksIdle()) return true;
+        if (unit.didntShootRecently(10)) return true;
+
+        return (unit.lastStoppedRunningMoreThanAgo(30))
             && (
             (
                 unit.enemiesNear().canAttack(unit, 2.5).empty()
@@ -23,6 +30,28 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     }
 
     @Override
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            ChangeLocationIfRanTooLong.class,
+            AttackTargetInRangeIfRanTooLong.class,
+            AttackTargetInRange.class,
+            MoveAsLooksIdle.class,
+        };
+    }
+
+    @Override
+    protected Manager handle() {
+        Manager submanager = handleSubmanagers();
+        if (submanager != null) return usedManager(submanager);
+
+        if (handleAttackNearEnemyUnits()) {
+            return usedManager(this);
+        }
+
+        return null;
+    }
+
+    @Override
     protected AUnit bestTargetToAttack() {
         AUnit target = defineTarget();
 
@@ -30,24 +59,32 @@ public class AttackAsWraith extends AttackNearbyEnemies {
             return null;
         }
 
-//        if (target != null) {
-//            System.out.println("target = " + target + " / " + unit.distTo(target) + " / " + unit.groundWeaponRange());
-//        }
-
-//        if (target != null && shouldStopMovingToAttack(target)) {
-//            unit.holdPosition("HoldToAttack");
-//        }
-
         return target;
     }
 
     private AUnit defineTarget() {
-        AUnit target = Select.enemyRealUnits().effVisible().inRadius(4.5, unit).nearestTo(unit);
+        Selection enemies = Select.enemy().effVisible().inRadius(999, unit)
+            .farFromAntiAirBuildings(unit.groundWeaponRange() + 1.2);
+
+        AUnit target;
+
+        if (unit.ranRecently(5)) {
+            target = enemies.nonBuildings().random();
+        }
+        else {
+            target = enemies.nonBuildings().nearestTo(unit);
+        }
+
         if (target != null) {
             return target;
         }
 
-        return Select.enemyRealUnitsWithBuildings().effVisible().inShootRangeOf(unit).nearestTo(unit);
+        return enemies.realUnitsAndBuildings()
+            .excludeTypes(
+                AUnitType.Terran_Barracks, AUnitType.Terran_Supply_Depot,
+                AUnitType.Protoss_Pylon, AUnitType.Protoss_Gateway
+            )
+            .inShootRangeOf(unit).nearestTo(unit);
     }
 
     private boolean shouldStopMovingToAttack(AUnit target) {

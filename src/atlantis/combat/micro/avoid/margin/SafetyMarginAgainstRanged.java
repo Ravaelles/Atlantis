@@ -72,24 +72,24 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
     private double forGroundUnit(AUnit attacker) {
         return enemyWeaponRange(attacker)
-                + quicknessBonus(attacker)
-                + lurkerBonus(attacker)
-                + woundedBonus(attacker)
-                + ourUnitsNearBonus(defender)
-                + ourMovementBonus(defender)
-                + enemyMovementBonus(attacker)
-                + scoutBonus(attacker)
-                + combatEvalBonus(attacker)
-                + workerBonus(attacker);
+            + quicknessBonus(attacker)
+            + lurkerBonus(attacker)
+            + woundedBonus(attacker)
+            + ourUnitsNearBonus(defender)
+            + ourMovementBonus(defender)
+            + enemyMovementBonus(attacker)
+            + scoutBonus(attacker)
+            + combatEvalBonus(attacker)
+            + workerBonus(attacker);
     }
 
     private double forAirUnit(AUnit attacker) {
         return 3
-                + enemyWeaponRange(attacker)
-                + woundedBonus(attacker)
-                + specialAirUnitBonus(defender)
-                + ourMovementBonus(defender)
-                + enemyMovementBonus(attacker);
+            + enemyWeaponRange(attacker)
+            + woundedBonus(attacker)
+            + specialAirUnitBonus(defender)
+            + ourMovementBonus(defender)
+            + enemyMovementBonus(attacker);
 //        return applyAirUnitTweaks(attacker);
     }
 
@@ -114,7 +114,13 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         }
 
         APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
-        return 1.6 + defender.woundPercent() / 100.0 + (defender.isMoving() ? 0.5 : 0) + (defender.isAir() ? 1.5 : 0);
+        APainter.paintCircle(attacker, 7 * 32, Color.Orange);
+
+        return 0.9
+            + defender.woundPercent() / 70.0
+            + (defender.isMoving() ? 0.5 : 0)
+            + (defender.isAir() ? -0.9 : 0)
+            + (defender.lastUnderAttackMoreThanAgo(30 * 100) ? -0.9 : 0);
     }
 
 //    private double extraMarginAgainstCombatBuilding(AUnit attacker) {

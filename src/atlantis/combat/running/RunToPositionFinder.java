@@ -81,7 +81,7 @@ public class RunToPositionFinder {
     }
 
     APosition showBackToEnemyIfPossible(HasPosition runAwayFrom) {
-        if (true) return null;
+        if (running.unit().isGroundUnit()) return null;
 
         APosition runTo;
         runAwayFrom = runAwayFrom.position();

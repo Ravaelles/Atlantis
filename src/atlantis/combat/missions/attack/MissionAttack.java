@@ -13,7 +13,7 @@ public class MissionAttack extends Mission {
 //    private final MissionAttackPermissionToAttack missionAttackPermissionToAttack = new MissionAttackPermissionToAttack();
 
     public MissionAttack() {
-        super("Attack");
+        super("M:Attack");
         focusPointManager = new MissionAttackFocusPoint();
     }
 

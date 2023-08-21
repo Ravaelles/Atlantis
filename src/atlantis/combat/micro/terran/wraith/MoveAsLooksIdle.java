@@ -21,7 +21,8 @@ public class MoveAsLooksIdle extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            AsAirUnitAttackNearEnemy.class,
+            AttackTargetInRange.class,
+            AsAirUnitAttackAnyEnemy.class,
             WeDontKnowWhereEnemyIs.class,
         };
     }

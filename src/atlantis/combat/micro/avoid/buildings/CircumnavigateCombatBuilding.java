@@ -2,7 +2,6 @@ package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -19,8 +18,9 @@ public class CircumnavigateCombatBuilding extends Manager {
     @Override
     public boolean applies() {
         if (unit.isGroundUnit()) return false;
-
         if (unit.woundPercent() >= 40) return false;
+        if (unit.looksIdle()) return false;
+        if (unit.isWraith() && unit.ranRecently(4) && unit.didntShootRecently(7)) return false;
 
         return true;
     }

@@ -25,8 +25,8 @@ public class AMineralGathering {
 
         // Get minerals near to our main base and sort them from closest to most distant one
         List<AUnit> minerals = (List<AUnit>) Select.minerals()
-                .inRadius(10, mainBase)
-                .sortDataByDistanceTo(mainBase, true);
+            .inRadius(10, mainBase)
+            .sortDataByDistanceTo(mainBase, true);
 
         if (minerals.isEmpty()) {
             return;
@@ -46,21 +46,20 @@ public class AMineralGathering {
 
     /**
      * Use this method to assign idle workers to gather minerals from optimal mineral field or to gather gas.
-     *
-     * @return
      */
     public static boolean gatherResources(AUnit unit) {
         AUnit mineralField = getMineralFieldToGather(unit);
-        if (mineralField != null) {
+        if (mineralField != null && !unit.isGatheringMinerals()) {
             unit.setTooltipTactical("Gatherer!");
-            return unit.gather(mineralField);
+            unit.gather(mineralField);
+            return true;
         }
 
         return false;
     }
 
     // =========================================================
-    
+
     private static AUnit getMineralFieldToGather(AUnit worker) {
 
         // Get nearest base for this unit
