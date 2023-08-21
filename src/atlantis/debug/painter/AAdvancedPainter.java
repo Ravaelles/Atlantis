@@ -248,13 +248,15 @@ public class AAdvancedPainter extends APainter {
 //        Log log = unit.log(); // Custom logs
         Log log = unit.managerLogs(); // Manager history logs
 
-        for (int i = log.messages().size() - 1; i >= 0; i--) {
+//        for (int i = log.messages().size() - 1; i >= 0; i--) {
+        for (int i = 0; i < log.messages().size(); i++) {
             LogMessage message = log.messages().get(i);
 //            unit.paintInfo(message.createdAtFrames() + "-" + message.message(), Color.Grey, offset);
             paintTextCentered(
                 unit,
                 message.createdAtFrames() + "-" + message.message(),
-                i == 0 ? Color.Yellow : (i == 1 ? Color.White : Color.Grey),
+//                i == 0 ? Color.Yellow : (i == 1 ? Color.White : Color.Grey),
+                i == log.messages().size() - 1 ? Color.Yellow : Color.Grey,
                 0,
                 (baseOffset + (8 * (counter++))) / 32.0
             );
