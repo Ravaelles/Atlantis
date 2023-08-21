@@ -3,6 +3,7 @@ package atlantis.production.dynamic.terran;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyFlags;
+import atlantis.production.dynamic.terran.abundance.TerranAbundance;
 import atlantis.production.dynamic.terran.units.ProduceGhosts;
 import atlantis.production.dynamic.terran.units.ProduceMarines;
 import atlantis.production.dynamic.terran.units.ProduceMedicsAndFirebats;
@@ -36,6 +37,8 @@ public class TerranDynamicUnitsCommander extends Commander {
             ProduceMedicsAndFirebats.medics();
             ProduceMarines.marines();
         }
+
+        (new TerranAbundance()).invoke();
     }
 
     // =========================================================

@@ -30,17 +30,19 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (
             A.supplyUsed() <= 100
-                && AGame.killsLossesResourceBalance() <= (MapAndRace.isMapGosu() ? 2000 : 600)
+                && AGame.killsLossesResourceBalance() < (MapAndRace.isMapGosu() ? 1800 : 600)
         ) return false;
 
         if (MapAndRace.isMapGosu() && Alpha.get().size() <= 25) return false;
+
+        if (A.seconds() <= 400 && AGame.killsLossesResourceBalance() >= 700) return true;
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
 
         if (
             ourRelativeStrength <= 600
                 && EnemyUnits.discovered().combatBuildingsAntiLand().atLeast(2)
-                && Count.tanks() <= 1
+                && Count.tanks() <= 3
                 && !TankDecisions.siegeResearched()
         ) return false;
 

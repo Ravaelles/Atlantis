@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.tank.sieging;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 import atlantis.util.Enemy;
@@ -18,9 +19,11 @@ public class SiegeHereDuringMissionDefend extends Manager {
     protected Manager handle() {
         if (unit.isMissionDefendOrSparta() && unit.distToFocusPoint() <= minDist()) {
             if (unit.target() == null || unit.target().distTo(unit) < 12) {
-                unit.siege();
-                unit.setTooltipAndLog("SiegeHereDuringMissionDefend");
-                return usedManager(this);
+                if (TankDecisions.canSiegeHere(unit, false)) {
+                    unit.siege();
+                    unit.setTooltipAndLog("SiegeHereDuringMissionDefend");
+                    return usedManager(this);
+                }
             }
         }
 

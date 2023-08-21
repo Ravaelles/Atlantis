@@ -11,7 +11,6 @@ import atlantis.util.Enemy;
 import bwapi.TechType;
 
 public class Stimpack extends Manager {
-
     public Stimpack(AUnit unit) {
         super(unit);
     }

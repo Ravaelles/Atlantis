@@ -12,18 +12,15 @@ public class TerranInfantryWeapons extends Commander {
     @Override
     public boolean applies() {
         if (OurStrategy.get().goingBio()) {
-            if (OurStrategy.get().goingBio()) {
-
-                int currentUpgradeLevel = ATech.getUpgradeLevel(UpgradeType.Terran_Infantry_Weapons);
-                int minInfantry = 12 + currentUpgradeLevel * 9;
-                if (
-                    currentUpgradeLevel <= 2
-                        && Count.infantry() >= minInfantry
-                        && AGame.canAffordWithReserved(100, 150)
-                ) {
-                    if (ATech.isNotResearchedOrPlanned(UpgradeType.Terran_Infantry_Weapons)) {
-                        return true;
-                    }
+            int currentUpgradeLevel = upgradeLevel();
+            int minInfantry = 12 + currentUpgradeLevel * 9;
+            if (
+                currentUpgradeLevel <= 2
+                    && Count.infantry() >= minInfantry
+                    && AGame.canAffordWithReserved(100, 150)
+            ) {
+                if (ATech.isNotResearchedOrPlanned(UpgradeType.Terran_Infantry_Weapons)) {
+                    return true;
                 }
             }
         }
@@ -31,8 +28,14 @@ public class TerranInfantryWeapons extends Commander {
         return false;
     }
 
+    public static int upgradeLevel() {
+        return ATech.getUpgradeLevel(UpgradeType.Terran_Infantry_Weapons);
+    }
+
     @Override
     protected void handle() {
-        AddToQueue.upgrade(UpgradeType.Terran_Infantry_Weapons);
+        if (upgradeLevel() <= 2) {
+            AddToQueue.upgrade(UpgradeType.Terran_Infantry_Weapons);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -13,6 +14,8 @@ public class TooLowSquadCohesion extends Manager {
 
     @Override
     public boolean applies() {
+        if (A.seconds() % 10 <= 5) return false;
+
         return unit.isGroundUnit() || (unit.isAir() && unit.isMutalisk());
     }
 

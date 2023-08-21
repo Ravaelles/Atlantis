@@ -126,9 +126,8 @@ public class TerranComsatStation extends Manager {
     private boolean genericScanUnit(AUnitType type) {
         for (AUnit enemy : Select.enemies(type).effUndetected().list()) {
             boolean shouldScan = enemy.enemiesNear()
-                .inRadius(6, enemy)
-                .canAttack(enemy, 1)
-                .atLeast(2);
+                .inRadius(7, enemy)
+                .atLeast(3);
             if (shouldScan) {
                 return scan(enemy);
             }

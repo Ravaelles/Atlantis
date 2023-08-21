@@ -33,6 +33,10 @@ public class Commander extends BaseAbstractCommander {
         handleSubcommanders();
     }
 
+    public void forceHandle() {
+        handle();
+    }
+
     protected void handle() {
         handleSubcommanders();
     }
