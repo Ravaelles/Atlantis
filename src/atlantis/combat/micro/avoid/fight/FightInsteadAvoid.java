@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid.fight;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.terran.ShouldFightInsteadAvoidAsTerran;
+import atlantis.combat.micro.avoid.terran.TerranFightInsteadAvoid;
 import atlantis.combat.micro.avoid.zerg.ShouldFightInsteadAvoidAsZerg;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.targeting.ATargetingCrucial;
@@ -35,7 +35,7 @@ public class FightInsteadAvoid {
     protected final AUnit vulture;
     protected final AUnit ranged;
     protected final AUnit melee;
-    private final TerranFightInsteadAvoid terranFightInsteadAvoid;
+    private final atlantis.combat.micro.avoid.fight.TerranFightInsteadAvoid terranFightInsteadAvoid;
 
     // =========================================================
 
@@ -44,7 +44,7 @@ public class FightInsteadAvoid {
         this.enemies = enemies;
         this.enemiesSelection = Select.from(enemies);
 
-        terranFightInsteadAvoid = new TerranFightInsteadAvoid(unit);
+        terranFightInsteadAvoid = new atlantis.combat.micro.avoid.fight.TerranFightInsteadAvoid(unit);
 
         Selection selector = Select.from(enemies);
         invisibleDT = selector.ofType(AUnitType.Protoss_Dark_Templar).effUndetected().first();
@@ -70,7 +70,7 @@ public class FightInsteadAvoid {
 
                 Manager m;
 
-                if ((m = new ShouldFightInsteadAvoidAsTerran(unit)).invoke() != null) return true;
+                if ((m = new TerranFightInsteadAvoid(unit)).invoke() != null) return true;
                 if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) return true;
 
                 if (unit.isMelee() && unit.shouldRetreat()) return false;

@@ -4,8 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.wraith.TerranWraith;
 import atlantis.units.AUnit;
 
-public class ShouldFightInsteadAvoidAsWraith extends Manager {
-    public ShouldFightInsteadAvoidAsWraith(AUnit unit) {
+public class TerranFightInsteadAvoidAsWraith extends Manager {
+    public TerranFightInsteadAvoidAsWraith(AUnit unit) {
         super(unit);
     }
 

@@ -3,8 +3,8 @@ package atlantis.combat.micro.avoid.terran;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
-public class ShouldFightInsteadAvoidAsFirebat extends Manager {
-    public ShouldFightInsteadAvoidAsFirebat(AUnit unit) {
+public class TerranFightInsteadAvoidAsFirebat extends Manager {
+    public TerranFightInsteadAvoidAsFirebat(AUnit unit) {
         super(unit);
     }
 

@@ -3,8 +3,8 @@ package atlantis.combat.micro.avoid.terran;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
-public class ShouldFightInsteadAvoidAsTerran extends Manager {
-    public ShouldFightInsteadAvoidAsTerran(AUnit unit) {
+public class TerranFightInsteadAvoid extends Manager {
+    public TerranFightInsteadAvoid(AUnit unit) {
         super(unit);
     }
 
@@ -16,9 +16,10 @@ public class ShouldFightInsteadAvoidAsTerran extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ShouldFightInsteadAvoidAsWraith.class,
-            ShouldFightInsteadAvoidAsFirebat.class,
-            ShouldFightInsteadAvoidAsRegularUnit.class,
+            TerranFightInsteadAvoidAsWraith.class,
+            TerranFightInsteadAvoidAsFirebat.class,
+            TerranFightInsteadAvoidAsAir.class,
+            TerranFightInsteadAvoidAsStandard.class,
         };
     }
 }

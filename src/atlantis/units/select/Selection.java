@@ -570,6 +570,10 @@ public class Selection extends BaseSelection {
         return units().onlyAir();
     }
 
+    public boolean onlyOfType(AUnitType type) {
+        return count() == countOfType(type);
+    }
+
     public Selection burrowed() {
         return cloneByRemovingIf(
             (unit -> !unit.isBurrowed()), "burrowed"

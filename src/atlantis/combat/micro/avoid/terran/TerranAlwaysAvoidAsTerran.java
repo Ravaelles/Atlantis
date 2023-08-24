@@ -3,8 +3,8 @@ package atlantis.combat.micro.avoid.terran;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
-public class ShouldAlwaysAvoidAsTerran extends Manager {
-    public ShouldAlwaysAvoidAsTerran(AUnit unit) {
+public class TerranAlwaysAvoidAsTerran extends Manager {
+    public TerranAlwaysAvoidAsTerran(AUnit unit) {
         super(unit);
     }
 
