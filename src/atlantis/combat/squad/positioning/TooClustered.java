@@ -16,9 +16,8 @@ public class TooClustered extends Manager {
     @Override
     public boolean applies() {
         if (A.seconds() % 10 <= 4) return false;
-
+        if (unit.isMissionAttack()) return false;
         if (unit.enemiesNear().inRadius(14, unit).notEmpty()) return false;
-
         if (unit.friendsNear().buildings().inRadius(3, unit).notEmpty()) return false;
 
         if (A.seconds() <= 300 && unit.isMissionDefend() && unit.friendsNear().inRadius(2, unit).notEmpty())

@@ -1905,9 +1905,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean is(AUnitType type) {
         return cacheBoolean.get(
-//                "isType:" + type.id(),
-            "isType:" + type.fullName(),
-            -1,
+            "isType:" + type.id(),
+            2,
             () -> type().is(type)
         );
     }

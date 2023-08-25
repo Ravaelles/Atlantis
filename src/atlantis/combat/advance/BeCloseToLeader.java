@@ -24,7 +24,7 @@ public class BeCloseToLeader extends MissionManager {
     @Override
     protected Manager handle() {
         if (shouldGetBackToLeader()) {
-            unit.move(squad.leader(), Actions.MOVE_FORMATION, "CloserToLeader");
+            unit.move(squad.leader().position(), Actions.MOVE_FORMATION, "CloserToLeader");
             return usedManager(this);
         }
 
@@ -35,12 +35,9 @@ public class BeCloseToLeader extends MissionManager {
         AUnit leader = squad.leader();
 
         if (!isLeaderOvercrowded(leader)) return false;
-        if (unit.distTo(leader) >= 9) return true;
 
-        if (
-            squad.cohesionPercent() <= 70
-                && unit.friendsInRadiusCount(1) <= 4
-        ) return true;
+        if (unit.distTo(leader) >= 9) return true;
+        if (squad.cohesionPercent() <= 70 && unit.friendsInRadiusCount(1) <= 4) return true;
 
         return false;
     }

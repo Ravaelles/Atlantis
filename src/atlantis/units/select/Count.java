@@ -1,5 +1,6 @@
 package atlantis.units.select;
 
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.ProductionQueue;
@@ -14,7 +15,6 @@ import bwapi.UpgradeType;
  * Quick auxiliary class for counting our units.
  */
 public class Count {
-
     private static Cache<Integer> cache = new Cache<>();
 
     public static int ourCombatUnits() {
@@ -221,9 +221,8 @@ public class Count {
     public static int tanks() {
         return cache.get(
             "tanks",
-            1,
-            () -> ofType(AUnitType.Terran_Siege_Tank_Siege_Mode)
-                + ofType(AUnitType.Terran_Siege_Tank_Tank_Mode)
+            7,
+            () -> ofType(AUnitType.Terran_Siege_Tank_Siege_Mode) + ofType(AUnitType.Terran_Siege_Tank_Tank_Mode)
         );
     }
 

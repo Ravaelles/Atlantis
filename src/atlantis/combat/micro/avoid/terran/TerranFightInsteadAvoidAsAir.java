@@ -11,18 +11,14 @@ public class TerranFightInsteadAvoidAsAir extends Manager {
 
     @Override
     public boolean applies() {
-        System.out.println("z");
-        if (!unit.isAir() || !unit.hasAnyWeapon()) return false;
-        System.out.println("x");
-        Selection enemies = unit.enemiesNear();
-        System.out.println("c");
-        if (!enemies.onlyAir()) return false;
+        Selection enemies;
 
-        System.out.println("a");
+        if (!unit.isAir() || !unit.hasAnyWeapon()) return false;
+        if (!(enemies = unit.enemiesNear()).onlyAir()) return false;
+
         if (enemies.onlyOfType(unit.type()) && (enemies.size() == 1 || unit.combatEvalRelative() >= 1.1)) {
             return true;
         }
-        System.out.println("b");
 
         return false;
     }

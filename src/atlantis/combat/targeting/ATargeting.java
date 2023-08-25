@@ -309,7 +309,7 @@ public class ATargeting extends HasUnit {
 
 //            System.out.prin tln("Air target for " + unit + ": " + target);
 //            if ((target = AAirUnitsTargeting.targetForAirUnits()) != null) {
-//                debug(("AirTarget = " + target);
+//                debug("AirTarget = " + target);
 //            }
 
             return target;
@@ -318,21 +318,21 @@ public class ATargeting extends HasUnit {
         // === Crucial units =======================================
 
         if ((target = (new ATargetingCrucial(unit)).target()) != null) {
-//            debug(("B = "+ target);
+//            debug("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
         if ((target = (new ATargetingImportant(unit)).target()) != null) {
-//            debug(("C = "+ target);
+//            debug("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
         if ((target = (new ATargetingStandard(unit)).target()) != null) {
-//            debug(("D = "+ target);
+//            debug("D = "+ target);
             return target;
         }
 
@@ -341,7 +341,7 @@ public class ATargeting extends HasUnit {
         return target;
     }
 
-    protected void debug(String message) {
+    protected static void debug(String message) {
         if (ATargeting.DEBUG) {
             A.println(message);
         }

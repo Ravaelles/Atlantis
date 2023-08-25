@@ -11,11 +11,15 @@ public class ContinueRepairing extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.lastActionLessThanAgo(5, Actions.REPAIR);
+        return false;
+//        return unit.lastActionLessThanAgo(5, Actions.REPAIR);
     }
 
     @Override
     public Manager handle() {
+//        if (!unit.isRepairing()) {
+//
+//        }
         unit.setTooltip(":: repairin ::");
         return usedManager(this);
     }

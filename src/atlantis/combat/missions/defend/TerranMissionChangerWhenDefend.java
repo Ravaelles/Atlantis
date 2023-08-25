@@ -28,14 +28,14 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            return false;
 //        }
 
-        if (
-            A.supplyUsed() <= 100
-                && AGame.killsLossesResourceBalance() < (MapAndRace.isMapGosu() ? 1800 : 600)
-        ) return false;
+        if (MapAndRace.isMapGosu()) {
+            if (A.supplyUsed() <= 100 && AGame.killsLossesResourceBalance() < 1800) return false;
+            if (Alpha.get().size() <= 25) return false;
+        }
 
-        if (MapAndRace.isMapGosu() && Alpha.get().size() <= 25) return false;
+        if (A.seconds() <= 450 && AGame.killsLossesResourceBalance() >= 500) return true;
 
-        if (A.seconds() <= 400 && AGame.killsLossesResourceBalance() >= 700) return true;
+        if (Enemy.terran()) return TerranMissionChangerWhenDefendVsTerran.get().shouldChangeMissionToAttack();
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
 

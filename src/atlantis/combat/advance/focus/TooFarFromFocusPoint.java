@@ -12,6 +12,8 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     @Override
     public boolean applies() {
+        if (unit.isMissionAttack()) return false;
+
         if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_FAR) {
             if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;
 

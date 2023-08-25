@@ -272,10 +272,7 @@ public class Selection extends BaseSelection {
     }
 
     public Selection tanks() {
-        return cloneByRemovingIf(unit -> !unit.is(
-            AUnitType.Terran_Siege_Tank_Siege_Mode,
-            AUnitType.Terran_Siege_Tank_Tank_Mode
-        ), "tanks");
+        return cloneByRemovingIf(unit -> !unit.isTank(), "tanks");
     }
 
     public Selection groundUnits() {

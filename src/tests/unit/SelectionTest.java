@@ -4,6 +4,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import org.junit.Test;
@@ -72,7 +73,16 @@ public class SelectionTest extends AbstractTestWithUnits {
 
             assertEquals(22, our.size());
             assertEquals(2, our.tanks().size());
-//            assertEquals(2, Select.our().tanks().size());
+            assertEquals(2, Count.tanks());
+            assertEquals(1, Select.countOurOfType(AUnitType.Terran_Siege_Tank_Tank_Mode));
+            assertEquals(1, Select.countOurOfType(AUnitType.Terran_Siege_Tank_Siege_Mode));
+            assertEquals(1, Select.our().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).count());
+            assertEquals(2, Select.our().ofType(
+                AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
+            ).count());
+            assertEquals(2, Select.ourWithUnfinished().ofType(
+                AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
+            ).count());
             assertEquals(22, our.size());
         });
     }
