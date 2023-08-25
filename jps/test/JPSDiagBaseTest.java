@@ -42,7 +42,6 @@ public class JPSDiagBaseTest {
         List<List<Tile>> tiles = new ArrayList<>();
         for (String column : columns) {
             String[] row = column.split(" ");
-            //System.out.println(row[15]);
             x = 0;
             List<Tile> tileRow = new ArrayList<>();
             for (String s : row) {

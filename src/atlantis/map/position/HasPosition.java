@@ -317,10 +317,6 @@ public interface HasPosition {
 
     static HasPosition nearestPositionFreeFromUnits(Positions<HasPosition> points, AUnit nearestTo) {
         for (HasPosition position : points.sortByDistanceTo(nearestTo, true).list()) {
-//            System.out.println(
-//                "Checking pos = " + position
-//                    + ": " + Select.our().exclude(nearestTo).inRadius(0.3, position).count()
-//            );
             if (Select.our().exclude(nearestTo).inRadius(0.3, position).empty()) {
                 return position;
             }

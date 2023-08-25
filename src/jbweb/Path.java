@@ -127,8 +127,6 @@ public class Path {
         }
 
         // If not reachable based on previous paths to this area
-//        System.out.println("target = " + target);
-//        System.out.println("JBWEB.mapBWEM.getMap().getArea(target) = " + JBWEB.mapBWEM.getMap().getArea(target));
         if (target.isValid(JBWEB.game) && JBWEB.mapBWEM.getMap().getArea(target) != null && wall.wallWalkable(new TilePosition(source.x, source.y))) {
             System.out.println("unitPathCache = " + unitPathCache);
             System.out.println("unitPathCache.notReachableThisFrame = " + unitPathCache.notReachableThisFrame);

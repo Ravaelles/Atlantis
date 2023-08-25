@@ -19,8 +19,6 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
         }
 
         if (!enemy.hasPosition() || enemy.effUndetected()) {
-//            System.out.println("enemy.effUndetected() = " + enemy.effUndetected());
-//            System.out.println("enemy.hasPosition() = " + enemy.hasPosition());
             return false;
         }
         if (focusPoint == null) return true;

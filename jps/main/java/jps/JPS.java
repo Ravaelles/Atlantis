@@ -68,7 +68,6 @@ public abstract class JPS<T extends Node> {
 
         // while the open list is not empty
         while (!open.isEmpty()) {
-            //System.out.println(open.size());
             // pop the position of node which has the minimum `f` value.
             T node = open.poll();
             // mark the current node as checked
@@ -114,7 +113,6 @@ public abstract class JPS<T extends Node> {
                 gMap.put(jumpNode, ng);
                 hMap.put(jumpNode, graph.getHeuristicDistance(jumpNode, goal));
                 fMap.put(jumpNode, gMap.getOrDefault(jumpNode, 0d) + hMap.getOrDefault(jumpNode, 0d));
-                //System.out.println("jumpNode: " + jumpNode.x + "," + jumpNode.y + " f: " + fMap.get(jumpNode));
                 parentMap.put(jumpNode, node);
 
                 if (!open.contains(jumpNode)) {

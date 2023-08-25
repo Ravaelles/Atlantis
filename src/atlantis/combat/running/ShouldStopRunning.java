@@ -27,9 +27,6 @@ public class ShouldStopRunning extends Manager {
     }
 
     public boolean check() {
-//        System.out.println(unit.id() + " // " + unit.isRunning()
-//                + " // " + AAvoidUnits.shouldNotAvoidAnyUnit());
-//        System.out.println(unit.isRunning() + " // " + unit.runningManager().isRunning() + " // " + unit.action().isRunning());
         if (!unit.isRunning()) {
             return decisionStopRunning();
         }

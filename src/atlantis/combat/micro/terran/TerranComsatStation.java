@@ -55,7 +55,6 @@ public class TerranComsatStation extends Manager {
                 && Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker).isNotEmpty()
                 && lurker.friendsNear().canAttack(lurker, 7).atLeast(2)
         ) {
-//            System.err.println("Scan " + lurker + " because buildings are close");
             return true;
         }
 
@@ -147,9 +146,6 @@ public class TerranComsatStation extends Manager {
 //            return false;
 //        }
 
-        if (!(unitToScan instanceof FakeUnit)) {
-//            System.err.println("=== COMSAT SCAN on " + unitToScan + ", energy = " + comsat.energy() + " ===");
-        }
         unit.setTooltipTactical("Scanning " + unitToScan.name());
         return unit.useTech(TechType.Scanner_Sweep, unitToScan);
     }

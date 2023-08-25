@@ -96,9 +96,6 @@ public class Sparta extends MissionDefend {
 //        Positions points = new Positions(focusPoint.choke().perpendicularLine());
 //        HasPosition spartanPoint = HasPosition.nearestPositionFreeFromUnits(points, unit);
 //
-////        if (spartanPoint != null) {
-////            System.out.println("Spartan point " + spartanPoint.toStringPixels() + " for " + unit);
-////        }
 //
 //        return spartanPoint != null ? spartanPoint : focusPoint;
 //    }
@@ -186,9 +183,9 @@ public class Sparta extends MissionDefend {
 //        if (enemyToBase + 3 <= focusPointToBase) {
 //            if (unit.isMelee()) {
 //                unit.addLog("Sparta:A");
-////               System.out.println("enemyDistToBase = " + enemyDistToBase);
-////               System.out.println("focusPointDistToBase = " + focusPointDistToBase);
-////               System.out.println("unitToEnemy = " + unitToEnemy);
+////               System.out.pr intln("enemyDistToBase = " + enemyDistToBase);
+////               System.out.pr intln("focusPointDistToBase = " + focusPointDistToBase);
+////               System.out.pr intln("unitToEnemy = " + unitToEnemy);
 //                return unitToEnemy <= 1;
 //            }
 //        }

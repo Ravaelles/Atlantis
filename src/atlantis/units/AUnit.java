@@ -598,7 +598,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             LogUnitsToFiles.saveUnitLogToFile(tooltip, this);
         }
 
-//        System.out.println(A.now() + " - " + this.tooltip);
         return this;
     }
 
@@ -778,7 +777,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         // Shooting RANGE
         if (checkShootingRange && !hasWeaponRangeToAttack(target, extraMargin)) {
-//            System.out.println(this.type() + " has no range for " + target + " / " + A.dist(this, target));
             return false;
         }
 
@@ -820,16 +818,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (weaponAgainstThisUnit == WeaponType.None) return false;
 
         double dist = this.distTo(targetUnit);
-//        System.out.println("ThisUnit = " + this);
-//        System.out.println(
-//            this.typeWithId() + " -> " + targetUnit.typeWithId()
-//                + "     Min / Dist / Max :  "
-//                + (weaponAgainstThisUnit.minRange() / 32)
-//                + " < " + dist
-//                + " < " + (weaponAgainstThisUnit.maxRange() / 32 + extraMargin)
-//        );
-//        System.out.println("min = " + weaponAgainstThisUnit.minRange() / 32);
-//        System.out.println("max = " + weaponAgainstThisUnit.maxRange() / 32);
+
         return (weaponAgainstThisUnit.minRange() / 32) <= dist
             && dist <= (weaponAgainstThisUnit.maxRange() / 32 + extraMargin);
     }

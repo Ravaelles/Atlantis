@@ -144,13 +144,11 @@ public class AttackNearbyEnemies extends Manager {
                 reasonNotToAttack = null;
 
                 AUnit enemy = bestTargetToAttack();
-//                System.out.println("enemy = " + enemy);
 
                 if (enemy == null) {
                     return null;
                 }
                 if (!allowedToAttack.isValidTargetAndAllowedToAttackUnit(enemy)) {
-//                    System.out.println("Not allowed to attack: " + enemy + " (" + reasonNotToAttack + ")");
                     return null;
                 }
 

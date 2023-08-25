@@ -221,7 +221,7 @@ public class AAirUnitsTargeting extends HasUnit {
         target = possibleTargets
             .bases()
             .nearestTo(unit);
-        if (ATargeting.DEBUG) System.out.println("target AA1 = " + target + " // " + unit);
+        debug(("target AA1 = " + target + " // " + unit);
 
         if (target != null) {
             return target;
@@ -233,7 +233,7 @@ public class AAirUnitsTargeting extends HasUnit {
         target = possibleTargets
             .ofType(AUnitType.Zerg_Sunken_Colony)
             .nearestTo(unit);
-        if (ATargeting.DEBUG) System.out.println("target AA2 = " + target + " // " + unit);
+        debug(("target AA2 = " + target + " // " + unit);
 
         if (target != null) {
             return target;
@@ -246,7 +246,7 @@ public class AAirUnitsTargeting extends HasUnit {
             .combatUnits()
             .notHavingAntiAirWeapon()
             .nearestTo(unit);
-        if (ATargeting.DEBUG) System.out.println("target AA3 = " + target + " // " + unit);
+        debug(("target AA3 = " + target + " // " + unit);
 
         if (target != null) {
             return target;
@@ -259,7 +259,7 @@ public class AAirUnitsTargeting extends HasUnit {
 //                .notHavingAntiAirWeapon()
 //                .inRadius(50, unit)
 //                .nearestTo(unit);
-//        if (ATargeting.DEBUG) System.out.println("target AA4 = " + target + " // " + unit);
+//        debug(("target AA4 = " + target + " // " + unit);
 //
 //        if (target != null) {
 //            return target;
@@ -272,7 +272,7 @@ public class AAirUnitsTargeting extends HasUnit {
             target = possibleTargets
                 .combatUnits()
                 .nearestTo(unit);
-            if (ATargeting.DEBUG) System.out.println("target AA5 = " + target + " // " + unit);
+            debug(("target AA5 = " + target + " // " + unit);
         }
 
         if (target != null) {

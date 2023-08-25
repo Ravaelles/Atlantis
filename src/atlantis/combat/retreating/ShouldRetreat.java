@@ -70,7 +70,7 @@ public class ShouldRetreat extends Manager {
 
 //                    if (CombatEvaluator.wouldLose()) {
 //                if (situationNotFavorable()) {
-////                        System.out.println(
+////                        System.out.pri ntln(
 ////                            u + " would lose.  REL="
 ////                                + CombatEvaluator.eval(true)
 ////                                + ", ABS=" + CombatEvaluator.eval(false)

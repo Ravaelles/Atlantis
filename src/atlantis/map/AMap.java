@@ -56,8 +56,6 @@ public class AMap {
             System.err.println("JBWEB exception");
             e.printStackTrace();
         }
-
-        System.out.println("OK.");
     }
 
     // =========================================================

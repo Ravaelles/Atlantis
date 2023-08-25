@@ -87,7 +87,6 @@ public abstract class MissionChanger {
 //        if (We.protoss() || We.terran()) {
         if (A.seconds() <= 60 * 7 && Count.basesWithUnfinished() <= 1) {
             if (Sparta.canUseSpartaMission()) {
-//                System.out.println("Using SPARTA mission instead of Defend");
                 return Missions.SPARTA;
             }
         }

@@ -20,8 +20,6 @@ public class Commander extends BaseAbstractCommander {
         if (A.now() == lastFrameInvoked) return;
         lastFrameInvoked = A.now();
 
-//        System.err.println("INVOKE " + getClass().getSimpleName());
-
         CodeProfiler.startMeasuring(this);
 
         if (applies()) {

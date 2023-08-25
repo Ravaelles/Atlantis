@@ -100,19 +100,8 @@ public class ATargeting extends HasUnit {
         }
 
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
-//        System.out.println("defineTarget = " + enemy);
-
-//        if (enemy == null) {
-//            return null;
-//        }
-
-        // Somewhat ugly fix for when targeting goes wrong
-//        if (enemy == null) {
-//            enemy = unit.enemiesNear().canBeAttackedBy(unit, 1.2).nearestTo(unit);
-//        }
 
         if (enemy == null) {
-//            enemy = unit.enemiesNear().havingPosition().effVisible().groundUnits().nearestTo(unit);
             enemy = unit.enemiesNear()
                 .realUnitsAndBuildings()
                 .effVisible()
@@ -139,10 +128,10 @@ public class ATargeting extends HasUnit {
             return null;
         }
 
-//        System.out.println("enemy.type() = " + enemy.type());
+//        System.out.prin tln("enemy.type() = " + enemy.type());
 //        AUnit weakestEnemy = selectWeakestEnemyOfType(enemy.type(), unit);
         AUnit weakestEnemy = enemy;
-//        System.out.println("weakestEnemy = " + weakestEnemy + "\n");
+//        System.out.pri ntln("weakestEnemy = " + weakestEnemy + "\n");
 
         return weakestEnemy;
     }
@@ -153,7 +142,7 @@ public class ATargeting extends HasUnit {
 
         // Most wounded enemy IN RANGE
         AUnit enemy = selectWeakestEnemyOfType(enemyType, unit, 0);
-//        System.out.println("enemy A = " + enemy);
+//        System.out.prin tln("enemy A = " + enemy);
         if (enemy != null) {
 //            unit.addLog("AttackClose");
             return enemy;
@@ -161,21 +150,21 @@ public class ATargeting extends HasUnit {
 
         // Most wounded enemy some distance from away
         enemy = selectWeakestEnemyOfType(enemyType, unit, 1);
-//        System.out.println("enemy B = " + enemy);
+//        System.out.prin tln("enemy B = " + enemy);
         if (enemy != null) {
             return enemy;
         }
 
         // Most wounded enemy some distance from away
         enemy = selectWeakestEnemyOfType(enemyType, unit, 6);
-//        System.out.println("enemy B2 = " + enemy);
+//        System.out.prin tln("enemy B2 = " + enemy);
         if (enemy != null) {
             return enemy;
         }
 
         // Ok, any possible of this type
         enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.maxDistToAttack(unit));
-//        System.out.println("enemy B3 = " + enemy);
+//        System.out.pri ntln("enemy B3 = " + enemy);
         if (enemy != null) {
             return enemy;
         }
@@ -286,8 +275,6 @@ public class ATargeting extends HasUnit {
                 .effVisible()
                 .isEmpty()
         ) {
-//            System.err.println("selectUnitToAttackByType maxDistFromEnemy = " + maxDistFromEnemy);
-//            System.out.println("No enemies near for " + unit + " in dist=" + maxDistFromEnemy);
             return null;
         }
 
@@ -307,28 +294,10 @@ public class ATargeting extends HasUnit {
             .effVisibleOrFoggedWithKnownPosition()
             .canBeAttackedBy(unit, maxDistFromEnemy);
 
-//        Select.enemyRealUnits().print();
-//        enemyBuildings.print();
-//        enemyUnits.print();
-
-//        if (unit.isDragoon()) {
-//            System.out.println("--- Enemy units near " + unit.idWithHash() + " (" + enemyUnits.size() + ") ---");
-//            for (AUnit enemy : enemyUnits.list()) {
-//                System.out.println(enemy.getClass() + " " + enemy.toString() + " / " + A.dist(unit, enemy));
-//            }
-//        }
-
-//        System.out.println("@@@@@@@@@@ size = " + enemyUnits.size());
-//        System.out.println("@@@@@@@@@@a " + Select.enemyRealUnits().size());
-//        System.out.println("@@@@@@@@@@b " + Select.enemyRealUnits().nonBuildings().size());
-//        System.out.println("@@@@@@@@@@c " + Select.enemyRealUnits().nonBuildings().effVisible().size());
-//        System.out.println("@@@@@@@@@@d " + Select.enemyRealUnits().nonBuildings().effVisible().inRadius(maxDistFromEnemy, unit).size());
-//        System.out.println("@@@@@@@@@@e " + Select.enemyRealUnits().nonBuildings().effVisible().inRadius(500, unit).size());
-
         // =========================================================
 
 //        if ((target = ATargetingForSpecificUnits.target()) != null) {
-//            if (ATargeting.DEBUG) System.out.println("A = "+ target);
+//            if (ATargeting.DEBUG) System.out.pri ntln("A = "+ target);
 //            return target;
 //        }
 
@@ -337,9 +306,9 @@ public class ATargeting extends HasUnit {
         if (unit.isAir() && unit.canAttackGroundUnits()) {
             target = (new AAirUnitsTargeting(unit)).targetForAirUnit();
 
-//            System.out.println("Air target for " + unit + ": " + target);
+//            System.out.prin tln("Air target for " + unit + ": " + target);
 //            if ((target = AAirUnitsTargeting.targetForAirUnits()) != null) {
-//                if (ATargeting.DEBUG) System.out.println("AirTarget = " + target);
+//                debug(("AirTarget = " + target);
 //            }
 
             return target;
@@ -348,27 +317,33 @@ public class ATargeting extends HasUnit {
         // === Crucial units =======================================
 
         if ((target = (new ATargetingCrucial(unit)).target()) != null) {
-//            if (ATargeting.DEBUG) System.out.println("B = "+ target);
+//            debug(("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
         if ((target = (new ATargetingImportant(unit)).target()) != null) {
-//            if (ATargeting.DEBUG) System.out.println("C = "+ target);
+//            debug(("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
         if ((target = (new ATargetingStandard(unit)).target()) != null) {
-//            if (ATargeting.DEBUG) System.out.println("D = "+ target);
+//            debug(("D = "+ target);
             return target;
         }
 
         // =====
 
         return target;
+    }
+
+    protected void debug(String message) {
+        if (ATargeting.DEBUG) {
+            System.out.println(message);
+        }
     }
 
 }
