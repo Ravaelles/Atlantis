@@ -71,7 +71,7 @@ public class DontInterruptStartedAttacks {
 //                        && NearestEnemy.rangedHasSmallerRangeThan(unit)
         ) {
 //            if (unit.isFirstCombatUnit()) {
-//                System.out.println(A.now() + "  " + unit.idWithHash() + " STARTED ATTACK ANIMATION");
+
 //            }
 //            APainter.paintCircle(unit, 15, Color.Green);
 //            APainter.paintCircle(unit, 13, Color.Green);

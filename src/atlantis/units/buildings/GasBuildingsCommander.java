@@ -34,7 +34,7 @@ public class GasBuildingsCommander extends Commander {
             return;
         }
 
-//        System.out.println("@ " + A.now() + " - GAS - " + Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) +
+
 //            " / " + AtlantisRaceConfig.GAS_BUILDING);
     }
 
@@ -48,7 +48,7 @@ public class GasBuildingsCommander extends Commander {
 
             int realCount = CountGasWorkers.countWorkersGatheringGasFor(gasBuilding);
             int expectedCount = expectedGasWorkers(gasBuilding, realCount);
-//            System.out.println("OPTIMAL_GAS=" + expectedCount + " // realCount=" + realCount);
+
 
             // Fewer workers gathering gas than optimal
             if (realCount < expectedCount) {
@@ -90,7 +90,7 @@ public class GasBuildingsCommander extends Commander {
 //            worker.returnCargo();
 //            worker.setTooltip("Cargo");
 //
-//            System.out.println("ret cargo");
+
 //            return;
 //        }
 

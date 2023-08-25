@@ -34,11 +34,11 @@ public class TerranGhostTest extends AbstractTestFakingGame {
                 manager4.invoke();
                 manager5.invoke();
 
-//                System.out.println("Lockdown targetFor(ghost1) = " + TerranGhost.lockdownTargets.targetFor(ghost1));
-//                System.out.println("Lockdown targetFor(ghost2) = " + TerranGhost.lockdownTargets.targetFor(ghost2));
-//                System.out.println("Lockdown targetFor(ghost3) = " + TerranGhost.lockdownTargets.targetFor(ghost3));
-//                System.out.println("Lockdown targetFor(ghost4) = " + TerranGhost.lockdownTargets.targetFor(ghost4));
-//                System.out.println("Lockdown targetFor(ghost5) = " + TerranGhost.lockdownTargets.targetFor(ghost5));
+//                System.err.println("Lockdown targetFor(ghost1) = " + TerranGhost.lockdownTargets.targetFor(ghost1));
+//                System.err.println("Lockdown targetFor(ghost2) = " + TerranGhost.lockdownTargets.targetFor(ghost2));
+//                System.err.println("Lockdown targetFor(ghost3) = " + TerranGhost.lockdownTargets.targetFor(ghost3));
+//                System.err.println("Lockdown targetFor(ghost4) = " + TerranGhost.lockdownTargets.targetFor(ghost4));
+//                System.err.println("Lockdown targetFor(ghost5) = " + TerranGhost.lockdownTargets.targetFor(ghost5));
 
                 assertEquals(reaver, TerranGhost.lockdownTargets.targetFor(ghost1)); // Reaver
                 assertEquals(dragoon, TerranGhost.lockdownTargets.targetFor(ghost2)); // Dragoon

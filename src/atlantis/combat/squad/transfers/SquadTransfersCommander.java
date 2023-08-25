@@ -51,7 +51,7 @@ public class SquadTransfersCommander extends Commander {
             unit.setSquad(null);
         }
 //        if (unit.isOur() && unit.isCombatUnit()) {
-//            System.out.println("unit destroyed " + unit + " // " + (squad != null ? squad.name() : null));
+
 //        }
     }
 }

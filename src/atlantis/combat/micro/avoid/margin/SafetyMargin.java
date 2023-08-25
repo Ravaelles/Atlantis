@@ -36,7 +36,7 @@ public class SafetyMargin {
 
         if ((calculated = (new SafetyMarginAgainstSpecial(defender)).handle(attacker)) != -1) {
             // Do nothing
-//            System.out.println("SafetyMarginSpecial = " + calculated + " / " + A.dist(attacker));
+
         }
         else if (attacker.isMelee()) {
             calculated = (new SafetyMarginAgainstMelee(defender)).calculateAgainst(attacker);
@@ -45,13 +45,13 @@ public class SafetyMargin {
             calculated = (new SafetyMarginAgainstRanged(defender)).calculateAgainst(attacker);
         }
 
-//        System.out.println("================ " + attacker);
-//        System.out.println("base = " + base);
-//        System.out.println("defender.distTo(attacker) = " + defender.distTo(attacker));
-//        System.out.println("calculated = " + calculated);
+
+
+
+
 
         double safetyMargin = base + defender.distTo(attacker) - calculated;
-//        System.out.println(defender.idWithHash() + ": MARGIN: " + safetyMargin);
+
 
 //        Color color = safetyMargin < 0 ? Color.Red : Color.Green;
 //        APainter.paintLine(attacker, color);
@@ -63,8 +63,8 @@ public class SafetyMargin {
     // =========================================================
 
     protected double enemyWeaponRange(AUnit attacker) {
-//        System.out.println(attacker.type() + ".enemyWeaponRange(" + defender.type() + ") = " + attacker.enemyWeaponRange(defender));
-//        System.out.println(defender.type() + ".enemyWeaponRange(" + attacker.type() + ") = " + defender.enemyWeaponRange(attacker));
+
+
 
         return defender.enemyWeaponRangeAgainstThisUnit(attacker) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }

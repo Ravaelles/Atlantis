@@ -72,17 +72,17 @@ public class A {
      * Prints the list of the given argument, separated with commas.
      */
     public static void print(Object... args) {
-        System.out.print(args[0]);
+        (System.out).print(args[0]);
 
         if (args.length > 1) {
-            System.out.print(", ");
+            (System.out).print(", ");
         }
 
         for (int i = 1; i < args.length - 1; i++) {
-            System.out.print(args[i] + ", ");
+            (System.out).print(args[i] + ", ");
         }
 
-        System.out.println(args[args.length - 1]);
+        (System.out).println(args[args.length - 1]);
     }
 
     /**
@@ -626,13 +626,13 @@ public class A {
     public static void displayTimeReport(long timeStart, int totalToProcess) {
         long timeEnd = System.currentTimeMillis();
 
-        System.out.println();
-        System.out.println(totalToProcess + " objects have been processed.");
-        System.out.println("Processing took " + convertSecondsToDisplayableFormat((int) (timeEnd - timeStart) / 1000)
+        A.println("");
+        A.println(totalToProcess + " objects have been processed.");
+        A.println("Processing took " + convertSecondsToDisplayableFormat((int) (timeEnd - timeStart) / 1000)
             + " seconds  (" + String.format("%.2f", (double) (timeEnd - timeStart) / (1000 * totalToProcess))
             + "s per file)");
-        System.out.println("################################################");
-        System.out.println();
+        A.println("################################################");
+        A.println("");
     }
 
     /**
@@ -643,7 +643,7 @@ public class A {
         double seconds = ((double) (System.currentTimeMillis() - timeStart) / (1000 * alreadyProcessed));
         String eta = A
             .convertSecondsToDisplayableFormat((int) ((totalToProcess - alreadyProcessed) * seconds));
-        System.out.println("It took " + String.format("%.1f", seconds) + "s. " + alreadyProcessed * 100
+        A.println("It took " + String.format("%.1f", seconds) + "s. " + alreadyProcessed * 100
             / totalToProcess + "% objects (" + alreadyProcessed + "/" + totalToProcess + ") ready. ETA: " + eta);
     }
 
@@ -739,14 +739,14 @@ public class A {
      *
      */
     public static void display2DList(java.util.List<java.util.List<Object>> list) {
-        System.out.println("### START OF LIST");
+        A.println("### START OF LIST");
         for (java.util.List<Object> arrayList : list) {
             for (Object string : arrayList) {
                 System.out.print(string + "/");
             }
-            System.out.println();
+            A.println();
         }
-        System.out.println("### END OF LIST");
+        A.println("### END OF LIST");
     }
 
     /**
@@ -760,19 +760,19 @@ public class A {
             footer = "### END OF LIST";
         }
 
-        System.out.println(header);
+        A.println(header);
         for (Object object : list) {
             System.out.print(object + "/");
             if (useNewLines) {
-                System.out.println();
+                A.println();
             }
         }
         if (!useNewLines) {
-            System.out.println();
+            A.println();
         }
 
         if (!"".equals(footer)) {
-            System.out.println(footer);
+            A.println(footer);
         }
     }
 
@@ -780,26 +780,26 @@ public class A {
      *
      */
     public static void displayArray(Object[][] array) {
-        System.out.println("### START OF LIST");
+        A.println("### START OF LIST");
         for (Object[] row : array) {
             for (Object string : row) {
                 System.out.print(string + "/");
             }
-            System.out.println();
+            A.println();
         }
-        System.out.println("### END OF LIST");
+        A.println("### END OF LIST");
     }
 
     /**
      *
      */
     public static void displayArray(Object[] array) {
-        System.out.println("### START OF LIST");
+        A.println("### START OF LIST");
         for (Object value : array) {
             System.out.print(value + "/");
-            System.out.println();
+            A.println();
         }
-        System.out.println("### END OF LIST");
+        A.println("### END OF LIST");
     }
 
     /**
@@ -1220,7 +1220,7 @@ public class A {
 
     public static void printList(Collection<?> list) {
         for (Object o : list) {
-            System.out.println("- " + o);
+            A.println("- " + o);
         }
     }
 
@@ -1252,7 +1252,7 @@ public class A {
     }
 
     public static boolean printErrorAndReturnTrue(String text) {
-        System.out.println(text);
+        A.println(text);
         return true;
     }
 
@@ -1318,5 +1318,17 @@ public class A {
 
     public static String substring(String str, int start, int end) {
         return str.substring(start, Math.min(end, str.length()));
+    }
+
+    public static void println() {
+        (System.out).println("");
+    }
+
+    public static void println(String string) {
+        (System.out).println(string);
+    }
+
+    public static void print(String string) {
+        (System.out).print(string);
     }
 }

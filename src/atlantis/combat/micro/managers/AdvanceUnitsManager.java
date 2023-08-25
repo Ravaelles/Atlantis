@@ -139,7 +139,7 @@
 //            }
 //        }
 //
-////        System.out.println("Target = " + ATargeting.defineBestEnemyToAttackFor(unit, 40) + " // " +
+
 ////                unit.enemiesNear().inRadius(10, unit).count());
 //
 //        // =========================================================

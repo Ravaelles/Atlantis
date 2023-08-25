@@ -17,7 +17,7 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
 
             FakeUnit enemy = nearestEnemy(unit);
 
-//            System.out.println(A.now() + " -       " + unit.tooltip()
+//            System.err.println(A.now() + " -       " + unit.tooltip()
 //                    + "\n " + unit.lastCommand()
 //                    + ",\n tx:" + unit.tx() + ", x:" + unit.x()
 //                    + ",\n combat_eval:" + unit.combatEvalRelative()
@@ -29,7 +29,7 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
 //                    + (unit.target == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target) + " (" + unit.target.hp() + "hp)")
 //                    + (unit.targetPosition == null ? "" : ",\n target_position:" + unit.targetPosition)
 //            );
-//            System.out.println("_______________________________________");
+//            System.err.println("_______________________________________");
         });
     }
 

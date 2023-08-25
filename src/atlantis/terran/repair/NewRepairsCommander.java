@@ -30,7 +30,7 @@ public class NewRepairsCommander extends Commander {
 
         for (AUnit woundedUnit : repairable) {
 //            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {
-//                System.out.println("Repair TURRET? ");
+
 //            }
 
             if (ShouldNotRepairUnit.shouldNotRepairUnit(null, woundedUnit)) {
@@ -43,7 +43,7 @@ public class NewRepairsCommander extends Commander {
 
             int newRepairersNeeded = optimalNumOfRepairersFor(woundedUnit);
 //            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {
-//                System.out.println("   HP=" + woundedUnit.hp() + " / repairers=" + newRepairersNeeded);
+
 //            }
             if (newRepairersNeeded > 0) {
                 assignRepairersToWoundedUnits(woundedUnit, newRepairersNeeded);
@@ -83,7 +83,7 @@ public class NewRepairsCommander extends Commander {
         if (unit.isBunker()) {
             int shouldHaveThisManyRepairers = OptimalNumOfBunkerRepairers.forBunker(unit);
             if (shouldHaveThisManyRepairers > 0) {
-//                System.out.println("Bunker repairers = " + shouldHaveThisManyRepairers);
+
                 unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
                 ProtectorCommander.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
                 return shouldHaveThisManyRepairers;

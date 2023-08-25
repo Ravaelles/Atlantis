@@ -47,17 +47,17 @@ public class TurretsForMain extends TerranTurret {
         if (!Have.engBay() || !Have.base()) return false;
 
         if (turretForMainChoke()) {
-//            System.out.println("Requested TURRET for MAIN CHOKE");
+
             return true;
         }
 
         if (turretsForMainRegionBorders()) {
-//            System.out.println("Requested TURRET for BORDERS");
+
             return true;
         }
 
         if (turretsForMainBase()) {
-//            System.out.println("Requested TURRET for MAIN BASE");
+
             return true;
         }
 
@@ -277,9 +277,9 @@ public class TurretsForMain extends TerranTurret {
                 .collect(Collectors.toList())
         );
 
-//        System.out.println("nearMapEdge = " + nearMapEdge.size());
+
 //        for (ARegionBoundary b : nearMapEdge.list()) {
-//            System.out.println("b = " + b.position());
+
 //        }
 
         return nearMapEdge.nearestTo(nearestTo);

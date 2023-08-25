@@ -76,7 +76,7 @@ public class BuildOrderRowParser {
         else {
             throw new RuntimeException("Unhandled parse build order line: " + row[0]);
         }
-//        System.out.println(minSupplyForThisOrder + " // " + nameString + " // " +modifier);
+
 
         // =========================================================
         // Parse entire row of strings

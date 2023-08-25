@@ -34,7 +34,7 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
 //            boolean alwaysShow = true;
 
             if (!isSafe || alwaysShow) {
-                System.out.println(A.now() + " - " + unit.manager()
+                System.err.println(A.now() + " - " + unit.manager()
                     + "\n   tooltip: " + unit.tooltip() + " / " + unit.lastCommand()
                     + ",\n   tx:" + unit.txWithPrecision() + ", dist_to_zealot:" + A.dist(distToZealot)
                     + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
@@ -42,7 +42,7 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
                     + "\n   marine eval = " + unit.combatEvalRelative()
                     + "\n   zealot eval = " + zealot.combatEvalRelative()
                 );
-                System.out.println("_______________________________________");
+                System.err.println("_______________________________________");
             }
 
             assertTrue(isSafe);

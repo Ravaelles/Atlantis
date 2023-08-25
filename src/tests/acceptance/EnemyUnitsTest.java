@@ -33,7 +33,7 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
         AtlantisRaceConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
 
         createWorld(5, () -> {
-//            System.out.println("\n===================== FRAME = " + A.now() + " ===========================");
+//            System.err.println("\n===================== FRAME = " + A.now() + " ===========================");
 
             if (A.now() == 1) {
                 firstFrame();
@@ -116,8 +116,8 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
 //        EnemyUnits.discovered().print("Fogged");
 //        Select.enemy().print("Visible enemies");
 
-//        System.out.println(EnemyUnits.getFoggedUnit(drone3).type());
-//        System.out.println(EnemyUnits.getFoggedUnit(lurkerEgg).type());
+//        System.err.println(EnemyUnits.getFoggedUnit(drone3).type());
+//        System.err.println(EnemyUnits.getFoggedUnit(lurkerEgg).type());
 
         assertEquals(AUnitType.Zerg_Creep_Colony, EnemyUnits.getFoggedUnit(drone1).type());
         assertEquals(AUnitType.Zerg_Sunken_Colony, EnemyUnits.getFoggedUnit(drone2).type());

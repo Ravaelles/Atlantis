@@ -13,11 +13,11 @@ public class Requirements {
 
     public static boolean hasRequirements(ProductionOrder order) {
         if (order.unitType() != null) {
-//            System.out.println("-----");
-//            System.out.println("order.unitType() = " + order.unitType());
-//            System.out.println("order.unitType().getWhatIsRequired() = " + order.unitType().whatIsRequired());
-//            System.out.println("order.unitType().hasRequiredUnit() = " + order.unitType().hasRequiredUnit());
-//            System.out.println("hasRequirements(order.unitType()) = " + hasRequirements(order.unitType()));
+
+
+
+
+
 //            order.unitType().requiredUnits().print("Required units");
 //            return !order.unitType().hasRequiredUnit() || hasRequirements(order.unitType());
             return !order.unitType().hasRequiredUnit() || hasRequirements(order.unitType());

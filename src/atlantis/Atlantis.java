@@ -247,12 +247,6 @@ public class Atlantis implements BWEventListener {
         (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
 
         if (Env.isLocal() && unit.isBunker() && Count.bunkers() == 1) CameraCommander.centerCameraOn(unit);
-
-//        System.out.println("NEW UNIT @ " + A.now() + " - " + unit);
-//        System.out.println(unit.mission());
-//        System.out.println(unit.squad());
-//        System.out.println(unit.action());
-//        System.out.println(unit.lastActionFramesAgo());
     }
 
     /**
@@ -260,17 +254,13 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onEnd(boolean winner) {
-        System.out.println();
-        System.out.println("#####################################");
-        if (winner) {
-            System.out.println("############ VICTORY! ###############");
-        }
-        else {
-            System.out.println("############ Defeat... ##############");
-        }
-        System.out.println("############ Lost: " + Atlantis.LOST + " ################");
-        System.out.println("########## Killed: " + Atlantis.KILLED + " ################");
-        System.out.println("#####################################");
+        String result = "#####################################\n";
+        result += "############ " + (winner ? "VICTORY!" : "Defeat...") + " ###############\n";
+        result += "############ Lost: " + Atlantis.LOST + " ################\n";
+        result += "########## Killed: " + Atlantis.KILLED + " ################\n";
+        result += "#####################################\n";
+
+        (System.out).println(result);
 
         OnEnd.execute(winner);
 
@@ -283,14 +273,13 @@ public class Atlantis implements BWEventListener {
     }
 
     private void killProcesses() {
-        System.out.println();
-        System.out.println("Killing StarCraft process... ");
+        A.println("\nKilling StarCraft process... ");
         ProcessHelper.killStarcraftProcess();
 
-        System.out.print("Killing Chaoslauncher process... ");
+        A.println("\nKilling Chaoslauncher process... ");
         ProcessHelper.killChaosLauncherProcess();
 
-        System.out.println("Exit...");
+        A.println("\nExit...");
         System.exit(0);
     }
 
@@ -300,15 +289,13 @@ public class Atlantis implements BWEventListener {
         }
 
         int resourcesBalance = AGame.killsLossesResourceBalance();
-        System.out.println();
-        System.out.println(
-            "### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
+        A.println(
+            "\n### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
                 "### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\r\n" +
                 "### Resource killed/lost: " + (resourcesBalance > 0 ? "+" + resourcesBalance : resourcesBalance) + " ###"
         );
 
         if (A.isUms()) {
-            System.out.println();
             UnitsArchive.paintLostUnits();
             UnitsArchive.paintKilledUnits();
         }
@@ -436,9 +423,9 @@ public class Atlantis implements BWEventListener {
      */
     public static void debug(Object... args) {
         for (int i = 0; i < args.length - 1; i++) {
-            System.out.print(args[i] + " / ");
+            (System.out).print(args[i] + " / ");
         }
-        System.out.println(args[args.length - 1]);
+        (System.out).println(args[args.length - 1]);
     }
 
 }

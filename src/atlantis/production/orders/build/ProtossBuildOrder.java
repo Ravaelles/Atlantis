@@ -29,7 +29,7 @@ public class ProtossBuildOrder extends ABuildOrder {
         }
 
         AUnit unitThatWillProduce = Select.ourOneNotTrainingUnits(whatBuildsIt);
-//        System.out.println("producer = " + unitThatWillProduce);
+
         if (unitThatWillProduce != null) {
             return unitThatWillProduce.train(unitType);
         }

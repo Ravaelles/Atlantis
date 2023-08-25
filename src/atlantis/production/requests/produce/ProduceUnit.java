@@ -17,9 +17,9 @@ public class ProduceUnit {
         // =========================================================
         // Worker
 
-//        System.out.println(type + " (" + A.supplyUsed() + ")");
+
         if (type.isWorker()) {
-//            System.out.println(A.now() + " worker");
+
             return ProduceWorker.produceWorker();
         }
 

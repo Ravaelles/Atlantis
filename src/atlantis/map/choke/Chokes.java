@@ -40,33 +40,28 @@ public class Chokes {
 //
 //                    // Define region where our main base is
 //                    ARegion mainRegion = getRegion(mainBase.position());
-//                    // System.out.println("mainRegion = " + mainRegion);
 //                    if (mainRegion == null) {
 //                        return null;
 //                    }
 //
 //                    // Define localization of the second base to expand
 //                    APosition natural = natural();
-//                    // System.out.println("secondBase = " + secondBase);
 //                    if (natural == null) {
 //                        return null;
 //                    }
 //
 //                    // Define region of the second base
 //                    ARegion naturalRegion = natural.getRegion();
-//                    // System.out.println("secondRegion = " + secondRegion);
 //                    if (naturalRegion == null) {
 //                        return null;
 //                    }
 //
 //                    // Try to match choke points between the two regions
 //                    for (AChoke mainRegionChoke : mainRegion.chokes()) {
-//                        // System.out.println("mainRegionChoke = " + mainRegionChoke + " / "
 //                        // + (mainRegionChoke.getFirstRegion()) + " / " + (mainRegionChoke.getSecondRegion()));
 //                        if (naturalRegion.equals(mainRegionChoke.getFirstRegion())
 //                                || naturalRegion.equals(mainRegionChoke.getSecondRegion())) {
 //                            return mainRegionChoke;
-//                            // System.out.println("MAIN CHOKE FOUND! " + cached_mainBaseChokepoint);
 //                        }
 //                    }
 //

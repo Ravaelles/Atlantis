@@ -133,10 +133,10 @@ public abstract class MoveToFocusPoint {
         APosition withdrawTo = focus.fromSide();
 
         if (!focus.isAroundChoke() || withdrawTo == null) {
-//            System.out.println("fromSide = " + fromSide);
-//            System.out.println("FOCUS POINT = " + focus.toString());
-//            System.out.println("isAroundChoke = " + focus.isAroundChoke());
-//            System.out.println("focus.fromSide() = " + focus.fromSide());
+
+
+
+
             return false;
         }
 

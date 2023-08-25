@@ -81,7 +81,7 @@ public class RepairAssignments {
         if (addLogs) {
             protector.addLog("Added PROTECTOR of " + unit);
         }
-//        System.out.println("Added PROTECTOR of " + unit);
+
 
         addRepairer(protector, unit);
         repairersToModes.put(protector, MODE_PROTECT);

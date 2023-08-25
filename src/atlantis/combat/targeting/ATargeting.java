@@ -2,6 +2,7 @@ package atlantis.combat.targeting;
 
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.targeting.tanks.ATankTargeting;
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -342,7 +343,7 @@ public class ATargeting extends HasUnit {
 
     protected void debug(String message) {
         if (ATargeting.DEBUG) {
-            System.out.println(message);
+            A.println(message);
         }
     }
 

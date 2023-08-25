@@ -179,7 +179,7 @@ public class ATargetingImportant extends ATargeting {
             .canBeAttackedBy(unit, 0)
             .mostWounded();
 
-        if (target != null && ATargeting.DEBUG) System.out.println("C5 = " + target);
+        debug("C5 = " + target);
 
         // === WORKERS ======================================================
 

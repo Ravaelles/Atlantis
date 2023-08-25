@@ -140,7 +140,7 @@ public class ProtectorCommander extends Commander {
     }
 
     private static boolean removeProtectorsIfNeeded() {
-//        System.out.println("PROT = " + RepairAssignments.countTotalProtectors() + " // " + MAX_PROTECTORS);
+
 
         int maxProtectors = maxProtectors();
         if (RepairAssignments.countTotalProtectors() > maxProtectors) {

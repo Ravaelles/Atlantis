@@ -217,7 +217,7 @@ public class ProtossHighTemplar extends Manager {
         if (closestOtherHT != null) {
 //            if (closestOtherHT.distTo(unit) <= 0.9) {
             unit.useTech(TechType.Archon_Warp, closestOtherHT);
-//                System.out.println("Warp Archon");
+
             unit.setTooltipTactical("WarpArchon");
             closestOtherHT.setTooltipTactical("OhArchon");
 //                GameSpeed.changeSpeedTo(10);

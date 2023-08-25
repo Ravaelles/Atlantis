@@ -37,13 +37,13 @@ public class OurStrategy {
         assertNotNull(strategy);
 
         ourStrategy = strategy;
-//        System.out.println("### Use strategy `" + strategy + "` ###");
 
-//        System.out.println("--------------");
+
+
 //        for (ProductionOrder po : ourStrategy.buildOrder().getProductionOrders()) {
-//            System.out.println(po);
+
 //        }
-//        System.out.println("--------------");
+
 
         ProductionQueue.useBuildOrderFrom(strategy);
     }

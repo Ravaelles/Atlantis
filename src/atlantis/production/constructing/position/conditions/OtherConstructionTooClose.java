@@ -15,21 +15,21 @@ public class OtherConstructionTooClose {
      * could be stacked.
      */
     public static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
-//        System.out.println("============================");
-//        System.out.println("position = " + position + ", not started = " + ConstructionRequests.notStarted().size()
+
+
 //                + " // all = " + ConstructionRequests.all().size());
 
         // Compare against planned construction places
         for (Construction order : ConstructionRequests.all()) {
             HasPosition constructionPosition = order.buildPosition();
-//            System.out.println("another = " + constructionPosition + " // " + order.buildingType());
+
             if (
                 position != null && constructionPosition != null
             ) {
-//                System.out.println("OK constructionPosition = " + constructionPosition);
+
                 double distance = position.distTo(constructionPosition);
-//                System.out.println("distance = " + distance + " // " + position);
-//                System.out.println("------------");
+
+
 //                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
 //                        && (distance <= 5 && !We.zerg());
 

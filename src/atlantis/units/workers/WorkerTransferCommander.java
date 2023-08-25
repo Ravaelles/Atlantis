@@ -65,24 +65,24 @@ public class WorkerTransferCommander extends Commander {
             return;
         }
 
-//        System.out.println(
+
 //                "Fewest: " + baseWithFewestWorkers
 //                        + " (" + baseWorkersRatios.valueFor(baseWithFewestWorkers)
 //                        + ") / " + fewestWorkersRatio
 //        );
-//        System.out.println(
+
 //                "Most: " + baseWithMostWorkers
 //                        + " (" + baseWorkersRatios.valueFor(baseWithMostWorkers)
 //                        + ") / " + fewestWorkersRatio
 //        );
-//        System.out.println();
+
 
         // === Perform worker transfer from base to base ========================================
 
         AUnit worker = Select.ourWorkersThatGather(true)
             .inRadius(16, baseWithMostWorkers)
             .nearestTo(baseWithFewestWorkers);
-//        System.out.println("transfer worker = " + worker);
+
         if (worker != null) {
             transferWorkerTo(worker, baseWithFewestWorkers);
         }

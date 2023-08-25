@@ -47,7 +47,7 @@ public class SupplyCommander extends Commander {
         }
 
         // Should use auto supply manager
-//        System.out.println(supplyTotal + " // " + CurrentBuildOrder.settingAutoSupplyManagerWhenSupplyExceeds());
+
         if (supplyTotal >= BuildOrderSettings.autoSupplyManagerWhenSupplyExceeds()) {
             supplyFree = AGame.supplyFree();
 

@@ -34,7 +34,7 @@ public class TooLowSquadCohesion extends Manager {
      * We want to make sure that at least N percent of units are inside X radius of squad center.
      */
     public boolean isCohesionTooLow() {
-//        System.out.println(
+
 //            A.now() + " " + unit
 //                + " // okay="
 //                + isSquadCohesionOkay()

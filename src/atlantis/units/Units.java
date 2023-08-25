@@ -222,12 +222,12 @@ public class Units {
         
         double bestValue = returnLowest ? Integer.MAX_VALUE : Integer.MIN_VALUE;
         for (AUnit unit : units) {
-//                System.out.println("######################");
-//                System.out.println(extraValues);
+
+
 //                for (AUnit u : extraValues.keySet()) {
-//                    System.out.println(u + " // " + (extraValues.containsKey(u) ? extraValues.get(u) : "NO"));
+
 //                }
-//                System.out.println("######################");
+
             if (bestUnit == null || (returnLowest ? (valueFor(unit) < bestValue) : (valueFor(unit) > bestValue))) {
                 bestValue = valueFor(unit);
                 bestUnit = unit;
@@ -388,7 +388,7 @@ public class Units {
     }
 
     public void print(String message) {
-//        System.out.println("Units in list:");
+
         System.out.println("===" + (message == null ? "" : " " + message + " (" + size() + ") ") + "==========");
         for (AUnit unit : list()) {
             System.out.print(unit);

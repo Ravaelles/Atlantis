@@ -46,7 +46,7 @@ public abstract class CurrentProductionQueue {
                 ProductionQueue.gasNeeded + order.gasPrice()
             );
 
-//            System.out.println("order = " + order + " // req=" + hasRequirements + " // aff=" + canAfford);
+
             order.setCanAffordNow(canAfford);
             AUnitType unitOrBuilding = order.unitType();
             UpgradeType upgrade = order.upgrade();
@@ -69,7 +69,7 @@ public abstract class CurrentProductionQueue {
             // UNIT/BUILDING
             if (unitOrBuilding != null && hasRequirements && canAfford) {
                 if (hasFreeBuildingFor(unitOrBuilding) && (unitOrBuilding.isBuilding() || !hasUnitInQueue(unitOrBuilding, queue))) {
-//                    System.out.println("EnQUEUE " + unitOrBuilding);
+
                     ProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
                     ProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
                 }
@@ -77,9 +77,9 @@ public abstract class CurrentProductionQueue {
 
             // UPGRADE
             else if (upgrade != null && hasRequirements) {
-//                System.out.println("====== WE'RE AT " + upgrade.name() + " --> " + hasWhatRequired);
-//                System.out.println("lvl = " + ATech.getUpgradeLevel(upgrade));
-//                System.out.println(upgrade.mineralPrice() + " // " + upgrade.gasPrice());
+
+
+
                 ProductionQueue.mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
                 ProductionQueue.gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
             }
@@ -121,9 +121,9 @@ public abstract class CurrentProductionQueue {
         // adding production orders dynamically.
 
 //        if (mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD && queue.size() > 0) {
-//            System.out.println("-- QUEUE SIZE --- " + queue.size());
+
 //            for (ProductionOrder order : queue) {
-//                System.out.println(order);
+
 //            }
 //        }
 

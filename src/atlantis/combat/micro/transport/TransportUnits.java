@@ -37,8 +37,8 @@ public class TransportUnits extends Manager {
     public boolean unloadFromTransport() {
         if (!unit.isLoaded()) return false;
 
-//        System.out.println("unit.isLoaded() = " + unit.isLoaded());
-//        System.out.println("isBabyInDanger(unit, true) = " + isBabyInDanger(unit, true));
+
+
         if (
             unit.isLoaded()
                 && !unit.loadedInto().isBunker()
@@ -171,7 +171,7 @@ public class TransportUnits extends Manager {
     }
 
     private boolean shouldLoadTheBaby(AUnit transport, AUnit baby) {
-//        System.out.println(baby.getID() + " baby.isUnderAttack(15) = " + baby.isUnderAttack(15));
+
         return !baby.isLoaded()
             && transport.hasFreeSpaceFor(baby)
 //                && transport.lastActionMoreThanAgo(25, UnitActions.LOAD)
@@ -182,13 +182,13 @@ public class TransportUnits extends Manager {
     }
 
     private boolean shouldDropTheBaby(AUnit transport, AUnit baby) {
-//        System.out.println("----");
-//        System.out.println("baby.isLoaded() = " + baby.isLoaded());
-//        System.out.println("transport.hasCargo() = " + transport.hasCargo());
-//        System.out.println("transport.lastActionMoreThanAgo(25, UnitActions.LOAD) = " + transport.lastActionMoreThanAgo(25, UnitActions.LOAD));
-//        System.out.println("isTransportInDanger(transport) = " + isTransportInDanger(transport));
-//        System.out.println("!isBabyInDanger(baby, false) = " + !isBabyInDanger(baby, false));
-//        System.out.println("transport.lastActionMoreThanAgo(30 * 12, UnitActions.LOAD) = " + transport.lastActionMoreThanAgo(30 * 12, UnitActions.LOAD));
+
+
+
+
+
+
+
         return baby.isLoaded()
             && transport.hasCargo()
 //                && baby.cooldownRemaining() <= 8

@@ -109,7 +109,7 @@ public class AvoidEnemies extends Manager {
             1,
             () -> {
                 enemies = new Units();
-//                System.out.println("enemyUnitsToPotentiallyAvoid() = " + enemyUnitsToPotentiallyAvoid().size());
+
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid()) {
                     double safetyMargin = (new SafetyMargin(unit)).calculateAgainst(enemy);
 //                    System.err.println(
@@ -120,15 +120,15 @@ public class AvoidEnemies extends Manager {
                 }
 //                enemies.print("Enemies to avoid");
 
-//                System.out.println(unit + " enemies near = " + enemyUnitsToPotentiallyAvoid().size());
+
 
                 if (enemies.isEmpty()) {
                     return new Units();
                 }
 
 //                for (AUnit enemy : enemyUnitsToPotentiallyAvoid()) {
-////                    //System.out.println(enemy + " which is " + A.dist(enemy, unit) + " away");
-//                    System.out.println(enemy + " has value: " + enemies.valueFor(enemy));
+
+
 //                }
 
                 if (onlyDangerouslyClose) {

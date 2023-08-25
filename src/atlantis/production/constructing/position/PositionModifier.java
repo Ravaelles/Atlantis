@@ -109,7 +109,7 @@ public class PositionModifier {
                 (AMap.getMapWidthInTiles() / 2) * 32,
                 (AMap.getMapHeightInTiles() / 2) * 32
             );
-//            System.out.println("at = " + at);
+
             return APositionFinder.findStandardPosition(builder, building, at, 30);
         }
 

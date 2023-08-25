@@ -35,10 +35,6 @@ public class JfapCombatEvaluator {
      * E.g. 121 (of arbitrary "score points")
      */
     public static double[] eval(AUnit unit) {
-//        System.out.println(unit.friendsNear().print("Friends for " + unit));
-//        System.err.println("Eval for: " + unit);
-//        System.err.println(unit.enemiesNear().print("Enemies for " + unit));
-
         Integer[] eval = fullEval(unit);
 
         int myScoreDiff = eval[1];

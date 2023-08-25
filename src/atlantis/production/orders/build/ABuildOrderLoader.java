@@ -21,8 +21,8 @@ public class ABuildOrderLoader {
     // =========================================================
 
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
-//        System.out.println("AtlantisIgniter.getBwapiDataPath() = " + AtlantisIgniter.getBwapiDataPath());
-//        System.out.println("BUILD_ORDERS_PATH = " + BUILD_ORDERS_PATH);
+
+
 
         String filePath = AtlantisIgniter.getBwapiDataPath()
             + BUILD_ORDERS_PATH + strategy.race() + "/"

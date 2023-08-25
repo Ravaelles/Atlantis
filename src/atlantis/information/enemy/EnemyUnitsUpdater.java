@@ -9,14 +9,14 @@ import atlantis.units.select.Select;
 public class EnemyUnitsUpdater extends EnemyUnits {
 
     public static void updateFoggedUnits() {
-//        System.out.println("--- UPDATE at " + A.now());
+
         for (AUnit enemy : Select.enemy().list()) {
-//            System.out.println("update fogged from real = " + enemy);
+
             updateTypeAndPositionOfFoggedUnitBasenOnVisibleAUnit(enemy);
         }
 
         for (AbstractFoggedUnit foggedUnit : enemyUnitsDiscovered.values()) {
-//            System.out.println("update fogged = " + foggedUnit);
+
             updatedFoggedUnitEvenIfNotVisible(foggedUnit);
         }
     }
@@ -43,12 +43,12 @@ public class EnemyUnitsUpdater extends EnemyUnits {
      * If so, change it, because it means we don't know where it is.
      */
     private static void updatedFoggedUnitEvenIfNotVisible(AbstractFoggedUnit foggedUnit) {
-//        System.out.println(
+
 //            foggedUnit + " / " + foggedUnit.getUnit() + " / " + foggedUnit.getUnit().isPositionVisible()
 //        );
 
 //        AUnit unit = foggedUnit.innerAUnit();
-//        System.out.println(unit + " // visible: " + (unit != null ? unit.isVisibleUnitOnMap() : "---"));
+
 
 //        if (unit == null || !unit.isVisibleUnitOnMap()) {
 //        System.err.println(unit + " / isVisibleUnitOnMap:" + unit.isVisibleUnitOnMap());
@@ -69,14 +69,14 @@ public class EnemyUnitsUpdater extends EnemyUnits {
 //                    && (foggedUnit.u() == null && !foggedUnit.isCloaked() && !foggedUnit.isDetected())
 //                    && (!foggedUnit.isCloaked() && !foggedUnit.isDetected())
         ) {
-//                System.out.println(">> Fogged unit no longer present at this visible position " + foggedUnit);
+
 //                foggedUnit.forceRemoveKnownPosition();
 //                foggedUnit.forceRemoveKnownPosition();
             foggedUnit.foggedUnitNoLongerWhereItWasBefore();
         }
 
 //            if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible() && foggedUnit.u() == null) {
-//                System.out.println(">> Fogged unit is no longer visible, remove position " + foggedUnit);
+
 //            }
 //        }
     }
@@ -98,7 +98,7 @@ public class EnemyUnitsUpdater extends EnemyUnits {
 
             enemyUnitsDiscovered.put(id, foggedUnit);
 
-//            System.out.println("ADD enemyUnit = " +  enemyUnit + " / " + id);
+
 //            if (enemyUnit.isBuilding()) {
 //                A.printStackTrace(
 //                System.err.println(
@@ -110,18 +110,18 @@ public class EnemyUnitsUpdater extends EnemyUnits {
     }
 
     public static void removeFoggedUnit(AUnit enemyUnit) {
-//        System.out.println("REMOVE a enemyUnit = " +  enemyUnit + " / " + enemyUnit.id());
+
         AbstractFoggedUnit foggedUnit = enemyUnitsDiscovered.get(enemyUnit.id());
 
         if (foggedUnit != null) {
-//            System.out.println("        forceRemoveKnownPosition");
+
             foggedUnit.foggedUnitNoLongerWhereItWasBefore();
         }
 
         enemyUnitsDiscovered.remove(enemyUnit.id());
         cache.clear();
 
-//        System.out.println("REMOVE b enemyUnit = " +  enemyUnit + " / " + enemyUnit.id());
+
 
 //        if (enemyUnit.isBuilding()) {
 ////            A.printStackTrace(

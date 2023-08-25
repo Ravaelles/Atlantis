@@ -30,7 +30,7 @@ public class TerranGhost extends Manager {
     @Override
     protected Manager handle() {
         if (unit.lastTechUsedAgo() <= 5) {
-//            System.out.println(A.now() + " DONT INTERRUPT GHOST ");
+
             return usedManager(this);
         }
 
@@ -51,7 +51,7 @@ public class TerranGhost extends Manager {
         if (!unit.energy(100) || !ATech.isResearched(lockdown)) return false;
 
         AUnit lockdownTarget = defineLockdownTarget();
-//        System.out.println("lockdownTarget = " + lockdownTarget);
+
 
         if (lockdownTarget != null) {
 //            System.err.println("USE LOCKDOWN ON " + lockdownTarget);

@@ -55,25 +55,25 @@ public class GasBuildingFix extends HasUnit {
             if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(-1, 0))
             ) {
-//                System.out.println("Applied [-1,0] " + building + " position FIX");
+
                 return position.translateByTiles(-1, 0);
             }
             if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(1, 0))
             ) {
-//                System.out.println("Applied [1,0] " + building + " position FIX");
+
                 return position.translateByTiles(1, 0);
             }
             if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(-2, -1))
             ) {
-//                System.out.println("Applied [-2,-1] " + building + " position FIX");
+
                 return position.translateByTiles(-2, -1);
             }
             if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(2, 1))
             ) {
-//                System.out.println("Applied [2,1] " + building + " position FIX");
+
                 return position.translateByTiles(2, 1);
             }
 

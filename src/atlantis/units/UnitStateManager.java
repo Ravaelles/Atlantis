@@ -27,7 +27,7 @@ public class UnitStateManager extends Manager {
             unit._lastAttackFrame = timeNow;
 //            APainter.paintCircleFilled(unit, 8, Color.Yellow);
 //            if (unit.isFirstCombatUnit()) {
-//                System.out.println("unit._lastAttackFrame = " + unit._lastAttackFrame);
+
 //            }
         }
 
@@ -41,7 +41,7 @@ public class UnitStateManager extends Manager {
 //            APainter.paintCircleFilled(unit, 8, Color.Orange);
             unit._lastFrameOfStartingAttack = timeNow;
 //            if (unit.isFirstCombatUnit()) {
-//                System.out.println("unit._lastFrameOfStartingAttack = " + unit._lastFrameOfStartingAttack);
+
 //            }
         }
 
@@ -50,7 +50,7 @@ public class UnitStateManager extends Manager {
         if (unit.isStartingAttack()) {
             unit._lastStartedAttack = timeNow;
 //            if (unit.isFirstCombatUnit()) {
-//                System.out.println("unit._lastStartedAttack = " + unit._lastStartedAttack);
+
 //            }
         }
 
@@ -64,12 +64,12 @@ public class UnitStateManager extends Manager {
             unit._lastUnderAttack = timeNow;
 
             AUnit enemy = Select.enemy().nearestTo(unit);
-//            System.out.println("-------------- (" + A.dist(enemy, unit));
-//            System.out.println(unit.getPosition());
-//            System.out.println(enemy.getPosition());
+
+
+
         }
 //        if (unit.id() == Select.ourCombatUnits().first().getID()) {
-//            System.out.println(AGame.getTimeFrames() + " ### "
+
 //                    + unit._lastAttackOrder + " // " + unit._lastAttackFrame + " // " + unit._lastStartingAttack);
 //        }
 

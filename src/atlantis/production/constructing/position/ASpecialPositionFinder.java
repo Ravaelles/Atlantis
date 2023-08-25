@@ -126,9 +126,9 @@ public class ASpecialPositionFinder {
 //        near = APosition.create(baseLocationToExpand.position());
         construction.setMaxDistance(3);
 
-//        System.out.println("Main base = " + Select.mainBase());
-//        System.out.println("baseLocationToExpand = " + baseLocationToExpand);
-//        System.out.println(builder + " / " + building + " / " +  APosition.createFrom(baseLocationToExpand.getPosition()));
+
+
+
 
         return APositionFinder.findStandardPosition(
             builder, building, near, construction.maxDistance()

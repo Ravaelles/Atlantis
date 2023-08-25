@@ -199,7 +199,7 @@ public class RunToPositionFinder {
         // Build list of possible run positions, basically around the clock
         //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
 
-        //        System.out.println("potentialPositionsList = " + potentialPositionsList.size());
+        
 
         // =========================================================
         // Find the location that would be most distant to the enemy location
@@ -232,9 +232,9 @@ public class RunToPositionFinder {
 
         if (position == null) return false;
 
-//        System.out.println("position.isWalkable() = " + position.isWalkable());
-//        System.out.println("unit.hasPathTo(position) = " + unit.hasPathTo(position));
-//        System.out.println("unit.position().groundDistanceTo(position) = " + unit.position().groundDistanceTo(position));
+
+
+
         int walkRadius = 32;
 
         boolean nearbyWalkable = unit.isFlying() || position.isCloseToMapBounds() || (

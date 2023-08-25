@@ -1181,12 +1181,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         return (!isDetected() || hp() == 0);
 
-//        if ((!isCloaked() && !isBurrowed()) || ensnared() || plagued()) {
-//            return false;
-//        }
-
-//        System.out.println(type() + " // " + isCloaked() + " // " + hp());
-
 //        return true;
 //        return hp() == 0;
 //        return !unit().isDetected();
@@ -1400,9 +1394,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasValidTarget() {
-//        if (unit().isCombatUnit()) {
-//            System.out.println(target() + " // alive=" + (target() != null ? target().isAlive() : 0));
-//        }
         return target() != null && target().isAlive();
     }
 
@@ -1789,12 +1780,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector otherUnitLookingVector = Vectors.vectorFromAngle(otherUnit.getAngle(), positionDifference.length());
 
-//        if (isFirstCombatUnit()) {
-//            System.out.println("### ARE PARALLEL = " + (positionDifference.isParallelTo(otherUnitLookingVector)));
-//            System.out.println(positionDifference + " // " + positionDifference.toAngle());
-//            System.out.println(otherUnitLookingVector + " // " + otherUnitLookingVector.toAngle());
-//        }
-
         return positionDifference.isParallelTo(otherUnitLookingVector);
     }
 
@@ -1803,12 +1788,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector thisUnitLookingVector = Vectors.vectorFromAngle(this.getAngle(), positionDifference.length());
-
-//        if (isFirstCombatUnit()) {
-//            System.out.println("### ARE PARALLEL = " + (positionDifference.isParallelTo(thisUnitLookingVector)));
-//            System.out.println(positionDifference + " // " + positionDifference.toAngle());
-//            System.out.println(thisUnitLookingVector + " // " + thisUnitLookingVector.toAngle());
-//        }
 
         return positionDifference.isParallelTo(thisUnitLookingVector);
     }
@@ -1846,12 +1825,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int energy() {
-        if (u == null) {
-            System.out.println(this.getClass());
-            System.out.println(this);
-            System.out.println(u);
-            System.out.println("---------");
-        }
         return u.getEnergy();
     }
 
@@ -2061,7 +2034,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isDefenseMatrixed() {
-//        System.out.println(u.getDefenseMatrixTimer() + " // " + u.getDefenseMatrixPoints() + " // " + u.isDefenseMatrixed());
+
         return u != null && u.isDefenseMatrixed();
     }
 
@@ -2231,9 +2204,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                         .exclude(this);
                 }
                 else if (unit().isEnemy() || (unit().type().isAddon() && unit().isNeutral())) {
-//                        System.out.println("------- for enemy -------- ");
-//                        System.out.println(Select.ourRealUnits().size());
-//                        System.out.println(Select.ourRealUnits().inRadius(15, this).size());
                     return Select.ourRealUnits()
                         .inRadius(15, this)
                         .exclude(this);

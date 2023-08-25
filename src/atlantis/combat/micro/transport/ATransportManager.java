@@ -102,10 +102,10 @@ public class ATransportManager extends Manager {
     }
 
     private boolean hasTransportAssigned(AUnit passenger) {
-//        System.out.println("A: " + passengersToTransports.containsKey(passenger));
+
         if (passengersToTransports.containsKey(passenger)) {
-//            System.out.println("B: " + passengersToTransports.get(passenger));
-//            System.out.println("C: " + passengersToTransports.get(passenger).isAlive());
+
+
         }
         return passengersToTransports.containsKey(passenger) && passengersToTransports.get(passenger).isAlive();
     }

@@ -124,7 +124,7 @@ public class DanceAfterShoot extends Manager {
 
         if (!unit.isAttacking() && unit.noCooldown()) return true;
 
-//        System.out.println("unit.lastAttackFrameAgo = " + lastAttackFrameAgo + " // " + minStop);
+
         return false;
     }
 

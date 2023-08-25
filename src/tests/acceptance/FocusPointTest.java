@@ -26,7 +26,7 @@ public class FocusPointTest extends AbstractTestFakingGame {
         gameCommander = new AtlantisGameCommander();
 
         createWorld(5, () -> {
-//            System.out.println("\n===================== FRAME = " + A.now() + " ===========================");
+//            System.err.println("\n===================== FRAME = " + A.now() + " ===========================");
 
             if (A.now() == 1) {
                 firstFrame();

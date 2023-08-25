@@ -60,7 +60,7 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
             }
         }
 
-//        System.out.println(
+
 //            "Existing = " + bunkersWithUnfinished.count()
 //                + " / OneOfWhich = " + bunkersWithUnfinished.first()
 //                + " / NotStarted = " + ConstructionRequests.notStartedOfType(Terran_Bunker).size()

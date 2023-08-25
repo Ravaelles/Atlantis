@@ -60,8 +60,8 @@ public class UnitsArchive {
             );
         }
 
-//        System.out.println();
-//        System.out.println("Damage taken: " + A.ki);
+
+
     }
 
     private static String balancePercentFor(AUnitType type, int balance) {
@@ -110,7 +110,7 @@ public class UnitsArchive {
 
         AUnit ourKiller = ourUnitThatKilledEnemy(enemy);
         if (ourKiller != null && !enemy.isABuilding()) {
-//            System.out.println(ourKiller.name() + " killed " + enemy.name() + " (worth " + enemy.totalCost() + ")");
+
             ourKillCountersPerUnitTypes.incrementValueFor(ourKiller.type());
             ourKilledResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
         }

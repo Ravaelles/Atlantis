@@ -22,12 +22,12 @@ public class TurretsForNonMain extends TerranTurret {
         if (Count.bases() == 1) return false;
 
         if (handleReinforcePosition(turretForNatural(), 7)) {
-//            System.out.println("Requested TURRET for NATURAL");
+
             return true;
         }
 
         if (handleTurretForAllBases()) {
-//            System.out.println("Requested TURRET for NON MAIN");
+
             return true;
         }
 

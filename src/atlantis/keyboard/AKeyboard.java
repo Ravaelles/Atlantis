@@ -46,7 +46,7 @@ public class AKeyboard implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-//        System.out.println("Key pressed code: " + e.getKeyCode());
+
         consumeEvent(e);
 
         switch (e.getKeyCode()) {
@@ -84,7 +84,7 @@ public class AKeyboard implements NativeKeyListener {
             case 3658:
             case 26:
                 GameSpeed.changeSpeedBy(+40);
-//                System.out.println("Notice: SPEED SLOWER (" + GameSpeed.gameSpeed + ")");
+
                 break;
 
             // Keys "+" and NumPad "+" and "]"
@@ -92,7 +92,7 @@ public class AKeyboard implements NativeKeyListener {
             case 3662:
             case 27:
                 GameSpeed.changeSpeedBy(-40);
-//                System.out.println("Notice: SPEED FASTER (" + GameSpeed.gameSpeed + ")");
+
                 break;
 
             // Key "1"
@@ -181,7 +181,7 @@ public class AKeyboard implements NativeKeyListener {
 
 //    @Override
 //    public void nativeKeyReleased(NativeKeyEvent e) {
-//        System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
+
 //    }
 
     @Override

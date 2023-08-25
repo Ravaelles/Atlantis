@@ -187,9 +187,9 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
                     fogged(AUnitType.Zerg_Lurker, outsideRange)
             };
 
-//            System.out.println("our = " + our);
-//            System.out.println("skippedTank1 = " + skippedTank1);
-//            System.out.println("skippedTank2 = " + skippedTank2);
+//            System.err.println("our = " + our);
+//            System.err.println("skippedTank1 = " + skippedTank1);
+//            System.err.println("skippedTank2 = " + skippedTank2);
 
             mockOtherStaticClasses();
             beforeTestLogic();

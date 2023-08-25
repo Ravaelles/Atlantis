@@ -220,7 +220,7 @@ public class AMap {
 //        Collection<AChoke> chokes = baseRegion.chokes();
 //        for (AChoke choke : chokes) {
 //            if (baseRegion.chokes().contains(choke)) {
-//                System.out.println("Disabling choke point: " + APosition.create(choke.getCenter()));
+//                System.err.println("Disabling choke point: " + APosition.create(choke.getCenter()));
 //                Chokes.disabledChokes.add(choke);    //choke.setDisabled(true);
 //            }
 //        }

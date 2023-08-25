@@ -851,7 +851,6 @@ public class AAdvancedPainter extends APainter {
 
             // Paint hash + unit ID and unit action e.g. "ENGAGE", "ATTACK_UNIT" etc
             String action = unit.action() != null ? unit.action().toString() : null;
-            System.out.println(action + " // " + ("ATTACK_UNIT".equals(action)));
             if ("ATTACK_UNIT".equals(action)) {
                 action += ":" + unit.target().type();
             }
@@ -1519,9 +1518,7 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintTurretsInMain() {
         ArrayList<APosition> turrets = (new TurretsForMain()).positionsForTurretsNearMainBorder();
-//        System.out.println("turrets = " + turrets.size());
         for (APosition turret : turrets) {
-//            System.out.println("turret = " + turret);
             paintRectangle(turret, 34, 34, Color.Purple);
             paintRectangle(turret.translateByPixels(1, 1), 32, 32, Color.Purple);
             paintTextCentered(turret.translateByPixels(17, 12), "Turret", Color.Purple);

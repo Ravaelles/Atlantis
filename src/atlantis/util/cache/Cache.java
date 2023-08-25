@@ -61,7 +61,7 @@ public class Cache<V> {
         if (value != null) {
             if (value instanceof AFocusPoint) {
                 if (((AFocusPoint) value).isValid()) {
-//                    System.out.println("Valid focus: " + value);
+
                     return value;
                 }
             }

@@ -128,12 +128,7 @@ public class Path {
 
         // If not reachable based on previous paths to this area
         if (target.isValid(JBWEB.game) && JBWEB.mapBWEM.getMap().getArea(target) != null && wall.wallWalkable(new TilePosition(source.x, source.y))) {
-            System.out.println("unitPathCache = " + unitPathCache);
-            System.out.println("unitPathCache.notReachableThisFrame = " + unitPathCache.notReachableThisFrame);
             Area area = JBWEB.mapBWEM.getMap().getArea(target);
-            System.out.println("area = " + area);
-            System.out.println("unitPathCache.notReachableThisFrame.get(area) = " + unitPathCache.notReachableThisFrame.get(area));
-            System.out.println("JBWEB.game.getFrameCount() = " + JBWEB.game.getFrameCount());
             int checkReachable = unitPathCache.notReachableThisFrame.getOrDefault(area, JBWEB.game.getFrameCount());
             if (checkReachable >= JBWEB.game.getFrameCount() && JBWEB.game.getFrameCount() > 0) {
                 reachable = false;
@@ -208,11 +203,6 @@ public class Path {
                 TilePosition next = new TilePosition(tile.x + d.x, tile.y + d.y);
 
                 if (next.isValid(JBWEB.game)) {
-                    System.out.println("A wall = " + wall);
-                    System.out.println("B parentGrid = " + parentGrid);
-                    System.out.println("C parentGrid = " + parentGrid[next.x]);
-                    System.out.println("D parentGrid = " + parentGrid[next.x][next.y]);
-
                     // If next has a parent or is a collision, continue
                     if (
                         parentGrid[next.x] == null

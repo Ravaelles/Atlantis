@@ -37,7 +37,7 @@ public class DontInterruptShootingUnits extends Manager {
     private boolean act() {
 //        if (true) return false;
 
-//        System.out.println("unit.meleeEnemiesNear(1.9) = " + unit.meleeEnemiesNear(MELEE_ENEMIES_RANGE));
+
 //        int enemiesMultiplier = unit.medicNear() ? 1 : unit.meleeEnemiesNear(MELEE_ENEMIES_RANGE);
 //        if (unit.hp() <= (Enemy.protoss() ? 18 : 8) * enemiesMultiplier) {
 //            APainter.paintCircleFilled(unit, 10, Color.Purple);
@@ -61,7 +61,7 @@ public class DontInterruptShootingUnits extends Manager {
 //        if (allowUnitToLoadToTransport(unit)) {
 //            unit.setTooltip("Load");
 //            APainter.paintRectangle(unit.translateByPixels(-5, 0), 10, 3, Color.Blue);
-////            System.out.println(A.now() + " TRANSP");
+
 //            return true;
 //        }
 

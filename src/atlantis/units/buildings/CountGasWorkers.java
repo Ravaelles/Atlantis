@@ -11,11 +11,11 @@ public class CountGasWorkers {
         for (AUnit worker : Select.ourWorkers().inRadius(12, gasBuilding).list()) {
 //            if (worker.isGatheringGas() || (worker.isCarryingGas() && worker.) {
 //            if (worker.isCarryingGas()) {
-//                System.out.println("carrying gas, " + worker.orderTarget() + " / " + worker.isMoving() + " / " + worker.action());
+
 //            }
 
             if (worker.isGatheringGas() || worker.isAction(Actions.GATHER_GAS)) {
-//                System.out.println("gathering gas, " + worker.orderTarget() + " / " + worker.isMoving() + " / " + worker.action());
+
                 total++;
             }
         }

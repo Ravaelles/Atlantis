@@ -25,7 +25,7 @@ public class TerranKilledBuilderCommander extends Commander {
         AUnit worker = Select.ourWorkers().notGathering().nearestTo(building);
         if (worker != null) {
             worker.doRightClickAndYesIKnowIShouldAvoidUsingIt(building);
-//            System.out.println("Assigned now CSV to previously KILLED " + building.type());
+
         }
     }
 

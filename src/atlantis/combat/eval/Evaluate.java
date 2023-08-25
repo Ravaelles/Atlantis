@@ -121,9 +121,9 @@ public class Evaluate {
 //    }
 
     private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
-//        System.out.println("\nevaluate = " + evaluate);
-//        System.out.println("evaluate isLockedDown = " + evaluate.isLockedDown());
-//        System.out.println("evaluate isStasised = " + evaluate.isStasised());
+
+
+
         if (evaluate.isStasised() || evaluate.isLockedDown()) {
             return 0;
         }
@@ -132,7 +132,7 @@ public class Evaluate {
     }
 
 //    private static double evaluateUnitHPandDamage(AUnit evaluate, AUnit againstUnit) {
-////        System.out.println(evaluate.getType() + " damage: " + evaluate.getType().getGroundWeapon().getDamageNormalized());
+
 //        return evaluateUnitHPandDamage(evaluate, againstUnit);
 //    }
 
@@ -154,7 +154,7 @@ public class Evaluate {
         double damageFactor = damageFactor(type, againstUnit);
         double total = hpFactor + damageFactor;
 
-//        System.out.println(type + " against " + againstUnit.name() + " // "
+
 //                + total + " // "
 //                + damageFactor + " // "
 //                + hpFactor * EVAL_HIT_POINTS_FACTOR + " // "

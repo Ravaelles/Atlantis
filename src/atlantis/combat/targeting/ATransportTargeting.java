@@ -17,20 +17,20 @@ public class ATransportTargeting extends HasUnit {
                 .inRadius(13, unit)
                 .nearestTo(unit);
 
-//        System.out.println("H");
-//        System.out.println(Select.enemy()
+
+
 //                .transports(true));
-//        System.out.println("I");
-//        System.out.println(Select.enemy()
+
+
 //                .transports(true)
 //                .canBeAttackedBy(unit, false, true));
-//        System.out.println("J");
-//        System.out.println(Select.enemy()
+
+
 //                .transports(true)
 //                .canBeAttackedBy(unit, false, true)
 //                .inRadius(13, unit));
-//        System.out.println("K");
-//        System.out.println(Select.enemy()
+
+
 //                .transports(true)
 //                .canBeAttackedBy(unit, false, true)
 //                .inRadius(13, unit)

@@ -21,8 +21,8 @@ public class CombatEvaluatorMeleeTest extends AbstractTestFakingGame {
             double ourEval = our.combatEvalAbsolute();
             double enemyEval = enemy.combatEvalAbsolute();
 
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+//            System.err.println("ourEval = " + ourEval);
+//            System.err.println("enemyEval = " + enemyEval);
 
             /**
              * It only works for Atlantis heuristic model (ACombatEvaluator)
@@ -44,8 +44,8 @@ public class CombatEvaluatorMeleeTest extends AbstractTestFakingGame {
             ourEval = our.combatEvalRelative();
             enemyEval = enemy.combatEvalRelative();
 
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+//            System.err.println("ourEval = " + ourEval);
+//            System.err.println("enemyEval = " + enemyEval);
 
             assertTrue(ourEval > 0);
             assertTrue(enemyEval > 0);

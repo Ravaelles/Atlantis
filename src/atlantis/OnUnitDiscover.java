@@ -15,7 +15,6 @@ public class OnUnitDiscover {
 
         else {
             if (!unit.isRealUnit() && !unit.type().isInvincible()) {
-//                    System.out.println("Neutral unit discovered! " + unit.name());
 //                if (A.isUms()) {
 //                    SpecialActionsCommander.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
 //                }

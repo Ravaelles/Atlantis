@@ -18,12 +18,12 @@ public class InitJBWEB {
 //            Wall wall = Walls.createTWall();
 
 //            if (!wall.getDefenses().isEmpty()) {
-//                System.out.println("Walls.getWalls() = " + Walls.getWalls());
-//                System.out.println("Wall = " + wall);
+
+
 //
 //                wall = Walls.getWall(Chokes.mainChoke().rawChoke());
-//                System.out.println("Walls.getWalls() = " + Walls.getWalls());
-//                System.out.println("Wall = " + wall);
+
+
 //            }
 //            else {
 //                System.err.println("Not able to init wall");

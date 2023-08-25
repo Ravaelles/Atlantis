@@ -25,7 +25,7 @@ public class OnUnitRenegade {
             Atlantis.ourNewUnit(unit);
 
             if (!unit.type().isGasBuildingOrGeyser() && !unit.type().isMineralField()) {
-//                System.out.println("NEW RENEGADE FOR US " + unit.name());
+
                 GoToNeutralNewCompanions.NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = unit;
             }
         }

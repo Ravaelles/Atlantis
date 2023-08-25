@@ -87,7 +87,7 @@ public class ProductionQueueRebuilder {
         // If we don't have this unit, add it to the current production queue.
 //        if (type.is(AUnitType.Protoss_Gateway)) {
 //        if (type.is(AUnitType.Protoss_Zealot)) {
-//            System.out.println(A.supplyUsed() + ",  " + type + " // have("
+
 //                    + weHaveThisManyUnits + ") < need(" + shouldHaveThisManyUnits + ")");
 ////                    + "),   (notStarted = " + ConstructionRequests.countNotStartedConstructionsOfType(type) + ")");
 //        }

@@ -22,7 +22,7 @@ public class UnitsToTargetsWithCacheTest  extends AbstractTestFakingGame {
     @Test
     public void tetsItReturnsTargetsAcquiredInLastNFrames() {
         createWorld(2, () -> {
-//            System.out.println("\n### now = " + A.now());
+//            System.err.println("\n### now = " + A.now());
 
             // === 1 ===========================================
 

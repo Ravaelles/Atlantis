@@ -26,7 +26,7 @@ public class ForbiddenByStreetGrid {
             buildingLeftTx(building, position) % GRID_VALUE <= 1
                 || buildingRightTx(building, position) % GRID_VALUE <= 1
         ) {
-//        System.out.println(building.name() + "   " + position.getTileX() + " // (" + position.getTileX() % GRID_VALUE + ") // "
+
 //                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
 //                (position.getTileX() + building.getDimensionRight() / 32) % GRID_VALUE + ")");
             AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";

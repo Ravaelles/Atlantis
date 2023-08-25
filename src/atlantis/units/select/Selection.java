@@ -1099,7 +1099,7 @@ public class Selection extends BaseSelection {
         System.out.println("=== " + (message != null ? message : currentCachePath) + " (" + size() + ") ===");
         for (AUnit unit : data) {
             System.out.println(unit.toString());
-//            System.out.println(unit.toString() + " / " + unit.getClass());
+
         }
         System.out.println();
         return this;

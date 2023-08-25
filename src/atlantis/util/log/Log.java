@@ -41,7 +41,7 @@ public class Log {
             LogUnitsToFiles.saveUnitLogToFile(message, unit);
         }
 
-//        System.out.println("LOG: " + message);
+
 
         if (messages.size() > limit) {
             messages.remove(0);

@@ -86,7 +86,7 @@ public class TerranBunkerPositionFinder {
                     .translateTilesTowards(naturalBase, 5)
                     .makeWalkable(8);
 
-//                    System.out.println();
+
 //                    System.err.println(nearTo);
 //                    System.err.println("DIST TO CHOKE = " + nearTo.distanceTo(chokepointForNatural.getCenter()));
 //                    System.err.println("DIST TO REGION = " + nearTo.distanceTo(nearTo.getRegion().getCenter()));

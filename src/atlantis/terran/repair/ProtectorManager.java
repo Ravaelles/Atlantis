@@ -33,7 +33,7 @@ public class ProtectorManager extends Manager {
         if (unit.isRepairing()) return true;
 
         target = RepairAssignments.getUnitToProtectFor(unit);
-//        System.out.println("protecting: " + target + "; "  + unit + " (" + unit.action() + ")");
+
 
         if (target == null || !target.isAlive()) {
             unit.setTooltipTactical("Null bunker");

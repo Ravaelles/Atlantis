@@ -170,7 +170,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
-//        System.out.println("New temp target @ " + A.now());
+
 
         if (our == null) {
             return null;

@@ -113,7 +113,7 @@ public class NewConstructionRequest {
         }
 
 //            A.printStackTrace("AFTER ADDED");
-//            System.out.println("# ADDED, constructions = ");
+
 //            A.printList(constructions);
 
         // Rebuild production queue as new building is about to be built
@@ -128,7 +128,7 @@ public class NewConstructionRequest {
         AUnitType requiredBuilding = building.whatIsRequired();
 
         if (requiredBuilding == null) {
-//            System.out.println("requiredBuilding NULL for " + building);
+
             return false;
         }
 

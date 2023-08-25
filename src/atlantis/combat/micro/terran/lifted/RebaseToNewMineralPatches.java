@@ -62,7 +62,7 @@ public class RebaseToNewMineralPatches extends Manager {
         if (liftToFlyFirst(baseLocation)) return true;
 
         double dist = baseLocation.distTo(unit);
-//        System.out.println("Rebase" + A.dist(dist));
+
 
         if (dist >= 7) {
             return moveToRebase(baseLocation);

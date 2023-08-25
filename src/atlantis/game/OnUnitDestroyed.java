@@ -12,8 +12,8 @@ import atlantis.units.select.Select;
 
 public class OnUnitDestroyed {
     public static void update(AUnit unit) {
-//        System.out.println("DESTROYED UNIT " + unit + " // @" + unit.id());
-//        System.out.println("DESTROYED " + unit.idWithHash() + " " + unit.name());
+
+
 
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {

@@ -22,7 +22,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
         createWorld(1, () -> {
             FakeUnit enemy = nearestEnemy(marine);
 
-//            System.out.println("Test print:");
+//            System.err.println("Test print:");
 //            Select.our().print();
 //            Select.enemy().print();
 
@@ -32,8 +32,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             ourEval = marine.combatEvalAbsolute();
             enemyEval = enemy.combatEvalAbsolute();
 
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+//            System.err.println("ourEval = " + ourEval);
+//            System.err.println("enemyEval = " + enemyEval);
 
             assertTrue(ourEval < 0);
             assertTrue(enemyEval < 0);
@@ -43,8 +43,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             ourEval = marine.combatEvalRelative();
             enemyEval = enemy.combatEvalRelative();
 
-//            System.out.println("-- ourEval = " + ourEval);
-//            System.out.println("-- enemyEval = " + enemyEval);
+//            System.err.println("-- ourEval = " + ourEval);
+//            System.err.println("-- enemyEval = " + enemyEval);
 
             assertTrue(valueAround(0.0024, ourEval));
             assertTrue(valueAround(408, enemyEval));
@@ -62,8 +62,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
                 ourEval = marine.combatEvalRelative();
                 enemyEval = enemy.combatEvalRelative();
 
-//                System.out.println("-- ourEval = " + ourEval);
-//                System.out.println("-- enemyEval = " + enemyEval);
+//                System.err.println("-- ourEval = " + ourEval);
+//                System.err.println("-- enemyEval = " + enemyEval);
 
                 assertTrue(ourEval < 0.9);
                 assertTrue(enemyEval > 1.1);
@@ -93,8 +93,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
                 ourEval = marine.combatEvalRelative();
                 enemyEval = enemy.combatEvalRelative();
 
-//                System.out.println("-- ourEval = " + ourEval);
-//                System.out.println("-- enemyEval = " + enemyEval);
+//                System.err.println("-- ourEval = " + ourEval);
+//                System.err.println("-- enemyEval = " + enemyEval);
 
                 assertTrue(ourEval < 0.2);
                 assertTrue(enemyEval > 3);
@@ -120,8 +120,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
                 ourEval = marine.combatEvalRelative();
                 enemyEval = enemy.combatEvalRelative();
 
-//                System.out.println("-- ourEval = " + ourEval);
-//                System.out.println("-- enemyEval = " + enemyEval);
+//                System.err.println("-- ourEval = " + ourEval);
+//                System.err.println("-- enemyEval = " + enemyEval);
 
                 assertTrue(valueAround(1, ourEval));
                 assertTrue(valueAround(1, enemyEval));
@@ -145,8 +145,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
                 ourEval = marine.combatEvalRelative();
                 enemyEval = marine.nearestEnemy().combatEvalRelative();
 
-//                System.out.println("-- ourEval = " + ourEval);
-//                System.out.println("-- enemyEval = " + enemyEval);
+//                System.err.println("-- ourEval = " + ourEval);
+//                System.err.println("-- enemyEval = " + enemyEval);
 
                 assertTrue(valueAround(0.73, ourEval / enemyEval));
             },
@@ -170,8 +170,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
                 ourEval = marine.combatEvalRelative();
                 enemyEval = marine.nearestEnemy().combatEvalRelative();
 
-//                System.out.println("-- ourEval = " + ourEval);
-//                System.out.println("-- enemyEval = " + enemyEval);
+//                System.err.println("-- ourEval = " + ourEval);
+//                System.err.println("-- enemyEval = " + enemyEval);
 
                 assertTrue(ourEval * 300 < enemyEval);
             },
@@ -196,8 +196,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
                 ourEval = marine.combatEvalRelative();
                 enemyEval = marine.nearestEnemy().combatEvalRelative();
 
-//                System.out.println("-- ourEval = " + ourEval);
-//                System.out.println("-- enemyEval = " + enemyEval);
+//                System.err.println("-- ourEval = " + ourEval);
+//                System.err.println("-- enemyEval = " + enemyEval);
 
                 assertTrue(valueAround(1.01, ourEval / enemyEval));
             },
@@ -220,8 +220,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
                 double ourEvalAbsolute = marine.combatEvalAbsolute();
 //                double enemyEval = enemy.combatEvalRelative();
 
-//                System.out.println("ourEvalRelative = " + ourEvalRelative);
-//                System.out.println("ourEvalAbsolute = " + ourEvalAbsolute);
+//                System.err.println("ourEvalRelative = " + ourEvalRelative);
+//                System.err.println("ourEvalAbsolute = " + ourEvalAbsolute);
 
                 assertTrue(marine.combatEvalRelative() > 0);
                 assertTrue(marine.combatEvalAbsolute() < 0);
@@ -278,8 +278,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
                 double ourEval = marine.combatEvalAbsolute();
                 double enemyEval = enemyMarine.combatEvalAbsolute();
 
-//                System.out.println("ourEval = " + ourEval);
-//                System.out.println("enemyEval = " + enemyEval);
+//                System.err.println("ourEval = " + ourEval);
+//                System.err.println("enemyEval = " + enemyEval);
 
                 assertTrue(ourEval < 0);
                 assertTrue(ourEval == enemyEval);
@@ -296,8 +296,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon = fakeEnemy(Protoss_Photon_Cannon, 92));
             EnemyUnitsUpdater.weDiscoveredEnemyUnit(fakeEnemy(Protoss_Gateway, 93));
 
-//            System.out.println("wraith = " + wraith);
-//            System.out.println("cannon = " + cannon);
+//            System.err.println("wraith = " + wraith);
+//            System.err.println("cannon = " + cannon);
 //
 //            wraith.enemiesNear().print("Enemies of " + wraith);
 //            cannon.enemiesNear().print("Enemies of " + cannon);
@@ -311,8 +311,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             double ourEval = wraith.combatEvalRelative();
             double enemyEval = cannon.combatEvalRelative();
 
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+//            System.err.println("ourEval = " + ourEval);
+//            System.err.println("enemyEval = " + enemyEval);
 
             assertTrue(ourEval > 0);
             assertTrue(enemyEval > 0);
@@ -322,8 +322,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //            double ourEval = wraith.combatEvalAbsolute();
 //            double enemyEval = cannon.combatEvalAbsolute();
 //
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+//            System.err.println("ourEval = " + ourEval);
+//            System.err.println("enemyEval = " + enemyEval);
 //
 //            assertTrue(ourEval > 0);
 //            assertTrue(enemyEval > 0);
@@ -338,11 +338,11 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             FakeUnit dragoon1 = (FakeUnit) Select.enemies(Protoss_Dragoon).first();
             FakeUnit dragoon2 = (FakeUnit) Select.enemies(Protoss_Dragoon).second();
 
-//            System.out.println("Dragoon isLockedDown = " + dragoon1.isLockedDown());
-//            System.out.println("Dragoon isStasised = " + dragoon2.isStasised());
+//            System.err.println("Dragoon isLockedDown = " + dragoon1.isLockedDown());
+//            System.err.println("Dragoon isStasised = " + dragoon2.isStasised());
 //
 //            Select.our().print("Our");
-//            System.out.println("wraith = " + wraith);
+//            System.err.println("wraith = " + wraith);
 //            wraith.enemiesNear().print("Enemies near");
 
             assertEquals(2, wraith.enemiesNear().size());
@@ -353,8 +353,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             ourEval = wraith.combatEvalAbsolute();
             enemyEval = dragoon1.combatEvalAbsolute();
 
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+//            System.err.println("ourEval = " + ourEval);
+//            System.err.println("enemyEval = " + enemyEval);
 
             assertTrue(ourEval == -1);
             assertTrue(enemyEval < -300);
@@ -362,8 +362,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             ourEval = wraith.combatEvalRelative();
             enemyEval = dragoon1.combatEvalRelative();
 
-//            System.out.println("ourEval = " + ourEval);
-//            System.out.println("enemyEval = " + enemyEval);
+//            System.err.println("ourEval = " + ourEval);
+//            System.err.println("enemyEval = " + enemyEval);
 
             assertTrue(ourEval >= 9800);
             assertTrue(enemyEval < 0.4);
@@ -382,14 +382,14 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 
 //                Select.our().print("Our");
 //                wraith.enemiesNear().print("Enemies near " + wraith);
-//                System.out.println("cannon1 = " + cannon1);
+//                System.err.println("cannon1 = " + cannon1);
 //                cannon1.enemiesNear().print("Cannon enemies nearby");
 
                 double ourEval = wraith.combatEvalRelative();
                 double enemyEval = enemy.combatEvalRelative();
 
-//                System.out.println("ourEval = " + ourEval);
-//                System.out.println("enemyEval = " + enemyEval);
+//                System.err.println("ourEval = " + ourEval);
+//                System.err.println("enemyEval = " + enemyEval);
 //
                 assertEquals(2, wraith.enemiesNear().size());
                 assertTrue(ourEval < enemyEval);

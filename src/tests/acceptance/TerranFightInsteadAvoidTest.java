@@ -17,12 +17,12 @@ public class TerranFightInsteadAvoidTest extends AbstractTestFakingGame {
         createWorld(1, () -> {
             TerranFightInsteadAvoid manager = new TerranFightInsteadAvoid(ourWraith);
 
-            System.out.println("manager.applies() = " + manager.applies());
-            System.out.println("manager.invoke() = " + manager.invoke());
+            System.err.println("manager.applies() = " + manager.applies());
+            System.err.println("manager.invoke() = " + manager.invoke());
             assertTrue(manager.applies());
             assertTrue(manager.equals(manager.invoke()));
 
-            System.out.println(ourWraith.managerLogs().toString());
+            System.err.println(ourWraith.managerLogs().toString());
         });
     }
 

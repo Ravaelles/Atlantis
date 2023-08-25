@@ -84,7 +84,7 @@ public class ARunningManager {
     private boolean handleContinueRunning() {
         if (unit.isRunning()) {
             if (unit.lastStartedRunningLessThanAgo(5)) {
-//                System.out.println("@ " + A.now() + " - StartedRunning " + unit.idWithHash() + " / " + unit.lastStartedRunningAgo());
+
                 return true;
             }
 
@@ -111,8 +111,8 @@ public class ARunningManager {
     private HasPosition adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(HasPosition runAwayFrom) {
         Selection friendsVeryNear = unit.friendsNear().inRadius(1.2, unit);
         if (friendsVeryNear.size() == 1) {
-//            System.out.println("runAwayFrom = " + runAwayFrom);
-//            System.out.println("and now = " + runAwayFrom.translatePercentTowards(20, friendsVeryNear.first()));
+
+
             return runAwayFrom.translatePercentTowards(35, friendsVeryNear.first());
         }
 

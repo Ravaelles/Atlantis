@@ -81,7 +81,7 @@ public class Construction implements Comparable<Construction> {
         AUnit optimalBuilder = GetOptimalBuilder.forPosition(this, productionOrder);
 
         if (optimalBuilder != null) {
-//            System.out.println("@ " + A.now() + " - optimalBuilder " + optimalBuilder);
+
             builder = optimalBuilder;
         }
         else {

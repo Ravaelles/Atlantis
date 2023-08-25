@@ -72,7 +72,7 @@ public class ConstructionsCommander extends Commander {
                     if (construction.friendsNear().workers().inRadius(0.6, construction).empty()) {
                         worker.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction);
                         worker.setTooltip("ConstructionUglyFix");
-//                        System.out.println("### ConstructionUglyFix on " + construction);
+
                         return;
                     }
                 }
@@ -139,12 +139,12 @@ public class ConstructionsCommander extends Commander {
      * If building is completed, mark construction as finished and remove it.
      */
     private void checkForConstructionStatusChange(Construction order, AUnit building) {
-//        System.out.println("==============");
-//        System.out.println(order.buildingType());
-//        System.out.println(order.status());
-//        System.out.println(order.builder());
+
+
+
+
 //        if (building != null) {
-//            System.out.println(building + " // " + building.hp() + " // " + building.isAlive() + " // " + building.exists());
+
 //        }
 
         if (
@@ -177,13 +177,13 @@ public class ConstructionsCommander extends Commander {
 
                 // Builder did not change it's type so it's not Zerg Extractor case
                 else {
-//                    System.out.println("getBuildType = " + construction.getBuilder().getBuildType());
-//                    System.out.println("getBuildUnit = " + construction.getBuilder().getBuildUnit());
-//                    System.out.println("getTarget = " + construction.getBuilder().getTarget());
-//                    System.out.println("getOrderTarget = " + construction.getBuilder().getOrderTarget());
-//                    System.out.println("Constr = " + construction.getConstruction());
-//                    System.out.println("Exists = " + construction.getBuilder().exists());
-//                    System.out.println("Completed = " + construction.getBuilder().isCompleted());
+
+
+
+
+
+
+
                     AUnit buildUnit = builder.buildUnit();
                     if (buildUnit != null) {
                         building = buildUnit;
@@ -261,7 +261,7 @@ public class ConstructionsCommander extends Commander {
 
             // If it has less than 71HP or less than 60% and is close to being finished
             if (building.hp() <= 32 || building.getRemainingBuildTime() <= 30) {
-//                System.out.println("Construction under attack - cancel! " + building.lastUnderAttackLessThanAgo(20));
+
                 order.cancel();
             }
         }

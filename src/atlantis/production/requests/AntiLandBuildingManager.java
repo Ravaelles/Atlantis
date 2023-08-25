@@ -179,7 +179,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
         AUnitType building = type();
 
-//        System.out.println(building + " // " + AGame.hasTechAndBuildingsToProduce(building));
+
 
         AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
         if (previousBuilding != null) {

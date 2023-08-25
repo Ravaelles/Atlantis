@@ -258,14 +258,14 @@ public class FakeUnit extends AUnit {
         int dx = otherUnit.x() - position.x();
         int dy = otherUnit.y() - position.y();
 
-//        System.out.println("this = " + this.position + " // " + this);
-//        System.out.println("otherUnit = " + ((FakeUnit) otherUnit).position);
-//        System.out.println("dx = " + dx + ", dy = " + dy);
-//        System.out.println("Fake dist = " + (Math.sqrt(dx * dx + dy * dy) / 32.0));
+//        System.err.println("this = " + this.position + " // " + this);
+//        System.err.println("otherUnit = " + ((FakeUnit) otherUnit).position);
+//        System.err.println("dx = " + dx + ", dy = " + dy);
+//        System.err.println("Fake dist = " + (Math.sqrt(dx * dx + dy * dy) / 32.0));
 
-//        System.out.println("X =  " + otherUnit.x() + " // " + position.x() + " // " + dx);
-//        System.out.println("Y =  " + otherUnit.y() + " // " + position.y() + " // " + dy);
-//        System.out.println("Length = " + Math.sqrt(dx * dx + dy * dy) / 32.0);
+//        System.err.println("X =  " + otherUnit.x() + " // " + position.x() + " // " + dx);
+//        System.err.println("Y =  " + otherUnit.y() + " // " + position.y() + " // " + dy);
+//        System.err.println("Length = " + Math.sqrt(dx * dx + dy * dy) / 32.0);
 
         return Math.sqrt(dx * dx + dy * dy) / 32.0;
     }
@@ -311,10 +311,10 @@ public class FakeUnit extends AUnit {
     public boolean attackUnit(AUnit target) {
         lastCommand = "AttackUnit";
         this.target = (FakeUnit) target;
-//        System.out.println("### ATTACK");
-//        System.out.println("target = " + target);
-//        System.out.println("target.targetPosition() = " + target.position());
-//        System.out.println("### End of ATTACK");
+//        System.err.println("### ATTACK");
+//        System.err.println("target = " + target);
+//        System.err.println("target.targetPosition() = " + target.position());
+//        System.err.println("### End of ATTACK");
         targetPosition = target.position();
         return true;
     }

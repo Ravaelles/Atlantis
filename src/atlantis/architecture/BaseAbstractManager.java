@@ -37,7 +37,7 @@ public abstract class BaseAbstractManager {
 
     public Manager instantiateManager(Class<? extends Manager> classObject) {
         try {
-//            System.out.println(classObject.getDeclaredConstructor(AUnit.class));
+
             return classObject.getDeclaredConstructor(AUnit.class).newInstance(unit);
         } catch (InvocationTargetException e) {
             System.err.println("There was an error in constructor of:\n");

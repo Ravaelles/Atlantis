@@ -196,7 +196,7 @@ public class AGame {
 
         if (!AGame.umsMode) {
             AGame.umsMode = true;
-            System.out.println("### UMS mode enabled! ###");
+            A.println("### UMS mode enabled! ###");
 
             MissionChanger.forceMissionAttack("UmsAlwaysAttack");
         }

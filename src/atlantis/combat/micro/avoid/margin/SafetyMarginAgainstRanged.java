@@ -38,7 +38,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         criticalDist += shouldRetreatBonus(defender);
 //            addBuildingBonus(attacker, criticalDist)
 //        if (attacker.isCombatBuilding()) {
-//            System.out.println(defender + ", CRIT_DIST = " + criticalDist + " // " + addBuildingBonus(attacker, criticalDist));
+
 //        }
 
         // ==============================================

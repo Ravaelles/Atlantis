@@ -30,7 +30,7 @@ public interface AUnitOrders {
 
     default boolean attackUnit(AUnit target) {
 //        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
-//            System.out.println(
+
 //                    "@ @" + A.now() + " ATTACK  / " +
 //                            "" + unit().typeWithHash() + " // " +
 //                            "cooldown " + unit().cooldownRemaining()+ " // " +
@@ -88,7 +88,7 @@ public interface AUnitOrders {
             return false;
         }
 
-//        System.out.println("                  ------> ATTACK #" + target);
+
 
         // Do NOT issue double orders
 //        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
@@ -121,7 +121,7 @@ public interface AUnitOrders {
             u().attack(target.p());
             unit().setAction(Actions.ATTACK_POSITION);
 
-//            System.out.println("--------- SHOOT AT POSITION " + target.position() + " // #" + u().getID());
+
             return true;
         }
 
@@ -222,7 +222,7 @@ public interface AUnitOrders {
 //        }
 //
 //        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
-//            System.out.println(u().getID() + " MOVE at @" + A.now());
+
 //        if (!unit().isMoving() || A.now() % 4 != 0) {
 //        if (!unit().isUnitActionMove() || A.now() % 5 == 0) {
 
@@ -235,7 +235,7 @@ public interface AUnitOrders {
             }
 
 //            if (unit().isFirstCombatUnit()) {
-//                System.out.println(A.now() + " move");
+
 //            }
             u().move(target.position().p());
 
@@ -346,7 +346,7 @@ public interface AUnitOrders {
     // Bugged, doesn't work
 //    default boolean returnCargo() {
 //        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-//            System.out.println("RETURN_CARGO @" + A.now() + " / " + unit().typeWithHash());
+
 //        }
 //
 //        AUnit base = Select.ourBases().nearestTo(unit());
@@ -691,7 +691,7 @@ public interface AUnitOrders {
      */
 //    default boolean useTech(TechType tech) {
 //        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
-//            System.out.println("TECH_1 @" + A.now() + " / " + unit().typeWithHash());
+
 //        }
 //
 //        unit().setAction(UnitActions.USING_TECH, tech, null);

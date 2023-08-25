@@ -58,13 +58,13 @@ public class ADetectorRequest {
 
     private static void requestDetectorConstruction(AUnitType detectorBuilding) {
         int detectors = ConstructionRequests.countExistingAndNotFinished(detectorBuilding);
-//        System.out.println("detectors = " + detectors);
+
 
         // === Ensure parent exists ========================================
 
         int requiredParents = ConstructionRequests.countExistingAndNotFinished(detectorBuilding.whatIsRequired());
         if (requiredParents == 0) {
-//            System.out.println("Detector dependency requested: " + detectorBuilding.getWhatIsRequired().name());
+
             AddToQueue.withTopPriority(detectorBuilding.whatIsRequired());
             return;
         }
@@ -77,7 +77,7 @@ public class ADetectorRequest {
             );
 
             for (int i = 0; i <= 2 - numberOfDetectorsNearBase; i++) {
-//                System.out.println("Detector construction (" + detectorBuilding.name() + ") requested!");
+
                 AddToQueue.withTopPriority(detectorBuilding, base.position());
             }
         }

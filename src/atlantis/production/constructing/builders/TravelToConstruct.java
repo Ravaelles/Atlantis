@@ -61,7 +61,7 @@ public class TravelToConstruct extends HasUnit {
 
         if (shouldRefreshConstructionPosition(construction, buildingType)) {
             APosition positionForNewBuilding = construction.findPositionForNewBuilding();
-//            System.out.println("UPDATED positionForNewBuilding = " + positionForNewBuilding);
+
             if (positionForNewBuilding != null) {
                 construction.setPositionToBuild(positionForNewBuilding);
                 Construction.clearCache();
@@ -185,7 +185,7 @@ public class TravelToConstruct extends HasUnit {
 //            return !AGame.canAfford(
 
 //            if (building.is(AUnitType.Zerg_Spawning_Pool)) {
-//                System.out.println(
+
 //                    "mineralsRes=" + CurrentProductionQueue.resourcesReserved()[0]
 //                    + ", queuePos=" + ProductionQueue.positionInQueue(building)
 //                );

@@ -150,7 +150,7 @@ public class Missions {
 //            }
 
             if (MissionChanger.DEBUG) {
-                System.out.println(
+                A.println(
                     "CHANGED MISSION AT " + A.seconds() + " TO: " + mission.name()
                         + ", reason: " + reason
                 );

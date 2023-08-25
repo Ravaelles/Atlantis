@@ -102,7 +102,7 @@ public class CodeProfiler {
 
         // Iterate through the sorted list and print the entries
 //        for (Map.Entry<String, Double> entry : entryList) {
-//            System.out.println(entry.getKey() + ": " + entry.getValue());
+
 //        }
 
         Map<String, Integer> results = new LinkedHashMap<>();
@@ -116,7 +116,7 @@ public class CodeProfiler {
     // =========================================================
 
     private static void measureAspect(String title) {
-//        System.out.println("title, realNowInMs() = " + title + " / " + realNowInMs());
+
         aspectsStart.put(title, realNowInMs());
     }
 

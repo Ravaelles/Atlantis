@@ -31,7 +31,7 @@ public class BaseSelection {
         if (currentCachePath != null) {
             currentCachePath += (currentCachePath.length() > 0 ? "." : "") + method;
         }
-//        System.out.println("path = " + currentCachePath);
+
         return currentCachePath;
     }
 

@@ -34,7 +34,7 @@ public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
 //            boolean alwaysShow = true;
 
             if (!isSafe || alwaysShow) {
-                System.out.println(A.now()
+                System.err.println(A.now()
                     + " -       " + unit.tooltip()
                     + "\n   Manager : " + unit.manager()
                     + "\n   Managers: " + unit.managerLogs().toString()
@@ -46,7 +46,7 @@ public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
                     + "\n   marine eval = " + unit.combatEvalRelative()
                     + "\n   sunken eval = " + sunken.combatEvalRelative()
                 );
-                System.out.println("_______________________________________");
+                System.err.println("_______________________________________");
             }
 
             assertTrue(isSafe);

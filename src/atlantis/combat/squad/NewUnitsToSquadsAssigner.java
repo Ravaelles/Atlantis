@@ -17,8 +17,8 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
         }
 
         Squad squad = chooseSquadFor();
-//        System.out.println("squad = " + squad);
-//        System.out.println("squad.contains() = " + squad.contains() + " // " + unit.name());
+
+
         if (!squad.contains(unit)) {
             squad.addUnit(unit);
             unit.setSquad(squad);

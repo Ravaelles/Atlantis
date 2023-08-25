@@ -222,7 +222,7 @@ public class ConstructionRequests {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
             if (!construction.hasStarted()) {
-//                System.out.println("Removing all non started buildings due to priority request");
+
                 construction.cancel();
             }
         }

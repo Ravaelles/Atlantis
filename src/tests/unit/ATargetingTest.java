@@ -97,7 +97,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-//            System.out.println("defineBestEnemyToAttackFor = " + ATargeting.defineBestEnemyToAttackFor(our));
+//            System.err.println("defineBestEnemyToAttackFor = " + ATargeting.defineBestEnemyToAttackFor(our));
             assertEquals(templar, ATargeting.defineBestEnemyToAttackFor(our));
         });
     }

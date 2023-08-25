@@ -40,7 +40,7 @@ public class RunInAnyDirection {
 
         // =============================================================================
 
-//        System.out.println("runTo = " + runTo + " // " + unit);
+
         if (
             positionFinder.running.runTo() != null && positionFinder.running.unit().distTo(positionFinder.running.runTo()) <= 0.02
 //                && isPossibleAndReasonablePosition(unit, runTo.position(), true)
@@ -100,7 +100,7 @@ public class RunInAnyDirection {
         positionSearchLoop(radius, potentialPositionsList);
         positionSearchLoop((int) (radius * 0.6), potentialPositionsList);
 
-//        System.out.println("potentialPositionsList = " + potentialPositionsList.size());
+
 
         // =========================================================
         // Find the location that would be most distant to the enemy location

@@ -93,7 +93,7 @@ public class ACachedValue<T> {
     private Double insertDoubleValueForKey(String key, Double value) {
         cachedValues.put(key, (T) value);
         cachedAtFrame.put(key, AGame.now());
-//        System.out.println("Cache between " + key + " at " + AGame.getTimeFrames() + " is " + value);
+
         return value;
     }
 

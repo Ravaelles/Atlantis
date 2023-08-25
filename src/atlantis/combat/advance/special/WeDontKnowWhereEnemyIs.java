@@ -33,7 +33,7 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
     private Manager goToRandomUnexplored() {
         APosition unexploredPosition = AMap.randomUnexploredPosition(unit);
         if (unexploredPosition != null) {
-//            System.out.println("Go to unexplored " + invisiblePosition);
+
             unit.move(unexploredPosition, Actions.MOVE_EXPLORE, "GoToUnexpl", true);
             return usedManager(this);
         }
@@ -44,7 +44,7 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
     private Manager goToRandomInvisible() {
         APosition invisiblePosition = AMap.randomInvisiblePosition(unit);
         if (invisiblePosition != null) {
-//            System.out.println("Go to invisiblePosition " + invisiblePosition);
+
             unit.move(invisiblePosition, Actions.MOVE_EXPLORE, "GoToRand", true);
             return usedManager(this);
         }

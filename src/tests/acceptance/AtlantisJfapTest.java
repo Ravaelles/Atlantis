@@ -35,10 +35,6 @@ public class AtlantisJfapTest extends NonAbstractTestFakingGame {
                 double ourScore = dragoon1.combatEvalAbsolute();
                 double enemyScore = sunkenColony.combatEvalAbsolute();
 
-//                System.out.println();
-//                System.out.println("## our   SCORE = " + ourScore);
-//                System.out.println("## enemy SCORE = " + enemyScore);
-
                 assertTrue(ourScore < -10);
                 assertTrue(enemyScore < -10);
 //                assertTrue(ourScore > enemyScore);
@@ -86,9 +82,9 @@ public class AtlantisJfapTest extends NonAbstractTestFakingGame {
                 double ourScore = marine.combatEvalAbsolute();
                 double enemyScore = hydra.combatEvalAbsolute();
 
-//                System.out.println();
-//                System.out.println("## our   SCORE = " + ourScore);
-//                System.out.println("## enemy SCORE = " + enemyScore);
+//                System.err.println();
+//                System.err.println("## our   SCORE = " + ourScore);
+//                System.err.println("## enemy SCORE = " + enemyScore);
 
                 assertTrue(ourScore < 0);
                 assertTrue(ourScore < enemyScore);

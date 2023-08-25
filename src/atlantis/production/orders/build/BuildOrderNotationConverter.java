@@ -36,15 +36,7 @@
 //    protected static ArrayList<ProductionOrder> convertNotation(ABuildOrder buildOrder) {
 //        ArrayList<ProductionOrder> newInitialQueue = new ArrayList<>();
 //
-////        System.out.println();
-////        System.out.println();
-////        System.out.println("Initial queue");
-////        for (ProductionOrder productionOrder : initialProductionQueue) {
-////            System.out.print(productionOrder.getRawFirstColumnInFile() + ":  ");
-////            System.out.println(productionOrder.name());
-////        }
-////        System.out.println();
-////        System.out.println();
+
 //
 //        int lastSupplyFromFile = -1;
 //        for (int currentSupply = 4; currentSupply <= 200; currentSupply++) {
@@ -77,8 +69,8 @@
 //
 //            // Add build order from file
 //            else {
-////            System.out.println("NAME: " + order.name());
-////            System.out.println("MODIFIER: " + order.getModifier());
+
+
 //
 //                if (order.getModifier() != null && order.getModifier().charAt(0) == 'x' && order.getUpgrade() == null) {
 //                    int timesToMultiply = 1;

@@ -222,8 +222,6 @@ public class JFAP extends AJFAP {
             fu.y += (int) (dy * (fu.speed / Math.sqrt(dx * dx + dy * dy)));
             didSomething = true;
         }
-
-//        System.out.println("Unit x " + fu.x / 32);
     }
 
     private void medicsim(JFAPUnit fu, Set<JFAPUnit> player12) {
