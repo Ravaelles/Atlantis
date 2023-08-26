@@ -339,7 +339,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     @Override
     public String toString() {
-        return idWithHash() + " " + type().name() + " @" + position();
+        if (type() == null) {
+            throw new RuntimeException("wut");
+        }
+        return idWithHash() + " " + (type() != null ? type().name() : "NULL_TYPE") + " @" + position();
     }
 
     @Override
@@ -893,8 +896,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Assign battle squad object for military units.
      */
-    public void setSquad(Squad squad) {
+    public AUnit setSquad(Squad squad) {
         this.squad = squad;
+
+        if (squad != null) squad.addUnit(this);
+
+        return this;
     }
 
     /**
@@ -2063,6 +2070,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public String combatEvalRelativeDigit() {
+        return A.digit(combatEvalRelative());
+    }
+
     public boolean isMedic() {
         return type().isMedic();
     }
@@ -2495,6 +2506,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isMissionAttack() {
         if (mission() == null) return false;
         return mission().isMissionAttack();
+    }
+
+    public boolean isMissionAttackOrGlobalAttack() {
+        return isMissionAttack() || Missions.isGlobalMissionAttack();
     }
 
     public boolean isMissionContain() {

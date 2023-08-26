@@ -14,7 +14,7 @@ import bwapi.UnitType;
 import tests.fakes.FakePlayer;
 
 public class FakeUnit extends AUnit {
-    public static int firstFreeId = 1;
+    public static int firstFreeId = 10;
     public int id;
     public AUnitType rawType;
     public APosition position;
@@ -53,7 +53,7 @@ public class FakeUnit extends AUnit {
 
     @Override
     public String toString() {
-        return "Fake " + super.toString() + " " + position() + (isEnemy() ? " (Enemy)" : "");
+        return "Fake " + super.toString() + (isEnemy() ? " (Enemy)" : "");
     }
 
     public String lastCommand() {

@@ -935,6 +935,10 @@ public class Selection extends BaseSelection {
         return new Selection(newData, null);
     }
 
+    public Selection exclude(Selection otherSelection) {
+        return exclude(otherSelection.list());
+    }
+
     /**
      * Reverse the order in which units are returned.
      */
@@ -988,7 +992,7 @@ public class Selection extends BaseSelection {
     }
 
     /**
-     * Returns true if there're no units that fullfilled all previous conditions.
+     * Returns true if there are no units that fullfilled all previous conditions.
      */
     public boolean isEmpty() {
         return data.size() == 0;

@@ -119,6 +119,11 @@ public class SelectionTest extends AbstractTestWithUnits {
             AUnit zealot = our.first();
             AUnit muta = our.ofType(AUnitType.Zerg_Mutalisk).first();
 
+//            our.exclude(our.combatUnits()).print();
+//            our.inShootRangeOf().print();
+
+            assertEquals(11, our.combatUnits().size());
+
             assertEquals(5, our.havingAntiAirWeapon().size());
             assertEquals(17, our.notHavingAntiAirWeapon().size());
 
@@ -133,6 +138,7 @@ public class SelectionTest extends AbstractTestWithUnits {
             assertEquals(3, zealot.friendsNear().canAttack(zealot, 4.0).size());
 
 //            muta.friendsNear().canBeAttackedBy(muta, 1).print("Test");
+            assertEquals(4, muta.friendsNear().inShootRangeOf(muta).size());
             assertEquals(4, muta.friendsNear().canBeAttackedBy(muta, 1).size());
             assertEquals(9, muta.friendsNear().canBeAttackedBy(muta, 2).size());
 

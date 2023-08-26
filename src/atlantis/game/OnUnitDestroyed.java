@@ -13,8 +13,6 @@ import atlantis.units.select.Select;
 public class OnUnitDestroyed {
     public static void update(AUnit unit) {
 
-
-
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {
             RepairAssignments.removeRepairer(unit);
@@ -25,6 +23,7 @@ public class OnUnitDestroyed {
             }
 
             OurWorkerWasKilled.onWorkedKilled(unit);
+            SquadTransfersCommander.removeUnitFromSquads(unit);
         }
 //        else if (unit.isEnemy() && unit.isRealUnit()) {
         else if (unit.isEnemy()) {
@@ -45,8 +44,6 @@ public class OnUnitDestroyed {
             UnitsArchive.paintLostUnits();
             UnitsArchive.paintKilledUnits();
         }
-
-        SquadTransfersCommander.removeUnitFromSquads(unit);
     }
 
 }

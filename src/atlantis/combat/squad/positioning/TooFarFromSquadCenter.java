@@ -2,6 +2,7 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.combat.missions.Missions;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -23,7 +24,7 @@ public class TooFarFromSquadCenter extends MissionManager {
     private boolean isTooFarFromSquadCenter() {
         if (unit.squad() == null || unit.isTank()) return false;
 
-        if (unit.isMissionAttack()) return false;
+        if (unit.isMissionAttackOrGlobalAttack()) return false;
 
 //        if (unit.distToSquadCenter() >= 15) {
 //            return false;

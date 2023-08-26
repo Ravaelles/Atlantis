@@ -2,6 +2,7 @@ package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 
 public class AdvanceAsALeader extends MissionManager {
@@ -16,7 +17,7 @@ public class AdvanceAsALeader extends MissionManager {
 
     @Override
     protected Manager handle() {
-        if (unit.isMissionAttack()) return null;
+        if (unit.isMissionAttackOrGlobalAttack()) return null;
 
         int cohesionPercent = unit.squad().cohesionPercent();
         int friendsNear = unit.friendsInRadius(7).count();

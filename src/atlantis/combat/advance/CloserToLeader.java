@@ -2,12 +2,13 @@ package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
-public class BeCloseToLeader extends MissionManager {
-    public BeCloseToLeader(AUnit unit) {
+public class CloserToLeader extends MissionManager {
+    public CloserToLeader(AUnit unit) {
         super(unit);
     }
 
@@ -24,8 +25,15 @@ public class BeCloseToLeader extends MissionManager {
     @Override
     protected Manager handle() {
         if (shouldGetBackToLeader()) {
-            unit.move(squad.leader().position(), Actions.MOVE_FORMATION, "CloserToLeader");
-            return usedManager(this);
+            APosition leaderPosition = squad.leader().position();
+            if (leaderPosition != null) {
+                unit.move(
+                    leaderPosition.translateByTiles(0.5, 0),
+                    Actions.MOVE_FORMATION,
+                    "CloserToLeader"
+                );
+                return usedManager(this);
+            }
         }
 
         return null;

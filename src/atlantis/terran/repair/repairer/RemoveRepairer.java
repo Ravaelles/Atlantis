@@ -36,9 +36,12 @@ public class RemoveRepairer extends Manager {
 //            return handleRepairCompletedTryFindingNewTarget();
 //        }
 
-        RepairAssignments.removeRepairer(unit);
-        unit.gatherBestResources();
+        if (target == null || !target.isAlive() || target.isHealthy()) {
+            RepairAssignments.removeRepairer(unit);
+    
+            return usedManager(this);
+        }
 
-        return usedManager(this);
+        return null;
     }
 }

@@ -1,8 +1,10 @@
 package atlantis.architecture;
 
 import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import tests.unit.FakeUnit;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -16,7 +18,7 @@ public abstract class BaseAbstractManager {
 
     public BaseAbstractManager(AUnit unit) {
         this.unit = unit;
-        this.squad = unit.squad();
+        this.squad = (unit != null ? unit.squad() : null);
 
         initializeManagerInstances();
     }

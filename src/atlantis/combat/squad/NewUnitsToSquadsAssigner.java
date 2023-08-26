@@ -18,7 +18,6 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
 
         Squad squad = chooseSquadFor();
 
-
         if (!squad.contains(unit)) {
             squad.addUnit(unit);
             unit.setSquad(squad);

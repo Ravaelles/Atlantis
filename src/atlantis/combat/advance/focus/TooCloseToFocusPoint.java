@@ -1,6 +1,7 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.missions.Missions;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -14,7 +15,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     @Override
     public boolean applies() {
         if (unit.isLoaded()) return false;
-        if (unit.isMissionAttack()) return false;
+        if (unit.isMissionAttackOrGlobalAttack()) return false;
 
         if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_CLOSE) {
             if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;
