@@ -146,7 +146,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     }
 
     protected void mockAtlantisConfig() {
-        AtlantisRaceConfig.MY_RACE = Race.Zerg;
+        AtlantisRaceConfig.MY_RACE = Race.Terran;
         AtlantisRaceConfig.BASE = AUnitType.Terran_Command_Center;
         AtlantisRaceConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
         AtlantisRaceConfig.WORKER = AUnitType.Terran_SCV;

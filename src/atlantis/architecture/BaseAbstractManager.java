@@ -75,6 +75,6 @@ public abstract class BaseAbstractManager {
 
     public String toString() {
         String name = getClass().getSimpleName();
-        return name.substring(0, Math.min(27, name.length()));
+        return A.substring(name.replace("Terran", ""), 0, 30);
     }
 }

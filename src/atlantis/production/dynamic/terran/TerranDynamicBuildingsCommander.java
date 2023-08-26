@@ -18,8 +18,6 @@ import static atlantis.units.AUnitType.*;
 public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
     @Override
     protected void handle() {
-//        super.invoke();
-
         ReinforceBasesWithCombatBuildings.get().invoke();
         (new ReinforceBunkersWithTurrets()).invoke();
         (new TurretNeededHere()).invoke();

@@ -112,7 +112,7 @@ public class SelectionTest extends AbstractTestWithUnits {
     @Test
     public void testVariousMethods() {
         usingFakeOurs(() -> {
-            Select.our().print();
+//            Select.our().print();
 
             Selection our = Select.our();
             AUnit zealot = our.first();

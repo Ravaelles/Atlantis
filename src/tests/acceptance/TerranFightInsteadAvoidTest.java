@@ -1,11 +1,13 @@
 package tests.acceptance;
 
 import atlantis.combat.micro.avoid.terran.TerranFightInsteadAvoid;
+import atlantis.combat.micro.avoid.terran.TerranFightInsteadAvoidAsWraith;
 import atlantis.production.BuildingsCommander;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TerranFightInsteadAvoidTest extends AbstractTestFakingGame {
@@ -17,12 +19,13 @@ public class TerranFightInsteadAvoidTest extends AbstractTestFakingGame {
         createWorld(1, () -> {
             TerranFightInsteadAvoid manager = new TerranFightInsteadAvoid(ourWraith);
 
-            System.err.println("manager.applies() = " + manager.applies());
-            System.err.println("manager.invoke() = " + manager.invoke());
-            assertTrue(manager.applies());
-            assertTrue(manager.equals(manager.invoke()));
+//            System.err.println("manager.applies() = " + manager.applies());
+//            System.err.println("manager.invoke() = " + manager.invoke());
 
-            System.err.println(ourWraith.managerLogs().toString());
+            assertTrue(manager.applies());
+            assertEquals(new TerranFightInsteadAvoidAsWraith(ourWraith), manager.invoke());
+            
+//            System.err.println(ourWraith.managerLogs().toString());
         });
     }
 
@@ -41,10 +44,10 @@ public class TerranFightInsteadAvoidTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateEnemies() {
         return fakeEnemies(
-            fake(AUnitType.Zerg_Creep_Colony, 5),
-            fake(AUnitType.Zerg_Sunken_Colony, 6),
-            fake(AUnitType.Zerg_Spore_Colony, 7),
-            enemyWraith = fake(AUnitType.Terran_Wraith, 24)
+            fake(AUnitType.Zerg_Creep_Colony, 35),
+            fake(AUnitType.Zerg_Sunken_Colony, 36),
+            fake(AUnitType.Zerg_Spore_Colony, 37),
+            enemyWraith = fake(AUnitType.Terran_Wraith, 38)
         );
     }
 }

@@ -16,9 +16,7 @@ public class TerranFightInsteadAvoidAsAir extends Manager {
         if (!unit.isAir() || !unit.hasAnyWeapon()) return false;
         if (!(enemies = unit.enemiesNear()).onlyAir()) return false;
 
-        if (enemies.onlyOfType(unit.type()) && (enemies.size() == 1 || unit.combatEvalRelative() >= 1.1)) {
-            return true;
-        }
+        if (enemies.onlyOfType(unit.type()) && (enemies.size() == 1 || unit.combatEvalRelative() >= 0.85)) return true;
 
         return false;
     }

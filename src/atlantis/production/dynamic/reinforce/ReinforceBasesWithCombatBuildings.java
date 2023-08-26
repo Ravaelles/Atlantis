@@ -2,6 +2,7 @@ package atlantis.production.dynamic.reinforce;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.expansion.AllBasePositions;
 import atlantis.production.dynamic.reinforce.terran.TerranReinforceBasesWithCombatBuildings;
@@ -16,7 +17,12 @@ public abstract class ReinforceBasesWithCombatBuildings extends Commander {
     public static ReinforceBasesWithCombatBuildings get() {
         if (We.terran()) return new TerranReinforceBasesWithCombatBuildings();
 
-        return null;
+        return new ReinforceBasesWithCombatBuildings() {
+            @Override
+            protected void makeSureIsReinforced(HasPosition basePosition) {
+                System.err.println("ReinforceBasesWithCombatBuildings not implemented for " + We.race());
+            }
+        };
     }
 
     @Override
