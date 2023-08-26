@@ -52,6 +52,8 @@ public class ScoutManager extends Manager {
 //            return;
 //        }
 
+        if (unit.isRepairing()) return usedManager(this, "UhmRepairing");
+
         AvoidEnemies avoidEnemies = new AvoidEnemies(unit);
         if (avoidEnemies.invoke() != null && !unit.looksIdle()) {
             return usedManager(avoidEnemies);

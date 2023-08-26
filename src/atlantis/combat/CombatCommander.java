@@ -5,13 +5,11 @@ import atlantis.combat.missions.MissionCommander;
 import atlantis.combat.squad.SquadsCommander;
 
 public class CombatCommander extends Commander {
-
     @Override
     protected Class<? extends Commander>[] subcommanders() {
-        return new Class[] {
+        return new Class[]{
             MissionCommander.class,
             SquadsCommander.class,
         };
     }
-
 }

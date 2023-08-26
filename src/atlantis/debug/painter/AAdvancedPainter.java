@@ -46,6 +46,7 @@ import atlantis.units.buildings.GasBuildingsCommander;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.workers.WorkerRepository;
 import atlantis.util.ColorUtil;
 import atlantis.util.MappingCounter;
@@ -132,7 +133,7 @@ public class AAdvancedPainter extends APainter {
         paintBuildingsTrainingUnitsAndResearching();
         paintBarsUnderUnits();
         paintFoggedUnits();
-        paintCombatUnits();
+        paintDetailedUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
         paintWorkers();
@@ -159,8 +160,12 @@ public class AAdvancedPainter extends APainter {
     /**
      * Painting for combat units can be a little different. Put here all the related code.
      */
-    protected static void paintCombatUnits() {
-        for (AUnit unit : Select.ourCombatUnits().list()) {
+    protected static void paintDetailedUnits() {
+        Selection unitsToPaint = Select.ourCombatUnits().add(Select.ourWorkers());
+        for (AUnit unit : unitsToPaint.list()) {
+            if (unit.isCombatBuilding()) continue;
+            if (unit.isWorker() && unit.lastActionMoreThanAgo(30 * 4)) continue;
+
 //            paintUnitInRangeInfo(unit);
 
             // =========================================================

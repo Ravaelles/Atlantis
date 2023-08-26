@@ -12,7 +12,7 @@ public class CombatUnitManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isCombatUnit();
+        return unit.isCombatUnit() && !unit.isABuilding();
     }
 
     @Override

@@ -72,7 +72,7 @@ public class UnitBeingReparedManager extends Manager {
         }
 
         // Go to repairer if he's close
-        if (distanceToRepairer > 0.2) {
+        if (distanceToRepairer >= 0.1) {
             if (unit.move(repairer.position(), Actions.MOVE_REPAIR, "To repairer", false)) {
                 if (!repairer.isRepairing()) {
                     repairer.repair(unit, ":: rep ::");

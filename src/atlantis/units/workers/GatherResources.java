@@ -2,6 +2,7 @@ package atlantis.units.workers;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 
 public class GatherResources extends Manager {
     public GatherResources(AUnit unit) {
@@ -10,7 +11,7 @@ public class GatherResources extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isWorker();
+        return unit.isWorker() && unit.lastActionMoreThanAgo(15, Actions.REPAIR);
     }
 
     protected Manager handle() {
