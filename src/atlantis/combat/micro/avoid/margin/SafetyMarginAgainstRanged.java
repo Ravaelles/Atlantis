@@ -120,7 +120,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             + defender.woundPercent() / 70.0
             + (defender.isMoving() ? 0.5 : 0)
             + (defender.isAir() ? -0.9 : 0)
-            + (defender.lastUnderAttackMoreThanAgo(30 * 100) ? -0.9 : 0);
+            + (defender.lastUnderAttackMoreThanAgo(30 * 100) ? -1.5 : 0);
     }
 
 //    private double extraMarginAgainstCombatBuilding(AUnit attacker) {

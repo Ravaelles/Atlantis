@@ -517,14 +517,14 @@ public class Selection extends BaseSelection {
 
     public Selection combatBuildingsAntiLand() {
         return cloneByRemovingIf(
-            (unit -> unit.is(AUnitType.Protoss_Photon_Cannon, AUnitType.Terran_Bunker, AUnitType.Zerg_Sunken_Colony)),
+            (unit -> !unit.is(AUnitType.Protoss_Photon_Cannon, AUnitType.Terran_Bunker, AUnitType.Zerg_Sunken_Colony)),
             "combatBuildingsAntiLand"
         );
     }
 
     public Selection combatBuildingsAntiAir() {
         return cloneByRemovingIf(
-            (unit -> unit.is(
+            (unit -> !unit.is(
                 AUnitType.Protoss_Photon_Cannon,
                 AUnitType.Terran_Bunker,
                 AUnitType.Terran_Missile_Turret,

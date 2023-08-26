@@ -239,4 +239,8 @@ public class GameSpeed {
     private static String currentSpeedAndFrameSkip() {
         return "speed = " + gameSpeed + ", frame skip = " + frameSkip;
     }
+
+    public static void changeSpeedToNormal() {
+        changeSpeedTo(20);
+    }
 }

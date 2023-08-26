@@ -18,13 +18,13 @@ public class ChangeLocationIfRanTooLong extends Manager {
     @Override
     public boolean applies() {
         if (unit.isGroundUnit()) return false;
-//        if (unit.isMoving()) return false;
         if (unit.looksIdle()) return false;
+        if (unit.enemiesNear().air().notEmpty()) return false;
 
         Selection enemiesNear = unit.enemiesNear();
 
         if (enemiesNear.nonBuildings().canBeAttackedBy(unit, 0.95).notEmpty()) return false;
-        
+
         if (unit.didntShootRecently(7)) return true;
 
         if (enemiesNear.inRadius(14, unit).empty()) return false;

@@ -2,7 +2,6 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.fight.FightInsteadAvoid;
 import atlantis.combat.micro.avoid.terran.TerranAlwaysAvoidAsTerran;
 import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
@@ -10,12 +9,12 @@ import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.util.Enemy;
 
-public class AttackInsteadAvoid extends Manager {
+public class FightInsteadAvoid extends Manager {
     private TerranAlwaysAvoidAsTerran shouldAlwaysAvoidAsTerran;
     private ShouldAlwaysAvoidAsZerg shouldAlwaysAvoidAsZerg;
     private final Units enemies;
 
-    public AttackInsteadAvoid(AUnit unit, Units enemies) {
+    public FightInsteadAvoid(AUnit unit, Units enemies) {
         super(unit);
         shouldAlwaysAvoidAsTerran = new TerranAlwaysAvoidAsTerran(unit);
         shouldAlwaysAvoidAsZerg = new ShouldAlwaysAvoidAsZerg(unit);
@@ -50,7 +49,7 @@ public class AttackInsteadAvoid extends Manager {
             return false;
         }
 
-        if (new FightInsteadAvoid(unit, enemies).shouldFight()) {
+        if (new atlantis.combat.micro.avoid.fight.FightInsteadAvoid(unit, enemies).shouldFight()) {
             unit.addLog("SHOULD FightInsteadAvoid");
             return true;
         }

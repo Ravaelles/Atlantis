@@ -34,6 +34,13 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
+        else if (MapAndRace.isMap("Wraith_v_Wraith")) {
+            if (A.now() <= 1) GameSpeed.changeSpeedToNormal();
+            if (A.seconds() <= 3) CameraCommander.centerCameraOn(Select.ourCombatUnits().first());
+        }
+
+        // =========================================================
+
         else if (
             MapAndRace.isMap("rav/Dragoon_v_Zealot")
                 || MapAndRace.isMap("rav/Dragoons_v_Zealots")

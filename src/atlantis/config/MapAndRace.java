@@ -98,6 +98,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/M&M_v_Cannons.scx";
 
         // vs Terran
+//        if (true) return "ums/rav/Wraith_v_Wraith.scm";
         if (true) return "ums/rav/Wraiths_v_Base.scx";
 //@        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/Tanks_v_Tanks_in_line.scx";

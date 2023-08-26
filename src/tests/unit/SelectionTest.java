@@ -112,7 +112,8 @@ public class SelectionTest extends AbstractTestWithUnits {
     @Test
     public void testVariousMethods() {
         usingFakeOurs(() -> {
-//            Select.our().print();
+            Select.our().print();
+            Select.enemy().print();
 
             Selection our = Select.our();
             AUnit zealot = our.first();
@@ -134,6 +135,11 @@ public class SelectionTest extends AbstractTestWithUnits {
 //            muta.friendsNear().canBeAttackedBy(muta, 1).print("Test");
             assertEquals(4, muta.friendsNear().canBeAttackedBy(muta, 1).size());
             assertEquals(9, muta.friendsNear().canBeAttackedBy(muta, 2).size());
+
+            assertEquals(1, our.combatBuildingsAntiAir().size());
+            assertEquals(2, our.combatBuildingsAntiLand().size());
+            assertEquals(2, our.combatBuildings(false).size());
+            assertEquals(3, our.combatBuildings(true).size());
         });
     }
 
