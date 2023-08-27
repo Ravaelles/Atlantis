@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran.tech;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.tech.ATech;
@@ -11,6 +12,9 @@ import bwapi.UpgradeType;
 public class TerranInfantryWeapons extends Commander {
     @Override
     public boolean applies() {
+        if (A.hasMinerals(700)) return false;
+        if (A.seconds() <= 600) return false;
+
         if (OurStrategy.get().goingBio()) {
             int currentUpgradeLevel = upgradeLevel();
             int minInfantry = 12 + currentUpgradeLevel * 9;

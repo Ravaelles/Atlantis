@@ -6,8 +6,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
-public class SiegeBecauseSpecificEnemiesNear extends Manager {
-    public SiegeBecauseSpecificEnemiesNear(AUnit unit) {
+public class SiegeAgainstSpecificEnemies extends Manager {
+    public SiegeAgainstSpecificEnemies(AUnit unit) {
         super(unit);
     }
 
@@ -17,7 +17,7 @@ public class SiegeBecauseSpecificEnemiesNear extends Manager {
     }
 
     protected Manager handle() {
-        Selection enemies = unit.enemiesNear().groundUnits().nonBuildings().nonWorkers().effVisible();
+        Selection enemies = unit.enemiesNear().combatUnits().nonBuildings().effVisible();
 
         if (!Enemy.terran()) {
             enemies = enemies.visibleOnMap();
@@ -39,8 +39,8 @@ public class SiegeBecauseSpecificEnemiesNear extends Manager {
                 .inRadius(maxDist, unit)
                 .notEmpty()
         ) {
-            if (unit.id() % 5 == 0 || enemies.inRadius(2 + unit.id() % 4, unit).notEmpty()) {
-                return usedManager(WantsToSiege.wantsToSiegeNow(this, "KeyEnemy"));
+            if (unit.idIsOdd() || enemies.inRadius(2 + unit.id() % 4, unit).notEmpty()) {
+                return usedManager(ForceSiege.forceSiegeNow(this, "KeyEnemy"));
             }
         }
 

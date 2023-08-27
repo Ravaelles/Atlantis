@@ -33,7 +33,7 @@ public class ThinkOfSieging extends Manager {
             SiegeAgainstCombatBuildings.class,
             UnitBeingReparedManager.class,
             SiegeHereDuringMissionDefend.class,
-            SiegeBecauseSpecificEnemiesNear.class,
+            SiegeAgainstSpecificEnemies.class,
             SiegeAgainstRegularBuildings.class,
             SiegeAgainstRegularEnemies.class,
             GoodDistanceToContainFocusPoint.class,

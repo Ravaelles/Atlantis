@@ -36,7 +36,7 @@ public class ExpansionCommander extends Commander {
     }
 
     protected static boolean shouldBuildNewBase() {
-        if (We.terran() && Count.tanks() <= 0 && !A.hasMinerals(550)) return false;
+        if (We.terran() && Count.tanks() <= 0 && !A.hasMinerals(370)) return false;
 
         // Zerg
         if (We.zerg() && ZergExpansionCommander.handleNoZergLarvas()) return true;

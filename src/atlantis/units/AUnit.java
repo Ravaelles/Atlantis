@@ -615,19 +615,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this;
     }
 
-//    public AUnit addTooltip(String tooltip) {
-//        this.tooltip = tooltip() + tooltip;
-//        return this;
-//    }
-
     public String tooltip() {
-//        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
-//            String tooltipToReturn = this.tooltip;
-//            this.tooltip = null;
-//            return tooltipToReturn;
-//        } else {
         return tooltip;
-//        }
+    }
+
+    public String managerTooltip() {
+        return tooltipForManager;
     }
 
     public void removeTooltip() {
@@ -2165,7 +2158,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                     }
                 }
 
-                throw new RuntimeException("Cant find loaded into");
+                ErrorLog.printMaxOncePerMinute("Cant find loaded into for " + this);
+                return null;
+//                throw new RuntimeException("Cant find loaded into");
             }
         );
     }
@@ -2302,6 +2297,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public double nearestMedicDist() {
+        return (double) cache.get(
+            "nearestMedicDist",
+            3,
+            () -> {
+                AUnit medic = unit().friendsNear().medics().nearestTo(this);
+                if (medic != null) {
+                    return medic.distTo(this);
+                }
+                return 999.9;
+            }
+        );
+    }
+
     public boolean isProtoss() {
         return type().isProtoss();
     }
@@ -2322,10 +2331,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isSpell();
     }
 
-    public boolean medicInHealRange() {
+    public boolean hasMedicInHealRange() {
         return cacheBoolean.get(
-            "medicInHealRange",
-            5,
+            "hasMedicInHealRange",
+            4,
             () -> Select.ourOfType(AUnitType.Terran_Medic)
                 .inRadius(2, this)
                 .havingEnergy(12)
@@ -2710,18 +2719,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public void setManagerUsed(Manager managerUsed) {
-        setManagerUsed(managerUsed, tooltip);
+        setManagerUsed(managerUsed, null);
     }
 
     public void setManagerUsed(Manager managerUsed, String message) {
         if (!manager().equals(managerUsed)) {
             managerLogs.addMessage(managerUsed.toString(), this);
+
+            this.manager = managerUsed;
+
+            addLog(managerUsed.toString());
         }
 
-        this.manager = managerUsed;
         this.tooltipForManager = message;
-
-        addLog(managerUsed.toString());
     }
 
     public boolean isActiveManager(Manager manager) {

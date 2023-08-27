@@ -20,19 +20,21 @@ public class LoadIntoTheBunker extends Manager {
     public boolean applies() {
         if (unit.isLoaded()) return false;
 
-        if (Enemy.terran() && unit.isMissionDefend()) return true;
+        if (wouldOverstack()) return false;
 
         if (
             GamePhase.isEarlyGame()
-                && unit.noCooldown()
-                && unit.hpMoreThan(20)
-                && unit.enemiesNear().ranged().empty()
-                && unit.nearestEnemyDist() >= 2
+//                && unit.noCooldown()
+//                && unit.hp() < 20
+//                && unit.enemiesNear().ranged().inRadius()empty()
+                && unit.meleeEnemiesNearCount(2.2) == 0
         ) return false;
 
         // Without enemies around, don't do anything
         Selection enemiesNear = unit.enemiesNear().havingWeapon().inRadius(9, unit).canAttack(unit, 10);
         if (enemiesNear.excludeMedics().empty()) return false;
+
+//        if (Enemy.terran() && unit.isMissionDefend()) return true;
 
         return true;
     }
@@ -103,11 +105,18 @@ public class LoadIntoTheBunker extends Manager {
         }
     }
 
-
     private AUnit bunkerToLoadTo() {
         return Select.ourOfType(AUnitType.Terran_Bunker)
             .inRadius(15, unit)
             .havingSpaceFree(unit.spaceRequired())
             .nearestTo(unit);
+    }
+
+
+    private boolean wouldOverstack() {
+        if (unit.hp() <= 18) return false;
+        if (Count.marines() <= 5) return false;
+
+        return unit.id() % 3 != 0 || unit.friendsNear().marines().count() >= 6;
     }
 }

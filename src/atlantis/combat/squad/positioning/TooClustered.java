@@ -16,12 +16,14 @@ public class TooClustered extends Manager {
 
     @Override
     public boolean applies() {
-        if (A.seconds() % 10 <= 4) return false;
+        int seconds = A.seconds();
+
+        if (seconds >= 300 && seconds % 10 <= 4) return false;
         if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.enemiesNear().inRadius(14, unit).notEmpty()) return false;
         if (unit.friendsNear().buildings().inRadius(3, unit).notEmpty()) return false;
 
-        if (A.seconds() <= 300 && unit.isMissionDefend() && unit.friendsNear().inRadius(2, unit).notEmpty())
+        if (seconds <= 300 && unit.isMissionDefend() && unit.friendsNear().inRadius(2, unit).notEmpty())
             return true;
 
         return squad.size() >= 2 && unit.friendsNear().inRadius(0.3, unit).groundUnits().atLeast(3);
@@ -32,8 +34,8 @@ public class TooClustered extends Manager {
             return null;
         }
 
-        Selection ourCombatUnits = Select.ourCombatUnits().inRadius(5, unit);
-        AUnit nearestBuddy = ourCombatUnits.clone().nearestTo(unit);
+        Selection ourCombatUnits = Select.ourCombatUnits().groundUnits().inRadius(5, unit);
+        AUnit nearestBuddy = ourCombatUnits.nearestTo(unit);
         double minDistBetweenUnits = minDistBetweenUnits();
 
         if (tooClustered(ourCombatUnits, nearestBuddy, minDistBetweenUnits)) {
@@ -43,7 +45,7 @@ public class TooClustered extends Manager {
 //                return usedManager(this);
 //            }
 
-            double moveDistance = (unit.idIsOdd() || A.everyNthGameFrame(3)) ? 4.5 : 0.4;
+            double moveDistance = A.chance(15) ? 2 : 0.5;
             unit.moveAwayFrom(nearestBuddy, moveDistance, Actions.MOVE_FORMATION, "SpreadOut");
             return usedManager(this);
         }
@@ -59,9 +61,9 @@ public class TooClustered extends Manager {
         double minDistBetweenUnits
     ) {
         return nearestBuddy != null
-            && ourCombatUnits.size() >= 5
+            && ourCombatUnits.size() >= 3
             && nearestBuddy.distToLessThan(unit, minDistBetweenUnits)
-            && unit.friendsInRadius(1.5).size() >= 4;
+            && (unit.friendsInRadius(1.5).size() >= 4 || unit.friendsInRadius(0.8).notEmpty());
     }
 
     private double minDistBetweenUnits() {

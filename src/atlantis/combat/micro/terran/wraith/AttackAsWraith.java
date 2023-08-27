@@ -16,6 +16,7 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     public boolean applies() {
         if (!unit.isWraith()) return false;
 
+        if (unit.hp() <= 20) return false;
         if (unit.hp() >= 110 || unit.looksIdle()) return true;
         if (unit.didntShootRecently(10)) return true;
 

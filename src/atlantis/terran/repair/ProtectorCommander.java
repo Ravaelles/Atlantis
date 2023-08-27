@@ -77,6 +77,10 @@ public class ProtectorCommander extends Commander {
     }
 
     private static int maxProtectors() {
+        if (!A.hasMinerals(0)) {
+            return 2;
+        }
+
         int workers = Count.workers();
 
         if (workers <= 20) {
@@ -140,8 +144,6 @@ public class ProtectorCommander extends Commander {
     }
 
     private static boolean removeProtectorsIfNeeded() {
-
-
         int maxProtectors = maxProtectors();
         if (RepairAssignments.countTotalProtectors() > maxProtectors) {
             for (int i = 0; i < RepairAssignments.countTotalProtectors() - maxProtectors; i++) {

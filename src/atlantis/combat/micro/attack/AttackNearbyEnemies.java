@@ -38,6 +38,11 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     protected Manager handle() {
+        PreventFreeze preventFreeze = new PreventFreeze(unit);
+        if (preventFreeze.invoke() != null) {
+            return usedManager(preventFreeze);
+        }
+
         Manager dedicatedManager = dedicatedManager();
         if (dedicatedManager != null) {
             return usedManager(dedicatedManager.invoke());

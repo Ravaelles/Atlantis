@@ -19,7 +19,7 @@ public class DontInterruptShootingUnits extends Manager {
         if (!unit.isRanged()) return false;
 
         if (unit.isWraith()) {
-            if (unit.hp() < 110 || unit.enemiesNear().buildings().canAttack(unit, 10).notEmpty()) {
+            if (unit.hp() < 110 || unit.enemiesNear().buildings().canAttack(unit, 1.1).notEmpty()) {
                 return false;
             }
         }
@@ -28,10 +28,17 @@ public class DontInterruptShootingUnits extends Manager {
     }
 
     @Override
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            DontInterruptShootingMarines.class,
+        };
+    }
+
+    @Override
     protected Manager handle() {
         if (act()) return usedManager(this);
 
-        return null;
+        return handleSubmanagers();
     }
 
     private boolean act() {

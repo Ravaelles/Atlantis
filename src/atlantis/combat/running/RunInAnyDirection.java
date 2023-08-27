@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class RunInAnyDirection {
     public static int ANY_DIRECTION_RADIUS_DEFAULT = 3;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 4;
-    public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 2;
+    public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 3;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
 
     private final RunToPositionFinder positionFinder;
@@ -25,7 +25,7 @@ public class RunInAnyDirection {
     protected HasPosition runInAnyDirection(HasPosition runAwayFrom) {
         if (
             positionFinder.running.unit()._lastPositionRunInAnyDir != null
-            && positionFinder.running.unit().lastActionLessThanAgo(40, Actions.RUN_IN_ANY_DIRECTION)
+                && positionFinder.running.unit().lastActionLessThanAgo(30, Actions.RUN_IN_ANY_DIRECTION)
         ) {
             return positionFinder.running.unit()._lastPositionRunInAnyDir;
         }
@@ -87,7 +87,7 @@ public class RunInAnyDirection {
 
         if (
             positionFinder.running.runTo != null
-            && unit.lastActionLessThanAgo(4, Actions.RUN_IN_ANY_DIRECTION)) {
+                && unit.lastActionLessThanAgo(14, Actions.RUN_IN_ANY_DIRECTION)) {
             return positionFinder.running.runTo.position();
         }
 
@@ -99,7 +99,6 @@ public class RunInAnyDirection {
 
         positionSearchLoop(radius, potentialPositionsList);
         positionSearchLoop((int) (radius * 0.6), potentialPositionsList);
-
 
 
         // =========================================================
@@ -146,7 +145,7 @@ public class RunInAnyDirection {
 //                        "O",
 //                        "x"
                     )
-                    && !potentialPosition.isCloseToMapBounds()
+                        && !potentialPosition.isCloseToMapBounds()
                 ) {
                     potentialPositionsList.add(potentialPosition);
                 }

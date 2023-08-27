@@ -1,7 +1,6 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -14,10 +13,7 @@ public class ProcessAttackUnit extends Manager {
     }
 
     public boolean processAttackOtherUnit(AUnit target) {
-        if (unit.isTankSieged() && unit.distToMoreThan(target, 12)) {
-            unit.setTooltip("UnsiegeToAttack");
-            return TerranTank.wantsToUnsiege(unit);
-        }
+        if (ProcessAttackUnitAsTank.forTank(unit, target)) return true;
 
         if (target.isFoggedUnitWithKnownPosition()) {
             if (unit.distTo(target) > unit.weaponRangeAgainst(target)) {
@@ -63,7 +59,7 @@ public class ProcessAttackUnit extends Manager {
         return true;
     }
 
-//    private  double distBonus(AUnit target) {
+    //    private  double distBonus(AUnit target) {
 //        if (unit.isOtherUnitFacingThisUnit(target) && (target.isMoving() || target.isAttacking())) {
 //            return -1.6;
 //        }

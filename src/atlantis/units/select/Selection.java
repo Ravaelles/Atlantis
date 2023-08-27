@@ -252,8 +252,15 @@ public class Selection extends BaseSelection {
 
     public Selection mutalisks() {
         return cloneByRemovingIf(
-            (unit -> !unit.is(AUnitType.Zerg_Mutalisk)),
+            (unit -> !unit.isMutalisk()),
             "mutalisks"
+        );
+    }
+
+    public Selection marines() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isMarine()),
+            "marines"
         );
     }
 

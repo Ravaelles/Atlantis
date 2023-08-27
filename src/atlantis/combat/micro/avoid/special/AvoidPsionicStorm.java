@@ -19,7 +19,7 @@ public class AvoidPsionicStorm extends Manager {
                 if (bullet.getType().equals(BulletType.Psionic_Storm)) {
 //                    System.err.println("------------- " + A.now() + " PSIONIC! ----------------");
 
-                    if (handleMoveAwayIfCloserThan(APosition.create(bullet.getPosition()), 2.5)) {
+                    if (handleMoveAwayIfCloserThan(APosition.create(bullet.getPosition()), 2.8)) {
                         return usedManager(this);
                     }
                 }

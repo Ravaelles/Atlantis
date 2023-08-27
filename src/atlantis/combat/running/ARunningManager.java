@@ -90,7 +90,7 @@ public class ARunningManager {
 
             if (
                 unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
-                    || unit.lastActionLessThanAgo(8, Actions.RUN_IN_ANY_DIRECTION)
+                    || unit.lastActionLessThanAgo(18, Actions.RUN_IN_ANY_DIRECTION)
             ) {
 //                System.err.println("@ " + A.now() + " - " + unit);
                 return true;

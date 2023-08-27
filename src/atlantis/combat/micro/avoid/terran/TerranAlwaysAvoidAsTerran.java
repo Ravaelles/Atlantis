@@ -15,8 +15,15 @@ public class TerranAlwaysAvoidAsTerran extends Manager {
 
     public boolean shouldAlwaysAvoid() {
         if (asVulture()) return true;
+        if (asInfantry()) return true;
 
         return false;
+    }
+
+    private boolean asInfantry() {
+        if (!unit.isTerranInfantry()) return false;
+
+        return unit.cooldown() >= 3 && unit.meleeEnemiesNearCount(2) >= 1;
     }
 
     private boolean asVulture() {

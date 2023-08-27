@@ -15,9 +15,17 @@ public class GoTowardsMedic extends Manager {
     public boolean applies() {
         if (!unit.isTerranInfantryWithoutMedics()) return false;
 
-        if (unit.isHealthy() && unit.distToLeader() <= 6) return false;
+        if (unit.isHealthy()) return false;
+//        if (unit.isHealthy() && unit.distToLeader() <= 6) return false;
 
-        if (unit.cooldownRemaining() <= 3 || unit.hp() >= 26) return false;
+        if (unit.cooldownRemaining() <= 3 || unit.hp() >= 33) return false;
+
+        if (
+            unit.isWounded()
+                && unit.didntShootRecently(2)
+                && unit.ranRecently(1)
+                && unit.nearestMedicDist() <= 2.3
+        ) return true;
 
 //        if (unit.enemiesNear().canAttack(unit, 7).isNotEmpty()) {
 //            return false;

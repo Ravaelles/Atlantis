@@ -221,7 +221,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 
         if (barracks >= 2 && Enemy.terran()) return false;
 
-        if (!A.hasMinerals(650)) {
+        if (!A.hasMinerals(630)) {
 //            if (barracks >= 3) {
 //                return false;
 //            }
@@ -235,7 +235,7 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
                 return false;
             }
 
-            if (barracks >= 3 && A.supplyUsed() <= 70) {
+            if (barracks >= 4 && A.supplyUsed() <= 70) {
                 return false;
             }
         }

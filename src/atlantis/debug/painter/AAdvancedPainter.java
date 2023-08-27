@@ -257,9 +257,15 @@ public class AAdvancedPainter extends APainter {
         for (int i = 0; i < log.messages().size(); i++) {
             LogMessage message = log.messages().get(i);
 //            unit.paintInfo(message.createdAtFrames() + "-" + message.message(), Color.Grey, offset);
+
+            String text = message.createdAtFrames() + "-" + message.message();
+            if (unit.managerTooltip() != null) {
+                text += "(" + unit.managerTooltip() + ")";
+            }
+
             paintTextCentered(
                 unit,
-                message.createdAtFrames() + "-" + message.message(),
+                text,
 //                i == 0 ? Color.Yellow : (i == 1 ? Color.White : Color.Grey),
                 i == log.messages().size() - 1 ? Color.Yellow : Color.Grey,
                 0,
