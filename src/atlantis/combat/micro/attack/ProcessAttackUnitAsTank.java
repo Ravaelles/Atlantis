@@ -13,7 +13,7 @@ public class ProcessAttackUnitAsTank {
         double distTo = unit.distTo(target);
 
         if (isCrucialGroundUnit(distTo, unit, target) && isGoodDistToSiege(unit, distTo, target)) {
-            if (WantsToSiege.wantsToSiegeNow(null, "SiegeReaver") != null) return true;
+            if (WantsToSiege.wantsToSiegeNow(unit, "SiegeReaver")) return true;
         }
 
         if (distTo >= 12.01) {
@@ -26,7 +26,7 @@ public class ProcessAttackUnitAsTank {
 
     private static boolean isGoodDistToSiege(AUnit unit, double distTo, AUnit target) {
         double minDist = target.isMoving() && unit.isOtherUnitFacingThisUnit(target) ? 13.7 : 11.99;
-        
+
         return distTo <= minDist && (distTo >= 8 || unit.hasCooldown());
     }
 

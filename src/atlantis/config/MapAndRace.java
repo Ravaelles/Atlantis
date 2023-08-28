@@ -12,8 +12,8 @@ public class MapAndRace {
     /**
      * Single player enemy race.
      */
-    public static final String ENEMY_RACE = "Protoss";
-//    public static final String ENEMY_RACE = "Terran";
+//    public static final String ENEMY_RACE = "Protoss";
+    public static final String ENEMY_RACE = "Terran";
 //    public static final String ENEMY_RACE = "Zerg";
 
     /**
@@ -24,7 +24,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
@@ -99,7 +99,7 @@ public class MapAndRace {
 
         // vs Terran
 //        if (true) return "ums/rav/Wraith_v_Wraith.scm";
-        if (true) return "ums/rav/Wraiths_v_Base.scx";
+//        if (true) return "ums/rav/Wraiths_v_Base.scx";
 //@        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/Tanks_v_Tanks_in_line.scx";
 //        if (true) return "ums/rav/Tanks_v_Tanks_with_choke.scx";

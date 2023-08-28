@@ -38,6 +38,8 @@ public class GoodDistanceToContainFocusPoint extends Manager {
 
     @Override
     protected Manager handle() {
-        return usedManager(WantsToSiege.wantsToSiegeNow(this, "ContainSiege"));
+        if (WantsToSiege.wantsToSiegeNow(unit, "ContainSiege")) return usedManager(this);
+
+        return null;
     }
 }

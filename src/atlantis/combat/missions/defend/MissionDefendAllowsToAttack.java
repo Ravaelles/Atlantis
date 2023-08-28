@@ -25,11 +25,13 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 
         if (
             unit.isInWeaponRangeByGame(enemy)
-                || enemy.canAttackTarget(unit)
+                || (unit.noCooldown() && enemy.canAttackTarget(unit) && focusPoint.regionsMatch(enemy))
                 || ourBuildingIsInDanger(unit, enemy)
         ) return true;
 
-        return true;
+//        System.err.println("@ " + A.now() + " - not allowed to att " + unit.id() + " / " + enemy.type());
+
+        return false;
 
 //        if (focusPoint.regionsMatch(enemy)) {
 //            return whenTargetInSameRegion(unit, enemy);

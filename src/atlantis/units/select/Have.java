@@ -68,6 +68,14 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Engineering_Bay) > 0;
     }
 
+    public static boolean starport() {
+        return Count.ofType(AUnitType.Terran_Starport) > 0;
+    }
+
+    public static boolean controlTower() {
+        return Count.ofType(AUnitType.Terran_Control_Tower) > 0;
+    }
+
     public static boolean dragoon() {
         return Count.ofType(AUnitType.Protoss_Dragoon) > 0;
     }

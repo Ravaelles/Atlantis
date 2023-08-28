@@ -12,7 +12,7 @@ public class DynamicRepairsNearby extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isScv() && (unit.id() % 3 == 0 || unit.isRepairerOfAnyKind()) && !unit.isRepairing();
+        return unit.isScv() && (unit.id() % 3 == 0 && !unit.isRepairerOfAnyKind()) && !unit.isRepairing();
     }
 
     protected Manager handle() {

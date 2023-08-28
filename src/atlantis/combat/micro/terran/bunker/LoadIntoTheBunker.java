@@ -99,7 +99,7 @@ public class LoadIntoTheBunker extends Manager {
             double enemyDist = unit.distTo(nearestEnemy);
             double enemyDistToBunker = nearestEnemy.distTo(bunker);
 
-            if (enemyDist <= 4 && enemyDistToBunker + 1.5 < unitDistToBunker) return false;
+            if (enemyDist <= 2.8 && enemyDistToBunker + 1.9 < unitDistToBunker) return false;
 
             return enemyDist < 2.4 || !enemiesNear.onlyMelee() || unitDistToBunker <= 3.6;
         }

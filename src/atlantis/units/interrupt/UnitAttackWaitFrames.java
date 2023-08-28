@@ -35,7 +35,7 @@ public class UnitAttackWaitFrames {
 
     protected static int stopFrames(AUnitType type) {
         if (type == AUnitType.Terran_SCV) return 2;
-        else if (type == AUnitType.Terran_Marine) return 9; // original 8
+        else if (type == AUnitType.Terran_Marine) return 10; // original 8
         else if (type == AUnitType.Terran_Firebat) return 8;
         else if (type == AUnitType.Terran_Ghost) return 3;
         else if (type == AUnitType.Terran_Vulture) return 2;

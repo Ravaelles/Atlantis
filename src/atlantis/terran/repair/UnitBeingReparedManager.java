@@ -81,7 +81,7 @@ public class UnitBeingReparedManager extends Manager {
             }
         }
 
-        if (!unit.isAttacking()) {
+        if (!unit.isAttacking() || unit.enemiesNear().nonBuildings().empty()) {
             unit.holdPosition("Be repaired");
         }
 

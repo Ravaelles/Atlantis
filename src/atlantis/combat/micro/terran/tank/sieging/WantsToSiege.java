@@ -5,18 +5,16 @@ import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 
 public class WantsToSiege {
-    public static Manager wantsToSiegeNow(Manager manager, String tooltip) {
-        AUnit unit = manager.unit();
-
+    public static boolean wantsToSiegeNow(AUnit unit, String tooltip) {
         if ((new WouldBlockChokeBySieging(unit)).invoke() != null) {
-            return null;
+            return false;
         }
 
-        if (unit.lastStartedRunningLessThanAgo(30 * 5)) return null;
+        if (unit.lastStartedRunningLessThanAgo(30 * 5)) return false;
 
         if (!Enemy.terran()) {
             if (unit.friendsNear().tanksSieged().inRadius(1.2, unit).isNotEmpty()) {
-                return null;
+                return false;
             }
 
             // Prevent tanks from blocking chokes
@@ -24,7 +22,7 @@ public class WantsToSiege {
                 unit.enemiesNear().combatBuildingsAntiLand().inRadius(8, unit).empty()
                     && unit.distToNearestChokeLessThan(1.7)
             ) {
-                return null;
+                return false;
             }
         }
 
@@ -32,6 +30,6 @@ public class WantsToSiege {
 
         unit.setTooltipTactical(tooltip);
         unit.addLog(tooltip);
-        return manager;
+        return true;
     }
 }

@@ -30,6 +30,8 @@ public class SiegeAgainstRegularBuildings extends Manager {
     }
 
     protected Manager handle() {
-        return usedManager(WantsToSiege.wantsToSiegeNow(this, "SiegeBuilding"));
+        if (WantsToSiege.wantsToSiegeNow(unit, "SiegeBuilding")) return usedManager(this);
+
+        return null;
     }
 }
