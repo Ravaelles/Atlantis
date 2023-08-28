@@ -14,10 +14,13 @@ public class SeparateFromRunningTanks extends Manager {
 
     @Override
     public boolean applies() {
+        if (!unit.isScv()) return false;
+
         target = RepairAssignments.unitToRepairForSCV(unit);
 
         return target.isTankUnsieged()
             && target.isRunning()
+            && unit.distTo(target) <= 1.4
             && target.enemiesNear().groundUnits().canAttack(target, 1.4).notEmpty();
     }
 

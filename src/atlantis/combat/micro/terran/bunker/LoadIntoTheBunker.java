@@ -19,8 +19,11 @@ public class LoadIntoTheBunker extends Manager {
     @Override
     public boolean applies() {
         if (unit.isLoaded()) return false;
-
         if (wouldOverstack()) return false;
+
+        if (Enemy.terran() && unit.isMissionDefend()) {
+            if (unit.distToFocusPoint() <= (3 + unit.id() % 3)) return true;
+        }
 
         if (
             GamePhase.isEarlyGame()
@@ -32,9 +35,9 @@ public class LoadIntoTheBunker extends Manager {
 
         // Without enemies around, don't do anything
         Selection enemiesNear = unit.enemiesNear().havingWeapon().inRadius(9, unit).canAttack(unit, 10);
-        if (enemiesNear.excludeMedics().empty()) return false;
-
-//        if (Enemy.terran() && unit.isMissionDefend()) return true;
+        if (enemiesNear.excludeMedics().empty()) {
+            return false;
+        }
 
         return true;
     }
@@ -117,6 +120,6 @@ public class LoadIntoTheBunker extends Manager {
         if (unit.hp() <= 18) return false;
         if (Count.marines() <= 5) return false;
 
-        return unit.id() % 3 != 0 || unit.friendsNear().marines().count() >= 6;
+        return unit.id() % 3 != 0 && unit.friendsNear().marines().count() >= 6;
     }
 }

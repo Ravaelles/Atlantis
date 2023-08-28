@@ -16,7 +16,7 @@ public class ConsiderLoadingIntoBunkers extends Manager {
         if (Count.bunkers() == 0) return false;
         if (!unit.isMarine() && !unit.isGhost()) return false;
 
-        boolean noBunkerVeryNear = unit.friendsNear().bunkers().inRadius(3, unit).empty();
+        boolean noBunkerVeryNear = unit.friendsNear().bunkers().inRadius(4.5, unit).empty();
 
         if (!noBunkerVeryNear && unit.distToFocusPoint() <= 4) return true;
 
