@@ -3,6 +3,7 @@ package atlantis;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.env.Env;
+import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.enemy.UnitsArchive;
@@ -259,6 +260,8 @@ public class Atlantis implements BWEventListener {
         result += "############ Lost: " + Atlantis.LOST + " ################\n";
         result += "########## Killed: " + Atlantis.KILLED + " ################\n";
         result += "#####################################\n";
+
+        LongFrames.printSummary();
 
         (System.out).println(result);
 

@@ -15,10 +15,19 @@ public class PreventFreeze extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.noCooldown()
-            && unit.lastActionLessThanAgo(20, Actions.ATTACK_UNIT)
-            && unit.hasNotMovedInAWhile()
-            && unit.lastActionMoreThanAgo(30 * 2, Actions.HOLD_POSITION);
+        return unit.noCooldown() && looksFrozen();
+    }
+
+    private boolean looksFrozen() {
+        if (unit.lastActionMoreThanAgo(35, Actions.HOLD_POSITION)) {
+            if (unit.lastActionLessThanAgo(20, Actions.ATTACK_UNIT) && unit.hasNotMovedInAWhile()) return true;
+//            if (unit.looksIdle()) {
+//                System.err.println("@ " + A.now() + " - looks idle unfreeze " + unit + " / " + unit.manager());
+//            }
+            if (unit.looksIdle()) return true;
+        }
+
+        return false;
     }
 
     @Override

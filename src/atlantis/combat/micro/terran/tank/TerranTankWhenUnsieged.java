@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.tank;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.terran.tank.sieging.AvoidCloseEnemiesToUnsiegedTank;
+import atlantis.combat.micro.terran.tank.unsieged.AvoidCloseEnemiesToUnsiegedTank;
 import atlantis.combat.micro.terran.tank.sieging.ThinkOfSieging;
 import atlantis.terran.repair.UnitBeingReparedManager;
 import atlantis.units.AUnit;

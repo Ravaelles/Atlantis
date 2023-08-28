@@ -56,7 +56,7 @@ public class PositionModifier {
 //            System.err.println("modifier = " + modifier);
 //        }
 
-        if (modifier.equals(MAIN) ) {
+        if (modifier.equals(MAIN)) {
             if (construction == null || construction.maxDistance() < 0) {
                 construction.setMaxDistance(40);
             }
@@ -124,11 +124,14 @@ public class PositionModifier {
 
         if (modifier.equals(MAIN_CHOKE)) {
             if (construction != null) {
-                construction.setMaxDistance(6);
+                construction.setMaxDistance(7);
             }
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
-                return APosition.create(mainChoke.center()).translateTilesTowards(main, 2.8);
+                return APosition.create(mainChoke.center()).translateTilesTowards(
+                    main,
+                    2.8 + (mainChoke.width() <= 4 ? 1.7 : 0)
+                );
             }
         }
         else if (modifier.equals(NATURAL_CHOKE)) {

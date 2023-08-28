@@ -2,6 +2,7 @@ package atlantis.game;
 
 import atlantis.Atlantis;
 import atlantis.debug.profiler.CodeProfiler;
+import atlantis.debug.profiler.LongFrames;
 import atlantis.production.orders.build.CurrentBuildOrder;
 
 public class OnEveryFrame {
@@ -40,6 +41,8 @@ public class OnEveryFrame {
         OnEveryFrameHelper.handle();
 
         CodeProfiler.endMeasuringTotalFrame();
+        LongFrames.reportFrameLength(CodeProfiler.lastFrameLength());
+
 //        CodeProfiler.printSummary();
     }
 }

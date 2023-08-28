@@ -54,7 +54,7 @@ public class CodeProfiler {
         return classNameToProfilerName(commander.getClass().getSimpleName());
     }
 
-    public static int totalFrameLength() {
+    public static int lastFrameLength() {
         return (int) currentFrameLength;
     }
 
@@ -65,7 +65,7 @@ public class CodeProfiler {
         }
 
         System.out.println("### Commanders time consumption ##########");
-        System.out.println(String.format("%25s:  ", "Total frame length:") + totalFrameLength() + "ms\n");
+        System.out.println(String.format("%25s:  ", "Total frame length:") + lastFrameLength() + "ms\n");
 
         Map<String, Integer> aspectsLength = aspectLengthSorted();
         for (String aspectTitle : aspectsLength.keySet()) {

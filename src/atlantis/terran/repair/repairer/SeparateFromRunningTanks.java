@@ -14,7 +14,7 @@ public class SeparateFromRunningTanks extends Manager {
 
     @Override
     public boolean applies() {
-        if (!unit.isScv()) return false;
+        if (unit.isMiningOrExtractingGas() || !unit.isScv()) return false;
 
         target = RepairAssignments.unitToRepairForSCV(unit);
 

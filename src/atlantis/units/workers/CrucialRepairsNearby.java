@@ -2,6 +2,7 @@ package atlantis.units.workers;
 
 import atlantis.architecture.Manager;
 import atlantis.terran.repair.RepairAssignments;
+import atlantis.terran.repair.RepairableUnits;
 import atlantis.units.AUnit;
 
 public class CrucialRepairsNearby extends Manager {
@@ -24,7 +25,7 @@ public class CrucialRepairsNearby extends Manager {
     }
 
     private boolean repairNearbyCrucialUnit() {
-        for (AUnit target : unit.friendsNear().mechanical().wounded().list()) {
+        for (AUnit target : RepairableUnits.get().list()) {
             if (ifShouldRepairNowThenRepair(target)) {
                 return true;
             }
@@ -33,6 +34,8 @@ public class CrucialRepairsNearby extends Manager {
     }
 
     private boolean ifShouldRepairNowThenRepair(AUnit target) {
+        if (target.isWorker() && target.friendsNear().buildings().inRadius(10, target).empty()) return false;
+
         if (target.isTank() && target.distTo(unit) < target.woundPercent() / 15) {
             return repairIfNtTooManyRepairersAlready(target, "SaveTank");
         }

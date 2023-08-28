@@ -11,6 +11,7 @@ import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.squad.AllSquads;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameLog;
@@ -1305,6 +1306,8 @@ public class AAdvancedPainter extends APainter {
         int counter = 0;
         for (String aspectTitle : aspectsLength.keySet()) {
             int value = aspectsLength.get(aspectTitle);
+//            if (value <= 2) continue;
+
             int x = timeConsumptionLeftOffset;
             int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter;
 
@@ -1323,16 +1326,24 @@ public class AAdvancedPainter extends APainter {
             // Draw aspect label
             paintMessage(aspectTitle, Color.White, x + 4, y + 1, true);
 
-            if (counter++ >= 6) break;
+            if (++counter >= 3) break;
         }
 
         // Paint total time
         int x = timeConsumptionLeftOffset;
         int y = timeConsumptionTopOffset + timeConsumptionYInterval * counter++ + 3;
-        int frameLength = CodeProfiler.totalFrameLength();
+        int frameLength = CodeProfiler.lastFrameLength();
         paintMessage("Length: " + frameLength, Color.White, x + 4, y + 1, true);
 
-        paintSquadsInfo(x, y);
+        int length;
+        if ((length = LongFrames.framesOver1000()) > 0) paintMessage(
+            "1s: " + length, Grey, x + 24, y + 16, true
+        );
+        if ((length = LongFrames.framesOver85()) > 0) paintMessage(
+            "85ms: " + length, Color.Grey, x + 9, y + 26, true
+        );
+
+        paintSquadsInfo(x, y + 40);
     }
 
     private static void paintSquadsInfo(int x, int y) {
