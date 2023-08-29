@@ -159,7 +159,7 @@ public class GameSpeed {
      * Changes game speed by given ammount of units. Total game speed: 0 - fastest 1 - very quick 20 - around
      * default
      */
-    public static void changeSpeedBy(int deltaSpeed) {
+    public static void changeSpeed(int deltaSpeed) {
 //        int speed = gameSpeed + deltaSpeed;
         int speed;
 

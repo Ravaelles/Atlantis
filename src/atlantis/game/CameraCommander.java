@@ -9,10 +9,10 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 public class CameraCommander extends Commander {
-    
+
     protected static int SCREEN_WIDTH = 640;
     protected static int SCREEN_HEIGHT = 480;
-//    protected static boolean focusCameraOnFirstCombatUnit = true;
+    //    protected static boolean focusCameraOnFirstCombatUnit = true;
     protected static boolean focusCameraOnFirstCombatUnit = false;
 
     // =========================================================
@@ -67,11 +67,11 @@ public class CameraCommander extends Commander {
         }
 
         Atlantis.game().setScreenPosition(
-                position.translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7).p()
+            position.translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7).p()
         );
     }
 
-    public static void toggleFocusCameraOnFirstCombatUnit() {
+    public static void toggleFocusCameraOnInterestingCombatUnit() {
         focusCameraOnFirstCombatUnit = !focusCameraOnFirstCombatUnit;
 
 

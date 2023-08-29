@@ -2813,4 +2813,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean ranRecently(int minSeconds) {
         return lastStartedRunningLessThanAgo(30 * minSeconds);
     }
+
+    public boolean moveToMain(Action action) {
+        return moveToMain(action, null);
+    }
+
+    public boolean moveToMain(Action action, String tooltip) {
+        AUnit main = Select.main();
+
+        if (main != null && distTo(main) >= 7) {
+            move(main, action, tooltip);
+            return true;
+        }
+
+        return false;
+    }
 }
