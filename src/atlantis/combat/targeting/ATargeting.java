@@ -42,7 +42,8 @@ public class ATargeting extends HasUnit {
 
         // Used when something went wrong there ^
         AttackNearbyEnemies.reasonNotToAttack = null;
-        return closestUnitFallback(unit, maxDistFromEnemy);
+        return null;
+//        return closestUnitFallback(unit, maxDistFromEnemy);
     }
 
     private static AUnit closestUnitFallback(AUnit unit, double maxDistFromEnemy) {
@@ -107,6 +108,8 @@ public class ATargeting extends HasUnit {
                 .realUnitsAndBuildings()
                 .effVisible()
                 .visibleOnMap()
+                .havingAtLeastHp(1)
+                .havingPosition()
                 .canBeAttackedBy(unit, 0)
                 .nearestTo(unit);
             if (enemy != null && !unit.isAir()) {
@@ -271,9 +274,11 @@ public class ATargeting extends HasUnit {
         // Quit early if no target at all
         if (
             unit.enemiesNear()
-                .visibleOnMap()
-                .inRadius(maxDistFromEnemy, unit)
                 .effVisible()
+                .visibleOnMap()
+                .havingAtLeastHp(1)
+                .havingPosition()
+                .inRadius(maxDistFromEnemy, unit)
                 .isEmpty()
         ) {
             return null;

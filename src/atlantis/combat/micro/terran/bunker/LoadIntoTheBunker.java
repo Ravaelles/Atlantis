@@ -25,7 +25,7 @@ public class LoadIntoTheBunker extends Manager {
             if (unit.isMissionDefend() && unit.idIsOdd()) return true;
             if (unit.hp() <= 25 && unit.isMarine()) return true;
         }
-        if (unit.isMissionDefend() && unit.distToFocusPoint() <= (3 + unit.id() % 3)) return true;
+        if (unit.isMissionDefend() && unit.distToFocusPoint() <= (5 + unit.id() % 5)) return true;
 
         if (
             GamePhase.isEarlyGame()

@@ -15,6 +15,8 @@ public class SiegeAgainstTerran extends Manager {
     @Override
     public boolean applies() {
         if (!Enemy.terran()) return false;
+        if (!unit.isTankUnsieged()) return false;
+        if (unit.enemiesNear().groundUnits().empty()) return false;
 
         return areEnemiesInRange();
     }
@@ -22,14 +24,16 @@ public class SiegeAgainstTerran extends Manager {
     private boolean areEnemiesInRange() {
         Selection enemies = EnemyUnits.discovered().groundUnits().combatUnits();
 
+        if (enemies.empty()) return false;
         if (enemies.atLeast(2)) return true;
 
-        return unit.id() % 3 == 0 || enemies.inRadius(15.9, unit).excludeMarines().notEmpty();
+        return unit.id() % 3 == 0
+            || enemies.inRadius(11.9 + (unit.idIsEven() ? 3 : 0), unit).notEmpty();
     }
 
     @Override
     protected Manager handle() {
-        if (WantsToSiege.wantsToSiegeNow(unit, "Enemies!")) return usedManager(this);
+        if (WantsToSiege.wantsToSiegeNow(unit, "vTerran!")) return usedManager(this);
 
         return null;
     }

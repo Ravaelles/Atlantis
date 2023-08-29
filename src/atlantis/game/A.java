@@ -1244,6 +1244,11 @@ public class A {
         return f.exists() && !f.isDirectory();
     }
 
+    public static boolean directoryExists(String file) {
+        File f = new File(file);
+        return f.exists() && f.isDirectory();
+    }
+
     public static void removeFile(String filePath) {
         if (fileExists(filePath)) {
             File file = new File(filePath);

@@ -10,23 +10,20 @@ import java.util.ArrayList;
 
 
 public class ABuildOrderLoader {
-
     final int NUMBER_OF_COLUMNS_IN_FILE = 2;
 
     /**
      * Directory that contains build orders.
      */
     public static final String BUILD_ORDERS_PATH = "AI/build_orders/";
+    public static final String BUILD_ORDERS_PATH_FALLBACK = "read/build_orders/";
 
     // =========================================================
 
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
+        String buildOrdersDir = buildOrdersDir();
 
-
-
-        String filePath = AtlantisIgniter.getBwapiDataPath()
-            + BUILD_ORDERS_PATH + strategy.race() + "/"
-            + strategy.name() + ".txt";
+        String filePath = buildOrdersDir + strategy.race() + "/" + strategy.name() + ".txt";
 
         File f = new File(filePath);
         if (!f.exists()) {
@@ -41,13 +38,21 @@ public class ABuildOrderLoader {
                 System.err.println(message);
 
                 throw new RuntimeException(message);
-            } else {
+            }
+            else {
                 System.err.println(message);
             }
         }
 
         ABuildOrderLoader loader = new ABuildOrderLoader();
         return loader.readBuildOrdersFromFile(strategy.race(), strategy.name(), filePath);
+    }
+
+    private static String buildOrdersDir() {
+        String dirPath = AtlantisIgniter.getBwapiDataPath() + BUILD_ORDERS_PATH;
+        String fallbackDirPath = AtlantisIgniter.getBwapiDataPath() + BUILD_ORDERS_PATH_FALLBACK;
+
+        return A.directoryExists(dirPath) ? dirPath : fallbackDirPath;
     }
 
     // =========================================================

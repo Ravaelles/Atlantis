@@ -15,8 +15,6 @@ public class ForbiddenByStreetGrid {
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         if (We.protoss() && A.supplyTotal() <= 10) return false;
-
-        // Special buildings can be build anywhere
         if (building.isBase() || building.isGasBuilding() || building.isCombatBuilding()) return false;
 
         // =========================================================

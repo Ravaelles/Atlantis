@@ -26,6 +26,7 @@ public class AvoidEnemies extends Manager {
     public boolean applies() {
         if (unit.enemiesNear().canAttack(unit, 6).empty()) return false;
         if (shouldSkip()) return false;
+        if (unit.effUndetected() && unit.hp() >= 36) return false;
 
         return true;
     }
@@ -119,7 +120,6 @@ public class AvoidEnemies extends Manager {
                     enemies.addUnitWithValue(enemy, safetyMargin);
                 }
 //                enemies.print("Enemies to avoid");
-
 
 
                 if (enemies.isEmpty()) {

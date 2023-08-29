@@ -20,6 +20,8 @@ public class PreventFreeze extends Manager {
     }
 
     private boolean looksFrozen() {
+        if (unit.lastActionMoreThanAgo(30 * 15)) return true;
+
         if (unit.lastActionMoreThanAgo(35, Actions.HOLD_POSITION)) {
             if (unit.lastActionLessThanAgo(20, Actions.ATTACK_UNIT) && unit.hasNotMovedInAWhile()) return true;
 //            if (unit.looksIdle()) {
@@ -33,6 +35,18 @@ public class PreventFreeze extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit.isTankSieged() && unit.isSieged()) {
+            if (
+                unit.lastAttackFrameMoreThanAgo(30 * 9)
+                    && unit.hasSiegedOrUnsiegedRecently()
+                    && unit.enemiesNear().groundUnits().nonBuildings().inRadius(11.9, unit).empty()
+            ) {
+                unit.unsiege();
+                return usedManager(this);
+            }
+
+            return null;
+        }
 
 //        System.err.println("@ " + A.now() + " - UNFREEZE " + unit + " / " + unit.manager());
         return unit.mission().handleManagerClass(unit);

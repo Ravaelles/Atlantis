@@ -11,7 +11,6 @@ import java.io.File;
  * We don't want to print out too much data in production.
  */
 public class Env {
-
     private static boolean isLocal = false;
     private static boolean firstRun = true;
     private static boolean paramTweaker = false;
@@ -22,7 +21,7 @@ public class Env {
         if (!A.fileExists(envFilePath())) {
             AGame.exit(
                 "ENV file doesn't exist (" + (new File(envFilePath())).getAbsolutePath()
-                + ")\nPlease create it by copying ENV-EXAMPLE file and renaming it."
+                    + ")\nPlease create it by copying ENV-EXAMPLE file and renaming it."
             );
         }
 
@@ -39,9 +38,12 @@ public class Env {
             String value = line[1];
 
             switch (key) {
-                case "LOCAL": isLocal = trueFalse(value);
-                case "BWAPI_DATA_PATH": AtlantisIgniter.setBwapiDataPath(value);
-                case "CHAOS_LAUNCHER_PATH": AtlantisIgniter.setChaosLauncherPath(value);
+                case "LOCAL":
+                    isLocal = trueFalse(value);
+                case "BWAPI_DATA_PATH":
+                    AtlantisIgniter.setBwapiDataPath(value);
+                case "CHAOS_LAUNCHER_PATH":
+                    AtlantisIgniter.setChaosLauncherPath(value);
             }
         }
 
@@ -90,6 +92,10 @@ public class Env {
      */
     public static boolean isLocal() {
         return isLocal;
+    }
+
+    public static boolean isTournament() {
+        return !isLocal;
     }
 
     /**

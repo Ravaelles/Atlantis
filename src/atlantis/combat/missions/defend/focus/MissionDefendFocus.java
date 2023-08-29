@@ -50,8 +50,12 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
                 if ((focus = enemyWhoBreachedBase()) != null) return focus;
 
-                // =========================================================
+                // === At second base ============================================
 
+                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
+
+                // ===============================================================
+                
                 if ((focus = SpecialDefendFocus.define()) != null) return focus;
 
                 // ===============================================================
@@ -60,8 +64,6 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
                 if ((focus = ZergDefendFocus.define()) != null) return focus;
                 if ((focus = TerranDefendFocus.define()) != null) return focus;
-
-                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
 
                 // If NO BASE exists, return any building
                 if (mainBase == null) {

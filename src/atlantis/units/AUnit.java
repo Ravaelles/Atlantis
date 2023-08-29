@@ -1552,7 +1552,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         if (unitAction == null && isWorker()) {
-            ErrorLog.printErrorOnce("Null action for worker");
+//            ErrorLog.printErrorOnce("Null action for worker");
             return true;
         }
 

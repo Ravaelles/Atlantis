@@ -6,6 +6,7 @@ import atlantis.combat.targeting.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
+import org.junit.runners.Parameterized;
 
 public class AttackNearbyEnemies extends Manager {
     private static Cache<AUnit> cache = new Cache<>();
@@ -53,6 +54,10 @@ public class AttackNearbyEnemies extends Manager {
         }
 
         if (handleAttackNearEnemyUnits()) {
+            if (unit.target() == null || unit.target().hp() <= 0) {
+                System.err.println(unit + " handleAttackNearEnemyUnits got " + unit.target());
+                return null;
+            }
             return usedManager(this);
         }
 

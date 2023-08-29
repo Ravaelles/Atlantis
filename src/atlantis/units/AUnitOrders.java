@@ -89,7 +89,6 @@ public interface AUnitOrders {
         }
 
 
-
         // Do NOT issue double orders
 //        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
         if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
@@ -381,7 +380,8 @@ public interface AUnitOrders {
 
         unit().setTooltip(tooltip);
 
-        if (unit().isRepairing() && unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
+//        if (unit().isRepairing() && unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
+        if (unit().isRepairing() && target.equals(unit().target())) {
 //            System.err.println(this + " avoid double command / " + unit().getLastCommand() + " // " + unit().target());
             return true;
         }

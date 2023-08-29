@@ -15,6 +15,10 @@ public class AtlantisIgniter {
     // =========================================================
 
     public static String getBwapiDataPath() {
+        if (Env.isTournament()) {
+            return "./bwapi-data/";
+        }
+
         if (bwapiDataPath == null && Env.isTesting()) {
 //            filePath = "." + filePath; // Fix for tests: Replace ./ with ../
             return "..\\";
