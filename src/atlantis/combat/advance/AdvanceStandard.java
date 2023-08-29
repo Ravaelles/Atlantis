@@ -23,10 +23,10 @@ public class AdvanceStandard extends MissionManager {
                 TerranTank.wantsToUnsiege(unit);
             }
             else {
-                AttackNearbyEnemies attackNearbyEnemies = new AttackNearbyEnemies(unit);
-                if (attackNearbyEnemies.invoke() != null) {
-                    return usedManager(attackNearbyEnemies);
-                }
+//                AttackNearbyEnemies attackNearbyEnemies = new AttackNearbyEnemies(unit);
+//                if (attackNearbyEnemies.invoke() != null) {
+//                    return usedManager(attackNearbyEnemies);
+//                }
 
                 unit.move(focusPoint, Actions.MOVE_FOCUS, "Advance");
             }

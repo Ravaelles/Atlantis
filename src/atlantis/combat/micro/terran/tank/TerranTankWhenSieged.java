@@ -6,7 +6,7 @@ import atlantis.combat.micro.terran.tank.sieging.WouldBlockChokeBySieging;
 import atlantis.combat.micro.terran.tank.unsieging.DontThinkAboutUnsieging;
 import atlantis.combat.micro.terran.tank.unsieging.SiegeTankRun;
 import atlantis.combat.micro.terran.tank.unsieging.UnsiegeToReposition;
-import atlantis.combat.micro.terran.tank.unsieging.kursk.TankVsTank;
+import atlantis.combat.micro.terran.tank.sieging.kursk.TankVsTank;
 import atlantis.units.AUnit;
 
 public class TerranTankWhenSieged extends Manager {

@@ -45,9 +45,9 @@ public class TooClustered extends Manager {
 //                return usedManager(this);
 //            }
 
-            double moveDistance = A.chance(15) ? 2 : 0.5;
-            unit.moveAwayFrom(nearestBuddy, moveDistance, Actions.MOVE_FORMATION, "SpreadOut");
-            return usedManager(this);
+//            double moveDistance = A.chance(15) ? 2 : 0.5;
+//            unit.moveAwayFrom(nearestBuddy, moveDistance, Actions.MOVE_FORMATION, "SpreadOut");
+            if (unit.moveToMain(Actions.MOVE_AVOID)) return usedManager(this, "SpreadOut");
         }
 
         return null;

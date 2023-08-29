@@ -222,7 +222,6 @@ public class ConstructionRequests {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
             if (!construction.hasStarted()) {
-
                 construction.cancel();
             }
         }

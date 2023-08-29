@@ -2,7 +2,7 @@ package atlantis.config;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
-import atlantis.combat.missions.defend.MissionDefendFocusPoint;
+import atlantis.combat.missions.defend.focus.MissionDefendFocus;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
@@ -68,7 +68,7 @@ public class MapSpecificCommander extends Commander {
                 GameSpeed.changeFrameSkipTo(initFrameSkip);
 
                 if (MapAndRace.isMap("vsGosuRav")) {
-                    CameraCommander.centerCameraOn((new MissionDefendFocusPoint()).focusPoint());
+                    CameraCommander.centerCameraOn((new MissionDefendFocus()).focusPoint());
                 }
             }
         }

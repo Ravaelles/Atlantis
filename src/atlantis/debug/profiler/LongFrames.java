@@ -9,7 +9,7 @@ public class LongFrames {
 
     public static void reportFrameLength(int frameLengthInMs) {
 //        frameLengthInMs = A.rand(0, 10500);
-        frameLengthInMs += 40;
+//        frameLengthInMs += 40;
 
         if (frameLengthInMs >= 85) framesOver85++;
         if (frameLengthInMs >= 1000) framesOver1000++;

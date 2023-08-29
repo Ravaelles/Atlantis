@@ -1,4 +1,4 @@
-package atlantis.combat.missions.contain;
+package atlantis.combat.missions.contain.focus;
 
 import atlantis.combat.advance.Advance;
 import atlantis.units.AUnit;

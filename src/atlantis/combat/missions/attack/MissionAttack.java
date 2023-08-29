@@ -2,6 +2,7 @@ package atlantis.combat.missions.attack;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.attack.focus.MissionAttackFocusPoint;
 import atlantis.units.AUnit;
 
 /**

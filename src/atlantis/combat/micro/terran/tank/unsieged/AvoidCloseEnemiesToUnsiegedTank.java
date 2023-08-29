@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran.tank.unsieged;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
@@ -22,9 +23,12 @@ public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
     }
 
     protected Manager handle() {
-        unit.runningManager().runFrom(
-            enemies.nearestTo(unit), 2, Actions.MOVE_AVOID, false
-        );
-        return usedManager(this);
+        if (unit.moveToMain(Actions.MOVE_AVOID, "CloseEnemies")) return usedManager(this);
+
+//        unit.runningManager().runFrom(
+//            enemies.nearestTo(unit), 2, Actions.MOVE_AVOID, false
+//        );
+
+        return null;
     }
 }

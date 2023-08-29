@@ -16,26 +16,17 @@ public class PreventMaginotLine extends Manager {
     @Override
     public boolean applies() {
         if (unit.enemiesNear().inRadius(5.99, unit).notEmpty()) return false;
-
         if (unit.hp() <= 20) return false;
-
+        if (shouldStayLoaded()) return false;
         if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) return false;
-
         if (unit.enemiesNear().inRadius(3.2 + unit.id() % 2, unit).notEmpty()) return false;
-
         if (EnemyWhoBreachedBase.get() == null) return false;
+        if (tooManyDragoonsNearby()) return false;
 
-        if (
-            unit.hpMoreThan(21)
-                && unit.enemiesNear().inRadius(4.2 + (unit.id() % 5 == 1 ? 2 : 0), unit).ranged().notEmpty()
-        ) return true;
-
-        int dragoons = unit.enemiesNear().ofType(AUnitType.Protoss_Dragoon).inRadius(7, unit).count();
-        if (dragoons > 0) {
-            if (GamePhase.isEarlyGame() && unit.friendsInRadiusCount(5) <= 4 * dragoons) {
-                return false;
-            }
-        }
+//        if (
+//            unit.hpMoreThan(21)
+//                && unit.enemiesNear().inRadius(4.2 + (unit.id() % 5 == 1 ? 2 : 0), unit).ranged().notEmpty()
+//        ) return true;
 
 //        if (unit.isMissionDefend()) {
 //            AUnit main = Select.main();
@@ -45,6 +36,24 @@ public class PreventMaginotLine extends Manager {
 //        }
 
         return true;
+    }
+
+    private boolean shouldStayLoaded() {
+        if (!unit.isLoaded()) return false;
+
+        AUnit enemy = unit.enemiesNear().nearestTo(unit);
+
+        return enemy == null || !enemy.regionsMatch(unit);
+    }
+
+    private boolean tooManyDragoonsNearby() {
+        int dragoons = unit.enemiesNear().ofType(AUnitType.Protoss_Dragoon).inRadius(7, unit).count();
+        if (dragoons > 0) {
+            if (GamePhase.isEarlyGame() && unit.friendsInRadiusCount(5) <= 4 * dragoons) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

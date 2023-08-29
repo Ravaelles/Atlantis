@@ -1,4 +1,4 @@
-package atlantis.combat.missions.attack;
+package atlantis.combat.missions.attack.focus;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
@@ -169,7 +169,6 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 "RandPosition"
             );
         }
-
 
 
         if (our == null) {

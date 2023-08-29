@@ -323,7 +323,7 @@ public class Bases {
         );
     }
 
-    public static AUnit hasBunkerAtNatural() {
+    public static AUnit bunkerAtNatural() {
         return (AUnit) cache.get(
             "hasBunkerAtNatural",
             57,

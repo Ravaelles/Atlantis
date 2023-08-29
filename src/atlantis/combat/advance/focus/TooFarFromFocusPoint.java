@@ -3,8 +3,10 @@ package atlantis.combat.advance.focus;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class TooFarFromFocusPoint extends MoveToFocusPoint {
     public TooFarFromFocusPoint(AUnit unit) {
@@ -38,7 +40,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     protected boolean act() {
         APosition goTo = unit.distTo(focusPoint) <= 3 ? unit.translateTilesTowards(0.15, focusPoint) : focusPoint;
 
-        if (goTo.isWalkable()) {
+        if (goTo != null && goTo.isWalkable()) {
             unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
             return true;
         }

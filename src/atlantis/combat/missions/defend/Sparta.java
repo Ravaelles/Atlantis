@@ -1,5 +1,6 @@
 package atlantis.combat.missions.defend;
 
+import atlantis.combat.missions.defend.focus.MissionDefendFocus;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -19,7 +20,7 @@ public class Sparta extends MissionDefend {
     public Sparta() {
         super();
         setName("Sparta");
-        focusPointManager = new MissionDefendFocusPoint();
+        focusPointManager = new MissionDefendFocus();
     }
 
     // =========================================================

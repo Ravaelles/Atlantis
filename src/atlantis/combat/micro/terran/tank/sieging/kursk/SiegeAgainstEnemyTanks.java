@@ -1,8 +1,7 @@
-package atlantis.combat.micro.terran.tank.unsieging.kursk;
+package atlantis.combat.micro.terran.tank.sieging.kursk;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.sieging.ForceSiege;
-import atlantis.combat.micro.terran.tank.sieging.WantsToSiege;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;

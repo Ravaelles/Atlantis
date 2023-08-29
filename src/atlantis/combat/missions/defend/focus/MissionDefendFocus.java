@@ -1,10 +1,8 @@
-package atlantis.combat.missions.defend;
+package atlantis.combat.missions.defend.focus;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
-import atlantis.combat.missions.Missions;
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.choke.AChoke;
@@ -12,14 +10,11 @@ import atlantis.map.base.Bases;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
-public class MissionDefendFocusPoint extends MissionFocusPoint {
+public class MissionDefendFocus extends MissionFocusPoint {
 
     private Cache<AFocusPoint> cache = new Cache<>();
 
@@ -51,101 +46,22 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     );
                 }
 
-                // === Enemies that breached into base =============
+                // === Enemies that breached into base ===========================
 
-                AUnit enemyInBase = EnemyWhoBreachedBase.get();
-                if (enemyInBase != null) {
-                    return new AFocusPoint(
-                        enemyInBase,
-                        "EnemyBreachedBase"
-                    );
-                }
+                if ((focus = enemyWhoBreachedBase()) != null) return focus;
 
                 // =========================================================
 
-                Selection basesWithUnfinished = Select.ourWithUnfinished().bases();
-                AChoke mainChoke = Chokes.mainChoke();
-                if (basesWithUnfinished.count() <= 1 && Missions.isGlobalMissionSparta()) {
-                    if (mainChoke != null) {
-                        return new AFocusPoint(
-                            mainChoke,
-                            Select.main(),
-                            "Choke300"
-                        );
-                    }
-                }
+                if ((focus = SpecialDefendFocus.define()) != null) return focus;
 
-                // === Around defensive building ===========================================
+                // ===============================================================
+                // === Around defensive buildings ================================
+                // ===============================================================
 
-                if (We.zerg()) {
-                    AUnit sunken = Select.ourOfType(AUnitType.Zerg_Sunken_Colony).mostDistantTo(mainBase);
-                    if (sunken != null) {
-                        return new AFocusPoint(
-                            sunken.translateTilesTowards(3.2, mainBase),
-                            mainBase,
-                            "Sunken"
-                        );
-                    }
-                }
+                if ((focus = ZergDefendFocus.define()) != null) return focus;
+                if ((focus = TerranDefendFocus.define()) != null) return focus;
 
-                // === Natural / main choke ================
-
-                AUnit bunkerAtNatural = Bases.hasBunkerAtNatural();
-                if (bunkerAtNatural != null) {
-                    return new AFocusPoint(
-                        bunkerAtNatural,
-                        mainBase,
-                        "Bunker@Natural"
-                    );
-                }
-
-//                if (Bases.hasBunkerAtNatural() || Bases.hasBaseAtNatural()) {
-//                    focus = atNaturalChoke();
-//                    if (focus != null) {
-//                        return focus;
-//                    }
-//                }
-
-                // === Terran bunker ===========================================
-
-                if (We.terran() && A.seconds() <= 700 && Count.tanks() <= 5) {
-                    AUnit bunker = Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).mostDistantTo(mainBase);
-                    if (bunker != null) {
-                        APosition point;
-                        String tooltip;
-                        if (mainChoke != null) {
-                            point = mainChoke.center().translateTilesTowards(3, bunker);
-                            tooltip = "Bunker & Choke";
-                        }
-                        else {
-                            point = bunker.translateTilesTowards(-3, mainBase);
-                            tooltip = "Bunker";
-                        }
-
-                        return new AFocusPoint(
-                            point,
-                            mainBase,
-                            tooltip
-                        );
-                    }
-                }
-
-                else {
-                    focus = atMainChoke();
-                    if (focus != null) {
-                        return focus;
-                    }
-                }
-
-
-                // =========================================================
-
-                if (basesWithUnfinished.count() >= 2) {
-                    focus = atAnyBase();
-                    if (focus != null) {
-                        return focus;
-                    }
-                }
+                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
 
                 // If NO BASE exists, return any building
                 if (mainBase == null) {
@@ -201,6 +117,55 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         );
     }
 
+    private AFocusPoint somewhereAtNaturalBaseOrNaturalChoke() {
+        AFocusPoint focus;
+
+//        if (Bases.hasBaseAtNatural()) {
+//            focus = atNaturalChoke();
+//            if (focus != null) {
+//                return focus;
+//            }
+//        }
+
+        Selection bases = Select.ourWithUnfinished().bases();
+        if (bases.count() == 2) {
+//            focus = atAnyBase();
+//            if (focus != null) {
+//                return focus;
+//            }
+
+            AChoke naturalChoke = Chokes.natural();
+            AUnit naturalBase = bases.last();
+
+            if (naturalChoke != null) {
+                return new AFocusPoint(
+                    naturalChoke,
+                    naturalBase,
+                    "NaturalChoke"
+                );
+            }
+
+            return new AFocusPoint(
+                naturalBase,
+                Select.main(),
+                "NaturalBase"
+            );
+        }
+
+        return null;
+    }
+
+    private static AFocusPoint enemyWhoBreachedBase() {
+        AUnit enemyInBase = EnemyWhoBreachedBase.get();
+        if (enemyInBase != null) {
+            return new AFocusPoint(
+                enemyInBase,
+                "EnemyBreachedBase"
+            );
+        }
+        return null;
+    }
+
     // =========================================================
 
     private AFocusPoint atAnyBase() {
@@ -231,7 +196,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
     // =========================================================
 
-    private AFocusPoint atMainChoke() {
+    protected static AFocusPoint atMainChoke() {
         AChoke mainChoke = Chokes.mainChoke();
         if (mainChoke == null) {
             return null;

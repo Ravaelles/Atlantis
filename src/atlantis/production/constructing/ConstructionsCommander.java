@@ -141,8 +141,6 @@ public class ConstructionsCommander extends Commander {
     private void checkForConstructionStatusChange(Construction order, AUnit building) {
 
 
-
-
 //        if (building != null) {
 
 //        }
@@ -154,7 +152,7 @@ public class ConstructionsCommander extends Commander {
                 && (building == null || !building.isAlive())
         ) {
             order.cancel();
-            System.out.println("Building destroyed - cancel construction");
+            A.println("Building destroyed - cancel construction");
             return;
         }
 
@@ -177,11 +175,6 @@ public class ConstructionsCommander extends Commander {
 
                 // Builder did not change it's type so it's not Zerg Extractor case
                 else {
-
-
-
-
-
 
 
                     AUnit buildUnit = builder.buildUnit();
@@ -261,7 +254,6 @@ public class ConstructionsCommander extends Commander {
 
             // If it has less than 71HP or less than 60% and is close to being finished
             if (building.hp() <= 32 || building.getRemainingBuildTime() <= 30) {
-
                 order.cancel();
             }
         }
@@ -283,13 +275,13 @@ public class ConstructionsCommander extends Commander {
         AUnit main = Select.main();
         int timeout = 30 * (
             8
-                + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 40 : 11)
-                + ((int) (2.7 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
+                + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 40 : 10)
+                + ((int) (2.9 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
         );
 
         if (AGame.now() - order.timeOrdered() > timeout) {
 //            System.err.println(" // " + AGame.now() + " // " + order.timeOrdered() + " // > " + timeout);
-            System.out.println("Cancel construction of " + order.buildingType() + " (Took too long)");
+            A.println("Cancel construction of " + order.buildingType() + " (Took too long)");
             order.cancel();
         }
     }

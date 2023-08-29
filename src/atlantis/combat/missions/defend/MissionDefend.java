@@ -3,14 +3,14 @@ package atlantis.combat.missions.defend;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.attack.MissionAttackVsEnemyUnit;
+import atlantis.combat.missions.defend.focus.MissionDefendFocus;
 import atlantis.units.AUnit;
 
 public class MissionDefend extends Mission {
     protected AUnit unit;
     protected AUnit main;
     protected AFocusPoint focusPoint;
-    
+
 //    protected double focusPointToBase;
 //    protected double unitToEnemy;
 //    protected double unitToFocus;
@@ -20,7 +20,7 @@ public class MissionDefend extends Mission {
 
     public MissionDefend() {
         super("Defend");
-        focusPointManager = new MissionDefendFocusPoint();
+        focusPointManager = new MissionDefendFocus();
     }
 
     // =========================================================

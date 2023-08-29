@@ -164,7 +164,7 @@ public class AAdvancedPainter extends APainter {
     protected static void paintDetailedUnits() {
         Selection unitsToPaint = Select.ourCombatUnits().add(Select.ourWorkers());
         for (AUnit unit : unitsToPaint.list()) {
-            if (unit.isCombatBuilding()) continue;
+            if (unit.isLoaded()) continue;
             if (unit.isWorker() && unit.lastActionMoreThanAgo(30 * 4)) continue;
 
 //            paintUnitInRangeInfo(unit);

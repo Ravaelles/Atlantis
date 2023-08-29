@@ -15,7 +15,8 @@ public class PreventFreeze extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.noCooldown() && looksFrozen();
+//        if (true) return false;
+        return unit.noCooldown() && !unit.isLoaded() && looksFrozen();
     }
 
     private boolean looksFrozen() {
@@ -32,8 +33,12 @@ public class PreventFreeze extends Manager {
 
     @Override
     public Manager handle() {
+
 //        System.err.println("@ " + A.now() + " - UNFREEZE " + unit + " / " + unit.manager());
-        unit.holdPosition("Unfreeze");
-        return usedManager(this);
+        return unit.mission().handleManagerClass(unit);
+
+//        return null;
+//        unit.holdPosition("Unfreeze");
+//        return usedManager(this);
     }
 }
