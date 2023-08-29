@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public abstract class BaseAbstractCommander {
+public abstract class BaseCommander {
     /**
      * Commanders can have subcommanders. This is the hierarchy level of this commander e.g.
      * 0 - top Commander (AtlantisGameCommander)
@@ -23,7 +23,7 @@ public abstract class BaseAbstractCommander {
     protected Commander[] commanderObjects;
     protected int lastFrameInvoked = -1;
 
-    public BaseAbstractCommander() {
+    public BaseCommander() {
         shouldProfile = Arrays.asList(AtlantisGameCommander.topLevelSubcommanders()).contains(this.getClass());
 
         initializeCommanderInstances();

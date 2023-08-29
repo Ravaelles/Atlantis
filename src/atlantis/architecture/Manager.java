@@ -8,7 +8,7 @@ import atlantis.units.AUnit;
  * If a manager return non-null value in handle(), it will prevent execution of
  * other managers in this frame.
  */
-public abstract class Manager extends BaseAbstractManager {
+public abstract class Manager extends BaseManager {
     public Manager(AUnit unit) {
         super(unit);
     }

@@ -3,7 +3,7 @@ package atlantis.architecture;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.game.A;
 
-public class Commander extends BaseAbstractCommander {
+public class Commander extends BaseCommander {
     /**
      * All sub-commanders. Order matters.
      */

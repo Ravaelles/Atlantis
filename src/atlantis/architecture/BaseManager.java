@@ -1,22 +1,20 @@
 package atlantis.architecture;
 
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import tests.unit.FakeUnit;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public abstract class BaseAbstractManager {
+public abstract class BaseManager {
     protected Manager[] submanagerObjects;
 
     protected final AUnit unit;
     protected final Squad squad;
 
-    public BaseAbstractManager(AUnit unit) {
+    public BaseManager(AUnit unit) {
         this.unit = unit;
         this.squad = (unit != null ? unit.squad() : null);
 
@@ -77,6 +75,7 @@ public abstract class BaseAbstractManager {
 
     public String toString() {
         String name = getClass().getSimpleName();
-        return A.substring(name.replace("Terran", ""), 0, 30);
+        if (name.startsWith("Terran")) name = name.replace("Terran", "");
+        return A.substring(name, 0, 30);
     }
 }
