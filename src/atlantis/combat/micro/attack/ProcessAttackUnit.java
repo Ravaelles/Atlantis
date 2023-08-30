@@ -6,6 +6,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class ProcessAttackUnit extends Manager {
     public ProcessAttackUnit(AUnit unit) {
@@ -13,6 +15,25 @@ public class ProcessAttackUnit extends Manager {
     }
 
     public boolean processAttackOtherUnit(AUnit target) {
+        if (target == null) {
+            ErrorLog.printMaxOncePerMinute(unit.type() + " AttackUnit got null target");
+            return false;
+        }
+        if (target.hp() <= 0) {
+            ErrorLog.printMaxOncePerMinute(
+                unit.type() + " AttackUnit got target.hp = " + target.hp() + " - " + target.type()
+            );
+            return false;
+        }
+        if (!target.hasPosition()) {
+            ErrorLog.printMaxOncePerMinute(
+                unit.type() + " AttackUnit got target with no position" + target.position() + " " + target.type()
+            );
+            return false;
+        }
+
+        // =========================================================
+
         if (ProcessAttackUnitAsTank.forTank(unit, target)) return true;
 
         if (target.isFoggedUnitWithKnownPosition()) {
@@ -20,9 +41,7 @@ public class ProcessAttackUnit extends Manager {
                 unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false);
                 return true;
             }
-            else {
-                return false;
-            }
+            return false;
         }
 
         if (handleMoveNextToTanksWhenAttackingThem(target)) return true;
@@ -55,8 +74,7 @@ public class ProcessAttackUnit extends Manager {
 //        }
 
         // Melee
-        confirmAttack(target);
-        return true;
+        return confirmAttack(target);
     }
 
     //    private  double distBonus(AUnit target) {
@@ -75,6 +93,7 @@ public class ProcessAttackUnit extends Manager {
 
     private boolean handleMoveNextToTanksWhenAttackingThem(AUnit enemy) {
         if (!enemy.isTank()) return false;
+        if (We.terran()) return false;
 
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (

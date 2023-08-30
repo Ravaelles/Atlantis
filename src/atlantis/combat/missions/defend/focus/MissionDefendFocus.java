@@ -4,6 +4,7 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
@@ -28,23 +29,7 @@ public class MissionDefendFocus extends MissionFocusPoint {
             () -> {
                 AFocusPoint focus = null;
 
-                if (AGame.isUms()) {
-                    return null;
-                }
-
-                AUnit mainBase = Select.main();
-                if (mainBase == null) {
-                    AUnit firstUnit = Select.our().first();
-
-                    if (firstUnit == null) {
-                        return null;
-                    }
-
-                    return new AFocusPoint(
-                        firstUnit,
-                        "WeHaveNoBase"
-                    );
-                }
+                if (Select.main() == null) return fallbackToNearestEnemy();
 
                 // === Enemies that breached into base ===========================
 
@@ -55,67 +40,85 @@ public class MissionDefendFocus extends MissionFocusPoint {
                 if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
 
                 // ===============================================================
-                
+
                 if ((focus = SpecialDefendFocus.define()) != null) return focus;
 
                 // ===============================================================
-                // === Around defensive buildings ================================
+                // === Around combat buildings ===================================
                 // ===============================================================
 
                 if ((focus = ZergDefendFocus.define()) != null) return focus;
                 if ((focus = TerranDefendFocus.define()) != null) return focus;
+                if ((focus = aroundCombatBuilding()) != null) return focus;
 
-                // If NO BASE exists, return any building
-                if (mainBase == null) {
-                    Selection selection = Select.ourBuildingsWithUnfinished();
-                    if (selection == null || selection.first() == null) {
-                        return null;
-                    }
+                // === Main choke ================================================
 
-                    return new AFocusPoint(selection.first(), "AnyBuilding");
-                }
+                if ((focus = atMainChoke()) != null) return focus;
 
-                // === Main choke ================
+                // === Return position near the first building ===================
 
-                focus = atMainChoke();
-                if (focus != null) {
+                if ((focus = anyOfOurBuildings()) != null) {
                     return focus;
                 }
 
-                // === Focus enemy attacking the main base =================
+                // === Hopeless case, go towards enemies =========================
 
-//                AUnit nearEnemy = Select.enemy()
-//                    .combatUnits()
-//                    .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Zerg_Overlord)
-//                    .effVisible()
-//                    .inRadius(12, mainBase)
-//                    .nearestTo(mainBase);
-//                if (nearEnemy != null) {
-//                    return new AFocusPoint(
-//                        nearEnemy,
-//                        Select.main()
-//                    );
-//                }
-//
-//                // === Gather around defensive buildings ===================
-//
-//                AUnit defBuilding = Select.ourOfTypeWithUnfinished(AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND).mostDistantTo(mainBase);
-//                if (defBuilding != null) {
-//                    return defBuilding.translateTilesTowards(mainBase.position(), 5);
-//                }
-
-                // === Return position near the first building ================
-
-                AUnit ourFirst = Select.our().first();
-                if (ourFirst != null) {
-                    return new AFocusPoint(
-                        ourFirst,
-                        "WeAlmostLost"
-                    );
-                }
-
-                return null;
+                return fallbackToNearestEnemy();
             }
+        );
+    }
+
+    private AFocusPoint whenNoMain() {
+        AUnit main = Select.main();
+
+        if (main != null) return null;
+
+        return fallbackToNearestEnemy();
+    }
+
+    private AFocusPoint fallbackToNearestEnemy() {
+        AUnit our = Select.ourBuildings().first();
+        if (our == null) our = Select.our().first();
+
+        AUnit enemy = EnemyUnits.discovered().groundUnits().havingPosition().nearestTo(our);
+
+        if (enemy == null) return null;
+
+        return new AFocusPoint(
+            enemy,
+            our,
+            "FallbackEnemy(" + enemy.type() + ")"
+        );
+    }
+
+    private static AFocusPoint aroundCombatBuilding() {
+        AUnit base = Select.ourBases().last();
+
+        if (base == null) return null;
+
+        AUnit combatBuilding = Select
+            .ourOfType(AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND)
+            .mostDistantTo(base);
+
+        if (combatBuilding == null) return null;
+
+        return new AFocusPoint(
+            combatBuilding.translateTilesTowards(base, 5),
+            base,
+            "Around" + combatBuilding.type().name()
+        );
+    }
+
+    private static AFocusPoint anyOfOurBuildings() {
+        AUnit ourBuilding;
+
+        ourBuilding = Select.ourBuildings().first();
+
+        if (ourBuilding == null) return null;
+
+        return new AFocusPoint(
+            ourBuilding,
+            "AnyOfOurBuildings"
         );
     }
 

@@ -1,5 +1,6 @@
 package atlantis.combat.targeting;
 
+import atlantis.combat.targeting.air.AAirUnitAirTargets;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -8,6 +9,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class AAirUnitsTargeting extends HasUnit {
+    private final AAirUnitAirTargets aAirUnitAirTargets;
     protected boolean onlyEnemiesInRangeAreAllowed;
     protected Selection possibleTargets;
 
@@ -18,6 +20,7 @@ public class AAirUnitsTargeting extends HasUnit {
     public AAirUnitsTargeting(AUnit unit, boolean onlyEnemiesInRangeAreAllowed) {
         super(unit);
         this.onlyEnemiesInRangeAreAllowed = onlyEnemiesInRangeAreAllowed;
+        this.aAirUnitAirTargets = new AAirUnitAirTargets(unit);
 
         assert (unit.isAir());
 
@@ -53,13 +56,9 @@ public class AAirUnitsTargeting extends HasUnit {
 
         // =========================================================
 
-        if ((target = targetsCrucial()) != null) {
-            return target;
-        }
-
-        if ((target = targetsStandard()) != null) {
-            return target;
-        }
+        if ((target = aAirUnitAirTargets.targetsAir(possibleTargets)) != null) return target;
+        if ((target = targetsCrucial()) != null) return target;
+        if ((target = targetsStandard()) != null) return target;
 
         return target;
     }

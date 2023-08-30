@@ -24,7 +24,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
@@ -39,7 +39,7 @@ public class MapAndRace {
          * vs AI Protoss player - ♥‿♥ - My favorite map for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-        if (true) return "ums/7th.scx";
+//        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
@@ -62,6 +62,13 @@ public class MapAndRace {
 //        if (true) return "ums/rav/M_v_1Ling.scm"; // 1 Marine v 1 Zergling
 //        if (true) return "ums/rav/Wraiths_v_Base.scx"; // Wraiths v CC & Turret & Workers
 //        if (true) return "ums/rav/Wraiths_v_Base2.scm"; // Wraiths v Hatchery & Spore & Workers
+
+        // vs Terran
+//        if (true) return "ums/rav/Wraith_v_Wraith.scm";
+//        if (true) return "ums/rav/Wraiths_v_Base.scx";
+//@        if (true) return "ums/rav/Bunker_v_M&M.scx";
+        if (true) return "ums/rav/Tanks_v_Tanks_in_line.scx";
+//        if (true) return "ums/rav/Tanks_v_Tanks_with_choke.scx";
 
         // vs Protoss
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
@@ -96,13 +103,6 @@ public class MapAndRace {
 //        if (true) return "ums/marines/m (5).scx"; // Nice map to test different terran infantry in rounds
 //        if (true) return "ums/marines/m (8).scx"; // Hmm
 //        if (true) return "ums/rav/M&M_v_Cannons.scx";
-
-        // vs Terran
-//        if (true) return "ums/rav/Wraith_v_Wraith.scm";
-//        if (true) return "ums/rav/Wraiths_v_Base.scx";
-//@        if (true) return "ums/rav/Bunker_v_M&M.scx";
-//        if (true) return "ums/rav/Tanks_v_Tanks_in_line.scx";
-//        if (true) return "ums/rav/Tanks_v_Tanks_with_choke.scx";
 
         // === Maps for testing as Zerg ============================
 

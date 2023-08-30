@@ -53,4 +53,10 @@ public class AvoidSingleEnemy extends Manager {
             return 3.5;
         }
     }
+
+    @Override
+    public String toString() {
+        String target = unit.runningFrom() == null ? "NULL_FROM" : unit.runningFrom().type().name();
+        return super.toString() + "(" + target + ")";
+    }
 }

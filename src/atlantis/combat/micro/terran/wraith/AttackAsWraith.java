@@ -15,8 +15,9 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     @Override
     public boolean applies() {
         if (!unit.isWraith()) return false;
-
         if (unit.hp() <= 20) return false;
+        if (unit.enemiesNear().air().havingAntiAirWeapon().canAttack(unit, 3.5).notEmpty()) return false;
+
         if (unit.hp() >= 110 || unit.looksIdle()) return true;
         if (unit.didntShootRecently(10)) return true;
 
@@ -34,6 +35,7 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             ChangeLocationIfRanTooLong.class,
+            AttackOtherAirUnits.class,
             AttackTargetInRangeIfRanTooLong.class,
             AttackTargetInRange.class,
             MoveAsLooksIdle.class,

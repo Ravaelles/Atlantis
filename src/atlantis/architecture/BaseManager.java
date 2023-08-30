@@ -73,6 +73,7 @@ public abstract class BaseManager {
         return (unit.id() + "," + getClass()).hashCode();
     }
 
+    @Override
     public String toString() {
         String name = getClass().getSimpleName();
         if (name.startsWith("Terran")) name = name.replace("Terran", "");

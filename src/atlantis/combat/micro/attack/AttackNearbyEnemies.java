@@ -39,22 +39,22 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     protected Manager handle() {
-        PreventFreeze preventFreeze = new PreventFreeze(unit);
-        if (preventFreeze.invoke() != null) {
-            return usedManager(preventFreeze);
-        }
+//        PreventFreeze preventFreeze = new PreventFreeze(unit);
+//        if (preventFreeze.invoke() != null) {
+//            return usedManager(preventFreeze);
+//        }
 
         Manager dedicatedManager = dedicatedManager();
         if (dedicatedManager != null) {
             return usedManager(dedicatedManager.invoke());
         }
 
-        if (this.equals(unit.manager()) && justHandledRecently() && !unit.looksIdle()) {
-            return usedManager(this);
-        }
+//        if (this.equals(unit.manager()) && justHandledRecently() && !unit.looksIdle()) {
+//            return usedManager(this);
+//        }
 
         if (handleAttackNearEnemyUnits()) {
-            if (unit.target() == null || unit.target().hp() <= 0) {
+            if (unit.isAttacking() && (unit.target() == null || unit.target().hp() <= 0)) {
                 System.err.println(unit + " handleAttackNearEnemyUnits got " + unit.target());
                 return null;
             }
@@ -88,10 +88,7 @@ public class AttackNearbyEnemies extends Manager {
             1,
             () -> {
                 if (!applies()) return false;
-
-                if (unit.target() != null) {
-                    if (!unit.mission().allowsToAttackEnemyUnit(unit, unit.target())) return false;
-                }
+                if (unit.target() != null && !unit.mission().allowsToAttackEnemyUnit(unit, unit.target())) return false;
                 if (!allowedToAttack.canAttackNow()) return false;
 
 //                if (unit.isAttacking() && (
@@ -116,9 +113,8 @@ public class AttackNearbyEnemies extends Manager {
                 if (unit.mission().allowsToAttackEnemyUnit(unit, enemy)) {
                     return processAttackUnit.processAttackOtherUnit(enemy);
                 }
-                else {
-                    return false;
-                }
+
+                return false;
             });
     }
 
@@ -169,5 +165,11 @@ public class AttackNearbyEnemies extends Manager {
 
     protected AUnit bestTargetToAttack() {
         return ATargeting.defineBestEnemyToAttackFor(unit, maxDistToAttack(unit));
+    }
+
+    @Override
+    public String toString() {
+        String target = unit.target() == null ? "NULL_TARGET" : unit.target().type().name();
+        return super.toString() + "(" + target + ")";
     }
 }
