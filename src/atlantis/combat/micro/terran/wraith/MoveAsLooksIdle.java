@@ -22,7 +22,7 @@ public class MoveAsLooksIdle extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AttackTargetInRange.class,
-            AsAirUnitAttackAnyEnemy.class,
+            AsAirAttackAnyone.class,
             WeDontKnowWhereEnemyIs.class,
         };
     }

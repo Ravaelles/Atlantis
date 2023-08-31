@@ -1,7 +1,6 @@
 package atlantis.architecture.generic;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.terran.wraith.AsAirUnitAttackAnyEnemy;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -19,7 +18,7 @@ public class DoNothing extends Manager {
 
 //        if (unit.isAir() && unit.hasAnyWeapon()) {
 
-//            AsAirUnitAttackAnyEnemy asAirUnitAttackAnyEnemy = new AsAirUnitAttackAnyEnemy(unit);
+//            AsAirAttackAnyone asAirUnitAttackAnyEnemy = new AsAirAttackAnyone(unit);
 //            return asAirUnitAttackAnyEnemy.invoke();
 //        }
 

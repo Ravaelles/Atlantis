@@ -4,10 +4,10 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
-public class SiegeAgainstRegularBuildings extends Manager {
+public class SiegeVsRegularBuildings extends Manager {
     private AUnit enemyBuilding = null;
 
-    public SiegeAgainstRegularBuildings(AUnit unit) {
+    public SiegeVsRegularBuildings(AUnit unit) {
         super(unit);
     }
 

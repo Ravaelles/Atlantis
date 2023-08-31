@@ -78,9 +78,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Unit u;
 
     /**
-     *
+     * Last manager used by this unit. Null means that no manager has been used.
+     * You need to set this variable manually each time by using setManagerUsed().
      */
-    private Manager manager = new DoNothing(this);
+    private Manager manager;
 
     /**
      * Cache var storing generic Object-type keys.
@@ -158,15 +159,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // Constructors only used for tests
 
     protected AUnit() {
+        initManagers();
     }
 
     protected AUnit(FakeUnit unit) {
+        initManagers();
     }
 
     // =========================================================
 
     protected AUnit(Unit u) {
         this.u = u;
+        initManagers();
 
         // Cached type helpers
         refreshType();
@@ -192,6 +196,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     public Manager manager() {
         return manager;
+    }
+
+    private void initManagers() {
+        manager = new DoNothing(this);
+
+        runningManager = new ARunningManager(this);
+        avoidEnemiesManager = new AvoidEnemies(this);
     }
 
     /**
@@ -234,7 +245,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     protected AUnitType cacheType() {
-        _lastType = AUnitType.from(u.getType());
+        _lastType = u != null ? AUnitType.from(u.getType()) : null;
         return _lastType;
     }
 
@@ -279,8 +290,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // =========================================================
 
     private Squad squad;
-    private final ARunningManager runningManager = new ARunningManager(this);
-    private final AvoidEnemies avoidEnemiesManager = new AvoidEnemies(this);
+    private ARunningManager runningManager;
+    private AvoidEnemies avoidEnemiesManager;
 
     private boolean _repairableMechanically = false;
     private boolean _healable = false;
@@ -340,7 +351,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     @Override
     public String toString() {
         if (type() == null) {
-            throw new RuntimeException("wut");
+            ErrorLog.printMaxOncePerMinute("AUnit type() is NULL");
+//            throw new RuntimeException("wut");
+            return "ERROR_NULL_TYPE";
         }
         return idWithHash() + " " + (type() != null ? type().name() : "NULL_TYPE") + " @" + position();
     }
@@ -2723,7 +2736,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public void setManagerUsed(Manager managerUsed, String message) {
-        if (!manager().equals(managerUsed)) {
+        if (!manager.equals(managerUsed)) {
             managerLogs.addMessage(managerUsed.toString(), this);
 
             this.manager = managerUsed;

@@ -3,6 +3,7 @@ package atlantis.combat.managers;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
+import atlantis.combat.micro.generic.Unfreezer;
 import atlantis.combat.micro.managers.DanceAfterShoot;
 import atlantis.combat.micro.managers.StopAndShoot;
 import atlantis.combat.micro.transport.TransportUnits;
@@ -23,13 +24,13 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            Unfreezer.class,
             AvoidSpellsAndMines.class,
             AvoidCriticalUnits.class,
             DanceAfterShoot.class,
             StopAndShoot.class,
             DontInterruptShootingUnits.class,
             TransportUnits.class,
-//            Unfreezer.class,
             ShouldStopRunning.class,
         };
     }

@@ -6,11 +6,11 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
-public class SiegeAgainstCombatBuildings extends Manager {
+public class SiegeVsCombatBuildings extends Manager {
     public static final double COMBAT_BUILDING_DIST_SIEGE = 11.95;
     private AUnit combatBuilding;
 
-    public SiegeAgainstCombatBuildings(AUnit unit) {
+    public SiegeVsCombatBuildings(AUnit unit) {
         super(unit);
     }
 

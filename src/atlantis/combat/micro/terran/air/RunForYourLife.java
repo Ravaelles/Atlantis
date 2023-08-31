@@ -24,6 +24,8 @@ public class RunForYourLife extends Manager {
 
     @Override
     protected Manager handle() {
+        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(8)) return usedManager(this);
+
         if ((new AvoidEnemies(unit)).invoke() != null) return usedManager(this);
 
         return null;

@@ -1,76 +1,111 @@
 package atlantis.combat.micro.generic;
 
+import atlantis.architecture.Manager;
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.UnitStateManager;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import bwapi.Color;
 
-public class Unfreezer {
-    /**
-     * Some units can get FROZEN (stuck, unable to move/shoot). It's a known Starcraft bug.
-     * This is an ugly way of fixing this.
-     */
-    public boolean handleUnfreeze(AUnit unit) {
-//        if (true) return false;
+import atlantis.architecture.Manager;
+import atlantis.units.AUnit;
 
-        if (unit.isRunning() && unit.lastActionFramesAgo() >= (UnitStateManager.UPDATE_UNIT_POSITION_EVERY_FRAMES + 20)) {
-            if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
-//                System.err.println("UNFREEZE #1!");
-//                unit.setTooltip("UNFREEZE!");
-                return unfreeze(unit);
-            }
-        }
-
-//        if (
-//                unit.lastUnderAttackLessThanAgo(5)
-//                        && unit.getLastOrderFramesAgo() >= AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES
-//                        && unit.cooldownRemaining() == 0
-//        ) {
-//            if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
-//                System.err.println("UNFREEZE #2!");
-//                unit.setTooltip("UNFREEZE!");
-//                return unfreeze();
-//            }
-//        }
-
-        return false;
+public class Unfreezer extends Manager {
+    public Unfreezer(AUnit unit) {
+        super(unit);
     }
 
-    // =========================================================
+    @Override
+    public boolean applies() {
+        return unit.isCombatUnit()
+            && !unit.isLoaded()
+            && unit.looksIdle()
+            && unit.lastActionMoreThanAgo(15)
+            && unit.lastActionMoreThanAgo(30, Actions.MOVE_UNFREEZE);
+    }
 
-    public boolean unfreeze(AUnit unit) {
-        unit.runningManager().stopRunning();
+    @Override
+    public Manager handle() {
+//        System.err.println(A.now() + " Unfreezing " + unit + " / " + unit.action());
 
-//        CameraCommander.centerCameraOn();
-
-        boolean paintingDisabled = APainter.isDisabled();
-        if (paintingDisabled) {
-            APainter.enablePainting();
+        if (unit.distToFocusPoint() >= 4) {
+            unit.moveTactical(unit.micro().focusPoint(), Actions.MOVE_UNFREEZE, "Unfreeze");
         }
-        APainter.paintCircleFilled(unit, 10, Color.Cyan);
-        if (paintingDisabled) {
-            APainter.disablePainting();
+        else {
+            unit.moveTactical(Select.ourBuildings().random(), Actions.MOVE_UNFREEZE, "Unfreezing");
         }
-//        GameSpeed.changeSpeedTo(70);
-//        GameSpeed.pauseGame();
 
-        if (Select.main() != null && unit.moveTactical(Select.main(), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
-
-        if (unit.moveTactical(unit.translateByPixels(8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
-        if (unit.moveTactical(unit.translateByPixels(-8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
-        if (unit.moveTactical(unit.translateByPixels(0, 8), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
-        if (unit.moveTactical(unit.translateByPixels(0, -8), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
-//        } else {
-//            unit.holdPosition("Unfreeze");
-//            unit.stop("Unfreeze");
-//            unit.holdPosition("Unfreeze");
-//            unit.stop("Unfreeze");
-//            unit.stop("Unfreeze");
-//            unit.holdPosition("Unfreeze");
-//        }
-
-        return false;
+        return usedManager(this);
     }
 }
+
+
+//public class Unfreezer extends Manager {
+//    /**
+//     * Some units can get FROZEN (stuck, unable to move/shoot). It's a known Starcraft bug.
+//     * This is an ugly way of fixing this.
+//     */
+//    public boolean handleUnfreeze(AUnit unit) {
+////        if (true) return false;
+//
+//        if (unit.isRunning() && unit.lastActionFramesAgo() >= (UnitStateManager.UPDATE_UNIT_POSITION_EVERY_FRAMES + 20)) {
+//            if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
+////                System.err.println("UNFREEZE #1!");
+////                unit.setTooltip("UNFREEZE!");
+//                return unfreeze(unit);
+//            }
+//        }
+//
+////        if (
+////                unit.lastUnderAttackLessThanAgo(5)
+////                        && unit.getLastOrderFramesAgo() >= AUnit.UPDATE_UNIT_POSITION_EVERY_FRAMES
+////                        && unit.cooldownRemaining() == 0
+////        ) {
+////            if (unit._lastX == unit.x() && unit._lastY == unit.y()) {
+////                System.err.println("UNFREEZE #2!");
+////                unit.setTooltip("UNFREEZE!");
+////                return unfreeze();
+////            }
+////        }
+//
+//        return false;
+//    }
+//
+//    // =========================================================
+//
+//    public boolean unfreeze(AUnit unit) {
+//        unit.runningManager().stopRunning();
+//
+////        CameraCommander.centerCameraOn();
+//
+//        boolean paintingDisabled = APainter.isDisabled();
+//        if (paintingDisabled) {
+//            APainter.enablePainting();
+//        }
+//        APainter.paintCircleFilled(unit, 10, Color.Cyan);
+//        if (paintingDisabled) {
+//            APainter.disablePainting();
+//        }
+////        GameSpeed.changeSpeedTo(70);
+////        GameSpeed.pauseGame();
+//
+//        if (Select.main() != null && unit.moveTactical(Select.main(), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
+//
+//        if (unit.moveTactical(unit.translateByPixels(8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
+//        if (unit.moveTactical(unit.translateByPixels(-8, 0), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
+//        if (unit.moveTactical(unit.translateByPixels(0, 8), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
+//        if (unit.moveTactical(unit.translateByPixels(0, -8), Actions.MOVE_UNFREEZE, "Unfreeze")) return true;
+////        } else {
+////            unit.holdPosition("Unfreeze");
+////            unit.stop("Unfreeze");
+////            unit.holdPosition("Unfreeze");
+////            unit.stop("Unfreeze");
+////            unit.stop("Unfreeze");
+////            unit.holdPosition("Unfreeze");
+////        }
+//
+//        return false;
+//    }
+//}

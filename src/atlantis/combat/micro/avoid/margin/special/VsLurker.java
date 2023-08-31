@@ -2,7 +2,7 @@ package atlantis.combat.micro.avoid.margin.special;
 
 import atlantis.units.AUnit;
 
-public class AgainstLurker {
+public class VsLurker {
     protected static double vsLurker(AUnit defender, AUnit lurker) {
         if (defender.isWorker()) {
             return 9.5;

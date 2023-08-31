@@ -30,13 +30,13 @@ public class ThinkOfSieging extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             SiegeAgainstEnemyTanks.class,
-            SiegeAgainstCombatBuildings.class,
+            SiegeVsCombatBuildings.class,
             UnitBeingReparedManager.class,
             SiegeHereDuringMissionDefend.class,
-            SiegeAgainstSpecificEnemies.class,
-            SiegeAgainstRegularBuildings.class,
-            SiegeAgainstTerran.class,
-            SiegeAgainstRegularEnemies.class,
+            SiegeVsSpecificEnemies.class,
+            SiegeVsRegularBuildings.class,
+            SiegeVsTerran.class,
+            SiegeVsRegularEnemies.class,
             GoodDistanceToContainFocusPoint.class,
         };
     }

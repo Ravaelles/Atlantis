@@ -6,8 +6,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
-public class SiegeAgainstSpecificEnemies extends Manager {
-    public SiegeAgainstSpecificEnemies(AUnit unit) {
+public class SiegeVsSpecificEnemies extends Manager {
+    public SiegeVsSpecificEnemies(AUnit unit) {
         super(unit);
     }
 

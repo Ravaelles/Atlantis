@@ -165,6 +165,7 @@ public class AAdvancedPainter extends APainter {
         Selection unitsToPaint = Select.ourCombatUnits().add(Select.ourWorkers());
         for (AUnit unit : unitsToPaint.list()) {
             if (unit.isLoaded()) continue;
+            if (unit.isCombatBuilding()) continue;
             if (unit.isWorker() && unit.lastActionMoreThanAgo(30 * 4)) continue;
 
 //            paintUnitInRangeInfo(unit);
@@ -174,10 +175,6 @@ public class AAdvancedPainter extends APainter {
             // =========================================================
 
             paintTargets(unit);
-
-            if (unit.isLoaded()) {
-                continue;
-            }
 
             // =========================================================
             // === Paint running and white flag

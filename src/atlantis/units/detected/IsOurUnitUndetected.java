@@ -9,6 +9,7 @@ public class IsOurUnitUndetected {
 
     public static boolean check(AUnit unit) {
         if (!unit.isCloaked()) return false;
+        if (unit.lastUnderAttackLessThanAgo(30 * 4)) return false;
 
         return cache.get(unit.idWithHash(), 7, () -> isUndetected(unit));
     }

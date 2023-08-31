@@ -1,6 +1,8 @@
 package atlantis.architecture;
 
 import atlantis.units.AUnit;
+import atlantis.units.select.Selection;
+import atlantis.util.log.ErrorLog;
 
 /**
  * Unit manager. Can contain submanagers (see managers() method).

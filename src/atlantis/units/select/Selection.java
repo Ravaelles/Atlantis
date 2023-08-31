@@ -732,6 +732,10 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(AUnit::isMedic, "excludeMedics");
     }
 
+    public Selection excludeOverlords() {
+        return cloneByRemovingIf(AUnit::isOverlord, "excludeOverlords");
+    }
+
     public Selection excludeMarines() {
         return cloneByRemovingIf(AUnit::isMarine, "excludeMarines");
     }

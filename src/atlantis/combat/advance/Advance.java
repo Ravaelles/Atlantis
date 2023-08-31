@@ -2,7 +2,7 @@ package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
-import atlantis.combat.micro.terran.wraith.AsAirUnitAttackAnyEnemy;
+import atlantis.combat.micro.terran.wraith.AsAirAttackAnyone;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 
@@ -18,7 +18,7 @@ public class Advance extends MissionManager {
             AdvanceAsTerran.class,
             AdvanceAsALeader.class,
             AdvanceStandard.class,
-            AsAirUnitAttackAnyEnemy.class,
+            AsAirAttackAnyone.class,
         };
     }
 }

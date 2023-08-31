@@ -6,8 +6,8 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
-public class SiegeAgainstRegularEnemies extends Manager {
-    public SiegeAgainstRegularEnemies(AUnit unit) {
+public class SiegeVsRegularEnemies extends Manager {
+    public SiegeVsRegularEnemies(AUnit unit) {
         super(unit);
     }
 

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -20,9 +21,11 @@ public class AvoidSingleEnemy extends Manager {
         APainter.paintCircle(enemy, 16, Color.Orange);
 
         if (enemy.position() == null) {
-//            System.err.println("enemy.position() is NULL for " + enemy);
+            System.err.println("enemy.position() is NULL for " + enemy);
             return null;
         }
+
+        if ((new DontAvoidEnemy(unit)).invoke() != null) return null;
 
 //        if (enemy.isCombatBuilding()) {
 //            return (new AvoidCombatBuilding(unit, enemy)).invoke();
