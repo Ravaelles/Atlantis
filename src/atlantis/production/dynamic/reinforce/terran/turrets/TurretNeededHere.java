@@ -2,6 +2,7 @@ package atlantis.production.dynamic.reinforce.terran.turrets;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -15,7 +16,7 @@ public class TurretNeededHere extends Commander {
     @Override
     public boolean applies() {
         return We.terran()
-            && A.hasMinerals(500)
+            && (A.hasMinerals(500) || A.seconds() >= 400)
             && A.everyNthGameFrame(83)
             && Have.engBay()
             && Count.inProductionOrInQueue(Terran_Missile_Turret) <= (A.hasMinerals(700) ? 3 : 1);
@@ -27,13 +28,19 @@ public class TurretNeededHere extends Commander {
         AUnit tank = checkIfThereAreTanksUnderAirAttack();
 
         if (tank != null) {
-            buildNear(tank);
+            haveTurretNear(tank);
         }
     }
 
-    private void buildNear(AUnit unit) {
+    private void haveTurretNear(AUnit unit) {
+        if (alreadyHaveTurretNear(unit)) return;
+
         AddToQueue.withHighPriority(Terran_Missile_Turret, unit.position());
 //        ConstructionRequests.requestConstructionOf(Terran_Missile_Turret, unit.position());
+    }
+
+    private boolean alreadyHaveTurretNear(HasPosition position) {
+        return Count.ourOfTypeWithUnfinished(Terran_Missile_Turret, position, 7) > 0;
     }
 
     private AUnit checkIfThereAreTanksUnderAirAttack() {
