@@ -83,6 +83,8 @@ public class FlyingBuildingScoutManager extends Manager {
             HasPosition moveTo = null;
 
             AUnit friend = Select.ourCombatUnits().nearestTo(unit);
+            if (friend == null) return false;
+
             if (friend != null && friend.distTo(unit) > 3) {
                 moveTo = friend;
             }

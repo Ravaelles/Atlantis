@@ -24,7 +24,7 @@ public class MapAndRace {
     // =========================================================
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
@@ -43,7 +43,6 @@ public class MapAndRace {
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
-//@        if (true) return "ums/exp_as_zerg.scx"; // Zerg v. AI Protoss player
 
         // vs TERRAN cheat-bots
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
@@ -168,6 +167,6 @@ public class MapAndRace {
     }
 
     public static boolean isMapGosu() {
-        return isMap("7th.scx") || isMap("/exp_");
+        return isMap("7th.scx") || isMap("/exp_") || isMap("vsGosu");
     }
 }

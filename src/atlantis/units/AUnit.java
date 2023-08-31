@@ -2845,4 +2845,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean hasAirWeapon() {
         return airWeaponRange() > 0;
     }
+
+    public Selection enemiesThatCanAttackMe(double radius) {
+        return enemiesNear().canAttack(this, radius);
+    }
 }

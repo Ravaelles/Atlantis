@@ -32,8 +32,8 @@ public class AttackOtherAirUnits extends Manager {
     public Manager handle() {
         AUnit airTarget = (new AAirUnitAirTargets(unit)).targetsAir(otherAirEnemiesNear);
 
-        System.err.println("@ " + A.now() + " - " + unit.nameWithId() + " airTarget = " + airTarget);
-        System.err.println();
+//        System.err.println("@ " + A.now() + " - " + unit.nameWithId() + " airTarget = " + airTarget);
+
         if (airTarget == null) return null;
 
         unit.attackUnit(airTarget);

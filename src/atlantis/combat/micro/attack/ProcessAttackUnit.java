@@ -34,7 +34,7 @@ public class ProcessAttackUnit extends Manager {
 
         // =========================================================
 
-        if (ProcessAttackUnitAsTank.forTank(unit, target)) return true;
+        if (ProcessAttackUnitAsTank.forTank(this, unit, target)) return true;
 
         if (target.isFoggedUnitWithKnownPosition()) {
             if (unit.distTo(target) > unit.weaponRangeAgainst(target)) {

@@ -37,7 +37,7 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
                 // === At second base ============================================
 
-                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
+//                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
 
                 // ===============================================================
 
@@ -125,20 +125,8 @@ public class MissionDefendFocus extends MissionFocusPoint {
     private AFocusPoint somewhereAtNaturalBaseOrNaturalChoke() {
         AFocusPoint focus;
 
-//        if (Bases.hasBaseAtNatural()) {
-//            focus = atNaturalChoke();
-//            if (focus != null) {
-//                return focus;
-//            }
-//        }
-
         Selection bases = Select.ourWithUnfinished().bases();
         if (bases.count() == 2) {
-//            focus = atAnyBase();
-//            if (focus != null) {
-//                return focus;
-//            }
-
             AChoke naturalChoke = Chokes.natural();
             AUnit naturalBase = bases.last();
 
