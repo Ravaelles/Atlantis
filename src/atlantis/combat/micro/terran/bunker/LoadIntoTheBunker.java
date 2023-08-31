@@ -27,13 +27,10 @@ public class LoadIntoTheBunker extends Manager {
         }
         if (unit.isMissionDefend() && unit.distToFocusPoint() <= (5 + unit.id() % 5)) return true;
 
-        if (
-            GamePhase.isEarlyGame()
-//                && unit.noCooldown()
-//                && unit.hp() < 20
-//                && unit.enemiesNear().ranged().inRadius()empty()
-                && unit.meleeEnemiesNearCount(2.2) == 0
-        ) return false;
+        int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(2.2);
+
+        if (GamePhase.isEarlyGame() && meleeEnemiesNearCount == 0) return false;
+        if (A.seconds() <= 360 && unit.enemiesThatCanAttackMe(3).empty()) return false;
 
         // Without enemies around, don't do anything
         Selection enemiesNear = unit.enemiesNear().havingWeapon().inRadius(9, unit).canAttack(unit, 10);
