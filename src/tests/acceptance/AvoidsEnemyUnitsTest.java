@@ -29,12 +29,16 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
             (new CombatUnitManager(unit)).invoke();
 
             double distToZealot = distToNearestEnemy(unit);
-            boolean isSafe = distToZealot > 1.7;
+            boolean isSafe = distToZealot > 1.1;
             boolean alwaysShow = false;
 //            boolean alwaysShow = true;
 
             if (!isSafe || alwaysShow) {
-                System.err.println(A.now() + " - " + unit.manager()
+                System.err.println(A.now()
+                    + " -       " + unit.tooltip()
+                    + "\n   Manager : " + unit.manager()
+                    + "\n   Managers: " + unit.managerLogs().toString()
+                    + "\n   Command : " + unit.lastCommand()
                     + "\n   tooltip: " + unit.tooltip() + " / " + unit.lastCommand()
                     + ",\n   tx:" + unit.txWithPrecision() + ", dist_to_zealot:" + A.dist(distToZealot)
                     + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))

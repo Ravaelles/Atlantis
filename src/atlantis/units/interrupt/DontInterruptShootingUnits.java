@@ -3,6 +3,7 @@ package atlantis.units.interrupt;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
 public class DontInterruptShootingUnits extends Manager {
@@ -13,10 +14,12 @@ public class DontInterruptShootingUnits extends Manager {
     @Override
     public boolean applies() {
 //        if (true) return false;
+        if (unit.isMarine()) return true;
 
         if (!unit.isAttacking()) return false;
-
         if (!unit.isRanged()) return false;
+
+        if (isMeleeEnemyNear()) return false;
 
         if (unit.isWraith()) {
             if (unit.hp() < 110 || unit.enemiesNear().buildings().canAttack(unit, 1.1).notEmpty()) {
@@ -25,6 +28,20 @@ public class DontInterruptShootingUnits extends Manager {
         }
 
         return true;
+    }
+
+    private boolean isMeleeEnemyNear() {
+        if (!unit.isGroundUnit()) return false;
+
+//        Selection meleeEnemies = unit.enemiesNear().melee().canAttack(unit, 0.9);
+        Selection meleeEnemies = unit.enemiesNear().melee().inRadius(
+            Math.min(3.5, 1.7 + unit.woundPercent() / 200.0), unit
+        );
+
+        if (meleeEnemies.empty()) return false;
+
+//        return true;
+        return meleeEnemies.nearestTo(unit).isFacing(unit);
     }
 
     @Override
@@ -36,7 +53,9 @@ public class DontInterruptShootingUnits extends Manager {
 
     @Override
     protected Manager handle() {
-        if (act()) return usedManager(this);
+        if (!unit.isMarine()) {
+            if (act()) return usedManager(this);
+        }
 
         return handleSubmanagers();
     }

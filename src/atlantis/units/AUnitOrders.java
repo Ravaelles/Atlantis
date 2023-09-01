@@ -8,6 +8,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.util.log.ErrorLog;
 import bwapi.*;
 
 /**
@@ -21,8 +22,8 @@ public interface AUnitOrders {
 
     int DEBUG_MIN_FRAMES = 0;
 
-    boolean DEBUG_ALL = false;
-    //    boolean DEBUG_ALL = true;
+        boolean DEBUG_ALL = false;
+//    boolean DEBUG_ALL = true;
     boolean DEBUG_COMBAT = false;
 //    boolean DEBUG_COMBAT = true;
 
@@ -182,8 +183,7 @@ public interface AUnitOrders {
             System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / " + tooltip);
         }
         if (target == null) {
-            System.err.println("Null move position for " + this.unit().typeWithHash());
-            A.printStackTrace("Null move position");
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit().typeWithHash());
             return false;
         }
 

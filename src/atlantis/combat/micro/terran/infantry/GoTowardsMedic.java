@@ -14,11 +14,9 @@ public class GoTowardsMedic extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isTerranInfantryWithoutMedics()) return false;
-
         if (unit.isHealthy()) return false;
-//        if (unit.isHealthy() && unit.distToLeader() <= 6) return false;
-
         if (unit.cooldownRemaining() <= 3 || unit.hp() >= 33) return false;
+        if (unit.meleeEnemiesNear().inRadius(3.5, unit).notEmpty()) return false;
 
         if (
             unit.isWounded()
@@ -50,6 +48,7 @@ public class GoTowardsMedic extends Manager {
             .inRadius(8, unit)
             .havingEnergy(25)
             .nearestTo(unit);
+
         if (medic != null && medic.distToMoreThan(unit, 2)) {
             return unit.move(medic, Actions.MOVE_SPECIAL, "BeHealed", false);
         }

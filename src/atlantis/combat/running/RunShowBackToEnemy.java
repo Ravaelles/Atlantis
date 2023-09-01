@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 public class RunShowBackToEnemy {
     protected static final double SHOW_BACK_DIST_DEFAULT = 6;
     protected static final double SHOW_BACK_DIST_DRAGOON = 3;
-    protected static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 5;
+    protected static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 2;
     protected static final double SHOW_BACK_DIST_VULTURE = 5;
 
     private final ARunningManager runningManager;
@@ -23,16 +23,22 @@ public class RunShowBackToEnemy {
 //        if (true) return true;
 //        if (true) return false;
 
-        if (
-            (
-                runningManager.unit.nearestEnemyDist() >= 2.3
-//                ||
-//                runningManager.unit.nearestEnemyDist() <= 1.7
-            )
-                && runningManager.unit.enemiesNearInRadius(3.9) <= 1
-        ) return true;
+        AUnit unit = runningManager.unit;
 
-        return runningManager.unit.isFlying();
+//        if (unit.isGroundUnit() && unit.meleeEnemiesNearCount(1.5) >= 0) return true;
+
+        if (unit.isGroundUnit() && unit.meleeEnemiesNearCount(2.5) >= 0) return true;
+
+//        if (
+//            (
+//                runningManager.unit.nearestEnemyDist() >= 2.3
+////                ||
+////                runningManager.unit.nearestEnemyDist() <= 1.7
+//            )
+//                && runningManager.unit.enemiesNearInRadius(3.9) <= 1
+//        ) return true;
+
+        return unit.isFlying();
     }
 
     /**

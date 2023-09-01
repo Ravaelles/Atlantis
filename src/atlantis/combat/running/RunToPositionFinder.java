@@ -58,7 +58,10 @@ public class RunToPositionFinder {
     }
 
     private boolean positionForShowingBackToEnemy(HasPosition runAwayFrom) {
-        running.setRunTo(findRunPositionShowYourBackToEnemy(runAwayFrom));
+        if (running.runTo() == null || running.unit().lastActionMoreThanAgo(4)) {
+            running.setRunTo(findRunPositionShowYourBackToEnemy(runAwayFrom));
+        }
+
         APainter.paintCircleFilled(running.runTo(), 3, Color.Brown);
         APainter.paintLine(running.unit(), running.runTo(), Color.Brown);
         running.unit().setTooltip("ShowBack");
@@ -199,7 +202,7 @@ public class RunToPositionFinder {
         // Build list of possible run positions, basically around the clock
         //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
 
-        
+
 
         // =========================================================
         // Find the location that would be most distant to the enemy location

@@ -1626,11 +1626,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // =========================================================
 
-//    public boolean shouldApplyAntiGlitch() {
-////        return (isAttacking() || isAttackFrame());
-//        return getLastUnitOrderWasFramesAgo() >= 40 || isMoving() && getLastUnitOrderWasFramesAgo() >= 10;
-//    }
-
     public boolean noCooldown() {
         return groundWeaponCooldown() <= 2 || airWeaponCooldown() <= 2;
     }
@@ -2208,6 +2203,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isCombatUnit() {
         return type().isCombatUnit();
+    }
+
+    public Selection meleeEnemiesNear() {
+        return enemiesNear().melee();
     }
 
     public Selection enemiesNear() {

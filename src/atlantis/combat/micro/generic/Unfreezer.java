@@ -19,12 +19,23 @@ public class Unfreezer extends Manager {
 
     @Override
     public boolean applies() {
+//        System.err.println(
+//            unit.lastActionAgo(Actions.MOVE_UNFREEZE)
+//                + " / " +
+//                unit.action()
+//                + " / " +
+//                unit.lastActionFramesAgo()
+//        );
         return unit.isCombatUnit()
             && !unit.isLoaded()
             && !unit.isMoving()
-            && unit.looksIdle()
+            && A.now() >= 10
             && unit.lastActionMoreThanAgo(15)
-            && unit.lastActionMoreThanAgo(50, Actions.MOVE_UNFREEZE);
+            && unit.lastActionMoreThanAgo(50, Actions.MOVE_UNFREEZE)
+            &&
+            (unit.looksIdle()
+                || (unit.lastActionMoreThanAgo(30) && unit.hasNotMovedInAWhile())
+            );
     }
 
     @Override
@@ -37,6 +48,7 @@ public class Unfreezer extends Manager {
         else {
             AUnit goTo = Select.ourBuildings().random();
             if (goTo == null) goTo = unit.friendsNear().mostDistantTo(unit);
+            if (goTo == null) return null;
 
             unit.moveTactical(goTo, Actions.MOVE_UNFREEZE, "Unfreezing");
         }

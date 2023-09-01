@@ -284,6 +284,11 @@ public class FakeUnit extends AUnit {
         return distTo(other);
     }
 
+    @Override
+    public boolean isFacing(AUnit otherUnit) {
+        return true;
+    }
+
     // =========================================================
     // Orders
 
@@ -340,6 +345,8 @@ public class FakeUnit extends AUnit {
         else {
             this.target = null;
         }
+
+        setAction(unitAction);
         targetPosition = target.position();
         return true;
     }

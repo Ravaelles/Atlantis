@@ -41,11 +41,11 @@ public class HugTanks extends Manager {
     }
 
     private boolean shouldGoToTank(AUnit tank) {
+        if (tankIsOvercrowded(tank)) return false;
+
         double distToTank = unit.distTo(tank);
 
         if (distToTank > MAX_DIST_FROM_TANK) return true;
-
-        if (tankIsOvercrowded(tank)) return false;
 
         if (distToTank < MIN_DIST_FROM_TANK) return false;
 
@@ -73,7 +73,8 @@ public class HugTanks extends Manager {
     }
 
     protected boolean tankIsOvercrowded(AUnit tank) {
-        return tank.friendsInRadius(2).groundUnits().atLeast(7)
+        return tank.friendsInRadius(0.5).groundUnits().atLeast(4)
+            || tank.friendsInRadius(2).groundUnits().atLeast(7)
             || tank.friendsInRadius(4).groundUnits().atLeast(13);
     }
 }

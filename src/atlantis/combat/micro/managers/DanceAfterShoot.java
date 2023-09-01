@@ -15,7 +15,8 @@ public class DanceAfterShoot extends Manager {
         return unit.isRanged()
             && !unit.isWraith()
             && !unit.isTank()
-            && unit.enemiesNear().ranged().inRadius(6, unit).empty();
+            && unit.enemiesNear().ranged().inRadius(6, unit).empty()
+            && !shouldSkip();
     }
 
     @Override
@@ -29,8 +30,6 @@ public class DanceAfterShoot extends Manager {
      * For ranged unit, once shoot is fired, move slightly away or move towards the target when still have cooldown.
      */
     private boolean update() {
-        if (shouldSkip()) return false;
-
         AUnit target = unit.target();
         double dist = target.distTo(unit);
         int weaponRange = unit.enemyWeaponRangeAgainstThisUnit(target);
@@ -56,19 +55,19 @@ public class DanceAfterShoot extends Manager {
         // =========================================================
 
         // Step FORWARD
-        if (shouldDanceTo(target, dist)) {
+        if (shouldDanceTowards(target, dist)) {
             unit.addLog(danceTo);
             return unit.move(
                 unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE_TO, danceTo, false
             );
         }
-        // Big step BACK
-        else if (dist <= weaponRange - 1.2 && !target.isCombatBuilding()) {
-            unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.9, Actions.MOVE_DANCE_AWAY, danceAway);
-        }
+//        // Big step BACK
+//        else if (shouldDanceBigStepBackwards(dist, weaponRange, target)) {
+//            unit.addLog(danceAway);
+//            return unit.moveAwayFrom(target, 0.9, Actions.MOVE_DANCE_AWAY, danceAway);
+//        }
         // Small step BACK
-        else if (dist <= weaponRange - 0.45 && !target.isCombatBuilding()) {
+        else if (shouldDanceBackwards(dist, weaponRange, target)) {
             unit.addLog(danceAway);
             return unit.moveAwayFrom(target, 0.35, Actions.MOVE_DANCE_AWAY, danceAway);
         }
@@ -76,12 +75,20 @@ public class DanceAfterShoot extends Manager {
         return false;
     }
 
+    private static boolean shouldDanceBackwards(double dist, int weaponRange, AUnit target) {
+        return dist <= weaponRange - 0.5 && !target.isCombatBuilding();
+    }
+
+//    private static boolean shouldDanceBigStepBackwards(double dist, int weaponRange, AUnit target) {
+//        return dist <= weaponRange - 1.2 && !target.isCombatBuilding();
+//    }
+
     // =========================================================
 
-    private boolean shouldDanceTo(AUnit target, double dist) {
+    private boolean shouldDanceTowards(AUnit target, double dist) {
         return target.isVisibleUnitOnMap()
             && target.effVisible()
-            && unit.distToMoreThan(target, 3)
+            && unit.distToMoreThan(target, 3.7)
             && dist >= (unit.enemyWeaponRangeAgainstThisUnit(target))
             && (
             (!target.isABuilding() && dist >= 1.6)
@@ -93,7 +100,6 @@ public class DanceAfterShoot extends Manager {
 //        if (true) return true;
 
         if (unit.isMelee()) return true;
-
         if (unit.target() == null) return true;
 
 //        if (unit.target() == null || !unit.target().isRealUnit()) {
