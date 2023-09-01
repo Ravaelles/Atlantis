@@ -2,7 +2,6 @@ package atlantis.combat.micro.terran.wraith;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.targeting.air.AAirUnitAirTargets;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
@@ -16,14 +15,15 @@ public class AttackOtherAirUnits extends Manager {
     @Override
     public boolean applies() {
         return unit.isAir() && unit.hasAirWeapon()
-            && (otherAirEnemiesNear = otherAirEnemiesNear()).notEmpty();
+            && (otherAirEnemiesNear = otherAirEnemiesNearToAttack()).notEmpty();
 //            && unit.enemiesNear().groundUnits().canAttack(unit, 2.5).empty();
     }
 
-    private Selection otherAirEnemiesNear() {
+    private Selection otherAirEnemiesNearToAttack() {
         return unit.enemiesNear()
             .air()
             .havingAntiAirWeapon()
+            .notPurelyAntiAir()
             .canBeAttackedBy(unit, 3.5)
             .effVisible();
     }

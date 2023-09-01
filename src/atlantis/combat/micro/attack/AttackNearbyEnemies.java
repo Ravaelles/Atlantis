@@ -6,6 +6,7 @@ import atlantis.combat.targeting.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 import org.junit.runners.Parameterized;
 
 public class AttackNearbyEnemies extends Manager {
@@ -104,7 +105,9 @@ public class AttackNearbyEnemies extends Manager {
 
                 AUnit enemy = (new AttackNearbyEnemies(unit)).defineEnemyToAttackFor();
 
-                if (enemy == null || !unit.canAttackTarget(enemy)) {
+                if (enemy == null) return false;
+                if (!unit.canAttackTarget(enemy) || !unit.isAlive()) {
+                    ErrorLog.printMaxOncePerMinute(unit.type() + " can't attack " + enemy);
                     return false;
                 }
 

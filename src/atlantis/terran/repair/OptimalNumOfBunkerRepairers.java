@@ -39,7 +39,7 @@ public class OptimalNumOfBunkerRepairers {
 
                 // against PROTOSS
                 if (Enemy.protoss()) {
-                    optimalNumber = enemiesNear * 2 + enemiesFar * 0.95;
+                    optimalNumber = enemiesNear * 1.8 + enemiesFar * 0.85;
                 }
                 // against TERRAN
                 else if (Enemy.terran()) {
@@ -50,7 +50,7 @@ public class OptimalNumOfBunkerRepairers {
                     optimalNumber = enemiesNear * 0.65 + enemiesFar * 0.5;
                 }
 
-                if (bunker.hp() < 300) {
+                if (bunker.hp() < 310) {
                     optimalNumber += 2;
                 }
 
@@ -65,12 +65,14 @@ public class OptimalNumOfBunkerRepairers {
                     optimalNumber = Math.min(bunker.isHealthy() ? 0 : 1, optimalNumber);
                 }
 
-                if (optimalNumber > 1) {
-                    if (!A.hasMinerals(7)) {
-                        return 2;
-                    }
-                    else if (!A.hasMinerals(1)) {
-                        return 1;
+                if (A.seconds() >= 500) {
+                    if (optimalNumber > 1) {
+                        if (!A.hasMinerals(11)) {
+                            return 2;
+                        }
+                        else if (!A.hasMinerals(3)) {
+                            return 1;
+                        }
                     }
                 }
 

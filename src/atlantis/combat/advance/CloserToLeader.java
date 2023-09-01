@@ -16,8 +16,8 @@ public class CloserToLeader extends MissionManager {
     public boolean applies() {
         return !unit.isAir()
             && !squad.isLeader(unit)
-            && unit.mission().focusPoint() != null
-            && unit.friendsInRadiusCount(3) <= 9
+//            && unit.mission().focusPoint() != null
+            && unit.friendsInRadiusCount(3) <= 11
             && unit.friendsInRadiusCount(1.3) <= 4
             && (unit.noCooldown() && unit.enemiesNearInRadius(7) == 0);
     }
@@ -44,14 +44,14 @@ public class CloserToLeader extends MissionManager {
 
         if (!isLeaderOvercrowded(leader)) return false;
 
-        if (unit.distTo(leader) >= 9) return true;
-        if (squad.cohesionPercent() <= 70 && unit.friendsInRadiusCount(1) <= 4) return true;
+        if (unit.distTo(leader) >= 7) return true;
+        if (squad.cohesionPercent() <= 70 && unit.friendsInRadiusCount(1) <= 3) return true;
 
         return false;
     }
 
     private static boolean isLeaderOvercrowded(AUnit leader) {
 //        return leader.friendsNear().inRadius(2, leader).count() >= 7
-        return Select.all().inRadius(1, leader).count() >= 7;
+        return Select.all().inRadius(1, leader).count() >= 5;
     }
 }

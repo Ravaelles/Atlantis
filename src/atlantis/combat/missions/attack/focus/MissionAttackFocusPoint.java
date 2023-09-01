@@ -72,8 +72,9 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
         if (
             enemyBuilding != null
-                && enemyBuilding.position() != null
-                && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
+                && enemyBuilding.hasPosition()
+//                && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
+                && enemyBuilding.isAlive()
         ) {
             return new AFocusPoint(
                 enemyBuilding,

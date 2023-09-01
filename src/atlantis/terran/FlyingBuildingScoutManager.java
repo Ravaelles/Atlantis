@@ -6,6 +6,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
+import atlantis.map.position.GoTo;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -14,6 +15,9 @@ import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class FlyingBuildingScoutManager extends Manager {
+
+    private AUnit combatBuilding;
+
     public FlyingBuildingScoutManager(AUnit unit) {
         super(unit);
     }
@@ -36,9 +40,9 @@ public class FlyingBuildingScoutManager extends Manager {
     private boolean updateFlyingBuilding() {
         APainter.paintCircle(unit, new int[]{7, 10, 13, 16}, Color.Grey);
 
-        if (avoidCombatBuildings()) return unit.moveAwayFrom(unit, 3, Actions.MOVE_SAFETY, "BloodyBuilding");
+        if (avoidCombatBuildings()) return unit.moveAwayFrom(combatBuilding, 3, Actions.MOVE_SAFETY, "BloodyBuilding");
 
-        if (underAttack()) return unit.moveAwayFrom(unit, 3, Actions.MOVE_SAFETY, "UnderFire");
+        if (underAttack()) return actWhenUnderFire();
 
         if (woundedAndAntiAirUnitsNear()) return true;
 
@@ -47,14 +51,22 @@ public class FlyingBuildingScoutManager extends Manager {
         return false;
     }
 
+    private boolean actWhenUnderFire() {
+        HasPosition goTo = GoTo.orMain(Alpha.get().center());
+
+        unit.move(goTo, Actions.MOVE_SAFETY, "UnderFire");
+        return true;
+    }
+
     private boolean woundedAndAntiAirUnitsNear() {
-        if (!unit.woundPercentMin(10)) return false;
+        if (!unit.woundPercentMin(3)) return false;
 
         Selection antiAirEnemies = unit.enemiesNear().havingAntiAirWeapon().canAttack(unit, 0.2);
         if (antiAirEnemies.notEmpty()) {
-            unit.moveAwayFrom(
-                antiAirEnemies.nearestTo(unit), 2, Actions.MOVE_SAFETY, "OopsAntiAir"
-            );
+//            unit.moveAwayFrom(
+//                antiAirEnemies.nearestTo(unit), 2, Actions.MOVE_SAFETY, "OopsAntiAir"
+//            );
+            unit.move(GoTo.orMain(Alpha.get().center()), Actions.MOVE_SAFETY, "OopsAntiAir");
             return true;
         }
 
@@ -108,8 +120,9 @@ public class FlyingBuildingScoutManager extends Manager {
             .combatBuildingsAntiAir()
             .inRadius(7.8, unit);
 
-        if (combatBuildings.notEmpty()) return true;
-        return false;
+        combatBuilding = combatBuildings.first();
+
+        return combatBuilding != null;
     }
 
 //    private APosition flyingBuildingFocusPoint() {

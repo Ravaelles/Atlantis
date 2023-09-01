@@ -2848,4 +2848,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public Selection enemiesThatCanAttackMe(double radius) {
         return enemiesNear().canAttack(this, radius);
     }
+
+    public boolean isPurelyAntiAir() {
+        return type().is(
+            AUnitType.Protoss_Corsair,
+            AUnitType.Terran_Valkyrie,
+            AUnitType.Terran_Goliath,
+            AUnitType.Zerg_Scourge
+        );
+    }
 }

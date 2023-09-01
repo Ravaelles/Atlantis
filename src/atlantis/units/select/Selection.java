@@ -500,6 +500,10 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(u -> !u.canAttackAirUnits(), "havingAntiAirWeapon");
     }
 
+    public Selection notPurelyAntiAir() {
+        return cloneByRemovingIf(u -> !u.isPurelyAntiAir(), "notPurelyAntiAir");
+    }
+
     public int totalHp() {
         return data.stream()
             .map(AUnit::hp)

@@ -29,9 +29,10 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //        }
 
         if (MapAndRace.isMapGosu()) {
-            if (Alpha.get().size() <= 25) return false;
+            int alphaSize = Alpha.get().size();
+            if (alphaSize <= 15) return false;
             if (AGame.killsLossesResourceBalance() < 1800) return false;
-            else return true;
+            else if (alphaSize >= 23) return true;
         }
 
         if (A.seconds() <= 450 && AGame.killsLossesResourceBalance() >= 500) return true;
