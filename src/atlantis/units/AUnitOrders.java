@@ -16,16 +16,15 @@ import bwapi.*;
  */
 public interface AUnitOrders {
 
+    int DEBUG_MIN_FRAMES = 0;
+    boolean DEBUG_ALL = false;
+    //    boolean DEBUG_ALL = true;
+    boolean DEBUG_COMBAT = false;
+//    boolean DEBUG_COMBAT = true;
+
     Unit u();
 
     AUnit unit();
-
-    int DEBUG_MIN_FRAMES = 0;
-
-        boolean DEBUG_ALL = false;
-//    boolean DEBUG_ALL = true;
-    boolean DEBUG_COMBAT = false;
-//    boolean DEBUG_COMBAT = true;
 
     // =========================================================
 
@@ -390,7 +389,7 @@ public interface AUnitOrders {
         unit().setLastActionReceivedNow().setAction(Actions.REPAIR);
 
         if (!unit().isRepairing()) {
-            if (unit().distToMoreThan(target, 2.5) && !unit().isMoving()) {
+            if (unit().distToMoreThan(target, 1.5) && !unit().isMoving()) {
                 //            u().move(target.position());
                 // A fix to avoid stucking SCVs that go to repair in line.
                 // We send them in slightly different places, hoping they don't stuck in line

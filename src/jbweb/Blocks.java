@@ -638,4 +638,10 @@ public class Blocks {
         }
         return bestBlock;
     }
+
+    // =========================================================
+
+    public static List<Block> getAllBlocks() {
+        return allBlocks;
+    }
 }

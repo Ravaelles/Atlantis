@@ -5,6 +5,7 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import bwapi.Color;
+import jbweb.Block;
 import jbweb.Blocks;
 
 import java.util.ArrayList;
@@ -21,7 +22,16 @@ public class OnEveryFrameHelper {
     }
 
     private static void paintJbwebBlocks() {
-        Blocks.draw();
+//        Blocks.draw();
+
+        for (Block block : Blocks.getAllBlocks()) {
+            AAdvancedPainter.paintRectangle(
+                APosition.create(block.getTilePosition().toPosition()),
+                block.width() * 32,
+                block.height() * 32,
+                Color.Grey
+            );
+        }
     }
 
     private static void pathToEnemyBase() {

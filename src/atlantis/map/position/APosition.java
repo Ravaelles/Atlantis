@@ -85,6 +85,9 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         else if (p instanceof WalkPosition) {
             position = new APosition(((WalkPosition) p).toPosition());
         }
+        else if (p instanceof TilePosition) {
+            position = new APosition(((TilePosition) p).toPosition());
+        }
         else {
             throw new RuntimeException("APosition::create invalid param " + p);
         }
