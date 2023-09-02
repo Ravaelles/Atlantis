@@ -1,6 +1,7 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
+import jbweb.Blocks;
 import jbweb.JBWEB;
 import jbweb.Stations;
 
@@ -13,7 +14,7 @@ public class InitJBWEB {
     public static void init() {
         try {
             JBWEB.onStart(Atlantis.game(), AMap.bwem);
-//            Blocks.findBlocks();
+            Blocks.findBlocks();
             Stations.findStations();
 //            Wall wall = Walls.createTWall();
 

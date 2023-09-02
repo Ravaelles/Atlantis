@@ -1762,6 +1762,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return x() == _lastX && y() == _lastY;
     }
 
+    public boolean hasNotShotInAWhile() {
+        return lastAttackFrameMoreThanAgo(30 * 3);
+    }
+
     public boolean isQuick() {
         return maxSpeed() >= 5.8;
     }

@@ -39,15 +39,13 @@ public class ProtectorCommander extends Commander {
 
     protected static boolean assignBunkerProtectorsIfNeeded() {
         for (AUnit bunker : Select.ourOfType(AUnitType.Terran_Bunker).list()) {
-//            Selection enemies = bunker.enemiesNear().havingWeapon().canAttack(bunker, 10);
 
             // No enemies + bunker healthy
             ArrayList<AUnit> existingProtectors = RepairAssignments.protectorsFor(bunker);
-//            int desiredBunkerProtectors = RepairerAssigner.optimalNumOfRepairersFor(bunker);
             int desiredBunkerProtectors = OptimalNumOfBunkerRepairers.forBunker(bunker);
             int howMany = desiredBunkerProtectors - existingProtectors.size();
 
-//            if (enemies.size() <= 1 && (enemies.isEmpty() || bunker.loadedUnits().isEmpty()) && bunker.isHealthy()) {
+//            System.out.println("@ " + A.now() + " - protectors = " + desiredBunkerProtectors);
 
             // Remove some (or all) existing protectors
             if (howMany < 0) {

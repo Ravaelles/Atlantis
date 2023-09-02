@@ -13,6 +13,7 @@ public class ATankTargeting extends HasUnit {
 
     public AUnit defineTarget() {
         List<AUnit> enemies = unit.enemiesNear()
+            .groundUnits()
             .visibleOnMap()
             .havingAtLeastHp(1)
             .havingPosition()

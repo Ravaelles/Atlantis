@@ -15,13 +15,16 @@ public class PreventMaginotLine extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.enemiesNear().inRadius(5.99, unit).notEmpty()) return false;
         if (unit.hp() <= 20) return false;
         if (shouldStayLoaded()) return false;
+        if (unit.enemiesNear().inRadius(2.7 + unit.id() % 3, unit).notEmpty()) return false;
         if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) return false;
-        if (unit.enemiesNear().inRadius(3.2 + unit.id() % 2, unit).notEmpty()) return false;
-        if (EnemyWhoBreachedBase.get() == null) return false;
         if (tooManyDragoonsNearby()) return false;
+
+        if (shouldEngage()) return true;
+
+        if (EnemyWhoBreachedBase.get() == null) return false;
+        if (unit.enemiesNear().inRadius(5.99, unit).notEmpty()) return false;
 
 //        if (
 //            unit.hpMoreThan(21)
@@ -36,6 +39,14 @@ public class PreventMaginotLine extends Manager {
 //        }
 
         return true;
+    }
+
+    private boolean shouldEngage() {
+        return unit.isHealthy()
+            && unit.hasNotShotInAWhile()
+            && !unit.isRunning()
+            && unit.lastUnderAttackMoreThanAgo(30 * 7)
+            && unit.enemiesNear().effVisible().inRadius(8, unit).atMost(2);
     }
 
     private boolean shouldStayLoaded() {

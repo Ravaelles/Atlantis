@@ -1,6 +1,7 @@
 package atlantis.terran.repair;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -34,7 +35,6 @@ public class ProtectorManager extends Manager {
 
         target = RepairAssignments.getUnitToProtectFor(unit);
 
-
         if (target == null || !target.isAlive()) {
             unit.setTooltipTactical("Null bunker");
             RepairAssignments.removeRepairer(unit);
@@ -42,7 +42,7 @@ public class ProtectorManager extends Manager {
         }
 
         // WOUNDED
-        if (target.isWounded() || target.enemiesNear().canAttack(target, 15).notEmpty()) {
+        if (target.isWounded() || (unit.isBunker() && A.everyNthGameFrame(7))) {
             if (unit.isRepairing()) return true;
 
             return unit.repair(target, "Protect" + target.name());
@@ -51,17 +51,15 @@ public class ProtectorManager extends Manager {
         }
 
         // Bunker fully HEALTHY
-        else {
-            double distanceToUnit = target.distTo(unit);
-            if (distanceToUnit > 0.7 && !unit.isMoving()) {
-                return unit.move(
-                    target.position(), Actions.MOVE_REPAIR, "ProtectNearer" + target.name(), true
-                );
-            }
-            else {
-                unit.setTooltipTactical("Protecting" + target.name());
-            }
-        }
+//        double distanceToUnit = target.distTo(unit);
+//        if (distanceToUnit > 0.7 && !unit.isMoving()) {
+//            return unit.move(
+//                target.position(), Actions.MOVE_REPAIR, "ProtectNearer" + target.name(), true
+//            );
+//        }
+//        else {
+//            unit.setTooltipTactical("Protecting" + target.name());
+//        }
 
         return false;
     }

@@ -390,15 +390,16 @@ public interface AUnitOrders {
         unit().setLastActionReceivedNow().setAction(Actions.REPAIR);
 
         if (!unit().isRepairing()) {
-            if (unit().distToMoreThan(target, 2) && !unit().isMoving()) {
+            if (unit().distToMoreThan(target, 2.5) && !unit().isMoving()) {
                 //            u().move(target.position());
                 // A fix to avoid stucking SCVs that go to repair in line.
                 // We send them in slightly different places, hoping they don't stuck in line
 
                 APosition moveTo = target.position().translateByTiles(
-                    -0.3 + 0.7 * (unit().id() % 4) / 4.0,
-                    -0.3 + 0.7 * (unit().id() % 4) / 4.0
+                    -0.8 + 1.6 * ((1 + unit().id()) % 4) / 4.0,
+                    -0.8 + 1.6 * ((-1 + unit().id()) % 5) / 4.0
                 );
+//                A.println(A.now() + " / " + unit() + " moveTo = " + moveTo);
                 move(moveTo, Actions.MOVE_REPAIR, tooltip, false);
 //                u().move();
             }

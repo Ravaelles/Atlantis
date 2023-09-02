@@ -5,6 +5,7 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import bwapi.Color;
+import jbweb.Blocks;
 
 import java.util.ArrayList;
 
@@ -14,8 +15,13 @@ import java.util.ArrayList;
 public class OnEveryFrameHelper {
     public static void handle() {
 //        paintMissionAttackFocusPoint();
-
 //        pathToEnemyBase();
+
+        paintJbwebBlocks();
+    }
+
+    private static void paintJbwebBlocks() {
+        Blocks.draw();
     }
 
     private static void pathToEnemyBase() {

@@ -274,10 +274,12 @@ public class ATargeting extends HasUnit {
         // Quit early if no target at all
         if (
             unit.enemiesNear()
+                .realUnitsAndBuildings()
                 .effVisible()
                 .visibleOnMap()
                 .havingAtLeastHp(1)
                 .havingPosition()
+                .canBeAttackedBy(unit, 10)
                 .inRadius(maxDistFromEnemy, unit)
                 .isEmpty()
         ) {

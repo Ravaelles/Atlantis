@@ -24,11 +24,13 @@ public class ForbiddenByStreetGrid {
             buildingLeftTx(building, position) % GRID_VALUE <= 1
                 || buildingRightTx(building, position) % GRID_VALUE <= 1
         ) {
-
-//                + (position.getTileX() + building.getDimensionRight() / 32) + " // (" +
-//                (position.getTileX() + building.getDimensionRight() / 32) % GRID_VALUE + ")");
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
-            return true;
+            if (
+                !position.translateByTiles(-1, 0).isWalkable()
+                && !position.translateByTiles(+1, 0).isWalkable()
+            ) {
+                AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
+                return true;
+            }
         }
 
         // Leave entire horizontal (same tileY) corridor free for units
@@ -36,8 +38,13 @@ public class ForbiddenByStreetGrid {
             position.ty() % GRID_VALUE <= 1
                 || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 0
         ) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
-            return true;
+            if (
+                !position.translateByTiles(0, -1).isWalkable()
+                    && !position.translateByTiles(0, +1).isWalkable()
+            ) {
+                AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
+                return true;
+            }
         }
 
         return false;

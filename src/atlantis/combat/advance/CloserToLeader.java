@@ -2,6 +2,7 @@ package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -17,8 +18,10 @@ public class CloserToLeader extends MissionManager {
         return !unit.isAir()
             && !squad.isLeader(unit)
 //            && unit.mission().focusPoint() != null
+            && A.seconds() % 6 <= 3
             && unit.friendsInRadiusCount(3) <= 11
             && unit.friendsInRadiusCount(1.3) <= 4
+            && unit.friendsInRadiusCount(0.5) <= 2
             && (unit.noCooldown() && unit.enemiesNearInRadius(7) == 0);
     }
 

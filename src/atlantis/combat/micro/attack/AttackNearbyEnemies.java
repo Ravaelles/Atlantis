@@ -148,7 +148,7 @@ public class AttackNearbyEnemies extends Manager {
     protected AUnit defineEnemyToAttackFor() {
         return cache.getIfValid(
             "defineEnemyToAttackFor",
-            2,
+            7,
             () -> {
                 reasonNotToAttack = null;
 
