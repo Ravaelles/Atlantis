@@ -78,7 +78,7 @@ public class MapAndRace {
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
 //        if (true) return "ums/rav/M_v_Zealots.scx"; // Many Zealots v Many Marines in a Terran base
 //        if (true) return "ums/rav/Wraiths_v_Protoss.scm"; // Wraiths v Reavers & HT & Observer
-        if (true) return "ums/rav/Bunker_v_Zealots.scx";
+//        if (true) return "ums/rav/Bunker_v_Zealots.scx";
 //@        if (true) return "ums/rav/Ghosts_v_P.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";
@@ -86,7 +86,7 @@ public class MapAndRace {
 //@        if (true) return "ums/rav/M&M_v_M&M_2.scx"; // Standing in lines, shooting at another
 //@        if (true) return "ums/rav/M&M_v_M&M_3.scx"; // You attacking behind the corner
 //@        if (true) return "ums/rav/M&M_v_T.scx"; // Terran bio engaging with units that keep on adding
-//        if (true) return "ums/rav/T_rebasing.scm"; // CC that mines out, tests proper rebasing process
+        if (true) return "ums/rav/T_rebasing.scm"; // CC that mines out, tests proper rebasing process
 //@        if (true) return "ums/rav/Tanks_v_DT.scx";
 //@        if (true) return "ums/rav/Tanks_v_DT_2.scx";
 //        if (true) return "ums/rav/Tanks_v_Lurkers.scx"; // Tanks & Marines vs Lurkers

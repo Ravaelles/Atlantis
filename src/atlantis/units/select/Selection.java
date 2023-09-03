@@ -381,6 +381,18 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection notLifted() {
+        return cloneByRemovingIf(
+            (unit -> unit.isLifted()), "notLifted"
+        );
+    }
+
+    public Selection lifted() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isLifted()), "notLifted"
+        );
+    }
+
     /**
      * Selects melee units that is units which have attack range at most 1 tile.
      */

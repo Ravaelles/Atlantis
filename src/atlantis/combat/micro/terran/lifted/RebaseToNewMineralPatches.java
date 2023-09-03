@@ -20,7 +20,7 @@ public class RebaseToNewMineralPatches extends Manager {
     public boolean applies() {
         if (AGame.notNthGameFrame(37)) return false;
 
-        return unit.isCommandCenter() && (unit.isLifted() || isBaseMinedOut());
+        return unit.isCommandCenter() && (unit.isLifted() || isBaseMinedOut(unit));
     }
 
     @Override
@@ -98,7 +98,7 @@ public class RebaseToNewMineralPatches extends Manager {
         return false;
     }
 
-    protected boolean isBaseMinedOut() {
+    public static boolean isBaseMinedOut(AUnit unit) {
         return Select.minerals().inRadius(10, unit).isEmpty();
     }
 }

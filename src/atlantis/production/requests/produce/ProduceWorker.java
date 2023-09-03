@@ -1,6 +1,5 @@
 package atlantis.production.requests.produce;
 
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.AGame;
 import atlantis.production.dynamic.AutoTrainWorkersCommander;
 import atlantis.units.AUnit;
@@ -8,9 +7,12 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
+import static atlantis.combat.micro.terran.lifted.RebaseToNewMineralPatches.isBaseMinedOut;
+
 public class ProduceWorker {
     public static boolean produceWorker() {
-        AUnit base = Select.ourOneNotTrainingUnits(AtlantisRaceConfig.BASE);
+        AUnit base = baseToProduceWorker();
+
         if (base == null) return false;
 
         if (We.zerg()) {
@@ -22,14 +24,21 @@ public class ProduceWorker {
             }
         }
 
-        if (isSafeToProduceWorkerAt(base)) {
-            return AutoTrainWorkersCommander.produceWorker(base);
+        return AutoTrainWorkersCommander.produceWorker(base);
+    }
+
+    private static AUnit baseToProduceWorker() {
+        for (AUnit base : Select.ourBases().free().notLifted().list()) {
+            if (!isSafeToProduceWorkerAt(base)) continue;
+            if (isBaseMinedOut(base)) continue;
+
+            return base;
         }
 
-        return false;
+        return null;
     }
 
     protected static boolean isSafeToProduceWorkerAt(AUnit base) {
-        return base.enemiesNear().havingWeapon().canAttack(base, 6).empty();
+        return base.enemiesNear().groundUnits().canAttack(base, 6).atMost(1);
     }
 }
