@@ -19,8 +19,8 @@ public class ProductionOrdersCommander extends Commander {
     @Override
     protected void handle() {
         // Get sequence of units (Production Orders) based on current build order
-        ArrayList<ProductionOrder> queue = CurrentProductionQueue.ordersToProduceNow(
-            ProductionQueueMode.WITH_REQUIREMENTS_FULFILLED
+        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(
+            ProductionQueueMode.REQUIREMENTS_FULFILLED
         );
 
         for (ProductionOrder order : queue) {

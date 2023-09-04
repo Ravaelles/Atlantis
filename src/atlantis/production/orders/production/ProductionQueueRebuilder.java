@@ -22,7 +22,7 @@ public class ProductionQueueRebuilder {
     public static void rebuildProductionQueueToExcludeProducedOrders() {
 
         // Clear old production queue.
-        ProductionQueue.nextInQueue.clear();
+//        ProductionQueue.nextInQueue.clear();
 
         // It will store [UnitType->(int)howMany] mapping as we gonna process initial
         // production queue and check if we currently have units needed

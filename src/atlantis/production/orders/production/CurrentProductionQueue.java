@@ -1,16 +1,10 @@
 package atlantis.production.orders.production;
 
-import atlantis.combat.missions.Mission;
 import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.information.tech.ATech;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import bwapi.TechType;
-import bwapi.UpgradeType;
 
 import java.util.ArrayList;
 
@@ -27,128 +21,16 @@ public abstract class CurrentProductionQueue {
      * Notice that dynamic actions (like requesting a detector quickly) may insert
      * a unit dynamically with top priority.
      */
-    public static ArrayList<ProductionOrder> ordersToProduceNow(ProductionQueueMode mode) {
-        ArrayList<ProductionOrder> queue = new ArrayList<>();
-        int[] resourcesNeededForNotStartedBuildings = ConstructionRequests.resourcesNeededForNotStarted();
-        ProductionQueue.mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
-        ProductionQueue.gasNeeded = resourcesNeededForNotStartedBuildings[1];
-
-        // =========================================================
-        // The idea as follows: as long as we can afford next enqueued production order,
-        // add it to the list. So at any given moment we can either produce nothing, one unit
-        // or even multiple units (if we have all the minerals, gas and techs/buildings required).
-
-        int countCanNotAfford = 0;
-        for (ProductionOrder order : ProductionQueue.nextInQueue) {
-            boolean hasRequirements = AGame.hasSupply(order.minSupply()) && Requirements.hasRequirements(order);
-            boolean canAfford = AGame.canAfford(
-                ProductionQueue.mineralsNeeded + order.mineralPrice(),
-                ProductionQueue.gasNeeded + order.gasPrice()
-            );
-
-
-            order.setCanAffordNow(canAfford);
-            AUnitType unitOrBuilding = order.unitType();
-            UpgradeType upgrade = order.upgrade();
-            TechType tech = order.tech();
-            Mission mission = order.mission();
-
-            // ===  Protoss fix: wait for at least one Pylon ============
-
-            if (
-                We.protoss()
-                    && mode == ProductionQueueMode.WITH_REQUIREMENTS_FULFILLED
-                    && (unitOrBuilding != null && !unitOrBuilding.isPylon())
-                    && Count.existingOrInProductionOrInQueue(AUnitType.Protoss_Pylon) == 0
-            ) {
-                continue;
-            }
-
-            // === Define order type: UNIT/BUILDING or UPGRADE or TECH ==
-
-            // UNIT/BUILDING
-            if (unitOrBuilding != null && hasRequirements && canAfford) {
-                if (hasFreeBuildingFor(unitOrBuilding) && (unitOrBuilding.isBuilding() || !hasUnitInQueue(unitOrBuilding, queue))) {
-
-                    ProductionQueue.mineralsNeeded += unitOrBuilding.getMineralPrice();
-                    ProductionQueue.gasNeeded += unitOrBuilding.getGasPrice();
-                }
-            }
-
-            // UPGRADE
-            else if (upgrade != null && hasRequirements) {
-
-
-
-                ProductionQueue.mineralsNeeded += upgrade.mineralPrice() * (1 + ATech.getUpgradeLevel(upgrade));
-                ProductionQueue.gasNeeded += upgrade.gasPrice() * (1 + ATech.getUpgradeLevel(upgrade));
-            }
-
-            // TECH
-            else if (tech != null && hasRequirements) {
-                ProductionQueue.mineralsNeeded += tech.mineralPrice();
-                ProductionQueue.gasNeeded += tech.gasPrice();
-            }
-
-            // MISSION - handled in ProductionOrdersCommander
-            else if (mission != null && A.supplyAtLeast(order.minSupply())) {
-                continue;
-            }
-
-            // =========================================================
-            // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
-
-            if (
-                mode == ProductionQueueMode.ENTIRE_QUEUE || hasRequirements
-            ) {
-                if (unitOrBuilding != null && !A.hasFreeSupply(unitOrBuilding.supplyNeeded())) {
-                    continue;
-                }
-
-                order.setHasWhatRequired(hasRequirements);
-                queue.add(order);
-            }
-
-            // We can't afford to produce this order (possibly other, previous orders are blocking it).
-            // Return current list of production orders (can be empty).
-            else if (++countCanNotAfford >= 5) {
-                break;
-            }
-        }
-
-        // At this moment production queue coming from build order might be empty.
-        // Race-specific dynamic production managers should take care of that by
-        // adding production orders dynamically.
-
-//        if (mode == ProductionQueueMode.ONLY_WHAT_CAN_AFFORD && queue.size() > 0) {
-
-//            for (ProductionOrder order : queue) {
-
-//            }
-//        }
-
-        return queue;
+    public static ArrayList<ProductionOrder> get(ProductionQueueMode mode) {
+        return (new RebuildProductionQueue(mode)).rebuildQueue();
     }
 
-    private static boolean hasUnitInQueue(AUnitType type, ArrayList<ProductionOrder> queue) {
+    protected static boolean hasUnitInQueue(AUnitType type, ArrayList<ProductionOrder> queue) {
         for (ProductionOrder order : queue) {
             if (order.unitType() != null && order.unitType().equals(type)) {
                 return true;
             }
         }
-        return false;
-    }
-
-    private static boolean hasFreeBuildingFor(AUnitType unit) {
-        if (We.zerg()) {
-            return Count.ofType(AUnitType.Zerg_Larva) > 0;
-        }
-
-        AUnitType building = unit.whatBuildsIt();
-        if (building != null) {
-            return Select.ourOfType(building).free().isNotEmpty();
-        }
-
         return false;
     }
 
@@ -158,5 +40,18 @@ public abstract class CurrentProductionQueue {
 
     public static void remove(ProductionOrder order) {
         ProductionQueue.nextInQueue.remove(order);
+    }
+
+    public static void print(String message) {
+//        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
+        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
+        int total = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE).size();
+
+        if (message != null) A.println(message);
+
+        A.println("Current production queue (" + queue.size() + "/" + total + "):");
+        for (ProductionOrder order : queue) {
+            A.println(order.toString());
+        }
     }
 }

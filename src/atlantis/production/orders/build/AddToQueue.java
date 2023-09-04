@@ -74,7 +74,7 @@ public class AddToQueue {
             return null;
         }
 
-        if (CurrentProductionQueue.ordersToProduceNow(ProductionQueueMode.WITH_REQUIREMENTS_FULFILLED).size() >= 20) {
+        if (CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED).size() >= 20) {
             ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
             return null;
         }
@@ -93,12 +93,14 @@ public class AddToQueue {
 //        }
 
 //        if (!allowToQueueRequiredBuildings(type)) {
-        int minSupply = 0;
+        int minSupply = -1;
         ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
         ProductionQueue.addToQueue(index, productionOrder);
 
+//        System.err.println("productionOrder = " + productionOrder);
 
         return productionOrder;
+
 //        }
 //        else {
 //            if (
