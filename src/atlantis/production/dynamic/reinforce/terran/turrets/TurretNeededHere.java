@@ -4,6 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -16,15 +17,17 @@ public class TurretNeededHere extends Commander {
     @Override
     public boolean applies() {
         return We.terran()
-            && (A.hasMinerals(500) || A.seconds() >= 400)
-            && A.everyNthGameFrame(83)
+            && (A.hasMinerals(200) || A.seconds() >= 400)
+            && A.everyNthGameFrame(77)
             && Have.engBay()
-            && Count.inProductionOrInQueue(Terran_Missile_Turret) <= (A.hasMinerals(700) ? 3 : 1);
+            && Count.inProductionOrInQueue(Terran_Missile_Turret) <= (A.hasMinerals(500) ? 3 : 1);
 //            && EnemyInfo.hasLotOfAirUnits();
     }
 
     @Override
     protected void handle() {
+//        System.err.println("@ " + A.now() + " - TurretNeededHere?");
+
         AUnit tank = checkIfThereAreTanksUnderAirAttack();
 
         if (tank != null) {
@@ -35,7 +38,13 @@ public class TurretNeededHere extends Commander {
     private void haveTurretNear(AUnit unit) {
         if (alreadyHaveTurretNear(unit)) return;
 
+//        System.err.println("enqueue turret");
+//
+//        CurrentProductionQueue.print("PRE");
+
         AddToQueue.withHighPriority(Terran_Missile_Turret, unit.position());
+
+        CurrentProductionQueue.print(null);
 //        ConstructionRequests.requestConstructionOf(Terran_Missile_Turret, unit.position());
     }
 

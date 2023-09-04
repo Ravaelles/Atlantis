@@ -1329,11 +1329,11 @@ public class A {
         (System.out).println("");
     }
 
-    public static void println(String string) {
+    public static void println(Object string) {
         (System.out).println(string);
     }
 
-    public static void print(String string) {
+    public static void print(Object string) {
         (System.out).print(string);
     }
 }

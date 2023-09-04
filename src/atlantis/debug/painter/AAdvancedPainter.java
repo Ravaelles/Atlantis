@@ -633,7 +633,7 @@ public class AAdvancedPainter extends APainter {
 
         // === Display units that should be produced right now or any time ==================
 
-        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.ordersToProduceNow(ProductionQueueMode.ENTIRE_QUEUE);
+        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
 //        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         int counter = 1;
         for (ProductionOrder order : produceNow) {

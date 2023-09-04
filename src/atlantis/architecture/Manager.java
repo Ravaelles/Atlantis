@@ -20,6 +20,7 @@ public abstract class Manager extends BaseManager {
     /**
      * All sub-managers. Order matters.
      */
+    @SuppressWarnings("unchecked")
     protected Class<? extends Manager>[] managers() {
         return new Class[]{};
     }
