@@ -2,6 +2,7 @@ package atlantis.information.strategy;
 
 import atlantis.util.Enemy;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class StrategyChooser {
 
@@ -17,8 +18,12 @@ public class StrategyChooser {
         else if (We.terran()) {
             strategy = initForTerran();
         }
-        else {
+        else if (We.zerg()) {
             strategy = initForZerg();
+        }
+        else {
+            ErrorLog.printErrorOnce("Unhandled race in StrategyChooser::initialize()");
+            strategy = null;
         }
 
         OurStrategy.setTo(strategy);

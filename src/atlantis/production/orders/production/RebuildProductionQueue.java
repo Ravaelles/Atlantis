@@ -42,8 +42,10 @@ public class RebuildProductionQueue {
         // add it to the list. So at any given moment we can either produce nothing, one unit
         // or even multiple units (if we have all the minerals, gas and techs/buildings required).
 
+//        System.err.println("@@@ " + ProductionQueue.nextInQueue().size());
+
         countCanNotAfford = 0;
-        for (ProductionOrder order : ProductionQueue.nextInQueue) {
+        for (ProductionOrder order : ProductionQueue.nextInQueue()) {
             initializeVariablesForOrder(order);
 
             if (waitForProtossFirstPylon(mode)) continue;
@@ -118,7 +120,15 @@ public class RebuildProductionQueue {
     }
 
     private void initializeVariablesForOrder(ProductionOrder order) {
-        hasRequirements = AGame.hasSupply(order.minSupply()) && Requirements.hasRequirements(order);
+        hasRequirements = AGame.supplyUsed() >= order.minSupply() && Requirements.hasRequirements(order);
+
+//        System.err.println("order = " + order);
+//        System.err.println("hasRequirements = " + hasRequirements);
+//        System.err.println("Requirements.hasRequirements(order) = " + Requirements.hasRequirements(order));
+//        System.err.println("supplyUsed " + AGame.supplyUsed());
+//        System.err.println("supplyFree " + AGame.supplyFree());
+//        System.err.println("supplyTotal " + AGame.supplyTotal());
+
         canAfford = AGame.canAfford(
             ProductionQueue.mineralsNeeded + order.mineralPrice(),
             ProductionQueue.gasNeeded + order.gasPrice()

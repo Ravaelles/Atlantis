@@ -13,12 +13,11 @@ import java.util.Comparator;
  * Current production queue. Based on Build Order loaded from file, with some dynamic changes applied.
  */
 public abstract class ProductionQueue {
-
     /**
      * Ordered list of next units we should build.
      * It gets rebuild whenever new unit is created.
      */
-    protected static ArrayList<ProductionOrder> nextInQueue = new ArrayList<>();
+    private static ArrayList<ProductionOrder> nextInQueue = new ArrayList<>();
 
     /**
      * Number of minerals reserved to produce some units/buildings.
@@ -36,11 +35,20 @@ public abstract class ProductionQueue {
         return nextInQueue.size();
     }
 
+    public static void addOrder(ProductionOrder order) {
+        nextInQueue.add(order);
+        sortQueueBySupplyNeeded();
+    }
+
     public static void addToQueue(int index, ProductionOrder productionOrder) {
         nextInQueue.add(index, productionOrder);
-        sortQueueByAtSupply();
+        sortQueueBySupplyNeeded();
 
 //        printQueue("Added to queue: " + productionOrder);
+    }
+
+    public static void removeOrder(ProductionOrder order) {
+        nextInQueue.remove(order);
     }
 
     public static boolean isAtTheTopOfQueue(AUnitType type, int amongNTop) {
@@ -159,8 +167,18 @@ public abstract class ProductionQueue {
 
     // =========================================================
 
-    private static void sortQueueByAtSupply() {
+    public static void sortQueueBySupplyNeeded() {
 //        nextInQueue.sort((o1, o2) -> o1.minSupply() < o2.minSupply());
         nextInQueue.sort(Comparator.comparing(ProductionOrder::minSupply));
+    }
+
+//    public static void sortBySupplyNeeded() {
+//        Comparator.comparingInt(ProductionOrder::minSupply);
+//    }
+
+    // =========================================================
+
+    public static ArrayList<ProductionOrder> nextInQueue() {
+        return nextInQueue;
     }
 }

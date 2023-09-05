@@ -16,6 +16,7 @@ import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class OnStart {
 
@@ -61,9 +62,9 @@ public class OnStart {
         try {
             AInitialActions.executeInitialActions();
         } catch (Exception e) {
-            System.err.println("### Early exception, but don't worry ###");
-            System.err.println("This probably means you are playing UMS map.");
-            System.err.println("Atlantis is handling this case and keeps on playing.");
+            A.errPrintln("### Early exception, but don't worry ###");
+            A.errPrintln("This probably means you are playing UMS map.");
+            A.errPrintln("Atlantis is handling this case and keeps on playing.");
             AGame.setUmsMode();
             A.printStackTrace();
         }
@@ -100,36 +101,35 @@ public class OnStart {
         try {
             StrategyChooser.initialize();
 
-            if (Env.isLocal()) {
-                if (CurrentBuildOrder.get() != null) {
-                    System.out.println("Use build order: `" + CurrentBuildOrder.get() + "`");
-                }
-                else {
-                    System.err.println("Invalid (empty) build order in AtlantisRaceConfig!");
-                    AGame.exit();
-                }
+//            A.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
+            if (CurrentBuildOrder.get() != null) {
+                if (Env.isLocal()) A.println("Use build order: `" + CurrentBuildOrder.get() + "`");
+            }
+            else {
+                ErrorLog.printErrorOnce("Invalid (empty) build order in AtlantisRaceConfig!");
+                AGame.exit();
             }
         } catch (Exception e) {
-            System.err.println();
-            System.err.println("#######################################################");
-            System.err.println(
+            A.errPrintln("");
+            A.errPrintln("#######################################################");
+            A.errPrintln(
                 "Make sure that Starcraft/" + ABuildOrderLoader.BUILD_ORDERS_PATH
                     + " contains build_orders directory,"
             );
-            System.err.println("copy it from Atlantis/build_orders");
-            System.err.println("#######################################################");
+            A.errPrintln("copy it from Atlantis/build_orders");
+            A.errPrintln("#######################################################");
 
             if (CurrentBuildOrder.get() == null) {
-                System.err.println();
+                A.errPrintln("");
                 throw new RuntimeException("Current BUILD ORDER is NULL");
             }
 
-            System.err.println(
+            A.errPrintln(
                 "Does file exist? "
                     + (A.fileExists(CurrentBuildOrder.get().getName()) ? "YES - " : "NO, IT DOESN'T! ")
                     + CurrentBuildOrder.get().getName()
             );
-            System.err.println(e.getMessage());
+            A.errPrintln(e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Exception when loading build orders file");
         }

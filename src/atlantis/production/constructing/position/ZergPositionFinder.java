@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position;
 
 import atlantis.Atlantis;
+import atlantis.game.A;
 import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
@@ -11,6 +12,7 @@ import atlantis.production.constructing.position.conditions.TooCloseToMineralsOr
 import atlantis.production.constructing.position.conditions.TooCloseToMainBase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.log.ErrorLog;
 
 public class ZergPositionFinder extends AbstractPositionFinder {
 
@@ -24,7 +26,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         _CONDITION_THAT_FAILED = null;
 
         if (nearTo == null) {
-            System.err.println("@@@ NULL nearTo for findStandardPositionFor " + building);
+            ErrorLog.printMaxOncePerMinute("@@@ NULL nearTo for findStandardPositionFor " + building);
             return null;
         }
 

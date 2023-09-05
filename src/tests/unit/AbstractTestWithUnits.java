@@ -19,6 +19,8 @@ import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
+import atlantis.util.We;
 import bwapi.*;
 import org.junit.After;
 import org.junit.Before;
@@ -124,6 +126,11 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         aTech.when(() -> ATech.isResearched(null)).thenReturn(false);
         aTech.when(() -> ATech.getUpgradeLevel(any())).thenReturn(0);
 
+        MockedStatic<Enemy> enemy = Mockito.mockStatic(Enemy.class);
+        enemy.when(() -> Enemy.terran()).thenReturn(false);
+        enemy.when(() -> Enemy.protoss()).thenReturn(true);
+        enemy.when(() -> Enemy.zerg()).thenReturn(false);
+
         // This is not needed for green tests and was causing standard AUnit::distTo(AUnit) to return 0
 //        positionUtil = Mockito.mockStatic(PositionUtil.class);
 //        positionUtil.when(() -> PositionUtil.groundDistanceTo(any(Position.class), any(Position.class)))
@@ -171,9 +178,12 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     protected void mockAGameObject() {
         aGame = Mockito.mockStatic(AGame.class);
-        aGame.when(AGame::supplyTotal).thenReturn(5);
-        aGame.when(AGame::supplyUsed).thenReturn(5);
-        aGame.when(AGame::isPlayingAsZerg).thenReturn(true);
+//        aGame.when(AGame::supplyTotal).thenReturn(10);
+//        aGame.when(AGame::supplyUsed).thenReturn(4);
+//        aGame.when(AGame::supplyFree).thenReturn(6);
+        aGame.when(AGame::minerals).thenReturn(444);
+        aGame.when(AGame::gas).thenReturn(333);
+        aGame.when(AGame::isPlayingAsTerran).thenReturn(true);
         aGame.when(AGame::isEnemyProtoss).thenReturn(true);
     }
 

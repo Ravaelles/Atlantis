@@ -24,33 +24,33 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
         FakeUnit drone, ling1, hydra, sunken, ling2;
 
         FakeUnit[] enemies = fakeEnemies(
-                drone = fake(AUnitType.Zerg_Drone, 12),
-                fake(AUnitType.Zerg_Larva, 11),
-                fake(AUnitType.Zerg_Egg, 11),
-                fake(AUnitType.Zerg_Hatchery, 11),
-                fake(AUnitType.Zerg_Lurker_Egg, 11),
-                fake(AUnitType.Zerg_Cocoon, 11),
-                fake(AUnitType.Zerg_Creep_Colony, 12),
-                fake(AUnitType.Zerg_Spore_Colony, 12),
-                fake(AUnitType.Zerg_Drone, 13),
-                fake(AUnitType.Zerg_Drone, 14),
-                ling1 = fake(AUnitType.Zerg_Zergling, 11.8),
-                hydra = fake(AUnitType.Zerg_Hydralisk, 14),
-                sunken = fake(AUnitType.Zerg_Sunken_Colony, 16),
-                fake(AUnitType.Zerg_Creep_Colony, 11),
-                ling2 = fake(AUnitType.Zerg_Zergling, 12.9),
-                fake(AUnitType.Zerg_Zergling, 13),
-                fake(AUnitType.Zerg_Zergling, 14),
-                fake(AUnitType.Zerg_Zergling, 15),
-                fake(AUnitType.Zerg_Zergling, 16),
-                fake(AUnitType.Zerg_Zergling, 17),
-                fake(AUnitType.Zerg_Hydralisk, 19),
-                fake(AUnitType.Zerg_Sunken_Colony, 28)
+            drone = fake(AUnitType.Zerg_Drone, 12),
+            fake(AUnitType.Zerg_Larva, 11),
+            fake(AUnitType.Zerg_Egg, 11),
+            fake(AUnitType.Zerg_Hatchery, 11),
+            fake(AUnitType.Zerg_Lurker_Egg, 11),
+            fake(AUnitType.Zerg_Cocoon, 11),
+            fake(AUnitType.Zerg_Creep_Colony, 12),
+            fake(AUnitType.Zerg_Spore_Colony, 12),
+            fake(AUnitType.Zerg_Drone, 13),
+            fake(AUnitType.Zerg_Drone, 14),
+            ling1 = fake(AUnitType.Zerg_Zergling, 11.8),
+            hydra = fake(AUnitType.Zerg_Hydralisk, 14),
+            sunken = fake(AUnitType.Zerg_Sunken_Colony, 16),
+            fake(AUnitType.Zerg_Creep_Colony, 11),
+            ling2 = fake(AUnitType.Zerg_Zergling, 12.9),
+            fake(AUnitType.Zerg_Zergling, 13),
+            fake(AUnitType.Zerg_Zergling, 14),
+            fake(AUnitType.Zerg_Zergling, 15),
+            fake(AUnitType.Zerg_Zergling, 16),
+            fake(AUnitType.Zerg_Zergling, 17),
+            fake(AUnitType.Zerg_Hydralisk, 19),
+            fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
-                    new FakeUnit[] { drone, ling1, hydra, sunken },
+                new FakeUnit[]{drone, ling1, hydra, sunken},
                 (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         });
@@ -62,25 +62,25 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
         FakeUnit enemy1, enemy2, enemy3, enemy4;
 
         FakeUnit[] enemies = fakeEnemies(
-                enemy1 = fake(AUnitType.Protoss_Photon_Cannon, 12),
-                fake(AUnitType.Protoss_Photon_Cannon, 11).setCompleted(false),
+            enemy1 = fake(AUnitType.Protoss_Photon_Cannon, 12),
+            fake(AUnitType.Protoss_Photon_Cannon, 11).setCompleted(false),
 
-                enemy2 = fake(AUnitType.Terran_Goliath, 16),
+            enemy2 = fake(AUnitType.Terran_Goliath, 16),
 
-                fake(AUnitType.Zerg_Sunken_Colony, 12),
-                fake(AUnitType.Zerg_Sunken_Colony, 13).setCompleted(false),
+            fake(AUnitType.Zerg_Sunken_Colony, 12),
+            fake(AUnitType.Zerg_Sunken_Colony, 13).setCompleted(false),
 
-                enemy3 = fake(AUnitType.Terran_Missile_Turret, 12),
-                fake(AUnitType.Terran_Missile_Turret, 13).setCompleted(false),
+            enemy3 = fake(AUnitType.Terran_Missile_Turret, 12),
+            fake(AUnitType.Terran_Missile_Turret, 13).setCompleted(false),
 
-                enemy4 = fake(AUnitType.Zerg_Spore_Colony, 12),
-                fake(AUnitType.Zerg_Spore_Colony, 13).setCompleted(false)
+            enemy4 = fake(AUnitType.Zerg_Spore_Colony, 12),
+            fake(AUnitType.Zerg_Spore_Colony, 13).setCompleted(false)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
-                    new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
-                    (new AvoidEnemies(our)).unitsToAvoid().array()
+                new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
+                (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         });
     }
@@ -92,26 +92,26 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
 
         double inRange = 16.9; // Range is 7, but we need some safety margin which varies depending on the unit
         int outsideRange = 22;
-        
+
         FakeUnit[] enemies = fakeEnemies(
-                cannon = fake(AUnitType.Protoss_Photon_Cannon, inRange),
-                fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
+            cannon = fake(AUnitType.Protoss_Photon_Cannon, inRange),
+            fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
 
-                sunken = fake(AUnitType.Zerg_Sunken_Colony, inRange),
-                fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
+            sunken = fake(AUnitType.Zerg_Sunken_Colony, inRange),
+            fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
 
-                fake(AUnitType.Terran_Missile_Turret, inRange),
+            fake(AUnitType.Terran_Missile_Turret, inRange),
 
-                bunker = fake(AUnitType.Terran_Bunker, inRange - 1),
-                fake(AUnitType.Terran_Bunker, outsideRange),
+            bunker = fake(AUnitType.Terran_Bunker, inRange - 1),
+            fake(AUnitType.Terran_Bunker, outsideRange),
 
-                fake(AUnitType.Zerg_Spore_Colony, inRange)
+            fake(AUnitType.Zerg_Spore_Colony, inRange)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
-                    new FakeUnit[] { cannon, sunken, bunker },
-                    (new AvoidEnemies(our)).unitsToAvoid().array()
+                new FakeUnit[]{cannon, sunken, bunker},
+                (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         });
     }
@@ -125,26 +125,26 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
         int outsideRange = 24;
 
         FakeUnit[] enemies = fakeEnemies(
-                enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange),
-                fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
+            enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange),
+            fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
 
-                fake(AUnitType.Zerg_Sunken_Colony, inRange),
-                fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
+            fake(AUnitType.Zerg_Sunken_Colony, inRange),
+            fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
 
-                enemy2 = fake(AUnitType.Terran_Missile_Turret, inRange),
-                fake(AUnitType.Terran_Missile_Turret, outsideRange),
+            enemy2 = fake(AUnitType.Terran_Missile_Turret, inRange),
+            fake(AUnitType.Terran_Missile_Turret, outsideRange),
 
-                enemy3 = fake(AUnitType.Zerg_Spore_Colony, inRange),
-                fake(AUnitType.Zerg_Spore_Colony, outsideRange),
+            enemy3 = fake(AUnitType.Zerg_Spore_Colony, inRange),
+            fake(AUnitType.Zerg_Spore_Colony, outsideRange),
 
-                enemy4 = fake(AUnitType.Terran_Bunker, inRange - 5),
-                fake(AUnitType.Terran_Bunker, outsideRange)
+            enemy4 = fake(AUnitType.Terran_Bunker, inRange - 5),
+            fake(AUnitType.Terran_Bunker, outsideRange)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
-                    new FakeUnit[] { enemy1, enemy2, enemy3, enemy4 },
-                    (new AvoidEnemies(our)).unitsToAvoid().array()
+                new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
+                (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         });
     }
@@ -158,8 +158,8 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
         FakeUnit our = fake(AUnitType.Terran_Siege_Tank_Siege_Mode, 10);
 
         FakeUnit[] enemies = fakeEnemies(
-                (FakeUnit) (enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange)),
-                fake(AUnitType.Protoss_Photon_Cannon, outsideRange)
+            (FakeUnit) (enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange)),
+            fake(AUnitType.Protoss_Photon_Cannon, outsideRange)
         );
 
         // =========================================================
@@ -172,19 +172,19 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
             FakeFoggedUnit enemy2, enemy3, enemy4, enemy5, enemy6;
             FakeFoggedUnit skippedTank1, skippedTank2;
 
-            FakeFoggedUnit[] fogged = new FakeFoggedUnit[] {
-                    enemy2 = fogged(AUnitType.Protoss_Photon_Cannon, inRange + 1),
-                    fogged(AUnitType.Protoss_Photon_Cannon, outsideRange),
-                    enemy3 = fogged(AUnitType.Zerg_Sunken_Colony, inRange),
-                    fogged(AUnitType.Zerg_Sunken_Colony, outsideRange),
-                    fogged(AUnitType.Protoss_Zealot, inRange),
-                    fogged(AUnitType.Zerg_Mutalisk, outsideRange),
-                    enemy4 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, inRange + 1),
-                    skippedTank1 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, outsideRange),
-                    enemy5 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, inRange),
-                    skippedTank2 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, outsideRange),
-                    enemy6 = fogged(AUnitType.Zerg_Lurker, inRange),
-                    fogged(AUnitType.Zerg_Lurker, outsideRange)
+            FakeFoggedUnit[] fogged = new FakeFoggedUnit[]{
+                enemy2 = fogged(AUnitType.Protoss_Photon_Cannon, inRange + 1),
+                fogged(AUnitType.Protoss_Photon_Cannon, outsideRange),
+                enemy3 = fogged(AUnitType.Zerg_Sunken_Colony, inRange),
+                fogged(AUnitType.Zerg_Sunken_Colony, outsideRange),
+                fogged(AUnitType.Protoss_Zealot, inRange),
+                fogged(AUnitType.Zerg_Mutalisk, outsideRange),
+                enemy4 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, inRange + 1),
+                skippedTank1 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, outsideRange),
+                enemy5 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, inRange),
+                skippedTank2 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, outsideRange),
+                enemy6 = fogged(AUnitType.Zerg_Lurker, inRange),
+                fogged(AUnitType.Zerg_Lurker, outsideRange)
             };
 
 //            System.err.println("our = " + our);
@@ -210,9 +210,9 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
 //            Select.enemy().print("Enemy units");
 
             assertContainsAll(
-                    new AUnit[] { enemy1, enemy2, enemy3, enemy4, enemy5, enemy6 },
+                new AUnit[]{enemy1, enemy2, enemy3, enemy4, enemy5, enemy6},
 //                    new AUnit[] { enemy4 },
-                    (new AvoidEnemies(our)).unitsToAvoid().array()
+                (new AvoidEnemies(our)).unitsToAvoid().array()
             );
         }
     }

@@ -6,7 +6,6 @@ import atlantis.util.cache.Cache;
 import bwapi.Race;
 
 public class We {
-
     private static Cache<Object> cache = new Cache<>();
 
     // =========================================================

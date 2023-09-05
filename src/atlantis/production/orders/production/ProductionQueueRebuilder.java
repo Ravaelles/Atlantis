@@ -1,5 +1,6 @@
 package atlantis.production.orders.production;
 
+import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.build.CurrentBuildOrder;
@@ -24,47 +25,49 @@ public class ProductionQueueRebuilder {
         // Clear old production queue.
 //        ProductionQueue.nextInQueue.clear();
 
-        // It will store [UnitType->(int)howMany] mapping as we gonna process initial
+        // It will store [UnitType -> howMany] mapping as we gonna process initial
         // production queue and check if we currently have units needed
         MappingCounter<AUnitType> virtualCounter = new MappingCounter<>();
 
         // =========================================================
 
         for (ProductionOrder order : CurrentBuildOrder.get().productionOrders()) {
-            boolean isOkayToAdd = false;
+            boolean isOkayToAdd = isOkayToAdd(order, virtualCounter);
 
-            // === Unit
-
-            if (order.unitType() != null) {
-                isOkayToAdd = addUnitOrBuildingIfDontHaveIt(order, virtualCounter);
-            }
-
-            // === Tech
-
-            else if (order.tech() != null) {
-                isOkayToAdd = !ATech.isResearchedWithOrder(order.tech(), order);
-            }
-
-            // === Upgrade
-
-            else if (order.upgrade() != null) {
-                isOkayToAdd = !ATech.isResearchedWithOrder(order.upgrade(), order);
-            }
-
-            // =========================================================
-
-            if (isOkayToAdd) {
-                ProductionQueue.nextInQueue.add(order);
-//                System.err.println("Enqueue " + order + " (now " + ProductionQueue.nextInQueue.size() + ")");
-                if (ProductionQueue.nextInQueue.size() >= 12) {
-                    break;
-                }
-            }
+            if (isOkayToAdd) ProductionQueue.addOrder(order);
+            if (ProductionQueue.nextInQueue().size() >= 12) break;
         }
 
         // It may happen that due to invalid build order sequence the supply order is not maintained
         // Make sure to sort by supply needed for the order.
-        ProductionQueue.nextInQueue.sort(Comparator.comparingInt(ProductionOrder::minSupply));
+        ProductionQueue.sortQueueBySupplyNeeded();
+
+//        ProductionQueue.printQueue("Rebuild production queue");
+    }
+
+    private static boolean isOkayToAdd(ProductionOrder order, MappingCounter<AUnitType> virtualCounter) {
+        // === Unit
+
+        if (order.unitType() != null) {
+            return addUnitOrBuildingIfDontHaveIt(order, virtualCounter);
+        }
+
+        // === Tech
+
+        else if (order.tech() != null) {
+            return !ATech.isResearchedWithOrder(order.tech(), order);
+        }
+
+        // === Upgrade
+
+        else if (order.upgrade() != null) {
+            return !ATech.isResearchedWithOrder(order.upgrade(), order);
+        }
+
+        // === Unknown
+
+        A.errPrintln("Unknown order type: " + order);
+        return true;
     }
 
     // =========================================================

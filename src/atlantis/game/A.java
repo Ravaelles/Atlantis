@@ -1219,6 +1219,7 @@ public class A {
     }
 
     public static void printList(Collection<?> list) {
+        A.println("List (" + list.size() + ")");
         for (Object o : list) {
             A.println("- " + o);
         }
@@ -1331,6 +1332,10 @@ public class A {
 
     public static void println(Object string) {
         (System.out).println(string);
+    }
+
+    public static void errPrintln(Object string) {
+        (System.err).println(string);
     }
 
     public static void print(Object string) {

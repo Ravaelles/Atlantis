@@ -129,10 +129,6 @@ public class AGame {
         return Atlantis.game().self().supplyUsed() / 2;
     }
 
-    public static boolean hasSupply(int minSupply) {
-        return supplyUsed() >= minSupply;
-    }
-
     /**
      * Number of supply totally available.
      */

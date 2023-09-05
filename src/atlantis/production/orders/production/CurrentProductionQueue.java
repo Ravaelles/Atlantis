@@ -11,8 +11,7 @@ import java.util.ArrayList;
 /**
  * Current production queue
  */
-public abstract class CurrentProductionQueue {
-
+public class CurrentProductionQueue {
     /**
      * Returns list of orders (units and upgrades) that we should produce now.
      * This method iterates over all production orders, taken from the active build orders
@@ -39,17 +38,17 @@ public abstract class CurrentProductionQueue {
     }
 
     public static void remove(ProductionOrder order) {
-        ProductionQueue.nextInQueue.remove(order);
+        ProductionQueue.removeOrder(order);
     }
 
     public static void print(String message) {
-//        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
-        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
+        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
+//        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
         int total = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE).size();
 
         if (message != null) A.println(message);
 
-        A.println("Current production queue (" + queue.size() + "/" + total + "):");
+        A.println("Current production queue (current: " + queue.size() + " / total: " + total + ")");
         for (ProductionOrder order : queue) {
             A.println(order.toString());
         }
