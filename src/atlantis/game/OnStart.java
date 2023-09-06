@@ -14,6 +14,7 @@ import atlantis.map.AMap;
 import atlantis.production.dynamic.expansion.InitialMainPosition;
 import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.CurrentBuildOrder;
+import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
@@ -99,7 +100,8 @@ public class OnStart {
 
     public static void initStrategyAndBuildOrder() {
         try {
-            StrategyChooser.initialize();
+            StrategyChooser.initializeStrategy();
+            QueueInitializer.initializeProductionQueue();
 
 //            A.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
             if (CurrentBuildOrder.get() != null) {

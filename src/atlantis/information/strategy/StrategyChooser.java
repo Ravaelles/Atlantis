@@ -9,7 +9,7 @@ public class StrategyChooser {
     /**
      * Choose initial strategy and therefore the Build Order.
      */
-    public static void initialize() {
+    public static void initializeStrategy() {
         AStrategy strategy;
 
         if (We.protoss()) {
