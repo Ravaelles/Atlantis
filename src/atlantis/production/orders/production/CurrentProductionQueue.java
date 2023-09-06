@@ -21,7 +21,11 @@ public class CurrentProductionQueue {
      * a unit dynamically with top priority.
      */
     public static ArrayList<ProductionOrder> get(ProductionQueueMode mode) {
-        return (new RebuildProductionQueue(mode)).rebuildQueue();
+        if (ProductionQueue.nextInQueue().size() >= 10) return ProductionQueue.nextInQueue();
+
+        (new RebuildProductionQueue(mode)).rebuildQueue();
+
+        return ProductionQueue.nextInQueue();
     }
 
     protected static boolean hasUnitInQueue(AUnitType type, ArrayList<ProductionOrder> queue) {
@@ -39,6 +43,10 @@ public class CurrentProductionQueue {
 
     public static void remove(ProductionOrder order) {
         ProductionQueue.removeOrder(order);
+    }
+
+    public static void print() {
+        print(null);
     }
 
     public static void print(String message) {

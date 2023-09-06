@@ -51,6 +51,10 @@ public abstract class ProductionQueue {
         nextInQueue.remove(order);
     }
 
+    protected static void setQueue(ArrayList<ProductionOrder> queue) {
+        nextInQueue = queue;
+    }
+
     public static boolean isAtTheTopOfQueue(AUnitType type, int amongNTop) {
         for (int i = 0; i < amongNTop && i < nextInQueue.size(); i++) {
             if (type.equals(nextInQueue.get(i).unitType())) {
@@ -178,7 +182,8 @@ public abstract class ProductionQueue {
 
     // =========================================================
 
+    @SuppressWarnings("unchecked")
     public static ArrayList<ProductionOrder> nextInQueue() {
-        return nextInQueue;
+        return (ArrayList<ProductionOrder>) nextInQueue.clone();
     }
 }

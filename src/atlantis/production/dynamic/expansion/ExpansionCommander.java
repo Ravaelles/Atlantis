@@ -140,7 +140,7 @@ public class ExpansionCommander extends Commander {
         // TERRAN + PROTOSS
         else {
             ProductionOrder productionOrder = AddToQueue.withHighPriority(AtlantisRaceConfig.BASE);
-            if (Count.bases() <= 1) {
+            if (productionOrder != null && Count.bases() <= 1) {
                 productionOrder.setModifier("NATURAL");
             }
         }

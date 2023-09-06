@@ -80,7 +80,7 @@ public class CurrentProductionQueueTest extends NonAbstractTestFakingGame {
 
         queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
 
-//        A.printList(queue);
+        A.printList(queue);
         assertEquals(6, queue.size());
         assertEquals(Terran_Supply_Depot, queue.get(0).unitType());
     }

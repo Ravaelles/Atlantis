@@ -33,7 +33,9 @@ public class ProductionOrdersCommander extends Commander {
             (new ProductionOrderHandler(order)).invoke();
         } catch (Exception e) {
             CurrentProductionQueue.remove(order);
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancelled " + order + " as there was a problem.");
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancelled " + order + " as there was: " + e.getClass());
+            ErrorLog.printMaxOncePerMinute("Cancelled " + order + " as there was: " + e.getClass());
+            e.printStackTrace();
         }
     }
 

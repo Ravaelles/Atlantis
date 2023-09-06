@@ -33,16 +33,19 @@ public class RebuildProductionQueue {
         resourcesNeededForNotStartedBuildings = ConstructionRequests.resourcesNeededForNotStarted();
     }
 
-    protected ArrayList<ProductionOrder> rebuildQueue() {
+    protected void rebuildQueue() {
         ProductionQueue.mineralsNeeded = resourcesNeededForNotStartedBuildings[0];
         ProductionQueue.gasNeeded = resourcesNeededForNotStartedBuildings[1];
+
+//        if (shouldReturnQueue()) return (ArrayList<ProductionOrder>) queue.clone();
 
         // =========================================================
         // The idea as follows: as long as we can afford next enqueued production order,
         // add it to the list. So at any given moment we can either produce nothing, one unit
         // or even multiple units (if we have all the minerals, gas and techs/buildings required).
 
-//        System.err.println("@@@ " + ProductionQueue.nextInQueue().size());
+        System.err.println(A.now() + " rebuild @@@ " + ProductionQueue.nextInQueue().size());
+//        A.printStackTrace();
 
         countCanNotAfford = 0;
         for (ProductionOrder order : ProductionQueue.nextInQueue()) {
@@ -51,13 +54,12 @@ public class RebuildProductionQueue {
             if (waitForProtossFirstPylon(mode)) continue;
             if (handleOrderBeingMissionEnforcement(order)) continue;
 
-            reserveResourcesForThisOrder();
-
             // =========================================================
 
             // If we can afford this order (and all previous ones as well), add it to CurrentToProduceList.
             if (shouldAddOrderToQueue(order)) {
                 addOrderToCurrentQueue(order);
+                reserveResourcesForThisOrder();
             }
 
             // We can't afford to produce this order (possibly other, previous orders are blocking it).
@@ -65,17 +67,18 @@ public class RebuildProductionQueue {
             else if (shouldReturnQueue()) break;
         }
 
-        //noinspection unchecked
-        return (ArrayList<ProductionOrder>) queue.clone();
+        ProductionQueue.setQueue(queue);
     }
 
     private boolean shouldReturnQueue() {
-        return ++countCanNotAfford >= 5;
+        return ++countCanNotAfford >= 5 || queue.size() >= 12;
     }
 
     private boolean shouldAddOrderToQueue(ProductionOrder order) {
         if (mode == ProductionQueueMode.ENTIRE_QUEUE || hasRequirements) {
+//            if (A.supplyUsed(order.minSupply())) {
             return unitOrBuilding == null || A.hasFreeSupply(unitOrBuilding.supplyNeeded());
+//            }
         }
 
         return false;
