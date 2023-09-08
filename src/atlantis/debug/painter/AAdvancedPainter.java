@@ -38,6 +38,8 @@ import atlantis.production.orders.production.CurrentProductionQueue;
 import atlantis.production.orders.production.ProductionOrder;
 import atlantis.production.orders.production.ProductionQueue;
 import atlantis.production.orders.production.ProductionQueueMode;
+import atlantis.production.orders.production.queue.Orders;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
@@ -633,10 +635,14 @@ public class AAdvancedPainter extends APainter {
 
         // === Display units that should be produced right now or any time ==================
 
-        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
+//        Queue.all();
+        Orders produceNow = Queue.get().orders();
+
+
+//        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
 //        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         int counter = 1;
-        for (ProductionOrder order : produceNow) {
+        for (ProductionOrder order : produceNow.list()) {
             paintSideMessage(
                 String.format("%02d", order.minSupply()) + " - " + order.name(),
                 order.hasWhatRequired() ? (order.currentlyInProduction() ? Green : Color.Yellow) : Color.Red

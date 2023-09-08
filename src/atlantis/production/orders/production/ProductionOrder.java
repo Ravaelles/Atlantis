@@ -18,6 +18,7 @@ public class ProductionOrder {
 
     private static int firstFreeId = 1;
     private int id;
+    private boolean completed = false;
 
     /**
      * How much supply has to be used for this order to become active
@@ -330,6 +331,15 @@ public class ProductionOrder {
 
     public ProductionOrder setMaximumDistance(int maximumDistance) {
         this.maximumDistance = maximumDistance;
+        return this;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public ProductionOrder setCompleted(boolean completed) {
+        this.completed = completed;
         return this;
     }
 }

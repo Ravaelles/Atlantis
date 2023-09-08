@@ -10,7 +10,6 @@ import java.util.Set;
  * TODO: check whether removing the need of K extend Comparable has negative side effects
  */
 public class MappingCounter<K> {
-
     private final HashMap<K, Integer> mapping = new HashMap<>();
 
     // =====================================================================

@@ -5,6 +5,7 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.production.orders.production.CurrentProductionQueue;
+import atlantis.production.orders.production.queue.Queue;
 import bwapi.Color;
 import jbweb.Block;
 import jbweb.Blocks;
@@ -19,9 +20,11 @@ public class OnEveryFrameHelper {
 //        paintMissionAttackFocusPoint();
 //        pathToEnemyBase();
 
-        paintJbwebBlocks();
+//        paintJbwebBlocks();
 
-        CurrentProductionQueue.print();
+//        CurrentProductionQueue.print();
+
+        Queue.all().print("All orders");
     }
 
     private static void paintJbwebBlocks() {
