@@ -1,6 +1,7 @@
 package atlantis.production.orders.production;
 
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -14,13 +15,16 @@ import bwapi.UpgradeType;
 public class Requirements {
 
     public static boolean hasRequirements(ProductionOrder order) {
-        if (order.unitType() != null) {
-//            if (AUnitType.Terran_Medic.equals(order.unitType())) {
-//                order.unitType().requiredUnits().print("Required units");
-////            return !order.unitType().hasRequiredUnit() || hasRequirements(order.unitType());
+        AUnitType type = order.unitType();
+
+        if (type != null) {
+//            if (AUnitType.Terran_Medic.equals(type)) {
+////                order.type().requiredUnits().print("Required units");
+//                System.err.println("hasRequiredTechForUnit(type) = " + hasRequiredTechForUnit(type));
+//                System.err.println("dontHaveEnoughGasAsRequirement(type) = " + dontHaveEnoughGasAsRequirement(type));
 //            }
 
-            return hasRequirements(order.unitType());
+            return hasRequirements(type);
         }
         else if (order.tech() != null) {
             return hasRequirements(order.tech());
@@ -37,24 +41,36 @@ public class Requirements {
 
     public static boolean hasRequirements(AUnitType type) {
         if (type == null) return true;
-        if (!type.hasRequiredUnit()) return true;
-
-//        if (type.hasRequiredUnit() && Count.ofType(type.whatIsRequired()) == 0) return false;
 
         Counter<AUnitType> requiredUnits = type.requiredUnits();
         for (AUnitType requiredType : requiredUnits.keys()) {
-            if (!requiredType.isLarva() && !Have.a(requiredType)) {
-                A.errPrintln("Dont have " + requiredType + " for " + type);
-                A.errPrintln("Have.a(requiredType) = " + Have.a(requiredType));
-                A.errPrintln(Select.ourOfType(requiredType).count());
+//            A.errPrintln(requiredType + " required for " + type + " - Have:" + A.trueFalse(Have.a(requiredType)));
+            if (!requiredType.isLarva() && !requiredType.isWorker() && !Have.a(requiredType)) {
+//                A.errPrintln("--------------------------");
+//                A.errPrintln("DONT have " + requiredType + " for " + type);
+//                A.errPrintln("Have.a(requiredType) = " + Have.a(requiredType));
+//                A.errPrintln(Select.ourOfType(requiredType).count());
+//                Select.clearCache();
+//                A.errPrintln(Select.ourOfType(requiredType).count());
+//                Select.ourOfType(requiredType).print();
+//                Select.our().print();
+//                A.errPrintln("--------------------------");
                 return false;
             }
         }
 
-        if (type.getGasPrice() > 0) {
-            if (!A.hasGas((int) (type.getGasPrice() * 0.7))) return false;
-        }
+        if (dontHaveEnoughGasAsRequirement(type)) return false;
 
+        return hasRequiredTechForUnit(type);
+    }
+
+    private static boolean dontHaveEnoughGasAsRequirement(AUnitType type) {
+        if (type.getGasPrice() == 0) return false;
+
+        return AGame.gas() < (int) (type.getGasPrice() * 0.7);
+    }
+
+    private static boolean hasRequiredTechForUnit(AUnitType type) {
         TechType techType = type.getRequiredTech();
         return techType == null || techType == TechType.None || ATech.isResearched(techType);
     }

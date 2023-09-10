@@ -49,7 +49,7 @@ public class CurrentProductionQueueTest extends NonAbstractTestFakingGame {
 
     private void firstFrame() {
         assertEquals(444, AGame.minerals());
-        assertEquals(333, AGame.gas());
+        assertEquals(555, AGame.gas());
 
         assertQueueHasListOfOrdersComingFromTheBuildOrder();
         assertQueueReturnsOrdersWeCanProduceNowDependingOnRequirements();

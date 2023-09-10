@@ -136,8 +136,8 @@ public class BuildOrderRowParser {
 
         // =========================================================
         // Save first column from row as it may contain build order modifiers
-        order.setRawFirstColumnInFile(row[0]);
-        order.setNumberOfColumnsInRow(row.length);
+//        order.setRawFirstColumnInFile(row[0]);
+//        order.setNumberOfColumnsInRow(row.length);
 
         // =========================================================
         // Save order modifier

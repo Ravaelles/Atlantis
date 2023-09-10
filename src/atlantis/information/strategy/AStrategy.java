@@ -3,6 +3,7 @@ package atlantis.information.strategy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.build.ABuildOrderLoader;
+import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class AStrategy {
      */
     private void assignBuildOrder() {
         buildOrder = ABuildOrderLoader.getBuildOrderForStrategy(this);
+        CurrentBuildOrder.set(buildOrder);
     }
 
     @Override
@@ -213,9 +215,11 @@ public class AStrategy {
     public String race() {
         if (isProtoss()) {
             return "Protoss";
-        } if (isTerran()) {
+        }
+        if (isTerran()) {
             return "Terran";
-        } else {
+        }
+        else {
             return "Zerg";
         }
     }

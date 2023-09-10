@@ -178,9 +178,15 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     protected void mockAGameObject() {
         aGame = Mockito.mockStatic(AGame.class);
+
+        if (this instanceof InitsSupply) {
+            ((InitsSupply) this).initSupply();
+        }
+
 //        aGame.when(AGame::supplyTotal).thenReturn(10);
 //        aGame.when(AGame::supplyUsed).thenReturn(4);
 //        aGame.when(AGame::supplyFree).thenReturn(6);
+
         aGame.when(AGame::minerals).thenReturn(444);
         aGame.when(AGame::gas).thenReturn(333);
         aGame.when(AGame::isPlayingAsTerran).thenReturn(true);

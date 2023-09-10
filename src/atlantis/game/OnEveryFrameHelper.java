@@ -24,7 +24,7 @@ public class OnEveryFrameHelper {
 
 //        CurrentProductionQueue.print();
 
-        Queue.get().readyToProduceOrders().print("All orders");
+//        Queue.get().readyToProduceOrders().print("All orders");
     }
 
     private static void paintJbwebBlocks() {

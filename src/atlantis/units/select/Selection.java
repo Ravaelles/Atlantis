@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Selection extends BaseSelection {
-
     protected Selection(Collection<? extends AUnit> unitsData, String initCachePath) {
         super(unitsData, initCachePath);
     }

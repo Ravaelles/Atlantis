@@ -19,7 +19,7 @@ import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
-public class QueueTest extends NonAbstractTestFakingGame {
+public class QueueTest extends NonAbstractTestFakingGame implements InitsSupply {
     private ABuildOrder buildOrder;
     private Queue queue = null;
     private ArrayList<ProductionOrder> allOrders = null;
@@ -136,17 +136,27 @@ public class QueueTest extends NonAbstractTestFakingGame {
     public void medicsAreReturnedInInProgress() {
         createWorld(1,
             () -> {
+//                Select.our().print("Our units");
+
                 queue = initQueue();
 
-                mockOurUnitsByAddingNewUnit(fakeOurs(
+//                mockOurUnitsByAddingNewUnit(fakeOurs(
+//                    fake(Terran_Supply_Depot, 7),
+//                    fake(Terran_Barracks, 4),
+//                    fake(Terran_Academy, 33)
+//                ));
+
+                queue.allOrders().print("All orders");
+                queue.readyToProduceOrders().print("ReadyToProduceOrders");
+            },
+            () -> FakeUnitHelper.merge(
+                ourInitialUnits(),
+                fakeOurs(
                     fake(Terran_Supply_Depot, 7),
                     fake(Terran_Barracks, 4),
                     fake(Terran_Academy, 33)
-                ));
-
-                queue.readyToProduceOrders().print("ReadyToProduceOrders");
-            },
-            () -> ourInitialUnits(),
+                )
+            ),
             () -> fakeExampleEnemies()
         );
     }
@@ -180,7 +190,7 @@ public class QueueTest extends NonAbstractTestFakingGame {
         return queue = Queue.get();
     }
 
-    private void initSupply() {
+    public void initSupply() {
         int supplyUsed = 49;
         int supplyFree = 2;
         aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);

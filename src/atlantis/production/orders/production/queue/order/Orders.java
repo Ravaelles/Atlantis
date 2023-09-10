@@ -63,6 +63,7 @@ public class Orders implements OrdersFilters {
         for (ProductionOrder order : orders) {
             A.println("    " + order);
         }
+        A.println("");
     }
 
     public List<ProductionOrder> list() {

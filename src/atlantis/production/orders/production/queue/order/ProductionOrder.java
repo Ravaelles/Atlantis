@@ -9,15 +9,6 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class ProductionOrder implements Comparable<ProductionOrder> {
-//    public static final String BASE_POSITION_NATURAL = "NATURAL";
-//    public static final String BASE_POSITION_MAIN = "MAIN";
-//
-//    private static final int PRIORITY_LOWEST = 1;
-//    private static final int PRIORITY_NORMAL = 4;
-//    private static final int PRIORITY_HIGHEST = 8;
-
-    // =========================================================
-
     private static int firstFreeId = 1;
     private int id;
     private OrderStatus status = OrderStatus.NEED_REQUIREMENTS;
@@ -36,17 +27,22 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
      * Makes sense only for buildings.
      */
     private HasPosition position = null;
+
+    /**
+     * Maximum distance from a given position to build this building.
+     * -1 means no limit.
+     */
     private int maximumDistance = -1;
 
     /**
      * Upgrade type to research. Can be null if this production order is for something else than upgrade.
      */
-    private UpgradeType upgrade;
+    private final UpgradeType upgrade;
 
     /**
      * Tech type to research. Can be null if this production order is for something else than upgrade.
      */
-    private TechType tech;
+    private final TechType tech;
 
     /**
      * At this supply we should change global mission to this.
@@ -64,29 +60,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     private String rawFirstColumnInFile;
 
     /**
-     * Number of row columns of line in build orders file.
-     */
-    private int numberOfColumnsInRow;
-
-    /**
-     * Metadata - used in APainter to show if we can afford it or not.
-     */
-    private boolean hasWhatRequired;
-
-    /**
-     * Metadata - if we have enough minerals and gas to build it (including reserved for other untis, higher in queue).
-     */
-    private boolean canAffordNow;
-
-    /**
      *
      */
     private ProductionOrderPriority priority = ProductionOrderPriority.STANDARD;
-
-    /**
-     * If true, no other order that comes after this order in the ProductionQueue can be started.
-     */
-//    private boolean blocking = false;
 
     // =========================================================
     public ProductionOrder(AUnitType unitOrBuilding, int minSupply) {
@@ -283,31 +259,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         this.modifier = modifier;
     }
 
-    public String getRawFirstColumnInFile() {
-        return rawFirstColumnInFile;
-    }
-
-    public void setRawFirstColumnInFile(String rawFirstColumnInFile) {
-        this.rawFirstColumnInFile = rawFirstColumnInFile;
-    }
-
-    public void setNumberOfColumnsInRow(int numberOfColumnsInRow) {
-        this.numberOfColumnsInRow = numberOfColumnsInRow;
-    }
-
-    public void setHasWhatRequired(boolean hasWhatRequired) {
-        this.hasWhatRequired = hasWhatRequired;
-    }
-
-    public boolean calculateIfHasWhatRequired() {
+    public boolean checkIfHasWhatRequired() {
         return Requirements.hasRequirements(this);
-    }
-
-    /**
-     * @deprecated
-     */
-    public boolean hasWhatRequired() {
-        return hasWhatRequired;
     }
 
     public HasPosition atPosition() {
@@ -322,16 +275,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         this.priority = priority;
     }
 
-    public void setCanAffordNow(boolean canAffordNow) {
-        this.canAffordNow = canAffordNow;
-    }
-
-    public boolean canAffordNow() {
-        return canAffordNow;
-    }
-
     public int minSupply() {
-//        return 0;
         return minSupply;
     }
 
