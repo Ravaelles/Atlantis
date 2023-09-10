@@ -9,12 +9,12 @@ import java.util.Set;
  * value is 0.
  * TODO: check whether removing the need of K extend Comparable has negative side effects
  */
-public class MappingCounter<K> {
+public class Counter<K> {
     private final HashMap<K, Integer> mapping = new HashMap<>();
 
     // =====================================================================
 
-    public MappingCounter() {
+    public Counter() {
     }
 
     // =====================================================================
@@ -31,7 +31,8 @@ public class MappingCounter<K> {
     public void changeValueBy(K key, int deltaValue) {
         if (mapping.containsKey(key)) {
             mapping.put(key, mapping.get(key) + deltaValue);
-        } else {
+        }
+        else {
             mapping.put(key, deltaValue);
         }
     }
@@ -43,7 +44,8 @@ public class MappingCounter<K> {
     public int getValueFor(K key) {
         if (mapping.containsKey(key)) {
             return mapping.get(key);
-        } else {
+        }
+        else {
             return 0;
         }
     }

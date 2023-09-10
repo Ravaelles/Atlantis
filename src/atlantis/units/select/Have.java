@@ -2,7 +2,8 @@ package atlantis.units.select;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.production.ProductionQueue;
+
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 
 public class Have {
@@ -28,7 +29,11 @@ public class Have {
         return Select.ourOfType(building).free().notEmpty();
     }
 
-    public static boolean notEvenInPlans(AUnitType type) {
+    public static boolean dontHaveEvenInPlans(AUnitType type) {
+        return Count.withPlanned(type) == 0;
+    }
+
+    public static boolean haveExistingOrInPlans(AUnitType type) {
         return Count.withPlanned(type) == 0;
     }
 
@@ -43,8 +48,7 @@ public class Have {
     public static boolean existingOrPlannedOrInQueue(AUnitType building, HasPosition position, double inRadius) {
         assert building.isBuilding();
 
-        if (ProductionQueue.isAtTheTopOfQueue(building, 2)) return true;
-
+        if (Queue.get().haveAmongNextOrders(building, 2)) return true;
         if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) return true;
 
         return Select.ourWithUnfinished(building).inRadius(inRadius, position).atLeast(1);

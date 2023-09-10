@@ -1,4 +1,4 @@
-package atlantis.production.orders.production;
+package atlantis.production.orders.production.queue.order;
 
 import atlantis.architecture.Commander;
 import atlantis.combat.missions.Missions;

@@ -3,18 +3,18 @@ package atlantis.information.enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.MappingCounter;
+import atlantis.util.Counter;
 
 import java.util.HashMap;
 
 public class UnitsArchive {
 
     protected static HashMap<Integer, AUnit> destroyedUnitIds = new HashMap<>();
-    protected static MappingCounter<AUnitType> enemyLostTypes = new MappingCounter<>();
-    protected static MappingCounter<AUnitType> ourLostTypes = new MappingCounter<>();
-    protected static MappingCounter<AUnitType> ourKilledResourcesPerUnitTypes = new MappingCounter<>();
-    protected static MappingCounter<AUnitType> ourLostResourcesPerUnitTypes = new MappingCounter<>();
-    protected static MappingCounter<AUnitType> ourKillCountersPerUnitTypes = new MappingCounter<>();
+    protected static Counter<AUnitType> enemyLostTypes = new Counter<>();
+    protected static Counter<AUnitType> ourLostTypes = new Counter<>();
+    protected static Counter<AUnitType> ourKilledResourcesPerUnitTypes = new Counter<>();
+    protected static Counter<AUnitType> ourLostResourcesPerUnitTypes = new Counter<>();
+    protected static Counter<AUnitType> ourKillCountersPerUnitTypes = new Counter<>();
 
     // =========================================================
 
@@ -54,12 +54,11 @@ public class UnitsArchive {
             String balancePercent = balancePercentFor(type, balance);
 
             System.out.println(
-                    type + ": " + balanceString + ", " + balancePercent
+                type + ": " + balanceString + ", " + balancePercent
                     + "  (kills: " + ourKillCountersPerUnitTypes.getValueFor(type)
                     + ", lost: " + ourLostTypes.getValueFor(type) + ")"
             );
         }
-
 
 
     }
@@ -67,13 +66,13 @@ public class UnitsArchive {
     private static String balancePercentFor(AUnitType type, int balance) {
         if (balance >= 0) {
             return ourLostResourcesPerUnitTypes.getValueFor(type) == 0
-                    ? "+++%"
-                    : ("+" + (ourKilledResourcesPerUnitTypes.getValueFor(type) * 100 / ourLostResourcesPerUnitTypes.getValueFor(type) - 100) + "%");
+                ? "+++%"
+                : ("+" + (ourKilledResourcesPerUnitTypes.getValueFor(type) * 100 / ourLostResourcesPerUnitTypes.getValueFor(type) - 100) + "%");
         }
 
         return ourKilledResourcesPerUnitTypes.getValueFor(type) == 0
-                ? "---%"
-                : (-ourLostResourcesPerUnitTypes.getValueFor(type) * 100 / ourKilledResourcesPerUnitTypes.getValueFor(type) + 100) + "%";
+            ? "---%"
+            : (-ourLostResourcesPerUnitTypes.getValueFor(type) * 100 / ourKilledResourcesPerUnitTypes.getValueFor(type) + 100) + "%";
     }
 
     public static void paintLostUnits() {
@@ -86,7 +85,7 @@ public class UnitsArchive {
         print(enemyLostTypes);
     }
 
-    private static void print(MappingCounter<AUnitType> types) {
+    private static void print(Counter<AUnitType> types) {
         for (AUnitType type : types.map().keySet()) {
             if (!type.isRealUnit()) {
                 continue;

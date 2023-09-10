@@ -41,15 +41,10 @@ public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander 
     // =========================================================
 
     private static void roboticsSupportBay() {
-        if (!A.supplyUsed(80)) {
-            return;
-        }
+        if (!A.supplyUsed(80)) return;
+        if (Have.notEvenPlanned(Protoss_Robotics_Facility) || Have.a(Protoss_Robotics_Support_Bay)) return;
 
-        if (Have.notEvenPlanned(Protoss_Robotics_Facility) || Have.a(Protoss_Robotics_Support_Bay)) {
-            return;
-        }
-
-        if (Have.notEvenInPlans(Protoss_Robotics_Support_Bay)) {
+        if (Have.dontHaveEvenInPlans(Protoss_Robotics_Support_Bay)) {
             buildNow(Protoss_Robotics_Support_Bay);
         }
     }

@@ -34,11 +34,9 @@ import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.PositionFulfillsAllConditions;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
-import atlantis.production.orders.production.CurrentProductionQueue;
-import atlantis.production.orders.production.ProductionOrder;
-import atlantis.production.orders.production.ProductionQueue;
-import atlantis.production.orders.production.ProductionQueueMode;
-import atlantis.production.orders.production.queue.Orders;
+import atlantis.production.orders.production.queue.ResourcesReserved;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.terran.repair.RepairAssignments;
@@ -52,7 +50,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.WorkerRepository;
 import atlantis.util.ColorUtil;
-import atlantis.util.MappingCounter;
+import atlantis.util.Counter;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
@@ -438,8 +436,8 @@ public class AAdvancedPainter extends APainter {
             paintSideMessage("Tanks: " + tanks, tanks >= 1 ? Color.Yellow : Color.White);
         }
         paintSideMessage("Gas workers per b: " + GasBuildingsCommander.defineGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + ProductionQueue.mineralsReserved(), Color.Grey);
-        paintSideMessage("Reserved gas: " + ProductionQueue.gasReserved(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + ResourcesReserved.minerals(), Color.Grey);
+        paintSideMessage("Reserved gas: " + ResourcesReserved.gas(), Color.Grey);
     }
 
     private static void paintCombatEval(AUnit unit) {
@@ -586,7 +584,7 @@ public class AAdvancedPainter extends APainter {
      */
     private static void paintUnitCounters() {
         // Unfinished
-        MappingCounter<AUnitType> unitTypesCounter = new MappingCounter<>();
+        Counter<AUnitType> unitTypesCounter = new Counter<>();
         for (AUnit unit : Select.ourUnfinishedRealUnits().list()) {
 //        for (AUnit unit : Select.our().listUnits()) {
             unitTypesCounter.incrementValueFor(unit.type());
@@ -606,7 +604,7 @@ public class AAdvancedPainter extends APainter {
 
         // =========================================================
         // Finished
-        unitTypesCounter = new MappingCounter<>();
+        unitTypesCounter = new Counter<>();
         for (AUnit unit : Select.our().list()) {
             unitTypesCounter.incrementValueFor(unit.type());
         }
@@ -636,7 +634,7 @@ public class AAdvancedPainter extends APainter {
         // === Display units that should be produced right now or any time ==================
 
 //        Queue.all();
-        Orders produceNow = Queue.get().orders();
+        Orders produceNow = Queue.get().readyToProduceOrders();
 
 
 //        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
@@ -645,7 +643,8 @@ public class AAdvancedPainter extends APainter {
         for (ProductionOrder order : produceNow.list()) {
             paintSideMessage(
                 String.format("%02d", order.minSupply()) + " - " + order.name(),
-                order.hasWhatRequired() ? (order.currentlyInProduction() ? Green : Color.Yellow) : Color.Red
+                (order.isInProgress() ? Green : (order.isInProgress() ? Color.Yellow : Color.Red))
+//                order.hasWhatRequired() ? (order.isInProgress() ? Green : Color.Yellow) : Color.Red
             );
             if (++counter >= 10) {
                 break;

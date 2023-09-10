@@ -53,9 +53,7 @@ public class MissionDefendManager extends MissionManager {
             return false;
 
         if (unit.isHydralisk()) {
-            if (unit.woundPercentMin(60) || unit.meleeEnemiesNearCount(2) >= 2) {
-                return false;
-            }
+            if (unit.woundPercentMin(60) || unit.meleeEnemiesNearCount(2) >= 2) return false;
         }
 
         if (

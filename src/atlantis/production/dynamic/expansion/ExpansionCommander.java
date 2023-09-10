@@ -12,8 +12,9 @@ import atlantis.map.base.Bases;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.zerg.ZergExpansionCommander;
 import atlantis.production.orders.build.AddToQueue;
-import atlantis.production.orders.production.ProductionOrder;
-import atlantis.production.orders.production.ProductionQueue;
+import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -67,9 +68,7 @@ public class ExpansionCommander extends Commander {
         // === First base ===========================================
 
         if (bases == 0 && basesInProduction == 0) {
-            if (We.terran() && EnemyStrategy.get().isRushOrCheese() && A.seconds() <= 450) {
-                return false;
-            }
+            if (We.terran() && EnemyStrategy.get().isRushOrCheese() && A.seconds() <= 450) return false;
 //            return true;
         }
 
@@ -105,16 +104,14 @@ public class ExpansionCommander extends Commander {
         // If we have plenty of minerals, then every new base is only a hazard
         if (!AGame.canAffordWithReserved(minMinerals, 1200)) return false;
 
-        int inConstruction = ProductionQueue.countInQueue(AtlantisRaceConfig.BASE, 8);
+        int inConstruction = CountInQueue.count(AtlantisRaceConfig.BASE, 8);
         if (inConstruction >= 1) return false;
 
         // === Force decent army before 3rd base =========================================
 
-        // Enforce too have a lot of tanks before expansion
+        // Enforce to have a lot of tanks before expansion
         if (!hasPlentyOfMinerals && AGame.isPlayingAsTerran() && bases >= 2) {
-            if (Select.ourTanks().count() <= 8) {
-                return false;
-            }
+            if (Select.ourTanks().count() <= 8) return false;
         }
 
         // === Check if we have almost as many bases as base locations; if so, exit ======

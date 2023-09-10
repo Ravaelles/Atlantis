@@ -49,12 +49,9 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 
     private static void scienceFacilities() {
         if (
-            Have.a(Terran_Science_Facility)
-                || !Have.a(Terran_Starport)
-                || Count.withPlanned(Terran_Science_Facility) > 0
-        ) {
-            return;
-        }
+            Have.haveExistingOrInPlans(Terran_Science_Facility)
+                || Have.dontHaveEvenInPlans(Terran_Starport)
+        ) return;
 
         boolean haveScienceFacility = haveNoExistingOrPlanned(Terran_Science_Facility);
 
@@ -229,17 +226,11 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 //            }
 
             //        if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
-            if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) {
-                return false;
-            }
+            if (!Have.academy() && Count.existingOrInProductionOrInQueue(Terran_Barracks) >= 2) return false;
 
-            if (barracks >= 3 && A.supplyUsed() <= 40) {
-                return false;
-            }
+            if (barracks >= 3 && A.supplyUsed() <= 40) return false;
 
-            if (barracks >= 4 && A.supplyUsed() <= 70) {
-                return false;
-            }
+            if (barracks >= 4 && A.supplyUsed() <= 70) return false;
         }
 
         if (A.canAffordWithReserved(150, 0) || A.hasMinerals(650)) {

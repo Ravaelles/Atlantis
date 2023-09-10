@@ -6,7 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.builders.GetOptimalBuilder;
 import atlantis.production.constructing.position.APositionFinder;
-import atlantis.production.orders.production.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

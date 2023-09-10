@@ -2,7 +2,7 @@ package atlantis.production.constructing;
 
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.production.ProductionQueue;
+
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -122,14 +122,14 @@ public class ConstructionRequests {
         return total;
     }
 
-    public static int countExistingAndExpectedInNearFuture(AUnitType type, int amongNTop) {
-        if (!type.isBuilding()) {
-            throw new RuntimeException("Can only use it for buildings: " + type);
-        }
-
-        return Select.ourOfType(type).count()
-            + ProductionQueue.countInQueue(type, amongNTop);
-    }
+//    public static int countExistingAndExpectedInNearFuture(AUnitType type, int amongNTop) {
+//        if (!type.isBuilding()) {
+//            throw new RuntimeException("Can only use it for buildings: " + type);
+//        }
+//
+//        return Select.ourOfType(type).count()
+//            + ProductionQueue.countInQueue(type, amongNTop);
+//    }
 
     public static int countExistingAndNotFinished(AUnitType type) {
         if (!type.isBuilding()) {

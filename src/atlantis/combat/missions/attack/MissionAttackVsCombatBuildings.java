@@ -13,9 +13,7 @@ public class MissionAttackVsCombatBuildings extends HasUnit {
 
     public boolean allowsToAttackCombatBuildings(AUnit combatBuilding) {
         if (unit.isTerran()) {
-            if (forbiddenForTerranInfantry(combatBuilding)) {
-                return false;
-            }
+            if (forbiddenForTerranInfantry(combatBuilding)) return false;
 
             // Tanks always allowed
             if (unit.isTank() && unit.distToMoreThan(combatBuilding, 7.9)) {

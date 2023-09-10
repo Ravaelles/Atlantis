@@ -6,7 +6,8 @@ import atlantis.config.AtlantisConfig;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.MapAndRace;
 import atlantis.config.MapSpecificCommander;
-import atlantis.production.orders.production.CurrentProductionQueue;
+
+import atlantis.production.orders.production.queue.ResourcesReserved;
 import atlantis.units.AUnitType;
 import bwapi.*;
 
@@ -302,12 +303,9 @@ public class AGame {
      * Takes into account planned constructions and orders.
      */
     public static boolean canAffordWithReserved(int minerals, int gas) {
-//        int[] reservedConstructions = ConstructionRequests.resourcesNeededForNotStartedConstructions();
-        int[] reservedInQueue = CurrentProductionQueue.resourcesReserved();
-
         return canAfford(
-            minerals + reservedInQueue[0],
-            gas + reservedInQueue[1]
+            minerals + ResourcesReserved.minerals(),
+            gas + ResourcesReserved.gas()
         );
     }
 

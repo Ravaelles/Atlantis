@@ -56,17 +56,17 @@ public class CombatEvaluatorMeleeTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Firebat, 10),
-                fake(AUnitType.Terran_Firebat, 11),
-                fake(AUnitType.Terran_Firebat, 10)
+            fake(AUnitType.Terran_Firebat, 10),
+            fake(AUnitType.Terran_Firebat, 11),
+            fake(AUnitType.Terran_Firebat, 10)
         );
     }
 
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 13;
         return fakeEnemies(
-                fake(AUnitType.Protoss_Zealot, enemyTy),
-                fake(AUnitType.Protoss_Zealot, enemyTy + 1)
+            fake(AUnitType.Protoss_Zealot, enemyTy),
+            fake(AUnitType.Protoss_Zealot, enemyTy + 1)
         );
     }
 

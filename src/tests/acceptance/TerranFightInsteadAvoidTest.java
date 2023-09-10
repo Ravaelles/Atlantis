@@ -24,7 +24,7 @@ public class TerranFightInsteadAvoidTest extends AbstractTestFakingGame {
 
             assertTrue(manager.applies());
             assertEquals(new TerranFightInsteadAvoidAsWraith(ourWraith), manager.invoke());
-            
+
 //            System.err.println(ourWraith.managerLogs().toString());
         });
     }

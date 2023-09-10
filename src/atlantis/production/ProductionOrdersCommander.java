@@ -4,13 +4,12 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.production.CurrentProductionQueue;
-import atlantis.production.orders.production.ProductionOrder;
-import atlantis.production.orders.production.ProductionOrderHandler;
-import atlantis.production.orders.production.ProductionQueueMode;
-import atlantis.util.log.ErrorLog;
 
-import java.util.ArrayList;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.OrderStatus;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderHandler;
+import atlantis.util.log.ErrorLog;
 
 public class ProductionOrdersCommander extends Commander {
     /**
@@ -19,9 +18,9 @@ public class ProductionOrdersCommander extends Commander {
     @Override
     protected void handle() {
         // Get sequence of units (Production Orders) based on current build order
-        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
+//        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
 
-        for (ProductionOrder order : queue) {
+        for (ProductionOrder order : Queue.get().readyToProduceOrders().list()) {
             if (newBaseInProgressAndCantAffordThisOrder(order)) return;
 
             handleProductionOrder(order);
@@ -32,7 +31,7 @@ public class ProductionOrdersCommander extends Commander {
         try {
             (new ProductionOrderHandler(order)).invoke();
         } catch (Exception e) {
-            CurrentProductionQueue.remove(order);
+            order.setStatus(OrderStatus.COMPLETED);
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancelled " + order + " as there was: " + e.getClass());
             ErrorLog.printMaxOncePerMinute("Cancelled " + order + " as there was: " + e.getClass());
             e.printStackTrace();

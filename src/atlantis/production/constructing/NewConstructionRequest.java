@@ -5,8 +5,8 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
-import atlantis.production.orders.production.ProductionOrder;
-import atlantis.production.orders.production.ProductionQueueRebuilder;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -117,7 +117,8 @@ public class NewConstructionRequest {
 //            A.printList(constructions);
 
         // Rebuild production queue as new building is about to be built
-        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+//        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+        Queue.get().refresh();
 
         return true;
     }

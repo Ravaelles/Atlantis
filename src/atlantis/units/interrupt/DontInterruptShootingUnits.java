@@ -22,9 +22,7 @@ public class DontInterruptShootingUnits extends Manager {
         if (isMeleeEnemyNear()) return false;
 
         if (unit.isWraith()) {
-            if (unit.hp() < 110 || unit.enemiesNear().buildings().canAttack(unit, 1.1).notEmpty()) {
-                return false;
-            }
+            if (unit.hp() < 110 || unit.enemiesNear().buildings().canAttack(unit, 1.1).notEmpty()) return false;
         }
 
         return true;

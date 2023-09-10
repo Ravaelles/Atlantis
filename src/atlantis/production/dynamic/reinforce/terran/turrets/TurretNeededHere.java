@@ -4,7 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.build.AddToQueue;
-import atlantis.production.orders.production.CurrentProductionQueue;
+
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -44,7 +44,7 @@ public class TurretNeededHere extends Commander {
 
         AddToQueue.withHighPriority(Terran_Missile_Turret, unit.position());
 
-        CurrentProductionQueue.print(null);
+//        CurrentProductionQueue.print(null);
 //        ConstructionRequests.requestConstructionOf(Terran_Missile_Turret, unit.position());
     }
 

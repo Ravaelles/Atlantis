@@ -1,4 +1,4 @@
-package atlantis.production.orders.production;
+package atlantis.production.orders.production.queue.order;
 
 public enum ProductionOrderPriority implements Comparable<ProductionOrderPriority> {
 
@@ -12,5 +12,9 @@ public enum ProductionOrderPriority implements Comparable<ProductionOrderPriorit
 
     ProductionOrderPriority(int number) {
         this.number = number;
+    }
+
+    public boolean isAtLeast(ProductionOrderPriority priority) {
+        return this.number >= priority.number;
     }
 }

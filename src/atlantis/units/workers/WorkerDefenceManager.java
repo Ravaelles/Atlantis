@@ -47,9 +47,7 @@ public class WorkerDefenceManager extends Manager {
                 AUnitType.Protoss_Scout, AUnitType.Protoss_Arbiter,
                 AUnitType.Terran_Wraith, AUnitType.Terran_Science_Vessel
             );
-            if (baseEnemies.inRadius(6, unit).atMost(3)) {
-                return false;
-            }
+            if (baseEnemies.inRadius(6, unit).atMost(3)) return false;
         }
 
         if (handleFightEnemyIfNeeded(unit)) return true;

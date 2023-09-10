@@ -50,9 +50,7 @@ public class AllowedToAttack {
             if (
                 combatBuildings.inRadius(12, unit).notEmpty()
                     && combatBuildings.inRadius(6.8, unit).isEmpty()
-            ) {
-                return false;
-            }
+            ) return false;
         }
 
         return true;

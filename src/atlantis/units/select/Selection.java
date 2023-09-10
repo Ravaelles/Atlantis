@@ -938,9 +938,7 @@ public class Selection extends BaseSelection {
     public boolean areAllBusy() {
         for (Iterator<AUnit> it = (Iterator) data.iterator(); it.hasNext(); ) {
             AUnit unit = it.next();
-            if (!unit.isBusy()) {
-                return false;
-            }
+            if (!unit.isBusy()) return false;
         }
 
         return true;

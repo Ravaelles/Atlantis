@@ -15,9 +15,7 @@ public class ComeCloser extends MissionManager {
             unit.friendsInRadius(1).groundUnits().atMost(1)
                 && unit.friendsInRadius(2).groundUnits().atMost(5)
         )) {
-            if (unit.isVulture()) {
-                return false;
-            }
+            if (unit.isVulture()) return false;
 
             return true;
         }

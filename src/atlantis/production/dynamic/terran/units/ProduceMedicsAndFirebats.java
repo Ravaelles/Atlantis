@@ -19,9 +19,7 @@ public class ProduceMedicsAndFirebats {
 
         int medics = Count.medics();
         if (!Decisions.shouldMakeTerranBio()) {
-            if (Have.academy() && Count.infantry() >= 4 && medics <= 0) {
-                return false;
-            }
+            if (Have.academy() && Count.infantry() >= 4 && medics <= 0) return false;
         }
 
         // =========================================================

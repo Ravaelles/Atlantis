@@ -29,6 +29,7 @@ public class Cache<V> {
 
         return null;
     }
+
     /**
      * Get cached value or return null.
      */
@@ -40,18 +41,23 @@ public class Cache<V> {
      * Get cached value or initialize it with given callback, cached for cacheForFrames.
      */
     public V get(String cacheKey, int cacheForFrames, Callback callback) {
+//        if (cacheKey == "completedOrders")
+//            System.err.println("cacheKey = " + cacheKey + " / data_size = " + data.size());
+
         if (cacheKey == null) {
             return (V) callback.run();
         }
 
         if (!data.containsKey(cacheKey) || !isCacheStillValid(cacheKey)) {
+//            if (cacheKey == "completedOrders") System.err.println("SET cacheKey = " + cacheKey);
             set(cacheKey, cacheForFrames, callback);
         }
 
         V result = data.get(cacheKey);
         if (result instanceof Selection) {
             return (V) ((Selection) result).clone();
-        } else {
+        }
+        else {
             return result;
         }
     }
@@ -126,7 +132,8 @@ public class Cache<V> {
     protected void addCachedUntilEntry(String cacheKey, int cacheForFrames) {
         if (cacheForFrames > -1) {
             cachedUntil.put(cacheKey, A.now() + cacheForFrames);
-        } else {
+        }
+        else {
             cachedUntil.remove(cacheKey);
         }
     }

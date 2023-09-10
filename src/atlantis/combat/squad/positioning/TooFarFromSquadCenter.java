@@ -37,14 +37,11 @@ public class TooFarFromSquadCenter extends MissionManager {
 
         if (unit.distTo(center) > maxDistToSquadCenter && unit.friendsNear().inRadius(3.5, unit).atMost(7)) {
             AUnit nearestFriend = unit.friendsNear().nearestTo(unit);
-            if (nearestFriend == null) {
-                return false;
-            }
+            if (nearestFriend == null) return false;
 
             Selection enemiesNear = unit.enemiesNear();
-            if ((unit.isVulture() || unit.isDragoon()) && (enemiesNear.isEmpty() || enemiesNear.onlyMelee())) {
+            if ((unit.isVulture() || unit.isDragoon()) && (enemiesNear.isEmpty() || enemiesNear.onlyMelee()))
                 return false;
-            }
 
             if (unit.move(
                 unit.translateTilesTowards(center, 2).makeWalkable(5),

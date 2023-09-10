@@ -6,8 +6,10 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.build.ZergBuildOrder;
-import atlantis.production.orders.production.ProductionOrder;
-import atlantis.production.orders.production.ProductionQueue;
+import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.SoonInQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
+
 import atlantis.production.requests.produce.ProduceWorker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -41,30 +43,21 @@ public class AutoTrainWorkersCommander extends Commander {
         // === Terran ===========================================
 
         if (We.terran()) {
-            ProductionOrder order = ProductionQueue.nextOrderFor(AUnitType.Terran_Comsat_Station, 1);
-            if (order != null && order.hasWhatRequired() && !A.hasMinerals(100)) {
-                return false;
-            }
+            if (
+                !A.hasMinerals(100)
+                    && SoonInQueue.have(AUnitType.Terran_Comsat_Station, 1)
+            ) return false;
         }
 
         // === Zerg ===========================================
 
         else if (We.zerg()) {
-            if (!A.hasMinerals(75 * Count.creepColonies())) {
-                return false;
-            }
-
-            if (A.supplyUsed() <= 20 && !AGame.canAffordWithReserved(50, 0)) {
-                return false;
-            }
-
-            ProductionOrder order = ProductionQueue.nextOrderFor(AUnitType.Zerg_Spawning_Pool, 2);
-            if (order != null && order.hasWhatRequired() && !A.hasMinerals(250)) {
-                return false;
-            }
+            if (!A.hasMinerals(75 * Count.creepColonies())) return false;
+            if (A.supplyUsed() <= 20 && !AGame.canAffordWithReserved(50, 0)) return false;
+            if (!A.hasMinerals(250) && SoonInQueue.have(AUnitType.Zerg_Spawning_Pool, 2)) return false;
 
             if (A.supplyUsed() <= 15 && Count.zerglings() < 4) {
-                int zerglingsInQueue = ProductionQueue.countInQueue(AUnitType.Zerg_Zergling, 2);
+                int zerglingsInQueue = CountInQueue.count(AUnitType.Zerg_Zergling, 2);
                 if (!A.hasMinerals(zerglingsInQueue * 50 + 50)) return false;
             }
         }
@@ -98,13 +91,9 @@ public class AutoTrainWorkersCommander extends Commander {
     public static boolean produceWorker(AUnit base) {
         if (!AGame.canAfford(50, 0) || AGame.supplyFree() == 0) return false;
 
-        if (We.zerg()) {
-            return ZergBuildOrder.produceZergUnit(AtlantisRaceConfig.WORKER);
-        }
+        if (We.zerg()) return ZergBuildOrder.produceZergUnit(AtlantisRaceConfig.WORKER);
 
-        if (base != null) {
-            return base.train(AtlantisRaceConfig.WORKER);
-        }
+        if (base != null) return base.train(AtlantisRaceConfig.WORKER);
 
         // If we're here it means all bases are busy. Try queue request
         for (AUnit anotherBase : Select.ourBases().reverse().list()) {

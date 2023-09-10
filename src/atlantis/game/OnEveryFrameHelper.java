@@ -4,7 +4,7 @@ import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
-import atlantis.production.orders.production.CurrentProductionQueue;
+
 import atlantis.production.orders.production.queue.Queue;
 import bwapi.Color;
 import jbweb.Block;
@@ -24,7 +24,7 @@ public class OnEveryFrameHelper {
 
 //        CurrentProductionQueue.print();
 
-        Queue.all().print("All orders");
+        Queue.get().readyToProduceOrders().print("All orders");
     }
 
     private static void paintJbwebBlocks() {

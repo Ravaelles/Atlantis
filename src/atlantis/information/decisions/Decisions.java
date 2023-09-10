@@ -10,7 +10,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.production.orders.production.ProductionQueue;
+
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -35,20 +35,22 @@ public class Decisions {
         );
     }
 
-    public static boolean wantsToBeAbleToProduceTanksSoon() {
-        return cache.get(
-            "beAbleToProduceTanks",
-            93,
-            () -> {
-                if (
-                    !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Siege_Tank_Tank_Mode, 5)
-                        && !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Machine_Shop, 5)
-                ) return false;
-
-                return EnemyInfo.startedWithCombatBuilding && OurStrategy.get().goingBio();
-            }
-        );
-    }
+//    public static boolean wantsToBeAbleToProduceTanksSoon() {
+//        return cache.get(
+//            "beAbleToProduceTanks",
+//            93,
+//            () -> {
+//                if (
+//                    !SoonInQueue.unit(AUnitType.Terran_Siege_Tank_Tank_Mode)
+//                        && !SoonInQueue.unit(AUnitType.Terran_Machine_Shop)
+////                    !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Siege_Tank_Tank_Mode, 5)
+////                        && !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Machine_Shop, 5)
+//                ) return false;
+//
+//                return EnemyInfo.startedWithCombatBuilding && OurStrategy.get().goingBio();
+//            }
+//        );
+//    }
 
     public static boolean shouldMakeTerranBio() {
         return cache.get(

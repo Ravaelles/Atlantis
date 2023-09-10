@@ -12,6 +12,7 @@ import atlantis.units.select.BaseSelect;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import tests.acceptance.AbstractTestFakingGame;
 
 import java.util.Arrays;
 
@@ -165,7 +166,7 @@ public class AvoidEnemiesTest extends AbstractTestWithUnits {
         // =========================================================
 
         int framesNow = 1;
-        try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
+        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
             aGame = Mockito.mockStatic(AGame.class);
             aGame.when(AGame::now).thenReturn(framesNow);
 

@@ -55,9 +55,7 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
             if (
                 existing.first().position().region() == position.position().region()
                     || existing.inRadius(searchRadius, position).notEmpty()
-            ) {
-                return false;
-            }
+            ) return false;
         }
 
 

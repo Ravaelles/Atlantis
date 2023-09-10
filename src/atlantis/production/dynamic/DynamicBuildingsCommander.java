@@ -117,9 +117,7 @@ public class DynamicBuildingsCommander extends Commander {
 
     protected static boolean isItSafeToAddTechBuildings() {
         if (EnemyStrategy.get().isRushOrCheese()) {
-            if (ArmyStrength.ourArmyRelativeStrength() <= 80 && !A.hasMineralsAndGas(250, 100)) {
-                return false;
-            }
+            if (ArmyStrength.ourArmyRelativeStrength() <= 80 && !A.hasMineralsAndGas(250, 100)) return false;
         }
 
         AUnit enemyUnitInMainBase = EnemyInfo.enemyUnitInMainBase();

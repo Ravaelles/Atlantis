@@ -2,10 +2,9 @@ package atlantis.information.tech;
 
 import atlantis.config.env.Env;
 import atlantis.game.AGame;
-import atlantis.production.orders.production.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

@@ -18,9 +18,7 @@ public class ThinkOfSieging extends Manager {
 
         Selection enemiesNear = unit.enemiesNear().groundUnits();
         if (enemiesNear.inRadius(7, unit).notEmpty()) {
-            if (enemiesNear.crucialUnits().inRadius(12, unit).empty()) {
-                return false;
-            }
+            if (enemiesNear.crucialUnits().inRadius(12, unit).empty()) return false;
         }
 
         return unit.lastActionMoreThanAgo(30 * 3 + unit.id() % 4, Actions.UNSIEGE);

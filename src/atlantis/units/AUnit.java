@@ -352,7 +352,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public String toString() {
         if (type() == null) {
             ErrorLog.printMaxOncePerMinute("AUnit type() is NULL");
-//            throw new RuntimeException("wut");
             return "ERROR_NULL_TYPE";
         }
         return idWithHash() + " " + (type() != null ? type().name() : "NULL_TYPE") + " @" + position();

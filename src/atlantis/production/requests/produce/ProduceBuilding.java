@@ -2,7 +2,7 @@ package atlantis.production.requests.produce;
 
 import atlantis.production.constructing.NewConstructionRequest;
 import atlantis.production.orders.build.ZergBuildOrder;
-import atlantis.production.orders.production.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 
 public class ProduceBuilding {

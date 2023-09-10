@@ -108,9 +108,7 @@ public class ProcessAttackUnit extends Manager {
                 && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
                 && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
         ) {
-            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) {
-                return false;
-            }
+            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) return false;
 
             if (unit.move(enemy, Actions.MOVE_ATTACK, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
                 return true;

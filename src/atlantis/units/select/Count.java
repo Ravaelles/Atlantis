@@ -3,7 +3,9 @@ package atlantis.units.select;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.production.ProductionQueue;
+
+import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
@@ -54,15 +56,15 @@ public class Count {
     }
 
     public static int inQueue(AUnitType type, int amongNTop) {
-        return ProductionQueue.countInQueue(type, amongNTop);
+        return CountInQueue.count(type, amongNTop);
     }
 
     public static int inQueue(TechType type, int amongNTop) {
-        return ProductionQueue.countInQueue(type, amongNTop);
+        return CountInQueue.count(type, amongNTop);
     }
 
     public static int inQueue(UpgradeType type, int amongNTop) {
-        return ProductionQueue.countInQueue(type, amongNTop);
+        return CountInQueue.count(type, amongNTop);
     }
 
     public static int inQueueOrUnfinished(AUnitType type, int amongNTop) {

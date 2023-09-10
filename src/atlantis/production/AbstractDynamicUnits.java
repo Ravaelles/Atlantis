@@ -3,14 +3,15 @@ package atlantis.production;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.build.AddToQueue;
-import atlantis.production.orders.production.ProductionQueue;
+
 import atlantis.production.orders.production.Requirements;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.SoonInQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Helpers;
 
 public class AbstractDynamicUnits extends Helpers {
-
     public static void buildToHave(AUnitType type, int haveN) {
         if (haveN <= 0) {
             return;
@@ -39,9 +40,7 @@ public class AbstractDynamicUnits extends Helpers {
         if (!AGame.canAffordWithReserved(hasMinerals, hasGas)) return false;
 
         if (onlyOneAtTime) {
-            if (type.isBuilding() && ConstructionRequests.hasRequestedConstructionOf(type)) {
-                return false;
-            }
+            if (type.isBuilding() && ConstructionRequests.hasRequestedConstructionOf(type)) return false;
         }
 
         return AddToQueue.addToQueueIfHaveFreeBuilding(type);
@@ -52,13 +51,8 @@ public class AbstractDynamicUnits extends Helpers {
             AGame.exit("Unhandled yet");
         }
 
-        if (!Requirements.hasRequirements(type)) {
-            return;
-        }
-
-        if (ProductionQueue.isAtTheTopOfQueue(type, 8)) {
-            return;
-        }
+        if (!Requirements.hasRequirements(type)) return;
+        if (SoonInQueue.have(type)) return;
 
         AddToQueue.addToQueueIfHaveFreeBuilding(type);
     }

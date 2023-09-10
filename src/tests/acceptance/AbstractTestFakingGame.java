@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.concurrent.Callable;
 
 public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
+    public static MockedStatic<BaseSelect> baseSelect;
 
     protected FakeUnit[] our;
     protected FakeUnit ourFirst;
@@ -35,7 +36,9 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     protected void usingFakeOursEnemiesAndNeutral(
         FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
     ) {
-        try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
+//        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
+        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
+            System.err.println("AbstractTestFakingGame.baseSelect AA = " + AbstractTestFakingGame.baseSelect);
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(ours));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
@@ -53,7 +56,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     }
 
     protected void createWorld(
-            int proceedUntilFrameReached, Runnable onFrame, Callable generateOur, Callable generateEnemies
+        int proceedUntilFrameReached, Runnable onFrame, Callable generateOur, Callable generateEnemies
     ) {
         // === Create fake units ==========================================
 
@@ -71,7 +74,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
         // === Mock static classes ========================================
 
-        try (MockedStatic<BaseSelect> baseSelect = Mockito.mockStatic(BaseSelect.class)) {
+        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
@@ -115,7 +118,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     protected abstract FakeUnit[] generateEnemies();
 
     protected FakeUnit[] generateNeutral() {
-        return new FakeUnit[] { };
+        return new FakeUnit[]{};
     }
 
     // =========================================================

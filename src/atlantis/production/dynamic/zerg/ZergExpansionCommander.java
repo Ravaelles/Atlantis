@@ -14,9 +14,7 @@ public class ZergExpansionCommander extends Commander {
 
     public static boolean handleNoZergLarvas() {
         if (!A.hasMinerals(300)) {
-            if (Count.larvas() > 0 && !A.hasMinerals(600)) {
-                return false;
-            }
+            if (Count.larvas() > 0 && !A.hasMinerals(600)) return false;
         }
 
         if (lastExpandedLessThanSecondsAgo(10)) return false;

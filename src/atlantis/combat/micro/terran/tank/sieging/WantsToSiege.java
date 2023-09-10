@@ -10,17 +10,13 @@ public class WantsToSiege {
         if (unit.lastStartedRunningLessThanAgo(30 * (3 + unit.id() % 4))) return false;
 
         if (!Enemy.terran()) {
-            if (unit.friendsNear().tanksSieged().inRadius(1.2, unit).isNotEmpty()) {
-                return false;
-            }
+            if (unit.friendsNear().tanksSieged().inRadius(1.2, unit).isNotEmpty()) return false;
 
             // Prevent tanks from blocking chokes
             if (
                 unit.enemiesNear().combatBuildingsAntiLand().inRadius(8, unit).empty()
                     && unit.distToNearestChokeLessThan(1.7)
-            ) {
-                return false;
-            }
+            ) return false;
         }
 
         unit.siege();

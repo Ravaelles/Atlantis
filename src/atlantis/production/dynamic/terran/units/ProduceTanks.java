@@ -21,15 +21,11 @@ public class ProduceTanks {
         boolean canAffordWithReserved = canAffordWithReserved();
 
         if (!Enemy.terran() && tanks >= 8) {
-            if (!canAffordWithReserved && !A.canAfford(600, 200)) {
-                return false;
-            }
+            if (!canAffordWithReserved && !A.canAfford(600, 200)) return false;
         }
 
         if (tanks >= 2 && Enemy.zerg() && Count.ofType(AUnitType.Terran_Wraith) <= 1) {
-            if (!canAffordWithReserved) {
-                return false;
-            }
+            if (!canAffordWithReserved) return false;
         }
 
 //        if (Count.infantry() >= 6 && Count.medics() <= 1) {
@@ -37,9 +33,7 @@ public class ProduceTanks {
 //        }
 
         if (Enemy.terran() && tanks >= 1 && !SiegeMode.isResearched()) {
-            if (!canAffordWithReserved) {
-                return false;
-            }
+            if (!canAffordWithReserved) return false;
         }
 
         if (Enemy.protoss() && tanks >= 4 && Count.scienceVessels() == 0) {

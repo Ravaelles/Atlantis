@@ -5,7 +5,10 @@ import atlantis.production.orders.build.ABuildOrder;
 public class QueueFactory {
     public static Queue fromBuildOrder(ABuildOrder buildOrder) {
         Queue queue = new Queue();
-        queue.orders().addAll(buildOrder.productionOrders());
+        queue.allOrders().addAll(buildOrder.productionOrders());
+
+        queue.refresh();
+
         return queue;
     }
 }

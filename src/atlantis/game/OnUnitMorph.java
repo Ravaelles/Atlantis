@@ -8,7 +8,7 @@ import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.production.ProductionQueueRebuilder;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 
 public class OnUnitMorph {
@@ -47,7 +47,8 @@ public class OnUnitMorph {
 
             // =========================================================
 
-            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+//            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+            Queue.get().refresh();
 
             // Add to combat squad if it's military unit
             if (unit.isRealUnit()) {

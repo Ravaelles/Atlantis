@@ -3,21 +3,22 @@ package tests.acceptance;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.build.AddToQueue;
-import atlantis.production.orders.production.CurrentProductionQueue;
-import atlantis.production.orders.production.ProductionOrder;
-import atlantis.production.orders.production.ProductionQueueMode;
+
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class CurrentProductionQueueTest extends NonAbstractTestFakingGame {
-    private static ArrayList<ProductionOrder> queue;
+    private static List<ProductionOrder> orders;
     private FakeUnit depot;
 
     @Test
@@ -57,10 +58,11 @@ public class CurrentProductionQueueTest extends NonAbstractTestFakingGame {
     }
 
     private void secondFrame() {
-        queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
+//        queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
+        orders = Queue.get().readyToProduceOrders().list();
 
 //        A.printList(queue);
-        assertEquals(7, queue.size());
+        assertEquals(7, orders.size());
     }
 
     // =========================================================
@@ -78,14 +80,14 @@ public class CurrentProductionQueueTest extends NonAbstractTestFakingGame {
     private static void assertQueueReturnsOrdersWeCanProduceNowDependingOnRequirements() {
 //        CurrentProductionQueue.print(null);
 
-        queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
+        orders = Queue.get().readyToProduceOrders().list();
 
-        A.printList(queue);
-        assertEquals(6, queue.size());
-        assertEquals(Terran_Supply_Depot, queue.get(0).unitType());
+        A.printList(orders);
+        assertEquals(6, orders.size());
+        assertEquals(Terran_Supply_Depot, orders.get(0).unitType());
     }
 
     private static void assertQueueHasListOfOrdersComingFromTheBuildOrder() {
-        assertFalse(CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE).isEmpty());
+        assertFalse(Queue.get().allOrders().isEmpty());
     }
 }

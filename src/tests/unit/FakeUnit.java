@@ -11,6 +11,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Action;
 import bwapi.TechType;
 import bwapi.UnitType;
+import bwapi.UpgradeType;
 import tests.fakes.FakePlayer;
 
 public class FakeUnit extends AUnit {
@@ -21,23 +22,25 @@ public class FakeUnit extends AUnit {
     public APlayer player;
     public boolean enemy = false;
     public boolean neutral = false;
+    public APosition targetPosition = null;
     public boolean burrowed = false;
     public boolean cloaked = false;
     public boolean completed = true;
+    public boolean detected = true;
     public boolean effCloaked = false;
     public boolean effVisible = true;
-    public boolean detected = true;
-    public boolean isVisibleUnitOnMap = true;
     public boolean idle = false;
+    public boolean isVisibleUnitOnMap = true;
     public boolean loaded = false;
     public boolean lockedDown = false;
+    public TechType researching = null;
+    public UpgradeType upgrading = null;
     public boolean stasised = false;
     public boolean stimmed = false;
-    public int energy = 0;
     public FakeUnit target = null;
-    public APosition targetPosition = null;
-    public TechType lastTechUsed = null;
+    public int energy = 0;
     public String lastCommand = "None";
+    public TechType lastTechUsed = null;
 
     // =========================================================
 
@@ -231,6 +234,26 @@ public class FakeUnit extends AUnit {
     @Override
     public boolean isCloaked() {
         return cloaked || isDT() || isObserver();
+    }
+
+    @Override
+    public boolean isResearching() {
+        return researching != null;
+    }
+
+    @Override
+    public TechType whatIsResearching() {
+        return researching;
+    }
+
+    @Override
+    public boolean isUpgrading() {
+        return upgrading != null;
+    }
+
+    @Override
+    public UpgradeType whatIsUpgrading() {
+        return upgrading;
     }
 
     @Override

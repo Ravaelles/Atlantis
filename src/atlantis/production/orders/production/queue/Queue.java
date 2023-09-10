@@ -1,41 +1,75 @@
 package atlantis.production.orders.production.queue;
 
-public class Queue {
-    private static Queue instance = null;
+import atlantis.production.orders.production.queue.order.Orders;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.updater.QueueRefresher;
+import atlantis.util.cache.Cache;
 
-//    private final Orders orders = new Orders();
-    private final Orders allOrders = new Orders();
-    private final Orders readyToProduceOrders = new Orders();
-    private final Orders inProgressOrders = new Orders();
-    private final Orders completedOrders = new Orders();
+public class Queue extends AbstractQueue {
+    private static Queue instance = null;
 
     // =========================================================
 
-    public Queue() {
+    protected Queue() {
     }
 
     // =========================================================
 
-    public void update() {
-        (new QueueUpdater(this)).update();
+    public void refresh() {
+        (new QueueRefresher(this)).refresh();
+        clearCache();
+    }
+
+    public void clearCache() {
+        cache.clear();
+    }
+
+    // =========================================================
+
+    public void addNew(int index, ProductionOrder productionOrder) {
+        allOrders().add(index, productionOrder);
     }
 
     // =========================================================
 
     public Orders allOrders() {
-        return allOrders;
+        return cache.get(
+            "allOrders",
+            -1,
+            () -> orders
+        );
     }
 
     public Orders readyToProduceOrders() {
-        return readyToProduceOrders;
+        return cache.get(
+            "readyToProduceOrders",
+            -1,
+            orders::readyToProduce
+        );
     }
 
     public Orders inProgressOrders() {
-        return inProgressOrders;
+        return cache.get(
+            "inProgressOrders",
+            -1,
+            orders::inProgress
+        );
+    }
+
+    public Orders nonCompleted() {
+        return cache.get(
+            "nonCompleted",
+            -1,
+            orders::nonCompleted
+        );
     }
 
     public Orders completedOrders() {
-        return completedOrders;
+        return cache.get(
+            "completedOrders",
+            -1,
+            orders::completed
+        );
     }
 
     // =========================================================
@@ -46,9 +80,5 @@ public class Queue {
 
     public static void set(Queue instance) {
         Queue.instance = instance;
-    }
-
-    public void print() {
-        orders.print();
     }
 }

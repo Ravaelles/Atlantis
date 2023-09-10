@@ -19,9 +19,7 @@ public class ProduceWorker {
 //            if (AGame.supplyUsed() <= 9) {
 //                return true;
 //            }
-            if (AGame.supplyUsed() >= 10 && Count.larvas() <= 1) {
-                return false;
-            }
+            if (AGame.supplyUsed() >= 10 && Count.larvas() <= 1) return false;
         }
 
         return AutoTrainWorkersCommander.produceWorker(base);

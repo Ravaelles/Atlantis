@@ -19,17 +19,11 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
             if (
                 EnemyStrategy.get().isRushOrCheese()
                     && (A.resourcesBalance() < 350 || !ArmyStrength.weAreMuchStronger())
-            ) {
-                return false;
-            }
+            ) return false;
 
-            if (Count.cannons() >= 1 && Count.ourCombatUnits() <= 8) {
-                return false;
-            }
+            if (Count.cannons() >= 1 && Count.ourCombatUnits() <= 8) return false;
 
-            if (EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(4)) {
-                return false;
-            }
+            if (EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(4)) return false;
         }
 
         return true;

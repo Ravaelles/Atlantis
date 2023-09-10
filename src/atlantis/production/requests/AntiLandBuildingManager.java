@@ -9,8 +9,9 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.orders.build.AddToQueue;
-import atlantis.production.orders.production.ProductionQueue;
+
 import atlantis.production.orders.production.Requirements;
+import atlantis.production.orders.production.queue.SoonInQueue;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
@@ -76,7 +77,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
             if (
                 requirement != null
                     && !Requirements.hasRequirements(buildType)
-                    && !ProductionQueue.isAtTheTopOfQueue(requirement, 6)
+                    && !SoonInQueue.have(requirement)
             ) {
                 if (!buildType.isSunken() && !buildType.isSporeColony() && !buildType.isCannon()) {
                     if (A.supplyUsed() >= 6) {
@@ -178,7 +179,6 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
         // =========================================================
 
         AUnitType building = type();
-
 
 
         AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();

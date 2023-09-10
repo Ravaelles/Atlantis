@@ -116,9 +116,7 @@ public class ShouldRetreat extends Manager {
 //        }
 
         if (We.protoss()) {
-            if (unit.isRanged() && unit.shieldDamageAtMost(13)) {
-                return false;
-            }
+            if (unit.isRanged() && unit.shieldDamageAtMost(13)) return false;
         }
 
         if (We.terran()) {

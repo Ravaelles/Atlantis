@@ -94,9 +94,7 @@ public class LoadIntoTheBunker extends Manager {
         else {
             Selection enemiesNear = bunker.enemiesNear();
 
-            if (enemiesNear.groundUnits().inRadius(1, bunker).atLeast(5)) {
-                return false;
-            }
+            if (enemiesNear.groundUnits().inRadius(1, bunker).atLeast(5)) return false;
 
             double enemyDist = unit.distTo(nearestEnemy);
             double enemyDistToBunker = nearestEnemy.distTo(bunker);

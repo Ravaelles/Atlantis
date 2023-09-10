@@ -3,7 +3,7 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.production.CurrentProductionQueue;
+import atlantis.production.orders.production.queue.ResourcesReserved;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.log.ErrorLog;
@@ -1291,11 +1291,11 @@ public class A {
     }
 
     public static int reservedMinerals() {
-        return CurrentProductionQueue.resourcesReserved()[0];
+        return ResourcesReserved.minerals();
     }
 
     public static int reservedGas() {
-        return CurrentProductionQueue.resourcesReserved()[1];
+        return ResourcesReserved.gas();
     }
 
     public static boolean canAfford(AUnitType unitType) {

@@ -295,9 +295,7 @@ public class Wall {
                 tileLayout.toPosition().y + typeLayout.tileHeight() * 16);
             double wallAngle = JBWEB.getAngle(new Pair<>(centerPiece, centerHere));
 
-            if (Math.abs(chokeAngle - wallAngle) > 20.0) {
-                return false;
-            }
+            if (Math.abs(chokeAngle - wallAngle) > 20.0) return false;
         }
         return true;
     }

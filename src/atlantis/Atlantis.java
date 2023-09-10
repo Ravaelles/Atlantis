@@ -8,7 +8,7 @@ import atlantis.game.*;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.constructing.ProtossConstructionManager;
-import atlantis.production.orders.production.ProductionQueueRebuilder;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.util.ProcessHelper;
@@ -127,7 +127,8 @@ public class Atlantis implements BWEventListener {
 
         // Our unit
         if (unit.isOur() && A.now() >= 2) {
-            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+//            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+            Queue.get().refresh();
 
             // Apply construction fix: detect new Protoss buildings and remove them from queue.
             if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
@@ -244,7 +245,9 @@ public class Atlantis implements BWEventListener {
     }
 
     public static void ourNewUnit(AUnit unit) {
-        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+//        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+        Queue.get().refresh();
+
         (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
 
         if (Env.isLocal() && unit.isBunker() && Count.bunkers() == 1) CameraCommander.centerCameraOn(unit);

@@ -8,7 +8,7 @@ import tests.unit.FakeUnit;
 import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.assertEquals;
 
-public class UnitsToTargetsWithCacheTest  extends AbstractTestFakingGame {
+public class UnitsToTargetsWithCacheTest extends AbstractTestFakingGame {
 
     private FakeUnit ghost1;
     private FakeUnit ghost2;

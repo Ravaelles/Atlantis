@@ -1,6 +1,7 @@
 package atlantis.information.strategy;
 
-import atlantis.production.orders.production.ProductionQueue;
+
+import atlantis.production.orders.production.queue.QueueInitializer;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -38,14 +39,8 @@ public class OurStrategy {
 
         ourStrategy = strategy;
 
-
-
-//        for (ProductionOrder po : ourStrategy.buildOrder().getProductionOrders()) {
-
-//        }
-
-
-        ProductionQueue.useBuildOrderFrom(strategy);
+//        ProductionQueue.useBuildOrderFrom(strategy);
+        QueueInitializer.initializeProductionQueue();
     }
 
 }

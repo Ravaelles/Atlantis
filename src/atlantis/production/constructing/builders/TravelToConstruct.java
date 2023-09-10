@@ -101,7 +101,7 @@ public class TravelToConstruct extends HasUnit {
 
     private boolean issueBuildOrder(Construction order) {
         AUnitType buildingType = order.buildingType();
-        
+
         if (We.protoss()) {
             AUnit newBuilding = Select.ourUnfinished()
                 .ofType(buildingType)
@@ -119,9 +119,7 @@ public class TravelToConstruct extends HasUnit {
 //            APosition buildPosition = refreshBuildPosition(order);
             APosition buildPosition = refreshConstructionPositionIfNeeded(order, buildingType);
 
-            if (buildPosition == null) {
-                return false;
-            }
+            if (buildPosition == null) return false;
 
 //            System.err.println("buildPosition POST = " + buildPosition);
 //            System.err.println("buildPosition.translateByTiles(1, 1) = " + buildPosition.translateByTiles(1, 1));
@@ -186,7 +184,7 @@ public class TravelToConstruct extends HasUnit {
 
 //            if (building.is(AUnitType.Zerg_Spawning_Pool)) {
 
-//                    "mineralsRes=" + CurrentProductionQueue.resourcesReserved()[0]
+//                    "mineralsRes=" + ResourcesReserved.minerals()
 //                    + ", queuePos=" + ProductionQueue.positionInQueue(building)
 //                );
 //            }

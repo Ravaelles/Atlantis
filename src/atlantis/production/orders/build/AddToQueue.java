@@ -4,6 +4,10 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.*;
+import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -53,14 +57,16 @@ public class AddToQueue {
             productionOrder.setPriority(ProductionOrderPriority.TOP);
         }
 
-        ProductionQueue.addToQueue(0, productionOrder);
+        Queue.get().addNew(0, productionOrder);
+//        ProductionQueue.addToQueue(0, productionOrder);
         return true;
     }
 
     public static boolean upgrade(UpgradeType upgrade) {
         if (Count.inQueueOrUnfinished(upgrade, 3) > 0) return false;
 
-        ProductionQueue.addToQueue(0, new ProductionOrder(upgrade, 0));
+        Queue.get().addNew(0, new ProductionOrder(upgrade, 0));
+//        ProductionQueue.addToQueue(0, new ProductionOrder(upgrade, 0));
         return true;
     }
 
@@ -74,7 +80,7 @@ public class AddToQueue {
             return null;
         }
 
-        if (CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED).size() >= 20) {
+        if (Queue.get().readyToProduceOrders().size() >= 20) {
             ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
             return null;
         }
@@ -95,7 +101,9 @@ public class AddToQueue {
 //        if (!allowToQueueRequiredBuildings(type)) {
         int minSupply = -1;
         ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
-        ProductionQueue.addToQueue(index, productionOrder);
+
+//        ProductionQueue.addToQueue(index, productionOrder);
+        Queue.get().addNew(index, productionOrder);
 
 //        System.err.println("productionOrder = " + productionOrder);
 
@@ -126,7 +134,7 @@ public class AddToQueue {
 //    }
 
     private static int indexForPriority(ProductionOrderPriority priority) {
-        return ProductionQueue.countOrdersWithPriorityAtLeast(priority);
+        return CountInQueue.countOrdersWithPriorityAtLeast(priority);
     }
 
     protected static boolean addToQueue(AUnitType type) {
@@ -143,7 +151,7 @@ public class AddToQueue {
     }
 
     public static boolean addToQueueIfNotAlreadyThere(AUnitType type) {
-        if (ProductionQueue.countInQueue(type, 5) == 0) {
+        if (CountInQueue.count(type, 5) == 0) {
             return addToQueue(type);
         }
 
@@ -151,7 +159,7 @@ public class AddToQueue {
     }
 
     public static boolean maxAtATime(AUnitType type, int maxAtATime) {
-        if (ProductionQueue.countInQueue(type, 20) < maxAtATime) {
+        if (CountInQueue.count(type, 20) < maxAtATime) {
             return addToQueue(type);
         }
 

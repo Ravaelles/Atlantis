@@ -270,9 +270,7 @@ public class Bases {
             .bases()
             .inRadius(7, baseLocation.position()).list();
         for (AUnit our : ourUnits) {
-            if (!our.isLifted()) {
-                return false;
-            }
+            if (!our.isLifted()) return false;
         }
 
         // If any enemy unit is Near
@@ -281,9 +279,7 @@ public class Bases {
         // Check for planned constructions
         for (Construction construction : ConstructionRequests.all()) {
             APosition constructionPlace = construction.positionToBuildCenter();
-            if (constructionPlace != null && constructionPlace.distTo(baseLocation.position()) < 8) {
-                return false;
-            }
+            if (constructionPlace != null && constructionPlace.distTo(baseLocation.position()) < 8) return false;
         }
 
         // All conditions have been fulfilled.

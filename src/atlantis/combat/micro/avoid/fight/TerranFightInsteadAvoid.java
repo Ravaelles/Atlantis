@@ -36,9 +36,7 @@ public class TerranFightInsteadAvoid extends HasUnit {
             if (tankDist <= 2) return true;
             if (tankDist >= 5) return false;
 
-            if (unit.enemiesNear().combatBuildingsAntiLand().inRadius(8, unit).notEmpty()) {
-                return false;
-            }
+            if (unit.enemiesNear().combatBuildingsAntiLand().inRadius(8, unit).notEmpty()) return false;
         }
 
         double combatEval = unit.combatEvalRelative();

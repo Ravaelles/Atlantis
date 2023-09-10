@@ -22,9 +22,7 @@ public class ChangeSquadToDefault extends SquadMissionChanger {
                     && GamePhase.isEarlyGame()
                     && EnemyStrategy.get().isRushOrCheese()
                     && squad.size() <= 13
-            ) {
-                return false;
-            }
+            ) return false;
         }
 
         return changeMissionToMainMission(squad, "Be good soldier");

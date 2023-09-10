@@ -31,9 +31,7 @@ public class TerranKilledBuilderCommander extends Commander {
 
     private boolean isNotBeingConstructed(AUnit building) {
         for (AUnit worker : Select.ourWorkers().notGathering().inRadius(1.5, building).list()) {
-            if (worker.buildUnit() == building || worker.target() == building) {
-                return false;
-            }
+            if (worker.buildUnit() == building || worker.target() == building) return false;
         }
 
         return true;

@@ -1,12 +1,14 @@
-package atlantis.production.orders.production;
+package atlantis.production.orders.production.queue.order;
 
 import atlantis.combat.missions.Mission;
+import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
+import atlantis.production.orders.production.Requirements;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-public class ProductionOrder {
+public class ProductionOrder implements Comparable<ProductionOrder> {
 //    public static final String BASE_POSITION_NATURAL = "NATURAL";
 //    public static final String BASE_POSITION_MAIN = "MAIN";
 //
@@ -18,7 +20,7 @@ public class ProductionOrder {
 
     private static int firstFreeId = 1;
     private int id;
-    private boolean completed = false;
+    private OrderStatus status = OrderStatus.NEED_REQUIREMENTS;
 
     /**
      * How much supply has to be used for this order to become active
@@ -55,8 +57,6 @@ public class ProductionOrder {
      * Special modifier e.g. base position modifier. See ConstructionSpecialBuildPositionFinder constants.
      */
     private String modifier = null;
-
-    private boolean currentlyInProduction = false;
 
     /**
      * Contains first column
@@ -139,13 +139,13 @@ public class ProductionOrder {
     @Override
     public String toString() {
         if (unitOrBuilding != null) {
-            return "At " + minSupply + " " + name() + (modifier != null ? " " + modifier : "");
+            return "At " + minSupply + " " + name() + (modifier != null ? " " + modifier : "") + " " + statusString();
         }
         else if (upgrade != null) {
-            return "At " + minSupply + " " + name();
+            return "At " + minSupply + " " + name() + " " + statusString();
         }
         else if (tech != null) {
-            return "At " + minSupply + " " + name();
+            return "At " + minSupply + " " + name() + " " + statusString();
         }
         else if (mission != null) {
             return "At " + minSupply + " " + mission.name();
@@ -154,6 +154,21 @@ public class ProductionOrder {
             return "InvalidEmptyOrder";
         }
     }
+
+    private String statusString() {
+        if (isStatus(OrderStatus.NEED_REQUIREMENTS)) return "";
+        else if (isStatus(OrderStatus.IN_PROGRESS)) return "(IN_PROGRESS)";
+        else if (isStatus(OrderStatus.READY_TO_PRODUCE)) return "(READY_TO_PRODUCE)";
+        else if (isStatus(OrderStatus.COMPLETED)) return "(COMPLETED)";
+        else return "UNKNOWN";
+    }
+
+    @Override
+    public int compareTo(ProductionOrder o) {
+        return Integer.compare(id, o.id);
+    }
+
+    // =========================================================
 
     public String name() {
         if (unitOrBuilding != null) {
@@ -184,6 +199,10 @@ public class ProductionOrder {
 //
 //        return clone;
 //    }
+
+    public boolean supplyRequirementFulfilled() {
+        return AGame.supplyUsed() >= minSupply;
+    }
 
     // === Getters =============================================
 
@@ -280,6 +299,13 @@ public class ProductionOrder {
         this.hasWhatRequired = hasWhatRequired;
     }
 
+    public boolean calculateIfHasWhatRequired() {
+        return Requirements.hasRequirements(this);
+    }
+
+    /**
+     * @deprecated
+     */
     public boolean hasWhatRequired() {
         return hasWhatRequired;
     }
@@ -309,12 +335,16 @@ public class ProductionOrder {
         return minSupply;
     }
 
-    public boolean currentlyInProduction() {
-        return currentlyInProduction;
+    public boolean isInProgress() {
+        return isStatus(OrderStatus.IN_PROGRESS);
     }
 
-    public void setCurrentlyInProduction(boolean currentlyInProduction) {
-        this.currentlyInProduction = currentlyInProduction;
+    public boolean isCompleted() {
+        return isStatus(OrderStatus.COMPLETED);
+    }
+
+    public boolean isReadyToProduce() {
+        return isStatus(OrderStatus.READY_TO_PRODUCE);
     }
 
     public Mission mission() {
@@ -334,12 +364,20 @@ public class ProductionOrder {
         return this;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public int id() {
+        return id;
     }
 
-    public ProductionOrder setCompleted(boolean completed) {
-        this.completed = completed;
-        return this;
+    public OrderStatus status() {
+        return status;
+    }
+
+    public boolean isStatus(OrderStatus orderStatus) {
+        return status.equals(orderStatus);
+    }
+
+    public OrderStatus setStatus(OrderStatus status) {
+        this.status = status;
+        return this.status;
     }
 }

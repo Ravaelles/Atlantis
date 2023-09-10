@@ -5,7 +5,7 @@ import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.debug.OurWorkerWasKilled;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.UnitsArchive;
-import atlantis.production.orders.production.ProductionQueueRebuilder;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -16,7 +16,10 @@ public class OnUnitDestroyed {
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {
             RepairAssignments.removeRepairer(unit);
-            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+
+//            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+            Queue.get().refresh();
+
             if (!unit.type().isGasBuilding()) {
                 Atlantis.LOST++;
                 Atlantis.LOST_RESOURCES += unit.type().getTotalResources();

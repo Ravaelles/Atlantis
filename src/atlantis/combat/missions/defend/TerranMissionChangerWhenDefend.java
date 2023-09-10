@@ -83,15 +83,11 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (ourRelativeStrength < 300 && EnemyStrategy.get().isRushOrCheese() && A.supplyUsed() <= 110) return false;
 
         if (We.terran() && Enemy.protoss()) {
-            if (Missions.counter() >= 2 && A.supplyUsed() <= 90 && A.seconds() <= 60 * 7) {
-                return false;
-            }
+            if (Missions.counter() >= 2 && A.supplyUsed() <= 90 && A.seconds() <= 60 * 7) return false;
         }
 
         if (Enemy.zerg()) {
-            if (Count.ourCombatUnits() <= 6) {
-                return false;
-            }
+            if (Count.ourCombatUnits() <= 6) return false;
         }
 
         if (EnemyInfo.hiddenUnitsCount() >= 2 && Count.ofType(AUnitType.Terran_Science_Vessel) == 0) return false;

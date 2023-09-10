@@ -1,6 +1,6 @@
 package atlantis.units;
 
-import atlantis.util.MappingCounter;
+import atlantis.util.Counter;
 import atlantis.util.cache.Cache;
 import bwapi.*;
 
@@ -501,7 +501,7 @@ public class AUnitType implements Comparable<Object> {
     protected static Object convertToAUnitTypesCollection(Object collection) {
         if (collection instanceof Map) {
 //            Map<AUnitType, Integer> result = new HashMap<>();
-            MappingCounter<AUnitType> units = new MappingCounter<>();
+            Counter<AUnitType> units = new Counter<>();
             for (Object key : ((Map) collection).keySet()) {
                 UnitType ut = (UnitType) key;
                 AUnitType unitType = from(ut);
@@ -855,8 +855,8 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
-    public MappingCounter<AUnitType> requiredUnits() {
-        return (MappingCounter<AUnitType>) cache.get(
+    public Counter<AUnitType> requiredUnits() {
+        return (Counter<AUnitType>) cache.get(
             "requiredUnits",
             -1,
             () -> convertToAUnitTypesCollection(ut.requiredUnits())

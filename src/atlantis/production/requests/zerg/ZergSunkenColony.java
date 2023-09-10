@@ -69,15 +69,11 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
         ) return false;
 
         if (creepColonies >= 1) {
-            if (!A.hasMinerals(150)) {
-                return false;
-            }
+            if (!A.hasMinerals(150)) return false;
 
             int mineralsNeeded = 50 + creepColonies * 75;
 
-            if (!A.hasMinerals(mineralsNeeded)) {
-                return false;
-            }
+            if (!A.hasMinerals(mineralsNeeded)) return false;
         }
 
         return super.shouldBuildNew();

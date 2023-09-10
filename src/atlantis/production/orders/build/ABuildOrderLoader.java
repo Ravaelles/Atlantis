@@ -3,7 +3,7 @@ package atlantis.production.orders.build;
 import atlantis.config.AtlantisIgniter;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
-import atlantis.production.orders.production.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 
 import java.io.File;
 import java.util.ArrayList;
