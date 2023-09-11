@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * Wrapper for BWMirror UnitType class that makes it much easier to use.<br /><br />
+ * Wrapper for JBWAPI UnitType class that makes it much easier to use.<br /><br />
  * Atlantis uses wrappers for BWAPI  classes which aren't extended.<br /><br />
  * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you can
  * create missing method here and you can reference original UnitType class via ut() method.
@@ -71,7 +71,7 @@ public class AUnitType implements Comparable<Object> {
             return unitType;
         }
 //        AUnitType unitType;
-//        if ((unitType = getBWMirrorUnitType(ut)) != null) {
+//        if ((unitType = getJBWAPIUnitType(ut)) != null) {
 //            return unitType;
 //        }
 //        else {
@@ -91,7 +91,7 @@ public class AUnitType implements Comparable<Object> {
         return ut;
     }
 
-//    private static AUnitType getBWMirrorUnitType(UnitType ut) {
+//    private static AUnitType getJBWAPIUnitType(UnitType ut) {
 //        for (AUnitType unitType : instances.values()) {
 //            if (unitType.ut.equals(ut)) {
 //                return unitType;

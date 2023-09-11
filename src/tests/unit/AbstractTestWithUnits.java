@@ -20,7 +20,7 @@ import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
-import atlantis.util.We;
+import atlantis.util.Options;
 import bwapi.*;
 import org.junit.After;
 import org.junit.Before;
@@ -46,6 +46,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     public MockedStatic<AGame> aGame;
     public MockedStatic<ATech> aTech;
     public MockedStatic<PositionUtil> positionUtil;
+
+    protected Options options = new Options();
 
     // =========================================================
 
@@ -179,13 +181,13 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     protected void mockAGameObject() {
         aGame = Mockito.mockStatic(AGame.class);
 
-        if (this instanceof InitsSupply) {
-            ((InitsSupply) this).initSupply();
+        if (options.has("supplyUsed")) {
+            int supplyUsed = options.getInt("supplyUsed");
+            aGame.when(AGame::supplyTotal).thenReturn(supplyUsed + 2);
+            aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
+            aGame.when(AGame::supplyFree).thenReturn(2);
         }
 
-//        aGame.when(AGame::supplyTotal).thenReturn(10);
-//        aGame.when(AGame::supplyUsed).thenReturn(4);
-//        aGame.when(AGame::supplyFree).thenReturn(6);
 
         aGame.when(AGame::minerals).thenReturn(444);
         aGame.when(AGame::gas).thenReturn(333);

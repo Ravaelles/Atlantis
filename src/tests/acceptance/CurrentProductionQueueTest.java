@@ -35,7 +35,7 @@ public class CurrentProductionQueueTest extends NonAbstractTestFakingGame {
         );
 
         createWorld(5, () -> {
-                initSupply();
+                initSupply(26);
 
                 if (A.now() == 1) firstFrame();
                 else if (A.now() == 2) secondFrame();
@@ -71,9 +71,9 @@ public class CurrentProductionQueueTest extends NonAbstractTestFakingGame {
         AddToQueue.withHighPriority(Terran_Missile_Turret, depot.position());
     }
 
-    private void initSupply() {
+    private void initSupply(int supplyUsed) {
         aGame.when(AGame::supplyTotal).thenReturn(26);
-        aGame.when(AGame::supplyUsed).thenReturn(23);
+        aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
         aGame.when(AGame::supplyFree).thenReturn(3);
     }
 

@@ -117,7 +117,7 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     /**
-     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached
+     * Returns unit type from JBWAPI OR if type is Unknown (behind fog of war) it will return last cached
      * type.
      */
     @Override

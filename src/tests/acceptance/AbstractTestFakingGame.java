@@ -3,6 +3,7 @@ package tests.acceptance;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.BaseSelect;
+import atlantis.util.Options;
 import org.junit.After;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -52,12 +53,27 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     // =========================================================
 
     protected void createWorld(int proceedUntilFrameReached, Runnable onFrame) {
-        createWorld(proceedUntilFrameReached, onFrame, null, null);
+        createWorld(proceedUntilFrameReached, onFrame, null, null, null);
     }
 
     protected void createWorld(
-        int proceedUntilFrameReached, Runnable onFrame, Callable generateOur, Callable generateEnemies
+        int proceedUntilFrameReached,
+        Runnable onFrame,
+        Callable generateOur,
+        Callable generateEnemies
     ) {
+        createWorld(proceedUntilFrameReached, onFrame, generateOur, generateEnemies, null);
+    }
+
+    protected void createWorld(
+        int proceedUntilFrameReached,
+        Runnable onFrame,
+        Callable generateOur,
+        Callable generateEnemies,
+        Options options
+    ) {
+        this.options = options;
+
         // === Create fake units ==========================================
 
         try {

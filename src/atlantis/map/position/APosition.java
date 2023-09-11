@@ -15,9 +15,9 @@ import bwapi.WalkPosition;
 /**
  * Atlantis uses wrapper for BWAPI  classes which can't extended due to private constructors.
  * <br /><br />
- * I've decided to implement a solution which allows to use the .jar of BWMirror library, because from
+ * I've decided to implement a solution which allows to use the .jar of JBWAPI library, because from
  * my experience it turns out, that it's extremely tedious to upgrade Atlantis to use newer version of
- * BWMirror if you work with the source code rather than the .jar library release.
+ * JBWAPI if you work with the source code rather than the .jar library release.
  * <br /><br />
  * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
  * you can create them here or reference original Position class via p() method.

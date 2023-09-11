@@ -79,7 +79,7 @@ public class Requirements {
 
     private static boolean hasRequirements(TechType tech) {
         if (tech.gasPrice() > 0) {
-            if (!A.hasGas((int) (tech.gasPrice() * 0.4))) return false;
+            if (AGame.gas() < ((int) (tech.gasPrice() * 0.4))) return false;
         }
 
         if (TechType.Tank_Siege_Mode.equals(tech)) {
@@ -87,8 +87,7 @@ public class Requirements {
         }
 
         AUnitType required = AUnitType.from(tech.requiredUnit());
-        if (required != null && Count.ofType(AUnitType.from(tech.requiredUnit())) == 0) return false;
-        return true;
+        return required == null || Count.ofType(AUnitType.from(tech.requiredUnit())) > 0;
     }
 
     private static boolean hasRequirements(UpgradeType upgrade) {

@@ -15,7 +15,7 @@ import atlantis.util.ProcessHelper;
 import bwapi.*;
 
 /**
- * Main bridge between the game and your code, ported to BWMirror.
+ * Main bridge between the game and your code, ported to JBWAPI.
  */
 public class Atlantis implements BWEventListener {
 
@@ -405,8 +405,8 @@ public class Atlantis implements BWEventListener {
     // =========================================================
 
     /**
-     * This method returns bridge connector between Atlantis and Starcraft, which is a BWMirror object. It
-     * provides low-level functionality for functions like canBuildHere etc. For more details, see BWMirror
+     * This method returns bridge connector between Atlantis and Starcraft, which is a JBWAPI object. It
+     * provides low-level functionality for functions like canBuildHere etc. For more details, see JBWAPI
      * project documentation.
      */
     public static Game game() {

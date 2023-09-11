@@ -1,4 +1,4 @@
-package tests.unit;
+package tests.acceptance;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -6,12 +6,15 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.TerranStrategies;
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
+import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.QueueFactory;
-import atlantis.units.select.Select;
+import atlantis.util.Options;
+import bwapi.TechType;
 import org.junit.Test;
-import tests.acceptance.NonAbstractTestFakingGame;
+import tests.unit.DynamicMockOurUnits;
+import tests.unit.FakeUnit;
+import tests.unit.FakeUnitHelper;
 
 import java.util.ArrayList;
 
@@ -19,7 +22,7 @@ import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
-public class QueueTest extends NonAbstractTestFakingGame implements InitsSupply {
+public class QueueTest extends NonAbstractTestFakingGame {
     private ABuildOrder buildOrder;
     private Queue queue = null;
     private ArrayList<ProductionOrder> allOrders = null;
@@ -30,13 +33,22 @@ public class QueueTest extends NonAbstractTestFakingGame implements InitsSupply 
             () -> {
                 queue = initQueue();
 
+//                aGame.when(AGame::supplyUsed).thenReturn(10);
+//                aGame.when(AGame::supplyTotal).thenReturn(18);
+//                aGame.when(AGame::minerals).thenReturn(88);
+//                aGame.when(AGame::gas).thenReturn(66);
+
+//                queue.readyToProduceOrders().print("Ready to produce orders");
+//                queue.inProgressOrders().print("In progress orders");
+
                 assertEquals(buildOrder.productionOrders().size(), queue.allOrders().size());
                 assertEquals(0, queue.inProgressOrders().size());
                 assertEquals(0, queue.readyToProduceOrders().size());
                 assertEquals(0, queue.completedOrders().size());
             },
             () -> ourInitialUnits(),
-            () -> fakeExampleEnemies()
+            () -> fakeExampleEnemies(),
+            Options.create().set("supplyUsed", 8)
         );
     }
 
@@ -49,15 +61,14 @@ public class QueueTest extends NonAbstractTestFakingGame implements InitsSupply 
                 if (A.now() == 3) frame3_inProgressOrdersAreDetected();
             },
             () -> ourInitialUnits(),
-            () -> fakeExampleEnemies()
+            () -> fakeExampleEnemies(),
+            Options.create().set("supplyUsed", 49)
         );
     }
 
     private void frame1_queueIsInitializedFromBuildOrder() {
         queue = initQueue();
         allOrders = buildOrder.productionOrders();
-
-//        queue.allOrders().print("All orders");
 
         assertEquals(allOrders.size(), queue.allOrders().size());
         assertEquals(0, queue.inProgressOrders().size());
@@ -93,10 +104,6 @@ public class QueueTest extends NonAbstractTestFakingGame implements InitsSupply 
 
 //        queue.allOrders().print("\nAfter refreshing");
 
-//        queue.readyToProduceOrders().print("\nReady to produce orders");
-//        queue.inProgressOrders().print("In progress orders");
-//        queue.completedOrders().print("Completed orders");
-
         assertEquals(0, queue.inProgressOrders().size());
         assertEquals(5, queue.readyToProduceOrders().size());
         assertEquals(1, queue.completedOrders().size());
@@ -124,7 +131,7 @@ public class QueueTest extends NonAbstractTestFakingGame implements InitsSupply 
         ));
 
         Queue.get().refresh();
-        queue.allOrders().print("\nAfter refreshing");
+//        queue.allOrders().print("\nAfter refreshing");
 
         assertEquals(3, queue.completedOrders().size());
         assertEquals(0, queue.inProgressOrders().ofType(Terran_Barracks).size());
@@ -133,21 +140,17 @@ public class QueueTest extends NonAbstractTestFakingGame implements InitsSupply 
     }
 
     @Test
-    public void medicsAreReturnedInInProgress() {
+    public void medicsAndStimpacksAreIdentifiedAsReady() {
         createWorld(1,
             () -> {
-//                Select.our().print("Our units");
-
                 queue = initQueue();
+                Orders readyToProduceOrders = queue.readyToProduceOrders();
 
-//                mockOurUnitsByAddingNewUnit(fakeOurs(
-//                    fake(Terran_Supply_Depot, 7),
-//                    fake(Terran_Barracks, 4),
-//                    fake(Terran_Academy, 33)
-//                ));
+//                queue.allOrders().print("All orders");
+//                readyToProduceOrders.print("ReadyToProduceOrders");
 
-                queue.allOrders().print("All orders");
-                queue.readyToProduceOrders().print("ReadyToProduceOrders");
+                assertEquals(2, readyToProduceOrders.ofType(Terran_Medic).size());
+                assertEquals(1, readyToProduceOrders.techType(TechType.Stim_Packs).size());
             },
             () -> FakeUnitHelper.merge(
                 ourInitialUnits(),
@@ -157,7 +160,8 @@ public class QueueTest extends NonAbstractTestFakingGame implements InitsSupply 
                     fake(Terran_Academy, 33)
                 )
             ),
-            () -> fakeExampleEnemies()
+            () -> fakeExampleEnemies(),
+            Options.create().set("supplyUsed", 49)
         );
     }
 
@@ -191,8 +195,9 @@ public class QueueTest extends NonAbstractTestFakingGame implements InitsSupply 
     }
 
     public void initSupply() {
-        int supplyUsed = 49;
         int supplyFree = 2;
+        int supplyUsed = options.getIntOr("supplyUsed", 49);
+
         aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
         aGame.when(AGame::supplyFree).thenReturn(supplyFree);
         aGame.when(AGame::supplyTotal).thenReturn(supplyUsed + supplyFree);

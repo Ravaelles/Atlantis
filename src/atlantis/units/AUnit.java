@@ -128,7 +128,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
      * create missing method here and you can reference original Unit class via u() method.
      * <p>
-     * The idea why we don't use inner Unit class is because if you change game bridge (JBWAPI, JNIBWAPI, BWMirror etc)
+     * The idea why we don't use inner Unit class is because if you change game bridge (JBWAPI, JNIBWAPI, JBWAPI etc)
      * you need to change half of your codebase. I've done it 3 times already ;__:
      */
     public static AUnit createFrom(Unit u) {

@@ -42,7 +42,7 @@ public class Regions {
 
     /**
      * @fix
-     * @broken due to BWTA Polygon gone from the bridge :- ( It was working in BWMirror.
+     * @broken due to BWTA Polygon gone from the bridge :- ( It was working in JBWAPI.
      * <p>
      * Can be used to avoid getting to close to the region edges, which may cause unit to get stuck.
      */

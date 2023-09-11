@@ -30,20 +30,20 @@ public class Main {
             // Listen for keyboard events
             AKeyboard.listenForKeyEvents();
 
-            // IMPORTANT: Make sure Chaoslauncher -> Settings -> "Run Starcraft on Startup" i1s checked
+            // IMPORTANT: Make sure Chaoslauncher -> Settings -> "Run Starcraft on Startup" is checked
             ProcessHelper.startChaosLauncherProcess();
         }
 
         // =============================================================
         // =============================================================
-        // ==== See AtlantisRaceConfig class to customize execution ========
+        // ==== See AtlantisRaceConfig class to customize execution ====
         // =============================================================
         // =============================================================
 
-        // Create Atlantis object to use for this bot. It wraps BWMirror functionality.
+        // Create Atlantis object, it is a wrapper around JBWAPI
         Atlantis atlantis = new Atlantis();
 
-        // Starts bot.
+        // Start the bot
         atlantis.run();
     }
 
