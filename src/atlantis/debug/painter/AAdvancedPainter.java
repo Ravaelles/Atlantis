@@ -636,6 +636,13 @@ public class AAdvancedPainter extends APainter {
 //        Queue.all();
         Orders produceNow = Queue.get().nextOrders(8);
 
+        int size = Queue.get().allOrders().size();
+        if (size >= 30) {
+            paintSideMessage("----------------", Color.Red);
+            paintSideMessage("Queue SIZE: " + size + " !!!", Color.Red);
+            paintSideMessage("----------------", Color.Red);
+        }
+
 //        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
 //        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         int counter = 1;
