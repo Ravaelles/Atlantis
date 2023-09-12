@@ -7,7 +7,7 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.MapAndRace;
 import atlantis.config.MapSpecificCommander;
 
-import atlantis.production.orders.production.queue.ResourcesReserved;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnitType;
 import bwapi.*;
 
@@ -304,8 +304,8 @@ public class AGame {
      */
     public static boolean canAffordWithReserved(int minerals, int gas) {
         return canAfford(
-            minerals + ResourcesReserved.minerals(),
-            gas + ResourcesReserved.gas()
+            minerals + ReservedResources.minerals(),
+            gas + ReservedResources.gas()
         );
     }
 

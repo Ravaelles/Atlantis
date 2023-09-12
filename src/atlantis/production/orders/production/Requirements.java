@@ -7,7 +7,6 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 import atlantis.util.Counter;
 import bwapi.TechType;
 import bwapi.UpgradeType;

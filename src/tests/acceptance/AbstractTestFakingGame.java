@@ -2,6 +2,7 @@ package tests.acceptance;
 
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.BaseSelect;
 import atlantis.util.Options;
 import org.junit.After;
@@ -37,9 +38,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     protected void usingFakeOursEnemiesAndNeutral(
         FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
     ) {
-//        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
         try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-            System.err.println("AbstractTestFakingGame.baseSelect AA = " + AbstractTestFakingGame.baseSelect);
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(ours));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));

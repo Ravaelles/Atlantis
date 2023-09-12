@@ -2,10 +2,8 @@ package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Counter;
 

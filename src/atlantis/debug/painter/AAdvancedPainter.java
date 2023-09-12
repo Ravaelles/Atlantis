@@ -34,7 +34,7 @@ import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.PositionFulfillsAllConditions;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
-import atlantis.production.orders.production.queue.ResourcesReserved;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.Queue;
@@ -436,8 +436,8 @@ public class AAdvancedPainter extends APainter {
             paintSideMessage("Tanks: " + tanks, tanks >= 1 ? Color.Yellow : Color.White);
         }
         paintSideMessage("Gas workers per b: " + GasBuildingsCommander.defineGasWorkersPerBuilding(), Color.Grey);
-        paintSideMessage("Reserved minerals: " + ResourcesReserved.minerals(), Color.Grey);
-        paintSideMessage("Reserved gas: " + ResourcesReserved.gas(), Color.Grey);
+        paintSideMessage("Reserved minerals: " + ReservedResources.minerals(), Color.Grey);
+        paintSideMessage("Reserved gas: " + ReservedResources.gas(), Color.Grey);
     }
 
     private static void paintCombatEval(AUnit unit) {
@@ -634,8 +634,7 @@ public class AAdvancedPainter extends APainter {
         // === Display units that should be produced right now or any time ==================
 
 //        Queue.all();
-        Orders produceNow = Queue.get().readyToProduceOrders();
-
+        Orders produceNow = Queue.get().nextOrders(8);
 
 //        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
 //        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);

@@ -5,7 +5,6 @@ import atlantis.information.tech.ATech;
 import atlantis.information.tech.IsAnyBuildingResearching;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
 import java.util.ArrayList;

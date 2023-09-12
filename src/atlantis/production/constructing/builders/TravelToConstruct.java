@@ -184,7 +184,7 @@ public class TravelToConstruct extends HasUnit {
 
 //            if (building.is(AUnitType.Zerg_Spawning_Pool)) {
 
-//                    "mineralsRes=" + ResourcesReserved.minerals()
+//                    "mineralsRes=" + ReservedResources.minerals()
 //                    + ", queuePos=" + ProductionQueue.positionInQueue(building)
 //                );
 //            }

@@ -13,6 +13,8 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.TerranStrategies;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.PositionUtil;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.fogged.AbstractFoggedUnit;
@@ -21,6 +23,7 @@ import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.Options;
+import atlantis.util.We;
 import bwapi.*;
 import org.junit.After;
 import org.junit.Before;
@@ -36,6 +39,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.when;
 
 public class AbstractTestWithUnits extends UnitTestHelper {
@@ -45,7 +49,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     public MockedStatic<Env> env;
     public MockedStatic<AGame> aGame;
     public MockedStatic<ATech> aTech;
-    public MockedStatic<PositionUtil> positionUtil;
+    public MockedStatic<Enemy> enemy;
 
     protected Options options = new Options();
 
@@ -70,9 +74,14 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         EnemyInfo.clearCache();
         EnemyUnits.clearCache();
         AvoidEnemies.clearCache();
+        ReservedResources.reset();
     }
 
     protected void beforeTestLogic() {
+        if (AtlantisRaceConfig.MY_RACE == null) {
+            AtlantisRaceConfig.MY_RACE = Race.Terran;
+        }
+
         initBuildOrder();
         setUpStrategy();
     }
@@ -103,6 +112,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
             }
         }
 
+        ReservedResources.reset();
+
         game = null;
         Atlantis.getInstance().setGame(null);
     }
@@ -128,7 +139,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         aTech.when(() -> ATech.isResearched(null)).thenReturn(false);
         aTech.when(() -> ATech.getUpgradeLevel(any())).thenReturn(0);
 
-        MockedStatic<Enemy> enemy = Mockito.mockStatic(Enemy.class);
+        enemy = Mockito.mockStatic(Enemy.class);
         enemy.when(() -> Enemy.terran()).thenReturn(false);
         enemy.when(() -> Enemy.protoss()).thenReturn(true);
         enemy.when(() -> Enemy.zerg()).thenReturn(false);
@@ -158,6 +169,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         AtlantisRaceConfig.MY_RACE = Race.Terran;
         AtlantisRaceConfig.BASE = AUnitType.Terran_Command_Center;
         AtlantisRaceConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
+        AtlantisRaceConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
         AtlantisRaceConfig.WORKER = AUnitType.Terran_SCV;
         AtlantisRaceConfig.BARRACKS = AUnitType.Terran_Barracks;
         AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
@@ -181,18 +193,21 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     protected void mockAGameObject() {
         aGame = Mockito.mockStatic(AGame.class);
 
-        if (options.has("supplyUsed")) {
+        if (options != null && options.has("supplyUsed")) {
             int supplyUsed = options.getInt("supplyUsed");
             aGame.when(AGame::supplyTotal).thenReturn(supplyUsed + 2);
             aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
             aGame.when(AGame::supplyFree).thenReturn(2);
         }
 
-
         aGame.when(AGame::minerals).thenReturn(444);
         aGame.when(AGame::gas).thenReturn(333);
         aGame.when(AGame::isPlayingAsTerran).thenReturn(true);
         aGame.when(AGame::isEnemyProtoss).thenReturn(true);
+
+//        try (MockedStatic<We> we = Mockito.mockStatic(We.class)) {
+//            we.when(We::terran).thenReturn(true);
+//        }
     }
 
     protected void setUpStrategy() {

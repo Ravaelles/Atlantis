@@ -1,5 +1,6 @@
 package atlantis.util;
 
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.AGame;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
@@ -31,7 +32,7 @@ public class We {
     }
 
     public static boolean terran() {
-        return AGame.isPlayingAsTerran();
+        return AGame.isPlayingAsTerran() || Race.Terran.equals(AtlantisRaceConfig.MY_RACE);
     }
 
     public static boolean protoss() {

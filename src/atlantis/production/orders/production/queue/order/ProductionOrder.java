@@ -11,7 +11,7 @@ import bwapi.UpgradeType;
 public class ProductionOrder implements Comparable<ProductionOrder> {
     private static int firstFreeId = 1;
     private int id;
-    private OrderStatus status = OrderStatus.NEED_REQUIREMENTS;
+    private OrderStatus status = OrderStatus.NOT_READY;
 
     /**
      * How much supply has to be used for this order to become active
@@ -132,7 +132,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     }
 
     private String statusString() {
-        if (isStatus(OrderStatus.NEED_REQUIREMENTS)) return "";
+        if (isStatus(OrderStatus.NOT_READY)) return "";
         else if (isStatus(OrderStatus.IN_PROGRESS)) return "(IN_PROGRESS)";
         else if (isStatus(OrderStatus.READY_TO_PRODUCE)) return "(READY_TO_PRODUCE)";
         else if (isStatus(OrderStatus.COMPLETED)) return "(COMPLETED)";

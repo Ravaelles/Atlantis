@@ -1,9 +1,8 @@
 package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import bwapi.TechType;
 
 public class IsReadyToProduceOrder {
     protected static boolean isReadyToProduce(ProductionOrder order) {
@@ -17,6 +16,19 @@ public class IsReadyToProduceOrder {
 //        A.errPrintln("order.checkIfHasWhatRequired() = " + order.checkIfHasWhatRequired());
 //        A.errPrintln("-----------");
 //        }
-        return order.supplyRequirementFulfilled() && order.checkIfHasWhatRequired();
+
+        if (!order.supplyRequirementFulfilled() || !order.checkIfHasWhatRequired()) return false;
+        if (!canAffordWithReserved(order)) return false;
+
+        return true;
+
+//        boolean isReady = order.supplyRequirementFulfilled() && order.checkIfHasWhatRequired();
+    }
+
+    private static boolean canAffordWithReserved(ProductionOrder order) {
+        return (A.minerals() - ReservedResources.minerals() >= order.mineralPrice())
+            && (A.gas() - ReservedResources.gas() >= order.gasPrice());
+
+//        return A.canAffordWithReserved(order.mineralPrice(), order.gasPrice());
     }
 }

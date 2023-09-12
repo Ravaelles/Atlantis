@@ -3,7 +3,7 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.production.queue.ResourcesReserved;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.log.ErrorLog;
@@ -1171,6 +1171,14 @@ public class A {
         return "(" + (unit1 != null && unit2 != null ? A.digit(unit1.groundDist(unit2)) : "-") + ")";
     }
 
+    public static int minerals() {
+        return AGame.minerals();
+    }
+
+    public static int gas() {
+        return AGame.gas();
+    }
+
     public static int supplyUsed() {
         return AGame.supplyUsed();
     }
@@ -1291,11 +1299,11 @@ public class A {
     }
 
     public static int reservedMinerals() {
-        return ResourcesReserved.minerals();
+        return ReservedResources.minerals();
     }
 
     public static int reservedGas() {
-        return ResourcesReserved.gas();
+        return ReservedResources.gas();
     }
 
     public static boolean canAfford(AUnitType unitType) {

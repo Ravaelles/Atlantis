@@ -30,7 +30,7 @@ public interface OrdersFilters {
         );
     }
 
-    default Orders nonCompleted() {
+    default Orders notCompleted() {
         return new Orders(
             list().stream()
                 .filter(order -> !order.isCompleted())

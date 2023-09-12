@@ -1,5 +1,6 @@
 package atlantis.information.strategy;
 
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;

@@ -1,14 +1,17 @@
 package atlantis.production.orders.production.queue.updater;
 
+import atlantis.game.A;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 import atlantis.util.Counter;
 
 public class QueueRefresher {
     private final Queue queue;
     private final Counter<AUnitType> existingCounter;
+    private boolean allOrdersFromNowNotReady = false;
 
     public QueueRefresher(Queue queue) {
         this.queue = queue;
@@ -16,7 +19,11 @@ public class QueueRefresher {
     }
 
     public void refresh() {
+//        A.printStackTrace();
+
         for (ProductionOrder order : queue.allOrders().list()) {
+            if (allOrdersFromNowNotReady) break;
+
             updateOrderStatus(order);
         }
     }
@@ -35,6 +42,10 @@ public class QueueRefresher {
             return markAsInProgress(order);
         }
 
+        if (allOrdersFromNowNotReady) {
+            return markAsNotReady(order);
+        }
+
 //        System.err.println("supplyUsed = " + AGame.supplyUsed());
 //        System.err.println("minerals = " + AGame.minerals());
 //        System.err.println("order = " + order);
@@ -45,6 +56,7 @@ public class QueueRefresher {
             return markAsReadyToProduce(order);
         }
 
+        allOrdersFromNowNotReady = true;
         return null;
     }
 
@@ -52,18 +64,20 @@ public class QueueRefresher {
 
     private OrderStatus markAsInProgress(ProductionOrder order) {
         return order.setStatus(OrderStatus.IN_PROGRESS);
-//        queue.inProgressOrders().add(order);
     }
 
     private OrderStatus markAsReadyToProduce(ProductionOrder order) {
+        ReservedResources.reserveMinerals(order.mineralPrice());
+        ReservedResources.reserveGas(order.gasPrice());
+
         return order.setStatus(OrderStatus.READY_TO_PRODUCE);
-//        queue.readyToProduceOrders().add(order);
-//        queue.completedOrders().remove(order);
+    }
+
+    private OrderStatus markAsNotReady(ProductionOrder order) {
+        return order.setStatus(OrderStatus.NOT_READY);
     }
 
     private OrderStatus markAsComplete(ProductionOrder order) {
-//        System.err.println("markAsComplete = " + order);
         return order.setStatus(OrderStatus.COMPLETED);
-//        queue.completedOrders().add(order);
     }
 }
