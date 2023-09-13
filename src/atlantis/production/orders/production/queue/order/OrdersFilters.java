@@ -65,6 +65,7 @@ public interface OrdersFilters {
     default Orders next(int n) {
         return new Orders(
             list().stream()
+                .filter(order -> !order.isCompleted() && order.supplyRequirementFulfilled())
                 .limit(n)
                 .collect(Collectors.toList())
         );

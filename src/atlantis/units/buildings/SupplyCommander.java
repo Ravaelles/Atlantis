@@ -91,17 +91,21 @@ public class SupplyCommander extends Commander {
     private void requestAdditionalSupply() {
 //        A.printStackTrace("Supply request: " + A.supplyUsed() + " // " + A.supplyTotal());
 
-        if (requestedConstructionsOfSupply() >= 2) return;
+        int requestedConstructionsOfSupply = requestedConstructionsOfSupply();
+        if (requestedConstructionsOfSupply >= 2) {
+            System.err.println("@ " + A.now() + " - requestedConstructionsOfSupply = " + requestedConstructionsOfSupply);
+        }
+
+        if (requestedConstructionsOfSupply >= 2) return;
 
         // Zerg handles supply a bit differently
         if (AGame.isPlayingAsZerg()) {
             ((ZergBuildOrder) CurrentBuildOrder.get()).produceZergUnit(AUnitType.Zerg_Overlord);
+            return;
         }
 
         // Terran + Protoss
-        else {
-            AddToQueue.withHighPriority(AtlantisRaceConfig.SUPPLY);
-        }
+        AddToQueue.withHighPriority(AtlantisRaceConfig.SUPPLY);
     }
 
     private boolean requestedConstructionOfSupply() {

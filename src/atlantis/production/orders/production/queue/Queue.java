@@ -25,8 +25,8 @@ public class Queue extends AbstractQueue {
 
     // =========================================================
 
-    public void addNew(int index, ProductionOrder productionOrder) {
-        allOrders().add(index, productionOrder);
+    public boolean addNew(int index, ProductionOrder productionOrder) {
+        return allOrders().add(index, productionOrder);
     }
 
     // =========================================================

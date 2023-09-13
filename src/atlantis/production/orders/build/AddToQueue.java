@@ -1,5 +1,6 @@
 package atlantis.production.orders.build;
 
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
@@ -74,15 +75,20 @@ public class AddToQueue {
 
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         assert type != null;
+        int maxOrdersAtOnceWithoutWarning = 20;
 
         // Too many requests of this type
-        if (Count.inQueue(type, 10) >= 4) {
+        int existingInQueue = Count.inQueue(type, maxOrdersAtOnceWithoutWarning);
+        if (existingInQueue >= 4) {
             return null;
         }
 
-        if (Queue.get().readyToProduceOrders().size() >= 20) {
-            ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
-            return null;
+        if (!Env.isTournament()) {
+            if (Queue.get().nextOrders(40).size() >= maxOrdersAtOnceWithoutWarning) {
+                ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
+                Queue.get().nextOrders(40).print();
+                return null;
+            }
         }
 
         if (We.protoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
@@ -103,7 +109,12 @@ public class AddToQueue {
         ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
 
 //        ProductionQueue.addToQueue(index, productionOrder);
-        Queue.get().addNew(index, productionOrder);
+
+
+        if (Queue.get().addNew(index, productionOrder)) {
+//            A.printStackTrace("Adding to queue: " + productionOrder + " / existingInQueue = " + existingInQueue);
+            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + existingInQueue);
+        }
 
 //        System.err.println("productionOrder = " + productionOrder);
 
@@ -159,7 +170,7 @@ public class AddToQueue {
     }
 
     public static boolean maxAtATime(AUnitType type, int maxAtATime) {
-        if (CountInQueue.count(type, 20) < maxAtATime) {
+        if (CountInQueue.count(type, 30) < maxAtATime) {
             return addToQueue(type);
         }
 

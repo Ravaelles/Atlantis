@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ResourcesReservedTest extends NonAbstractTestFakingGame {
     private Queue queue = null;
@@ -48,6 +49,15 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
 
                 assertEquals(600, ReservedResources.minerals());
                 assertEquals(6, readyToProduceOrders.size());
+                Orders nextOrders = queue.nextOrders(20);
+                int nextOrdersSize = nextOrders.size();
+
+//                queue.allOrders().print("All orders");
+//                nextOrders.print("\nNext orders");
+
+                assertTrue(readyToProduceOrders.size() < nextOrdersSize);
+                assertEquals(11, nextOrdersSize);
+                assertTrue(nextOrders.list().get(nextOrdersSize - 1).minSupply() >= 45);
             },
             () -> FakeUnitHelper.merge(
                 ourInitialUnits(),

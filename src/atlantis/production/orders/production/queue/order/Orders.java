@@ -1,6 +1,7 @@
 package atlantis.production.orders.production.queue.order;
 
 import atlantis.game.A;
+import atlantis.production.orders.production.queue.CountInQueue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,22 +21,34 @@ public class Orders implements OrdersFilters {
 
     // === Add ==================================================
 
-    public void add(int index, ProductionOrder item) {
-        if (!orders.contains(item)) orders.add(index, item);
+    public boolean add(int index, ProductionOrder item) {
+        if (!orders.contains(item)) {
+            System.err.println(
+                "@ " + A.now() + " added " + item + " / " +
+                    (item.unitType() == null ? "" : CountInQueue.count(item.unitType(), 30))
+            );
+        }
+        if (!orders.contains(item)) {
+            orders.add(index, item);
+            return true;
+        }
+
+        return false;
     }
 
-    public void add(ProductionOrder item) {
-        if (!orders.contains(item)) orders.add(item);
+    public boolean add(ProductionOrder item) {
+        if (!orders.contains(item)) {
+            orders.add(item);
+            return true;
+        }
+
+        return false;
     }
 
     public void addAll(Collection<ProductionOrder> items) {
         for (ProductionOrder item : items) {
             add(item);
         }
-    }
-
-    public void prepend(ProductionOrder item) {
-        if (!orders.contains(item)) orders.add(0, item);
     }
 
     // === Remove ==============================================
@@ -58,12 +71,13 @@ public class Orders implements OrdersFilters {
         print("Queue");
     }
 
-    public void print(String message) {
+    public Orders print(String message) {
         A.println(message + " (" + orders.size() + "):");
         for (ProductionOrder order : orders) {
             A.println("    " + order);
         }
         A.println("");
+        return this;
     }
 
     public List<ProductionOrder> list() {

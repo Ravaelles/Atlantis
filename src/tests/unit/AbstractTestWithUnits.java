@@ -193,11 +193,21 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     protected void mockAGameObject() {
         aGame = Mockito.mockStatic(AGame.class);
 
-        if (options != null && options.has("supplyUsed")) {
+        boolean optionSupplyUsed = options != null && options.has("supplyUsed");
+        boolean optionSupplyTotal = options != null && options.has("supplyTotal");
+
+        if (optionSupplyUsed) {
             int supplyUsed = options.getInt("supplyUsed");
-            aGame.when(AGame::supplyTotal).thenReturn(supplyUsed + 2);
             aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
-            aGame.when(AGame::supplyFree).thenReturn(2);
+            if (!optionSupplyTotal) {
+                aGame.when(AGame::supplyTotal).thenReturn(supplyUsed + 4);
+                aGame.when(AGame::supplyFree).thenReturn(4);
+            }
+        }
+        if (optionSupplyTotal) {
+            int supplyTotal = options.getInt("supplyTotal");
+            aGame.when(AGame::supplyTotal).thenReturn(supplyTotal);
+            aGame.when(AGame::supplyFree).thenReturn(4);
         }
 
         aGame.when(AGame::minerals).thenReturn(444);
