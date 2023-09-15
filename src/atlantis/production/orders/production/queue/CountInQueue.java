@@ -21,4 +21,8 @@ public class CountInQueue {
     public static int countOrdersWithPriorityAtLeast(ProductionOrderPriority priority) {
         return Queue.get().nonCompleted().priorityAtLeast(priority).size();
     }
+
+//    public static int countOrdersWithSupplyAtMost(int maxSupply) {
+//        return Queue.get().allOrders().supplyAtMost(maxSupply).size();
+//    }
 }

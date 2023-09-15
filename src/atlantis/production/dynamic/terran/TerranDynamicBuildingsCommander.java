@@ -18,6 +18,8 @@ import static atlantis.units.AUnitType.*;
 public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
     @Override
     protected void handle() {
+        if (true) return;
+
         ReinforceBasesWithCombatBuildings.get().invoke();
         (new ReinforceBunkersWithTurrets()).invoke();
         (new TurretNeededHere()).invoke();
@@ -232,6 +234,8 @@ public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
 
             if (barracks >= 4 && A.supplyUsed() <= 70) return false;
         }
+
+        if (Count.inProductionOrInQueue(Terran_Barracks) > 0) return false;
 
         if (A.canAffordWithReserved(150, 0) || A.hasMinerals(650)) {
             return buildIfAllBusyButCanAfford(Terran_Barracks, 0, 0);

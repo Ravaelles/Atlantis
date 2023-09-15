@@ -20,9 +20,9 @@ import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class AddToQueueTest extends NonAbstractTestFakingGame {
-
     private Queue queue;
 
     @Test
@@ -31,32 +31,32 @@ public class AddToQueueTest extends NonAbstractTestFakingGame {
             () -> {
                 queue = initQueue();
 
-                queue.readyToProduceOrders().print("ReadyToProduceOrders");
+                queue.nextOrders(15).print("nextOrders");
+                assertEquals(0, queue.nextOrders(15).ofType(Terran_Marine).size());
+                assertNotEquals(Terran_Marine, queue.nextOrders(1).list().get(0).unitType());
+
+                AddToQueue.maxAtATime(Terran_Marine, 2);
+
+                queue.clearCache();
+                assertEquals(1, queue.nextOrders(15).ofType(Terran_Marine).size());
+                queue.nextOrders(15).print("nextOrders");
+                assertEquals(Terran_Marine, queue.nextOrders(1).list().get(0).unitType());
+//                queue.readyToProduceOrders().print("ReadyToProduceOrders");
 
                 AddToQueue.maxAtATime(Terran_Marine, 2);
 
                 queue.clearCache();
                 queue.nextOrders(15).print("nextOrders");
-                queue.readyToProduceOrders().print("ReadyToProduceOrders");
+                assertEquals(2, queue.nextOrders(15).ofType(Terran_Marine).size());
+                assertEquals(Terran_Marine, queue.nextOrders(2).list().get(0).unitType());
+                assertEquals(Terran_Marine, queue.nextOrders(2).list().get(1).unitType());
 
                 AddToQueue.maxAtATime(Terran_Marine, 2);
 
                 queue.clearCache();
+                assertEquals(2, queue.nextOrders(15).ofType(Terran_Marine).size());
+                assertNotEquals(Terran_Marine, queue.nextOrders(3).list().get(2).unitType());
                 queue.nextOrders(15).print("nextOrders");
-                queue.readyToProduceOrders().print("ReadyToProduceOrders");
-
-                AddToQueue.maxAtATime(Terran_Marine, 2);
-
-                queue.clearCache();
-                queue.readyToProduceOrders().print("ReadyToProduceOrders");
-
-//                System.err.println("supplyUsed = " + AGame.supplyUsed());
-//                System.err.println("supplyTotal = " + AGame.supplyTotal());
-
-//                readyToProduceOrders.print("ReadyToProduceOrders");
-
-//                assertEquals(2, readyToProduceOrders.ofType(Terran_Medic).size());
-//                assertEquals(1, readyToProduceOrders.techType(TechType.Stim_Packs).size());
             },
             () -> FakeUnitHelper.merge(
                 ourInitialUnits(),
@@ -75,16 +75,6 @@ public class AddToQueueTest extends NonAbstractTestFakingGame {
 
     private FakeUnit[] ourInitialUnits() {
         return fakeExampleOurs();
-    }
-
-    private void mockOurUnitsByAddingNewUnit(FakeUnit[] ourNewFakeUnits) {
-        ArrayList<FakeUnit> ourUnits = FakeUnitHelper.fakeUnitsToArrayList(ourInitialUnits());
-        ArrayList<FakeUnit> newUnitsCollection = FakeUnitHelper.fakeUnitsToArrayList(ourNewFakeUnits);
-        ourUnits.addAll(newUnitsCollection);
-
-        DynamicMockOurUnits.mockOur(ourUnits);
-        if (queue != null) queue.clearCache();
-        if (queue != null) queue.refresh();
     }
 
     private Queue initQueue() {

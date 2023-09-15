@@ -634,25 +634,25 @@ public class AAdvancedPainter extends APainter {
         // === Display units that should be produced right now or any time ==================
 
 //        Queue.all();
-        Orders produceNow = Queue.get().nextOrders(8);
+        Orders nextOrders = Queue.get().nextOrders(30);
 
-        int size = Queue.get().allOrders().size();
+        int size = nextOrders.size();
         if (size >= 30) {
             paintSideMessage("----------------", Color.Red);
             paintSideMessage("Queue SIZE: " + size + " !!!", Color.Red);
             paintSideMessage("----------------", Color.Red);
         }
 
-//        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
-//        ArrayList<ProductionOrder> produceNow = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
+//        ArrayList<ProductionOrder> nextOrders = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
+//        ArrayList<ProductionOrder> nextOrders = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         int counter = 1;
-        for (ProductionOrder order : produceNow.list()) {
+        for (ProductionOrder order : nextOrders.list()) {
             paintSideMessage(
                 String.format("%02d", order.minSupply()) + " - " + order.name(),
                 (order.isInProgress() ? Green : (order.isInProgress() ? Color.Yellow : Color.Red))
 //                order.hasWhatRequired() ? (order.isInProgress() ? Green : Color.Yellow) : Color.Red
             );
-            if (++counter >= 10) {
+            if (++counter >= 8) {
                 break;
             }
         }
@@ -660,8 +660,8 @@ public class AAdvancedPainter extends APainter {
         // === Display next units to produce ================================================
 
 //        ArrayList<ProductionOrder> fullQueue = ProductionQueue.nextInProductionQueue(
-//                5 - produceNow.size());
-//        for (int index = produceNow.size(); index < fullQueue.size(); index++) {
+//                5 - nextOrders.size());
+//        for (int index = nextOrders.size(); index < fullQueue.size(); index++) {
 //            ProductionOrder order = fullQueue.get(index);
 //            if (order != null && order.name() != null) {
 //                if (order.getUnitOrBuilding() != null
@@ -674,7 +674,7 @@ public class AAdvancedPainter extends APainter {
 
         // === Paint info if queues are empty ===============================================
 
-        if (produceNow.isEmpty()) {
+        if (nextOrders.isEmpty()) {
             paintSideMessage("Nothing to produce - it's a bug", Color.Red);
         }
     }

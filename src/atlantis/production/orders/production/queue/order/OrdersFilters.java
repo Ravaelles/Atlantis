@@ -65,7 +65,8 @@ public interface OrdersFilters {
     default Orders next(int n) {
         return new Orders(
             list().stream()
-                .filter(order -> !order.isCompleted() && order.supplyRequirementFulfilled())
+//                .filter(order -> !order.isCompleted() && order.supplyRequirementFulfilled())
+                .filter(order -> !order.isCompleted())
                 .limit(n)
                 .collect(Collectors.toList())
         );
@@ -91,6 +92,14 @@ public interface OrdersFilters {
         return new Orders(
             list().stream()
                 .filter(order -> order.priority().isAtLeast(priority))
+                .collect(Collectors.toList())
+        );
+    }
+
+    default Orders supplyAtMost(int maxSupply) {
+        return new Orders(
+            list().stream()
+                .filter(order -> order.minSupply() <= maxSupply)
                 .collect(Collectors.toList())
         );
     }

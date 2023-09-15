@@ -17,4 +17,8 @@ public enum ProductionOrderPriority implements Comparable<ProductionOrderPriorit
     public boolean isAtLeast(ProductionOrderPriority priority) {
         return this.number >= priority.number;
     }
+
+    public boolean isStandard() {
+        return this == STANDARD;
+    }
 }

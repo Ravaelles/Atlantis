@@ -4,9 +4,9 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.production.*;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
@@ -74,20 +74,48 @@ public class AddToQueue {
     // =========================================================
 
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
+        if (preventExcessiveOrInvalidOrders(type)) return null;
+
+        ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
+
+        if (Queue.get().addNew(index, productionOrder)) {
+            Queue.get().clearCache();
+            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
+        }
+
+        return productionOrder;
+    }
+
+    private static int defineMinSupplyForNewOrder() {
+        Orders nextOrders = Queue.get().nextOrders(2);
+
+//        nextOrders.print("nextOrders");
+
+        if (nextOrders.isEmpty()) {
+            return A.supplyUsed() - 1;
+        }
+
+//        System.err.println("A = " + (nextOrders.list().get(0).minSupply() + 1));
+
+        return nextOrders.list().get(0).minSupply() + 1;
+    }
+
+    private static boolean preventExcessiveOrInvalidOrders(AUnitType type) {
         assert type != null;
+
         int maxOrdersAtOnceWithoutWarning = 20;
 
         // Too many requests of this type
-        int existingInQueue = Count.inQueue(type, maxOrdersAtOnceWithoutWarning);
+        int existingInQueue = Count.inQueue(type, 30);
         if (existingInQueue >= 4) {
-            return null;
+            return true;
         }
 
         if (!Env.isTournament()) {
-            if (Queue.get().nextOrders(40).size() >= maxOrdersAtOnceWithoutWarning) {
+            if (Queue.get().nextOrders(30).size() >= maxOrdersAtOnceWithoutWarning) {
                 ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
-                Queue.get().nextOrders(40).print();
-                return null;
+                Queue.get().nextOrders(30).print();
+                return true;
             }
         }
 
@@ -95,47 +123,10 @@ public class AddToQueue {
             if (A.seconds() < 200) {
                 System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
             }
-            return null;
+            return true;
         }
 
-//        if (type.isBuilding()) {
-//            System.err.println("At " + A.seconds() + "s added to QUEUE > " + type + " <");
-//            System.err.println("Reserved: minerals(" + A.reservedMinerals() + "), gas(" + A.reservedGas() + ")");
-//            A.printStackTrace("At " + A.seconds() + "s added to QUEUE > " + type + " <");
-//        }
-
-//        if (!allowToQueueRequiredBuildings(type)) {
-        int minSupply = -1;
-        ProductionOrder productionOrder = new ProductionOrder(type, position, minSupply);
-
-//        ProductionQueue.addToQueue(index, productionOrder);
-
-
-        if (Queue.get().addNew(index, productionOrder)) {
-//            A.printStackTrace("Adding to queue: " + productionOrder + " / existingInQueue = " + existingInQueue);
-            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + existingInQueue);
-        }
-
-//        System.err.println("productionOrder = " + productionOrder);
-
-        return productionOrder;
-
-//        }
-//        else {
-//            if (
-//                    type.getWhatIsRequired() != null
-//                            && !type.getWhatIsRequired().isPylon()
-//                            && !type.getWhatIsRequired().isPrimaryBase()
-//                            && !Requirements.hasRequirements(type)
-//            ) {
-//                if (!ProductionQueue.isAtTheTopOfQueue(type, 6)) {
-
-//                    addToQueue(type.getWhatIsRequired(), null, 0);
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
+        return false;
     }
 
     // =========================================================
@@ -145,6 +136,10 @@ public class AddToQueue {
 //    }
 
     private static int indexForPriority(ProductionOrderPriority priority) {
+        if (priority.isStandard()) {
+            return CountInQueue.countOrdersWithPriorityAtLeast(ProductionOrderPriority.HIGH);
+        }
+
         return CountInQueue.countOrdersWithPriorityAtLeast(priority);
     }
 
