@@ -1,17 +1,15 @@
 package atlantis.production.dynamic.terran;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.terran.units.ProduceTanks;
 import atlantis.production.dynamic.terran.units.ProduceVultures;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 
 public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
 

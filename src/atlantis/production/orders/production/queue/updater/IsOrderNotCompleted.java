@@ -8,7 +8,7 @@ import atlantis.units.select.Select;
 import atlantis.util.Counter;
 
 public class IsOrderNotCompleted {
-    protected static boolean isOrderNotCompleted(ProductionOrder order, Counter<AUnitType> existingCounter) {
+    protected static boolean check(ProductionOrder order, Counter<AUnitType> existingCounter) {
         // === Unit
 
         if (order.unitType() != null) {
@@ -33,24 +33,25 @@ public class IsOrderNotCompleted {
         return true;
     }
 
-    private static boolean checkIfWeHaveLessUnitsThanExpected(ProductionOrder order, Counter<AUnitType> existingCounter) {
+    private static boolean checkIfWeHaveLessUnitsThanExpected(ProductionOrder order, Counter<AUnitType> expectedCounter) {
         AUnitType type = order.unitType();
-        existingCounter.incrementValueFor(type);
+        expectedCounter.incrementValueFor(type);
 
-//        int existingUnits = existingOrInProgressUnitsCount(type);
         int existingUnits = existingUnitsCount(type);
-        int expectedUnits = expectedUnitsCount(type, existingCounter);
+        int expectedUnits = expectedUnitsCount(type, expectedCounter);
 
         // If we don't have this unit, add it to the current production queue.
-//        if (type.is(AUnitType.Terran_Supply_Depot)) {
-//            System.err.println("SupplyDepotz = " + existingUnits + " / " + expectedUnits);
+//        if (type.is(AUnitType.Terran_Academy)) {
+//            System.err.println("@" + A.now() + " EXIZ/EXPEC = " + existingUnits + " / " + expectedUnits);
+//            Select.our().print("Ourz");
+//            Select.ourOfType(AUnitType.Terran_Academy).print("Academies");
 //        }
 
         return existingUnits < expectedUnits;
     }
 
-    private static int expectedUnitsCount(AUnitType type, Counter<AUnitType> existingCounter) {
-        return ThisManyUnitsByDefault.numOfUnits(existingCounter, type);
+    private static int expectedUnitsCount(AUnitType type, Counter<AUnitType> expectedCounter) {
+        return ThisManyUnitsByDefault.numOfUnits(expectedCounter, type);
     }
 
     private static int existingUnitsCount(AUnitType type) {

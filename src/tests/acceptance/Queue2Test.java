@@ -4,11 +4,14 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.TerranStrategies;
+import atlantis.production.dynamic.terran.tech.U238;
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueInitializer;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.units.select.Select;
 import atlantis.util.Options;
 import bwapi.TechType;
 import org.junit.Test;
@@ -28,15 +31,17 @@ public class Queue2Test extends NonAbstractTestFakingGame {
 
     @Test
     public void queueIsProperlyDetectingInProgressAndReadyAndCompletedOrders() {
-        createWorld(4,
+        createWorld(5,
             () -> {
                 if (A.now() == 1) frame1_queueIsInitializedFromBuildOrder();
                 if (A.now() == 2) frame2_completedOrdersAreDetected();
                 if (A.now() == 3) frame3_inProgressOrdersAreDetected();
+                if (A.now() == 4) frame4();
+                if (A.now() == 5) frame5();
             },
             () -> ourInitialUnits(),
             () -> fakeExampleEnemies(),
-            Options.create().set("supplyUsed", 49)
+            Options.create().set("supplyUsed", 66)
         );
     }
 
@@ -49,14 +54,14 @@ public class Queue2Test extends NonAbstractTestFakingGame {
 
         assertEquals(allOrders.size(), queue.allOrders().size());
         assertEquals(0, queue.inProgressOrders().size());
-        assertEquals(4, queue.readyToProduceOrders().size());
+        assertEquals(6, queue.readyToProduceOrders().size());
         assertEquals(0, queue.completedOrders().size());
 
         Queue.get().refresh(); // Refresh with no changes shouldn't change anything
 
         assertEquals(allOrders.size(), queue.allOrders().size());
         assertEquals(0, queue.inProgressOrders().size());
-        assertEquals(4, queue.readyToProduceOrders().size());
+        assertEquals(6, queue.readyToProduceOrders().size());
         assertEquals(0, queue.completedOrders().size());
     }
 
@@ -67,21 +72,10 @@ public class Queue2Test extends NonAbstractTestFakingGame {
 
         Queue.get().refresh();
 
-        /* We expect this:
-              At 9 SupplyD (COMPLETED)
-              At 11 Barracks (READY_TO_PRODUCE)
-              At 14 SupplyD (READY_TO_PRODUCE)
-              At 18 Refinery (READY_TO_PRODUCE)
-              At 19 Academy
-              At 20 Bunker MAIN_CHOKE
-              At 21 Barracks (READY_TO_PRODUCE)
-              At 22 SupplyD (READY_TO_PRODUCE)
-         */
-
-//        queue.allOrders().print("\nAfter refreshing");
+//        queue.allOrders().print("Refreshing...");
 
         assertEquals(0, queue.inProgressOrders().size());
-        assertEquals(3, queue.readyToProduceOrders().size());
+        assertEquals(5, queue.readyToProduceOrders().size());
         assertEquals(1, queue.completedOrders().size());
     }
 
@@ -93,26 +87,66 @@ public class Queue2Test extends NonAbstractTestFakingGame {
         ));
 
         Queue.get().refresh();
-//        queue.allOrders().print("\nAfter refreshing");
+//        queue.allOrders().print("\n3rd refreshing");
+//        ReservedResources.print();
 
         assertEquals(1, queue.inProgressOrders().ofType(Terran_Barracks).size());
         assertEquals(2, queue.inProgressOrders().size());
-        assertEquals(2, queue.readyToProduceOrders().size());
+        assertEquals(4, queue.readyToProduceOrders().size());
         assertEquals(1, queue.completedOrders().size());
+    }
+
+    private void frame4() {
+        mockOurUnitsByAddingNewUnit(fakeOurs(
+            fake(Terran_Supply_Depot, 7),
+            fake(Terran_Barracks, 4),
+            fake(Terran_Academy, 33),
+            fake(Terran_Starport, 36)
+        ));
+
+//        System.err.println("ACZ = " + Select.ourOfType(Terran_Academy).size());
+
+        Select.clearCache();
+        Queue.get().refresh();
+//        queue.allOrders().print("\nAfter another refreshing");
+//        Select.our().print();
+//        ReservedResources.print();
+
+        assertEquals(4, queue.completedOrders().size());
+        assertEquals(0, queue.inProgressOrders().ofType(Terran_Barracks).size());
+        assertEquals(0, queue.inProgressOrders().size());
+
+        assertEquals(2, queue.readyToProduceOrders().ofType(Terran_Medic).size());
+        assertEquals(1, queue.readyToProduceOrders().ofType(Terran_Control_Tower).size());
+        assertEquals(1, queue.readyToProduceOrders().upgradeType(U238.upgradeType()).size());
+    }
+
+    private void frame5() {
+//        if (true) return;
 
         mockOurUnitsByAddingNewUnit(fakeOurs(
             fake(Terran_Supply_Depot, 7),
-            fake(Terran_Barracks, 4).setCompleted(true),
-            fake(Terran_Academy, 33).setCompleted(true)
+            fake(Terran_Barracks, 4),
+            fake(Terran_Academy, 33),
+            fake(Terran_Starport, 36),
+            fake(Terran_Factory, 48)
         ));
 
-        Queue.get().refresh();
-//        queue.allOrders().print("\nAfter refreshing");
+//        System.err.println("ACZ = " + Select.ourOfType(Terran_Academy).size());
 
-        assertEquals(3, queue.completedOrders().size());
-        assertEquals(0, queue.inProgressOrders().ofType(Terran_Barracks).size());
-        assertEquals(0, queue.inProgressOrders().size());
-        assertEquals(7, queue.readyToProduceOrders().size()); // Why two medics aren't allowed here?
+        Select.clearCache();
+        Queue.get().refresh();
+//        queue.allOrders().print("\nShould have most now");
+//        Select.our().print();
+//        ReservedResources.print();
+
+        assertEquals(1, queue.readyToProduceOrders().ofType(Terran_Machine_Shop).size());
+        assertEquals(1, queue.readyToProduceOrders().ofType(Terran_Control_Tower).size());
+
+//        assertEquals(4, queue.completedOrders().size());
+//        assertEquals(0, queue.inProgressOrders().ofType(Terran_Barracks).size());
+//        assertEquals(0, queue.inProgressOrders().size());
+//        assertEquals(7, queue.readyToProduceOrders().size()); // Why two medics aren't allowed here?
     }
 
     // =========================================================
@@ -150,7 +184,7 @@ public class Queue2Test extends NonAbstractTestFakingGame {
 
     public void initSupply() {
         int supplyFree = 2;
-        int supplyUsed = options.getIntOr("supplyUsed", 49);
+        int supplyUsed = options.getIntOr("supplyUsed", 66);
 
         aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
         aGame.when(AGame::supplyFree).thenReturn(supplyFree);

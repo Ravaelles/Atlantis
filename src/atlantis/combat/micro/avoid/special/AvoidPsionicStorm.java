@@ -17,8 +17,6 @@ public class AvoidPsionicStorm extends Manager {
         if (unit.isUnderStorm()) {
             for (Bullet bullet : Atlantis.game().getBullets()) {
                 if (bullet.getType().equals(BulletType.Psionic_Storm)) {
-//                    System.err.println("------------- " + A.now() + " PSIONIC! ----------------");
-
                     if (handleMoveAwayIfCloserThan(APosition.create(bullet.getPosition()), 2.8)) {
                         return usedManager(this);
                     }

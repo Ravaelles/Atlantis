@@ -649,7 +649,7 @@ public class AAdvancedPainter extends APainter {
         for (ProductionOrder order : nextOrders.list()) {
             paintSideMessage(
                 String.format("%02d", order.minSupply()) + " - " + order.name(),
-                (order.isInProgress() ? Green : (order.isInProgress() ? Color.Yellow : Color.Red))
+                (order.isInProgress() ? Color.Yellow : Color.Red)
 //                order.hasWhatRequired() ? (order.isInProgress() ? Green : Color.Yellow) : Color.Red
             );
             if (++counter >= 8) {

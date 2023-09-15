@@ -8,7 +8,7 @@ import atlantis.production.dynamic.terran.units.ProduceGhosts;
 import atlantis.production.dynamic.terran.units.ProduceMarines;
 import atlantis.production.dynamic.terran.units.ProduceMedicsAndFirebats;
 import atlantis.production.dynamic.terran.units.ProduceWraiths;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;

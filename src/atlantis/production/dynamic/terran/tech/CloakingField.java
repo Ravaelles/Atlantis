@@ -1,18 +1,12 @@
 package atlantis.production.dynamic.terran.tech;
 
 import atlantis.architecture.Commander;
-import atlantis.game.AGame;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmyStrength;
-import atlantis.information.strategy.OurStrategy;
 import atlantis.information.tech.ATech;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
 import atlantis.util.We;
-import bwapi.TechType;
-import bwapi.UpgradeType;
 
 import static bwapi.TechType.Cloaking_Field;
 

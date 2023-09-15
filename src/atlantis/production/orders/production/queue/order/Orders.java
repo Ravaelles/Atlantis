@@ -72,7 +72,7 @@ public class Orders implements OrdersFilters {
     }
 
     public Orders print(String message) {
-        A.println(message + " (" + orders.size() + "):");
+        A.println("@" + A.now() + " " + message + " (" + orders.size() + "):");
         for (ProductionOrder order : orders) {
             A.println("    " + order);
         }
@@ -82,5 +82,13 @@ public class Orders implements OrdersFilters {
 
     public List<ProductionOrder> list() {
         return orders;
+    }
+
+    public ProductionOrder first() {
+        return orders.get(0);
+    }
+
+    public ProductionOrder get(int index) {
+        return orders.get(index);
     }
 }

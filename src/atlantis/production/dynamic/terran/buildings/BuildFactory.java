@@ -2,8 +2,7 @@ package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -24,7 +23,7 @@ public class BuildFactory {
             existing >= 1 && !A.canAfford(300, 175)
                 && Count.vultures() <= 1 && Count.tanks() <= 1
         ) return false;
-        
+
         int inProgress = Count.inProductionOrInQueue(Terran_Factory);
 
         if (inProgress == 0 && !Have.factory() && A.canAfford(230, 115)) {

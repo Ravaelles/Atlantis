@@ -4,7 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 import bwapi.TechType;

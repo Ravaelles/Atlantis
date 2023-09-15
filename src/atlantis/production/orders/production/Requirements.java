@@ -3,11 +3,13 @@ package atlantis.production.orders.production;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
+import atlantis.production.dynamic.terran.tech.U238;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Counter;
+import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -34,8 +36,9 @@ public class Requirements {
         else if (order.mission() != null) {
             return A.supplyUsed() >= order.minSupply();
         }
-        System.err.println(order);
-        throw new RuntimeException("Shouldn't reach here");
+
+        ErrorLog.printMaxOncePerMinute("Shouldn't reach order here: " + order);
+        return false;
     }
 
     public static boolean hasRequirements(AUnitType type) {
@@ -86,16 +89,39 @@ public class Requirements {
         }
 
         AUnitType required = AUnitType.from(tech.requiredUnit());
-        return required == null || Count.ofType(AUnitType.from(tech.requiredUnit())) > 0;
+//        if (TechType.Stim_Packs.equals(tech)) {
+//            System.out.println("for Stim_Packs required = " + required);
+//            System.out.println("for Stim_Packs whatResearches = " + tech.whatResearches());
+//        }
+        if (required != null && Count.ofType(required) == 0) return false;
+
+        AUnitType whatResearches = AUnitType.from(tech.whatResearches());
+        if (whatResearches != null && Count.ofType(whatResearches) == 0) return false;
+
+        return true;
     }
 
     private static boolean hasRequirements(UpgradeType upgrade) {
         if (upgrade.gasPrice() > 0) {
-            if (!A.hasGas((int) (upgrade.gasPrice() * 0.4))) return false;
+            if (AGame.gas() < (upgrade.gasPrice() * 0.4)) return false;
         }
 
-        AUnitType required = AUnitType.from(upgrade.whatsRequired());
-        if (required != null && Count.ofType(required) == 0) return false;
+        if (upgrade.whatsRequired() != null) {
+            AUnitType required = AUnitType.from(upgrade.whatsRequired());
+//            if (U238.upgradeType().equals(upgrade)) {
+//                A.errPrintln("for U238 required = " + required);
+//            }
+            if (required != null && Count.ofType(required) == 0) return false;
+        }
+
+        if (upgrade.whatUpgrades() != null) {
+            AUnitType whatUpgrades = AUnitType.from(upgrade.whatUpgrades());
+//            if (U238.upgradeType().equals(upgrade)) {
+//                A.errPrintln("for U238 whatResearches = " + whatUpgrades);
+//            }
+            if (whatUpgrades != null && Count.ofType(whatUpgrades) == 0) return false;
+        }
+
         return true;
     }
 

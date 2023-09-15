@@ -12,7 +12,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.production.dynamic.expansion.InitialMainPosition;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

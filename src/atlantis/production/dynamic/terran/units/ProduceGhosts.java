@@ -2,7 +2,7 @@ package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;

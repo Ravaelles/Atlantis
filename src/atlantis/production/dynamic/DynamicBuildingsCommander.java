@@ -9,7 +9,7 @@ import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

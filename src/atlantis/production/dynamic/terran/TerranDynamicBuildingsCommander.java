@@ -8,7 +8,7 @@ import atlantis.production.dynamic.reinforce.ReinforceBasesWithCombatBuildings;
 import atlantis.production.dynamic.reinforce.terran.turrets.ReinforceBunkersWithTurrets;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretNeededHere;
 import atlantis.production.dynamic.terran.buildings.BuildFactory;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;

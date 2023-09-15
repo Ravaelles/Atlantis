@@ -17,7 +17,6 @@ public class ReservedResources {
     // =========================================================
 
     public static void reserveMinerals(int minerals) {
-//        A.errPrintln("reserveMinerals(" + minerals + " / " + ReservedResources.minerals + ")");
         ReservedResources.minerals += minerals;
     }
 

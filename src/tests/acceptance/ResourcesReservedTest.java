@@ -4,15 +4,13 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.TerranStrategies;
-import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.units.select.Select;
 import atlantis.util.Options;
-import bwapi.TechType;
 import org.junit.Test;
 import tests.unit.DynamicMockOurUnits;
 import tests.unit.FakeUnit;
@@ -26,38 +24,35 @@ import static org.junit.Assert.assertTrue;
 
 public class ResourcesReservedTest extends NonAbstractTestFakingGame {
     private Queue queue = null;
+    private Orders readyToProduceOrders;
+    private int initialReservedMinerals;
+    private int afterInProgressMinerals;
 
     @Test
-    public void reservedMineralsAndGasAreRespected() {
+    public void reservedMineralsAndGasAreUpdatedAsOrderStatusChanges() {
         ReservedResources.reset();
+        initialReservedMinerals = 600;
+        afterInProgressMinerals = 500;
 
         createWorld(1,
             () -> {
-                ReservedResources.reset();
+                mineralsAreReservedForOrdersMarkedAsReady();
+                ProductionOrder order = readyToProduceOrders.first();
 
-                assertEquals(0, ReservedResources.minerals());
+                assertEquals(initialReservedMinerals, ReservedResources.minerals());
 
-                queue = initQueue(640, 2323);
-                queue.refresh();
+//                System.out.println("readyToProduceOrders.first() = " + readyToProduceOrders.first());
+//                readyToProduceOrders.first().unitType().print("First unit type");
 
-                assertEquals(640, A.minerals());
+                Queue.get().allOrders().print("All orders");
 
-                Orders readyToProduceOrders = queue.readyToProduceOrders();
+                order.setStatus(OrderStatus.IN_PROGRESS);
 
-//                queue.allOrders().print("All orders");
-//                readyToProduceOrders.print("ReadyToProduceOrders");
+                assertEquals(afterInProgressMinerals, ReservedResources.minerals());
 
-                assertEquals(600, ReservedResources.minerals());
-                assertEquals(6, readyToProduceOrders.size());
-                Orders nextOrders = queue.nextOrders(20);
-                int nextOrdersSize = nextOrders.size();
+                order.setStatus(OrderStatus.COMPLETED);
 
-//                queue.allOrders().print("All orders");
-//                nextOrders.print("\nNext orders");
-
-                assertTrue(readyToProduceOrders.size() < nextOrdersSize);
-                assertEquals(11, nextOrdersSize);
-                assertTrue(nextOrders.list().get(nextOrdersSize - 1).minSupply() >= 45);
+                assertEquals(afterInProgressMinerals, ReservedResources.minerals());
             },
             () -> FakeUnitHelper.merge(
                 ourInitialUnits(),
@@ -72,24 +67,37 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
         );
     }
 
+    private void mineralsAreReservedForOrdersMarkedAsReady() {
+        ReservedResources.reset();
+
+        assertEquals(0, ReservedResources.minerals());
+
+        queue = initQueue(640, 2323);
+        queue.refresh();
+
+        assertEquals(640, A.minerals());
+
+        readyToProduceOrders = queue.readyToProduceOrders();
+
+        queue.allOrders().print("All orders");
+//        readyToProduceOrders.print("ReadyToProduceOrders");
+        ReservedResources.print();
+
+        assertEquals(initialReservedMinerals, ReservedResources.minerals());
+        assertEquals(6, readyToProduceOrders.size());
+        Orders nextOrders = queue.nextOrders(20);
+
+//        queue.allOrders().print("All orders");
+//        nextOrders.print("\nNext orders");
+
+        assertTrue(readyToProduceOrders.size() < nextOrders.size());
+        assertTrue(nextOrders.first().minSupply() >= 14);
+    }
+
     // =========================================================
 
     private FakeUnit[] ourInitialUnits() {
         return fakeExampleOurs();
-    }
-
-    private void mockOurUnitsByAddingNewUnit(FakeUnit[] ourNewFakeUnits) {
-        ArrayList<FakeUnit> ourUnits = FakeUnitHelper.fakeUnitsToArrayList(ourInitialUnits());
-        ArrayList<FakeUnit> newUnitsCollection = FakeUnitHelper.fakeUnitsToArrayList(ourNewFakeUnits);
-        ourUnits.addAll(newUnitsCollection);
-
-        DynamicMockOurUnits.mockOur(ourUnits);
-        if (queue != null) queue.clearCache();
-        if (queue != null) queue.refresh();
-    }
-
-    private Queue initQueue() {
-        return initQueue(3456, 2345);
     }
 
     private Queue initQueue(int minerals, int gas) {

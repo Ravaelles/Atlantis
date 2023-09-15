@@ -11,7 +11,7 @@ import atlantis.util.Counter;
 public class QueueRefresher {
     private final Queue queue;
     private final Counter<AUnitType> existingCounter;
-    private boolean allOrdersFromNowNotReady = false;
+    private boolean noMoreNewReadyOrdersFromNowOn;
 
     public QueueRefresher(Queue queue) {
         this.queue = queue;
@@ -19,45 +19,43 @@ public class QueueRefresher {
     }
 
     public void refresh() {
-//        A.printStackTrace();
+//        A.errPrintln("@ " + A.now() + " - REFRESH QUEUE -----------------------------");
+        noMoreNewReadyOrdersFromNowOn = false;
 
         for (ProductionOrder order : queue.allOrders().list()) {
-            if (allOrdersFromNowNotReady) break;
-
             updateOrderStatus(order);
         }
     }
 
     private OrderStatus updateOrderStatus(ProductionOrder order) {
-        if (IsOrderNotCompleted.isOrderNotCompleted(order, existingCounter)) {
-            return updateWhenNotCompleted(order);
-        }
+        if (!IsOrderNotCompleted.check(order, existingCounter)) return markAsComplete(order);
 
-        return markAsComplete(order);
+        if (IsOrderInProgress.check(order)) return markAsInProgress(order);
+
+        return tryChangingStatusToReady(order);
     }
 
-    private OrderStatus updateWhenNotCompleted(ProductionOrder order) {
-        // In progress
-        if (IsOrderInProgress.check(order)) {
-            return markAsInProgress(order);
-        }
-
-        if (allOrdersFromNowNotReady) {
-            return markAsNotReady(order);
-        }
+    private OrderStatus tryChangingStatusToReady(ProductionOrder order) {
+        if (noMoreNewReadyOrdersFromNowOn) return markAsNotReady(order);
 
 //        System.err.println("supplyUsed = " + AGame.supplyUsed());
 //        System.err.println("minerals = " + AGame.minerals());
-//        System.err.println("order = " + order);
+//        System.err.println("CHECK order = " + order);
 //        System.err.println("calculateIfHasWhatRequired() = " + order.calculateIfHasWhatRequired());
+//        ReservedResources.print();
 
         // Ready to produce
-        if (IsReadyToProduceOrder.isReadyToProduce(order)) {
-            return markAsReadyToProduce(order);
-        }
+        if (IsReadyToProduceOrder.isReadyToProduce(order)) return markAsReadyToProduce(order);
 
-        allOrdersFromNowNotReady = true;
+        if (!IsReadyToProduceOrder.canAffordWithReserved(order)) noMoreNewReadyOrdersFromNowOn = true;
+//        return null;
+
+//        System.err.println("\n@@@@@@@@ FROM NOW ON NOT READY @@@@@");
+//        ReservedResources.print();
+
+//        noMoreNewReadyOrdersFromNowOn = true;
         return null;
+
     }
 
     // =========================================================
@@ -67,9 +65,6 @@ public class QueueRefresher {
     }
 
     private OrderStatus markAsReadyToProduce(ProductionOrder order) {
-        ReservedResources.reserveMinerals(order.mineralPrice());
-        ReservedResources.reserveGas(order.gasPrice());
-
         return order.setStatus(OrderStatus.READY_TO_PRODUCE);
     }
 
@@ -78,6 +73,10 @@ public class QueueRefresher {
     }
 
     private OrderStatus markAsComplete(ProductionOrder order) {
-        return order.setStatus(OrderStatus.COMPLETED);
+        order.setStatus(OrderStatus.COMPLETED);
+
+//        OrderWasCompleted.update(order, queue);
+
+        return order.status();
     }
 }

@@ -1,4 +1,4 @@
-package atlantis.production.orders.build;
+package atlantis.production.orders.production.queue.add;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
@@ -67,7 +67,6 @@ public class AddToQueue {
         if (Count.inQueueOrUnfinished(upgrade, 3) > 0) return false;
 
         Queue.get().addNew(0, new ProductionOrder(upgrade, 0));
-//        ProductionQueue.addToQueue(0, new ProductionOrder(upgrade, 0));
         return true;
     }
 
@@ -92,7 +91,8 @@ public class AddToQueue {
 //        nextOrders.print("nextOrders");
 
         if (nextOrders.isEmpty()) {
-            return A.supplyUsed() - 1;
+//            return A.supplyUsed() - 1;
+            return 0;
         }
 
 //        System.err.println("A = " + (nextOrders.list().get(0).minSupply() + 1));
@@ -129,12 +129,6 @@ public class AddToQueue {
         return false;
     }
 
-    // =========================================================
-
-//    private static boolean allowToQueueRequiredBuildings(AUnitType type) {
-//        return type.isCombatBuilding();
-//    }
-
     private static int indexForPriority(ProductionOrderPriority priority) {
         if (priority.isStandard()) {
             return CountInQueue.countOrdersWithPriorityAtLeast(ProductionOrderPriority.HIGH);
@@ -144,14 +138,6 @@ public class AddToQueue {
     }
 
     protected static boolean addToQueue(AUnitType type) {
-//        if (AGame.supplyFree() == 0) {
-//            return false;
-//        }
-
-//        if (!AGame.canAffordWithReserved(Math.max(80, type.getMineralPrice()), type.getGasPrice())) {
-//            return false;
-//        }
-
         withStandardPriority(type);
         return true;
     }

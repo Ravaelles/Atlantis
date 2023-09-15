@@ -52,4 +52,5 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 51 - U 238 Shells
 60 - Starport
 63 - Control Tower
+65 - Science Facility
 67 - Science Vessel

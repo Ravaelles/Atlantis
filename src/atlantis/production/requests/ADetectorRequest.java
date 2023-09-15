@@ -3,7 +3,7 @@ package atlantis.production.requests;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

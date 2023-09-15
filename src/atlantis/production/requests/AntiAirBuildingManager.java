@@ -2,7 +2,7 @@ package atlantis.production.requests;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiAir;
 import atlantis.production.requests.zerg.ZergSporeColony;
 import atlantis.units.AUnit;

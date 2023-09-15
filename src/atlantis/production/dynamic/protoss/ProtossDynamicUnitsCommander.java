@@ -9,7 +9,7 @@ import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.GamePhase;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

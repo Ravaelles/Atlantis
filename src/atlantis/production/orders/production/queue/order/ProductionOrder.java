@@ -10,40 +10,33 @@ import bwapi.UpgradeType;
 
 public class ProductionOrder implements Comparable<ProductionOrder> {
     private static int firstFreeId = 1;
+    /**
+     * Upgrade type to research. Can be null if this production order is for something else than upgrade.
+     */
+    private final UpgradeType upgrade;
+    /**
+     * Tech type to research. Can be null if this production order is for something else than upgrade.
+     */
+    private final TechType tech;
     private int id;
     private OrderStatus status = OrderStatus.NOT_READY;
-
     /**
      * How much supply has to be used for this order to become active
      */
     private int minSupply;
-
     /**
      * AUnit type to be built. Can be null if this production order is for something else than upgrade.
      */
     private AUnitType unitOrBuilding = null;
-
     /**
      * Makes sense only for buildings.
      */
     private HasPosition position = null;
-
     /**
      * Maximum distance from a given position to build this building.
      * -1 means no limit.
      */
     private int maximumDistance = -1;
-
-    /**
-     * Upgrade type to research. Can be null if this production order is for something else than upgrade.
-     */
-    private final UpgradeType upgrade;
-
-    /**
-     * Tech type to research. Can be null if this production order is for something else than upgrade.
-     */
-    private final TechType tech;
-
     /**
      * At this supply we should change global mission to this.
      */
@@ -64,7 +57,10 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
      */
     private ProductionOrderPriority priority = ProductionOrderPriority.STANDARD;
 
+    private OrderReservations orderReservations = new OrderReservations(this);
+
     // =========================================================
+
     public ProductionOrder(AUnitType unitOrBuilding, int minSupply) {
         this(unitOrBuilding, null, null, null, minSupply);
     }
@@ -104,12 +100,20 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     public boolean equals(Object object) {
         if (object == null) return false;
         if (!(object instanceof ProductionOrder)) return false;
-        return ((ProductionOrder) object).id == id;
+        ProductionOrder otherOrder = (ProductionOrder) object;
+
+        if (otherOrder.id == id) return true;
+
+        if (otherOrder.unitType() != null && otherOrder.unitType().equals(unitType())) return true;
+        if (otherOrder.tech() != null && otherOrder.tech().equals(tech())) return true;
+        if (otherOrder.upgrade() != null && otherOrder.upgrade().equals(upgrade())) return true;
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return hashCode() * 7;
+        return id * 7;
     }
 
     @Override
@@ -320,8 +324,21 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         return status.equals(orderStatus);
     }
 
-    public OrderStatus setStatus(OrderStatus status) {
-        this.status = status;
-        return this.status;
+    public OrderStatus setStatus(OrderStatus newStatus) {
+        this.status = newStatus;
+
+        if (status.ready()) this.reserveResources();
+//        if (status.inProgress()) this.clearResourcesReserved();
+        else this.clearResourcesReserved();
+
+        return status;
+    }
+
+    public void reserveResources() {
+        orderReservations.reserveResources();
+    }
+
+    public void clearResourcesReserved() {
+        orderReservations.clearResourcesReserved();
     }
 }
