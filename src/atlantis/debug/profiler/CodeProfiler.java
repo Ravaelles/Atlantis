@@ -38,8 +38,10 @@ public class CodeProfiler {
         if (!AtlantisConfig.USE_CODE_PROFILER) return;
 
         if (aspectsStart.containsKey(title)) {
-            long measured = realNowInMs() - aspectsStart.get(title);
-            aspectsLength.put(title, measured);
+            long measuredLengthInMs = realNowInMs() - aspectsStart.get(title);
+            aspectsLength.put(title, measuredLengthInMs);
+
+            LongFrames.checkPotentialLongMeasurement(measuredLengthInMs, title);
         }
     }
 
@@ -116,7 +118,6 @@ public class CodeProfiler {
     // =========================================================
 
     private static void measureAspect(String title) {
-
         aspectsStart.put(title, realNowInMs());
     }
 

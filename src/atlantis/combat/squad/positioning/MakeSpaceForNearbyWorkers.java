@@ -18,15 +18,13 @@ public class MakeSpaceForNearbyWorkers extends Manager {
     @Override
     public boolean applies() {
         if (unit.isMissionAttackOrGlobalAttack()) return false;
-
         if (unit.friendsNear().groundUnits().nonBuildings().countInRadius(1, unit) <= 1) return false;
-
+        if (unit.friendsNear().workers().inRadius(4, unit).empty()) return false;
         if (unit.enemiesNearInRadius(12) > 0) return false;
-
         if (A.seconds() % 6 <= 3) return false;
 
         AChoke choke = Chokes.nearestChoke(unit);
-        if (choke != null && choke.distTo(unit) >= 5) return false;
+        if (choke != null && choke.distTo(unit) >= 6) return false;
 
         return true;
     }

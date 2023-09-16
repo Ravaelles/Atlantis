@@ -14,7 +14,9 @@ public class TooFarFromMedic extends Manager {
 
     @Override
     public boolean applies() {
-        return Count.medics() >= 2 && unit.isTerranInfantryWithoutMedics();
+        return Count.medics() >= 2
+            && unit.isTerranInfantryWithoutMedics()
+            && unit.friendsNear().inRadius(1.5, unit).count() <= 3;
     }
 
     protected Manager handle() {

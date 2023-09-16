@@ -1,6 +1,7 @@
 package atlantis.debug.profiler;
 
 import atlantis.game.A;
+import atlantis.util.log.ErrorLog;
 
 public class LongFrames {
     private static int framesOver85 = 0;
@@ -24,15 +25,11 @@ public class LongFrames {
         A.println();
     }
 
-//    public static Integer[] getSummary() {
-//        Integer[] summary = new Integer[3];
-//
-//        summary[0] = framesOver10000;
-//        summary[1] = framesOver1000;
-//        summary[2] = framesOver85;
-//
-//        return summary;
-//    }
+    public static void checkPotentialLongMeasurement(long lengthInMs, String title) {
+        if (lengthInMs < 100 || A.now() <= 1) return;
+
+        ErrorLog.printMaxOncePerMinute("Long measurement (" + title + "). Took " + lengthInMs + "ms");
+    }
 
     public static int framesOver85() {
         return framesOver85;

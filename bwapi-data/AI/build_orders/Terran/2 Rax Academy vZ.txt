@@ -31,10 +31,10 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 
 @ - Name - Modifier
 9 - Supply Depot
-11 - Barracks
-14 - Supply Depot
+10 - Barracks
 14 - Barracks
-19 - Bunker - @MAIN
+14 - Supply Depot
+16 - Bunker - @MAIN
 22 - Supply Depot
 26 - Academy
 26 - Bunker - @MAIN_CHOKE
@@ -46,8 +46,8 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 38 - Stim Packs
 40 - Engineering Bay
 42 - U 238 Shells
+47 - Factory
 50 - Barracks
-//47 - Factory
 //49 - Tank
 //52 - Tank
 //54 - Missile Turret

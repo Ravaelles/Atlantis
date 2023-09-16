@@ -36,7 +36,7 @@ public class TravelToConstruct extends HasUnit {
 
         // =========================================================
 
-        double minDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 2.6 : 1.1;
+        double minDistanceToIssueBuildOrder = buildingType.isGasBuilding() ? 3.5 : 2.1;
         double distance = unit.distTo(buildPositionCenter);
         String distString = "(" + A.digit(distance) + ")";
 
@@ -46,7 +46,7 @@ public class TravelToConstruct extends HasUnit {
             return moveToConstruct(construction, buildingType, distance, distString);
         }
         else {
-            if (A.everyNthGameFrame(67)) {
+            if (A.everyNthGameFrame(79) || unit.hasNotMovedInAWhile()) {
                 refreshConstructionPositionIfNeeded(construction, buildingType);
             }
 
