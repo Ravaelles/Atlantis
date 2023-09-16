@@ -53,8 +53,8 @@ public class APositionFinder {
         Construction construction,
         HasPosition nearTo, double maxDistance
     ) {
-        if (nearTo == null && building.isSupplyDepot() && A.chance(75)) {
-            nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).random();
+        if (nearTo == null && building.isSupplyDepot()) {
+            nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
         }
 
         if (building.isBunker() && maxDistance <= 5) {
