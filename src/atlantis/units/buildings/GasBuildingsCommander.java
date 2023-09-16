@@ -29,13 +29,9 @@ public class GasBuildingsCommander extends Commander {
             return;
         }
 
-//        if (ConstructionRequests.countNotFinishedOfType(Terran_Factory) >= 1) {
-        if (Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
-            return;
-        }
-
-
-//            " / " + AtlantisRaceConfig.GAS_BUILDING);
+//        if (Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
+//            return;
+//        }
     }
 
     private static void controlNumberOfWorkersGatheringGasAtEachBuilding() {
@@ -130,49 +126,5 @@ public class GasBuildingsCommander extends Commander {
 
     private static int expectedGasWorkers(AUnit gasBuilding, int numOfWorkersNear) {
         return defineGasWorkersPerBuilding();
-
-//        if (Count.workers() <= 8) {
-//            return 0;
-//        }
-//
-//        // Too much gas, too little minerals
-//        if (A.seconds() <= 800) {
-//            if ((A.hasGas(170) && Count.workers() <= 19) || (!A.hasMinerals(160) && A.hasGas(150))) {
-//                return 1;
-//            }
-//        }
-//
-////        if (AGame.hasGas(800)) {
-////            return 1;
-////        }
-//
-////        if (gasBuilding.isDepleted()) {
-////            return GamePhase.isLateGame() && AGame.canAfford(0, 200) ? 0 : 1;
-////        }
-//
-////        if (Select.ourBases().inRadius(10, gasBuilding).isEmpty()) {
-////            return 0;
-////        }
-//
-//        if (GamePhase.isEarlyGame() && AGame.canAfford(0, 100)) {
-//            return (int) A.inRange(1, numOfWorkersNear / 4, 3);
-//        }
-//
-//        return 3;
-//
-////        int totalGasNeeded = 0;
-////        ArrayList<ProductionOrder> nextOrders = ProductionQueue.nextInProductionQueue(
-////                1 + (AGame.timeSeconds() > 300 ? 2 : 0)
-////        );
-////        for (ProductionOrder order : nextOrders) {
-////            totalGasNeeded += order.getGasRequired();
-////        }
-////
-////        if (Select.ourWorkers().count() >= 30) {
-////            return 3;
-////        }
-////
-////        return (totalGasNeeded > 0 && !AGame.hasGas(totalGasNeeded) ? 3 : 1);
     }
-
 }

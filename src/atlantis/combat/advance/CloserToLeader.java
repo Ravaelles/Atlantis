@@ -19,10 +19,10 @@ public class CloserToLeader extends MissionManager {
             && !squad.isLeader(unit)
 //            && unit.mission().focusPoint() != null
             && A.seconds() % 6 <= 3
-            && unit.friendsInRadiusCount(3) <= 11
-            && unit.friendsInRadiusCount(1.3) <= 4
-            && unit.friendsInRadiusCount(0.5) <= 2
-            && (unit.noCooldown() && unit.enemiesNearInRadius(7) == 0);
+            && (unit.noCooldown() && unit.enemiesNearInRadius(8) == 0)
+            && unit.friendsInRadiusCount(3) <= 9
+            && unit.friendsInRadiusCount(1.3) <= 3
+            && unit.friendsInRadiusCount(0.5) <= 2;
     }
 
     @Override

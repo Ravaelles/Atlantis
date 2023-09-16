@@ -22,12 +22,13 @@ public class Orders implements OrdersFilters {
     // === Add ==================================================
 
     public boolean add(int index, ProductionOrder item) {
-        if (!orders.contains(item)) {
-            System.err.println(
-                "@ " + A.now() + " added " + item + " / " +
-                    (item.unitType() == null ? "" : CountInQueue.count(item.unitType(), 30))
-            );
-        }
+//        if (!orders.contains(item)) {
+//            System.err.println(
+//                "@ " + A.now() + " added " + item + " / " +
+//                    (item.unitType() == null ? "" : CountInQueue.count(item.unitType(), 30))
+//            );
+//        }
+
         if (!orders.contains(item)) {
             orders.add(index, item);
             return true;

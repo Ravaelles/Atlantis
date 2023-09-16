@@ -221,7 +221,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     }
 
     protected void setUpStrategy() {
-        OurStrategy.setTo(TerranStrategies.TERRAN_Nada_2_Fac);
+        OurStrategy.setTo(TerranStrategies.TERRAN_MMG_vP);
     }
 
     // =========================================================

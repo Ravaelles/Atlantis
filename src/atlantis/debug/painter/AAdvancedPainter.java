@@ -1101,9 +1101,9 @@ public class AAdvancedPainter extends APainter {
     static void paintBuildingsTrainingUnitsAndResearching() {
         setTextSizeMedium();
         for (AUnit building : Select.ourBuildings().list()) {
-            if (!building.isBusy()) {
-                continue;
-            }
+//            if (!building.isBusy()) {
+//                continue;
+//            }
 
             // UNITS PRODUCED
             if (building.isTrainingAnyUnit()) {

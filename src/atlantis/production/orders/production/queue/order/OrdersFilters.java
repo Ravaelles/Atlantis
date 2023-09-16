@@ -102,4 +102,10 @@ public interface OrdersFilters {
                 .collect(Collectors.toList())
         );
     }
+
+    default int sumMinerals() {
+        return list().stream()
+            .mapToInt(ProductionOrder::mineralPrice)
+            .sum();
+    }
 }

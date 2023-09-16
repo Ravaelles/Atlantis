@@ -6,7 +6,6 @@ import atlantis.production.orders.production.queue.updater.QueueRefresher;
 
 public class Queue extends AbstractQueue {
     private static Queue instance = null;
-    private Orders completedOrdersHistory = new Orders();
 
     // =========================================================
 
@@ -86,9 +85,5 @@ public class Queue extends AbstractQueue {
 
     public static void set(Queue instance) {
         Queue.instance = instance;
-    }
-
-    public Orders completedOrdersHistory() {
-        return completedOrdersHistory;
     }
 }

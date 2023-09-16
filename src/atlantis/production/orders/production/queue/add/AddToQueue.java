@@ -59,7 +59,6 @@ public class AddToQueue {
         }
 
         Queue.get().addNew(0, productionOrder);
-//        ProductionQueue.addToQueue(0, productionOrder);
         return true;
     }
 
@@ -79,7 +78,7 @@ public class AddToQueue {
 
         if (Queue.get().addNew(index, productionOrder)) {
             Queue.get().clearCache();
-            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
+//            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }
 
         return productionOrder;

@@ -4,6 +4,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.Requirements;
+import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -82,11 +83,11 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         this(unitOrBuilding, position, null, null, minSupply);
     }
 
-    public ProductionOrder(AUnitType unitOrBuilding, HasPosition position, TechType tech, UpgradeType upgrade, int minSupply) {
-        assert unitOrBuilding != null || tech != null || upgrade != null;
+    public ProductionOrder(AUnitType type, HasPosition position, TechType tech, UpgradeType upgrade, int minSupply) {
+        assert type != null || tech != null || upgrade != null;
 
         this.id = firstFreeId++;
-        this.unitOrBuilding = unitOrBuilding;
+        this.unitOrBuilding = type;
         this.position = position;
         this.minSupply = minSupply;
         this.tech = tech;
@@ -104,9 +105,11 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
         if (otherOrder.id == id) return true;
 
-        if (otherOrder.unitType() != null && otherOrder.unitType().equals(unitType())) return true;
-        if (otherOrder.tech() != null && otherOrder.tech().equals(tech())) return true;
-        if (otherOrder.upgrade() != null && otherOrder.upgrade().equals(upgrade())) return true;
+//        if (otherOrder.unitType() != null && otherOrder.unitType().equals(unitType())) return true;
+        if (otherOrder.minSupply == minSupply) {
+            if (otherOrder.tech() != null && otherOrder.tech().equals(tech())) return true;
+            if (otherOrder.upgrade() != null && otherOrder.upgrade().equals(upgrade())) return true;
+        }
 
         return false;
     }
@@ -118,14 +121,16 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     @Override
     public String toString() {
+        String suffix = " " + statusString() + " (#" + id() + ")";
+
         if (unitOrBuilding != null) {
-            return "At " + minSupply + " " + name() + (modifier != null ? " " + modifier : "") + " " + statusString();
+            return "At " + minSupply + " " + name() + (modifier != null ? " " + modifier : "") + suffix;
         }
         else if (upgrade != null) {
-            return "At " + minSupply + " " + name() + " " + statusString();
+            return "At " + minSupply + " " + name() + suffix;
         }
         else if (tech != null) {
-            return "At " + minSupply + " " + name() + " " + statusString();
+            return "At " + minSupply + " " + name() + suffix;
         }
         else if (mission != null) {
             return "At " + minSupply + " " + mission.name();
@@ -325,20 +330,24 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     }
 
     public OrderStatus setStatus(OrderStatus newStatus) {
-        this.status = newStatus;
+        if (this.status != newStatus) {
+            this.status = newStatus;
 
-        if (status.ready()) this.reserveResources();
-//        if (status.inProgress()) this.clearResourcesReserved();
-        else this.clearResourcesReserved();
+            OrderStatusWasChanged.update(this, newStatus);
+        }
 
         return status;
     }
 
-    public void reserveResources() {
+    public void makeSureResourcesAreReserved() {
         orderReservations.reserveResources();
     }
 
-    public void clearResourcesReserved() {
+    public void makeSureToClearReservedResources() {
         orderReservations.clearResourcesReserved();
+    }
+
+    public OrderReservations reservations() {
+        return orderReservations;
     }
 }

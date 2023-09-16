@@ -2,6 +2,7 @@ package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -38,7 +39,7 @@ public class NewGasBuildingCommander extends Commander {
                 && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.GAS_BUILDING) == 0
                 && hasABaseWithFreeGeyser()
         ) {
-//            System.err.println("Request GAS BUILDING at supply: " + A.supplyUsed());
+//            A.errPrintln("Request GAS BUILDING at supply: " + A.supplyUsed());
             AddToQueue.withTopPriority(AtlantisRaceConfig.GAS_BUILDING);
         }
     }

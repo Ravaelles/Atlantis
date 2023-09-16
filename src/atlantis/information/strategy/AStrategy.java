@@ -11,7 +11,6 @@ import java.util.List;
 
 
 public class AStrategy {
-
     private static final List<AStrategy> allStrategies = new ArrayList<>();
 
     // =========================================================

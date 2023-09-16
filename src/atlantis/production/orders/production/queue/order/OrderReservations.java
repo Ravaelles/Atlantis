@@ -18,11 +18,13 @@ public class OrderReservations {
         if (alreadyReserved) return;
 
         reservedMinerals = order.mineralPrice();
-        reservedGas = order.mineralPrice();
+        reservedGas = order.gasPrice();
 
         ReservedResources.reserveMinerals(reservedMinerals);
         ReservedResources.reserveGas(reservedGas);
         alreadyReserved = true;
+
+//        System.err.println("        reserved=" + reservedMinerals + " for " + order + " / " + ReservedResources.minerals());
     }
 
     public void clearResourcesReserved() {
@@ -35,5 +37,15 @@ public class OrderReservations {
         reservedMinerals = 0;
         reservedGas = 0;
         alreadyReserved = false;
+
+//        System.err.println("CLEARED reservedMinerals = " + reservedMinerals + " for " + order + " / " + ReservedResources.minerals());
+    }
+
+    public int minerals() {
+        return reservedMinerals;
+    }
+
+    public int gas() {
+        return reservedGas;
     }
 }

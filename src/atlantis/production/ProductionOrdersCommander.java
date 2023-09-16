@@ -3,6 +3,7 @@ package atlantis.production;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
+import atlantis.information.strategy.GamePhase;
 import atlantis.production.constructing.ConstructionRequests;
 
 import atlantis.production.orders.production.queue.Queue;
@@ -17,8 +18,7 @@ public class ProductionOrdersCommander extends Commander {
      */
     @Override
     protected void handle() {
-        // Get sequence of units (Production Orders) based on current build order
-//        ArrayList<ProductionOrder> queue = CurrentProductionQueue.get(ProductionQueueMode.REQUIREMENTS_FULFILLED);
+        if (A.everyNthGameFrame(GamePhase.isEarlyGame() ? 19 : 71)) Queue.get().refresh();
 
         for (ProductionOrder order : Queue.get().readyToProduceOrders().list()) {
             if (newBaseInProgressAndCantAffordThisOrder(order)) return;

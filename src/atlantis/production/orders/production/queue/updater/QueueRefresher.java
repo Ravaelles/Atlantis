@@ -3,6 +3,7 @@ package atlantis.production.orders.production.queue.updater;
 import atlantis.game.A;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -25,6 +26,10 @@ public class QueueRefresher {
         for (ProductionOrder order : queue.allOrders().list()) {
             updateOrderStatus(order);
         }
+
+//        queue.clearCache();
+//        queue.allOrders().print("ALL");
+//        ReservedResources.print();
     }
 
     private OrderStatus updateOrderStatus(ProductionOrder order) {
@@ -38,22 +43,11 @@ public class QueueRefresher {
     private OrderStatus tryChangingStatusToReady(ProductionOrder order) {
         if (noMoreNewReadyOrdersFromNowOn) return markAsNotReady(order);
 
-//        System.err.println("supplyUsed = " + AGame.supplyUsed());
-//        System.err.println("minerals = " + AGame.minerals());
-//        System.err.println("CHECK order = " + order);
-//        System.err.println("calculateIfHasWhatRequired() = " + order.calculateIfHasWhatRequired());
-//        ReservedResources.print();
-
         // Ready to produce
         if (IsReadyToProduceOrder.isReadyToProduce(order)) return markAsReadyToProduce(order);
 
         if (!IsReadyToProduceOrder.canAffordWithReserved(order)) noMoreNewReadyOrdersFromNowOn = true;
-//        return null;
 
-//        System.err.println("\n@@@@@@@@ FROM NOW ON NOT READY @@@@@");
-//        ReservedResources.print();
-
-//        noMoreNewReadyOrdersFromNowOn = true;
         return null;
 
     }
@@ -74,8 +68,6 @@ public class QueueRefresher {
 
     private OrderStatus markAsComplete(ProductionOrder order) {
         order.setStatus(OrderStatus.COMPLETED);
-
-//        OrderWasCompleted.update(order, queue);
 
         return order.status();
     }

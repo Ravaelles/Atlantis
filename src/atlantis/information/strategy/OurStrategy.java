@@ -37,10 +37,10 @@ public class OurStrategy {
     public static void setTo(AStrategy strategy) {
         assertNotNull(strategy);
 
+        if (ourStrategy == strategy) return;
+
         ourStrategy = strategy;
 
-//        ProductionQueue.useBuildOrderFrom(strategy);
         QueueInitializer.initializeProductionQueue();
     }
-
 }

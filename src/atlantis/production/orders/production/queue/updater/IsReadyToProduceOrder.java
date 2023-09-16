@@ -1,12 +1,8 @@
 package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.production.dynamic.terran.tech.U238;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.units.AUnitType;
-import bwapi.TechType;
 
 public class IsReadyToProduceOrder {
     protected static boolean isReadyToProduce(ProductionOrder order) {
@@ -32,9 +28,9 @@ public class IsReadyToProduceOrder {
     }
 
     public static boolean canAffordWithReserved(ProductionOrder order) {
-        return (A.minerals() - ReservedResources.minerals() >= order.mineralPrice())
-            && (A.gas() - ReservedResources.gas() >= order.gasPrice());
+        int mineralsAvailable = A.minerals() - ReservedResources.minerals() + order.reservations().minerals();
+        int gasAvailable = A.gas() - ReservedResources.gas() + order.reservations().gas();
 
-//        return A.canAffordWithReserved(order.mineralPrice(), order.gasPrice());
+        return (mineralsAvailable >= order.mineralPrice()) && (gasAvailable >= order.gasPrice());
     }
 }
