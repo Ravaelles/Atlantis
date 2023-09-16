@@ -83,7 +83,7 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
 
         readyToProduceOrders = queue.readyToProduceOrders();
 
-//        queue.allOrders().print("All orders");
+        queue.allOrders().print("All orders");
 //        readyToProduceOrders.print("ReadyToProduceOrders");
 //        ReservedResources.print();
 

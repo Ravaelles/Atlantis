@@ -63,8 +63,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static bwapi.Color.Green;
-import static bwapi.Color.Grey;
+import static bwapi.Color.*;
 
 public class AAdvancedPainter extends APainter {
 
@@ -230,7 +229,7 @@ public class AAdvancedPainter extends APainter {
         APosition position = unit.position();
 
         Color inRangeColor = unit.nearestEnemyDist() <= 4
-            ? (unit.cooldownRemaining() == 0 ? Color.Green : Color.Yellow)
+            ? (unit.cooldownRemaining() == 0 ? Color.Green : Yellow)
             : Color.Red;
 
         paintRectangleFilled(
@@ -265,7 +264,7 @@ public class AAdvancedPainter extends APainter {
                 unit,
                 text,
 //                i == 0 ? Color.Yellow : (i == 1 ? Color.White : Color.Grey),
-                i == log.messages().size() - 1 ? Color.Yellow : Color.Grey,
+                i == log.messages().size() - 1 ? Yellow : Color.Grey,
                 0,
                 (baseOffset + (8 * (counter++))) / 32.0
             );
@@ -366,7 +365,7 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Army strength: " + armyStrength + "%", armyStrength >= 100 ? Green : Color.Red);
         paintSideMessage("Enemy strategy: " + (EnemyStrategy.isEnemyStrategyKnown()
                 ? EnemyStrategy.get().toString() : "Unknown"),
-            EnemyStrategy.isEnemyStrategyKnown() ? Color.Yellow : Color.Red);
+            EnemyStrategy.isEnemyStrategyKnown() ? Yellow : Color.Red);
 
         Mission mission = Missions.globalMission();
         if (mission.isMissionDefend()) {
@@ -414,10 +413,10 @@ public class AAdvancedPainter extends APainter {
 
         // =========================================================
 
-        paintSideMessage("Combat squad size: " + Alpha.get().size(), Color.Yellow, 0);
+        paintSideMessage("Combat squad size: " + Alpha.get().size(), Yellow, 0);
 
         int scouts = ScoutCommander.allScouts().size();
-        color = scouts == 0 ? Color.Grey : (scouts == 1 ? Color.Yellow : Color.Red);
+        color = scouts == 0 ? Color.Grey : (scouts == 1 ? Yellow : Color.Red);
         paintSideMessage("Scouts: " + scouts, color, 0);
 
         if (We.terran()) {
@@ -433,7 +432,7 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Workers: " + Count.workers(), Color.White);
         if (We.terran()) {
             int tanks = Count.tanks();
-            paintSideMessage("Tanks: " + tanks, tanks >= 1 ? Color.Yellow : Color.White);
+            paintSideMessage("Tanks: " + tanks, tanks >= 1 ? Yellow : Color.White);
         }
         paintSideMessage("Gas workers per b: " + GasBuildingsCommander.defineGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + ReservedResources.minerals(), Color.Grey);
@@ -643,18 +642,13 @@ public class AAdvancedPainter extends APainter {
             paintSideMessage("----------------", Color.Red);
         }
 
-//        ArrayList<ProductionOrder> nextOrders = CurrentProductionQueue.get(ProductionQueueMode.ENTIRE_QUEUE);
-//        ArrayList<ProductionOrder> nextOrders = CurrentProductionQueue.thingsToProduce(ProductionQueueMode.ONLY_WHAT_CAN_AFFORD);
         int counter = 1;
         for (ProductionOrder order : nextOrders.list()) {
-            paintSideMessage(
-                String.format("%02d", order.minSupply()) + " - " + order.name(),
-                (order.isInProgress() ? Color.Yellow : Color.Red)
-//                order.hasWhatRequired() ? (order.isInProgress() ? Green : Color.Yellow) : Color.Red
-            );
-            if (++counter >= 8) {
-                break;
-            }
+            Color color = productionOrderColor(order);
+
+            paintSideMessage(String.format("%02d", order.minSupply()) + " - " + order.name(), color);
+
+            if (++counter >= 8) break;
         }
 
         // === Display next units to produce ================================================
@@ -676,6 +670,21 @@ public class AAdvancedPainter extends APainter {
 
         if (nextOrders.isEmpty()) {
             paintSideMessage("Nothing to produce - it's a bug", Color.Red);
+        }
+    }
+
+    private static Color productionOrderColor(ProductionOrder order) {
+        switch (order.status()) {
+            case NOT_READY:
+                return Brown;
+            case READY_TO_PRODUCE:
+                return order.canAffordWithReserved() ? Orange : Red;
+            case IN_PROGRESS:
+                return Yellow;
+            case COMPLETED:
+                return Green;
+            default:
+                return Black;
         }
     }
 
@@ -863,11 +872,11 @@ public class AAdvancedPainter extends APainter {
 
             // RUN
             if (unit.isRunning()) {
-                paintLine(unit.position(), unit.runningManager().runToPosition(), Color.Yellow);
-                paintLine(unit.translateByPixels(1, 1), unit.runningManager().runToPosition(), Color.Yellow);
+                paintLine(unit.position(), unit.runningManager().runToPosition(), Yellow);
+                paintLine(unit.translateByPixels(1, 1), unit.runningManager().runToPosition(), Yellow);
 
                 if (unit.runningManager().runToPosition() != null) {
-                    paintCircleFilled(unit.runningManager().runToPosition(), 10, Color.Yellow);
+                    paintCircleFilled(unit.runningManager().runToPosition(), 10, Yellow);
                 }
 
                 paintWhiteFlagWhenRunning(unit);
@@ -997,7 +1006,7 @@ public class AAdvancedPainter extends APainter {
                 progressColor = Color.Red;
             }
             else if (labelProgress < 67) {
-                progressColor = Color.Yellow;
+                progressColor = Yellow;
             }
             else {
                 progressColor = Green;
@@ -1046,7 +1055,7 @@ public class AAdvancedPainter extends APainter {
 
             Color color = Green;
             if (hpRatio < 0.66) {
-                color = Color.Yellow;
+                color = Yellow;
                 if (hpRatio < 0.33) {
                     color = Color.Red;
                 }
@@ -1128,7 +1137,7 @@ public class AAdvancedPainter extends APainter {
             }
 
             // UPGRADING
-            else if (building.isResearching()) {
+            else if (building.isUpgrading()) {
                 UpgradeType upgradeType = building.whatIsUpgrading();
                 paintBuildingActionProgress(
                     building,
@@ -1289,7 +1298,7 @@ public class AAdvancedPainter extends APainter {
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
             for (ARegionBoundary point : ScoutManager.scoutingAroundBasePoints.arrayList()) {
-                paintCircleFilled(point, 2, Color.Yellow);
+                paintCircleFilled(point, 2, Yellow);
             }
         }
     }
@@ -1406,7 +1415,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintLifeBar(AUnit unit) {
-        Color color = unit.isOur() ? Green : Color.Yellow;
+        Color color = unit.isOur() ? Green : Yellow;
 
 //        if (unit.isWounded()) {
         paintUnitProgressBar(unit, 10, 100, Color.Red);
@@ -1654,7 +1663,7 @@ public class AAdvancedPainter extends APainter {
                 continue;
             }
             String away = main == null ? "" : (A.distGround(main, base.position()) + " away");
-            AAdvancedPainter.paintBase(base.position(), "Base " + away, Color.Yellow, -0.3);
+            AAdvancedPainter.paintBase(base.position(), "Base " + away, Yellow, -0.3);
         }
     }
 

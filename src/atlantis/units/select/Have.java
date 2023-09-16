@@ -17,6 +17,11 @@ public class Have {
         return Count.ofType(type) > 0;
     }
 
+    public static boolean no(AUnitType type) {
+//        return Count.withPlanned(type) > 0;
+        return Count.ofType(type) == 0;
+    }
+
     public static boolean unfinishedOrPlanned(AUnitType type) {
         return Count.inProductionOrInQueue(type) > 0;
     }

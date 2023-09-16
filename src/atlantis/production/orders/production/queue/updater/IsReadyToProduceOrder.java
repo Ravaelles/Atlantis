@@ -28,9 +28,31 @@ public class IsReadyToProduceOrder {
     }
 
     public static boolean canAffordWithReserved(ProductionOrder order) {
-        int mineralsAvailable = A.minerals() - ReservedResources.minerals() + order.reservations().minerals();
-        int gasAvailable = A.gas() - ReservedResources.gas() + order.reservations().gas();
+        int mineralsAvailable = mineralsAvailable(order);
+        int gasAvailable = gasAvailable(order);
 
         return (mineralsAvailable >= order.mineralPrice()) && (gasAvailable >= order.gasPrice());
+    }
+
+    // =========================================================
+
+    private static int mineralsAvailable(ProductionOrder order) {
+        int mineralsBonus = mineralsBonusForEarlyConstruction(order);
+
+        return A.minerals() - ReservedResources.minerals() + order.reservations().minerals() + mineralsBonus;
+    }
+
+    private static int gasAvailable(ProductionOrder order) {
+        int gasBonus = gasBonusForEarlyConstruction(order);
+
+        return A.gas() - ReservedResources.gas() + order.reservations().gas() + gasBonus;
+    }
+
+    private static int mineralsBonusForEarlyConstruction(ProductionOrder order) {
+        return order.isBuilding() ? (order.unitType().isBase() ? 150 : 80) : 0;
+    }
+
+    private static int gasBonusForEarlyConstruction(ProductionOrder order) {
+        return order.isBuilding() ? 30 : 0;
     }
 }

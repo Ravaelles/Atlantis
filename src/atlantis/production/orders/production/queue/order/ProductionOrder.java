@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.Requirements;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
+import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -95,7 +96,12 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     }
 
     // =========================================================
-    // Override
+
+    public boolean canAffordWithReserved() {
+        return IsReadyToProduceOrder.canAffordWithReserved(this);
+    }
+
+    // =========================================================
 
     @Override
     public boolean equals(Object object) {
@@ -121,7 +127,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     @Override
     public String toString() {
-        String suffix = " " + statusString() + " (#" + id() + ")";
+        String suffix = " " + statusString() + "(#" + id() + ")";
 
         if (unitOrBuilding != null) {
             return "At " + minSupply + " " + name() + (modifier != null ? " " + modifier : "") + suffix;
@@ -349,5 +355,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public OrderReservations reservations() {
         return orderReservations;
+    }
+
+    public boolean isBuilding() {
+        return unitOrBuilding != null && unitOrBuilding.isBuilding();
     }
 }

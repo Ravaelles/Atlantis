@@ -92,9 +92,8 @@ public class SupplyCommander extends Commander {
 //        A.printStackTrace("Supply request: " + A.supplyUsed() + " // " + A.supplyTotal());
 
         int requestedConstructionsOfSupply = requestedConstructionsOfSupply();
-        if (requestedConstructionsOfSupply >= 2) {
-            System.err.println("@ " + A.now() + " - requestedConstructionsOfSupply = " + requestedConstructionsOfSupply);
-        }
+
+//        if (requestedConstructionsOfSupply >= 2) System.err.println("@ " + A.now() + " - requestedConstructionsOfSupply = " + requestedConstructionsOfSupply);
 
         if (requestedConstructionsOfSupply >= 2) return;
 
