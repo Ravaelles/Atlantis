@@ -12,7 +12,7 @@ import bwapi.UpgradeType;
 public class TerranInfantryWeapons extends Commander {
     @Override
     public boolean applies() {
-        if (A.hasMinerals(700)) return false;
+        if (!A.hasMinerals(800)) return false;
         if (A.seconds() <= 600) return false;
 
         if (OurStrategy.get().goingBio()) {

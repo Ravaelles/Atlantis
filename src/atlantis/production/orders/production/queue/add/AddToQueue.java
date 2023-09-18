@@ -33,6 +33,10 @@ public class AddToQueue {
         return addToQueue(type, position, IndexForNewOrder.indexForPriority(ProductionOrderPriority.TOP));
     }
 
+    public static ProductionOrder withPriority(AUnitType type, ProductionOrderPriority priority) {
+        return addToQueue(type, null, IndexForNewOrder.indexForPriority(priority));
+    }
+
     public static ProductionOrder withHighPriority(AUnitType type) {
         return withHighPriority(type, null);
     }
@@ -141,8 +145,28 @@ public class AddToQueue {
     }
 
     public static boolean maxAtATime(AUnitType type, int maxAtATime) {
+        return maxAtATime(type, maxAtATime, ProductionOrderPriority.STANDARD);
+    }
+
+    public static boolean maxAtATime(AUnitType type, int maxAtATime, ProductionOrderPriority priority) {
         if (CountInQueue.count(type, 30) < maxAtATime) {
-            return addToQueue(type);
+            return withPriority(type, priority) != null;
+        }
+
+        return false;
+    }
+
+    public static boolean toHave(AUnitType type) {
+        return toHave(type, 1, ProductionOrderPriority.STANDARD);
+    }
+
+    public static boolean toHave(AUnitType type, int inTotal) {
+        return toHave(type, inTotal, ProductionOrderPriority.STANDARD);
+    }
+
+    public static boolean toHave(AUnitType type, int inTotal, ProductionOrderPriority priority) {
+        if (Count.existingOrInProductionOrInQueue(type) < inTotal) {
+            return withPriority(type, priority) != null;
         }
 
         return false;
@@ -158,4 +182,5 @@ public class AddToQueue {
         }
         return false;
     }
+
 }

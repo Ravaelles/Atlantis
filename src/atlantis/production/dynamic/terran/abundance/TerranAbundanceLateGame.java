@@ -7,7 +7,7 @@ import atlantis.information.strategy.GamePhase;
 public class TerranAbundanceLateGame extends Commander {
     @Override
     public boolean applies() {
-        return GamePhase.isLateGame() && A.hasFreeSupply(4);
+        return A.hasMinerals(800) && GamePhase.isLateGame() && A.hasFreeSupply(4);
     }
 
     @Override

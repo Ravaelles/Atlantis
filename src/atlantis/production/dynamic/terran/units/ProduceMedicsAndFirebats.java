@@ -48,7 +48,7 @@ public class ProduceMedicsAndFirebats {
                 int unfinishedFirebats = Count.inProductionOrInQueue(AUnitType.Terran_Firebat);
                 if (unfinishedFirebats == 0) {
                     if (marines >= 4 && medics >= 3 && unfinishedFirebats < minFirebats()) {
-                        return AddToQueue.maxAtATime(AUnitType.Terran_Firebat, 2);
+                        return AddToQueue.maxAtATime(AUnitType.Terran_Firebat, 1);
                     }
                 }
             }

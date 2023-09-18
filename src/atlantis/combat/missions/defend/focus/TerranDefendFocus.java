@@ -36,7 +36,8 @@ public class TerranDefendFocus {
                 String tooltip;
                 AChoke mainChoke = Chokes.mainChoke();
                 if (mainChoke != null) {
-                    point = mainChoke.center().translateTilesTowards(3, bunker);
+//                    point = mainChoke.center().translateTilesTowards(3, bunker);
+                    point = bunker.translateTilesTowards(3, mainChoke.center());
                     tooltip = "Bunker & Choke";
                 }
                 else {

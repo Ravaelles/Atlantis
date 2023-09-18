@@ -8,7 +8,7 @@ import atlantis.units.select.Count;
 public class TerranAbundanceTech extends Commander {
     @Override
     public boolean applies() {
-        return A.canAfford(600, 400);
+        return A.canAfford(900, 400);
     }
 
     @Override

@@ -27,7 +27,7 @@ Improvised Build Order
 16 - Supply Depot
 16 - Factory
 18 - Machine Shop
-18 - Bunker - @MAIN_CHOKE
+//18 - Bunker - @MAIN_CHOKE
 18 - Factory
 23 - Supply Depot
 23 - Machine Shop

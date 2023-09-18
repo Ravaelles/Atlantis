@@ -35,11 +35,13 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
             else if (alphaSize >= 23) return true;
         }
 
-        if (A.seconds() <= 450 && AGame.killsLossesResourceBalance() >= 500) return true;
+        if (A.seconds() <= 450 && AGame.killsLossesResourceBalance() >= 600) return true;
 
         if (Enemy.terran()) return TerranMissionChangerWhenDefendVsTerran.get().shouldChangeMissionToAttack();
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
+
+        if (!Enemy.terran() && A.supplyUsed() <= 90 && ourRelativeStrength <= 500) return false;
 
         if (
             ourRelativeStrength <= 600

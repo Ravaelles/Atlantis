@@ -714,6 +714,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection withoutAddon() {
+        return cloneByRemovingIf(
+            (u -> u.hasAddon()), "withoutAddon"
+        );
+    }
+
     /**
      * Selects these units which are not scouts.
      */

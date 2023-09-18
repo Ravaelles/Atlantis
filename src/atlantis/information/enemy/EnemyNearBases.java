@@ -61,12 +61,10 @@ public class EnemyNearBases {
         nearestEnemy = enemies.crucialUnits().nearestTo(base);
 
         if (nearestEnemy != null) {
-            if (nearestEnemy.distToLessThan(base, maxDist) || base.regionsMatch(nearestEnemy)) {
-                return nearestEnemy;
-            }
-
-            if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 6) {
-                return nearestEnemy;
+            if (nearestEnemy.distToLessThan(base, maxDist) && base.regionsMatch(nearestEnemy)) {
+                if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 10) {
+                    return nearestEnemy;
+                }
             }
         }
 
@@ -75,12 +73,10 @@ public class EnemyNearBases {
         nearestEnemy = enemies.nearestTo(base);
 
         if (nearestEnemy != null) {
-            if (nearestEnemy.distToLessThan(base, maxDist) || base.regionsMatch(nearestEnemy)) {
-                return nearestEnemy;
-            }
-
-            if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 6) {
-                return nearestEnemy;
+            if (nearestEnemy.distToLessThan(base, maxDist) && base.regionsMatch(nearestEnemy)) {
+                if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 7.5) {
+                    return nearestEnemy;
+                }
             }
         }
 

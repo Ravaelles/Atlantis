@@ -8,6 +8,7 @@ import atlantis.production.dynamic.terran.units.ProduceGhosts;
 import atlantis.production.dynamic.terran.units.ProduceMarines;
 import atlantis.production.dynamic.terran.units.ProduceMedicsAndFirebats;
 import atlantis.production.dynamic.terran.units.ProduceWraiths;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -28,14 +29,20 @@ public class TerranDynamicUnitsCommander extends Commander {
     protected void handle() {
         scienceVessels();
 
-        TerranDynamicFactoryUnits.handleFactoryProduction();
+        int dynamicOrders = CountInQueue.countDynamicOrders();
 
-        ProduceWraiths.wraiths();
+        if (dynamicOrders <= 3 || A.hasMinerals(700)) {
+            ProduceWraiths.wraiths();
 
-        if (Count.infantry() <= 14 || (Enemy.protoss() && Count.tanks() >= 4) || A.hasMinerals(500)) {
-            ProduceGhosts.ghosts();
-            ProduceMedicsAndFirebats.medics();
-            ProduceMarines.marines();
+            TerranDynamicFactoryUnits.handleFactoryProduction();
+        }
+
+        if (dynamicOrders <= 4 || A.hasMinerals(800)) {
+            if (Count.infantry() <= 14 || (Enemy.protoss() && Count.tanks() >= 4) || A.hasMinerals(500)) {
+                ProduceGhosts.ghosts();
+                ProduceMedicsAndFirebats.medics();
+                ProduceMarines.marines();
+            }
         }
 
         (new TerranAbundance()).invoke();

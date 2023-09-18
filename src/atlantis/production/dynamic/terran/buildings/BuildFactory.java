@@ -18,6 +18,9 @@ public class BuildFactory {
         if (!Have.barracks()) return false;
 
         int existing = Count.existing(Terran_Factory);
+        int existingAndPlanned = Count.withPlanned(Terran_Factory);
+
+        if (existingAndPlanned >= 2 && !Have.starport()) return false;
 
         if (
             existing >= 1 && !A.canAfford(300, 175)

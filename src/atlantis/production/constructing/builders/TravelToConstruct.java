@@ -72,8 +72,12 @@ public class TravelToConstruct extends HasUnit {
     }
 
     private static boolean shouldRefreshConstructionPosition(Construction construction, AUnitType buildingType) {
-        return !CanPhysicallyBuildHere.check(construction.builder(), buildingType, construction.buildPosition())
-            || (construction.builder().looksIdle() && AGame.everyNthGameFrame(31));
+        return
+            (!CanPhysicallyBuildHere.check(construction.builder(), buildingType,
+                construction.buildPosition())
+            )
+                ||
+                (construction.builder().looksIdle() && AGame.everyNthGameFrame(151));
     }
 
     private boolean moveToConstruct(Construction construction, AUnitType buildingType, double distance, String distString) {
