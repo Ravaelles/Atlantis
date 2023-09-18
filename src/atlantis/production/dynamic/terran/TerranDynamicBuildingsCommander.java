@@ -3,7 +3,7 @@ package atlantis.production.dynamic.terran;
 import atlantis.game.A;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.services.AreWeGoingBio;
-import atlantis.production.dynamic.DynamicBuildingsCommander;
+import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.reinforce.ReinforceBasesWithCombatBuildings;
 import atlantis.production.dynamic.reinforce.terran.turrets.ReinforceBunkersWithTurrets;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretNeededHere;
@@ -15,10 +15,10 @@ import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.*;
 
-public class TerranDynamicBuildingsCommander extends DynamicBuildingsCommander {
+public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     protected void handle() {
-        if (true) return;
+//        if (true) return;
 
         ReinforceBasesWithCombatBuildings.get().invoke();
         (new ReinforceBunkersWithTurrets()).invoke();

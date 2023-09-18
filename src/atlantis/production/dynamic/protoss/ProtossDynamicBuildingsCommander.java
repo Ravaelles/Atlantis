@@ -3,11 +3,15 @@ package atlantis.production.dynamic.protoss;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
+import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import bwapi.TechType;
@@ -45,7 +49,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander 
         if (Have.notEvenPlanned(Protoss_Robotics_Facility) || Have.a(Protoss_Robotics_Support_Bay)) return;
 
         if (Have.dontHaveEvenInPlans(Protoss_Robotics_Support_Bay)) {
-            buildNow(Protoss_Robotics_Support_Bay);
+            DynamicCommanderHelpers.buildNow(Protoss_Robotics_Support_Bay);
         }
     }
 
@@ -55,7 +59,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander 
         }
 
         if (Count.withPlanned(Protoss_Observatory) == 0) {
-            buildNow(Protoss_Observatory);
+            DynamicCommanderHelpers.buildNow(Protoss_Observatory);
         }
     }
 
@@ -70,7 +74,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander 
         }
 
         if (Count.withPlanned(Protoss_Robotics_Facility) == 0) {
-            buildNow(Protoss_Robotics_Facility);
+            DynamicCommanderHelpers.buildNow(Protoss_Robotics_Facility);
         }
     }
 
@@ -85,24 +89,24 @@ public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander 
                 && EnemyStrategy.get().isRushOrCheese()
                 && Count.ourOfTypeWithUnfinished(Protoss_Gateway) <= (A.hasMinerals(250) ? 2 : 1)
         ) {
-            buildIfHaveMineralsAndGas(Protoss_Gateway);
+            DynamicCommanderHelpers.buildIfHaveMineralsAndGas(Protoss_Gateway);
             return;
         }
 
-        buildIfAllBusyButCanAfford(Protoss_Gateway, A.supplyUsed() <= 90 ? 260 : 650, 0);
+        DynamicCommanderHelpers.buildIfAllBusyButCanAfford(Protoss_Gateway, A.supplyUsed() <= 90 ? 260 : 650, 0);
     }
 
     private static void forge() {
         int buildAtSupply = EnemyStrategy.get().isRushOrCheese() ? 46 : 36;
-        buildToHaveOne(buildAtSupply, Protoss_Forge);
+        DynamicCommanderHelpers.buildToHaveOne(buildAtSupply, Protoss_Forge);
     }
 
     private static void stargate() {
-        buildToHaveOne(80, Protoss_Stargate);
+        DynamicCommanderHelpers.buildToHaveOne(80, Protoss_Stargate);
     }
 
     private static void arbiterTribunal() {
-        buildToHaveOne(90, Protoss_Arbiter_Tribunal);
+        DynamicCommanderHelpers.buildToHaveOne(90, Protoss_Arbiter_Tribunal);
 
         if (hasFree(Protoss_Arbiter_Tribunal) && has(Protoss_Arbiter)) {
             ATechRequests.researchTech(TechType.Stasis_Field);
@@ -117,5 +121,18 @@ public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander 
         if (ProtossReinforceBases.invoke()) return true;
 
         return false;
+    }
+
+    // =========================================================
+
+    protected static boolean isItSafeToAddTechBuildings() {
+        if (EnemyStrategy.get().isRushOrCheese()) {
+            if (ArmyStrength.ourArmyRelativeStrength() <= 80 && !A.hasMineralsAndGas(250, 100)) return false;
+        }
+
+        AUnit enemyUnitInMainBase = EnemyInfo.enemyUnitInMainBase();
+        if (enemyUnitInMainBase == null || enemyUnitInMainBase.effUndetected()) return false;
+
+        return true;
     }
 }

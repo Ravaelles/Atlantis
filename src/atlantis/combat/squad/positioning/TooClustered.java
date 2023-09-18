@@ -3,6 +3,7 @@ package atlantis.combat.squad.positioning;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -47,13 +48,23 @@ public class TooClustered extends Manager {
 
 //            double moveDistance = A.chance(15) ? 2 : 0.5;
 //            unit.moveAwayFrom(nearestBuddy, moveDistance, Actions.MOVE_FORMATION, "SpreadOut");
-            if (unit.moveToMain(Actions.MOVE_AVOID)) return usedManager(this, "SpreadOut");
+            if (uncluster()) return usedManager(this, "SpreadOut");
         }
 
         return null;
     }
 
     // =========================================================
+
+    private boolean uncluster() {
+        APosition center = unit.friendsNear().inRadius(1.5, unit).center();
+        if (center != null) {
+            unit.moveAwayFrom(center, 1.5, Actions.MOVE_FORMATION, "SpreadOut");
+            return true;
+        }
+
+        return unit.moveToMain(Actions.MOVE_FORMATION, "SpreadOut");
+    }
 
     private boolean tooClustered(
         Selection ourCombatUnits,

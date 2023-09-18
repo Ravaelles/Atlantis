@@ -38,10 +38,26 @@ public interface OrdersFilters {
         );
     }
 
+    default Orders notInProgress() {
+        return new Orders(
+            list().stream()
+                .filter(order -> !order.isInProgress())
+                .collect(Collectors.toList())
+        );
+    }
+
     default Orders completed() {
         return new Orders(
             list().stream()
                 .filter(ProductionOrder::isCompleted)
+                .collect(Collectors.toList())
+        );
+    }
+
+    default Orders forCurrentSupply() {
+        return new Orders(
+            list().stream()
+                .filter(order -> order.supplyRequirementFulfilled())
                 .collect(Collectors.toList())
         );
     }
@@ -91,6 +107,14 @@ public interface OrdersFilters {
         return new Orders(
             list().stream()
                 .filter(order -> order.priority().isAtLeast(priority))
+                .collect(Collectors.toList())
+        );
+    }
+
+    default Orders dynamic() {
+        return new Orders(
+            list().stream()
+                .filter(order -> order.isDynamic())
                 .collect(Collectors.toList())
         );
     }

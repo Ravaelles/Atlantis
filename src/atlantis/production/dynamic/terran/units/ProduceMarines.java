@@ -17,10 +17,10 @@ import static atlantis.units.AUnitType.Terran_Marine;
 
 public class ProduceMarines {
     public static boolean marines() {
-        if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
-        if (Count.inProductionOrInQueue(Terran_Marine) >= 4) return false;
-
         int marines = Count.marines();
+
+        if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
+        if (Count.inProductionOrInQueue(Terran_Marine) >= 2) return false;
 
         if (Enemy.terran() && (marines >= 4 && !A.hasMinerals(700 + 100 * marines))) return false;
 

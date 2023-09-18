@@ -22,6 +22,14 @@ public class CountInQueue {
         return Queue.get().nonCompleted().priorityAtLeast(priority).size();
     }
 
+    public static int countDynamicOrders() {
+        return Queue.get().nonCompleted().dynamic().size();
+    }
+
+    public static int countNextOrdersWithSupplyRequirementFilled(int supply) {
+        return Queue.get().allOrders().supplyAtMost(supply).size();
+    }
+
 //    public static int countOrdersWithSupplyAtMost(int maxSupply) {
 //        return Queue.get().allOrders().supplyAtMost(maxSupply).size();
 //    }

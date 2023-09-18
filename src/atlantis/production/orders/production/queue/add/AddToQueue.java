@@ -30,7 +30,7 @@ public class AddToQueue {
 //            A.printStackTrace("Why top priority " + type + "???");
 //        }
 
-        return addToQueue(type, position, indexForPriority(ProductionOrderPriority.TOP));
+        return addToQueue(type, position, IndexForNewOrder.indexForPriority(ProductionOrderPriority.TOP));
     }
 
     public static ProductionOrder withHighPriority(AUnitType type) {
@@ -38,7 +38,7 @@ public class AddToQueue {
     }
 
     public static ProductionOrder withHighPriority(AUnitType type, HasPosition position) {
-        return addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.HIGH));
+        return addToQueue(type, position != null ? position.position() : null, IndexForNewOrder.indexForPriority(ProductionOrderPriority.HIGH));
     }
 
     public static ProductionOrder withStandardPriority(AUnitType type) {
@@ -46,11 +46,11 @@ public class AddToQueue {
     }
 
     public static ProductionOrder withStandardPriority(AUnitType type, HasPosition position) {
-        return addToQueue(type, position != null ? position.position() : null, indexForPriority(ProductionOrderPriority.STANDARD));
+        return addToQueue(type, position != null ? position.position() : null, IndexForNewOrder.indexForPriority(ProductionOrderPriority.STANDARD));
     }
 
     public static boolean tech(TechType tech) {
-        if (Count.inQueueOrUnfinished(tech, 8) > 0) return false;
+        if (Count.inQueueOrUnfinished(tech, 1) > 0) return false;
 
         ProductionOrder productionOrder = new ProductionOrder(tech, 0);
 
@@ -63,7 +63,7 @@ public class AddToQueue {
     }
 
     public static boolean upgrade(UpgradeType upgrade) {
-        if (Count.inQueueOrUnfinished(upgrade, 3) > 0) return false;
+        if (Count.inQueueOrUnfinished(upgrade, 1) > 0) return false;
 
         Queue.get().addNew(0, new ProductionOrder(upgrade, 0));
         return true;
@@ -77,7 +77,6 @@ public class AddToQueue {
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
 
         if (Queue.get().addNew(index, productionOrder)) {
-            Queue.get().clearCache();
 //            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }
 
@@ -102,7 +101,7 @@ public class AddToQueue {
     private static boolean preventExcessiveOrInvalidOrders(AUnitType type) {
         assert type != null;
 
-        int maxOrdersAtOnceWithoutWarning = 20;
+        int maxOrdersAtOnceWithoutWarning = 15;
 
         // Too many requests of this type
         int existingInQueue = Count.inQueue(type, 30);
@@ -111,9 +110,9 @@ public class AddToQueue {
         }
 
         if (!Env.isTournament()) {
-            if (Queue.get().nextOrders(30).size() >= maxOrdersAtOnceWithoutWarning) {
+            if (Queue.get().nonCompleted().notInProgress().forCurrentSupply().size() >= maxOrdersAtOnceWithoutWarning) {
                 ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
-                Queue.get().nextOrders(30).print();
+                if (A.everyNthGameFrame(79)) Queue.get().nonCompleted().forCurrentSupply().print();
                 return true;
             }
         }
@@ -126,14 +125,6 @@ public class AddToQueue {
         }
 
         return false;
-    }
-
-    private static int indexForPriority(ProductionOrderPriority priority) {
-        if (priority.isStandard()) {
-            return CountInQueue.countOrdersWithPriorityAtLeast(ProductionOrderPriority.HIGH);
-        }
-
-        return CountInQueue.countOrdersWithPriorityAtLeast(priority);
     }
 
     protected static boolean addToQueue(AUnitType type) {

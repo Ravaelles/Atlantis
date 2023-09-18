@@ -13,7 +13,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 public class TerranBunkerPositionFinder {
-
     private static AUnitType bunker = AUnitType.Terran_Bunker;
 
     public static APosition findPosition(AUnit builder, Construction order, HasPosition nearTo) {

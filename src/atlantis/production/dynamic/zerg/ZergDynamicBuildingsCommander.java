@@ -2,6 +2,7 @@ package atlantis.production.dynamic.zerg;
 
 import atlantis.game.A;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
+import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
@@ -33,7 +34,7 @@ public class ZergDynamicBuildingsCommander extends DynamicBuildingsCommander {
             return;
         }
 
-        buildToHaveOne(Zerg_Hydralisk_Den);
+        DynamicCommanderHelpers.buildToHaveOne(Zerg_Hydralisk_Den);
     }
 
 }

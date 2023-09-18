@@ -13,6 +13,8 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
+import static atlantis.units.AUnitType.Terran_Marine;
+
 public class ProduceMedicsAndFirebats {
     public static boolean medics() {
         if (Count.ofType(AUnitType.Terran_Academy) == 0) return false;
@@ -43,14 +45,19 @@ public class ProduceMedicsAndFirebats {
 
             // Firebats
             if (!Enemy.terran()) {
-                if (marines >= 4 && medics >= 3 && Count.ourOfTypeWithUnfinished(AUnitType.Terran_Firebat) < minFirebats()) {
-                    return AddToQueue.maxAtATime(AUnitType.Terran_Firebat, 2);
+                int unfinishedFirebats = Count.inProductionOrInQueue(AUnitType.Terran_Firebat);
+                if (unfinishedFirebats == 0) {
+                    if (marines >= 4 && medics >= 3 && unfinishedFirebats < minFirebats()) {
+                        return AddToQueue.maxAtATime(AUnitType.Terran_Firebat, 2);
+                    }
                 }
             }
 
             // Medics
             if (TerranArmyComposition.medicsToInfantryRatioTooLow()) {
-                return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 4);
+                if (Count.medics() <= 4 && Count.inProductionOrInQueue(Terran_Marine) <= 2) {
+                    return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2);
+                }
             }
         }
 

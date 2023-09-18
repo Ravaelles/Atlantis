@@ -1,8 +1,8 @@
 package atlantis.production.dynamic.reinforce.terran.turrets;
 
 import atlantis.game.A;
-import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
+import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;

@@ -676,6 +676,20 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
+    public static AUnit mainOrAnyBuilding() {
+        return cacheUnit.getIfValid(
+            "mainOrAnyBuilding",
+            73,
+            () -> {
+                AUnit main = Select.main();
+
+                if (main != null) return main;
+
+                return Select.ourBuildings().first();
+            }
+        );
+    }
+
     /**
      * Returns first building. The advantage over Select.main() is that it always works
      */

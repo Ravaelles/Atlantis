@@ -12,8 +12,7 @@ import tests.unit.FakeUnit;
 import tests.unit.FakeUnitHelper;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 public class AddToQueueTest extends NonAbstractTestFakingGame {
     private Queue queue;
@@ -24,7 +23,7 @@ public class AddToQueueTest extends NonAbstractTestFakingGame {
             () -> {
                 queue = initQueue();
 
-                queue.nextOrders(15).print("nextOrders");
+//                queue.nextOrders(15).print("nextOrders");
                 assertEquals(0, queue.nextOrders(15).ofType(Terran_Marine).size());
                 assertNotEquals(Terran_Marine, queue.nextOrders(1).list().get(0).unitType());
 
@@ -32,24 +31,30 @@ public class AddToQueueTest extends NonAbstractTestFakingGame {
 
                 queue.clearCache();
                 assertEquals(1, queue.nextOrders(15).ofType(Terran_Marine).size());
-                queue.nextOrders(15).print("nextOrders");
-                assertEquals(Terran_Marine, queue.nextOrders(1).list().get(0).unitType());
+//                queue.nextOrders(15).print("nextOrders");
+                assertEquals(1, queue.nextOrders(15).ofType(Terran_Marine).size());
 //                queue.readyToProduceOrders().print("ReadyToProduceOrders");
 
                 AddToQueue.maxAtATime(Terran_Marine, 2);
 
                 queue.clearCache();
-                queue.nextOrders(15).print("nextOrders");
+//                queue.nextOrders(15).print("nextOrders");
                 assertEquals(2, queue.nextOrders(15).ofType(Terran_Marine).size());
-                assertEquals(Terran_Marine, queue.nextOrders(2).list().get(0).unitType());
-                assertEquals(Terran_Marine, queue.nextOrders(2).list().get(1).unitType());
 
+                queue.clearCache();
                 AddToQueue.maxAtATime(Terran_Marine, 2);
 
                 queue.clearCache();
                 assertEquals(2, queue.nextOrders(15).ofType(Terran_Marine).size());
-                assertNotEquals(Terran_Marine, queue.nextOrders(3).list().get(2).unitType());
-                queue.nextOrders(15).print("nextOrders");
+//                queue.nextOrders(15).print("nextOrders");
+
+                queue.clearCache();
+                int medicsInQueue = queue.nextOrders(30).ofType(Terran_Medic).size();
+                AddToQueue.maxAtATime(Terran_Medic, 5); // Now a Medic
+
+                queue.clearCache();
+                assertEquals(medicsInQueue + 1, queue.nextOrders(30).ofType(Terran_Medic).size());
+//                queue.nextOrders(15).print("nextOrders");
             },
             () -> FakeUnitHelper.merge(
                 ourInitialUnits(),

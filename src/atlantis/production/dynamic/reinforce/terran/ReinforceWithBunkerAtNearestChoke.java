@@ -30,6 +30,8 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (Count.barracks() <= 0) return false;
         if (Count.inProductionOrInQueue(Terran_Bunker) > 0) return false;
 

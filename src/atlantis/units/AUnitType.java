@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.units.select.Count;
 import atlantis.util.Counter;
 import atlantis.util.cache.Cache;
 import bwapi.*;
@@ -884,11 +885,19 @@ public class AUnitType implements Comparable<Object> {
         return ut.dimensionLeft();
     }
 
+    public int dimensionLeftTx() {
+        return ut.dimensionLeft() / 32;
+    }
+
     /**
      * In pixels (1 tile = 32px)
      */
     public int dimensionRightPx() {
         return ut.dimensionRight();
+    }
+
+    public int dimensionRightTx() {
+        return ut.dimensionRight() / 32;
     }
 
     /**
@@ -898,11 +907,19 @@ public class AUnitType implements Comparable<Object> {
         return ut.dimensionUp();
     }
 
+    public int dimensionUpTx() {
+        return ut.dimensionUp() / 32;
+    }
+
     /**
      * In pixels (1 tile = 32px)
      */
     public int dimensionDownPx() {
         return ut.dimensionDown();
+    }
+
+    public int dimensionDownTx() {
+        return ut.dimensionDown() / 32;
     }
 
     /**
@@ -1314,7 +1331,10 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "hasRequiredUnit",
             -1,
-            () -> whatIsRequired() != null
+            () -> {
+                AUnitType whatIsRequired = whatIsRequired();
+                return whatIsRequired == null || Count.ofType(whatIsRequired) > 0;
+            }
         );
     }
 

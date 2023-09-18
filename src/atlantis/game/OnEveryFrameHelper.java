@@ -20,7 +20,7 @@ public class OnEveryFrameHelper {
 //        paintMissionAttackFocusPoint();
 //        pathToEnemyBase();
 
-//        paintJbwebBlocks();
+        paintJbwebBlocks();
 
 //        CurrentProductionQueue.print();
 

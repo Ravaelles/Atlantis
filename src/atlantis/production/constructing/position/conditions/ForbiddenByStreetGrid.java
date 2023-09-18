@@ -19,14 +19,19 @@ public class ForbiddenByStreetGrid {
 
         // =========================================================
 
+        if (position.tx() % 9 <= 1) return false;
+        if (position.ty() % 9 <= 1) return false;
+
+        // =========================================================
+
         // Leave entire vertical (same tileX) corridor free for units
         if (
             buildingLeftTx(building, position) % GRID_VALUE <= 1
                 || buildingRightTx(building, position) % GRID_VALUE <= 1
         ) {
             if (
-                !position.translateByTiles(-1, 0).isWalkable()
-                && !position.translateByTiles(+1, 0).isWalkable()
+                !position.translateByTiles(-1 - building.dimensionLeftTx(), 0).isWalkable()
+                    && !position.translateByTiles(+1 + building.dimensionRightTx(), 0).isWalkable()
             ) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
                 return true;
@@ -39,8 +44,8 @@ public class ForbiddenByStreetGrid {
                 || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 0
         ) {
             if (
-                !position.translateByTiles(0, -1).isWalkable()
-                    && !position.translateByTiles(0, +1).isWalkable()
+                !position.translateByTiles(0, -1 - building.dimensionUpTx()).isWalkable()
+                    && !position.translateByTiles(0, +1 + building.dimensionDownTx()).isWalkable()
             ) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
                 return true;

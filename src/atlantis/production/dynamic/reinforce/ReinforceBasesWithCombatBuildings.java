@@ -2,7 +2,6 @@ package atlantis.production.dynamic.reinforce;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.expansion.AllBasePositions;
 import atlantis.production.dynamic.reinforce.terran.TerranReinforceBasesWithCombatBuildings;

@@ -24,8 +24,6 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     @Override
     public boolean shouldChangeMissionToDefend() {
-
-
         if (MissionDecisions.baseUnderSeriousAttack()) {
             if (DEBUG) reason = "Protect base";
             return true;

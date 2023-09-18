@@ -14,7 +14,7 @@ public class TooLowSquadCohesion extends Manager {
 
     @Override
     public boolean applies() {
-        if (A.seconds() % 10 <= 5) return false;
+        if (A.seconds() % 8 <= 3) return false;
 
         return unit.isGroundUnit() || (unit.isAir() && unit.isMutalisk());
     }
@@ -50,7 +50,7 @@ public class TooLowSquadCohesion extends Manager {
 
         // Too stacked for cohesion
         if (
-            (unit.friendsInRadius(2).count() >= 3 && unit.friendsInRadius(4).count() >= 8)
+            (unit.friendsInRadius(2).count() >= 3 && unit.friendsInRadius(4).count() >= 9)
                 || unit.friendsInRadius(7).count() >= 20
         ) return false;
 
@@ -65,7 +65,8 @@ public class TooLowSquadCohesion extends Manager {
 
     private boolean improveCohesion() {
         String t = "Cohesion";
-        APosition goTo = unit.squadLeader().position();
+//        APosition goTo = unit.squadLeader().position();
+        APosition goTo = squad.center();
 //            .translateTilesTowards(2, unit.position());
 //                .makeFreeOfAnyGroundUnits(5, unit.type().dimensionLeft() * 2, unit);
 

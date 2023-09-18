@@ -18,7 +18,7 @@ public class RunForYourLife extends Manager {
                 && unit.enemiesNear().combatBuildingsAntiAir().inRadius(11, unit).notEmpty()
         ) return true;
 
-        return unit.hp() <= 55
+        return unit.hp() <= 65
             && unit.enemiesNear().canAttack(unit, 5.1).notEmpty();
     }
 

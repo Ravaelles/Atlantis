@@ -6,6 +6,7 @@ import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -84,10 +85,13 @@ public class APositionFinder {
         }
 
         // =========================================================
-        // BUNKER
 
         else if (building.isBunker()) {
             return TerranBunkerPositionFinder.findPosition(builder, construction, nearTo);
+        }
+        else if (building.isSupplyDepot()) {
+            APosition position = SupplyDepotPositionFinder.findPosition(builder, construction, nearTo);
+            if (position != null) return position;
         }
 
         // =========================================================
@@ -99,42 +103,40 @@ public class APositionFinder {
 
         // =========================================================
         // STANDARD BUILDINGS
-        else {
 
-            // If we didn't specify location where to build, build somewhere near the main base
-            if (nearTo == null) {
-                if (AGame.isPlayingAsZerg()) {
-                    nearTo = Select.main().position();
+        // If we didn't specify location where to build, build somewhere near the main base
+        if (nearTo == null) {
+            if (AGame.isPlayingAsZerg()) {
+                nearTo = Select.main().position();
+            }
+            else {
+                if (Count.bases() >= 3) {
+                    nearTo = Select.ourBases().random();
                 }
                 else {
-                    if (Count.bases() >= 3) {
-                        nearTo = Select.ourBases().random();
-                    }
-                    else {
-                        nearTo = Select.main().position();
-                    }
+                    nearTo = Select.main().position();
                 }
             }
-
-            // If all of our bases have been destroyed, build somewhere near our first unit alive
-            if (nearTo == null) {
-                nearTo = Select.our().first().position();
-            }
-
-            // Hopeless case, all units have died, just quit.
-            if (nearTo == null) {
-                return null;
-            }
-
-            if (maxDistance < 0) {
-                maxDistance = 50;
-            }
-
-            // =========================================================
-            // Standard place
-
-            return findStandardPosition(builder, building, nearTo, maxDistance);
         }
+
+        // If all of our bases have been destroyed, build somewhere near our first unit alive
+        if (nearTo == null) {
+            nearTo = Select.our().first().position();
+        }
+
+        // Hopeless case, all units have died, just quit.
+        if (nearTo == null) {
+            return null;
+        }
+
+        if (maxDistance < 0) {
+            maxDistance = 50;
+        }
+
+        // =========================================================
+        // Standard place
+
+        return findStandardPosition(builder, building, nearTo, maxDistance);
     }
 
     // =========================================================
@@ -153,17 +155,17 @@ public class APositionFinder {
                 // ===========================================================
 
                 // Terran
-                if (AGame.isPlayingAsTerran()) {
+                if (We.terran()) {
                     return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
                 }
 
                 // Protoss
-                else if (AGame.isPlayingAsProtoss()) {
+                else if (We.protoss()) {
                     return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
                 }
 
                 // Zerg
-                else if (AGame.isPlayingAsZerg()) {
+                else if (We.zerg()) {
                     return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
                 }
 

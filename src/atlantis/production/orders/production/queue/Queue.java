@@ -3,6 +3,7 @@ package atlantis.production.orders.production.queue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.updater.QueueRefresher;
+import atlantis.units.select.Select;
 
 public class Queue extends AbstractQueue {
     private static Queue instance = null;
@@ -26,7 +27,12 @@ public class Queue extends AbstractQueue {
     // =========================================================
 
     public boolean addNew(int index, ProductionOrder productionOrder) {
-        return allOrders().add(index, productionOrder);
+        boolean result = allOrders().add(index, productionOrder);
+
+        clearCache();
+//        allOrders().print("Added");
+
+        return result;
     }
 
     // =========================================================
@@ -44,6 +50,14 @@ public class Queue extends AbstractQueue {
             "readyToProduceOrders",
             -1,
             orders::readyToProduce
+        );
+    }
+
+    public Orders forCurrentSupply() {
+        return cache.get(
+            "forCurrentSupply",
+            -1,
+            orders::forCurrentSupply
         );
     }
 

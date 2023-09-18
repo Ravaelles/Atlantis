@@ -8,8 +8,6 @@ import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.SoonInQueue;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
-
 import atlantis.production.requests.produce.ProduceWorker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

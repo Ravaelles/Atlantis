@@ -49,14 +49,13 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
      */
     private String modifier = null;
 
+    private boolean dynamic = true;
+
     /**
      * Contains first column
      */
     private String rawFirstColumnInFile;
 
-    /**
-     *
-     */
     private ProductionOrderPriority priority = ProductionOrderPriority.STANDARD;
 
     private OrderReservations orderReservations = new OrderReservations(this);
@@ -111,8 +110,10 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
         if (otherOrder.id == id) return true;
 
-//        if (otherOrder.unitType() != null && otherOrder.unitType().equals(unitType())) return true;
         if (otherOrder.minSupply == minSupply) {
+            if (otherOrder.isDynamic() || otherOrder.isDynamic()) {
+                if (otherOrder.unitType() != null && otherOrder.unitType().equals(unitType())) return true;
+            }
             if (otherOrder.tech() != null && otherOrder.tech().equals(tech())) return true;
             if (otherOrder.upgrade() != null && otherOrder.upgrade().equals(upgrade())) return true;
         }
@@ -127,7 +128,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     @Override
     public String toString() {
-        String suffix = " " + statusString() + "(#" + id() + ")";
+        String suffix = (isDynamic() ? "*" : "") + " " + statusString() + "(#" + id() + ")";
 
         if (unitOrBuilding != null) {
             return "At " + minSupply + " " + name() + (modifier != null ? " " + modifier : "") + suffix;
@@ -359,5 +360,13 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public boolean isBuilding() {
         return unitOrBuilding != null && unitOrBuilding.isBuilding();
+    }
+
+    public void markAsNotDynamic() {
+        dynamic = false;
+    }
+
+    public boolean isDynamic() {
+        return dynamic;
     }
 }

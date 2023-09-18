@@ -1,7 +1,6 @@
 package atlantis.map.position;
 
 import atlantis.game.A;
-import bwapi.Position;
 
 import java.util.*;
 
@@ -24,7 +23,8 @@ public class Positions<T extends HasPosition> {
 
     // =====================================================================
 
-    public Positions() { }
+    public Positions() {
+    }
 
     public Positions(Collection<T> positionsToAdd) {
         addPositions(positionsToAdd);
@@ -82,8 +82,8 @@ public class Positions<T extends HasPosition> {
     /**
      * Returns random positions.
      */
-    public Position getRandom() {
-        return (Position) A.getRandomListElement(positions);
+    public T random() {
+        return (T) A.getRandomListElement(positions);
     }
 
     /**
@@ -118,7 +118,8 @@ public class Positions<T extends HasPosition> {
                 if (distToU1 < 0) {
                     distToU1 = 99999;
                 }
-                double distToU2 = position.position().groundDistanceTo(p2);;
+                double distToU2 = position.position().groundDistanceTo(p2);
+                ;
 
                 return distToU1 < distToU2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
             }
@@ -138,7 +139,8 @@ public class Positions<T extends HasPosition> {
         ensureValueMappingExists();
         if (positionValues.containsKey(position)) {
             positionValues.put(position, positionValues.get(position) + deltaValue);
-        } else {
+        }
+        else {
             positionValues.put(position, deltaValue);
         }
     }
@@ -151,7 +153,8 @@ public class Positions<T extends HasPosition> {
     public double getValueFor(T position) {
         if (positionValues == null) {
             return 0;
-        } else {
+        }
+        else {
             return positionValues.get(position);
         }
     }
@@ -227,11 +230,11 @@ public class Positions<T extends HasPosition> {
     }
 
     private static int _lastIndex = 0;
-    
+
     public T nearestTo(HasPosition position) {
         double closestDist = 9999999;
         T closest = null;
-        
+
         int index = 0;
         for (T t : positions) {
             if (t.distTo(position) < closestDist) {
@@ -242,7 +245,7 @@ public class Positions<T extends HasPosition> {
             }
             index++;
         }
-        
+
         return closest;
     }
 

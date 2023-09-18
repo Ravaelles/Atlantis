@@ -2,7 +2,6 @@ package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
