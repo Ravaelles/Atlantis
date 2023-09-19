@@ -30,7 +30,7 @@ public class CountInQueue {
         return Queue.get().allOrders().supplyAtMost(supply).size();
     }
 
-//    public static int countOrdersWithSupplyAtMost(int maxSupply) {
-//        return Queue.get().allOrders().supplyAtMost(maxSupply).size();
-//    }
+    public static int countInfantry() {
+        return Queue.get().allOrders().infantry().size();
+    }
 }

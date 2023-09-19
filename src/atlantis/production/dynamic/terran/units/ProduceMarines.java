@@ -13,22 +13,25 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
+import static atlantis.units.AUnitType.Terran_Barracks;
 import static atlantis.units.AUnitType.Terran_Marine;
 
 public class ProduceMarines {
     public static boolean marines() {
         int marines = Count.marines();
 
+        if (CanProduceInfantry.canProduceInfantry(marines)) {
+            return AddToQueue.maxAtATime(Terran_Marine, 4);
+        }
+
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
-        if (Count.inProductionOrInQueue(Terran_Marine) >= 2) return false;
+//        if (Count.inProductionOrInQueue(Terran_Marine) >= 3 && !A.hasMinerals(400)) return false;
+//        if (CountInQueue.countInfantry() >= 4 && Select.free(Terran_Barracks).notEmpty()) return false;
+        if (Select.free(Terran_Barracks).empty()) return false;
 
         if (Enemy.terran() && (marines >= 4 && !A.hasMinerals(700 + 100 * marines))) return false;
 
         int tanks = Count.tanks();
-
-        if (marines <= 1) {
-            return AddToQueue.maxAtATime(Terran_Marine, 2);
-        }
 
 //        int infantry = Count.infantry();
 

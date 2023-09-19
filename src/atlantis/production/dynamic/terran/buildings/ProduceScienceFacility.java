@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.terran.units;
+package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
@@ -42,7 +42,7 @@ public class ProduceScienceFacility {
         if (A.supplyUsed() >= 120 && needScienceFacility) {
             int covertOps = Count.existingOrInProductionOrInQueue(Terran_Covert_Ops);
             if (covertOps == 0) {
-                AddToQueue.withHighPriority(Terran_Covert_Ops);
+                AddToQueue.toHave(Terran_Covert_Ops);
                 return;
             }
         }

@@ -29,7 +29,7 @@ public class IsOrderNotCompleted {
 
         // === Unknown
 
-        A.errPrintln("Unknown order type: " + order);
+//        A.errPrintln("Unknown order type: " + order);
         return true;
     }
 

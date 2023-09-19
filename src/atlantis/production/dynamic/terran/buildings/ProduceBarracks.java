@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.terran.units;
+package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
@@ -13,9 +13,12 @@ public class ProduceBarracks {
     public static boolean barracks() {
         int barracks = Count.withPlanned(Terran_Barracks);
 
-        if (barracks >= 10) return false;
+        if (barracks >= 4) return false;
         if (barracks >= 2 && Enemy.terran()) return false;
         if (Select.free(Terran_Barracks).notEmpty()) return false;
+
+        if (Select.free(Terran_Barracks).size() > 0)
+            System.err.println("@ " + A.now() + " - FREE BARRACKS " + Select.free(Terran_Barracks).size());
 
         if (!A.hasMinerals(630)) {
 //            if (barracks >= 3) {

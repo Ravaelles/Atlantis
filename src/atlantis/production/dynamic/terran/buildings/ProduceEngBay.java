@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.terran.units;
+package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -13,9 +13,7 @@ public class ProduceEngBay {
         if (Have.engBay() || Count.withPlanned(Terran_Engineering_Bay) > 0) return;
 
         if (A.supplyUsed(45) || A.hasMinerals(550) || A.seconds() >= 500) {
-            if (AddToQueue.toHave(Terran_Engineering_Bay, 1, ProductionOrderPriority.HIGH)) {
-                A.printStackTrace("Requested ENGINEERING BAY");
-            }
+            AddToQueue.toHave(Terran_Engineering_Bay, 1, ProductionOrderPriority.HIGH);
         }
     }
 }

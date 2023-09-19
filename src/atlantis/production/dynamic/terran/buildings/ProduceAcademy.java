@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.terran.units;
+package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
 import atlantis.production.orders.production.queue.add.AddToQueue;

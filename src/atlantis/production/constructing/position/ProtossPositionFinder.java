@@ -25,7 +25,6 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      */
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _CONDITION_THAT_FAILED = null;
-        int initSearchRadius = 0;
 
         // =========================================================
 
@@ -45,7 +44,32 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
 
-        int searchRadius = initSearchRadius;
+//        int searchRadius = initSearchRadius;
+//        while (searchRadius < maxDistance) {
+//            int xMin = nearTo.tx() - searchRadius;
+//            int xMax = nearTo.tx() + searchRadius;
+//            int yMin = nearTo.ty() - searchRadius;
+//            int yMax = nearTo.ty() + searchRadius;
+//            for (int tileX = xMin; tileX <= xMax; tileX++) {
+//                for (int tileY = yMin; tileY <= yMax; tileY++) {
+//                    if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
+//                        APosition constructionPosition = APosition.create(tileX, tileY);
+//                        if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
+//                            return constructionPosition;
+//                        }
+//
+////                        System.err.println(building + ": " + AbstractPositionFinder._CONDITION_THAT_FAILED);
+//                    }
+//                }
+//            }
+//
+//            searchRadius++;
+//        }
+
+        // =========================================================
+
+        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
+
         while (searchRadius < maxDistance) {
             int xMin = nearTo.tx() - searchRadius;
             int xMax = nearTo.tx() + searchRadius;
@@ -55,11 +79,19 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                 for (int tileY = yMin; tileY <= yMax; tileY++) {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
-                        if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
+                        if (PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
+                            builder, building, constructionPosition
+                        )) {
+
+                            if (building.isCombatBuilding()) {
+                                // Turret fix - make sure to build in the same region
+                                if (constructionPosition.groundDistanceTo(nearTo) > 1.6 * searchRadius) {
+                                    continue;
+                                }
+                            }
+
                             return constructionPosition;
                         }
-
-//                        System.err.println(building + ": " + AbstractPositionFinder._CONDITION_THAT_FAILED);
                     }
                 }
             }
@@ -87,7 +119,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
             if (A.supplyTotal() >= 20 && Count.inQueueOrUnfinished(AUnitType.Protoss_Pylon, 2) == 0) {
                 AddToQueue.withTopPriority(AUnitType.Protoss_Pylon);
-                System.out.println("Requested Pylon for more powered up surface.");
+//                System.out.println("Requested Pylon for more powered up surface.");
             }
 
             return false;

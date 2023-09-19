@@ -19,7 +19,7 @@ import bwapi.TechType;
 import static atlantis.units.AUnitType.*;
 import static atlantis.util.Helpers.*;
 
-public class ProtossDynamicBuildingsCommander extends DynamicBuildingsCommander {
+public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     protected void handle() {
         super.invoke();

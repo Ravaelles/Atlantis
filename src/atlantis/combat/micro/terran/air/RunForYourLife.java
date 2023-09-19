@@ -12,6 +12,7 @@ public class RunForYourLife extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isAir()) return false;
+        if (unit.effUndetected()) return false;
 
         if (
             unit.lastUnderAttackLessThanAgo(30 * 1)

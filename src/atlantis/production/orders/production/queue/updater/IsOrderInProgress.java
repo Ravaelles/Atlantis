@@ -32,7 +32,7 @@ public class IsOrderInProgress {
 
         // === Unknown
 
-        A.errPrintln("Unknown order type: " + order);
+//        A.errPrintln("Unknown order type: " + order);
         return false;
     }
 

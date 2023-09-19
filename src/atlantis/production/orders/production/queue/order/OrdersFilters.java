@@ -132,4 +132,12 @@ public interface OrdersFilters {
             .mapToInt(ProductionOrder::mineralPrice)
             .sum();
     }
+
+    default Orders infantry() {
+        return new Orders(
+            list().stream()
+                .filter(order -> order.unitType() != null && order.unitType().isInfantry())
+                .collect(Collectors.toList())
+        );
+    }
 }

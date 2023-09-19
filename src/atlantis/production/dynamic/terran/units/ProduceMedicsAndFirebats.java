@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.generic.TerranArmyComposition;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -20,6 +21,9 @@ public class ProduceMedicsAndFirebats {
         if (Count.ofType(AUnitType.Terran_Academy) == 0) return false;
 
         int medics = Count.medics();
+
+        if (!CanProduceInfantry.canProduceInfantry(medics)) return false;
+
         if (!Decisions.shouldMakeTerranBio()) {
             if (Have.academy() && Count.infantry() >= 4 && medics <= 0) return false;
         }
@@ -37,7 +41,6 @@ public class ProduceMedicsAndFirebats {
         }
 
         if (TerranDynamicInfantry.needToSaveForFactory()) return false;
-
         if (!AGame.canAffordWithReserved(60, 30)) return false;
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();

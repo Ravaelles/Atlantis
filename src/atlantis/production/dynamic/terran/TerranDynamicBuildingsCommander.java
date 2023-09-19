@@ -4,8 +4,7 @@ import atlantis.game.A;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.reinforce.terran.turrets.ReinforceBunkersWithTurrets;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretNeededHere;
-import atlantis.production.dynamic.terran.buildings.BuildFactory;
-import atlantis.production.dynamic.terran.units.*;
+import atlantis.production.dynamic.terran.buildings.*;
 
 public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override

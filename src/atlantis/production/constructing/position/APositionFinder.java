@@ -27,6 +27,8 @@ public class APositionFinder {
      * Returns build position for next building of given type.
      */
     public static APosition findPositionForNew(AUnit builder, AUnitType building, Construction construction) {
+        if (construction == null || construction.productionOrder() == null) return null;
+
         HasPosition near = construction != null ? construction.nearTo() : null;
         double maxDistance = construction != null ? construction.maxDistance() : 35;
 

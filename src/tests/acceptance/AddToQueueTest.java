@@ -90,14 +90,4 @@ public class AddToQueueTest extends NonAbstractTestFakingGame {
 
         return queue = Queue.get();
     }
-
-    public void initSupply() {
-        int supplyFree = 2;
-        int supplyUsed = options.getIntOr("supplyUsed", 49);
-        int supplyTotal = options.getIntOr("supplyTotal", supplyUsed + supplyFree);
-
-        aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
-        aGame.when(AGame::supplyFree).thenReturn(supplyFree);
-        aGame.when(AGame::supplyTotal).thenReturn(supplyTotal);
-    }
 }

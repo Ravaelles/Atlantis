@@ -35,9 +35,7 @@ public class TransportUnits extends Manager {
     }
 
     public boolean unloadFromTransport() {
-        if (!unit.isLoaded()) return false;
-
-
+        if (!unit.isLoaded() || unit.loadedInto() == null) return false;
 
         if (
             unit.isLoaded()
@@ -182,11 +180,6 @@ public class TransportUnits extends Manager {
     }
 
     private boolean shouldDropTheBaby(AUnit transport, AUnit baby) {
-
-
-
-
-
 
 
         return baby.isLoaded()

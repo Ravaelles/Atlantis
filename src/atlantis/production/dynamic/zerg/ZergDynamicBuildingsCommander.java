@@ -9,7 +9,7 @@ import atlantis.units.select.Have;
 import static atlantis.units.AUnitType.Zerg_Creep_Colony;
 import static atlantis.units.AUnitType.Zerg_Hydralisk_Den;
 
-public class ZergDynamicBuildingsCommander extends DynamicBuildingsCommander {
+public class ZergDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     protected void handle() {
         hydraDen();

@@ -7,10 +7,16 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 import java.util.List;
 
 public class NewRepairsCommander extends Commander {
+    @Override
+    public boolean applies() {
+        return We.terran();
+    }
+
     @Override
     protected void handle() {
         removeExcessiveRepairersIfNeeded();
