@@ -22,6 +22,8 @@ public class ProduceZerglings {
 
         if (zerglings <= 5) return produceZergling();
 
+        if (larvas >= 2 && A.supplyUsed() <= 180 && A.hasMinerals(400)) return produceZergling();
+
         if (larvas <= (A.seconds() <= 200 ? 1 : 2)) return false;
 
         if (AGame.supplyFree() <= 1 || !AGame.canAffordWithReserved(150, 0)) return false;

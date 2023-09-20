@@ -7,15 +7,16 @@ import atlantis.combat.squad.positioning.TooClustered;
 import atlantis.combat.squad.positioning.TooLowSquadCohesion;
 import atlantis.combat.squad.positioning.terran.TerranEnsureBall;
 import atlantis.units.AUnit;
+import atlantis.util.We;
 
-public class SquadCohesionManager extends Manager {
-    public SquadCohesionManager(AUnit unit) {
+public class TerranSquadCohesionManager extends Manager {
+    public TerranSquadCohesionManager(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return unit.isGroundUnit() && !DoNotThinkOfImprovingCohesion.dontThink(unit);
+        return We.terran() && unit.isGroundUnit() && !DoNotThinkOfImprovingCohesion.dontThink(unit);
     }
 
     @Override

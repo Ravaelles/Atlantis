@@ -43,11 +43,6 @@ public class ASpecialPositionFinder {
                     System.err.println(construction.maxDistance());
                     System.err.println("=== Base location error /" + modifier + "/ ===");
 
-                    if (We.zerg()) {
-                        System.err.println("Fallback to standard building position");
-                        return APositionFinder.findStandardPosition(builder, building, Select.main(), 50);
-                    }
-
                     position = positionModifierToPosition("", building, builder, construction);
                     if (position != null) {
                         System.err.println("Used fix to build base anywhere.");
@@ -55,6 +50,11 @@ public class ASpecialPositionFinder {
                 }
 
                 APosition result = findPositionForBase_nearestFreeBase(building, builder, construction);
+
+                if (position == null && We.zerg()) {
+                    System.err.println("Fallback to standard building position");
+                    return APositionFinder.findStandardPosition(builder, building, Select.main(), 50);
+                }
 
                 if (result != null) {
                     cache.clear();

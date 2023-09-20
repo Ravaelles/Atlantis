@@ -47,7 +47,7 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
         if (GamePhase.isEarlyGame()) {
             if (ourArmyRelativeStrength < 100) {
                 int missingStrengthToEquillibrium = 100 - ourArmyRelativeStrength;
-                int moreNeeded = Math.min(2, (int) Math.ceil(missingStrengthToEquillibrium / 10.0));
+                int moreNeeded = Math.min(3, (int) Math.ceil(missingStrengthToEquillibrium / 10.0));
 
                 return existing + moreNeeded;
             }
@@ -63,9 +63,10 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
     public boolean shouldBuildNew() {
         int creepColonies = Count.existingOrInProductionOrInQueue(AUnitType.Zerg_Creep_Colony);
 
+        int maxInProduction = 3;
         if (
-            Count.inProductionOrInQueue(AUnitType.Zerg_Creep_Colony) >= 2
-                || Count.inProductionOrInQueue(AUnitType.Zerg_Sunken_Colony) >= 2
+            Count.inProductionOrInQueue(AUnitType.Zerg_Creep_Colony) >= maxInProduction
+                || Count.inProductionOrInQueue(AUnitType.Zerg_Sunken_Colony) >= maxInProduction
         ) return false;
 
         if (creepColonies >= 1) {

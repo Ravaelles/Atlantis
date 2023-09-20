@@ -35,7 +35,7 @@ public class MissionContainManager extends Manager {
 ////            return true;
 ////        }
 //
-//        if (SquadCohesionManager.invoke()) {
+//        if (TerranSquadCohesionManager.invoke()) {
 //            return true;
 //        }
 //

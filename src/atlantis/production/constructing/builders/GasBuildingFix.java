@@ -55,42 +55,65 @@ public class GasBuildingFix extends HasUnit {
             position = geyser.position();
         }
 
-        if (
-            building.isGasBuilding()
-                && !CanPhysicallyBuildHere.check(unit, building, position)
-        ) {
-            if (CanPhysicallyBuildHere.check(
-                unit, building, position.translateByTiles(-1, 0))
-            ) {
-                A.errPrintln("Gas building FIX A was applied");
-                return position.translateByTiles(-1, 0);
-            }
-            if (CanPhysicallyBuildHere.check(
-                unit, building, position.translateByTiles(1, 0))
-            ) {
-                A.errPrintln("Gas building FIX B was applied");
-                return position.translateByTiles(1, 0);
-            }
-            if (CanPhysicallyBuildHere.check(
-                unit, building, position.translateByTiles(-2, -1))
-            ) {
-                A.errPrintln("Gas building FIX C was applied");
-                return position.translateByTiles(-2, -1);
-            }
-            if (CanPhysicallyBuildHere.check(
-                unit, building, position.translateByTiles(2, 1))
-            ) {
-                A.errPrintln("Gas building FIX D was applied");
-                return position.translateByTiles(2, 1);
+        // =========================================================
+
+        if (CanPhysicallyBuildHere.check(unit, building, position)) return position;
+
+        // === Loop ================================================
+
+        int radius = 1;
+        while (radius <= 4) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dy = -radius; dy <= radius; dy++) {
+                    if (dx == 0 && dy == 0) continue;
+
+                    if (CanPhysicallyBuildHere.check(
+                        unit, building, position.translateByTiles(dx, dy))
+                    ) {
+                        return position.translateByTiles(dx, dy);
+                    }
+                }
             }
 
-//            if (building.isGasBuilding()) {
-//                GameSpeed.pauseGame();
-//            }
-
-            ErrorLog.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
+            radius++;
         }
 
         return position;
     }
+
+//    if (
+//        building.isGasBuilding()
+//        && !CanPhysicallyBuildHere.check(unit, building, position)
+//        ) {
+//        if (CanPhysicallyBuildHere.check(
+//            unit, building, position.translateByTiles(-1, 0))
+//        ) {
+//            A.errPrintln("Gas building FIX A was applied");
+//            return position.translateByTiles(-1, 0);
+//        }
+//        if (CanPhysicallyBuildHere.check(
+//            unit, building, position.translateByTiles(1, 0))
+//        ) {
+//            A.errPrintln("Gas building FIX B was applied");
+//            return position.translateByTiles(1, 0);
+//        }
+//        if (CanPhysicallyBuildHere.check(
+//            unit, building, position.translateByTiles(-2, -1))
+//        ) {
+//            A.errPrintln("Gas building FIX C was applied");
+//            return position.translateByTiles(-2, -1);
+//        }
+//        if (CanPhysicallyBuildHere.check(
+//            unit, building, position.translateByTiles(2, 1))
+//        ) {
+//            A.errPrintln("Gas building FIX D was applied");
+//            return position.translateByTiles(2, 1);
+//        }
+//
+////            if (building.isGasBuilding()) {
+////                GameSpeed.pauseGame();
+////            }
+//
+//        ErrorLog.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
+//    }
 }

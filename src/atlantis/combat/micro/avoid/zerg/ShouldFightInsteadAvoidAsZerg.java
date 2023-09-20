@@ -14,6 +14,8 @@ public class ShouldFightInsteadAvoidAsZerg {
             () -> {
                 if (!unit.isZerg()) return false;
 
+                if (unit.combatEvalRelative() <= 0.7) return false;
+
                 if (asHydra(unit)) return true;
 
                 if (asZergling(unit)) return true;
