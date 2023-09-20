@@ -20,9 +20,7 @@ public class ProduceZerglings {
             if (!A.hasMinerals(210) && zerglings >= 4) return false;
         }
 
-        if (zerglings <= 5) {
-            return produce();
-        }
+        if (zerglings <= 5) return produceZergling();
 
         if (larvas <= (A.seconds() <= 200 ? 1 : 2)) return false;
 
@@ -32,15 +30,14 @@ public class ProduceZerglings {
             zerglings <= 40 && (AGame.canAffordWithReserved(50, 0))
         ) {
 //            System.err.println(A.now() + " zergling enqueued");
-            return produce();
+            return produceZergling();
         }
 
         return false;
 
     }
 
-    private static boolean produce() {
-        AddToQueue.withStandardPriority(AUnitType.Zerg_Zergling);
-        return true;
+    private static boolean produceZergling() {
+        return AddToQueue.maxAtATime(AUnitType.Zerg_Zergling, 5);
     }
 }

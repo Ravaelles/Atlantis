@@ -5,9 +5,11 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.build.BuildOrderSettings;
-import atlantis.production.orders.build.ZergBuildOrder;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.SoonInQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.production.requests.produce.ProduceWorker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -15,6 +17,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
+import static atlantis.units.AUnitType.Zerg_Spawning_Pool;
 
 public class AutoTrainWorkersCommander extends Commander {
     /**
@@ -52,7 +55,12 @@ public class AutoTrainWorkersCommander extends Commander {
         else if (We.zerg()) {
             if (!A.hasMinerals(75 * Count.creepColonies())) return false;
             if (A.supplyUsed() <= 20 && !AGame.canAffordWithReserved(50, 0)) return false;
-            if (!A.hasMinerals(250) && SoonInQueue.have(AUnitType.Zerg_Spawning_Pool, 2)) return false;
+            if (!A.hasMinerals(250) && SoonInQueue.have(Zerg_Spawning_Pool, 1)) {
+                ProductionOrder order = Queue.get().nextOrders(1).ofType(Zerg_Spawning_Pool).get(0);
+                if (order != null && order.supplyRequirementFulfilled()) {
+                    return !A.hasMinerals(250);
+                }
+            }
 
             if (A.supplyUsed() <= 15 && Count.zerglings() < 4) {
                 int zerglingsInQueue = CountInQueue.count(AUnitType.Zerg_Zergling, 2);
@@ -89,7 +97,7 @@ public class AutoTrainWorkersCommander extends Commander {
     public static boolean produceWorker(AUnit base) {
         if (!AGame.canAfford(50, 0) || AGame.supplyFree() == 0) return false;
 
-        if (We.zerg()) return ZergBuildOrder.produceZergUnit(AtlantisRaceConfig.WORKER);
+        if (We.zerg()) return ProduceZergUnit.produceZergUnit(AtlantisRaceConfig.WORKER);
 
         if (base != null) return base.train(AtlantisRaceConfig.WORKER);
 

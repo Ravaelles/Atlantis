@@ -7,8 +7,7 @@ import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
-import atlantis.production.orders.build.CurrentBuildOrder;
-import atlantis.production.orders.build.ZergBuildOrder;
+import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
@@ -99,7 +98,7 @@ public class SupplyCommander extends Commander {
 
         // Zerg handles supply a bit differently
         if (AGame.isPlayingAsZerg()) {
-            ((ZergBuildOrder) CurrentBuildOrder.get()).produceZergUnit(AUnitType.Zerg_Overlord);
+            ProduceZergUnit.produceZergUnit(AUnitType.Zerg_Overlord);
             return;
         }
 

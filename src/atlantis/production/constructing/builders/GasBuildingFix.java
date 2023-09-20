@@ -1,5 +1,6 @@
 package atlantis.production.constructing.builders;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
 import atlantis.units.AUnit;
@@ -20,6 +21,7 @@ public class GasBuildingFix extends HasUnit {
      */
     protected APosition applyGasBuildingFixIfNeeded(APosition position, AUnitType building) {
         if (position == null) {
+            A.errPrintln("Gas building FIX got NULL");
             return null;
         }
 
@@ -45,7 +47,12 @@ public class GasBuildingFix extends HasUnit {
 //                ErrorLog.printErrorOnce("No geyser is known!");
 //            }
 
-            return null;
+            A.errPrintln("Gas building FIX got position too far from geyser");
+            AUnit geyser = Select.geysers().inRadius(10, position).nearestTo(position);
+
+            if (geyser == null) return null;
+
+            position = geyser.position();
         }
 
         if (
@@ -55,25 +62,25 @@ public class GasBuildingFix extends HasUnit {
             if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(-1, 0))
             ) {
-
+                A.errPrintln("Gas building FIX A was applied");
                 return position.translateByTiles(-1, 0);
             }
             if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(1, 0))
             ) {
-
+                A.errPrintln("Gas building FIX B was applied");
                 return position.translateByTiles(1, 0);
             }
             if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(-2, -1))
             ) {
-
+                A.errPrintln("Gas building FIX C was applied");
                 return position.translateByTiles(-2, -1);
             }
             if (CanPhysicallyBuildHere.check(
                 unit, building, position.translateByTiles(2, 1))
             ) {
-
+                A.errPrintln("Gas building FIX D was applied");
                 return position.translateByTiles(2, 1);
             }
 

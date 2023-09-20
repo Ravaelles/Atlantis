@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.zerg.units;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
@@ -12,13 +13,18 @@ public class ProduceHydras {
 
         int hydras = Count.hydralisks();
 
-        if (Count.larvas() == 0) return false;
+        if (hydras <= 2 || AGame.canAffordWithReserved(50, 0)) return produceHydra();
 
-        if (hydras <= 2 || AGame.canAffordWithReserved(50, 0)) {
-            AddToQueue.withStandardPriority(AUnitType.Zerg_Hydralisk);
-            return true;
-        }
+        if (A.supplyUsed() <= 190 && canAfford()) return produceHydra();
 
         return false;
+    }
+
+    private static boolean canAfford() {
+        return A.canAfford(450, 200) || AGame.canAffordWithReserved(50, 150);
+    }
+
+    private static boolean produceHydra() {
+        return AddToQueue.maxAtATime(AUnitType.Zerg_Hydralisk, 6);
     }
 }

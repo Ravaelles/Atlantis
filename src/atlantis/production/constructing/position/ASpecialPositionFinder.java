@@ -11,6 +11,7 @@ import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class ASpecialPositionFinder {
@@ -41,6 +42,11 @@ public class ASpecialPositionFinder {
                     System.err.println(construction.productionOrder());
                     System.err.println(construction.maxDistance());
                     System.err.println("=== Base location error /" + modifier + "/ ===");
+
+                    if (We.zerg()) {
+                        System.err.println("Fallback to standard building position");
+                        return APositionFinder.findStandardPosition(builder, building, Select.main(), 50);
+                    }
 
                     position = positionModifierToPosition("", building, builder, construction);
                     if (position != null) {
@@ -125,9 +131,6 @@ public class ASpecialPositionFinder {
 //        APosition near = APosition.create(baseLocationToExpand.position()).translateByPixels(-64, -48);
 //        near = APosition.create(baseLocationToExpand.position());
         construction.setMaxDistance(3);
-
-
-
 
 
         return APositionFinder.findStandardPosition(

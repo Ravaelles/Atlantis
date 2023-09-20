@@ -12,7 +12,7 @@ public class AvoidTanksSieged extends Manager {
 
     @Override
     public boolean applies() {
-        return Enemy.terran() && unit.isGroundUnit() && !unit.isSieged();
+        return Enemy.terran() && unit.isGroundUnit() && !unit.isSieged() && unit.combatEvalRelative() <= 2;
     }
 
     @Override

@@ -81,6 +81,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Starport) > 0;
     }
 
+    public static boolean spawningPool() {
+        return Count.ofType(AUnitType.Zerg_Spawning_Pool) > 0;
+    }
+
     public static boolean controlTower() {
         return Count.ofType(AUnitType.Terran_Control_Tower) > 0;
     }
@@ -125,4 +129,7 @@ public class Have {
         return have(AUnitType.Protoss_Robotics_Facility);
     }
 
+    public static boolean larvas(int minLarvas) {
+        return Count.larvas() >= minLarvas;
+    }
 }
