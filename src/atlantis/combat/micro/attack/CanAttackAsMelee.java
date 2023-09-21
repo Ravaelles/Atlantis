@@ -1,6 +1,9 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.util.Enemy;
+import atlantis.util.We;
 
 public class CanAttackAsMelee {
 
@@ -9,6 +12,8 @@ public class CanAttackAsMelee {
     public static boolean canAttackAsMelee(AUnit unit) {
         if (!unit.isMelee()) return true;
 
+        if (allowForZerg(unit)) return true;
+
         double combatEval = unit.combatEvalRelative();
 
         if (combatEval < THRESHOLD_OF_COMBAT_EVAL) return false;
@@ -16,5 +21,15 @@ public class CanAttackAsMelee {
         if (unit.enemiesNear().inRadius(2, unit).canBeAttackedBy(unit, 1).notEmpty()) return true;
 
         return combatEval >= THRESHOLD_OF_COMBAT_EVAL;
+    }
+
+    private static boolean allowForZerg(AUnit unit) {
+        if (!We.zerg()) return false;
+
+        if (unit.enemiesNear().ranged().nonBuildings().inRadius(2, unit).notEmpty()) return true;
+
+        if (unit.hp() <= (Enemy.protoss() ? 18 : 11)) return false;
+
+        return unit.friendsNear().ofType(AUnitType.Zerg_Sunken_Colony).inRadius(4, unit).notEmpty();
     }
 }

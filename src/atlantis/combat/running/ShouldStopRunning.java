@@ -31,6 +31,8 @@ public class ShouldStopRunning extends Manager {
             return decisionStopRunning();
         }
 
+        if (checkAsMelee()) return false;
+
         if (unit.avoidEnemiesManager().shouldNotAvoidAnyUnit()) {
             unit.setTooltip("JustStop");
             unit.addLog("JustStop");
@@ -93,6 +95,20 @@ public class ShouldStopRunning extends Manager {
         }
 
         return false;
+    }
+
+    private boolean checkAsMelee() {
+        return checkAsZergling() || checkAsZealot();
+    }
+
+    private boolean checkAsZergling() {
+        return unit.isZergling()
+            && unit.enemiesNear().melee().canAttack(unit, 2).empty()
+            && unit.combatEvalRelative() >= 1.2;
+    }
+
+    private boolean checkAsZealot() {
+        return unit.isZealot() && unit.combatEvalRelative() >= 1.2;
     }
 
     private boolean decisionStopRunning() {

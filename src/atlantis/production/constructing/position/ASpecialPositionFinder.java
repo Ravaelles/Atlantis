@@ -38,10 +38,10 @@ public class ASpecialPositionFinder {
                 }
 
                 if (position == null) {
-                    System.err.println("");
-                    System.err.println(construction.productionOrder());
-                    System.err.println(construction.maxDistance());
-                    System.err.println("=== Base location error /" + modifier + "/ ===");
+//                    System.err.println("");
+//                    System.err.println(construction.productionOrder());
+//                    System.err.println(construction.maxDistance());
+//                    System.err.println("=== Base location error /" + modifier + "/ ===");
 
                     position = positionModifierToPosition("", building, builder, construction);
                     if (position != null) {

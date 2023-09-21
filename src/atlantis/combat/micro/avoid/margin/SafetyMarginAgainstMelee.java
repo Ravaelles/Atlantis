@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.margin;
 
 import atlantis.units.AUnit;
+import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
 import static atlantis.units.AUnitType.Zerg_Devourer;
@@ -38,8 +39,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         // === Zerg ===============================================
 
-        else if (defender.isHydralisk()) {
-            criticalDist = forHydralisk(attacker);
+        else if (defender.isZerg()) {
+            criticalDist = (new ZergSafetyMarginAgainstMelee(defender)).handle(attacker);
         }
 
         // === Standard unit =========================================
@@ -67,18 +68,6 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         }
 
         return criticalDist;
-    }
-
-    private double forHydralisk(AUnit attacker) {
-        if (!defender.isHydralisk()) {
-            return -1;
-        }
-
-        if (defender.isHealthy()) {
-            return 0;
-        }
-
-        return defender.woundPercent() / 33;
     }
 
     protected double enemyFacingThisUnitBonus(AUnit attacker) {
@@ -127,7 +116,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     private double baseForMelee(AUnit attacker) {
         double base = 0.7;
-        if (attacker.isZealot()) base = 0.5;
+
+        if (attacker.isZealot()) {
+            if (We.zerg()) base = 1.5;
+            else if (We.terran()) base = 0.5;
+        }
 
         if (defender.isVulture()) base += 0.5;
 

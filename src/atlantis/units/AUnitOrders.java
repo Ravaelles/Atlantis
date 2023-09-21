@@ -273,6 +273,11 @@ public interface AUnitOrders {
             System.out.println(unit().typeWithHash() + " HOLD @" + A.now() + " / " + tooltip);
         }
 
+//        System.err.println(tooltip);
+//        System.err.println(unit().manager());
+//        System.err.println(unit().managerLogs().toString());
+//        System.err.println("-------------------------");
+
         unit().setTooltip(tooltip).setAction(Actions.HOLD_POSITION);
         return u().holdPosition();
     }
