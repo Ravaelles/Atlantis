@@ -22,6 +22,7 @@ import java.util.List;
 
 import static atlantis.production.AbstractDynamicUnits.*;
 import static atlantis.units.AUnitType.Protoss_Dragoon;
+import static atlantis.units.AUnitType.Protoss_Gateway;
 
 public class ProtossDynamicUnitsCommander extends Commander {
     @Override
@@ -120,11 +121,11 @@ public class ProtossDynamicUnitsCommander extends Commander {
 
         if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
 //            trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
-            return AddToQueue.maxAtATime(Protoss_Dragoon, 5);
+            return produceDragoon();
         }
 
         if (A.hasGas(100) && A.supplyUsed() <= 38) {
-            return AddToQueue.maxAtATime(Protoss_Dragoon, 5);
+            return produceDragoon();
         }
 
 //        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
@@ -132,6 +133,14 @@ public class ProtossDynamicUnitsCommander extends Commander {
 //        }
 
         return trainIfPossible(Protoss_Dragoon);
+    }
+
+    private static boolean produceDragoon() {
+        return AddToQueue.maxAtATime(Protoss_Dragoon, freeGateways());
+    }
+
+    private static int freeGateways() {
+        return Select.ourFree(Protoss_Gateway).count();
     }
 
     private static void zealots() {

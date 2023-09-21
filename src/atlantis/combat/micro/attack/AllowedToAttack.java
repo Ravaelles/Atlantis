@@ -117,8 +117,7 @@ public class AllowedToAttack {
     protected boolean isValidTargetAndAllowedToAttackUnit(AUnit target) {
         if (target == null || target.position() == null) return false;
         if (!CanAttackCombatBuilding.isAllowed(unit, target)) return false;
-
-        if (target.combatEvalRelative() > 1.5) return false;
+        if (unit.isZergling() && target.combatEvalRelative() > 1.7) return false;
 
         if (!missionAllowsToAttackEnemyUnit(target)) {
             AttackNearbyEnemies.reasonNotToAttack = "MissionForbids" + target.name();

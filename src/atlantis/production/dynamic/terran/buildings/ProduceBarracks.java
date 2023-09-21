@@ -15,10 +15,10 @@ public class ProduceBarracks {
 
         if (barracks >= 4) return false;
         if (barracks >= 2 && Enemy.terran()) return false;
-        if (Select.free(Terran_Barracks).notEmpty()) return false;
+        if (Select.ourFree(Terran_Barracks).notEmpty()) return false;
 
-        if (Select.free(Terran_Barracks).size() > 0)
-            System.err.println("@ " + A.now() + " - FREE BARRACKS " + Select.free(Terran_Barracks).size());
+        if (Select.ourFree(Terran_Barracks).size() > 0)
+            System.err.println("@ " + A.now() + " - FREE BARRACKS " + Select.ourFree(Terran_Barracks).size());
 
         if (!A.hasMinerals(630)) {
 //            if (barracks >= 3) {

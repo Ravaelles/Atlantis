@@ -15,7 +15,7 @@ public class ProduceFactoryWhenBioOnly {
 
         if (A.supplyUsed() <= 30 || !A.hasGas(90) || Have.factory()) return false;
 
-        if (Select.free(Terran_Factory).notEmpty()) return false;
+        if (Select.ourFree(Terran_Factory).notEmpty()) return false;
 
 //        if (OurDecisions.haveFactories() && Count.factories() < 2) {
 //            AddToQueue.withHighPriority(Terran_Factory);

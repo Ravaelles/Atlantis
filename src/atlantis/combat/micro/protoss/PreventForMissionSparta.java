@@ -10,6 +10,9 @@ public class PreventForMissionSparta extends Manager {
 
     @Override
     public boolean applies() {
+        // BROKEN :-/
+        if (true) return false;
+
         return unit.isGroundUnit();
     }
 

@@ -30,7 +30,6 @@ Zealot Core Zealot
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-4 - MISSION=DEFEND
 8 - Pylon
 10 - Gateway
 12 - Assimilator

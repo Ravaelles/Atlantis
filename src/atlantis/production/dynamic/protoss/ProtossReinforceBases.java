@@ -17,14 +17,14 @@ public class ProtossReinforceBases {
             HasPosition nearTo = ABaseLocation.mineralsCenter(base);
             int cannonsNearby = Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 12, nearTo);
 
-            System.err.println(base + " cannons = " + cannonsNearby);
+//            System.err.println(base + " cannons = " + cannonsNearby);
 
             if (cannonsNearby == 0) {
                 if (Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 8, nearTo) == 0) {
-                    System.err.println(
-                        "Pylons = "
-                            + Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 8, nearTo)
-                    );
+//                    System.err.println(
+//                        "Pylons = "
+//                            + Count.existingOrPlannedBuildingsNear(Protoss_Pylon, 8, nearTo)
+//                    );
                     nearTo = nearTo.translateTilesTowards(3, base);
                     AddToQueue.withHighPriority(Protoss_Pylon, nearTo);
                     return true;

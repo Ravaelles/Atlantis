@@ -27,7 +27,7 @@ public class ProduceMarines {
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
 //        if (Count.inProductionOrInQueue(Terran_Marine) >= 3 && !A.hasMinerals(400)) return false;
 //        if (CountInQueue.countInfantry() >= 4 && Select.free(Terran_Barracks).notEmpty()) return false;
-        if (Select.free(Terran_Barracks).empty()) return false;
+        if (Select.ourFree(Terran_Barracks).empty()) return false;
 
         if (Enemy.terran() && (marines >= 4 && !A.hasMinerals(700 + 100 * marines))) return false;
 

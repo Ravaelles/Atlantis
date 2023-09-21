@@ -880,9 +880,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         return selectedUnits;
     }
 
-    public static Selection free(AUnitType type) {
+    public static Selection ourFree(AUnitType type) {
         return cache.get(
-            "free:" + type.id(),
+            "ourFree:" + type.id(),
             3,
             () -> Select.ourOfType(type).free()
         );
