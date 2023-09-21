@@ -13,7 +13,9 @@ public class ProduceHydras {
 
         int hydras = Count.hydralisks();
 
-        if (hydras <= 2 || AGame.canAffordWithReserved(50, 0)) return produceHydra();
+        if (hydras <= 2 || A.hasGas(350)) {
+            return produceHydra();
+        }
 
         if (A.supplyUsed() <= 190 && canAfford()) return produceHydra();
 
@@ -25,6 +27,6 @@ public class ProduceHydras {
     }
 
     private static boolean produceHydra() {
-        return AddToQueue.maxAtATime(AUnitType.Zerg_Hydralisk, 6);
+        return AddToQueue.maxAtATime(AUnitType.Zerg_Hydralisk, 8);
     }
 }

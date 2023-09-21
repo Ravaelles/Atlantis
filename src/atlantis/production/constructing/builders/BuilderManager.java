@@ -15,7 +15,7 @@ public class BuilderManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isBuilder();
+        return unit.isWorker() && unit.isBuilder();
     }
 
     @Override

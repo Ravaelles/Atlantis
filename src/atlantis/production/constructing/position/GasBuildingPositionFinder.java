@@ -8,6 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class GasBuildingPositionFinder {
@@ -21,7 +22,7 @@ public class GasBuildingPositionFinder {
 //                + Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING)
 //        );
 
-        if (Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) >= 2) {
+        if (Count.inProduction(AtlantisRaceConfig.GAS_BUILDING) >= 2) {
 //            A.printStackTrace("Too many refineries");
             ErrorLog.printMaxOncePerMinute("Too many refineries, don't build for now");
             return null;
@@ -30,12 +31,16 @@ public class GasBuildingPositionFinder {
         for (AUnit base : Select.ourBases().list()) {
             Selection geysers = Select.geysers();
 
+            int maxDistFromBase = We.zerg() ? 7 : 12;
             if (nearTo != null) {
-                geysers = geysers.inRadius(12, nearTo);
+                geysers = geysers.inRadius(maxDistFromBase, nearTo);
+            }
+            else {
+                nearTo = Select.ourBases().last();
             }
 
             AUnit geyser = geysers.nearestTo(base);
-            if (geyser != null && geyser.distTo(base) < 12) {
+            if (geyser != null && geyser.distTo(base) < maxDistFromBase) {
                 return geyser.translateByPixels(-64, -32);
             }
         }

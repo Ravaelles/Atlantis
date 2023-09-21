@@ -1311,7 +1311,7 @@ public class A {
     }
 
     public static boolean canAfford(int minerals, int gas) {
-        return AGame.canAfford(minerals, gas);
+        return AGame.minerals() >= minerals && AGame.gas() >= gas;
     }
 
     public static boolean canAffordWithReserved(int minerals, int gas) {

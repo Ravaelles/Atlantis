@@ -1,6 +1,7 @@
 package atlantis.combat.retreating;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -47,9 +48,11 @@ public class RetreatManager extends Manager {
                     }
 
                     if (runAwayFrom == null && nearEnemies.notEmpty()) {
-                        System.err.println("Retreat runAwayFrom is NULL, despite:");
+                        A.errPrintln("Retreat runAwayFrom is NULL, despite:");
                         nearEnemies.print("nearEnemies");
                     }
+
+                    System.err.println("@ " + A.now() + " - RETREAT " + unit.typeWithHash());
 
                     if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
                         unit.addLog("RetreatedFrom" + runAwayFrom);

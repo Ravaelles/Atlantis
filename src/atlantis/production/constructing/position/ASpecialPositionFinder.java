@@ -50,9 +50,11 @@ public class ASpecialPositionFinder {
                 }
 
                 APosition result = findPositionForBase_nearestFreeBase(building, builder, construction);
+//                System.err.println("result = " + result);
+//                System.err.println("Bases.natural() = " + Bases.natural());
 
-                if (position == null && We.zerg()) {
-                    System.err.println("Fallback to standard building position");
+                if (result == null && We.zerg()) {
+                    A.errPrintln("Fallback to standard building position");
                     return APositionFinder.findStandardPosition(builder, building, Select.main(), 50);
                 }
 
@@ -131,7 +133,6 @@ public class ASpecialPositionFinder {
 //        APosition near = APosition.create(baseLocationToExpand.position()).translateByPixels(-64, -48);
 //        near = APosition.create(baseLocationToExpand.position());
         construction.setMaxDistance(3);
-
 
         return APositionFinder.findStandardPosition(
             builder, building, near, construction.maxDistance()

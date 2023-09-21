@@ -14,7 +14,11 @@ public class DontInterruptShootingUnits extends Manager {
     @Override
     public boolean applies() {
 //        if (true) return false;
+
         if (unit.isMarine()) return true;
+
+        if (unit.isMelee() && unit.combatEvalRelative() < 1) return false;
+        if (unit.combatEvalRelative() < 1 && unit.enemiesNear().ranged().canAttack(unit, 1).notEmpty()) return false;
 
         if (!unit.isAttacking()) return false;
         if (!unit.isRanged()) return false;

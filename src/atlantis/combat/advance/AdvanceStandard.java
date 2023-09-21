@@ -1,7 +1,6 @@
 package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
@@ -14,7 +13,7 @@ public class AdvanceStandard extends MissionManager {
 
     @Override
     public boolean applies() {
-        return unit.squad().isLeader(unit);
+        return unit.isCombatUnit() && !squad.isLeader(unit) && unit.combatEvalRelative() > 1.5;
     }
 
     protected Manager handle() {
@@ -23,11 +22,6 @@ public class AdvanceStandard extends MissionManager {
                 TerranTank.wantsToUnsiege(unit);
             }
             else {
-//                AttackNearbyEnemies attackNearbyEnemies = new AttackNearbyEnemies(unit);
-//                if (attackNearbyEnemies.invoke() != null) {
-//                    return usedManager(attackNearbyEnemies);
-//                }
-
                 unit.move(focusPoint, Actions.MOVE_FOCUS, "Advance");
             }
             return usedManager(this);

@@ -1,6 +1,7 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
+import atlantis.game.A;
 import jbweb.Blocks;
 import jbweb.JBWEB;
 import jbweb.Stations;
@@ -30,9 +31,14 @@ public class InitJBWEB {
 //                System.err.println("Not able to init wall");
 //            }
         } catch (Exception e) {
-            System.err.println("JBWEB exception: " + e.getMessage());
-            e.printStackTrace();
-            Atlantis.getInstance().exitGame();
+            if (!A.isUms()) {
+                System.err.println("JBWEB exception: " + e.getMessage());
+                e.printStackTrace();
+                Atlantis.getInstance().exitGame();
+            }
+            else {
+                A.errPrintln("InitJBWEB failed, but continuing to play.");
+            }
         }
     }
 

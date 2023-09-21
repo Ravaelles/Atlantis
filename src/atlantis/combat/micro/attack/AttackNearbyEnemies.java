@@ -3,6 +3,7 @@ package atlantis.combat.micro.attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.wraith.AttackAsWraith;
 import atlantis.combat.targeting.ATargeting;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
@@ -35,6 +36,8 @@ public class AttackNearbyEnemies extends Manager {
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
         if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
 
+        if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
+
         return unit.hasAnyWeapon();
     }
 
@@ -44,6 +47,8 @@ public class AttackNearbyEnemies extends Manager {
 //        if (preventFreeze.invoke() != null) {
 //            return usedManager(preventFreeze);
 //        }
+
+//        why();
 
         Manager dedicatedManager = dedicatedManager();
         if (dedicatedManager != null) {
@@ -63,6 +68,12 @@ public class AttackNearbyEnemies extends Manager {
         }
 
         return null;
+    }
+
+    private void why() {
+        if (unit.combatEvalRelative() < 1) {
+            A.printStackTrace("Why is this unit attacking?");
+        }
     }
 
     private Manager dedicatedManager() {

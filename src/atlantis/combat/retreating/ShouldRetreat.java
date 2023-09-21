@@ -47,9 +47,8 @@ public class ShouldRetreat extends Manager {
             () -> {
                 if (A.isUms() && A.supplyUsed() <= 30) return false;
 
-                if (unit.isRunning()) return false;
-
-                if (unit.isMissionDefend()) return false;
+//                if (unit.isRunning()) return false;
+                if (shouldNotRunInMissionDefend(unit)) return false;
 
 //                if (TempDontRetreat.temporarilyDontRetreat()) {
 //                    return false;
@@ -63,8 +62,7 @@ public class ShouldRetreat extends Manager {
                 terranShouldNotRetreat = new TerranShouldNotRetreat(unit);
 
                 if (terranShouldRetreat.shouldRetreat() != null) return true;
-
-                if (terranShouldNotRetreat.shouldNotRetreat() != null) return true;
+                if (terranShouldNotRetreat.shouldNotRetreat() != null) return false;
 
                 if (shouldNotConsiderRetreatingNow(unit)) return false;
 
@@ -103,6 +101,12 @@ public class ShouldRetreat extends Manager {
                 return false;
             }
         );
+    }
+
+    private static boolean shouldNotRunInMissionDefend(AUnit unit) {
+        return unit.isMissionDefend()
+            && (unit.hp() >= 25 || unit.enemiesNear().melee().nearestToDistMore(unit, 2.1))
+            && unit.friendsNear().buildings().nearestToDistLess(unit, 4);
     }
 
     private static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {

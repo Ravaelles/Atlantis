@@ -17,13 +17,13 @@ public class ProduceZergUnit {
         for (AUnit larva : Select.ourOfType(AUnitType.Zerg_Larva).list()) {
             try {
                 larva.train(type);
+                return true;
             } catch (Exception e) {
-                ErrorLog.printMaxOncePerMinute(
-                    "Exception in produceZergUnit: " + type + " // " + larva
-                        + " / " + e.getMessage()
-                );
+//                ErrorLog.printMaxOncePerMinute(
+//                    "Exception in produceZergUnit: " + type + " // " + larva
+//                        + " / " + e.getMessage()
+//                );
             }
-            return true;
         }
 
         return false;

@@ -11,7 +11,7 @@ import bwapi.Game;
 import bwapi.Text;
 
 /**
- * Here you can include code that will draw extra informations over units etc.
+ * Here you can include code that will draw extra information over units etc.
  */
 public class APainter {
 
@@ -30,7 +30,6 @@ public class APainter {
 
     public static void init() {
         if (Env.isLocal() && !Env.isParamTweaker()) {
-            paintingMode = MODE_FULL_PAINTING;
         }
         else {
             paintingMode = MODE_NO_PAINTING;

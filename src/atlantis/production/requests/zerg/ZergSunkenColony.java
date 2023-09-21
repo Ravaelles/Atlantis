@@ -61,6 +61,8 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
 
     @Override
     public boolean shouldBuildNew() {
+        if (A.seconds() <= (EnemyStrategy.get().isRushOrCheese() ? 0 : 200)) return false;
+
         int creepColonies = Count.existingOrInProductionOrInQueue(AUnitType.Zerg_Creep_Colony);
 
         int maxInProduction = 3;

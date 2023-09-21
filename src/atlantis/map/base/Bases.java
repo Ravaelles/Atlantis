@@ -79,7 +79,7 @@ public class Bases {
             return null;
         }
 
-        return baseLocations.get(index % baseLocations.size());
+        return baseLocations.get((index + 1) % baseLocations.size());
     }
 
     /**

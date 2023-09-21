@@ -13,13 +13,11 @@ public class ShouldFightInsteadAvoidAsZerg {
             1,
             () -> {
                 if (!unit.isZerg()) return false;
-
                 if (unit.combatEvalRelative() <= 0.7) return false;
+                if (unit.isWounded() && unit.lastStartedRunningLessThanAgo(20)) return false;
 
                 if (asHydra(unit)) return true;
-
                 if (asZergling(unit)) return true;
-
                 if (protectOurSunken(unit)) return true;
 
                 return false;

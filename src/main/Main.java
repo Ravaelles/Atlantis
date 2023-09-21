@@ -48,12 +48,12 @@ public class Main {
     }
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -72,7 +72,7 @@ public class Main {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Maps for testing as Terran ==========================
@@ -92,7 +92,8 @@ public class Main {
 //@        if (true) return "ums/rav/Bunker_v_M&M.scx";
 //        if (true) return "ums/rav/Tanks_v_Tanks_in_line.scx";
 //        if (true) return "ums/rav/Tanks_v_Tanks_with_choke.scx";
-        if (true) return "ums/rav/Tanks_v_Wraiths.scm"; // Make sure that SCVs can construct turrets ad hoc
+//        if (true) return "ums/rav/Tanks_v_Wraiths.scm"; // Make sure that SCVs can construct turrets ad hoc
+//        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
@@ -130,9 +131,8 @@ public class Main {
 
         // === Maps for testing as Zerg ============================
 
-//        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
-//        if (true) return "ums/Muta Micro_ Python.scm"; // Need good squad management
-//        if (true) return "ums/vulture_v_zerglings.scx"; // 1 Vulture v entire map of Lings
+//        if (true) return "ums/rav/Lings_v_Zealots.scm";
+//        if (true) return "ums/Muta Micro_ Python.scm"; // Need crazy good squad management
 //@        if (true) return "ums/rav/Z+H_v_Zealots+Dragoons.scm";
 
         // === Maps for testing as Protoss ========================
@@ -144,7 +144,7 @@ public class Main {
 //        if (true) return "ums/rav/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_Zeal.scm";
-//        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
+//@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 //        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
 //        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";
 //        if (true) return "ums/rav/Dragoons_v_Marines.scm";
@@ -152,7 +152,7 @@ public class Main {
 //        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
 //        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
 //        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
-//        if (true) return "ums/rav/Zeal_v_Zeal.scm";
+//@        if (true) return "ums/rav/Zeal_v_Zeal.scm";
 //        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 //        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
 //        if (true) return "ums/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers

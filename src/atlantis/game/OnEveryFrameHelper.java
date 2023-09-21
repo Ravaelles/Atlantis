@@ -5,7 +5,8 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 
-import atlantis.production.orders.production.queue.Queue;
+import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import bwapi.Color;
 import jbweb.Block;
 import jbweb.Blocks;
@@ -20,11 +21,24 @@ public class OnEveryFrameHelper {
 //        paintMissionAttackFocusPoint();
 //        pathToEnemyBase();
 
-        paintJbwebBlocks();
+//        paintJbwebBlocks();
 
 //        CurrentProductionQueue.print();
 
 //        Queue.get().readyToProduceOrders().print("All orders");
+
+//        combatUnitInfo();
+    }
+
+    private static void combatUnitInfo() {
+        AUnit first = Select.ourCombatUnits().nonBuildings().first();
+        if (first == null) return;
+
+        A.println(first.typeWithHash() + " / " + first.manager() + " / " + first.combatEvalRelative());
+
+//        if (first.combatEvalRelative() < 1 && first.isActiveManager(AttackNearbyEnemies.class)) {
+//            A.printStackTrace("Why is this unit attacking?");
+//        }
     }
 
     private static void paintJbwebBlocks() {

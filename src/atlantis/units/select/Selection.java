@@ -835,6 +835,16 @@ public class Selection extends BaseSelection {
         return data.isEmpty() ? null : data.get(0);
     }
 
+    public boolean nearestToDistLess(HasPosition position, double maxDist) {
+        AUnit nearest = nearestTo(position);
+        return nearest != null && nearest.distTo(position) <= maxDist;
+    }
+
+    public boolean nearestToDistMore(HasPosition position, double maxDist) {
+        AUnit nearest = nearestTo(position);
+        return nearest != null && nearest.distTo(position) >= maxDist;
+    }
+
     public AUnit mostDistantTo(HasPosition position) {
         if (data.isEmpty() || position == null) {
             return null;

@@ -9,6 +9,7 @@ import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
+import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
@@ -37,6 +38,13 @@ public class MapSpecificCommander extends Commander {
         else if (MapAndRace.isMap("Wraith_v_Wraith")) {
             if (A.now() <= 1) GameSpeed.changeSpeedToNormal();
             if (A.seconds() <= 3) CameraCommander.centerCameraOn(Select.ourCombatUnits().first());
+        }
+
+        // =========================================================
+
+        else if (MapAndRace.isMap("Lings_v_Zealots")) {
+            if (A.now() <= 1) GameSpeed.changeSpeedTo(30);
+            if (A.seconds() <= 3) CameraCommander.centerCameraOn(ourUnitNearestToEnemy());
         }
 
         // =========================================================
@@ -140,6 +148,10 @@ public class MapSpecificCommander extends Commander {
                 GameSpeed.changeFrameSkipTo(0);
             }
         }
+    }
+
+    private static AUnit ourUnitNearestToEnemy() {
+        return Select.ourCombatUnits().nearestTo(Select.enemy().first());
     }
 
     public static boolean shouldTreatAsNormalMap() {

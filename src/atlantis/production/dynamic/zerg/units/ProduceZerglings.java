@@ -14,6 +14,8 @@ public class ProduceZerglings {
         int zerglings = Count.zerglings();
         int larvas = Count.larvas();
 
+        if (larvas >= 3 && A.supplyUsed() <= 180 && A.hasMinerals(600)) return produceZergling();
+
         if (zerglings >= 2 && larvas == 0) return false;
 
         if (Have.hydraliskDen()) {
