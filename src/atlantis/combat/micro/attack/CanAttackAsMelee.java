@@ -26,9 +26,11 @@ public class CanAttackAsMelee {
     }
 
     private static boolean allowForTerran(AUnit unit) {
-        if (!We.terran()) return false;
+        if (!We.terran() || !unit.isFirebat()) return false;
 
-        if (unit.enemiesNear().ranged().nonBuildings().inRadius(2, unit).notEmpty()) return true;
+//        if (unit.enemiesNear().ranged().nonBuildings().inRadius(2, unit).notEmpty()) return true;
+
+        if (unit.enemiesNear().canBeAttackedBy(unit, 1.5).notEmpty()) return true;
 
         if (unit.hp() <= (Enemy.protoss() ? 33 : 18)) return false;
 

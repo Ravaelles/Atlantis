@@ -16,7 +16,6 @@ import bwapi.TechType;
 
 
 public class TerranVulture extends Manager {
-
     public TerranVulture(AUnit unit) {
         super(unit);
     }
@@ -81,59 +80,59 @@ public class TerranVulture extends Manager {
 
     // =========================================================
 
-    private boolean fightEnemyUsingMinesNextToThem() {
-//        if (unit.hp() <= 45 && !unit.isUnitAction(UnitActions.USING_TECH)) {
-//            return false;
-//        }
-
-        // First define closest enemy
-        AUnit nearestEnemy = unit.enemiesNear().ofType(
-            AUnitType.Terran_Siege_Tank_Siege_Mode,
-            AUnitType.Terran_Siege_Tank_Tank_Mode,
-            AUnitType.Protoss_Dragoon
-        ).inRadius(8, unit).nearestTo(unit);
-
-        if (nearestEnemy != null) {
-            APainter.paintTextCentered(unit.translateByTiles(0, -1.2), A.trueFalse(unit.isBraking()) + "," + A.trueFalse(unit.isIdle()), Color.Orange);
-
-            // Define center of other enemy units Near
-            HasPosition enemiesCenter = nearestEnemy
-                .friendsNear()
-                .groundUnits()
-                .inRadius(2, nearestEnemy)
-                .center()
-                .makeWalkable(5);
-
-            APosition finalPlace = enemiesCenter.position();
-
-            APainter.paintCircleFilled(finalPlace, 16, Color.White);
-            System.out.println("unit.distTo(enemiesCenter) = " + unit.distTo(finalPlace));
-
-            if (unit.distToLessThan(enemiesCenter, 1.5)) {
-                finalPlace = unit.position();
-            }
-            else if (unit.distToLessThan(enemiesCenter, 2.8) && (unit.isBraking() || unit.isIdle() || unit.hasNotMovedInAWhile())) {
-                finalPlace = unit.position();
-            }
-            else {
-//                unit.move(finalPlace.translatePercentTowards(10, unit), UnitActions.MOVE_TO_ENGAGE, "GoAndMine");
+//    private boolean fightEnemyUsingMinesNextToThem() {
+////        if (unit.hp() <= 45 && !unit.isUnitAction(UnitActions.USING_TECH)) {
+////            return false;
+////        }
+//
+//        // First define closest enemy
+//        AUnit nearestEnemy = unit.enemiesNear().ofType(
+//            AUnitType.Terran_Siege_Tank_Siege_Mode,
+//            AUnitType.Terran_Siege_Tank_Tank_Mode,
+//            AUnitType.Protoss_Dragoon
+//        ).inRadius(8, unit).nearestTo(unit);
+//
+//        if (nearestEnemy != null) {
+//            APainter.paintTextCentered(unit.translateByTiles(0, -1.2), A.trueFalse(unit.isBraking()) + "," + A.trueFalse(unit.isIdle()), Color.Orange);
+//
+//            // Define center of other enemy units Near
+//            HasPosition enemiesCenter = nearestEnemy
+//                .friendsNear()
+//                .groundUnits()
+//                .inRadius(2, nearestEnemy)
+//                .center()
+//                .makeWalkable(5);
+//
+//            APosition finalPlace = enemiesCenter.position();
+//
+//            APainter.paintCircleFilled(finalPlace, 16, Color.White);
+//            System.out.println("unit.distTo(enemiesCenter) = " + unit.distTo(finalPlace));
+//
+//            if (unit.distToLessThan(enemiesCenter, 1.5)) {
+//                finalPlace = unit.position();
+//            }
+//            else if (unit.distToLessThan(enemiesCenter, 2.8) && (unit.isBraking() || unit.isIdle() || unit.hasNotMovedInAWhile())) {
+//                finalPlace = unit.position();
+//            }
+//            else {
+////                unit.move(finalPlace.translatePercentTowards(10, unit), UnitActions.MOVE_TO_ENGAGE, "GoAndMine");
+////                return true;
+//            }
+//
+////            plantMineAt(unit, enemiesCenter.translateTilesTowards(unit, 0.7));
+//
+//            APainter.paintCircleFilled(enemiesCenter, 24, Color.Yellow);
+//            if (finalPlace != null) {
+//                APainter.paintCircleFilled(enemiesCenter, 24, Color.Red);
+//                System.out.println("finalPlace = " + finalPlace);
+//                plantMineAt(finalPlace);
+//                unit.setTooltipTactical("UseMine");
 //                return true;
-            }
-
-//            plantMineAt(unit, enemiesCenter.translateTilesTowards(unit, 0.7));
-
-            APainter.paintCircleFilled(enemiesCenter, 24, Color.Yellow);
-            if (finalPlace != null) {
-                APainter.paintCircleFilled(enemiesCenter, 24, Color.Red);
-                System.out.println("finalPlace = " + finalPlace);
-                plantMineAt(finalPlace);
-                unit.setTooltipTactical("UseMine");
-                return true;
-            }
-        }
-
-        return false;
-    }
+//            }
+//        }
+//
+//        return false;
+//    }
 
     private boolean plantStandardMine() {
         Selection NearMines = Select.ourOfType(AUnitType.Terran_Vulture_Spider_Mine).inRadius(8, unit);

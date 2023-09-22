@@ -36,21 +36,21 @@ public class ProduceTanks {
         }
 
         if (Enemy.protoss() && tanks >= 4 && Count.scienceVessels() == 0) {
-            if (canAffordWithReserved) isMaxAtATime();
+            if (canAffordWithReserved) produceTank();
         }
 
 //        int vultures = Count.vultures();
         if (!Decisions.produceVultures() || tanks <= 5 || A.canAfford(700, 250)) {
-            return isMaxAtATime();
+            return produceTank();
         }
 
         return false;
     }
 
-    private static boolean isMaxAtATime() {
+    private static boolean produceTank() {
         return AddToQueue.maxAtATime(
             AUnitType.Terran_Siege_Tank_Tank_Mode,
-            Math.min(AGame.minerals() / 160, Count.ofType(AUnitType.Terran_Machine_Shop))
+            A.inRange(1, AGame.minerals() / 160, Count.ofType(AUnitType.Terran_Machine_Shop))
         );
     }
 

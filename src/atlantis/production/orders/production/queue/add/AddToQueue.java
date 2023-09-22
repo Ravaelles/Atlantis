@@ -105,7 +105,7 @@ public class AddToQueue {
     private static boolean preventExcessiveOrInvalidOrders(AUnitType type) {
         assert type != null;
 
-        int maxOrdersAtOnceWithoutWarning = 15;
+        int maxOrdersAtOnceWithoutWarning = 30;
 
         // Too many requests of this type
         int existingInQueue = Count.inQueue(type, 30);

@@ -1,6 +1,7 @@
 package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 
@@ -18,6 +19,11 @@ public class IsReadyToProduceOrder {
 //            A.errPrintln("order.checkIfHasWhatRequired() = " + order.checkIfHasWhatRequired());
 //            A.errPrintln("-----------");
 //        }
+
+        // Prioritize combat unit production when base is under attack
+        if (order.isUnitOrBuilding() && order.unitType().isBase()) {
+            if (EnemyWhoBreachedBase.get() != null) return false;
+        }
 
         if (!order.supplyRequirementFulfilled() || !order.checkIfHasWhatRequired()) return false;
         if (!canAffordWithReserved(order)) return false;

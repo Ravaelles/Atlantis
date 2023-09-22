@@ -31,30 +31,20 @@ public class ProduceMarines {
 
         if (Enemy.terran() && (marines >= 4 && !A.hasMinerals(700 + 100 * marines))) return false;
 
-        int tanks = Count.tanks();
-
-//        int infantry = Count.infantry();
-
-        if (tanks >= 5) {
-            if (!A.canAfford(450 + marines * 15, 0)) return false;
-        }
-
-        if (tanks <= 2 && marines >= 10 && (!A.hasMinerals(650))) {
-            if (Enemy.zerg() && Count.bunkers() >= 1) return false;
-        }
+        if (inRelationToTanks(marines)) return false;
 
         if (!A.supplyUsed(160) && A.hasMinerals(800)) {
-            return AddToQueue.maxAtATime(Terran_Marine, 3);
+            return produceMarine();
         }
 
         if (marines <= 10 && A.hasMinerals(600)) {
-            return AddToQueue.maxAtATime(Terran_Marine, 3);
+            return produceMarine();
         }
 
         if (marines >= 8 && A.supplyUsed(170) && !A.hasMinerals(800)) return false;
 
         if (Enemy.zerg() && A.seconds() >= 300 && marines <= 4) {
-            return AddToQueue.maxAtATime(Terran_Marine, 3);
+            return produceMarine();
         }
 
         if (!A.hasMinerals(200) && marines >= 4 && !A.canAffordWithReserved(50, 0)) return false;
@@ -77,10 +67,30 @@ public class ProduceMarines {
 
         Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
         if (barracks.isNotEmpty() && A.canAffordWithReserved(100 + 50 * barracks.count(), 0)) {
-            return AddToQueue.maxAtATime(Terran_Marine, 1);
+            return produceMarine();
         }
 
         return trainMarinesForBunkersIfNeeded();
+    }
+
+    private static boolean produceMarine() {
+        return AddToQueue.maxAtATime(Terran_Marine, 3);
+    }
+
+    private static boolean inRelationToTanks(int marines) {
+        int tanks = Count.tanks();
+
+        if (tanks <= 2) {
+            if (A.canAfford(450 + marines * 15, 0)) return produceMarine();
+        }
+        if (tanks >= 5) {
+            if (A.canAfford(450 + marines * 15, 0)) return produceMarine();
+        }
+        if (tanks <= 2 && marines >= 10 && A.hasMinerals(650)) {
+            if (Enemy.zerg() && Count.bunkers() >= 1) return produceMarine();
+        }
+        
+        return false;
     }
 
     protected static boolean trainMarinesForBunkersIfNeeded() {

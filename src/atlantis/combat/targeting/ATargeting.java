@@ -93,8 +93,8 @@ public class ATargeting extends HasUnit {
         }
 
 //        System.out.prin tln("enemy.type() = " + enemy.type());
-//        AUnit weakestEnemy = selectWeakestEnemyOfType(enemy.type(), unit);
-        AUnit weakestEnemy = enemy;
+        AUnit weakestEnemy = selectWeakestEnemyOfType(enemy.type(), unit);
+//        AUnit weakestEnemy = enemy;
 //        System.out.pri ntln("weakestEnemy = " + weakestEnemy + "\n");
 
         return weakestEnemy;

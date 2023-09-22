@@ -28,6 +28,10 @@ public class ATankTargeting extends HasUnit {
             }
         }
 
+        AUnit target = null;
+
+        if ((target = (new TankCrucialTargeting(unit, enemies)).crucialTarget()) != null) return target;
+
         return (new HighestScoreTargetForTank(unit)).targetWithBestScoreAmong(possibleTargets);
     }
 

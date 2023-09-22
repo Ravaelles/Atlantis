@@ -1,6 +1,7 @@
 ### BUGS ###
 
-- SiegeT can't attack #436 Shuttle @(44, 42)
+.- SiegeT can't attack #436 Shuttle @(44, 42)
+- Firebat can't attack #378 Shuttle @(71, 48)
 - Build turrets against enemy Wraiths
 
 ### FEATURES ###

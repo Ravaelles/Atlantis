@@ -637,6 +637,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     /**
      * Create initial search-pool of units from given collection of units.
      */
+//    public static Selection from(Collection<AUnit> units, String initCachePath) {
+//        return new Selection(units, initCachePath);
+//    }
     public static Selection from(Collection<? extends AUnit> units, String initCachePath) {
         return new Selection(units, initCachePath);
     }
@@ -883,7 +886,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static Selection ourFree(AUnitType type) {
         return cache.get(
             "ourFree:" + type.id(),
-            3,
+            0,
             () -> Select.ourOfType(type).free()
         );
     }

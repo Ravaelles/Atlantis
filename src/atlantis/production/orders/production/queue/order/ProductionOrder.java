@@ -369,4 +369,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     public boolean isDynamic() {
         return dynamic;
     }
+
+    public boolean isUnitOrBuilding() {
+        return unitOrBuilding != null;
+    }
 }

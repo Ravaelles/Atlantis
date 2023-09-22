@@ -39,7 +39,7 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
         AChoke choke = Chokes.nearestChoke(initialPositionToReinforce);
 
         if (choke != null) {
-            position = choke.translateTilesTowards(initialPositionToReinforce, 3.4);
+            translateChokeTowardsOurSide(choke);
         }
 
         if (position == null) return false;
@@ -73,6 +73,10 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
 //        );
 
         return position != null;
+    }
+
+    private void translateChokeTowardsOurSide(AChoke choke) {
+        position = choke.translateTilesTowards(initialPositionToReinforce, 3.4);
     }
 
     @Override
