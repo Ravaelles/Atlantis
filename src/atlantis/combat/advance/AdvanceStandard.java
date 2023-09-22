@@ -18,17 +18,16 @@ public class AdvanceStandard extends MissionManager {
     }
 
     protected Manager handle() {
-        if (A.now() % 10 <= 8 && !unit.looksIdle()) {
+        if (unit.isTankSieged()) {
+            TerranTank.wantsToUnsiege(unit);
+        }
+
+        if (A.now() % 10 <= 8 && (!unit.isMoving() && !unit.isAttacking())) {
             return usedManager(this, "AdvanceContinue");
         }
 
         if (focusPoint != null) {
-            if (unit.isTankSieged()) {
-                TerranTank.wantsToUnsiege(unit);
-            }
-            else {
-                unit.move(focusPoint, Actions.MOVE_FOCUS, "Advance");
-            }
+            unit.move(focusPoint, Actions.MOVE_FOCUS, "Advance");
             return usedManager(this);
         }
 

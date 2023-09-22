@@ -119,7 +119,7 @@ public class AttackNearbyEnemies extends Manager {
                 if (enemy == null) return false;
                 if (!unit.canAttackTarget(enemy) || !unit.isAlive()) {
 //                    ErrorLog.printMaxOncePerMinute(unit.type() + " can't attack " + enemy);
-                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(unit.type() + " can't attack " + enemy);
+//                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(unit.type() + " can't attack " + enemy);
                     return false;
                 }
 
