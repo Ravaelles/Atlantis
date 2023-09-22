@@ -9,7 +9,7 @@ import static atlantis.units.AUnitType.*;
 public class TerranAbundanceEarlyToMidGame extends Commander {
     @Override
     public boolean applies() {
-        return !GamePhase.isLateGame() && A.hasFreeSupply(3) && A.hasMinerals(850);
+        return !GamePhase.isLateGame() && A.hasFreeSupply(3) && A.hasMinerals(800);
     }
 
     @Override

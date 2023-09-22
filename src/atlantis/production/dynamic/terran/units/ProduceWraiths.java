@@ -5,11 +5,13 @@ import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 public class ProduceWraiths {
     public static boolean wraiths() {
         if (Count.ofType(AUnitType.Terran_Starport) == 0) return false;
+        if (prioritizeScienceFacility()) return false;
 
         boolean produceWraiths = A.supplyUsed() >= 90;
 
@@ -25,6 +27,12 @@ public class ProduceWraiths {
         if (wraiths >= 12) return false;
 
         return produce();
+    }
+
+    private static boolean prioritizeScienceFacility() {
+        if (!A.canAfford(650, 350) && Have.notEvenPlanned(AUnitType.Terran_Science_Facility)) return true;
+
+        return false;
     }
 
     private static boolean produce() {

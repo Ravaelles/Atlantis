@@ -769,11 +769,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         boolean includeCooldown,
         double extraMargin
     ) {
-        if (hasNoWeaponAtAll()) return false;
-
+        if (hasNoWeaponAtAll() || !hasWeaponToAttackThisUnit(target)) return false;
         if (target.isFoggedUnitWithUnknownPosition()) return false;
-
-        // Target CLOAKED
         if (checkVisibility && target.effUndetected()) return false;
 
         // Target is GROUND unit

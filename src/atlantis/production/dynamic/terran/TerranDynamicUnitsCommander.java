@@ -27,7 +27,7 @@ public class TerranDynamicUnitsCommander extends Commander {
             TerranDynamicFactoryUnits.handleFactoryProduction();
         }
 
-        if (dynamicOrders <= 4 || A.hasMinerals(800)) {
+        if (dynamicOrders <= 8 || A.hasMinerals(600)) {
             if (Count.infantry() <= 14 || (Enemy.protoss() && Count.tanks() >= 4) || A.hasMinerals(500)) {
                 ProduceGhosts.ghosts();
                 ProduceMedicsAndFirebats.medics();

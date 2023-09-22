@@ -18,7 +18,6 @@ public class ATankTargeting extends HasUnit {
             .havingAtLeastHp(1)
             .havingPosition()
             .realUnitsAndBuildings()
-            .groundUnits()
             .effVisible()
             .sortDataByDistanceTo(unit, true);
 

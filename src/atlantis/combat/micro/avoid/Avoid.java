@@ -18,7 +18,7 @@ public class Avoid extends Manager {
 
     @Override
     public boolean applies() {
-        return !unit.isABuilding();
+        return !unit.isABuilding() && !unit.effUndetected();
     }
 
     public Manager singleUnit(AUnit enemy) {

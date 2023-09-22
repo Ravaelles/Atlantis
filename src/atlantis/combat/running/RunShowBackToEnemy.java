@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 public class RunShowBackToEnemy {
     protected static final double SHOW_BACK_DIST_DEFAULT = 6;
     protected static final double SHOW_BACK_DIST_DRAGOON = 3;
-    protected static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 2;
+    protected static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 3;
     protected static final double SHOW_BACK_DIST_VULTURE = 5;
 
     private final ARunningManager runningManager;

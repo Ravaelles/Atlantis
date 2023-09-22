@@ -19,8 +19,8 @@ public class ForbiddenByStreetGrid {
 
         // =========================================================
 
-        if (position.tx() % 9 <= 1) return false;
-        if (position.ty() % 9 <= 1) return false;
+        if (position.tx() % 9 <= 1) return true;
+        if (position.ty() % 9 <= 1) return true;
 
         // =========================================================
 

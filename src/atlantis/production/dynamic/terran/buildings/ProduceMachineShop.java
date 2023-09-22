@@ -1,10 +1,17 @@
 package atlantis.production.dynamic.terran.buildings;
 
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.information.strategy.services.AreWeGoingBio;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 
+import static atlantis.units.AUnitType.Terran_Factory;
 import static atlantis.units.AUnitType.Terran_Machine_Shop;
 
 public class ProduceMachineShop {
@@ -29,8 +36,11 @@ public class ProduceMachineShop {
         }
 
         if (Count.factories() > Count.ofType(Terran_Machine_Shop)) {
-            if (Count.inProductionOrInQueue(Terran_Machine_Shop) <= 1) {
-                AddToQueue.withHighPriority(Terran_Machine_Shop);
+            if (Count.inProductionOrInQueue(Terran_Machine_Shop) == 0) {
+//                AddToQueue.maxAtATime(Terran_Machine_Shop, 1, ProductionOrderPriority.HIGH);
+                if (A.canAfford(Terran_Machine_Shop)) {
+                    buildAddon(Terran_Machine_Shop);
+                }
                 return;
             }
         }
@@ -41,20 +51,17 @@ public class ProduceMachineShop {
 //                        || AGame.canAffordWithReserved(150, 150)
 //                        || A.supplyUsed(70)
 //        ) {
-//
-//            for (AUnit building : Select.ourBuildings().list()) {
-//                if (building.type().isFactory() && !building.hasAddon()) {
-//                    AUnitType addonType = building.type().getRelatedAddon();
-//                    if (addonType != null) {
-//
-//                        if (AGame.canAfford(addonType) && Count.inQueueOrUnfinished(addonType, 3) <= 1) {
-////                            AddToQueue.withHighPriority(addonType);
-//                            building.buildAddon(addonType);
-//                            return;
-//                        }
-//                    }
-//                }
-//            }
-//        }
+
+    }
+
+    private static void buildAddon(AUnitType addonType) {
+        for (AUnit building : Select.ourOfType(Terran_Factory).list()) {
+            if (building.type().isFactory() && !building.hasAddon()) {
+                if (AGame.canAfford(addonType) && Count.inQueueOrUnfinished(addonType, 3) <= 1) {
+                    building.buildAddon(addonType);
+                    return;
+                }
+            }
+        }
     }
 }

@@ -32,6 +32,7 @@ public class ShouldStopRunning extends Manager {
         }
 
         if (checkAsMelee()) return false;
+        if (StopRunningAsMarine.shouldNotStop(unit)) return false;
 
         if (unit.avoidEnemiesManager().shouldNotAvoidAnyUnit()) {
             unit.setTooltip("JustStop");
