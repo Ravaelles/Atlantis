@@ -144,16 +144,16 @@ public class AddToQueue {
         return false;
     }
 
-    public static boolean maxAtATime(AUnitType type, int maxAtATime) {
+    public static ProductionOrder maxAtATime(AUnitType type, int maxAtATime) {
         return maxAtATime(type, maxAtATime, ProductionOrderPriority.STANDARD);
     }
 
-    public static boolean maxAtATime(AUnitType type, int maxAtATime, ProductionOrderPriority priority) {
+    public static ProductionOrder maxAtATime(AUnitType type, int maxAtATime, ProductionOrderPriority priority) {
         if (CountInQueue.count(type, 30) < maxAtATime) {
-            return withPriority(type, priority) != null;
+            return withPriority(type, priority);
         }
 
-        return false;
+        return null;
     }
 
     public static boolean toHave(AUnitType type) {

@@ -27,6 +27,6 @@ public class ProduceHydras {
     }
 
     private static boolean produceHydra() {
-        return AddToQueue.maxAtATime(AUnitType.Zerg_Hydralisk, 8);
+        return AddToQueue.maxAtATime(AUnitType.Zerg_Hydralisk, 8) != null;
     }
 }

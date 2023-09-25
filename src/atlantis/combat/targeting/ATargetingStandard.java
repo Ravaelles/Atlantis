@@ -6,8 +6,8 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ATargetingStandard extends ATargeting {
-    public ATargetingStandard(AUnit unit) {
-        super(unit);
+    public ATargetingStandard(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
+        super(unit, enemyUnits, enemyBuildings);
     }
 
     public AUnit target() {
@@ -114,7 +114,6 @@ public class ATargetingStandard extends ATargeting {
             debug("D6a = " + target);
             return target;
         }
-
 
         // =========================================================
         // Okay, try targeting any-fuckin-thing

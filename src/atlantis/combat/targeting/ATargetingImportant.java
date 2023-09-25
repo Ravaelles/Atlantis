@@ -3,11 +3,12 @@ package atlantis.combat.targeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class ATargetingImportant extends ATargeting {
 
-    public ATargetingImportant(AUnit unit) {
-        super(unit);
+    public ATargetingImportant(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
+        super(unit, enemyUnits, enemyBuildings);
     }
 
     public AUnit target() {

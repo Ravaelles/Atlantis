@@ -188,6 +188,26 @@ public class FakeUnit extends AUnit {
     }
 
     @Override
+    public boolean hasAddon() {
+        return false;
+    }
+
+    @Override
+    public boolean isConstructing() {
+        return false;
+    }
+
+    @Override
+    public boolean isGatheringMinerals() {
+        return false;
+    }
+
+    @Override
+    public boolean isGatheringGas() {
+        return false;
+    }
+
+    @Override
     public boolean isPowered() {
         return true;
     }

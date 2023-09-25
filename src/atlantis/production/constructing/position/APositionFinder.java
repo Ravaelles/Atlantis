@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -28,6 +29,8 @@ public class APositionFinder {
      */
     public static APosition findPositionForNew(AUnit builder, AUnitType building, Construction construction) {
         if (construction == null || construction.productionOrder() == null) return null;
+
+        if (Env.isTesting()) return APosition.create(A.rand(1, 99), A.rand(13, 99));
 
         HasPosition near = construction != null ? construction.nearTo() : null;
         double maxDistance = construction != null ? construction.maxDistance() : 35;

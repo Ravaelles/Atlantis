@@ -37,7 +37,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(drone, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(drone, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -72,7 +72,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(sunken, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -98,7 +98,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
 //            System.err.println("defineBestEnemyToAttackFor = " + ATargeting.defineBestEnemyToAttackFor(our));
-            assertEquals(templar, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(templar, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -109,14 +109,14 @@ public class ATargetingTest extends AbstractTestWithUnits {
 
         FakeUnit[] enemies = fakeEnemies(
             fake(AUnitType.Zerg_Larva, 11),
-            fake(AUnitType.Zerg_Egg, 11),
-            fake(AUnitType.Zerg_Lurker_Egg, 11),
-            fake(AUnitType.Zerg_Cocoon, 11),
+            fake(AUnitType.Zerg_Egg, 11.2),
+            fake(AUnitType.Zerg_Lurker_Egg, 11.4),
+            fake(AUnitType.Zerg_Cocoon, 12),
             building = fake(AUnitType.Zerg_Hydralisk_Den, 17)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(building, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(building, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -139,7 +139,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(spore, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(spore, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -155,7 +155,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -172,7 +172,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -189,7 +189,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -205,7 +205,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -222,7 +222,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 }

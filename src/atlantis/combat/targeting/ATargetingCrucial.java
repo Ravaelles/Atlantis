@@ -7,8 +7,8 @@ import atlantis.units.select.Selection;
 
 public class ATargetingCrucial extends ATargeting {
 
-    public ATargetingCrucial(AUnit unit) {
-        super(unit);
+    public ATargetingCrucial(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
+        super(unit, enemyUnits, enemyBuildings);
     }
 
     public AUnit target() {

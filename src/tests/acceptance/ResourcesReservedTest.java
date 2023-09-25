@@ -31,8 +31,8 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
     @Test
     public void reservedMineralsAndGasAreUpdatedAsOrderStatusChanges() {
         ReservedResources.reset();
-        initialReservedMinerals = 600;
-        afterInProgressMinerals = 500;
+        initialReservedMinerals = 550;
+        afterInProgressMinerals = 450;
 
         createWorld(1,
             () -> {
@@ -83,7 +83,7 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
 
         readyToProduceOrders = queue.readyToProduceOrders();
 
-        queue.allOrders().print("All orders");
+//        queue.allOrders().print("All orders");
 //        readyToProduceOrders.print("ReadyToProduceOrders");
 //        ReservedResources.print();
 
@@ -107,7 +107,6 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
     private Queue initQueue(int minerals, int gas) {
         aGame.when(AGame::minerals).thenReturn(minerals);
         aGame.when(AGame::gas).thenReturn(gas);
-        OurStrategy.setTo(TerranStrategies.TERRAN_MMG_vP);
 
         initSupply();
 

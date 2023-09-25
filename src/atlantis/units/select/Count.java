@@ -324,6 +324,14 @@ public class Count {
         return Count.ofType(AUnitType.Protoss_Observer);
     }
 
+    public static boolean notBeingProduced(AUnitType type) {
+        return inProductionOrInQueue(type) == 0;
+    }
+
+    public static boolean beingProduced(AUnitType type) {
+        return inProductionOrInQueue(type) > 0;
+    }
+
 //    public static int () {
 //        return ofType(AUnitType.);
 //    }

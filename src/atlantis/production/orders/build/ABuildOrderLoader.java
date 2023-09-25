@@ -4,6 +4,7 @@ import atlantis.config.AtlantisIgniter;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.util.We;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +22,10 @@ public class ABuildOrderLoader {
     // =========================================================
 
     public static ABuildOrder getBuildOrderForStrategy(AStrategy strategy) {
+        if (We.race() == null) throw new RuntimeException("Our race is null.");
+        if (strategy == null) throw new RuntimeException("ABuildOrderLoader: Strategy is null.");
+        if (strategy.race() == null) throw new RuntimeException("ABuildOrderLoader: Strategy race is null.");
+
         String buildOrdersDir = buildOrdersDir();
 
         String filePath = buildOrdersDir + strategy.race() + "/" + strategy.name() + ".txt";

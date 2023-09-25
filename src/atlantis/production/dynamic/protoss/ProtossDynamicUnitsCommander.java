@@ -136,7 +136,7 @@ public class ProtossDynamicUnitsCommander extends Commander {
     }
 
     private static boolean produceDragoon() {
-        return AddToQueue.maxAtATime(Protoss_Dragoon, freeGateways());
+        return AddToQueue.maxAtATime(Protoss_Dragoon, freeGateways()) != null;
     }
 
     private static int freeGateways() {

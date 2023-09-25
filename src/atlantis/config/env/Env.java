@@ -12,6 +12,7 @@ import java.io.File;
  */
 public class Env {
     private static boolean isLocal = false;
+    private static boolean isTesting = false;
     private static boolean firstRun = true;
     private static boolean paramTweaker = false;
 
@@ -110,6 +111,10 @@ public class Env {
     }
 
     public static boolean isTesting() {
-        return false;
+        return isTesting;
+    }
+
+    public static void markIsTesting(boolean enabled) {
+        isTesting = enabled;
     }
 }

@@ -38,6 +38,6 @@ public class ProduceWraiths {
     private static boolean produce() {
         int maxAtATime = Math.min(5, Select.ourOfType(AUnitType.Terran_Starport).free().count());
 
-        return AddToQueue.maxAtATime(AUnitType.Terran_Wraith, maxAtATime);
+        return AddToQueue.maxAtATime(AUnitType.Terran_Wraith, maxAtATime) != null;
     }
 }

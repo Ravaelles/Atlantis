@@ -24,13 +24,14 @@ public class TerranStrategies extends AStrategy {
     public static final AStrategy TERRAN_Mech = new AStrategy();
     public static final AStrategy TERRAN_Nada_2_Fac = new AStrategy();
     public static final AStrategy TERRAN_Three_Factory_Vultures = new AStrategy();
+    public static final AStrategy TERRAN_Tests = new AStrategy(); // Marine Medic Ghost (with Lockdown)
 
     // =========================================================
 
     public static void initialize() {
 
         // === Rushes ========================================
-        
+
         TERRAN_2_Rax_MnM.setTerran().setName("Double Rax MnM").setGoingRush().setGoingBio();
 
         TERRAN_2_Rax_Academy_vZ.setTerran().setName("2 Rax Academy vZ").setGoingRush().setGoingBio();
@@ -60,10 +61,12 @@ public class TerranStrategies extends AStrategy {
         TERRAN_Nada_2_Fac.setTerran().setName("Nada 2 Fac").setGoingTech();
 
         TERRAN_Three_Factory_Vultures.setTerran().setName("Three Factory Vultures").setGoingTech();
+
+        TERRAN_Tests.setTerran().setName("Terran strategy for Tests").setGoingTech();
     }
-    
+
     // =========================================================
-    
+
     public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
         int barracks = count(AUnitType.Terran_Barracks);
@@ -72,32 +75,32 @@ public class TerranStrategies extends AStrategy {
         int bunkers = count(AUnitType.Terran_Bunker);
         int marines = count(AUnitType.Terran_Marine);
         int medics = count(AUnitType.Terran_Medic);
-        
+
         // === Cheese ==============================================
-        
+
         if (barracks >= 3 && seconds < 350) {
             return TerranStrategies.TERRAN_3_Rax_MnM;
         }
-        
+
         if (barracks >= 2 && seconds < 200) {
             return TerranStrategies.TERRAN_BBS;
         }
 
         // === Expansion ===========================================
-        
+
         if (bases >= 2 && factories >= 1 && seconds < 300) {
             return TerranStrategies.TERRAN_1_Rax_FE;
         }
 
         // === Rush ================================================
-        
+
         if (barracks >= 2 && seconds < 350) {
             return TerranStrategies.TERRAN_2_Rax_MnM;
         }
-        
+
         // =========================================================
-        
+
         return null;
     }
-    
+
 }

@@ -61,7 +61,7 @@ public class DynamicProductionCommanderTest extends NonAbstractTestFakingGame {
         if (A.everyNthGameFrame(9)) mockProductionAndProduceReadyUnits();
 
         if (A.everyNthGameFrame(10)) {
-            System.err.println("@ " + A.now() + " - SUPPLY = " + A.supplyUsed());
+//            System.err.println("@ " + A.now() + " - SUPPLY = " + A.supplyUsed());
             printOurUnitsSummary();
 //            Queue.get().nonCompleted().print();
         }

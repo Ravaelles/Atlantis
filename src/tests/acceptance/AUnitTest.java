@@ -82,7 +82,7 @@ public class AUnitTest extends AbstractTestFakingGame {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(null, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(null, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -96,7 +96,7 @@ public class AUnitTest extends AbstractTestFakingGame {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -110,7 +110,7 @@ public class AUnitTest extends AbstractTestFakingGame {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -124,7 +124,7 @@ public class AUnitTest extends AbstractTestFakingGame {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -138,7 +138,7 @@ public class AUnitTest extends AbstractTestFakingGame {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 

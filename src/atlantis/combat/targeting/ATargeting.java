@@ -19,18 +19,28 @@ public class ATargeting extends HasUnit {
     //    protected static final boolean DEBUG = true;
     protected static final boolean DEBUG = false;
 
-    protected static Selection enemyBuildings;
-    protected static Selection enemyUnits;
+    protected Selection enemyBuildings;
+    protected Selection enemyUnits;
 
     public ATargeting(AUnit unit) {
         super(unit);
+    }
+
+    public ATargeting(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
+        super(unit);
+        this.enemyUnits = enemyUnits;
+        this.enemyBuildings = enemyBuildings;
+    }
+
+    public static AUnit defineBestEnemyToAttack(AUnit unit) {
+        return (new ATargeting(unit)).defineBestEnemyToAttack(AttackNearbyEnemies.maxDistToAttack(unit));
     }
 
     /**
      * For given <b>unit</b> it defines the best close range target from enemy units. The target is not
      * necessarily in the shoot range. Will return <i>null</i> if no enemy can is visible.
      */
-    public static AUnit defineBestEnemyToAttackFor(AUnit unit, double maxDistFromEnemy) {
+    protected AUnit defineBestEnemyToAttack(double maxDistFromEnemy) {
 //        if (true) return null;
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
@@ -50,16 +60,10 @@ public class ATargeting extends HasUnit {
 //        return closestUnitFallback(unit, maxDistFromEnemy);
     }
 
-    public static AUnit defineBestEnemyToAttackFor(AUnit unit) {
-        return defineBestEnemyToAttackFor(unit, AttackNearbyEnemies.maxDistToAttack(unit));
-    }
-
     // =========================================================
 
-    private static AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
-        if (unit.isTankSieged()) {
-            return (new ATankTargeting(unit)).defineTarget();
-        }
+    private AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
+        if (unit.isTankSieged()) return (new ATankTargeting(unit)).targetForTank();
 
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
 
@@ -92,21 +96,20 @@ public class ATargeting extends HasUnit {
             return null;
         }
 
-//        System.out.prin tln("enemy.type() = " + enemy.type());
+//        A.errPrintln("BEFORE weakestEnemy = " + enemy + "\n");
         AUnit weakestEnemy = selectWeakestEnemyOfType(enemy.type(), unit);
-//        AUnit weakestEnemy = enemy;
-//        System.out.pri ntln("weakestEnemy = " + weakestEnemy + "\n");
+//        A.errPrintln("AFTER weakestEnemy = " + weakestEnemy + "\n");
 
         return weakestEnemy;
     }
 
     // =========================================================
 
-    private static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
+    private AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
 
         // Most wounded enemy IN RANGE
         AUnit enemy = selectWeakestEnemyOfType(enemyType, unit, 0);
-//        System.out.prin tln("enemy A = " + enemy);
+//        A.errPrintln("enemy A = " + enemy);
         if (enemy != null) {
 //            unit.addLog("AttackClose");
             return enemy;
@@ -114,21 +117,14 @@ public class ATargeting extends HasUnit {
 
         // Most wounded enemy some distance from away
         enemy = selectWeakestEnemyOfType(enemyType, unit, 1);
-//        System.out.prin tln("enemy B = " + enemy);
-        if (enemy != null) {
-            return enemy;
-        }
-
-        // Most wounded enemy some distance from away
-        enemy = selectWeakestEnemyOfType(enemyType, unit, 6);
-//        System.out.prin tln("enemy B2 = " + enemy);
+//        A.errPrintln("enemy B = " + enemy);
         if (enemy != null) {
             return enemy;
         }
 
         // Ok, any possible of this type
         enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.maxDistToAttack(unit));
-//        System.out.pri ntln("enemy B3 = " + enemy);
+//        A.errPrintln("enemy B3 = " + enemy);
         if (enemy != null) {
             return enemy;
         }
@@ -137,7 +133,7 @@ public class ATargeting extends HasUnit {
         // Couldn't find enemy of given type in/near weapon range. Change target
 
         // Nearest enemy
-        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0).nearestTo(unit);
+        enemy = enemyUnits.canBeAttackedBy(unit, 20).nearestTo(unit);
         if (enemy != null) {
             unit.addLog("AttackNearest");
             return enemy;
@@ -163,7 +159,7 @@ public class ATargeting extends HasUnit {
         return null;
     }
 
-//    private static AUnit selectWeakestEnemyOfTypeInRange(AUnitType type, AUnit ourUnit) {
+//    private AUnit selectWeakestEnemyOfTypeInRange(AUnitType type, AUnit ourUnit) {
 //        Selection targets = ourUnit.enemiesNear()
 //                .ofType(type)
 //                .effVisible()
@@ -177,9 +173,8 @@ public class ATargeting extends HasUnit {
 //        return targets.clone().nearestTo(ourUnit);
 //    }
 
-    private static AUnit selectWeakestEnemyOfType(AUnitType type, AUnit ourUnit, double extraRange) {
-//        Selection targets = ourUnit.enemiesNear()
-        Selection targets = enemyUnits
+    private AUnit selectWeakestEnemyOfType(AUnitType type, AUnit ourUnit, double extraRange) {
+        Selection targets = Select.enemy()
             .ofType(type)
             .canBeAttackedBy(ourUnit, extraRange);
 //                .hasPathFrom(ourUnit);
@@ -212,7 +207,7 @@ public class ATargeting extends HasUnit {
         return targets.clone().nearestTo(relativeTo);
     }
 
-    private static AUnit handleTanksSpecially(AUnit unit, AUnit weakestEnemy) {
+    private AUnit handleTanksSpecially(AUnit unit, AUnit weakestEnemy) {
         if (weakestEnemy.enemiesNear().inRadius(2, unit).notEmpty()) {
             AUnit tankTarget = unit.enemiesNear()
                 .combatUnits()
@@ -229,38 +224,36 @@ public class ATargeting extends HasUnit {
 
     // =========================================================
 
-    private static AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
-
-        // Quit early if no target at all
-        if (
-            unit.enemiesNear()
-                .realUnitsAndBuildings()
-                .effVisible()
-                .visibleOnMap()
-                .havingAtLeastHp(1)
-                .havingPosition()
-                .canBeAttackedBy(unit, 10)
-                .inRadius(maxDistFromEnemy, unit)
-                .isEmpty()
-        ) {
-            return null;
-        }
-
-        // =========================================================
-
+    private AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
         AUnit target;
-        enemyBuildings = Select.enemyRealUnits(true, false, true)
+
+//        System.err.println("Aaaaaaaa " + Select.enemyRealUnits(true, false, true).size());
+        Select.enemyRealUnits(true, false, true)
+//            .print("A")
             .visibleOnMap()
+//            .print("B")
+            .buildings()
+//            .print("C")
+            .inRadius(maxDistFromEnemy, unit)
+//            .print("D")
+            .canBeAttackedBy(unit, maxDistFromEnemy);
+//            .print("E");
+
+        enemyBuildings = Select.enemyRealUnits(true, false, true)
             .buildings()
             .inRadius(maxDistFromEnemy, unit)
             .canBeAttackedBy(unit, maxDistFromEnemy);
         enemyUnits = Select.enemyRealUnitsWithBuildings()
-            .visibleOnMap()
             .nonBuildingsOrCombatBuildings()
             .inRadius(maxDistFromEnemy, unit)
             .maxGroundDist(maxDistFromEnemy, unit)
             .effVisibleOrFoggedWithKnownPosition()
             .canBeAttackedBy(unit, maxDistFromEnemy);
+
+//        System.err.println("enemyBuildings = " + enemyBuildings.size());
+//        System.err.println("enemyUnits = " + enemyUnits.size());
+
+        if (enemyUnits.empty() && enemyBuildings.empty()) return null;
 
         // =========================================================
 
@@ -274,7 +267,7 @@ public class ATargeting extends HasUnit {
         if (unit.isAir() && unit.canAttackGroundUnits()) {
             target = (new AAirUnitsTargeting(unit)).targetForAirUnit();
 
-//            System.out.prin tln("Air target for " + unit + ": " + target);
+//            A.errPrintln("Air target for " + unit + ": " + target);
 //            if ((target = AAirUnitsTargeting.targetForAirUnits()) != null) {
 //                debug("AirTarget = " + target);
 //            }
@@ -284,21 +277,21 @@ public class ATargeting extends HasUnit {
 
         // === Crucial units =======================================
 
-        if ((target = (new ATargetingCrucial(unit)).target()) != null) {
+        if ((target = (new ATargetingCrucial(unit, enemyUnits, enemyBuildings)).target()) != null) {
 //            debug("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
-        if ((target = (new ATargetingImportant(unit)).target()) != null) {
+        if ((target = (new ATargetingImportant(unit, enemyUnits, enemyBuildings)).target()) != null) {
 //            debug("C = "+ target);
             return target;
         }
 
         // === Standard targets ====================================
 
-        if ((target = (new ATargetingStandard(unit)).target()) != null) {
+        if ((target = (new ATargetingStandard(unit, enemyUnits, enemyBuildings)).target()) != null) {
 //            debug("D = "+ target);
             return target;
         }

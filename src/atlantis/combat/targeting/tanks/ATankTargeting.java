@@ -11,7 +11,7 @@ public class ATankTargeting extends HasUnit {
         super(unit);
     }
 
-    public AUnit defineTarget() {
+    public AUnit targetForTank() {
         List<AUnit> enemies = unit.enemiesNear()
             .groundUnits()
             .visibleOnMap()

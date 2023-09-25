@@ -26,6 +26,12 @@ public class ProduceStarport {
 
     private static boolean noStarportsOrAllBusy() {
         int all = Count.existingOrInProductionOrInQueue(Terran_Starport);
-        return all == 0 || (A.canAfford(500, 250) && Select.ourFree(Terran_Starport).isEmpty());
+        return all == 0 || existingOnesAreBusyAndWeHaveResources();
+    }
+
+    private static boolean existingOnesAreBusyAndWeHaveResources() {
+        return A.canAfford(800, 350)
+            && Select.ourFree(Terran_Starport).isEmpty()
+            && Count.notBeingProduced(Terran_Starport);
     }
 }

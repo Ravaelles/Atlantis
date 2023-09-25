@@ -6,6 +6,7 @@ import atlantis.information.strategy.TerranStrategies;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueInitializer;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.util.Options;
 import org.junit.Test;
 import tests.unit.FakeUnit;
@@ -22,27 +23,31 @@ public class AddToQueueTest extends NonAbstractTestFakingGame {
         createWorld(1,
             () -> {
                 queue = initQueue();
+                ProductionOrder added;
 
 //                queue.nextOrders(15).print("nextOrders");
                 assertEquals(0, queue.nextOrders(15).ofType(Terran_Marine).size());
                 assertNotEquals(Terran_Marine, queue.nextOrders(1).list().get(0).unitType());
 
-                AddToQueue.maxAtATime(Terran_Marine, 2);
+                added = AddToQueue.maxAtATime(Terran_Marine, 2);
+//                System.err.println("added = " + added);
 
                 queue.clearCache();
                 assertEquals(1, queue.nextOrders(15).ofType(Terran_Marine).size());
-//                queue.nextOrders(15).print("nextOrders");
+//                queue.nextOrders(15).print("nextOrders A");
                 assertEquals(1, queue.nextOrders(15).ofType(Terran_Marine).size());
 //                queue.readyToProduceOrders().print("ReadyToProduceOrders");
 
-                AddToQueue.maxAtATime(Terran_Marine, 2);
+                added = AddToQueue.maxAtATime(Terran_Marine, 2);
+//                System.err.println("added = " + added);
 
                 queue.clearCache();
-//                queue.nextOrders(15).print("nextOrders");
+//                queue.nextOrders(15).print("nextOrders B");
                 assertEquals(2, queue.nextOrders(15).ofType(Terran_Marine).size());
 
                 queue.clearCache();
-                AddToQueue.maxAtATime(Terran_Marine, 2);
+                added = AddToQueue.maxAtATime(Terran_Marine, 2);
+//                System.err.println("added = " + added);
 
                 queue.clearCache();
                 assertEquals(2, queue.nextOrders(15).ofType(Terran_Marine).size());

@@ -53,7 +53,7 @@ public class AtlantisConfigChanger {
      * Helper method for using Zerg race.
      */
     public static void useConfigForZerg() {
-        AtlantisRaceConfig.MY_RACE = Race.Zerg;
+        AtlantisRaceConfig.MY_RACE = Race.Terran;
         AtlantisRaceConfig.BASE = AUnitType.Zerg_Hatchery;
         AtlantisRaceConfig.WORKER = AUnitType.Zerg_Drone;
         AtlantisRaceConfig.BARRACKS = AUnitType.Zerg_Spawning_Pool;

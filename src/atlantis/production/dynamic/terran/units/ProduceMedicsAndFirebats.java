@@ -32,12 +32,12 @@ public class ProduceMedicsAndFirebats {
 
         int marines = Count.marines();
         if (A.hasGas(25) && medics == 0 && marines > 0) {
-            return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2) != null;
         }
 
         // We have medics, but all of them are depleted from energy
         if (medics > 0 && Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).isEmpty()) {
-            return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 4);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 4) != null;
         }
 
         if (TerranDynamicInfantry.needToSaveForFactory()) return false;
@@ -51,7 +51,7 @@ public class ProduceMedicsAndFirebats {
                 int unfinishedFirebats = Count.inProductionOrInQueue(AUnitType.Terran_Firebat);
                 if (unfinishedFirebats == 0) {
                     if (marines >= 4 && medics >= 3 && unfinishedFirebats < minFirebats()) {
-                        return AddToQueue.maxAtATime(AUnitType.Terran_Firebat, 1);
+                        return AddToQueue.maxAtATime(AUnitType.Terran_Firebat, 1) != null;
                     }
                 }
             }
@@ -59,7 +59,7 @@ public class ProduceMedicsAndFirebats {
             // Medics
             if (TerranArmyComposition.medicsToInfantryRatioTooLow()) {
                 if (Count.medics() <= 4 && Count.inProductionOrInQueue(Terran_Marine) <= 2) {
-                    return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2);
+                    return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2) != null;
                 }
             }
         }

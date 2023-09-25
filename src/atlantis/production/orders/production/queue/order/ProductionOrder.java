@@ -111,9 +111,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         if (otherOrder.id == id) return true;
 
         if (otherOrder.minSupply == minSupply) {
-            if (otherOrder.isDynamic() || otherOrder.isDynamic()) {
-                if (otherOrder.unitType() != null && otherOrder.unitType().equals(unitType())) return true;
-            }
+//            if (otherOrder.isDynamic() || otherOrder.isDynamic()) {
+//                if (otherOrder.unitType() != null && otherOrder.unitType().equals(unitType())) return true;
+//            }
             if (otherOrder.tech() != null && otherOrder.tech().equals(tech())) return true;
             if (otherOrder.upgrade() != null && otherOrder.upgrade().equals(upgrade())) return true;
         }

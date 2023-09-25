@@ -12,8 +12,6 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.TerranStrategies;
 import atlantis.information.tech.ATech;
-import atlantis.map.position.PositionUtil;
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -23,7 +21,6 @@ import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.Options;
-import atlantis.util.We;
 import bwapi.*;
 import org.junit.After;
 import org.junit.Before;
@@ -39,7 +36,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.when;
 
 public class AbstractTestWithUnits extends UnitTestHelper {
@@ -57,6 +53,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     @Before
     public void before() {
+        Env.markIsTesting(true);
+
         Env.readEnvFile(new String[]{});
 
         if (!(this instanceof AbstractTestFakingGame)) {
@@ -221,7 +219,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     }
 
     protected void setUpStrategy() {
-        OurStrategy.setTo(TerranStrategies.TERRAN_MMG_vP);
+        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
     }
 
     // =========================================================

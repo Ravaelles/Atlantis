@@ -51,7 +51,7 @@ public class ProduceTanks {
         return AddToQueue.maxAtATime(
             AUnitType.Terran_Siege_Tank_Tank_Mode,
             A.inRange(1, AGame.minerals() / 160, Count.ofType(AUnitType.Terran_Machine_Shop))
-        );
+        ) != null;
     }
 
     private static boolean canAffordWithReserved() {

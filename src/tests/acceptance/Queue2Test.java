@@ -9,6 +9,7 @@ import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Select;
@@ -97,28 +98,32 @@ public class Queue2Test extends NonAbstractTestFakingGame {
     }
 
     private void frame4() {
+//        AddToQueue.toHave(Terran_Starport, 1);
+
+//        Queue.get().refresh();
+//        queue.allOrders().print("\nBefore frame 4");
+
         mockOurUnitsByAddingNewUnit(fakeOurs(
             fake(Terran_Supply_Depot, 7),
             fake(Terran_Barracks, 4),
             fake(Terran_Academy, 33),
+            fake(Terran_Factory, 44),
             fake(Terran_Starport, 36)
         ));
 
 //        System.err.println("ACZ = " + Select.ourOfType(Terran_Academy).size());
 
-        Select.clearCache();
-        Queue.get().refresh();
-//        queue.allOrders().print("\nAfter another refreshing");
-//        Select.our().print();
-//        ReservedResources.print();
+//        Select.clearCache();
+//        Queue.get().refresh();
+//        queue.allOrders().print("\nFrame 4");
 
-        assertEquals(4, queue.completedOrders().size());
+        assertEquals(5, queue.completedOrders().size());
         assertEquals(0, queue.inProgressOrders().ofType(Terran_Barracks).size());
         assertEquals(0, queue.inProgressOrders().size());
 
         assertEquals(2, queue.readyToProduceOrders().ofType(Terran_Medic).size());
         assertEquals(1, queue.readyToProduceOrders().ofType(Terran_Control_Tower).size());
-        assertEquals(1, queue.readyToProduceOrders().upgradeType(U238.upgradeType()).size());
+        assertEquals(1, queue.readyToProduceOrders().techType(TechType.Stim_Packs).size());
     }
 
     private void frame5() {
@@ -172,7 +177,7 @@ public class Queue2Test extends NonAbstractTestFakingGame {
     private Queue initQueue(int minerals, int gas) {
         aGame.when(AGame::minerals).thenReturn(minerals);
         aGame.when(AGame::gas).thenReturn(gas);
-        OurStrategy.setTo(TerranStrategies.TERRAN_MMG_vP);
+        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
 
         buildOrder = OurStrategy.get().buildOrder();
         initSupply();

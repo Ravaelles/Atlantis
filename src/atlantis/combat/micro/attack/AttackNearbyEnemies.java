@@ -179,7 +179,7 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     protected AUnit bestTargetToAttack() {
-        return ATargeting.defineBestEnemyToAttackFor(unit, maxDistToAttack(unit));
+        return ATargeting.defineBestEnemyToAttack(unit);
     }
 
     @Override

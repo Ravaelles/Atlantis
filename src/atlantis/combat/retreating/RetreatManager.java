@@ -52,7 +52,7 @@ public class RetreatManager extends Manager {
                         nearEnemies.print("nearEnemies");
                     }
 
-                    System.err.println("@ " + A.now() + " - RETREAT " + unit.typeWithHash());
+//                    System.err.println("@ " + A.now() + " - RETREAT " + unit.typeWithHash());
 
                     if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
                         unit.addLog("RetreatedFrom" + runAwayFrom);

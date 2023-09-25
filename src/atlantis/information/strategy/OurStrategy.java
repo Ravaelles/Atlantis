@@ -1,6 +1,7 @@
 package atlantis.information.strategy;
 
 
+import atlantis.config.env.Env;
 import atlantis.production.orders.production.queue.QueueInitializer;
 
 import static org.junit.Assert.assertNotNull;
@@ -12,6 +13,10 @@ public class OurStrategy {
     // =========================================================
 
     public static AStrategy get() {
+//        if (ourStrategy == null && Env.isTesting()) {
+//            OurStrategy.setTo(TerranStrategies.TERRAN_MMG_vP);
+//        }
+
         if (ourStrategy == null) {
             throw new RuntimeException("Strategy was not properly initialized.");
         }

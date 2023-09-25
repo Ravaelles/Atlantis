@@ -15,13 +15,8 @@ import atlantis.units.select.Count;
 public class EnemyUnitDiscoveredResponse {
 
     public static void updateEnemyUnitDiscovered(AUnit enemyUnit) {
-        if (A.isUms()) {
-            return;
-        }
-
-        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
-            return;
-        }
+        if (A.isUms()) return;
+        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) return;
 
         // HIDDEN units and buildings to produce it
         handleHiddenUnitDetected(enemyUnit);
@@ -56,8 +51,8 @@ public class EnemyUnitDiscoveredResponse {
 
     private static void handleHiddenUnitDetected(AUnit enemyUnit) {
         if (!enemyUnit.isCloaked()
-                && !enemyUnit.isLurker()
-                && !enemyUnit.isDT() && !enemyUnit.is(AUnitType.Protoss_Templar_Archives)
+            && !enemyUnit.isLurker()
+            && !enemyUnit.isDT() && !enemyUnit.is(AUnitType.Protoss_Templar_Archives)
         ) {
             return;
         }

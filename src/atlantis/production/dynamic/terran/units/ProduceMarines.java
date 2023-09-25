@@ -21,7 +21,7 @@ public class ProduceMarines {
         int marines = Count.marines();
 
         if (CanProduceInfantry.canProduceInfantry(marines)) {
-            return AddToQueue.maxAtATime(Terran_Marine, 4);
+            return AddToQueue.maxAtATime(Terran_Marine, 4) != null;
         }
 
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
@@ -74,7 +74,7 @@ public class ProduceMarines {
     }
 
     private static boolean produceMarine() {
-        return AddToQueue.maxAtATime(Terran_Marine, 3);
+        return AddToQueue.maxAtATime(Terran_Marine, 3) != null;
     }
 
     private static boolean inRelationToTanks(int marines) {
@@ -89,7 +89,7 @@ public class ProduceMarines {
         if (tanks <= 2 && marines >= 10 && A.hasMinerals(650)) {
             if (Enemy.zerg() && Count.bunkers() >= 1) return produceMarine();
         }
-        
+
         return false;
     }
 
@@ -105,7 +105,7 @@ public class ProduceMarines {
                     AUnit idleBarrack = Select.ourOneNotTrainingUnits(AUnitType.Terran_Barracks);
                     if (idleBarrack != null) {
 //                        return AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
-                        return AddToQueue.maxAtATime(Terran_Marine, 4);
+                        return AddToQueue.maxAtATime(Terran_Marine, 4) != null;
                     }
                     else {
                         break;

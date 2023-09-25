@@ -17,14 +17,14 @@ public class ProduceVultures {
                 Count.factories(),
                 Count.marines() <= 8 ? 2 : 1
             );
-            return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, maxAtATime);
+            return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, maxAtATime) != null;
         }
 
         if (Enemy.terran()) {
             if (vultures * 2 >= Count.marines() && !A.hasMinerals(750)) return false;
 
             if (vultures < 2 || (A.hasMinerals(600) && !A.hasGas(100))) {
-                return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, 5);
+                return AddToQueue.maxAtATime(AUnitType.Terran_Vulture, 5) != null;
             }
         }
 

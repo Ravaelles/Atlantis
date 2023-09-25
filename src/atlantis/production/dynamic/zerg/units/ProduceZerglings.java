@@ -42,6 +42,6 @@ public class ProduceZerglings {
     }
 
     private static boolean produceZergling() {
-        return AddToQueue.maxAtATime(AUnitType.Zerg_Zergling, 5);
+        return AddToQueue.maxAtATime(AUnitType.Zerg_Zergling, 5) != null;
     }
 }
