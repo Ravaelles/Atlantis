@@ -48,10 +48,10 @@ public class ATech {
                 if (isResearched(techOrUpgrade)) return false;
 
                 if (techOrUpgrade instanceof TechType) {
-                    return Count.inQueueOrUnfinished((TechType) techOrUpgrade, 4) == 0;
+                    return Count.inQueueOrUnfinished((TechType) techOrUpgrade, 50) == 0;
                 }
                 else if (techOrUpgrade instanceof UpgradeType) {
-                    return Count.inQueueOrUnfinished((UpgradeType) techOrUpgrade, 4) == 0;
+                    return Count.inQueueOrUnfinished((UpgradeType) techOrUpgrade, 50) == 0;
                 }
                 else {
                     throw new RuntimeException("Neither a tech, nor an upgrade.");

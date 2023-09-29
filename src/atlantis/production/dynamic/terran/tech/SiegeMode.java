@@ -15,10 +15,12 @@ import bwapi.TechType;
 public class SiegeMode extends Commander {
     @Override
     public boolean applies() {
-        return Have.factory() && ATech.isNotResearchedOrPlanned(TechType.Tank_Siege_Mode) && shouldResearchNow();
+        return Have.factory() && shouldResearchNow();
     }
 
     private static boolean shouldResearchNow() {
+        if (!ATech.isNotResearchedOrPlanned(TechType.Tank_Siege_Mode)) return false;
+
         int tanks = Count.tanks();
 
         if (Enemy.terran()) {

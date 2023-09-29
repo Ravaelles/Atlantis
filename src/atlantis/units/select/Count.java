@@ -224,7 +224,8 @@ public class Count {
         return cache.get(
             "tanks",
             7,
-            () -> ofType(AUnitType.Terran_Siege_Tank_Siege_Mode) + ofType(AUnitType.Terran_Siege_Tank_Tank_Mode)
+//            () -> ofType(AUnitType.Terran_Siege_Tank_Siege_Mode) + ofType(AUnitType.Terran_Siege_Tank_Tank_Mode)
+            () -> Select.ourTanks().size()
         );
     }
 

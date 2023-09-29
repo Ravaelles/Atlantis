@@ -72,7 +72,7 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
     }
 
     private void mineralsAreReservedForOrdersMarkedAsReady() {
-//        ReservedResources.reset();
+        ReservedResources.reset();
 
 //        assertEquals(0, ReservedResources.minerals());
 

@@ -12,6 +12,7 @@ public class ProduceWraiths {
     public static boolean wraiths() {
         if (Count.ofType(AUnitType.Terran_Starport) == 0) return false;
         if (prioritizeScienceFacility()) return false;
+        if (Count.inProductionOrInQueue(AUnitType.Terran_Wraith) >= 2) return false;
 
         boolean produceWraiths = A.supplyUsed() >= 90;
 
@@ -36,7 +37,7 @@ public class ProduceWraiths {
     }
 
     private static boolean produce() {
-        int maxAtATime = Math.min(5, Select.ourOfType(AUnitType.Terran_Starport).free().count());
+        int maxAtATime = Math.min(2, Select.ourOfType(AUnitType.Terran_Starport).free().count());
 
         return AddToQueue.maxAtATime(AUnitType.Terran_Wraith, maxAtATime) != null;
     }
