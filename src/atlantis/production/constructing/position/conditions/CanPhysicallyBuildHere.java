@@ -3,6 +3,7 @@ package atlantis.production.constructing.position.conditions;
 import atlantis.Atlantis;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.GameSpeed;
+import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
@@ -28,6 +29,7 @@ public class CanPhysicallyBuildHere {
             AAdvancedPainter.paintCircleFilled(position, 5, Color.Red);
         }
 
+
 //        if (!position.isPositionVisible()) return true;
 
         if (!We.zerg() && Atlantis.game().hasCreep(position.toTilePosition())) {
@@ -36,6 +38,8 @@ public class CanPhysicallyBuildHere {
         }
 
         if (!Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u())) {
+            if (!position.isPositionVisible() && !position.isExplored()) return true;
+            
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Can't physically build here";
             return false;
         }

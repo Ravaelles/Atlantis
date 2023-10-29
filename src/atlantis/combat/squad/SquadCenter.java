@@ -63,7 +63,8 @@ public class SquadCenter {
         return units
             .groundUnits()
             .excludeMedics()
-            .mostDistantTo(building);
+//            .mostDistantTo(building);
+            .mostDistantTo(Select.mainOrAnyBuilding());
 
 //        ArrayList<Integer> xCoords = new ArrayList<>();
 //        ArrayList<Integer> yCoords = new ArrayList<>();

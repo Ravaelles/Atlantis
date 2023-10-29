@@ -742,7 +742,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         return cache.get(
             cachePath = "ourTanks",
             microCacheForFrames,
-            () -> our().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode)
+            () -> our().tanks()
         );
     }
 

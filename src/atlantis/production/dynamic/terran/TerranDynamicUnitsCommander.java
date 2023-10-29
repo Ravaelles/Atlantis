@@ -5,6 +5,8 @@ import atlantis.game.A;
 import atlantis.production.dynamic.terran.abundance.TerranAbundance;
 import atlantis.production.dynamic.terran.units.*;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 import atlantis.util.We;
@@ -12,7 +14,9 @@ import atlantis.util.We;
 public class TerranDynamicUnitsCommander extends Commander {
     @Override
     public boolean applies() {
-        return We.terran();
+        return We.terran()
+            && ReservedResources.minerals() <= 900
+            && Queue.get().nonCompleted().size() <= 10;
     }
 
     @Override

@@ -15,7 +15,7 @@ public class SiegeVsRegularBuildings extends Manager {
     public boolean applies() {
         if ((new WouldBlockChokeBySieging(unit)).invoke() != null) return false;
 
-        if (unit.lastSiegeUnsiegedAgo() <= 30 * 9) return false;
+        if (unit.lastSiegeUnsiegedAgo() <= 30 * (10 + unit.id() % 5)) return false;
 
         if (
             unit.id() % 5 == 0

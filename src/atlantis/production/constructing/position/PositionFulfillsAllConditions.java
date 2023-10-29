@@ -1,10 +1,12 @@
 package atlantis.production.constructing.position;
 
+import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.conditions.*;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import bwapi.Color;
 
 public class PositionFulfillsAllConditions {
     /**
@@ -12,7 +14,7 @@ public class PositionFulfillsAllConditions {
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
      */
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
-//        APainter.paintCircle(position, 6, Color.Red);
+        APainter.paintCircle(position, 6, Color.Red);
 
         if (position == null) {
             TerranPositionFinder._CONDITION_THAT_FAILED = "POSITION ARGUMENT IS NULL";

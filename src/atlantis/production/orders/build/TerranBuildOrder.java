@@ -18,7 +18,7 @@ public class TerranBuildOrder extends ABuildOrder {
         AUnitType whatBuildsIt = type.whatBuildsIt();
         AUnit parentUnit = Select.ourFree(whatBuildsIt).first();
 
-        if (parentUnit != null) {
+        if (parentUnit != null && parentUnit.isFree()) {
             return parentUnit.train(type);
         }
 //        else {

@@ -62,7 +62,7 @@ public class DynamicProductionCommanderTest extends NonAbstractTestFakingGame {
 
         if (A.everyNthGameFrame(10)) {
 //            System.err.println("@ " + A.now() + " - SUPPLY = " + A.supplyUsed());
-            printOurUnitsSummary();
+//            printOurUnitsSummary();
 //            Queue.get().nonCompleted().print();
         }
     }
@@ -120,7 +120,7 @@ public class DynamicProductionCommanderTest extends NonAbstractTestFakingGame {
             AUnitType type = order.unitType();
             if (type != null) {
                 newUnits.add(fake(type));
-                A.errPrintln("Producing " + type);
+//                A.errPrintln("Producing " + type);
             }
         }
     }

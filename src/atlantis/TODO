@@ -1,5 +1,7 @@
 ### BUGS ###
 
+- Prioritize Scouts over Cannons
+
 - 3 Eng Bays built at once
 - sometimes 2 Starports built at once
 
@@ -10,3 +12,13 @@
 ### FEATURES ###
 
 + Consider high ground for tanks
+
+
+
+
+#####################################
+#####################################
+#####################################
+
+DefineTarget fix for #243 Vulture @(39, 88), chosen #311 Pylon @(38, 91)
+DefineTarget fix for #243 Vulture @(40, 88), chosen #311 Pylon @(38, 91)

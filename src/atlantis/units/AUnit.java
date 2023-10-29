@@ -1163,6 +1163,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return !isIdle();
     }
 
+    public boolean isFree() {
+        return isIdle();
+    }
+
     private boolean ensnared() {
         return u.isEnsnared();
     }

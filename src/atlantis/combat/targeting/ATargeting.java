@@ -67,7 +67,7 @@ public class ATargeting extends HasUnit {
 
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
 
-        if (enemy == null) {
+        if (enemy == null && maxDistFromEnemy >= 8) {
             enemy = unit.enemiesNear()
                 .realUnitsAndBuildings()
                 .effVisible()
@@ -77,7 +77,11 @@ public class ATargeting extends HasUnit {
                 .canBeAttackedBy(unit, 0)
                 .nearestTo(unit);
             if (enemy != null && !unit.isAir()) {
-                ErrorLog.printErrorOnce("DefineTarget fix for " + unit + ", chosen " + enemy);
+                ErrorLog.printErrorOnce(
+                    "DefineTarget fix for " + unit
+                        + ", (was null), chosen " + enemy
+                        + " maxDistFromEnemy = " + maxDistFromEnemy
+                );
             }
         }
 
