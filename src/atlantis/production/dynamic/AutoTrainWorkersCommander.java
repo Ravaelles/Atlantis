@@ -7,6 +7,7 @@ import atlantis.game.AGame;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.SoonInQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
@@ -95,6 +96,7 @@ public class AutoTrainWorkersCommander extends Commander {
      * See AutoTrainWorkersCommander which is also used to produce workers.
      */
     public static boolean produceWorker(AUnit base) {
+        if (A.supplyUsed() >= 8 && !hasEnoughMineralsToConsiderProducingWorker()) return false;
         if (!AGame.canAfford(50, 0) || AGame.supplyFree() == 0) return false;
 
         if (We.zerg()) return ProduceZergUnit.produceZergUnit(AtlantisRaceConfig.WORKER);
@@ -119,6 +121,12 @@ public class AutoTrainWorkersCommander extends Commander {
         }
 
         return false;
+    }
+
+    private static boolean hasEnoughMineralsToConsiderProducingWorker() {
+        if (ReservedResources.minerals() == 0) return true;
+
+        return A.minerals() >= 200 || (ReservedResources.minerals() - A.minerals()) >= 50;
     }
 
     // =========================================================

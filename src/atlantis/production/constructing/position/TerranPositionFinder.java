@@ -38,7 +38,6 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         _CONDITION_THAT_FAILED = null;
 
         int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
-        maxDistance = limitMaxDistanceForImportantBuildings(maxDistance, building);
 
         while (searchRadius < maxDistance) {
             int xMin = nearTo.tx() - searchRadius;
@@ -74,18 +73,6 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 
     // =========================================================
     // Low-level
-
-    private static double limitMaxDistanceForImportantBuildings(double maxDistance, AUnitType building) {
-        if (building.is(AUnitType.Terran_Academy)) {
-            return 8;
-        }
-
-//        if (building.isBase()) {
-//            return 10;
-//        }
-
-        return maxDistance;
-    }
 
     public static boolean isNotEnoughPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
         if (

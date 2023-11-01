@@ -129,6 +129,8 @@ public class Regions {
         }
 
         try {
+            if (position.getX() >= 32000) return null;
+
             ARegion region = ARegion.create(AMap.getMap().getArea(position.toTilePosition()));
             return region;
         } catch (Exception e) {

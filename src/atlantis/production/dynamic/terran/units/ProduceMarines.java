@@ -32,7 +32,7 @@ public class ProduceMarines {
 //            return AddToQueue.maxAtATime(Terran_Marine, 1) != null;
 //        }
 
-        if (CanProduceInfantry.canProduceInfantry(marines)) {
+        if (A.canAffordWithReserved(55, 0) && CanProduceInfantry.canProduceInfantry(marines)) {
             return AddToQueue.maxAtATime(Terran_Marine, 4) != null;
         }
 

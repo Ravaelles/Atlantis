@@ -3,6 +3,7 @@ package atlantis.production.dynamic.reinforce.terran.turrets;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -13,6 +14,9 @@ import static atlantis.units.AUnitType.Terran_Bunker;
 import static atlantis.units.AUnitType.Terran_Missile_Turret;
 
 public class ReinforceBunkersWithTurrets extends Commander {
+
+    public static final int MAX_DISTANCE_FROM_BUNKER = 6;
+
     @Override
     public boolean applies() {
         return A.everyNthGameFrame(111) && Have.engBay() && Count.bunkers() > 0
@@ -27,11 +31,12 @@ public class ReinforceBunkersWithTurrets extends Commander {
     }
 
     protected void reinforceBunkerWithTurrets(AUnit bunker) {
-        Selection turretsNear = Select.ourOfType(Terran_Missile_Turret).inRadius(6, bunker);
+        Selection turretsNear = Select.ourWithUnfinishedOfType(Terran_Missile_Turret).inRadius(6, bunker);
         int optimalTurrets = 2;
 
         if (turretsNear.count() < optimalTurrets) {
-            AddToQueue.withStandardPriority(Terran_Missile_Turret, bunker.position());
+            ProductionOrder order = AddToQueue.withStandardPriority(Terran_Missile_Turret, bunker.position());
+            order.setMaximumDistance(MAX_DISTANCE_FROM_BUNKER);
         }
     }
 }

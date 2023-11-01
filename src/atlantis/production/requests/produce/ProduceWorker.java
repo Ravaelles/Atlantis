@@ -13,8 +13,6 @@ import static atlantis.combat.micro.terran.lifted.RebaseToNewMineralPatches.isBa
 
 public class ProduceWorker {
     public static boolean produceWorker() {
-        if (!hasEnoughMineralsToProduceWorker()) return false;
-
         if (We.zerg()) {
             if (AGame.supplyUsed() >= 10 && Count.larvas() <= 1) return false;
         }
@@ -24,10 +22,6 @@ public class ProduceWorker {
         if (base == null) return false;
 
         return AutoTrainWorkersCommander.produceWorker(base);
-    }
-
-    private static boolean hasEnoughMineralsToProduceWorker() {
-        return A.minerals() >= 200 || (ReservedResources.minerals() - A.minerals()) >= 50;
     }
 
     private static AUnit baseToProduceWorker() {

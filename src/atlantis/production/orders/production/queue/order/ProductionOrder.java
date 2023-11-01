@@ -193,7 +193,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 //    }
 
     public boolean supplyRequirementFulfilled() {
-        return AGame.supplyUsed() >= minSupply;
+        int bonus = unitOrBuilding != null && unitOrBuilding.isABuilding() ? 1 : 0;
+
+        return AGame.supplyUsed() + bonus >= minSupply;
     }
 
     // === Getters =============================================
