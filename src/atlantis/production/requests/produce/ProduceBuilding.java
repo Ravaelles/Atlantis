@@ -7,7 +7,7 @@ import atlantis.units.AUnitType;
 
 public class ProduceBuilding {
     public static void produceBuilding(AUnitType type, ProductionOrder order) {
-        assert type.isBuilding();
+        assert type.isABuilding();
 
         if (type.isZerg()) {
             ProduceZergUnit.produceZergBuilding(type, order);

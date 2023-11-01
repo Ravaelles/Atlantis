@@ -22,24 +22,10 @@ public class TooCloseToMineralsOrGeyser {
             return true;
         }
 
-        double distToBase = nearestBase.translateByTiles(2, 0).distTo(position);
-        if (distToBase <= 10) {
-
-            AUnit geyser = Select.geysers().nearestTo(position);
-
-            if (geyser != null) {
-                int minDistToGeyser = building.isPylon() ? 5 : (building.isSupplyUnit() ? 8 : 6);
-                if (geyser.distTo(position) <= minDistToGeyser) {
-                    AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to geyser";
-                    return true;
-                }
-            }
-
-            AUnit gasBuilding = Select.geyserBuildings().nearestTo(position);
-            if (gasBuilding != null && gasBuilding.distTo(position) <= 4 && distToBase <= 5.5) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to gas building";
-                return true;
-            }
+        AUnit gasBuilding = Select.geysersAndGasBuildings().nearestTo(position);
+        if (gasBuilding != null && gasBuilding.distTo(position) <= 3.2) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to geyser";
+            return true;
         }
 
         return false;

@@ -1,7 +1,9 @@
 package atlantis.production.requests.produce;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.dynamic.AutoTrainWorkersCommander;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -11,18 +13,21 @@ import static atlantis.combat.micro.terran.lifted.RebaseToNewMineralPatches.isBa
 
 public class ProduceWorker {
     public static boolean produceWorker() {
+        if (!hasEnoughMineralsToProduceWorker()) return false;
+
+        if (We.zerg()) {
+            if (AGame.supplyUsed() >= 10 && Count.larvas() <= 1) return false;
+        }
+
         AUnit base = baseToProduceWorker();
 
         if (base == null) return false;
 
-        if (We.zerg()) {
-//            if (AGame.supplyUsed() <= 9) {
-//                return true;
-//            }
-            if (AGame.supplyUsed() >= 10 && Count.larvas() <= 1) return false;
-        }
-
         return AutoTrainWorkersCommander.produceWorker(base);
+    }
+
+    private static boolean hasEnoughMineralsToProduceWorker() {
+        return A.minerals() >= 200 || (ReservedResources.minerals() - A.minerals()) >= 50;
     }
 
     private static AUnit baseToProduceWorker() {

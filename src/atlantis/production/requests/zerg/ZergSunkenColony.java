@@ -7,14 +7,14 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
-public class ZergSunkenColony extends AntiLandBuildingManager {
+public class ZergSunkenColony extends AntiLandBuildingCommander {
 
     @Override
     public AUnitType type() {
@@ -105,8 +105,8 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
     }
 
     @Override
-    public HasPosition nextBuildingPosition() {
-        HasPosition standard = super.nextBuildingPosition();
+    public HasPosition nextPosition() {
+        HasPosition standard = super.nextPosition();
 
         if (standard == null) {
             return null;

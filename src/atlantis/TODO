@@ -2,11 +2,9 @@
 
 - Prioritize Scouts over Cannons
 
-- 3 Eng Bays built at once
+
 - sometimes 2 Starports built at once
 
-.- SiegeT can't attack #436 Shuttle @(44, 42)
-- Firebat can't attack #378 Shuttle @(71, 48)
 - Build turrets against enemy Wraiths
 
 ### FEATURES ###
@@ -15,10 +13,59 @@
 
 
 
+###############
 
-#####################################
-#####################################
-#####################################
-
-DefineTarget fix for #243 Vulture @(39, 88), chosen #311 Pylon @(38, 91)
-DefineTarget fix for #243 Vulture @(40, 88), chosen #311 Pylon @(38, 91)
+@26465 Queue (68):
+    At 0 Terran Infantry Armor* (IN_PROGRESS)(#87)
+    At 17 SupplyD* (#75)
+    At 16 SupplyD* (#74)
+    At 18 SupplyD* (#50)
+    At 19 SupplyD* (#49)
+    At 18 SupplyD* (#48)
+    At 16 SupplyD* (#40)
+    At 16 SupplyD* (#39)
+    At 15 EngineeringB* (#37)
+    At 14 CommandC NATURAL* (#35)
+    At 15 Factory* (#24)
+    At 20 SupplyD* (#23)
+    At 20 SupplyD* (#22)
+    At 14 Bunker* (#14)
+    At 9 SupplyD (#1)
+    At 13 Barracks (#3)
+    At 14 SupplyD (#4)
+    At 14 Marine* (#10)
+    At 14 Marine* (#11)
+    At 14 Marine* (#12)
+    At 14 Marine* (#13)
+    At 18 Refinery (#5)
+    At 15 Marine* (#15)
+    At 15 Marine* (#16)
+    At 15 Marine* (#17)
+    At 24 SupplyD (#7)
+    At 20 Marine* (#18)
+    At 20 Marine* (#19)
+    At 20 Medic* (#20)
+    At 20 Medic* (#21)
+    At 28 ComsatS (#9)
+    At 1 Marine* (#26)
+    At 1 Marine* (#27)
+    At 1 Marine* (#28)
+    At 1 Medic* (#29)
+    At 1 Medic* (#31)
+    At 1 Medic* (#32)
+    At 1 Medic* (#33)
+    At 1 Medic* (#34)
+    At 16 SiegeT* (#41)
+    At 16 Vulture* (#42)
+    At 1 MissileT* (#52)
+    At 1 MissileT* (#53)
+    At 1 MissileT* (#54)
+    At 1 Firebat* (#55)
+    At 1 Marine* (#56)
+    At 15 Marine* (#57)
+    At 26 Wraith* (#59)
+    At 16 MissileT* (#60)
+    At 16 Firebat* (#61)
+    At 16 Marine* (#62)
+    At 16 Firebat* (#63)
+    At 16 Firebat* (#64)

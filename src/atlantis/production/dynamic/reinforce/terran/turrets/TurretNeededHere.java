@@ -15,6 +15,8 @@ import static atlantis.units.AUnitType.Terran_Missile_Turret;
 public class TurretNeededHere extends Commander {
     @Override
     public boolean applies() {
+        if (true) return false; // @TODO DISABLED
+
         return We.terran()
             && (A.hasMinerals(200) || A.seconds() >= 400)
             && A.everyNthGameFrame(77)

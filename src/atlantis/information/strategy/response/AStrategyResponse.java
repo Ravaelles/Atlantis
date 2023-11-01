@@ -1,6 +1,6 @@
 package atlantis.information.strategy.response;
 
-import atlantis.combat.micro.terran.TerranBunker;
+import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.production.dynamic.reinforce.terran.turrets.TerranTurret;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
@@ -11,8 +11,8 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.scout.ScoutCommander;
-import atlantis.production.requests.AntiAirBuildingManager;
-import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.AntiAirBuildingCommander;
+import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.production.requests.zerg.ZergSporeColony;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.util.We;
@@ -112,7 +112,7 @@ public abstract class AStrategyResponse {
 
     // =========================================================
 
-    private AntiLandBuildingManager antiLandManager() {
+    private AntiLandBuildingCommander antiLandManager() {
         if (We.zerg()) {
             return ZergSunkenColony.get();
         }
@@ -120,10 +120,10 @@ public abstract class AStrategyResponse {
             return TerranBunker.get();
         }
 
-        return AntiLandBuildingManager.get();
+        return AntiLandBuildingCommander.get();
     }
 
-    private AntiAirBuildingManager antiAirManager() {
+    private AntiAirBuildingCommander antiAirManager() {
         if (We.zerg()) {
             return ZergSporeColony.get();
         }
@@ -131,7 +131,7 @@ public abstract class AStrategyResponse {
             return TerranTurret.get();
         }
 
-        return AntiAirBuildingManager.get();
+        return AntiAirBuildingCommander.get();
     }
 
 }

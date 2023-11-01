@@ -10,8 +10,8 @@ public class TerranAbundance extends AbundanceCommander {
     @Override
     public boolean applies() {
         return We.terran()
-            && ReservedResources.minerals() <= 900
-            && Queue.get().nonCompleted().size() <= 10;
+            && ReservedResources.minerals() >= 1100
+            && Queue.get().forCurrentSupply().nonCompleted().size() <= 10;
     }
 
     @Override

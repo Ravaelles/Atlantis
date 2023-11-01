@@ -1,6 +1,6 @@
 package atlantis.production.requests;
 
-import atlantis.combat.micro.terran.TerranBunker;
+import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.game.A;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.AChoke;
@@ -20,11 +20,14 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
 
 import static atlantis.units.AUnitType.Protoss_Forge;
 
-public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
-    protected static AntiLandBuildingManager instance = null;
+public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander {
+    protected static AntiLandBuildingCommander instance = null;
+
+    private Cache<APosition> cache = new Cache<>();
 
     // =========================================================
 
@@ -46,7 +49,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
         if (shouldBuildNew()) {
 //            System.err.println("ENQUEUE NEW Sunken Colony");
-            return requestOne(nextBuildingPosition());
+            return requestOne(nextPosition());
         }
 
         return false;
@@ -69,7 +72,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
         // =========================================================
 
         if (at == null) {
-            at = nextBuildingPosition();
+            at = nextPosition();
         }
 
         if (at != null) {
@@ -114,94 +117,98 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
     }
 
     @Override
-    public HasPosition nextBuildingPosition() {
-        int bases = Count.basesWithUnfinished();
+    public HasPosition nextPosition() {
+        return cache.get(
+            "nextBuildingPosition",
+            13,
+            () -> {
+                int bases = Count.basesWithUnfinished();
 
-        if (bases == 0 || Select.main() == null) {
-            return null;
-        }
+                if (bases == 0 || Select.main() == null) {
+                    return null;
+                }
 
-        APosition nearTo = null;
+                APosition nearTo = null;
 
-        // === Main choke ===========================================
+                // === Main choke ===========================================
 
-        AChoke mainChoke = Chokes.mainChoke();
-        if (bases <= 1 && mainChoke != null) {
-            if (We.terran() && Enemy.terran()) {
-                nearTo = mainChoke.translateTilesTowards(3, Select.main())
-                    .makeWalkable(8);
-                AUnit builder = Select.ourWorkers().nearestTo(nearTo);
-                return APositionFinder.findStandardPosition(
-                    builder, type(), nearTo, 15
-                );
-            }
+                AChoke mainChoke = Chokes.mainChoke();
+                if (bases <= 1 && mainChoke != null) {
+                    if (We.terran() && Enemy.terran()) {
+                        nearTo = mainChoke.translateTilesTowards(3, Select.main())
+                            .makeWalkable(8);
+                        AUnit builder = Select.ourWorkers().nearestTo(nearTo);
+                        return APositionFinder.findStandardPosition(
+                            builder, type(), nearTo, 15
+                        );
+                    }
 
-            if (Count.bunkers() > 0) {
-                nearTo = mainChoke
-                    .translateTilesTowards(5, Select.main())
-                    .makeBuildable(8)
-                    .makeWalkable(4);
-            }
-            else {
-                nearTo = Select.main()
-                    .translateTilesTowards(6, mainChoke)
-                    .makeBuildable(8)
-                    .makeWalkable(4);
-            }
+                    if (Count.bunkers() > 0) {
+                        nearTo = mainChoke
+                            .translateTilesTowards(5, Select.main())
+                            .makeBuildable(8)
+                            .makeWalkable(4);
+                    }
+                    else {
+                        nearTo = Select.main()
+                            .translateTilesTowards(3, mainChoke)
+                            .makeBuildable(8)
+                            .makeWalkable(4);
+                    }
 
-            return findPositionNear(nearTo);
+                    return findPositionNear(nearTo);
 
 //            return PositionModifier.toPosition(
 //                PositionModifier.MAIN_CHOKE, type(), null, null
 //            );
-        }
+                }
 
-        // === At natural ===========================================
+                // === At natural ===========================================
 
-        if (bases >= 2) {
-            APosition naturalPosition = Bases.natural();
-            if (naturalPosition != null) {
-                AUnit naturalBase = Select.ourWithUnfinished().bases().inRadius(8, naturalPosition).first();
-                if (naturalBase != null) {
-                    AChoke naturalChoke = Chokes.natural();
-                    if (naturalChoke != null) {
+                if (bases >= 2) {
+                    APosition naturalPosition = Bases.natural();
+                    if (naturalPosition != null) {
+                        AUnit naturalBase = Select.ourWithUnfinished().bases().inRadius(8, naturalPosition).first();
+                        if (naturalBase != null) {
+                            AChoke naturalChoke = Chokes.natural();
+                            if (naturalChoke != null) {
 //                        nearTo = naturalChoke.position();
 //                        return naturalChoke.translatePercentTowards(10, naturalBase);
-                        double distFromChoke = naturalChoke.width() <= 4 ? 3.5 : 3;
-                        nearTo = naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
+                                double distFromChoke = naturalChoke.width() <= 4 ? 3.5 : 3;
+                                nearTo = naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
+                            }
+
+                            return findPositionNear(nearTo);
+                        }
                     }
-
-                    return findPositionNear(nearTo);
                 }
+
+                // =========================================================
+
+                AUnitType building = type();
+
+                AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
+                if (previousBuilding != null) {
+                    nearTo = previousBuilding.position();
+                }
+
+                if (nearTo == null) {
+
+                    // Place near the base
+                    nearTo = Select.naturalOrMain() != null ? Select.naturalOrMain().position() : null;
+                }
+
+                // Move towards nearest choke
+                if (nearTo != null) {
+                    AChoke choke = Chokes.nearestChoke(nearTo);
+                    if (choke != null) {
+                        nearTo = nearTo.translateTilesTowards(choke, 7);
+                    }
+                }
+
+                return nearTo;
             }
-        }
-
-        // =========================================================
-
-        AUnitType building = type();
-
-
-        AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
-        if (previousBuilding != null) {
-            nearTo = previousBuilding.position();
-        }
-
-        if (nearTo == null) {
-
-            // Place near the base
-            nearTo = Select.naturalOrMain() != null ? Select.naturalOrMain().position() : null;
-//            nearTo = Select.mainBase();
-        }
-
-        // Move towards nearest choke
-        if (nearTo != null) {
-            AChoke choke = Chokes.nearestChoke(nearTo);
-            if (choke != null) {
-                nearTo = nearTo.translateTilesTowards(choke, 7);
-            }
-        }
-
-        return nearTo;
+        );
     }
 
     private HasPosition findPositionNear(APosition nearTo) {
@@ -214,7 +221,7 @@ public abstract class AntiLandBuildingManager extends DynamicBuildingManager {
 
     // =========================================================
 
-    public static AntiLandBuildingManager get() {
+    public static AntiLandBuildingCommander get() {
         if (instance == null) {
             if (We.zerg()) {
                 return instance = new ZergSunkenColony();

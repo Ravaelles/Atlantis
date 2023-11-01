@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.terran.TerranBunker;
+import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
@@ -611,7 +611,7 @@ public class AAdvancedPainter extends APainter {
         counters = unitTypesCounter.map();
         counters = A.sortByValue(counters, false);
         for (AUnitType unitType : counters.keySet()) {
-            if (!unitType.isBuilding()) {
+            if (!unitType.isABuilding()) {
                 paintSideMessage(counters.get(unitType) + "x " + unitType, Color.Grey, 0);
             }
         }
@@ -622,8 +622,11 @@ public class AAdvancedPainter extends APainter {
      * Paints next units to build in top left corner.
      */
     static void paintProductionQueue() {
+        Orders nextOrders = Queue.get().nextOrders(30);
+        int size = nextOrders.size();
+
         paintSideMessage("", Color.White);
-        paintSideMessage("Prod. queue:", Color.White);
+        paintSideMessage("Prod. queue (" + size + "):", Color.White);
 
         // === Display units currently in production ========================================
 
@@ -632,10 +635,6 @@ public class AAdvancedPainter extends APainter {
 
         // === Display units that should be produced right now or any time ==================
 
-//        Queue.all();
-        Orders nextOrders = Queue.get().nextOrders(30);
-
-        int size = nextOrders.size();
         if (size >= 30) {
             paintSideMessage("----------------", Color.Red);
             paintSideMessage("Queue SIZE: " + size + " !!!", Color.Red);
@@ -1544,10 +1543,10 @@ public class AAdvancedPainter extends APainter {
 
         // Sunken
         if (We.zerg()) {
-            paintBuildingPosition((new ZergSunkenColony()).nextBuildingPosition(), "Next Sunken");
+            paintBuildingPosition((new ZergSunkenColony()).nextPosition(), "Next Sunken");
         }
         if (We.terran()) {
-            paintBuildingPosition((new TerranBunker()).nextBuildingPosition(), "Next Bunker");
+            paintBuildingPosition((new TerranBunker()).nextPosition(), "Next Bunker");
         }
 
         // Next defensive building position

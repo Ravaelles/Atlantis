@@ -6,7 +6,7 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
-public abstract class DynamicBuildingManager {
+public abstract class DynamicBuildingCommander {
 
     public abstract AUnitType type();
 
@@ -14,7 +14,7 @@ public abstract class DynamicBuildingManager {
 
     public boolean handleBuildNew() {
         if (shouldBuildNew()) {
-            return requestOne(nextBuildingPosition());
+            return requestOne(nextPosition());
         }
 
         return false;
@@ -35,7 +35,7 @@ public abstract class DynamicBuildingManager {
     /**
      * null will be changed later to become something like "in main".
      */
-    public HasPosition nextBuildingPosition() {
+    public HasPosition nextPosition() {
         return null;
     }
 

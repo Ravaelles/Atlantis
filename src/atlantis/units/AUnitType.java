@@ -707,7 +707,7 @@ public class AUnitType implements Comparable<Object> {
         return ut.airWeapon();
     }
 
-    public boolean isBuilding() {
+    public boolean isABuilding() {
         return ut.isBuilding();
     }
 
@@ -817,7 +817,7 @@ public class AUnitType implements Comparable<Object> {
             "isMilitaryBuilding",
             -1,
             () -> {
-                if (!isBuilding()) return false;
+                if (!isABuilding()) return false;
                 if (canShootGround && isMilitaryBuildingAntiGround()) return true;
                 else return canShootAir && isMilitaryBuildingAntiAir();
             }
@@ -1067,9 +1067,9 @@ public class AUnitType implements Comparable<Object> {
             "whatIsRequired",
             -1,
             () -> {
-                if (isBuilding()) {
+                if (isABuilding()) {
                     for (AUnitType requiredUnit : requiredUnits().map().keySet()) {
-                        if (requiredUnit.isBuilding() && !requiredUnit.isInitialBase() && !requiredUnit.isLarva()) {
+                        if (requiredUnit.isABuilding() && !requiredUnit.isInitialBase() && !requiredUnit.isLarva()) {
                             return requiredUnit;
                         }
                     }
@@ -1239,7 +1239,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "isRealUnitOrBuilding",
             -1,
-            () -> !isNeutral() && (isBuilding() || !isNotRealUnit())
+            () -> !isNeutral() && (isABuilding() || !isNotRealUnit())
         );
     }
 
@@ -1297,7 +1297,7 @@ public class AUnitType implements Comparable<Object> {
                 && !isInvincible()
                 && !isMine()
                 && !isObserver()
-                && (!isBuilding() || isCombatBuilding() || isSunkenOrCreep())
+                && (!isABuilding() || isCombatBuilding() || isSunkenOrCreep())
                 && !isOverlord()
         );
     }
@@ -1460,11 +1460,11 @@ public class AUnitType implements Comparable<Object> {
     private boolean isValidUnitRequirement(AUnitType requirement, AUnitType unit) {
         if (requirement.isPylon()) return false;
 
-        if (!unit.isBuilding() && requirement.isBuilding()) return false;
+        if (!unit.isABuilding() && requirement.isABuilding()) return false;
 
-        if (isBuilding() && (requirement.isBuilding() && requirement.isBase())) return false;
+        if (isABuilding() && (requirement.isABuilding() && requirement.isBase())) return false;
 
-        if (isBuilding() && requirement.isWorker()) return false;
+        if (isABuilding() && requirement.isWorker()) return false;
 
         return true;
     }

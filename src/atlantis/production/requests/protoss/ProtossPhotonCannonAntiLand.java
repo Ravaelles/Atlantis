@@ -2,12 +2,12 @@ package atlantis.production.requests.protoss;
 
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 
-public class ProtossPhotonCannonAntiLand extends AntiLandBuildingManager {
+public class ProtossPhotonCannonAntiLand extends AntiLandBuildingCommander {
 
     public AUnitType type() {
         return AUnitType.Protoss_Photon_Cannon;

@@ -4,12 +4,12 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.production.requests.AntiAirBuildingManager;
+import atlantis.production.requests.AntiAirBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-public class TerranTurret extends AntiAirBuildingManager {
+public class TerranTurret extends AntiAirBuildingCommander {
 
     protected final AUnitType turret = AUnitType.Terran_Missile_Turret;
 

@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
@@ -21,13 +22,19 @@ public class SiegeMode extends Commander {
     private static boolean shouldResearchNow() {
         if (!ATech.isNotResearchedOrPlanned(TechType.Tank_Siege_Mode)) return false;
 
+        return Enemy.terran() ? shouldResearchAgainstTerran() : shouldResearchAgainstProtossAndZerg();
+    }
+
+    private static boolean shouldResearchAgainstProtossAndZerg() {
         int tanks = Count.tanks();
 
-        if (Enemy.terran()) {
-            return tanks >= 1 || A.seconds() >= 360;
-        }
-
         return tanks >= 2 || (tanks >= 1 && A.seconds() >= 430);
+    }
+
+    private static boolean shouldResearchAgainstTerran() {
+        int tanks = Count.tanks();
+
+        return (tanks >= 1 || A.seconds() >= 370) && OurArmyStrength.calculate() >= 200;
     }
 
     @Override

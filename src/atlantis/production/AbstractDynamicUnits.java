@@ -39,7 +39,7 @@ public class AbstractDynamicUnits extends Helpers {
         if (!AGame.canAffordWithReserved(hasMinerals, hasGas)) return false;
 
         if (onlyOneAtTime) {
-            if (type.isBuilding() && ConstructionRequests.hasRequestedConstructionOf(type)) return false;
+            if (type.isABuilding() && ConstructionRequests.hasRequestedConstructionOf(type)) return false;
         }
 
         return AddToQueue.addToQueueIfHaveFreeBuilding(type);

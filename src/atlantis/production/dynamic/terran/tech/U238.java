@@ -17,6 +17,7 @@ public class U238 extends Commander {
     @Override
     public boolean applies() {
         if (!Have.academy()) return false;
+        if (Count.medics() <= 0) return false;
 
         if (OurStrategy.get().goingBio()) {
             if (Count.infantry() >= 8 && AGame.canAffordWithReserved(100, 100)) {

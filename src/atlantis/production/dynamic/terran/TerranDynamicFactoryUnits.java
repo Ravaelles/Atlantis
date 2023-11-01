@@ -13,18 +13,20 @@ import atlantis.units.select.Select;
 
 public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
 
-    protected static void handleFactoryProduction() {
+    protected static boolean handleFactoryProduction() {
 //        if (!AGame.canAfford(200, 150) && !AGame.canAffordWithReserved(150, 100)) {
 //            return;
 //        }
 
         if (!Have.factory()) {
-            return;
+            return false;
         }
 
         for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).free().list()) {
             requestFactoryUnit(factory);
         }
+
+        return false;
     }
 
     protected static boolean requestFactoryUnit(AUnit factory) {

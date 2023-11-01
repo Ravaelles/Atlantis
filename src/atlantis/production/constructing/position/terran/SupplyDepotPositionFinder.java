@@ -21,7 +21,7 @@ public class SupplyDepotPositionFinder {
 
         return cache.get(
             "findPosition:" + builder.id() + "," + construction.id() + "," + nearTo,
-            131,
+            81,
             () -> findNewPosition(builder, construction, nearTo)
         );
     }
@@ -29,19 +29,19 @@ public class SupplyDepotPositionFinder {
     private static APosition findNewPosition(AUnit builder, Construction construction, HasPosition nearTo) {
 //        nearTo = nearTo();
 
-        return APositionFinder.findStandardPosition(builder, AUnitType.Terran_Supply_Depot, nearTo, 12);
+        return APositionFinder.findStandardPosition(builder, AUnitType.Terran_Supply_Depot, nearTo, 20);
     }
 
-    private static APosition nearTo() {
-        Positions<APosition> positions = BuildablePositionsAroundMainBase.get()
-            .sortByDistanceTo(Select.mainOrAnyBuilding(), true);
-
-        for (APosition position : positions.list()) {
-            if (position.isBuildable()) {
-                return position;
-            }
-        }
-
-        return null;
-    }
+//    private static APosition nearTo() {
+//        Positions<APosition> positions = BuildablePositionsAroundMainBase.get()
+//            .sortByDistanceTo(Select.mainOrAnyBuilding(), true);
+//
+//        for (APosition position : positions.list()) {
+//            if (position.isBuildable()) {
+//                return position;
+//            }
+//        }
+//
+//        return null;
+//    }
 }

@@ -1,8 +1,7 @@
 package tests.acceptance;
 
-import atlantis.combat.micro.avoid.terran.TerranFightInsteadAvoid;
+import atlantis.combat.micro.avoid.terran.ShouldFightInsteadAvoidAsTerran;
 import atlantis.combat.micro.avoid.terran.TerranFightInsteadAvoidAsWraith;
-import atlantis.production.BuildingsCommander;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;
@@ -17,7 +16,7 @@ public class TerranFightInsteadAvoidTest extends AbstractTestFakingGame {
     @Test
     public void iteratesOverBuildings() {
         createWorld(1, () -> {
-            TerranFightInsteadAvoid manager = new TerranFightInsteadAvoid(ourWraith);
+            ShouldFightInsteadAvoidAsTerran manager = new ShouldFightInsteadAvoidAsTerran(ourWraith);
 
 //            System.err.println("manager.applies() = " + manager.applies());
 //            System.err.println("manager.invoke() = " + manager.invoke());

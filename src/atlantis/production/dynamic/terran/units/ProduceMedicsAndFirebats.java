@@ -18,22 +18,22 @@ import static atlantis.units.AUnitType.Terran_Marine;
 
 public class ProduceMedicsAndFirebats {
     public static boolean medics() {
-        if (Count.ofType(AUnitType.Terran_Academy) == 0) return false;
+        if (Count.ourOfTypeWithUnfinished(AUnitType.Terran_Academy) == 0) return false;
 
         int medics = Count.medics();
-
-        if (!CanProduceInfantry.canProduceInfantry(medics)) return false;
+        int marines = Count.marines();
 
         if (!Decisions.shouldMakeTerranBio()) {
             if (Have.academy() && Count.infantry() >= 4 && medics <= 0) return false;
         }
 
-        // =========================================================
+//        if (!CanProduceInfantry.canProduceInfantry(medics)) return false;
 
-        int marines = Count.marines();
-        if (A.hasGas(25) && medics == 0 && marines > 0) {
+        if (medics <= 2 && marines >= 1) {
             return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2) != null;
         }
+
+        // =========================================================
 
         // We have medics, but all of them are depleted from energy
         if (medics > 0 && Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).isEmpty()) {

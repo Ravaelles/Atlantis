@@ -23,7 +23,7 @@ public class WorkerDefenceManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isWorker();
+        return unit.isWorker() && (!unit.isScv() || unit.isWounded());
     }
 
     /**

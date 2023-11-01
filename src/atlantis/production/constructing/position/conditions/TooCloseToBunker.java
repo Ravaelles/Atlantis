@@ -1,10 +1,10 @@
 package atlantis.production.constructing.position.conditions;
 
 import atlantis.information.strategy.GamePhase;
-import atlantis.map.choke.AChoke;
-import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
+import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -27,6 +27,11 @@ public class TooCloseToBunker {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to bunker (" + distToBunker + ")";
                 return true;
             }
+        }
+
+        if (!building.isBunker()) {
+            HasPosition nextBunker = AntiLandBuildingCommander.get().nextPosition();
+            if (nextBunker != null && nextBunker.distToLessThan(position, 5)) return true;
         }
 
         return false;

@@ -5,8 +5,14 @@ import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.reinforce.terran.turrets.ReinforceBunkersWithTurrets;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretNeededHere;
 import atlantis.production.dynamic.terran.buildings.*;
+import atlantis.production.orders.production.queue.CountInQueue;
 
 public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
+    @Override
+    public boolean applies() {
+        return CountInQueue.countDynamicBuildingsOrders() <= 3;
+    }
+
     @Override
     protected void handle() {
 //        if (true) return;
@@ -17,6 +23,7 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
         if (A.everyNthGameFrame(13)) {
             ProduceComsatStation.comsats();
+            ProduceControlTower.controlTowers();
             ProduceBarracks.barracks();
             ProduceFactoryWhenBioOnly.factoryIfBioOnly();
         }

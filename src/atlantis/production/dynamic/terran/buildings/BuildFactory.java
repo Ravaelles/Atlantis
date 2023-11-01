@@ -16,6 +16,7 @@ public class BuildFactory {
      */
     public static boolean factories() {
         if (!Have.barracks()) return false;
+        if (!Have.academy() && !A.canAfford(350, 100)) return false;
 
         int existing = Count.existing(Terran_Factory);
         int existingAndPlanned = Count.withPlanned(Terran_Factory);

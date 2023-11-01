@@ -1,4 +1,4 @@
-package atlantis.combat.micro.terran;
+package atlantis.combat.micro.terran.infantry;
 
 import atlantis.architecture.Manager;
 import atlantis.information.tech.ATech;

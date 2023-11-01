@@ -37,7 +37,7 @@ public class NewConstructionRequest {
     public static boolean requestConstructionOf(AUnitType building, HasPosition near, ProductionOrder order) {
 
         // Validate
-        if (!building.isBuilding()) {
+        if (!building.isABuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
 

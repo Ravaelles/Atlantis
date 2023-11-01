@@ -6,31 +6,38 @@ import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
+import atlantis.util.log.ConsoleLog;
+import atlantis.util.log.LogMessage;
 
 import static atlantis.units.AUnitType.Terran_Barracks;
 import static atlantis.units.AUnitType.Terran_Marine;
 
 public class ProduceMarines {
+    //    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
+
     public static boolean marines() {
+        if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
+
         int marines = Count.marines();
+
+//        if (marines == 0 && A.hasMinerals(100)) {
+//            return AddToQueue.maxAtATime(Terran_Marine, 1) != null;
+//        }
 
         if (CanProduceInfantry.canProduceInfantry(marines)) {
             return AddToQueue.maxAtATime(Terran_Marine, 4) != null;
         }
 
-        if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
-//        if (Count.inProductionOrInQueue(Terran_Marine) >= 3 && !A.hasMinerals(400)) return false;
-//        if (CountInQueue.countInfantry() >= 4 && Select.free(Terran_Barracks).notEmpty()) return false;
         if (Select.ourFree(Terran_Barracks).empty()) return false;
-
         if (Enemy.terran() && (marines >= 4 && !A.hasMinerals(700 + 100 * marines))) return false;
-
         if (inRelationToTanks(marines)) return false;
 
         if (!A.supplyUsed(160) && A.hasMinerals(800)) {
@@ -74,7 +81,14 @@ public class ProduceMarines {
     }
 
     private static boolean produceMarine() {
-        return AddToQueue.maxAtATime(Terran_Marine, 3) != null;
+        ProductionOrder result = AddToQueue.maxAtATime(Terran_Marine, 3);
+
+        if (DEBUG) ConsoleLog.message(
+            "Produce marine (Marines: " + Count.existingOrInProductionOrInQueue(Terran_Marine) + "," +
+                "minerals: " + A.minerals() + ", reserved: " + A.reservedMinerals() + ")"
+        );
+
+        return result != null;
     }
 
     private static boolean inRelationToTanks(int marines) {

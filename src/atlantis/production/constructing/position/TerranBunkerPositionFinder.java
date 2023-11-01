@@ -1,6 +1,6 @@
 package atlantis.production.constructing.position;
 
-import atlantis.combat.micro.terran.TerranBunker;
+import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
@@ -22,8 +22,7 @@ public class TerranBunkerPositionFinder {
 //            return APositionFinder.findStandardPosition(builder, bunker, nearTo, 12);
 //        }
 
-
-        HasPosition hasPosition = TerranBunker.get().nextBuildingPosition();
+        HasPosition hasPosition = TerranBunker.get().nextPosition();
         return hasPosition != null ? hasPosition.position() : null;
     }
 

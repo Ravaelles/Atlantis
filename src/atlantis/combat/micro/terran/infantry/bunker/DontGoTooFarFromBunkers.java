@@ -1,4 +1,4 @@
-package atlantis.combat.micro.terran.bunker;
+package atlantis.combat.micro.terran.infantry.bunker;
 
 import atlantis.architecture.Manager;
 import atlantis.information.strategy.GamePhase;

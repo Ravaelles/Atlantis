@@ -10,9 +10,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-public abstract class AntiAirBuildingManager extends DynamicBuildingManager {
-
-    protected static AntiAirBuildingManager instance = null;
+public abstract class AntiAirBuildingCommander extends DynamicBuildingCommander {
+    protected static AntiAirBuildingCommander instance = null;
 
     // =========================================================
 
@@ -73,7 +72,7 @@ public abstract class AntiAirBuildingManager extends DynamicBuildingManager {
 
     // =========================================================
 
-    public static AntiAirBuildingManager get() {
+    public static AntiAirBuildingCommander get() {
         if (instance == null) {
             if (We.zerg()) {
                 return instance = new ZergSporeColony();
@@ -82,7 +81,7 @@ public abstract class AntiAirBuildingManager extends DynamicBuildingManager {
                 return instance = new ProtossPhotonCannonAntiAir();
             }
 //            else if (We.terran()) {
-//                return instance = new AntiAirBuildingManager();
+//                return instance = new AntiAirBuildingCommander();
 //            }
         }
 

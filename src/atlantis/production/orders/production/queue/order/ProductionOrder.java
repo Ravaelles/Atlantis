@@ -359,7 +359,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     }
 
     public boolean isBuilding() {
-        return unitOrBuilding != null && unitOrBuilding.isBuilding();
+        return unitOrBuilding != null && unitOrBuilding.isABuilding();
     }
 
     public void markAsNotDynamic() {

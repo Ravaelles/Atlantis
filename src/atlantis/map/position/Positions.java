@@ -256,4 +256,8 @@ public class Positions<T extends HasPosition> {
     public APosition average() {
         return PositionHelper.getPositionAverage((Collection<HasPosition>) positions);
     }
+
+    public APosition center() {
+        return average();
+    }
 }

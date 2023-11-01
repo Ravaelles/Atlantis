@@ -28,8 +28,9 @@ public class OptimalNumOfBunkerRepairers {
             return 0;
         }
 
-        int enemiesNear = potentialEnemies.inRadius(13, bunker).count();
+        int enemiesNear = potentialEnemies.inRadius(7, bunker).count();
         int enemiesFar = potentialEnemies.count() - enemiesNear;
+        int enemiesTotal = enemiesFar + enemiesFar;
 
 //                System.out.println("enemiesNear = " + enemiesNear + " / enemiesFar = " + enemiesFar);
 
@@ -58,9 +59,9 @@ public class OptimalNumOfBunkerRepairers {
         }
 
         if (bunker.hp() < 310) optimalNumber += 1;
-        if (bunker.hp() < 250) optimalNumber += 1;
-        if (bunker.hp() < 200) optimalNumber += 1;
-        if (bunker.hp() < 150) optimalNumber += 1;
+        if (bunker.hp() < 220) optimalNumber += 1;
+        if (bunker.hp() < 160) optimalNumber += 1;
+        if (bunker.hp() < 130) optimalNumber += 1;
 
         // === Two bunkers near each other =========================
 
@@ -78,6 +79,8 @@ public class OptimalNumOfBunkerRepairers {
         if (enemiesVeryNear.empty() && potentialEnemies.ranged().atMost(1)) {
             optimalNumber = Math.min(1, optimalNumber);
         }
+
+        optimalNumber = Math.min(enemiesTotal, optimalNumber);
 
         // === When nearly no minerals left ========================
 

@@ -1,13 +1,13 @@
 package atlantis.production.requests.zerg;
 
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.production.requests.AntiAirBuildingManager;
+import atlantis.production.requests.AntiAirBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Selection;
 
-public class ZergSporeColony extends AntiAirBuildingManager {
+public class ZergSporeColony extends AntiAirBuildingCommander {
 
     @Override
     public AUnitType type() {

@@ -3,7 +3,7 @@ package atlantis.production.dynamic.protoss;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -30,7 +30,7 @@ public class ProtossReinforceBases {
                     return true;
                 }
 
-                AntiLandBuildingManager.get().requestOne(nearTo);
+                AntiLandBuildingCommander.get().requestOne(nearTo);
 //                    AddToQueue.withHighPriority(Protoss_Photon_Cannon, nearTo);
 //                    System.err.println("Requested Cannon to protect base " + base);
                 return true;

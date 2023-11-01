@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
@@ -20,8 +21,14 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo,
                                                     double maxDistance) {
         int cacheForFrames = building.isCombatBuilding() ? 27 : 77;
+        String cacheKey = "findStandardPositionFor:" + building.id()
+            + "," + (nearTo != null ? nearTo.toStringPixels() : nearTo)
+            + "," + builder.id();
+
+//        System.err.println("@ " + A.now() + " - " + building + " / near " + nearTo + " / maxDistance " + maxDistance);
+
         return cache.get(
-            "findStandardPositionFor:" + building.id() + "," + nearTo.toStringPixels() + "," + builder.id(),
+            cacheKey,
             cacheForFrames,
             () -> findNewPosition(builder, building, nearTo, maxDistance)
         );

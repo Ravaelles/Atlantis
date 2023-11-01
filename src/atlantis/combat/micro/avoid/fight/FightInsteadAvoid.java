@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid.fight;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.terran.TerranFightInsteadAvoid;
+import atlantis.combat.micro.avoid.terran.ShouldFightInsteadAvoidAsTerran;
 import atlantis.combat.micro.avoid.zerg.ShouldFightInsteadAvoidAsZerg;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.targeting.ATargetingCrucial;
@@ -70,7 +70,7 @@ public class FightInsteadAvoid {
 
                 Manager m;
 
-                if ((m = new TerranFightInsteadAvoid(unit)).invoke() != null) return true;
+                if ((m = new ShouldFightInsteadAvoidAsTerran(unit)).invoke() != null) return true;
                 if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) return true;
 
                 if (unit.isMelee() && unit.shouldRetreat()) return false;

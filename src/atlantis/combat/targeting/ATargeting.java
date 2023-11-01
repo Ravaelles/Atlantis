@@ -70,14 +70,14 @@ public class ATargeting extends HasUnit {
         if (enemy == null && maxDistFromEnemy >= 8) {
             enemy = unit.enemiesNear()
                 .realUnitsAndBuildings()
-                .effVisible()
                 .visibleOnMap()
+                .effVisible()
                 .havingAtLeastHp(1)
                 .havingPosition()
                 .canBeAttackedBy(unit, 0)
                 .nearestTo(unit);
             if (enemy != null && !unit.isAir()) {
-                ErrorLog.printErrorOnce(
+                ErrorLog.printMaxOncePerMinute(
                     "DefineTarget fix for " + unit
                         + ", (was null), chosen " + enemy
                         + " maxDistFromEnemy = " + maxDistFromEnemy

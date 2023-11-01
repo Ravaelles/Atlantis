@@ -19,7 +19,6 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class AddToQueue {
-
     public static ProductionOrder withTopPriority(AUnitType type) {
         return withTopPriority(type, null);
     }
@@ -81,6 +80,7 @@ public class AddToQueue {
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
 
         if (Queue.get().addNew(index, productionOrder)) {
+//            if (type.isBunker()) A.printStackTrace(A.now() + ": Adding bunker to queue");
 //            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }
 
@@ -121,7 +121,7 @@ public class AddToQueue {
             }
         }
 
-        if (We.protoss() && type.isBuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
+        if (We.protoss() && type.isABuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
             if (A.seconds() < 200) {
                 System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
             }

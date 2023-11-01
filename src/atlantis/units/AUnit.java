@@ -389,7 +389,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if given unit is OF TYPE BUILDING.
      */
     public boolean isABuilding() {
-        return type().isBuilding() || type().isAddon();
+        return type().isABuilding() || type().isAddon();
     }
 
     public boolean isWorker() {

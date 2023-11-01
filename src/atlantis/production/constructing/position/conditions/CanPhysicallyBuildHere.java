@@ -38,7 +38,7 @@ public class CanPhysicallyBuildHere {
         }
 
         if (!Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u())) {
-            if (!position.isPositionVisible() && !position.isExplored()) return true;
+//            if (!position.isPositionVisible() && !position.isExplored()) return true;
             
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Can't physically build here";
             return false;

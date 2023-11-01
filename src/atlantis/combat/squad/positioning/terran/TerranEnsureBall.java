@@ -2,7 +2,7 @@ package atlantis.combat.squad.positioning.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.GoBehindLineOfTanks;
-import atlantis.combat.squad.positioning.HugTanks;
+import atlantis.combat.squad.positioning.TooFarFromTank;
 import atlantis.units.AUnit;
 
 public class TerranEnsureBall extends Manager {
@@ -20,7 +20,7 @@ public class TerranEnsureBall extends Manager {
         return new Class[]{
             TooFarFromMedic.class,
             GoBehindLineOfTanks.class,
-            HugTanks.class,
+            TooFarFromTank.class,
         };
     }
 }

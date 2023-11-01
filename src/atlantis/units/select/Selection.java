@@ -192,7 +192,7 @@ public class Selection extends BaseSelection {
      */
     public Selection visibleOnMap() {
         return cloneByRemovingIf(
-            (unit -> !unit.isVisibleUnitOnMap()),
+            (unit -> !unit.isVisibleUnitOnMap() || unit instanceof AbstractFoggedUnit),
             "visibleOnMap"
         );
     }
@@ -463,7 +463,7 @@ public class Selection extends BaseSelection {
      */
     public Selection buildings() {
         return cloneByRemovingIf(
-            (unit -> !unit.type().isBuilding() && !unit.type().isAddon()), "buildings"
+            (unit -> !unit.type().isABuilding() && !unit.type().isAddon()), "buildings"
         );
     }
 

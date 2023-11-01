@@ -84,10 +84,10 @@ public class JFAP extends AJFAP {
     public MutablePair<Integer, Integer> playerScoresUnits() {
         MutablePair<Integer, Integer> res = new MutablePair<>(0, 0);
         for (final JFAPUnit u : player1) {
-            if (!u.unitType.isBuilding()) res.first += score(u);
+            if (!u.unitType.isABuilding()) res.first += score(u);
         }
         for (final JFAPUnit u : player2) {
-            if (!u.unitType.isBuilding()) res.second += score(u);
+            if (!u.unitType.isABuilding()) res.second += score(u);
         }
         return res;
     }
@@ -96,10 +96,10 @@ public class JFAP extends AJFAP {
     public MutablePair<Integer, Integer> playerScoresBuildings() {
         MutablePair<Integer, Integer> res = new MutablePair<>(0, 0);
         for (final JFAPUnit u : player1) {
-            if (u.unitType.isBuilding()) res.first += score(u);
+            if (u.unitType.isABuilding()) res.first += score(u);
         }
         for (final JFAPUnit u : player2) {
-            if (u.unitType.isBuilding()) res.second += score(u);
+            if (u.unitType.isABuilding()) res.second += score(u);
         }
         return res;
     }

@@ -1,13 +1,12 @@
 package atlantis.production.requests.produce;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.AUnitType;
 
 public class ProduceUnit {
     public static boolean produceUnit(AUnitType type) {
-        assert !type.isBuilding();
+        assert !type.isABuilding();
 
         // Supply: OVERLORD / PYLON / DEPOT
 //        if (AGame.supplyFree() == 0 && !unitType.isSupplyUnit()) {

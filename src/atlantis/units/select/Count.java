@@ -1,11 +1,9 @@
 package atlantis.units.select;
 
-import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 
 import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
@@ -149,13 +147,13 @@ public class Count {
     }
 
     public static int existingOrPlannedBuildingsNear(AUnitType type, double radius, HasPosition position) {
-        assert type.isBuilding();
+        assert type.isABuilding();
 
         return ourOfTypeWithUnfinished(type, position, radius) + plannedBuildingsNear(type, radius, position);
     }
 
     public static int plannedBuildingsNear(AUnitType type, double radius, HasPosition position) {
-        assert type.isBuilding();
+        assert type.isABuilding();
 
         return ConstructionRequests.countNotStartedOfTypeInRadius(type, radius, position);
     }

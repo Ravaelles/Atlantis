@@ -3,7 +3,6 @@ package atlantis.production.orders.production.queue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.updater.QueueRefresher;
-import atlantis.units.select.Select;
 
 public class Queue extends AbstractQueue {
     private static Queue instance = null;
@@ -73,7 +72,7 @@ public class Queue extends AbstractQueue {
         return cache.get(
             "nonCompleted",
             -1,
-            orders::notCompleted
+            orders::nonCompleted
         );
     }
 

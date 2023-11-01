@@ -6,7 +6,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -132,7 +131,7 @@ public class ConstructionRequests {
 //    }
 
     public static int countExistingAndNotFinished(AUnitType type) {
-        if (!type.isBuilding()) {
+        if (!type.isABuilding()) {
             throw new RuntimeException("Can only use it for buildings: " + type);
         }
 
@@ -141,7 +140,7 @@ public class ConstructionRequests {
     }
 
     public static int countExistingAndPlannedInRadius(AUnitType type, double radius, APosition position) {
-        if (!type.isBuilding()) {
+        if (!type.isABuilding()) {
             throw new RuntimeException("Can only use it for buildings: " + type);
         }
 

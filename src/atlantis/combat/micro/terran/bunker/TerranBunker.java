@@ -1,4 +1,4 @@
-package atlantis.combat.micro.terran;
+package atlantis.combat.micro.terran.bunker;
 
 import atlantis.combat.missions.Missions;
 import atlantis.game.AGame;
@@ -11,7 +11,7 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -19,7 +19,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
-public class TerranBunker extends AntiLandBuildingManager {
+public class TerranBunker extends AntiLandBuildingCommander {
     @Override
     public AUnitType type() {
         return AUnitType.Terran_Bunker;
@@ -35,19 +35,28 @@ public class TerranBunker extends AntiLandBuildingManager {
     }
 
     @Override
-    public boolean handleBuildNew() {
+    public boolean shouldBuildNew() {
         if (!Have.barracks()) return false;
 
+        return Count.bases() <= 1
+            ? ShouldBuildBunkerIfOneBase.shouldBuild()
+            : ShouldBuildBunkerIfManyBases.shouldBuild();
+    }
+
+    protected static int existingOrInProduction() {
+        return Count.existingOrInProductionOrInQueue(AUnitType.Terran_Bunker);
+    }
+
+    @Override
+    public boolean handleBuildNew() {
         if (
             GamePhase.isEarlyGame()
                 && OurStrategy.get().isRushOrCheese()
                 && EnemyUnits.discovered().combatUnits().atMost(Enemy.zerg() ? 10 : 5)
         ) return false;
 
-        if (Count.bases() >= 2) {
-            if (handleNaturalBunker()) {
-                return true;
-            }
+        if (Count.bases() >= 2 && existingOrInProduction() < Count.bases()) {
+            if (handleNaturalBunker()) return true;
         }
 
         return super.handleBuildNew();

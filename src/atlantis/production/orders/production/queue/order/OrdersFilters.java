@@ -30,7 +30,7 @@ public interface OrdersFilters {
         );
     }
 
-    default Orders notCompleted() {
+    default Orders nonCompleted() {
         return new Orders(
             list().stream()
                 .filter(order -> !order.isCompleted())
@@ -115,6 +115,22 @@ public interface OrdersFilters {
         return new Orders(
             list().stream()
                 .filter(order -> order.isDynamic())
+                .collect(Collectors.toList())
+        );
+    }
+
+    default Orders buildings() {
+        return new Orders(
+            list().stream()
+                .filter(order -> order.unitType() != null && order.unitType().isABuilding())
+                .collect(Collectors.toList())
+        );
+    }
+
+    default Orders units() {
+        return new Orders(
+            list().stream()
+                .filter(order -> order.unitType() != null && !order.unitType().isABuilding())
                 .collect(Collectors.toList())
         );
     }

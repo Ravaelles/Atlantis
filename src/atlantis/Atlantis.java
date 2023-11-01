@@ -131,7 +131,7 @@ public class Atlantis implements BWEventListener {
             Queue.get().refresh();
 
             // Apply construction fix: detect new Protoss buildings and remove them from queue.
-            if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
+            if (AGame.isPlayingAsProtoss() && unit.type().isABuilding()) {
                 ProtossConstructionManager.handleWarpingNewBuilding(unit);
             }
 

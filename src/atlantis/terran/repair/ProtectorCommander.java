@@ -57,6 +57,9 @@ public class ProtectorCommander extends Commander {
                 AAdvancedPainter.paintTextCentered(bunker, howMany + "", Color.Orange);
                 addProtectorsForUnit(bunker, howMany);
             }
+
+            Color color = howMany > 0 ? Color.Orange : Color.Grey;
+            AAdvancedPainter.paintTextCentered(bunker, howMany + "", color);
         }
 
         return true;

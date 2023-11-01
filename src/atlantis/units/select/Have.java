@@ -43,7 +43,7 @@ public class Have {
     }
 
     public static boolean existingOrPlanned(AUnitType building, HasPosition position, double inRadius) {
-        assert building.isBuilding();
+        assert building.isABuilding();
 
         if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) return true;
 
@@ -51,7 +51,7 @@ public class Have {
     }
 
     public static boolean existingOrPlannedOrInQueue(AUnitType building, HasPosition position, double inRadius) {
-        assert building.isBuilding();
+        assert building.isABuilding();
 
         if (Queue.get().haveAmongNextOrders(building, 2)) return true;
         if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) return true;

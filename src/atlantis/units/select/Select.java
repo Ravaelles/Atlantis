@@ -290,7 +290,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static int countOurOfType(AUnitType type) {
         return cacheInt.get(
             "countOurOfType:" + type.id(),
-            type.isBuilding() ? 0 : 37,
+            type.isABuilding() ? 0 : 37,
             () -> {
                 int total = 0;
 
@@ -615,16 +615,16 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
             cachePath = "geysers",
-            50,
+            53,
             () -> neutral().ofType(AUnitType.Resource_Vespene_Geyser)
         );
     }
 
-    public static Selection geyserBuildings() {
+    public static Selection geysersAndGasBuildings() {
         String cachePath;
         return cache.get(
-            cachePath = "geyserBuildings",
-            30,
+            cachePath = "geysersAndGasBuildings",
+            31,
             () -> all().ofType(
                 AUnitType.Resource_Vespene_Geyser,
                 AUnitType.Protoss_Assimilator,
@@ -808,7 +808,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             microCacheForFrames,
             () -> {
                 Selection selectedUnits = Select.ourWithUnfinished();
-                selectedUnits.list().removeIf(unit -> !unit.type().isBuilding() && !unit.type().isAddon());
+                selectedUnits.list().removeIf(unit -> !unit.type().isABuilding() && !unit.type().isAddon());
                 return selectedUnits;
             }
         );
@@ -822,7 +822,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 Selection selectedUnits = Select.ourWithUnfinished();
                 selectedUnits.list().removeIf(
-                    unit -> (!unit.type().isBuilding() && !unit.type().isAddon()) || unit.isCompleted()
+                    unit -> (!unit.type().isABuilding() && !unit.type().isAddon()) || unit.isCompleted()
                 );
                 return selectedUnits;
             }

@@ -23,7 +23,7 @@ public class ProductionOrderHandler extends Commander {
         if (order.unitType() != null) {
             AUnitType unitType = order.unitType();
 
-            if (unitType.isBuilding()) {
+            if (unitType.isABuilding()) {
                 ProduceBuilding.produceBuilding(unitType, order);
             }
             else {

@@ -104,7 +104,7 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits
             .ofType(AUnitType.Protoss_High_Templar)
-            .inRadius(8, unit)
+            .canBeAttackedBy(unit, 1)
             .nearestTo(unit);
 
         if (target != null) {
@@ -181,7 +181,6 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits
             .ofType(
-                AUnitType.Protoss_High_Templar,
                 AUnitType.Protoss_Reaver,
                 AUnitType.Terran_Science_Vessel
             )

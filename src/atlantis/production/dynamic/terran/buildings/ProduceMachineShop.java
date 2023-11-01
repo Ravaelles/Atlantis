@@ -11,35 +11,24 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
-import static atlantis.units.AUnitType.Terran_Factory;
-import static atlantis.units.AUnitType.Terran_Machine_Shop;
+import static atlantis.units.AUnitType.*;
 
 public class ProduceMachineShop {
     /**
      * If there are buildings without addons, build them.
      */
     public static void machineShop() {
-        if (!Have.factory()) {
-            return;
-        }
+        if (!Have.factory()) return;
 
-//        if (
-//            GamePhase.isEarlyGame()
-//                && Count.vultures() <= 3
-//                && EnemyUnits.discovered().ofType(Protoss_Zealot).atLeast(5)
-//        ) {
+//        if (AreWeGoingBio.check() && AreWeGoingBio.doNotFocusOnTanksForNow()) {
 //            return;
 //        }
-
-        if (AreWeGoingBio.check() && AreWeGoingBio.doNotFocusOnTanksForNow()) {
-            return;
-        }
 
         if (Count.factories() > Count.ofType(Terran_Machine_Shop)) {
             if (Count.inProductionOrInQueue(Terran_Machine_Shop) == 0) {
 //                AddToQueue.maxAtATime(Terran_Machine_Shop, 1, ProductionOrderPriority.HIGH);
                 if (A.canAfford(Terran_Machine_Shop)) {
-                    buildAddon(Terran_Machine_Shop);
+                    ProduceAddon.buildNow(Terran_Machine_Shop);
                 }
                 return;
             }
@@ -52,16 +41,5 @@ public class ProduceMachineShop {
 //                        || A.supplyUsed(70)
 //        ) {
 
-    }
-
-    private static void buildAddon(AUnitType addonType) {
-        for (AUnit building : Select.ourOfType(Terran_Factory).list()) {
-            if (building.type().isFactory() && !building.hasAddon()) {
-                if (AGame.canAfford(addonType) && Count.inQueueOrUnfinished(addonType, 3) <= 1) {
-                    building.buildAddon(addonType);
-                    return;
-                }
-            }
-        }
     }
 }

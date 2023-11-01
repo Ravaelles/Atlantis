@@ -1,4 +1,4 @@
-package atlantis.combat.micro.terran;
+package atlantis.combat.micro.terran.bunker;
 
 import atlantis.architecture.Commander;
 import atlantis.information.enemy.EnemyInfo;

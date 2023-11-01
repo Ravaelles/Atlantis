@@ -87,7 +87,7 @@ public class AddToQueueTest extends NonAbstractTestFakingGame {
     private Queue initQueue(int minerals, int gas) {
         aGame.when(AGame::minerals).thenReturn(minerals);
         aGame.when(AGame::gas).thenReturn(gas);
-        OurStrategy.setTo(TerranStrategies.TERRAN_MMG_vP);
+        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
 
         initSupply();
 
