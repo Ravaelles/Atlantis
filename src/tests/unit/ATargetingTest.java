@@ -108,8 +108,8 @@ public class ATargetingTest extends AbstractTestWithUnits {
         FakeUnit scout;
 
         FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Protoss_Photon_Cannon, 13.8),
             scout = fake(AUnitType.Protoss_Scout, 14),
-            fake(AUnitType.Protoss_Photon_Cannon, 16),
             fake(AUnitType.Protoss_Dragoon, 21),
             fake(AUnitType.Protoss_Zealot, 22)
         );

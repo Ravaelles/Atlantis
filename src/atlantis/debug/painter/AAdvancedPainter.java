@@ -44,6 +44,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.buildings.CountGasWorkers;
 import atlantis.units.buildings.GasBuildingsCommander;
+import atlantis.units.buildings.NumberOfGasWorkersCommander;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -434,7 +435,7 @@ public class AAdvancedPainter extends APainter {
             int tanks = Count.tanks();
             paintSideMessage("Tanks: " + tanks, tanks >= 1 ? Yellow : Color.White);
         }
-        paintSideMessage("Gas workers per b: " + GasBuildingsCommander.defineGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Gas workers per b: " + NumberOfGasWorkersCommander.defineGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + ReservedResources.minerals(), Color.Grey);
         paintSideMessage("Reserved gas: " + ReservedResources.gas(), Color.Grey);
     }

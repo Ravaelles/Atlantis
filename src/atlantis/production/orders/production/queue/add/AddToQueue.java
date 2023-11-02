@@ -149,7 +149,7 @@ public class AddToQueue {
     }
 
     public static ProductionOrder maxAtATime(AUnitType type, int maxAtATime, ProductionOrderPriority priority) {
-        if (CountInQueue.count(type, 30) < maxAtATime) {
+        if (CountInQueue.count(type, 50) < maxAtATime) {
             return withPriority(type, priority);
         }
 

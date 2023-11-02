@@ -511,7 +511,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().name() + " #" + id();
     }
 
-    public boolean isInWeaponRangeByGame(AUnit target) {
+    public boolean isEnemyInWeaponRangeByGame(AUnit target) {
         return u.isInWeaponRange(target.u);
     }
 

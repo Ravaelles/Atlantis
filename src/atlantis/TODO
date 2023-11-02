@@ -1,19 +1,17 @@
 ### BUGS ###
 
-- Prioritize Scouts over Cannons
+--- Ugly construction fix (two SCVs just standing near depot, no action taken)
 
-- Build turrets against enemy Wraiths
+-- Refinery sometimes not produced (20 - Refinery), no error, nothing, no construction order
+
 
 ### FEATURES ###
+
++++ Queue workers if minerals >= 50
+
+++ Build turrets against enemy Wraiths
 
 + Consider high ground for tanks
 
 
-
 ###############
-
-1 - MissionForbidsDragon for Marine standing near two bunkers and watching Dragon killing bunkers
-2 - Dont use 3 gas workers if gas>1000 and min<700
-3 - missile turrets in main produced 1by1 up till 5 and more
-
-- refresh position makes builder move quite some dist

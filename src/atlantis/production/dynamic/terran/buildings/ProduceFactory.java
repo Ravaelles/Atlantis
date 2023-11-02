@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -10,12 +11,13 @@ import atlantis.units.select.Selection;
 
 import static atlantis.units.AUnitType.Terran_Factory;
 
-public class BuildFactory {
+public class ProduceFactory {
     /**
      * If all factories are busy (training units) request new ones.
      */
     public static boolean factories() {
         if (!Have.barracks()) return false;
+        if (OurStrategy.get().goingBio()) return false; // See: ProduceFactoryWhenBioOnly
         if (!Have.academy() && !A.canAfford(350, 100)) return false;
 
         int existing = Count.existing(Terran_Factory);

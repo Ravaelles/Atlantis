@@ -14,7 +14,6 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.log.ConsoleLog;
-import atlantis.util.log.LogMessage;
 
 import static atlantis.units.AUnitType.Terran_Barracks;
 import static atlantis.units.AUnitType.Terran_Marine;
@@ -25,6 +24,7 @@ public class ProduceMarines {
 
     public static boolean marines() {
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
+        if (A.canAffordWithReserved(55, 0)) return false;
 
         int marines = Count.marines();
 
@@ -32,13 +32,13 @@ public class ProduceMarines {
 //            return AddToQueue.maxAtATime(Terran_Marine, 1) != null;
 //        }
 
-        if (A.canAffordWithReserved(55, 0) && CanProduceInfantry.canProduceInfantry(marines)) {
-            return AddToQueue.maxAtATime(Terran_Marine, 4) != null;
-        }
-
         if (Select.ourFree(Terran_Barracks).empty()) return false;
         if (Enemy.terran() && (marines >= 4 && !A.hasMinerals(700 + 100 * marines))) return false;
         if (inRelationToTanks(marines)) return false;
+
+        if (ShouldProduceInfantry.shouldProduceInfantry(marines)) {
+            return produceMarine();
+        }
 
         if (!A.supplyUsed(160) && A.hasMinerals(800)) {
             return produceMarine();

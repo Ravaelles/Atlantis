@@ -25,7 +25,7 @@ public class OffensiveTurrets extends TurretsForNonMain {
 //            return false;
 //        }
 //
-//        return TerranTurret.get().handleReinforcePosition(squadCenter, 14);
+//        return TerranMissileTurret.get().handleReinforcePosition(squadCenter, 14);
 //    }
 
     protected boolean handleReinforceMissionContain() {

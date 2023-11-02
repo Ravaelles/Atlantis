@@ -35,7 +35,7 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
         if (A.everyNthGameFrame(37)) {
             ProduceMachineShop.machineShop();
-            BuildFactory.factories();
+            ProduceFactory.factories();
         }
 
         if (A.everyNthGameFrame(67)) {

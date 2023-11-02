@@ -1,7 +1,6 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -24,7 +23,7 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
         if (focusPoint == null) return true;
 
         if (
-            unit.isInWeaponRangeByGame(enemy)
+            unit.isEnemyInWeaponRangeByGame(enemy)
                 || (unit.noCooldown() && enemy.canAttackTarget(unit) && focusPoint.regionsMatch(enemy))
                 || ourBuildingIsInDanger(unit, enemy)
         ) return true;
@@ -77,7 +76,7 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
     private boolean ourBuildingIsInDanger(AUnit unit, AUnit enemy) {
         Selection ourBuildings = Select.ourBuildings().inRadius(enemy.groundWeaponRange() + 0.5, enemy);
         if (unit.isAir()) {
-            if (ourBuildings.atLeast(2)) {
+            if (ourBuildings.atLeast(2) || ourBuildings.combatBuildingsAntiLand().notEmpty()) {
                 return true;
             }
         }

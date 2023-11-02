@@ -15,6 +15,12 @@ import atlantis.util.We;
 import java.util.Collection;
 
 public class GasBuildingsCommander extends Commander {
+    @Override
+    protected Class<? extends Commander>[] subcommanders() {
+        return new Class[]{
+            NumberOfGasWorkersCommander.class
+        };
+    }
 
     /**
      * If any of our gas extracting buildings needs worker, it will assign exactly one worker per frame (until
@@ -26,7 +32,7 @@ public class GasBuildingsCommander extends Commander {
             return;
         }
 
-        controlNumberOfWorkersGatheringGasAtEachBuilding();
+        handleSubcommanders();
 
         if (tooEarlyForAnotherGasBuilding()) {
             return;
@@ -35,35 +41,6 @@ public class GasBuildingsCommander extends Commander {
 //        if (Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
 //            return;
 //        }
-    }
-
-    private static void controlNumberOfWorkersGatheringGasAtEachBuilding() {
-        Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisRaceConfig.GAS_BUILDING).list();
-
-        for (AUnit gasBuilding : gasBuildings) {
-//            if (!gasBuilding.isCompleted()) {
-//                continue;
-//            }
-
-            int realCount = CountGasWorkers.countWorkersGatheringGasFor(gasBuilding);
-            int expectedCount = expectedGasWorkers(gasBuilding, realCount);
-
-
-            // Fewer workers gathering gas than optimal
-            if (realCount < expectedCount) {
-                assignBestWorkerToGasBuilding(gasBuilding);
-                break; // Only one worker per execution - prevent weird runs
-            }
-
-            // More workers than optimal
-            else if (realCount > expectedCount) {
-                AUnit worker = WorkerRepository.getRandomWorkerAssignedTo(gasBuilding);
-                if (worker != null && worker.isGatheringGas()) {
-                    worker.stop("I'm fired!", true);
-                }
-                break; // Only one worker per execution - prevent weird runs
-            }
-        }
     }
 
     // =========================================================
@@ -81,58 +58,5 @@ public class GasBuildingsCommander extends Commander {
         }
 
         return false;
-    }
-
-    private static void assignBestWorkerToGasBuilding(AUnit gasBuilding) {
-        AUnit worker = getWorkerForGasBuilding(gasBuilding);
-        if (worker == null) {
-            return;
-        }
-
-        // If is carrying stuff, return first
-//        if (worker.isCarryingGas() || worker.isCarryingMinerals()) {
-//            worker.returnCargo();
-//            worker.setTooltip("Cargo");
-//
-
-//            return;
-//        }
-
-        worker.gather(gasBuilding);
-        worker.setTooltipTactical("Gas");
-    }
-
-    private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
-        return Select.ourWorkers().gatheringMinerals(true).nearestTo(gasBuilding);
-    }
-
-    public static int defineGasWorkersPerBuilding() {
-//        return 3;
-
-        int workers = Count.workers();
-
-        if (workers <= 8) {
-            return 0;
-        }
-
-        if (workers <= 13 && !A.hasMinerals(150)) {
-            return 1;
-        }
-
-        int seconds = A.seconds();
-
-        if (seconds < 150 && A.hasGas(170)) {
-            return 1;
-        }
-        else if (seconds < 250 && A.hasGas(250)) {
-            return 2;
-        }
-        else {
-            return 3;
-        }
-    }
-
-    private static int expectedGasWorkers(AUnit gasBuilding, int numOfWorkersNear) {
-        return defineGasWorkersPerBuilding();
     }
 }

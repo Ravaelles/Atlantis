@@ -27,7 +27,7 @@ public class ProduceMedicsAndFirebats {
             if (Have.academy() && Count.infantry() >= 4 && medics <= 0) return false;
         }
 
-//        if (!CanProduceInfantry.canProduceInfantry(medics)) return false;
+//        if (!ShouldProduceInfantry.canProduceInfantry(medics)) return false;
 
         if (medics <= 2 && marines >= 1) {
             return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2) != null;

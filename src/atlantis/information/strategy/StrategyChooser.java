@@ -1,6 +1,5 @@
 package atlantis.information.strategy;
 
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
@@ -39,7 +38,7 @@ public class StrategyChooser {
 //        if (true) { return TerranStrategies.TERRAN_BBS; }
 
         if (Enemy.protoss()) {
-            return TerranStrategies.TERRAN_MMG_vP;
+            return TerranStrategies.TERRAN_Shallow_Two_vP;
 //            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_Nada_2_Fac;

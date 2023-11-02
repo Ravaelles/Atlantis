@@ -75,9 +75,9 @@ public class TravelToConstruct extends HasUnit {
         return
             (!CanPhysicallyBuildHere.check(construction.builder(), buildingType,
                 construction.buildPosition())
-            )
-                ||
-                (construction.builder().looksIdle() && AGame.everyNthGameFrame(151));
+            );
+//                ||
+//                (construction.builder().looksIdle() && AGame.everyNthGameFrame(151));
     }
 
     private boolean moveToConstruct(Construction construction, AUnitType buildingType, double distance, String distString) {

@@ -9,7 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-public class TerranTurret extends AntiAirBuildingCommander {
+public class TerranMissileTurret extends AntiAirBuildingCommander {
 
     protected final AUnitType turret = AUnitType.Terran_Missile_Turret;
 
@@ -35,6 +35,8 @@ public class TerranTurret extends AntiAirBuildingCommander {
         if (!Have.existingOrPlannedOrInQueue(type(), position, inRadius)) {
             AddToQueue.withTopPriority(type(), position).setMaximumDistance(8);
 //            AAntiAirBuildingRequests.requestCombatBuildingAntiAir(position);
+//            System.err.println("@ " + A.now() + " - MISSILE TURRET ENQUEUED = "
+//                + Have.existingOrPlannedOrInQueue(type(), position, inRadius));
             return true;
         }
 
@@ -58,11 +60,11 @@ public class TerranTurret extends AntiAirBuildingCommander {
 
     // =========================================================
 
-    public static TerranTurret get() {
+    public static TerranMissileTurret get() {
         if (instance == null) {
-            return (TerranTurret) (instance = new TerranTurret());
+            return (TerranMissileTurret) (instance = new TerranMissileTurret());
         }
 
-        return (TerranTurret) instance;
+        return (TerranMissileTurret) instance;
     }
 }

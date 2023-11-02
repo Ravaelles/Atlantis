@@ -25,7 +25,7 @@ import atlantis.util.cache.Cache;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class TurretsForMain extends TerranTurret {
+public class TurretsForMain extends TerranMissileTurret {
     private final int BORDER_TURRETS_MIN_COUNT = 1;
     private final int BORDER_TURRETS_TOTAL_OVER_TIME = 0;
     //    private  final int BORDER_TURRETS_MIN_COUNT = 4;

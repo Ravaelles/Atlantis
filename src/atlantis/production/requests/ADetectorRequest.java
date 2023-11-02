@@ -6,6 +6,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
@@ -57,14 +58,15 @@ public class ADetectorRequest {
     }
 
     private static void requestDetectorConstruction(AUnitType detectorBuilding) {
-        int detectors = ConstructionRequests.countExistingAndNotFinished(detectorBuilding);
-
+        int existing = Count.existingOrInProductionOrInQueue(detectorBuilding);
+        if (existing >= 2) {
+            return;
+        }
 
         // === Ensure parent exists ========================================
 
         int requiredParents = ConstructionRequests.countExistingAndNotFinished(detectorBuilding.whatIsRequired());
         if (requiredParents == 0) {
-
             AddToQueue.withTopPriority(detectorBuilding.whatIsRequired());
             return;
         }
@@ -77,7 +79,6 @@ public class ADetectorRequest {
             );
 
             for (int i = 0; i <= 2 - numberOfDetectorsNearBase; i++) {
-
                 AddToQueue.withTopPriority(detectorBuilding, base.position());
             }
         }

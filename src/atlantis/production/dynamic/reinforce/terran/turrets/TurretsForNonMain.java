@@ -13,7 +13,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
-public class TurretsForNonMain extends TerranTurret {
+public class TurretsForNonMain extends TerranMissileTurret {
     private final int MIN_TURRETS_PER_BASE = 2;
 
     public boolean buildIfNeeded() {

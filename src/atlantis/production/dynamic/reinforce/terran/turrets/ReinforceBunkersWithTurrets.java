@@ -36,7 +36,7 @@ public class ReinforceBunkersWithTurrets extends Commander {
 
         if (turretsNear.count() < optimalTurrets) {
             ProductionOrder order = AddToQueue.withStandardPriority(Terran_Missile_Turret, bunker.position());
-            order.setMaximumDistance(MAX_DISTANCE_FROM_BUNKER);
+            if (order != null) order.setMaximumDistance(MAX_DISTANCE_FROM_BUNKER);
         }
     }
 }

@@ -3,7 +3,6 @@ package atlantis.combat.micro.terran.infantry.medic;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.position.conditions.TooCloseToBunker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -265,39 +264,33 @@ public class TerranMedic extends Manager {
         return false;
     }
 
-    private boolean healCriticallyWoundedUnits() {
-        if (medic.energy() < 2) return false;
-
-        AUnit nearestWoundedInfantry = Select.our()
-            .organic()
-            .criticallyWounded()
-            .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
-            .exclude(medic)
-            .notBeingHealed()
-            .nearestTo(medic);
-
-        // =========================================================
-        // If there's a wounded unit, heal it.
-
-        if (nearestWoundedInfantry != null) {
-            healUnit(nearestWoundedInfantry);
-            return true;
-        }
-
-        return false;
-    }
+//    private boolean healCriticallyWoundedUnits() {
+//        if (medic.energy() < 2) return false;
+//
+//        AUnit nearestWoundedInfantry = allowedToBeHealed()
+//            .criticallyWounded()
+//            .inRadius(HEAL_OTHER_UNITS_MAX_DISTANCE, medic)
+//            .nearestTo(medic);
+//
+//        // =========================================================
+//        // If there's a wounded unit, heal it.
+//
+//        if (nearestWoundedInfantry != null) {
+//            healUnit(nearestWoundedInfantry);
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     private boolean healMostWoundedInRange() {
         if (!medic.energy(5)) return false;
 
         if (medic.lastActionLessThanAgo(10, Actions.HEAL)) return false;
 
-        AUnit nearestWoundedInfantry = Select.our()
-            .organic()
+        AUnit nearestWoundedInfantry = allowedToBeHealed()
             .notHavingHp(19)
             .inRadius(1.99, medic)
-            .exclude(medic)
-            .notBeingHealed()
             .sortByHealth()
             .first();
 
@@ -311,6 +304,14 @@ public class TerranMedic extends Manager {
         }
 
         return false;
+    }
+
+    private Selection allowedToBeHealed() {
+        return Select.our()
+            .organic()
+            .exclude(medic)
+            .exclude(medicsToAssignments.values()) // Only heal units that have no medics assigned
+            .notBeingHealed();
     }
 
     private boolean healAnyWoundedNear() {
