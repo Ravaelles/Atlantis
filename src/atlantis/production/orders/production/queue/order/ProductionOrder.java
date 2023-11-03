@@ -1,6 +1,7 @@
 package atlantis.production.orders.production.queue.order;
 
 import atlantis.combat.missions.Mission;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.Requirements;
@@ -193,7 +194,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 //    }
 
     public boolean supplyRequirementFulfilled() {
-        int bonus = unitOrBuilding != null && unitOrBuilding.isABuilding() ? 1 : 0;
+        int bonus = unitOrBuilding != null && A.supplyUsed() >= 10 && unitOrBuilding.isABuilding() ? 1 : 0;
 
         return AGame.supplyUsed() + bonus >= minSupply;
     }

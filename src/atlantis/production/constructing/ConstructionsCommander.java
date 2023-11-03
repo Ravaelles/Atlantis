@@ -49,35 +49,31 @@ public class ConstructionsCommander extends Commander {
 
     // =========================================================
 
-    private void fixForIdleBuilders() {
-        if (!We.terran()) {
-            return;
-        }
-
-        if (A.everyFrameExceptNthFrame(27)) {
-            return;
-        }
+    private boolean fixForIdleBuilders() {
+        if (!We.terran()) return false;
+        if (A.everyFrameExceptNthFrame(27)) return false;
 
         for (AUnit worker : Select.ourWorkers().list()) {
+            if (!worker.recentlyMoved(40)) continue;
+
             if (worker.isIdle() && !worker.isGatheringMinerals()) {
                 List<AUnit> unfinished = Select.ourUnfinished()
                     .buildings()
                     .excludeTypes(AUnitType.Terran_Refinery)
                     .sortDataByDistanceTo(worker, true);
                 for (AUnit construction : unfinished) {
-                    if (construction.type().isAddon()) {
-                        continue;
-                    }
+                    if (construction.type().isAddon()) continue;
 
-                    if (construction.friendsNear().workers().inRadius(0.6, construction).empty()) {
+                    if (construction.friendsNear().workers().inRadius(1.6, construction).empty()) {
                         worker.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction);
                         worker.setTooltip("ConstructionUglyFix");
-
-                        return;
+                        return true;
                     }
                 }
             }
         }
+
+        return false;
     }
 
     /**

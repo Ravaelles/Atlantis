@@ -1493,6 +1493,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public Action action() {
+        if (unitAction == null) return Actions.INVALID;
+
         return unitAction;
     }
 

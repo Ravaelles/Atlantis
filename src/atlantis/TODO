@@ -1,13 +1,13 @@
 ### BUGS ###
 
---- Ugly construction fix (two SCVs just standing near depot, no action taken)
+.--- Ugly construction fix (two SCVs just standing near depot, no action taken)
 
 -- Refinery sometimes not produced (20 - Refinery), no error, nothing, no construction order
 
 
 ### FEATURES ###
 
-+++ Queue workers if minerals >= 50
+-.+++ Queue workers if minerals >= 50
 
 ++ Build turrets against enemy Wraiths
 

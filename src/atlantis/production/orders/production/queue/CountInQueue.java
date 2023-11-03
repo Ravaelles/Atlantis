@@ -6,6 +6,10 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class CountInQueue {
+    public static int count(AUnitType type) {
+        return count(type, 50);
+    }
+
     public static int count(AUnitType type, int numberOfNextOrdersToCheck) {
         return Queue.get().nextOrders(numberOfNextOrdersToCheck).ofType(type).size();
     }

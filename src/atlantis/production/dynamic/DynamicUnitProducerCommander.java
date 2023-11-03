@@ -41,7 +41,7 @@ public class DynamicUnitProducerCommander extends Commander {
         }
 
         Class[] generic = new Class[]{
-            AutoTrainWorkersCommander.class
+            AutoProduceWorkersCommander.class
         };
 
         return mergeCommanders(raceSpecific, generic);

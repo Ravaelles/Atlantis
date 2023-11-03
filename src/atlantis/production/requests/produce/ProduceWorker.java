@@ -1,9 +1,7 @@
 package atlantis.production.requests.produce;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.dynamic.AutoTrainWorkersCommander;
-import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.production.dynamic.AutoProduceWorkersCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -19,9 +17,7 @@ public class ProduceWorker {
 
         AUnit base = baseToProduceWorker();
 
-        if (base == null) return false;
-
-        return AutoTrainWorkersCommander.produceWorker(base);
+        return AutoProduceWorkersCommander.produceWorker(base);
     }
 
     private static AUnit baseToProduceWorker() {

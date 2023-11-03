@@ -14,6 +14,7 @@ public class Actions {
     public static final Action GATHER_MINERALS = new Action().setName("GATHER_MINERALS");
     public static final Action GATHER_GAS = new Action().setName("GATHER_GAS");
     public static final Action INIT = new Action().setName("INIT");
+    public static final Action INVALID = new Action().setName("INVALID");
     public static final Action HEAL = new Action().setName("HEAL");
     public static final Action HOLD_POSITION = new Action().setName("HOLD_POSITION");
     public static final Action LAND = new Action().setName("LAND");

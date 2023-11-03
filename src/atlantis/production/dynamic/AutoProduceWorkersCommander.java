@@ -9,6 +9,7 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.SoonInQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.production.requests.produce.ProduceWorker;
@@ -20,13 +21,18 @@ import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Zerg_Spawning_Pool;
 
-public class AutoTrainWorkersCommander extends Commander {
+public class AutoProduceWorkersCommander extends Commander {
+    @Override
+    public boolean applies() {
+        return A.hasMinerals(48);
+    }
+
     /**
      * Selects the least worker-saturated base to build a worker.
      */
     @Override
     protected void handle() {
-        if (!shouldTrainWorkers()) {
+        if (!shouldProduceWorkers()) {
             return;
         }
 
@@ -35,7 +41,7 @@ public class AutoTrainWorkersCommander extends Commander {
 
     // =========================================================
 
-    public static boolean shouldTrainWorkers() {
+    public static boolean shouldProduceWorkers() {
         if (AGame.supplyFree() == 0 || !AGame.hasMinerals(50)) return false;
 
 //        if ((A.supplyUsed() <= 154 && !AGame.canAffordWithReserved(50, 0))) {
@@ -93,29 +99,31 @@ public class AutoTrainWorkersCommander extends Commander {
      * Request to produce worker (Zerg Drone, Terran SCV or Protoss Probe) that should be handled according to
      * the race played.
      * <p>
-     * See AutoTrainWorkersCommander which is also used to produce workers.
+     * See AutoProduceWorkersCommander which is also used to produce workers.
      */
     public static boolean produceWorker(AUnit base) {
+        if (AGame.supplyFree() == 0 || !AGame.canAfford(50, 0)) return false;
         if (A.supplyUsed() >= 8 && !hasEnoughMineralsToConsiderProducingWorker()) return false;
-        if (!AGame.canAfford(50, 0) || AGame.supplyFree() == 0) return false;
 
         if (We.zerg()) return ProduceZergUnit.produceZergUnit(AtlantisRaceConfig.WORKER);
-
         if (base != null) return base.train(AtlantisRaceConfig.WORKER);
 
-        // If we're here it means all bases are busy. Try queue request
-        for (AUnit anotherBase : Select.ourBases().reverse().list()) {
-            if (
-                anotherBase.remainingTrainTime() <= 4
-                    && anotherBase.hasNothingInQueue()
-                    && AGame.supplyFree() >= 2
-            ) {
-//                System.err.println(
-//                    "At supply " + A.supplyUsed() + " produce worker " +
-//                        "(" + Count.ourOfTypeWithUnfinished(AtlantisRaceConfig.WORKER) + ")"
-//                );
+//        if (CountInQueue.count(AtlantisRaceConfig.WORKER) > 0) return false;
 
-                anotherBase.train(AtlantisRaceConfig.WORKER);
+        if (queueWorker()) return true;
+
+        return false;
+    }
+
+    private static boolean queueWorker() {
+        AUnit base = Select.main();
+
+        if (base == null) return false;
+
+        if (base.remainingTrainTime() <= 10 && base.remainingTrainTime() >= 1) {
+//                ProductionOrder order = AddToQueue.maxAtATime(AtlantisRaceConfig.WORKER, 1);
+            if (base.hasNothingInQueue()) {
+                base.train(AtlantisRaceConfig.WORKER);
                 return true;
             }
         }
