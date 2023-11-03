@@ -25,7 +25,7 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
         // Marines & Medics v. Zealots
 
-        if (MapAndRace.isMap("minimaps/")) {
+        if (ActiveMap.isMap("minimaps/")) {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(30);
                 GameSpeed.changeFrameSkipTo(0);
@@ -35,14 +35,14 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
-        else if (MapAndRace.isMap("Wraith_v_Wraith")) {
+        else if (ActiveMap.isMap("Wraith_v_Wraith")) {
             if (A.now() <= 1) GameSpeed.changeSpeedToNormal();
             if (A.seconds() <= 3) CameraCommander.centerCameraOn(Select.ourCombatUnits().first());
         }
 
         // =========================================================
 
-        else if (MapAndRace.isMap("Lings_v_Zealots")) {
+        else if (ActiveMap.isMap("Lings_v_Zealots")) {
             if (A.now() <= 1) GameSpeed.changeSpeedTo(30);
             if (A.seconds() <= 3) CameraCommander.centerCameraOn(ourUnitNearestToEnemy());
         }
@@ -50,8 +50,8 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
 
         else if (
-            MapAndRace.isMap("rav/Dragoon_v_Zealot")
-                || MapAndRace.isMap("rav/Dragoons_v_Zealots")
+            ActiveMap.isMap("rav/Dragoon_v_Zealot")
+                || ActiveMap.isMap("rav/Dragoons_v_Zealots")
         ) {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(50);
@@ -63,10 +63,10 @@ public class MapSpecificCommander extends Commander {
         // v. ZERG / PROTOSS / Gosu maps
 
         else if (
-            MapAndRace.isMap("vsGosuComputer")
-                || MapAndRace.isMap("vsGosuRav")
-                || MapAndRace.isMap("exp_skilltest")
-                || MapAndRace.isMap("7th")
+            ActiveMap.isMap("vsGosuComputer")
+                || ActiveMap.isMap("vsGosuRav")
+                || ActiveMap.isMap("exp_skilltest")
+                || ActiveMap.isMap("7th")
         ) {
             int initFrameSkip = 80;
 
@@ -75,7 +75,7 @@ public class MapSpecificCommander extends Commander {
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(initFrameSkip);
 
-                if (MapAndRace.isMap("vsGosuRav")) {
+                if (ActiveMap.isMap("vsGosuRav")) {
                     CameraCommander.centerCameraOn((new MissionDefendFocus()).focusPoint());
                 }
             }
@@ -84,7 +84,7 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
         // Marines v. ZERGLINGS
 
-        else if (MapAndRace.isMap("marines_v_zerglings")) {
+        else if (ActiveMap.isMap("marines_v_zerglings")) {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(20);
                 GameSpeed.changeFrameSkipTo(0);
@@ -97,7 +97,7 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
         // Marines v. ZERGLINGS
 
-        else if (MapAndRace.isMap("Jim_v_Lurker")) {
+        else if (ActiveMap.isMap("Jim_v_Lurker")) {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(1);
                 GameSpeed.changeFrameSkipTo(0);
@@ -108,7 +108,7 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
         // Marines v. ZEALOTS
 
-        else if (MapAndRace.isMap("mar_v_zea")) {
+        else if (ActiveMap.isMap("mar_v_zea")) {
             if (Select.enemyCombatUnits().isEmpty()) {
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(70);
@@ -133,7 +133,7 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
         // Rebasing
 
-        else if (MapAndRace.isMap("T_rebasing")) {
+        else if (ActiveMap.isMap("T_rebasing")) {
             if (A.now() <= 3) {
                 CameraCommander.centerCameraOn(Select.ourBases().first());
                 GameSpeed.changeSpeedTo(0);
@@ -141,7 +141,7 @@ public class MapSpecificCommander extends Commander {
             }
         }
 
-        else if (MapAndRace.isMap("TBall_v_HydraLings")) {
+        else if (ActiveMap.isMap("TBall_v_HydraLings")) {
             if (A.now() <= 3) {
                 CameraCommander.centerCameraOn(Select.ourBases().first());
                 GameSpeed.changeSpeedTo(1);
@@ -160,6 +160,6 @@ public class MapSpecificCommander extends Commander {
             "ums/rav/vsGosuRav.scx"
         };
 
-        return Arrays.asList(umsMapsTreatedAsNormal).contains(MapAndRace.activeMap());
+        return Arrays.asList(umsMapsTreatedAsNormal).contains(ActiveMap.activeMap());
     }
 }

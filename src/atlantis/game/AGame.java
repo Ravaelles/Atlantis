@@ -4,12 +4,12 @@ import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.config.MapAndRace;
 import atlantis.config.MapSpecificCommander;
 
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnitType;
 import bwapi.*;
+import main.Main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,7 +213,7 @@ public class AGame {
      * Returns true if user plays as Terran.
      */
     public static boolean isPlayingAsTerran() {
-        if (AtlantisRaceConfig.MY_RACE == null) return "Terran".equals(MapAndRace.OUR_RACE);
+        if (AtlantisRaceConfig.MY_RACE == null) return "Terran".equals(Main.OUR_RACE);
 
         return AtlantisRaceConfig.MY_RACE.equals(Race.Terran);
     }
@@ -222,7 +222,7 @@ public class AGame {
      * Returns true if user plays as Protoss.
      */
     public static boolean isPlayingAsProtoss() {
-        if (AtlantisRaceConfig.MY_RACE == null) return "Protoss".equals(MapAndRace.OUR_RACE);
+        if (AtlantisRaceConfig.MY_RACE == null) return "Protoss".equals(Main.OUR_RACE);
 
         return AtlantisRaceConfig.MY_RACE.equals(Race.Protoss);
     }
@@ -231,7 +231,7 @@ public class AGame {
      * Returns true if user plays as Zerg.
      */
     public static boolean isPlayingAsZerg() {
-        if (AtlantisRaceConfig.MY_RACE == null) return "Zerg".equals(MapAndRace.OUR_RACE);
+        if (AtlantisRaceConfig.MY_RACE == null) return "Zerg".equals(Main.OUR_RACE);
 
         return AGame.getPlayerUs().getRace().equals(Race.Zerg);
 //        return AtlantisRaceConfig.MY_RACE.equals(Race.Zerg);

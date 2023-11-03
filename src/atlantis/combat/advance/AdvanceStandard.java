@@ -19,10 +19,10 @@ public class AdvanceStandard extends MissionManager {
 
     protected Manager handle() {
         if (unit.isTankSieged()) {
-            TerranTank.wantsToUnsiege(unit);
+            if (TerranTank.wantsToUnsiege(unit)) return null;
         }
 
-        if (A.now() % 10 <= 8 && (!unit.isMoving() && !unit.isAttacking())) {
+        if (A.seconds() % 4 <= 2 && (!unit.isMoving() && !unit.isAttacking())) {
             return usedManager(this, "AdvanceContinue");
         }
 

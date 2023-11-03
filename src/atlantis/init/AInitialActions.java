@@ -1,6 +1,6 @@
 package atlantis.init;
 
-import atlantis.config.MapAndRace;
+import atlantis.config.ActiveMap;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
 import atlantis.units.workers.AMineralGathering;
@@ -17,7 +17,7 @@ public class AInitialActions {
         }
 
         if (Select.ourWorkers().count() != 4) {
-            if (!MapAndRace.isMap("vsGosuRav")) {
+            if (!ActiveMap.isMap("vsGosuRav")) {
                 AGame.setUmsMode();
             }
         }

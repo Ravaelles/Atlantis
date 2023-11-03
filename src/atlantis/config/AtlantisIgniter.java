@@ -2,6 +2,7 @@ package atlantis.config;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import main.Main;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,11 +76,11 @@ public class AtlantisIgniter {
         for (int i = 0; i < fileContent.length; i++) {
             String line = fileContent[i];
             if (line.startsWith("race = ")) {
-                fileContent[i] = "race = " + MapAndRace.OUR_RACE;
+                fileContent[i] = "race = " + Main.OUR_RACE;
 
                 if (!fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
-                    System.out.println("Updated our race in bwapi.ini to: " + MapAndRace.OUR_RACE);
+                    System.out.println("Updated our race in bwapi.ini to: " + Main.OUR_RACE);
                 }
                 return;
             }
@@ -90,11 +91,11 @@ public class AtlantisIgniter {
         for (int i = 0; i < fileContent.length; i++) {
             String line = fileContent[i];
             if (line.startsWith("enemy_race = ")) {
-                fileContent[i] = "enemy_race = " + MapAndRace.ENEMY_RACE;
+                fileContent[i] = "enemy_race = " + Main.ENEMY_RACE;
 
                 if (!fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
-                    System.out.println("Updated enemy race in bwapi.ini to: " + MapAndRace.ENEMY_RACE);
+                    System.out.println("Updated enemy race in bwapi.ini to: " + Main.ENEMY_RACE);
                 }
                 return;
             }
@@ -105,17 +106,17 @@ public class AtlantisIgniter {
         for (int i = 0; i < fileContent.length; i++) {
             String line = fileContent[i];
             if (line.startsWith("map = ")) {
-                fileContent[i] = "map = " + MapAndRace.MAP;
+                fileContent[i] = "map = " + Main.MAP;
 
                 if (!fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
-                    System.out.println("Updated map in bwapi.ini to: " + MapAndRace.MAP);
+                    System.out.println("Updated map in bwapi.ini to: " + Main.MAP);
                 }
             }
 
             // game_type = USE_MAP_SETTINGS
             else if (line.startsWith("game_type = ")) {
-                String gameType = (MapAndRace.MAP.contains("ums/") || MapAndRace.MAP.contains("Atlantis/"))
+                String gameType = (Main.MAP.contains("ums/") || Main.MAP.contains("Atlantis/"))
                     ? "USE_MAP_SETTINGS" : "MELEE";
                 fileContent[i] = "game_type = " + gameType;
 

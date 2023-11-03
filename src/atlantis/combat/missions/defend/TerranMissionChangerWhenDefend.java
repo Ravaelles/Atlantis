@@ -3,7 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.config.MapAndRace;
+import atlantis.config.ActiveMap;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
@@ -28,7 +28,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            return false;
 //        }
 
-        if (MapAndRace.isMapGosu()) {
+        if (ActiveMap.isMapGosu()) {
             int alphaSize = Alpha.get().size();
             if (alphaSize <= 15) return false;
             if (AGame.killsLossesResourceBalance() < 1800) return false;

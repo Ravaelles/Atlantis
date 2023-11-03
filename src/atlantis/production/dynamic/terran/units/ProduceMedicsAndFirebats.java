@@ -18,7 +18,8 @@ import static atlantis.units.AUnitType.Terran_Marine;
 
 public class ProduceMedicsAndFirebats {
     public static boolean medics() {
-        if (Count.ourOfTypeWithUnfinished(AUnitType.Terran_Academy) == 0) return false;
+        if (!A.hasGas(1) || Count.ofType(AUnitType.Terran_Refinery) == 0) return false;
+        if (Count.ofType(AUnitType.Terran_Academy) == 0) return false;
 
         int medics = Count.medics();
         int marines = Count.marines();

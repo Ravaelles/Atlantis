@@ -1,13 +1,13 @@
 ### BUGS ###
 
---- Space4Workers causing huge blob in choke
-
 -- Refinery sometimes not produced (20 - Refinery), no error, nothing, no construction order
 
 
 ### FEATURES ###
 
-++ Build turrets against enemy Wraiths
++ First build a bunker at natural, only then build the CC
+
++ Build turrets against enemy Wraiths
 
 + Consider high ground for tanks
 

@@ -8,6 +8,7 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.position.base.FindPositionForBase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -60,7 +61,7 @@ public class PositionModifier {
             if (construction == null || construction.maxDistance() < 0) {
                 construction.setMaxDistance(40);
             }
-            return ASpecialPositionFinder.findPositionForBase_nearMainBase(building, builder, construction);
+            return FindPositionForBase.findPositionForBase_nearMainBase(building, builder, construction);
         }
         else if (modifier.equals(NATURAL)) {
 //            double maxDist = construction.maxDistance();
@@ -73,7 +74,7 @@ public class PositionModifier {
 //                maxDist = 1;
 //            }
 
-            return ASpecialPositionFinder.findPositionForBase_natural(building, builder);
+            return FindPositionForBase.findPositionForBase_natural(building, builder);
         }
         else if (modifier.equals(ENEMY_NATURAL)) {
             APosition enemyNatural = Bases.enemyNatural();

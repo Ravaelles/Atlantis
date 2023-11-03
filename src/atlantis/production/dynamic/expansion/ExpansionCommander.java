@@ -2,24 +2,11 @@ package atlantis.production.dynamic.expansion;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.strategy.GamePhase;
-import atlantis.map.base.Bases;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.dynamic.zerg.ZergExpansionCommander;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-
-import static atlantis.units.AUnitType.Protoss_Zealot;
 
 public class ExpansionCommander extends Commander {
     public ExpansionCommander() {
@@ -28,106 +15,19 @@ public class ExpansionCommander extends Commander {
     @Override
     protected void handle() {
 //        System.err.println("ExpansionCommander.handle() @ " + A.now());
-        if (shouldBuildNewBase()) prepareForNewBase();
+        if (ShouldExpand.shouldBuildNewBase()) prepareForNewBase();
     }
 
     protected void prepareForNewBase() {
-        requestNewBase();
+        if (newExpansionIsSecured()) {
+            requestNewBase();
+        }
     }
 
-    protected static boolean shouldBuildNewBase() {
-        if (We.terran()) {
-            if (Count.tanks() <= 0 && !A.hasMinerals(370)) return false;
-            if (A.minerals() <= 1100 && GamePhase.isLateGame()) return false;
-        }
+    protected boolean newExpansionIsSecured() {
+        if (!We.terran()) return true;
 
-        // Zerg
-        if (We.zerg() && ZergExpansionCommander.handleNoZergLarvas()) return true;
-
-        // =========================================================
-
-        if (
-            We.terran()
-                && GamePhase.isEarlyGame()
-                && (
-                ArmyStrength.ourArmyRelativeStrength() <= 80
-                    || EnemyUnits.count(Protoss_Zealot) >= 5
-                    || !Have.factory()
-            )
-        ) return false;
-
-        int bases = Count.bases();
-        int basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
-
-        if (bases >= 5 || basesInProduction >= 1) return false;
-
-        if (Count.inQueue(AtlantisRaceConfig.BASE, 6) > 0) return false;
-
-//        if (ProductionQueue.size() >= 3) {
-//            return false;
-//        }
-
-        // === First base ===========================================
-
-        if (bases == 0 && basesInProduction == 0) {
-            if (We.terran() && EnemyStrategy.get().isRushOrCheese() && A.seconds() <= 450) return false;
-//            return true;
-        }
-
-        if (bases <= 1 && basesInProduction == 0) {
-            boolean secondsAllow =
-                (
-                    (A.seconds() >= 400 && Count.ourCombatUnits() >= 20)
-                        || (A.seconds() >= 520 && Count.ourCombatUnits() >= 8)
-                        || (A.seconds() >= 650)
-                );
-//                (
-//                    (A.seconds() >= 500 && Count.ourCombatUnits() >= 20)
-//                    || (A.seconds() >= 600 && Count.ourCombatUnits() >= 8)
-//                    || (A.seconds() >= 700)
-//                );
-            if (AGame.canAfford(330, 0) || secondsAllow) {
-                return true;
-            }
-        }
-
-        // =========================================================
-
-        if (bases >= 3 && Count.workers() <= 17 * (bases + basesInProduction)) return false;
-
-        boolean hasPlentyOfMinerals = AGame.hasMinerals(580);
-        int minMinerals = 100 + (AGame.isPlayingAsZerg() ? 268 : 356);
-
-        // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AGame.canAffordWithReserved(minMinerals, 0)) return false;
-
-        // === False again ===========================================
-
-        // If we have plenty of minerals, then every new base is only a hazard
-        if (!AGame.canAffordWithReserved(minMinerals, 1200)) return false;
-
-        int inConstruction = CountInQueue.count(AtlantisRaceConfig.BASE, 8);
-        if (inConstruction >= 1) return false;
-
-        // === Force decent army before 3rd base =========================================
-
-        // Enforce to have a lot of tanks before expansion
-        if (!hasPlentyOfMinerals && AGame.isPlayingAsTerran() && bases >= 2) {
-            if (Select.ourTanks().count() <= 8) return false;
-        }
-
-        // === Check if we have almost as many bases as base locations; if so, exit ======
-
-        if (bases >= Bases.baseLocations().size() - 2) return false;
-
-        int numberOfUnfinishedBases = ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.BASE);
-
-        boolean haveEnoughMinerals = AGame.hasMinerals(minMinerals);
-//        boolean haveEnoughBases = bases >= 4 && AGame.isPlayingAsZerg() && Select.ourLarva().count() >= 2;
-        boolean noBaseToConstruct = numberOfUnfinishedBases == 0;
-        boolean allowExtraExpansion = AGame.hasMinerals(minMinerals + 200) && numberOfUnfinishedBases <= 1;
-
-        return haveEnoughMinerals && (noBaseToConstruct || allowExtraExpansion);
+        return NewBaseIsSecured.newBaseIsSecured();
     }
 
     private static void requestNewBase() {

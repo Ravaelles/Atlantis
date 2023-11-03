@@ -7,6 +7,7 @@ import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.position.base.FindPositionForBaseNearestFree;
 import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -86,7 +87,7 @@ public class APositionFinder {
                 }
             }
 
-            return ASpecialPositionFinder.findPositionForBase(building, builder, construction);
+            return FindPositionForBaseNearestFree.find(building, builder, construction);
         }
 
         // =========================================================

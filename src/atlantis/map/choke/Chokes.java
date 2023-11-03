@@ -1,6 +1,6 @@
 package atlantis.map.choke;
 
-import atlantis.config.MapAndRace;
+import atlantis.config.ActiveMap;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
@@ -80,7 +80,7 @@ public class Chokes {
             "natural",
             -1,
             () -> {
-                if (!MapAndRace.isMap("7th")) {
+                if (!ActiveMap.isMap("7th")) {
                     AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
                     if (choke != null) {
                         return choke;
