@@ -1,13 +1,11 @@
 ### BUGS ###
 
-.--- Ugly construction fix (two SCVs just standing near depot, no action taken)
+--- Space4Workers causing huge blob in choke
 
 -- Refinery sometimes not produced (20 - Refinery), no error, nothing, no construction order
 
 
 ### FEATURES ###
-
--.+++ Queue workers if minerals >= 50
 
 ++ Build turrets against enemy Wraiths
 

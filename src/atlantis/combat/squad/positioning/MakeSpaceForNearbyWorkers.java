@@ -11,6 +11,8 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class MakeSpaceForNearbyWorkers extends Manager {
+    private AChoke choke;
+
     public MakeSpaceForNearbyWorkers(AUnit unit) {
         super(unit);
     }
@@ -23,8 +25,11 @@ public class MakeSpaceForNearbyWorkers extends Manager {
         if (unit.enemiesNearInRadius(12) > 0) return false;
         if (A.seconds() % 6 <= 3) return false;
 
-        AChoke choke = Chokes.nearestChoke(unit);
-        if (choke != null && choke.distTo(unit) >= 6) return false;
+        if (
+            (choke = Chokes.nearestChoke(unit)) != null
+                && choke.width() >= 5
+                && choke.distTo(unit) >= 6
+        ) return false;
 
         return true;
     }
@@ -40,11 +45,14 @@ public class MakeSpaceForNearbyWorkers extends Manager {
                 }
             }
             else {
-                AUnit main = Select.main();
-                if (main != null && main.distToMoreThan(unit, 5)) {
-                    unit.move(main, Actions.MOVE_SPACE, "Space4Worker");
-                    return usedManager(this);
+                if (unit.moveAwayFrom(nearWorker, 3, Actions.MOVE_SPACE, "Space4W01rker")) {
+                    return usedManager(this, "Space4W0rker");
                 }
+//                AUnit main = Select.main();
+//                if (main != null && main.distToMoreThan(unit, 5)) {
+//                    unit.move(main, Actions.MOVE_SPACE, "Space4Worker");
+//                    return usedManager(this);
+//                }
             }
         }
 

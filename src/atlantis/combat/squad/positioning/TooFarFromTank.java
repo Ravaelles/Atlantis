@@ -45,8 +45,7 @@ public class TooFarFromTank extends Manager {
 
         double distToTank = unit.distTo(tank);
 
-        if (distToTank > MAX_DIST_FROM_TANK) return true;
-
+        if (distToTank > MAX_DIST_FROM_TANK) return false;
         if (distToTank < MIN_DIST_FROM_TANK) return false;
 
         if (

@@ -9,49 +9,58 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 
 public class TooFarFromSquadCenter extends MissionManager {
+
+    private APosition center;
+    private AUnit nearestFriend;
+
     public TooFarFromSquadCenter(AUnit unit) {
         super(unit);
     }
 
     protected Manager handle() {
         if (isTooFarFromSquadCenter()) {
-            return usedManager(this);
+            if (moveTowardsSquadCenter()) {
+                return usedManager(this);
+            }
         }
 
         return null;
     }
 
+    private boolean moveTowardsSquadCenter() {
+        return unit.move(
+//            unit.translateTilesTowards(center, 2).makeWalkable(5),
+            center,
+            Actions.MOVE_FOCUS,
+            "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
+            false
+        );
+    }
+
     private boolean isTooFarFromSquadCenter() {
         if (unit.squad() == null || unit.isTank()) return false;
-
         if (unit.isMissionAttackOrGlobalAttack()) return false;
 
-//        if (unit.distToSquadCenter() >= 15) {
-//            return false;
-//        }
+//        if (unit.outsideSquadRadius()) return false;
 
-        APosition center = unit.squad().center();
+        center = unit.squad().center();
         if (center == null) return false;
 
         double maxDistToSquadCenter = squad.radius();
 
-        if (unit.distTo(center) > maxDistToSquadCenter && unit.friendsNear().inRadius(3.5, unit).atMost(7)) {
-            AUnit nearestFriend = unit.friendsNear().nearestTo(unit);
+        if (
+            unit.distTo(center) > maxDistToSquadCenter
+            && unit.friendsNear().inRadius(3.5, unit).atMost(7)
+        ) {
+            nearestFriend = unit.friendsNear().nearestTo(unit);
+
             if (nearestFriend == null) return false;
 
             Selection enemiesNear = unit.enemiesNear();
             if ((unit.isVulture() || unit.isDragoon()) && (enemiesNear.isEmpty() || enemiesNear.onlyMelee()))
                 return false;
 
-            if (unit.move(
-                unit.translateTilesTowards(center, 2).makeWalkable(5),
-                Actions.MOVE_FOCUS,
-                "TooExposed(" + (int) center.distTo(unit) + "/" + (int) unit.distTo(nearestFriend) + ")",
-                false
-            )) {
-                unit.addLog("TooExposed");
-                return true;
-            }
+            return true;
         }
 
         return false;
