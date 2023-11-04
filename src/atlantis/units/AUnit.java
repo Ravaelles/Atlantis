@@ -2728,7 +2728,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             || (!isMoving() && !isAccelerating() && noCooldown());
     }
 
-    public HasPosition squadLeader() {
+    public AUnit squadLeader() {
         return squad != null ? squad.leader() : null;
     }
 

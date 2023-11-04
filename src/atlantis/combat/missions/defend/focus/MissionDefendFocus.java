@@ -6,11 +6,13 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
@@ -47,9 +49,17 @@ public class MissionDefendFocus extends MissionFocusPoint {
                 // === Around combat buildings ===================================
                 // ===============================================================
 
-                if ((focus = ZergDefendFocus.define()) != null) return focus;
-                if ((focus = TerranDefendFocus.define()) != null) return focus;
-                if ((focus = aroundCombatBuilding()) != null) return focus;
+                if (ArmyStrength.weAreStronger() && Count.ourCombatUnits() <= 7) {
+                    if ((focus = ZergDefendFocus.define()) != null) return focus;
+                    if ((focus = TerranDefendFocus.define()) != null) return focus;
+                    if ((focus = aroundCombatBuilding()) != null) return focus;
+                }
+
+                // === Natural choke ================================================
+
+                if (Count.bases() >= 2) {
+                    if ((focus = atNaturalChoke()) != null) return focus;
+                }
 
                 // === Main choke ================================================
 

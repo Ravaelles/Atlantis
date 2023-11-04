@@ -19,6 +19,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
+import static atlantis.units.AUnitType.Terran_Comsat_Station;
 import static atlantis.units.AUnitType.Zerg_Spawning_Pool;
 
 public class AutoProduceWorkersCommander extends Commander {
@@ -43,9 +44,7 @@ public class AutoProduceWorkersCommander extends Commander {
                 || (A.minerals() < A.reservedMinerals() + 50)
         ) return false;
 
-//        if ((A.supplyUsed() <= 154 && !AGame.canAffordWithReserved(50, 0))) {
-//            return false;
-//        }
+        if (CountInQueue.count(Terran_Comsat_Station, 2) > 0) return false;
 
         // === Terran ===========================================
 

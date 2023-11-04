@@ -6,11 +6,15 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.production.dynamic.terran.tech.SiegeMode;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
     @Override
     public boolean shouldChangeMissionToContain() {
+        if (true) return false;
+
         if (A.supplyUsed() >= 174) return false;
 
 //        if (OurStrategy.get().goingBio()) {
@@ -34,6 +38,11 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
+        if (enemyHasHiddenUnitsAndWeDontHaveEnoughDetection()) {
+            if (DEBUG) reason = "Not enough detection";
+            return true;
+        }
+
 //        if (
 //            EnemyInfo.hiddenUnitsCount() >= 2
 //                && Count.ofType(AUnitType.Terran_Science_Vessel) == 0
@@ -41,6 +50,16 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 //            if (DEBUG) reason = "Hidden unitz";
 //            return true;
 //        }
+
+        return false;
+    }
+
+    private boolean enemyHasHiddenUnitsAndWeDontHaveEnoughDetection() {
+        if (Count.ofType(AUnitType.Terran_Science_Vessel) > 0) return false;
+
+        if (EnemyUnits.discovered().effUndetected().size() >= 2) {
+            if (Select.ourOfType(AUnitType.Terran_Comsat_Station).havingEnergy(150).empty()) return true;
+        }
 
         return false;
     }

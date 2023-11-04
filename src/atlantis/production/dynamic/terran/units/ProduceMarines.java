@@ -24,9 +24,12 @@ public class ProduceMarines {
 
     public static boolean marines() {
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
-        if (A.canAffordWithReserved(55, 0)) return false;
 
         int marines = Count.marines();
+
+        if (marines <= 1 && A.hasMinerals(150)) return produceMarine();
+
+        if (A.canAffordWithReserved(55, 0)) return false;
 
 //        if (marines == 0 && A.hasMinerals(100)) {
 //            return AddToQueue.maxAtATime(Terran_Marine, 1) != null;
@@ -81,6 +84,8 @@ public class ProduceMarines {
     }
 
     private static boolean produceMarine() {
+        if (Select.ourFree(Terran_Barracks).empty()) return false;
+
         ProductionOrder result = AddToQueue.maxAtATime(Terran_Marine, 3);
 
         if (DEBUG) ConsoleLog.message(

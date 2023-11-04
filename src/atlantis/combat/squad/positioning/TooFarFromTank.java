@@ -11,6 +11,7 @@ import atlantis.util.We;
 public class TooFarFromTank extends Manager {
     public static final int MAX_DIST_FROM_TANK = 5;
     public static final int MIN_DIST_FROM_TANK = 2;
+    private int tanks;
 
     public TooFarFromTank(AUnit unit) {
         super(unit);
@@ -18,9 +19,10 @@ public class TooFarFromTank extends Manager {
 
     @Override
     public boolean applies() {
+        tanks = Count.tanks();
         return We.terran()
             && !unit.isAir()
-            && Count.tanks() >= 1
+            && tanks >= 1
             && !unitIsOvercrowded();
     }
 
@@ -45,7 +47,7 @@ public class TooFarFromTank extends Manager {
 
         double distToTank = unit.distTo(tank);
 
-        if (distToTank > MAX_DIST_FROM_TANK) return false;
+        if (tanks <= 1 && distToTank > MAX_DIST_FROM_TANK) return false;
         if (distToTank < MIN_DIST_FROM_TANK) return false;
 
         if (

@@ -18,6 +18,7 @@ public class TerranEnsureBall extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            EnsureBallAsTank.class,
             TooFarFromMedic.class,
             GoBehindLineOfTanks.class,
             TooFarFromTank.class,

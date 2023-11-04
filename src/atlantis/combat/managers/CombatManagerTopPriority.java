@@ -24,9 +24,9 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            Unfreezer.class,
             AvoidSpellsAndMines.class,
             AvoidCriticalUnits.class,
+            Unfreezer.class,
             DanceAfterShoot.class,
             StopAndShoot.class,
             DontInterruptShootingUnits.class,

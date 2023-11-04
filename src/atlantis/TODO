@@ -1,11 +1,17 @@
 ### BUGS ###
 
--- Refinery sometimes not produced (20 - Refinery), no error, nothing, no construction order
+--- When base is repositioned, units keep on gasing and what's worse, they're not counted as assigned. Check and fix.
+
+-- Marines running against Interceptors, make them brave
+
+- Refinery sometimes not produced (20 - Refinery), no error, nothing, no construction order
 
 
 ### FEATURES ###
 
-+ First build a bunker at natural, only then build the CC
+.+++ DFPoint at main choke when units >= 8
+
+.+++ Mission attack is forbidden when DTs are present and (no detection && !Comsat.energy < 130)
 
 + Build turrets against enemy Wraiths
 

@@ -15,12 +15,18 @@ public class ForbiddenByStreetGrid {
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         if (We.protoss() && A.supplyTotal() <= 10) return false;
-        if (building.isBase() || building.isGasBuilding() || building.isCombatBuilding()) return false;
+        if (building.isBase() || building.isGasBuilding()) return false;
 
         // =========================================================
 
-        if (position.tx() % 9 <= 1) return true;
-        if (position.ty() % 9 <= 1) return true;
+        if (building.isCombatBuilding()) {
+            if (position.tx() % 6 <= 1) return true;
+            if (position.ty() % 6 <= 1) return true;
+        }
+        else {
+            if (position.tx() % 9 <= 1) return true;
+            if (position.ty() % 9 <= 1) return true;
+        }
 
         // =========================================================
 
