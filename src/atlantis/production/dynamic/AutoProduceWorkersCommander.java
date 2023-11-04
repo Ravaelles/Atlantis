@@ -22,11 +22,6 @@ import atlantis.util.We;
 import static atlantis.units.AUnitType.Zerg_Spawning_Pool;
 
 public class AutoProduceWorkersCommander extends Commander {
-    @Override
-    public boolean applies() {
-        return A.hasMinerals(48);
-    }
-
     /**
      * Selects the least worker-saturated base to build a worker.
      */
@@ -42,7 +37,11 @@ public class AutoProduceWorkersCommander extends Commander {
     // =========================================================
 
     public static boolean shouldProduceWorkers() {
-        if (AGame.supplyFree() == 0 || !AGame.hasMinerals(50)) return false;
+        if (
+            AGame.supplyFree() == 0
+                || !AGame.hasMinerals(50)
+                || (A.minerals() < A.reservedMinerals() + 50)
+        ) return false;
 
 //        if ((A.supplyUsed() <= 154 && !AGame.canAffordWithReserved(50, 0))) {
 //            return false;

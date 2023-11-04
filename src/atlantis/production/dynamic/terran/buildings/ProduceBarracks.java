@@ -13,7 +13,7 @@ public class ProduceBarracks {
     public static boolean barracks() {
         int barracks = Count.withPlanned(Terran_Barracks);
 
-        if (barracks >= 4) return false;
+        if (barracks >= 3 && !A.hasMinerals(800)) return false;
         if (barracks >= 2 && Enemy.terran()) return false;
         if (Select.ourFree(Terran_Barracks).notEmpty()) return false;
 

@@ -17,6 +17,8 @@ public class SecureNatural {
     private static APosition natural;
 
     public static boolean secure() {
+        if (true) return true;
+
         if (!We.terran()) return true;
         if ((natural = Bases.natural()) == null) return true;
         if (isAlreadySecure()) return true;

@@ -25,7 +25,6 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 @ - Name - Modifier
 9 - Supply Depot
 11 - Barracks
-13 - Barracks
 14 - Supply Depot
 19 - Academy
 20 - Refinery
