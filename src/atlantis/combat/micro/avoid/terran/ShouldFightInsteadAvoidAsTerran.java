@@ -17,6 +17,7 @@ public class ShouldFightInsteadAvoidAsTerran extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             TerranFightInsteadAvoidAsWraith.class,
+            TerranFightAgainstCrucialUnits.class,
             TerranFightInsteadAvoidAsFirebat.class,
             TerranFightInsteadAvoidAsAir.class,
             TerranFightInsteadAvoidAsStandard.class,

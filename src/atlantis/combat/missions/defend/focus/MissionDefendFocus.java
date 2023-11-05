@@ -18,7 +18,6 @@ import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
 public class MissionDefendFocus extends MissionFocusPoint {
-
     private Cache<AFocusPoint> cache = new Cache<>();
 
     // =========================================================

@@ -2,6 +2,7 @@ package atlantis.map.position;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.region.ARegion;
@@ -362,4 +363,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         return Regions.getRegion(this);
     }
 
+    public boolean isHighGround() {
+        return Atlantis.game().getGroundHeight(tx(), ty()) == 2;
+    }
 }

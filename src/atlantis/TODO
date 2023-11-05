@@ -1,8 +1,8 @@
 ### BUGS ###
 
---- When base is repositioned, units keep on gasing and what's worse, they're not counted as assigned. Check and fix.
+.--- When base is repositioned, units keep on gasing and what's worse, they're not counted as assigned. Check and fix.
 
--- Marines running against Interceptors, make them brave
+.-- Marines running against Interceptors, make them brave
 
 - Refinery sometimes not produced (20 - Refinery), no error, nothing, no construction order
 

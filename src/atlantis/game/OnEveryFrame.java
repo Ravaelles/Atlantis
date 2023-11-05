@@ -1,9 +1,13 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.debug.profiler.LongFrames;
+import atlantis.map.high.FindHighGround;
+import atlantis.map.position.APosition;
 import atlantis.production.orders.build.CurrentBuildOrder;
+import atlantis.units.AUnit;
 
 public class OnEveryFrame {
     public static void update() {
@@ -44,5 +48,13 @@ public class OnEveryFrame {
         LongFrames.reportFrameLength(CodeProfiler.lastFrameLength());
 
 //        CodeProfiler.printSummary();
+
+//        if (A.everyNthGameFrame(30)) {
+//            AUnit leader = Alpha.get().leader();
+//            if (leader != null) {
+//                APosition near = FindHighGround.findNear(leader, 10);
+//                System.err.println("leader = " + leader + ", near " + near);
+//            }
+//        }
     }
 }
