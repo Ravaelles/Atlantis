@@ -16,12 +16,10 @@ public class NumberOfGasWorkersCommander extends Commander {
         Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisRaceConfig.GAS_BUILDING).list();
 
         for (AUnit gasBuilding : gasBuildings) {
-//            if (!gasBuilding.isCompleted()) {
-//                continue;
-//            }
+            boolean noBaseIsNearThisGasBuilding = Select.ourBases().inRadius(12, gasBuilding).count() == 0;
 
             int realCount = CountGasWorkers.countWorkersGatheringGasFor(gasBuilding);
-            int expectedCount = expectedGasWorkers(gasBuilding, realCount);
+            int expectedCount = noBaseIsNearThisGasBuilding ? 0 : expectedGasWorkers(gasBuilding, realCount);
 
 
             // Fewer workers gathering gas than optimal
