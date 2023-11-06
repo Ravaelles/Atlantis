@@ -17,26 +17,15 @@ public class PreventMaginotLine extends Manager {
     public boolean applies() {
         if (unit.hp() <= 20) return false;
         if (shouldStayLoaded()) return false;
-        if (unit.enemiesNear().inRadius(2.2 + (unit.id() % 5) / 2.0, unit).notEmpty()) return false;
         if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) return false;
+        if (unit.enemiesNear().inRadius(2.2 + (unit.id() % 6) / 2.0, unit).notEmpty()) return false;
         if (tooManyDragoonsNearby()) return false;
 
+//        if (unit.enemiesNear().inRadius(2.2 + (unit.id() % 6) / 2.5, unit).empty()) return true;
         if (shouldEngage()) return true;
 
         if (EnemyWhoBreachedBase.get() == null) return false;
         if (unit.enemiesNear().inRadius(5.99, unit).notEmpty()) return false;
-
-//        if (
-//            unit.hpMoreThan(21)
-//                && unit.enemiesNear().inRadius(4.2 + (unit.id() % 5 == 1 ? 2 : 0), unit).ranged().notEmpty()
-//        ) return true;
-
-//        if (unit.isMissionDefend()) {
-//            AUnit main = Select.main();
-//            if (main != null && Select.enemyCombatUnits().inRadius(4, main).notEmpty()) {
-//                return true;
-//            }
-//        }
 
         return true;
     }
@@ -46,7 +35,11 @@ public class PreventMaginotLine extends Manager {
             && unit.hasNotShotInAWhile()
             && !unit.isRunning()
             && unit.lastUnderAttackMoreThanAgo(30 * 7)
-            && unit.enemiesNear().effVisible().inRadius(8, unit).atMost(2);
+            && (
+            unit.enemiesNear().effVisible().inRadius(14, unit).onlyMelee()
+                || unit.enemiesNear().effVisible().inRadius(8, unit).atMost(2)
+        );
+
     }
 
     private boolean shouldStayLoaded() {

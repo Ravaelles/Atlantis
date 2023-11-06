@@ -8,7 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ForbiddenByStreetGrid {
-    private static final int GRID_VALUE = 7;
+    private static final int GRID_VALUE = 8;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -24,8 +24,10 @@ public class ForbiddenByStreetGrid {
             if (position.ty() % 6 <= 1) return true;
         }
         else {
-            if (position.tx() % 9 <= 1) return true;
-            if (position.ty() % 9 <= 1) return true;
+            if (position.tx() % GRID_VALUE <= 1) return true;
+            if (position.ty() % GRID_VALUE <= 1) return true;
+//            if (position.tx() % 9 <= 1) return true;
+//            if (position.ty() % 9 <= 1) return true;
         }
 
         // =========================================================

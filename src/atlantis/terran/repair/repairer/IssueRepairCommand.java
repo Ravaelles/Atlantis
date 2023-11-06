@@ -15,9 +15,13 @@ public class IssueRepairCommand extends Manager {
 
     @Override
     public boolean applies() {
-        if (!A.hasMinerals(3)) return false;
+        if (!A.hasMinerals(5)) return false;
 
-        if (unit.isRepairing() && (target = unit.target()) != null && target.isAlive()) return true;
+        if (unit.isRepairing() && (target = unit.target()) != null && target.isAlive()) {
+            if (target.isAir() && target.distTo(unit) >= 20) return false;
+
+            return true;
+        }
 
         target = RepairAssignments.unitToRepairForSCV(unit);
 

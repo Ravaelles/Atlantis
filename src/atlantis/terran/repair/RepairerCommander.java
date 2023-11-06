@@ -1,6 +1,7 @@
 package atlantis.terran.repair;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.terran.repair.repairer.RepairerManager;
 import atlantis.units.AUnit;
 
@@ -9,6 +10,8 @@ import java.util.Iterator;
 public class RepairerCommander extends Commander {
     @Override
     protected void handle() {
+        boolean noMineralsToContinueRepairs = !A.hasMinerals(4);
+        
         for (Iterator<AUnit> iterator = RepairAssignments.getRepairers().iterator(); iterator.hasNext(); ) {
             AUnit repairer = iterator.next();
 
@@ -16,7 +19,7 @@ public class RepairerCommander extends Commander {
                 continue;
             }
 
-            if (!repairer.isAlive()) {
+            if (noMineralsToContinueRepairs || !repairer.isAlive()) {
                 RepairAssignments.removeRepairer(repairer);
                 iterator.remove();
                 continue;

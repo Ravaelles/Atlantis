@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 public class TerranMedic extends Manager {
     public double BODY_BLOCK_POSITION_ERROR_MARGIN = 0.2;
+    public double MAX_DIST_TO_ASSIGNMENT = 1.65;
     public double MIN_DIST_TO_ASSIGNMENT = 0.45;
 
     /**
@@ -250,15 +251,12 @@ public class TerranMedic extends Manager {
 
             double dist = assignment.distTo(medic);
 
-            if (dist > 1.9) {
+            if (dist > MAX_DIST_TO_ASSIGNMENT) {
                 return medic.move(assignment.position(), Actions.MOVE_FOLLOW, "Stick", false);
             }
             else if (dist <= MIN_DIST_TO_ASSIGNMENT) {
                 return medic.moveAwayFrom(assignment.position(), 0.3, Actions.MOVE_FORMATION, "Separate");
             }
-//            else if (medic.isMoving()) {
-//                return medic.holdPosition("Ok");
-//            }
         }
 
         return false;

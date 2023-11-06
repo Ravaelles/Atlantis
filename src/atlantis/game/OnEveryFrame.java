@@ -1,13 +1,14 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.debug.profiler.LongFrames;
+import atlantis.map.base.Bases;
 import atlantis.map.high.FindHighGround;
 import atlantis.map.position.APosition;
 import atlantis.production.orders.build.CurrentBuildOrder;
-import atlantis.units.AUnit;
+import bwapi.Color;
 
 public class OnEveryFrame {
     public static void update() {
@@ -49,11 +50,13 @@ public class OnEveryFrame {
 
 //        CodeProfiler.printSummary();
 
-//        if (A.everyNthGameFrame(30)) {
-//            AUnit leader = Alpha.get().leader();
-//            if (leader != null) {
-//                APosition near = FindHighGround.findNear(leader, 10);
-//                System.err.println("leader = " + leader + ", near " + near);
+//        APosition natural = Bases.natural();
+//        if (natural != null) {
+//            APosition highGround = FindHighGround.findNear(natural, 10);
+//            System.err.println("natural = " + natural + ", highGround " + highGround);
+//            if (highGround != null) {
+//                CameraCommander.centerCameraOn(highGround);
+//                AAdvancedPainter.paintCircleFilled(highGround, 8, Color.Purple);
 //            }
 //        }
     }

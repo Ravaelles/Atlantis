@@ -15,14 +15,10 @@ public class AvoidLurkers extends Manager {
 
     @Override
     protected Manager handle() {
-        if (unit.isAir() || unit.isABuilding()) {
-            return null;
-        }
+        if (unit.isAir() || unit.isABuilding()) return null;
 
         AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(7.7, unit).nearestTo(unit);
-        if (lurker == null) {
-            return null;
-        }
+        if (lurker == null) return null;
 
         unit.runningManager().runFromAndNotifyOthersToMove(lurker, "LURKER!");
         return usedManager(this);

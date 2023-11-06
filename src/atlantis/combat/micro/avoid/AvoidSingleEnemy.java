@@ -18,6 +18,8 @@ public class AvoidSingleEnemy extends Manager {
     }
 
     public Manager avoid() {
+        if (unit.effUndetected()) return null;
+
         APainter.paintCircle(enemy, 16, Color.Orange);
 
         if (enemy.position() == null) {

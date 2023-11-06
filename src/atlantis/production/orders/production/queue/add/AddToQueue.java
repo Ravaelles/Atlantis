@@ -137,7 +137,7 @@ public class AddToQueue {
     }
 
     public static boolean addToQueueIfNotAlreadyThere(AUnitType type) {
-        if (CountInQueue.count(type, 5) == 0) {
+        if (CountInQueue.count(type) == 0) {
             return addToQueue(type);
         }
 

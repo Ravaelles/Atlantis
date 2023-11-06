@@ -10,7 +10,13 @@ public class TerranFightInsteadAvoidAsFirebat extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isFirebat() && unit.hp() >= 40 && unit.friendsInRadiusCount(3) >= 4;
+        return unit.isFirebat() && unit.hp() >= 40 && (unit.friendsInRadiusCount(3) >= 4 || longNotUnderAttackAndCloseToEnemy());
+    }
+
+    private boolean longNotUnderAttackAndCloseToEnemy() {
+        return unit.hp() >= 45
+            && unit.isMissionDefend()
+            && unit.lastUnderAttackMoreThanAgo(30 * 3) && unit.enemiesNear().inRadius(3, unit).notEmpty();
     }
 
     @Override

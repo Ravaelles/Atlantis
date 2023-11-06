@@ -3,6 +3,7 @@ package atlantis.units.workers;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
+import atlantis.util.log.ErrorLog;
 
 import java.util.Collection;
 import java.util.List;
@@ -69,9 +70,11 @@ public class AMineralGathering {
         }
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        List<AUnit> minerals = Select.minerals().inRadius(8, base).list();
-
-        if (!minerals.isEmpty()) {
+        List<AUnit> minerals;
+        if (
+            base.position().groundDistanceTo(worker) <= 25
+                && !(minerals = Select.minerals().inRadius(15, base).sortDataByDistanceTo(worker, true)).isEmpty()
+        ) {
 
             // Count how many other workers gather this mineral
             Units mineralsToWorkerCount = new Units();
@@ -86,7 +89,7 @@ public class AMineralGathering {
                 }
             }
 
-            // Get least gathered mineral
+            // Get the least gathered mineral
             AUnit leastGatheredMineral = mineralsToWorkerCount.unitWithLowestValue();
 
 //            if (leastGatheredMineral != null && leastGatheredMineral.distTo(worker) >= 40) {
@@ -94,13 +97,11 @@ public class AMineralGathering {
 //            }
 
             // This is our optimal mineral to gather near given unit
-            return leastGatheredMineral;
+            if (leastGatheredMineral != null) return leastGatheredMineral;
         }
 
         // If no minerals found, return nearest mineral
-        else {
-            return Select.minerals().nearestTo(base);
-        }
+        return Select.minerals().nearestTo(worker);
     }
 
 }

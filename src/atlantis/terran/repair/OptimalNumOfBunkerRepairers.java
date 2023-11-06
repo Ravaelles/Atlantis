@@ -10,8 +10,10 @@ import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
 public class OptimalNumOfBunkerRepairers {
-
     private static final Cache<Integer> cacheInt = new Cache<>();
+    private static int enemiesNear;
+    private static int enemiesFar;
+    private static int enemiesTotal;
 
     public static int forBunker(AUnit bunker) {
         return cacheInt.get(
@@ -28,9 +30,9 @@ public class OptimalNumOfBunkerRepairers {
             return 0;
         }
 
-        int enemiesNear = potentialEnemies.inRadius(7, bunker).count();
-        int enemiesFar = potentialEnemies.count() - enemiesNear;
-        int enemiesTotal = enemiesFar + enemiesFar;
+        enemiesNear = potentialEnemies.inRadius(7, bunker).count();
+        enemiesFar = potentialEnemies.count() - enemiesNear;
+        enemiesTotal = enemiesFar + enemiesFar;
 
 //                System.out.println("enemiesNear = " + enemiesNear + " / enemiesFar = " + enemiesFar);
 
@@ -41,6 +43,10 @@ public class OptimalNumOfBunkerRepairers {
             if ((enemiesFar + enemiesNear) >= 5 && bunker.loadedUnits().size() > 0) {
                 return 1;
             }
+        }
+
+        if (thereIsFewAttackers(bunker)) {
+            return 1;
         }
 
         double optimalNumber;
@@ -102,6 +108,10 @@ public class OptimalNumOfBunkerRepairers {
         // =========================================================
 
         return Math.min(7, (int) Math.floor(optimalNumber));
+    }
+
+    private static boolean thereIsFewAttackers(AUnit bunker) {
+        return bunker.hp() >= 290 && enemiesNear <= 1 && enemiesFar <= 1;
     }
 
     private static boolean thereIsAnotherBunkerNearbyThatIsInBiggerDanger(AUnit bunker) {

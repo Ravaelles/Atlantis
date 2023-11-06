@@ -1,21 +1,13 @@
 ### BUGS ###
 
-.--- When base is repositioned, units keep on gasing and what's worse, they're not counted as assigned. Check and fix.
-
-.-- Marines running against Interceptors, make them brave
-
 - Refinery sometimes not produced (20 - Refinery), no error, nothing, no construction order
 
 
 ### FEATURES ###
 
-.+++ DFPoint at main choke when units >= 8
-
-.+++ Mission attack is forbidden when DTs are present and (no detection && !Comsat.energy < 130)
-
 + Build turrets against enemy Wraiths
 
-+ Consider high ground for tanks
+.+ Consider high ground for tanks
 
 
 ###############

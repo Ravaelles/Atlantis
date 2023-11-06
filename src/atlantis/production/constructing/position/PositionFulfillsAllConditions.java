@@ -46,6 +46,7 @@ public class PositionFulfillsAllConditions {
         if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return false;
         if (TooCloseToChoke.isTooCloseToChoke(building, position)) return false;
         if (TooCloseToBunker.isTooCloseToBunker(building, position)) return false;
+        if (LooksTooFar.looksTooFar(builder, building, position)) return false;
 
         if (building.isMissileTurret()) return true;
 

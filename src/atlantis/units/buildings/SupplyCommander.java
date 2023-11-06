@@ -26,7 +26,9 @@ public class SupplyCommander extends Commander {
 
         int requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
-        if (requestedConstructionsOfSupply >= 3) return;
+        if (requestedConstructionsOfSupply >= 3) {
+            if (tooManyNotStartedConstructions()) return;
+        }
 
         if (!A.hasFreeSupply(3) && A.supplyUsed() <= 170 && A.hasMinerals(300)) {
             if (requestedConstructionsOfSupply <= 2) {
@@ -106,8 +108,8 @@ public class SupplyCommander extends Commander {
         AddToQueue.withHighPriority(AtlantisRaceConfig.SUPPLY);
     }
 
-    private boolean requestedConstructionOfSupply() {
-        return ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.SUPPLY) > 0;
+    private boolean tooManyNotStartedConstructions() {
+        return AGame.supplyFree() != 0 && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.SUPPLY) >= 3;
     }
 
     private int requestedConstructionsOfSupply() {

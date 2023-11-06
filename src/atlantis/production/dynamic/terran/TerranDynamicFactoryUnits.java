@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
+import atlantis.production.dynamic.terran.units.ProduceGoliaths;
 import atlantis.production.dynamic.terran.units.ProduceTanks;
 import atlantis.production.dynamic.terran.units.ProduceVultures;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -30,7 +31,7 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
     }
 
     protected static boolean requestFactoryUnit(AUnit factory) {
-        if (goliaths(factory)) {
+        if (ProduceGoliaths.goliaths(factory)) {
 //            return true;
         }
         if (ProduceTanks.tanks(factory)) {
@@ -42,17 +43,4 @@ public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
 
         return false;
     }
-
-    private static boolean goliaths(AUnit factory) {
-        if (!Have.armory()) return false;
-
-        if (EnemyStrategy.get().isAirUnits() && Count.withPlanned(AUnitType.Terran_Goliath) <= 20) {
-            if (AGame.canAffordWithReserved(150, 100)) {
-                return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Goliath);
-            }
-        }
-
-        return false;
-    }
-
 }

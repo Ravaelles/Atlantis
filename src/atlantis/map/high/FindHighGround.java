@@ -1,7 +1,5 @@
 package atlantis.map.high;
 
-import atlantis.Atlantis;
-import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 
@@ -17,12 +15,19 @@ public class FindHighGround {
                 position = APosition.create(tx, ty).makeValid();
 //                System.err.println("tx " + tx + " ty " + ty + " / " + Atlantis.game().getGroundHeight(tx, ty));
 
-                if (position.isWalkable() && position.isBuildable() && position.isHighGround()) {
+                if (isPositionGoodHighGround(position, near)) {
                     return position;
                 }
             }
         }
 
         return null;
+    }
+
+    private static boolean isPositionGoodHighGround(APosition position, HasPosition near) {
+        return position.isWalkable()
+            && position.isBuildable()
+            && position.isHighGround()
+            && position.groundDistanceTo(near.position()) <= 15;
     }
 }

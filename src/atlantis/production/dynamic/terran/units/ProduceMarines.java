@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
@@ -24,6 +25,7 @@ public class ProduceMarines {
 
     public static boolean marines() {
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
+        if (Select.ourFree(Terran_Barracks).size() < CountInQueue.count(Terran_Marine)) return false;
 
         int marines = Count.marines();
 
