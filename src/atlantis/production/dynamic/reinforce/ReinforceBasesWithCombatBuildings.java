@@ -3,7 +3,7 @@ package atlantis.production.dynamic.reinforce;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
-import atlantis.production.dynamic.expansion.AllBasePositions;
+import atlantis.production.dynamic.expansion.AllOfOurBasePositions;
 import atlantis.production.dynamic.reinforce.terran.TerranReinforceBasesWithCombatBuildings;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForNonMain;
@@ -48,7 +48,7 @@ public abstract class ReinforceBasesWithCombatBuildings extends Commander {
     private void reinforceAllBasesIncludingUnfinishedOnes() {
         if (A.everyFrameExceptNthFrame(79)) return;
 
-        for (HasPosition position : AllBasePositions.allBases(true, true)) {
+        for (HasPosition position : AllOfOurBasePositions.allBases(true, true)) {
             if (position != null) makeSureIsReinforced(position);
         }
     }

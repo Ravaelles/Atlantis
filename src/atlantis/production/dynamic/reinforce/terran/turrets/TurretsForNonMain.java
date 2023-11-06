@@ -21,15 +21,8 @@ public class TurretsForNonMain extends TerranMissileTurret {
         if (!Have.engBay()) return false;
         if (Count.bases() == 1) return false;
 
-        if (handleReinforcePosition(turretForNatural(), 7)) {
-
-            return true;
-        }
-
-        if (handleTurretForAllBases()) {
-
-            return true;
-        }
+        if (handleReinforcePosition(turretForNatural(), 7)) return true;
+        if (handleTurretForAllBases()) return true;
 
         return false;
     }
@@ -38,12 +31,11 @@ public class TurretsForNonMain extends TerranMissileTurret {
 
     private boolean handleTurretForAllBases() {
         if (!Enemy.zerg()) return false;
-
         if (exceededExistingAndInProduction()) return false;
 
         int maxDist = 12;
 
-        for (AUnit base : Select.ourBases().list()) {
+        for (AUnit base : Select.ourBasesWithUnfinished().list()) {
             if (base.isLifted()) continue;
 
             int existing = Count.existingOrPlannedBuildingsNear(type(), maxDist, base.position());

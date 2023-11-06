@@ -151,6 +151,25 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
+    public static Selection ourBasesWithUnfinished() {
+        String cachePath;
+        return cache.get(
+            cachePath = "ourBasesWithUnfinished",
+            0,
+            () -> {
+                if (We.zerg()) {
+                    return ourWithUnfinished().ofType(
+                        AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
+                        AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
+                    );
+                }
+                else {
+                    return countOurOfTypeWithUnfinished(AtlantisRaceConfig.BASE);
+                }
+            }
+        );
+    }
+
     /**
      * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe).
      */
@@ -255,6 +274,25 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 List<AUnit> data = new ArrayList<>();
 
                 for (AUnit unit : ourUnits()) {
+                    if (unit.isCompleted() && unit.is(type)) {
+                        data.add(unit);
+                    }
+                }
+
+                return new Selection(data, cachePath);
+            }
+        );
+    }
+
+    public static Selection ourOfTypeWithUnfinished(AUnitType type) {
+        String cachePath;
+        return cache.get(
+            cachePath = "ourOfTypeWithUnfinished:" + type.id(),
+            microCacheForFrames,
+            () -> {
+                List<AUnit> data = new ArrayList<>();
+
+                for (AUnit unit : ourWithUnfinished().list()) {
                     if (unit.isCompleted() && unit.is(type)) {
                         data.add(unit);
                     }

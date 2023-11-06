@@ -45,7 +45,7 @@ public class UnitBeingReparedManager extends Manager {
                 && distanceToRepairer <= 0.1
                 && unit.hp() <= 60
         ) {
-            if (unit.isMoving()) {
+            if (unit.isMoving() && unit.meleeEnemiesNearCount(2.5) == 0) {
                 unit.holdPosition("UnderRepair");
                 return usedManager(this);
             }
@@ -54,7 +54,7 @@ public class UnitBeingReparedManager extends Manager {
         }
 
         // Air units should be repaired thoroughly
-        if (unit.isAir() && (unit.isBeingRepaired() || unit.distTo(repairer) > 0.05)) {
+        if (unit.isAir() && unit.isBeingRepaired()) {
             if (!unit.isRunning() && unit.isMoving()) {
 //                unit.setTooltip("HoldTheFuckDown");
                 unit.holdPosition("HoldTheFuckDown");

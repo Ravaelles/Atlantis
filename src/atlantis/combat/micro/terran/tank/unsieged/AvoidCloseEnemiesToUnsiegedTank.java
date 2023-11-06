@@ -3,7 +3,6 @@ package atlantis.combat.micro.terran.tank.unsieged;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
@@ -15,9 +14,12 @@ public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.noCooldown() || unit.hp() >= 140) return false;
+        if (unit.noCooldown()) return false;
 
-        enemies = unit.enemiesNear().groundUnits().canAttack(unit, 1.4 + unit.woundPercent() / 50.0);
+        enemies = unit.enemiesNear()
+            .groundUnits()
+            .inRadius(6.3, unit)
+            .canAttack(unit, 1.4 + unit.woundPercent() / 50.0);
 
         return enemies.atLeast(1);
     }

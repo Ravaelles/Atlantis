@@ -5,7 +5,11 @@
 
 ### FEATURES ###
 
-+ Build turrets against enemy Wraiths
++++ Build turrets against enemy Wraiths/Scouts
+
+++ Tank protectors should repair nearby turrets, they dont maybe because of scouts near?
+
+++ If zealots are near marines and there are sieged tanks near, marines should avoid zealots as they attract siege fire
 
 .+ Consider high ground for tanks
 

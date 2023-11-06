@@ -25,7 +25,7 @@ public class ReinforceBunkersWithTurrets extends Commander {
 
     @Override
     protected void handle() {
-        for (AUnit bunker : Select.ourOfType(Terran_Bunker).list()) {
+        for (AUnit bunker : Select.ourOfTypeWithUnfinished(Terran_Bunker).list()) {
             reinforceBunkerWithTurrets(bunker);
         }
     }

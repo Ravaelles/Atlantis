@@ -2,6 +2,7 @@ package atlantis.combat.micro.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.config.env.Env;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -72,8 +73,11 @@ public class TerranComsatStation extends Manager {
     private boolean scanDarkTemplars() {
         for (AUnit dt : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Dark_Templar).list()) {
             Selection ourCombatUnits = Select.ourCombatUnits();
-            if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
-                .atLeast(unit.energy(150) ? (unit.energy(190) ? 2 : 4) : 7)) {
+
+            int minOurUnitsNear = unit.energy(150) ? (unit.energy(190) ? 2 : 4) : 7;
+            if (A.seconds() <= 320) minOurUnitsNear = 2;
+
+            if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt).atLeast(minOurUnitsNear)) {
                 if (
                     ourCombatUnits.nearestTo(dt).distToLessThan(dt, 6)
                         || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()

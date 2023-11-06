@@ -22,6 +22,7 @@ public class DoNotThinkOfImprovingCohesion {
 
     public static boolean dontThink(AUnit unit) {
         return (A.supplyUsed() >= 150 && ArmyStrength.ourArmyRelativeStrength() >= 250)
+            || unit.enemiesNear().inRadius(7, unit).notEmpty()
             || unit.friendsInRadius(4).groundUnits().count() >= 13
             || Missions.isGlobalMissionDefendOrSparta();
     }

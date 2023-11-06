@@ -141,10 +141,11 @@ public class NewConstructionRequest {
 
         ErrorLog.printMaxOncePerMinute(
             "Uhmmm... shouldn't reach here. "
-                + "EXISTING_BUILDING=" + Count.existing(building)
-                + ", IN_PROD_BUILDING" + Count.inProductionOrInQueue(building)
-                + "EXISTING_REQ=" + Count.existing(requiredBuilding)
-                + ", IN_PROD_REQ" + Count.inProductionOrInQueue(requiredBuilding)
+                + "\nbuilding=" + building
+                + "\nEXISTING_BUILDING=" + Count.existing(building)
+                + "\nIN_PROD_BUILDING" + Count.inProductionOrInQueue(building)
+                + "\nEXISTING_REQ=" + Count.existing(requiredBuilding)
+                + "\nIN_PROD_REQ" + Count.inProductionOrInQueue(requiredBuilding)
         );
         ErrorLog.printMaxOncePerMinute(building + " // " + requiredBuilding);
         return false;
