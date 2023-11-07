@@ -155,7 +155,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         String cachePath;
         return cache.get(
             cachePath = "ourBasesWithUnfinished",
-            0,
+            1,
             () -> {
                 if (We.zerg()) {
                     return ourWithUnfinished().ofType(
@@ -164,7 +164,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     );
                 }
                 else {
-                    return countOurOfTypeWithUnfinished(AtlantisRaceConfig.BASE);
+                    return ourWithUnfinishedOfType(AtlantisRaceConfig.BASE);
                 }
             }
         );

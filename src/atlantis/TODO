@@ -19,6 +19,6 @@ fire
 
 .+ Paint our own cloaked units
 
-+ Focus on the logic of expanding to natural - move army first, then build CC + bunker + turret
+(.)?+ Focus on the logic of expanding to natural - move army first, then build CC + bunker + turret
 
 + Wiki with recommended features (P - Paints extensive debug info)

@@ -26,8 +26,11 @@ public class ForbiddenByStreetGrid {
         else {
             if (position.tx() % GRID_VALUE <= 1) return true;
             if (position.ty() % GRID_VALUE <= 1) return true;
-//            if (position.tx() % 9 <= 1) return true;
-//            if (position.ty() % 9 <= 1) return true;
+        }
+
+        if (building.isBarracks()) {
+            if (position.tx() % 3 <= 1) return true;
+            if (position.ty() % 3 <= 1) return true;
         }
 
         // =========================================================

@@ -41,6 +41,7 @@ public class PositionFulfillsAllConditions {
 
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return false;
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return false;
+        if (TooCloseToBase.isTooCloseToBase(building, position)) return false;
         if (OverlappingBaseLocation.isOverlappingBaseLocation(building, position)) return false;
         if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return false;
         if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return false;

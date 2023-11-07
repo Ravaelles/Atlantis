@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.bunker;
 
 import atlantis.combat.missions.Missions;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -38,7 +39,7 @@ public class TerranBunker extends AntiLandBuildingCommander {
     public boolean shouldBuildNew() {
         if (!Have.barracks()) return false;
 
-        return Count.bases() <= 1
+        return Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) <= 1
             ? ShouldBuildBunkerIfOneBase.shouldBuild()
             : ShouldBuildBunkerIfManyBases.shouldBuild();
     }

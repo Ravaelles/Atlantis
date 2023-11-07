@@ -578,6 +578,14 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isBarracks() {
+        return (boolean) cache.get(
+            "isBarracks",
+            -1,
+            () -> is(Terran_Barracks)
+        );
+    }
+
     public boolean isPylon() {
         return (boolean) cache.get(
             "isPylon",
