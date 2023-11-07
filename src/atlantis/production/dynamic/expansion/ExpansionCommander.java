@@ -2,6 +2,7 @@ package atlantis.production.dynamic.expansion;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
@@ -10,6 +11,11 @@ import atlantis.util.We;
 
 public class ExpansionCommander extends Commander {
     public ExpansionCommander() {
+    }
+
+    @Override
+    public boolean applies() {
+        return We.zerg() || CountInQueue.count(AtlantisRaceConfig.BASE) == 0;
     }
 
     @Override

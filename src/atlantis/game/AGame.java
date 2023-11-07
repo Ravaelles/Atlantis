@@ -306,7 +306,8 @@ public class AGame {
         return canAfford(
             minerals + ReservedResources.minerals(),
             gas + ReservedResources.gas()
-        );
+        )
+            || canAfford(Math.min(minerals, 550), Math.min(minerals, 250));
     }
 
     public static boolean canAffordWithReserved(AUnitType type) {

@@ -3,7 +3,6 @@ package atlantis.terran.repair;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 
 /**
  * unit is a unit that is close to another unit (bunker or tank), ready to repair it,
@@ -43,8 +42,6 @@ public class ProtectorManager extends Manager {
 
         // WOUNDED
         if (target.isWounded() || (unit.isBunker() && A.everyNthGameFrame(7))) {
-            if (unit.isRepairing()) return true;
-
             return unit.repair(target, "Protect" + target.name());
 //                return unit.repair(Select.main(), "Protect" + target.name(), true);
 //                return unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(target);
@@ -65,8 +62,12 @@ public class ProtectorManager extends Manager {
     }
 
     private Manager idleProtector() {
-        if (target.isBunker()) return null;
+        if (unit.idIsOdd()) return usedManager(this); // Only half of the protectors can do dynamic repairs if idle
 
-        return (new IdleRepairer(unit)).invoke();
+        if (
+            target.isBunker() && target.enemiesNear().havingWeapon().inRadius(9, target).atMost(1)
+        ) return null;
+
+        return (new IdleProtectorRepairs(unit)).invoke();
     }
 }

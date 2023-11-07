@@ -4,8 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
-public class IdleRepairer extends Manager {
-    public IdleRepairer(AUnit unit) {
+public class IdleProtectorRepairs extends Manager {
+    public IdleProtectorRepairs(AUnit unit) {
         super(unit);
     }
 

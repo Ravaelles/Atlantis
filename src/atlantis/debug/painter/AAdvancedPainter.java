@@ -1651,6 +1651,12 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintManagers() {
         for (AUnit unit : Select.ourCombatUnits().list()) {
+            if (unit.isCloaked()) {
+                Color cloakedColor = unit.effUndetected() ? Orange : Green;
+                paintCircle(unit, 16, cloakedColor);
+                paintCircle(unit, 15, cloakedColor);
+            }
+
             Color color = unit.looksIdle() ? Color.Purple : Grey;
             paintTextCentered(unit, unit.manager().toString(), color, 0, -0.6);
         }
