@@ -20,19 +20,19 @@ public class UnitBeingReparedManager extends Manager {
             && unit.isTerran()
             && (repairer = unit.repairer()) != null
             && (
-            (enemiesNear = unit.enemiesNear().groundUnits().canAttack(unit, 1.6)).isEmpty()
+            (enemiesNear = unit.enemiesNear().groundUnits().canAttack(unit, -0.2)).isEmpty()
                 || (unit.hp() >= 32 && RepairAssignments.countRepairersForUnit(unit) >= 2)
+                && repairer != null
+                && !unit.isRunning()
         );
     }
 
     protected Manager handle() {
-        if (repairer == null) {
-            return null;
-        }
-
         double distanceToRepairer = repairer.distTo(unit);
-        if (unit.isRunning()) {
-            return null;
+
+        if (unit.cooldown() >= 3 && distanceToRepairer > 1 && distanceToRepairer <= 5) {
+            unit.move(repairer, Actions.MOVE_REPAIR, "2Repair");
+            return usedManager(this);
         }
 
         if (!unit.isWounded()) {
@@ -54,7 +54,7 @@ public class UnitBeingReparedManager extends Manager {
         }
 
         // Air units should be repaired thoroughly
-        if (unit.isAir() && unit.isBeingRepaired()) {
+        if (unit.isAir() && distanceToRepairer >= 0.2) {
             if (!unit.isRunning() && unit.isMoving()) {
 //                unit.setTooltip("HoldTheFuckDown");
                 unit.holdPosition("HoldTheFuckDown");
@@ -63,13 +63,11 @@ public class UnitBeingReparedManager extends Manager {
         }
 
         // Ignore going closer to repairer if unit is still relatively healthy
-        if (!unit.isAir() && unit.hpPercent() > 70 && distanceToRepairer >= 3) {
-            return null;
-        }
+        if (!unit.isAir() && unit.hpPercent() > 80 && distanceToRepairer <= 1.7) return null;
 
         // =========================================================
 
-        if (unit.nearestEnemyDist() <= (unit.hp() <= 60 ? 2.8 : 1.7)) {
+        if (unit.nearestEnemyDist() <= (unit.hp() <= 60 ? 2.8 : 1.9)) {
             unit.setTooltip("DontRepairEnemy");
             return null;
         }

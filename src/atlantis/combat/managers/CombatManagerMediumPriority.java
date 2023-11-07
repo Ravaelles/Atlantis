@@ -3,6 +3,7 @@ package atlantis.combat.managers;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.terran.repair.DontMoveWhenBeingRepared;
 import atlantis.terran.repair.UnitBeingReparedManager;
@@ -21,6 +22,7 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            AvoidCombatBuilding.class,
             AvoidEnemies.class,
             DontMoveWhenBeingRepared.class,
             UnitBeingReparedManager.class,

@@ -24,6 +24,8 @@ public class ProduceFactory {
         int existing = Count.existing(Terran_Factory);
         int existingAndPlanned = Count.withPlanned(Terran_Factory);
 
+        if (!A.canAfford(350, 200) && existingAndPlanned >= 1) return false;
+
         if (existingAndPlanned >= 2 && !Have.starport()) return false;
 
         if (

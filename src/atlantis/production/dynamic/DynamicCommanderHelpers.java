@@ -83,14 +83,14 @@ public class DynamicCommanderHelpers extends Commander {
         return Count.existingOrInProductionOrInQueue(type) == 0;
     }
 
-    public static boolean addWithTopPriorityThisOrItsRequirement(AUnitType target, AUnitType itsRequirement) {
-        if (haveNoExistingOrPlanned(itsRequirement)) {
-            AddToQueue.withHighPriority(itsRequirement);
-            return true;
-        }
-        else {
-            AddToQueue.withTopPriority(target);
-            return true;
-        }
-    }
+//    public static boolean addWithTopPriorityThisOrItsRequirement(AUnitType target, AUnitType itsRequirement) {
+//        if (haveNoExistingOrPlanned(itsRequirement)) {
+//            AddToQueue.withHighPriority(itsRequirement);
+//            return true;
+//        }
+//        else {
+//            AddToQueue.withTopPriority(target);
+//            return true;
+//        }
+//    }
 }

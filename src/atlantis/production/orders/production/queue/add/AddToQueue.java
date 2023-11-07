@@ -77,6 +77,10 @@ public class AddToQueue {
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         if (preventExcessiveOrInvalidOrders(type)) return null;
 
+//        if (type != null && type.isFactory()) {
+//            A.printStackTrace("Factory, " + CountInQueue.count(AUnitType.Terran_Factory));
+//        }
+
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
 
         if (Queue.get().addNew(index, productionOrder)) {
@@ -108,7 +112,7 @@ public class AddToQueue {
         int maxOrdersAtOnceWithoutWarning = 30;
 
         // Too many requests of this type
-        int existingInQueue = Count.inQueue(type, 30);
+        int existingInQueue = Count.inQueue(type);
         if (existingInQueue >= 4) {
             return true;
         }

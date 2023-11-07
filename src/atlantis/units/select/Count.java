@@ -50,7 +50,11 @@ public class Count {
     }
 
     public static int inProductionOrInQueue(AUnitType type) {
-        return inProduction(type) + inQueue(type, 5);
+        return inProduction(type) + inQueue(type);
+    }
+
+    public static int inQueue(AUnitType type) {
+        return CountInQueue.count(type);
     }
 
     public static int inQueue(AUnitType type, int amongNTop) {

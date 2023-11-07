@@ -8,6 +8,7 @@ import atlantis.production.dynamic.terran.TerranDynamicInfantry;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -88,7 +89,7 @@ public class ProduceMarines {
     private static boolean produceMarine() {
         if (Select.ourFree(Terran_Barracks).empty()) return false;
 
-        ProductionOrder result = AddToQueue.maxAtATime(Terran_Marine, 3);
+        ProductionOrder result = AddToQueue.maxAtATime(Terran_Marine, 3, ProductionOrderPriority.TOP);
 
         if (DEBUG) ConsoleLog.message(
             "Produce marine (Marines: " + Count.existingOrInProductionOrInQueue(Terran_Marine) + "," +

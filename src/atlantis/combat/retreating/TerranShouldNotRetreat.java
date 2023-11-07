@@ -1,6 +1,7 @@
 package atlantis.combat.retreating;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 
 public class TerranShouldNotRetreat extends Manager {
@@ -18,6 +19,7 @@ public class TerranShouldNotRetreat extends Manager {
         Manager manager = shouldNotRetreat();
 
         if (manager != null) {
+            (new AttackNearbyEnemies(unit)).invoke();
             return manager;
         }
 

@@ -53,7 +53,8 @@ public abstract class AStrategyResponse {
         // === Expansion ===================================
 
         if (enemyStrategy.isExpansion() && GamePhase.isEarlyGame() && Mission.get().isMissionDefendOrSparta()) {
-            Missions.forceGlobalMissionContain("Enemy is expanding, engage him");
+//            Missions.forceGlobalMissionContain("Enemy is expanding, engage him");
+            Missions.forceGlobalMissionAttack("Enemy is expanding, engage him");
         }
 
         // === Tech ========================================

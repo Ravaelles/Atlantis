@@ -2802,8 +2802,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return hasSiegedRecently() || hasUnsiegedRecently();
     }
 
-    public int lastSiegeUnsiegedAgo() {
-        return Math.max(
+    public int lastSiegedOrUnsiegedAgo() {
+        return Math.min(
             lastActionAgo(Actions.SIEGE),
             lastActionAgo(Actions.UNSIEGE)
         );
@@ -2849,6 +2849,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean hasAirWeapon() {
         return airWeaponRange() > 0;
+    }
+
+    public boolean hasGroundWeapon() {
+        return groundWeaponRange() > 0;
     }
 
     public Selection enemiesThatCanAttackMe(double radius) {

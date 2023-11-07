@@ -20,9 +20,11 @@ import atlantis.util.We;
 public class ShouldExpand {
     protected static boolean shouldBuildNewBase() {
         if (We.terran()) {
-            if (Count.tanks() <= 0 && !A.hasMinerals(370)) return false;
+            if (Count.tanks() <= 0 && !A.hasMinerals(350)) return false;
             if (A.minerals() <= 1100 && GamePhase.isLateGame()) return false;
         }
+
+        if (!We.zerg() && CountInQueue.count(AtlantisRaceConfig.BASE) > 0) return false;
 
         // Zerg
         if (We.zerg() && ZergExpansionCommander.handleNoZergLarvas()) return true;
@@ -43,8 +45,7 @@ public class ShouldExpand {
         int basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 
         if (bases >= 5 || basesInProduction >= 1) return false;
-
-        if (Count.inQueue(AtlantisRaceConfig.BASE, 6) > 0) return false;
+        if (Count.inQueue(AtlantisRaceConfig.BASE) > 0) return false;
 
 //        if (ProductionQueue.size() >= 3) {
 //            return false;

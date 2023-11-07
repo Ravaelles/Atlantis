@@ -16,7 +16,7 @@ public class GoodDistanceToContainFocusPoint extends Manager {
     public boolean applies() {
         if (!unit.isMissionContain() && !unit.isMissionDefend()) return false;
 
-        if (unit.lastSiegeUnsiegedAgo() <= 30 * (6 + unit.id() % 3)) return false;
+        if (unit.lastSiegedOrUnsiegedAgo() <= 30 * (6 + unit.id() % 3)) return false;
 
         APosition focusPoint = Missions.globalMission().focusPoint();
         if (

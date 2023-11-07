@@ -36,6 +36,7 @@ public class AttackAsWraith extends AttackNearbyEnemies {
         return new Class[]{
             ChangeLocationIfRanTooLong.class,
             AttackOtherAirUnits.class,
+            AttackWorkersWhenItMakesSense.class,
             AttackTargetInRangeIfRanTooLong.class,
             AttackTargetInRange.class,
             MoveAsLooksIdle.class,

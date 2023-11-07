@@ -15,13 +15,13 @@ public class ExpansionCommander extends Commander {
 
     @Override
     public boolean applies() {
-        return We.zerg() || CountInQueue.count(AtlantisRaceConfig.BASE) == 0;
+        return ShouldExpand.shouldBuildNewBase();
     }
 
     @Override
     protected void handle() {
 //        System.err.println("ExpansionCommander.handle() @ " + A.now());
-        if (ShouldExpand.shouldBuildNewBase()) prepareForNewBase();
+        prepareForNewBase();
     }
 
     protected void prepareForNewBase() {

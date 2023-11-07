@@ -9,29 +9,48 @@ import atlantis.production.dynamic.terran.tech.SiegeMode;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 
 public class AvoidCombatBuilding extends Manager {
-    private ShouldRetreat shouldRetreat;
+//    private ShouldRetreat shouldRetreat;
 
     private Selection combatBuildings;
     private AUnit combatBuilding;
 
-    public AvoidCombatBuilding(AUnit unit, AUnit combatBuilding) {
+    public AvoidCombatBuilding(AUnit unit) {
         super(unit);
-        this.combatBuilding = combatBuilding;
-        shouldRetreat = new ShouldRetreat(unit);
+//        shouldRetreat = new ShouldRetreat(unit);
     }
 
     @Override
     public boolean applies() {
-        if (unit.isAir()) return true;
+        AUnit combatBuilding = unit.enemiesNear()
+            .combatBuildings(false)
+            .canAttack(unit, 5)
+            .nearestTo(unit);
 
+        if (combatBuilding == null) return false;
         if (unit.isMissionDefendOrSparta() && unit.isGroundUnit()) return false;
+
+        if (unit.isAir()) return true;
 
         if (
             A.supplyUsed() <= 150 && unit.isInfantry() && Count.tanks() >= 2 && unit.combatEvalRelative() <= 3.5
         ) return true;
+
+        if (!unit.isTank()) {
+            if (We.terran() && unit.friendsNear().groundUnits().havingGroundWeapon().atLeast(9)) return false;
+
+            if (
+                unit.isMissionAttack()
+                    && unit.woundPercent() >= 20
+                    && unit.friendsNear().tanks().inRadius(15, unit).atLeast(2)
+                    && unit.friendsNear().groundUnits().inRadius(1, unit).atMost(2)
+                    && unit.friendsNear().groundUnits().inRadius(3, unit).atMost(8)
+            ) return true;
+        }
 
         if (
             unit.isGroundUnit() && unit.combatEvalRelative() >= 2.5 && unit.hp() >= 30 && unit.woundPercent() <= 40
@@ -44,6 +63,8 @@ public class AvoidCombatBuilding extends Manager {
     }
 
     protected Manager handle() {
+        if (combatBuilding == null) return null;
+
         if (unit.isTankUnsieged() && handleForTank(combatBuilding) != null) return usedManager(this);
 
 //        APainter.paintCircleFilled(8, Color.Red);
@@ -52,7 +73,8 @@ public class AvoidCombatBuilding extends Manager {
             !unit.isAir()
                 && unit.friendsInRadiusCount(3) >= 6
                 && unit.friendsInRadiusCount(5) >= 8
-                && !shouldRetreat.shouldRetreat(unit)
+                && unit.combatEvalRelative() <= 4.5
+//                && !shouldRetreat.shouldRetreat(unit)
                 && combatBuildings.combatBuildings(false).inRadius(10, unit).notEmpty()
         ) {
 //            unit.setTooltip("@ D YOLO " + unit);
@@ -60,7 +82,7 @@ public class AvoidCombatBuilding extends Manager {
         }
 
 //        double criticalDist = 9.8 + (unit.isAir() ? 2.5 : 0);
-        double criticalDist = criticalDist(combatBuilding);
+        double criticalDist = criticalDist();
         double distTo = combatBuilding.distTo(unit);
 
         double doNothingMargin = 1.5;
@@ -137,7 +159,8 @@ public class AvoidCombatBuilding extends Manager {
             return usedManager(this);
         }
         else {
-            unit.runningManager().runFrom(combatBuilding, 0.1, Actions.MOVE_AVOID, false);
+//            unit.runningManager().runFrom(combatBuilding, 0.1, Actions.MOVE_AVOID, false);
+            unit.move(Select.mainOrAnyBuilding(), Actions.MOVE_AVOID, "Ah+" + combatBuilding.name());
             return usedManager(this);
         }
     }
@@ -154,7 +177,7 @@ public class AvoidCombatBuilding extends Manager {
 //        return usedManager(this);
     }
 
-    private double criticalDist(AUnit combatBuilding) {
+    private double criticalDist() {
         return 9.1
             + (combatBuilding.isSunken() ? 1.6 : 0)
             + (unit.isAir() ? 0.6 : 0) + (unit.isMoving() ? 1.25 : 0)

@@ -17,6 +17,7 @@ public class ProduceFactoryWhenBioOnly {
         if (!OurStrategy.get().goingBio()) return false;
         if (A.supplyUsed() <= 30 || !A.hasGas(90) || Have.factory()) return false;
         if (Select.ourFree(Terran_Factory).notEmpty()) return false;
+        if (Count.inProductionOrInQueue(Terran_Factory) >= 1) return false;
 
         if (
             Count.ourCombatUnits() >= 3
@@ -27,9 +28,7 @@ public class ProduceFactoryWhenBioOnly {
                         || (A.supplyUsed() >= 32 && Count.withPlanned(Terran_Factory) == 0)
                 )
         ) {
-//            AddToQueue.withHighPriority(Terran_Factory);
-            AddToQueue.toHave(Terran_Factory);
-            return true;
+            return AddToQueue.toHave(Terran_Factory);
         }
 
         return false;

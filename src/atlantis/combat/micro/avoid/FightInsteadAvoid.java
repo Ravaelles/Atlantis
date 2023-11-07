@@ -37,7 +37,7 @@ public class FightInsteadAvoid extends Manager {
             unit.isInfantry()
                 && unit.enemiesNear().ofType(AUnitType.Zerg_Lurker).inRadius(7.2, unit).effUndetected().notEmpty()
         ) {
-            unit.setTooltip("Aaa-LURKER!");
+            unit.setTooltip("AttackWorkersWhenItMakesSense-LURKER!");
             return false;
         }
 
@@ -45,7 +45,7 @@ public class FightInsteadAvoid extends Manager {
             unit.isInfantry()
                 && unit.enemiesNear().ofType(AUnitType.Protoss_Reaver).inRadius(9.2, unit).effUndetected().notEmpty()
         ) {
-            unit.setTooltip("Aaa-LURKER!");
+            unit.setTooltip("AttackWorkersWhenItMakesSense-LURKER!");
             return false;
         }
 

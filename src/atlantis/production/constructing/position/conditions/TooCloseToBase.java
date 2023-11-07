@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.conditions;
 
+import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -13,7 +14,7 @@ public class TooCloseToBase {
     public static boolean isTooCloseToBase(AUnitType building, APosition position) {
         if (building.isCombatBuilding() || building.isGasBuilding()) return false;
 
-        int minDistToBase = building.isSupplyDepot() ? 8 : 5;
+        int minDistToBase = building.isSupplyDepot() ? (A.supplyTotal() >= 15 ? 8 : 4) : 5;
 
         return Select.ourBasesWithUnfinished().inRadius(minDistToBase, position).notEmpty();
     }

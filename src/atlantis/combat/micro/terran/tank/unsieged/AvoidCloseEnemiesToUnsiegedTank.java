@@ -18,8 +18,8 @@ public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
 
         enemies = unit.enemiesNear()
             .groundUnits()
-            .inRadius(6.3, unit)
-            .canAttack(unit, 1.4 + unit.woundPercent() / 50.0);
+            .havingWeapon()
+            .inRadius(6.5, unit);
 
         return enemies.atLeast(1);
     }
