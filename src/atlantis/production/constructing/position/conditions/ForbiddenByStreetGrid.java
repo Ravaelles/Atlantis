@@ -12,6 +12,9 @@ public class ForbiddenByStreetGrid {
 
     /**
      * Returns true if game says it's possible to build given building at this position.
+     * <p>
+     * Leave entire horizontal (same tileX) and vertical (same tileY) corridors free for units to pass
+     * So disallow building in e.g. 0,1, 6,7, 12,13, horizontally and vertically
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         if (We.protoss() && A.supplyTotal() <= 10) return false;

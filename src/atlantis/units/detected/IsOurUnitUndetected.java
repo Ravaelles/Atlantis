@@ -8,7 +8,7 @@ public class IsOurUnitUndetected {
     private static Cache<Boolean> cache = new Cache<>();
 
     public static boolean check(AUnit unit) {
-        if (!unit.isCloaked() && !unit.isBurrowed()) return false;
+        if (!unit.isCloaked() || !unit.isBurrowed()) return false;
         if (unit.lastUnderAttackLessThanAgo(30 * 4)) return false;
 
         return cache.get(unit.idWithHash(), 7, () -> isUndetected(unit));

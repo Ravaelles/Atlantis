@@ -33,6 +33,7 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.PositionFulfillsAllConditions;
+import atlantis.production.constructing.position.base.NextBasePosition;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -1548,6 +1549,7 @@ public class AAdvancedPainter extends APainter {
         }
         if (We.terran()) {
             paintBuildingPosition((new TerranBunker()).nextPosition(), "Next Bunker");
+            paintBuildingPosition(NextBasePosition.nextBasePosition(), "Next BASE");
         }
 
         // Next defensive building position

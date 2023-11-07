@@ -1,4 +1,4 @@
-package atlantis.production.constructing.position;
+package atlantis.production.constructing.position.terran;
 
 import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.map.base.ABaseLocation;
@@ -8,6 +8,7 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.position.PositionModifier;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

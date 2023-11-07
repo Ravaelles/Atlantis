@@ -1,4 +1,4 @@
-package atlantis.production.constructing.position;
+package atlantis.production.constructing.position.terran;
 
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;

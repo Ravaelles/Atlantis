@@ -1,8 +1,10 @@
-package atlantis.production.constructing.position;
+package atlantis.production.constructing.position.terran;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.position.AbstractPositionFinder;
+import atlantis.production.constructing.position.PositionFulfillsAllConditions;
 import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -18,8 +20,9 @@ public class TerranPositionFinder extends AbstractPositionFinder {
      * position.<br />
      * It checks if buildings aren't too close one to another and things like that.
      */
-    public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo,
-                                                    double maxDistance) {
+    public static APosition findStandardPositionFor(
+        AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance
+    ) {
         int cacheForFrames = building.isCombatBuilding() ? 27 : 77;
         String cacheKey = "findStandardPositionFor:" + building.id()
             + "," + (nearTo != null ? nearTo.toStringPixels() : nearTo)

@@ -2,7 +2,9 @@ package atlantis.production.dynamic.expansion;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.game.A;
+import atlantis.production.dynamic.expansion.secure.NewBaseIsSecured;
+import atlantis.production.dynamic.expansion.secure.SecuringBase;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
@@ -15,7 +17,8 @@ public class ExpansionCommander extends Commander {
 
     @Override
     public boolean applies() {
-        return ShouldExpand.shouldBuildNewBase();
+        return A.supplyUsed() >= 12 && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) <= 1;
+//        return ShouldExpand.shouldBuildNewBase();
     }
 
     @Override
@@ -28,6 +31,13 @@ public class ExpansionCommander extends Commander {
         if (newExpansionIsSecured()) {
             requestNewBase();
         }
+        else {
+            secureNewBase();
+        }
+    }
+
+    private void secureNewBase() {
+        NewBaseIsSecured.secure();
     }
 
     protected boolean newExpansionIsSecured() {

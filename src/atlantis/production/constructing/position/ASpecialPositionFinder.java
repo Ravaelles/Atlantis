@@ -22,13 +22,13 @@ public class ASpecialPositionFinder {
         String modifier, AUnitType building, AUnit builder, Construction construction
     ) {
         if (modifier.equals(PositionModifier.MAIN) || modifier.equals("MAIN")) {
-            if (construction.maxDistance() < 0) {
+            if (construction != null && construction.maxDistance() < 0) {
                 construction.setMaxDistance(40);
             }
             return FindPositionForBaseNearestFree.find(building, builder, construction);
         }
         else if (modifier.equals(PositionModifier.NATURAL)) {
-            if (construction.maxDistance() < 0) {
+            if (construction != null && construction.maxDistance() < 0) {
                 construction.setMaxDistance(20);
             }
             return FindPositionForBase.findPositionForBase_natural(building, builder);

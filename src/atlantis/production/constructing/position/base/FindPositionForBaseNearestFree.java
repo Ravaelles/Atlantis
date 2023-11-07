@@ -18,10 +18,10 @@ public class FindPositionForBaseNearestFree {
      */
     public static APosition find(AUnitType building, AUnit builder, Construction construction) {
         return FindPositionForBase.cache.get(
-            "findPositionForBase:" + builder + "," + construction.id(),
+            "findPositionForBase:" + builder + "," + (construction != null ? construction.id() : "-"),
             53,
             () -> {
-                String modifier = construction.productionOrder() != null ?
+                String modifier = construction != null && construction.productionOrder() != null ?
                     construction.productionOrder().getModifier() : null;
 
                 APosition position = null;

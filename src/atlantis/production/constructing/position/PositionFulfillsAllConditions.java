@@ -3,6 +3,7 @@ package atlantis.production.constructing.position;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.conditions.*;
+import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -29,8 +30,6 @@ public class PositionFulfillsAllConditions {
             }
         }
 
-        // Leave entire horizontal (same tileX) and vertical (same tileY) corridors free for units to pass
-        // So disallow building in e.g. 1, 5, 9, 13, 16 horizontally and 3, 7, 11, 15, 19 vertically
         if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
         if (ForbiddenForSupplyDepot.isForbidden(builder, building, position)) return false;
 
