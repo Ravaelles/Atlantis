@@ -50,6 +50,7 @@ public class AMineralGathering {
      */
     public static boolean gatherResources(AUnit unit) {
         AUnit mineralField = getMineralFieldToGather(unit);
+
         if (mineralField != null && !unit.isGatheringMinerals()) {
             unit.setTooltipTactical("Gatherer!");
             unit.gather(mineralField);
@@ -65,16 +66,12 @@ public class AMineralGathering {
 
         // Get nearest base for this unit
         AUnit base = Select.ourBases().nearestTo(worker);
-        if (base == null) {
-            return null;
-        }
+
+        if (base == null) return null;
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        List<AUnit> minerals;
-        if (
-            base.position().groundDistanceTo(worker) <= 25
-                && !(minerals = Select.minerals().inRadius(15, base).sortDataByDistanceTo(worker, true)).isEmpty()
-        ) {
+        List<AUnit> minerals = Select.minerals().inRadius(15, base).sortDataByDistanceTo(base, true);
+        if (!minerals.isEmpty()) {
 
             // Count how many other workers gather this mineral
             Units mineralsToWorkerCount = new Units();

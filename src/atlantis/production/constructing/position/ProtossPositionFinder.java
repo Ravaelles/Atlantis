@@ -80,8 +80,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
-                            builder, building, constructionPosition
-                        )) {
+                            builder, building, constructionPosition,
+                            nearTo)) {
 
                             if (building.isCombatBuilding()) {
                                 // Turret fix - make sure to build in the same region

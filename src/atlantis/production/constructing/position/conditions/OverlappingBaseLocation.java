@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position.conditions;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.Bases;
 import atlantis.map.position.APosition;
@@ -16,7 +17,7 @@ public class OverlappingBaseLocation {
             return forBase(position);
         }
 
-        return forNonBaseBuilding(position);
+        return forNonBaseBuilding(position, building);
     }
 
     private static boolean forBase(APosition position) {
@@ -28,14 +29,22 @@ public class OverlappingBaseLocation {
         return ConstructionRequests.hasNotStartedNear(AtlantisRaceConfig.BASE, position, 8);
     }
 
-    private static boolean forNonBaseBuilding(APosition position) {
+    private static boolean forNonBaseBuilding(APosition position, AUnitType building) {
+        double minDist = building.isBunker() ? 4 : 6;
+
+//        if (building.isBunker()) System.err.println("@ " + A.now() + " - bunker ");
+
         for (ABaseLocation base : Bases.baseLocations()) {
-            APosition natural = Bases.natural();
+//            if (building.isBunker())
+//                System.err.println("@ " + A.now() + " - " + base + " / " + (base.translateByTiles(3, 1).distTo(position)));
             if (
-                !base.isStartLocation()
-                    && (natural != null && natural.translateByTiles(3, 1).distTo(position) <= 3)
-                    && base.translateByTiles(We.terran() ? 3 : 0, 0).distTo(position) <= 3.5
+//                !base.isStartLocation()
+//                    (natural != null && natural.translateByTiles(3, 1).distTo(position) <= minDist)
+                base.translateByTiles(We.terran() ? 4 : 2, 1).distTo(position) <= minDist
             ) {
+//                System.err.println("   --- BASE " + base.position() + " Out with dist: " + base.translateByTiles(4,
+//                    1).distTo(position) + " / " + position);
+//                APosition natural = Bases.natural();
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "Overlaps base location";
                 return true;
             }

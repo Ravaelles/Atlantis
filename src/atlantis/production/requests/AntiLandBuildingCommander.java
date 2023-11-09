@@ -8,10 +8,9 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
-import atlantis.production.orders.production.queue.add.AddToQueue;
-
 import atlantis.production.orders.production.Requirements;
 import atlantis.production.orders.production.queue.SoonInQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
@@ -72,7 +71,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
         // =========================================================
 
         if (at == null) {
-            at = nextPosition();
+            at = nextPosition(at);
         }
 
         if (at != null) {
@@ -117,26 +116,25 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
     }
 
     @Override
-    public HasPosition nextPosition() {
+    public HasPosition nextPosition(HasPosition initialNearTo) {
         return cache.get(
-            "nextBuildingPosition",
+            "nextBuildingPosition:" + initialNearTo,
             13,
             () -> {
+                APosition nearTo = initialNearTo != null ? initialNearTo.position() : null;
+
                 int bases = Count.basesWithUnfinished();
 
                 if (bases == 0 || Select.main() == null) {
                     return null;
                 }
 
-                APosition nearTo = null;
-
                 // === Main choke ===========================================
 
                 AChoke mainChoke = Chokes.mainChoke();
                 if (bases <= 1 && mainChoke != null) {
                     if (We.terran() && Enemy.terran()) {
-                        nearTo = mainChoke.translateTilesTowards(3, Select.main())
-                            .makeWalkable(8);
+                        if (nearTo == null) nearTo = mainChoke.translateTilesTowards(3, Select.main()).makeWalkable(8);
                         AUnit builder = Select.ourWorkers().nearestTo(nearTo);
                         return APositionFinder.findStandardPosition(
                             builder, type(), nearTo, 15
@@ -144,13 +142,13 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
                     }
 
                     if (Count.bunkers() > 0) {
-                        nearTo = mainChoke
+                        if (nearTo == null) nearTo = mainChoke
                             .translateTilesTowards(5, Select.main())
                             .makeBuildable(8)
                             .makeWalkable(4);
                     }
                     else {
-                        nearTo = Select.main()
+                        if (nearTo == null) nearTo = Select.main()
                             .translateTilesTowards(3, mainChoke)
                             .makeBuildable(8)
                             .makeWalkable(4);
@@ -175,7 +173,8 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
 //                        nearTo = naturalChoke.position();
 //                        return naturalChoke.translatePercentTowards(10, naturalBase);
                                 double distFromChoke = naturalChoke.width() <= 4 ? 3.5 : 3;
-                                nearTo = naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
+                                if (nearTo == null)
+                                    nearTo = naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
                             }
 
                             return findPositionNear(nearTo);
@@ -188,7 +187,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
                 AUnitType building = type();
 
                 AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
-                if (previousBuilding != null) {
+                if (We.zerg() && previousBuilding != null) {
                     nearTo = previousBuilding.position();
                 }
 

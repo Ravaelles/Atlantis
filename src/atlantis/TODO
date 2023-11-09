@@ -9,10 +9,11 @@
 
 .+ Consider high ground for tanks
 
++ Wall-in
 
 ###############
 
-@@@ .- Fix OwnCloaked not working properly - always shows unit as detected
+. @@@ .- Fix OwnCloaked not working properly - always shows unit as detected
 
 (.)?+ Focus on the logic of expanding to natural - move army first, then build CC + bunker + turret
 

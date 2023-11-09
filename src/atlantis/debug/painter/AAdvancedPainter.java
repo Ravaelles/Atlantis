@@ -34,6 +34,7 @@ import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.PositionFulfillsAllConditions;
 import atlantis.production.constructing.position.base.NextBasePosition;
+import atlantis.production.dynamic.expansion.secure.SecuringWithBunkerPosition;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -44,7 +45,6 @@ import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.buildings.CountGasWorkers;
-import atlantis.units.buildings.GasBuildingsCommander;
 import atlantis.units.buildings.NumberOfGasWorkersCommander;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
@@ -1268,26 +1268,26 @@ public class AAdvancedPainter extends APainter {
      * Every frame paint next allowed location of Supply Depot. Can be used to debug construction finding, but
      * slows the game down impossibly.
      */
-    private static void paintTestSupplyDepotLocationsNearMain() {
-        AUnit worker = Select.ourWorkers().first();
-        AUnit base = Select.ourBases().first();
-        int tileX = base.position().tx();
-        int tileY = base.position().ty();
-        for (int x = tileX - 10; x <= tileX + 10; x++) {
-            for (int y = tileY - 10; y <= tileY + 10; y++) {
-                APosition position = APosition.create(x, y);
-                boolean canBuild = PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
-                    worker, AUnitType.Terran_Supply_Depot, position
-                );
-
-                paintCircleFilled(position, 4, canBuild ? Green : Color.Red);
-
-                if (x == tileX && y == tileY) {
-                    paintCircleFilled(position, 10, canBuild ? Green : Color.Red);
-                }
-            }
-        }
-    }
+//    private static void paintTestSupplyDepotLocationsNearMain() {
+//        AUnit worker = Select.ourWorkers().first();
+//        AUnit base = Select.ourBases().first();
+//        int tileX = base.position().tx();
+//        int tileY = base.position().ty();
+//        for (int x = tileX - 10; x <= tileX + 10; x++) {
+//            for (int y = tileY - 10; y <= tileY + 10; y++) {
+//                APosition position = APosition.create(x, y);
+//                boolean canBuild = PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
+//                    worker, AUnitType.Terran_Supply_Depot, position,
+//                    nearTo);
+//
+//                paintCircleFilled(position, 4, canBuild ? Green : Color.Red);
+//
+//                if (x == tileX && y == tileY) {
+//                    paintCircleFilled(position, 10, canBuild ? Green : Color.Red);
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Can be helpful to illustrate or debug behavior or worker unit which is scouting around enemy base.
@@ -1548,7 +1548,8 @@ public class AAdvancedPainter extends APainter {
             paintBuildingPosition((new ZergSunkenColony()).nextPosition(), "Next Sunken");
         }
         if (We.terran()) {
-            paintBuildingPosition((new TerranBunker()).nextPosition(), "Next Bunker");
+//            paintBuildingPosition((new TerranBunker()).nextPosition(), "Next Bunker");
+            paintBuildingPosition(SecuringWithBunkerPosition.bunkerPosition(), "Next Bunker");
             paintBuildingPosition(NextBasePosition.nextBasePosition(), "Next BASE");
         }
 

@@ -23,8 +23,8 @@ public class TerranBunkerPositionFinder {
 //            return APositionFinder.findStandardPosition(builder, bunker, nearTo, 12);
 //        }
 
-        HasPosition hasPosition = TerranBunker.get().nextPosition();
-        return hasPosition != null ? hasPosition.position() : null;
+        HasPosition bunkerPosition = TerranBunker.get().nextPosition(nearTo);
+        return bunkerPosition != null ? bunkerPosition.position() : null;
     }
 
     // =========================================================

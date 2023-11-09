@@ -11,6 +11,7 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnit;
@@ -52,9 +53,11 @@ public class TerranBunker extends AntiLandBuildingCommander {
     public boolean handleBuildNew() {
         if (
             GamePhase.isEarlyGame()
-                && OurStrategy.get().isRushOrCheese()
-                && EnemyUnits.discovered().combatUnits().atMost(Enemy.zerg() ? 10 : 5)
+//                && OurStrategy.get().isRushOrCheese()
+                && EnemyUnits.discovered().combatUnits().atMost(Enemy.zerg() ? 8 : 5)
         ) return false;
+
+        if (Count.withPlanned(AUnitType.Terran_Bunker) >= 1) return false;
 
         if (Count.bases() >= 2 && existingOrInProduction() < Count.bases()) {
             if (handleNaturalBunker()) return true;

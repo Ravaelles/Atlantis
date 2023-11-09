@@ -2,6 +2,7 @@ package atlantis.production.requests;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.dynamic.expansion.secure.SecuringWithBunkerPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -32,11 +33,12 @@ public abstract class DynamicBuildingCommander {
         return type();
     }
 
-    /**
-     * null will be changed later to become something like "in main".
-     */
+    public HasPosition nextPosition(HasPosition nearTo) {
+        return SecuringWithBunkerPosition.forNonNatural(nearTo);
+    }
+
     public HasPosition nextPosition() {
-        return null;
+        return SecuringWithBunkerPosition.bunkerPosition();
     }
 
     public int existingWithUnfinished() {

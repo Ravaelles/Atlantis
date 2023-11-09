@@ -19,6 +19,7 @@ public class AvoidSingleEnemy extends Manager {
 
     public Manager avoid() {
         if (unit.effUndetected()) return null;
+        if (isEnemyFacingOtherWayAndWeLookSafe()) return null;
 
         APainter.paintCircle(enemy, 16, Color.Orange);
 
@@ -41,6 +42,13 @@ public class AvoidSingleEnemy extends Manager {
         }
 
         return runError.handleErrorRun(unit);
+    }
+
+    private boolean isEnemyFacingOtherWayAndWeLookSafe() {
+        return enemy.isMelee()
+            && unit.hp() >= 18
+            && enemy.distTo(unit) >= 1.5
+            && !unit.isOtherUnitFacingThisUnit(enemy);
     }
 
     protected double calculateRunDistance(AUnit enemy) {

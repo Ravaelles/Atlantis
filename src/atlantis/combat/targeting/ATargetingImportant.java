@@ -167,7 +167,8 @@ public class ATargetingImportant extends ATargeting {
         // =========================================================
         // Including unfinished defensive buildings
 
-        target = Select.enemy()
+        target = enemyBuildings
+            .onlyCompleted()
             .ofType(
                 AUnitType.Protoss_Photon_Cannon,
                 AUnitType.Zerg_Sunken_Colony,
@@ -177,7 +178,7 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Terran_Missile_Turret
             )
             .inRadius(14, unit)
-            .canBeAttackedBy(unit, 0)
+            .canBeAttackedBy(unit, 1)
             .mostWounded();
 
         debug("C5 = " + target);
@@ -186,13 +187,31 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyUnits
             .workers()
-            .inRadius(unit.isMelee() ? 8 : 12, unit)
+            .inRadius(unit.isMelee() ? 8 : 15, unit)
             .nearestTo(unit);
 
         if (target != null) {
             debug("C5b = " + target);
             return target;
         }
+
+        // =========================================================
+        // Including unfinished defensive buildings
+
+        target = unit.enemiesNear()
+            .ofType(
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Zerg_Sunken_Colony,
+//                        AUnitType.Zerg_Creep_Colony,
+                AUnitType.Zerg_Spore_Colony,
+                AUnitType.Terran_Bunker,
+                AUnitType.Terran_Missile_Turret
+            )
+            .inRadius(14, unit)
+            .canBeAttackedBy(unit, 1)
+            .mostWounded();
+
+        debug("C5c = " + target);
 
         // === Damaged bases ======================================================
 
@@ -212,7 +231,7 @@ public class ATargetingImportant extends ATargeting {
         target = enemyBuildings
             .ofType(
                 AUnitType.Protoss_Fleet_Beacon,
-                AUnitType.Protoss_Templar_Archives,
+//                AUnitType.Protoss_Templar_Archives,
 //                AUnitType.Terran_Armory,
 //                AUnitType.Terran_Engineering_Bay,
 //                AUnitType.Terran_Academy,

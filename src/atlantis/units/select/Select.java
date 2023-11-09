@@ -390,9 +390,23 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 int total = 0;
 
                 for (AUnit unit : ourUnits()) {
-                    if (unit.is(type)) {
-                        total++;
-                    }
+                    if (unit.is(type)) total++;
+                }
+
+                return total;
+            }
+        );
+    }
+
+    public static int countOurUnfinishedOfType(AUnitType type) {
+        return cacheInt.get(
+            "countOurUnfinishedOfType:" + type.name(),
+            microCacheForFrames,
+            () -> {
+                int total = 0;
+
+                for (AUnit unit : ourUnits()) {
+                    if (!unit.isCompleted() && unit.is(type)) total++;
                 }
 
                 return total;

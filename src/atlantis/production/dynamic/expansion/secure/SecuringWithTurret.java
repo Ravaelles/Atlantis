@@ -3,17 +3,18 @@ package atlantis.production.dynamic.expansion.secure;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
-public class SecuringWithBunker {
+import static atlantis.units.AUnitType.Terran_Missile_Turret;
+
+public class SecuringWithTurret {
     private final SecuringBase securingBase;
 
-    public SecuringWithBunker(SecuringBase securingBase) {
+    public SecuringWithTurret(SecuringBase securingBase) {
         this.securingBase = securingBase;
     }
 
-    public boolean hasBunkerSecuring() {
+    public boolean hasTurretSecuring() {
         return Count.existingOrUnfinishedBuildingsNear(
-//            AUnitType.Terran_Bunker, 8, securingBase.getBaseToSecure()
-            AUnitType.Terran_Bunker, 7, SecuringWithBunkerPosition.bunkerPosition()
+            Terran_Missile_Turret, 7, SecuringWithBunkerPosition.bunkerPosition()
         ) > 0;
     }
 }

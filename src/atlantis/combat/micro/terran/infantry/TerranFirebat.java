@@ -18,11 +18,8 @@ public class TerranFirebat extends Manager {
         return unit.isFirebat();
     }
 
-    public Manager update() {
-        if (!unit.isFirebat()) {
-            return null;
-        }
-
+    @Override
+    protected Manager handle() {
         if (!shouldContinueMeleeFighting()) {
             AUnit enemy = unit.nearestEnemy();
             boolean shouldRun = (enemy != null && unit.distTo(enemy) <= 1.8);
@@ -36,7 +33,7 @@ public class TerranFirebat extends Manager {
         }
 
         if (
-            (unit.hp() >= 43 || unit.lastStartedAttackAgo() >= 30 * 10)
+            (unit.hp() >= 25 || unit.lastStartedAttackAgo() >= 30 * 10)
                 && unit.cooldown() <= 3
                 && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
                 && unit.friendsNear().medics().inRadius(1.4, unit).notEmpty()

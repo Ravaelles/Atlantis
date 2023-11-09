@@ -40,6 +40,10 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     private static APosition findNewPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _CONDITION_THAT_FAILED = null;
 
+//        System.err.println("building = " + building);
+//        System.err.println("nearTo = " + nearTo);
+//        System.err.println("maxDistance = " + maxDistance);
+
         int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
 
         while (searchRadius < maxDistance) {
@@ -52,7 +56,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
                         APosition constructionPosition = APosition.create(tileX, tileY);
                         if (PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
-                            builder, building, constructionPosition
+                            builder, building, constructionPosition, nearTo
                         )) {
 
                             if (building.isCombatBuilding()) {

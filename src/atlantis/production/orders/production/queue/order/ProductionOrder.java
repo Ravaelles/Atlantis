@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.Requirements;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
@@ -131,6 +132,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     public String toString() {
         String suffix = (isDynamic() ? "*" : "") + " " + statusString() + "(#" + id() + ")";
 
+        if (position != null) suffix += " @ " + position;
+
         if (unitOrBuilding != null) {
             return "At " + minSupply + " " + name() + (modifier != null ? " " + modifier : "") + suffix;
         }
@@ -197,6 +200,10 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         int bonus = unitOrBuilding != null && A.supplyUsed() >= 10 && unitOrBuilding.isABuilding() ? 1 : 0;
 
         return AGame.supplyUsed() + bonus >= minSupply;
+    }
+
+    public void cancel() {
+        Queue.get().removeOrder(this);
     }
 
     // === Getters =============================================

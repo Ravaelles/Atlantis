@@ -17,6 +17,7 @@ public class PreventMaginotLine extends Manager {
     public boolean applies() {
         if (unit.hp() <= 20) return false;
         if (shouldStayLoaded()) return false;
+        if (unit.nearestEnemyDist() <= 4.98) return false;
         if (unit.lastActionLessThanAgo(30 * 4, Actions.LOAD)) return false;
         if (unit.enemiesNear().inRadius(2.2 + (unit.id() % 6) / 2.0, unit).notEmpty()) return false;
         if (tooManyDragoonsNearby()) return false;

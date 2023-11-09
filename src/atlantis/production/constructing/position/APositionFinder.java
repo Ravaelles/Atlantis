@@ -9,8 +9,10 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 public class APositionFinder {
     public static Cache<APosition> cache = new Cache<>();
@@ -25,15 +27,23 @@ public class APositionFinder {
      * Returns build position for next building of given type.
      */
     public static APosition findPositionForNew(AUnit builder, AUnitType building, Construction construction) {
-        if (construction == null || construction.productionOrder() == null) return null;
+        if (construction == null || construction.productionOrder() == null) {
+            ErrorLog.printMaxOncePerMinute(
+                "construction = " + construction + "\n" +
+                    "construction.productionOrder() = " + (construction != null ? construction.productionOrder() : "-")
+            );
+            return null;
+        }
 
         if (Env.isTesting()) return APosition.create(A.rand(1, 99), A.rand(13, 99));
 
         HasPosition near = construction != null ? construction.nearTo() : null;
         double maxDistance = construction != null ? construction.maxDistance() : 35;
 
+//        System.err.println("building = " + building + ", near = " + near);
+
         String modifier = construction.productionOrder().getModifier();
-        if (modifier != null) {
+        if (near == null && modifier != null) {
 //            AAdvancedPainter.paintCircleFilled(
 //                PositionModifier.toPosition(modifier, building, builder, construction),
 //                24, Color.Brown
@@ -41,7 +51,6 @@ public class APositionFinder {
 //            GameSpeed.pauseGame();
             near = PositionModifier.toPosition(modifier, building, builder, construction);
         }
-
 
         return findPositionForNew(builder, building, construction, near, maxDistance);
     }

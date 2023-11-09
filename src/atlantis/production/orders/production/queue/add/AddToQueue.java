@@ -1,8 +1,12 @@
 package atlantis.production.orders.production.queue.add;
 
 import atlantis.config.env.Env;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.CameraCommander;
+import atlantis.game.GameSpeed;
+import atlantis.map.base.Bases;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -15,6 +19,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import bwapi.Color;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -84,11 +89,34 @@ public class AddToQueue {
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
 
         if (Queue.get().addNew(index, productionOrder)) {
-//            if (type.isBunker()) A.printStackTrace(A.now() + ": Adding bunker to queue");
+            clearOtherExistingOfTheSameTypeIfNeeded(productionOrder);
+
+//            if (type.isBase()) {
+//                A.printStackTrace(A.now() + ": Queued BASE at " + position + " / natural: " + Bases.natural());
+//            }
+
+            if (type.isBunker()) {
+                if (position != null) {
+                    AAdvancedPainter.paintingMode = 3;
+                    AAdvancedPainter.paintCircleFilled(position, 14, Color.Orange);
+                    CameraCommander.centerCameraOn(position);
+                }
+                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position + " / natural: " + Bases.natural());
+                GameSpeed.pauseGame();
+            }
+
 //            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }
 
         return productionOrder;
+    }
+
+    private static void clearOtherExistingOfTheSameTypeIfNeeded(ProductionOrder productionOrder) {
+        if (productionOrder.isUnitOrBuilding() && productionOrder.unitType().isBase()) {
+            for (ProductionOrder order : Queue.get().readyToProduceOrders().ofType(productionOrder.unitType()).list()) {
+                if (!order.equals(productionOrder)) order.cancel();
+            }
+        }
     }
 
     private static int defineMinSupplyForNewOrder() {

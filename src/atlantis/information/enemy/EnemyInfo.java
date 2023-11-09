@@ -53,6 +53,14 @@ public class EnemyInfo {
         );
     }
 
+    public static int combatBuildingsAntiLand() {
+        return (int) cache.get(
+            "hasDiscoveredAnyBuilding",
+            53,
+            () -> EnemyUnits.discovered().combatBuildingsAntiLand().size()
+        );
+    }
+
     /**
      * Returns <b>true</b> if we have discovered at least one enemy building <b>(and it's still alive)</b>.
      */

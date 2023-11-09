@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 public class NextBasePosition {
     protected static Cache<APosition> cache = new Cache<>();
@@ -18,11 +19,17 @@ public class NextBasePosition {
             () -> {
                 AUnit builder = Select.ourWorkers().first();
                 AUnitType building = AtlantisRaceConfig.BASE;
+                APosition basePosition = FindPositionForBaseNearestFree.find(building, builder, null);
+
+                if (basePosition == null) {
+                    ErrorLog.printMaxOncePerMinute("Null base position, exiting");
+                    return null;
+                }
 
                 return APositionFinder.findStandardPosition(
                     builder,
                     building,
-                    FindPositionForBaseNearestFree.find(building, builder, null),
+                    basePosition,
                     3
                 );
             }

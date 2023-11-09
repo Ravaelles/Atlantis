@@ -180,6 +180,10 @@ public class Count {
         return Select.countOurOfTypeWithUnfinished(type);
     }
 
+    public static int ourUnfinishedOfType(AUnitType type) {
+        return Select.countOurUnfinishedOfType(type);
+    }
+
     public static int ourOfTypeUnfinished(AUnitType type) {
         return Select.ourUnfinished().ofType(type).count();
     }

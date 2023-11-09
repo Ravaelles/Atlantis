@@ -15,6 +15,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
 public class MissionDefendFocus extends MissionFocusPoint {
@@ -44,21 +45,28 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
                 if ((focus = SpecialDefendFocus.define()) != null) return focus;
 
-                // ===============================================================
-                // === Around combat buildings ===================================
-                // ===============================================================
+                // === Main choke ================================================
 
-                if (ArmyStrength.weAreStronger() && Count.ourCombatUnits() <= 7) {
-                    if ((focus = ZergDefendFocus.define()) != null) return focus;
-                    if ((focus = TerranDefendFocus.define()) != null) return focus;
-                    if ((focus = aroundCombatBuilding()) != null) return focus;
+                if (!Enemy.terran() && Count.ourCombatUnits() <= 4) {
+                    if ((focus = atMainChoke()) != null) return focus;
                 }
 
                 // === Natural choke ================================================
 
-                if (Count.bases() >= 2) {
+                if (Count.ourCombatUnits() >= 8 && Count.bases() >= 2) {
                     if ((focus = atNaturalChoke()) != null) return focus;
                 }
+
+                // ===============================================================
+                // === Around combat buildings ===================================
+                // ===============================================================
+
+//                if (ArmyStrength.weAreStronger() && Count.ourCombatUnits() <= 8) {
+//                if (Count.ourCombatUnits() <= 8) {
+                if ((focus = ZergDefendFocus.define()) != null) return focus;
+                if ((focus = TerranDefendFocus.define()) != null) return focus;
+                if ((focus = aroundCombatBuilding()) != null) return focus;
+//                }
 
                 // === Main choke ================================================
 

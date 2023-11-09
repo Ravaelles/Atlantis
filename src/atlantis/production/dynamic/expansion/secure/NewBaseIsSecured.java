@@ -5,7 +5,11 @@ import atlantis.production.constructing.position.base.NextBasePosition;
 
 public class NewBaseIsSecured {
     public static boolean newBaseIsSecured() {
-        return (new SecuringBase(nextBasePosition())).isSecure();
+        APosition basePosition = nextBasePosition();
+
+        if (basePosition == null) return false;
+
+        return (new SecuringBase(basePosition)).isSecure();
     }
 
     public static void secure() {

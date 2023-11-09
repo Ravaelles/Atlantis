@@ -25,7 +25,7 @@ public class SiegeVsSpecificEnemies extends Manager {
 
         AUnit enemy = unit.nearestEnemy();
 
-        double maxDist = enemy != null && enemy.isMoving() ? 14.5 : 11.98;
+        double maxDist = enemy != null && !unit.isMoving() && enemy.isMoving() && enemy.isFacing(unit) ? 17.5 : 11.98;
         if (
             enemies
                 .ofType(

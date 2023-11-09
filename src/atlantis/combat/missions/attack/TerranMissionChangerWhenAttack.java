@@ -2,6 +2,7 @@ package atlantis.combat.missions.attack;
 
 import atlantis.combat.missions.MissionDecisions;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.production.dynamic.terran.tech.SiegeMode;
@@ -68,13 +69,13 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
         if (
             A.supplyUsed() <= 120
-//                && AGame.killsLossesResourceBalance() <= 900
                 && (
-                EnemyUnits.discovered().combatBuildingsAntiLand().size() >= 8 * ourCombatUnits
-                    || EnemyUnits.discovered().combatBuildingsAntiLand().size() >= 5 * Count.marines()
+                EnemyInfo.combatBuildingsAntiLand() >= 12 * ourCombatUnits
+                    || EnemyInfo.combatBuildingsAntiLand() >= 6 * Count.marines()
             )
         ) {
-            if (Count.tanks() <= 3 || !SiegeMode.isResearched()) return true;
+            return true;
+//            if (Count.tanks() <= 3 || !SiegeMode.isResearched()) return true;
         }
 
         return false;

@@ -28,7 +28,7 @@ public class AvoidCombatBuilding extends Manager {
     public boolean applies() {
         AUnit combatBuilding = unit.enemiesNear()
             .combatBuildings(false)
-            .canAttack(unit, 5)
+            .canAttack(unit, A.supplyUsed() <= 40 ? 8 : 5)
             .nearestTo(unit);
 
         if (combatBuilding == null) return false;

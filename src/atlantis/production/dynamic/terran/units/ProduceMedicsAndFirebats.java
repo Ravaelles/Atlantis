@@ -14,7 +14,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
-import static atlantis.units.AUnitType.Terran_Marine;
+import static atlantis.units.AUnitType.*;
 
 public class ProduceMedicsAndFirebats {
     public static boolean medics() {
@@ -22,7 +22,10 @@ public class ProduceMedicsAndFirebats {
         if (Count.ofType(AUnitType.Terran_Academy) == 0) return false;
 
         int medics = Count.medics();
+        int medicsUnfinished = Count.ourUnfinishedOfType(Terran_Medic);
         int marines = Count.marines();
+
+        if (medicsUnfinished >= 3) return false;
 
         if (!Decisions.shouldMakeTerranBio()) {
             if (Have.academy() && Count.infantry() >= 4 && medics <= 0) return false;
@@ -30,29 +33,29 @@ public class ProduceMedicsAndFirebats {
 
 //        if (!ShouldProduceInfantry.canProduceInfantry(medics)) return false;
 
-        if (medics <= 2 && marines >= 1) {
-            return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2) != null;
+        if (medics <= 1 && marines >= 2) {
+            return produceMedic();
         }
 
         // =========================================================
 
         // We have medics, but all of them are depleted from energy
-        if (medics > 0 && Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(30).isEmpty()) {
-            return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 4) != null;
+        if (medics > 0 && Select.ourOfType(Terran_Medic).havingEnergy(30).isEmpty()) {
+            return produceMedic();
         }
 
         if (TerranDynamicInfantry.needToSaveForFactory()) return false;
         if (!AGame.canAffordWithReserved(60, 30)) return false;
 
-        Selection barracks = Select.ourOfType(AUnitType.Terran_Barracks).free();
+        Selection barracks = Select.ourFree(AUnitType.Terran_Barracks);
         if (barracks.isNotEmpty()) {
 
             // Firebats
             if (!Enemy.terran()) {
-                int unfinishedFirebats = Count.inProductionOrInQueue(AUnitType.Terran_Firebat);
+                int unfinishedFirebats = Count.inProductionOrInQueue(Terran_Firebat);
                 if (unfinishedFirebats == 0) {
                     if (marines >= 4 && medics >= 3 && unfinishedFirebats < minFirebats()) {
-                        return AddToQueue.maxAtATime(AUnitType.Terran_Firebat, 1) != null;
+                        return AddToQueue.maxAtATime(Terran_Firebat, 1) != null;
                     }
                 }
             }
@@ -60,12 +63,16 @@ public class ProduceMedicsAndFirebats {
             // Medics
             if (TerranArmyComposition.medicsToInfantryRatioTooLow()) {
                 if (Count.medics() <= 4 && Count.inProductionOrInQueue(Terran_Marine) <= 2) {
-                    return AddToQueue.maxAtATime(AUnitType.Terran_Medic, 2) != null;
+                    return produceMedic();
                 }
             }
         }
 
         return false;
+    }
+
+    private static boolean produceMedic() {
+        return AddToQueue.maxAtATime(Terran_Medic, 2) != null;
     }
 
     private static int minFirebats() {

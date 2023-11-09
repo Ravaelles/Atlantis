@@ -105,8 +105,8 @@ public class ZergSunkenColony extends AntiLandBuildingCommander {
     }
 
     @Override
-    public HasPosition nextPosition() {
-        HasPosition standard = super.nextPosition();
+    public HasPosition nextPosition(HasPosition nearTo) {
+        HasPosition standard = super.nextPosition(nearTo);
 
         if (standard == null) {
             return null;
