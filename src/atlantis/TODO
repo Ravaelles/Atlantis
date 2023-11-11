@@ -1,11 +1,29 @@
 ### BUGS ###
 
-- Refinery sometimes not produced (20 - Refinery), no error, nothing, no construction order
+---- NATURAL bunker bo skips finding the positon ,force to use exact postio
+
+--- For Wraiths, prioritize attacking other Scouts/Wraiths
+
+.-- Factory and other buildings get order supply 01 or 02 etc
+
+?--- Mission Defend all the time
+?--- Bunkers not built at all
+
+.----- Force Firebats to fight when near tanks and not dead
+
+---- Build second bunker at natural if have one there
+?--- Natural base not built even when having 750 minerals
+-- Build early CC when have a bunker there in order to protect it
+
+
+
 
 
 ### FEATURES ###
 
 +++ Build turrets against enemy Wraiths/Scouts
+
+++ Performance improvement for situation when there's Combat Building nearby. 3x slower when one cannon nearby.
 
 .+ Consider high ground for tanks
 

@@ -1,4 +1,4 @@
-package atlantis.production.constructing.position;
+package atlantis.production.constructing.position.modifier;
 
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.*;
@@ -8,6 +8,7 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.base.FindPositionForBase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -50,6 +51,12 @@ public class PositionModifier {
         String modifier, AUnitType building, AUnit builder, Construction construction
     ) {
         AUnit main = Select.main();
+
+        // === Bunker ==========================================
+
+        if (building.isBunker()) {
+            return BunkerPositionModifier.modifierToPosition(modifier, building, builder, construction);
+        }
 
         // === Bases ===========================================
 

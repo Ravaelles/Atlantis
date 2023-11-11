@@ -40,20 +40,13 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
         return existingWithUnfinished() < expected();
     }
 
-    @Override
-    public boolean handleBuildNew() {
+    public boolean requestToBuildNewAntiLandCombatBuilding() {
         if (We.zerg()) {
-            ((ZergSunkenColony) instance).handleExistingCreepColonyIfNeeded();
+            if (((ZergSunkenColony) instance).handleExistingCreepColonyIfNeeded()) return true;
         }
 
-        if (shouldBuildNew()) {
-//            System.err.println("ENQUEUE NEW Sunken Colony");
-            return requestOne(nextPosition());
-        }
-
-        return false;
+        return shouldBuildNew() ? requestOne(nextPosition()) : false;
     }
-
 
     @Override
     public boolean requestOne(HasPosition at) {
@@ -115,100 +108,100 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
         return false;
     }
 
-    @Override
-    public HasPosition nextPosition(HasPosition initialNearTo) {
-        return cache.get(
-            "nextBuildingPosition:" + initialNearTo,
-            13,
-            () -> {
-                APosition nearTo = initialNearTo != null ? initialNearTo.position() : null;
-
-                int bases = Count.basesWithUnfinished();
-
-                if (bases == 0 || Select.main() == null) {
-                    return null;
-                }
-
-                // === Main choke ===========================================
-
-                AChoke mainChoke = Chokes.mainChoke();
-                if (bases <= 1 && mainChoke != null) {
-                    if (We.terran() && Enemy.terran()) {
-                        if (nearTo == null) nearTo = mainChoke.translateTilesTowards(3, Select.main()).makeWalkable(8);
-                        AUnit builder = Select.ourWorkers().nearestTo(nearTo);
-                        return APositionFinder.findStandardPosition(
-                            builder, type(), nearTo, 15
-                        );
-                    }
-
-                    if (Count.bunkers() > 0) {
-                        if (nearTo == null) nearTo = mainChoke
-                            .translateTilesTowards(5, Select.main())
-                            .makeBuildable(8)
-                            .makeWalkable(4);
-                    }
-                    else {
-                        if (nearTo == null) nearTo = Select.main()
-                            .translateTilesTowards(3, mainChoke)
-                            .makeBuildable(8)
-                            .makeWalkable(4);
-                    }
-
-                    return findPositionNear(nearTo);
-
-//            return PositionModifier.toPosition(
-//                PositionModifier.MAIN_CHOKE, type(), null, null
-//            );
-                }
-
-                // === At natural ===========================================
-
-                if (bases >= 2) {
-                    APosition naturalPosition = Bases.natural();
-                    if (naturalPosition != null) {
-                        AUnit naturalBase = Select.ourWithUnfinished().bases().inRadius(8, naturalPosition).first();
-                        if (naturalBase != null) {
-                            AChoke naturalChoke = Chokes.natural();
-                            if (naturalChoke != null) {
-//                        nearTo = naturalChoke.position();
-//                        return naturalChoke.translatePercentTowards(10, naturalBase);
-                                double distFromChoke = naturalChoke.width() <= 4 ? 3.5 : 3;
-                                if (nearTo == null)
-                                    nearTo = naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
-                            }
-
-                            return findPositionNear(nearTo);
-                        }
-                    }
-                }
-
-                // =========================================================
-
-                AUnitType building = type();
-
-                AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
-                if (We.zerg() && previousBuilding != null) {
-                    nearTo = previousBuilding.position();
-                }
-
-                if (nearTo == null) {
-
-                    // Place near the base
-                    nearTo = Select.naturalOrMain() != null ? Select.naturalOrMain().position() : null;
-                }
-
-                // Move towards nearest choke
-                if (nearTo != null) {
-                    AChoke choke = Chokes.nearestChoke(nearTo);
-                    if (choke != null) {
-                        nearTo = nearTo.translateTilesTowards(choke, 7);
-                    }
-                }
-
-                return nearTo;
-            }
-        );
-    }
+//    @Override
+//    public HasPosition nextPosition(HasPosition initialNearTo) {
+//        return cache.get(
+//            "nextBuildingPosition:" + initialNearTo,
+//            13,
+//            () -> {
+//                APosition nearTo = initialNearTo != null ? initialNearTo.position() : null;
+//
+//                int bases = Count.basesWithUnfinished();
+//
+//                if (bases == 0 || Select.main() == null) {
+//                    return null;
+//                }
+//
+//                // === Main choke ===========================================
+//
+//                AChoke mainChoke = Chokes.mainChoke();
+//                if (bases <= 1 && mainChoke != null) {
+//                    if (We.terran() && Enemy.terran()) {
+//                        if (nearTo == null) nearTo = mainChoke.translateTilesTowards(3, Select.main()).makeWalkable(8);
+//                        AUnit builder = Select.ourWorkers().nearestTo(nearTo);
+//                        return APositionFinder.findStandardPosition(
+//                            builder, type(), nearTo, 15
+//                        );
+//                    }
+//
+//                    if (Count.bunkers() > 0) {
+//                        if (nearTo == null) nearTo = mainChoke
+//                            .translateTilesTowards(5, Select.main())
+//                            .makeBuildable(8)
+//                            .makeWalkable(4);
+//                    }
+//                    else {
+//                        if (nearTo == null) nearTo = Select.main()
+//                            .translateTilesTowards(3, mainChoke)
+//                            .makeBuildable(8)
+//                            .makeWalkable(4);
+//                    }
+//
+//                    return findPositionNear(nearTo);
+//
+////            return PositionModifier.toPosition(
+////                PositionModifier.MAIN_CHOKE, type(), null, null
+////            );
+//                }
+//
+//                // === At natural ===========================================
+//
+//                if (bases >= 2) {
+//                    APosition naturalPosition = Bases.natural();
+//                    if (naturalPosition != null) {
+//                        AUnit naturalBase = Select.ourWithUnfinished().bases().inRadius(8, naturalPosition).first();
+//                        if (naturalBase != null) {
+//                            AChoke naturalChoke = Chokes.natural();
+//                            if (naturalChoke != null) {
+////                        nearTo = naturalChoke.position();
+////                        return naturalChoke.translatePercentTowards(10, naturalBase);
+//                                double distFromChoke = naturalChoke.width() <= 4 ? 3.5 : 3;
+//                                if (nearTo == null)
+//                                    nearTo = naturalChoke.translateTilesTowards(distFromChoke, naturalBase);
+//                            }
+//
+//                            return findPositionNear(nearTo);
+//                        }
+//                    }
+//                }
+//
+//                // =========================================================
+//
+//                AUnitType building = type();
+//
+//                AUnit previousBuilding = Select.ourBuildingsWithUnfinished().ofType(building).first();
+//                if (We.zerg() && previousBuilding != null) {
+//                    nearTo = previousBuilding.position();
+//                }
+//
+//                if (nearTo == null) {
+//
+//                    // Place near the base
+//                    nearTo = Select.naturalOrMain() != null ? Select.naturalOrMain().position() : null;
+//                }
+//
+//                // Move towards nearest choke
+//                if (nearTo != null) {
+//                    AChoke choke = Chokes.nearestChoke(nearTo);
+//                    if (choke != null) {
+//                        nearTo = nearTo.translateTilesTowards(choke, 7);
+//                    }
+//                }
+//
+//                return nearTo;
+//            }
+//        );
+//    }
 
     private HasPosition findPositionNear(APosition nearTo) {
         AUnit builder = Select.ourWorkers().nearestTo(nearTo);

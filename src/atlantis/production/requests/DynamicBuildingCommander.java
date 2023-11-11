@@ -2,7 +2,7 @@ package atlantis.production.requests;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.dynamic.expansion.secure.SecuringWithBunkerPosition;
+import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -13,7 +13,7 @@ public abstract class DynamicBuildingCommander {
 
     public abstract boolean shouldBuildNew();
 
-    public boolean handleBuildNew() {
+    public boolean requestToBuildNewAntiAirCombatBuilding() {
         if (shouldBuildNew()) {
             return requestOne(nextPosition());
         }
@@ -34,11 +34,11 @@ public abstract class DynamicBuildingCommander {
     }
 
     public HasPosition nextPosition(HasPosition nearTo) {
-        return SecuringWithBunkerPosition.forNonNatural(nearTo);
+        return (new NewBunkerPositionFinder(nearTo)).find();
     }
 
     public HasPosition nextPosition() {
-        return SecuringWithBunkerPosition.bunkerPosition();
+        return (new NewBunkerPositionFinder(null)).find();
     }
 
     public int existingWithUnfinished() {

@@ -23,10 +23,10 @@ public abstract class AStrategyResponse {
         if (AGame.notNthGameFrame(17)) return false;
 
         // Anti-LAND
-        if (antiLandManager().handleBuildNew()) return true;
+//        if (antiLandManager().requestToBuildNewAntiLandCombatBuilding()) return true;
 
         // Anti-AIR
-        if (antiAirManager().handleBuildNew()) return true;
+        if (antiAirManager().requestToBuildNewAntiAirCombatBuilding()) return true;
 
         return false;
     }

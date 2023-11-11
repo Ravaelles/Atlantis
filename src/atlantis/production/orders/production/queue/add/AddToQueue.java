@@ -125,8 +125,8 @@ public class AddToQueue {
 //        nextOrders.print("nextOrders");
 
         if (nextOrders.isEmpty()) {
-//            return A.supplyUsed() - 1;
-            return 0;
+            return A.supplyUsed() - 1;
+//            return 0;
         }
 
 //        System.err.println("A = " + (nextOrders.list().get(0).minSupply() + 1));

@@ -1,7 +1,6 @@
 package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
@@ -41,7 +40,7 @@ public class AvoidCombatBuilding extends Manager {
         ) return true;
 
         if (!unit.isTank()) {
-            if (We.terran() && unit.friendsNear().groundUnits().havingGroundWeapon().atLeast(9)) return false;
+            if (We.terran() && unit.friendsNear().groundUnits().havingAntiGroundWeapon().atLeast(9)) return false;
 
             if (
                 unit.isMissionAttack()

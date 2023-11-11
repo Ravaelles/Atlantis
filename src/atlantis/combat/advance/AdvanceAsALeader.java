@@ -17,7 +17,7 @@ public class AdvanceAsALeader extends MissionManager {
 
     @Override
     protected Manager handle() {
-        if (unit.isMissionAttackOrGlobalAttack()) return null;
+//        if (unit.isMissionAttackOrGlobalAttack()) return null;
 
         int cohesionPercent = unit.squad().cohesionPercent();
         int friendsNear = unit.friendsInRadius(7).count();

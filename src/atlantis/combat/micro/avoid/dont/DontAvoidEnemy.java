@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid.dont;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.terran.TerranDontAvoidEnemy;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 
 public class DontAvoidEnemy extends Manager {
     public DontAvoidEnemy(AUnit unit) {
@@ -11,7 +12,17 @@ public class DontAvoidEnemy extends Manager {
 
     @Override
     public boolean applies() {
-        return true;
+        return unit.isRanged()
+            && unit.woundHp() <= 16
+            && enemyAirUnitsAreNearAndWeShouldEngage();
+    }
+
+    private boolean enemyAirUnitsAreNearAndWeShouldEngage() {
+        return unit.enemiesNear()
+            .ofType(AUnitType.Terran_Wraith, AUnitType.Protoss_Scout).inRadius(5, unit)
+            .effVisible()
+            .notEmpty()
+            && unit.meleeEnemiesNearCount(2.5) == 0;
     }
 
     @Override

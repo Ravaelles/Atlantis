@@ -97,6 +97,7 @@ public class ZergSunkenColony extends AntiLandBuildingCommander {
                 String tooltip = "Into" + type();
                 colony.addLog(tooltip);
                 colony.setTooltip(tooltip);
+                return true;
 //                    System.err.println("---- Morph " + colony + " into >>> " + type());
             }
         }

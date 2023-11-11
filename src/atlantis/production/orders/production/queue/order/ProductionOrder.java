@@ -54,6 +54,12 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     private boolean dynamic = true;
 
     /**
+     * If true, then the building will be built exactly at given position, without any modifications.
+     * If false, then the building will be built at the nearest possible position.
+     */
+    private boolean usingExactPosition = false;
+
+    /**
      * Contains first column
      */
     private String rawFirstColumnInFile;
@@ -382,5 +388,13 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public boolean isUnitOrBuilding() {
         return unitOrBuilding != null;
+    }
+
+    public void markAsUsingExactPosition() {
+        usingExactPosition = true;
+    }
+
+    public boolean isUsingExactPosition() {
+        return usingExactPosition;
     }
 }

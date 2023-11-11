@@ -64,6 +64,6 @@ public class TurretNeededHere extends Commander {
 
     private boolean isUnderAttackByAirOrSoItSeems(AUnit unit) {
         return unit.lastUnderAttackLessThanAgo(30 * 3)
-            && unit.enemiesNear().air().havingGroundWeapon().inRadius(7, unit).notEmpty();
+            && unit.enemiesNear().air().havingAntiGroundWeapon().inRadius(7, unit).notEmpty();
     }
 }

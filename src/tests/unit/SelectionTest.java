@@ -1,9 +1,5 @@
 package tests.unit;
 
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.enemy.EnemyUnitsUpdater;
-import atlantis.information.strategy.OurStrategy;
-import atlantis.information.strategy.TerranStrategies;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
@@ -137,7 +133,7 @@ public class SelectionTest extends NonAbstractTestFakingGame {
             assertEquals(5, our.havingAntiAirWeapon().size());
             assertEquals(17, our.notHavingAntiAirWeapon().size());
 
-            assertEquals(11, our.havingGroundWeapon().size());
+            assertEquals(11, our.havingAntiGroundWeapon().size());
 
             assertEquals(0, zealot.friendsInRadius(4.9).size());
             assertEquals(1, our.inRadius(4.9, zealot).size());

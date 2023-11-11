@@ -499,8 +499,8 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(u -> !u.hasAnyWeapon(), "havingWeapon");
     }
 
-    public Selection havingGroundWeapon() {
-        return cloneByRemovingIf(u -> !u.canAttackGroundUnits(), "havingGroundWeapon");
+    public Selection havingAntiGroundWeapon() {
+        return cloneByRemovingIf(u -> !u.canAttackGroundUnits(), "havingAntiGroundWeapon");
     }
 
     public Selection notHavingAntiAirWeapon() {

@@ -8,6 +8,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.base.FindPositionForBase;
 import atlantis.production.constructing.position.base.FindPositionForBaseNearestFree;
+import atlantis.production.constructing.position.modifier.PositionModifier;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

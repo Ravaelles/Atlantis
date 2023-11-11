@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid.dont.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class TerranDontAvoidEnemy extends Manager {
@@ -18,6 +19,7 @@ public class TerranDontAvoidEnemy extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             WraithDontAvoidEnemy.class,
+            TerranRangedDontAvoidEnemy.class,
         };
     }
 

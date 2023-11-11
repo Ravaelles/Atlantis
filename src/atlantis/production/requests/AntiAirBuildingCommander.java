@@ -24,13 +24,10 @@ public abstract class AntiAirBuildingCommander extends DynamicBuildingCommander 
         return existingWithUnfinished() < expected();
     }
 
-    public boolean handleBuildNew() {
+    public boolean requestToBuildNewAntiAirCombatBuilding() {
         if (We.terran()) return false;
 
-        if (shouldBuildNew()) {
-//            System.err.println("ENQUEUE NEW Spore Colony");
-            return requestOne(null);
-        }
+        if (shouldBuildNew()) return requestOne(null);
 
         return false;
     }

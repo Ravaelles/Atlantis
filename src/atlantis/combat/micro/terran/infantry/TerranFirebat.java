@@ -20,31 +20,33 @@ public class TerranFirebat extends Manager {
 
     @Override
     protected Manager handle() {
-        if (!shouldContinueMeleeFighting()) {
-            AUnit enemy = unit.nearestEnemy();
-            boolean shouldRun = (enemy != null && unit.distTo(enemy) <= 1.8);
-            if (shouldRun) {
-                if (unit.runningManager().runFrom(
-                    enemy, 2, Actions.RUN_ENEMY, false
-                )) {
-                    return usedManager(this);
-                }
-            }
-        }
+        return null; // This works worse than without it :)
 
-        if (
-            (unit.hp() >= 25 || unit.lastStartedAttackAgo() >= 30 * 10)
-                && unit.cooldown() <= 3
-                && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
-                && unit.friendsNear().medics().inRadius(1.4, unit).notEmpty()
-        ) {
-            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
-                unit.setTooltip("Napalm");
-                return usedManager(this);
-            }
-        }
-
-        return null;
+//        if (!shouldContinueMeleeFighting()) {
+//            AUnit enemy = unit.nearestEnemy();
+//            boolean shouldRun = (enemy != null && unit.distTo(enemy) <= 1.8);
+//            if (shouldRun) {
+//                if (unit.runningManager().runFrom(
+//                    enemy, 2, Actions.RUN_ENEMY, false
+//                )) {
+//                    return usedManager(this);
+//                }
+//            }
+//        }
+//
+//        if (
+//            (unit.hp() >= 25 || unit.lastStartedAttackAgo() >= 30 * 10)
+//                && unit.cooldown() <= 3
+//                && unit.enemiesNear().melee().inRadius(1.6, unit).atMost(Enemy.protoss() ? 1 : 3)
+//                && unit.friendsNear().medics().inRadius(1.4, unit).notEmpty()
+//        ) {
+//            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
+//                unit.setTooltip("Napalm");
+//                return usedManager(this);
+//            }
+//        }
+//
+//        return null;
     }
 
     protected boolean shouldContinueMeleeFighting() {

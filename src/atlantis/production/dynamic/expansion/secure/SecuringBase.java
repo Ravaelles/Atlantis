@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.expansion.secure;
 
+import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.position.APosition;
@@ -9,19 +10,23 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
 
 public class SecuringBase {
     public static final int DIST_FROM_BASE = 8;
-    private final SecuringWithBunker securingWithBunker = new SecuringWithBunker(this);
-    private final SecuringWithTurret securingWithTurret = new SecuringWithTurret(this);
+
+    private final SecuringWithBunker securingWithBunker;
+    private final SecuringWithTurret securingWithTurret;
 
     private APosition baseToSecure;
 
     public SecuringBase(APosition baseToSecure) {
         this.baseToSecure = baseToSecure;
+        this.securingWithBunker = new SecuringWithBunker(this);
+        this.securingWithTurret = new SecuringWithTurret(this);
     }
 
     public boolean secure() {
@@ -39,12 +44,13 @@ public class SecuringBase {
         if (CountInQueue.count(Terran_Bunker) >= 1) return true;
         if (Count.withPlanned(Terran_Bunker) >= 3) return true;
 
-        APosition bunkerPosition = SecuringWithBunkerPosition.bunkerPosition();
+        APosition bunkerPosition = (new NewBunkerPositionFinder(baseToSecure)).find();
 
-//        System.err.println(A.now() + " bunkerPosition = " + bunkerPosition + " / " + Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition));
-//        System.err.println(Select.main().position());
+        System.err.println(A.now() + " bunkerPosition = " + bunkerPosition
+            + " / " + Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition)
+            + " // " + Select.main().position());
 
-        if (bunkerPosition == null) return true; // Broken, temp fix
+        if (bunkerPosition == null) return true;
 
         if (Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition) == 0) {
             ProductionOrder order = AddToQueue.withTopPriority(Terran_Bunker, bunkerPosition);
@@ -75,7 +81,7 @@ public class SecuringBase {
         return true;
     }
 
-    public HasPosition getBaseToSecure() {
+    public HasPosition baseToSecure() {
         return baseToSecure;
     }
 

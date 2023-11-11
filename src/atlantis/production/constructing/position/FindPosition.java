@@ -7,7 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.base.FindPositionForBaseNearestFree;
 import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
-import atlantis.production.constructing.position.terran.TerranBunkerPositionFinder;
+import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -103,7 +103,9 @@ public class FindPosition {
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {
         if (building.isBunker()) {
-            return TerranBunkerPositionFinder.findPosition(builder, construction, nearTo);
+//            return TerranBunkerPositionFinder.findPosition(builder, construction, nearTo);
+//            return (new NewBunkerPositionFinder(nearTo, builder, construction)).find();
+            return (new NewBunkerPositionFinder(nearTo, builder)).find();
         }
 
         // =========================================================

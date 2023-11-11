@@ -6,10 +6,10 @@ import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.position.modifier.PositionModifier;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
@@ -44,11 +44,6 @@ public class APositionFinder {
 
         String modifier = construction.productionOrder().getModifier();
         if (near == null && modifier != null) {
-//            AAdvancedPainter.paintCircleFilled(
-//                PositionModifier.toPosition(modifier, building, builder, construction),
-//                24, Color.Brown
-//            );
-//            GameSpeed.pauseGame();
             near = PositionModifier.toPosition(modifier, building, builder, construction);
         }
 
@@ -67,7 +62,7 @@ public class APositionFinder {
     ) {
         return cache.get(
             "findPositionForNew",
-            1,
+            2,
             () -> FindPosition.findForBuilding(builder, building, construction, nearTo, maxDistance)
         );
     }

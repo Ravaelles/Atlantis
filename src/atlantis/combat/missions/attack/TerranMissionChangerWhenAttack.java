@@ -68,7 +68,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
         int ourCombatUnits = Count.ourCombatUnits();
 
         if (
-            A.supplyUsed() <= 120
+            A.supplyUsed() <= 70
                 && (
                 EnemyInfo.combatBuildingsAntiLand() >= 12 * ourCombatUnits
                     || EnemyInfo.combatBuildingsAntiLand() >= 6 * Count.marines()

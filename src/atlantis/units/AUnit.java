@@ -2867,4 +2867,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             AUnitType.Zerg_Scourge
         );
     }
+
+    public boolean hasCloseRepairer() {
+        AUnit repairer = repairer();
+
+        return repairer != null && this.distTo(repairer) <= (isAir() ? 6 : 2);
+    }
 }

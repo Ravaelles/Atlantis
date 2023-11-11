@@ -7,6 +7,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 
 public class SpecificConstructionRequests {
@@ -16,13 +17,14 @@ public class SpecificConstructionRequests {
      */
     protected static boolean handledAsSpecialBuilding(AUnitType building, ProductionOrder order) {
         if (handledTerranSpecialBuilding(building, order)) return true;
+
         return handledZergSpecialBuilding(building, order);
     }
 
     // === Terran ========================================    
 
     private static boolean handledTerranSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (!AGame.isPlayingAsTerran()) return false;
+        if (!We.terran()) return false;
 
         if (building.isAddon()) {
             TerranAddonBuilder.buildNewAddon(building, order);

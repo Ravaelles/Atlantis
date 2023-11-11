@@ -1,6 +1,7 @@
 package atlantis.information.enemy;
 
 import atlantis.game.A;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -189,6 +190,11 @@ public class EnemyInfo {
             30,
             () -> {
                 if (!GamePhase.isEarlyGame()) return false;
+
+                if (
+                    (A.supplyUsed() >= 14 && EnemyStrategy.get().isUnknown())
+                        || (A.supplyUsed() <= 30 && ArmyStrength.weAreMuchWeaker())
+                ) return true;
 
                 if (Enemy.protoss()) {
                     return EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(6);

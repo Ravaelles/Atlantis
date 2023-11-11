@@ -4,7 +4,6 @@ import atlantis.Atlantis;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
@@ -32,9 +31,8 @@ import atlantis.map.scout.ScoutManager;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.position.PositionFulfillsAllConditions;
 import atlantis.production.constructing.position.base.NextBasePosition;
-import atlantis.production.dynamic.expansion.secure.SecuringWithBunkerPosition;
+import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -1516,7 +1514,7 @@ public class AAdvancedPainter extends APainter {
         setTextSizeMedium();
 
         // Natural base
-        APosition natural = Bases.natural();
+        HasPosition natural = Bases.natural();
         paintBase(natural, "Our natural", Color.Grey, 0);
 
         // Enemy base
@@ -1549,7 +1547,7 @@ public class AAdvancedPainter extends APainter {
         }
         if (We.terran()) {
 //            paintBuildingPosition((new TerranBunker()).nextPosition(), "Next Bunker");
-            paintBuildingPosition(SecuringWithBunkerPosition.bunkerPosition(), "Next Bunker");
+            paintBuildingPosition((new NewBunkerPositionFinder(null)).find(), "Next Bunker");
             paintBuildingPosition(NextBasePosition.nextBasePosition(), "Next BASE");
         }
 
@@ -1676,7 +1674,7 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    public static void paintBase(APosition position, String text, Color color, double extraDy) {
+    public static void paintBase(HasPosition position, String text, Color color, double extraDy) {
         if (position == null || isDisabled()) {
             return;
         }

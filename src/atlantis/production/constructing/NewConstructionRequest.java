@@ -5,6 +5,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
+import atlantis.production.constructing.position.DefineExactPositionForNewConstruction;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.Requirements;
@@ -48,9 +49,7 @@ public class NewConstructionRequest {
 
         if (SpecificConstructionRequests.handledAsSpecialBuilding(building, order)) return true;
 
-        if (!Requirements.hasRequirements(building)) {
-            return handleRequirementsNotFullfilledFor(building);
-        }
+        if (!Requirements.hasRequirements(building)) return handleRequirementsNotFullfilledFor(building);
 
         // =========================================================
         // Create ConstructionOrder object, assign random worker for the time being
@@ -61,13 +60,13 @@ public class NewConstructionRequest {
 //            A.printStackTrace("Requested BASE");
 //        }
 
-        Construction newConstructionOrder = new Construction(building);
-        newConstructionOrder.setProductionOrder(order);
-        newConstructionOrder.setNearTo(near);
-        newConstructionOrder.setMaxDistance(order != null ? order.maximumDistance() : -1);
-        newConstructionOrder.assignRandomBuilderForNow();
+        Construction newConstruction = new Construction(building);
+        newConstruction.setProductionOrder(order);
+        newConstruction.setNearTo(near);
+        newConstruction.setMaxDistance(order != null ? order.maximumDistance() : -1);
+        newConstruction.assignRandomBuilderForNow();
 
-        if (newConstructionOrder.builder() == null) {
+        if (newConstruction.builder() == null) {
             if (AGame.supplyUsed() >= 7 && Count.bases() > 0 && Count.workers() > 0) {
                 ErrorLog.printMaxOncePerMinute("Builder is null, got damn it!");
             }
@@ -77,8 +76,11 @@ public class NewConstructionRequest {
         // =========================================================
         // Find place for new building
 
-        APosition positionToBuild = newConstructionOrder.findPositionForNewBuilding();
-        newConstructionOrder.setPositionToBuild(positionToBuild);
+        APosition positionToBuild = DefineExactPositionForNewConstruction.exactPositionForNewConstruction(
+            building, order, newConstruction
+        );
+
+        // =========================================================
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         if (positionToBuild == null) {
@@ -91,7 +93,7 @@ public class NewConstructionRequest {
                 ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
             }
 
-            newConstructionOrder.cancel();
+            newConstruction.cancel();
             return false;
         }
 
@@ -101,15 +103,15 @@ public class NewConstructionRequest {
         APositionFinder.clearCache();
 
         // Assign optimal builder for this building
-        newConstructionOrder.assignOptimalBuilder();
+        newConstruction.assignOptimalBuilder();
 
         // Add to list of pending orders
-        if (ConstructionRequests.alreadyExists(newConstructionOrder)) {
-            newConstructionOrder.cancel();
+        if (ConstructionRequests.alreadyExists(newConstruction)) {
+            newConstruction.cancel();
             return false;
         }
         else {
-            ConstructionRequests.constructions.add(newConstructionOrder);
+            ConstructionRequests.constructions.add(newConstruction);
         }
 
 //            A.printStackTrace("AFTER ADDED");

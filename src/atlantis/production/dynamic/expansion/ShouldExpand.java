@@ -9,6 +9,7 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.base.Bases;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.dynamic.expansion.terran.TerranShouldExpandToNatural;
 import atlantis.production.dynamic.zerg.ZergExpansionCommander;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.AUnitType;
@@ -20,6 +21,11 @@ import atlantis.util.We;
 public class ShouldExpand {
     protected static boolean shouldBuildNewBase() {
         if (We.terran()) {
+            if (TerranShouldExpandToNatural.shouldExpandToNatural()) {
+                System.err.println("@ " + A.now() + " - YES shouldBuildNewBase");
+                return true;
+            }
+
             if (Count.tanks() <= 0 && !A.hasMinerals(350)) return false;
             if (A.minerals() <= 1100 && GamePhase.isLateGame()) return false;
         }

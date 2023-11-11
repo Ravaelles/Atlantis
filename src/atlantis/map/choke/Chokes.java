@@ -92,7 +92,7 @@ public class Chokes {
         );
     }
 
-    public static AChoke natural(APosition relativeTo) {
+    public static AChoke natural(HasPosition relativeTo) {
         if (relativeTo == null) {
             return null;
         }

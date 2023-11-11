@@ -15,7 +15,7 @@ public class ShouldNeverAvoidAsTerran extends HasUnit {
     }
 
     private boolean enemyWeakAirUnitsNearby() {
-        return unit.enemiesNear().air().havingGroundWeapon().inRadius(6, unit).size() > 0
+        return unit.enemiesNear().air().havingAntiGroundWeapon().inRadius(6, unit).size() > 0
             && unit.hpMoreThan(20)
             && unit.combatEvalRelative() > 0.8;
     }

@@ -1,6 +1,8 @@
 package atlantis.production.constructing.position;
 
 import atlantis.debug.painter.APainter;
+import atlantis.game.CameraCommander;
+import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.conditions.*;
@@ -8,6 +10,7 @@ import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.PauseAndCenter;
 import bwapi.Color;
 
 public class PositionFulfillsAllConditions {
@@ -19,6 +22,7 @@ public class PositionFulfillsAllConditions {
         AUnit builder, AUnitType building, APosition position, HasPosition nearTo
     ) {
         APainter.paintCircle(position, 6, Color.Red);
+//        if (building.isBunker()) PauseAndCenter.on(position, true);
 
         if (position == null) {
             TerranPositionFinder._CONDITION_THAT_FAILED = "POSITION ARGUMENT IS NULL";
