@@ -42,6 +42,7 @@ public class SecuringBase {
     }
 
     private boolean secureWithBunker() {
+        if (baseToSecure == null) return false;
         if (CountInQueue.count(Terran_Bunker) >= 1) return true;
         if (Count.withPlanned(Terran_Bunker) >= 3) return true;
 
@@ -77,6 +78,8 @@ public class SecuringBase {
     }
 
     public boolean isSecure() {
+        if (baseToSecure == null) return true;
+
 //        if (A.hasMinerals(1000)) return true; // Having lots of resources means we can afford potential losses
 
 //        if (We.terran() && !Have.barracks()) return true;

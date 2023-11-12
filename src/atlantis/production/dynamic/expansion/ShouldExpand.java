@@ -19,11 +19,9 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ShouldExpand {
-    protected static boolean shouldBuildNewBase() {
+    public static boolean shouldBuildNewBase() {
         if (We.terran()) {
-            if (TerranShouldExpandToNatural.shouldExpandToNatural()) {
-                return true;
-            }
+            if (TerranShouldExpandToNatural.shouldExpandToNatural()) return true;
 
             if (Count.tanks() <= 0 && !A.hasMinerals(350)) return false;
             if (A.minerals() <= 1100 && GamePhase.isLateGame()) return false;

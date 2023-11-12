@@ -27,12 +27,13 @@ import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.ARegionBoundary;
 import atlantis.map.scout.ScoutCommander;
-import atlantis.map.scout.ScoutManager;
+import atlantis.map.scout.ScoutState;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.base.NextBasePosition;
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
+import atlantis.production.dynamic.expansion.ShouldExpand;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -390,6 +391,10 @@ public class AAdvancedPainter extends APainter {
             color = Color.Orange;
         }
         paintSideMessage("Alpha mission: " + Alpha.get().mission().name(), color);
+
+
+        String shouldExpand = ShouldExpand.shouldBuildNewBase() ? "YES" : "NO";
+        paintSideMessage("Should expand: " + shouldExpand, shouldExpand == "YES" ? Green : Grey);
 
 //        AFocusPoint focus = mission.focusPoint();
         paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.Grey);
@@ -1296,7 +1301,7 @@ public class AAdvancedPainter extends APainter {
 //            ARegion enemyBaseRegion = Regions.getRegion(enemyBase);
 //            Position polygonCenter = enemyBaseRegion.getPolygon().getCenter();
 //            APosition polygonCenter = APosition.create(enemyBaseRegion.getPolygon().getCenter());
-            for (ARegionBoundary point : ScoutManager.scoutingAroundBasePoints.arrayList()) {
+            for (ARegionBoundary point : ScoutState.scoutingAroundBasePoints.arrayList()) {
                 paintCircleFilled(point, 2, Yellow);
             }
         }

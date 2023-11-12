@@ -25,7 +25,7 @@ public class PositionUtil {
 //        if (true) throw new RuntimeException("PositionUtil.distanceTo was used");
 
         if (object1 == null || object2 == null) {
-            ErrorLog.printMaxOncePerMinute(
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                 "object1\n" +
                     object1 + "\n" +
                     "object2\n" +

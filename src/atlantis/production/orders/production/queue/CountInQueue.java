@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue;
 
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
@@ -40,5 +41,9 @@ public class CountInQueue {
 
     public static int countInfantry() {
         return Queue.get().allOrders().infantry().size();
+    }
+
+    public static int bases() {
+        return count(AtlantisRaceConfig.BASE);
     }
 }

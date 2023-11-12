@@ -4,6 +4,8 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.GamePhase;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -23,16 +25,19 @@ import static atlantis.units.AUnitType.Terran_Marine;
 public class ProduceMarines {
     //    private static final boolean DEBUG = true;
     private static final boolean DEBUG = false;
+    private static int marines;
 
     public static boolean marines() {
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
         if (Select.ourFree(Terran_Barracks).size() < CountInQueue.count(Terran_Marine)) return false;
 
-        int marines = Count.marines();
+        marines = Count.marines();
 
         if (marines <= 1 && A.hasMinerals(150)) return produceMarine();
 
         if (A.canAffordWithReserved(55, 0)) return false;
+
+        if (earlyGameAndWeAreWeak()) return false;
 
 //        if (marines == 0 && A.hasMinerals(100)) {
 //            return AddToQueue.maxAtATime(Terran_Marine, 1) != null;
@@ -84,6 +89,15 @@ public class ProduceMarines {
         }
 
         return trainMarinesForBunkersIfNeeded();
+    }
+
+    private static boolean earlyGameAndWeAreWeak() {
+        return GamePhase.isEarlyGame()
+            && (
+            ArmyStrength.weAreMuchWeaker()
+                && marines <= 10
+                && A.hasMinerals(100)
+        ) || A.hasMinerals(500);
     }
 
     private static boolean produceMarine() {
