@@ -15,12 +15,15 @@ public class DefineExactPositionForNewConstruction {
         // === Bunker ===========================================
 
         if (building.isBunker()) {
-            if (order.atPosition() == null && order.getModifier() != null) {
-                PositionModifier.toPosition(order.getModifier(), building, null, newConstructionOrder);
-            }
+            if (order.getModifier() != null) {
+                APosition position = PositionModifier.toPosition(
+                    order.getModifier(), building, null, newConstructionOrder
+                );
+                System.err.println("FORCE BUNKER position from BO = " + position + " / " + order.getModifier());
 
-            if (order.atPosition() != null) order.markAsUsingExactPosition();
-            System.err.println("&& order.isUsingExactPosition() = " + order.isUsingExactPosition());
+                order.forceSetPosition(position);
+                if (order.atPosition() != null) order.markAsUsingExactPosition();
+            }
         }
 
         // =========================================================

@@ -95,15 +95,15 @@ public class AddToQueue {
 //                A.printStackTrace(A.now() + ": Queued BASE at " + position + " / natural: " + Bases.natural());
 //            }
 
-            if (type.isBunker()) {
-                if (position != null) {
-                    AAdvancedPainter.paintingMode = 3;
-                    AAdvancedPainter.paintCircleFilled(position, 14, Color.Orange);
-                    CameraCommander.centerCameraOn(position);
-                }
-                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position + " / natural: " + Bases.natural());
-                GameSpeed.pauseGame();
-            }
+//            if (type.isBunker()) {
+//                if (position != null) {
+//                    AAdvancedPainter.paintingMode = 3;
+//                    AAdvancedPainter.paintCircleFilled(position, 14, Color.Orange);
+//                    CameraCommander.centerCameraOn(position);
+//                }
+//                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position + " / natural: " + Bases.natural());
+//                GameSpeed.pauseGame();
+//            }
 
 //            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }

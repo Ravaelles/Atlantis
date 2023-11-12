@@ -7,11 +7,11 @@ import bwapi.Color;
 
 public class NewBunkerEstimatePosition {
     public HasPosition approximatePosition() {
-        System.err.println("a = " + BunkerEstimatePositionAtNatural.define() + " / " + Select.main().position());
+//        System.err.println("a = " + BunkerEstimatePositionAtNatural.define() + " / " + Select.main().position());
         if (ShouldPlaceAtNatural.shouldPlaceAtNatural()) return BunkerEstimatePositionAtNatural.define();
 
         HasPosition positionToSecure = Select.ourBases().last();
-        PauseAndCenter.on(positionToSecure, true, Color.Teal);
+//        PauseAndCenter.on(positionToSecure, true, Color.Teal);
 
         return BunkerEstimatePositionAtNonNatural.define(positionToSecure);
     }

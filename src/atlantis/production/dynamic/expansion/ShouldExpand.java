@@ -22,7 +22,6 @@ public class ShouldExpand {
     protected static boolean shouldBuildNewBase() {
         if (We.terran()) {
             if (TerranShouldExpandToNatural.shouldExpandToNatural()) {
-                System.err.println("@ " + A.now() + " - YES shouldBuildNewBase");
                 return true;
             }
 

@@ -3,6 +3,7 @@ package atlantis.production.orders.production.queue.order;
 import atlantis.combat.missions.Mission;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.Requirements;
 import atlantis.production.orders.production.queue.Queue;
@@ -396,5 +397,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public boolean isUsingExactPosition() {
         return usingExactPosition;
+    }
+
+    public void forceSetPosition(APosition position) {
+        this.position = position;
     }
 }

@@ -1,21 +1,18 @@
 ### BUGS ###
 
----- NATURAL bunker bo skips finding the positon ,force to use exact postio
+.------------ Supply Depot stack at 94/94. Allow constructions up till 3 at once. FORCE DIST BETWEEN EACH AT LEAST 20.
 
---- For Wraiths, prioritize attacking other Scouts/Wraiths
+.---- Make Wraiths run from Dragoons with higher bonus, extra bnus for it Dragoon is facing Wraith
 
-.-- Factory and other buildings get order supply 01 or 02 etc
+?---- NATURAL bunker bo skips finding the positon ,force to use exact postio
 
-?--- Mission Defend all the time
-?--- Bunkers not built at all
+.---- Build second bunker at natural if have one there
 
-.----- Force Firebats to fight when near tanks and not dead
-
----- Build second bunker at natural if have one there
 ?--- Natural base not built even when having 750 minerals
+
 -- Build early CC when have a bunker there in order to protect it
 
-
+----- AvoidCombatBuilding logic is broken, units suicide. It's slow, so simply leave one logic (hold)
 
 
 

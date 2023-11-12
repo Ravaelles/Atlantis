@@ -2,6 +2,7 @@ package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -15,6 +16,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     @Override
     public boolean applies() {
+        if (EnemyWhoBreachedBase.get() != null) return false;
         if (unit.isMissionAttackOrGlobalAttack()) return false;
 
         if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_FAR) {

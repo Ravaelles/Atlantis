@@ -37,7 +37,6 @@ public class AvoidSingleEnemy extends Manager {
         if (unit.runningManager().runFrom(
             enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, false
         )) {
-//            unit.setTooltip(getTooltip(enemy));
             return usedManager(this);
         }
 

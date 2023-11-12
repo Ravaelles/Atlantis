@@ -15,31 +15,27 @@ import atlantis.util.We;
 public class SupplyCommander extends Commander {
     private int supplyTotal;
     private int supplyFree;
+    private int requestedConstructionsOfSupply;
 
     @Override
     protected void handle() {
         supplyTotal = AGame.supplyTotal();
 
-        if (supplyTotal >= 200) {
-            return;
-        }
+        if (supplyTotal >= 200) return;
 
-        int requestedConstructionsOfSupply = requestedConstructionsOfSupply();
+        requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
-        if (requestedConstructionsOfSupply >= 3) {
-            if (tooManyNotStartedConstructions()) return;
-        }
+        if (tooManyNotStartedConstructions()) return;
+
 
         if (!A.hasFreeSupply(3) && A.supplyUsed() <= 170 && A.hasMinerals(300)) {
-            if (requestedConstructionsOfSupply <= 2) {
+            if (requestedConstructionsOfSupply <= 5) {
                 requestAdditionalSupply();
                 return;
             }
         }
 
-        if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 50) {
-            return;
-        }
+        if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 50) return;
 
         // Fix for UMS maps
         if (A.isUms() && AGame.supplyFree() <= 1) {
@@ -94,8 +90,6 @@ public class SupplyCommander extends Commander {
 
         int requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
-//        if (requestedConstructionsOfSupply >= 2) System.err.println("@ " + A.now() + " - requestedConstructionsOfSupply = " + requestedConstructionsOfSupply);
-
         if (requestedConstructionsOfSupply >= 2) return;
 
         // Zerg handles supply a bit differently
@@ -109,6 +103,8 @@ public class SupplyCommander extends Commander {
     }
 
     private boolean tooManyNotStartedConstructions() {
+        if (requestedConstructionsOfSupply >= 3) return true;
+
         return AGame.supplyFree() != 0 && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.SUPPLY) >= 3;
     }
 

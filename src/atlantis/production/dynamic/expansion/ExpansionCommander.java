@@ -3,7 +3,8 @@ package atlantis.production.dynamic.expansion;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.production.dynamic.expansion.secure.NewBaseIsSecured;
+import atlantis.production.constructing.position.base.NextBasePosition;
+import atlantis.production.dynamic.expansion.secure.SecuringBase;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -34,7 +35,7 @@ public class ExpansionCommander extends Commander {
     }
 
     protected void prepareNewBase() {
-        System.err.println("@ " + A.now() + " newExpansionIsSecured() - " + newExpansionIsSecured());
+//        System.err.println("@ " + A.now() + " newExpansionIsSecured() - " + newExpansionIsSecured());
         if (newExpansionIsSecured()) {
             requestNewBase();
         }
@@ -44,13 +45,13 @@ public class ExpansionCommander extends Commander {
     }
 
     private void secureNewBase() {
-        NewBaseIsSecured.secure();
+        (new SecuringBase(NextBasePosition.nextBasePosition())).secure();
     }
 
     protected boolean newExpansionIsSecured() {
         if (!We.terran()) return true;
 
-        return A.hasMinerals(500) || NewBaseIsSecured.newBaseIsSecured();
+        return A.hasMinerals(500) || (new SecuringBase(NextBasePosition.nextBasePosition())).isSecure();
     }
 
     private static void requestNewBase() {

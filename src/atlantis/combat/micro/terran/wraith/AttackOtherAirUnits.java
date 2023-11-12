@@ -22,7 +22,7 @@ public class AttackOtherAirUnits extends Manager {
     private Selection otherAirEnemiesNearToAttack() {
         return unit.enemiesNear()
             .air()
-            .havingAntiAirWeapon()
+//            .havingAntiAirWeapon()
             .notPurelyAntiAir()
             .canBeAttackedBy(unit, 3.5)
             .effVisible();

@@ -3,6 +3,7 @@ package atlantis.production.dynamic.expansion.secure;
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.map.base.IsNatural;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -46,13 +47,13 @@ public class SecuringBase {
 
         APosition bunkerPosition = (new NewBunkerPositionFinder(baseToSecure)).find();
 
-        System.err.println(A.now() + " bunkerPosition = " + bunkerPosition
-            + " / " + Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition)
-            + " // " + Select.main().position());
-
         if (bunkerPosition == null) return true;
 
-        if (Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition) == 0) {
+//        System.err.println(A.now() + " bunkerPosition = " + bunkerPosition
+//            + " / " + Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition)
+//            + " // " + Select.main().position());
+
+        if (Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition) < numOfBunkers()) {
             ProductionOrder order = AddToQueue.withTopPriority(Terran_Bunker, bunkerPosition);
 
 //            System.err.println("@ " + A.now() + " - ");
@@ -69,6 +70,12 @@ public class SecuringBase {
         return Count.inProductionOrInQueue(Terran_Bunker) >= 2;
     }
 
+    private int numOfBunkers() {
+        if (IsNatural.isPositionNatural(baseToSecure)) return 2;
+
+        return 1;
+    }
+
     public boolean isSecure() {
 //        if (A.hasMinerals(1000)) return true; // Having lots of resources means we can afford potential losses
 
@@ -76,7 +83,8 @@ public class SecuringBase {
         if (We.zerg() && !Have.spawningPool()) return true;
 
         if (!securingWithBunker.hasBunkerSecuring()) return false;
-        if (EnemyInfo.hasHiddenUnits() && A.seconds() >= 350 && securingWithTurret.hasTurretSecuring()) return false;
+
+        if (EnemyInfo.hasHiddenUnits() && A.seconds() >= 350 && !securingWithTurret.hasTurretSecuring()) return false;
 
         return true;
     }

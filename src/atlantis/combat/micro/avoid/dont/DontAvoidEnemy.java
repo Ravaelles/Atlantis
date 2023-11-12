@@ -13,8 +13,20 @@ public class DontAvoidEnemy extends Manager {
     @Override
     public boolean applies() {
         return unit.isRanged()
-            && unit.woundHp() <= 16
-            && enemyAirUnitsAreNearAndWeShouldEngage();
+            && (
+            enemyAirUnitsAreNearAndWeShouldEngage()
+                || enemyCombatBuildingNearAndWeAreStacked()
+        );
+    }
+
+    private boolean enemyCombatBuildingNearAndWeAreStacked() {
+        return unit.isGroundUnit()
+            && unit.friendsNear().groundUnits().combatUnits().inRadius(5, unit).atLeast(14)
+            && unit.enemiesNear()
+            .combatBuildings(false)
+            .inRadius(8, unit)
+            .notEmpty()
+            && (unit.woundHp() <= 16 || unit.meleeEnemiesNearCount(2.5) == 0);
     }
 
     private boolean enemyAirUnitsAreNearAndWeShouldEngage() {

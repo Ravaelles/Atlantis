@@ -1,5 +1,6 @@
 package atlantis.combat.micro.avoid.margin;
 
+import atlantis.combat.micro.avoid.margin.terran.BonusForWraith;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
@@ -23,7 +24,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 criticalDist += bonusForGhost(attacker);
             }
             else if (defender.isWraith()) {
-                criticalDist += bonusForWraith(attacker);
+                criticalDist += BonusForWraith.bonusForWraith(attacker, defender);
             }
         }
 
@@ -44,14 +45,6 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         // ==============================================
 
         return criticalDist;
-    }
-
-    private double bonusForWraith(AUnit attacker) {
-        if (attacker.isDragoon()) {
-            return 2.3;
-        }
-
-        return 1.3;
     }
 
     private double bonusForGhost(AUnit attacker) {
