@@ -18,10 +18,6 @@ public class WeDontKnowEnemyLocation extends Manager {
     protected Manager handle() {
         unit.setTooltipTactical("Find enemy");
 
-        if ((new ScoutManager(unit)).tryFindingEnemy()) {
-            return usedManager(this);
-        }
-
-        return null;
+        return (new ScoutManager(unit)).invoke();
     }
 }

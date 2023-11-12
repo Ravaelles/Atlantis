@@ -14,7 +14,7 @@ public class WantsToSiege {
 
             // Prevent tanks from blocking chokes
             if (
-                unit.enemiesNear().combatBuildingsAntiLand().inRadius(8, unit).empty()
+                unit.enemiesNear().combatBuildingsAntiLand().inRadius(7.7, unit).empty()
                     && unit.distToNearestChokeLessThan(1.7)
             ) return false;
         }

@@ -25,18 +25,18 @@ public class AvoidCombatBuilding extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isAir()) return true;
+        if (unit.isGroundUnit() && unit.isMissionDefendOrSparta()) return false;
+
         AUnit combatBuilding = unit.enemiesNear()
             .combatBuildings(false)
             .canAttack(unit, A.supplyUsed() <= 40 ? 8 : 5)
             .nearestTo(unit);
 
         if (combatBuilding == null) return false;
-        if (unit.isMissionDefendOrSparta() && unit.isGroundUnit()) return false;
-
-        if (unit.isAir()) return true;
 
         if (
-            A.supplyUsed() <= 150 && unit.isInfantry() && Count.tanks() >= 2 && unit.combatEvalRelative() <= 3.5
+            A.supplyUsed() <= 100 && unit.isInfantry() && Count.tanks() <= 3 && unit.combatEvalRelative() <= 3
         ) return true;
 
         if (!unit.isTank()) {
@@ -83,7 +83,6 @@ public class AvoidCombatBuilding extends Manager {
 //        double criticalDist = 9.8 + (unit.isAir() ? 2.5 : 0);
         double criticalDist = criticalDist();
         double distTo = combatBuilding.distTo(unit);
-
         double doNothingMargin = 1.5;
 
         if (distTo <= criticalDist) {

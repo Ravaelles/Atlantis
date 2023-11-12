@@ -1,18 +1,15 @@
 ### BUGS ###
 
-.------------ Supply Depot stack at 94/94. Allow constructions up till 3 at once. FORCE DIST BETWEEN EACH AT LEAST 20.
-
-.---- Make Wraiths run from Dragoons with higher bonus, extra bnus for it Dragoon is facing Wraith
-
-?---- NATURAL bunker bo skips finding the positon ,force to use exact postio
-
-.---- Build second bunker at natural if have one there
-
-?--- Natural base not built even when having 750 minerals
+.--- "Scout..." hanging
 
 -- Build early CC when have a bunker there in order to protect it
 
------ AvoidCombatBuilding logic is broken, units suicide. It's slow, so simply leave one logic (hold)
+
+?---- NATURAL bunker bo skips finding the positon ,force to use exact postio
+
+?--- Natural base not built even when having 750 minerals
+
+.----- AvoidCombatBuilding logic is broken, units suicide. It's slow, so simply leave one logic (hold)
 
 
 

@@ -17,7 +17,7 @@ public class SiegeHereDuringMissionDefend extends Manager {
     }
 
     protected Manager handle() {
-        if (unit.isMissionDefendOrSparta() && unit.distToFocusPoint() <= minDist()) {
+        if (unit.isMissionDefendOrSparta() && goodDistanceToFocusOrBunker()) {
             if (unit.target() == null || unit.target().distTo(unit) < 12) {
                 if (TankDecisions.canSiegeHere(unit, false)) {
                     unit.siege();
@@ -28,6 +28,11 @@ public class SiegeHereDuringMissionDefend extends Manager {
         }
 
         return null;
+    }
+
+    private boolean goodDistanceToFocusOrBunker() {
+        return unit.distToFocusPoint() <= minDist()
+            || (!Enemy.terran() && unit.friendsNear().bunkers().countInRadius(3, unit) > 0);
     }
 
     private double minDist() {

@@ -36,6 +36,6 @@ public class TerranInfantryShouldRetreat extends Manager {
         if (!unit.isMissionAttack()) return false;
         if (unit.groundWeaponRange() > 6.5) return false;
 
-        return unit.enemiesNear().combatBuildings(false).canAttack(unit, 8).notEmpty();
+        return unit.enemiesNear().combatBuildings(false).canAttack(unit, 8.5).notEmpty();
     }
 }

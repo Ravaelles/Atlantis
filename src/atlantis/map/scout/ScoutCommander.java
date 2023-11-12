@@ -18,14 +18,6 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 public class ScoutCommander extends Commander {
-
-    public static boolean anyScoutBeenKilled = false;
-
-    /**
-     * Current scout unit.
-     */
-    private static final ArrayList<AUnit> scouts = new ArrayList<>();
-
     /**
      * If we don't have unit scout assigns one of workers to become one and then, <b>scouts and harasses</b>
      * the enemy base or tries to find it if we still don't know where the enemy is.
@@ -44,7 +36,7 @@ public class ScoutCommander extends Commander {
         manageScoutAssigned();
 
         try {
-            for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext(); ) {
+            for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
                 AUnit unit = iterator.next();
 
                 if (unit != null && unit.isAlive()) {
@@ -63,7 +55,7 @@ public class ScoutCommander extends Commander {
     private void removeOverlordsAsScouts() {
         if (We.zerg()) {
             if (EnemyInfo.hasDiscoveredAnyBuilding()) {
-                scouts.clear();
+                ScoutState.scouts.clear();
             }
         }
     }
@@ -108,16 +100,16 @@ public class ScoutCommander extends Commander {
         // =========================================================
         // TERRAN + PROTOSS
 
-        else if (scouts.isEmpty()) {
-            if (anyScoutBeenKilled && OurStrategy.get().isRushOrCheese()) {
+        else if (ScoutState.scouts.isEmpty()) {
+            if (ScoutState.anyScoutBeenKilled && OurStrategy.get().isRushOrCheese()) {
                 return;
             }
 
             for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(Bases.natural(), true)) {
                 if (!scout.isBuilder() && !scout.isRepairerOfAnyKind()) {
-                    if (scouts.isEmpty()) {
+                    if (ScoutState.scouts.isEmpty()) {
 
-                        scouts.add(scout);
+                        ScoutState.scouts.add(scout);
                         return;
                     }
                 }
@@ -126,20 +118,20 @@ public class ScoutCommander extends Commander {
     }
 
     private void removeExcessiveScouts() {
-        if (scouts.size() > 1) {
-            AUnit leaveThisScout = scouts.get(scouts.size() - 1);
-            scouts.clear();
-            scouts.add(leaveThisScout);
+        if (ScoutState.scouts.size() > 1) {
+            AUnit leaveThisScout = ScoutState.scouts.get(ScoutState.scouts.size() - 1);
+            ScoutState.scouts.clear();
+            ScoutState.scouts.add(leaveThisScout);
         }
     }
 
     private void removeDeadScouts() {
-        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext(); ) {
+        for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
             AUnit scout = iterator.next();
             if (!scout.isAlive()) {
 
                 iterator.remove();
-                anyScoutBeenKilled = true;
+                ScoutState.anyScoutBeenKilled = true;
             }
         }
     }
@@ -147,11 +139,11 @@ public class ScoutCommander extends Commander {
     // =========================================================
 
     public static boolean hasAnyScoutBeenKilled() {
-        return anyScoutBeenKilled;
+        return ScoutState.anyScoutBeenKilled;
     }
 
     public static ArrayList<AUnit> allScouts() {
-        return scouts;
+        return ScoutState.scouts;
     }
 
     /**
