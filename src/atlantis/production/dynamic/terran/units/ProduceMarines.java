@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -37,7 +38,7 @@ public class ProduceMarines {
 
         if (A.canAffordWithReserved(55, 0)) return false;
 
-        if (earlyGameAndWeAreWeak()) return false;
+        if (earlyGameAndWeAreWeak()) return produceMarine();
 
 //        if (marines == 0 && A.hasMinerals(100)) {
 //            return AddToQueue.maxAtATime(Terran_Marine, 1) != null;
@@ -94,10 +95,10 @@ public class ProduceMarines {
     private static boolean earlyGameAndWeAreWeak() {
         return GamePhase.isEarlyGame()
             && (
-            ArmyStrength.weAreMuchWeaker()
-                && marines <= 10
+            (marines < 8 || ArmyStrength.weAreMuchWeaker() || EnemyStrategy.isUnknownOrRush())
+                && marines < 10
                 && A.hasMinerals(100)
-        ) || A.hasMinerals(500);
+        ) || A.hasMinerals(450);
     }
 
     private static boolean produceMarine() {

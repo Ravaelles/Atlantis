@@ -1,7 +1,10 @@
 package atlantis.production.constructing.position.base;
 
 import atlantis.game.A;
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.base.Bases;
 import atlantis.map.position.APosition;
+import atlantis.map.position.Positions;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.ASpecialPositionFinder;
@@ -9,7 +12,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.We;
-import atlantis.util.cache.Cache;
 
 public class FindPositionForBaseNearestFree {
     /**
@@ -47,15 +49,32 @@ public class FindPositionForBaseNearestFree {
 
                 if (result == null && We.zerg()) {
                     A.errPrintln("Fallback to standard building position");
-                    return APositionFinder.findStandardPosition(builder, building, Select.main(), 50);
+                    result = APositionFinder.findStandardPosition(builder, building, Select.main(), 50);
                 }
 
                 if (result != null) {
                     FindPositionForBase.cache.clear();
                 }
 
+                if (result == null) {
+                    result = fallback();
+                }
+
                 return result;
             }
         );
+    }
+
+    private static APosition fallback() {
+        if (Select.main() == null) return null;
+
+        Positions<ABaseLocation> positions = new Positions<>(Bases.baseLocations());
+        positions = positions.sortByGroundDistanceTo(Select.mainOrAnyBuilding().position(), true);
+
+        for (ABaseLocation baseLocation : positions.list()) {
+            if (Select.all().inRadius(3, baseLocation).empty()) return baseLocation.position();
+        }
+
+        return null;
     }
 }

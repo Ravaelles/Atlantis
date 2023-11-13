@@ -108,7 +108,9 @@ public class Bases {
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
             if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation) || !baseLocation.isPositionVisible()) {
-                return baseLocation;
+                if (hasBaseMinerals(baseLocation)) {
+                    return baseLocation;
+                }
             }
         }
 
@@ -116,7 +118,7 @@ public class Bases {
     }
 
     public static boolean hasBaseMinerals(HasPosition baseLocation) {
-        return Select.minerals().inRadius(8, baseLocation).count() > 0;
+        return Select.minerals().inRadius(8, baseLocation).count() >= 3;
     }
 
     /**
@@ -172,7 +174,8 @@ public class Bases {
         baseLocations.sortByGroundDistanceTo(nearestTo, true);
 
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (baseLocation.isStartLocation() || !nearestTo.hasPathTo(baseLocation.position())) {
+//            if (baseLocation.isStartLocation() || !nearestTo.hasPathTo(baseLocation.position())) {
+            if (!nearestTo.hasPathTo(baseLocation.position())) {
                 continue;
             }
             return baseLocation;

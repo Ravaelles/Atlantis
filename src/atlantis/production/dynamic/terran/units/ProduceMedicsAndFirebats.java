@@ -25,7 +25,7 @@ public class ProduceMedicsAndFirebats {
         int medicsUnfinished = Count.ourUnfinishedOfType(Terran_Medic);
         int marines = Count.marines();
         int infantry = Count.infantry();
-        boolean medicsRatioOkay = medics <= 1 || infantry * 0.32 > medics;
+        boolean medicsRatioTooLow = medicsUnfinished <= 1 && TerranArmyComposition.medicsToInfantryRatioTooLow();
 
         if (medicsUnfinished >= 3) return false;
 
@@ -38,13 +38,13 @@ public class ProduceMedicsAndFirebats {
         if (TerranDynamicInfantry.needToSaveForFactory()) return false;
         if (!AGame.canAffordWithReserved(60, 30)) return false;
 
-        if (medicsRatioOkay) {
-            if (medics <= 1 && marines >= 2) {
+        if (medicsRatioTooLow) {
+            if (medicsUnfinished <= 0 && marines >= 2) {
                 return produceMedic();
             }
 
             // We have medics, but all of them are depleted from energy
-            if (medics > 0 && Select.ourOfType(Terran_Medic).havingEnergy(30).isEmpty()) {
+            if (medicsUnfinished > 0 && Select.ourOfType(Terran_Medic).havingEnergy(30).isEmpty()) {
                 return produceMedic();
             }
         }
@@ -69,7 +69,7 @@ public class ProduceMedicsAndFirebats {
 
             // Medics
             if (
-                medicsRatioOkay
+                medicsRatioTooLow
                     && TerranArmyComposition.medicsToInfantryRatioTooLow()
                     && Count.inProductionOrInQueue(Terran_Marine) <= 2
             ) return produceMedic();

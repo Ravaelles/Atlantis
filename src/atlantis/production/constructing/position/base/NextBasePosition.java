@@ -22,7 +22,7 @@ public class NextBasePosition {
                 APosition basePosition = FindPositionForBaseNearestFree.find(building, builder, null);
 
                 if (basePosition == null) {
-                    ErrorLog.printMaxOncePerMinute("Null base position, exiting");
+                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null base position, exiting");
                     return null;
                 }
 

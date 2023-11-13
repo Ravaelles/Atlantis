@@ -21,7 +21,7 @@ public class RoamAroundEnemyBase extends Manager {
 
     @Override
     public boolean applies() {
-        return !ScoutState.anyScoutBeenKilled;
+        return ScoutState.scoutsKilledCount == 0;
     }
 
     @Override

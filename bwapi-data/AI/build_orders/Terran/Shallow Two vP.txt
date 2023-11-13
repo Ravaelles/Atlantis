@@ -1,7 +1,7 @@
 // === CUSTOMIZABLE VARIABLES =========================================
 
 // Which worker (1st, 8th etc) should scout and try to find enemy base
-#SCOUT_IS_NTH_WORKER=10
+#SCOUT_IS_NTH_WORKER=11
 
 // When supply is bigger than N, then start auto-producing supply units
 #AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=28
@@ -28,8 +28,8 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 14 - Supply Depot
 //15 - Bunker - MAIN
 15 - Bunker - NATURAL
-19 - Academy
-20 - Refinery
+21 - Academy
+23 - Refinery
 24 - Supply Depot
-26 - Stim Pack
 28 - Comsat Station
+29 - Stim Pack

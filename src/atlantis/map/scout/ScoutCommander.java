@@ -2,6 +2,7 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.OurStrategy;
@@ -18,11 +19,17 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 public class ScoutCommander extends Commander {
+    @Override
+    public boolean applies() {
+        return A.everyNthGameFrame(17);
+    }
+
     /**
      * If we don't have unit scout assigns one of workers to become one and then, <b>scouts and harasses</b>
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
-    protected void handle() {
+    @Override
+    public void handle() {
         // CodeProfiler.startMeasuring(this);
 
         // === Handle UMS ==========================================
@@ -70,13 +77,11 @@ public class ScoutCommander extends Commander {
         removeExcessiveScouts();
 
         // Build order defines which worker should be a scout
-        if (Count.workers() < BuildOrderSettings.scoutIsNthWorker()) {
-            return;
-        }
+        if (Count.workers() >= BuildOrderSettings.scoutIsNthWorker())
 
-        // === Zerg =================================================
+            // === Zerg =================================================
 
-        if (We.zerg()) {
+            if (We.zerg()) {
 
 //            // We know enemy building
 //            if (EnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
@@ -95,26 +100,26 @@ public class ScoutCommander extends Commander {
 //                scouts.clear();
 //                scouts.addAll(Select.ourCombatUnits().listUnits());
 //            }
-        }
-
-        // =========================================================
-        // TERRAN + PROTOSS
-
-        else if (ScoutState.scouts.isEmpty()) {
-            if (ScoutState.anyScoutBeenKilled && OurStrategy.get().isRushOrCheese()) {
-                return;
             }
 
-            for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(Bases.natural(), true)) {
-                if (!scout.isBuilder() && !scout.isRepairerOfAnyKind()) {
-                    if (ScoutState.scouts.isEmpty()) {
+            // =========================================================
+            // TERRAN + PROTOSS
 
-                        ScoutState.scouts.add(scout);
-                        return;
+            else if (ScoutState.scouts.isEmpty()) {
+                if (ScoutState.scoutsKilledCount <= 1 && OurStrategy.get().isRushOrCheese()) {
+                    return;
+                }
+
+                for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(Bases.natural(), true)) {
+                    if (!scout.isBuilder() && !scout.isRepairerOfAnyKind()) {
+                        if (ScoutState.scouts.isEmpty()) {
+
+                            ScoutState.scouts.add(scout);
+                            return;
+                        }
                     }
                 }
             }
-        }
     }
 
     private void removeExcessiveScouts() {
@@ -131,7 +136,7 @@ public class ScoutCommander extends Commander {
             if (!scout.isAlive()) {
 
                 iterator.remove();
-                ScoutState.anyScoutBeenKilled = true;
+                ScoutState.scoutsKilledCount++;
             }
         }
     }
@@ -139,7 +144,7 @@ public class ScoutCommander extends Commander {
     // =========================================================
 
     public static boolean hasAnyScoutBeenKilled() {
-        return ScoutState.anyScoutBeenKilled;
+        return ScoutState.scoutsKilledCount > 0;
     }
 
     public static ArrayList<AUnit> allScouts() {

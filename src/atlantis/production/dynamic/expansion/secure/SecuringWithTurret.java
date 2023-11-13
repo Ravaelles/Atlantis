@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.expansion.secure;
 
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
+import atlantis.map.position.APosition;
 import atlantis.units.select.Count;
 
 import static atlantis.units.AUnitType.Terran_Missile_Turret;
@@ -13,10 +14,14 @@ public class SecuringWithTurret {
     }
 
     public boolean hasTurretSecuring() {
+        APosition position = (new NewBunkerPositionFinder(securingBase.baseToSecure())).find();
+
+        if (position == null) return true;
+
         return Count.existingOrUnfinishedBuildingsNear(
             Terran_Missile_Turret,
             7,
-            (new NewBunkerPositionFinder(securingBase.baseToSecure())).find()
+            position
         ) > 0;
     }
 }

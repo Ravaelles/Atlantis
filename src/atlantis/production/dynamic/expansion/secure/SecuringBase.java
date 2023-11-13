@@ -48,6 +48,8 @@ public class SecuringBase {
 
         APosition bunkerPosition = (new NewBunkerPositionFinder(baseToSecure)).find();
 
+        System.err.println("@ " + A.now() + " - secureWithBunker base? " + baseToSecure + " / " + bunkerPosition);
+
         if (bunkerPosition == null) return true;
 
 //        System.err.println(A.now() + " bunkerPosition = " + bunkerPosition
@@ -80,9 +82,6 @@ public class SecuringBase {
     public boolean isSecure() {
         if (baseToSecure == null) return true;
 
-//        if (A.hasMinerals(1000)) return true; // Having lots of resources means we can afford potential losses
-
-//        if (We.terran() && !Have.barracks()) return true;
         if (We.zerg() && !Have.spawningPool()) return true;
 
         if (!securingWithBunker.hasBunkerSecuring()) return false;
@@ -95,8 +94,4 @@ public class SecuringBase {
     public HasPosition baseToSecure() {
         return baseToSecure;
     }
-
-//    public boolean isSecure() {
-//        return A.hasMinerals(800) || Count.existingOrUnfinishedBuildingsNear(Terran_Bunker, 8, baseToSecure) > 0;
-//    }
 }

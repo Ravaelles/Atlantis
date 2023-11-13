@@ -103,10 +103,7 @@ public abstract class AStrategyResponse {
 
     protected boolean shouldSkipAntiRushCombatBuilding(AStrategy enemyStrategy) {
         if (enemyStrategy == null) return false;
-
         if (ScoutCommander.hasAnyScoutBeenKilled()) return false;
-
-        // =========================================================
 
         return !enemyStrategy.isRush() && !enemyStrategy.isGoingCheese();
     }

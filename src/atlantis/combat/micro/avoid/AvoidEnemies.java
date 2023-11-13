@@ -25,8 +25,8 @@ public class AvoidEnemies extends Manager {
     @Override
     public boolean applies() {
         if (unit.enemiesNear().canAttack(unit, 6).empty()) return false;
+        if (unit.effUndetected() && unit.hp() >= 23) return false;
         if (shouldSkip()) return false;
-        if (unit.effUndetected() && unit.hp() >= 36) return false;
 
         return true;
     }

@@ -23,7 +23,7 @@ public class SecureBasesCommander extends Commander {
     public boolean applies() {
         return A.everyNthGameFrame(41)
             && Have.barracks()
-            && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) > 1
+            && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) >= 2
             && CountInQueue.count(AUnitType.Terran_Bunker) <= 0;
     }
 
@@ -49,6 +49,8 @@ public class SecureBasesCommander extends Commander {
 
     protected boolean isBaseSecured(AUnit base) {
         if (!We.terran()) return true;
+
+//        System.err.println("@ " + A.now() + " - isSecure base? " + base + " / " + (new SecuringBase(base.position())).isSecure());
 
         return (new SecuringBase(base.position())).isSecure();
     }

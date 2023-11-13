@@ -349,6 +349,17 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         else return py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
     }
 
+    public boolean isCloseToMapBounds(int txAwayFromEdge) {
+        int px = p.getX();
+        int py = p.getY();
+
+        if (px < txAwayFromEdge * 32) return true;
+        else if (px >= (32 * AMap.getMapWidthInTiles() - txAwayFromEdge * 32)) return true;
+
+        if (py < txAwayFromEdge * 32) return true;
+        else return py >= (32 * AMap.getMapHeightInTiles() - txAwayFromEdge * 32);
+    }
+
     public APosition randomizePosition(int maxTiles) {
         return APosition.create(
             tx() - (A.chance(50) ? 0 : maxTiles + A.rand(0, 2 * maxTiles)),

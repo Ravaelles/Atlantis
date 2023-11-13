@@ -26,7 +26,7 @@ public class TerranFightInsteadAvoidAsFirebat extends Manager {
 
     private boolean longNotUnderAttackAndCloseToEnemy() {
         return unit.hp() >= 45
-            && unit.isMissionDefend()
+            && (unit.isHealthy() || unit.isMissionDefend())
             && unit.lastUnderAttackMoreThanAgo(30 * 3) && unit.enemiesNear().inRadius(3, unit).notEmpty();
     }
 

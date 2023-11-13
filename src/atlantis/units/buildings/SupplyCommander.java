@@ -27,7 +27,6 @@ public class SupplyCommander extends Commander {
 
         if (tooManyNotStartedConstructions()) return;
 
-
         if (!A.hasFreeSupply(3) && A.supplyUsed() <= 170 && A.hasMinerals(300)) {
             if (requestedConstructionsOfSupply <= 5) {
                 requestAdditionalSupply();

@@ -1,9 +1,9 @@
 package atlantis.information.strategy;
 
 public class EnemyStrategy {
-    
+
     private static AStrategy enemyStrategy = null;
-    
+
     // =========================================================
 
     public static boolean isEnemyStrategyKnown() {
@@ -21,5 +21,8 @@ public class EnemyStrategy {
     protected static void setEnemyStrategy(AStrategy strategy) {
         enemyStrategy = strategy;
     }
-    
+
+    public static boolean isUnknownOrRush() {
+        return get().isUnknown() || get().isRushOrCheese();
+    }
 }

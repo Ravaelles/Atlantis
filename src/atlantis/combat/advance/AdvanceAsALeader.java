@@ -3,8 +3,10 @@ package atlantis.combat.advance;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class AdvanceAsALeader extends MissionManager {
     public AdvanceAsALeader(AUnit unit) {
@@ -42,8 +44,14 @@ public class AdvanceAsALeader extends MissionManager {
     }
 
     private boolean actWithCohesionTooLow(String tooltip) {
-        unit.move(squad.center(), Actions.MOVE_FORMATION, tooltip);
+//        APosition moveTo = squad.center();
+        HasPosition moveTo = unit.friendsNear().mostDistantTo(Select.mainOrAnyBuilding());
 
-        return true;
+        if (moveTo != null) {
+            unit.move(moveTo, Actions.MOVE_FORMATION, tooltip);
+            return true;
+        }
+
+        return false;
     }
 }

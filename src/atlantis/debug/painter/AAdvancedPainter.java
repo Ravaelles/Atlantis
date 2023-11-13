@@ -40,6 +40,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.requests.zerg.ZergSunkenColony;
+import atlantis.terran.repair.OptimalNumOfBunkerRepairers;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -398,8 +399,8 @@ public class AAdvancedPainter extends APainter {
 
 //        AFocusPoint focus = mission.focusPoint();
         paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.Grey);
-        paintSideMessage("Fogged buildings: " + EnemyUnits.foggedUnits().buildings().count(), Color.Grey);
-        paintSideMessage("Fogged units: " + EnemyUnits.foggedUnits().realUnits().count(), Color.Grey);
+//        paintSideMessage("Fogged buildings: " + EnemyUnits.foggedUnits().buildings().count(), Color.Grey);
+//        paintSideMessage("Fogged units: " + EnemyUnits.foggedUnits().realUnits().count(), Color.Grey);
 
         // =========================================================
         // Focus point
@@ -425,8 +426,14 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Scouts: " + scouts, color, 0);
 
         if (We.terran()) {
-            paintSideMessage("Repairers: " + RepairAssignments.countTotalRepairers(), Color.White, 0);
-            paintSideMessage("Protectors: " + RepairAssignments.countTotalProtectors(), Color.White, 0);
+            paintSideMessage("Repairers: " + RepairAssignments.countTotalRepairers(), White, 0);
+            paintSideMessage("Protectors: " + RepairAssignments.countTotalProtectors(), White, 0);
+            String bunkerProtectors = "";
+            for (AUnit unit : Select.ourOfType(AUnitType.Terran_Bunker).list()) {
+                if (!bunkerProtectors.isEmpty()) bunkerProtectors += ", ";
+                bunkerProtectors += OptimalNumOfBunkerRepairers.forBunker(unit);
+            }
+            paintSideMessage("Bunker prot: " + bunkerProtectors, Yellow, 0);
         }
 
         // =========================================================
@@ -438,6 +445,8 @@ public class AAdvancedPainter extends APainter {
         if (We.terran()) {
             int tanks = Count.tanks();
             paintSideMessage("Tanks: " + tanks, tanks >= 1 ? Yellow : Color.White);
+            paintSideMessage("Marines: " + Count.marines(), Grey);
+            paintSideMessage("Medics: " + Count.medics(), Grey);
         }
         paintSideMessage("Gas workers per b: " + NumberOfGasWorkersCommander.defineGasWorkersPerBuilding(), Color.Grey);
         paintSideMessage("Reserved minerals: " + ReservedResources.minerals(), Color.Grey);
