@@ -1,9 +1,13 @@
-package atlantis.terran.repair;
+package atlantis.terran.repair.protect;
 
 import atlantis.architecture.Commander;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.terran.repair.CanAbandonUnitAssignedToRepair;
+import atlantis.terran.repair.NewRepairer;
+import atlantis.terran.repair.OptimalNumOfBunkerRepairers;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

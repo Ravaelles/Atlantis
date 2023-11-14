@@ -1,6 +1,7 @@
 package atlantis.terran.repair;
 
 import atlantis.architecture.Commander;
+import atlantis.terran.repair.protect.ProtectorCommander;
 import atlantis.util.We;
 
 public class TerranRepairsCommander extends Commander {

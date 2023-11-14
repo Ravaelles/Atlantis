@@ -10,6 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 public class FindPositionForBase {
     protected static Cache<APosition> cache = new Cache<>();
@@ -34,8 +35,8 @@ public class FindPositionForBase {
 //        }
 
         if (near == null) {
-            if (ourBasesCount <= 2) {
-                System.err.println("baseLocationToExpand is null");
+            if (ourBasesCount <= 1) {
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("findPositionForBase_nearestFreeBase is null");
             }
             return null;
         }

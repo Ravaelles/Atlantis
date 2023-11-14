@@ -3,6 +3,7 @@ package atlantis.terran.repair;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.terran.repair.protect.ProtectorCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
