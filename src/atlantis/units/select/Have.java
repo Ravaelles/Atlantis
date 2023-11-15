@@ -132,4 +132,8 @@ public class Have {
     public static boolean larvas(int minLarvas) {
         return Count.larvas() >= minLarvas;
     }
+
+    public static boolean scienceVessel() {
+        return Count.ofType(AUnitType.Terran_Science_Vessel) > 0;
+    }
 }

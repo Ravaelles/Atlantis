@@ -164,7 +164,7 @@ public class ProtectorCommander extends Commander {
 
     // =========================================================
 
-    protected static void addProtectorsForUnit(AUnit unitToProtect, int numberOfProtectorsToAssign) {
+    public static void addProtectorsForUnit(AUnit unitToProtect, int numberOfProtectorsToAssign) {
         if (unitToProtect == null || unitToProtect.isDead()) {
             return;
         }

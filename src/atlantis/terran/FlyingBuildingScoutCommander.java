@@ -38,8 +38,7 @@ public class FlyingBuildingScoutCommander extends Commander {
     private boolean needNewFlyingBuilding() {
         if (!flyingBuildings.isEmpty()) return false;
 
-        return Select.ourWithUnfinished(AUnitType.Terran_Machine_Shop).atLeast(1)
-            || Select.ourTanks().atLeast(3);
+        return Select.ourWithUnfinished(AUnitType.Terran_Siege_Tank_Tank_Mode).atLeast(1);
     }
 
     private void liftABuildingAndFlyAmongStars() {

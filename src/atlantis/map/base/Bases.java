@@ -2,6 +2,7 @@ package atlantis.map.base;
 
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
+import atlantis.map.base.define.DefineNatural;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
@@ -149,42 +150,6 @@ public class Bases {
     }
 
     /**
-     * Returns nearest base location (by the actual ground distance) to the given base location.
-     */
-    public static APosition natural() {
-        if (Select.main() == null) {
-            return null;
-        }
-
-        ABaseLocation naturalLocation = natural(Select.main().position());
-        if (naturalLocation != null) {
-            return naturalLocation.position();
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns nearest base location (by the actual ground distance) to the given base location.
-     */
-    public static ABaseLocation natural(APosition nearestTo) {
-        // Get all base locations, sort by being closest to given nearestTo position
-        Positions<ABaseLocation> baseLocations = new Positions<>();
-        baseLocations.addPositions(baseLocations());
-        baseLocations.sortByGroundDistanceTo(nearestTo, true);
-
-        for (ABaseLocation baseLocation : baseLocations.list()) {
-//            if (baseLocation.isStartLocation() || !nearestTo.hasPathTo(baseLocation.position())) {
-            if (!nearestTo.hasPathTo(baseLocation.position())) {
-                continue;
-            }
-            return baseLocation;
-        }
-
-        return null;
-    }
-
-    /**
      * Returns list of places that have geyser and mineral fields so they are the places where you could build
      * a base. Starting locations are also included here.
      */
@@ -299,7 +264,7 @@ public class Bases {
                     return null;
                 }
 
-                ABaseLocation baseLocation = natural(enemyBase.position());
+                ABaseLocation baseLocation = DefineNatural.natural(enemyBase.position());
                 if (baseLocation != null) {
                     return baseLocation.position().translateByTiles(2, 0);
                 }
@@ -314,7 +279,7 @@ public class Bases {
             "hasBaseAtNatural",
             57,
             () -> {
-                APosition natural = natural();
+                APosition natural = DefineNatural.natural();
                 if (natural == null) return false;
 
                 return Select.ourBuildingsWithUnfinished().bases().inRadius(8, natural).notEmpty();
@@ -327,7 +292,7 @@ public class Bases {
             "hasBunkerAtNatural",
             57,
             () -> {
-                APosition natural = natural();
+                APosition natural = DefineNatural.natural();
                 if (natural == null) return null;
 
                 return Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker)

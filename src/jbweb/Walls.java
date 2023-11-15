@@ -42,7 +42,7 @@ public class Walls {
         }
 
         Date date = new Date(System.currentTimeMillis());
-        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         String timeNow = formatter.format(date);
 
         // Print the clock position of this Wall
@@ -63,7 +63,7 @@ public class Walls {
                 e.printStackTrace();
             }
 
-            for (UnitType building : buildings){
+            for (UnitType building : buildings) {
                 try {
                     writeFile.write(building.toString());
                 } catch (IOException e) {
@@ -205,8 +205,12 @@ public class Walls {
         buildings.add(UnitType.Terran_Barracks);
         List<UnitType> defenses = new ArrayList<>();
         UnitType type = JBWEB.game.enemy() != null && JBWEB.game.enemy().getRace() == Race.Protoss ? UnitType.Protoss_Zealot : UnitType.Zerg_Zergling;
+//        System.err.println("type = " + type);
+//        System.err.println("JBWEB.getMainArea() = " + JBWEB.getMainArea());
+//        System.err.println("JBWEB.getMainChoke() = " + JBWEB.getMainChoke());
 
-        return createWall(buildings, JBWEB.getMainArea(), JBWEB.getMainChoke(), type, defenses, false, true);
+//        return createWall(buildings, JBWEB.getMainArea(), JBWEB.getMainChoke(), type, defenses, false, true); // @FIX
+        return createWall(buildings, JBWEB.getMainArea(), JBWEB.getMainChoke(), type, defenses, false, false);
     }
 
     /// Returns the closest Wall to the given TilePosition.
@@ -217,11 +221,11 @@ public class Walls {
             Wall wall = walls.get(chokePoint);
             double dist = here.getDistance(new TilePosition(wall.getChokePoint().getCenter()));
 
-        if (dist < distBest) {
-            distBest = dist;
-            bestWall = wall;
+            if (dist < distBest) {
+                distBest = dist;
+                bestWall = wall;
+            }
         }
-    }
         return bestWall;
     }
 

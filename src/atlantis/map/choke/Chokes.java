@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.map.base.Bases;
+import atlantis.map.base.define.DefineNatural;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
@@ -89,7 +90,7 @@ public class Chokes {
                     }
                 }
 
-                return nearestChoke(Bases.natural());
+                return nearestChoke(DefineNatural.natural());
             }
         );
     }
@@ -103,7 +104,7 @@ public class Chokes {
             "natural:" + relativeTo.toStringPixels(),
             403,
             () -> {
-                ARegion naturalRegion = Regions.getRegion(Bases.natural(relativeTo.position()));
+                ARegion naturalRegion = Regions.getRegion(DefineNatural.natural(relativeTo.position()));
                 if (naturalRegion == null) {
                     System.err.println("Can't find region for natural base");
                     AGame.setUmsMode();

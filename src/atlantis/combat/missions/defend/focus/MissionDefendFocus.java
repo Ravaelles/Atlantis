@@ -3,10 +3,9 @@ package atlantis.combat.missions.defend.focus;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
-import atlantis.information.generic.ArmyStrength;
+import atlantis.map.base.define.DefineNatural;
 import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.Chokes;
@@ -234,7 +233,7 @@ public class MissionDefendFocus extends MissionFocusPoint {
             return null;
         }
 
-        APosition natural = Bases.natural();
+        APosition natural = DefineNatural.natural();
         return new AFocusPoint(
             natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
             natural != null ? natural : null,

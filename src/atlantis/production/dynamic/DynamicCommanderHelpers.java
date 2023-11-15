@@ -78,7 +78,7 @@ public class DynamicCommanderHelpers extends Commander {
     }
 
     public static boolean haveNoExistingOrPlanned(AUnitType type) {
-        if (Count.ofType(type) > 0) return false;
+//        if (Count.ofType(type) > 0) return false;
 
         return Count.existingOrInProductionOrInQueue(type) == 0;
     }

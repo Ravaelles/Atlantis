@@ -377,4 +377,20 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
     public boolean isHighGround() {
         return Atlantis.game().getGroundHeight(tx(), ty()) == 2;
     }
+
+    public APosition left() {
+        return APosition.create(tx() - 1, ty());
+    }
+
+    public APosition right() {
+        return APosition.create(tx() + 1, ty());
+    }
+
+    public APosition top() {
+        return APosition.create(tx(), ty() - 1);
+    }
+
+    public APosition bottom() {
+        return APosition.create(tx(), ty() + 1);
+    }
 }

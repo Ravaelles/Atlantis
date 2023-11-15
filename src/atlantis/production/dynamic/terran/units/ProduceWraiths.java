@@ -14,7 +14,7 @@ public class ProduceWraiths {
         if (prioritizeScienceFacility()) return false;
         if (Count.inProductionOrInQueue(AUnitType.Terran_Wraith) >= 2) return false;
 
-        boolean produceWraiths = A.supplyUsed() >= 90;
+        boolean produceWraiths = A.supplyUsed() >= 90 || A.canAfford(600, 400);
 
         int wraiths = Count.ofType(AUnitType.Terran_Wraith);
         boolean canAffordWithReserved = AGame.canAffordWithReserved(150, 100);

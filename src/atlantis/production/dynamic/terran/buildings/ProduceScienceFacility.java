@@ -12,11 +12,12 @@ import static atlantis.units.AUnitType.*;
 
 public class ProduceScienceFacility {
     public static void scienceFacilities() {
+        if (!Have.starport()) return;
         if (Have.haveExistingOrInPlans(Terran_Science_Facility)) return;
 
-        boolean needScienceFacility = DynamicCommanderHelpers.haveNoExistingOrPlanned(Terran_Science_Facility);
+        if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI = " + shouldProduce());
 
-        if (A.supplyUsed() >= (Enemy.terran() ? 90 : 50) || DynamicCommanderHelpers.enemyStrategy().isGoingHiddenUnits()) {
+        if (shouldProduce()) {
             if (DynamicCommanderHelpers.haveNoExistingOrPlanned(Terran_Starport)) {
                 AddToQueue.toHave(Terran_Starport, 1, ProductionOrderPriority.HIGH);
                 return;
@@ -25,26 +26,26 @@ public class ProduceScienceFacility {
                 AddToQueue.toHave(Terran_Control_Tower, 1, ProductionOrderPriority.HIGH);
                 return;
             }
-            if (needScienceFacility) {
-                AddToQueue.toHave(Terran_Science_Facility, 1, ProductionOrderPriority.HIGH);
-                return;
-            }
+
+            produceScienceFacility();
         }
 
-//        int scienceFacilities = Count.existingOrInProductionOrInQueue(Terran_Science_Facility);
-//        if (A.supplyUsed() >= 60) {
-//            if (scienceFacilities == 0) {
-//                AddToQueue.withHighPriority(Terran_Science_Facility);
+//        if (A.supplyUsed() >= 120 && needScienceFacility) {
+//            int covertOps = Count.existingOrInProductionOrInQueue(Terran_Covert_Ops);
+//            if (covertOps == 0) {
+//                AddToQueue.toHave(Terran_Covert_Ops);
 //                return;
 //            }
 //        }
+    }
 
-        if (A.supplyUsed() >= 120 && needScienceFacility) {
-            int covertOps = Count.existingOrInProductionOrInQueue(Terran_Covert_Ops);
-            if (covertOps == 0) {
-                AddToQueue.toHave(Terran_Covert_Ops);
-                return;
-            }
-        }
+    private static boolean shouldProduce() {
+        return A.supplyUsed() >= (Enemy.terran() ? 90 : 50)
+            || A.canAfford(550, 200)
+            || DynamicCommanderHelpers.enemyStrategy().isGoingHiddenUnits();
+    }
+
+    public static boolean produceScienceFacility() {
+        return AddToQueue.toHave(Terran_Science_Facility, 1, ProductionOrderPriority.TOP);
     }
 }

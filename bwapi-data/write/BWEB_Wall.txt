@@ -1,0 +1,3 @@
+2023-11-14 at 20:20:07 CETexp_skilltest.scxAt: 8.0 o'clock.
+Buildings:Terran_Supply_DepotTerran_Supply_DepotTerran_BarracksFailure Reasons:Power: 0Angle: 0Placement: 1259Tight: 0Path: 0Spawn: 0
+Generation Time: 50ms and failed.--------------------

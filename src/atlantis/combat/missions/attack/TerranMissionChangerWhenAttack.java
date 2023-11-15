@@ -8,7 +8,9 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.production.dynamic.terran.tech.SiegeMode;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
     @Override
@@ -40,6 +42,16 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
         if (enemyHasHiddenUnitsAndWeDontHaveEnoughDetection()) {
             if (DEBUG) reason = "Not enough detection";
+            return true;
+        }
+
+        if (
+            Enemy.protoss()
+                && EnemyInfo.hasHiddenUnits()
+                && !Have.scienceVessel()
+                && ArmyStrength.ourArmyRelativeStrength() <= 400
+        ) {
+            if (DEBUG) reason = "No Science Vessel";
             return true;
         }
 

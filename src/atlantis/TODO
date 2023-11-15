@@ -1,6 +1,14 @@
 ### BUGS ###
 
---- AdvanceAsALeader
+?---- Science facility not built AT ALL
+
+.--- Natural base incorrect, Main identified as natural
+
+?-- Science Vessel not added to queue upon science facility completion
+
+
+- Science Vessel not attached to army, but maybe that's ok
+
 
 ?---- NATURAL bunker bo skips finding the positon ,force to use exact postio
 

@@ -6,7 +6,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.map.base.Bases;
+import atlantis.map.base.define.DefineNatural;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -110,7 +110,7 @@ public class ScoutCommander extends Commander {
                     return;
                 }
 
-                for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(Bases.natural(), true)) {
+                for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(DefineNatural.natural(), true)) {
                     if (!scout.isBuilder() && !scout.isRepairerOfAnyKind()) {
                         if (ScoutState.scouts.isEmpty()) {
 

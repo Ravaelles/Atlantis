@@ -1,15 +1,11 @@
 package atlantis.combat.micro.terran.bunker.position;
 
-import atlantis.map.base.Bases;
-import atlantis.map.choke.AChoke;
-import atlantis.map.choke.Chokes;
+import atlantis.map.base.define.DefineNatural;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.base.NextBasePosition;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
@@ -53,7 +49,7 @@ public class NewBunkerPositionFinder {
         if (positionToSecure == null) return true;
 
         nearestBasePosition = NextBasePosition.nextBasePosition();
-        naturalBase = Bases.natural();
+        naturalBase = DefineNatural.natural();
 
         return nearestBasePosition == null || naturalBase == null;
     }

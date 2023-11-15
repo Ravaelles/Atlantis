@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.reinforce.terran;
 
 import atlantis.architecture.Commander;
-import atlantis.map.base.Bases;
+import atlantis.map.base.define.DefineNatural;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -90,7 +90,7 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
     }
 
     private boolean isForNatural() {
-        natural = Bases.natural();
+        natural = DefineNatural.natural();
 
         return natural != null && initialPositionToReinforce.distToLessThan(natural, 6);
     }

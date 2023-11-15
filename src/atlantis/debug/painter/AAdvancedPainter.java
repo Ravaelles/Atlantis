@@ -20,6 +20,7 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.Bases;
+import atlantis.map.base.define.DefineNatural;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -1528,7 +1529,7 @@ public class AAdvancedPainter extends APainter {
         setTextSizeMedium();
 
         // Natural base
-        HasPosition natural = Bases.natural();
+        HasPosition natural = DefineNatural.natural();
         paintBase(natural, "Our natural", Color.Grey, 0);
 
         // Enemy base
@@ -1536,7 +1537,7 @@ public class AAdvancedPainter extends APainter {
         paintBase(enemyBase, "Enemy natural", Color.Orange, 0);
 
         // Our natural choke
-        AChoke naturalChoke = Chokes.natural(Bases.natural());
+        AChoke naturalChoke = Chokes.natural(DefineNatural.natural());
         paintChoke(naturalChoke, Green, "Natural choke");
 
         // Our main choke

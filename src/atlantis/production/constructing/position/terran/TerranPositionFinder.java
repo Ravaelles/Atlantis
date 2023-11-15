@@ -26,7 +26,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         int cacheForFrames = building.isCombatBuilding() ? 27 : 77;
         String cacheKey = "findStandardPositionFor:" + building.id()
             + "," + (nearTo != null ? nearTo.toStringPixels() : nearTo)
-            + "," + builder.id();
+            + "," + (builder != null ? builder.id() : "-");
 
 //        System.err.println("@ " + A.now() + " - " + building + " / near " + nearTo + " / maxDistance " + maxDistance);
 

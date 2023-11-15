@@ -2,6 +2,7 @@ package atlantis.production.constructing.position.base;
 
 import atlantis.game.A;
 import atlantis.map.base.Bases;
+import atlantis.map.base.define.DefineNatural;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
@@ -23,7 +24,7 @@ public class FindPositionForBase {
         int ourBasesCount = Select.ourBases().count();
 
         if (A.seconds() <= 800 && ourBasesCount <= 1) {
-            near = Bases.natural();
+            near = DefineNatural.natural();
         }
 //        else if (ourBasesCount <= 2) {
         else {
@@ -63,7 +64,7 @@ public class FindPositionForBase {
     }
 
     public static APosition findPositionForBase_natural(AUnitType building, AUnit builder) {
-        APosition near = Bases.natural();
+        APosition near = DefineNatural.natural();
 
         if (near == null) {
             System.err.println("Unknown natural position - it will break base position");
