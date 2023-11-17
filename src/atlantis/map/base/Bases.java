@@ -264,7 +264,7 @@ public class Bases {
                     return null;
                 }
 
-                ABaseLocation baseLocation = DefineNatural.natural(enemyBase.position());
+                ABaseLocation baseLocation = DefineNatural.naturalIfMainIsAt(enemyBase.position());
                 if (baseLocation != null) {
                     return baseLocation.position().translateByTiles(2, 0);
                 }

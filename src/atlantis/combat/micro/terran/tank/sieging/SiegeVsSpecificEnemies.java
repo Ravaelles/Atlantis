@@ -7,18 +7,21 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
 public class SiegeVsSpecificEnemies extends Manager {
+
+    private Selection enemies;
+
     public SiegeVsSpecificEnemies(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return true;
+        enemies = unit.enemiesNear().combatUnits().nonBuildings().effVisible();
+
+        return enemies.notEmpty();
     }
 
     protected Manager handle() {
-        Selection enemies = unit.enemiesNear().combatUnits().nonBuildings().effVisible();
-
         if (!Enemy.terran()) {
             enemies = enemies.visibleOnMap();
         }

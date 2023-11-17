@@ -28,6 +28,12 @@ public class OnEveryFrameHelper {
 //        Queue.get().readyToProduceOrders().print("All orders");
 
 //        combatUnitInfo();
+
+        paintMyOwnWallInSolution();
+    }
+
+    private static void paintMyOwnWallInSolution() {
+
     }
 
     private static void combatUnitInfo() {

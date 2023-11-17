@@ -19,17 +19,31 @@ public class IdleProtectorRepairs extends Manager {
         if (!unit.isUnitActionRepair() || !unit.isRepairing() || unit.isIdle()) {
             int maxAllowedDistToRoam = 13;
 
-            // Try finding any repairable and wounded unit Near
-            AUnit nearestWoundedUnit = RepairableUnits.get().inRadius(maxAllowedDistToRoam, unit).nearestTo(unit);
-            if (nearestWoundedUnit != null && A.hasMinerals(5)) {
-                unit.repair(nearestWoundedUnit, "HelpNear" + nearestWoundedUnit.name());
-//                if (nearestWoundedUnit.distTo(unit) > 0.8) {
-//                    nearestWoundedUnit.move(unit, Actions.MOVE_REPAIR, "BeHelped");
-//                }
-                return usedManager(this);
-            }
+            // Try finding repairable tanks nearby
+            if (repairTanks(maxAllowedDistToRoam)) return usedManager(this);
+
+            // Try finding any repairable nearby
+            if (repairAny(maxAllowedDistToRoam)) return usedManager(this);
         }
 
         return null;
+    }
+
+    private boolean repairTanks(int maxAllowedDistToRoam) {
+        AUnit nearestWoundedUnit = RepairableUnits.get().tanks().inRadius(maxAllowedDistToRoam, unit).nearestTo(unit);
+        if (nearestWoundedUnit != null && A.hasMinerals(2)) {
+            unit.repair(nearestWoundedUnit, "HelpNear" + nearestWoundedUnit.name());
+            return true;
+        }
+        return false;
+    }
+
+    private boolean repairAny(int maxAllowedDistToRoam) {
+        AUnit nearestWoundedUnit = RepairableUnits.get().inRadius(maxAllowedDistToRoam, unit).nearestTo(unit);
+        if (nearestWoundedUnit != null && A.hasMinerals(5)) {
+            unit.repair(nearestWoundedUnit, "HelpNear" + nearestWoundedUnit.name());
+            return true;
+        }
+        return false;
     }
 }

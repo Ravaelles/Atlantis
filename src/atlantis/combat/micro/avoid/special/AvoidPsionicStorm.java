@@ -1,12 +1,15 @@
 package atlantis.combat.micro.avoid.special;
 
 import atlantis.architecture.Manager;
+import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.game.A;
 import atlantis.map.bullets.BulletsOnMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import bwapi.Bullet;
 import bwapi.BulletType;
+import bwapi.Color;
 
 import java.util.ArrayList;
 
@@ -26,11 +29,17 @@ public class AvoidPsionicStorm extends Manager {
 
         if (bullets.isEmpty()) return null;
 
-        if (handleMoveAwayIfPsionicCloserThan(bullets, 3.1)) {
-            return usedManager(this);
-        }
+//        paintBullets(bullets, Color.Cyan);
+
+        if (handleMoveAwayIfPsionicCloserThan(bullets, 3.8)) return usedManager(this);
 
         return null;
+    }
+
+    private void paintBullets(ArrayList<Bullet> bullets, Color color) {
+        for (Bullet bullet : bullets) {
+            AAdvancedPainter.paintCircleFilled(APosition.create(bullet.getPosition()), 5, color);
+        }
     }
 
     protected boolean handleMoveAwayIfPsionicCloserThan(ArrayList<Bullet> bullets, double minDist) {

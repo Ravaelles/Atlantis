@@ -10,7 +10,7 @@ import atlantis.production.orders.production.queue.CountInQueue;
 public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     public boolean applies() {
-        return CountInQueue.countDynamicBuildingsOrders() <= 3;
+        return CountInQueue.countDynamicBuildingsOrders() <= 6;
     }
 
     @Override
@@ -20,6 +20,12 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
 //        ReinforceBasesWithCombatBuildings.get().invoke();
         (new ReinforceBunkersWithTurrets()).invoke();
         (new TurretNeededHere()).invoke();
+
+        if (A.everyNthGameFrame(57)) {
+            ProduceScienceFacility.scienceFacilities();
+            ProduceStarport.starport();
+            ProduceEngBay.engBay();
+        }
 
         if (A.everyNthGameFrame(13)) {
             ProduceComsatStation.comsats();
@@ -36,12 +42,6 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
         if (A.everyNthGameFrame(37)) {
             ProduceMachineShop.machineShop();
             ProduceFactory.factories();
-        }
-
-        if (A.everyNthGameFrame(67)) {
-            ProduceScienceFacility.scienceFacilities();
-            ProduceStarport.starport();
-            ProduceEngBay.engBay();
         }
     }
 }

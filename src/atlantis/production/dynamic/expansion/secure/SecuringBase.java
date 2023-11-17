@@ -58,6 +58,7 @@ public class SecuringBase {
 
         if (Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition) < numOfBunkers()) {
             ProductionOrder order = AddToQueue.withTopPriority(Terran_Bunker, bunkerPosition);
+            order.markAsUsingExactPosition();
 
 //            System.err.println("@ " + A.now() + " - ");
 //            System.err.println("Count.existingOrPlannedBuildingsNear = "

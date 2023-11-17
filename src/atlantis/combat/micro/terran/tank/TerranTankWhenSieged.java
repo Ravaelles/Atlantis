@@ -25,11 +25,10 @@ public class TerranTankWhenSieged extends Manager {
             TankVsTank.class,
             DontThinkAboutUnsieging.class,
             SiegeTankRun.class,
-            UnsiegeCauseLonely.class,
             WouldBlockChokeBySieging.class,
             SiegeHereDuringMissionDefend.class,
             UnsiegeToReposition.class,
-            SiegeHereDuringMissionDefend.class,
+            UnsiegeCauseLonely.class,
         };
     }
 }

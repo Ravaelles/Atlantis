@@ -2,7 +2,7 @@ package atlantis.combat.micro.terran.tank.sieging;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.sieging.kursk.SiegeAgainstEnemyTanks;
-import atlantis.terran.repair.UnitBeingReparedManager;
+import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;

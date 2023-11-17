@@ -33,7 +33,7 @@ public class DontMoveWhenBeingRepared extends Manager {
         AUnit repairer = unit.repairer();
         if (
             repairer != null
-                && repairer.distToMoreThan(unit, 0.9)
+                && repairer.distToMoreThan(unit, 0.1)
         ) {
             unit.move(repairer, Actions.MOVE_REPAIR, "BeFixed");
             return usedManager(this);

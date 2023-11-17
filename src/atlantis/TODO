@@ -1,26 +1,33 @@
 ### BUGS ###
 
-?---- Science facility not built AT ALL
+.?---- Science facility not built AT ALL
 
-.--- Natural base incorrect, Main identified as natural
+.---- Wraiths suiciding. At low health (30) they absolutely have to get back to repairer
+.- They don't hold when repairer is nearby, incrwsding the problem
+.- be more careful with observers nearby
+
+-----------------------------------------------
+- Bunker securing the main
+
+-----------------------------------------------
 
 ?-- Science Vessel not added to queue upon science facility completion
 
-
-- Science Vessel not attached to army, but maybe that's ok
 
 
 ?---- NATURAL bunker bo skips finding the positon ,force to use exact postio
 
 ?--- Natural base not built even when having 750 minerals
 
-.----- AvoidCombatBuilding logic is broken, units suicide. It's slow, so simply leave one logic (hold)
+..----- AvoidCombatBuilding logic is broken, units suicide. It's slow, so simply leave one logic (hold)
 
 
 
 ### FEATURES ###
 
-+++ Build turrets against enemy Wraiths/Scouts
+.++++ Build turrets against enemy Wraiths/Scouts
+
++++ Road to enemy base
 
 ++ Performance improvement for situation when there's Combat Building nearby. 3x slower when one cannon nearby.
 

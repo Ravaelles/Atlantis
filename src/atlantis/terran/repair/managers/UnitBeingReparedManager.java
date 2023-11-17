@@ -1,6 +1,7 @@
-package atlantis.terran.repair;
+package atlantis.terran.repair.managers;
 
 import atlantis.architecture.Manager;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;

@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Terran_Missile_Turret;
@@ -15,11 +16,11 @@ import static atlantis.units.AUnitType.Terran_Missile_Turret;
 public class TurretNeededHere extends Commander {
     @Override
     public boolean applies() {
-        if (true) return false; // @TODO DISABLED
+//        if (true) return false; // @TODO DISABLED
 
         return We.terran()
             && (A.hasMinerals(200) || A.seconds() >= 400)
-            && A.everyNthGameFrame(77)
+            && A.everyNthGameFrame(67)
             && Have.engBay()
             && Count.inProductionOrInQueue(Terran_Missile_Turret) <= (A.hasMinerals(500) ? 3 : 1);
 //            && EnemyInfo.hasLotOfAirUnits();
@@ -29,7 +30,7 @@ public class TurretNeededHere extends Commander {
     protected void handle() {
 //        System.err.println("@ " + A.now() + " - TurretNeededHere?");
 
-        AUnit tank = checkIfThereAreTanksUnderAirAttack();
+        AUnit tank = reinforceTankUnderAirAttack();
 
         if (tank != null) {
             haveTurretNear(tank);
@@ -53,7 +54,7 @@ public class TurretNeededHere extends Commander {
         return Count.ourOfTypeWithUnfinished(Terran_Missile_Turret, position, 7) > 0;
     }
 
-    private AUnit checkIfThereAreTanksUnderAirAttack() {
+    private HasPosition reinforceTankUnderAirAttack() {
         for (AUnit tank : Select.ourTanks().list()) {
             if (isUnderAttackByAirOrSoItSeems(tank)) {
                 return tank;
@@ -63,7 +64,11 @@ public class TurretNeededHere extends Commander {
     }
 
     private boolean isUnderAttackByAirOrSoItSeems(AUnit unit) {
+        Selection airEnemies;
+
         return unit.lastUnderAttackLessThanAgo(30 * 3)
-            && unit.enemiesNear().air().havingAntiGroundWeapon().inRadius(7, unit).notEmpty();
+            && unit.woundPercent() >= 10
+            && (airEnemies = unit.enemiesNear().air().havingAntiGroundWeapon().inRadius(7, unit)).notEmpty()
+            && unit.friendsNear().havingAntiAirWeapon().count() > airEnemies.count();
     }
 }

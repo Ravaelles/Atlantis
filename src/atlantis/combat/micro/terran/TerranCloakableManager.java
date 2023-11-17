@@ -60,7 +60,7 @@ public class TerranCloakableManager extends Manager {
     }
 
     private boolean whenNotCloaked() {
-        if (unit.energy() > 30 && enemiesThatCanAttackThisUnit && !enemyDetectorsNear) {
+        if (unit.energy() > 50 && enemiesThatCanAttackThisUnit && !enemyDetectorsNear) {
             unit.cloak();
             unit.setTooltipTactical("CLOAK!");
             return true;

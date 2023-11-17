@@ -7,7 +7,7 @@ import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.enemy.UnitsArchive;
-import atlantis.production.constructing.ProtossConstructionManager;
+import atlantis.production.constructing.ProtossWarping;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -132,7 +132,7 @@ public class Atlantis implements BWEventListener {
 
             // Apply construction fix: detect new Protoss buildings and remove them from queue.
             if (AGame.isPlayingAsProtoss() && unit.type().isABuilding()) {
-                ProtossConstructionManager.handleWarpingNewBuilding(unit);
+                ProtossWarping.handleWarpingNewBuilding(unit);
             }
 
             if (unit.isABuilding()) {

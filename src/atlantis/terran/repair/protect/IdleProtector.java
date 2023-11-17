@@ -21,7 +21,7 @@ public class IdleProtector extends Manager {
     public Manager handle() {
         target = RepairAssignments.getUnitToProtectFor(unit);
 
-        if (unit.idIsOdd()) return usedManager(this); // Only half of the protectors can do dynamic repairs if idle
+//        if (unit.idIsOdd()) return usedManager(this); // Only half of the protectors can do dynamic repairs if idle
 
         if (
             target.isBunker() && target.enemiesNear().havingWeapon().inRadius(9, target).atMost(1)

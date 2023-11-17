@@ -377,7 +377,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return _repairableMechanically || _healable;
     }
 
-    public boolean isRepairableMechanically() {
+    public boolean canBeRepaired() {
         return _repairableMechanically;
     }
 

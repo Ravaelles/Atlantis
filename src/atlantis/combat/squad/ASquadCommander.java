@@ -1,27 +1,26 @@
 package atlantis.combat.squad;
 
+import atlantis.architecture.Commander;
 import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.mission.SquadMissionChanger;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import bwapi.Color;
 
 /**
  * Commands all existing battle squads.
  */
-public class ASquadManager {
-
+public class ASquadCommander extends Commander {
     private Squad squad;
 
-    public ASquadManager(Squad squad) {
+    public ASquadCommander(Squad squad) {
         this.squad = squad;
     }
 
     /**
      * Acts with all units that are part of given battle squad.
      */
-    public void update() {
+    @Override
+    public void handle() {
         if (A.everyNthGameFrame(11)) {
             SquadMissionChanger.changeSquadMissionIfNeeded(squad);
         }

@@ -29,4 +29,9 @@ public class TerranTank extends Manager {
         unit.unsiege();
         return true;
     }
+
+    public static boolean forceUnsiege(AUnit unit) {
+        unit.unsiege();
+        return true;
+    }
 }

@@ -9,10 +9,12 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 public class ProduceWraiths {
+    public static int totalQueued = 0;
     public static boolean wraiths() {
         if (Count.ofType(AUnitType.Terran_Starport) == 0) return false;
         if (prioritizeScienceFacility()) return false;
         if (Count.inProductionOrInQueue(AUnitType.Terran_Wraith) >= 2) return false;
+        if (prioritizeScienceVessels()) return false;
 
         boolean produceWraiths = A.supplyUsed() >= 90 || A.canAfford(600, 400);
 
@@ -22,12 +24,18 @@ public class ProduceWraiths {
         if (wraiths >= 5 && !canAffordWithReserved) return false;
 
         if (produceWraiths && wraiths <= 1) {
-            return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
+            return produce();
         }
 
         if (wraiths >= 12) return false;
 
         return produce();
+    }
+
+    private static boolean prioritizeScienceVessels() {
+        return totalQueued > 0
+            && Have.scienceFacility()
+            && !Have.scienceVessel();
     }
 
     private static boolean prioritizeScienceFacility() {
@@ -39,6 +47,11 @@ public class ProduceWraiths {
     private static boolean produce() {
         int maxAtATime = Math.min(2, Select.ourOfType(AUnitType.Terran_Starport).free().count());
 
-        return AddToQueue.maxAtATime(AUnitType.Terran_Wraith, maxAtATime) != null;
+        if (AddToQueue.maxAtATime(AUnitType.Terran_Wraith, maxAtATime) != null) {
+            totalQueued++;
+            return true;
+        }
+
+        return false;
     }
 }

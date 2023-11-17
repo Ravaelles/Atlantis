@@ -7,6 +7,7 @@ import atlantis.production.constructing.position.base.NextBasePosition;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.log.ErrorLog;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
 
@@ -24,21 +25,25 @@ public class NewBunkerPositionFinder {
         this.positionToSecure = positionToSecure;
         this.builder = builder;
 
-        if (positionToSecure == null) this.positionToSecure = Select.ourBases().last();
+        if (positionToSecure == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("NewBunkerPositionFinder: positionToSecure got null");
+            this.positionToSecure = Select.ourBases().last();
+        }
         if (builder == null) this.builder = Select.ourWorkers().nearestTo(positionToSecure);
     }
 
     public APosition find() {
-        if (isNotValid()) return null;
+        if (isNotValid()) {
+            ErrorLog.printMaxOncePerMinute("NewBunkerPositionFinder: invalid / " + positionToSecure + " / " + builder);
+            return null;
+        }
 
         return TerranPositionFinder.findStandardPositionFor(
-            Select.ourWorkers().nearestTo(positionToSecure),
+            builder,
             Terran_Bunker,
             positionToSecure,
             10
         );
-
-//        return isForNatural() ? BunkerEstimatePositionAtNatural.define() : BunkerEstimatePositionAtNonNatural.define(positionToSecure);
     }
 
     private boolean isForNatural() {

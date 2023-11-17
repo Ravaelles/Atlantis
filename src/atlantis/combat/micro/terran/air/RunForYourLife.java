@@ -14,7 +14,7 @@ public class RunForYourLife extends Manager {
         if (!unit.isAir()) return false;
 
         if (
-            unit.lastUnderAttackLessThanAgo(30 * 1)
+            unit.lastUnderAttackLessThanAgo(30 * 3)
                 && unit.enemiesNear().combatBuildingsAntiAir().inRadius(11, unit).notEmpty()
         ) return true;
 

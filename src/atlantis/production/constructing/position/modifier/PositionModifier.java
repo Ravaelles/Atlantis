@@ -149,7 +149,7 @@ public class PositionModifier {
             }
             AChoke chokepointForNatural = Chokes.natural(main.position());
             if (chokepointForNatural != null && main != null) {
-                ABaseLocation natural = DefineNatural.natural(main.position());
+                ABaseLocation natural = DefineNatural.naturalIfMainIsAt(main.position());
 //                return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);
                 return natural.translateTilesTowards(chokepointForNatural.center(), 8);
             }

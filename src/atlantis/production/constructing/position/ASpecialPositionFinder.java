@@ -48,7 +48,7 @@ public class ASpecialPositionFinder {
         else if (modifier.equals(PositionModifier.NATURAL_CHOKE)) {
             AChoke chokepointForNatural = Chokes.natural(Select.main().position());
             if (chokepointForNatural != null && Select.main() != null) {
-                ABaseLocation natural = DefineNatural.natural(Select.main().position());
+                ABaseLocation natural = DefineNatural.naturalIfMainIsAt(Select.main().position());
                 return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);
             }
         }

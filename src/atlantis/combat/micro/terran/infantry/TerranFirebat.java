@@ -19,8 +19,15 @@ public class TerranFirebat extends Manager {
     }
 
     @Override
-    protected Manager handle() {
-        return null; // This works worse than without it :)
+    protected Class<? extends Manager>[] managers() {
+        return new Class[] {
+            GoTowardsMedic.class
+        };
+    }
+
+    //    @Override
+//    protected Manager handle() {
+//        return null; // This works worse than without it :)
 
 //        if (!shouldContinueMeleeFighting()) {
 //            AUnit enemy = unit.nearestEnemy();
@@ -47,7 +54,7 @@ public class TerranFirebat extends Manager {
 //        }
 //
 //        return null;
-    }
+//    }
 
     protected boolean shouldContinueMeleeFighting() {
         if (unit.hp() >= 40) return true;

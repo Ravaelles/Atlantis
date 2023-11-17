@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.unsieged.AvoidCloseEnemiesToUnsiegedTank;
 import atlantis.combat.micro.terran.tank.sieging.ThinkOfSieging;
 import atlantis.combat.micro.terran.tank.unsieged.AvoidCloseMeleeEnemiesToUnsiegedTank;
-import atlantis.terran.repair.UnitBeingReparedManager;
+import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 

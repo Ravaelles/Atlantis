@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.select.Count;
@@ -12,21 +13,28 @@ import static atlantis.units.AUnitType.*;
 
 public class ProduceScienceFacility {
     public static void scienceFacilities() {
-        if (!Have.starport()) return;
-        if (Have.haveExistingOrInPlans(Terran_Science_Facility)) return;
+//        if (!Have.starport()) return;
+//        if (Have.haveExistingOrInPlans(Terran_Science_Facility)) return;
+        if (
+            Have.a(Terran_Science_Facility)
+                || CountInQueue.count(Terran_Science_Facility, 6) > 0
+        ) return;
 
-        if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI = " + shouldProduce());
+        if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI A = " + shouldProduce());
 
         if (shouldProduce()) {
             if (DynamicCommanderHelpers.haveNoExistingOrPlanned(Terran_Starport)) {
-                AddToQueue.toHave(Terran_Starport, 1, ProductionOrderPriority.HIGH);
+                if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI B = ");
+                AddToQueue.toHave(Terran_Starport, 1, ProductionOrderPriority.TOP);
                 return;
             }
             if (DynamicCommanderHelpers.haveNoExistingOrPlanned(Terran_Control_Tower)) {
-                AddToQueue.toHave(Terran_Control_Tower, 1, ProductionOrderPriority.HIGH);
+                if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI C = ");
+                AddToQueue.toHave(Terran_Control_Tower, 1, ProductionOrderPriority.TOP);
                 return;
             }
 
+            if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI YEEEEEEEES = ");
             produceScienceFacility();
         }
 

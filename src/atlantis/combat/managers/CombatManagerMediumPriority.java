@@ -6,7 +6,7 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.terran.repair.DontMoveWhenBeingRepared;
-import atlantis.terran.repair.UnitBeingReparedManager;
+import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 
 public class CombatManagerMediumPriority extends Manager {

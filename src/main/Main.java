@@ -111,7 +111,7 @@ public class Main {
 
         // vs Protoss
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx";
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
@@ -159,7 +159,7 @@ public class Main {
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_Zeal.scm";
 //@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
-//        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
+//@        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
 //        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";
 //        if (true) return "ums/rav/Dragoons_v_Marines.scm";
 //        if (true) return "ums/rav/Dragoons_v_Zealots.scm";

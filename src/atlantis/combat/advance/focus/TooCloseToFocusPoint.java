@@ -16,6 +16,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     public boolean applies() {
         if (unit.isLoaded()) return false;
         if (unit.isMissionAttackOrGlobalAttack()) return false;
+        if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
 
         if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_CLOSE) {
             if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;

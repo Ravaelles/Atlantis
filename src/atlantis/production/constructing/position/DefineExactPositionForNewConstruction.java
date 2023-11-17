@@ -15,15 +15,7 @@ public class DefineExactPositionForNewConstruction {
         // === Bunker ===========================================
 
         if (building.isBunker()) {
-            if (order.getModifier() != null) {
-                APosition position = PositionModifier.toPosition(
-                    order.getModifier(), building, null, newConstructionOrder
-                );
-                System.err.println("FORCE BUNKER position from BO = " + position + " / " + order.getModifier());
-
-                order.forceSetPosition(position);
-                if (order.atPosition() != null) order.markAsUsingExactPosition();
-            }
+            defineBunkerPositionSearchConfig(building, order, newConstructionOrder);
         }
 
         // =========================================================
@@ -40,5 +32,28 @@ public class DefineExactPositionForNewConstruction {
         // =========================================================
 
         return positionToBuild;
+    }
+
+    private static void defineBunkerPositionSearchConfig(AUnitType building, ProductionOrder order, Construction newConstructionOrder) {
+        if (order.getModifier() != null) {
+            if (!order.isUsingExactPosition() && order.atPosition() == null) {
+                APosition position = definePosition(building, order, newConstructionOrder);
+                System.err.println("FORCE BUNKER position = " + position + " / " + order.getModifier());
+
+                order.forceSetPosition(position);
+            }
+        }
+
+        if (order.atPosition() != null) order.markAsUsingExactPosition();
+    }
+
+    private static APosition definePosition(AUnitType building, ProductionOrder order, Construction newConstructionOrder) {
+        if (order.atPosition() != null && order.isUsingExactPosition()) {
+            return APosition.create(order.atPosition());
+        }
+
+        return PositionModifier.toPosition(
+            order.getModifier(), building, null, newConstructionOrder
+        );
     }
 }

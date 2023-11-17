@@ -19,16 +19,11 @@ public class DefineNatural {
             "natural",
             -1,
             () -> {
-                if (Select.main() == null) {
-                    return null;
-                }
+                if (Select.main() == null) return null;
 
-                ABaseLocation naturalLocation = natural(Select.main().position());
-                if (naturalLocation != null) {
-                    return naturalLocation.position();
-                }
+                ABaseLocation naturalLocation = naturalIfMainIsAt(Select.main().position());
 
-                return null;
+                return naturalLocation != null ? naturalLocation.position() : null;
             }
         );
     }
@@ -36,7 +31,7 @@ public class DefineNatural {
     /**
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
-    public static ABaseLocation natural(APosition nearestTo) {
+    public static ABaseLocation naturalIfMainIsAt(APosition nearestTo) {
         return (ABaseLocation) cache.get(
             "natural:" + nearestTo,
             -1,
@@ -48,11 +43,14 @@ public class DefineNatural {
 
                 AUnit main = Select.mainOrAnyBuilding();
 
+                if (main == null) return null;
+
                 for (ABaseLocation baseLocation : baseLocations.list()) {
 //            if (baseLocation.isStartLocation() || !nearestTo.hasPathTo(baseLocation.position())) {
-                    if ((main == null || main.distTo(baseLocation) > 5) && !nearestTo.hasPathTo(baseLocation.position())) {
+                    if (main.distTo(baseLocation) <= 6 || !nearestTo.hasPathTo(baseLocation.position())) {
                         continue;
                     }
+
                     return baseLocation;
                 }
 

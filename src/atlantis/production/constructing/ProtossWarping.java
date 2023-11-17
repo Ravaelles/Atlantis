@@ -5,7 +5,7 @@ import atlantis.units.Units;
 
 import java.util.ArrayList;
 
-public class ProtossConstructionManager {
+public class ProtossWarping {
 
     /**
      * Handle construction fix: detect new Protoss buildings and remove them from construction queue.
@@ -15,7 +15,7 @@ public class ProtossConstructionManager {
     public static void handleWarpingNewBuilding(AUnit newBuilding) {
         ArrayList<Construction> notStartedConstructions =
                 ConstructionRequests.notStartedOfType(newBuilding.type());
-        
+
         // Find a Probe-builder closest to the constructions of given type and cancel this construction
         Units closestBuilders = new Units();
         for (Construction order : notStartedConstructions) {
@@ -25,12 +25,12 @@ public class ProtossConstructionManager {
             int distBuilderToConstruction = (int) (order.builder().distTo(order.buildPosition())) * 10;
             closestBuilders.changeValueBy(order.builder(), distBuilderToConstruction);
         }
-        
+
         // =========================================================
-        
+
         if (!closestBuilders.isEmpty()) {
             AUnit closestBuilder = closestBuilders.unitWithLowestValue();
-            
+
             // Assume that closest builder is the one that has just constructed a building.
             if (closestBuilder != null) {
                 Construction order = ConstructionRequests.constructionFor(closestBuilder);
@@ -40,5 +40,5 @@ public class ProtossConstructionManager {
             }
         }
     }
-    
+
 }

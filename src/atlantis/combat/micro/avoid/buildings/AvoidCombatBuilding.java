@@ -85,20 +85,25 @@ public class AvoidCombatBuilding extends Manager {
         double distTo = combatBuilding.distTo(unit);
         double doNothingMargin = 1.5;
 
-        if (distTo <= criticalDist) {
-//            if (thereIsNoSafetyMarginAtAll(combatBuilding)) return usedManager(avoidCombatBuildingCriticallyClose);
-            return barelyAnySafetyLeft(combatBuilding);
-        }
-        else if (holdPositionToShoot(combatBuilding) != null) {
+        if (distTo <= criticalDist + doNothingMargin) {
+            unit.holdPosition("HoldVsBuilding");
             return usedManager(this);
         }
-        else if (distTo <= (criticalDist + doNothingMargin)) {
-            return stillSomePlaceLeft(combatBuilding);
-        }
-        else if (distTo < (criticalDist + doNothingMargin)) {
-            Manager manager = thereIsNoSafetyMarginAtAll(combatBuilding);
-            if (manager != null) return usedManager(manager);
-        }
+
+//        if (distTo <= criticalDist) {
+////            if (thereIsNoSafetyMarginAtAll(combatBuilding)) return usedManager(avoidCombatBuildingCriticallyClose);
+//            return barelyAnySafetyLeft(combatBuilding);
+//        }
+//        else if (holdPositionToShoot(combatBuilding) != null) {
+//            return usedManager(this);
+//        }
+//        else if (distTo <= (criticalDist + doNothingMargin)) {
+//            return stillSomePlaceLeft(combatBuilding);
+//        }
+//        else if (distTo < (criticalDist + doNothingMargin)) {
+//            Manager manager = thereIsNoSafetyMarginAtAll(combatBuilding);
+//            if (manager != null) return usedManager(manager);
+//        }
 
         return null;
     }
