@@ -8,10 +8,12 @@ import atlantis.map.AMap;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
+import atlantis.util.log.ErrorLog;
 import bwapi.Point;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwapi.WalkPosition;
+import bwem.ChokePoint;
 
 /**
  * Atlantis uses wrapper for BWAPI  classes which can't extended due to private constructors.
@@ -89,7 +91,11 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         else if (p instanceof TilePosition) {
             position = new APosition(((TilePosition) p).toPosition());
         }
+        else if (p instanceof ChokePoint) {
+            position = new APosition(((ChokePoint) p).getCenter().toPosition());
+        }
         else {
+            ErrorLog.printMaxOncePerMinute("Got: " + position);
             throw new RuntimeException("APosition::create invalid param " + p);
         }
 

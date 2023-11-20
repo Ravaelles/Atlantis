@@ -18,9 +18,17 @@ public class WallInAlgorithm {
         APosition eTile,
         EnemyUnitToWallFrom enemySize
     ) {
+        initVisited();
+
         structurePlacement(0, structures, placedStructures, choke, sTile, eTile, enemySize);
 
         return structureSet;
+    }
+
+    private static void initVisited() {
+        for (int tx = 0; tx < visited.length; tx++) {
+            Arrays.fill(visited[tx], false);
+        }
     }
 
     private static void structurePlacement(int depth, List<Structure> structures, List<Structure> placedStructures,

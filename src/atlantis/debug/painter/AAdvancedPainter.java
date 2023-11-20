@@ -1712,4 +1712,14 @@ public class AAdvancedPainter extends APainter {
         );
         APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
     }
+
+    private static int prevMode;
+
+    public static void forcePainting() {
+        prevMode = paintingMode;
+    }
+
+    public static void liftForcedPainting() {
+        paintingMode = prevMode;
+    }
 }

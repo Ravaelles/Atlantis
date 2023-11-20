@@ -18,7 +18,7 @@ public class IssueRepairCommand extends Manager {
         if (!A.hasMinerals(5)) return false;
 
         if (unit.isRepairing() && (target = unit.target()) != null && target.isAlive()) {
-            if (target.isAir() && target.distTo(unit) >= 20) return false;
+            if (target.isAir() && target.distTo(unit) >= 4) return false;
 
             return true;
         }

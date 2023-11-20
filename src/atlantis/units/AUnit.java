@@ -333,6 +333,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 && move(newPosition, action, "Move away", false)
 //                && (unit().isAir() || Select.all().groundUnits().inRadius(0.05, newPosition).empty())
         ) {
+            double distTo = this.distTo(newPosition);
+            if (distTo >= 3 && distTo > 2 * moveDistance) {
+                ErrorLog.printMaxOncePerMinute(
+                    typeWithHash() + "::moveAwayFrom: distTo: " + distTo
+                        + " / " + "moveDistance: " + moveDistance
+                );
+            }
         }
         this.setTooltip(tooltip, false);
         return true;
@@ -2872,5 +2879,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         AUnit repairer = repairer();
 
         return repairer != null && this.distTo(repairer) <= (isAir() ? 6 : 2);
+    }
+
+    public boolean targetIsOfType(AUnitType... type) {
+        return target() != null && target().is(type);
     }
 }

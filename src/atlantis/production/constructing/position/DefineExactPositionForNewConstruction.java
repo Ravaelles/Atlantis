@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position;
 
+import atlantis.game.CameraCommander;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.modifier.PositionModifier;
@@ -23,6 +24,7 @@ public class DefineExactPositionForNewConstruction {
         if (order != null && order.isUsingExactPosition() && order.atPosition() != null) {
             System.err.println("Using exact position for " + building + " - " + order);
             positionToBuild = APosition.create(order.atPosition());
+//            CameraCommander.centerCameraOn(positionToBuild);
         }
         else {
             positionToBuild = newConstructionOrder.findPositionForNewBuilding();

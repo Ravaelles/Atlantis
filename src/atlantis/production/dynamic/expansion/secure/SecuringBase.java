@@ -13,6 +13,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
 
@@ -45,6 +46,12 @@ public class SecuringBase {
         if (baseToSecure == null) return false;
         if (CountInQueue.count(Terran_Bunker) >= 1) return true;
         if (Count.withPlanned(Terran_Bunker) >= 3) return true;
+
+        // @Fix
+        if (baseToSecure.regionsMatch(Select.main())) {
+            ErrorLog.printMaxOncePerMinute("Trying SecuringBase main - ignore");
+            return false;
+        }
 
         APosition bunkerPosition = (new NewBunkerPositionFinder(baseToSecure)).find();
 

@@ -19,24 +19,32 @@ public class ProduceScienceVessels {
             return;
         }
 
-        int limit = Math.max(
-            1 + (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT ? 2 : 0),
-            A.supplyTotal() / 35
-        );
-        produceScienceVessels(limit);
+        produceScienceVessels();
     }
 
     private static boolean produceScienceVessel() {
+        System.err.println("@ " + A.now() + " - produce VESSEL A");
         return AddToQueue.toHave(Terran_Science_Vessel, 1, ProductionOrderPriority.TOP);
     }
 
-    private static boolean produceScienceVessels(int upTo) {
-        return AddToQueue.toHave(Terran_Science_Vessel, upTo, ProductionOrderPriority.TOP);
+    private static boolean produceScienceVessels() {
+        int base = (A.canAfford(700, 450) || A.supplyTotal() >= 130) ? 2 : 1;
+
+        int limit = Math.max(
+            base + (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT ? 1 : 0),
+            A.supplyTotal() / 40
+        );
+
+        System.err.println("@ " + A.now() + " - produce VESSEL B = " + limit);
+
+        return AddToQueue.toHave(Terran_Science_Vessel, limit, ProductionOrderPriority.TOP);
     }
 
     private static boolean dontHaveScienceFacility() {
         if (!Have.notEvenPlanned(Terran_Science_Facility)) {
-            if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) ProduceScienceFacility.produceScienceFacility();
+            if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT || Have.controlTower()) {
+                ProduceScienceFacility.produceScienceFacility();
+            }
 
             return true;
         }

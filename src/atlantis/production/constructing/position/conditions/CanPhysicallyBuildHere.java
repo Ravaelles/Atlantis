@@ -29,7 +29,8 @@ public class CanPhysicallyBuildHere {
             AAdvancedPainter.paintCircleFilled(position, 5, Color.Red);
         }
 
-//        if (!position.isPositionVisible()) return true;
+        // Fix for bases - allow in unknown locations
+        if (!position.isExplored() && building.isBase()) return true;
 
         if (!We.zerg() && Atlantis.game().hasCreep(position.toTilePosition())) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Ugly creep on it";

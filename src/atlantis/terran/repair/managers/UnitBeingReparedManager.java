@@ -31,6 +31,15 @@ public class UnitBeingReparedManager extends Manager {
     protected Manager handle() {
         double distanceToRepairer = repairer.distTo(unit);
 
+        if (
+            distanceToRepairer <= 0.5
+                && repairer.isRepairing()
+                && unit.enemiesNear().canBeAttackedBy(unit, -0.4).empty()
+        ) {
+            unit.holdPosition("WaitRepair");
+            return usedManager(this);
+        }
+
         if (unit.cooldown() >= 3 && distanceToRepairer > 1 && distanceToRepairer <= 5) {
             unit.move(repairer, Actions.MOVE_REPAIR, "2Repair");
             return usedManager(this);

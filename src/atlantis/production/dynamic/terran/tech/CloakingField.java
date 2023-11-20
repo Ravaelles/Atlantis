@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran.tech;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -15,6 +16,7 @@ public class CloakingField extends Commander {
     public boolean applies() {
         if (!We.terran()) return false;
         if (!Have.controlTower()) return false;
+        if (!Have.scienceFacility() && (!Have.scienceVessel() || !A.hasGas(350))) return false;
         if (ATech.isResearchedOrPlanned(Cloaking_Field)) return false;
 
         if (Count.wraiths() >= 1 && !ArmyStrength.weAreWeaker()) return true;

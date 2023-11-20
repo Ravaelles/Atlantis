@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -10,6 +11,7 @@ import atlantis.units.select.Select;
 
 public class ProduceWraiths {
     public static int totalQueued = 0;
+
     public static boolean wraiths() {
         if (Count.ofType(AUnitType.Terran_Starport) == 0) return false;
         if (prioritizeScienceFacility()) return false;
@@ -33,9 +35,11 @@ public class ProduceWraiths {
     }
 
     private static boolean prioritizeScienceVessels() {
-        return totalQueued > 0
-            && Have.scienceFacility()
-            && !Have.scienceVessel();
+        if (A.hasGas(400)) return false;
+
+        if (EnemyInfo.hasHiddenUnits()) return !Have.scienceVessel();
+
+        return !Have.haveExistingOrInPlans(AUnitType.Terran_Science_Vessel);
     }
 
     private static boolean prioritizeScienceFacility() {

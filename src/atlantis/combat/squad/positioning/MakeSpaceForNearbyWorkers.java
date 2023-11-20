@@ -19,6 +19,7 @@ public class MakeSpaceForNearbyWorkers extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isLoaded()) return false;
         if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.friendsNear().groundUnits().nonBuildings().countInRadius(1, unit) <= 1) return false;
         if (unit.friendsNear().workers().inRadius(4, unit).empty()) return false;
@@ -35,7 +36,7 @@ public class MakeSpaceForNearbyWorkers extends Manager {
     }
 
     protected Manager handle() {
-        AUnit nearWorker = Select.ourWorkers().inRadius(1.5, unit).first();
+        AUnit nearWorker = Select.ourWorkers().notGathering().inRadius(1.7, unit).first();
 
         if (nearWorker != null) {
             unit.setTooltipAndLog("Space4Worker");

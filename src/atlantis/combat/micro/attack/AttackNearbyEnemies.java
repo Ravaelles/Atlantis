@@ -77,7 +77,7 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     private Manager dedicatedManager() {
-        if (unit.isWraith()) return new AttackAsWraith(unit);
+//        if (unit.isWraith()) return new AttackAsWraith(unit);
 
         return null;
     }

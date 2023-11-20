@@ -12,11 +12,14 @@ public class AttackTargetInRange extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.hasAnyWeapon() && unit.noCooldown();
+        return unit.noCooldown() && unit.hasAnyWeapon();
     }
 
     protected Manager handle() {
-        Selection targets = unit.enemiesNear().canBeAttackedBy(unit, -0.4);
+        Selection targets = unit.enemiesNear()
+            .canBeAttackedBy(unit, -0.3);
+
+        if (!notAllowedToAttackBuildings()) targets = targets.nonBuildings();
 
         if (targets.empty()) return null;
 
@@ -39,6 +42,11 @@ public class AttackTargetInRange extends Manager {
         }
 
         return null;
+    }
+
+    private boolean notAllowedToAttackBuildings() {
+        return (unit.noCooldown() && A.chance(60))
+            && unit.lastStartedAttackLessThanAgo(30 * 5);
     }
 
     protected boolean tryAttacking(Selection targets) {

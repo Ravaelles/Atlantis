@@ -19,7 +19,6 @@ public class RepairerManager extends Manager {
         return new Class[]{
             RepairerSafety.class,
             RemoveRepairer.class,
-            ContinueRepairing.class,
             IssueRepairCommand.class,
             SeparateFromRunningTanks.class,
         };

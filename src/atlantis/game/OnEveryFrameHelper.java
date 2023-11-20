@@ -5,13 +5,18 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 
+import atlantis.map.wall.GetWallIn;
+import atlantis.map.wall.Structure;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import bwapi.Color;
 import jbweb.Block;
 import jbweb.Blocks;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Auxiliary class, helpful when there's need to do something every frame and not spam other classes.
@@ -29,11 +34,28 @@ public class OnEveryFrameHelper {
 
 //        combatUnitInfo();
 
-        paintMyOwnWallInSolution();
+//        paintMyOwnWallInSolution(); // <<<<<<<<<<<<<<<<<
+
+//        testScvMoveAwayFrom();
+    }
+
+    private static void testScvMoveAwayFrom() {
+        List<AUnit> workers = Select.ourWorkers().list();
+        for (AUnit unit : workers) {
+            if (unit.id() % 3 != 0) continue;
+
+            AUnit avoid = Select.ourWorkers().exclude(unit).nearestTo(unit);
+
+            if (avoid != null && avoid.distTo(unit) <= 5) {
+                unit.moveAwayFrom(avoid, 1, Actions.MOVE_AVOID, "TestAvoid");
+                AAdvancedPainter.paintLine(unit, unit.targetPosition(), Color.Cyan);
+            }
+        }
     }
 
     private static void paintMyOwnWallInSolution() {
-
+        Set<Structure> structures = GetWallIn.get();
+        GetWallIn.paint(structures);
     }
 
     private static void combatUnitInfo() {

@@ -2,6 +2,7 @@ package atlantis.game;
 
 import atlantis.Atlantis;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.config.MapSpecificCommander;
 import atlantis.config.env.Env;
 import atlantis.information.enemy.EnemyInfo;
 import bwapi.Game;
@@ -134,6 +135,7 @@ public class GameSpeed {
      * Changes game speed. 0 - fastest 1 - very quick 20 - around default
      */
     public static void changeSpeedTo(int speed) {
+        if (A.now() > 5) MapSpecificCommander.initialSpeed = false;
         dynamicSlowdownIsActive = false;
 
         if (speed <= 0) {

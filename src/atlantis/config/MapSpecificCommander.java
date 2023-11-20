@@ -11,11 +11,13 @@ import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 import java.util.Arrays;
 
 public class MapSpecificCommander extends Commander {
+    public static boolean initialSpeed = true;
 
     @Override
     protected void handle() {
@@ -79,6 +81,10 @@ public class MapSpecificCommander extends Commander {
                     CameraCommander.centerCameraOn((new MissionDefendFocus()).focusPoint());
                 }
             }
+
+//            if (ActiveMap.isMap("exp_skilltest") && !Have.controlTower()) {
+//                GameSpeed.changeFrameSkipTo(2000);
+//            }
         }
 
         // =========================================================

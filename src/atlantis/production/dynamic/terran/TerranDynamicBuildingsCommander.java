@@ -3,7 +3,7 @@ package atlantis.production.dynamic.terran;
 import atlantis.game.A;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.reinforce.terran.turrets.ReinforceBunkersWithTurrets;
-import atlantis.production.dynamic.reinforce.terran.turrets.TurretNeededHere;
+import atlantis.production.dynamic.reinforce.terran.turrets.here.OffensiveTurretsCommander;
 import atlantis.production.dynamic.terran.buildings.*;
 import atlantis.production.orders.production.queue.CountInQueue;
 
@@ -19,7 +19,7 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
 //        ReinforceBasesWithCombatBuildings.get().invoke();
         (new ReinforceBunkersWithTurrets()).invoke();
-        (new TurretNeededHere()).invoke();
+        (new OffensiveTurretsCommander()).invoke();
 
         if (A.everyNthGameFrame(57)) {
             ProduceScienceFacility.scienceFacilities();

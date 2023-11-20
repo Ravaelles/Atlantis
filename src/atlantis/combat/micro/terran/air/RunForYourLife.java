@@ -22,12 +22,12 @@ public class RunForYourLife extends Manager {
         if (unit.effUndetected()) return false;
 
         return unit.hp() <= 65
-            && unit.enemiesNear().canAttack(unit, 5.1).notEmpty();
+            && unit.enemiesNear().canAttack(unit, 8.1).notEmpty();
     }
 
     @Override
     protected Manager handle() {
-        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(8)) return usedManager(this);
+        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(16)) return usedManager(this);
 
         if ((new AvoidEnemies(unit)).invoke() != null) return usedManager(this);
 

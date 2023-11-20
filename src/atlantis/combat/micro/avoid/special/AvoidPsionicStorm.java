@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid.special;
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
+import atlantis.game.GameSpeed;
 import atlantis.map.bullets.BulletsOnMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
@@ -31,7 +32,7 @@ public class AvoidPsionicStorm extends Manager {
 
 //        paintBullets(bullets, Color.Cyan);
 
-        if (handleMoveAwayIfPsionicCloserThan(bullets, 3.8)) return usedManager(this);
+        if (handleMoveAwayIfPsionicCloserThan(bullets, 4)) return usedManager(this);
 
         return null;
     }
@@ -47,9 +48,18 @@ public class AvoidPsionicStorm extends Manager {
 
         if (unit.distTo(avoidCenter) < minDist) {
             unit.runningManager().runFromAndNotifyOthersToMove(avoidCenter, "PSIONIC-STORM");
+            AAdvancedPainter.forcePainting();
+//            AAdvancedPainter.paintCircle(unit, 13, Color.Cyan);
+//            AAdvancedPainter.paintLine(unit, avoidCenter, Color.Cyan);
+            AAdvancedPainter.paintLine(unit, unit.targetPosition(), Color.Cyan);
+            AAdvancedPainter.liftForcedPainting();
+            System.err.println("RUNNING FROM PSIONIC / unit:" + unit.position() + " to " + unit.targetPosition() + " " +
+                "/ " +
+                "psionic: " + avoidCenter + " / dist:" + unit.distTo(avoidCenter) + " / runTo:" + unit.distTo(unit.targetPosition()));
             return true;
         }
-        else return false;
+
+        return false;
     }
 
     private APosition psionicCenter(ArrayList<Bullet> bullets) {

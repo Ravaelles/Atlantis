@@ -15,6 +15,7 @@ public class ThinkOfSieging extends Manager {
     @Override
     public boolean applies() {
         if (unit.isTankSieged()) return false;
+        if (unit.hasSiegedOrUnsiegedRecently()) return false;
 
         Selection enemiesNear = unit.enemiesNear().groundUnits();
         if (enemiesNear.inRadius(7, unit).notEmpty()) {
@@ -31,7 +32,7 @@ public class ThinkOfSieging extends Manager {
             SiegeVsCombatBuildings.class,
             UnitBeingReparedManager.class,
             SiegeHereDuringMissionDefend.class,
-            SiegeVsSpecificEnemies.class,
+            SiegeAgainstSpecificEnemies.class,
             SiegeVsRegularBuildings.class,
             SiegeVsTerran.class,
             SiegeVsRegularEnemies.class,

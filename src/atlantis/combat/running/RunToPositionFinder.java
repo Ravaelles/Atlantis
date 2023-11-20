@@ -22,12 +22,14 @@ public class RunToPositionFinder {
      * Running behavior which will make unit run straight away from the enemy.
      */
     protected HasPosition findBestPositionToRun(HasPosition runAwayFrom, double dist) {
-        if ((running.setRunTo(running.runTowardsNonStandard.shouldRunTowardsBunker())) != null) {
-            return running.runTo();
-        }
+        if (!running.allowedToNotifyNearUnitsToMakeSpace) {
+            if ((running.setRunTo(running.runTowardsNonStandard.shouldRunTowardsBunker())) != null) {
+                return running.runTo();
+            }
 
-        if (running.runTowardsNonStandard.shouldRunTowardsBase()) {
-            return running.setRunTo(Select.main().position());
+            if (running.runTowardsNonStandard.shouldRunTowardsBase()) {
+                return running.setRunTo(Select.main().position());
+            }
         }
 
         // =========================================================
@@ -203,7 +205,6 @@ public class RunToPositionFinder {
         //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
 
 
-
         // =========================================================
         // Find the location that would be most distant to the enemy location
 
@@ -234,8 +235,6 @@ public class RunToPositionFinder {
         position = position.makeWalkable(1);
 
         if (position == null) return false;
-
-
 
 
         int walkRadius = 32;

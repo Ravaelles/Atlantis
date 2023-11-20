@@ -12,7 +12,11 @@ public class GoToRepair extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.canBeRepaired() && unit.hp() <= 36 && !unit.isRunning();
+        AUnit repairer;
+
+        return unit.canBeRepaired()
+            && (unit.hp() <= 36 || ((repairer = unit.repairer()) != null && repairer.distTo(unit) <= 1))
+            && !unit.isRunning();
     }
 
     public Manager handle() {

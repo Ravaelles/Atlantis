@@ -26,7 +26,7 @@ public class NewBunkerPositionFinder {
         this.builder = builder;
 
         if (positionToSecure == null) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("NewBunkerPositionFinder: positionToSecure got null");
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("NewBunkerPositionFinder: positionToSecure got null");
             this.positionToSecure = Select.ourBases().last();
         }
         if (builder == null) this.builder = Select.ourWorkers().nearestTo(positionToSecure);

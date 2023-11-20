@@ -13,28 +13,28 @@ import static atlantis.units.AUnitType.*;
 
 public class ProduceScienceFacility {
     public static void scienceFacilities() {
-//        if (!Have.starport()) return;
+        if (!Have.starport()) return;
 //        if (Have.haveExistingOrInPlans(Terran_Science_Facility)) return;
         if (
             Have.a(Terran_Science_Facility)
                 || CountInQueue.count(Terran_Science_Facility, 6) > 0
         ) return;
 
-        if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI A = " + shouldProduce());
+//        if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI A = " + shouldProduce());
 
         if (shouldProduce()) {
             if (DynamicCommanderHelpers.haveNoExistingOrPlanned(Terran_Starport)) {
-                if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI B = ");
+//                if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI B = ");
                 AddToQueue.toHave(Terran_Starport, 1, ProductionOrderPriority.TOP);
                 return;
             }
             if (DynamicCommanderHelpers.haveNoExistingOrPlanned(Terran_Control_Tower)) {
-                if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI C = ");
+//                if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI C = ");
                 AddToQueue.toHave(Terran_Control_Tower, 1, ProductionOrderPriority.TOP);
                 return;
             }
 
-            if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI YEEEEEEEES = ");
+//            if (A.supplyUsed(39)) System.err.println("shouldProduce() SCI FACI YEEEEEEEES = ");
             produceScienceFacility();
         }
 

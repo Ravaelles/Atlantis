@@ -22,6 +22,15 @@ public class TerranWraith extends Manager {
             RunForYourLife.class,
             UnitBeingReparedManager.class,
             GoToRepair.class,
+
+            // Attack-related
+            ChangeLocationIfRanTooLong.class,
+            AttackOtherAirUnits.class,
+            AttackSpecificEnemies.class,
+            AttackWorkersWhenItMakesSense.class,
+            AttackTargetInRangeIfRanTooLong.class,
+            AttackTargetInRange.class,
+            MoveAsLooksIdle.class,
         };
     }
 
