@@ -30,14 +30,13 @@ public class Unfreezer extends Manager {
             && !unit.isLoaded()
             && !unit.isMoving()
             && A.now() >= 10
+            && unit.looksIdle()
 //            && (unit.position().equals(unit.lastPosition()))
             && unit.lastStartedRunningMoreThanAgo(50)
+            && unit.lastActionMoreThanAgo(150, Actions.MOVE_UNFREEZE)
+            && unit.hasNotMovedInAWhile()
             && unit.nearestEnemyDist() >= 4
-            && unit.lastActionMoreThanAgo(15)
-            && unit.lastActionMoreThanAgo(50, Actions.MOVE_UNFREEZE)
-            && unit.looksIdle()
-            && unit.lastActionMoreThanAgo(30)
-            && unit.hasNotMovedInAWhile();
+            && unit.lastActionMoreThanAgo(30);
 //            (unit.looksIdle()
 //                || (unit.lastActionMoreThanAgo(30) && unit.hasNotMovedInAWhile())
 //            );

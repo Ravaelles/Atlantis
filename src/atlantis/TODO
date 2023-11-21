@@ -1,14 +1,16 @@
 ### BUGS ###
 
---- Very broken expansions
+.-- minerals dist to barrack 0
+
+?--- Very broken expansions (natural is detected ok, pribably secure bunker problem
+
+.--- tanks not waiting for repair even with 1hp, wraiths wait for 30%)
 
 ------ RunFrom1.0 goes like 30, psionic broken! :O
 
 .++++ Force Wraiths to attack Reavers in range, same with Tanks sieged, add tests
 
 .-- Psionic irritating - PSIONIC_STORM but go in... :-/
-
-.---- Science Vessel not produced
 
 -----------------------------------------------
 - Bunker securing the main

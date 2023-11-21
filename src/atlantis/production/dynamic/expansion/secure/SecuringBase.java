@@ -89,7 +89,7 @@ public class SecuringBase {
 
     public boolean isSecure() {
         if (baseToSecure == null) return true;
-
+        if (A.hasMinerals(800)) return true;
         if (We.zerg() && !Have.spawningPool()) return true;
 
         if (!securingWithBunker.hasBunkerSecuring()) return false;

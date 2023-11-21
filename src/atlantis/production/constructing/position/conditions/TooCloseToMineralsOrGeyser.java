@@ -17,7 +17,9 @@ public class TooCloseToMineralsOrGeyser {
         if (nearestBase == null) return false;
 
         AUnit mineral = Select.minerals().nearestTo(position);
-        int minDistToMineral = building.isBunker() ? 5 : 2;
+
+        int minDistToMineral = minDistToMineral(building);
+
         if (mineral != null && mineral.distTo(position) <= minDistToMineral) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to mineral";
             return true;
@@ -30,5 +32,12 @@ public class TooCloseToMineralsOrGeyser {
         }
 
         return false;
+    }
+
+    private static int minDistToMineral(AUnitType building) {
+        if (building.isBunker()) return 5;
+        if (building.isBarracks()) return 4;
+
+        return 3;
     }
 }
