@@ -3,8 +3,12 @@ package atlantis.map.path;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.cache.Cache;
+import atlantis.util.cache.CacheKey;
 import bwem.CPPath;
 import bwem.ChokePoint;
 
@@ -12,25 +16,41 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class PathToEnemyBase {
+    private static Cache<Object> cache = new Cache<>();
+    private static Cache<ArrayList<AChoke>> cacheChokes = new Cache<>();
+
     public static ArrayList<AChoke> chokesLeadingToEnemyBase() {
-        CPPath path = definePath();
+        AUnit enemy = enemy();
 
-        if (path == null) {
-            return new ArrayList<>();
-        }
+        if (enemy == null) return null;
 
-        return iteratorToChokes(path);
+        return cacheChokes.get(
+            "chokesLeadingToEnemyBase:" + CacheKey.toKey(enemy),
+            -1,
+            () -> {
+                CPPath path = definePathToEnemy(Select.mainOrAnyBuilding());
+
+                if (path == null) {
+                    return new ArrayList<>();
+                }
+
+                return iteratorToChokes(path);
+            }
+        );
     }
 
-    private static CPPath definePath() {
-        AUnit enemy = EnemyUnits.nearestEnemyBuilding();
-        AUnit ourBuilding = Select.ourBuildings().first();
+    private static AUnit enemy() {
+        return EnemyUnits.nearestEnemyBuilding();
+    }
 
-        if (enemy == null || !enemy.hasPosition() || ourBuilding == null) {
+    protected static CPPath definePathToEnemy(HasPosition from) {
+        AUnit enemy = enemy();
+
+        if (enemy == null || !enemy.hasPosition() || from == null) {
             return null;
         }
 
-        CPPath path = AMap.getMap().getPath(ourBuilding.position().p(), enemy.position().p());
+        CPPath path = AMap.getMap().getPath(from.position().p(), enemy.position().p());
         return path;
     }
 

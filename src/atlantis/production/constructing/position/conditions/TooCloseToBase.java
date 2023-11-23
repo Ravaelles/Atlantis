@@ -12,9 +12,11 @@ import atlantis.units.select.Select;
 
 public class TooCloseToBase {
     public static boolean isTooCloseToBase(AUnitType building, APosition position) {
-        if (building.isCombatBuilding() || building.isGasBuilding()) return false;
+        if (building.isGasBuilding()) return false;
 
         int minDistToBase = building.isSupplyDepot() ? (A.supplyTotal() >= 15 ? 8 : 4) : 5;
+
+        if (building.isCombatBuilding()) minDistToBase = 2;
 
         return Select.ourBasesWithUnfinished().inRadius(minDistToBase, position).notEmpty();
     }

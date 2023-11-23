@@ -14,6 +14,7 @@ public class ConsiderLoadingIntoBunkers extends Manager {
     public boolean applies() {
         if (unit.isLoaded()) return false;
         if (Count.bunkers() == 0) return false;
+        if (unit.hp() <= 20 && Count.marines() >= 5 && unit.meleeEnemiesNearCount(1.7) > 0) return false;
         if (!unit.isMarine() && !unit.isGhost()) return false;
         if (unit.meleeEnemiesNearCount(1.8) >= 2) return false;
 

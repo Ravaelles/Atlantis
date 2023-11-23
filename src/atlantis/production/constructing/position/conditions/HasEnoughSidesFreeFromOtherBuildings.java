@@ -13,6 +13,12 @@ public class HasEnoughSidesFreeFromOtherBuildings {
                     && !BuildingTileHelper.tileLeftFrom(building, position).isWalkable()
             ) return false;
 
+            if (building.canHaveAddon()) {
+                if (!BuildingTileHelper.tileRightFrom(
+                    building, position.translateByTiles(2, 0)
+                ).isWalkable()) return false;
+            }
+
             if (
                 !BuildingTileHelper.tileUpFrom(building, position).isWalkable()
                     && !BuildingTileHelper.tileDownFrom(building, position).isWalkable()

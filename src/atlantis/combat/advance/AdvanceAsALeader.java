@@ -44,10 +44,10 @@ public class AdvanceAsALeader extends MissionManager {
     }
 
     private boolean actWithCohesionTooLow(String tooltip) {
-//        APosition moveTo = squad.center();
-        HasPosition moveTo = unit.friendsNear().mostDistantTo(Select.mainOrAnyBuilding());
+//        HasPosition moveTo = unit.friendsNear().mostDistantTo(Select.mainOrAnyBuilding());
+        APosition moveTo = squad.center();
 
-        if (moveTo != null) {
+        if (moveTo != null && unit.distTo(moveTo) > 4) {
             unit.move(moveTo, Actions.MOVE_FORMATION, tooltip);
             return true;
         }

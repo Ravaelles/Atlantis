@@ -1,6 +1,7 @@
-package atlantis.combat.missions.defend.focus;
+package atlantis.combat.missions.defend.focus.terran;
 
 import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.missions.defend.focus.MissionDefendFocus;
 import atlantis.game.A;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.AChoke;
@@ -12,14 +13,14 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-public class TerranDefendFocus {
+public class TerranMissionDefendFocus {
     public static AFocusPoint define() {
         if (!We.terran()) return null;
 
         AFocusPoint focus;
 
-        if ((focus = TerranDefendFocus.bunkerAtNatural()) != null) return focus;
-        if ((focus = TerranDefendFocus.bunker()) != null) return focus;
+        if ((focus = TerranMissionDefendFocus.bunkerAtNatural()) != null) return focus;
+        if ((focus = TerranMissionDefendFocus.bunker()) != null) return focus;
 
         return null;
     }

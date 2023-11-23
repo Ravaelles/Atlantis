@@ -46,9 +46,9 @@ public class NewBunkerPositionFinder {
         );
     }
 
-    private boolean isForNatural() {
-        return nearestBasePosition.distTo(naturalBase) <= 9;
-    }
+//    private boolean isForNatural() {
+//        return nearestBasePosition.distTo(naturalBase) <= 9;
+//    }
 
     private boolean isNotValid() {
         if (positionToSecure == null) return true;
@@ -56,6 +56,8 @@ public class NewBunkerPositionFinder {
         nearestBasePosition = NextBasePosition.nextBasePosition();
         naturalBase = DefineNatural.natural();
 
-        return nearestBasePosition == null || naturalBase == null;
+        // @FIX?
+        return nearestBasePosition == null && naturalBase == null;
+//        return nearestBasePosition == null || naturalBase == null;
     }
 }

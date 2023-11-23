@@ -34,7 +34,7 @@ public class UnitBeingReparedManager extends Manager {
         if (
             distanceToRepairer <= 0.8
                 && repairer.isRepairing()
-                && (unit.woundPercent() >= 10 || unit.enemiesNear().groundUnits().canBeAttackedBy(unit, -0.4).empty())
+                && (unit.woundPercent() >= 15 || unit.enemiesNear().groundUnits().canBeAttackedBy(unit, -0.4).empty())
         ) {
             unit.holdPosition("WaitRepair");
             return usedManager(this);

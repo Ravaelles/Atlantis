@@ -2,14 +2,19 @@ package atlantis.combat.missions.defend.focus;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
+import atlantis.combat.missions.defend.focus.terran.TerranMissionDefendFocus;
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.base.define.DefineNatural;
 import atlantis.map.choke.AChoke;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.Chokes;
+import atlantis.map.path.OurClosestBaseToEnemy;
+import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -42,13 +47,17 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
                 // ===============================================================
 
-                if ((focus = SpecialDefendFocus.define()) != null) return focus;
+                if ((focus = SpecialMissionDefendFocus.define()) != null) return focus;
 
                 // === Main choke ================================================
 
                 if (!Enemy.terran() && Count.ourCombatUnits() <= 4) {
                     if ((focus = atMainChoke()) != null) return focus;
                 }
+
+                // === Last base ================================================
+
+                if ((focus = atLastBase()) != null) return focus;
 
                 // === Natural choke ================================================
 
@@ -62,8 +71,8 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
 //                if (ArmyStrength.weAreStronger() && Count.ourCombatUnits() <= 8) {
 //                if (Count.ourCombatUnits() <= 8) {
-                if ((focus = ZergDefendFocus.define()) != null) return focus;
-                if ((focus = TerranDefendFocus.define()) != null) return focus;
+                if ((focus = ZergMissionDefendFocus.define()) != null) return focus;
+                if ((focus = TerranMissionDefendFocus.define()) != null) return focus;
                 if ((focus = aroundCombatBuilding()) != null) return focus;
 //                }
 
@@ -81,6 +90,20 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
                 return fallbackToNearestEnemy();
             }
+        );
+    }
+
+    private AFocusPoint atLastBase() {
+        if (A.supplyUsed() < 50 || Count.bases() < 2) return null;
+
+        HasPosition lastBase = OurClosestBaseToEnemy.get();
+
+        if (lastBase == null) return null;
+
+        return new AFocusPoint(
+            Select.mainOrAnyBuilding(),
+            lastBase,
+            "LastBase"
         );
     }
 
@@ -205,7 +228,7 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
     // =========================================================
 
-    protected static AFocusPoint atMainChoke() {
+    public static AFocusPoint atMainChoke() {
         AChoke mainChoke = Chokes.mainChoke();
         if (mainChoke == null) {
             return null;

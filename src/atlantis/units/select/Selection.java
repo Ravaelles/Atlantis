@@ -9,7 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.fogged.AbstractFoggedUnit;
-import atlantis.util.cache.CachePathKey;
+import atlantis.util.cache.CacheKey;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ public class Selection extends BaseSelection {
     public Selection ofType(AUnitType... types) {
         return cloneByRemovingIf(
             (unit -> !typeMatches(unit, types)),
-            CachePathKey.get(types)
+            CacheKey.get(types)
         );
     }
 
@@ -745,7 +745,7 @@ public class Selection extends BaseSelection {
 
     public Selection excludeTypes(AUnitType... types) {
         return cloneByRemovingIf(
-            (unit -> unit.is(types)), "excludeTypes:" + CachePathKey.get(types)
+            (unit -> unit.is(types)), "excludeTypes:" + CacheKey.get(types)
         );
     }
 

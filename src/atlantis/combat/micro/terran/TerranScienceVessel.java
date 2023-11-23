@@ -6,6 +6,7 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
+import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -27,6 +28,7 @@ public class TerranScienceVessel extends MobileDetector {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AvoidEnemies.class,
+            UnitBeingReparedManager.class,
         };
     }
 

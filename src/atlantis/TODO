@@ -1,32 +1,24 @@
 ### BUGS ###
 
-.-- minerals dist to barrack 0
+.- Nastural over lastBAse
+- Starport not having place for addon (Refiner)
 
 ?--- Very broken expansions (natural is detected ok, pribably secure bunker problem
 
-.--- tanks not waiting for repair even with 1hp, wraiths wait for 30%)
-
 ------ RunFrom1.0 goes like 30, psionic broken! :O
-
-.++++ Force Wraiths to attack Reavers in range, same with Tanks sieged, add tests
-
-.-- Psionic irritating - PSIONIC_STORM but go in... :-/
 
 -----------------------------------------------
 - Bunker securing the main
-
 -----------------------------------------------
 
-
 ..----- AvoidCombatBuilding logic is broken, units suicide. It's slow, so simply leave one logic (hold)
-
 
 
 ### FEATURES ###
 
 ..++++ Build turrets against enemy Wraiths/Scouts
 
-+++ Road to enemy base
+.+++ Road to enemy base
 
 ++ Performance improvement for situation when there's Combat Building nearby. 3x slower when one cannon nearby.
 
@@ -35,8 +27,6 @@
 + Wall-in
 
 ###############
-
-. @@@ .- Fix OwnCloaked not working properly - always shows unit as detected
 
 (.)?+ Focus on the logic of expanding to natural - move army first, then build CC + bunker + turret
 
