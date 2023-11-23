@@ -65,6 +65,10 @@ public class MissionDefendFocus extends MissionFocusPoint {
                     if ((focus = atNaturalChoke()) != null) return focus;
                 }
 
+                // === Main choke ================================================
+
+                if (A.supplyUsed() >= 50 && (focus = atMainChoke()) != null) return focus;
+
                 // ===============================================================
                 // === Around combat buildings ===================================
                 // ===============================================================
@@ -75,10 +79,6 @@ public class MissionDefendFocus extends MissionFocusPoint {
                 if ((focus = TerranMissionDefendFocus.define()) != null) return focus;
                 if ((focus = aroundCombatBuilding()) != null) return focus;
 //                }
-
-                // === Main choke ================================================
-
-                if ((focus = atMainChoke()) != null) return focus;
 
                 // === Return position near the first building ===================
 

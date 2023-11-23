@@ -16,7 +16,7 @@ public class TerranAbundance extends AbundanceCommander {
     public boolean applies() {
         return We.terran()
             && A.hasMinerals(800)
-            && Queue.get().forCurrentSupply().nonCompleted().size() <= 10;
+            && (A.hasMinerals(1000) || Queue.get().forCurrentSupply().nonCompleted().size() <= 10);
     }
 
     @Override

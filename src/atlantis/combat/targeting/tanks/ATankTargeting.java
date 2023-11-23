@@ -12,14 +12,7 @@ public class ATankTargeting extends HasUnit {
     }
 
     public AUnit targetForTank() {
-        List<AUnit> enemies = unit.enemiesNear()
-            .groundUnits()
-            .visibleOnMap()
-            .havingAtLeastHp(1)
-            .havingPosition()
-            .realUnitsAndBuildings()
-            .effVisible()
-            .sortDataByDistanceTo(unit, true);
+        List<AUnit> enemies = targets();
 
         ArrayList<AUnit> possibleTargets = new ArrayList<>();
         for (AUnit enemy : enemies) {
@@ -35,8 +28,22 @@ public class ATankTargeting extends HasUnit {
         return (new HighestScoreTargetForTank(unit)).targetWithBestScoreAmong(possibleTargets);
     }
 
+    private List<AUnit> targets() {
+        return unit.enemiesNear()
+            .groundUnits()
+            .visibleOnMap()
+            .havingAtLeastHp(1)
+            .havingPosition()
+            .realUnitsAndBuildings()
+            .effVisible()
+            .sortDataByDistanceTo(unit, true);
+    }
+
     private boolean enemyCanBePhysicallyAttacked(AUnit enemy) {
         double distToEnemy = unit.distTo(enemy);
-        return 2.05 <= distToEnemy && distToEnemy <= 11.95;
+
+        if (unit.isSieged()) return 2.05 <= distToEnemy && distToEnemy <= 11.99;
+
+        return distToEnemy <= 7;
     }
 }

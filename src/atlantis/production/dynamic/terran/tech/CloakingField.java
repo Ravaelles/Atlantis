@@ -7,6 +7,7 @@ import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 import static bwapi.TechType.Cloaking_Field;
@@ -19,7 +20,7 @@ public class CloakingField extends Commander {
         if (!Have.scienceFacility() && (!Have.scienceVessel() || !A.hasGas(350))) return false;
         if (ATech.isResearchedOrPlanned(Cloaking_Field)) return false;
 
-        if (Count.wraiths() >= 1 && !ArmyStrength.weAreWeaker()) return true;
+        if (Count.wraiths() >= (Enemy.terran() ? 1 : 2) && !ArmyStrength.weAreWeaker()) return true;
 //        if (Count.wraiths() >= (Enemy.terran() ? 2 : 1)) return true;
 
         return false;

@@ -70,7 +70,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
         if (Count.ofType(AUnitType.Terran_Science_Vessel) > 0) return false;
 
         if (EnemyUnits.discovered().effUndetected().size() >= 2) {
-            if (Select.ourOfType(AUnitType.Terran_Comsat_Station).havingEnergy(150).empty()) return true;
+            if (Select.ourOfType(AUnitType.Terran_Comsat_Station).havingEnergy(130).empty()) return true;
         }
 
         return false;

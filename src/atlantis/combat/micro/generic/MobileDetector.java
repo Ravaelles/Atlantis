@@ -2,6 +2,7 @@ package atlantis.combat.micro.generic;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -11,7 +12,6 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class MobileDetector extends Manager {
-
     protected AUnit unitAssignedToMainSquad = null;
     protected AUnit unitForSquadScout = null;
     protected AUnit unitForBase = null;
@@ -38,11 +38,9 @@ public class MobileDetector extends Manager {
 
     protected boolean update() {
         if (handleSpreadOut()) return true;
-
         if (detectInvisibleUnitsClosestToBase()) return true;
-
-        if (followArmy(false)) return true;
-
+//        if (followArmy(false)) return true;
+        if (followArmy(true)) return true;
         if (followSquadScout()) return true;
 
         return followArmy(true);
@@ -85,13 +83,17 @@ public class MobileDetector extends Manager {
     protected boolean followArmy(boolean shouldFollowItsSquad) {
         if (!shouldFollowItsSquad && !unit.is(unitAssignedToMainSquad)) return false;
 
-        HasPosition goTo = unit.squadCenter();
+        HasPosition squadCenter = unit.squadCenter();
+        HasPosition goTo = squadCenter;
         if (goTo != null) {
+            AUnit nearestInvisibleEnemy = unit.enemiesNear().effUndetected().nearestTo(squadCenter);
+            if (nearestInvisibleEnemy != null) goTo = nearestInvisibleEnemy;
+
             unitAssignedToMainSquad = unit;
-            if (goTo.distTo(unit) > 1) {
+            if (goTo.distTo(unit) > 3) {
                 unitAssignedToMainSquad.move(goTo, Actions.MOVE_FOLLOW, "Follow", true);
+                return true;
             }
-            return true;
         }
 
         return false;
@@ -99,13 +101,12 @@ public class MobileDetector extends Manager {
 
     protected boolean detectInvisibleUnitsClosestToBase() {
         if (Select.main() == null) return false;
-
         if (!unit.equals(Select.ourOfType(unit.type()).first())) return false;
-
         if (!unit.is(unitForBase)) return false;
 
         AUnit dangerousInvisibleEnemy = enemyDangerousHiddenUnit();
-        if (dangerousInvisibleEnemy != null) {
+
+        if (dangerousInvisibleEnemy != null && dangerousInvisibleEnemy.friendsNear().exclude(unit).notEmpty()) {
             unitForBase = unit;
             if (unitForBase.distTo(dangerousInvisibleEnemy) > 0.2) {
                 unitForBase.move(dangerousInvisibleEnemy.position(), Actions.MOVE_ENGAGE, "RevealEnemy", true);
