@@ -16,7 +16,7 @@ public class GoToRepairAsAirUnit extends Manager {
 
         return unit.isAir()
             && unit.canBeRepaired()
-            && (unit.hp() <= 36 || ((repairer = unit.repairer()) != null && repairer.distTo(unit) <= 1))
+            && (unit.hp() <= minHealth() || ((repairer = unit.repairer()) != null && repairer.distTo(unit) <= 1))
             && !unit.isRunning();
     }
 
@@ -30,6 +30,10 @@ public class GoToRepairAsAirUnit extends Manager {
         }
 
         return null;
+    }
+
+    private int minHealth() {
+        return unit.maxHp() >= 150 ? 60 : 36;
     }
 
     private boolean moveToRepairer(AUnit worker) {

@@ -3,7 +3,7 @@ package atlantis.production.constructing.position.modifier;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.*;
 import atlantis.map.base.ABaseLocation;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNatural;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -85,7 +85,7 @@ public class PositionModifier {
             return FindPositionForBase.findPositionForBase_natural(building, builder);
         }
         else if (modifier.equals(ENEMY_NATURAL)) {
-            APosition enemyNatural = Bases.enemyNatural();
+            APosition enemyNatural = BaseLocations.enemyNatural();
             AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
 
             if (enemyNatural != null && enemyNaturalChoke != null) {

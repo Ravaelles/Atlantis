@@ -5,12 +5,11 @@ import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.enemy.EnemyNearBases;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -146,7 +145,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Try to go to some starting location, hoping to find enemy there.
         if (main != null) {
-            APosition startLocation = Bases.nearestUnexploredStartingLocation(main);
+            APosition startLocation = BaseLocations.nearestUnexploredStartingLocation(main);
 
 //            System.err.println("startLocation = " + startLocation);
 //            if (startLocation != null && startLocation.isExplored()) {

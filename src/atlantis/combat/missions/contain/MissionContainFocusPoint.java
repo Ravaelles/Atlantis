@@ -5,7 +5,7 @@ import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.choke.AChoke;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -66,7 +66,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
                 }
 
 //                AChoke enemyMainChoke = Chokes.enemyMainChoke();
-                APosition enemyNatural = Bases.enemyNatural();
+                APosition enemyNatural = BaseLocations.enemyNatural();
                 if (enemyNatural != null) {
 //                    AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
 //                    if (enemyNaturalChoke != null) {
@@ -115,7 +115,7 @@ public class MissionContainFocusPoint extends MissionFocusPoint {
 
                 // Try to go to some starting location, hoping to find enemy there.
                 if (Select.main() != null) {
-                    APosition unexploredBase = Bases.nearestUnexploredStartingLocation(Select.main().position());
+                    APosition unexploredBase = BaseLocations.nearestUnexploredStartingLocation(Select.main().position());
 
                     if (unexploredBase != null) {
                         return new AFocusPoint(

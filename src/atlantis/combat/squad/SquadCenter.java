@@ -32,14 +32,15 @@ public class SquadCenter {
     }
 
     protected AUnit leader() {
-        int ttl = 69;
+        int ttl = 93;
         AUnit leader = cache.get(
             "leader",
             ttl,
             this::defineLeader
         );
 
-        if (leader != null && leader.isAlive() && !leader.isRunning()) {
+//        if (leader != null && leader.isAlive() && !leader.isRunning()) {
+        if (leader != null && leader.isAlive()) {
             return leader;
         }
 
@@ -49,22 +50,18 @@ public class SquadCenter {
     }
 
     protected AUnit defineLeader() {
-        if (squad.isEmpty()) {
-            return null;
-        }
+        if (squad.isEmpty()) return null;
 
         Selection units = Alpha.get().units();
         AUnit building = Select.ourBuildings().first();
 
-        if (units.tanks().atLeast(2)) {
-            return units.tanks().mostDistantTo(building);
-        }
+//        if (units.tanks().atLeast(2)) {
+//            return units.tanks().mostDistantTo(building);
+//        }
 
-        return units
-            .groundUnits()
-            .excludeMedics()
-//            .mostDistantTo(building);
-            .mostDistantTo(Select.mainOrAnyBuilding());
+//        return potentialLeaders(units)
+////            .mostDistantTo(building);
+//            .mostDistantTo(Select.mainOrAnyBuilding());
 
 //        ArrayList<Integer> xCoords = new ArrayList<>();
 //        ArrayList<Integer> yCoords = new ArrayList<>();
@@ -82,11 +79,12 @@ public class SquadCenter {
 //            .units()
 //            .groundUnits()
 //            .excludeMedics();
-//
-//        AUnit nearestToMedian = potentials
-//            .havingAtLeastHp(25)
-//            .nearestTo(median);
-//
+
+        APosition median = squad.average();
+
+        AUnit nearestToMedian = potentialLeaders(units)
+            .nearestTo(median);
+
 //        if (nearestToMedian == null) {
 //            nearestToMedian = potentials.nearestTo(median);
 //        }
@@ -101,7 +99,13 @@ public class SquadCenter {
 //            }
 //        }
 //
-//        return nearestToMedian;
+        return nearestToMedian;
+    }
+
+    private static Selection potentialLeaders(Selection units) {
+        return units
+            .groundUnits()
+            .excludeMedics();
     }
 
 }

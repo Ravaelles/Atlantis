@@ -20,7 +20,7 @@ public class Count {
     public static int ourCombatUnits() {
         return cache.get(
             "ourCombatUnits",
-            0,
+            1,
             () -> Select.ourCombatUnits().count()
         );
     }

@@ -3,7 +3,7 @@ package atlantis.map.scout;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -35,12 +35,12 @@ public class TryFindingEnemy extends Manager {
 
         HasPosition startingLocation;
         if (unit.is(AUnitType.Zerg_Overlord) || ScoutCommander.allScouts().size() > 1) {
-            startingLocation = Bases.startingLocationBasedOnIndex(
+            startingLocation = BaseLocations.startingLocationBasedOnIndex(
                 unit.getUnitIndexInBwapi()// UnitUtil.getUnitIndex()
             );
         }
         else {
-            startingLocation = Bases.nearestUnexploredStartingLocation(unit.position());
+            startingLocation = BaseLocations.nearestUnexploredStartingLocation(unit.position());
         }
 
         // =========================================================

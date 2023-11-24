@@ -2,9 +2,6 @@ package atlantis.production.requests;
 
 import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.game.A;
-import atlantis.map.base.Bases;
-import atlantis.map.choke.AChoke;
-import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
@@ -17,7 +14,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 

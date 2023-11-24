@@ -1,14 +1,9 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.debug.profiler.LongFrames;
-import atlantis.map.base.Bases;
-import atlantis.map.high.FindHighGround;
-import atlantis.map.position.APosition;
 import atlantis.production.orders.build.CurrentBuildOrder;
-import bwapi.Color;
 
 public class OnEveryFrame {
     public static void update() {

@@ -1,7 +1,7 @@
 package atlantis.map.base.define;
 
 import atlantis.map.base.ABaseLocation;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
@@ -38,7 +38,7 @@ public class DefineNatural {
             () -> {
                 // Get all base locations, sort by being closest to given nearestTo position
                 Positions<ABaseLocation> baseLocations = new Positions<>();
-                baseLocations.addPositions(Bases.baseLocations());
+                baseLocations.addPositions(BaseLocations.baseLocations());
                 baseLocations.sortByGroundDistanceTo(nearestTo, true);
 
                 AUnit main = Select.mainOrAnyBuilding();

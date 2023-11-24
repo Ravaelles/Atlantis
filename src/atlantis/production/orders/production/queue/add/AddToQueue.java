@@ -1,12 +1,8 @@
 package atlantis.production.orders.production.queue.add;
 
 import atlantis.config.env.Env;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.CameraCommander;
-import atlantis.game.GameSpeed;
-import atlantis.map.base.Bases;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -19,7 +15,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
-import bwapi.Color;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

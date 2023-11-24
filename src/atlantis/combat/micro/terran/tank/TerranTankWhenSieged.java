@@ -5,6 +5,7 @@ import atlantis.combat.micro.terran.tank.sieging.SiegeHereDuringMissionDefend;
 import atlantis.combat.micro.terran.tank.sieging.WouldBlockChokeBySieging;
 import atlantis.combat.micro.terran.tank.unsieging.DontThinkAboutUnsieging;
 import atlantis.combat.micro.terran.tank.unsieging.SiegeTankRun;
+import atlantis.combat.micro.terran.tank.unsieging.SiegeTankRunCritical;
 import atlantis.combat.micro.terran.tank.unsieging.UnsiegeToReposition;
 import atlantis.combat.micro.terran.tank.sieging.kursk.TankVsTank;
 import atlantis.units.AUnit;
@@ -23,6 +24,7 @@ public class TerranTankWhenSieged extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             TankVsTank.class,
+            SiegeTankRunCritical.class,
             DontThinkAboutUnsieging.class,
             SiegeTankRun.class,
             WouldBlockChokeBySieging.class,

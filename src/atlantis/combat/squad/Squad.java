@@ -89,13 +89,9 @@ public abstract class Squad extends Units {
      * Center of this squad.
      */
     public APosition center() {
-        if (size() <= 0) {
-            return null;
-        }
+        if (size() <= 0) return null;
 
-        if (squadCenter.isInvalid(_leader)) {
-            _leader = squadCenter.leader();
-        }
+        if (squadCenter.isInvalid(_leader)) _leader = squadCenter.leader();
 
         return _leader != null ? _leader.position() : null;
     }
@@ -221,6 +217,9 @@ public abstract class Squad extends Units {
     public AUnit leader() {
         return squadCenter.leader();
     }
+
+//    public APosition averageUnit() {
+//    }
 
     public boolean lessThanUnits(int units) {
         return size() < units;

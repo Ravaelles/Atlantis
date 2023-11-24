@@ -3,7 +3,7 @@ package atlantis.combat.missions.defend.focus.terran;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.defend.focus.MissionDefendFocus;
 import atlantis.game.A;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -60,7 +60,7 @@ public class TerranMissionDefendFocus {
     protected static AFocusPoint bunkerAtNatural() {
         if (!We.terran()) return null;
 
-        AUnit bunkerAtNatural = Bases.bunkerAtNatural();
+        AUnit bunkerAtNatural = BaseLocations.bunkerAtNatural();
         if (bunkerAtNatural != null) {
             return new AFocusPoint(
                 bunkerAtNatural,

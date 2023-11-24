@@ -9,10 +9,9 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.base.define.DefineNatural;
 import atlantis.map.choke.AChoke;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
-import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -207,7 +206,7 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
             // === At natural =========================================
 
-            if (Bases.hasBaseAtNatural()) {
+            if (BaseLocations.hasBaseAtNatural()) {
 //                AChoke naturalChoke = Chokes.mainChoke();
                 AChoke naturalChoke = Chokes.mainChoke();
                 if (naturalChoke != null) {

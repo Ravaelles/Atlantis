@@ -7,7 +7,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.expansion.terran.TerranShouldExpandToNatural;
 import atlantis.production.dynamic.zerg.ZergExpansionCommander;
@@ -105,7 +105,7 @@ public class ShouldExpand {
 
         // === Check if we have almost as many bases as base locations; if so, exit ======
 
-        if (bases >= Bases.baseLocations().size() - 2) return false;
+        if (bases >= BaseLocations.baseLocations().size() - 2) return false;
 
         int numberOfUnfinishedBases = ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.BASE);
 

@@ -4,6 +4,8 @@ package atlantis.combat.micro.terran;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.generic.MobileDetector;
+import atlantis.combat.micro.generic.managers.DetectHiddenEnemyClosestToBase;
+import atlantis.combat.micro.generic.managers.FollowArmy;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
 import atlantis.terran.repair.managers.GoToRepairAsAirUnit;
@@ -31,6 +33,8 @@ public class TerranScienceVessel extends MobileDetector {
             AvoidEnemies.class,
             GoToRepairAsAirUnit.class,
             UnitBeingReparedManager.class,
+            DetectHiddenEnemyClosestToBase.class,
+            FollowArmy.class,
         };
     }
 

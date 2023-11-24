@@ -2,7 +2,7 @@ package atlantis.production.constructing.position.base;
 
 import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.production.constructing.Construction;
@@ -68,7 +68,7 @@ public class FindPositionForBaseNearestFree {
     private static APosition fallback() {
         if (Select.main() == null) return null;
 
-        Positions<ABaseLocation> positions = new Positions<>(Bases.baseLocations());
+        Positions<ABaseLocation> positions = new Positions<>(BaseLocations.baseLocations());
         positions = positions.sortByGroundDistanceTo(Select.mainOrAnyBuilding().position(), true);
 
         for (ABaseLocation baseLocation : positions.list()) {

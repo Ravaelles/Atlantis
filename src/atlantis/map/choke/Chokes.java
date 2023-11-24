@@ -4,7 +4,7 @@ import atlantis.config.ActiveMap;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNatural;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -191,7 +191,7 @@ public class Chokes {
     }
 
     public static AChoke enemyNaturalChoke() {
-        APosition enemyNatural = Bases.enemyNatural();
+        APosition enemyNatural = BaseLocations.enemyNatural();
         if (enemyNatural == null) {
             return null;
         }

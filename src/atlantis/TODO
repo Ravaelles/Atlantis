@@ -1,7 +1,19 @@
 ### BUGS ###
 
-.- Nastural over lastBAse
-- Starport not having place for addon (Refiner)
+--- Not direcrlt producing Marines even if 3k minerals and 90/150
+--- Not building more than 3-4 barracks even if 3k minerals
+
+--- Units leaving tanks too far and thus being killed, tanks waiting and not shooting
+
+.- Tank being a leader waits in back, while other units advance
+
+.- Tanks should unsiege if DTs near
+
+?- Cohesion wait is not working, two army groups
+
+.- Tanks having destroyed marines, still are attacking e.g 3. If late game, always retreat to squad center if squad < 10
+
+.- Starport not having place for addon (Refiner)
 
 -- Absoolutely awful performance with Scouts & Carriers
 

@@ -2,6 +2,7 @@ package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -45,10 +46,17 @@ public class AdvanceAsALeader extends MissionManager {
 
     private boolean actWithCohesionTooLow(String tooltip) {
 //        HasPosition moveTo = unit.friendsNear().mostDistantTo(Select.mainOrAnyBuilding());
+//        APosition moveTo = squad.center();
         APosition moveTo = squad.center();
+//        APosition moveTo = squad.averageUnit();
 
         if (moveTo != null && unit.distTo(moveTo) > 4) {
             unit.move(moveTo, Actions.MOVE_FORMATION, tooltip);
+            return true;
+        }
+
+        if (!unit.squad().isCohesionPercentOkay() && A.seconds() % 4 <= 1) {
+            unit.holdPosition("LeaderWaiting");
             return true;
         }
 

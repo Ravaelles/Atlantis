@@ -1,7 +1,7 @@
 package atlantis.production.constructing.position.base;
 
 import atlantis.game.A;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNatural;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -29,7 +29,7 @@ public class FindPositionForBase {
 //        else if (ourBasesCount <= 2) {
         else {
             AUnit mainBase = Select.main();
-            near = Bases.expansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
+            near = BaseLocations.expansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
         }
 //        else {
 //            baseLocationToExpand = Bases.expansionBaseLocationMostDistantToEnemy();

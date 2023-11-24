@@ -7,7 +7,7 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -141,7 +141,7 @@ public class EnemyInfo {
                     return enemyChoke.position();
                 }
 
-                APosition position = Bases.nearestUnexploredStartingLocation(Select.our().first());
+                APosition position = BaseLocations.nearestUnexploredStartingLocation(Select.our().first());
                 if (position != null) {
                     return position;
                 }

@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.map.base.ABaseLocation;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -48,7 +48,7 @@ public class RebaseToNewMineralPatches extends Manager {
     }
 
     private ABaseLocation defineNewBaseLocation() {
-        ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(unit);
+        ABaseLocation baseLocation = BaseLocations.expansionFreeBaseLocationNearestTo(unit);
 
         if (baseLocation == null && !Env.isTesting()) {
             ErrorLog.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");

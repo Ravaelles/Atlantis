@@ -1,9 +1,8 @@
 package atlantis.production.constructing.position.conditions;
 
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.AbstractPositionFinder;
@@ -34,7 +33,7 @@ public class OverlappingBaseLocation {
 
 //        if (building.isBunker()) System.err.println("@ " + A.now() + " - bunker ");
 
-        for (ABaseLocation base : Bases.baseLocations()) {
+        for (ABaseLocation base : BaseLocations.baseLocations()) {
 //            if (building.isBunker())
 //                System.err.println("@ " + A.now() + " - " + base + " / " + (base.translateByTiles(3, 1).distTo(position)));
             if (
