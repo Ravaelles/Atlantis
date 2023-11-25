@@ -18,7 +18,7 @@ import atlantis.util.log.ErrorLog;
 import static atlantis.units.AUnitType.Terran_Bunker;
 
 public class SecuringBase {
-    public static final int DIST_FROM_BASE = 8;
+    public static final int DIST_FROM_BASE = 14;
 
     private final SecuringWithBunker securingWithBunker;
     private final SecuringWithTurret securingWithTurret;
@@ -40,11 +40,10 @@ public class SecuringBase {
         // @Fix
         if (baseToSecure.regionsMatch(Select.main())) {
             ErrorLog.printMaxOncePerMinute("Trying SecuringBase main - ignore");
-            return false;
+            return true;
         }
 
-        secureWithBunker();
-        return false;
+        return secureWithBunker();
     }
 
     private boolean consideredBaseAsSecure(String reason) {
@@ -53,7 +52,6 @@ public class SecuringBase {
     }
 
     private boolean secureWithBunker() {
-
         APosition bunkerPosition = (new NewBunkerPositionFinder(baseToSecure)).find();
 
         System.err.println("@ " + A.now() + " - secureWithBunker base? " + baseToSecure + " / " + bunkerPosition);
@@ -93,7 +91,8 @@ public class SecuringBase {
         if (A.hasMinerals(800)) return consideredBaseAsSecure("Lots of minerals");
         if (We.zerg() && !Have.spawningPool()) return consideredBaseAsSecure("Zerg fast expanded");
 //        if (CountInQueue.count(Terran_Bunker, 6) >= 2) return consideredBaseAsSecure("Bunkers already queued");
-        if (Count.withPlanned(Terran_Bunker) >= 2 + Count.basesWithPlanned()) return consideredBaseAsSecure("Bunkers already queued");
+        if (Count.withPlanned(Terran_Bunker) >= 2 + Count.basesWithPlanned())
+            return consideredBaseAsSecure("Bunkers already queued");
 
 //        if (EnemyInfo.hasHiddenUnits() && A.seconds() >= 350 && !securingWithTurret.hasTurretSecuring()) return false;
 

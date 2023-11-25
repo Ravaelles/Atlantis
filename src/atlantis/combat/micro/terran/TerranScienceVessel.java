@@ -5,7 +5,10 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.combat.micro.generic.managers.DetectHiddenEnemyClosestToBase;
+import atlantis.combat.micro.generic.managers.FollowAlphaScout;
 import atlantis.combat.micro.generic.managers.FollowArmy;
+import atlantis.combat.micro.generic.managers.SpreadOutDetectors;
+import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
 import atlantis.terran.repair.managers.GoToRepairAsAirUnit;
@@ -33,7 +36,9 @@ public class TerranScienceVessel extends MobileDetector {
             AvoidEnemies.class,
             GoToRepairAsAirUnit.class,
             UnitBeingReparedManager.class,
+            SpreadOutDetectors.class,
             DetectHiddenEnemyClosestToBase.class,
+            FollowAlphaScout.class,
             FollowArmy.class,
         };
     }
@@ -62,7 +67,7 @@ public class TerranScienceVessel extends MobileDetector {
 
         if (unit.lastTechUsedAgo() <= 15) return true;
 
-        if (unit.energy(75) && ATech.isResearched(TechType.Irradiate)) {
+        if (unit.energy(75) && A.everyNthGameFrame(7) && ATech.isResearched(TechType.Irradiate)) {
             if (irradiate()) {
                 unit.setTooltipTactical("Irradiate!");
                 return true;
@@ -79,19 +84,21 @@ public class TerranScienceVessel extends MobileDetector {
     private boolean defensiveMatrix() {
         if (unit.energy() < 100) return false;
 
-        Selection targets = unit.friendsNear().wounded();
-        if (unit.energy() < 200 && Count.tanks() > 0) {
-            targets = targets.tanks();
-        }
+//        Selection targets = unit.friendsNear().wounded();
+        Selection targets = unit.friendsNear().tanks().sortByHealth();
+
+//        if (unit.energy() < 200 && Count.tanks() > 0) {
+//            targets = targets.tanks();
+//        }
 
         if (targets.notEmpty()) {
             for (AUnit target : targets.list()) {
-                if (target.isDefenseMatrixed()) {
-                    continue;
-                }
+                if (target.isDefenseMatrixed()) continue;
 
-                if (target.lastUnderAttackLessThanAgo(50) && target.enemiesNear().count() >= 2) {
-
+                if (
+                    (target.isWounded() || target.lastUnderAttackLessThanAgo(120))
+                        && target.enemiesNear().count() >= 1
+                ) {
                     return unit.useTech(TechType.Defensive_Matrix, target);
                 }
             }

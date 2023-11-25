@@ -4,31 +4,16 @@
 - No bunker no turret at natural
 .- still marines engaging far from tanks to attack cannons etc
 
+?- Targeting still prefers some buildings over Scouts and Observers or even marines just standing
+
 - Distinct SecureBunker logic from SecureTurret
 
-- Impossibly bad performance when 200 units, even without cannons, but especially with cannons.
-- Do a tweak to not run most of managers when enemy not known and supply > 120
+.- Impossibly bad performance when 200 units, even without cannons, but especially with cannons.
+.- Do a tweak to not run most of managers when enemy not known and supply > 120
 
-- Make Vessel fly over the squad scout
+.- Make Vessel fly over the squad scout
 
 ?- marines not loadng into bunkers even if near and only 2 inside
-
-.--- Not direcrlt producing Marines even if 3k minerals and 90/150
-.--- Not building more than 3-4 barracks even if 3k minerals
-
-.--- Units leaving tanks too far and thus being killed, tanks waiting and not shooting
-
-.- Tank being a leader waits in back, while other units advance
-
-.- Tanks should unsiege if DTs near
-
-?- Cohesion wait is not working, two army groups
-
-.- Tanks having destroyed marines, still are attacking e.g 3. If late game, always retreat to squad center if squad < 10
-
-.- Starport not having place for addon (Refiner)
-
--- Absoolutely awful performance with Scouts & Carriers
 
 ?--- Very broken expansions (natural is detected ok, pribably secure bunker problem
 

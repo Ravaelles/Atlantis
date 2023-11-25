@@ -22,6 +22,22 @@ public class DefineExactPositionForNewConstruction {
         // =========================================================
 
         if (order != null && order.isUsingExactPosition() && order.atPosition() != null) {
+            @@@ ALWAYS HERE
+            /**
+             * FORCE BUNKER position = (9, 85) / MAIN
+             * Using exact position for Bunker - At 15 Bunker MAIN (READY_TO_PRODUCE)(#4) @ (9, 85)
+             * Can't find place for `Barracks`, At 17 Barracks* (READY_TO_PRODUCE)(#12)
+             * (reason: Must leave enough free space for units to pass)
+             * @ 6919 - secureWithBunker base? (7, 52) / (5, 50)
+             * SECURE base (7, 52) with BUNKER = At 25 Bunker* (#20) @ (5, 50)
+             * Using exact position for Bunker - At 15 Bunker MAIN (READY_TO_PRODUCE)(#4) @ (9, 85)
+             * Can't find place for `Factory`, At 16 Factory* (READY_TO_PRODUCE)(#21)
+             * (reason: LEAVE_PLACE_VERTICALLY)
+             * @ 7548 - secureWithBunker base? (7, 52) / (5, 50)
+             * SECURE base (7, 52) with BUNKER = At 1 Bunker* (#23) @ (5, 50)
+             * Using exact position for Bunker - At 15 Bunker MAIN (READY_TO_PRODUCE)(#4) @ (9, 85)
+             * consideredBaseAsSecure r
+             */
             System.err.println("Using exact position for " + building + " - " + order);
             positionToBuild = APosition.create(order.atPosition());
 //            CameraCommander.centerCameraOn(positionToBuild);

@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
 public class TerranInfantryShouldRetreat extends Manager {
-
     public TerranInfantryShouldRetreat(AUnit unit) {
         super(unit);
     }
@@ -22,7 +21,7 @@ public class TerranInfantryShouldRetreat extends Manager {
         if (!unit.mission().isMissionDefend()) {
             if (
                 unit.enemiesNear().ranged().notEmpty()
-                    && unit.friendsNear().atMost(4) && unit.combatEvalRelative() <= 2
+                    && unit.friendsNear().atMost(4) && unit.combatEvalRelative() <= 2.7
             ) {
                 unit.setTooltipTactical("BewareRanged");
                 return usedManager(this);
@@ -34,7 +33,7 @@ public class TerranInfantryShouldRetreat extends Manager {
 
     private boolean shouldRetreatFromCombatBuildings() {
         if (!unit.isMissionAttack()) return false;
-        if (unit.groundWeaponRange() > 6.5) return false;
+        if (unit.hp() >= 125 && unit.groundWeaponRange() > 6.5) return false;
 
         return unit.enemiesNear().combatBuildings(false).canAttack(unit, 8.5).notEmpty();
     }

@@ -43,6 +43,16 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyUnits
             .air()
+            .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Terran_Wraith, AUnitType.Zerg_Queen)
+            .inShootRangeOf(unit)
+            .nearestTo(unit);
+        if (target != null) {
+            debug("C1a = " + target);
+            return target;
+        }
+
+        target = enemyUnits
+            .air()
             .excludeTypes(AUnitType.Zerg_Overlord)
             .inShootRangeOf(unit)
             .nearestTo(unit);

@@ -2,6 +2,7 @@ package atlantis.game;
 
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.map.choke.AChoke;
+import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 
@@ -37,6 +38,14 @@ public class OnEveryFrameHelper {
 //        paintMyOwnWallInSolution(); // <<<<<<<<<<<<<<<<<
 
 //        testScvMoveAwayFrom();
+
+        paintNearestBaseToEnemy();
+    }
+
+    private static void paintNearestBaseToEnemy() {
+        AUnit nearestToEnemy = OurClosestBaseToEnemy.get();
+        AAdvancedPainter.paintCircleFilled(nearestToEnemy, 9, Color.Orange);
+        AAdvancedPainter.paintTextCentered(nearestToEnemy, "NearestBaseToEnemy", Color.Orange);
     }
 
     private static void testScvMoveAwayFrom() {

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.generic.managers;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -29,11 +30,13 @@ public class FollowArmy extends Manager {
     }
 
     public Manager handle() {
-        if (followPoint.distTo(unit) > 2) {
-            unit.move(followPoint, Actions.MOVE_FOLLOW, "FollowArmy", true);
-            return usedManager(this);
-        }
+        
 
-        return null;
+//        if (followPoint.distTo(unit) > 1) {
+        unit.move(followPoint, Actions.MOVE_FOLLOW, "FollowArmy", true);
+        return usedManager(this);
+//        }
+//
+//        return null;
     }
 }

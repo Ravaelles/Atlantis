@@ -26,6 +26,9 @@ public class SpreadOutDetectors extends Manager {
 
     public Manager handle() {
         AUnit otherUnit = separateFrom.nearestTo(unit);
+
+        if (unit.id() < otherUnit.id()) return null; // Older units don't separate, only newer ones do it
+
         unit.moveAwayFrom(otherUnit.position(), minDistBetween, Actions.MOVE_FORMATION, "SpreadDetectors");
         return usedManager(this);
     }

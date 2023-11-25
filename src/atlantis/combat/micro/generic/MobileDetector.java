@@ -35,6 +35,7 @@ public class MobileDetector extends Manager {
         return new Class[]{
             AvoidEnemies.class,
             UnitBeingReparedManager.class,
+            SpreadOutDetectors.class,
             DetectHiddenEnemyClosestToBase.class,
             FollowArmy.class,
         };
