@@ -35,23 +35,24 @@ public class SecuringBase {
 //        if (true) return true;
 
         if (!We.terran()) return true;
-        if (baseToSecure == null) return true;
-        if (isSecure()) return true;
-
-        secureWithBunker();
-        return false;
-    }
-
-    private boolean secureWithBunker() {
-        if (baseToSecure == null) return false;
-        if (CountInQueue.count(Terran_Bunker) >= 1) return true;
-        if (Count.withPlanned(Terran_Bunker) >= 3) return true;
+        if (isSecure()) return consideredBaseAsSecure("isSecure");
 
         // @Fix
         if (baseToSecure.regionsMatch(Select.main())) {
             ErrorLog.printMaxOncePerMinute("Trying SecuringBase main - ignore");
             return false;
         }
+
+        secureWithBunker();
+        return false;
+    }
+
+    private boolean consideredBaseAsSecure(String reason) {
+        System.out.println("consideredBaseAsSecure reason = " + reason);
+        return true;
+    }
+
+    private boolean secureWithBunker() {
 
         APosition bunkerPosition = (new NewBunkerPositionFinder(baseToSecure)).find();
 
@@ -88,15 +89,15 @@ public class SecuringBase {
     }
 
     public boolean isSecure() {
-        if (baseToSecure == null) return true;
-        if (A.hasMinerals(800)) return true;
-        if (We.zerg() && !Have.spawningPool()) return true;
+        if (baseToSecure == null) return consideredBaseAsSecure("Null baseToSecure");
+        if (A.hasMinerals(800)) return consideredBaseAsSecure("Lots of minerals");
+        if (We.zerg() && !Have.spawningPool()) return consideredBaseAsSecure("Zerg fast expanded");
+//        if (CountInQueue.count(Terran_Bunker, 6) >= 2) return consideredBaseAsSecure("Bunkers already queued");
+        if (Count.withPlanned(Terran_Bunker) >= 2 + Count.basesWithPlanned()) return consideredBaseAsSecure("Bunkers already queued");
 
-        if (!securingWithBunker.hasBunkerSecuring()) return false;
+//        if (EnemyInfo.hasHiddenUnits() && A.seconds() >= 350 && !securingWithTurret.hasTurretSecuring()) return false;
 
-        if (EnemyInfo.hasHiddenUnits() && A.seconds() >= 350 && !securingWithTurret.hasTurretSecuring()) return false;
-
-        return true;
+        return securingWithBunker.hasBunkerSecuring();
     }
 
     public HasPosition baseToSecure() {

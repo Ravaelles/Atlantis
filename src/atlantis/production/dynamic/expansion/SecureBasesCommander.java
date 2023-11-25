@@ -21,10 +21,10 @@ public class SecureBasesCommander extends Commander {
 
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(41)
+        return A.everyNthGameFrame(51)
             && Have.barracks()
             && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) >= 2
-            && CountInQueue.count(AUnitType.Terran_Bunker) <= 0;
+            && CountInQueue.count(AUnitType.Terran_Bunker, 6) <= 2;
     }
 
     @Override

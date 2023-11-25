@@ -20,8 +20,8 @@ public class TerranEnsureBall extends Manager {
         return new Class[]{
             EnsureBallAsTank.class,
             TooFarFromMedic.class,
-            GoBehindLineOfTanks.class,
-            TooFarFromTank.class,
+//            GoBehindLineOfTanks.class,
+//            TooFarFromTank.class,
         };
     }
 }

@@ -1,5 +1,6 @@
 package atlantis.units.select;
 
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 
@@ -230,6 +231,10 @@ public class Count {
 
     public static int basesWithUnfinished() {
         return Select.ourWithUnfinished().bases().count();
+    }
+
+    public static int basesWithPlanned() {
+        return basesWithUnfinished() + withPlanned(AtlantisRaceConfig.BASE);
     }
 
     public static int tanks() {

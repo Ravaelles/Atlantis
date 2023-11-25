@@ -8,6 +8,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class AdvanceAsALeader extends MissionManager {
     public AdvanceAsALeader(AUnit unit) {
@@ -45,9 +46,18 @@ public class AdvanceAsALeader extends MissionManager {
     }
 
     private boolean actWithCohesionTooLow(String tooltip) {
+        HasPosition moveTo = null;
+
+        Selection tanks = Select.ourTanks().exclude(unit);
+        if (tanks.count() >= 3) {
+            moveTo = tanks.nearestTo(unit);
+            unit.move(moveTo, Actions.MOVE_FORMATION, "LeaderMergeTanks");
+            return true;
+        }
+
 //        HasPosition moveTo = unit.friendsNear().mostDistantTo(Select.mainOrAnyBuilding());
 //        APosition moveTo = squad.center();
-        APosition moveTo = squad.center();
+        moveTo = squad.center();
 //        APosition moveTo = squad.averageUnit();
 
         if (moveTo != null && unit.distTo(moveTo) > 4) {
@@ -56,7 +66,13 @@ public class AdvanceAsALeader extends MissionManager {
         }
 
         if (!unit.squad().isCohesionPercentOkay() && A.seconds() % 4 <= 1) {
-            unit.holdPosition("LeaderWaiting");
+            if (unit.friendsNear().inRadius(5, unit).atLeast(5)) {
+                unit.holdPosition("LeaderWaiting");
+            }
+            else {
+                AUnit nearestFriend = unit.friendsNear().combatUnits().groundUnits().nearestTo(unit);
+                unit.move(nearestFriend, Actions.MOVE_FORMATION, "LeaderMergeFriend");
+            }
             return true;
         }
 

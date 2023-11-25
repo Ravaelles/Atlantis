@@ -12,6 +12,7 @@ public class TooFarFromTank extends Manager {
     public static final int MAX_DIST_FROM_TANK = 5;
     public static final int MIN_DIST_FROM_TANK = 2;
     private int tanks;
+    private double distToTank;
 
     public TooFarFromTank(AUnit unit) {
         super(unit);
@@ -19,42 +20,39 @@ public class TooFarFromTank extends Manager {
 
     @Override
     public boolean applies() {
-        tanks = Count.tanks();
+        if (unit.isMissionDefend()) return false;
+
         return We.terran()
             && !unit.isAir()
-            && tanks >= 1
+            && (tanks = Count.tanks()) >= 1
             && !unitIsOvercrowded();
     }
 
     @Override
     protected Manager handle() {
-        if (unit.isMissionDefend()) {
-            return null;
-        }
 
         // Too far from nearest tank
         AUnit nearestTank = Select.ourTanks().nearestTo(unit);
         if (nearestTank != null && shouldGoToTank(nearestTank)) {
-            goToNearestTank(nearestTank);
-            return usedManager(this);
+            if (goToNearestTank(nearestTank)) return usedManager(this);
         }
 
         return null;
     }
 
     private boolean shouldGoToTank(AUnit tank) {
-        if (tankIsOvercrowded(tank)) return false;
+        distToTank = unit.distTo(tank);
 
-        double distToTank = unit.distTo(tank);
-
-        if (tanks <= 1 && distToTank > MAX_DIST_FROM_TANK) return false;
+        if (distToTank <= 7 && tankIsOvercrowded(tank)) return false;
         if (distToTank < MIN_DIST_FROM_TANK) return false;
 
-        if (
-            unit.isHealthy()
-                && unit.combatEvalRelative() >= 2.5
-                && unit.lastUnderAttackMoreThanAgo(30 * 10)
-        ) return false;
+        if (distToTank > MAX_DIST_FROM_TANK) return true;
+
+//        if (
+//            unit.isHealthy()
+//                && unit.combatEvalRelative() >= 2.5
+//                && unit.lastUnderAttackMoreThanAgo(30 * 10)
+//        ) return false;
 
         return false;
     }

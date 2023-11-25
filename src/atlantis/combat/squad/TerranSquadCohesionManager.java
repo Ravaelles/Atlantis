@@ -5,6 +5,7 @@ import atlantis.combat.squad.positioning.ComeCloser;
 import atlantis.combat.squad.positioning.DoNotThinkOfImprovingCohesion;
 import atlantis.combat.squad.positioning.TooClustered;
 import atlantis.combat.squad.positioning.TooLowSquadCohesion;
+import atlantis.combat.squad.positioning.terran.EnsureCoordinationWithTanks;
 import atlantis.combat.squad.positioning.terran.TerranEnsureBall;
 import atlantis.units.AUnit;
 import atlantis.util.We;
@@ -22,6 +23,7 @@ public class TerranSquadCohesionManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            EnsureCoordinationWithTanks.class,
             TooClustered.class,
             TerranEnsureBall.class,
             ComeCloser.class,

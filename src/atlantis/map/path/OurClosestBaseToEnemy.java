@@ -1,6 +1,6 @@
 package atlantis.map.path;
 
-import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -19,7 +19,8 @@ public class OurClosestBaseToEnemy {
                 int closestDistance = 999;
 
                 for (AUnit base : Select.ourBasesWithUnfinished().list()) {
-                    int chokeDistance = baseToEnemyChokeDistance(base);
+                    int chokeDistance = distToEnemyInNumOfChokes(base);
+                    System.out.println("base = " + base + " / chokeDistance=" + chokeDistance);
 
                     if (chokeDistance > 0 && chokeDistance < closestDistance) {
                         closest = base;
@@ -32,8 +33,8 @@ public class OurClosestBaseToEnemy {
         );
     }
 
-    private static int baseToEnemyChokeDistance(AUnit base) {
-        CPPath chokes = PathToEnemyBase.definePathToEnemy(base);
+    private static int distToEnemyInNumOfChokes(HasPosition from) {
+        CPPath chokes = PathToEnemyBase.definePathToEnemy(from);
         return chokes != null ? chokes.size() : -1;
     }
 }

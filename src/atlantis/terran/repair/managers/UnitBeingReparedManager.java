@@ -19,12 +19,11 @@ public class UnitBeingReparedManager extends Manager {
         return unit.isMechanical()
             && unit.isWounded()
             && unit.isTerran()
+            && !unit.isRunning()
             && (repairer = unit.repairer()) != null
             && (
             (enemiesNear = unit.enemiesNear().groundUnits().canAttack(unit, -0.2)).isEmpty()
-                || (unit.hp() >= 32 && RepairAssignments.countRepairersForUnit(unit) >= 2)
-                && repairer != null
-                && !unit.isRunning()
+                || (unit.hp() >= 40 && RepairAssignments.countRepairersForUnit(unit) >= 2)
         );
     }
 
@@ -32,9 +31,9 @@ public class UnitBeingReparedManager extends Manager {
         double distanceToRepairer = repairer.distTo(unit);
 
         if (
-            distanceToRepairer <= 0.8
+            distanceToRepairer <= 1.7
                 && repairer.isRepairing()
-                && (unit.woundPercent() >= 15 || unit.enemiesNear().groundUnits().canBeAttackedBy(unit, -0.4).empty())
+                && (unit.woundPercent() >= 15 || unit.enemiesNear().groundUnits().canBeAttackedBy(unit, -0.2).empty())
         ) {
             unit.holdPosition("WaitRepair");
             return usedManager(this);

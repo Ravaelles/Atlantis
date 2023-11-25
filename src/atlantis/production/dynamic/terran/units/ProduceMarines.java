@@ -29,10 +29,14 @@ public class ProduceMarines {
     private static int marines;
 
     public static boolean marines() {
+        int freeBarracks = Select.ourFree(Terran_Barracks).size();
+
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
-        if (Select.ourFree(Terran_Barracks).size() < CountInQueue.count(Terran_Marine)) return false;
+        if (freeBarracks < CountInQueue.count(Terran_Marine)) return false;
 
         marines = Count.marines();
+
+        if (freeBarracks > 0 && A.hasMinerals(1000)) return forceProduceMarine();
 
         if (marines <= 1 && A.hasMinerals(150)) return produceMarine();
 
@@ -90,6 +94,10 @@ public class ProduceMarines {
         }
 
         return trainMarinesForBunkersIfNeeded();
+    }
+
+    private static boolean forceProduceMarine() {
+        return Select.ourFree(Terran_Barracks).random().train(Terran_Marine);
     }
 
     private static boolean earlyGameAndWeAreWeak() {
