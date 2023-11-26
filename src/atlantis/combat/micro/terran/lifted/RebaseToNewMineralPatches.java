@@ -5,6 +5,7 @@ import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
+import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -84,6 +85,7 @@ public class RebaseToNewMineralPatches extends Manager {
         if (rebaseExactLocation != null) {
             unit.setTooltipAndLog("LandInNewHome");
             unit.land(rebaseExactLocation.toTilePosition());
+            OurClosestBaseToEnemy.clearCache();
             return true;
         }
         return false;
@@ -93,6 +95,7 @@ public class RebaseToNewMineralPatches extends Manager {
         if (!unit.isLifted() && rebaseTo.distToMoreThan(unit, 5)) {
             unit.setTooltipAndLog("LiftAndRebase");
             unit.lift();
+            OurClosestBaseToEnemy.clearCache();
             return true;
         }
         return false;

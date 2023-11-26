@@ -18,6 +18,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 public class MissionAttackFocusPoint extends MissionFocusPoint {
 
@@ -170,10 +171,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
-
-        if (our == null) {
-            return null;
-        }
+        if (our == null) our = Select.all().first();
 
         // Go to random UNEXPLORED
         _temporaryTarget = AMap.randomUnexploredPosition(our);
@@ -195,7 +193,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
-//        System.err.println("No MissionAttack FocusPoint");
+        ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
         return null;
     }
 

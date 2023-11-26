@@ -17,6 +17,9 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ExpansionCommander extends Commander {
+
+    private SecuringBase securingBase;
+
     public ExpansionCommander() {
     }
 
@@ -32,6 +35,8 @@ public class ExpansionCommander extends Commander {
 
     @Override
     protected void handle() {
+        securingBase = (new SecuringBase(NextBasePosition.nextBasePosition()));
+
 //        System.err.println("ExpansionCommander.handle() @ " + A.now());
         prepareNewBase();
     }
@@ -53,13 +58,13 @@ public class ExpansionCommander extends Commander {
     }
 
     private void secureNewBase() {
-        (new SecuringBase(NextBasePosition.nextBasePosition())).secure();
+        securingBase.secure();
     }
 
     protected boolean newExpansionIsSecured() {
         if (!We.terran()) return true;
 
-        return (new SecuringBase(NextBasePosition.nextBasePosition())).isSecure();
+        return securingBase.isSecure();
     }
 
     private static void requestNewBase() {

@@ -101,6 +101,12 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         this.minSupply = minSupply;
         this.tech = tech;
         this.upgrade = upgrade;
+
+//        if (unitOrBuilding != null && unitOrBuilding.isBunker()) {
+//            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//            A.printStackTrace("BUNKER ORDER CREATED at " + position);
+//            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        }
     }
 
     // =========================================================
@@ -401,5 +407,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public void forceSetPosition(APosition position) {
         this.position = position;
+    }
+
+    public void setUnitType(AUnitType type) {
+        this.unitOrBuilding = type;
     }
 }

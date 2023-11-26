@@ -11,10 +11,10 @@ public class BonusForWraith {
             + (defender.woundPercent() / 25.0)
             + (defender.enemiesNear().combatBuildingsAntiAir().inRadius(13, defender).notEmpty() ? 1.5 : 0);
 
-        if (attacker.isDragoon()) {
+        if (attacker.isGroundUnit() && attacker.isRanged()) {
             return base
                 + (defender.isOtherUnitFacingThisUnit(attacker) ? 1.7 : -0.4)
-                + (defender.lastUnderAttackLessThanAgo(150) ? 0.8 : 0);
+                + (defender.lastUnderAttackLessThanAgo(200) ? 1.7 : 0);
         }
 
         return base;

@@ -3,6 +3,7 @@ package atlantis.combat.squad.positioning.terran;
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.GoBehindLineOfTanks;
 import atlantis.combat.squad.positioning.TooFarFromTank;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
 
 public class TerranEnsureBall extends Manager {
@@ -12,7 +13,7 @@ public class TerranEnsureBall extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTerranInfantry();
+        return unit.isTerranInfantry() && EnemyInfo.weKnowAboutAnyRealUnit();
     }
 
     @Override

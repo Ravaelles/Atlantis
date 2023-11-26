@@ -22,7 +22,7 @@ public class ASpecialPositionFinder {
     public static APosition positionModifierToPosition(
         String modifier, AUnitType building, AUnit builder, Construction construction
     ) {
-        if (modifier.equals(PositionModifier.MAIN) || modifier.equals("MAIN")) {
+        if (modifier.equals(PositionModifier.MAIN)) {
             if (construction != null && construction.maxDistance() < 0) {
                 construction.setMaxDistance(40);
             }

@@ -26,10 +26,15 @@ public class TooFarFromLeader extends Manager {
         AUnit leader = squad.leader();
         if (leader == null) return false;
 
+        double distToLeader = unit.distTo(leader);
         if (
-            unit.distTo(leader) > 6
-                && unit.friendsInRadiusCount(3) <= 8
-                && leader.friendsInRadiusCount(4) <= 10
+            distToLeader > 12
+                ||
+                (
+                    distToLeader > 6
+                        && unit.friendsInRadiusCount(3) <= 8
+                        && leader.friendsInRadiusCount(4) <= 10
+                )
         ) {
             unit.move(leader, Actions.MOVE_FORMATION, "Coordinate");
             return true;

@@ -19,7 +19,11 @@ public class SiegeTankRun extends Manager {
             unit.lastUnderAttackLessThanAgo(30)
                 && (unit.hp() >= 100 || unit.enemiesNearInRadius(2) <= 2)
         ) {
-            if (unit.enemiesNear().groundUnits().inRadius(3, unit).count() >= (unit.hpPercent() >= 50 ? 2 : 1)) {
+            if (
+                unit.enemiesNear().groundUnits().havingWeapon().inRadius(3, unit).count()
+                    >=
+                    (unit.hpPercent() >= 50 ? 2 : 1)
+            ) {
                 unit.setTooltip("Evacuate");
                 TerranTank.wantsToUnsiege(unit);
                 return usedManager(this);

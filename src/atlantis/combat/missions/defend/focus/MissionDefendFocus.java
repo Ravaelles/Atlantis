@@ -199,31 +199,31 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
     // =========================================================
 
-    private AFocusPoint atAnyBase() {
-        //                    AChoke natural = Chokes.natural();
-        AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisRaceConfig.BASE).mostDistantTo(Select.main());
-        if (lastBase != null) {
-
-            // === At natural =========================================
-
-            if (BaseLocations.hasBaseAtNatural()) {
+//    private AFocusPoint atAnyBase() {
+//        //                    AChoke natural = Chokes.natural();
+//        AUnit lastBase = Select.ourWithUnfinishedOfType(AtlantisRaceConfig.BASE).mostDistantTo(Select.main());
+//        if (lastBase != null) {
+//
+//            // === At natural =========================================
+//
+//            if (BaseLocations.hasBaseAtNatural()) {
+////                AChoke naturalChoke = Chokes.mainChoke();
 //                AChoke naturalChoke = Chokes.mainChoke();
-                AChoke naturalChoke = Chokes.mainChoke();
-                if (naturalChoke != null) {
-                    return atNaturalChoke();
-                }
-            }
-
-            // === Standard ===========================================
-
-            return new AFocusPoint(
-                lastBase,
-                "LastBase"
-            );
-        }
-
-        return null;
-    }
+//                if (naturalChoke != null) {
+//                    return atNaturalChoke();
+//                }
+//            }
+//
+//            // === Standard ===========================================
+//
+//            return new AFocusPoint(
+//                lastBase,
+//                "LastBase"
+//            );
+//        }
+//
+//        return null;
+//    }
 
     // =========================================================
 

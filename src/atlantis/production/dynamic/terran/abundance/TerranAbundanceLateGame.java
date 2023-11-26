@@ -9,17 +9,15 @@ import atlantis.units.select.Select;
 public class TerranAbundanceLateGame extends Commander {
     @Override
     public boolean applies() {
-        return A.hasMinerals(800)
+        return A.hasMinerals(900)
             && GamePhase.isLateGame()
             && A.hasFreeSupply(4);
     }
 
     @Override
     protected void handle() {
-        if (A.hasMinerals(900)) {
-            AbundanceProduce.produceTank();
-            AbundanceProduce.produceMarine();
-            AbundanceProduce.produceMarine();
-        }
+        AbundanceProduce.produceTank();
+        AbundanceProduce.produceMarine();
+        AbundanceProduce.produceMarine();
     }
 }

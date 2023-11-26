@@ -7,6 +7,7 @@ import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.choke.Chokes;
+import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.requests.ProductionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -44,6 +45,8 @@ public class EnemyUnitDiscoveredResponse {
                     MissionChanger.forceMissionSpartaOrDefend("CautionWithZealot");
                 }
             }
+
+            if (EnemyUnits.discovered().buildings().atMost(3)) OurClosestBaseToEnemy.clearCache();
         }
     }
 

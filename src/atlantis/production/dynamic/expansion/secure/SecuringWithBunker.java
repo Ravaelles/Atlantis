@@ -9,19 +9,21 @@ import atlantis.util.We;
 
 public class SecuringWithBunker {
     private final SecuringBase securingBase;
+    private NewBunkerPositionFinder newBunkerPositionFinder;
 
     public SecuringWithBunker(SecuringBase securingBase) {
         this.securingBase = securingBase;
+        newBunkerPositionFinder = (new NewBunkerPositionFinder(securingBase.baseToSecure()));
     }
 
     public boolean hasBunkerSecuring() {
-        APosition bunkerPosition = (new NewBunkerPositionFinder(securingBase.baseToSecure())).find();
+        APosition bunkerPosition = newBunkerPositionFinder.find();
 
         if (bunkerPosition == null) return false;
 
         return Count.existingOrUnfinishedBuildingsNear(
 //            AUnitType.Terran_Bunker, 8, securingBase.getBaseToSecure()
-            AUnitType.Terran_Bunker, 8, bunkerPosition
+            AUnitType.Terran_Bunker, 10, bunkerPosition
         ) >= expectedNumOfBunkers();
     }
 

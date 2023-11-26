@@ -18,6 +18,7 @@ public interface OrdersFilters {
         return new Orders(
             list().stream()
                 .filter(ProductionOrder::isReadyToProduce)
+//                .filter(o -> o != null && o.isReadyToProduce())
                 .collect(Collectors.toList())
         );
     }
@@ -25,6 +26,7 @@ public interface OrdersFilters {
     default Orders inProgress() {
         return new Orders(
             list().stream()
+//                .filter(o -> o != null && o.isInProgress())
                 .filter(ProductionOrder::isInProgress)
                 .collect(Collectors.toList())
         );

@@ -14,6 +14,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class SecureBasesCommander extends Commander {
+    private static SecuringBase securingBase;
     private Selection bases;
 
     public SecureBasesCommander() {
@@ -35,23 +36,25 @@ public class SecureBasesCommander extends Commander {
         for (AUnit base : bases.list()) {
             if (baseNumber++ <= 1) continue;
 
-            secureExistingBase(base);
+            securingBase = (new SecuringBase(base.position()));
+
+            secureExistingBase();
         }
     }
 
-    private void secureExistingBase(AUnit base) {
-        if (!isBaseSecured(base)) secureBase(base);
+    private void secureExistingBase() {
+        if (!isBaseSecured()) secureBase();
     }
 
-    private static boolean secureBase(AUnit base) {
-        return (new SecuringBase(base.position())).secure();
+    private static boolean secureBase() {
+        return securingBase.secure();
     }
 
-    protected boolean isBaseSecured(AUnit base) {
+    protected boolean isBaseSecured() {
         if (!We.terran()) return true;
 
 //        System.err.println("@ " + A.now() + " - isSecure base? " + base + " / " + (new SecuringBase(base.position())).isSecure());
 
-        return (new SecuringBase(base.position())).isSecure();
+        return securingBase.isSecure();
     }
 }

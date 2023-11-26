@@ -2,6 +2,7 @@ package atlantis.map.path;
 
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
@@ -19,18 +20,25 @@ public class OurClosestBaseToEnemy {
                 int closestDistance = 999;
 
                 for (AUnit base : Select.ourBasesWithUnfinished().list()) {
-                    int chokeDistance = distToEnemyInNumOfChokes(base);
-                    System.out.println("base = " + base + " / chokeDistance=" + chokeDistance);
+                    if (base.isLifted() && base.lastActionMoreThanAgo(90, Actions.LAND)) continue;
 
-                    if (chokeDistance > 0 && chokeDistance < closestDistance) {
+                    int distToEnemyInChokes = distToEnemyInNumOfChokes(base);
+                    System.out.println("base = " + base + " / distToEnemyInChokes=" + distToEnemyInChokes);
+
+                    if (distToEnemyInChokes > 0 && distToEnemyInChokes < closestDistance) {
                         closest = base;
-                        closestDistance = chokeDistance;
+                        closestDistance = distToEnemyInChokes;
                     }
                 }
 
+                System.err.println("RETURN closest = " + closest + " (" + closestDistance);
                 return closest;
             }
         );
+    }
+
+    public static void clearCache() {
+        cache.clear();
     }
 
     private static int distToEnemyInNumOfChokes(HasPosition from) {

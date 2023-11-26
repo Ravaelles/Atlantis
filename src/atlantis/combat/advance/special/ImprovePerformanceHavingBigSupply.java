@@ -2,24 +2,22 @@ package atlantis.combat.advance.special;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInfo;
-import atlantis.map.AMap;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 
-public class ImprovePerformanceHavingBugSupply extends MissionManager {
-    public ImprovePerformanceHavingBugSupply(AUnit unit) {
+public class ImprovePerformanceHavingBigSupply extends MissionManager {
+    public ImprovePerformanceHavingBigSupply(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return A.supplyUsed(140)
+        return (A.supplyUsed(110) || LongFrames.framesOver85() >= 30)
             && unit.isMoving()
             && !unit.isRunning()
-            && unit.lastActionLessThanAgo(20);
+            && unit.lastActionLessThanAgo(20)
+            && unit.enemiesNear().atMost(1);
     }
 
     protected Manager handle(AUnit unit) {

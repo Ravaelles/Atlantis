@@ -44,6 +44,9 @@ public class OnEveryFrameHelper {
 
     private static void paintNearestBaseToEnemy() {
         AUnit nearestToEnemy = OurClosestBaseToEnemy.get();
+
+        if (nearestToEnemy == null) return;
+
         AAdvancedPainter.paintCircleFilled(nearestToEnemy, 9, Color.Orange);
         AAdvancedPainter.paintTextCentered(nearestToEnemy, "NearestBaseToEnemy", Color.Orange);
     }

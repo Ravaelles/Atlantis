@@ -24,7 +24,7 @@ public class SiegeTankRunCritical extends Manager {
         double minDist = A.inRange(2, 3 + unit.woundPercent() / 30.0 - unit.friendsNear().count() / 7.0, 5);
         int minCount = unit.isWounded() ? 1 : 2;
 
-        return unit.enemiesNear().inRadius(minDist, unit).count() >= minCount;
+        return unit.enemiesNear().groundUnits().havingWeapon().inRadius(minDist, unit).count() >= minCount;
     }
 
     private boolean darkTemplarsVeryNear() {

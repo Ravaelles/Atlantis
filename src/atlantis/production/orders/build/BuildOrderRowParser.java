@@ -108,26 +108,18 @@ public class BuildOrderRowParser {
         // =========================================================
 
         // Unit
-        if (isUnit) {
-            order = new ProductionOrder(unitType, minSupplyForThisOrder);
-        }
+        if (isUnit) order = new ProductionOrder(unitType, minSupplyForThisOrder);
 
-        // Upgrade
-        else if (isUpgrade) {
-            order = new ProductionOrder(upgrade, minSupplyForThisOrder);
-        }
+            // Upgrade
+        else if (isUpgrade) order = new ProductionOrder(upgrade, minSupplyForThisOrder);
 
-        // Tech
-        else if (isTech) {
-            order = new ProductionOrder(tech, minSupplyForThisOrder);
-        }
+            // Tech
+        else if (isTech) order = new ProductionOrder(tech, minSupplyForThisOrder);
 
-        // Mission
-        else if (isMission) {
-            order = new ProductionOrder(mission, minSupplyForThisOrder);
-        }
+            // Mission
+        else if (isMission) order = new ProductionOrder(mission, minSupplyForThisOrder);
 
-        // Invalid entry type
+            // Invalid entry type
         else {
             System.err.println("Invalid build order: " + nameString);
             System.err.println("Please correct it.");
