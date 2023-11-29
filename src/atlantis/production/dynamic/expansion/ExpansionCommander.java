@@ -3,7 +3,6 @@ package atlantis.production.dynamic.expansion;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.information.strategy.GamePhase;
 import atlantis.production.constructing.position.base.NextBasePosition;
 import atlantis.production.dynamic.expansion.secure.SecuringBase;
 import atlantis.production.dynamic.expansion.terran.TerranEarlyExpansion;
@@ -58,7 +57,7 @@ public class ExpansionCommander extends Commander {
     }
 
     private void secureNewBase() {
-        securingBase.secure();
+        securingBase.secureWithCombatBuildings();
     }
 
     protected boolean newExpansionIsSecured() {

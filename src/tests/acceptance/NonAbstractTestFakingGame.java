@@ -1,10 +1,17 @@
 package tests.acceptance;
 
 import atlantis.game.AGame;
+import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.TerranStrategies;
+import atlantis.production.orders.build.ABuildOrder;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.AUnitType;
 import tests.unit.FakeUnit;
 
 public class NonAbstractTestFakingGame extends AbstractTestFakingGame {
+    protected Queue queue = null;
+    protected ABuildOrder buildOrder = null;
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -41,5 +48,36 @@ public class NonAbstractTestFakingGame extends AbstractTestFakingGame {
 
     protected FakeUnit[] fakeExampleEnemies() {
         return fakeEnemies(fake(AUnitType.Zerg_Zergling, 19));
+    }
+
+    protected Queue initQueue() {
+        return initQueue(3456, 2345);
+    }
+
+//    protected Queue initQueue(int minerals, int gas) {
+//        aGame.when(AGame::minerals).thenReturn(minerals);
+//        aGame.when(AGame::gas).thenReturn(gas);
+//        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
+//
+//        initSupply();
+//
+//        QueueInitializer.initializeProductionQueue();
+//
+//        return queue = Queue.get();
+//    }
+
+    protected Queue initQueue(int minerals, int gas) {
+        if (Queue.get() != null) Queue.get().clearCache();
+
+        aGame.when(AGame::minerals).thenReturn(minerals);
+        aGame.when(AGame::gas).thenReturn(gas);
+        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
+
+        buildOrder = OurStrategy.get().buildOrder();
+        initSupply();
+
+        QueueInitializer.initializeProductionQueue();
+
+        return queue = Queue.get();
     }
 }

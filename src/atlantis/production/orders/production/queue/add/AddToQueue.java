@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue.add;
 
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -77,9 +78,10 @@ public class AddToQueue {
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         if (preventExcessiveOrInvalidOrders(type)) return null;
 
-//        if (type != null && type.isFactory()) {
-//            A.printStackTrace("Factory, " + CountInQueue.count(AUnitType.Terran_Factory));
-//        }
+        if (type != null && type.isSupplyDepot()) {
+            A.printStackTrace("isSupplyDepot, " + CountInQueue.count(AUnitType.Terran_Supply_Depot) + " / "
+                + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
+        }
 
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
 

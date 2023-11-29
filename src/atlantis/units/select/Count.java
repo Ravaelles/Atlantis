@@ -18,6 +18,10 @@ import bwapi.UpgradeType;
 public class Count {
     private static Cache<Integer> cache = new Cache<>();
 
+    public static void clearCache() {
+        cache.clear();
+    }
+
     public static int ourCombatUnits() {
         return cache.get(
             "ourCombatUnits",

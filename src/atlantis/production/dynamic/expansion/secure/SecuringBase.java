@@ -2,11 +2,9 @@ package atlantis.production.dynamic.expansion.secure;
 
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.base.IsNatural;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
@@ -31,12 +29,12 @@ public class SecuringBase {
         this.securingWithTurret = new SecuringWithTurret(this);
     }
 
-    public boolean secure() {
+    public boolean secureWithCombatBuildings() {
 //        if (true) return true;
 
         if (!We.terran()) return true;
         if (isSecure()) return consideredBaseAsSecure("isSecure");
-        if (errorDetectedSameRegionAsMain()) return true;
+        if (errorDetectedSameRegionAsMain()) return consideredBaseAsSecure("Same region as main base detected");
 
         return secureWithBunker();
     }
@@ -61,39 +59,42 @@ public class SecuringBase {
 //        System.err.println("@ " + A.now() + " - secureWithBunker base? " + baseToSecure + " / " + bunkerPosition);
 
         if (bunkerPosition == null) return false;
-
-        if (isSecure()) return true;
-
         if (errorDetectedSameRegionAsMain()) return false;
 
+        if (isSecure()) {
+            if (baseToSecure.distTo(Select.mainOrAnyBuilding()) > 15) {
+                System.err.println("------ base is secure " + baseToSecure);
+            }
+            return true;
+        }
 
 //        System.err.println(A.now() + " bunkerPosition = " + bunkerPosition
 //            + " / " + Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition)
 //            + " // " + Select.main().position());
 
-        if (!isPlaceSecured(bunkerPosition)) {
-            ProductionOrder order = AddToQueue.withTopPriority(Terran_Bunker, bunkerPosition);
+//        if (!isPlaceSecured(bunkerPosition)) {
+        ProductionOrder order = AddToQueue.withTopPriority(Terran_Bunker, bunkerPosition);
 
-            if (order == null) {
-                ErrorLog.printMaxOncePerMinute("Empty ProductionOrder for secureWithBunker");
-                return false;
-            }
+        if (order == null) {
+            ErrorLog.printMaxOncePerMinute("Empty ProductionOrder for secureWithBunker");
+            return false;
+        }
 
-            order.markAsUsingExactPosition();
-            order.forceSetPosition(bunkerPosition);
+        order.markAsUsingExactPosition();
+        order.forceSetPosition(bunkerPosition);
 
 //            System.err.println("@ " + A.now() + " - ");
 //            System.err.println("Count.existingOrPlannedBuildingsNear = "
 //                + Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, baseToSecure));
-            System.err.println("@@@@ SECURE base " + baseToSecure + " with BUNKER = " + order);
+        System.err.println("@@@@ SECURE base " + baseToSecure + " with BUNKER = " + order);
 //            if (order != null) {
 //                order.setModifier(PositionModifier.NATURAL);
 //                return false;
 //            }
-            return false;
-        }
+        return false;
+//        }
 
-        return true;
+//        return true;
 //        return Count.inProductionOrInQueue(Terran_Bunker) >= 2;
     }
 

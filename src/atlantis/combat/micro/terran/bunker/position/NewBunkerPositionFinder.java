@@ -33,24 +33,42 @@ public class NewBunkerPositionFinder {
     }
 
     public APosition find() {
-        if (isNotValid()) {
+        if (isInputInvalid()) {
             ErrorLog.printMaxOncePerMinute("NewBunkerPositionFinder: invalid / " + positionToSecure + " / " + builder);
             return null;
         }
 
-        return TerranPositionFinder.findStandardPositionFor(
+        APosition foundPosition = TerranPositionFinder.findStandardPositionFor(
             builder,
             Terran_Bunker,
             positionToSecure,
-            10
+            15
         );
+
+        return validateOutput(foundPosition);
+    }
+
+    private APosition validateOutput(APosition foundPosition) {
+        if (foundPosition != null) {
+            double distTo = foundPosition.distTo(positionToSecure);
+
+            if (distTo > 10) {
+                ErrorLog.printMaxOncePerMinute(
+                    "NewBunkerPositionFinder: position too far (" + distTo + ") / " +
+                        "found:" + foundPosition + ", securing: " + positionToSecure
+                );
+                return null;
+            }
+        }
+
+        return foundPosition;
     }
 
 //    private boolean isForNatural() {
 //        return nearestBasePosition.distTo(naturalBase) <= 9;
 //    }
 
-    private boolean isNotValid() {
+    private boolean isInputInvalid() {
         if (positionToSecure == null) return true;
 
         nearestBasePosition = NextBasePosition.nextBasePosition();

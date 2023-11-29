@@ -5,28 +5,28 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
+import atlantis.util.cache.CacheKey;
 import bwem.CPPath;
 
-public class OurClosestBaseToEnemy {
+public class ClosestToEnemyBase {
     private static Cache<AUnit> cache = new Cache<>();
 
-    public static AUnit get() {
+    public static AUnit from(Selection positions) {
         return cache.get(
-            "get:" + Count.basesWithUnfinished(),
-            -1,
+            "from:" + positions.toString(),
+            2,
             () -> {
                 AUnit closest = null;
                 int closestDistance = 999;
 
-                for (AUnit base : Select.ourBasesWithUnfinished().list()) {
-                    if (base.isLifted() && base.lastActionMoreThanAgo(90, Actions.LAND)) continue;
-
-                    int distToEnemyInChokes = distToEnemyInNumOfChokes(base);
-//                    System.out.println("base = " + base + " / distToEnemyInChokes=" + distToEnemyInChokes);
+                for (AUnit unit : positions.list()) {
+                    int distToEnemyInChokes = distToEnemyInNumOfChokes(unit);
+//                    System.out.println("unit = " + unit + " / distToEnemyInChokes=" + distToEnemyInChokes);
 
                     if (distToEnemyInChokes > 0 && distToEnemyInChokes < closestDistance) {
-                        closest = base;
+                        closest = unit;
                         closestDistance = distToEnemyInChokes;
                     }
                 }
@@ -35,10 +35,6 @@ public class OurClosestBaseToEnemy {
                 return closest;
             }
         );
-    }
-
-    public static void clearCache() {
-        cache.clear();
     }
 
     private static int distToEnemyInNumOfChokes(HasPosition from) {

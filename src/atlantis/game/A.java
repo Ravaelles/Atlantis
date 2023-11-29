@@ -1208,7 +1208,7 @@ public class A {
     }
 
     public static boolean hasMinerals(int minerals) {
-        return AGame.hasMinerals(minerals);
+        return A.minerals() >= minerals;
     }
 
     public static boolean hasMineralsAndGas(int minerals, int gas) {
@@ -1216,7 +1216,7 @@ public class A {
     }
 
     public static boolean hasGas(int gas) {
-        return AGame.hasGas(gas);
+        return A.gas() >= gas;
     }
 
     /**

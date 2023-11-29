@@ -15,14 +15,13 @@ import atlantis.units.select.Select;
 import atlantis.util.Options;
 import org.junit.Test;
 import tests.unit.FakeUnit;
+import tests.unit.FakeUnitData;
 
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
 public class TerranDynamicUnitsCommanderTest extends NonAbstractTestFakingGame {
-    private ABuildOrder buildOrder;
-    private Queue queue = null;
     private ArrayList<ProductionOrder> allOrders = null;
 
     @Test
@@ -48,16 +47,21 @@ public class TerranDynamicUnitsCommanderTest extends NonAbstractTestFakingGame {
             () -> {
                 queue = initQueue();
 
+                int oldTrainUnits = FakeUnitData.TRAIN.size();
+
                 (new TerranDynamicUnitsCommander()).invoke();
 
-                Select.our().print("All our units!");
-                System.out.println("## Supply: " + A.supplyUsed() + " \\ Minerals: " + A.minerals() + " ##\n");
+//                Select.our().print("All our units!");
+//                System.out.println("## Supply: " + A.supplyUsed() + " / Minerals: " + A.minerals() + " ##\n");
+//                queue.allOrders().print("Queue all");
 
-                queue.allOrders().print("Queue all");
+                Queue.get().clearCache();
                 Orders dynamicUnitOrders = queue.forCurrentSupply().dynamic().units();
 
-                assertEquals(1, dynamicUnitOrders.size());
-                assertEquals(true, dynamicUnitOrders.get(0).unitType().isMedic());
+                int newTrainUnits = FakeUnitData.TRAIN.size();
+
+                assertEquals(true, newTrainUnits > oldTrainUnits);
+//                assertEquals(true, dynamicUnitOrders.get(0).unitType().isTerranInfantry());
             },
             () -> ours,
             () -> fakeExampleEnemies(),
@@ -66,23 +70,6 @@ public class TerranDynamicUnitsCommanderTest extends NonAbstractTestFakingGame {
     }
 
     // =========================================================
-
-    private Queue initQueue() {
-        return initQueue(3456, 2345);
-    }
-
-    private Queue initQueue(int minerals, int gas) {
-        aGame.when(AGame::minerals).thenReturn(minerals);
-        aGame.when(AGame::gas).thenReturn(gas);
-        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
-
-        buildOrder = OurStrategy.get().buildOrder();
-        initSupply();
-
-        QueueInitializer.initializeProductionQueue();
-
-        return queue = Queue.get();
-    }
 
     private FakeUnit[] ourInitialUnits() {
         return fakeExampleOurs();

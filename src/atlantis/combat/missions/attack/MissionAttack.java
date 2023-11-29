@@ -38,7 +38,7 @@ public class MissionAttack extends Mission {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
-        return (new MissionAttackVsEnemyUnit(unit)).allowsToAttackEnemyUnit(enemy);
+        return (new MissionAttackAllowsToAttack(unit)).allowsToAttackEnemyUnit(enemy);
     }
 
 //    @Override

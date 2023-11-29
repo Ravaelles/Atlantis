@@ -67,10 +67,11 @@ public class SelectionTest extends NonAbstractTestFakingGame {
     @Test
     public void tanks() {
         usingFakeOurs(() -> {
-            Select.our().print();
             BaseSelect.clearCache();
             Select.clearCache();
+            Count.clearCache();
 
+            Select.our().print();
             Selection our = Select.our();
 
             assertEquals(22, our.size());

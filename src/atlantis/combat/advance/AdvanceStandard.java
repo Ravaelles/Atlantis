@@ -22,7 +22,7 @@ public class AdvanceStandard extends MissionManager {
             if (TerranTank.wantsToUnsiege(unit)) return null;
         }
 
-        if (A.seconds() % 4 <= 2 && (!unit.isMoving() && !unit.isAttacking())) {
+        if (A.seconds() % 6 <= 3 && (!unit.isMoving() && !unit.isAttacking())) {
             return usedManager(this, "AdvanceContinue");
         }
 

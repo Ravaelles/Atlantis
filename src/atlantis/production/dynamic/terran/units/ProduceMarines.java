@@ -31,8 +31,8 @@ public class ProduceMarines {
     public static boolean marines() {
         int freeBarracks = Select.ourFree(Terran_Barracks).size();
 
+        if (freeBarracks <= 0 || freeBarracks < CountInQueue.count(Terran_Marine)) return false;
         if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
-        if (freeBarracks < CountInQueue.count(Terran_Marine)) return false;
 
         marines = Count.marines();
 

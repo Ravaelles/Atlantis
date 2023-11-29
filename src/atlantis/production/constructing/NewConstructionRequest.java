@@ -92,6 +92,9 @@ public class NewConstructionRequest {
             else {
                 ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
             }
+            
+            if (order != null)
+                ErrorLog.printMaxOncePerMinute("(Max search distance was: " + order.maximumDistance() + ")");
 
             newConstruction.cancel();
             return false;

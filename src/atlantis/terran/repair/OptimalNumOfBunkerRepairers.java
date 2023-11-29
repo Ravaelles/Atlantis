@@ -41,7 +41,7 @@ public class OptimalNumOfBunkerRepairers {
                 return A.seconds() <= 300 ? 1 : 0;
             }
             if ((enemiesFar + enemiesNear) >= 5 && bunker.loadedUnits().size() > 0) {
-                return 1;
+                return 2;
             }
         }
 

@@ -9,7 +9,6 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.base.define.DefineNatural;
 import atlantis.map.choke.AChoke;
-import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.position.APosition;
@@ -21,7 +20,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
-public class MissionDefendFocus extends MissionFocusPoint {
+public class MissionDefendFocusPoint extends MissionFocusPoint {
     private Cache<AFocusPoint> cache = new Cache<>();
 
     // =========================================================
@@ -99,9 +98,11 @@ public class MissionDefendFocus extends MissionFocusPoint {
 
         if (lastBase == null) return null;
 
+        AChoke choke = Chokes.nearestChoke(lastBase.position());
+
         return new AFocusPoint(
+            choke != null ? choke : lastBase,
             Select.mainOrAnyBuilding(),
-            lastBase,
             "LastBase"
         );
     }
@@ -258,7 +259,7 @@ public class MissionDefendFocus extends MissionFocusPoint {
         APosition natural = DefineNatural.natural();
         return new AFocusPoint(
             natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
-            natural != null ? natural : null,
+            natural,
             "NaturalChoke"
         );
     }

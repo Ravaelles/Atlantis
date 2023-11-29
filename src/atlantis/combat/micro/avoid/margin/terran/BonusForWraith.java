@@ -8,7 +8,7 @@ public class BonusForWraith {
 
         double base = 1.3
             + (defender.enemiesNear().detectors().inRadius(13, defender).notEmpty() ? 2 : 0)
-            + (defender.woundPercent() / 25.0)
+            + (defender.woundPercent() / 20.0)
             + (defender.enemiesNear().combatBuildingsAntiAir().inRadius(13, defender).notEmpty() ? 1.5 : 0);
 
         if (attacker.isGroundUnit() && attacker.isRanged()) {

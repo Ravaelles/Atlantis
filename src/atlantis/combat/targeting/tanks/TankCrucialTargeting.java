@@ -20,18 +20,18 @@ public class TankCrucialTargeting extends HasUnit {
         AUnit target = null;
 
         // Protoss
-        if ((target = enemies.ofType(AUnitType.Protoss_Reaver).first()) != null) return target;
-        if ((target = enemies.ofType(AUnitType.Protoss_Dark_Templar).first()) != null) return target;
-        if ((target = enemies.ofType(AUnitType.Protoss_High_Templar).first()) != null) return target;
-        if ((target = enemies.ofType(AUnitType.Protoss_Archon).first()) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Protoss_Reaver).nearestTo(unit)) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Protoss_Dark_Templar).nearestTo(unit)) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Protoss_High_Templar).nearestTo(unit)) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Protoss_Archon).mostWounded()) != null) return target;
 
         // Terran
-        if ((target = enemies.ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).first()) != null) return target;
-        if ((target = enemies.ofType(AUnitType.Terran_Siege_Tank_Tank_Mode).first()) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).mostWounded()) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Terran_Siege_Tank_Tank_Mode).mostWounded()) != null) return target;
 
         // Zerg
-        if ((target = enemies.ofType(AUnitType.Zerg_Defiler).first()) != null) return target;
-        if ((target = enemies.ofType(AUnitType.Zerg_Ultralisk).first()) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Zerg_Defiler).nearestTo(unit)) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Zerg_Ultralisk).mostWounded()) != null) return target;
 
         return null;
     }

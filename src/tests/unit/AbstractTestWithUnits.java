@@ -18,6 +18,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.Options;
@@ -67,6 +68,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
         Select.clearCache();
         BaseSelect.clearCache();
+        Count.clearCache();
 //        HeuristicCombatEvaluator.clearCache();
         AbstractFoggedUnit.clearCache();
         EnemyInfo.clearCache();

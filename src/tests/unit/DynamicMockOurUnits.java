@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.units.select.BaseSelect;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import tests.acceptance.AbstractTestFakingGame;
 
@@ -11,5 +12,6 @@ public class DynamicMockOurUnits {
         AbstractTestFakingGame.baseSelect.when(BaseSelect::ourUnits).thenReturn(ourUnits);
         BaseSelect.clearCache();
         Select.clearCache();
+        Count.clearCache();
     }
 }

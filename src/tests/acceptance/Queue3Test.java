@@ -22,8 +22,6 @@ import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.assertEquals;
 
 public class Queue3Test extends NonAbstractTestFakingGame {
-    private ABuildOrder buildOrder;
-    private Queue queue = null;
     private ArrayList<ProductionOrder> allOrders = null;
 
     @Test
@@ -65,23 +63,6 @@ public class Queue3Test extends NonAbstractTestFakingGame {
         DynamicMockOurUnits.mockOur(ourUnits);
         if (queue != null) queue.clearCache();
         if (queue != null) queue.refresh();
-    }
-
-    private Queue initQueue() {
-        return initQueue(3456, 2345);
-    }
-
-    private Queue initQueue(int minerals, int gas) {
-        aGame.when(AGame::minerals).thenReturn(minerals);
-        aGame.when(AGame::gas).thenReturn(gas);
-        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
-
-        buildOrder = OurStrategy.get().buildOrder();
-        initSupply();
-
-        QueueInitializer.initializeProductionQueue();
-
-        return queue = Queue.get();
     }
 
     public void initSupply() {

@@ -9,6 +9,7 @@ public class Actions {
     public static final Action ATTACK_UNIT = new Action(true).setName("ATTACK_UNIT");
     public static final Action BUILD = new Action().setName("BUILD");
     public static final Action BURROW = new Action().setName("BURROW");
+    public static final Action CANCEL = new Action().setName("CANCEL");
     public static final Action CLOAK = new Action().setName("CLOAK");
     public static final Action DECLOAK = new Action().setName("DECLOAK");
     public static final Action GATHER_MINERALS = new Action().setName("GATHER_MINERALS");
@@ -42,13 +43,13 @@ public class Actions {
     public static final Action MOVE_UNFREEZE = new Action().setName("MOVE_UNFREEZE");
     public static final Action PATROL = new Action().setName("PATROL");
     public static final Action REPAIR = new Action().setName("REPAIR");
-//    public static final Action RETREAT = new Action(false, true).setName("RETREAT");
+    //    public static final Action RETREAT = new Action(false, true).setName("RETREAT");
     public static final Action RETURN_CARGO = new Action().setName("RETURN_CARGO");
 
     // For the love of Aiur - dont use it unless there's no direct tech for it e.g. Protoss Recharge Shields
     public static final Action RIGHT_CLICK = new Action().setName("RIGHT_CLICK");
 
-//    public static final Action RUN_ = new Action(false, true).setName("RUN_");
+    //    public static final Action RUN_ = new Action(false, true).setName("RUN_");
     public static final Action RUN_ENEMY = new Action(false, true).setName("RUN_ENEMY");
     public static final Action RUN_ENEMIES = new Action(false, true).setName("RUN_ENEMIES");
     public static final Action RUN_IN_ANY_DIRECTION = new Action(false, true).setName("RUN_IN_ANY_DIR");

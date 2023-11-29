@@ -43,10 +43,10 @@ public class TooFarFromTank extends Manager {
     private boolean shouldGoToTank(AUnit tank) {
         distToTank = unit.distTo(tank);
 
-        if (distToTank <= 7 && tankIsOvercrowded(tank)) return false;
-        if (distToTank < MIN_DIST_FROM_TANK) return false;
-
         if (distToTank > MAX_DIST_FROM_TANK) return true;
+
+        if (distToTank < MIN_DIST_FROM_TANK) return false;
+        if (distToTank <= 7 && tankIsOvercrowded(tank)) return false;
 
 //        if (
 //            unit.isHealthy()

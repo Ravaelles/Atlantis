@@ -69,10 +69,10 @@ public class QueueRefresher {
     private OrderStatus markAsComplete(ProductionOrder order) {
         order.setStatus(OrderStatus.COMPLETED);
 //        order.setUnitType(null);
-        order.setModifier(null);
-        order.forceSetPosition(null);
+//        order.setModifier(null);
+//        order.forceSetPosition(null);
 
-        Queue.get().clearCache();
+        if (Queue.get() != null) Queue.get().clearCache();
 
         return OrderStatus.COMPLETED;
 

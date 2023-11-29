@@ -3,10 +3,17 @@ package atlantis.production.orders.production.queue.updater;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.util.log.ErrorLog;
 
 public class IsReadyToProduceOrder {
     protected static boolean isReadyToProduce(ProductionOrder order) {
+        if (order.isStatus(OrderStatus.COMPLETED)) {
+//            ErrorLog.printMaxOncePerMinute("Trying to produce completed order: " + order);
+            return false;
+        }
+
 //        if (order.unitType() == AUnitType.Terran_Machine_Shop) {
 //        if (order.tech() == TechType.Stim_Packs) {
 //        if (order.upgrade() == U238.upgradeType()) {

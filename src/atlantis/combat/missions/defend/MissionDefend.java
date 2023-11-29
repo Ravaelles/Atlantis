@@ -3,7 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.defend.focus.MissionDefendFocus;
+import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.units.AUnit;
 
 public class MissionDefend extends Mission {
@@ -20,7 +20,7 @@ public class MissionDefend extends Mission {
 
     public MissionDefend() {
         super("Defend");
-        focusPointManager = new MissionDefendFocus();
+        focusPointManager = new MissionDefendFocusPoint();
     }
 
     // =========================================================

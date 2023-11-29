@@ -76,23 +76,24 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
 
 //        assertEquals(0, ReservedResources.minerals());
 
-        queue = initQueue(640, 2323);
+        int weHaveMinerals = 460;
+
+        queue = initQueue(weHaveMinerals, 2323);
         queue.refresh();
 
-        assertEquals(640, A.minerals());
+        assertEquals(weHaveMinerals, A.minerals());
 
         readyToProduceOrders = queue.readyToProduceOrders();
 
-//        queue.allOrders().print("All orders");
-//        readyToProduceOrders.print("ReadyToProduceOrders");
-//        ReservedResources.print();
+        queue.allOrders().print("All orders");
+        readyToProduceOrders.print("ReadyToProduceOrders");
+        ReservedResources.print();
 
-        assertEquals(initialReservedMinerals, ReservedResources.minerals());
-//        assertEquals(6, readyToProduceOrders.size());
+        assertEquals(450, ReservedResources.minerals());
         Orders nextOrders = queue.nextOrders(20);
 
-//        queue.allOrders().print("All orders");
-//        nextOrders.print("\nNext orders");
+        queue.allOrders().print("All orders");
+        nextOrders.print("\nNext orders");
 
         assertTrue(readyToProduceOrders.size() < nextOrders.size());
         assertTrue(nextOrders.first().minSupply() >= 14);
@@ -102,17 +103,6 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
 
     private FakeUnit[] ourInitialUnits() {
         return fakeExampleOurs();
-    }
-
-    private Queue initQueue(int minerals, int gas) {
-        aGame.when(AGame::minerals).thenReturn(minerals);
-        aGame.when(AGame::gas).thenReturn(gas);
-
-        initSupply();
-
-        QueueInitializer.initializeProductionQueue();
-
-        return queue = Queue.get();
     }
 
     public void initSupply() {

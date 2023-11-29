@@ -16,13 +16,12 @@ import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.*;
 
 public class AddToQueueTest extends NonAbstractTestFakingGame {
-    private Queue queue;
-
     @Test
     public void marinesAreNotAddedMultipleTimesToTheQueue() {
         createWorld(1,
             () -> {
                 queue = initQueue();
+
                 ProductionOrder added;
 
 //                queue.nextOrders(15).print("nextOrders");
@@ -78,21 +77,5 @@ public class AddToQueueTest extends NonAbstractTestFakingGame {
 
     private FakeUnit[] ourInitialUnits() {
         return fakeExampleOurs();
-    }
-
-    private Queue initQueue() {
-        return initQueue(3456, 2345);
-    }
-
-    private Queue initQueue(int minerals, int gas) {
-        aGame.when(AGame::minerals).thenReturn(minerals);
-        aGame.when(AGame::gas).thenReturn(gas);
-        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
-
-        initSupply();
-
-        QueueInitializer.initializeProductionQueue();
-
-        return queue = Queue.get();
     }
 }

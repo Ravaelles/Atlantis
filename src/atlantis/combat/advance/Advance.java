@@ -5,6 +5,7 @@ import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
 import atlantis.combat.micro.terran.wraith.AsAirAttackAnyone;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.squad.positioning.TooFarFromLeader;
 import atlantis.units.AUnit;
 
 public class Advance extends MissionManager {
@@ -20,7 +21,8 @@ public class Advance extends MissionManager {
             AdvanceAsTerran.class,
             AdvanceAsALeader.class,
             AdvanceAsTank.class,
-            DontAdvanceWhenEnemyBuildingsClose.class,
+            DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class,
+            TooFarFromLeader.class,
             AdvanceStandard.class,
             AsAirAttackAnyone.class,
         };

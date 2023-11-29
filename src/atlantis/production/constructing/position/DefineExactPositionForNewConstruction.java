@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position;
 
+import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.game.CameraCommander;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
@@ -49,6 +50,9 @@ public class DefineExactPositionForNewConstruction {
             System.err.println("@@@@@@@@@@@@@@@@@@@@@ OK, RETURN EXACT " + order.atPosition());
             return;
         }
+//        else {
+//            (new NewBunkerPositionFinder()).find();
+//        }
 
         if (order.getModifier() != null) {
             if (!order.isUsingExactPosition() && order.atPosition() == null) {

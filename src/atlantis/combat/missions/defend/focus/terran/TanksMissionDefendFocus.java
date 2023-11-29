@@ -1,12 +1,12 @@
 package atlantis.combat.missions.defend.focus.terran;
 
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.missions.defend.focus.MissionDefendFocus;
+import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.map.high.FindHighGround;
 import atlantis.map.position.APosition;
 import atlantis.units.select.Select;
 
-public class TanksMissionDefendFocus extends MissionDefendFocus {
+public class TanksMissionDefendFocus extends MissionDefendFocusPoint {
     @Override
     public AFocusPoint focusPoint() {
         if (focusPoint().isAroundChoke()) {
@@ -20,7 +20,7 @@ public class TanksMissionDefendFocus extends MissionDefendFocus {
     }
 
     protected AFocusPoint aroundHighGround() {
-        AFocusPoint focus = (new MissionDefendFocus()).focusPoint();
+        AFocusPoint focus = (new MissionDefendFocusPoint()).focusPoint();
 
         APosition highGround = FindHighGround.findNear(focus, 8);
 

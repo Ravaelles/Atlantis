@@ -2,8 +2,6 @@ package atlantis.production.constructing.position.conditions;
 
 import atlantis.Atlantis;
 import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.game.GameSpeed;
-import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
@@ -29,8 +27,12 @@ public class CanPhysicallyBuildHere {
             AAdvancedPainter.paintCircleFilled(position, 5, Color.Red);
         }
 
-        // Fix for bases - allow in unknown locations
-        if (!position.isExplored() && building.isBase()) return true;
+        // Fix for bases & bunkers - allow in unknown locations
+        if (
+            (!position.isExplored() || !position.isPositionVisible())
+                &&
+                (building.isBase() || building.isCombatBuilding())
+        ) return true;
 
         if (!We.zerg() && Atlantis.game().hasCreep(position.toTilePosition())) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Ugly creep on it";

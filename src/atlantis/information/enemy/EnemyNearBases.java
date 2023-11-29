@@ -15,7 +15,7 @@ public class EnemyNearBases {
 
     public static AUnit enemyNearAnyOurBase(int maxDistToBase) {
         if (maxDistToBase < 0) {
-            maxDistToBase = 12;
+            maxDistToBase = 13;
         }
         maxDist = maxDistToBase;
 

@@ -131,8 +131,7 @@ public class OnStart {
                     + (A.fileExists(CurrentBuildOrder.get().getName()) ? "YES - " : "NO, IT DOESN'T! ")
                     + CurrentBuildOrder.get().getName()
             );
-            A.errPrintln(e.getMessage());
-            e.printStackTrace();
+            A.errPrintln("Error: " + e.getMessage());
             throw new RuntimeException("Exception when loading build orders file");
         }
     }

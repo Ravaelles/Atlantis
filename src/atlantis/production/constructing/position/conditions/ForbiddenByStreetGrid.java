@@ -2,9 +2,11 @@ package atlantis.production.constructing.position.conditions;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ForbiddenByStreetGrid {
@@ -19,6 +21,10 @@ public class ForbiddenByStreetGrid {
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         if (We.protoss() && A.supplyTotal() <= 10) return false;
         if (building.isBase() || building.isGasBuilding()) return false;
+        
+        if (
+            building.isMissileTurret() && Select.ourBuildingsWithUnfinished().inRadius(3, position).empty()
+        ) return false;
 
         // =========================================================
 

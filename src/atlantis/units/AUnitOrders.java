@@ -10,6 +10,7 @@ import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;
+import tests.unit.FakeUnitData;
 
 /**
  * Class using default methods which are extracted from AUnit class to separate this functionality.
@@ -129,7 +130,7 @@ public interface AUnitOrders {
 
     default boolean train(AUnitType unitToTrain) {
         unit().setAction(Actions.TRAIN);
-        return u().train(unitToTrain.ut());
+        return u() != null ? u().train(unitToTrain.ut()) : FakeUnitData.TRAIN.add(unitToTrain);
     }
 
     default boolean morph(AUnitType into) {
@@ -624,9 +625,9 @@ public interface AUnitOrders {
      * canCancelConstruction
      */
     default boolean cancelConstruction() {
-        unit().setAction(null);
+        unit().setAction(Actions.CANCEL);
 //        throw new RuntimeException("Cancel!");
-        return u() != null ? u().cancelConstruction() : null;
+        return unit() != null && u() != null ? u().cancelConstruction() : FakeUnitData.CANCEL.add(unit());
     }
 
     /**

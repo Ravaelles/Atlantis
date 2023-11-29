@@ -2,6 +2,8 @@ package atlantis.units.select;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.path.ClosestToEnemyBase;
+import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.terran.repair.RepairAssignments;
@@ -822,13 +824,9 @@ public class Selection extends BaseSelection {
      * Returns closest unit to given <b>position</b> from all units in the current selection.
      */
     public AUnit nearestTo(HasPosition position) {
-        if (data.isEmpty() || position == null) {
-            return null;
-        }
+        if (data.isEmpty() || position == null) return null;
 
-        if (data.size() == 1) {
-            return data.get(0);
-        }
+        if (data.size() == 1) return data.get(0);
 
         sortDataByDistanceTo(position, true);
 
@@ -853,6 +851,10 @@ public class Selection extends BaseSelection {
         sortDataByDistanceTo(position, false);
 
         return data.isEmpty() ? null : (AUnit) data.get(0);
+    }
+
+    public AUnit closestToEnemyBase() {
+        return ClosestToEnemyBase.from(this);
     }
 
     /**

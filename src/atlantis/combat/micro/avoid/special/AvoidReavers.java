@@ -11,7 +11,7 @@ public class AvoidReavers extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isGroundUnit() && !unit.isABuilding() && !unit.isTank();
+        return unit.isGroundUnit() && !unit.isABuilding() && !unit.isTank() && !unit.isMissionDefend();
     }
 
     @Override

@@ -23,7 +23,9 @@ public class FakeUnit extends AUnit {
     public boolean enemy = false;
     public boolean neutral = false;
     public APosition targetPosition = null;
+
     public boolean burrowed = false;
+    public boolean busy = false;
     public boolean cloaked = false;
     public boolean completed = true;
     public boolean detected = true;
@@ -31,16 +33,17 @@ public class FakeUnit extends AUnit {
     public boolean effVisible = true;
     public boolean idle = false;
     public boolean isVisibleUnitOnMap = true;
+    public boolean lifted = false;
     public boolean loaded = false;
     public boolean lockedDown = false;
-    public TechType researching = null;
-    public UpgradeType upgrading = null;
     public boolean stasised = false;
     public boolean stimmed = false;
     public FakeUnit target = null;
     public int energy = 0;
     public String lastCommand = "None";
     public TechType lastTechUsed = null;
+    public TechType researching = null;
+    public UpgradeType upgrading = null;
 
     // =========================================================
 
@@ -225,6 +228,16 @@ public class FakeUnit extends AUnit {
     @Override
     public boolean isStimmed() {
         return stimmed;
+    }
+
+    @Override
+    public boolean isBusy() {
+        return busy;
+    }
+
+    @Override
+    public boolean isLifted() {
+        return lifted;
     }
 
     @Override

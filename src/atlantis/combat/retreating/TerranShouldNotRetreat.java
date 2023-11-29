@@ -27,7 +27,7 @@ public class TerranShouldNotRetreat extends Manager {
     }
 
     public Manager shouldNotRetreat() {
-        if (unit.isTank() && unit.woundPercentMax(60) && unit.cooldownRemaining() <= 0) {
+        if (unit.isTank() && unit.woundPercentMax(20) && unit.cooldownRemaining() <= 0) {
             unit.setTooltip("BraveTank");
             return usedManager(this);
         }

@@ -1,15 +1,13 @@
 package atlantis.combat.missions.defend.focus.terran;
 
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.missions.defend.focus.MissionDefendFocus;
-import atlantis.game.A;
+import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
@@ -28,34 +26,34 @@ public class TerranMissionDefendFocus {
     protected static AFocusPoint bunker() {
         if (!We.terran()) return null;
 
-        if (A.seconds() <= 700 && Count.tanks() <= 5) {
-            AUnit main = Select.main();
-            AUnit bunker = Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).mostDistantTo(main);
+//        if (A.seconds() <= 700 && Count.tanks() <= 5) {
+        AUnit main = Select.main();
+        AUnit bunker = Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker).closestToEnemyBase();
 
-            if (bunker == null) return MissionDefendFocus.atMainChoke();
+        if (bunker == null) return MissionDefendFocusPoint.atMainChoke();
 
-            APosition point;
-            String tooltip;
-            AChoke mainChoke = Chokes.mainChoke();
-            if (mainChoke != null) {
+        APosition point;
+        String tooltip;
+        AChoke mainChoke = Chokes.mainChoke();
+        if (mainChoke != null) {
 //                point = bunker.translateTilesTowards(1, main);
 //                point = bunker.translateTilesTowards(1, mainChoke.center());
-                point = bunker.translateTilesTowards(3, mainChoke.center());
-                tooltip = "Bunker & Choke";
-            }
-            else {
-                point = bunker.translateTilesTowards(-3, main);
-                tooltip = "Bunker";
-            }
-
-            return new AFocusPoint(
-                point,
-                main,
-                tooltip
-            );
+            point = bunker.translateTilesTowards(7, mainChoke.center());
+            tooltip = "Bunker & Choke";
+        }
+        else {
+            point = bunker.translateTilesTowards(-3, main);
+            tooltip = "Bunker";
         }
 
-        return null;
+        return new AFocusPoint(
+            point,
+            main,
+            tooltip
+        );
+//        }
+
+//        return null;
     }
 
     protected static AFocusPoint bunkerAtNatural() {
