@@ -1109,7 +1109,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean exists() {
-        return u.exists();
+        return u() != null ? u.exists() : true;
     }
 
     public boolean isConstructing() {

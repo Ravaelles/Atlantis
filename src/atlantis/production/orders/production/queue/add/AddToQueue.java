@@ -78,10 +78,10 @@ public class AddToQueue {
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         if (preventExcessiveOrInvalidOrders(type)) return null;
 
-        if (type != null && type.isSupplyDepot()) {
-            A.printStackTrace("isSupplyDepot, " + CountInQueue.count(AUnitType.Terran_Supply_Depot) + " / "
-                + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
-        }
+//        if (type != null && type.isSupplyDepot()) {
+//            A.printStackTrace("isSupplyDepot, " + CountInQueue.count(AUnitType.Terran_Supply_Depot) + " / "
+//                + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
+//        }
 
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
 

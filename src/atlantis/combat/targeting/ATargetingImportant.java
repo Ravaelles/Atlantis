@@ -43,7 +43,8 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyUnits
             .air()
-            .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Terran_Wraith, AUnitType.Zerg_Queen)
+//            .excludeTypes(AUnitType.Protoss_Observer, AUnitType.Terran_Wraith, AUnitType.Zerg_Queen)
+            .excludeOverlords()
             .inShootRangeOf(unit)
             .nearestTo(unit);
         if (target != null) {
@@ -53,7 +54,7 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyUnits
             .air()
-            .excludeTypes(AUnitType.Zerg_Overlord)
+            .excludeOverlords()
             .inShootRangeOf(unit)
             .nearestTo(unit);
         if (target != null) {

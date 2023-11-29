@@ -34,8 +34,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -321,15 +320,30 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         return fakeUnits;
     }
 
-    protected static FakeFoggedUnit fogged(AUnitType type, int x) {
+    protected static FakeFoggedUnit fogged(AUnitType type, double x) {
         return FakeFoggedUnit.fromFake(fakeEnemy(type, x));
     }
 
     // =========================================================
 
     public void assertContainsAll(Object[] expected, Object[] actual) {
-        boolean containsAll = (Arrays.asList(expected)).containsAll(Arrays.asList(actual));
+//        boolean containsAll = (Arrays.asList(expected)).containsAll(Arrays.asList(actual));
         boolean lengthsMatch = expected.length == actual.length;
+        boolean containsAll = true;
+        Object missing = null;
+
+        List<Object> expectedList = Arrays.asList(expected);
+        List<Object> actualList = Arrays.asList(actual);
+
+//        boolean containsAll = actualList.containsAll(expectedList);
+
+        for (Object object : expectedList) {
+            if (!actualList.contains(object)) {
+                containsAll = false;
+                missing = object;
+                break;
+            }
+        }
 
         if (!containsAll || !lengthsMatch) {
             System.err.println("\nExpected: (" + expected.length + ")");
@@ -341,6 +355,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
                 System.err.println(o);
             }
         }
+
+        if (missing != null) System.err.println("\nMissing: " + missing);
 
         assertEquals(expected.length, actual.length);
         assertTrue(containsAll);

@@ -30,8 +30,8 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
 
             double distToZealot = distToNearestEnemy(unit);
             boolean isSafe = distToZealot > 1.1;
-            boolean alwaysShow = false;
-//            boolean alwaysShow = true;
+//            boolean alwaysShow = false;
+            boolean alwaysShow = true;
 
             if (!isSafe || alwaysShow) {
                 System.err.println(A.now()
@@ -63,7 +63,7 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateEnemies() {
         return fakeEnemies(
-            zealot = fake(AUnitType.Protoss_Zealot, 15),
+            zealot = fake(AUnitType.Protoss_Zealot, 14),
             fake(AUnitType.Protoss_Zealot, 18)
         );
     }

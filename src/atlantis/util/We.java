@@ -1,9 +1,11 @@
 package atlantis.util;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 import bwapi.Race;
 
 public class We {
@@ -25,8 +27,14 @@ public class We {
                 else if (AGame.isPlayingAsZerg()) {
                     return Race.Zerg;
                 }
-                System.err.println("Unable to identify race");
-                return null;
+
+//                System.err.println("Unable to identify race");
+
+                if (Env.isTesting()) return Race.Terran;
+                else {
+                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unable to identify race");
+                    return null;
+                }
             }
         );
     }

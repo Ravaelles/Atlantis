@@ -9,7 +9,6 @@ import org.junit.Test;
 import tests.unit.FakeUnit;
 
 public class FocusPointTest extends AbstractTestFakingGame {
-
     private AtlantisGameCommander gameCommander;
     private FakeUnit assimilator;
     private FakeUnit drone2;
@@ -22,7 +21,7 @@ public class FocusPointTest extends AbstractTestFakingGame {
     private FakeUnit larva;
 
     @Test
-    public void neverRunsIntoCombatBuildings() {
+    public void uhm() {
         gameCommander = new AtlantisGameCommander();
 
         createWorld(5, () -> {

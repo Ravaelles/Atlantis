@@ -170,6 +170,7 @@ public class AAirUnitsTargeting extends HasUnit {
 
         target = possibleTargets
             .air()
+            .excludeOverlords()
             .inShootRangeOf(unit)
             .mostWounded();
         if (target != null) {
