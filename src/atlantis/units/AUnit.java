@@ -26,6 +26,7 @@ import atlantis.map.scout.ScoutCommander;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.builders.BuilderManager;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.terran.FlyingBuildingScoutCommander;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.actions.Action;
@@ -66,7 +67,6 @@ import static atlantis.units.actions.Actions.RUN_RETREAT;
  */
 //public class AUnit implements UnitInterface, Comparable<AUnit>, HasPosition, AUnitOrders {
 public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
-
     /**
      * Mapping of native unit IDs to AUnit objects
      */
@@ -98,6 +98,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Log managerLogs = new Log(30 * 30, 5);
     private Action unitAction = Actions.INIT;
     private Action _prevAction = null;
+    /**
+     * Production order object for a unit that's currently being trained/produced by this unit.
+     */
+    private ProductionOrder productionOrder = null;
 
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
     private AUnit runningFrom = null;
@@ -1082,7 +1086,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return "#" + type();
     }
 
-    public String typeWithId() {
+    public String typeWithUnitId() {
         return type() + "#" + id();
     }
 
@@ -2883,5 +2887,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean targetIsOfType(AUnitType... type) {
         return target() != null && target().is(type);
+    }
+
+    public void setProductionOrder(ProductionOrder productionOrder) {
+        this.productionOrder = productionOrder;
+    }
+
+    public ProductionOrder productionOrder() {
+        return this.productionOrder;
     }
 }

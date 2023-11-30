@@ -46,8 +46,10 @@ public class FindPositionForBase {
 //        near = APosition.create(baseLocationToExpand.position());
         if (construction != null) construction.setMaxDistance(3);
 
+        double maxDistance = construction != null && construction.maxDistance() >= 0 ? construction.maxDistance() : 3;
+
         return APositionFinder.findStandardPosition(
-            builder, building, near, construction != null ? construction.maxDistance() : 3
+            builder, building, near, maxDistance
         );
     }
 

@@ -80,13 +80,8 @@ public class Construction implements Comparable<Construction> {
     protected AUnit assignOptimalBuilder() {
         AUnit optimalBuilder = GetOptimalBuilder.forPosition(this, productionOrder);
 
-        if (optimalBuilder != null) {
-
-            builder = optimalBuilder;
-        }
-        else {
-            ErrorLog.printMaxOncePerMinute("No optimal builder for " + buildingType);
-        }
+        if (optimalBuilder != null) builder = optimalBuilder;
+        else ErrorLog.printMaxOncePerMinute("No optimal builder for " + buildingType);
 
         return builder;
     }
@@ -207,6 +202,7 @@ public class Construction implements Comparable<Construction> {
 
     public void setProductionOrder(ProductionOrder productionOrder) {
         this.productionOrder = productionOrder;
+        if (productionOrder != null) this.productionOrder.setConstruction(this);
     }
 
     public HasPosition nearTo() {

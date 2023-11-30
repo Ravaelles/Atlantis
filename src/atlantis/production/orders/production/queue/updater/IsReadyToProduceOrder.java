@@ -28,12 +28,13 @@ public class IsReadyToProduceOrder {
 //        }
 
         // Prioritize combat unit production when base is under attack
-        if (order.isUnitOrBuilding() && order.unitType().isBase()) {
+        if (order.isBuilding() && order.unitType().isBase()) {
             if (EnemyWhoBreachedBase.get() != null) return false;
         }
 
-        if (!order.supplyRequirementFulfilled() || !order.checkIfHasWhatRequired()) return false;
-        if (!canAffordWithReserved(order)) return false;
+        if (!order.supplyRequirementFulfilled()) return false;
+//        if (!canAffordWithReserved(order)) return false;
+        if (!order.checkIfHasWhatRequired()) return false;
 
         return true;
 
@@ -41,18 +42,20 @@ public class IsReadyToProduceOrder {
     }
 
     public static boolean canAffordWithReserved(ProductionOrder order) {
-        int mineralsAvailable = mineralsAvailable(order);
-        int gasAvailable = gasAvailable(order);
+//        int mineralsAvailable = mineralsAvailable(order);
+//        int gasAvailable = gasAvailable(order);
 
-        return (mineralsAvailable >= order.mineralPrice()) && (gasAvailable >= order.gasPrice());
+        return (A.hasMinerals(600) || mineralsAvailable(order) >= order.mineralPrice())
+            && (A.hasGas(500) || gasAvailable(order) >= order.gasPrice());
     }
 
     // =========================================================
 
     private static int mineralsAvailable(ProductionOrder order) {
         int mineralsBonus = mineralsBonusForEarlyConstruction(order);
+        int reservedMinerals = Math.min(500, ReservedResources.minerals());
 
-        return A.minerals() - ReservedResources.minerals() + order.reservations().minerals() + mineralsBonus;
+        return A.minerals() - reservedMinerals + order.reservations().minerals() + mineralsBonus;
     }
 
     private static int gasAvailable(ProductionOrder order) {

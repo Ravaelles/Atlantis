@@ -20,7 +20,7 @@ public class TerranDynamicInfantry extends TerranDynamicUnitsCommander {
         return false;
     }
 
-    private static void produceUnit(AUnit building, AUnitType type) {
-        building.train(type);
-    }
+//    private static void produceUnit(AUnit building, AUnitType type) {
+//        building.tra in(type);
+//    }
 }

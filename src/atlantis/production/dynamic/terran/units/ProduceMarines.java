@@ -10,6 +10,7 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
@@ -97,7 +98,9 @@ public class ProduceMarines {
     }
 
     private static boolean forceProduceMarine() {
-        return Select.ourFree(Terran_Barracks).random().train(Terran_Marine);
+        return Select.ourFree(Terran_Barracks).random().train(
+            Terran_Marine, ForcedDirectProductionOrder.create(Terran_Marine)
+        );
     }
 
     private static boolean earlyGameAndWeAreWeak() {

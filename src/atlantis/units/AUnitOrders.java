@@ -1,11 +1,14 @@
 package atlantis.units;
 
 import atlantis.combat.micro.terran.tank.unsieging.ShouldUnsiegeToMove;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.util.log.ErrorLog;
@@ -128,8 +131,15 @@ public interface AUnitOrders {
         return false;
     }
 
-    default boolean train(AUnitType unitToTrain) {
+    default boolean train(AUnitType unitToTrain, ProductionOrder productionOrder) {
         unit().setAction(Actions.TRAIN);
+        unit().setProductionOrder(productionOrder);
+        return u() != null ? u().train(unitToTrain.ut()) : FakeUnitData.TRAIN.add(unitToTrain);
+    }
+
+    default boolean trainForced(AUnitType unitToTrain) {
+        unit().setAction(Actions.TRAIN);
+        unit().setProductionOrder(ForcedDirectProductionOrder.create(unitToTrain));
         return u() != null ? u().train(unitToTrain.ut()) : FakeUnitData.TRAIN.add(unitToTrain);
     }
 

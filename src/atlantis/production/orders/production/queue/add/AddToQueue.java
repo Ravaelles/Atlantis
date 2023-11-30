@@ -1,6 +1,5 @@
 package atlantis.production.orders.production.queue.add;
 
-import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
@@ -13,12 +12,13 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class AddToQueue {
+    public static final int MAX = 999;
+
     public static ProductionOrder withTopPriority(AUnitType type) {
         return withTopPriority(type, null);
     }
@@ -53,20 +53,34 @@ public class AddToQueue {
     }
 
     public static boolean tech(TechType tech) {
-        if (Count.inQueueOrUnfinished(tech, 1) > 0) return false;
+//        if (Count.inQueueOrUnfinished(tech, 1) > 0) return false;
+        if (Count.inQueueOrUnfinished(tech, MAX) > 0) {
+            ProductionOrder existingOrder = Queue.get().nextOrders(MAX).techType(tech).first();
+
+            if (existingOrder != null) Queue.get().removeOrder(existingOrder);
+            else ErrorLog.printMaxOncePerMinute("Could not find existing order for " + tech + " to remove");
+
+            return false;
+        }
 
         ProductionOrder productionOrder = new ProductionOrder(tech, 0);
 
-        if (tech.equals(TechType.Tank_Siege_Mode)) {
-            productionOrder.setPriority(ProductionOrderPriority.TOP);
-        }
+        if (tech.equals(TechType.Tank_Siege_Mode)) productionOrder.setPriority(ProductionOrderPriority.TOP);
 
         Queue.get().addNew(0, productionOrder);
         return true;
     }
 
     public static boolean upgrade(UpgradeType upgrade) {
-        if (Count.inQueueOrUnfinished(upgrade, 1) > 0) return false;
+//        if (Count.inQueueOrUnfinished(upgrade, MAX) > 0) return false;
+        if (Count.inQueueOrUnfinished(upgrade, MAX) > 0) {
+            ProductionOrder existingOrder = Queue.get().nextOrders(MAX).upgradeType(upgrade).first();
+
+            if (existingOrder != null) Queue.get().removeOrder(existingOrder);
+            else ErrorLog.printMaxOncePerMinute("Could not find existing order for " + upgrade + " to remove");
+
+            return false;
+        }
 
         Queue.get().addNew(0, new ProductionOrder(upgrade, 0));
         return true;
@@ -75,9 +89,7 @@ public class AddToQueue {
     // =========================================================
 
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
-        if (preventExcessiveOrInvalidOrders(type)) return null;
-
-        if (fixAndExitIfBroken(type, position)) return null;
+        if (PreventAddDuplicate.preventExcessiveOrInvalidOrders(type, position)) return null;
 
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
 
@@ -104,26 +116,6 @@ public class AddToQueue {
         return productionOrder;
     }
 
-    private static boolean fixAndExitIfBroken(AUnitType type, HasPosition position) {
-        if (type != null) {
-//            if (type.isSupplyDepot()) {
-//                if (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= (1 + A.supplyUsed() / 35)) return true;
-//            }
-//            if (type.isBunker()) {
-//                if (Count.withPlanned(AUnitType.Terran_Bunker) >= 3) return true;
-//                if (Count.existingOrPlannedBuildingsNear(AUnitType.Terran_Bunker, 8, position) > 0) return true;
-//            }
-
-//            System.err.println("Added SUPPLY: " + A.supplyUsed() + " / " + A.supplyTotal());
-//            A.printStackTrace("isSupplyDepot, "
-//                + CountInQueue.count(AUnitType.Terran_Supply_Depot) + " / "
-//                + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY) + " / "
-//                + Count.withPlanned(AUnitType.Terran_Supply_Depot)
-//            );
-        }
-        return false;
-    }
-
     private static void clearOtherExistingOfTheSameTypeIfNeeded(ProductionOrder productionOrder) {
         if (productionOrder.isUnitOrBuilding() && productionOrder.unitType().isBase()) {
             for (ProductionOrder order : Queue.get().readyToProduceOrders().ofType(productionOrder.unitType()).list()) {
@@ -145,35 +137,6 @@ public class AddToQueue {
 //        System.err.println("A = " + (nextOrders.list().get(0).minSupply() + 1));
 
         return nextOrders.list().get(0).minSupply() + 1;
-    }
-
-    private static boolean preventExcessiveOrInvalidOrders(AUnitType type) {
-        assert type != null;
-
-        int maxOrdersAtOnceWithoutWarning = 30;
-
-        // Too many requests of this type
-        int existingInQueue = Count.inQueue(type);
-        if (existingInQueue >= 4) {
-            return true;
-        }
-
-        if (!Env.isTournament()) {
-            if (Queue.get().nonCompleted().notInProgress().forCurrentSupply().size() >= maxOrdersAtOnceWithoutWarning) {
-                ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
-                if (A.everyNthGameFrame(79)) Queue.get().nonCompleted().forCurrentSupply().print();
-                return true;
-            }
-        }
-
-        if (We.protoss() && type.isABuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
-            if (A.seconds() < 200) {
-                System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
-            }
-            return true;
-        }
-
-        return false;
     }
 
     protected static boolean addToQueue(AUnitType type) {

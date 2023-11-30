@@ -5,11 +5,14 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.Construction;
 import atlantis.production.orders.production.Requirements;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
+import bwapi.Color;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -68,6 +71,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     private ProductionOrderPriority priority = ProductionOrderPriority.STANDARD;
 
     private OrderReservations orderReservations = new OrderReservations(this);
+    private Construction construction = null;
 
     // =========================================================
 
@@ -125,22 +129,21 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
         if (otherOrder.id == id) return true;
 
-        if (otherOrder.minSupply == minSupply) {
-//            if (otherOrder.isDynamic() || otherOrder.isDynamic()) {
-//                if (otherOrder.unitType() != null && otherOrder.unitType().equals(unitType())) return true;
-//            }
-
-            if (
-//                    && otherOrder.status().equals(status())
-//                otherOrder.isCompleted()
-                unitOrBuilding != null
-                    && unitOrBuilding.isABuilding()
-                    && otherOrder.unitType().equals(unitOrBuilding)
-            ) return true;
-
-            if (otherOrder.tech() != null && otherOrder.tech().equals(tech())) return true;
-            if (otherOrder.upgrade() != null && otherOrder.upgrade().equals(upgrade())) return true;
-        }
+//        if (otherOrder.minSupply == minSupply) {
+//            if (unitOrBuilding != null && unitOrBuilding.equals(otherOrder.unitOrBuilding)) return true;
+//
+////            if (
+//////                    && otherOrder.status().equals(status())
+//////                otherOrder.isCompleted()
+////                unitOrBuilding != null
+////                    && unitOrBuilding.equals(otherOrder.unitOrBuilding)
+//////                    && unitOrBuilding.isABuilding()
+//////                    && otherOrder.unitType().equals(unitOrBuilding)
+////            ) return true;
+//
+//            if (otherOrder.tech() != null && otherOrder.tech().equals(tech())) return true;
+//            if (otherOrder.upgrade() != null && otherOrder.upgrade().equals(upgrade())) return true;
+//        }
 
         return false;
     }
@@ -420,5 +423,19 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public void setUnitType(AUnitType type) {
         this.unitOrBuilding = type;
+    }
+
+    public boolean isBuildingAndConstructionStarted() {
+        if (!isBuilding()) return false;
+
+        return construction != null && construction.hasStarted();
+    }
+
+    public void setConstruction(Construction construction) {
+        this.construction = construction;
+    }
+
+    public Construction construction() {
+        return this.construction;
     }
 }

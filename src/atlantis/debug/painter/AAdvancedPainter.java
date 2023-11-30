@@ -690,11 +690,12 @@ public class AAdvancedPainter extends APainter {
     private static Color productionOrderColor(ProductionOrder order) {
         switch (order.status()) {
             case NOT_READY:
-                return Brown;
+                return Grey;
             case READY_TO_PRODUCE:
-                return order.canAffordWithReserved() ? Orange : Red;
+                return order.canAffordWithReserved() ? Red : Brown;
             case IN_PROGRESS:
-                return Yellow;
+                return order.isBuildingAndConstructionStarted() ? Purple : Yellow;
+//                return order.con() != null ? Yellow;
             case COMPLETED:
                 return Green;
             default:

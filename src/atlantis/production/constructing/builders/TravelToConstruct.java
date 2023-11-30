@@ -47,7 +47,7 @@ public class TravelToConstruct extends HasUnit {
             return moveToConstruct(construction, buildingType, distance, distString);
         }
         else {
-            if (A.everyNthGameFrame(69) || unit.hasNotMovedInAWhile()) {
+            if ((A.everyNthGameFrame(77) || unit.hasNotMovedInAWhile()) && distance <= 0.5) {
                 refreshConstructionPositionIfNeeded(construction, buildingType);
             }
 
@@ -57,7 +57,7 @@ public class TravelToConstruct extends HasUnit {
 
     private static double minDistanceToIssueBuildOrder(AUnitType buildingType) {
         double minDistanceToIssueBuildOrder = 2.1;
-        
+
         if (buildingType.isBunker()) minDistanceToIssueBuildOrder = 8;
         else if (buildingType.isGasBuilding()) minDistanceToIssueBuildOrder = 3.5;
 
@@ -82,10 +82,9 @@ public class TravelToConstruct extends HasUnit {
     }
 
     private static boolean shouldRefreshConstructionPosition(Construction construction, AUnitType buildingType) {
-        return
-            (!CanPhysicallyBuildHere.check(construction.builder(), buildingType,
-                construction.buildPosition())
-            );
+        return !CanPhysicallyBuildHere.check(
+            construction.builder(), buildingType, construction.buildPosition()
+        );
 //                ||
 //                (construction.builder().looksIdle() && AGame.everyNthGameFrame(151));
     }
@@ -115,6 +114,14 @@ public class TravelToConstruct extends HasUnit {
 
     private boolean issueBuildOrder(Construction order) {
         AUnitType buildingType = order.buildingType();
+
+        AUnit builder = order.builder();
+        if (builder != null && builder.buildUnit() != null) {
+            System.err.println("builder = " + builder);
+            System.err.println("builder.buildUnit() = " + builder.buildUnit());
+            System.err.println("builder.construction() = " + builder.construction());
+            System.err.println("builder.productionOrder() = " + builder.construction().productionOrder());
+        }
 
         if (We.protoss()) {
             AUnit newBuilding = Select.ourUnfinished()

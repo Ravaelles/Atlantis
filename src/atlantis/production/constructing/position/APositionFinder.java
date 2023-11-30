@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
+import atlantis.util.cache.CacheKey;
 import atlantis.util.log.ErrorLog;
 
 public class APositionFinder {
@@ -37,8 +38,8 @@ public class APositionFinder {
 
         if (Env.isTesting()) return APosition.create(A.rand(1, 99), A.rand(13, 99));
 
-        HasPosition near = construction != null ? construction.nearTo() : null;
-        double maxDistance = construction != null ? construction.maxDistance() : 35;
+        HasPosition near = construction.nearTo();
+        double maxDistance = construction.maxDistance() >= 0 ? construction.maxDistance() : 35;
 
 //        System.err.println("building = " + building + ", near = " + near);
 
@@ -60,9 +61,11 @@ public class APositionFinder {
         Construction construction,
         HasPosition nearTo, double maxDistance
     ) {
+        String cacheKey = CacheKey.create("findPositionForNew", building, nearTo, construction, A.digit(maxDistance));
+
         return cache.get(
-            "findPositionForNew",
-            2,
+            cacheKey,
+            37,
             () -> FindPosition.findForBuilding(builder, building, construction, nearTo, maxDistance)
         );
     }
@@ -73,37 +76,38 @@ public class APositionFinder {
      * Returns standard build position for building near given position.
      */
     public static APosition findStandardPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
-        return cache.get(
-            "findStandardPosition:" + building + "," + nearTo + "," + builder + "," + A.digit(maxDistance),
-            41,
-            () -> {
-                // ===========================================================
-                // = Handle standard building position according to the race =
-                // = as every race uses completely different approach        =
-                // ===========================================================
+//        return cache.get(
+//            "findStandardPosition:" + building + "," + nearTo + "," + builder + "," + A.digit(maxDistance),
+//            41,
+//            () -> {
+//            }
+//        );
 
-                // Terran
-                if (We.terran()) {
-                    return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-                }
+        // ===========================================================
+        // = Handle standard building position according to the race =
+        // = as every race uses completely different approach        =
+        // ===========================================================
 
-                // Protoss
-                else if (We.protoss()) {
-                    return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-                }
+        // Terran
+        if (We.terran()) {
+            return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+        }
 
-                // Zerg
-                else if (We.zerg()) {
-                    return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-                }
+        // Protoss
+        else if (We.protoss()) {
+            return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+        }
 
-                else {
-                    System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
-                    System.exit(-1);
-                    return null;
-                }
-            }
-        );
+        // Zerg
+        else if (We.zerg()) {
+            return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+        }
+
+        else {
+            System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
+            System.exit(-1);
+            return null;
+        }
     }
 
 }

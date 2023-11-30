@@ -66,31 +66,29 @@ public class Count {
         return CountInQueue.count(type, amongNTop);
     }
 
-    public static int inQueue(TechType type, int amongNTop) {
-        return CountInQueue.count(type, amongNTop);
+    public static int inQueue(TechType tech, int amongNTop) {
+        return CountInQueue.count(tech, amongNTop);
     }
 
-    public static int inQueue(UpgradeType type, int amongNTop) {
-        return CountInQueue.count(type, amongNTop);
+    public static int inQueue(UpgradeType upgrade, int amongNTop) {
+        return CountInQueue.count(upgrade, amongNTop);
     }
 
     public static int inQueueOrUnfinished(AUnitType type, int amongNTop) {
         return inQueue(type, amongNTop) + inProduction(type);
     }
 
-    public static int inQueueOrUnfinished(TechType type, int amongNTop) {
-        return inQueue(type, amongNTop) + inProduction(type);
+    public static int inQueueOrUnfinished(TechType tech, int amongNTop) {
+        return inQueue(tech, amongNTop) + inProduction(tech);
     }
 
-    public static int inQueueOrUnfinished(UpgradeType type, int amongNTop) {
-        return inQueue(type, amongNTop) + inProduction(type);
+    public static int inQueueOrUnfinished(UpgradeType upgrade, int amongNTop) {
+        return inQueue(upgrade, amongNTop) + inProduction(upgrade);
     }
 
-    private static int inProduction(TechType type) {
-        for (AUnit building : Select.ourOfType(AUnitType.from(type.whatResearches())).list()) {
-            if (type.equals(building.whatIsResearching())) {
-                return 1;
-            }
+    private static int inProduction(TechType tech) {
+        for (AUnit building : Select.ourOfType(AUnitType.from(tech.whatResearches())).list()) {
+            if (tech.equals(building.whatIsResearching())) return 1;
         }
         return 0;
     }

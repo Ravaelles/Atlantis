@@ -3,13 +3,13 @@ package atlantis.units.select;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.path.ClosestToEnemyBase;
-import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
+import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.util.cache.CacheKey;
 
@@ -29,7 +29,7 @@ public class Selection extends BaseSelection {
     public Selection ofType(AUnitType... types) {
         return cloneByRemovingIf(
             (unit -> !typeMatches(unit, types)),
-            CacheKey.get(types)
+            CacheKey.create(types)
         );
     }
 
@@ -330,6 +330,12 @@ public class Selection extends BaseSelection {
     public Selection notGatheringGas() {
         return cloneByRemovingIf(
             (unit -> unit.isGatheringGas()), "notGatheringGas"
+        );
+    }
+
+    public Selection notSpecialAction() {
+        return cloneByRemovingIf(
+            (unit -> unit.lastActionLessThanAgo(100, Actions.MOVE_SPECIAL)), "notSpecialAction"
         );
     }
 
@@ -747,7 +753,7 @@ public class Selection extends BaseSelection {
 
     public Selection excludeTypes(AUnitType... types) {
         return cloneByRemovingIf(
-            (unit -> unit.is(types)), "excludeTypes:" + CacheKey.get(types)
+            (unit -> unit.is(types)), "excludeTypes:" + CacheKey.create(types)
         );
     }
 

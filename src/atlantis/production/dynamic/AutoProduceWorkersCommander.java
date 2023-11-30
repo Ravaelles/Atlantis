@@ -10,6 +10,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.SoonInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.production.requests.produce.ProduceWorker;
@@ -19,8 +20,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-import static atlantis.units.AUnitType.Terran_Comsat_Station;
-import static atlantis.units.AUnitType.Zerg_Spawning_Pool;
+import static atlantis.units.AUnitType.*;
 
 public class AutoProduceWorkersCommander extends Commander {
     /**
@@ -103,8 +103,14 @@ public class AutoProduceWorkersCommander extends Commander {
         if (AGame.supplyFree() == 0 || !AGame.canAfford(50, 0)) return false;
         if (A.supplyUsed() >= 8 && !hasEnoughMineralsToConsiderProducingWorker()) return false;
 
-        if (We.zerg()) return ProduceZergUnit.produceZergUnit(AtlantisRaceConfig.WORKER);
-        if (base != null) return base.train(AtlantisRaceConfig.WORKER);
+        if (We.zerg()) return ProduceZergUnit.produceZergUnit(
+            AtlantisRaceConfig.WORKER,
+            ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
+        );
+        if (base != null) return base.train(
+            AtlantisRaceConfig.WORKER,
+            ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
+        );
 
 //        if (CountInQueue.count(AtlantisRaceConfig.WORKER) > 0) return false;
 
@@ -121,7 +127,7 @@ public class AutoProduceWorkersCommander extends Commander {
         if (base.remainingTrainTime() <= 10 && base.remainingTrainTime() >= 1) {
 //                ProductionOrder order = AddToQueue.maxAtATime(AtlantisRaceConfig.WORKER, 1);
             if (base.hasNothingInQueue()) {
-                base.train(AtlantisRaceConfig.WORKER);
+                base.trainForced(AtlantisRaceConfig.WORKER);
                 return true;
             }
         }

@@ -1,22 +1,22 @@
 package atlantis.production.orders.zerg;
 
 import atlantis.production.constructing.NewConstructionRequest;
+import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.log.ErrorLog;
 
 public class ProduceZergUnit {
     /**
      * Produce zerg unit from free larva. Will do nothing if no free larva is available.
      */
-    public static boolean produceZergUnit(AUnitType type) {
+    public static boolean produceZergUnit(AUnitType type, ProductionOrder productionOrder) {
 //        for (AUnit base : Select.ourBases().list()) {
 
         for (AUnit larva : Select.ourOfType(AUnitType.Zerg_Larva).list()) {
             try {
-                larva.train(type);
+                larva.train(type, productionOrder);
                 return true;
             } catch (Exception e) {
 //                ErrorLog.printMaxOncePerMinute(

@@ -14,7 +14,10 @@ public class GetOptimalBuilder {
         if (positionToBuild == null) {
             ErrorLog.printMaxOncePerMinute("No position to build, so can't find builder (" + order.unitType() + ")");
 
-            return Select.ourWorkersFreeToBuildOrRepair(false).notGatheringGas().random();
+            return Select.ourWorkersFreeToBuildOrRepair(false)
+                .notGatheringGas()
+                .notSpecialAction()
+                .random();
         }
 
         boolean allowRepairers = true;

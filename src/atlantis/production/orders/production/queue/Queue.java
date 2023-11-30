@@ -88,6 +88,8 @@ public class Queue extends AbstractQueue {
 
     public void removeOrder(ProductionOrder order) {
         orders.remove(order);
+
+        clearCache();
     }
 
     // =========================================================

@@ -27,7 +27,7 @@ public class ProductionOrderHandler extends Commander {
                 ProduceBuilding.produceBuilding(unitType, order);
             }
             else {
-                ProduceUnit.produceUnit(unitType);
+                ProduceUnit.produceUnit(unitType, order);
             }
         }
 

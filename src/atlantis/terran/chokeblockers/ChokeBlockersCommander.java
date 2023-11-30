@@ -2,6 +2,7 @@ package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -20,7 +21,11 @@ public class ChokeBlockersCommander extends Commander {
 
     @Override
     public boolean applies() {
-        return Count.bunkers() <= 2 && Count.bases() <= 1;
+        if (AGame.killsLossesResourceBalance() >= 1800) return false;
+
+        int bunkers = Count.bunkers();
+
+        return bunkers >= 1 && bunkers <= 2 && Count.bases() <= 1;
     }
 
     @Override

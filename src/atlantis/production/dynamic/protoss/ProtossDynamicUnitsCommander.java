@@ -2,6 +2,7 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.architecture.Commander;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
@@ -11,6 +12,7 @@ import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -21,8 +23,7 @@ import atlantis.util.We;
 import java.util.List;
 
 import static atlantis.production.AbstractDynamicUnits.*;
-import static atlantis.units.AUnitType.Protoss_Dragoon;
-import static atlantis.units.AUnitType.Protoss_Gateway;
+import static atlantis.units.AUnitType.*;
 
 public class ProtossDynamicUnitsCommander extends Commander {
     @Override
@@ -199,7 +200,7 @@ public class ProtossDynamicUnitsCommander extends Commander {
         List<AUnit> reavers = Select.ourOfType(AUnitType.Protoss_Reaver).list();
         for (AUnit reaver : reavers) {
             if (reaver.scarabCount() <= 3 && !reaver.isTrainingAnyUnit()) {
-                reaver.train(AUnitType.Protoss_Scarab);
+                reaver.trainForced(AUnitType.Protoss_Scarab);
             }
         }
     }

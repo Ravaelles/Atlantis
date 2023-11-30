@@ -23,7 +23,9 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(
         AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance
     ) {
-        int cacheForFrames = building.isCombatBuilding() ? 27 : 77;
+//        int cacheForFrames = building.isCombatBuilding() ? 27 : 77;
+        int cacheForFrames = 83;
+
         String cacheKey = "findStandardPositionFor:" + building.id()
             + "," + (nearTo != null ? nearTo.toStringPixels() : nearTo)
             + "," + (builder != null ? builder.id() : "-");

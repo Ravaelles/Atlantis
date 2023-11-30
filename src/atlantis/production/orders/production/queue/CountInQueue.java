@@ -15,12 +15,12 @@ public class CountInQueue {
         return Queue.get().nextOrders(numberOfNextOrdersToCheck).ofType(type).size();
     }
 
-    public static int count(TechType type, int numberOfNextOrdersToCheck) {
-        return Queue.get().nextOrders(numberOfNextOrdersToCheck).techType(type).size();
+    public static int count(TechType tech, int numberOfNextOrdersToCheck) {
+        return Queue.get().nextOrders(numberOfNextOrdersToCheck).techType(tech).size();
     }
 
-    public static int count(UpgradeType type, int numberOfNextOrdersToCheck) {
-        return Queue.get().nextOrders(numberOfNextOrdersToCheck).upgradeType(type).size();
+    public static int count(UpgradeType upgrade, int numberOfNextOrdersToCheck) {
+        return Queue.get().nextOrders(numberOfNextOrdersToCheck).upgradeType(upgrade).size();
     }
 
     public static int countOrdersWithPriorityAtLeast(ProductionOrderPriority priority) {

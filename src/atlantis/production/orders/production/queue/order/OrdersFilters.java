@@ -89,18 +89,18 @@ public interface OrdersFilters {
         );
     }
 
-    default Orders techType(TechType type) {
+    default Orders techType(TechType tech) {
         return new Orders(
             list().stream()
-                .filter(order -> (order.tech() != null && order.tech().equals(type)))
+                .filter(order -> (order.tech() != null && order.tech().equals(tech)))
                 .collect(Collectors.toList())
         );
     }
 
-    default Orders upgradeType(UpgradeType type) {
+    default Orders upgradeType(UpgradeType upgrade) {
         return new Orders(
             list().stream()
-                .filter(order -> (order.upgrade() != null && order.upgrade().equals(type)))
+                .filter(order -> (order.upgrade() != null && order.upgrade().equals(upgrade)))
                 .collect(Collectors.toList())
         );
     }

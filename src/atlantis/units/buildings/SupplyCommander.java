@@ -6,8 +6,10 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
+import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -29,7 +31,8 @@ public class SupplyCommander extends Commander {
 
         if (supplyTotal >= 200) return;
         if (A.hasFreeSupply(10)) return;
-        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
+//        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
+        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 3) return;
 
         requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
@@ -101,7 +104,7 @@ public class SupplyCommander extends Commander {
 
         // Zerg handles supply a bit differently
         if (AGame.isPlayingAsZerg()) {
-            ProduceZergUnit.produceZergUnit(AUnitType.Zerg_Overlord);
+            ProduceZergUnit.produceZergUnit(AUnitType.Zerg_Overlord, ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER));
             return;
         }
 

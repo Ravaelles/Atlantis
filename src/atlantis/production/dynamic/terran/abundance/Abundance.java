@@ -10,7 +10,7 @@ public class Abundance {
         if (building == null || building.isBusy()) return false;
         if (!A.canAfford(unitToProduce)) return false;
 
-        return building.train(unitToProduce);
+        return building.trainForced(unitToProduce);
     }
 
     public static AUnit freeBarracks() {
