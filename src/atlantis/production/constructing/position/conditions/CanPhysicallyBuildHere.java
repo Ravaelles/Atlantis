@@ -28,11 +28,13 @@ public class CanPhysicallyBuildHere {
         }
 
         // Fix for bases & bunkers - allow in unknown locations
-        if (
-            (!position.isExplored() || !position.isPositionVisible())
-                &&
-                (building.isBase() || building.isCombatBuilding())
-        ) return true;
+        if (building.isBase() && (!position.isExplored() || !position.isPositionVisible())) return true;
+        if (building.isCombatBuilding() && !position.isExplored()) return true;
+//        if (
+//            (!position.isExplored() || !position.isPositionVisible())
+//                &&
+//                (building.isBase() || building.isCombatBuilding())
+//        ) return true;
 
         if (!We.zerg() && Atlantis.game().hasCreep(position.toTilePosition())) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Ugly creep on it";

@@ -71,7 +71,7 @@ public class MapSpecificCommander extends Commander {
         ) {
             int initFrameSkip = 80;
 
-            if (A.seconds() <= 1) {
+            if (A.now() <= 0) {
                 AAdvancedPainter.disablePainting();
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(initFrameSkip);

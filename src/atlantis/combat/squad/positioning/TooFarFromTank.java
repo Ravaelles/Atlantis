@@ -9,7 +9,7 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class TooFarFromTank extends Manager {
-    public static final int MAX_DIST_FROM_TANK = 5;
+    public static final double MAX_DIST_FROM_TANK = 4.6;
     public static final int MIN_DIST_FROM_TANK = 2;
     private int tanks;
     private double distToTank;
@@ -43,9 +43,10 @@ public class TooFarFromTank extends Manager {
     private boolean shouldGoToTank(AUnit tank) {
         distToTank = unit.distTo(tank);
 
-        if (distToTank > MAX_DIST_FROM_TANK) return true;
-
         if (distToTank < MIN_DIST_FROM_TANK) return false;
+
+        if (distToTank > MAX_DIST_FROM_TANK + (unit.id() % 4) / 2.0) return true;
+
         if (distToTank <= 7 && tankIsOvercrowded(tank)) return false;
 
 //        if (

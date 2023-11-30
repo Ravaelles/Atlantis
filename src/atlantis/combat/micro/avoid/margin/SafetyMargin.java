@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 public class SafetyMargin {
-    
+
     protected AUnit defender;
 
     public SafetyMargin(AUnit defender) {
@@ -17,11 +17,11 @@ public class SafetyMargin {
      * Margin of defender safety against the attacker weapon range.
      * Negative value means attacker can shoot at the defender.
      * Positive value means some extra safety margin for the defender.
-     *
+     * <p>
      * Example #1:
      * Defending Dragoon is 3 tiles away from attacking Marine (RANGED unit, range 4).
      * Margin =  3 - 4 = -1  tiles
-     *
+     * <p>
      * Example #2:
      * Defending Dragoon is 5.5 tiles away from attacking Zealot (MELEE unit, range 1).
      * Margin =  5.5 - 1 = 4.5  tiles
@@ -46,10 +46,6 @@ public class SafetyMargin {
         }
 
 
-
-
-
-
         double safetyMargin = base + defender.distTo(attacker) - calculated;
 
 
@@ -65,7 +61,6 @@ public class SafetyMargin {
     protected double enemyWeaponRange(AUnit attacker) {
 
 
-
         return defender.enemyWeaponRangeAgainstThisUnit(attacker) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 
@@ -75,14 +70,14 @@ public class SafetyMargin {
         if (attacker.isMoving()) {
             boolean doingWell = defender.woundPercent() < 33 && defender.lastUnderAttackMoreThanAgo((int) (30 * (5 + defender.woundPercent())));
             return defender.isTargetedBy(attacker)
-                    ? (doingWell
-                        ? 0.8
-                        : 1.7
-                    )
-                    : (doingWell
-                        ? -1.4
-                        : 0.5
-                    );
+                ? (doingWell
+                ? 0.8
+                : 1.7
+            )
+                : (doingWell
+                ? -1.4
+                : 0.5
+            );
         }
         else {
 //            return defender.isTargetedBy(attacker) ? 1.2 : -1.0;
@@ -122,6 +117,10 @@ public class SafetyMargin {
             if (Select.ourOfType(AUnitType.Terran_Medic).havingEnergy(20).inRadius(2, defender).isNotEmpty()) {
                 return 0;
             }
+
+            if (defender.isWounded() && attacker.isDragoon()) {
+                return defender.woundPercent() / 30;
+            }
         }
 
         if (defender.isAir()) {
@@ -139,7 +138,7 @@ public class SafetyMargin {
     protected double quicknessBonus(AUnit attacker) {
 
         // If unit is much slower than enemy, don't run at all. It's better to shoot instead.
-       double quicknessDifference = defender.maxSpeed() - attacker.maxSpeed();
+        double quicknessDifference = defender.maxSpeed() - attacker.maxSpeed();
 
         return -quicknessDifference / (quicknessDifference > 0 ? 2.5 : (attacker.isMelee() ? 0.6 : 1.5));
 //        return Math.min(0, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));

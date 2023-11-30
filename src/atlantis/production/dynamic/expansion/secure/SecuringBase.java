@@ -67,6 +67,9 @@ public class SecuringBase {
             }
             return true;
         }
+        if (Count.existingOrPlannedBuildingsNear(Terran_Bunker, 12, bunkerPosition) > 0) {
+            return true;
+        }
 
 //        System.err.println(A.now() + " bunkerPosition = " + bunkerPosition
 //            + " / " + Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition)
@@ -86,7 +89,7 @@ public class SecuringBase {
 //            System.err.println("@ " + A.now() + " - ");
 //            System.err.println("Count.existingOrPlannedBuildingsNear = "
 //                + Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, baseToSecure));
-        System.err.println("@@@@ SECURE base " + baseToSecure + " with BUNKER = " + order);
+//        System.err.println("@@@@ SECURE base " + baseToSecure + " with BUNKER = " + order);
 //            if (order != null) {
 //                order.setModifier(PositionModifier.NATURAL);
 //                return false;

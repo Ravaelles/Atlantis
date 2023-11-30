@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.modifier;
 
+import atlantis.combat.micro.terran.bunker.position.BunkerEstimatePositionAtNatural;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.*;
 import atlantis.map.base.ABaseLocation;
@@ -56,7 +57,10 @@ public class PositionModifier {
         // === Bunker ==========================================
 
         if (building.isBunker()) {
-            return BunkerPositionModifier.modifierToPosition(modifier, building, builder, construction);
+            if (modifier.equals(NATURAL)) {
+                return BunkerEstimatePositionAtNatural.define();
+            }
+//            return BunkerPositionModifier.modifierToPosition(modifier, building, builder, construction);
         }
 
         // === Bases ===========================================
@@ -139,7 +143,9 @@ public class PositionModifier {
             if (mainChoke != null) {
                 return APosition.create(mainChoke.center()).translateTilesTowards(
                     main,
-                    2.8 + (mainChoke.width() <= 4 ? 1.7 : 0)
+                    1.2
+//                    (mainChoke.width() <= 4 ? 1.7 : )
+//                    2.8 + (mainChoke.width() <= 4 ? 1.7 : 0)
                 );
             }
         }

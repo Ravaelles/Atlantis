@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -36,7 +37,7 @@ public class ProduceFactory {
         int inProgress = Count.inProductionOrInQueue(Terran_Factory);
 
         if (inProgress == 0 && !Have.factory() && A.canAfford(230, 115)) {
-            AddToQueue.withHighPriority(Terran_Factory);
+            produce();
             return true;
         }
 
@@ -51,18 +52,22 @@ public class ProduceFactory {
             if (numberOfFactories >= 1 && factories.areAllBusy()) {
 
                 if (inProgress == 0) {
-                    AddToQueue.withHighPriority(Terran_Factory);
+                    produce();
                     return true;
                 }
                 else if (inProgress >= 1 && AGame.canAfford(
                     100 + 200 * inProgress, 100 + 100 * inProgress
                 )) {
-                    AddToQueue.withHighPriority(Terran_Factory);
+                    produce();
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    private static ProductionOrder produce() {
+        return AddToQueue.withHighPriority(Terran_Factory);
     }
 }

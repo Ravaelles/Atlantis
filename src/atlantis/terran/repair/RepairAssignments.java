@@ -2,6 +2,7 @@ package atlantis.terran.repair;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.workers.GatherResources;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +74,8 @@ public class RepairAssignments {
                 }
                 repairersToUnit.remove(repairer);
                 repairersToModes.remove(repairer);
+
+                (new GatherResources(repairer)).invoke();
             }
         }
     }

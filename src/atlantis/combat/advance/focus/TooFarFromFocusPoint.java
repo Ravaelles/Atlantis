@@ -16,6 +16,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     @Override
     public boolean applies() {
+        if (unit.lastActionLessThanAgo(40, Actions.LOAD)) return false;
         if (EnemyWhoBreachedBase.get() != null) return false;
         if (unit.isMissionAttackOrGlobalAttack()) return false;
 

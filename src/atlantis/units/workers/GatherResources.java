@@ -29,10 +29,10 @@ public class GatherResources extends Manager {
 
         // Don't react if already gathering
         // @Check Surprisingly, isMiningOrExtractingGas is quite slow! looksIdle works faster
-        if (!unit.looksIdle()) {
-            unit.setTooltipTactical("Miner");
-            return true;
-        }
+//        if (!unit.looksIdle() && unit.hasChangedPositionRecently()) {
+//            unit.setTooltipTactical("Miner");
+//            return true;
+//        }
 
         if (unit.isRepairing()) {
             unit.setTooltipTactical("Repair");

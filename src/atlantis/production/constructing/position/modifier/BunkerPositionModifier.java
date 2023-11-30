@@ -10,17 +10,17 @@ import atlantis.units.AUnitType;
 import static atlantis.production.constructing.position.modifier.PositionModifier.MAIN;
 import static atlantis.production.constructing.position.modifier.PositionModifier.NATURAL;
 
-public class BunkerPositionModifier {
-    public static APosition modifierToPosition(
-        String modifier, AUnitType building, AUnit builder, Construction construction
-    ) {
-//        if (modifier.equals(MAIN)) {
+//public class BunkerPositionModifier {
+//    public static APosition modifierToPosition(
+//        String modifier, AUnitType building, AUnit builder, Construction construction
+//    ) {
+////        if (modifier.equals(MAIN)) {
+////        }
+//
+//        if (modifier.equals(NATURAL)) {
+//            return BunkerEstimatePositionAtNatural.define();
 //        }
-        
-        if (modifier.equals(NATURAL)) {
-            return BunkerEstimatePositionAtNatural.define();
-        }
-
-        return BunkerEstimatePositionAtNonNatural.define(construction.buildPosition());
-    }
-}
+//
+//        return BunkerEstimatePositionAtNonNatural.define(construction.buildPosition());
+//    }
+//}

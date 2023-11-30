@@ -9,6 +9,7 @@ import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -27,6 +28,8 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //        if (!shouldChangeMissionToAttack()) {
 //            return false;
 //        }
+
+        if (EnemyWhoBreachedBase.get() != null) return false;
 
         if (ActiveMap.isMapGosu()) {
             int alphaSize = Alpha.get().size();

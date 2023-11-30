@@ -1,8 +1,6 @@
 package atlantis.production.constructing.position;
 
 import atlantis.debug.painter.APainter;
-import atlantis.game.CameraCommander;
-import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.conditions.*;
@@ -10,7 +8,6 @@ import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.PauseAndCenter;
 import bwapi.Color;
 
 public class PositionFulfillsAllConditions {
@@ -53,7 +50,7 @@ public class PositionFulfillsAllConditions {
         if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return false;
         if (TooCloseToChoke.isTooCloseToChoke(building, position)) return false;
         if (TooCloseToBunker.isTooCloseToBunker(building, position)) return false;
-        if (IsProbablyInAnotherRegion.looksToBeTooFar(builder, building, position, nearTo)) return false;
+        if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return false;
 
         if (building.isMissileTurret()) return true;
 

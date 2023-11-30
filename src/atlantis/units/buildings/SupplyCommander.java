@@ -19,18 +19,24 @@ public class SupplyCommander extends Commander {
     private int requestedConstructionsOfSupply;
 
     @Override
+    public boolean applies() {
+        return A.everyNthGameFrame(11);
+    }
+
+    @Override
     protected void handle() {
         supplyTotal = AGame.supplyTotal();
 
         if (supplyTotal >= 200) return;
-        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 3) return;
+        if (A.hasFreeSupply(10)) return;
+        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
 
         requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
         if (tooManyNotStartedConstructions()) return;
 
         if (!A.hasFreeSupply(3) && A.supplyUsed() <= 170 && A.hasMinerals(300)) {
-            if (requestedConstructionsOfSupply <= 5) {
+            if (requestedConstructionsOfSupply <= 2 + A.supplyUsed() / 50) {
                 requestAdditionalSupply();
                 return;
             }

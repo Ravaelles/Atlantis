@@ -28,7 +28,7 @@ public class ProduceFactoryWhenBioOnly {
                         || (A.supplyUsed() >= 32 && Count.withPlanned(Terran_Factory) == 0)
                 )
         ) {
-            return AddToQueue.toHave(Terran_Factory);
+            return AddToQueue.withHighPriority(Terran_Factory) != null;
         }
 
         return false;

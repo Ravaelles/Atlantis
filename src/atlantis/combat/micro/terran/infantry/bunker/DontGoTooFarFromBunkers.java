@@ -41,7 +41,7 @@ public class DontGoTooFarFromBunkers extends Manager {
 
         if (bunker == null) return false;
 
-        if (unit.distTo(bunker) >= 15) {
+        if (unit.distTo(bunker) >= 22) {
             if (!unit.lastActionLessThanAgo(3)) {
                 unit.move(bunker, Actions.MOVE_SAFETY, "CloserToBunker");
             }

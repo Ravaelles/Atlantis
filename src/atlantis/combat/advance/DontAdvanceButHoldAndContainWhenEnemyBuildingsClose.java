@@ -33,7 +33,7 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
 
     private boolean closeToEnemyBuildingsOrChoke() {
         return EnemyUnits.discovered().buildings().inRadius(minDistToEnemyBuilding(), unit).notEmpty()
-            || ((enemyMainChoke = Chokes.enemyMainChoke()) != null && enemyMainChoke.distTo(unit) < DIST_TO_ENEMY_MAIN_CHOKE);
+            && ((enemyMainChoke = Chokes.enemyMainChoke()) != null && enemyMainChoke.distTo(unit) < DIST_TO_ENEMY_MAIN_CHOKE);
     }
 
     private double minDistToEnemyBuilding() {

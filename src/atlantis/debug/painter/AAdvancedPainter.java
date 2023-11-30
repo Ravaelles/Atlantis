@@ -1619,13 +1619,17 @@ public class AAdvancedPainter extends APainter {
     }
 
     public static void paintPosition(HasPosition position, String text) {
+        paintPosition(position, Color.Orange, text);
+    }
+
+    public static void paintPosition(HasPosition position, Color color, String text) {
         if (position == null) {
             return;
         }
 
         double dtx = 1;
-        paintRectangle(position.translateByTiles(-dtx, -dtx), 2 * 32, 2 * 32, Color.Orange);
-        paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);
+        paintRectangle(position.translateByTiles(-dtx, -dtx), 2 * 32, 2 * 32, color);
+        paintTextCentered(position.translateByTiles(dtx, 1), text, color);
     }
 
     public static void paintChoke(AChoke choke, Color color, String extraText) {

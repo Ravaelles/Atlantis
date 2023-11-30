@@ -2,15 +2,22 @@ package atlantis.game;
 
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 
+import atlantis.map.region.ARegion;
+import atlantis.map.region.MainRegion;
 import atlantis.map.wall.GetWallIn;
 import atlantis.map.wall.Structure;
+import atlantis.production.constructing.position.terran.TerranPositionFinder;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import bwapi.Color;
 import jbweb.Block;
 import jbweb.Blocks;
@@ -39,7 +46,71 @@ public class OnEveryFrameHelper {
 
 //        testScvMoveAwayFrom();
 
-        paintNearestBaseToEnemy();
+//        paintNearestBaseToEnemy();
+
+//        paintMainChokeDetails();
+
+//        printQueue();
+    }
+
+    private static void printQueue() {
+        if (A.everyNthGameFrame(30 * 9)) {
+            Queue.get().allOrders().print("All orders");
+        }
+    }
+
+    private static void paintMainChokeDetails() {
+        AChoke choke = Chokes.mainChoke();
+
+        if (choke == null) return;
+
+        if (A.now() <= 1) {
+            CameraCommander.centerCameraOn(choke.center());
+            AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+        }
+
+        // === Define regions ======================================
+
+        APosition point1 = choke.firstPoint();
+        APosition point2 = choke.lastPoint();
+
+        AAdvancedPainter.paintCircleFilled(point1, 4, Color.Yellow);
+        AAdvancedPainter.paintCircleFilled(point2, 4, Color.Orange);
+
+        ARegion regionA = choke.firstRegion();
+        ARegion regionB = choke.secondRegion();
+//        System.err.println(regionA + " / " + regionB + " / " + Select.main().position().region());
+
+        boolean regionAIsMain = MainRegion.isMainRegion(regionA);
+        boolean regionBIsMain = MainRegion.isMainRegion(regionB);
+
+        AAdvancedPainter.paintPosition(regionA, regionAIsMain ? Color.Green : Color.Red, "A");
+        AAdvancedPainter.paintPosition(regionB, regionBIsMain ? Color.Green : Color.Red, "B");
+
+        APosition point3 = null;
+        if (regionAIsMain) point3 = point1.translateTilesTowards(-1, regionB.center());
+        else point3 = point1.translateTilesTowards(-1, regionA.center());
+
+        AAdvancedPainter.paintCircleFilled(point3, 8, Color.Purple);
+
+        // =========================================================
+
+        APosition position1 = TerranPositionFinder.findStandardPositionFor(
+            null, AUnitType.Terran_Supply_Depot, point3, 6
+        );
+        APosition position2 = TerranPositionFinder.findStandardPositionFor(
+            null, AUnitType.Terran_Supply_Depot, point3, 6
+        );
+
+        if (position1 != null) AAdvancedPainter.paintRectangle(position1, 2 * 32, 2 * 32, Color.Cyan);
+//        if (position2 != null) AAdvancedPainter.paintRectangle(position2, 2 * 32, 2 * 32, Color.Teal);
+
+//        sendWorkersToBlockChoke(point1, point2);
+    }
+
+    private static void sendWorkersToBlockChoke(APosition point1, APosition point2) {
+
+
     }
 
     private static void paintNearestBaseToEnemy() {

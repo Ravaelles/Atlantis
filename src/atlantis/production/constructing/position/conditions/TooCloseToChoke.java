@@ -10,13 +10,15 @@ public class TooCloseToChoke {
     public static boolean isTooCloseToChoke(AUnitType building, APosition position) {
         if (building.isBase()) return false;
 
+        double minDist = building.isBunker() ? 1.3 : 3.8;
+
         for (AChoke choke : Chokes.chokes()) {
             if (choke.width() >= 5) {
                 continue;
             }
 
             double distToChoke = choke.center().distTo(position) - choke.width();
-            if (distToChoke <= 3.8) {
+            if (distToChoke <= minDist) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "Overlaps choke (" + distToChoke + ")";
                 return true;
             }

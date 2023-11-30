@@ -38,7 +38,7 @@ public class SiegeAgainstSpecificEnemies extends Manager {
 
         AUnit enemy = unit.nearestEnemy();
 
-        double minDist = enemy != null && enemy.isMoving() && enemy.isFacing(unit) ? 17.5 : 11.98;
+        double minDist = enemy != null && enemy.isMoving() && enemy.isFacing(unit) ? 15.5 : 11.98;
         if (enemies.notEmpty()) {
             if (unit.woundHp() <= 15 || enemies.inRadius(2 + unit.id() % 4, unit).notEmpty()) {
                 return usedManager(ForceSiege.forceSiegeNow(this, "KeyEnemy"));

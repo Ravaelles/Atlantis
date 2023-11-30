@@ -1,6 +1,5 @@
 package atlantis.production.orders.production.queue.add;
 
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -78,10 +77,7 @@ public class AddToQueue {
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         if (preventExcessiveOrInvalidOrders(type)) return null;
 
-//        if (type != null && type.isSupplyDepot()) {
-//            A.printStackTrace("isSupplyDepot, " + CountInQueue.count(AUnitType.Terran_Supply_Depot) + " / "
-//                + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
-//        }
+        if (fixAndExitIfBroken(type, position)) return null;
 
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
 
@@ -106,6 +102,26 @@ public class AddToQueue {
         }
 
         return productionOrder;
+    }
+
+    private static boolean fixAndExitIfBroken(AUnitType type, HasPosition position) {
+        if (type != null) {
+//            if (type.isSupplyDepot()) {
+//                if (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= (1 + A.supplyUsed() / 35)) return true;
+//            }
+//            if (type.isBunker()) {
+//                if (Count.withPlanned(AUnitType.Terran_Bunker) >= 3) return true;
+//                if (Count.existingOrPlannedBuildingsNear(AUnitType.Terran_Bunker, 8, position) > 0) return true;
+//            }
+
+//            System.err.println("Added SUPPLY: " + A.supplyUsed() + " / " + A.supplyTotal());
+//            A.printStackTrace("isSupplyDepot, "
+//                + CountInQueue.count(AUnitType.Terran_Supply_Depot) + " / "
+//                + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY) + " / "
+//                + Count.withPlanned(AUnitType.Terran_Supply_Depot)
+//            );
+        }
+        return false;
     }
 
     private static void clearOtherExistingOfTheSameTypeIfNeeded(ProductionOrder productionOrder) {

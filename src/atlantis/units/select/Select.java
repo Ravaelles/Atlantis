@@ -9,10 +9,7 @@ import atlantis.units.Units;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class allows to easily select units e.g. to select one of your Marines, nearest to given location, you
@@ -179,10 +176,11 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             cachePath = "ourWorkers",
             microCacheForFrames,
             () -> {
-                List<AUnit> data = new ArrayList<>();
+//                SortedSet<AUnit> data = new ArrayList<>();
+                TreeSet<AUnit> data = new TreeSet<>();
 
                 for (AUnit unit : ourUnits()) {
-                    if (unit.isCompleted() && unit.isWorker()) {
+                    if (unit.isWorker()) {
                         data.add(unit);
                     }
                 }

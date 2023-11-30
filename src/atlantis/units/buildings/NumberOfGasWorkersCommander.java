@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.workers.GatherResources;
 import atlantis.units.workers.WorkerRepository;
 
 import java.util.Collection;
@@ -33,6 +34,7 @@ public class NumberOfGasWorkersCommander extends Commander {
                 AUnit worker = WorkerRepository.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null && worker.isGatheringGas()) {
                     worker.stop("I'm fired!", true);
+                    (new GatherResources(worker)).invoke();
                 }
                 break; // Only one worker per execution - prevent weird runs
             }
