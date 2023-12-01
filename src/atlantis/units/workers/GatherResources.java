@@ -11,7 +11,9 @@ public class GatherResources extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isWorker() && unit.lastActionMoreThanAgo(15, Actions.REPAIR);
+        return unit.isWorker()
+            && unit.lastActionMoreThanAgo(20, Actions.REPAIR)
+            && unit.lastActionMoreThanAgo(40, Actions.MOVE_SPECIAL);
     }
 
     protected Manager handle() {

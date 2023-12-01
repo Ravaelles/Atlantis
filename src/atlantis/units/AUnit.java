@@ -105,6 +105,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
     private AUnit runningFrom = null;
+
+    /**
+     * Can be used for special missions to remember position assigned for this unit.
+     */
+    private APosition specialPosition = null;
     private int _lastActionReceived = 0;
     public int _lastAttackOrder;
     public int _lastAttackFrame;
@@ -2895,5 +2900,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public ProductionOrder productionOrder() {
         return this.productionOrder;
+    }
+
+    public APosition specialPosition() {
+        return specialPosition;
+    }
+
+    public void setSpecialPosition(APosition specialPosition) {
+        this.specialPosition = specialPosition;
     }
 }

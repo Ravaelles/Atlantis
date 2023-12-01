@@ -904,44 +904,6 @@ public class AAdvancedPainter extends APainter {
             }
             paintTextCentered(unit.translateByTiles(0, 1), "#" + unit.id() + " " + action, Color.Cyan);
 
-            // BUILDER
-//            if (AtlantisConstructingManager.isBuilder(unit)) {
-//                paintCircle(unit, 15, Color.Teal);
-//                paintCircle(unit, 13, Color.Teal);
-//                paintCircle(unit, 11, Color.Teal);
-//            }
-            // Current COMMAND
-//            if (!unit.isMoving()) {
-//                paintTextCentered(unit, unit.getLastCommand().getUnitCommandType().toString(), Color.Purple);
-//            }
-            // =========================================================
-//            Color color = Color.Grey;
-//            if (unit.action() != null) {
-//                if (unit.getAction().equals(UnitActions.MOVE)) {
-//                    color = Color.Teal;
-//                } else if (unit.getAction().isAttacking()) {
-//                    color = Color.Orange;
-//                } else if (unit.getAction().equals(UnitActions.RETREAT)) {
-//                    color = Color.Brown;
-//                } else if (unit.getAction().equals(UnitActions.HEAL)) {
-//                    color = Color.Purple;
-//                } else if (unit.getAction().equals(UnitActions.BUILD)) {
-//                    color = Color.Purple;
-//                } else if (unit.getAction().equals(UnitActions.REPAIR)) {
-//                    color = Color.Purple;
-//                }
-//            else if (unit.getAction().equals(UnitActions.)) {
-//                color = Color.;
-//            }
-//            else if (unit.getAction().equals(UnitActions.)) {
-//                color = Color.;
-//            }
-//            }
-
-//            if (!unit.isWorker() && !unit.isGatheringMinerals() && !unit.isGatheringGas()) {
-//                paintCircle(unit, unit.type().getDimensionLeft() + unit.type().getDimensionRight(), color);
-//                paintCircle(unit, unit.type().getDimensionLeft() - 2 + unit.type().getDimensionRight(), color);
-//            }
             if (unit.isWorker() && unit.isIdle()) {
                 paintCircle(unit, 10, Color.Black);
                 paintCircle(unit, 8, Color.Black);

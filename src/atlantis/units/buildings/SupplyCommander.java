@@ -31,7 +31,7 @@ public class SupplyCommander extends Commander {
 
         if (supplyTotal >= 200) return;
         if (A.hasFreeSupply(10)) return;
-//        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
+        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
         if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 3) return;
 
         requestedConstructionsOfSupply = requestedConstructionsOfSupply();
@@ -96,15 +96,30 @@ public class SupplyCommander extends Commander {
     // =========================================================
 
     private void requestAdditionalSupply() {
-//        A.printStackTrace("Supply request: " + A.supplyUsed() + " // " + A.supplyTotal());
-
         int requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
-        if (requestedConstructionsOfSupply >= 2) return;
+//        A.printStackTrace("Supply request: "
+//            + A.supplyUsed() + " // "
+//            + A.supplyTotal() + " // F="
+//            + requestedConstructionsOfSupply + " // G="
+//            + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size()
+//        );
+
+        if (requestedConstructionsOfSupply >= 2) {
+            System.err.println("TOO MANY REQUESTED SUPPLIES: " + requestedConstructionsOfSupply);
+            return;
+        }
+
+        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 2) {
+            System.err.println("EXIT!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
+            return;
+        }
 
         // Zerg handles supply a bit differently
         if (AGame.isPlayingAsZerg()) {
-            ProduceZergUnit.produceZergUnit(AUnitType.Zerg_Overlord, ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER));
+            ProduceZergUnit.produceZergUnit(
+                AUnitType.Zerg_Overlord, ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
+            );
             return;
         }
 
@@ -124,7 +139,10 @@ public class SupplyCommander extends Commander {
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }
 
-        return Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY);
+//        return Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY);
+//        System.out.println("A= " + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
+//        System.out.println("B = " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
+        return Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size();
 //        return ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
 
 //        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisRaceConfig.SUPPLY);

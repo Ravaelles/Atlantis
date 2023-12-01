@@ -110,6 +110,17 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection inRadius(double maxDist, Selection selectionOfUnits) {
+        return Select.cache.get(
+            addToCachePath(CacheKey.create("inRadiusSelection", maxDist, selectionOfUnits)),
+            1,
+            () -> cloneByRemovingIf(
+                (u -> selectionOfUnits.nearestTo(u).distTo(u) > maxDist),
+                "selection:" + maxDist + ":" + CacheKey.create(selectionOfUnits)
+            )
+        );
+    }
+
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */
@@ -1156,5 +1167,15 @@ public class Selection extends BaseSelection {
         }
         System.out.println();
         return this;
+    }
+
+    public String unitIds() {
+        StringBuilder result = new StringBuilder("ids(");
+
+        for (AUnit unit : list()){
+            result.append(unit.id()).append(",");
+        }
+
+        return result.append(")").toString();
     }
 }

@@ -23,7 +23,7 @@ public class UnitBeingReparedManager extends Manager {
             && (repairer = unit.repairer()) != null
             && (
             (enemiesNear = unit.enemiesNear().groundUnits().canAttack(unit, -0.2)).isEmpty()
-                || (unit.hp() >= 40 && RepairAssignments.countRepairersForUnit(unit) >= 2)
+                || (RepairAssignments.countRepairersForUnit(unit) >= 2)
         );
     }
 
@@ -84,9 +84,9 @@ public class UnitBeingReparedManager extends Manager {
         // Go to repairer if he's close
         if (distanceToRepairer >= 0.4) {
             if (unit.move(repairer.position(), Actions.MOVE_REPAIR, "To repairer", false)) {
-                if (!repairer.isRepairing()) {
-                    repairer.repair(unit, ":: rep ::");
-                }
+//                if (!repairer.isRepairing()) {
+//                    repairer.repair(unit, ":: rep ::");
+//                }
                 return usedManager(this);
             }
         }

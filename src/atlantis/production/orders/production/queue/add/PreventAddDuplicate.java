@@ -3,6 +3,7 @@ package atlantis.production.orders.production.queue.add;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -15,7 +16,7 @@ public class PreventAddDuplicate {
     protected static boolean preventExcessiveOrInvalidOrders(AUnitType type, HasPosition position) {
         assert type != null;
 
-        if (tooManyOrdersOfThisType(type)) return true;
+        if (tooManyOrdersOfThisType(type, position)) return true;
         if (tooManyOrdersInGeneral(type)) return true;
 
         if (forProtossEnforceHavingAPylonFirst(type)) return true;
@@ -34,18 +35,34 @@ public class PreventAddDuplicate {
         return false;
     }
 
-    private static boolean tooManyOrdersOfThisType(AUnitType type) {
+    private static boolean tooManyOrdersOfThisType(AUnitType type, HasPosition position) {
         int existingInQueue = Count.inQueue(type);
 
         if (existingInQueue >= (type.isABuilding() ? (type.isCombatBuilding() ? 5 : 2) : 4)) {
             if (type.isSupplyDepot()) ErrorLog.printMaxOncePerMinute("Exceeded DEPOTS allowed: " + existingInQueue);
-            if (type.isBunker()) ErrorLog.printMaxOncePerMinute("Exceeded BUNKERS allowed: " + existingInQueue);
+//            if (type.isBunker()) ErrorLog.printMaxOncePerMinute("Exceeded BUNKERS allowed: " + existingInQueue);
             return true;
         }
 
-        if (invalidBunkers()) return true;
+        if (tooManyDepots(type, position)) return true;
+        if (tooManyBunkers(type, position)) return true;
 
         return false;
+    }
+
+    private static boolean tooManyDepots(AUnitType type, HasPosition position) {
+        return We.terran() && CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2;
+    }
+
+    private static boolean tooManyBunkers(AUnitType type, HasPosition position) {
+        if (!type.isBunker()) return false;
+
+        if (position == null) {
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Position for bunker is null, that's retarded");
+            return false;
+        }
+
+        return Count.existingOrPlannedBuildingsNear(AUnitType.Terran_Bunker, 11, position) > 0;
     }
 
     private static boolean tooManyOrdersInGeneral(AUnitType type) {

@@ -48,6 +48,10 @@ public abstract class Manager extends BaseManager {
         return handleSubmanagers();
     }
 
+    public Manager forceHandle() {
+        return handle();
+    }
+
     /**
      * @return TRUE if the manager was applied, an action was taken, meaning further execution should be stopped.
      * FALSE if the manager was not applied. Further execution down the stack should be proceeded.

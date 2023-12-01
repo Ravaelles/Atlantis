@@ -34,14 +34,16 @@ public class SecuringBase {
 
         if (!We.terran()) return true;
         if (isSecure()) return consideredBaseAsSecure("isSecure");
-        if (errorDetectedSameRegionAsMain()) return consideredBaseAsSecure("Same region as main base detected");
+        if (errorDetectedSameRegionAsMain(baseToSecure)) return consideredBaseAsSecure(
+            "Same region as main base detected"
+        );
 
         return secureWithBunker();
     }
 
-    private boolean errorDetectedSameRegionAsMain() {
+    private boolean errorDetectedSameRegionAsMain(APosition bunkerPosition) {
         // @Fix
-        if (baseToSecure.regionsMatch(Select.main())) {
+        if (bunkerPosition.regionsMatch(Select.main())) {
             ErrorLog.printMaxOncePerMinute("Trying SecuringBase main - ignore");
             return true;
         }
@@ -59,7 +61,7 @@ public class SecuringBase {
 //        System.err.println("@ " + A.now() + " - secureWithBunker base? " + baseToSecure + " / " + bunkerPosition);
 
         if (bunkerPosition == null) return false;
-        if (errorDetectedSameRegionAsMain()) return false;
+        if (errorDetectedSameRegionAsMain(bunkerPosition)) return false;
 
         if (isSecure()) {
             if (baseToSecure.distTo(Select.mainOrAnyBuilding()) > 15) {
@@ -101,9 +103,9 @@ public class SecuringBase {
 //        return Count.inProductionOrInQueue(Terran_Bunker) >= 2;
     }
 
-    private boolean isPlaceSecured(APosition bunkerPosition) {
-        return Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition) < numOfBunkers();
-    }
+//    private boolean isPlaceSecured(APosition bunkerPosition) {
+//        return Count.existingOrPlannedBuildingsNear(Terran_Bunker, DIST_FROM_BASE, bunkerPosition) < numOfBunkers();
+//    }
 
     private int numOfBunkers() {
         if (IsNatural.isPositionNatural(baseToSecure)) return 2;

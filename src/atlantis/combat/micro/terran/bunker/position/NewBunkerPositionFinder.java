@@ -42,26 +42,32 @@ public class NewBunkerPositionFinder {
             builder,
             Terran_Bunker,
             positionToSecure,
-            15
+            10
         );
 
-        return validateOutput(foundPosition);
+        return validateOutput(foundPosition, positionToSecure);
     }
 
-    private APosition validateOutput(APosition foundPosition) {
-        if (foundPosition != null) {
-            double distTo = foundPosition.distTo(positionToSecure);
+    private APosition validateOutput(APosition output, HasPosition near) {
+        if (output != null) {
+            double distTo = output.distTo(this.positionToSecure);
+            int MAX_DIST = 12;
 
-            if (distTo > 10) {
+            if (distTo > MAX_DIST || (near != null && near.distTo(output) > MAX_DIST)) {
                 ErrorLog.printMaxOncePerMinute(
                     "NewBunkerPositionFinder: position too far (" + distTo + ") / " +
-                        "found:" + foundPosition + ", securing: " + positionToSecure
+                        "found:" + output + ", securing: " + this.positionToSecure
                 );
+                return null;
+            }
+
+            if (!this.positionToSecure.regionsMatch(output)) {
+                ErrorLog.printMaxOncePerMinute("NewBunkerPositionFinder: wrong region");
                 return null;
             }
         }
 
-        return foundPosition;
+        return output;
     }
 
 //    private boolean isForNatural() {

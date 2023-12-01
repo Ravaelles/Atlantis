@@ -26,6 +26,7 @@ public class TerranWraith extends Manager {
             // Attack-related
             ChangeLocationIfRanTooLong.class,
             AttackOtherAirUnits.class,
+            AttackSpecificEnemiesNearBases.class,
             AttackSpecificEnemies.class,
             AttackWorkersWhenItMakesSense.class,
             AttackTargetInRangeIfRanTooLong.class,

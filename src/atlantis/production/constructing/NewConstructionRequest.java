@@ -63,7 +63,7 @@ public class NewConstructionRequest {
         Construction newConstruction = new Construction(building);
         newConstruction.setProductionOrder(order);
         newConstruction.setNearTo(near);
-        newConstruction.setMaxDistance(order != null ? order.maximumDistance() : -1);
+        newConstruction.setMaxDistance(order != null ? order.maximumDistance() : 66);
         newConstruction.assignRandomBuilderForNow();
 
         if (newConstruction.builder() == null) {
@@ -92,11 +92,16 @@ public class NewConstructionRequest {
             else {
                 ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
             }
-            
+
             if (order != null)
                 ErrorLog.printMaxOncePerMinute("(Max search distance was: " + order.maximumDistance() + ")");
 
+            if (order != null && order.maximumDistance() < 0) {
+                ErrorLog.printMaxOncePerMinute("(Max search distance was not defined - bug)");
+            }
+
             newConstruction.cancel();
+            if (order != null) order.cancel();
             return false;
         }
 

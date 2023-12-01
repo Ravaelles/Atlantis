@@ -1,15 +1,16 @@
 package atlantis.combat.micro.terran.wraith;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.targeting.air.AAirUnitAirTargets;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-public class AttackSpecificEnemies extends Manager {
+public class AttackSpecificEnemiesNearBases extends Manager {
     private Selection specificEnemies;
 
-    public AttackSpecificEnemies(AUnit unit) {
+    public AttackSpecificEnemiesNearBases(AUnit unit) {
         super(unit);
     }
 
@@ -20,9 +21,9 @@ public class AttackSpecificEnemies extends Manager {
     }
 
     private Selection targets() {
-        return unit.enemiesNear()
+        return EnemyUnits.discovered()
             .ofType(targetTypes())
-            .canBeAttackedBy(unit, 5)
+            .inRadius(30, Select.ourBasesWithUnfinished())
             .effVisible();
     }
 

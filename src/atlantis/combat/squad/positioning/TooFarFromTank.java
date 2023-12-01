@@ -6,6 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class TooFarFromTank extends Manager {
@@ -25,7 +26,7 @@ public class TooFarFromTank extends Manager {
         return We.terran()
             && !unit.isAir()
             && (tanks = Count.tanks()) >= 1
-            && !unitIsOvercrowded();
+            && (unit.squad().units().tanks().atMost(4) || !unitIsOvercrowded());
     }
 
     @Override
@@ -48,6 +49,10 @@ public class TooFarFromTank extends Manager {
         if (distToTank > MAX_DIST_FROM_TANK + (unit.id() % 4) / 2.0) return true;
 
         if (distToTank <= 7 && tankIsOvercrowded(tank)) return false;
+
+        Selection tanksInSquad = unit.squad().units().tanks();
+
+        if (tanksInSquad.atLeast(4) && tanksInSquad.inRadius(10, unit).atMost(3)) return true;
 
 //        if (
 //            unit.isHealthy()

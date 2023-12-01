@@ -20,6 +20,7 @@ public class FindPosition {
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {
         if (nearTo == null && building.isSupplyDepot()) nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
+        if (nearTo == null) nearTo = Select.mainOrAnyBuilding();
 
         if (maxDistance <= 5 && building.isBunker()) maxDistance = 10;
         if (maxDistance < 0) maxDistance = 50;

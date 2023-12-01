@@ -69,7 +69,7 @@ public class Construction implements Comparable<Construction> {
      * and we're cool, bro.
      */
     protected void assignRandomBuilderForNow() {
-        builder = Select.ourWorkers().first();
+        builder = Select.ourWorkers().notSpecialAction().first();
     }
 
     /**

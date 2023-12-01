@@ -42,9 +42,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     private HasPosition position = null;
     /**
      * Maximum distance from a given position to build this building.
-     * -1 means no limit.
      */
-    private int maximumDistance = -1;
+    private int maximumDistance = 66;
     /**
      * At this supply we should change global mission to this.
      */

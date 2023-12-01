@@ -15,11 +15,11 @@ public class IssueRepairCommand extends Manager {
 
     @Override
     public boolean applies() {
+        if (target == null) return false;
         if (!A.hasMinerals(5)) return false;
+        if (target.isAir() && target.distTo(unit) >= 2) return false;
 
         if (unit.isRepairing() && (target = unit.target()) != null && target.isAlive()) {
-            if (target.isAir() && target.distTo(unit) >= 4) return false;
-
             return true;
         }
 
@@ -32,13 +32,6 @@ public class IssueRepairCommand extends Manager {
 
     @Override
     public Manager handle() {
-//        if (unit.lastActionMoreThanAgo(30 * 3, Actions.REPAIR) || unit.looksIdle()) {
-//            RepairAssignments.removeRepairer(unit);
-//            unit.setTooltipTactical("IdleGTFO");
-//            unit.gatherBestResources();
-//            return usedManager(this);
-//        }
-
         unit.repair(
             target,
             "Repair " + target.nameWithId() + "(" + unit.lastActionFramesAgo() + ")"

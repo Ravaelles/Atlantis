@@ -10,6 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
+import atlantis.util.cache.CacheKey;
 
 import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
@@ -17,10 +18,10 @@ public class SupplyDepotPositionFinder {
     private static Cache<APosition> cache = new Cache<>();
 
     public static APosition findPosition(AUnit builder, Construction construction, HasPosition nearTo) {
-        if (Count.ofType(Terran_Supply_Depot) <= 3) return null;
+//        if (Count.ofType(Terran_Supply_Depot) <= 3) return null;
 
         return cache.get(
-            "findPosition:" + builder.id() + "," + construction.id() + "," + nearTo,
+            CacheKey.create("findPosition", construction, nearTo),
             81,
             () -> findNewPosition(builder, construction, nearTo)
         );
@@ -29,7 +30,7 @@ public class SupplyDepotPositionFinder {
     private static APosition findNewPosition(AUnit builder, Construction construction, HasPosition nearTo) {
 //        nearTo = nearTo();
 
-        return APositionFinder.findStandardPosition(builder, AUnitType.Terran_Supply_Depot, nearTo, 20);
+        return APositionFinder.findStandardPosition(builder, AUnitType.Terran_Supply_Depot, nearTo, 50);
     }
 
 //    private static APosition nearTo() {

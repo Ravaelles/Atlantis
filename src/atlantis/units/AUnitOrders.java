@@ -401,7 +401,6 @@ public interface AUnitOrders {
             return true;
         }
 
-
         unit().setLastActionReceivedNow().setAction(Actions.REPAIR);
 
         if (!unit().isRepairing()) {
@@ -416,37 +415,17 @@ public interface AUnitOrders {
                 );
 //                A.println(A.now() + " / " + unit() + " moveTo = " + moveTo);
                 move(moveTo, Actions.MOVE_REPAIR, tooltip, false);
-//                u().move();
             }
             else {
                 u().repair(target.u());
             }
         }
-//        else {
-//            u().repair(target.u());
-//        }
 
         if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
             System.out.println(unit().typeWithHash() + " REPAIR @" + A.now() + " / " + target + " (" + target.hp() + ")");
         }
 
         return true;
-
-//        if (target.getPosition().distanceTo(unit()) > 1.5) {
-//            unit().setLastUnitOrderNow();
-//            return unit().move(target.getPosition(), UnitActions.MOVE_TO_REPAIR);
-//        }
-//        else {
-//            unit().setAction(UnitActions.REPAIR);
-//            if (unit().getTarget() == null || !unit().getTarget().equals(target) || !unit().isRepairing()) {
-//                unit().setLastUnitOrderNow();
-//                unit().setLastUnitOrderNow();
-//                return u().repair(target.u());
-//            }
-//            else {
-//                return true;
-//            }
-//        }
     }
 
     /**

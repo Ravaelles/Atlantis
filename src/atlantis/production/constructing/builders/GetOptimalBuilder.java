@@ -22,6 +22,9 @@ public class GetOptimalBuilder {
 
         boolean allowRepairers = true;
 
-        return Select.ourWorkersFreeToBuildOrRepair(allowRepairers).notGatheringGas().nearestTo(positionToBuild);
+        return Select.ourWorkersFreeToBuildOrRepair(allowRepairers)
+            .notGatheringGas()
+            .notSpecialAction()
+            .nearestTo(positionToBuild);
     }
 }

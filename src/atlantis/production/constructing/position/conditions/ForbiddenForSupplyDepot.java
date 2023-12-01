@@ -23,6 +23,6 @@ public class ForbiddenForSupplyDepot {
     }
 
     private static boolean streetGridMatches(APosition position) {
-        return position.tx() % 2 != 1 || position.ty() % 2 != 1;
+        return position.tx() % 2 == 1 || position.ty() % 2 == 1;
     }
 }

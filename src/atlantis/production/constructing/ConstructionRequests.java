@@ -75,6 +75,7 @@ public class ConstructionRequests {
         for (Construction construction : constructions) {
             if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
                 && construction.buildingType().equals(type)
+                && construction.positionToBuildCenter() != null
                 && position.distTo(construction.positionToBuildCenter()) <= radius) {
                 total++;
             }

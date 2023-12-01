@@ -12,9 +12,11 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 
 public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends MissionManager {
-
     public static final int DIST_TO_ENEMY_MAIN_CHOKE = 8;
+
     private AChoke enemyMainChoke;
+    private AChoke enemyNaturalChoke;
+    private int tanks;
 
     public DontAdvanceButHoldAndContainWhenEnemyBuildingsClose(AUnit unit) {
         super(unit);
@@ -22,18 +24,32 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
 
     @Override
     public boolean applies() {
-        int tanks = Count.tanks();
+        tanks = Count.tanks();
 
         return
-            (A.supplyUsed() < 185 || tanks < 9)
-                && A.minerals() < 2200
+            (A.supplyUsed() < 185 || tanks <= 10)
+                && A.minerals() < 2000
                 && unit.isCombatUnit()
                 && closeToEnemyBuildingsOrChoke();
     }
 
     private boolean closeToEnemyBuildingsOrChoke() {
         return EnemyUnits.discovered().buildings().inRadius(minDistToEnemyBuilding(), unit).notEmpty()
-            && ((enemyMainChoke = Chokes.enemyMainChoke()) != null && enemyMainChoke.distTo(unit) < DIST_TO_ENEMY_MAIN_CHOKE);
+            && closeToEnemyChokes();
+    }
+
+    private boolean closeToEnemyChokes() {
+        return
+            (
+                (enemyMainChoke = Chokes.enemyMainChoke()) != null
+                    && enemyMainChoke.distTo(unit) < DIST_TO_ENEMY_MAIN_CHOKE
+            )
+                ||
+                (
+                    (enemyNaturalChoke = Chokes.enemyNaturalChoke()) != null
+                        && enemyNaturalChoke.distTo(unit) < 5
+                )
+            ;
     }
 
     private double minDistToEnemyBuilding() {
