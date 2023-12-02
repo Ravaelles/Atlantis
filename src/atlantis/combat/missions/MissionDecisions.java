@@ -16,11 +16,14 @@ public class MissionDecisions {
         if (A.supplyUsed() < 30) {
             return 1;
         }
-        else if (A.supplyUsed() < 50) {
+//        else if (A.supplyUsed() < 50) {
+//            return 2;
+//        }
+        else if (A.supplyUsed() < 70) {
             return 2;
         }
-        else if (A.supplyUsed() < 80) {
-            return 3;
+        else if (A.supplyUsed() < 140) {
+            return 4;
         }
         else {
             return 6;

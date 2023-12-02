@@ -43,7 +43,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     /**
      * Maximum distance from a given position to build this building.
      */
-    private int maximumDistance = 66;
+    private int maximumDistance = 26;
     /**
      * At this supply we should change global mission to this.
      */
@@ -127,6 +127,16 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         ProductionOrder otherOrder = (ProductionOrder) object;
 
         if (otherOrder.id == id) return true;
+
+        if (unitOrBuilding != null) {
+            if (otherOrder.minSupply == this.minSupply) {
+    //            if (isBuilding() && this.unitType().equals(otherOrder.unitType())) return true;
+                if (
+                    this.unitType().equals(otherOrder.unitType())
+                    && (this.isDynamic() && otherOrder.isDynamic())
+                ) return true;
+            }
+        }
 
 //        if (otherOrder.minSupply == minSupply) {
 //            if (unitOrBuilding != null && unitOrBuilding.equals(otherOrder.unitOrBuilding)) return true;

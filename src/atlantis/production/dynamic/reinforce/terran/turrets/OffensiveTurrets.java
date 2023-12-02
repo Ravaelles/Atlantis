@@ -8,7 +8,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.select.Have;
 
 public class OffensiveTurrets extends TurretsForNonMain {
-
     public boolean buildIfNeeded() {
         if (!Have.engBay()) return false;
 

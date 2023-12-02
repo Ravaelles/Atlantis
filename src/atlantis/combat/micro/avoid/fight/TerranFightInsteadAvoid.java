@@ -31,7 +31,7 @@ public class TerranFightInsteadAvoid extends HasUnit {
         if (!unit.isMarine() && !unit.isGhost() && !unit.isFirebat()) return false;
 
         if (unit.isAttacking() && Count.tanks() >= 1) {
-            double tankDist = unit.nearestFriendlyTankDist();
+            double tankDist = unit.nearestOurTankDist();
 
             if (tankDist <= 2) return true;
             if (tankDist >= 5) return false;

@@ -34,6 +34,10 @@ public class AvoidSingleEnemy extends Manager {
 //            return (new AvoidCombatBuilding(unit, enemy)).invoke();
 //        }
 
+        if (enemy.isCombatBuilding() && unit.isGroundUnit()) {
+            return avoidCombatBuildingAsGround();
+        }
+
         if (unit.runningManager().runFrom(
             enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, false
         )) {
@@ -41,6 +45,12 @@ public class AvoidSingleEnemy extends Manager {
         }
 
         return runError.handleErrorRun(unit);
+    }
+
+    private Manager avoidCombatBuildingAsGround() {
+        if (unit.holdPosition("AvoidCombatBuilding")) return usedManager(this);
+
+        return null;
     }
 
     private boolean isEnemyFacingOtherWayAndWeLookSafe() {

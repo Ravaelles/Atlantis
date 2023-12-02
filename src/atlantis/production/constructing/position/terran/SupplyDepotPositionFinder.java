@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.terran;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
@@ -28,12 +29,17 @@ public class SupplyDepotPositionFinder {
     }
 
     private static APosition findNewPosition(AUnit builder, Construction construction, HasPosition nearTo) {
-//        nearTo = nearTo();
+        nearTo = nearTo();
 
         return APositionFinder.findStandardPosition(builder, AUnitType.Terran_Supply_Depot, nearTo, 50);
     }
 
-//    private static APosition nearTo() {
+    private static HasPosition nearTo() {
+        if (A.supplyTotal() <= 30) return Select.mainOrAnyBuilding();
+
+        if (A.chance(60)) return Select.ourOfType(Terran_Supply_Depot).last();
+        else return Select.ourBuildings().havingAntiGroundWeapon().random();
+
 //        Positions<APosition> positions = BuildablePositionsAroundMainBase.get()
 //            .sortByDistanceTo(Select.mainOrAnyBuilding(), true);
 //
@@ -44,5 +50,5 @@ public class SupplyDepotPositionFinder {
 //        }
 //
 //        return null;
-//    }
+    }
 }

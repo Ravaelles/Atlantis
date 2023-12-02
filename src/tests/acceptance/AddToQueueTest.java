@@ -24,12 +24,12 @@ public class AddToQueueTest extends NonAbstractTestFakingGame {
 
                 ProductionOrder added;
 
-//                queue.nextOrders(15).print("nextOrders");
+                queue.nextOrders(15).print("nextOrders");
                 assertEquals(0, queue.nextOrders(15).ofType(Terran_Marine).size());
                 assertNotEquals(Terran_Marine, queue.nextOrders(1).list().get(0).unitType());
 
                 added = AddToQueue.maxAtATime(Terran_Marine, 2);
-//                System.err.println("added = " + added);
+                System.err.println("added = " + added);
 
                 queue.clearCache();
                 assertEquals(1, queue.nextOrders(15).ofType(Terran_Marine).size());

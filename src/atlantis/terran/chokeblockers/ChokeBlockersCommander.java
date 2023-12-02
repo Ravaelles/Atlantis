@@ -17,7 +17,7 @@ public class ChokeBlockersCommander extends Commander {
     }
 
     private boolean checkIfApplies() {
-        if (AGame.notNthGameFrame(3)) return false;
+        if (AGame.notNthGameFrame(5)) return false;
 
         choke = Chokes.mainChoke();
         if (choke == null) return false;
@@ -27,9 +27,9 @@ public class ChokeBlockersCommander extends Commander {
         int bunkers = Count.bunkers();
         if (bunkers <= 0 || bunkers >= 3 || Count.bases() != 1) return false;
 
-        if (Atlantis.KILLED <= 2) return true;
+        if (Count.tanks() >= 2) return false;
 
-        return Count.ourCombatUnits() <= 18;
+        return Atlantis.KILLED <= 7 || Count.ourCombatUnits() <= 18;
     }
 
     @Override

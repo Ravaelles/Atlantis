@@ -11,6 +11,8 @@ import atlantis.units.select.Select;
 import bwapi.Color;
 
 public class PositionFulfillsAllConditions {
+    public static int currentSearchRadius = -1;
+
     /**
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
      * necessary requirements like: doesn't collide with another building, isn't too close to minerals etc.
@@ -18,6 +20,8 @@ public class PositionFulfillsAllConditions {
     public static boolean doesPositionFulfillAllConditions(
         AUnit builder, AUnitType building, APosition position, HasPosition nearTo
     ) {
+        if (position.isOutOfBounds()) return false;
+
         APainter.paintCircle(position, 6, Color.Red);
 //        if (building.isBunker()) PauseAndCenter.on(position, true);
 

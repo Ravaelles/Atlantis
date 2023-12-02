@@ -24,6 +24,8 @@ public class SecureBasesCommander extends Commander {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         return A.everyNthGameFrame(53)
             && Have.barracks()
             && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) >= 2

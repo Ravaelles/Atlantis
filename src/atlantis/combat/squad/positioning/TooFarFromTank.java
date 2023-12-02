@@ -52,7 +52,9 @@ public class TooFarFromTank extends Manager {
 
         Selection tanksInSquad = unit.squad().units().tanks();
 
-        if (tanksInSquad.atLeast(4) && tanksInSquad.inRadius(10, unit).atMost(3)) return true;
+        if (!unit.isTank()) {
+            if (tanksInSquad.atLeast(4) && tanksInSquad.inRadius(10, unit).atMost(3)) return true;
+        }
 
 //        if (
 //            unit.isHealthy()

@@ -1,5 +1,6 @@
 package atlantis.combat.missions.defend;
 
+import atlantis.Atlantis;
 import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
@@ -30,6 +31,8 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //        }
 
         if (EnemyWhoBreachedBase.get() != null) return false;
+
+        if (A.seconds() >= 600 && Atlantis.LOST >= 15 && Count.tanks() <= 8) return false;
 
         if (ActiveMap.isMapGosu()) {
             int alphaSize = Alpha.get().size();

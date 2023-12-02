@@ -6,6 +6,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.beta.Beta;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 
@@ -29,8 +30,10 @@ public class SquadTransfersCommander extends Commander {
     }
 
     private static boolean shouldHaveBeta() {
+        if (EnemyWhoBreachedBase.numberOfAttacksOnBase() > 0) return true;
+
 //        return false;
-        return (A.supplyUsed(85) || Missions.isGlobalMissionAttack() || Count.ourCombatUnits() >= 30);
+        return (A.supplyUsed(85) || Missions.isGlobalMissionAttack() || Count.ourCombatUnits() >= 25);
     }
 
     private static void removeBeta() {

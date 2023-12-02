@@ -5,8 +5,8 @@ import atlantis.terran.repair.RepairAssignments;
 import atlantis.terran.repair.RepairableUnits;
 import atlantis.units.AUnit;
 
-public class CrucialRepairsNearby extends Manager {
-    public CrucialRepairsNearby(AUnit unit) {
+public class OldCrucialRepairsNearby extends Manager {
+    public OldCrucialRepairsNearby(AUnit unit) {
         super(unit);
     }
 

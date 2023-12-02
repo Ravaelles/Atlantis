@@ -21,26 +21,26 @@ public class ForbiddenByStreetGrid {
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         if (We.protoss() && A.supplyTotal() <= 10) return false;
         if (building.isBase() || building.isGasBuilding()) return false;
-        
+
         if (
             building.isMissileTurret() && Select.ourBuildingsWithUnfinished().inRadius(3, position).empty()
         ) return false;
 
         // =========================================================
 
-        if (building.isCombatBuilding()) {
-            if (position.tx() % 6 <= 1) return true;
-            if (position.ty() % 6 <= 1) return true;
-        }
-        else {
-            if (position.tx() % GRID_VALUE <= 1) return true;
-            if (position.ty() % GRID_VALUE <= 1) return true;
-        }
+//        if (building.isCombatBuilding()) {
+//            if (position.tx() % 6 <= 1) return fail("TX CB modulo");
+//            if (position.ty() % 6 <= 1) return fail("TY CB modulo");
+//        }
+//        else {
+            if (position.tx() % GRID_VALUE <= 1) return fail("TX modulo");
+            if (position.ty() % GRID_VALUE <= 1) return fail("TY modulo");
+//        }
 
-        if (building.isBarracks() || building.isFactory()) {
-            if (position.tx() % 3 <= 1) return true;
-            if (position.ty() % 3 <= 1) return true;
-        }
+//        if (building.isBarracks() || building.isFactory()) {
+//            if (position.tx() % 3 <= 1) return fail("TX Barracks & Factory modulo");
+//            if (position.ty() % 3 <= 1) return fail("TX Barracks & Factory modulo");
+//        }
 
         // =========================================================
 
@@ -53,8 +53,7 @@ public class ForbiddenByStreetGrid {
                 !position.translateByTiles(-1 - building.dimensionLeftTx(), 0).isWalkable()
                     && !position.translateByTiles(+1 + building.dimensionRightTx(), 0).isWalkable()
             ) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_VERTICALLY";
-                return true;
+                return fail("LEAVE_PLACE_VERTICALLY");
             }
         }
 
@@ -67,12 +66,16 @@ public class ForbiddenByStreetGrid {
                 !position.translateByTiles(0, -1 - building.dimensionUpTx()).isWalkable()
                     && !position.translateByTiles(0, +1 + building.dimensionDownTx()).isWalkable()
             ) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "LEAVE_PLACE_HORIZONTALLY";
-                return true;
+                return fail("LEAVE_PLACE_HORIZONTALLY");
             }
         }
 
         return false;
+    }
+
+    private static boolean fail(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 
     private static int buildingLeftTx(AUnitType building, APosition position) {

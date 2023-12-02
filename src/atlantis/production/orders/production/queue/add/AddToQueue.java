@@ -94,7 +94,7 @@ public class AddToQueue {
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
 
         if (Queue.get().addNew(index, productionOrder)) {
-            clearOtherExistingOfTheSameTypeIfNeeded(productionOrder);
+//            clearOtherExistingOfTheSameTypeIfNeeded(productionOrder);
 
 //            if (type.isBase()) {
 //                A.printStackTrace(A.now() + ": Queued BASE at " + position + " / natural: " + Bases.natural());

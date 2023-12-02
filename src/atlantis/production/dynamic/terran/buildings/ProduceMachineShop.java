@@ -28,7 +28,7 @@ public class ProduceMachineShop {
             if (Count.inProductionOrInQueue(Terran_Machine_Shop) == 0) {
 //                AddToQueue.maxAtATime(Terran_Machine_Shop, 1, ProductionOrderPriority.HIGH);
                 if (A.canAfford(Terran_Machine_Shop)) {
-                    ProduceAddon.buildNow(Terran_Machine_Shop);
+                    produce();
                 }
                 return;
             }
@@ -41,5 +41,10 @@ public class ProduceMachineShop {
 //                        || A.supplyUsed(70)
 //        ) {
 
+    }
+
+    private static boolean produce() {
+        return ProduceAddon.buildNow(Terran_Machine_Shop)
+            && AddToQueue.withHighPriority(Terran_Siege_Tank_Tank_Mode) != null;
     }
 }

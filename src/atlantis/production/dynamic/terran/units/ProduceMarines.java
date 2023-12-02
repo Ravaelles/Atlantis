@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -37,13 +38,15 @@ public class ProduceMarines {
 
         marines = Count.marines();
 
-        if (freeBarracks > 0 && A.hasMinerals(1000)) return forceProduceMarine();
+        if (A.hasMinerals(1100)) return forceProduceMarine();
 
-        if (marines <= 1 && A.hasMinerals(150)) return produceMarine();
+        if (!A.canAffordWithReserved(55, 0)) return false;
 
-        if (A.canAffordWithReserved(55, 0)) return false;
+        if (A.hasMinerals(100) && EnemyWhoBreachedBase.get() != null) return forceProduceMarine();
 
-        if (earlyGameAndWeAreWeak()) return produceMarine();
+        if (marines <= 1 && A.hasMinerals(150)) return forceProduceMarine();
+
+        if (earlyGameAndWeAreWeak()) return forceProduceMarine();
 
 //        if (marines == 0 && A.hasMinerals(100)) {
 //            return AddToQueue.maxAtATime(Terran_Marine, 1) != null;

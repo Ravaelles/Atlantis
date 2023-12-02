@@ -6,6 +6,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.DefineExactPositionForNewConstruction;
+import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.Requirements;
@@ -84,25 +85,7 @@ public class NewConstructionRequest {
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         if (positionToBuild == null) {
-            ErrorLog.printMaxOncePerMinute("Can't find place for `" + building + "`, " + order);
-//                A.printStackTrace("Can't find place for `" + building + "`, " + order);
-            if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
-                ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
-            }
-            else {
-                ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
-            }
-
-            if (order != null)
-                ErrorLog.printMaxOncePerMinute("(Max search distance was: " + order.maximumDistance() + ")");
-
-            if (order != null && order.maximumDistance() < 0) {
-                ErrorLog.printMaxOncePerMinute("(Max search distance was not defined - bug)");
-            }
-
-            newConstruction.cancel();
-            if (order != null) order.cancel();
-            return false;
+            return invalidNullPositionSoQuit(building, order, newConstruction);
         }
 
         // =========================================================
@@ -131,6 +114,32 @@ public class NewConstructionRequest {
         Queue.get().refresh();
 
         return true;
+    }
+
+    private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
+        ErrorLog.printMaxOncePerMinute("Can't find place for `" + building + "`, " + order);
+//                A.printStackTrace("Can't find place for `" + building + "`, " + order);
+        if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
+            ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
+        }
+        else {
+            ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
+        }
+
+//        ErrorLog.printMaxOncePerMinute("(Construction: " + newConstruction + ")");
+
+        if (order != null)
+            ErrorLog.printMaxOncePerMinute("(Max search distance was: " + order.maximumDistance() + ")");
+
+        if (order != null && order.maximumDistance() < 0) {
+            ErrorLog.printMaxOncePerMinute("(Max search distance was not defined - bug)");
+        }
+
+//        if (order != null) order.cancel();
+        AbstractPositionFinder.clearCache();
+        newConstruction.findPositionForNewBuilding();
+
+        return false;
     }
 
     private static boolean handleRequirementsNotFullfilledFor(AUnitType building) {

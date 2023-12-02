@@ -7,6 +7,8 @@ import atlantis.units.AUnitType;
 
 public class TooCloseToUnwalkable {
     public static boolean isTooCloseToUnwalkable(AUnitType building, APosition position) {
+        if (true) return false;
+
         if (building.isBase() || building.isCombatBuilding() || building.isGasBuilding()) return false;
 
         if (isTooClose(building, position)) return true;
@@ -16,11 +18,7 @@ public class TooCloseToUnwalkable {
     }
 
     protected static boolean isTooClose(AUnitType building, APosition position) {
-        APosition right = BuildingTileHelper.tileRightFrom(building, position);
-        if (
-            !right.isWalkable()
-                && !right.isBuildable()
-        ) return true;
+//        APosturn true;
 
         APosition left = BuildingTileHelper.tileLeftFrom(building, position);
         if (

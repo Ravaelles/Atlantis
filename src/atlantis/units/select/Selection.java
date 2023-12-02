@@ -350,6 +350,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection specialAction() {
+        return cloneByRemovingIf(
+            (unit -> unit.lastActionMoreThanAgo(100, Actions.MOVE_SPECIAL)), "specialAction"
+        );
+    }
+
     /**
      * Selects units being infantry.
      */

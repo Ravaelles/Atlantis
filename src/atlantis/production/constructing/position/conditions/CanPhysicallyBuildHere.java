@@ -3,6 +3,7 @@ package atlantis.production.constructing.position.conditions;
 import atlantis.Atlantis;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.map.position.APosition;
+import atlantis.map.region.MainRegion;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -29,7 +30,8 @@ public class CanPhysicallyBuildHere {
 
         // Fix for bases & bunkers - allow in unknown locations
         if (building.isBase() && (!position.isExplored() || !position.isPositionVisible())) return true;
-        if (building.isCombatBuilding() && !position.isExplored()) return true;
+//        if (building.isCombatBuilding() && !position.isExplored()) return true;
+        if (!position.isExplored() && position.regionsMatch(MainRegion.mainRegion())) return true;
 //        if (
 //            (!position.isExplored() || !position.isPositionVisible())
 //                &&

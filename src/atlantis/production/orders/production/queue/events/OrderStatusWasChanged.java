@@ -22,6 +22,8 @@ public class OrderStatusWasChanged {
     }
 
     private static Orders sameTypeTech(ProductionOrder order) {
+        if (Queue.get() == null) return new Orders();
+
         return Queue.get().allOrders().techType(order.tech()).exclude(order);
     }
 

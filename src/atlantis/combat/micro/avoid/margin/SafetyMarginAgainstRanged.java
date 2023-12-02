@@ -26,6 +26,9 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             else if (defender.isWraith()) {
                 criticalDist += BonusForWraith.bonusForWraith(attacker, defender);
             }
+            else if (defender.isScienceVessel()) {
+                criticalDist += 1 + defender.woundPercent() / 25.0;
+            }
         }
 
         // AIR unit

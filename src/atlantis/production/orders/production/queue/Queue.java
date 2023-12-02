@@ -9,8 +9,7 @@ public class Queue extends AbstractQueue {
 
     // =========================================================
 
-    protected Queue() {
-    }
+    protected Queue() {}
 
     // =========================================================
 

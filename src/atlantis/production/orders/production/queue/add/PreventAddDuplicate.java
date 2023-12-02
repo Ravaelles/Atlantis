@@ -11,7 +11,7 @@ import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class PreventAddDuplicate {
-    public static final int MAX_NONCOMPLETED_ORDERS_AT_ONCE = 30;
+    public static final int MAX_NONCOMPLETED_ORDERS_AT_ONCE = 20;
 
     protected static boolean preventExcessiveOrInvalidOrders(AUnitType type, HasPosition position) {
         assert type != null;
@@ -51,7 +51,12 @@ public class PreventAddDuplicate {
     }
 
     private static boolean tooManyDepots(AUnitType type, HasPosition position) {
-        return We.terran() && CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2;
+        if (We.terran() && CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2) {
+            ErrorLog.printMaxOncePerMinute("Exceeded DEPOTS allowed: " + CountInQueue.count(AUnitType.Terran_Supply_Depot));
+            return true;
+        }
+
+        return false;
     }
 
     private static boolean tooManyBunkers(AUnitType type, HasPosition position) {
@@ -62,7 +67,8 @@ public class PreventAddDuplicate {
             return false;
         }
 
-        return Count.existingOrPlannedBuildingsNear(AUnitType.Terran_Bunker, 11, position) > 0;
+        return Count.existingOrPlannedBuildingsNear(AUnitType.Terran_Bunker, 13, position) > 0
+            || Count.withPlanned(AUnitType.Terran_Bunker) >= Count.basesWithPlanned();
     }
 
     private static boolean tooManyOrdersInGeneral(AUnitType type) {

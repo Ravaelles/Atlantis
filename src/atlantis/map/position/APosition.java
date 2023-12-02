@@ -399,4 +399,8 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
     public APosition bottom() {
         return APosition.create(tx(), ty() + 1);
     }
+
+    public boolean isOutOfBounds() {
+        return tx() < 0 || tx() >= AMap.getMapWidthInTiles() || ty() < 0 || ty() >= AMap.getMapHeightInTiles();
+    }
 }

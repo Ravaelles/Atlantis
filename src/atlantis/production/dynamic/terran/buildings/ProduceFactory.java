@@ -3,6 +3,7 @@ package atlantis.production.dynamic.terran.buildings;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
@@ -24,6 +25,8 @@ public class ProduceFactory {
 
         int existing = Count.existing(Terran_Factory);
         int existingAndPlanned = Count.withPlanned(Terran_Factory);
+
+        if (ProduceFactory.secondFactory()) return true;
 
         if (!A.canAfford(350, 200) && existingAndPlanned >= 1) return false;
 
@@ -62,6 +65,21 @@ public class ProduceFactory {
                     return true;
                 }
             }
+        }
+
+        return false;
+    }
+
+    public static boolean secondFactory() {
+        if (
+            Select.ourFree(Terran_Factory).isEmpty()
+                && Count.factories() == 1
+                && Count.withPlanned(Terran_Factory) <= 1
+        ) {
+            if (
+                A.canAfford(370, 160)
+                    || (A.canAfford(270, 140) && CountInQueue.bases() == 0)
+            ) return produce() != null;
         }
 
         return false;

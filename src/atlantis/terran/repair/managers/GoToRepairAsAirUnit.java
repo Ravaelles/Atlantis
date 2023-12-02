@@ -1,6 +1,7 @@
 package atlantis.terran.repair.managers;
 
 import atlantis.architecture.Manager;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -16,7 +17,11 @@ public class GoToRepairAsAirUnit extends Manager {
 
         return unit.isAir()
             && unit.canBeRepaired()
-            && (unit.hp() <= minHealth() || ((repairer = unit.repairer()) != null && repairer.distTo(unit) <= 1))
+            && (
+                unit.hp() <= minHealth()
+                    || ((repairer = unit.repairer()) != null && repairer.distTo(unit) <= 1)
+                    || RepairAssignments.countRepairersForUnit(unit) >= 2
+        )
             && !unit.isRunning();
     }
 

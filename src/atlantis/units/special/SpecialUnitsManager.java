@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.protoss.PreventForMissionSparta;
 import atlantis.combat.micro.protoss.ProtossShieldBattery;
 import atlantis.combat.micro.terran.TerranCloakableManager;
-import atlantis.combat.micro.terran.TerranScienceVessel;
+import atlantis.combat.micro.terran.vessel.TerranScienceVessel;
 import atlantis.combat.micro.terran.TerranVulture;
 import atlantis.combat.micro.terran.wraith.TerranWraith;
 import atlantis.combat.micro.terran.infantry.TerranInfantry;

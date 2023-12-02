@@ -68,12 +68,15 @@ public class AdvanceAsALeader extends MissionManager {
         if (!unit.squad().isCohesionPercentOkay() && A.seconds() % 4 <= 1) {
             if (unit.friendsNear().inRadius(5, unit).atLeast(5)) {
                 unit.holdPosition("LeaderWaiting");
+                return true;
             }
             else {
                 AUnit nearestFriend = unit.friendsNear().combatUnits().groundUnits().nearestTo(unit);
-                unit.move(nearestFriend, Actions.MOVE_FORMATION, "LeaderMergeFriend");
+                if (nearestFriend != null) {
+                    unit.move(nearestFriend, Actions.MOVE_FORMATION, "LeaderMergeFriend");
+                    return true;
+                }
             }
-            return true;
         }
 
         return false;

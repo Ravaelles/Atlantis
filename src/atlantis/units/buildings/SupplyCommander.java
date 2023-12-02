@@ -14,6 +14,7 @@ import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class SupplyCommander extends Commander {
     private int supplyTotal;
@@ -30,20 +31,27 @@ public class SupplyCommander extends Commander {
         supplyTotal = AGame.supplyTotal();
 
         if (supplyTotal >= 200) return;
+//        if (A.supplyTotal() <= 50 && A.hasFreeSupply(4)) return;
         if (A.hasFreeSupply(10)) return;
-        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
-        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 3) return;
+
+//        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
+//        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 2) return;
 
         requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
-        if (tooManyNotStartedConstructions()) return;
-
-        if (!A.hasFreeSupply(3) && A.supplyUsed() <= 170 && A.hasMinerals(300)) {
-            if (requestedConstructionsOfSupply <= 2 + A.supplyUsed() / 50) {
-                requestAdditionalSupply();
-                return;
-            }
+        if (tooManyNotStartedConstructions()) {
+            ErrorLog.printMaxOncePerMinute(
+                "Too many not started constructions of supply: " + requestedConstructionsOfSupply
+            );
+            return;
         }
+
+//        if (!A.hasFreeSupply(3) && A.supplyUsed() <= 170 && A.hasMinerals(300)) {
+//            if (requestedConstructionsOfSupply <= 2 + A.supplyUsed() / 50) {
+//                requestAdditionalSupply();
+//                return;
+//            }
+//        }
 
         if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 50) return;
 
@@ -130,7 +138,8 @@ public class SupplyCommander extends Commander {
     private boolean tooManyNotStartedConstructions() {
         if (requestedConstructionsOfSupply >= 3) return true;
 
-        return AGame.supplyFree() != 0 && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.SUPPLY) >= 3;
+        return false;
+//        return ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.SUPPLY) >= 4;
     }
 
     private int requestedConstructionsOfSupply() {
@@ -142,7 +151,11 @@ public class SupplyCommander extends Commander {
 //        return Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY);
 //        System.out.println("A= " + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
 //        System.out.println("B = " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
-        return Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size();
+        return Math.max(
+//            Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size(),
+            ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),
+            CountInQueue.count(AtlantisRaceConfig.SUPPLY, 10)
+        );
 //        return ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
 
 //        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisRaceConfig.SUPPLY);

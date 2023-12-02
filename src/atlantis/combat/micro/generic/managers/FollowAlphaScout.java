@@ -36,7 +36,7 @@ public class FollowAlphaScout extends Manager {
 
         if (basePoint == null || focus == null) return null;
 
-        return basePoint.translateTilesTowards(6, focus);
+        return basePoint.translateTilesTowards(10, focus);
     }
 
     public Manager handle() {

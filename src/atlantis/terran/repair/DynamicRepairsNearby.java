@@ -46,10 +46,10 @@ public class DynamicRepairsNearby extends Manager {
 
                 if (repairable.distTo(unit) > 0.3) {
                     repairable.move(unit, Actions.MOVE_REPAIR, "ToRepairer");
+                    return true;
                 }
             }
 
-            return true;
         }
 
         return false;

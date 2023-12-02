@@ -32,7 +32,7 @@ public class IsReadyToProduceOrder {
             if (EnemyWhoBreachedBase.get() != null) return false;
         }
 
-        if (!order.supplyRequirementFulfilled()) return false;
+        if (!order.supplyRequirementFulfilled() && !A.canAfford(500, 300)) return false;
 //        if (!canAffordWithReserved(order)) return false;
         if (!order.checkIfHasWhatRequired()) return false;
 
@@ -44,6 +44,8 @@ public class IsReadyToProduceOrder {
     public static boolean canAffordWithReserved(ProductionOrder order) {
 //        int mineralsAvailable = mineralsAvailable(order);
 //        int gasAvailable = gasAvailable(order);
+
+        if (order.isBuilding()) return true;
 
         return (A.hasMinerals(600) || mineralsAvailable(order) >= order.mineralPrice())
             && (A.hasGas(500) || gasAvailable(order) >= order.gasPrice());

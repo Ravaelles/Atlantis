@@ -41,10 +41,31 @@ public class SiegeAgainstSpecificEnemies extends Manager {
         double minDist = enemy != null && enemy.isMoving() && enemy.isFacing(unit) ? 15.5 : 11.98;
         if (enemies.notEmpty()) {
             if (unit.woundHp() <= 15 || enemies.inRadius(2 + unit.id() % 4, unit).notEmpty()) {
-                return usedManager(ForceSiege.forceSiegeNow(this, "KeyEnemy"));
+                return wantsToSiegeAgainst(enemy, enemies);
             }
         }
 
         return null;
+    }
+
+    private Manager wantsToSiegeAgainst(AUnit enemy, Selection enemies) {
+//        Selection otherEnemyTypes = enemies.excludeTypes(enemy.type());
+
+        if (dangerousEnemiesCloseSoDontSiege()) return null;
+
+        return usedManager(ForceSiege.forceSiegeNow(this, "KeyEnemy"));
+    }
+
+    private boolean dangerousEnemiesCloseSoDontSiege() {
+        int minEnemiesToCancelSiege = Math.max(
+            1, (unit.isWounded() ? 1 : 2) - unit.friendsNear().tanks().size() / 4
+        );
+
+        return unit.enemiesNear().inRadius(13, unit).ofType(
+            AUnitType.Protoss_Dark_Templar,
+            AUnitType.Protoss_High_Templar,
+            AUnitType.Protoss_Archon,
+            AUnitType.Zerg_Ultralisk
+        ).atLeast(minEnemiesToCancelSiege);
     }
 }

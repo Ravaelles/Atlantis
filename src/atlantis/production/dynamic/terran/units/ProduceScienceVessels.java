@@ -27,7 +27,7 @@ public class ProduceScienceVessels {
     }
 
     private static boolean produceScienceVessels() {
-        int base = (A.canAfford(700, 450) || A.supplyTotal() >= 130) ? 2 : 1;
+        int base = (A.canAfford(700, 450) || A.supplyTotal() >= 90) ? 2 : 1;
 
         int limit = Math.max(
             base + (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT ? 1 : 0),

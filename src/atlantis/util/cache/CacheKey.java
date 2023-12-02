@@ -1,12 +1,14 @@
 package atlantis.util.cache;
 
 import atlantis.game.A;
+import atlantis.map.base.ABaseLocation;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
 import atlantis.util.log.ErrorLog;
+import bwta.BaseLocation;
 
 import java.util.Arrays;
 
@@ -37,6 +39,8 @@ public class CacheKey {
         if (object instanceof APosition) return ((APosition) object).toStringPixels();
         if (object instanceof Construction) return ((Construction) object).id() + "";
         if (object instanceof Selection) return ((Selection) object).unitIds();
+        if (object instanceof BaseLocation) return ((BaseLocation) object).toString();
+        if (object instanceof ABaseLocation) return ((ABaseLocation) object).toString();
 
         ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
             "Unknown object to CacheKey: " + object.getClass().getName()
