@@ -22,8 +22,8 @@ public class SupplyDepotPositionFinder {
 //        if (Count.ofType(Terran_Supply_Depot) <= 3) return null;
 
         return cache.get(
-            CacheKey.create("findPosition", construction, nearTo),
-            81,
+            CacheKey.create("findPosition", builder, construction, nearTo),
+            91,
             () -> findNewPosition(builder, construction, nearTo)
         );
     }
@@ -38,7 +38,7 @@ public class SupplyDepotPositionFinder {
         if (A.supplyTotal() <= 30) return Select.mainOrAnyBuilding();
 
         if (A.chance(60)) return Select.ourOfType(Terran_Supply_Depot).last();
-        else return Select.ourBuildings().havingAntiGroundWeapon().random();
+        else return Select.ourBuildings().random();
 
 //        Positions<APosition> positions = BuildablePositionsAroundMainBase.get()
 //            .sortByDistanceTo(Select.mainOrAnyBuilding(), true);

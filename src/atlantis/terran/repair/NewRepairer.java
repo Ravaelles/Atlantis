@@ -4,6 +4,7 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.log.ErrorLog;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -39,11 +40,14 @@ public class NewRepairer {
             return Select.from(protectors, "protectors").nearestTo(unitToRepair);
         }
 
-        // If no free protector was found, return normal worker.
-        else {
-            return workers
-                .exclude(unitToRepair)
-                .nearestTo(unitToRepair);
-        }
+//        // If no free protector was found, return normal worker.
+//        else {
+//            return workers
+//                .exclude(unitToRepair)
+//                .nearestTo(unitToRepair);
+//        }
+
+//        ErrorLog.printMaxOncePerMinute("No free repairer found for " + unitToRepair);
+        return null;
     }
 }

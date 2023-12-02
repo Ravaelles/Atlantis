@@ -16,6 +16,7 @@ public class CloserToLeader extends MissionManager {
     @Override
     public boolean applies() {
         return !unit.isAir()
+            && squad.leader() != null
             && !squad.isLeader(unit)
 //            && unit.mission().focusPoint() != null
             && A.seconds() % 6 <= 3

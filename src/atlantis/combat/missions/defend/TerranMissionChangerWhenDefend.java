@@ -32,18 +32,32 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (EnemyWhoBreachedBase.get() != null) return false;
 
+        if (A.minerals() >= 2000) {
+            if (DEBUG) reason = "Abundance of minerals";
+            return true;
+        }
+
         if (A.seconds() >= 600 && Atlantis.LOST >= 15 && Count.tanks() <= 8) return false;
 
         if (ActiveMap.isMapGosu()) {
             int alphaSize = Alpha.get().size();
             if (alphaSize <= 15) return false;
             if (AGame.killsLossesResourceBalance() < 1800) return false;
-            else if (alphaSize >= 23) return true;
+            else if (alphaSize >= 23) {
+                if (DEBUG) reason = "Alpha size big enough";
+                return true;
+            }
         }
 
-        if (A.seconds() <= 450 && AGame.killsLossesResourceBalance() >= 600) return true;
+        if (A.seconds() <= 450 && AGame.killsLossesResourceBalance() >= 600) {
+            if (DEBUG) reason = "Early game and killed/lost resource balance";
+            return true;
+        }
 
-        if (Enemy.terran()) return TerranMissionChangerWhenDefendVsTerran.get().shouldChangeMissionToAttack();
+        if (Enemy.terran() && TerranMissionChangerWhenDefendVsTerran.get().shouldChangeMissionToAttack()) {
+            if (DEBUG) reason = "vs Terran change to attack";
+            return true;
+        }
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
 

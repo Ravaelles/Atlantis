@@ -86,7 +86,8 @@ public class AvoidCombatBuilding extends Manager {
         double doNothingMargin = 1.5;
 
         if (distTo <= criticalDist + doNothingMargin) {
-            unit.holdPosition("HoldVsBuilding");
+//            unit.holdPosition("HoldVsBuilding");
+            unit.move(Select.mainOrAnyBuilding(), Actions.MOVE_AVOID, "AvoidCB");
             return usedManager(this);
         }
 

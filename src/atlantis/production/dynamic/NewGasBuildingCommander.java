@@ -45,7 +45,13 @@ public class NewGasBuildingCommander extends Commander {
 
     private static boolean hasABaseWithFreeGeyser() {
         for (AUnit base : Select.ourBases().list()) {
-            if (Select.geysers().inRadius(13, base).isNotEmpty()) {
+//            for (AUnit geyser : Select.geysers().inRadius(10, base).list()) {
+//            }
+            if (Select.ourOfType(AtlantisRaceConfig.GAS_BUILDING).inRadius(10, base).isNotEmpty()) {
+                return false;
+            }
+
+            if (Select.geysers().inRadius(10, base).isNotEmpty()) {
                 return true;
             }
         }

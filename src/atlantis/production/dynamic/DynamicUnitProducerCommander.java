@@ -14,7 +14,8 @@ import atlantis.util.We;
 public class DynamicUnitProducerCommander extends Commander {
     @Override
     public boolean applies() {
-        return Queue.get().nonCompleted().forCurrentSupply().size() <= (2 + A.supplyUsed() / 35);
+        return A.minerals() >= 600;
+//            || Queue.get().nonCompleted().forCurrentSupply().size() <= (2 + A.supplyUsed() / 35);
     }
 
     @Override

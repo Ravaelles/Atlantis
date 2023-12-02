@@ -9,8 +9,10 @@ import atlantis.map.base.define.DefineNatural;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
+import atlantis.map.region.MainRegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 import bwem.ChokePoint;
 import jbweb.JBWEB;
@@ -34,13 +36,14 @@ public class Chokes {
             "mainChoke",
             -1,
             () -> AChoke.from(JBWEB.getMainChoke())
-//                    AUnit mainBase = Select.mainBase();
-//                    if (mainBase == null) {
+//            () -> {
+//                    AUnit main = Select.main();
+//                    if (main == null) {
 //                        return null;
 //                    }
 //
 //                    // Define region where our main base is
-//                    ARegion mainRegion = getRegion(mainBase.position());
+//                    ARegion mainRegion = MainRegion.mainRegion();
 //                    if (mainRegion == null) {
 //                        return null;
 //                    }
@@ -117,7 +120,11 @@ public class Chokes {
                 }
 
                 for (AChoke choke : naturalRegion.chokes()) {
-                    if (choke.center().distTo(chokeForMainBase) > 1) {
+                    if (
+                        choke.width() <= 7
+                            && choke.center().distTo(chokeForMainBase) > 1
+                            && choke.center().distTo(chokeForMainBase) <= 15
+                    ) {
                         return choke;
                     }
                 }
@@ -128,9 +135,7 @@ public class Chokes {
     }
 
     public static AChoke nearestChoke(HasPosition position) {
-        if (position == null) {
-            return null;
-        }
+        if (position == null) return null;
 
         return (AChoke) cache.get(
             "nearestChoke:" + position.toStringPixels(),
@@ -140,7 +145,12 @@ public class Chokes {
                 AChoke nearest = null;
 
                 for (AChoke chokePoint : chokes()) {
-                    double dist = position.position().groundDistanceTo(chokePoint.center()) - (chokePoint.width() / 64.0);
+                    if (
+                        chokePoint.width() >= 8 || chokePoint.position().isCloseToMapBounds()
+                    ) continue;
+
+//                    double dist = position.position().groundDistanceTo(chokePoint.center()) - (chokePoint.width() / 64.0);
+                    double dist = position.position().groundDistanceTo(chokePoint.center());
                     if (dist < nearestDist) {
                         nearestDist = dist;
                         nearest = chokePoint;
@@ -179,9 +189,7 @@ public class Chokes {
 
     public static AChoke enemyMainChoke() {
         AUnit enemyMain = EnemyUnits.enemyBase();
-        if (enemyMain == null) {
-            return null;
-        }
+        if (enemyMain == null) return null;
 
         return (AChoke) cache.get(
             "enemyMainChoke",

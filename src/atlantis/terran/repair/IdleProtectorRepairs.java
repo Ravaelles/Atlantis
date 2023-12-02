@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import atlantis.units.workers.GatherResources;
 
 public class IdleProtectorRepairs extends Manager {
 
@@ -32,6 +33,8 @@ public class IdleProtectorRepairs extends Manager {
             if (repairAir(4)) return usedManager(this);
         }
 
+        RepairAssignments.removeRepairer(unit);
+        (new GatherResources(unit)).forceHandle();
         return null;
     }
 

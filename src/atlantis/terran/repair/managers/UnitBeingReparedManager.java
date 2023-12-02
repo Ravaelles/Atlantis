@@ -19,7 +19,7 @@ public class UnitBeingReparedManager extends Manager {
         return unit.isMechanical()
             && unit.isWounded()
             && unit.isTerran()
-            && !unit.isRunning()
+//            && !unit.isRunning()
             && (repairer = unit.repairer()) != null
             && (
             (enemiesNear = unit.enemiesNear().groundUnits().canAttack(unit, -0.2)).isEmpty()

@@ -22,6 +22,8 @@ public class ChangeLocationIfRanTooLong extends Manager {
         if (unit.enemiesNear().air().notEmpty()) return false;
         if (unit.lastActionMoreThanAgo(30 * 8, Actions.MOVE_SPECIAL)) return false;
 
+        if (unit.hp() <= 95 && unit.lastUnderAttackLessThanAgo(30 * 6)) return true;
+
         Selection enemiesNear = unit.enemiesNear();
 
         if (enemiesNear.nonBuildings().canBeAttackedBy(unit, 0.95).notEmpty()) return false;

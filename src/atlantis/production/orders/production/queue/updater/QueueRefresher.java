@@ -64,7 +64,9 @@ public class QueueRefresher {
         // Ready to produce
         if (IsReadyToProduceOrder.isReadyToProduce(order)) return markAsReadyToProduce(order);
 
-        if (!IsReadyToProduceOrder.canAffordWithReserved(order)) noMoreNewReadyOrdersFromNowOn = true;
+        if (
+            !A.hasMinerals(550) && !IsReadyToProduceOrder.canAffordWithReserved(order)
+        ) noMoreNewReadyOrdersFromNowOn = true;
 
         return null;
 

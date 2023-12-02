@@ -10,7 +10,10 @@ public class TerranMissionChangerWhenDefendVsTerran {
     }
 
     public boolean shouldChangeMissionToAttack() {
-        if (A.hasMinerals(800)) return true;
+        if (A.hasMinerals(800)) {
+            if (TerranMissionChangerWhenDefend.DEBUG) TerranMissionChangerWhenDefend.reason = "vT - lots of minerals";
+            return true;
+        }
 
         int ourRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
 
@@ -18,6 +21,7 @@ public class TerranMissionChangerWhenDefendVsTerran {
 
         if (Count.tanks() <= 4) return false;
 
+        if (TerranMissionChangerWhenDefend.DEBUG) TerranMissionChangerWhenDefend.reason = "vT - lets do this";
         return true;
     }
 }

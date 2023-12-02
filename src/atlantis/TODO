@@ -1,10 +1,10 @@
 ### BUGS ###
 
-!.----- No matrix on tanks, 200/200
-.- Two SV
-.!--- Build 2nd Factory
-?----- Force Wraiths to wait on repair. PERIOD.
-?---- Repairers (Crucial / Kind / Nearby) dont repair closest wounded, tanks fall dead
+---- AdvanceStandard - disallow when no tanks near
+
+!!!!!!!!!!.- More protectors per tank
+- Exclude builders for repairers
+!!!!!!!!!!!!!!.- Make Vessel follow not scout, but closest hidden
 
 - Still no Turrets against Scouts
 - No bunker no turret at natural

@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ProtectorCommander extends Commander {
-    private static final int MAX_PROTECTORS = 5;
+    private static final int MAX_PROTECTORS = 9;
 
     // =========================================================
 
@@ -82,7 +82,7 @@ public class ProtectorCommander extends Commander {
     }
 
     private static int maxProtectors() {
-        if (!A.hasMinerals(0)) {
+        if (A.supplyUsed() <= 40 && !A.hasMinerals(0)) {
             return 2;
         }
 
@@ -90,11 +90,11 @@ public class ProtectorCommander extends Commander {
 
         if (workers <= 20) {
             if (!A.hasMinerals(1)) {
-                return 3;
+                return 4;
             }
-            else if (!A.hasMinerals(10)) {
-                return Math.min(workers / 2, MAX_PROTECTORS);
-            }
+//            else if (!A.hasMinerals(10)) {
+//                return Math.min(workers / 2, MAX_PROTECTORS);
+//            }
         }
 
         return MAX_PROTECTORS;
@@ -165,24 +165,19 @@ public class ProtectorCommander extends Commander {
     // =========================================================
 
     public static void addProtectorsForUnit(AUnit unitToProtect, int numberOfProtectorsToAssign) {
-        if (unitToProtect == null || unitToProtect.isDead()) {
-            return;
-        }
+        if (unitToProtect == null || unitToProtect.isDead()) return;
 
         numberOfProtectorsToAssign = numberOfProtectorsToAssign - RepairAssignments.countProtectorsFor(unitToProtect);
 
-        if (numberOfProtectorsToAssign <= 0) {
-            return;
-        }
+        if (numberOfProtectorsToAssign <= 0) return;
 
         for (int i = 0; i < numberOfProtectorsToAssign; i++) {
             AUnit worker = NewRepairer.repairerFor(
                 unitToProtect,
                 unitToProtect.isBunker() || unitToProtect.isTank()
             );
-            if (worker != null) {
-                RepairAssignments.addProtector(worker, unitToProtect);
-            }
+
+            if (worker != null) RepairAssignments.addProtector(worker, unitToProtect);
         }
     }
 }

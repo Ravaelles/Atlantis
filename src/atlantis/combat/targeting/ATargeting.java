@@ -76,13 +76,13 @@ public class ATargeting extends HasUnit {
                 .havingPosition()
                 .canBeAttackedBy(unit, 0)
                 .nearestTo(unit);
-            if (enemy != null && !unit.isAir()) {
-                ErrorLog.printMaxOncePerMinute(
-                    "DefineTarget fix for " + unit
-                        + ", (was null), chosen " + enemy
-                        + " maxDistFromEnemy = " + maxDistFromEnemy
-                );
-            }
+//            if (enemy != null && !unit.isAir()) {
+//                ErrorLog.printMaxOncePerMinute(
+//                    "DefineTarget fix for " + unit
+//                        + ", (was null), chosen " + enemy
+//                        + " maxDistFromEnemy = " + maxDistFromEnemy
+//                );
+//            }
         }
 
 //        if (enemy == null) {

@@ -48,8 +48,9 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
             return usedManager(this);
         }
 
-        if (unit.nearestOurTankDist() >= 4) {
-            unit.move(unit.nearestOurTank(), Actions.MOVE_FORMATION, "CloserToTank");
+        AUnit target = unit.nearestOurTank();
+        if (target != null && unit.distTo(target) >= 4) {
+            unit.move(target, Actions.MOVE_FORMATION, "CloserToTank");
             return usedManager(this);
         }
 

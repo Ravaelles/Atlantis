@@ -1,11 +1,11 @@
 package atlantis.combat.missions.attack;
 
+import atlantis.Atlantis;
 import atlantis.combat.missions.MissionDecisions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.production.dynamic.terran.tech.SiegeMode;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -35,8 +35,17 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
-        if (enemyHasDefensiveBuildingsAndWeDontHaveEnoughTanks()) {
+        if (A.minerals() >= 2000) {
+            return false;
+        }
+
+        if (enemyHasDefensiveBuildingsAndWeArentStrongEnough()) {
             if (DEBUG) reason = "Not enough tanks to break defences";
+            return true;
+        }
+
+        if (notEnoughTanksAndNotEarlyGame()) {
+            if (DEBUG) reason = "Not enough tanks to attack safely";
             return true;
         }
 
@@ -66,6 +75,10 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
         return false;
     }
 
+    private boolean notEnoughTanksAndNotEarlyGame() {
+        return !Enemy.terran() && A.seconds() >= 500 && Atlantis.LOST >= 10 && Count.tanks() <= 6;
+    }
+
     private boolean enemyHasHiddenUnitsAndWeDontHaveEnoughDetection() {
         if (Count.ofType(AUnitType.Terran_Science_Vessel) > 0) return false;
 
@@ -76,7 +89,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
         return false;
     }
 
-    private boolean enemyHasDefensiveBuildingsAndWeDontHaveEnoughTanks() {
+    private boolean enemyHasDefensiveBuildingsAndWeArentStrongEnough() {
         int ourCombatUnits = Count.ourCombatUnits();
 
         if (

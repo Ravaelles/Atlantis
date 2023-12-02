@@ -32,6 +32,8 @@ public class DefineNatural {
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
     public static ABaseLocation naturalIfMainIsAt(APosition nearestTo) {
+        if (nearestTo == null) return null;
+
         return (ABaseLocation) cache.get(
             "natural:" + nearestTo,
             -1,
@@ -41,13 +43,11 @@ public class DefineNatural {
                 baseLocations.addPositions(BaseLocations.baseLocations());
                 baseLocations.sortByGroundDistanceTo(nearestTo, true);
 
-                AUnit main = Select.mainOrAnyBuilding();
-
-                if (main == null) return null;
+//                AUnit main = Select.mainOrAnyBuilding();
 
                 for (ABaseLocation baseLocation : baseLocations.list()) {
 //            if (baseLocation.isStartLocation() || !nearestTo.hasPathTo(baseLocation.position())) {
-                    if (main.distTo(baseLocation) <= 6 || !nearestTo.hasPathTo(baseLocation.position())) {
+                    if (nearestTo.distTo(baseLocation) <= 6 || !nearestTo.hasPathTo(baseLocation.position())) {
                         continue;
                     }
 

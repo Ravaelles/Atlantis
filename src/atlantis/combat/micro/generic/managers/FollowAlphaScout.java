@@ -4,6 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.attack.focus.MissionAttackFocusPoint;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -19,24 +21,32 @@ public class FollowAlphaScout extends Manager {
     public boolean applies() {
         followPoint = getFollowPoint();
 
-        if (followPoint != null && followPoint.distTo(unit) < 15) {
+        if (followPoint != null && followPoint.distTo(unit) < 20) {
             return true;
         }
 
         return followPoint != null;
     }
 
-    private static HasPosition getFollowPoint() {
+    private HasPosition getFollowPoint() {
         AUnit squadScout = Alpha.get().squadScout();
 
         if (squadScout == null) return null;
 
-        AUnit basePoint = squadScout;
+        HasPosition basePoint = squadScout;
         AFocusPoint focus = squadScout.mission().focusPoint();
 
         if (basePoint == null || focus == null) return null;
 
-        return basePoint.translateTilesTowards(10, focus);
+        basePoint = basePoint.translatePercentTowards(50, unit.squadCenter());
+        basePoint = basePoint.translateTilesTowards(10, focus);
+
+        AUnit undetected = EnemyUnits.discovered().inRadius(25, unit).havingWeapon().effUndetected().first();
+        if (undetected != null) {
+            basePoint = basePoint.translatePercentTowards(undetected, 85);
+        }
+
+        return basePoint;
     }
 
     public Manager handle() {

@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.AntiAirBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -31,11 +32,12 @@ public class TerranMissileTurret extends AntiAirBuildingCommander {
         if (Count.existingOrInProductionOrInQueue(type()) >= 3) return false;
 
         if (!Have.existingOrPlannedOrInQueue(type(), position, inRadius)) {
-            AddToQueue.withTopPriority(type(), position).setMaximumDistance(8);
+            ProductionOrder order = AddToQueue.withTopPriority(type(), position);
+            if (order != null) order.setMaximumDistance(8);
 //            AAntiAirBuildingRequests.requestCombatBuildingAntiAir(position);
 //            System.err.println("@ " + A.now() + " - MISSILE TURRET ENQUEUED = "
 //                + Have.existingOrPlannedOrInQueue(type(), position, inRadius));
-            return true;
+            return order != null;
         }
 
         return false;

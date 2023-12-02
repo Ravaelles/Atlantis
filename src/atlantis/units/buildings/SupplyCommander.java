@@ -40,9 +40,9 @@ public class SupplyCommander extends Commander {
         requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
         if (tooManyNotStartedConstructions()) {
-            ErrorLog.printMaxOncePerMinute(
-                "Too many not started constructions of supply: " + requestedConstructionsOfSupply
-            );
+//            ErrorLog.printMaxOncePerMinute(
+//                "Too many not started constructions of supply: " + requestedConstructionsOfSupply
+//            );
             return;
         }
 
@@ -78,18 +78,18 @@ public class SupplyCommander extends Commander {
                     requestAdditionalSupply();
                 }
             }
-            else if (supplyTotal <= 43) {
-                if (supplyFree <= 5 && noSuppliesBeingBuilt) {
+            else if (supplyTotal <= 46) {
+                if (supplyFree <= 8 && noSuppliesBeingBuilt || supplyFree <= 1) {
                     requestAdditionalSupply();
                 }
             }
             else if (supplyTotal <= 70) {
-                if (supplyFree <= 8 && suppliesBeingBuilt <= 1) {
+                if (supplyFree <= 11 && suppliesBeingBuilt <= 1 || supplyFree <= 1) {
                     requestAdditionalSupply();
                 }
             }
             else if (supplyTotal <= 170) {
-                if (supplyFree <= 12 && suppliesBeingBuilt <= 1) {
+                if (supplyFree <= 13 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
                 }
             }
@@ -113,12 +113,12 @@ public class SupplyCommander extends Commander {
 //            + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size()
 //        );
 
-        if (requestedConstructionsOfSupply >= 2) {
+        if (requestedConstructionsOfSupply >= 3) {
             System.err.println("TOO MANY REQUESTED SUPPLIES: " + requestedConstructionsOfSupply);
             return;
         }
 
-        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 2) {
+        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 3) {
             System.err.println("EXIT!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
             return;
         }
@@ -132,7 +132,7 @@ public class SupplyCommander extends Commander {
         }
 
         // Terran + Protoss
-        AddToQueue.withHighPriority(AtlantisRaceConfig.SUPPLY);
+        AddToQueue.withTopPriority(AtlantisRaceConfig.SUPPLY);
     }
 
     private boolean tooManyNotStartedConstructions() {
