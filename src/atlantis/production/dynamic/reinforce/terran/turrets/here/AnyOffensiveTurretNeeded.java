@@ -48,6 +48,6 @@ public class AnyOffensiveTurretNeeded {
     }
 
     private boolean alreadyHaveTurretNear(HasPosition position) {
-        return Count.ourOfTypeWithUnfinished(Terran_Missile_Turret, position, 7) > 0;
+        return Count.ourWithUnfinished(Terran_Missile_Turret, position, 7) > 0;
     }
 }

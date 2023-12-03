@@ -53,12 +53,12 @@ public class OnEveryFrameHelper {
 
 //        printQueue();
 
-        validateNextDepotPosition();
+//        validateNextDepotPosition();
     }
 
-    private static void validateNextDepotPosition() {
-        SupplyDepotPositionFinder.findPosition(null, null, null);
-    }
+//    private static void validateNextDepotPosition() {
+//        SupplyDepotPositionFinder.findPosition(null, null, null);
+//    }
 
     private static void printQueue() {
         if (A.everyNthGameFrame(30 * 9)) {

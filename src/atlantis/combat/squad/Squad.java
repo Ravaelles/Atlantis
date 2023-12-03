@@ -218,7 +218,8 @@ public abstract class Squad extends Units {
         return squadCenter.leader();
     }
 
-//    public APosition averageUnit() {
+//    public HasPosition tankMedian() {
+//
 //    }
 
     public boolean lessThanUnits(int units) {
@@ -334,4 +335,5 @@ public abstract class Squad extends Units {
     public void handleReinforcements() {
         (new SquadReinforcements(this)).handleReinforcements();
     }
+
 }

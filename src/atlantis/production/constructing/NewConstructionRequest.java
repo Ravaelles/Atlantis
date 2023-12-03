@@ -147,10 +147,7 @@ public class NewConstructionRequest {
 
         AUnitType requiredBuilding = building.whatIsRequired();
 
-        if (requiredBuilding == null) {
-
-            return false;
-        }
+        if (requiredBuilding == null) return false;
 
 //        if (countExistingAndNotFinished(requiredBuilding) == 0) {
         if (Count.existing(requiredBuilding) == 0 && Count.inProductionOrInQueue(requiredBuilding) == 0) {
@@ -158,15 +155,15 @@ public class NewConstructionRequest {
             return true;
         }
 
-        ErrorLog.printMaxOncePerMinute(
-            "Uhmmm... shouldn't reach here. "
-                + "\nbuilding=" + building
-                + "\nEXISTING_BUILDING=" + Count.existing(building)
-                + "\nIN_PROD_BUILDING" + Count.inProductionOrInQueue(building)
-                + "\nEXISTING_REQ=" + Count.existing(requiredBuilding)
-                + "\nIN_PROD_REQ" + Count.inProductionOrInQueue(requiredBuilding)
-        );
-        ErrorLog.printMaxOncePerMinute(building + " // " + requiredBuilding);
+//        ErrorLog.printMaxOncePerMinute(
+//            "Uhmmm... shouldn't reach here. "
+//                + "\nbuilding=" + building
+//                + "\nEXISTING_BUILDING=" + Count.existing(building)
+//                + "\nIN_PROD_BUILDING" + Count.inProductionOrInQueue(building)
+//                + "\nEXISTING_REQ=" + Count.existing(requiredBuilding)
+//                + "\nIN_PROD_REQ" + Count.inProductionOrInQueue(requiredBuilding)
+//        );
+//        ErrorLog.printMaxOncePerMinute(building + " // " + requiredBuilding);
         return false;
     }
 }

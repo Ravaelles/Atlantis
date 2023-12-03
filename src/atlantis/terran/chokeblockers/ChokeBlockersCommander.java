@@ -2,10 +2,12 @@ package atlantis.terran.chokeblockers;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
+import atlantis.combat.missions.Missions;
 import atlantis.game.AGame;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
 public class ChokeBlockersCommander extends Commander {
@@ -19,12 +21,14 @@ public class ChokeBlockersCommander extends Commander {
     private boolean checkIfApplies() {
         if (AGame.notNthGameFrame(5)) return false;
 
+        if (Missions.isGlobalMissionAttack()) return false;
+
         choke = Chokes.mainChoke();
         if (choke == null) return false;
 
         if (AGame.killsLossesResourceBalance() >= 1800) return false;
 
-        int bunkers = Count.bunkers();
+        int bunkers = Count.ourWithUnfinished(AUnitType.Terran_Bunker);
         if (bunkers <= 0 || bunkers >= 3 || Count.bases() != 1) return false;
 
         if (Count.tanks() >= 2) return false;

@@ -25,7 +25,8 @@ public class TooFarFromTank extends Manager {
         return We.terran()
             && !unit.isAir()
             && (Count.tanks()) >= 1
-            && (unit.squad().units().tanks().atMost(4) || !unitIsOvercrowded());
+            && !unitIsOvercrowded();
+//            && (unit.squad().units().tanks().atMost(4) || !unitIsOvercrowded());
     }
 
     @Override

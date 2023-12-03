@@ -12,7 +12,7 @@ public class ScvDontAvoidEnemy extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isScv() && unit.hpMoreThan(50) && !unit.looksIdle();
+        return unit.isScv() && unit.hpMoreThan(54);
     }
 
     @Override
@@ -25,6 +25,11 @@ public class ScvDontAvoidEnemy extends Manager {
                 || enemiesNear.canAttack(unit, 0).atMost(2)
             )
         ) {
+            return usedManager(this);
+        }
+
+        AUnit nearest = enemiesNear.nearestTo(unit);
+        if (nearest != null && nearest.isDragoon() && !nearest.regionsMatch(unit)) {
             return usedManager(this);
         }
 

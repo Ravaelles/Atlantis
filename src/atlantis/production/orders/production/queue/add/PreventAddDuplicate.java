@@ -38,7 +38,10 @@ public class PreventAddDuplicate {
     private static boolean tooManyOrdersOfThisType(AUnitType type, HasPosition position) {
         int existingInQueue = Count.inQueue(type);
 
-        if (existingInQueue >= (type.isABuilding() ? (type.isCombatBuilding() ? 5 : 2) : 4)) {
+        int max = type.isABuilding() ? (type.isCombatBuilding() ? 5 : 2) : 4;
+        if (type.isSupplyDepot() && A.supplyTotal() <= 32) max = 1;
+
+        if (existingInQueue >= max) {
             if (type.isSupplyDepot()) ErrorLog.printMaxOncePerMinute("Exceeded DEPOTS allowed: " + existingInQueue);
 //            if (type.isBunker()) ErrorLog.printMaxOncePerMinute("Exceeded BUNKERS allowed: " + existingInQueue);
             return true;

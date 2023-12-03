@@ -30,6 +30,7 @@ public class TerranWraith extends Manager {
             AttackSpecificEnemies.class,
             AttackWorkersWhenItMakesSense.class,
             AttackTargetInRangeIfRanTooLong.class,
+            SeparateFromOtherWraiths.class,
             AttackTargetInRange.class,
             MoveAsLooksIdle.class,
         };

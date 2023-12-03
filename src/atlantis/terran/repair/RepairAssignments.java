@@ -75,7 +75,7 @@ public class RepairAssignments {
                 repairersToUnit.remove(repairer);
                 repairersToModes.remove(repairer);
 
-                (new GatherResources(repairer)).forceHandle();
+                if (!unitToRepair.isProtector()) (new GatherResources(repairer)).forceHandle();
             }
         }
     }

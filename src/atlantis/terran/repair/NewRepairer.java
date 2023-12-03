@@ -17,12 +17,16 @@ public class NewRepairer {
             .notProtector()
             .notGatheringGas()
             .notConstructing()
+            .notSpecialAction()
             .notScout();
 
         if (criticallyImportant) {
             Selection candidates = workers.notRepairing();
             if (!OurStrategy.get().isRush()) {
-                candidates = candidates.notScout().notConstructing();
+                candidates = candidates
+                    .notScout()
+                    .notSpecialAction()
+                    .notConstructing();
             }
             return candidates.exclude(unitToRepair).nearestTo(unitToRepair);
         }

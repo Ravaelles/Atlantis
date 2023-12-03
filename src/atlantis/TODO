@@ -1,5 +1,8 @@
 ### BUGS ###
 
+------ SupplyDepot bot constructed 50/50, and 60/60, but position non null / no order
+---- MATRIX not working
+
 ?----- Depots still broken when 60
 .- ToFromTank for tanks
 

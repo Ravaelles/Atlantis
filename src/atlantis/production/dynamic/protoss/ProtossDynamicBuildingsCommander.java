@@ -8,7 +8,6 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.tech.ATechRequests;
-import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
@@ -87,7 +86,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         if (
             GamePhase.isEarlyGame()
                 && EnemyStrategy.get().isRushOrCheese()
-                && Count.ourOfTypeWithUnfinished(Protoss_Gateway) <= (A.hasMinerals(250) ? 2 : 1)
+                && Count.ourWithUnfinished(Protoss_Gateway) <= (A.hasMinerals(250) ? 2 : 1)
         ) {
             DynamicCommanderHelpers.buildIfHaveMineralsAndGas(Protoss_Gateway);
             return;

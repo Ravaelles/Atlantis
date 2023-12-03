@@ -39,7 +39,7 @@ public class TooFarFromSquadCenter extends MissionManager {
 
     private boolean isTooFarFromSquadCenter() {
         if (unit.squad() == null || unit.isTank()) return false;
-        if (unit.isMissionAttackOrGlobalAttack()) return false;
+//        if (unit.isMissionAttackOrGlobalAttack()) return false;
 
 //        if (unit.outsideSquadRadius()) return false;
 

@@ -42,7 +42,7 @@ public abstract class DynamicBuildingCommander {
     }
 
     public int existingWithUnfinished() {
-        return Count.ourOfTypeWithUnfinished(type()) + ConstructionRequests.countNotStartedOfType(type());
+        return Count.ourWithUnfinished(type()) + ConstructionRequests.countNotStartedOfType(type());
     }
 
 }

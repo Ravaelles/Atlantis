@@ -72,6 +72,7 @@ public class ProduceFactory {
 
     public static boolean secondFactory() {
         if (!A.hasGas(180)) return false;
+        if (CountInQueue.count(Terran_Factory) >= (A.hasGas(400) ? 2 : 1)) return false;
 
         if (
             Select.ourFree(Terran_Factory).isEmpty()

@@ -34,7 +34,7 @@ public class IdleProtectorRepairs extends Manager {
         }
 
         RepairAssignments.removeRepairer(unit);
-        (new GatherResources(unit)).forceHandle();
+        if (!unit.isProtector()) (new GatherResources(unit)).forceHandle();
         return null;
     }
 
