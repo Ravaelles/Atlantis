@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
+import atlantis.map.region.MainRegion;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
@@ -37,8 +38,9 @@ public class SupplyDepotPositionFinder {
     private static HasPosition nearTo() {
         if (A.supplyTotal() <= 30) return Select.mainOrAnyBuilding();
 
-        if (A.chance(60)) return Select.ourOfType(Terran_Supply_Depot).last();
-        else return Select.ourBuildings().random();
+//        if (A.chance(60)) return Select.ourOfType(Terran_Supply_Depot).random();
+//        else return Select.ourBuildings().random();
+        return MainRegion.mainRegion().center();
 
 //        Positions<APosition> positions = BuildablePositionsAroundMainBase.get()
 //            .sortByDistanceTo(Select.mainOrAnyBuilding(), true);

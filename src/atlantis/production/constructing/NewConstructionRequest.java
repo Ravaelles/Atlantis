@@ -99,6 +99,9 @@ public class NewConstructionRequest {
         // Add to list of pending orders
         if (ConstructionRequests.alreadyExists(newConstruction)) {
             newConstruction.cancel();
+//            if (order.isBuilding() && !order.unitType().isMissileTurret()) {
+//                ErrorLog.printMaxOncePerMinute("Cancel as construction already exists: " + newConstruction);
+//            }
             return false;
         }
         else {

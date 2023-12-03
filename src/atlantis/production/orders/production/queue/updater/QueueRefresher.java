@@ -1,20 +1,15 @@
 package atlantis.production.orders.production.queue.updater;
 
-import atlantis.game.A;
 import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.ReservedResources;
-import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.Counter;
 
-import java.util.ArrayList;
-
 public class QueueRefresher {
     private final Queue queue;
     private final Counter<AUnitType> existingCounter;
-    private boolean noMoreNewReadyOrdersFromNowOn;
+//    private boolean noMoreNewReadyOrdersFromNowOn;
 
     public QueueRefresher(Queue queue) {
         this.queue = queue;
@@ -23,7 +18,7 @@ public class QueueRefresher {
 
     public void refresh() {
 //        A.errPrintln("@ " + A.now() + " - REFRESH QUEUE -----------------------------");
-        noMoreNewReadyOrdersFromNowOn = false;
+//        noMoreNewReadyOrdersFromNowOn = false;
 
 //        ArrayList<ProductionOrder> completed = new ArrayList<>();
 
@@ -51,7 +46,7 @@ public class QueueRefresher {
 //    }
 
     private OrderStatus updateOrderStatus(ProductionOrder order) {
-        if (!IsOrderNotCompleted.check(order, existingCounter)) return markAsComplete(order);
+        if (IsOrderCompleted.isCompleted(order, existingCounter)) return markAsComplete(order);
 
         if (IsOrderInProgress.check(order)) return markAsInProgress(order);
 
@@ -59,14 +54,14 @@ public class QueueRefresher {
     }
 
     private OrderStatus tryChangingStatusToReady(ProductionOrder order) {
-        if (noMoreNewReadyOrdersFromNowOn) return markAsNotReady(order);
+//        if (noMoreNewReadyOrdersFromNowOn) return markAsNotReady(order);
 
         // Ready to produce
         if (IsReadyToProduceOrder.isReadyToProduce(order)) return markAsReadyToProduce(order);
 
-        if (
-            !A.hasMinerals(550) && !IsReadyToProduceOrder.canAffordWithReserved(order)
-        ) noMoreNewReadyOrdersFromNowOn = true;
+//        if (
+//            !A.hasMinerals(550) && !IsReadyToProduceOrder.canAffordWithReserved(order)
+//        ) noMoreNewReadyOrdersFromNowOn = true;
 
         return null;
 

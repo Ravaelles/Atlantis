@@ -10,6 +10,8 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
+import atlantis.production.orders.production.queue.order.OrderStatus;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -40,20 +42,13 @@ public class SupplyCommander extends Commander {
         requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
         if (tooManyNotStartedConstructions()) {
-//            ErrorLog.printMaxOncePerMinute(
-//                "Too many not started constructions of supply: " + requestedConstructionsOfSupply
-//            );
+            ErrorLog.printMaxOncePerMinute(
+                "Too many not started constructions of supply: " + requestedConstructionsOfSupply
+            );
             return;
         }
 
-//        if (!A.hasFreeSupply(3) && A.supplyUsed() <= 170 && A.hasMinerals(300)) {
-//            if (requestedConstructionsOfSupply <= 2 + A.supplyUsed() / 50) {
-//                requestAdditionalSupply();
-//                return;
-//            }
-//        }
-
-        if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 50) return;
+        if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 48) return;
 
         // Fix for UMS maps
         if (A.isUms() && AGame.supplyFree() <= 1) {
@@ -113,12 +108,14 @@ public class SupplyCommander extends Commander {
 //            + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size()
 //        );
 
-        if (requestedConstructionsOfSupply >= 3) {
+        int maxAtOnce = 3;
+
+        if (requestedConstructionsOfSupply >= maxAtOnce) {
             System.err.println("TOO MANY REQUESTED SUPPLIES: " + requestedConstructionsOfSupply);
             return;
         }
 
-        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 3) {
+        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
             System.err.println("EXIT!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
             return;
         }
@@ -132,7 +129,9 @@ public class SupplyCommander extends Commander {
         }
 
         // Terran + Protoss
-        AddToQueue.withTopPriority(AtlantisRaceConfig.SUPPLY);
+//        System.err.println("------------------ REQUEST SUPPLY AT " + A.supplyUsed() + " / " + A.supplyTotal());
+        ProductionOrder order = AddToQueue.withTopPriority(AtlantisRaceConfig.SUPPLY);
+        if (order != null) order.setStatus(OrderStatus.READY_TO_PRODUCE);
     }
 
     private boolean tooManyNotStartedConstructions() {

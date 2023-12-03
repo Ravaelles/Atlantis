@@ -18,8 +18,10 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
 //        if (true) return;
 
 //        ReinforceBasesWithCombatBuildings.get().invoke();
-        (new ReinforceBunkersWithTurrets()).invoke();
-        (new OffensiveTurretsCommander()).invoke();
+
+        // Turrets
+//        (new ReinforceBunkersWithTurrets()).invoke();
+//        (new OffensiveTurretsCommander()).invoke();
 
         if (A.everyNthGameFrame(57)) {
             ProduceScienceFacility.scienceFacilities();

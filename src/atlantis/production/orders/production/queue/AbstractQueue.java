@@ -5,14 +5,23 @@ import atlantis.units.AUnitType;
 import atlantis.util.cache.Cache;
 
 public abstract class AbstractQueue {
+    protected final int CACHE_FOR_FRAMES = 0;
+
+
     protected static Cache<Orders> cache = new Cache<>();
 
     protected final Orders orders = new Orders();
 
+
+    public void clearCache() {
+        cache.clear();
+    }
+
+
     public Orders nextOrders(int n) {
         return cache.get(
-            "nextOrders:" + n,
-            -1,
+            "abstractNextOrders:" + n,
+            CACHE_FOR_FRAMES,
             () -> orders.next(n)
         );
     }

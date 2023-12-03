@@ -44,6 +44,11 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
+        if (Select.our().air().atMost(1)) {
+            if (DEBUG) reason = "Not enough AIR support";
+            return true;
+        }
+
         if (notEnoughTanksAndNotEarlyGame()) {
             if (DEBUG) reason = "Not enough tanks to attack safely";
             return true;

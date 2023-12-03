@@ -277,7 +277,7 @@ public class ConstructionsCommander extends Commander {
 
         if (AGame.now() - order.timeOrdered() > timeout) {
 //            System.err.println(" // " + AGame.now() + " // " + order.timeOrdered() + " // > " + timeout);
-            A.println("Cancel construction of " + order.buildingType() + " (Took too long)");
+            ErrorLog.printMaxOncePerMinute("Cancel construction of " + order.buildingType() + " (Took too long)");
             order.cancel();
         }
     }

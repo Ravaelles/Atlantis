@@ -112,17 +112,20 @@ public class AddToQueue {
 
 //            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }
+        else {
+            ErrorLog.printMaxOncePerMinute("Could not add " + type + " to queue");
+        }
 
         return productionOrder;
     }
 
-    private static void clearOtherExistingOfTheSameTypeIfNeeded(ProductionOrder productionOrder) {
-        if (productionOrder.isUnitOrBuilding() && productionOrder.unitType().isBase()) {
-            for (ProductionOrder order : Queue.get().readyToProduceOrders().ofType(productionOrder.unitType()).list()) {
-                if (!order.equals(productionOrder)) order.cancel();
-            }
-        }
-    }
+//    private static void clearOtherExistingOfTheSameTypeIfNeeded(ProductionOrder productionOrder) {
+//        if (productionOrder.isUnitOrBuilding() && productionOrder.unitType().isBase()) {
+//            for (ProductionOrder order : Queue.get().readyToProduceOrders().ofType(productionOrder.unitType()).list()) {
+//                if (!order.equals(productionOrder)) order.cancel();
+//            }
+//        }
+//    }
 
     private static int defineMinSupplyForNewOrder() {
         Orders nextOrders = Queue.get().nextOrders(2);

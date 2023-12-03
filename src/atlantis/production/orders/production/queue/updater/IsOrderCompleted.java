@@ -1,36 +1,35 @@
 package atlantis.production.orders.production.queue.updater;
 
-import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.Counter;
 
-public class IsOrderNotCompleted {
-    protected static boolean check(ProductionOrder order, Counter<AUnitType> existingCounter) {
+public class IsOrderCompleted {
+    protected static boolean isCompleted(ProductionOrder order, Counter<AUnitType> existingCounter) {
         // === Unit
 
         if (order.unitType() != null) {
-            return checkIfWeHaveLessUnitsThanExpected(order, existingCounter);
+            return !checkIfWeHaveLessUnitsThanExpected(order, existingCounter);
         }
 
         // === Tech
 
         else if (order.tech() != null) {
-            return !ATech.isResearchedWithOrder(order.tech(), order);
+            return ATech.isResearchedWithOrder(order.tech(), order);
         }
 
         // === Upgrade
 
         else if (order.upgrade() != null) {
-            return !ATech.isResearchedWithOrder(order.upgrade(), order);
+            return ATech.isResearchedWithOrder(order.upgrade(), order);
         }
 
         // === Unknown
 
 //        A.errPrintln("Unknown order type: " + order);
-        return true;
+        return false;
     }
 
     private static boolean checkIfWeHaveLessUnitsThanExpected(ProductionOrder order, Counter<AUnitType> expectedCounter) {

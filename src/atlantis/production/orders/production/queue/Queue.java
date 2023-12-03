@@ -9,17 +9,14 @@ public class Queue extends AbstractQueue {
 
     // =========================================================
 
-    protected Queue() {}
+    protected Queue() {
+    }
 
     // =========================================================
 
     public void refresh() {
         (new QueueRefresher(this)).refresh();
         clearCache();
-    }
-
-    public void clearCache() {
-        cache.clear();
     }
 
     // =========================================================
@@ -38,7 +35,7 @@ public class Queue extends AbstractQueue {
     public Orders allOrders() {
         return cache.get(
             "allOrders",
-            -1,
+            CACHE_FOR_FRAMES,
             () -> orders
         );
     }
@@ -46,7 +43,7 @@ public class Queue extends AbstractQueue {
     public Orders readyToProduceOrders() {
         return cache.get(
             "readyToProduceOrders",
-            -1,
+            CACHE_FOR_FRAMES,
             orders::readyToProduce
         );
     }
@@ -54,7 +51,7 @@ public class Queue extends AbstractQueue {
     public Orders forCurrentSupply() {
         return cache.get(
             "forCurrentSupply",
-            -1,
+            CACHE_FOR_FRAMES,
             orders::forCurrentSupply
         );
     }
@@ -62,7 +59,7 @@ public class Queue extends AbstractQueue {
     public Orders inProgressOrders() {
         return cache.get(
             "inProgressOrders",
-            -1,
+            CACHE_FOR_FRAMES,
             orders::inProgress
         );
     }
@@ -70,7 +67,7 @@ public class Queue extends AbstractQueue {
     public Orders nonCompleted() {
         return cache.get(
             "nonCompleted",
-            -1,
+            CACHE_FOR_FRAMES,
             orders::nonCompleted
         );
     }
@@ -78,7 +75,7 @@ public class Queue extends AbstractQueue {
     public Orders completedOrders() {
         return cache.get(
             "completedOrders",
-            -1,
+            CACHE_FOR_FRAMES,
             orders::completed
         );
     }

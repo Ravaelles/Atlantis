@@ -29,7 +29,7 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
         tanks = Count.tanks();
 
         return
-            (unit.isWounded() || A.supplyUsed() < 185 || tanks <= 15)
+            (unit.isWounded() || (A.supplyUsed() < 185 && tanks <= 18))
                 && A.minerals() < 2000
                 && unit.isCombatUnit()
                 && closeToEnemyBuildingsOrChoke();
@@ -70,7 +70,7 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
         if (unit.isTankUnsieged()) {
             if (unit.enemiesNearInRadius(10) == 0) {
                 ForceSiege.forceSiegeNow(this, "RemainHere");
-    //            WantsToSiege.wantsToSiegeNow(unit, "RemainHere");
+                //            WantsToSiege.wantsToSiegeNow(unit, "RemainHere");
                 return usedManager(this);
             }
         }
@@ -104,6 +104,6 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
     }
 
     private double minDistToEnemyBuilding() {
-        return unit.isTank() ? 10.7 : 13.3;
+        return unit.isTank() ? 11.8 : 13.3;
     }
 }

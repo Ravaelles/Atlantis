@@ -17,9 +17,9 @@ public class UseVesselTechs extends Manager {
 
     @Override
     public boolean applies() {
-        if (!A.everyNthGameFrame(7)) return false;
-
         if (unit.lastTechUsedAgo() <= 15) return true;
+
+        if (!A.everyNthGameFrame(7)) return false;
 
         if (unit.energy() <= 74) return false;
 
@@ -50,6 +50,8 @@ public class UseVesselTechs extends Manager {
             AUnitType.Terran_Siege_Tank_Tank_Mode
         ).sortByHealth();
 
+        System.err.println("MATRIX targets = " + targets.size());
+
         for (AUnit target : targets.list()) {
             if (target.isDefenseMatrixed()) continue;
 
@@ -64,7 +66,7 @@ public class UseVesselTechs extends Manager {
 
         // Use on anyone as a fallback
 
-        if (unit.energy(198)) {
+        if (unit.energy(195)) {
             AUnit mostWounded = null;
             mostWounded = unit.friendsNear().tanks().mostWounded();
 

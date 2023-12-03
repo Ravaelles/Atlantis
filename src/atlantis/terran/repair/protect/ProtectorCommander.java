@@ -82,8 +82,8 @@ public class ProtectorCommander extends Commander {
     }
 
     private static int maxProtectors() {
-        if (A.supplyUsed() <= 40 && !A.hasMinerals(0)) {
-            return 2;
+        if (!A.hasMinerals(0)) {
+            return Count.workers() >= 20 ? 4 : 1;
         }
 
         int workers = Count.workers();

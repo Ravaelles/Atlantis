@@ -121,7 +121,9 @@ public class Construction implements Comparable<Construction> {
         if (buildingType == null || positionToBuild == null) return false;
 
         return this.ID == other.ID
-            || (this.buildingType.equals(other.buildingType) && positionToBuild.equals(other.positionToBuild));
+            || (
+            this.buildingType.equals(other.buildingType) && positionToBuild.equals(other.positionToBuild)
+        );
     }
 
     @Override

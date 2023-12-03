@@ -54,8 +54,12 @@ public class PreventAddDuplicate {
     }
 
     private static boolean tooManyDepots(AUnitType type, HasPosition position) {
-        if (We.terran() && CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2) {
-            ErrorLog.printMaxOncePerMinute("Exceeded DEPOTS allowed: " + CountInQueue.count(AUnitType.Terran_Supply_Depot));
+        if (!type.isSupplyDepot()) return false;
+
+        if (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2) {
+            ErrorLog.printMaxOncePerMinute(
+                "Exceeded DEPOTS allowed: " + CountInQueue.count(AUnitType.Terran_Supply_Depot)
+            );
             return true;
         }
 

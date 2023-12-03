@@ -20,15 +20,15 @@ public class FindPositionForBase {
 
     public static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder, Construction construction) {
 //        ABaseLocation baseLocationToExpand;
-        HasPosition near;
+        HasPosition near = null;
         int ourBasesCount = Select.ourBases().count();
 
         if (A.seconds() <= 800 && ourBasesCount <= 1) {
             near = DefineNatural.natural();
         }
 //        else if (ourBasesCount <= 2) {
-        else {
-            AUnit mainBase = Select.main();
+        if (near == null) {
+            AUnit mainBase = Select.mainOrAnyBuilding();
             near = BaseLocations.expansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
         }
 //        else {

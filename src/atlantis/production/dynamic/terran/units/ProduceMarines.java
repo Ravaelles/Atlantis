@@ -118,14 +118,16 @@ public class ProduceMarines {
     private static boolean produceMarine() {
         if (Select.ourFree(Terran_Barracks).empty()) return false;
 
-        ProductionOrder result = AddToQueue.maxAtATime(Terran_Marine, 3, ProductionOrderPriority.TOP);
+        return forceProduceMarine();
 
-        if (DEBUG) ConsoleLog.message(
-            "Produce marine (Marines: " + Count.existingOrInProductionOrInQueue(Terran_Marine) + "," +
-                "minerals: " + A.minerals() + ", reserved: " + A.reservedMinerals() + ")"
-        );
-
-        return result != null;
+//        ProductionOrder result = AddToQueue.maxAtATime(Terran_Marine, 3, ProductionOrderPriority.TOP);
+//
+//        if (DEBUG) ConsoleLog.message(
+//            "Produce marine (Marines: " + Count.existingOrInProductionOrInQueue(Terran_Marine) + "," +
+//                "minerals: " + A.minerals() + ", reserved: " + A.reservedMinerals() + ")"
+//        );
+//
+//        return result != null;
     }
 
     private static boolean inRelationToTanks(int marines) {

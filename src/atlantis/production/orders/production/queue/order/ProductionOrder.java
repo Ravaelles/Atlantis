@@ -128,15 +128,15 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
         if (otherOrder.id == id) return true;
 
-        if (unitOrBuilding != null) {
-            if (otherOrder.minSupply == this.minSupply) {
-    //            if (isBuilding() && this.unitType().equals(otherOrder.unitType())) return true;
-                if (
-                    this.unitType().equals(otherOrder.unitType())
-                    && (this.isDynamic() && otherOrder.isDynamic())
-                ) return true;
-            }
-        }
+//        if (unitOrBuilding != null) {
+//            if (otherOrder.minSupply == this.minSupply) {
+//    //            if (isBuilding() && this.unitType().equals(otherOrder.unitType())) return true;
+//                if (
+//                    this.unitType().equals(otherOrder.unitType())
+//                    && (this.isDynamic() && otherOrder.isDynamic())
+//                ) return true;
+//            }
+//        }
 
 //        if (otherOrder.minSupply == minSupply) {
 //            if (unitOrBuilding != null && unitOrBuilding.equals(otherOrder.unitOrBuilding)) return true;
@@ -236,9 +236,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         return AGame.supplyUsed() + bonus >= minSupply;
     }
 
-    public void cancel() {
-        Queue.get().removeOrder(this);
-    }
+//    public void cancel() {
+//        Queue.get().removeOrder(this);
+//    }
 
     // === Getters =============================================
 

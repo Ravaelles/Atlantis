@@ -32,9 +32,19 @@ public class IsReadyToProduceOrder {
             if (EnemyWhoBreachedBase.get() != null) return false;
         }
 
-        if (!order.supplyRequirementFulfilled() && !A.canAfford(500, 300)) return false;
+        boolean a, b = false;
+        if (
+//             && !A.canAfford(150 + order.mineralPrice(), order.gasPrice())
+            (a = (!order.supplyRequirementFulfilled()))
+                || (b = !order.checkIfHasWhatRequired())
+        ) {
+//            if (order.isBuilding() && order.unitType().isSupplyDepot()) {
+//                ErrorLog.printMaxOncePerMinute("Return Supply depot as not ready, a=" + a + ", b=" + b);
+//            }
+            return false;
+        }
 //        if (!canAffordWithReserved(order)) return false;
-        if (!order.checkIfHasWhatRequired()) return false;
+//        if (!order.checkIfHasWhatRequired()) return false;
 
         return true;
 

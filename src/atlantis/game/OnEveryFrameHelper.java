@@ -39,7 +39,9 @@ public class OnEveryFrameHelper {
 
 //        CurrentProductionQueue.print();
 
-//        Queue.get().readyToProduceOrders().print("All orders");
+//        if (A.supplyUsed() >= 41 && A.now() % 30 == 0) {
+//            Queue.get().readyToProduceOrders().print("All orders");
+//        }
 
 //        combatUnitInfo();
 
