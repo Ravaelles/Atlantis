@@ -43,7 +43,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     /**
      * Maximum distance from a given position to build this building.
      */
-    private int maximumDistance = 26;
+    private int maximumDistance = 36;
     /**
      * At this supply we should change global mission to this.
      */

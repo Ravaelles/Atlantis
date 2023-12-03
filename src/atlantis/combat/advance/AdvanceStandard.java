@@ -6,6 +6,7 @@ import atlantis.combat.missions.MissionManager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 
 public class AdvanceStandard extends MissionManager {
     public AdvanceStandard(AUnit unit) {
@@ -18,6 +19,10 @@ public class AdvanceStandard extends MissionManager {
     }
 
     protected Manager handle() {
+        if (unit.isGroundUnit() && !unit.isTank() && Count.tanks() >= 2) {
+            if (advanceAsNonTank()) return usedManager(this);
+        }
+
         if (unit.isTankSieged()) {
             if (TerranTank.wantsToUnsiege(unit)) return null;
         }
@@ -32,5 +37,15 @@ public class AdvanceStandard extends MissionManager {
         }
 
         return null;
+    }
+
+    private boolean advanceAsNonTank() {
+        AUnit target = unit.nearestOurTank();
+        if (target != null && unit.distTo(target) >= 5) {
+            unit.move(target, Actions.MOVE_FORMATION, "RollWithTank");
+            return true;
+        }
+
+        return false;
     }
 }

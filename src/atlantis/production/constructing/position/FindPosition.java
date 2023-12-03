@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -19,7 +20,9 @@ public class FindPosition {
     public static APosition findForBuilding(
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {
-        if (nearTo == null && building.isSupplyDepot()) nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
+        if (nearTo == null && building.isSupplyDepot() && A.chance(50)) {
+            nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
+        }
         if (nearTo == null) nearTo = Select.mainOrAnyBuilding();
 
         if (maxDistance <= 5 && building.isBunker()) maxDistance = 10;
@@ -40,6 +43,11 @@ public class FindPosition {
 
         else if (building.isSupplyDepot()) {
             APosition position = SupplyDepotPositionFinder.findPosition(builder, construction, nearTo);
+            if (position == null) {
+                ErrorLog.printMaxOncePerMinute(
+                    "SupplyDepotPositionFinder returned null for " + building + " / " + construction + " / " + nearTo
+                );
+            }
             if (position != null) return position;
         }
 

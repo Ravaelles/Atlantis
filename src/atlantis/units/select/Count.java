@@ -352,6 +352,10 @@ public class Count {
         return inProductionOrInQueue(type) > 0;
     }
 
+    public static int freeFactories() {
+        return ofTypeFree(AUnitType.Terran_Factory);
+    }
+
 //    public static int () {
 //        return ofType(AUnitType.);
 //    }

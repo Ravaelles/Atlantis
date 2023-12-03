@@ -1,6 +1,7 @@
 package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.tank.sieging.ForceSiege;
 import atlantis.combat.micro.terran.tank.sieging.WantsToSiege;
 import atlantis.combat.missions.MissionManager;
@@ -28,7 +29,7 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
         tanks = Count.tanks();
 
         return
-            (A.supplyUsed() < 185 || tanks <= 10)
+            (unit.isWounded() || A.supplyUsed() < 185 || tanks <= 15)
                 && A.minerals() < 2000
                 && unit.isCombatUnit()
                 && closeToEnemyBuildingsOrChoke();
@@ -58,7 +59,11 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
     }
 
     private Manager asTank() {
-        if (unit.isSieged() && unit.lastSiegedAgo() <= 30 * (17 + unit.id() % 6)) {
+        if (unit.isSieged() && unit.lastSiegedAgo() <= 30 * (24 + unit.id() % 6)) {
+            if (unit.noCooldown() && unit.enemiesNear().groundUnits().inShootRangeOf(unit).notEmpty()) {
+                (new AttackNearbyEnemies(unit)).invoke();
+            }
+
             return usedManager(this, "StayHere");
         }
 

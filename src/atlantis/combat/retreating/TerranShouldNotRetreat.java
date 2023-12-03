@@ -3,6 +3,7 @@ package atlantis.combat.retreating;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
+import atlantis.util.We;
 
 public class TerranShouldNotRetreat extends Manager {
     public TerranShouldNotRetreat(AUnit unit) {
@@ -11,7 +12,11 @@ public class TerranShouldNotRetreat extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTerran() && unit.enemiesNear().visibleOnMap().notEmpty();
+        if (!We.terran()) return false;
+
+        if (unit.isTank() && (unit.isWounded() || unit.enemiesNear().inRadius(4, unit).notEmpty())) return false;
+
+        return unit.enemiesNear().visibleOnMap().notEmpty();
     }
 
     @Override

@@ -16,8 +16,8 @@ import static atlantis.units.AUnitType.Terran_Factory;
 public class ProduceFactoryWhenBioOnly {
     public static boolean factoryIfBioOnly() {
         if (!Have.barracks()) return false;
-        if (!OurStrategy.get().goingBio()) return false;
-        if (A.supplyUsed() <= 25 || !A.hasGas(90) || Have.factory()) return false;
+        if (!OurStrategy.get().goingBio()) return false; // See: ProduceFactory
+        if (A.supplyUsed() <= 25 || !A.hasGas(90)) return false;
 
         Selection freeFactories = Select.ourFree(Terran_Factory);
 

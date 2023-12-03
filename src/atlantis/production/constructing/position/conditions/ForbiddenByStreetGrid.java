@@ -33,9 +33,10 @@ public class ForbiddenByStreetGrid {
 //            if (position.ty() % 6 <= 1) return fail("TY CB modulo");
 //        }
 //        else {
-            if (position.tx() % GRID_VALUE <= 1) return fail("TX modulo");
-            if (position.ty() % GRID_VALUE <= 1) return fail("TY modulo");
-//        }
+        if (!building.isSupplyDepot()) {
+            if (position.tx() % GRID_VALUE <= 0) return fail("TX modulo");
+            if (position.ty() % GRID_VALUE <= 0) return fail("TY modulo");
+        }
 
 //        if (building.isBarracks() || building.isFactory()) {
 //            if (position.tx() % 3 <= 1) return fail("TX Barracks & Factory modulo");

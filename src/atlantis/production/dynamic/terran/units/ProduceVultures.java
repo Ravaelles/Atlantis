@@ -4,12 +4,18 @@ import atlantis.game.A;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
 public class ProduceVultures {
     public static boolean vultures() {
 //        return false;
+
+        if (
+            (A.hasGas(150) || Have.unfinishedOrPlanned(AUnitType.Terran_Machine_Shop))
+                && Count.freeFactories() < 2
+        ) return false;
 
         int vultures = Count.withPlanned(AUnitType.Terran_Vulture);
 

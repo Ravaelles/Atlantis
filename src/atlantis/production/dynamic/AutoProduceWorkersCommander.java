@@ -28,9 +28,7 @@ public class AutoProduceWorkersCommander extends Commander {
      */
     @Override
     protected void handle() {
-        if (!shouldProduceWorkers()) {
-            return;
-        }
+        if (!shouldProduceWorkers()) return;
 
         ProduceWorker.produceWorker();
     }
@@ -77,7 +75,8 @@ public class AutoProduceWorkersCommander extends Commander {
 
         // Check if not TOO MANY WORKERS
         int workers = Select.ourWorkers().count();
-        if (workers >= (25 * Select.ourBuildingsWithUnfinished().bases().count())) return false;
+        int workersBonus = We.terran() ? 4 : 0; // For repairers
+        if (workers >= (workersBonus + 25 * Select.ourBuildingsWithUnfinished().bases().count())) return false;
 
         // =========================================================
         // Check if AUTO-PRODUCTION of WORKERS is active.

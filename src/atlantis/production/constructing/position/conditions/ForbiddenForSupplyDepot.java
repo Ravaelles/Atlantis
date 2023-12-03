@@ -18,11 +18,19 @@ public class ForbiddenForSupplyDepot {
 
     private static boolean otherSupplyDepotConstructionsAreNotClose(APosition position) {
         return !ConstructionRequests.hasNotStartedNear(
-            Terran_Supply_Depot, position, 20
+            Terran_Supply_Depot, position, 5
         );
     }
 
     private static boolean streetGridMatches(APosition position) {
-        return position.tx() % 2 == 1 || position.ty() % 2 == 1;
+        return position.tx() % 2 > 0 || position.ty() % 2 > 0 || position.tx() % 6 == 0;
     }
 }
+
+
+//        if (building.isSupplyDepot()) {
+//            if (Select.ourOfTypeWithUnfinished(AUnitType.Terran_Supply_Depot).inRadius(2.5, position).notEmpty())
+//            return false;
+//            if (position.tx() % 3 > 0) return fail("TX Supply Depot modulo");
+//            if (position.ty() % 3 > 0) return fail("TY Supply Depot modulo");
+//            }

@@ -14,9 +14,9 @@ public class TooCloseToBase {
     public static boolean isTooCloseToBase(AUnitType building, APosition position) {
         if (building.isGasBuilding()) return false;
 
-        int minDistToBase = building.isSupplyDepot() ? (A.supplyTotal() >= 15 ? 8 : 4) : 5;
+        double minDistToBase = building.isSupplyDepot() ? (A.supplyTotal() >= 15 ? 6 : 6) : 5;
 
-        if (building.isCombatBuilding()) minDistToBase = 2;
+        if (building.isCombatBuilding()) minDistToBase = 2.4;
 
         return Select.ourBasesWithUnfinished().inRadius(minDistToBase, position).notEmpty();
     }

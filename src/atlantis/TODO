@@ -1,10 +1,7 @@
 ### BUGS ###
 
----- AdvanceStandard - disallow when no tanks near
-
-!!!!!!!!!!.- More protectors per tank
-- Exclude builders for repairers
-!!!!!!!!!!!!!!.- Make Vessel follow not scout, but closest hidden
+?----- Depots still broken when 60
+.- ToFromTank for tanks
 
 - Still no Turrets against Scouts
 - No bunker no turret at natural
@@ -22,8 +19,6 @@
 
 ### FEATURES ###
 
-..++++ Build turrets against enemy Wraiths/Scouts
-
 .+++ Road to enemy base
 
 ++ Performance improvement for situation when there's Combat Building nearby. 3x slower when one cannon nearby.
@@ -33,7 +28,5 @@
 + Wall-in
 
 ###############
-
-(.)?+ Focus on the logic of expanding to natural - move army first, then build CC + bunker + turret
 
 + Wiki with recommended features (P - Paints extensive debug info)

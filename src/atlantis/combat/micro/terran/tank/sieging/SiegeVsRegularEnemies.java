@@ -34,7 +34,7 @@ public class SiegeVsRegularEnemies extends Manager {
     private boolean someTanksShouldNotSiege() {
         if (Enemy.terran()) return false;
 
-        return unit.id() % 3 != 0 || Count.tanks() <= 3;
+        return unit.id() % 4 != 0 || Count.tanks() <= 3;
     }
 
     @Override

@@ -1525,7 +1525,7 @@ public class AAdvancedPainter extends APainter {
         }
         if (We.terran()) {
 //            paintBuildingPosition((new TerranBunker()).nextPosition(), "Next Bunker");
-            paintBuildingPosition((new NewBunkerPositionFinder(null)).find(), "Next Bunker");
+//            paintBuildingPosition((new NewBunkerPositionFinder(null)).find(), "Next Bunker");
             paintBuildingPosition(NextBasePosition.nextBasePosition(), "Next BASE");
         }
 

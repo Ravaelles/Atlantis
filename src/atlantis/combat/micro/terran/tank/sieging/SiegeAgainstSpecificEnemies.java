@@ -16,9 +16,14 @@ public class SiegeAgainstSpecificEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        enemies = unit.enemiesNear().combatUnits().nonBuildings().effVisible();
+        if (unit.woundHp() <= 15) return false;
 
-        return enemies.notEmpty();
+        enemies = unit.enemiesNear().combatUnits().nonBuildings().effVisible();
+        if (enemies.empty()) return false;
+
+        if (enemies.inRadius(7 + unit.id() % 6, unit).notEmpty()) return false;
+
+        return true;
     }
 
     protected Manager handle() {
@@ -40,9 +45,7 @@ public class SiegeAgainstSpecificEnemies extends Manager {
 
         double minDist = enemy != null && enemy.isMoving() && enemy.isFacing(unit) ? 15.5 : 11.98;
         if (enemies.notEmpty()) {
-            if (unit.woundHp() <= 15 || enemies.inRadius(2 + unit.id() % 4, unit).notEmpty()) {
-                return wantsToSiegeAgainst(enemy, enemies);
-            }
+            return wantsToSiegeAgainst(enemy, enemies);
         }
 
         return null;

@@ -11,6 +11,7 @@ import atlantis.map.region.ARegion;
 import atlantis.map.region.MainRegion;
 import atlantis.map.wall.GetWallIn;
 import atlantis.map.wall.Structure;
+import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
@@ -51,6 +52,12 @@ public class OnEveryFrameHelper {
 //        paintMainChokeDetails();
 
 //        printQueue();
+
+        validateNextDepotPosition();
+    }
+
+    private static void validateNextDepotPosition() {
+        SupplyDepotPositionFinder.findPosition(null, null, null);
     }
 
     private static void printQueue() {

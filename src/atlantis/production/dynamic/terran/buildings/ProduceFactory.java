@@ -71,10 +71,12 @@ public class ProduceFactory {
     }
 
     public static boolean secondFactory() {
+        if (!A.hasGas(180)) return false;
+
         if (
             Select.ourFree(Terran_Factory).isEmpty()
                 && Count.factories() == 1
-                && Count.withPlanned(Terran_Factory) <= 1
+                && Count.inQueue(Terran_Factory) == 0
         ) {
             if (
                 A.canAfford(370, 160)
