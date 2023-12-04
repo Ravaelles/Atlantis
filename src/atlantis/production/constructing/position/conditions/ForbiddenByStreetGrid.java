@@ -19,8 +19,8 @@ public class ForbiddenByStreetGrid {
      * So disallow building in e.g. 0,1, 6,7, 12,13, horizontally and vertically
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
-        if (We.protoss() && A.supplyTotal() <= 10) return false;
         if (building.isBase() || building.isGasBuilding()) return false;
+        if (We.protoss() && A.supplyTotal() <= 10) return false;
 
         if (
             building.isMissileTurret() && Select.ourBuildingsWithUnfinished().inRadius(3, position).empty()

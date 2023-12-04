@@ -3,6 +3,7 @@ package atlantis.combat.squad.positioning;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -23,6 +24,7 @@ public class TooClustered extends Manager {
         if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.enemiesNear().inRadius(14, unit).notEmpty()) return false;
         if (unit.friendsNear().buildings().inRadius(3, unit).notEmpty()) return false;
+        if (unit.isMissionDefend() && EnemyWhoBreachedBase.notNull()) return false;
 
         if (seconds <= 300 && unit.isMissionDefend() && unit.friendsNear().inRadius(2, unit).notEmpty())
             return true;

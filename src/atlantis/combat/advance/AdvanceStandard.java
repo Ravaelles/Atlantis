@@ -1,7 +1,6 @@
 package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.missions.MissionManager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -20,11 +19,7 @@ public class AdvanceStandard extends MissionManager {
 
     protected Manager handle() {
         if (unit.isGroundUnit() && !unit.isTank() && Count.tanks() >= 2) {
-            if (advanceAsNonTank()) return usedManager(this);
-        }
-
-        if (unit.isTankSieged()) {
-            if (TerranTank.wantsToUnsiege(unit)) return null;
+            if (tooFarFromTank()) return usedManager(this);
         }
 
         if (A.seconds() % 6 <= 3 && (!unit.isMoving() && !unit.isAttacking())) {
@@ -39,7 +34,7 @@ public class AdvanceStandard extends MissionManager {
         return null;
     }
 
-    private boolean advanceAsNonTank() {
+    private boolean tooFarFromTank() {
         AUnit target = unit.nearestOurTank();
         if (target != null && unit.distTo(target) >= 5) {
             unit.move(target, Actions.MOVE_FORMATION, "RollWithTank");

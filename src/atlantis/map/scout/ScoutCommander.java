@@ -18,6 +18,7 @@ import atlantis.util.We;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.List;
 
 public class ScoutCommander extends Commander {
     @Override
@@ -111,7 +112,7 @@ public class ScoutCommander extends Commander {
                     return;
                 }
 
-                for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(DefineNatural.natural(), true)) {
+                for (AUnit scout : candidates()) {
                     if (
                         scout.isBuilder()
                             || scout.isRepairerOfAnyKind()
@@ -126,6 +127,15 @@ public class ScoutCommander extends Commander {
                     }
                 }
             }
+    }
+
+    private static List<AUnit> candidates() {
+        return Select.ourWorkers()
+            .notCarrying()
+            .gatheringMinerals(true)
+            .notSpecialAction()
+            .notConstructing()
+            .sortDataByDistanceTo(DefineNatural.natural(), true);
     }
 
     private void removeExcessiveScouts() {

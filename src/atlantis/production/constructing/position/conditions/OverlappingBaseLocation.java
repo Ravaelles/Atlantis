@@ -12,9 +12,7 @@ import atlantis.util.We;
 
 public class OverlappingBaseLocation {
     public static boolean isOverlappingBaseLocation(AUnitType building, APosition position) {
-        if (building.isBase()) {
-            return forBase(position);
-        }
+        if (building.isBase()) return forBase(position);
 
         return forNonBaseBuilding(position, building);
     }

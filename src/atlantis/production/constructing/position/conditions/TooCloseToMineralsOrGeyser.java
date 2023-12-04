@@ -9,6 +9,7 @@ import atlantis.units.select.Select;
 public class TooCloseToMineralsOrGeyser {
     public static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
         if (building.isMissileTurret()) return false;
+        if (building.isBase()) return false;
         if (building.isCombatBuilding() && !building.isBunker()) return false;
         if (Select.main() == null) return false;
 

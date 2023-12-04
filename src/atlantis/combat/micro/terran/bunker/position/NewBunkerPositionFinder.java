@@ -61,7 +61,10 @@ public class NewBunkerPositionFinder {
                 return null;
             }
 
-            if (!this.positionToSecure.regionsMatch(output)) {
+            if (
+                this.positionToSecure.distTo(near) >= 10
+                    && !this.positionToSecure.regionsMatch(output)
+            ) {
                 ErrorLog.printMaxOncePerMinute("NewBunkerPositionFinder: wrong region");
                 return null;
             }

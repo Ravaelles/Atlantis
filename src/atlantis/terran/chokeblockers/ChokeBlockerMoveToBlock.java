@@ -16,7 +16,7 @@ public class ChokeBlockerMoveToBlock extends Manager {
     public Manager handle() {
         double dist = unit.distTo(blockChokePoint);
 
-        if (dist > 0.15) {
+        if (dist > 0.03) {
             unit.move(blockChokePoint, Actions.MOVE_SPECIAL, "ChokeBlocker");
         }
         else {

@@ -22,4 +22,8 @@ public class EnemyWhoBreachedBase {
     public static int numberOfAttacksOnBase() {
         return _numOfBaseAttacks;
     }
+
+    public static boolean notNull() {
+        return get() != null;
+    }
 }

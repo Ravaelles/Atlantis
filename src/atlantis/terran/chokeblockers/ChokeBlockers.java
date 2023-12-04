@@ -36,8 +36,8 @@ public class ChokeBlockers {
         blockingPoint1 = choke.firstPoint();
         blockingPoint2 = choke.lastPoint();
 
-        blockingPoint1 = blockingPoint1.translatePercentTowards(blockingPoint2, 28);
-        blockingPoint2 = blockingPoint2.translatePercentTowards(blockingPoint1, 28);
+        blockingPoint1 = blockingPoint1.translatePercentTowards(blockingPoint2, 26);
+        blockingPoint2 = blockingPoint2.translatePercentTowards(blockingPoint1, 26);
     }
 
     public void assignWorkersIfNeeded() {
@@ -51,7 +51,7 @@ public class ChokeBlockers {
 
         if (worker1 != null && worker1.isAlive() && worker2 != null && worker2.isAlive()) return;
 
-        Selection workers = Select.ourWorkers().gatheringMinerals(true);
+        Selection workers = candidates();
 
         if (worker1 == null || !worker1.isAlive()) {
             worker1 = workers.first();
@@ -61,6 +61,12 @@ public class ChokeBlockers {
             worker2 = workers.second();
             if (worker2 != null) worker2.setSpecialPosition(blockingPoint2);
         }
+    }
+
+    private static Selection candidates() {
+        return Select.ourWorkers()
+            .gatheringMinerals(true)
+            .notConstructing();
     }
 
     public AUnit otherBlocker(AUnit unit) {

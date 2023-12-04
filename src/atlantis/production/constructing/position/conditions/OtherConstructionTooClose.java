@@ -15,6 +15,8 @@ public class OtherConstructionTooClose {
      * could be stacked.
      */
     public static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
+        if (building.isBase()) return false;
+
         // Compare against planned construction places
         for (Construction order : ConstructionRequests.all()) {
             HasPosition constructionPosition = order.buildPosition();

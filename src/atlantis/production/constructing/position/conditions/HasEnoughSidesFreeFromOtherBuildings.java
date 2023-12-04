@@ -7,6 +7,8 @@ import atlantis.units.AUnitType;
 
 public class HasEnoughSidesFreeFromOtherBuildings {
     public static boolean check(AUnit builder, AUnitType building, APosition position) {
+        if (building.isBase()) return true;
+
         if (!building.isBunker()) {
             if (
                 !BuildingTileHelper.tileRightFrom(building, position).isWalkable()

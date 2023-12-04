@@ -23,7 +23,7 @@ public class FindPositionForBase {
         HasPosition near = null;
         int ourBasesCount = Select.ourBases().count();
 
-        if (A.seconds() <= 800 && ourBasesCount <= 1) {
+        if (A.seconds() <= 1000 && ourBasesCount <= 1) {
             near = DefineNatural.natural();
         }
 //        else if (ourBasesCount <= 2) {
@@ -48,9 +48,21 @@ public class FindPositionForBase {
 
         double maxDistance = construction != null && construction.maxDistance() >= 0 ? construction.maxDistance() : 3;
 
-        return APositionFinder.findStandardPosition(
+        APosition nearestBase = APositionFinder.findStandardPosition(
             builder, building, near, maxDistance
         );
+
+        if (nearestBase == null) {
+            ErrorLog.printMaxOncePerMinute(
+                "Could not find nearest base."
+                    + "\nnear = " + near
+                    + "\nconstruction = " + construction
+            );
+            return null;
+        }
+        ;
+
+        return nearestBase;
     }
 
     public static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, Construction construction) {

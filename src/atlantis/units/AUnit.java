@@ -2891,7 +2891,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean hasCloseRepairer() {
         AUnit repairer = repairer();
 
-        return repairer != null && this.distTo(repairer) <= (isAir() ? 6 : 2);
+        return repairer != null
+            && this.distTo(repairer) <= (isAir() ? 6 : 2)
+            && (!repairer.isRepairing() || repairer.isTarget(this));
     }
 
     public boolean targetIsOfType(AUnitType... type) {

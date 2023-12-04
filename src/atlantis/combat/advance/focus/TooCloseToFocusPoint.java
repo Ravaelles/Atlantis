@@ -2,6 +2,7 @@ package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -17,6 +18,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         if (unit.isLoaded()) return false;
         if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
+        if (EnemyWhoBreachedBase.notNull()) return false;
 
         if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_CLOSE) {
             // Be brave with ChokeBlockers

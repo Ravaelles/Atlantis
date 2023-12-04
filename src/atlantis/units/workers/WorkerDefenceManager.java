@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionsCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -23,7 +24,7 @@ public class WorkerDefenceManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isWorker() && (!unit.isScv() || unit.isWounded());
+        return unit.isWorker() && (unit.isWounded() || unit.enemiesNear().reavers().notEmpty());
     }
 
     /**
@@ -76,9 +77,17 @@ public class WorkerDefenceManager extends Manager {
             }
 
             if (distTo <= 12) {
-                AUnit goTo = Select.minerals().inRadius(40, worker).mostDistantTo(worker);
-                if (goTo != null && goTo.distTo(worker) >= 2) {
-                    worker.move(goTo, Actions.MOVE_AVOID, "RunToAnotherBase");
+                AUnit goTo = Select.minerals().inRadius(30, worker).mostDistantTo(worker);
+                if (goTo != null && goTo.distTo(worker) >= 10) {
+//                    worker.gather(goTo, Actions.MOVE_AVOID, "RunToAnotherBase");
+                    worker.gather(goTo);
+                    worker.setTooltip("OhShitReaver");
+                    return true;
+                }
+
+                HasPosition runTo = Select.all().inRadius(60, worker).mostDistantTo(worker);
+                if (runTo != null && runTo.distTo(worker) >= 10) {
+                    worker.move(runTo, Actions.MOVE_AVOID, "RunToHell");
                     return true;
                 }
             }
