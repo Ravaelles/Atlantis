@@ -12,6 +12,7 @@ public class DontMoveWhenBeingRepared extends Manager {
     @Override
     public boolean applies() {
         if (unit.isHealthy()) return false;
+        if (unit.meleeEnemiesNearCount(3) > 0) return false;
 
         AUnit repairer = unit.repairer();
         return repairer != null && repairer.isRepairing() && repairer.distToLessThan(unit, 2);

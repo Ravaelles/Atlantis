@@ -21,8 +21,8 @@ public class TankCrucialTargeting extends HasUnit {
 
         // Protoss
         if ((target = enemies.ofType(AUnitType.Protoss_Reaver).nearestTo(unit)) != null) return target;
-        if ((target = enemies.ofType(AUnitType.Protoss_Dark_Templar).nearestTo(unit)) != null) return target;
         if ((target = enemies.ofType(AUnitType.Protoss_High_Templar).nearestTo(unit)) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Protoss_Dark_Templar).nearestTo(unit)) != null) return target;
         if ((target = enemies.ofType(AUnitType.Protoss_Archon).mostWounded()) != null) return target;
 
         // Terran
@@ -31,6 +31,7 @@ public class TankCrucialTargeting extends HasUnit {
 
         // Zerg
         if ((target = enemies.ofType(AUnitType.Zerg_Defiler).nearestTo(unit)) != null) return target;
+        if ((target = enemies.ofType(AUnitType.Zerg_Lurker).nearestTo(unit)) != null) return target;
         if ((target = enemies.ofType(AUnitType.Zerg_Ultralisk).mostWounded()) != null) return target;
 
         return null;

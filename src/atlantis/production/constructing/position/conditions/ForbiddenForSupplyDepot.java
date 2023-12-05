@@ -12,8 +12,8 @@ public class ForbiddenForSupplyDepot {
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!We.terran() || !building.isSupplyDepot()) return false;
 
-        return streetGridMatches(position)
-            && otherSupplyDepotConstructionsAreNotClose(position);
+        return !streetGridMatches(position);
+//             otherSupplyDepotConstructionsAreNotClose(position);
     }
 
     private static boolean otherSupplyDepotConstructionsAreNotClose(APosition position) {
@@ -23,7 +23,7 @@ public class ForbiddenForSupplyDepot {
     }
 
     private static boolean streetGridMatches(APosition position) {
-        return position.tx() % 2 > 0 || position.ty() % 2 > 0 || position.tx() % 6 == 0;
+        return position.tx() % 3 == 0 && position.ty() % 3 == 0 && position.tx() % 9 != 0;
     }
 }
 

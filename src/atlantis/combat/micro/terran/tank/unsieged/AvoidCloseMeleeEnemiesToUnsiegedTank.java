@@ -16,7 +16,7 @@ public class AvoidCloseMeleeEnemiesToUnsiegedTank extends Manager {
     public boolean applies() {
         if (unit.noCooldown() || unit.hp() >= 140) return false;
 
-        enemies = unit.enemiesNear().melee().inRadius(3, unit);
+        enemies = unit.enemiesNear().melee().inRadius(3.5 + unit.woundPercent() / 40.0, unit);
 
         return enemies.atLeast(1);
     }

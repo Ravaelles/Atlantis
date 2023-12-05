@@ -13,6 +13,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -117,7 +118,7 @@ public class ScoutCommander extends Commander {
                         scout.isBuilder()
                             || scout.isRepairerOfAnyKind()
                             || scout.isBuilder()
-                            || scout.lastActionLessThanAgo(50, Actions.MOVE_SPECIAL)
+                            || scout.lastActionLessThanAgo(50, Actions.SPECIAL)
                     ) continue;
 
                     if (ScoutState.scouts.isEmpty()) {
@@ -130,12 +131,7 @@ public class ScoutCommander extends Commander {
     }
 
     private static List<AUnit> candidates() {
-        return Select.ourWorkers()
-            .notCarrying()
-            .gatheringMinerals(true)
-            .notSpecialAction()
-            .notConstructing()
-            .sortDataByDistanceTo(DefineNatural.natural(), true);
+        return FreeWorkers.get().sortDataByDistanceTo(DefineNatural.natural(), true);
     }
 
     private void removeExcessiveScouts() {

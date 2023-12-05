@@ -346,13 +346,13 @@ public class Selection extends BaseSelection {
 
     public Selection notSpecialAction() {
         return cloneByRemovingIf(
-            (unit -> unit.lastActionLessThanAgo(100, Actions.MOVE_SPECIAL)), "notSpecialAction"
+            (unit -> unit.lastActionLessThanAgo(100, Actions.SPECIAL)), "notSpecialAction"
         );
     }
 
     public Selection specialAction() {
         return cloneByRemovingIf(
-            (unit -> unit.lastActionMoreThanAgo(100, Actions.MOVE_SPECIAL)), "specialAction"
+            (unit -> unit.lastActionMoreThanAgo(100, Actions.SPECIAL)), "specialAction"
         );
     }
 
@@ -1178,7 +1178,7 @@ public class Selection extends BaseSelection {
     public String unitIds() {
         StringBuilder result = new StringBuilder("ids(");
 
-        for (AUnit unit : list()){
+        for (AUnit unit : list()) {
             result.append(unit.id()).append(",");
         }
 

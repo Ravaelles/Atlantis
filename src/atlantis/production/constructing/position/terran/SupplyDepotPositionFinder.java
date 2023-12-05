@@ -38,7 +38,7 @@ public class SupplyDepotPositionFinder {
     private static HasPosition nearTo() {
         if (A.supplyTotal() <= 30) return Select.mainOrAnyBuilding();
 
-//        if (A.chance(60)) return Select.ourOfType(Terran_Supply_Depot).random();
+        if (A.chance(40)) return Select.ourOfType(Terran_Supply_Depot).last();
 //        else return Select.ourBuildings().random();
         return MainRegion.mainRegion().center();
 

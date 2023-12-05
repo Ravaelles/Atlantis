@@ -158,7 +158,8 @@ public class ProduceMarines {
                     AUnit idleBarrack = Select.ourOneNotTrainingUnits(AUnitType.Terran_Barracks);
                     if (idleBarrack != null) {
 //                        return AbstractDynamicUnits.addToQueue(AUnitType.Terran_Marine);
-                        return AddToQueue.maxAtATime(Terran_Marine, 4) != null;
+//                        return AddToQueue.maxAtATime(Terran_Marine, 4) != null;
+                        return forceProduceMarine();
                     }
                     else {
                         break;

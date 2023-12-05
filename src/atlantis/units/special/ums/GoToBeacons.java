@@ -35,7 +35,7 @@ public class GoToBeacons extends Manager {
             AUnit unit = ours.clone().inRadius(9, beacon).nearestTo(beacon);
             AUnit nearestBeacon = beacons.clone().nearestTo(unit);
             if (unit != null && beacon != null) {
-                unit.move(nearestBeacon, Actions.MOVE_SPECIAL, "To beacon", true);
+                unit.move(nearestBeacon, Actions.SPECIAL, "To beacon", true);
                 APainter.paintLine(unit, nearestBeacon, Color.White);
             }
             return usedManager(this);

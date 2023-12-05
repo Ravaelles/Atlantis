@@ -63,6 +63,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             Enemy.protoss()
                 && EnemyInfo.hasHiddenUnits()
                 && !Have.scienceVessel()
+                && Select.ourOfType(AUnitType.Terran_Comsat_Station).havingEnergy(75).empty()
                 && ArmyStrength.ourArmyRelativeStrength() <= 400
         ) {
             if (DEBUG) reason = "No Science Vessel";
@@ -81,7 +82,11 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
     }
 
     private boolean notEnoughTanksAndNotEarlyGame() {
-        return !Enemy.terran() && A.seconds() >= 500 && Atlantis.LOST >= 10 && Count.tanks() <= 6;
+        return !Enemy.terran()
+            && A.seconds() >= 500
+            && Atlantis.LOST >= 10
+            && Count.tanks() <= 6
+            && ArmyStrength.ourArmyRelativeStrength() <= 300;
     }
 
     private boolean enemyHasHiddenUnitsAndWeDontHaveEnoughDetection() {

@@ -191,7 +191,7 @@ public class TravelToConstruct extends HasUnit {
 
     private void moveOtherUnitsOutOfConstructionPlace(APosition buildPosition) {
         for (AUnit unit : unit.friendsNear().inRadius(2.3, buildPosition).exclude(unit).list()) {
-            unit.moveAwayFrom(buildPosition, 1, Actions.MOVE_SPECIAL, "Construction!");
+            unit.moveAwayFrom(buildPosition, 1, Actions.SPECIAL, "Construction!");
         }
     }
 

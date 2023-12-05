@@ -1,6 +1,7 @@
 ### BUGS ###
 
------- SupplyDepot bot constructed 50/50, and 60/60, but position non null / no order
+---- EnemyWhobreached not working for DTs (probably just for invisible, but let's force 1 DT, regardless)
+
 ?---- MATRIX not working
 
 ?----- Depots still broken when 60

@@ -76,7 +76,7 @@ public class RebaseToNewMineralPatches extends Manager {
 
     private boolean moveToRebase(ABaseLocation rebaseTo) {
         unit.setTooltipAndLog("MoveToRebase");
-        unit.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true);
+        unit.move(rebaseTo, Actions.SPECIAL, "FlyToRebase", true);
         return true;
     }
 

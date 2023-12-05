@@ -38,7 +38,7 @@ public class SuicideAgainstScarabs extends Manager {
 
         if (shouldMoveTowardsScarab(scarabAimedAtUnit, friendsNear)) {
             moveNearbyFriendsIfNeeded(friendsNear);
-            return unit.move(scarabAimedAtUnit, Actions.MOVE_SPECIAL, "SUICIDE", false);
+            return unit.move(scarabAimedAtUnit, Actions.SPECIAL, "SUICIDE", false);
         }
 
         return false;

@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.units.workers.FreeWorkers;
 
 public class ChokeBlockers {
     private static ChokeBlockers instance = null;
@@ -36,8 +37,8 @@ public class ChokeBlockers {
         blockingPoint1 = choke.firstPoint();
         blockingPoint2 = choke.lastPoint();
 
-        blockingPoint1 = blockingPoint1.translatePercentTowards(blockingPoint2, 26);
-        blockingPoint2 = blockingPoint2.translatePercentTowards(blockingPoint1, 26);
+        blockingPoint1 = blockingPoint1.translatePercentTowards(blockingPoint2, 22);
+        blockingPoint2 = blockingPoint2.translatePercentTowards(blockingPoint1, 22);
     }
 
     public void assignWorkersIfNeeded() {
@@ -51,7 +52,7 @@ public class ChokeBlockers {
 
         if (worker1 != null && worker1.isAlive() && worker2 != null && worker2.isAlive()) return;
 
-        Selection workers = candidates();
+        Selection workers = FreeWorkers.get();
 
         if (worker1 == null || !worker1.isAlive()) {
             worker1 = workers.first();
@@ -63,14 +64,12 @@ public class ChokeBlockers {
         }
     }
 
-    private static Selection candidates() {
-        return Select.ourWorkers()
-            .gatheringMinerals(true)
-            .notConstructing();
-    }
-
     public AUnit otherBlocker(AUnit unit) {
         if (unit.equals(worker1)) return worker2;
         else return worker1;
+    }
+
+    public boolean noEnemiesVeryNear() {
+        return worker1 != null && worker1.enemiesNear().inRadius(6, worker1).empty();
     }
 }

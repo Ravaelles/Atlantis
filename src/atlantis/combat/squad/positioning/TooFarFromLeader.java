@@ -11,7 +11,10 @@ public class TooFarFromLeader extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isGroundUnit() && unit.friendsNear().groundUnits().countInRadius(1, unit) <= 3;
+        return unit.isGroundUnit()
+            && !unit.squad().isLeader(unit)
+            && unit.friendsNear().groundUnits().countInRadius(1, unit) <= 3
+            && unit.friendsNear().groundUnits().countInRadius(3, unit) <= 8;
     }
 
     protected Manager handle() {

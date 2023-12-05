@@ -45,7 +45,7 @@ public class FindPosition {
             APosition position = SupplyDepotPositionFinder.findPosition(builder, construction, nearTo);
             if (position == null) {
                 ErrorLog.printMaxOncePerMinute(
-                    "SupplyDepotPositionFinder returned null: " + construction + " \n/ near:" + nearTo
+                    "SupplyDepotPositionFinder returned null \n    / near:" + nearTo
                 );
             }
             if (position != null) return position;

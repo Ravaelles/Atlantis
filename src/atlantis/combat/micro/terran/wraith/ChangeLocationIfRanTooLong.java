@@ -20,7 +20,7 @@ public class ChangeLocationIfRanTooLong extends Manager {
         if (unit.isGroundUnit()) return false;
         if (unit.looksIdle()) return false;
         if (unit.enemiesNear().air().notEmpty()) return false;
-        if (unit.lastActionMoreThanAgo(30 * 8, Actions.MOVE_SPECIAL)) return false;
+        if (unit.lastActionMoreThanAgo(30 * 8, Actions.SPECIAL)) return false;
 
         if (unit.hp() <= 95 && unit.lastUnderAttackLessThanAgo(30 * 6)) return true;
 
@@ -45,7 +45,7 @@ public class ChangeLocationIfRanTooLong extends Manager {
             if (goElsewhere()) return usedManager(this);
         }
 
-        if (unit.lastActionLessThanAgo(30 * 14, Actions.MOVE_SPECIAL)) {
+        if (unit.lastActionLessThanAgo(30 * 14, Actions.SPECIAL)) {
             if (unit.isMoving()) {
                 return usedManager(this);
             }
@@ -61,7 +61,7 @@ public class ChangeLocationIfRanTooLong extends Manager {
         AAdvancedPainter.paintCircleFilled(unit, 6, Color.Orange);
 
         if (goTo != null) {
-            unit.move(goTo, Actions.MOVE_SPECIAL, "BeSmart");
+            unit.move(goTo, Actions.SPECIAL, "BeSmart");
             return usedManager(this);
         }
 
@@ -71,7 +71,7 @@ public class ChangeLocationIfRanTooLong extends Manager {
     private boolean goElsewhere() {
         APosition invisiblePosition = AMap.randomInvisiblePosition(unit);
         if (invisiblePosition != null) {
-            unit.move(invisiblePosition, Actions.MOVE_SPECIAL, "ChangeLocRand", true);
+            unit.move(invisiblePosition, Actions.SPECIAL, "ChangeLocRand", true);
             return true;
         }
         return false;

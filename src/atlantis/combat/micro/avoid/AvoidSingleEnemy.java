@@ -5,6 +5,7 @@ import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import bwapi.Color;
 
 public class AvoidSingleEnemy extends Manager {
@@ -34,10 +35,6 @@ public class AvoidSingleEnemy extends Manager {
 //            return (new AvoidCombatBuilding(unit, enemy)).invoke();
 //        }
 
-        if (enemy.isCombatBuilding() && unit.isGroundUnit()) {
-            return avoidCombatBuildingAsGround();
-        }
-
         if (unit.runningManager().runFrom(
             enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, false
         )) {
@@ -47,11 +44,11 @@ public class AvoidSingleEnemy extends Manager {
         return runError.handleErrorRun(unit);
     }
 
-    private Manager avoidCombatBuildingAsGround() {
-        if (unit.holdPosition("AvoidCombatBuilding")) return usedManager(this);
-
-        return null;
-    }
+//    private Manager avoidCombatBuildingAsGround() {
+////        if (unit.holdPosition("AvoidCombatBuilding")) return usedManager(this);
+//        unit.move(Select.mainOrAnyBuilding(), Actions.MOVE_AVOID, "Wit hdrawB");
+//        return usedManager(this);
+//    }
 
     private boolean isEnemyFacingOtherWayAndWeLookSafe() {
         return enemy.isMelee()

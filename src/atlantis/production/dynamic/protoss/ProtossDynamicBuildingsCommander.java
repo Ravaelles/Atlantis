@@ -23,7 +23,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     protected void handle() {
         super.invoke();
 
-        if (AGame.notNthGameFrame(7) || noSupply(25)) {
+        if (AGame.notNthGameFrame(7) || (!A.hasMinerals(550) && noSupply(25))) {
             return;
         }
 

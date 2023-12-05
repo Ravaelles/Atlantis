@@ -11,7 +11,7 @@ public class ScoutManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isScout() && unit.recentlyMoved();
+        return unit.isScout();
     }
 
     @Override

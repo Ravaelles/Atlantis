@@ -70,7 +70,12 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
                 && !TankDecisions.siegeResearched()
         ) return false;
 
-        if (ourRelativeStrength >= 350 && !EnemyInfo.isEnemyNearAnyOurBase()) {
+        if (
+            ourRelativeStrength >= 350
+                && !EnemyInfo.isEnemyNearAnyOurBase()
+                && (A.seconds() >= 370 || !EnemyStrategy.get().isRushOrCheese())
+                && (Count.medics() >= 2 || Count.tanks() >= 2)
+        ) {
             if (DEBUG) reason = "Comfortably stronger (" + ourRelativeStrength + "%)";
             return true;
         }

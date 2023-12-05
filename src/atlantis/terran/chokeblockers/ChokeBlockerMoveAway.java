@@ -3,6 +3,7 @@ package atlantis.terran.chokeblockers;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -17,6 +18,8 @@ public class ChokeBlockerMoveAway extends Manager {
 
     @Override
     public boolean applies() {
+        if (ChokeBlockers.get().noEnemiesVeryNear() && CountInQueue.bases() > 0) return true;
+
         if (A.seconds() <= 300) return false;
 
         if (chokeBlockPoint.distTo(unit) > 8) return false;
@@ -28,7 +31,7 @@ public class ChokeBlockerMoveAway extends Manager {
     @Override
     protected Manager handle() {
         unit.move(Select.mainOrAnyBuilding(), Actions.MOVE_SPACE, "Spacing...");
-        unit.setAction(Actions.MOVE_SPECIAL);
+        unit.setAction(Actions.SPECIAL);
 
         return usedManager(this);
     }

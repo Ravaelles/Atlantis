@@ -52,7 +52,7 @@ public class FindPositionForBase {
             builder, building, near, maxDistance
         );
 
-        if (nearestBase == null) {
+        if (nearestBase == null && Select.ourBases().notEmpty()) {
             ErrorLog.printMaxOncePerMinute(
                 "Could not find nearest base."
                     + "\nnear = " + near

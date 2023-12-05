@@ -27,10 +27,11 @@ public class ProtectorCommander extends Commander {
     protected void handle() {
         if (AGame.everyNthGameFrame(9)) {
             assignBunkerProtectorsIfNeeded();
+            assignUnitsProtectorsIfNeeded();
 
-            if (!removeProtectorsIfNeeded()) {
-                assignUnitsProtectorsIfNeeded();
-            }
+            removeProtectorsIfNeeded();
+//            if (!removeProtectorsIfNeeded()) {
+//            }
         }
 
         for (Iterator<AUnit> iterator = RepairAssignments.getProtectors().iterator(); iterator.hasNext(); ) {

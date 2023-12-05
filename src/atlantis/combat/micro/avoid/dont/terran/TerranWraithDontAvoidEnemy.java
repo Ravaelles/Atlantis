@@ -3,8 +3,8 @@ package atlantis.combat.micro.avoid.dont.terran;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
-public class TerranRangedDontAvoidEnemy extends Manager {
-    public TerranRangedDontAvoidEnemy(AUnit unit) {
+public class TerranWraithDontAvoidEnemy extends Manager {
+    public TerranWraithDontAvoidEnemy(AUnit unit) {
         super(unit);
     }
 

@@ -39,7 +39,7 @@ public class Actions {
     public static final Action MOVE_SAFETY = new Action().setName("MOVE_SAFETY");
     public static final Action MOVE_SCOUT = new Action().setName("MOVE_SCOUT");
     public static final Action MOVE_SPACE = new Action().setName("MOVE_SPACE");
-    public static final Action MOVE_SPECIAL = new Action().setName("MOVE_SPECIAL");
+    public static final Action SPECIAL = new Action().setName("MOVE_SPECIAL");
     public static final Action MOVE_UNFREEZE = new Action().setName("MOVE_UNFREEZE");
     public static final Action PATROL = new Action().setName("PATROL");
     public static final Action REPAIR = new Action().setName("REPAIR");

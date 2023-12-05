@@ -19,7 +19,8 @@ public class TerranDontAvoidEnemy extends Manager {
         return new Class[]{
             ScvDontAvoidEnemy.class,
             WraithDontAvoidEnemy.class,
-            TerranRangedDontAvoidEnemy.class,
+            TerranMarineDontAvoidEnemy.class,
+            TerranWraithDontAvoidEnemy.class,
         };
     }
 

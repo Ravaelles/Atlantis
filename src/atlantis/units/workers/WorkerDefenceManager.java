@@ -24,7 +24,9 @@ public class WorkerDefenceManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isWorker() && (unit.isWounded() || unit.enemiesNear().reavers().notEmpty());
+        return unit.isWorker()
+            && !unit.isSpecialMission()
+            && (unit.isWounded() || unit.enemiesNear().reavers().notEmpty());
     }
 
     /**

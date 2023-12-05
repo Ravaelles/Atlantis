@@ -3,7 +3,6 @@ package atlantis.terran.repair;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -36,13 +35,9 @@ public class OptimalNumOfBunkerRepairers {
 
 //                System.out.println("enemiesNear = " + enemiesNear + " / enemiesFar = " + enemiesFar);
 
-        if (thereIsAlmostNooneInside(bunker)) {
-            if (enemiesNear == 0 && enemiesFar == 0) {
-                return A.seconds() <= 300 ? 1 : 0;
-            }
-            if ((enemiesFar + enemiesNear) >= 5 && bunker.loadedUnits().size() > 0) {
-                return 2;
-            }
+        int nooneInside = whenAlmostNooneInside(bunker);
+        if (nooneInside != -1) {
+            return nooneInside;
         }
 
         if (thereIsFewAttackers(bunker)) {
@@ -128,8 +123,21 @@ public class OptimalNumOfBunkerRepairers {
         return otherBunkerEnemies >= 2 && thisBunkerEnemies < otherBunkerEnemies;
     }
 
-    private static boolean thereIsAlmostNooneInside(AUnit bunker) {
-        return bunker.loadedUnits().size() <= 1
-            && bunker.friendsNear().terranInfantryWithoutMedics().inRadius(6, bunker).atMost(1);
+    private static int whenAlmostNooneInside(AUnit bunker) {
+        if (enemiesNear == 0 && enemiesFar == 0) return A.seconds() <= 300 ? 1 : 0;
+
+        if ((enemiesFar + enemiesNear) >= 5 && bunker.loadedUnits().size() > 0) return 2;
+
+        if (
+            bunker.loadedUnits().size() <= 0
+                && Select.ourOfType(AUnitType.Terran_Marine).inRadius(9, bunker).atMost(1)
+        ) return 0;
+
+        if (
+            bunker.loadedUnits().size() <= 1
+                && bunker.friendsNear().terranInfantryWithoutMedics().inRadius(6, bunker).atMost(1)
+        ) return 1;
+
+        return -1;
     }
 }

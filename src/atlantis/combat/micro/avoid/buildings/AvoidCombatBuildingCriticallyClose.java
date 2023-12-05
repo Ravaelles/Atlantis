@@ -2,6 +2,8 @@ package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class AvoidCombatBuildingCriticallyClose extends Manager {
     private final AUnit combatBuilding;
@@ -23,13 +25,17 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
             return usedManager(this);
         }
 
-        return null;
+        else {
+            unit.move(Select.mainOrAnyBuilding(), Actions.MOVE_AVOID, "AvoidCB");
+            return usedManager(this);
+        }
     }
 
     private boolean shouldHoldGround(AUnit combatBuilding) {
         return unit.isMoving()
             && unit.targetPosition() != null
-            && unit.targetPosition().distTo(combatBuilding) < 7.25;
+            && unit.targetPosition().distTo(combatBuilding) < 7.65
+            && unit.targetPosition().distTo(combatBuilding) >= 7.1;
     }
 
     private boolean isHoldingTooLong(AUnit combatBuilding) {

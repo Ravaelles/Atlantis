@@ -31,6 +31,8 @@ public class DynamicRepairsNearby extends Manager {
         if (repairable != null && repairable.isWalkable()) {
             if (ShouldNotRepairUnit.shouldNotRepairUnit(unit, repairable)) return false;
 
+            if (RepairAssignments.countRepairersForUnit(repairable) >= 4) return false;
+
             RepairAssignments.addRepairer(unit, repairable);
             if (!unit.isRepairing()) {
                 unit.repair(unit, "DynaRepair");

@@ -3,28 +3,31 @@ package atlantis.terran.chokeblockers;
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.Enemy;
 
 public class ChokeBlockersCommander extends Commander {
     private AChoke choke;
 
     @Override
     public boolean applies() {
+        if (Enemy.terran()) return false;
+
         return checkIfApplies();
     }
 
     private boolean checkIfApplies() {
         if (AGame.notNthGameFrame(5)) return false;
-
         if (Missions.isGlobalMissionAttack()) return false;
 
         choke = Chokes.mainChoke();
-        if (choke == null) return false;
+        if (choke == null || choke.width() >= 4.5) return false;
 
         if (AGame.killsLossesResourceBalance() >= 1800) return false;
 

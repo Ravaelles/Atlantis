@@ -23,7 +23,7 @@ public class ProtossShieldBattery extends Manager {
             .nearestTo(unit);
         if (
             battery != null && battery.distToMoreThan(unit, 6)
-                && unit.move(battery, Actions.MOVE_SPECIAL, "ToBattery", false)
+                && unit.move(battery, Actions.SPECIAL, "ToBattery", false)
         ) {
             return usedManager(this);
         }

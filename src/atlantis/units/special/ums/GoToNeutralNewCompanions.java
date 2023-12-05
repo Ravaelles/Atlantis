@@ -24,7 +24,7 @@ public class GoToNeutralNewCompanions extends Manager {
 
             for (AUnit unit : Select.our().inRadius(10, goToRenegade).list()) {
                 if (unit.distTo(goToRenegade) > 0.5) {
-                    unit.move(goToRenegade, Actions.MOVE_SPECIAL, "Friendly Renegade!", true);
+                    unit.move(goToRenegade, Actions.SPECIAL, "Friendly Renegade!", true);
                 }
                 else {
                     NEW_NEUTRAL_THAT_WILL_RENEGADE_TO_US = null;

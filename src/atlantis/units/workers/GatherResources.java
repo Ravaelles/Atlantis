@@ -16,7 +16,7 @@ public class GatherResources extends Manager {
     }
 
     protected Manager handle() {
-        if (unit.lastActionLessThanAgo(40, Actions.MOVE_SPECIAL)) return null;
+        if (unit.lastActionLessThanAgo(40, Actions.SPECIAL)) return null;
 
         if (handleGatherMineralsOrGas()) return usedManager(this);
 

@@ -42,9 +42,9 @@ public class SupplyCommander extends Commander {
         requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
         if (tooManyNotStartedConstructions()) {
-            ErrorLog.printMaxOncePerMinute(
-                "Too many not started constructions of supply: " + requestedConstructionsOfSupply
-            );
+//            ErrorLog.printMaxOncePerMinute(
+//                "Too many not started constructions of supply: " + requestedConstructionsOfSupply
+//            );
             return;
         }
 

@@ -50,7 +50,7 @@ public class GoTowardsMedic extends Manager {
             .nearestTo(unit);
 
         if (medic != null && medic.distToMoreThan(unit, 2)) {
-            return unit.move(medic, Actions.MOVE_SPECIAL, "BeHealed", false);
+            return unit.move(medic, Actions.SPECIAL, "BeHealed", false);
         }
 
         return false;

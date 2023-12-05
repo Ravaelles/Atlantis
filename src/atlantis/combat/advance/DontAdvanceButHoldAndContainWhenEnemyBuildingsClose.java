@@ -12,6 +12,7 @@ import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 
 public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends MissionManager {
     public static final int DIST_TO_ENEMY_MAIN_CHOKE = 8;
@@ -32,7 +33,14 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
             (unit.isWounded() || (A.supplyUsed() < 185 && tanks <= 18))
                 && A.minerals() < 2000
                 && unit.isCombatUnit()
+                && safeWithTanksSoSkip()
                 && closeToEnemyBuildingsOrChoke();
+    }
+
+    private boolean safeWithTanksSoSkip() {
+        if (unit.isTank()) return false;
+
+        return unit.nearestOurTankDist() >= 3 && unit.friendsNear().inRadius(3, unit).atLeast(7);
     }
 
     protected Manager handle() {
@@ -45,7 +53,8 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
 
     private Manager asNonTank() {
         if (unit.noCooldown() && unit.lastUnderAttackMoreThanAgo(30) && noEnemiesInShootRange()) {
-            unit.holdPosition("Steady");
+//            unit.holdPosition("Steady");
+            unit.move(Select.mainOrAnyBuilding(), Actions.MOVE_FORMATION, "SteadyNow");
             return usedManager(this);
         }
 

@@ -4,6 +4,7 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.log.ErrorLog;
 
 import java.util.Collection;
@@ -11,20 +12,12 @@ import java.util.Iterator;
 
 public class NewRepairer {
     public static AUnit repairerFor(AUnit unitToRepair, boolean criticallyImportant) {
-        Selection workers = Select.ourWorkers()
-            .notCarrying()
-            .notRepairing()
-            .notProtector()
-            .notGatheringGas()
-            .notConstructing()
-            .notSpecialAction()
-            .notScout();
+        Selection workers = FreeWorkers.get();
 
         if (criticallyImportant) {
             Selection candidates = workers.notRepairing();
             if (!OurStrategy.get().isRush()) {
-                candidates = candidates
-                    .notScout()
+                candidates = Select.ourWorkers()
                     .notSpecialAction()
                     .notConstructing();
             }

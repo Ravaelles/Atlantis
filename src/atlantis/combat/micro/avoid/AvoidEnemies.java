@@ -75,7 +75,7 @@ public class AvoidEnemies extends Manager {
 
         if (
             unit.hp() <= 16 && unit.isMelee() && unit.isCombatUnit()
-                && unit.enemiesNear().groundUnits().effVisible().inRadius(1, unit).notEmpty()
+                && unit.enemiesNear().groundUnits().inRadius(1, unit).notEmpty()
         ) {
             unit.setTooltipTactical("Kamikaze");
             return true;
@@ -159,6 +159,7 @@ public class AvoidEnemies extends Manager {
         return unit.enemiesNear()
             .removeDuplicates()
             .onlyCompleted()
+            .havingWeapon()
             .canAttack(unit, true, true, 4.5)
             .havingPosition()
             .list();

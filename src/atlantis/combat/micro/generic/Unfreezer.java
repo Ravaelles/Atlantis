@@ -36,7 +36,8 @@ public class Unfreezer extends Manager {
             && unit.lastActionMoreThanAgo(150, Actions.MOVE_UNFREEZE)
             && unit.hasNotMovedInAWhile()
             && unit.nearestEnemyDist() >= 4
-            && unit.lastActionMoreThanAgo(30);
+            && unit.lastActionMoreThanAgo(30)
+            && (!unit.isTank() || unit.lastSiegedAgo() >= 30 * 9);
 //            (unit.looksIdle()
 //                || (unit.lastActionMoreThanAgo(30) && unit.hasNotMovedInAWhile())
 //            );

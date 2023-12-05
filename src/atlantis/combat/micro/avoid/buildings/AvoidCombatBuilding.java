@@ -27,6 +27,15 @@ public class AvoidCombatBuilding extends Manager {
     public boolean applies() {
         if (unit.isAir()) return true;
         if (unit.isGroundUnit() && unit.isMissionDefendOrSparta()) return false;
+        if (
+            A.supplyUsed() >= 70
+                && Count.ourCombatUnits() >= 15
+                && !unit.isTank()
+                && (
+                unit.nearestOurTankDist() <= 2.5
+                    || unit.friendsNear().inRadius(2, unit).atLeast(6)
+            )
+        ) return false;
 
         AUnit combatBuilding = unit.enemiesNear()
             .combatBuildings(false)
@@ -38,6 +47,8 @@ public class AvoidCombatBuilding extends Manager {
         if (
             A.supplyUsed() <= 100 && unit.isInfantry() && Count.tanks() <= 3 && unit.combatEvalRelative() <= 3
         ) return true;
+
+        if (unit.isGroundUnit() && unit.combatEvalRelative() > 4) return false;
 
         if (!unit.isTank()) {
             if (We.terran() && unit.friendsNear().groundUnits().havingAntiGroundWeapon().atLeast(9)) return false;
@@ -68,28 +79,17 @@ public class AvoidCombatBuilding extends Manager {
 
 //        APainter.paintCircleFilled(8, Color.Red);
 //        System.err.println("@ C = " + ShouldRetreat.shouldRetreat(unit));
-        if (
-            !unit.isAir()
-                && unit.friendsInRadiusCount(3) >= 6
-                && unit.friendsInRadiusCount(5) >= 8
-                && unit.combatEvalRelative() <= 4.5
-//                && !shouldRetreat.shouldRetreat(unit)
-                && combatBuildings.combatBuildings(false).inRadius(10, unit).notEmpty()
-        ) {
-//            unit.setTooltip("@ D YOLO " + unit);
-            return null;
-        }
 
 //        double criticalDist = 9.8 + (unit.isAir() ? 2.5 : 0);
         double criticalDist = criticalDist();
         double distTo = combatBuilding.distTo(unit);
         double doNothingMargin = 1.5;
 
-        if (distTo <= criticalDist + doNothingMargin) {
+//        if (distTo > criticalDist) {
 //            unit.holdPosition("HoldVsBuilding");
-            unit.move(Select.mainOrAnyBuilding(), Actions.MOVE_AVOID, "AvoidCB");
-            return usedManager(this);
-        }
+        unit.move(Select.mainOrAnyBuilding(), Actions.MOVE_AVOID, "AvoidCB");
+        return usedManager(this);
+//        }
 
 //        if (distTo <= criticalDist) {
 ////            if (thereIsNoSafetyMarginAtAll(combatBuilding)) return usedManager(avoidCombatBuildingCriticallyClose);
@@ -105,8 +105,6 @@ public class AvoidCombatBuilding extends Manager {
 //            Manager manager = thereIsNoSafetyMarginAtAll(combatBuilding);
 //            if (manager != null) return usedManager(manager);
 //        }
-
-        return null;
     }
 
     private Manager handleForTank(AUnit combatBuilding) {
@@ -121,26 +119,26 @@ public class AvoidCombatBuilding extends Manager {
         return null;
     }
 
-    private Manager holdPositionToShoot(AUnit combatBuilding) {
-        Selection enemiesToAttack = unit.enemiesNear().canBeAttackedBy(unit, 0);
-        if (enemiesToAttack.notEmpty()) {
-            if (
-                unit.isMoving()
-                    && !unit.isRunning()
-                    && unit.lastStartedRunningLessThanAgo(30 * 7)
-            ) {
-                unit.holdPosition("Hold&Shoot");
-            }
-            return usedManager(this);
-        }
-
-//        if (A.seconds() % 8 <= 4) {
-//            unit.holdPosition("HoldToShoot");
+//    private Manager holdPositionToShoot(AUnit combatBuilding) {
+//        Selection enemiesToAttack = unit.enemiesNear().canBeAttackedBy(unit, 0);
+//        if (enemiesToAttack.notEmpty()) {
+//            if (
+//                unit.isMoving()
+//                    && !unit.isRunning()
+//                    && unit.lastStartedRunningLessThanAgo(30 * 7)
+//            ) {
+//                unit.holdPosition("Hold&Shoot");
+//            }
 //            return usedManager(this);
 //        }
-
-        return null;
-    }
+//
+////        if (A.seconds() % 8 <= 4) {
+////            unit.holdPosition("HoldToShoot");
+////            return usedManager(this);
+////        }
+//
+//        return null;
+//    }
 
     private Manager thereIsNoSafetyMarginAtAll(AUnit combatBuilding) {
         AvoidCombatBuildingCriticallyClose avoidCombatBuildingCriticallyClose = new AvoidCombatBuildingCriticallyClose(unit, combatBuilding);
