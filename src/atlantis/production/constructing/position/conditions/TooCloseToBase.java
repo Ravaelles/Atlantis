@@ -14,10 +14,15 @@ public class TooCloseToBase {
     public static boolean isTooCloseToBase(AUnitType building, APosition position) {
         if (building.isGasBuilding()) return false;
 
-        double minDistToBase = building.isSupplyDepot() ? (A.supplyTotal() >= 15 ? 6 : 6) : 5;
+        double minDistToBase = building.isSupplyDepot() ? 4.1 : 3.1;
 
         if (building.isCombatBuilding()) minDistToBase = 2.4;
 
-        return Select.ourBasesWithUnfinished().inRadius(minDistToBase, position).notEmpty();
+        if (Select.ourBasesWithUnfinished().inRadius(minDistToBase, position).notEmpty()) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to base";
+            return true;
+        }
+
+        return false;
     }
 }

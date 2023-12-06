@@ -20,7 +20,7 @@ public class TravelToConstruct extends HasUnit {
         super(unit);
     }
 
-    protected boolean travel(Construction construction) {
+    protected boolean travelIfReady(Construction construction) {
         APosition buildPosition = construction.buildPosition();
         APosition buildPositionCenter = construction.positionToBuildCenter();
         AUnitType buildingType = construction.buildingType();
@@ -41,6 +41,8 @@ public class TravelToConstruct extends HasUnit {
         double distance = unit.distTo(buildPositionCenter);
         String distString = "(" + A.digit(distance) + ")";
 
+        if (notEnoughMineralsYet(distance, buildingType)) return false;
+
 //        CameraCommander.centerCameraOn(unit.getPosition());
 
         if (distance > minDistanceToIssueBuildOrder) {
@@ -53,6 +55,15 @@ public class TravelToConstruct extends HasUnit {
 
             return issueBuildOrder(construction);
         }
+    }
+
+    private boolean notEnoughMineralsYet(double distance, AUnitType buildingType) {
+        if (
+            distance <= 12
+                && !A.canAfford(buildingType.getMineralPrice() - 35, buildingType.getGasPrice() - 20)
+        ) return true;
+
+        return false;
     }
 
     private static double minDistanceToIssueBuildOrder(AUnitType buildingType) {

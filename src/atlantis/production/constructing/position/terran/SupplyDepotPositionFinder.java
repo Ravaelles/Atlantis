@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 import atlantis.util.cache.CacheKey;
 
@@ -36,10 +37,12 @@ public class SupplyDepotPositionFinder {
     }
 
     private static HasPosition nearTo() {
-        if (A.supplyTotal() <= 30) return Select.mainOrAnyBuilding();
+        Selection depots = Select.ourOfType(Terran_Supply_Depot);
 
-        if (A.chance(40)) return Select.ourOfType(Terran_Supply_Depot).last();
-//        else return Select.ourBuildings().random();
+        if (depots.size() <= 1) return Select.mainOrAnyBuilding();
+
+        if (A.chance(70)) return depots.last();
+        
         return MainRegion.mainRegion().center();
 
 //        Positions<APosition> positions = BuildablePositionsAroundMainBase.get()

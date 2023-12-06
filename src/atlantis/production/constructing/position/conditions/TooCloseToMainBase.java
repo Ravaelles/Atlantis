@@ -11,7 +11,6 @@ import atlantis.util.We;
 public class TooCloseToMainBase {
     public static boolean isTooCloseToMainBase(AUnitType building, APosition position) {
         if (We.protoss() && A.supplyTotal() <= 10) return false;
-
         if (building.isCombatBuilding()) return false;
 
         AUnit base = Select.main();

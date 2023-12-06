@@ -4,7 +4,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
 public class FallbackTargeting {
-    private static AUnit closestUnitFallback(AUnit unit, double maxDistFromEnemy) {
+    public static AUnit closestUnitFallback(AUnit unit, double maxDistFromEnemy) {
 
         // Workers
         AUnit worker = Select.enemy().workers().canBeAttackedBy(unit, 0).nearestTo(unit);

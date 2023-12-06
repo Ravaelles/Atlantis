@@ -18,8 +18,15 @@ public class OverlappingBaseLocation {
     }
 
     private static boolean forBase(APosition position) {
-        return checkExistingBasesIncludingUnfinished(position)
-            || checkExistingConstructionsOfOtherBase(position);
+        if (
+            checkExistingBasesIncludingUnfinished(position)
+                || checkExistingConstructionsOfOtherBase(position)
+        ) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Base to close to anotha base";
+            return true;
+        }
+
+        return false;
     }
 
     private static boolean checkExistingConstructionsOfOtherBase(APosition position) {

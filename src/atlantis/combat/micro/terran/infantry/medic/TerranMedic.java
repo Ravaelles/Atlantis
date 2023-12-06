@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran.infantry.medic;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.map.position.APosition;
+import atlantis.terran.chokeblockers.ChokeBlockers;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -46,15 +47,19 @@ public class TerranMedic extends Manager {
         return unit.isMedic();
     }
 
-    @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            AvoidEnemies.class,
-//            UnitTooCloseToBunker.class,
-        };
-    }
+//    @Override
+//    protected Class<? extends Manager>[] managers() {
+//        return new Class[]{
+////            ChokeBlock.class,
+//            AvoidEnemies.class,
+////            UnitTooCloseToBunker.class,
+//        };
+//    }
 
     protected Manager handle() {
+        Manager manager = (new MedicChokeBlock(unit)).invoke();
+        if (manager != null) return manager;
+
 //        if (medic.hp() <= 14 && AvoidEnemies.avoidEnemiesIfNeeded()) {
 //            return true;
 //        }

@@ -25,7 +25,10 @@ public class TooCloseToUnwalkable {
         APosition up = BuildingTileHelper.tileUpFrom(building, position);
         APosition down = BuildingTileHelper.tileDownFrom(building, position);
 
-        if (!left.isWalkable() && !down.isWalkable()) return true;
+        if (!left.isWalkable() && !down.isWalkable()) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Left and down from unwalkable";
+            return true;
+        }
 
 //        if (
 //            !left.isWalkable()

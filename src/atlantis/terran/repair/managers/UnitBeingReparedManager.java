@@ -22,8 +22,10 @@ public class UnitBeingReparedManager extends Manager {
 //            && !unit.isRunning()
             && (repairer = unit.repairer()) != null
             && (
-            (enemiesNear = unit.enemiesNear().groundUnits().canAttack(unit, -0.2)).isEmpty()
-                || (RepairAssignments.countRepairersForUnit(unit) >= 2)
+            (
+                (enemiesNear = unit.enemiesNear().groundUnits().canAttack(unit, -0.2)).isEmpty()
+                    || RepairAssignments.countRepairersForUnit(unit) >= 2
+            )
         );
     }
 

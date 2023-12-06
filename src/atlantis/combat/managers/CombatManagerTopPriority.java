@@ -1,6 +1,7 @@
 package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.special.ImprovePerformanceHavingBigSupply;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.combat.micro.generic.Unfreezer;
@@ -27,6 +28,7 @@ public class CombatManagerTopPriority extends Manager {
             AvoidSpellsAndMines.class,
             AvoidCriticalUnits.class,
             Unfreezer.class,
+            ImprovePerformanceHavingBigSupply.class,
             DanceAfterShoot.class,
             StopAndShoot.class,
             DontInterruptShootingUnits.class,

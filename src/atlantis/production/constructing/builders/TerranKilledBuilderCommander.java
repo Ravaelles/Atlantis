@@ -4,6 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
 
 public class TerranKilledBuilderCommander extends Commander {
@@ -22,7 +23,7 @@ public class TerranKilledBuilderCommander extends Commander {
     }
 
     private void assignWorkerToBuildingWithoutABuilder(AUnit building) {
-        AUnit worker = Select.ourWorkers().notGathering().nearestTo(building);
+        AUnit worker = FreeWorkers.get().nearestTo(building);
         if (worker != null) {
             worker.doRightClickAndYesIKnowIShouldAvoidUsingIt(building);
 

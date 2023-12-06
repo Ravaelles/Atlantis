@@ -14,7 +14,9 @@ public class OptimalNumOfRepairers {
     }
 
     public static boolean weHaveTooManyRepairersOverall() {
-        return RepairAssignments.countTotalRepairers() > Math.min(MAX_REPAIRERS_AT_ONCE, Count.workers() * 2 / 3);
+        int repairers = RepairAssignments.countTotalRepairers() + RepairAssignments.countTotalProtectors();
+        
+        return repairers > Math.min(MAX_REPAIRERS_AT_ONCE, Count.workers() * 0.6);
     }
 
 }

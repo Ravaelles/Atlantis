@@ -43,6 +43,11 @@ public class IsProbablyInAnotherRegion {
         if (Count.bunkers() >= 1) return false;
 
 //        System.err.println("MISMATCH = " + !position.regionsMatch(MainRegion.mainRegion()));
-        return !position.regionsMatch(MainRegion.mainRegion());
+        if (!position.regionsMatch(MainRegion.mainRegion())) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Bad region for first bunker";
+            return true;
+        }
+
+        return false;
     }
 }

@@ -20,6 +20,7 @@ public class AvoidSingleEnemy extends Manager {
 
     public Manager avoid() {
         if (unit.effUndetected()) return null;
+        if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return null;
         if (isEnemyFacingOtherWayAndWeLookSafe()) return null;
 
         APainter.paintCircle(enemy, 16, Color.Orange);

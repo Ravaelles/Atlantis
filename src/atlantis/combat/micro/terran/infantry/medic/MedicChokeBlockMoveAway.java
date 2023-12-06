@@ -1,23 +1,20 @@
-package atlantis.terran.chokeblockers;
+package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
-import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 
-public class ChokeBlockerMoveAway extends Manager {
-    private final APosition chokeBlockPoint;
+public class MedicChokeBlockMoveAway extends Manager {
     private AChoke choke;
 
-    public ChokeBlockerMoveAway(AUnit unit) {
+    public MedicChokeBlockMoveAway(AUnit unit) {
         super(unit);
-        this.chokeBlockPoint = unit.specialPosition();
     }
 
     @Override

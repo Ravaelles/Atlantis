@@ -25,14 +25,13 @@ public class ProtectorCommander extends Commander {
 
     @Override
     protected void handle() {
-        if (AGame.everyNthGameFrame(9)) {
+        if (AGame.everyNthGameFrame(5)) {
             assignBunkerProtectorsIfNeeded();
-            assignUnitsProtectorsIfNeeded();
-
-            removeProtectorsIfNeeded();
-//            if (!removeProtectorsIfNeeded()) {
-//            }
         }
+        if (AGame.everyNthGameFrame(13)) {
+            assignUnitsProtectorsIfNeeded();
+        }
+        removeProtectorsIfNeeded();
 
         for (Iterator<AUnit> iterator = RepairAssignments.getProtectors().iterator(); iterator.hasNext(); ) {
             AUnit unit = iterator.next();
@@ -50,7 +49,7 @@ public class ProtectorCommander extends Commander {
             int desiredBunkerProtectors = OptimalNumOfBunkerRepairers.forBunker(bunker);
             int howMany = desiredBunkerProtectors - existingProtectors.size();
 
-//            System.out.println("@ " + A.now() + " - protectors = " + desiredBunkerProtectors);
+//            System.out.println("@ " + A.now() + " - protectors = " + desiredBunkerProtectors + " / HOW=" + howMany);
 
             // Remove some (or all) existing protectors
             if (howMany < 0) {
@@ -155,6 +154,7 @@ public class ProtectorCommander extends Commander {
             for (int i = 0; i < RepairAssignments.countTotalProtectors() - maxProtectors; i++) {
                 AUnit protector = RepairAssignments.getProtectors().get(RepairAssignments.getProtectors().size() - 1);
                 if (CanAbandonUnitAssignedToRepair.check(protector)) {
+//                    System.err.println("Remove repairer / protector");
                     RepairAssignments.removeRepairer(protector);
                 }
             }
@@ -172,11 +172,13 @@ public class ProtectorCommander extends Commander {
 
         if (numberOfProtectorsToAssign <= 0) return;
 
+//        System.err.println("numberOfProtectorsToAssign = " + numberOfProtectorsToAssign);
         for (int i = 0; i < numberOfProtectorsToAssign; i++) {
             AUnit worker = NewRepairer.repairerFor(
                 unitToProtect,
                 unitToProtect.isBunker() || unitToProtect.isTank()
             );
+//            System.err.println("worker = " + worker);
 
             if (worker != null) RepairAssignments.addProtector(worker, unitToProtect);
         }

@@ -38,7 +38,7 @@ public class ProduceMarines {
 
         marines = Count.marines();
 
-        if (A.hasMinerals(1100)) return forceProduceMarine();
+        if (marines <= 20 && A.hasMinerals(600)) return forceProduceMarine();
 
         if (!A.canAffordWithReserved(55, 0)) return false;
 

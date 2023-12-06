@@ -13,7 +13,7 @@ import atlantis.util.ProcessHelper;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-    //    public static final String OUR_RACE = "Protoss";
+    //        public static final String OUR_RACE = "Protoss";
     public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Zerg";
 
@@ -62,7 +62,7 @@ public class Main {
     }
 
     public static String activeMap() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps =================================
 

@@ -16,6 +16,7 @@ public class RepairerSafety extends Manager {
     @Override
     public boolean applies() {
         return unit.hp() <= (Enemy.protoss() ? 32 : 18)
+            && !unit.isProtector()
             &&
             !unit.targetIsOfType(
                 Terran_Bunker, Terran_Siege_Tank_Siege_Mode, Terran_Siege_Tank_Tank_Mode, Terran_Missile_Turret

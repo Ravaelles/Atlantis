@@ -48,7 +48,7 @@ public class BuilderManager extends Manager {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
-                return (new TravelToConstruct(unit)).travel(construction);
+                return (new TravelToConstruct(unit)).travelIfReady(construction);
             }
             else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
                 // Do nothing - construction is pending

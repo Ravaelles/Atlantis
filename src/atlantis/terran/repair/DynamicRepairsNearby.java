@@ -12,7 +12,9 @@ public class DynamicRepairsNearby extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isScv() && (unit.id() % 3 == 0 && !unit.isRepairerOfAnyKind()) && !unit.isRepairing();
+        return unit.isScv()
+            && (unit.id() % 4 == 0 && !unit.isRepairerOfAnyKind())
+            && !unit.isRepairing();
     }
 
     protected Manager handle() {
@@ -26,9 +28,9 @@ public class DynamicRepairsNearby extends Manager {
     private boolean check() {
         if (!A.hasMinerals(15)) return false;
 
-        AUnit repairable = unit.friendsNear().mechanical().wounded().inRadius(4, unit).nearestTo(unit);
+        AUnit repairable = unit.friendsNear().mechanical().wounded().inRadius(2.5, unit).nearestTo(unit);
 
-        if (repairable != null && repairable.isWalkable()) {
+        if (repairable != null && repairable.isWalkable() && repairable.isAlive()) {
             if (ShouldNotRepairUnit.shouldNotRepairUnit(unit, repairable)) return false;
 
             if (RepairAssignments.countRepairersForUnit(repairable) >= 4) return false;
@@ -52,6 +54,10 @@ public class DynamicRepairsNearby extends Manager {
                 }
             }
 
+            if (!unit.isRepairing() && !unit.hasNotMovedInAWhile()) {
+                RepairAssignments.removeRepairer(unit);
+                return false;
+            }
         }
 
         return false;

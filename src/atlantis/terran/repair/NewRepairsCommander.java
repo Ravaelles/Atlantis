@@ -1,6 +1,7 @@
 package atlantis.terran.repair;
 
 import atlantis.architecture.Commander;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.terran.repair.protect.ProtectorCommander;
@@ -9,6 +10,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import bwapi.Color;
 
 import java.util.List;
 
@@ -85,7 +87,7 @@ public class NewRepairsCommander extends Commander {
         if (unit.isBunker()) {
             int shouldHaveThisManyRepairers = OptimalNumOfBunkerRepairers.forBunker(unit);
             if (shouldHaveThisManyRepairers > 0) {
-
+                AAdvancedPainter.paintTextCentered(unit, shouldHaveThisManyRepairers + "", Color.Orange);
                 unit.setTooltipTactical(shouldHaveThisManyRepairers + " RepairNeed");
                 ProtectorCommander.addProtectorsForUnit(unit, shouldHaveThisManyRepairers);
                 return shouldHaveThisManyRepairers;

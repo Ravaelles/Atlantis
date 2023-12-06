@@ -37,7 +37,7 @@ public class FindPositionForBase {
 
         if (near == null) {
             if (ourBasesCount <= 1) {
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("findPositionForBase_nearestFreeBase is null");
+                ErrorLog.printMaxOncePerMinute("findPositionForBase_nearestFreeBase is null");
             }
             return null;
         }

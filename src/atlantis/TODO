@@ -1,11 +1,6 @@
 ### BUGS ###
 
----- EnemyWhobreached not working for DTs (probably just for invisible, but let's force 1 DT, regardless)
-
-?---- MATRIX not working
-
-?----- Depots still broken when 60
-.- ToFromTank for tanks
+- Wraiths are not stopping for repair
 
 - Still no Turrets against Scouts
 - No bunker no turret at natural

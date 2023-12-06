@@ -5,6 +5,7 @@ import atlantis.architecture.Commander;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
@@ -26,17 +27,25 @@ public class ChokeBlockersCommander extends Commander {
         if (AGame.notNthGameFrame(5)) return false;
         if (Missions.isGlobalMissionAttack()) return false;
 
-        choke = Chokes.mainChoke();
-        if (choke == null || choke.width() >= 4.5) return false;
+        if (A.supplyUsed() <= 13) return false;
+        if (A.supplyUsed() >= 45) return false;
+
+        choke = ChokeToBlock.get();
+        if (choke == null) return false;
 
         if (AGame.killsLossesResourceBalance() >= 1800) return false;
 
         int bunkers = Count.ourWithUnfinished(AUnitType.Terran_Bunker);
-        if (bunkers <= 0 || bunkers >= 3 || Count.bases() != 1) return false;
+//        if (bunkers <= 0) return false;
+        if (bunkers >= 3 || (A.seconds() >= 450 && Count.bases() != 1)) return false;
 
         if (Count.tanks() >= 2) return false;
 
-        return Atlantis.KILLED <= 7 || Count.ourCombatUnits() <= 18;
+        int combatUnits = Count.ourCombatUnits();
+
+        if (combatUnits >= 14 && ArmyStrength.ourArmyRelativeStrength() >= 270) return false;
+
+        return Atlantis.KILLED <= 8 || combatUnits <= 18;
     }
 
     @Override

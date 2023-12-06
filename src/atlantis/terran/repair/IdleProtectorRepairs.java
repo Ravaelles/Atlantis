@@ -9,6 +9,7 @@ import atlantis.units.workers.GatherResources;
 public class IdleProtectorRepairs extends Manager {
 
     private Selection repairable;
+    private AUnit assignment;
 
     public IdleProtectorRepairs(AUnit unit) {
         super(unit);
@@ -21,6 +22,8 @@ public class IdleProtectorRepairs extends Manager {
 
     @Override
     protected Manager handle() {
+        assignment = RepairAssignments.getUnitToProtectFor(unit);
+
         if (!unit.isUnitActionRepair() || !unit.isRepairing() || unit.isIdle()) {
 
             // Try finding repairable tanks nearby
@@ -67,7 +70,7 @@ public class IdleProtectorRepairs extends Manager {
 
     private boolean repairAir(int maxAllowedDistToRoam) {
         AUnit nearestWoundedUnit = RepairableUnits.get()
-            .inRadius(maxAllowedDistToRoam, unit)
+            .inRadius(maxAllowedDistToRoam, assignment)
             .nearestTo(unit);
 
         if (nearestWoundedUnit != null && A.hasMinerals(5)) {

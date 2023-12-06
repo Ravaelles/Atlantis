@@ -86,7 +86,15 @@ public class Orders implements OrdersFilters {
     }
 
     public ProductionOrder first() {
+        if (orders.isEmpty()) return null;
+        
         return orders.get(0);
+    }
+
+    public ProductionOrder last() {
+        if (orders.isEmpty()) return null;
+
+        return orders.get(orders.size() - 1);
     }
 
     public ProductionOrder get(int index) {

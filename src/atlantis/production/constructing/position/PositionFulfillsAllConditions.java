@@ -39,9 +39,9 @@ public class PositionFulfillsAllConditions {
         }
 
         if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
-        if (ForbiddenForSupplyDepot.isForbidden(builder, building, position)) return false;
+        if (StreetGridOkayForSupplyDepot.isForbidden(builder, building, position)) return false;
 
-        if (!HasEnoughSidesFreeFromOtherBuildings.check(builder, building, position)) {
+        if (!HasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Must leave enough free space for units to pass";
             return false;
         }

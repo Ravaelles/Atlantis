@@ -10,11 +10,19 @@ public class TerranMarineDontAvoidEnemy extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isMarine()
+        if (unit.isMarine()
             && unit.isMissionDefend()
             && unit.isHealthy()
-            && unit.friendsNear().inRadius(2, unit).count() >= 4
-            && unit.meleeEnemiesNearCount(3) == 0;
+        ) {
+            if (
+                unit.friendsNear().inRadius(2, unit).count() >= 4
+                    && unit.meleeEnemiesNearCount(3) == 0
+            ) return true;
+
+            if (unit.nearestOurTankDist() <= 3 && unit.nearestEnemyDist() > 3) return true;
+        }
+
+        return false;
     }
 
     @Override

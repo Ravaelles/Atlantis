@@ -2,6 +2,7 @@ package atlantis.combat.advance.special;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.combat.missions.Missions;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -13,7 +14,8 @@ public class ImprovePerformanceHavingBigSupply extends MissionManager {
 
     @Override
     public boolean applies() {
-        return (A.supplyUsed(110) || LongFrames.framesOver85() >= 30)
+        return Missions.isGlobalMissionAttack()
+            && (A.supplyUsed(110) || LongFrames.framesOver85() >= 30)
             && unit.isMoving()
             && !unit.isRunning()
             && unit.lastActionLessThanAgo(20)

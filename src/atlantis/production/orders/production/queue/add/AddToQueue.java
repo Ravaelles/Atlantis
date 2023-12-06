@@ -91,7 +91,7 @@ public class AddToQueue {
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         if (PreventAddDuplicate.preventExcessiveOrInvalidOrders(type, position)) return null;
 
-        ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder());
+        ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
 
         if (Queue.get().addNew(index, productionOrder)) {
 //            clearOtherExistingOfTheSameTypeIfNeeded(productionOrder);
@@ -127,19 +127,26 @@ public class AddToQueue {
 //        }
 //    }
 
-    private static int defineMinSupplyForNewOrder() {
-        Orders nextOrders = Queue.get().nextOrders(2);
+    private static int defineMinSupplyForNewOrder(AUnitType type) {
+        Orders nextOrders = Queue.get().nextOrders(20).nonCompleted();
 
 //        nextOrders.print("nextOrders");
 
+        int currentMin1 = A.supplyUsed() - 1;
+
         if (nextOrders.isEmpty()) {
-            return A.supplyUsed() - 1;
+            return currentMin1;
 //            return 0;
         }
 
 //        System.err.println("A = " + (nextOrders.list().get(0).minSupply() + 1));
 
-        return nextOrders.list().get(0).minSupply() + 1;
+        ProductionOrder last = type == null ? null : nextOrders.nonCompleted().ofType(type).last();
+
+        return 1 + Math.max(
+            Math.max(0, last == null ? 0 : last.minSupply()),
+            nextOrders.last().minSupply()
+        );
     }
 
     protected static boolean addToQueue(AUnitType type) {

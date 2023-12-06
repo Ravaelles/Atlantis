@@ -7,6 +7,7 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.DefineExactPositionForNewConstruction;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.Requirements;
@@ -128,6 +129,12 @@ public class NewConstructionRequest {
         else {
             ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
         }
+
+        if (
+            building.isSupplyDepot()
+                && order != null
+                && CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 3
+        ) order.cancel();
 
 //        ErrorLog.printMaxOncePerMinute("(Construction: " + newConstruction + ")");
 

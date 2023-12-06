@@ -42,6 +42,7 @@ public class ATargeting extends HasUnit {
      */
     protected AUnit defineBestEnemyToAttack(double maxDistFromEnemy) {
 //        if (true) return null;
+        if (unit.hp() <= 18) return FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
 
@@ -56,8 +57,7 @@ public class ATargeting extends HasUnit {
 
         // Used when something went wrong there ^
         AttackNearbyEnemies.reasonNotToAttack = null;
-        return null;
-//        return closestUnitFallback(unit, maxDistFromEnemy);
+        return FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
     }
 
     // =========================================================

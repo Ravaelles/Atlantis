@@ -20,7 +20,8 @@ public class ChokeBlockerMoveToBlock extends Manager {
             unit.move(blockChokePoint, Actions.SPECIAL, "ChokeBlocker");
         }
         else {
-            unit.holdPosition("ChokeBlocker");
+//            unit.holdPosition("ChokeBlocker");
+            unit.repair(ChokeBlockers.get().otherBlocker(unit), "Hold!");
         }
         unit.setAction(Actions.SPECIAL);
 

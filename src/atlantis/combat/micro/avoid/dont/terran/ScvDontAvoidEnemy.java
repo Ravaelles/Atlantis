@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
+import atlantis.units.workers.GatherResources;
 
 public class ScvDontAvoidEnemy extends Manager {
     public ScvDontAvoidEnemy(AUnit unit) {
@@ -21,15 +22,16 @@ public class ScvDontAvoidEnemy extends Manager {
 
         if (enemiesNear.onlyAir()
             && (
-                enemiesNear.onlyOfType(AUnitType.Protoss_Scout)
+            enemiesNear.onlyOfType(AUnitType.Protoss_Scout)
                 || enemiesNear.canAttack(unit, 0).atMost(2)
-            )
+        )
         ) {
             return usedManager(this);
         }
 
         AUnit nearest = enemiesNear.nearestTo(unit);
         if (nearest != null && nearest.isDragoon() && !nearest.regionsMatch(unit)) {
+            (new GatherResources(unit)).forceHandle();
             return usedManager(this);
         }
 

@@ -31,7 +31,10 @@ public class TooCloseToBunker {
 //        HasPosition nextBunker = TerranBunker.get().nextPosition(position);
 //        if (nextBunker != null && nextBunker.distToLessThan(position, 5)) return true;
 
-        if (ConstructionRequests.hasNotStartedNear(AUnitType.Terran_Bunker, position, 5)) return true;
+        if (ConstructionRequests.hasNotStartedNear(AUnitType.Terran_Bunker, position, 5)) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Has close bunker nearby";
+            return true;
+        }
 
         return false;
     }

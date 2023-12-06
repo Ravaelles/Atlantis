@@ -19,7 +19,12 @@ public class ForbiddenByStreetGrid {
      * So disallow building in e.g. 0,1, 6,7, 12,13, horizontally and vertically
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
-        if (building.isBase() || building.isGasBuilding()) return false;
+        if (
+            building.isBase()
+                || building.isGasBuilding()
+                || building.isSupplyDepot()
+        ) return false;
+
         if (We.protoss() && A.supplyTotal() <= 10) return false;
 
         if (
@@ -28,15 +33,12 @@ public class ForbiddenByStreetGrid {
 
         // =========================================================
 
-//        if (building.isCombatBuilding()) {
-//            if (position.tx() % 6 <= 1) return fail("TX CB modulo");
-//            if (position.ty() % 6 <= 1) return fail("TY CB modulo");
+        if (position.tx() % GRID_VALUE <= 0) return fail("TX modulo");
+        if (position.ty() % GRID_VALUE <= 0) return fail("TY modulo");
+
+//        if (building.getTileWidth() >= 4) {
+//            if (position.tx() % 4 >= 2) return fail("TX big modulo");
 //        }
-//        else {
-        if (!building.isSupplyDepot()) {
-            if (position.tx() % GRID_VALUE <= 0) return fail("TX modulo");
-            if (position.ty() % GRID_VALUE <= 0) return fail("TY modulo");
-        }
 
 //        if (building.isBarracks() || building.isFactory()) {
 //            if (position.tx() % 3 <= 1) return fail("TX Barracks & Factory modulo");
@@ -45,31 +47,31 @@ public class ForbiddenByStreetGrid {
 
         // =========================================================
 
-        // Leave entire vertical (same tileX) corridor free for units
-        if (
-            buildingLeftTx(building, position) % GRID_VALUE <= 1
-                || buildingRightTx(building, position) % GRID_VALUE <= 1
-        ) {
-            if (
-                !position.translateByTiles(-1 - building.dimensionLeftTx(), 0).isWalkable()
-                    && !position.translateByTiles(+1 + building.dimensionRightTx(), 0).isWalkable()
-            ) {
-                return fail("LEAVE_PLACE_VERTICALLY");
-            }
-        }
-
-        // Leave entire horizontal (same tileY) corridor free for units
-        if (
-            position.ty() % GRID_VALUE <= 1
-                || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 0
-        ) {
-            if (
-                !position.translateByTiles(0, -1 - building.dimensionUpTx()).isWalkable()
-                    && !position.translateByTiles(0, +1 + building.dimensionDownTx()).isWalkable()
-            ) {
-                return fail("LEAVE_PLACE_HORIZONTALLY");
-            }
-        }
+//        // Leave entire vertical (same tileX) corridor free for units
+//        if (
+//            buildingLeftTx(building, position) % GRID_VALUE <= 1
+//                || buildingRightTx(building, position) % GRID_VALUE <= 1
+//        ) {
+//            if (
+//                !position.translateByTiles(-1 - building.dimensionLeftTx(), 0).isWalkable()
+//                    && !position.translateByTiles(+1 + building.dimensionRightTx(), 0).isWalkable()
+//            ) {
+//                return fail("LEAVE_PLACE_VERTICALLY");
+//            }
+//        }
+//
+//        // Leave entire horizontal (same tileY) corridor free for units
+//        if (
+//            position.ty() % GRID_VALUE <= 1
+//                || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 0
+//        ) {
+//            if (
+//                !position.translateByTiles(0, -1 - building.dimensionUpTx()).isWalkable()
+//                    && !position.translateByTiles(0, +1 + building.dimensionDownTx()).isWalkable()
+//            ) {
+//                return fail("LEAVE_PLACE_HORIZONTALLY");
+//            }
+//        }
 
         return false;
     }

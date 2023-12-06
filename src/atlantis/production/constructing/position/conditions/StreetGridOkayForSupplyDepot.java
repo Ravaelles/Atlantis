@@ -2,17 +2,22 @@ package atlantis.production.constructing.position.conditions;
 
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
-public class ForbiddenForSupplyDepot {
+public class StreetGridOkayForSupplyDepot {
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
-        if (!We.terran() || !building.isSupplyDepot()) return false;
+        if (!building.isSupplyDepot()) return false;
 
-        return !streetGridMatches(position);
+        if (!streetGridMatches(position)) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Depot street grid doesn't match";
+            return true;
+        }
+
+        return false;
 //             otherSupplyDepotConstructionsAreNotClose(position);
     }
 
@@ -23,7 +28,8 @@ public class ForbiddenForSupplyDepot {
     }
 
     private static boolean streetGridMatches(APosition position) {
-        return position.tx() % 3 == 0 && position.ty() % 3 == 0 && position.tx() % 9 != 0;
+        return position.tx() % 3 == 0 && position.ty() % 2 == 0
+            && position.tx() % 9 != 0 && position.ty() % 8 != 0;
     }
 }
 

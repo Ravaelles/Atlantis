@@ -96,7 +96,7 @@ public class ProduceMedicsAndFirebats {
         if (marines <= 7) return 0;
 
         if (Enemy.protoss()) {
-            return Math.max(4, (marines / 10 + Count.medics() / 6 - 1));
+            return Math.max(4, (marines / 8 + Count.medics() / 5));
         }
 
         // Zerg

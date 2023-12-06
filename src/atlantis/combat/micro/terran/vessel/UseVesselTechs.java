@@ -19,22 +19,20 @@ public class UseVesselTechs extends Manager {
     public boolean applies() {
         if (unit.lastTechUsedAgo() <= 15) return true;
 
-        if (!A.everyNthGameFrame(7)) return false;
-
         if (unit.energy() <= 74) return false;
+        if (!A.everyNthGameFrame(3)) return false;
 
-        return false;
+        return true;
+    }
+
+    protected boolean print(String s) {
+        System.err.println("Manager -> print:  " + s);
+        return true;
     }
 
     @Override
     public Manager handle() {
-        if (unit.energy(75) && ATech.isResearched(TechType.Irradiate)) {
-            if (irradiate()) {
-                unit.setTooltipTactical("Irradiate!");
-                return usedManager(this);
-            }
-        }
-
+        if (irradiate()) return usedManager(this);
         if (defensiveMatrix()) return usedManager(this);
 
         return null;
@@ -42,15 +40,21 @@ public class UseVesselTechs extends Manager {
 
     private boolean defensiveMatrix() {
         if (!unit.energy(100)) return false;
+        if (!unit.energy(195) && unit.enemiesNear().empty()) return false;
 
-//        Selection targets = unit.friendsNear().wounded();
-        Selection targets = unit.friendsNear().ofType(
+        Selection combatUnits = unit.friendsNear().combatUnits();
+
+        Selection targets = combatUnits.ofType(
             AUnitType.Terran_Science_Vessel,
             AUnitType.Terran_Siege_Tank_Siege_Mode,
             AUnitType.Terran_Siege_Tank_Tank_Mode
-        ).sortByHealth();
+        );
 
-        System.err.println("MATRIX targets = " + targets.size());
+        if (targets.isEmpty()) targets = combatUnits.wounded().havingWeapon();
+        if (targets.isEmpty()) targets = combatUnits.havingWeapon();
+        if (targets.isEmpty()) targets = combatUnits;
+
+        targets = targets.sortByHealth();
 
         for (AUnit target : targets.list()) {
             if (target.isDefenseMatrixed()) continue;
@@ -59,7 +63,7 @@ public class UseVesselTechs extends Manager {
                 (target.isWounded() || target.lastUnderAttackLessThanAgo(120))
                     && target.enemiesNear().atLeast(1)
             ) {
-                System.out.println("@ " + A.now() + " - MATRIX A ON " + unit);
+//                System.out.println("@ " + A.now() + " - MATRIX A ON " + target);
                 return unit.useTech(TechType.Defensive_Matrix, target);
             }
         }
@@ -68,14 +72,12 @@ public class UseVesselTechs extends Manager {
 
         if (unit.energy(195)) {
             AUnit mostWounded = null;
-            mostWounded = unit.friendsNear().tanks().mostWounded();
+            mostWounded = combatUnits.tanks().mostWounded();
 
-            if (mostWounded != null) System.out.println("@ " + A.now() + " - MATRIX B ON " + unit);
             if (mostWounded != null) return unit.useTech(TechType.Defensive_Matrix, mostWounded);
 
-            mostWounded = unit.friendsNear().mostWounded();
+            mostWounded = combatUnits.mostWounded();
 
-            if (mostWounded != null) System.out.println("@ " + A.now() + " - MATRIX C ON " + unit);
             if (mostWounded != null) return unit.useTech(TechType.Defensive_Matrix, mostWounded);
         }
 
@@ -83,6 +85,8 @@ public class UseVesselTechs extends Manager {
     }
 
     private boolean irradiate() {
+        if (!unit.energy(75) || !ATech.isResearched(TechType.Irradiate)) return false;
+
         Selection enemies = Select.enemyCombatUnits().inRadius(10, unit);
         if (enemies.count() >= 5 || (enemies.count() >= 3 && unit.energy(181))) {
             APosition center = enemies.center();
@@ -94,11 +98,11 @@ public class UseVesselTechs extends Manager {
             }
 
             if (center != null) {
-                return unit.useTech(TechType.Irradiate, center);
+                return usingIrradiate(center);
             }
             else {
                 System.err.println("Irradiate center is NULL / " + enemies.count());
-                return unit.useTech(TechType.Irradiate, enemies.first());
+                return usingIrradiate(enemies.first().position());
             }
         }
 
@@ -124,6 +128,12 @@ public class UseVesselTechs extends Manager {
         }
 
         return false;
+    }
+
+    private boolean usingIrradiate(APosition center) {
+        unit.setTooltipTactical("Irradiate!");
+        System.err.println("Irradiate center is " + center);
+        return unit.useTech(TechType.Irradiate, center);
     }
 
     private boolean empShockwave() {

@@ -46,8 +46,10 @@ public class FindPosition {
             if (position == null) {
                 ErrorLog.printMaxOncePerMinute(
                     "SupplyDepotPositionFinder returned null \n    / near:" + nearTo
+                        + "\n    Fallback to default now"
                 );
             }
+
             if (position != null) return position;
         }
 

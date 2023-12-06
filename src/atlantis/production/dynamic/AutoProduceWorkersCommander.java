@@ -44,6 +44,10 @@ public class AutoProduceWorkersCommander extends Commander {
 
         if (CountInQueue.count(Terran_Comsat_Station, 2) > 0) return false;
 
+        int workers = Select.ourWorkers().count();
+
+        if (workers <= 20 && A.seconds() >= 500) return true;
+
         // === Terran ===========================================
 
         if (We.terran()) {
@@ -74,7 +78,6 @@ public class AutoProduceWorkersCommander extends Commander {
         // =========================================================
 
         // Check if not TOO MANY WORKERS
-        int workers = Select.ourWorkers().count();
         int workersBonus = We.terran() ? 4 : 0; // For repairers
         if (workers >= (workersBonus + 25 * Select.ourBuildingsWithUnfinished().bases().count())) return false;
 

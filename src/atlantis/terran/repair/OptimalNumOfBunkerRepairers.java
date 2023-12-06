@@ -35,12 +35,14 @@ public class OptimalNumOfBunkerRepairers {
 
 //                System.out.println("enemiesNear = " + enemiesNear + " / enemiesFar = " + enemiesFar);
 
-        int nooneInside = whenAlmostNooneInside(bunker);
-        if (nooneInside != -1) {
-            return nooneInside;
-        }
-
         if (thereIsFewAttackers(bunker)) {
+            int nooneInside = whenAlmostNooneInside(bunker);
+            if (nooneInside != -1) {
+//                System.err.println("ŁOLO");
+                return nooneInside;
+            }
+
+//            System.err.println("Hello");
             return 1;
         }
 
@@ -48,7 +50,7 @@ public class OptimalNumOfBunkerRepairers {
 
         // against PROTOSS
         if (Enemy.protoss()) {
-            optimalNumber = enemiesNear * 1.8 + enemiesFar * 0.85;
+            optimalNumber = enemiesNear * 0.8 + enemiesFar * 0.55;
         }
         // against TERRAN
         else if (Enemy.terran()) {
@@ -77,11 +79,11 @@ public class OptimalNumOfBunkerRepairers {
 
         // =========================================================
 
-        if (enemiesVeryNear.empty() && potentialEnemies.ranged().atMost(1)) {
+        if (enemiesTotal <= 1 && enemiesVeryNear.empty() && potentialEnemies.ranged().atMost(1)) {
             optimalNumber = Math.min(1, optimalNumber);
         }
 
-        optimalNumber = Math.min(enemiesTotal, optimalNumber);
+//        optimalNumber = Math.min(enemiesTotal, optimalNumber);
 
         // === When nearly no minerals left ========================
 
@@ -94,10 +96,10 @@ public class OptimalNumOfBunkerRepairers {
                     return (int) Math.min(optimalNumber, 2);
                 }
             }
-        }
 
-        if (!A.hasMinerals(1)) {
-            return Math.max(2, Math.min(4, (int) optimalNumber));
+            if (!A.hasMinerals(1)) {
+                return Math.max(2, Math.min(4, (int) optimalNumber));
+            }
         }
 
         // =========================================================

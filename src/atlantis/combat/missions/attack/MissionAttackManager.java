@@ -16,7 +16,6 @@ public class MissionAttackManager extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AllowTimeToReposition.class,
-            ImprovePerformanceHavingBigSupply.class,
             TerranSquadCohesionManager.class,
             Advance.class,
         };
