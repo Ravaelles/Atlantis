@@ -6,6 +6,7 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -17,7 +18,7 @@ public class NextBasePosition {
             "nextBasePosition",
             273,
             () -> {
-                AUnit builder = Select.ourWorkers().first();
+                AUnit builder = FreeWorkers.get().first();
                 AUnitType building = AtlantisRaceConfig.BASE;
                 APosition basePosition = FindPositionForBaseNearestFree.find(building, builder, null);
 

@@ -36,14 +36,20 @@ public class FollowAlphaScout extends Manager {
         HasPosition basePoint = squadScout;
         AFocusPoint focus = squadScout.mission().focusPoint();
 
-        if (basePoint == null || focus == null) return null;
+        if (focus == null) return null;
 
         basePoint = basePoint.translatePercentTowards(50, unit.squadCenter());
         basePoint = basePoint.translateTilesTowards(10, focus);
 
         AUnit undetected = EnemyUnits.discovered().inRadius(25, unit).havingWeapon().effUndetected().first();
-        if (undetected != null) {
+        if (undetected != null && undetected.hasPosition()) {
             basePoint = basePoint.translatePercentTowards(undetected, 85);
+        }
+        else {
+            AUnit cloakable = EnemyUnits.discovered().inRadius(18, unit).havingWeapon().cloakable().first();
+            if (cloakable != null && cloakable.hasPosition()) {
+                basePoint = basePoint.translatePercentTowards(cloakable, 85);
+            }
         }
 
         return basePoint;

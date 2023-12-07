@@ -82,27 +82,7 @@ public class ScoutCommander extends Commander {
         // Build order defines which worker should be a scout
         if (Count.workers() >= BuildOrderSettings.scoutIsNthWorker())
 
-            // === Zerg =================================================
-
             if (We.zerg()) {
-
-//            // We know enemy building
-//            if (EnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
-//                if (AGame.timeSeconds() < 350) {
-//                    if (scouts.isEmpty()) {
-//                        for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
-//                            if (!worker.isBuilder()) {
-//                                scouts.add(worker);
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-//            } // Haven't discovered any enemy building
-//            else {
-//                scouts.clear();
-//                scouts.addAll(Select.ourCombatUnits().listUnits());
-//            }
             }
 
             // =========================================================

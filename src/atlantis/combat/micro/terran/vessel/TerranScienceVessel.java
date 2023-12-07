@@ -35,8 +35,8 @@ public class TerranScienceVessel extends MobileDetector {
         return new Class[]{
             UseVesselTechs.class,
             AvoidEnemies.class,
-            GoToRepairAsAirUnit.class,
             UnitBeingReparedManager.class,
+            GoToRepairAsAirUnit.class,
             SpreadOutDetectors.class,
             DetectHiddenEnemyClosestToBase.class,
             FollowAlphaScout.class,

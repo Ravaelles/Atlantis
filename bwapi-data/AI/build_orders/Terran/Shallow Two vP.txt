@@ -38,5 +38,5 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 29 - Stim Pack
 30 - Supply Depot
 // 34->42
-42 - Bunker - NATURAL
-36 - Factory
+//36 - Factory
+//42 - Bunker - NATURAL

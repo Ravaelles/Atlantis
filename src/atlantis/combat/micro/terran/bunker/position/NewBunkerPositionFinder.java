@@ -7,6 +7,7 @@ import atlantis.production.constructing.position.base.NextBasePosition;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.log.ErrorLog;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
@@ -29,7 +30,7 @@ public class NewBunkerPositionFinder {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("NewBunkerPositionFinder: positionToSecure got null");
             this.positionToSecure = Select.ourBases().last();
         }
-        if (builder == null) this.builder = Select.ourWorkers().nearestTo(positionToSecure);
+        if (builder == null) this.builder = FreeWorkers.get().nearestTo(positionToSecure);
     }
 
     public APosition find() {

@@ -46,11 +46,11 @@ public class ATargeting extends HasUnit {
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
 
-        if (enemy != null) {
-            if (!unit.canAttackTarget(enemy)) {
-                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit " + unit + " cannot attack " + enemy);
-            }
+        if (enemy != null && enemy.isAlive() && !unit.canAttackTarget(enemy)) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit " + unit + " cannot attack " + enemy);
+        }
 
+        if (enemy != null && enemy.isAlive() && unit.canAttackTarget(enemy)) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
             return enemy;
         }
@@ -247,6 +247,12 @@ public class ATargeting extends HasUnit {
             .buildings()
             .inRadius(maxDistFromEnemy, unit)
             .canBeAttackedBy(unit, maxDistFromEnemy);
+
+        // If early in the game, don't attack regular buildings, storm into the base and kill workers/bases
+        if (unit.isMissionAttack() && A.seconds() <= 700) {
+            enemyBuildings = enemyBuildings.bases();
+        }
+
         enemyUnits = Select.enemyRealUnitsWithBuildings()
             .nonBuildingsOrCombatBuildings()
             .inRadius(maxDistFromEnemy, unit)

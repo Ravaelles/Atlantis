@@ -17,7 +17,7 @@ public class AdvanceStandard extends MissionManager {
         return unit.isCombatUnit()
             && !squad.isLeader(unit)
             && unit.combatEvalRelative() > 1.5
-            && unit.distToLeader() <= 8 + (A.supplyUsed() / 25.0);
+            && unit.distToLeader() <= 7 + (A.supplyUsed() / 25.0);
     }
 
     protected Manager handle() {
@@ -45,5 +45,10 @@ public class AdvanceStandard extends MissionManager {
         }
 
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "AdvanceStandard(" + A.digit(unit.distToLeader()) + ")";
     }
 }

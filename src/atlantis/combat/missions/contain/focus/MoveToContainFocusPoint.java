@@ -60,14 +60,14 @@ public class MoveToContainFocusPoint extends Advance {
 
     // =========================================================
 
-    private int workersComeThroughBonus() {
-        if (unit != null && unit.isMissionDefend()) {
-            return Select.enemy().inRadius(5, unit).isEmpty()
-                && Select.ourWorkers().inRadius(6, unit).atLeast(1)
-                ? 4 : 0;
-        }
-
-        return 0;
-    }
+//    private int workersComeThroughBonus() {
+//        if (unit != null && unit.isMissionDefend()) {
+//            return Select.enemy().inRadius(5, unit).isEmpty()
+//                && Select.ourWorkers().inRadius(6, unit).atLeast(1)
+//                ? 4 : 0;
+//        }
+//
+//        return 0;
+//    }
 
 }

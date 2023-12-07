@@ -20,6 +20,8 @@ public class TooFarFromTank extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (unit.isMissionDefend()) return false;
 
         return We.terran()

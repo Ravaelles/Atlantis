@@ -13,6 +13,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -53,7 +54,7 @@ public class ConstructionsCommander extends Commander {
         if (!We.terran()) return false;
         if (A.everyFrameExceptNthFrame(27)) return false;
 
-        for (AUnit worker : Select.ourWorkers().list()) {
+        for (AUnit worker : FreeWorkers.get().list()) {
             if (!worker.recentlyMoved(40)) continue;
 
             if (worker.isIdle() && !worker.isGatheringMinerals()) {

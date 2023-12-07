@@ -10,9 +10,13 @@ public class TerranMarineDontAvoidEnemy extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isMarine()
-            && unit.isMissionDefend()
-            && unit.isHealthy()
+        if (!unit.isMarine()) return false;
+
+        if (protectMainChokeDuringMissionDefend()) return true;
+
+        if (
+            unit.isMissionDefend()
+                && unit.isHealthy()
         ) {
             if (
                 unit.friendsNear().inRadius(2, unit).count() >= 4
@@ -20,6 +24,19 @@ public class TerranMarineDontAvoidEnemy extends Manager {
             ) return true;
 
             if (unit.nearestOurTankDist() <= 3 && unit.nearestEnemyDist() > 3) return true;
+        }
+
+        return false;
+    }
+
+    private boolean protectMainChokeDuringMissionDefend() {
+        if (
+            unit.isMissionDefend()
+                && unit.hp() >= 25
+                && unit.mission().focusPoint() != null
+                && unit.mission().focusPoint().isAroundChoke()
+        ) {
+            return true;
         }
 
         return false;

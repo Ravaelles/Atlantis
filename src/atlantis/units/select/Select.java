@@ -913,6 +913,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 unit.isConstructing()
                     || BuilderManager.isBuilder(unit)
                     || unit.isScout()
+                    || unit.isGatheringGas()
+                    || unit.isSpecialAction()
                     || (!allowRepairers && (unit.isRepairing()))
 //                || (!allowRepairers && (unit.isRepairing() || unit.isRepairerOfAnyKind()))
         );

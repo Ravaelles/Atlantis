@@ -245,4 +245,8 @@ public class GameSpeed {
     public static void changeSpeedToNormal() {
         changeSpeedTo(20);
     }
+
+    public static int speed() {
+        return gameSpeed;
+    }
 }

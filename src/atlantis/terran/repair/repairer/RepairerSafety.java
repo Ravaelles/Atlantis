@@ -30,7 +30,7 @@ public class RepairerSafety extends Manager {
 
         (new AvoidEnemies(unit)).avoidEnemiesIfNeeded();
 
-        return usedManager(this);
+        return null;
 
 //        if (
 //            (!unit.isRepairing() || unit.hpPercent() <= 30)

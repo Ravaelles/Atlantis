@@ -16,12 +16,12 @@ public class ChokeBlockerMoveToBlock extends Manager {
     public Manager handle() {
         double dist = unit.distTo(blockChokePoint);
 
-        if (dist > 0.03) {
+        if (dist > 0.01 && !unit.isMoving()) {
             unit.move(blockChokePoint, Actions.SPECIAL, "ChokeBlocker");
         }
         else {
-//            unit.holdPosition("ChokeBlocker");
-            unit.repair(ChokeBlockers.get().otherBlocker(unit), "Hold!");
+            unit.holdPosition("ChokeBlocker");
+//            unit.repair(ChokeBlockers.get().otherBlocker(unit), "Hold!");
         }
         unit.setAction(Actions.SPECIAL);
 

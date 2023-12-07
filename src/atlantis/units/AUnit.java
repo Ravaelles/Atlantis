@@ -601,13 +601,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Zergling. It compares IDs of units to return correct result.
      */
     public int getUnitIndexInBwapi() {
-        int index = 0;
-        for (AUnit otherUnit : Select.our().ofType(type()).list()) {
-            if (otherUnit.id() < this.id()) {
-                index++;
+        return cacheInt.get(
+            "getUnitIndexInBwapi",
+            2,
+            () -> {
+                int index = 0;
+                for (AUnit otherUnit : Select.ourOfType(type()).list()) {
+                    if (otherUnit.id() < this.id()) index++;
+                }
+                return index;
             }
-        }
-        return index;
+        );
     }
 
     // ===  Debugging / Painting methods ========================================
@@ -2921,6 +2925,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isSpecialMission() {
+        return lastActionLessThanAgo(50, Actions.SPECIAL);
+    }
+
+    public boolean isSpecialAction() {
         return lastActionLessThanAgo(50, Actions.SPECIAL);
     }
 }

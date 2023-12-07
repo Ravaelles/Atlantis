@@ -37,8 +37,8 @@ public class ChokeBlockers {
         blockingPoint1 = choke.firstPoint();
         blockingPoint2 = choke.lastPoint();
 
-        blockingPoint1 = blockingPoint1.translatePercentTowards(blockingPoint2, 32);
-        blockingPoint2 = blockingPoint2.translatePercentTowards(blockingPoint1, 32);
+        blockingPoint1 = blockingPoint1.translatePercentTowards(blockingPoint2, 24);
+        blockingPoint2 = blockingPoint2.translatePercentTowards(blockingPoint1, 24);
     }
 
     public void assignWorkersIfNeeded() {

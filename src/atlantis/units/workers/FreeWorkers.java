@@ -12,7 +12,7 @@ public class FreeWorkers {
             .notScout()
             .notRepairing()
             .notConstructing()
-            .notProtector()
+            .notProtectors()
             .notSpecialAction();
     }
 }

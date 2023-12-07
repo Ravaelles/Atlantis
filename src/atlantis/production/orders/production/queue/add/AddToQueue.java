@@ -94,6 +94,8 @@ public class AddToQueue {
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
 
         if (Queue.get().addNew(index, productionOrder)) {
+            Select.clearCache();
+            Count.clearCache();
 //            clearOtherExistingOfTheSameTypeIfNeeded(productionOrder);
 
 //            if (type.isBase()) {

@@ -19,7 +19,7 @@ public class CrucialRepairsNearbyCommander extends Commander {
         if (A.everyFrameExceptNthFrame(17) || !A.hasMinerals(16)) return;
         if (tooManyRepairers()) return;
 
-        for (AUnit worker : Select.ourWorkers().list()) {
+        for (AUnit worker : FreeWorkers.get().list()) {
             (new DoRepairsNearby(worker)).invoke();
         }
     }

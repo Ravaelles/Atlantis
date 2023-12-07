@@ -1,6 +1,7 @@
 package atlantis.terran;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -36,6 +37,7 @@ public class FlyingBuildingScoutCommander extends Commander {
     // =========================================================
 
     private boolean needNewFlyingBuilding() {
+        if (A.seconds() <= 460) return false;
         if (!flyingBuildings.isEmpty()) return false;
 
         return Select.ourWithUnfinished(AUnitType.Terran_Siege_Tank_Tank_Mode).atLeast(1);

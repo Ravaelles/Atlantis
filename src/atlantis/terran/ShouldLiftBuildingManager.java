@@ -14,7 +14,11 @@ public class ShouldLiftBuildingManager extends Manager {
     }
 
     protected Manager handle() {
-        if (unit.lastUnderAttackLessThanAgo(40) && unit.hpPercent() <= 38) {
+        if (
+            unit.lastUnderAttackLessThanAgo(40)
+                && unit.hpPercent() <= 38
+                && unit.enemiesNear().inRadius(13, unit).notEmpty()
+        ) {
             unit.lift();
             unit.setTooltip("LiftMeUp");
             return usedManager(this);

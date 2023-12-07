@@ -199,14 +199,6 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
 //        );
 //    }
 
-    private HasPosition findPositionNear(APosition nearTo) {
-        AUnit builder = Select.ourWorkers().nearestTo(nearTo);
-
-        return APositionFinder.findStandardPosition(
-            builder, type(), nearTo, 15
-        );
-    }
-
     // =========================================================
 
     public static AntiLandBuildingCommander get() {

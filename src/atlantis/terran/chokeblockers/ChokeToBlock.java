@@ -7,7 +7,7 @@ public class ChokeToBlock {
     public static AChoke get() {
         AChoke choke = Chokes.mainChoke();
 
-        if (choke == null || choke.width() >= 4.5) return null;
+        if (choke == null || choke.width() >= 4.1) return null;
 
         return choke;
     }

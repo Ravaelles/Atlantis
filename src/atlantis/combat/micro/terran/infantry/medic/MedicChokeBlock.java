@@ -20,13 +20,13 @@ public class MedicChokeBlock extends Manager {
     @Override
     public boolean applies() {
         return Missions.isGlobalMissionDefend()
-            && Count.ourCombatUnits() <= 20
+            && Count.ourCombatUnits() <= 30
             && (choke = ChokeToBlock.get()) != null;
     }
 
     @Override
     public Manager handle() {
-        APosition goTo = choke.center();
+        APosition goTo = pointToBlock();
 
         if (goTo != null && goTo.distTo(unit) > 0.03) {
             if (A.now() % 5 == 0) {
@@ -39,5 +39,12 @@ public class MedicChokeBlock extends Manager {
         unit.setAction(Actions.SPECIAL);
 
         return usedManager(this);
+    }
+
+    private APosition pointToBlock() {
+        int totalMedics = Math.max(1, Count.medics());
+        int points = choke.perpendicularLine().size();
+        int index = unit.getUnitIndexInBwapi() * (points - 1) / totalMedics;
+        return choke.perpendicularLine().get(index % points);
     }
 }

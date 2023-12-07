@@ -520,6 +520,13 @@ public class Selection extends BaseSelection {
         ).count();
     }
 
+    public Selection cloakable() {
+        return cloneByRemovingIf(u -> !u.type().is(
+            AUnitType.Protoss_Dark_Templar,
+            AUnitType.Zerg_Lurker
+        ), "cloakable");
+    }
+
     public Selection havingWeapon() {
         return cloneByRemovingIf(u -> !u.hasAnyWeapon(), "havingWeapon");
     }
@@ -644,9 +651,21 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection notProtector() {
+    public Selection notProtectors() {
         return cloneByRemovingIf(
-            (AUnit::isProtector), "notProtector"
+            (AUnit::isProtector), "notProtectors"
+        );
+    }
+
+    public Selection protectors() {
+        return cloneByRemovingIf(
+            (u -> !u.isProtector()), "protectors"
+        );
+    }
+
+    public Selection healthy() {
+        return cloneByRemovingIf(
+            (AUnit::isWounded), "healthy"
         );
     }
 

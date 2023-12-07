@@ -10,6 +10,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -69,7 +70,7 @@ public class Construction implements Comparable<Construction> {
      * and we're cool, bro.
      */
     protected void assignRandomBuilderForNow() {
-        builder = Select.ourWorkers().notSpecialAction().first();
+        builder = FreeWorkers.get().first();
     }
 
     /**

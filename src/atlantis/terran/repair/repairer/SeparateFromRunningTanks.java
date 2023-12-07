@@ -18,6 +18,8 @@ public class SeparateFromRunningTanks extends Manager {
 
         target = RepairAssignments.unitToRepairForSCV(unit);
 
+        if (target == null) return false;
+
         return target.isTankUnsieged()
             && target.isRunning()
             && unit.distTo(target) <= 1.4

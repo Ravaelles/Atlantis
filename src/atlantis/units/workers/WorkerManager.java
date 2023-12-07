@@ -3,6 +3,7 @@ package atlantis.units.workers;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
+import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.production.constructing.builders.BuilderManager;
 import atlantis.terran.repair.DynamicRepairsNearby;
 import atlantis.terran.repair.RepairAssignments;
@@ -21,6 +22,8 @@ public class WorkerManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            AvoidSpellsAndMines.class,
+
             AvoidCriticalUnits.class,
             WorkerDefenceManager.class,
             AvoidEnemies.class,

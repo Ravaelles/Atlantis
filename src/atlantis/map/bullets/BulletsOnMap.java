@@ -14,15 +14,15 @@ public class BulletsOnMap {
 
     public static ArrayList<Bullet> ofType(BulletType type, int maxDist, HasPosition from) {
         ArrayList<Bullet> bullets = ofType(type);
+        if (bullets.isEmpty()) return bullets;
 
         bullets.removeIf(bullet -> APosition.create(bullet.getPosition()).distToMoreThan(from, maxDist));
-
         return bullets;
     }
 
     public static ArrayList<Bullet> ofType(BulletType type) {
         return cache.get(
-            "ofType:" + type.id,
+            "ofType:" + type.name(),
             2,
             () -> {
                 ArrayList<Bullet> bullets = new ArrayList<>();

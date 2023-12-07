@@ -57,7 +57,12 @@ public class TerranMedic extends Manager {
 //    }
 
     protected Manager handle() {
-        Manager manager = (new MedicChokeBlock(unit)).invoke();
+        Manager manager;
+
+        manager = (new MedicChokeBlockMoveAway(unit)).invoke();
+        if (manager != null) return manager;
+
+        manager = (new MedicChokeBlock(unit)).invoke();
         if (manager != null) return manager;
 
 //        if (medic.hp() <= 14 && AvoidEnemies.avoidEnemiesIfNeeded()) {
@@ -249,6 +254,10 @@ public class TerranMedic extends Manager {
     }
 
     private boolean handleStickToAssignments() {
+        if (medic.nearestOurTankDist() < 1) {
+            return medic.moveAwayFrom(medic.nearestOurTank(), 0.5, Actions.MOVE_SPACE, "Space4Tank");
+        }
+
         AUnit assignment = medicAssignment();
 
         if (assignment != null && assignment.isAlive()) {

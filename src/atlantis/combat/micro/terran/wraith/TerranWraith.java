@@ -19,8 +19,8 @@ public class TerranWraith extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            WraithBeingReparedManager.class,
             RunForYourLife.class,
-            UnitBeingReparedManager.class,
             GoToRepairAsAirUnit.class,
 
             // Attack-related

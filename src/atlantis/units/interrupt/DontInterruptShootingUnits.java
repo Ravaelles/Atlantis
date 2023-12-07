@@ -15,6 +15,9 @@ public class DontInterruptShootingUnits extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
+        AUnit target = unit.target();
+        if (target != null && target.isABuilding() && !target.isCombatBuilding()) return false;
+
         if (unit.isMarine()) return true;
 
         if (unit.isZergling()) {
@@ -26,7 +29,6 @@ public class DontInterruptShootingUnits extends Manager {
 
         if (!unit.isAttacking()) return false;
         if (!unit.isRanged()) return false;
-
         if (isMeleeEnemyNear()) return false;
 
         if (unit.isWraith()) {

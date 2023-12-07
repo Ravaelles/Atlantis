@@ -37,6 +37,8 @@ public class ProduceWraiths {
     private static boolean prioritizeScienceVessels() {
         if (A.hasGas(400)) return false;
 
+        if (A.seconds() <= 600 && !Have.scienceVessel()) return true;
+
         if (EnemyInfo.hasHiddenUnits()) return !Have.scienceVessel();
 
         return !Have.haveExistingOrInPlans(AUnitType.Terran_Science_Vessel);

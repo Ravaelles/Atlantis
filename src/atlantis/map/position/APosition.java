@@ -76,14 +76,14 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 //        else {
         APosition position = null;
 
-        if (p instanceof APosition) {
+        if (p instanceof Position) {
+            position = new APosition((Position) p);
+        }
+        else if (p instanceof APosition) {
             position = new APosition((APosition) p);
         }
         else if (p instanceof HasPosition) {
             position = new APosition(((HasPosition) p).position());
-        }
-        else if (p instanceof Position) {
-            position = new APosition((Position) p);
         }
         else if (p instanceof WalkPosition) {
             position = new APosition(((WalkPosition) p).toPosition());

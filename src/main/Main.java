@@ -17,9 +17,9 @@ public class Main {
     public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Zerg";
 
-    public static final String ENEMY_RACE = "Protoss";
+    //    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
-//    public static final String ENEMY_RACE = "Zerg";
+    public static final String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -77,7 +77,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My favorite map for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-        if (true) return "ums/7th.scx";
+//        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
@@ -86,7 +86,7 @@ public class Main {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Maps for testing as Terran ==========================

@@ -14,14 +14,15 @@ public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
 
     @Override
     public boolean applies() {
-        boolean hasCooldown = unit.cooldown() >= 4;
+        boolean hasCooldown = unit.cooldown() >= 3;
 
+        double minDist = (hasCooldown ? 6.8 : 6.12) - (unit.isHealthy() ? 1.65 : 0);
         enemies = unit.enemiesNear()
             .groundUnits()
             .nonBuildings()
             .ranged()
             .havingAntiGroundWeapon()
-            .inRadius(hasCooldown ? 6.8 : 6.2, unit);
+            .inRadius(minDist, unit);
 
         return enemies.atLeast(1);
     }

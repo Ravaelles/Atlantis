@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid.special;
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
+import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
 import atlantis.map.bullets.BulletsOnMap;
 import atlantis.map.position.APosition;
@@ -30,7 +31,7 @@ public class AvoidPsionicStorm extends Manager {
 
         if (bullets.isEmpty()) return null;
 
-//        paintBullets(bullets, Color.Cyan);
+        paintBullets(bullets, Color.Cyan);
 
         if (handleMoveAwayIfPsionicCloserThan(bullets, 4)) return usedManager(this);
 
@@ -39,7 +40,7 @@ public class AvoidPsionicStorm extends Manager {
 
     private void paintBullets(ArrayList<Bullet> bullets, Color color) {
         for (Bullet bullet : bullets) {
-            AAdvancedPainter.paintCircleFilled(APosition.create(bullet.getPosition()), 5, color);
+            AAdvancedPainter.paintCircleFilled(APosition.create(bullet.getPosition()), 25, color);
         }
     }
 
@@ -49,14 +50,16 @@ public class AvoidPsionicStorm extends Manager {
         if (unit.distTo(avoidCenter) < minDist) {
             unit.runningManager().runFromAndNotifyOthersToMove(avoidCenter, "PSIONIC-STORM");
 
-//            AAdvancedPainter.forcePainting();
-////            AAdvancedPainter.paintCircle(unit, 13, Color.Cyan);
-////            AAdvancedPainter.paintLine(unit, avoidCenter, Color.Cyan);
-//            AAdvancedPainter.paintLine(unit, unit.targetPosition(), Color.Cyan);
-//            AAdvancedPainter.liftForcedPainting();
-//            System.err.println("RUNNING FROM PSIONIC / unit:" + unit.position() + " to " + unit.targetPosition() + " " +
-//                "/ " +
-//                "psionic: " + avoidCenter + " / dist:" + unit.distTo(avoidCenter) + " / runTo:" + unit.distTo(unit.targetPosition()));
+            AAdvancedPainter.forcePainting();
+            AAdvancedPainter.paintCircle(unit, 13, Color.Cyan);
+            AAdvancedPainter.paintLine(unit, avoidCenter, Color.Cyan);
+            AAdvancedPainter.paintLine(unit, unit.targetPosition(), Color.Cyan);
+            AAdvancedPainter.liftForcedPainting();
+            System.err.println("RUNNING FROM PSIONIC / unit:" + unit.position() + " to " + unit.targetPosition() + " " +
+                "/ " +
+                "psionic: " + avoidCenter + " / dist:" + unit.distTo(avoidCenter) + " / runTo:" + unit.distTo(unit.targetPosition()));
+            CameraCommander.centerCameraOn(avoidCenter);
+            if (GameSpeed.speed() <= 1) GameSpeed.changeSpeedTo(100);
             return true;
         }
 

@@ -102,7 +102,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
         return new AFocusPoint(
             choke != null ? choke : lastBase,
-            Select.mainOrAnyBuilding(),
+            lastBase,
             "LastBase"
         );
     }

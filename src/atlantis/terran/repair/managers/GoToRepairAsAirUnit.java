@@ -1,10 +1,12 @@
 package atlantis.terran.repair.managers;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 
 public class GoToRepairAsAirUnit extends Manager {
     public GoToRepairAsAirUnit(AUnit unit) {
@@ -16,11 +18,12 @@ public class GoToRepairAsAirUnit extends Manager {
         AUnit repairer;
 
         return unit.isAir()
+            && A.hasMinerals(1)
             && unit.canBeRepaired()
             && (
-                unit.hp() <= minHealth()
-                    || ((repairer = unit.repairer()) != null && repairer.distTo(unit) <= 1)
-                    || RepairAssignments.countRepairersForUnit(unit) >= 2
+            unit.hp() <= minHealth()
+                || ((repairer = unit.repairer()) != null && repairer.distTo(unit) <= 1)
+                || RepairAssignments.countRepairersForUnit(unit) >= 2
         )
             && !unit.isRunning();
     }
@@ -57,6 +60,9 @@ public class GoToRepairAsAirUnit extends Manager {
 
         if (repairer != null) return repairer;
 
-        return Select.ourWorkersFreeToBuildOrRepair(true).nearestTo(unit);
+        AUnit protector = Select.ourWorkers().protectors().notRepairing().healthy().nearestTo(unit);
+        if (protector != null) return protector;
+
+        return FreeWorkers.get().nearestTo(unit);
     }
 }

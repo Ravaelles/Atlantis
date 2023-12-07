@@ -1,20 +1,17 @@
 ### BUGS ###
 
-- Wraiths are not stopping for repair
+- Refactor Medic into managers
+
+.---- PsionicNotReallyTriggered
+
+----------------
 
 - Still no Turrets against Scouts
 - No bunker no turret at natural
 
 - Distinct SecureBunker logic from SecureTurret
 
------- RunFrom1.0 goes like 30, psionic broken! :O
-
------------------------------------------------
-- Bunker securing the main
------------------------------------------------
-
-..----- AvoidCombatBuilding logic is broken, units suicide. It's slow, so simply leave one logic (hold)
-
+.------ RunFrom1.0 goes like 30, psionic broken! :O
 
 ### FEATURES ###
 
