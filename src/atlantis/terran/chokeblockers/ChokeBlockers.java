@@ -13,13 +13,13 @@ import atlantis.units.workers.FreeWorkers;
 public class ChokeBlockers {
     private static ChokeBlockers instance = null;
 
-    private AChoke choke;
+    private static AChoke choke;
 
     public AUnit worker1 = null;
     public AUnit worker2 = null;
 
-    private APosition blockingPoint1;
-    private APosition blockingPoint2;
+    private static APosition blockingPoint1;
+    private static APosition blockingPoint2;
 
     private ChokeBlockers(AChoke choke) {
         this.choke = choke;
@@ -33,7 +33,7 @@ public class ChokeBlockers {
         return instance;
     }
 
-    private void defineBlockingPoints() {
+    private static void defineBlockingPoints() {
         blockingPoint1 = choke.firstPoint();
         blockingPoint2 = choke.lastPoint();
 
@@ -71,5 +71,17 @@ public class ChokeBlockers {
 
     public boolean noEnemiesVeryNear() {
         return worker1 != null && worker1.enemiesNear().inRadius(6, worker1).empty();
+    }
+
+    public static APosition chokeBlockPoint1() {
+        if (blockingPoint1 == null) defineBlockingPoints();
+
+        return blockingPoint1;
+    }
+
+    public static APosition chokeBlockPoint2() {
+        if (blockingPoint1 == null) defineBlockingPoints();
+
+        return blockingPoint1;
     }
 }

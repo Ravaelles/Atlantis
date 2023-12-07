@@ -5,7 +5,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 
 public abstract class MoveToFocusPoint extends MissionManager {
-    protected static final double MARGIN = 0.2;
+    protected static final double MARGIN = 0.4;
 
     protected double optimalDist;
     protected double unitToFocus;
@@ -42,7 +42,7 @@ public abstract class MoveToFocusPoint extends MissionManager {
     // =========================================================
 
     protected DistFromFocus evaluateDistFromFocusPoint() {
-        if (unitToFocus < (optimalDist - MARGIN)) return DistFromFocus.TOO_CLOSE;
+        if (unitToFocus < (optimalDist)) return DistFromFocus.TOO_CLOSE;
         if (unitToFocus > (optimalDist + MARGIN)) return DistFromFocus.TOO_FAR;
         return DistFromFocus.OPTIMAL;
     }

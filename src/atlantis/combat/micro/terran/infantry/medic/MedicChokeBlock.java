@@ -5,6 +5,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
+import atlantis.terran.chokeblockers.ChokeBlockers;
 import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -42,9 +43,13 @@ public class MedicChokeBlock extends Manager {
     }
 
     private APosition pointToBlock() {
-        int totalMedics = Math.max(1, Count.medics());
-        int points = choke.perpendicularLine().size();
-        int index = unit.getUnitIndexInBwapi() * (points - 1) / totalMedics;
-        return choke.perpendicularLine().get(index % points);
+//        int totalMedics = Math.max(1, Count.medics());
+//        int points = choke.perpendicularLine().size();
+//        int index = unit.getUnitIndexInBwapi() * (points - 1) / totalMedics;
+//        return choke.perpendicularLine().get(index % points);
+//        int index = unit.getUnitIndexInBwapi();
+
+        return unit.getUnitIndexInBwapi() % 2 == 0
+            ? ChokeBlockers.chokeBlockPoint1() : ChokeBlockers.chokeBlockPoint2();
     }
 }

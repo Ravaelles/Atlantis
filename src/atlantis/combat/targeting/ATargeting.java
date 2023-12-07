@@ -46,9 +46,9 @@ public class ATargeting extends HasUnit {
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
 
-        if (enemy != null && enemy.isAlive() && !unit.canAttackTarget(enemy)) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit " + unit + " cannot attack " + enemy);
-        }
+//        if (enemy != null && enemy.isAlive() && !unit.canAttackTarget(enemy)) {
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit " + unit + " cannot attack " + enemy);
+//        }
 
         if (enemy != null && enemy.isAlive() && unit.canAttackTarget(enemy)) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);

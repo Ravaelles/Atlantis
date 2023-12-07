@@ -1,6 +1,10 @@
 ### BUGS ###
 
-- Refactor Medic into managers
+---- GatherResources "KindGuy" is holding idle forever
+---- Another one (GatherResources?) "MakeSpace" also idle
+--- DynamicRepairsNearby  ("Kind") is holding idle forever
+---- Wraith got "Constructing!" tooltip
+--- Wraith 20hp getting to repair once, then attacks even with workers near.
 
 .---- PsionicNotReallyTriggered
 

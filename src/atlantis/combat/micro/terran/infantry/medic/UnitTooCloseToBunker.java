@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran.infantry.medic;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.Enemy;
 
 public class UnitTooCloseToBunker extends Manager {
     private AUnit bunker;
@@ -13,7 +14,7 @@ public class UnitTooCloseToBunker extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isMedic() && (bunker = unit.friendsNear().bunkers().nearestTo(unit)) != null;
+        return Enemy.protoss() && unit.isMedic() && (bunker = unit.friendsNear().bunkers().nearestTo(unit)) != null;
     }
 
     @Override

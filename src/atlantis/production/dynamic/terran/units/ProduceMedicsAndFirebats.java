@@ -27,6 +27,8 @@ public class ProduceMedicsAndFirebats {
         int infantry = Count.infantry();
         boolean medicsRatioTooLow = medicsUnfinished <= 1 && TerranArmyComposition.medicsToInfantryRatioTooLow();
 
+        if (medics <= 1 && (medicsUnfinished <= 1 || medics == 0)) return produceMedic();
+
         if (medicsUnfinished >= 3) return false;
 
         if (!Decisions.shouldMakeTerranBio()) {

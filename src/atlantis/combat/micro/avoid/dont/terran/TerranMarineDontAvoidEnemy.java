@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.dont.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 
 public class TerranMarineDontAvoidEnemy extends Manager {
@@ -32,7 +33,7 @@ public class TerranMarineDontAvoidEnemy extends Manager {
     private boolean protectMainChokeDuringMissionDefend() {
         if (
             unit.isMissionDefend()
-                && unit.hp() >= 25
+                && unit.hp() >= 22
                 && unit.mission().focusPoint() != null
                 && unit.mission().focusPoint().isAroundChoke()
         ) {
@@ -44,6 +45,8 @@ public class TerranMarineDontAvoidEnemy extends Manager {
 
     @Override
     public Manager handle() {
-        return this;
+        (new AttackNearbyEnemies(unit)).forceHandle();
+
+        return usedManager(this);
     }
 }
