@@ -9,7 +9,6 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
@@ -25,7 +24,7 @@ public class Construction implements Comparable<Construction> {
     private final int timeOrdered;
     private int timeBecameInProgress;
     private AUnitType buildingType;
-    private AUnit construction;
+    private AUnit build;
     private AUnit builder;
     private APosition positionToBuild;
     private HasPosition near;
@@ -60,7 +59,7 @@ public class Construction implements Comparable<Construction> {
 
         if (builder != null) cacheKey += builder.id() + ",";
         if (buildingType != null) cacheKey += buildingType.id() + ",";
-        if (construction != null) cacheKey += construction.position();
+        if (build != null) cacheKey += build.position();
 
         return cacheKey;
     }
@@ -91,8 +90,8 @@ public class Construction implements Comparable<Construction> {
      * Fully delete this construction, remove the building if needed by cancelling it.
      */
     public void cancel() {
-        if (construction != null) {
-            construction.cancelConstruction();
+        if (build != null) {
+            build.cancelConstruction();
         }
 
         if (builder != null) {
@@ -134,7 +133,7 @@ public class Construction implements Comparable<Construction> {
 
     @Override
     public String toString() {
-        return "ConstructionOrder{" + "ID=" + ID + ", buildingType=" + buildingType + ", construction=" + construction + ", builder=" + builder + ", positionToBuild=" + positionToBuild + ", productionOrder=" + productionOrder + ", status=" + status + '}';
+        return "Construction{" + "#" + ID + ", " + buildingType + ", build=" + build + ", builder=" + builder + ", positionToBuild=" + positionToBuild + ", status=" + status + '}';
     }
 
     // =========================================================
@@ -188,11 +187,11 @@ public class Construction implements Comparable<Construction> {
     }
 
     public AUnit construction() {
-        return construction;
+        return build;
     }
 
-    public void setConstruction(AUnit construction) {
-        this.construction = construction;
+    public void setBuild(AUnit build) {
+        this.build = build;
     }
 
     public int id() {

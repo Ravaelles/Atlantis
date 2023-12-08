@@ -29,7 +29,7 @@ public class StreetGridOkayForSupplyDepot {
 
     private static boolean streetGridMatches(APosition position) {
         return position.tx() % 3 == 0 && position.ty() % 2 == 0
-            && position.tx() % 9 != 0 && position.ty() % 8 != 0;
+            && position.tx() % 12 != 0 && position.ty() % 10 != 0;
     }
 }
 

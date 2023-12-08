@@ -15,7 +15,7 @@ public class ProduceBarracks {
         int barracks = Count.withPlanned(Terran_Barracks);
         int freeBarracks = Select.ourFree(Terran_Barracks).size();
 
-        if (freeBarracks >= 2) return false;
+        if (freeBarracks >= 1) return false;
         if (barracks <= 8 && A.hasMinerals(800) && A.hasFreeSupply(4)) return produce();
         if (barracks >= 3 && !A.hasMinerals(800)) return false;
         if (barracks >= 2 && (!A.hasMinerals(450) || Enemy.terran())) return false;

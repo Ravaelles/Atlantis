@@ -20,9 +20,8 @@ public class ChokeBlockerMoveAway extends Manager {
 
     @Override
     public boolean applies() {
-        return Missions.isGlobalMissionDefend()
-            && Count.ourCombatUnits() <= 20
-            && unit.enemiesNear().inRadius(13, unit).empty()
+        return ChokeBlockersCommander.checkIfApplies()
+            && unit.enemiesNear().inRadius(11, unit).empty()
             && (choke = ChokeToBlock.get()) != null
             && needToMoveSpaceForWorkers();
     }
@@ -30,12 +29,13 @@ public class ChokeBlockerMoveAway extends Manager {
     private boolean needToMoveSpaceForWorkers() {
         return unit.friendsNear()
             .workers()
+            .exclude(unit)
             .notRepairing()
             .notProtectors()
             .notSpecialAction()
-            .notConstructing()
+//            .notConstructing()
             .notScout()
-            .inRadius(6, unit)
+            .inRadius(7, choke.center())
             .atLeast(1);
     }
 

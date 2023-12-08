@@ -78,6 +78,7 @@ public class BuilderManager extends Manager {
 
         for (Construction construction : ConstructionRequests.constructions) {
             if (worker.equals(construction.builder())) {
+                if (construction.buildPosition() == null) return false;
 
                 // Pending Protoss buildings allow unit to go away
                 // Terran and Zerg need to use the worker until construction is finished

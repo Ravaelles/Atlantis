@@ -81,9 +81,7 @@ public class ConstructionsCommander extends Commander {
      * If builder has died when constructing, replace him with new one.
      */
     private void checkIfTerranBuilderGotKilled(Construction construction) {
-        if (!We.terran()) {
-            return;
-        }
+        if (!We.terran()) return;
 
         // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
         // finish the construction.
@@ -107,6 +105,12 @@ public class ConstructionsCommander extends Commander {
                     builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
                     builder.setTooltipTactical("Resume");
                 }
+                else {
+                    ErrorLog.printMaxOncePerMinute("Problem with construction " + construction + " / " + builder);
+                }
+            }
+            else {
+                if (A.seconds() <= 500) ErrorLog.printMaxOncePerMinute("Not safe to assign builder to " + construction);
             }
         }
     }
@@ -136,12 +140,6 @@ public class ConstructionsCommander extends Commander {
      * If building is completed, mark construction as finished and remove it.
      */
     private void checkForConstructionStatusChange(Construction order, AUnit building) {
-
-
-//        if (building != null) {
-
-//        }
-
         if (
             !We.zerg()
                 && order.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
@@ -166,18 +164,16 @@ public class ConstructionsCommander extends Commander {
                     // Happens for Extractor
                     if (builder.buildType() == null || builder.buildType().equals(AUnitType.None)) {
                         building = builder;
-                        order.setConstruction(builder);
+                        order.setBuild(builder);
                     }
                 }
 
                 // Builder did not change it's type so it's not Zerg Extractor case
                 else {
-
-
                     AUnit buildUnit = builder.buildUnit();
                     if (buildUnit != null) {
                         building = buildUnit;
-                        order.setConstruction(buildUnit);
+                        order.setBuild(buildUnit);
                     }
                 }
             }

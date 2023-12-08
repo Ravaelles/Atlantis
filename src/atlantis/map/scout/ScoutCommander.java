@@ -15,6 +15,7 @@ import atlantis.units.select.Select;
 
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -99,7 +100,10 @@ public class ScoutCommander extends Commander {
                             || scout.isRepairerOfAnyKind()
                             || scout.isBuilder()
                             || scout.lastActionLessThanAgo(50, Actions.SPECIAL)
-                    ) continue;
+                    ) {
+                        ErrorLog.printMaxOncePerMinute("Scout got mission: " + scout.manager());
+                        continue;
+                    }
 
                     if (ScoutState.scouts.isEmpty()) {
 

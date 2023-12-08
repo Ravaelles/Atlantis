@@ -38,14 +38,14 @@ public class TerranMedic extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             ContinueHeal.class,
-            MedicChokeBlockMoveAway.class,
-            MedicChokeBlock.class,
             HealMostWoundedInRange.class,
             HealAnyWoundedNear.class,
+            MedicChokeBlockMoveAway.class,
+            MedicChokeBlock.class,
             MedicBodyBlock.class,
             UnitTooCloseToBunker.class,
-            MoveAwayMedicFromTanks.class,
             TooFarFromNearestInfantry.class,
+            MoveAwayMedicFromTanks.class,
             StickToAssignments.class,
             AvoidEnemies.class,
         };

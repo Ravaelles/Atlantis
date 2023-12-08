@@ -9,30 +9,31 @@ import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 
 public class GoToRepairAsAirUnit extends Manager {
+    private AUnit repairer;
+
     public GoToRepairAsAirUnit(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        AUnit repairer;
-
         return unit.isAir()
             && A.hasMinerals(1)
-            && unit.canBeRepaired()
+            && unit.isMechanical()
+            && unit.isWounded()
             && (
             unit.hp() <= minHealth()
                 || ((repairer = unit.repairer()) != null && repairer.distTo(unit) <= 1)
                 || RepairAssignments.countRepairersForUnit(unit) >= 2
-        )
-            && !unit.isRunning();
+        );
     }
 
     public Manager handle() {
-        if (unit.isAttacking()) return null;
+        if (repairer != null) {
+            if (moveToRepairer(repairer)) return usedManager(this);
+        }
 
         AUnit worker = defineClosestRepairer();
-
         if (worker != null) {
             if (moveToRepairer(worker)) return usedManager(this);
         }

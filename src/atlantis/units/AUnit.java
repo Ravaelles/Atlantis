@@ -370,7 +370,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             ErrorLog.printMaxOncePerMinute("AUnit type() is NULL");
             return "ERROR_NULL_TYPE";
         }
-        return idWithHash() + " " + (type() != null ? type().name() : "NULL_TYPE") + " @" + position();
+        return idWithHash() + " "
+            + (type() != null ? type().name() : "NULL_TYPE")
+            + " @" + position()
+            + (isWorker() && isOur() ? " (" + manager + ")" : "");
     }
 
     @Override

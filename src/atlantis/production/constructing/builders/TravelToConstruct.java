@@ -141,7 +141,7 @@ public class TravelToConstruct extends HasUnit {
             if (newBuilding != null) {
                 order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
                 order.setBuilder(null);
-                unit.stop("Finished!", true);
+                unit.stop("Finished!");
                 return false;
             }
         }

@@ -1,7 +1,6 @@
 package atlantis.units;
 
 import atlantis.combat.micro.terran.tank.unsieging.ShouldUnsiegeToMove;
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
@@ -300,12 +299,12 @@ public interface AUnitOrders {
      * determined that the command would fail. Note There is a small chance for a command to fail after it has
      * been passed to Broodwar. See also canStop, isIdle
      */
-    default boolean stop(String tooltip, boolean strategicLevel) {
+    default boolean stop(String tooltip) {
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println(unit().typeWithHash() + "STOP @" + A.now() + " / " + tooltip);
         }
 
-        unit().setTooltip(tooltip, strategicLevel)
+        unit().setTooltip(tooltip)
             .setAction(Actions.STOP);
         return u().stop();
     }

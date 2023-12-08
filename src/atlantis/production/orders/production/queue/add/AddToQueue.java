@@ -94,8 +94,23 @@ public class AddToQueue {
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
 
         if (Queue.get().addNew(index, productionOrder)) {
+//            if (type.isSupplyDepot()) {
+//                System.out.println("@ " + A.now() + " - ADDED DEPOT = "
+//                    + CountInQueue.count(AUnitType.Terran_Supply_Depot)
+//                    + " / " + Count.inQueueOrUnfinished(AUnitType.Terran_Supply_Depot, 50)
+//                );
+//            }
+
             Select.clearCache();
             Count.clearCache();
+
+//            if (type.isSupplyDepot()) {
+//                System.out.println("@ " + A.now() + " - ADDED DEPOT - POST CLEAR CACHE = "
+//                    + CountInQueue.count(AUnitType.Terran_Supply_Depot)
+//                    + " / " + Count.inQueueOrUnfinished(AUnitType.Terran_Supply_Depot, 50)
+//                );
+//            }
+
 //            clearOtherExistingOfTheSameTypeIfNeeded(productionOrder);
 
 //            if (type.isBase()) {

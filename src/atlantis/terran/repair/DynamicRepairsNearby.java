@@ -53,11 +53,11 @@ public class DynamicRepairsNearby extends Manager {
                     return true;
                 }
             }
+        }
 
-            if (!unit.isRepairing() && !unit.hasNotMovedInAWhile()) {
-                RepairAssignments.removeRepairer(unit);
-                return false;
-            }
+        if (!unit.isRepairing() && !unit.hasNotMovedInAWhile()) {
+            RepairAssignments.removeRepairer(unit);
+            return false;
         }
 
         return false;

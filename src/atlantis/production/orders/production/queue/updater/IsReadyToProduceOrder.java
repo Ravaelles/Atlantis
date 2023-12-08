@@ -55,6 +55,8 @@ public class IsReadyToProduceOrder {
 //        int mineralsAvailable = mineralsAvailable(order);
 //        int gasAvailable = gasAvailable(order);
 
+        if (true) return false;
+
         if (order.isBuilding()) return true;
 
         return (A.hasMinerals(600) || mineralsAvailable(order) >= order.mineralPrice())

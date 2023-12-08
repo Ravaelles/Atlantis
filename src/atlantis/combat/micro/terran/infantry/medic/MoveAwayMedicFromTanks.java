@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -11,7 +12,7 @@ public class MoveAwayMedicFromTanks extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.nearestOurTankDist() < 1.5;
+        return A.seconds() % 4 <= 1 && unit.nearestOurTankDist() < 1.5;
     }
 
     @Override

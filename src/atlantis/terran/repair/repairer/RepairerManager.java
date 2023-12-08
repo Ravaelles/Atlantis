@@ -1,6 +1,8 @@
 package atlantis.terran.repair.repairer;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.special.AvoidPsionicStorm;
+import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.units.AUnit;
 
 
@@ -17,6 +19,7 @@ public class RepairerManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            AvoidSpellsAndMines.class,
             RepairerSafety.class,
             RemoveRepairer.class,
             IssueRepairCommand.class,

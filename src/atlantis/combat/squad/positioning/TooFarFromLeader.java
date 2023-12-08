@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -54,7 +55,9 @@ public class TooFarFromLeader extends Manager {
     }
 
     protected Manager handle() {
-        unit.move(leader, Actions.MOVE_FORMATION, "Coordinate");
+        if (!unit.isMoving() || A.everyNthGameFrame(5)) {
+            unit.move(leader, Actions.MOVE_FORMATION, "Coordinate");
+        }
         return usedManager(this);
     }
 }

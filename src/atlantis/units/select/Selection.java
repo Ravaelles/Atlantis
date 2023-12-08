@@ -1105,6 +1105,31 @@ public class Selection extends BaseSelection {
         return data.size();
     }
 
+    public List<AUnit> sortDataByGroundDistanceTo(final HasPosition position, final boolean nearestFirst) {
+//        if (position == null) {
+//            return null;
+//        }
+
+        Collections.sort(data, new Comparator<HasPosition>() {
+            @Override
+            public int compare(HasPosition p1, HasPosition p2) {
+                if (!(p1 instanceof HasPosition)) {
+                    throw new RuntimeException("Invalid comparison: " + p1);
+                }
+                if (!(p2 instanceof HasPosition)) {
+                    throw new RuntimeException("Invalid comparison: " + p2);
+                }
+
+                double distance1 = p1.groundDist(position);
+                double distance2 = p2.groundDist(position);
+
+                return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
+            }
+        });
+
+        return data;
+    }
+
     public List<AUnit> sortDataByDistanceTo(final HasPosition position, final boolean nearestFirst) {
 //        if (position == null) {
 //            return null;

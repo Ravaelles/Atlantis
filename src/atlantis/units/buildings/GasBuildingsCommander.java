@@ -28,35 +28,8 @@ public class GasBuildingsCommander extends Commander {
      */
     @Override
     protected void handle() {
-        if (AGame.notNthGameFrame(9)) {
-            return;
-        }
+        if (AGame.notNthGameFrame(9)) return;
 
         handleSubcommanders();
-
-        if (tooEarlyForAnotherGasBuilding()) {
-            return;
-        }
-
-//        if (Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
-//            return;
-//        }
-    }
-
-    // =========================================================
-
-    private static boolean tooEarlyForAnotherGasBuilding() {
-        if (Count.existingOrInProduction(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
-            if (!A.hasMinerals(200) || A.supplyTotal() <= 30) {
-                return true;
-            }
-        }
-
-        if (We.zerg()) {
-            if (!A.hasMinerals(300)) return false;
-            if (!Have.unfinishedOrPlanned(AUnitType.Zerg_Spawning_Pool)) return false;
-        }
-
-        return false;
     }
 }

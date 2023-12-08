@@ -39,7 +39,7 @@ public class WorkerDefenceManager extends Manager {
     // =========================================================
 
     private boolean act() {
-        if (runFromReaverFix(unit)) return true;
+        if (runFromReaver(unit)) return true;
 
         if (unit.isRepairing()) return false;
         if (unit.enemiesNear().combatUnits().isEmpty()) return false;
@@ -66,13 +66,13 @@ public class WorkerDefenceManager extends Manager {
         return false;
     }
 
-    private static boolean runFromReaverFix(AUnit worker) {
+    private static boolean runFromReaver(AUnit worker) {
         AUnit reaver = worker.enemiesNear().ofType(AUnitType.Protoss_Reaver).nearestTo(worker);
         if (reaver != null) {
             double distTo = reaver.distTo(worker);
 
-            if (distTo <= 9) {
-                worker.runningManager().runFrom(reaver, 10, Actions.RUN_ENEMY, true);
+            if (distTo <= 10.2) {
+                runFromEnemyToAnotherRegion(worker, reaver);
                 worker.setTooltip("OhFuckReaver!", true);
                 worker.addLog("OhFuckReaver!");
                 return true;
@@ -96,6 +96,26 @@ public class WorkerDefenceManager extends Manager {
         }
 
         return false;
+    }
+
+    private static void runFromEnemyToAnotherRegion(AUnit worker, AUnit reaver) {
+//        worker.runningManager().runFrom(reaver, 10, Actions.RUN_ENEMY, true);
+
+        AUnit main = Select.mainOrAnyBuilding();
+
+        if (main != null && main.distTo(worker) >= 16) {
+            worker.move(main, Actions.MOVE_AVOID, "RunFarFromReaver");
+            return;
+        }
+
+        int maxDist = 25;
+        List<AUnit> anywhere = Select.all().inRadius(maxDist, worker).sortDataByGroundDistanceTo(reaver, false);
+        for (HasPosition goTo : anywhere) {
+            if (goTo.distTo(worker) <= (maxDist + 6) && goTo.position().hasPathTo(worker.position())) {
+                worker.move(goTo, Actions.MOVE_AVOID, "RunFarFromReaver");
+                return;
+            }
+        }
     }
 
     /**

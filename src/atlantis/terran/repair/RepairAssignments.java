@@ -68,7 +68,7 @@ public class RepairAssignments {
             if (CanAbandonUnitAssignedToRepair.check(repairer)) {
 //                System.err.println("Remove PROTECTOR for " + unitsToRepairers);
                 unitsToRepairers.get(unitToRepair).remove(repairer);
-                repairer.stop("No longer repairer", true);
+                repairer.stop("No longer repairer");
                 if (addLogs) {
                     repairer.addLog("No longer repairer of " + unitToRepair);
                 }

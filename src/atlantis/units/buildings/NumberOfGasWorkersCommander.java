@@ -6,12 +6,19 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.units.workers.GatherResources;
 import atlantis.units.workers.WorkerRepository;
+import atlantis.util.log.ErrorLog;
 
 import java.util.Collection;
 
 public class NumberOfGasWorkersCommander extends Commander {
+    @Override
+    public boolean applies() {
+        return A.everyNthGameFrame(7);
+    }
+
     @Override
     protected void handle() {
         Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisRaceConfig.GAS_BUILDING).list();
@@ -21,7 +28,6 @@ public class NumberOfGasWorkersCommander extends Commander {
 
             int realCount = CountGasWorkers.countWorkersGatheringGasFor(gasBuilding);
             int expectedCount = noBaseIsNearThisGasBuilding ? 0 : expectedGasWorkers(gasBuilding, realCount);
-
 
             // Fewer workers gathering gas than optimal
             if (realCount < expectedCount) {
@@ -33,7 +39,8 @@ public class NumberOfGasWorkersCommander extends Commander {
             else if (realCount > expectedCount) {
                 AUnit worker = WorkerRepository.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null && worker.isGatheringGas()) {
-                    worker.stop("I'm fired!", true);
+//                    System.out.println("FIRE GAS WORKER = " + worker + " / " + worker.getLastCommand());
+                    worker.stop("Fired!");
                     (new GatherResources(worker)).invoke();
                 }
                 break; // Only one worker per execution - prevent weird runs
@@ -48,9 +55,9 @@ public class NumberOfGasWorkersCommander extends Commander {
 
         int workers = Count.workers();
 
-        if (workers <= 8) {
-            return 0;
-        }
+//        if (workers <= 8) {
+//            return 0;
+//        }
 
         if (workers <= 13 && !A.hasMinerals(150)) {
             return 1;
@@ -77,6 +84,7 @@ public class NumberOfGasWorkersCommander extends Commander {
     private static void assignBestWorkerToGasBuilding(AUnit gasBuilding) {
         AUnit worker = getWorkerForGasBuilding(gasBuilding);
         if (worker == null) {
+            if (Count.workers() >= 6) ErrorLog.printMaxOncePerMinute("No worker for gas building");
             return;
         }
 
@@ -94,7 +102,7 @@ public class NumberOfGasWorkersCommander extends Commander {
     }
 
     private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
-        return Select.ourWorkers().gatheringMinerals(true).nearestTo(gasBuilding);
+        return FreeWorkers.get().gatheringMinerals(true).nearestTo(gasBuilding);
     }
 
     private static int expectedGasWorkers(AUnit gasBuilding, int numOfWorkersNear) {

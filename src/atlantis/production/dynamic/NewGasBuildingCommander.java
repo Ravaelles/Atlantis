@@ -2,17 +2,42 @@ package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class NewGasBuildingCommander extends Commander {
     @Override
+    public boolean applies() {
+        return A.everyNthGameFrame(23)
+            && !tooEarlyForAnotherGasBuilding();
+    }
+
+    @Override
     protected void handle() {
         requestGasBuildingIfNeeded();
+    }
+
+    private static boolean tooEarlyForAnotherGasBuilding() {
+        if (Count.existingOrInProduction(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
+            if (!A.hasMinerals(200) || A.supplyTotal() <= 30) {
+                return true;
+            }
+        }
+
+        if (We.zerg()) {
+            if (!A.hasMinerals(300)) return false;
+            if (!Have.unfinishedOrPlanned(AUnitType.Zerg_Spawning_Pool)) return false;
+        }
+
+        return false;
     }
 
     /**

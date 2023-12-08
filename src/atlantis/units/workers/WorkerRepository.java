@@ -25,9 +25,7 @@ public class WorkerRepository {
 
         // Take those not carrying anything first
         for (AUnit worker : Select.ourWorkers().list()) {
-            if (!isWorkerAssignedToBuilding(worker, target)) {
-                continue;
-            }
+            if (!isWorkerAssignedToBuilding(worker, target)) continue;
 
             if (!worker.isCarryingGas() && !worker.isCarryingMinerals()) {
                 return worker;

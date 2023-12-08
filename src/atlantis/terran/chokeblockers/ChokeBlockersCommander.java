@@ -14,7 +14,7 @@ import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 
 public class ChokeBlockersCommander extends Commander {
-    private AChoke choke;
+    private static AChoke choke;
 
     @Override
     public boolean applies() {
@@ -23,7 +23,7 @@ public class ChokeBlockersCommander extends Commander {
         return checkIfApplies();
     }
 
-    private boolean checkIfApplies() {
+    public static boolean checkIfApplies() {
         if (AGame.notNthGameFrame(5)) return false;
         if (Missions.isGlobalMissionAttack()) return false;
 
@@ -45,7 +45,7 @@ public class ChokeBlockersCommander extends Commander {
 
         if (combatUnits >= 14 && ArmyStrength.ourArmyRelativeStrength() >= 270) return false;
 
-        return Atlantis.KILLED <= 8 || combatUnits <= 18;
+        return Atlantis.KILLED <= 8 || combatUnits <= 25;
     }
 
     @Override

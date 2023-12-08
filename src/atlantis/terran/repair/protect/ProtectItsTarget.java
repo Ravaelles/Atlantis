@@ -21,8 +21,12 @@ public class ProtectItsTarget extends Manager {
     public Manager handle() {
         target = RepairAssignments.getUnitToProtectFor(unit);
 
-        if (target.isWounded() || target.isBunker() || A.everyNthGameFrame(11)) {
-            if (unit.repair(target, "Protect" + target.name())) return usedManager(this);
+        if (target != null && target.isAlive()) {
+            if (target.isWounded() || target.isBunker() || A.everyNthGameFrame(11)) {
+                unit.repair(target, "Protect" + target.name());
+            }
+
+            return usedManager(this);
         }
 
         return null;

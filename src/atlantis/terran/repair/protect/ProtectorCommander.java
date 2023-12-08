@@ -82,11 +82,14 @@ public class ProtectorCommander extends Commander {
     }
 
     private static int maxProtectors() {
-        if (!A.hasMinerals(0)) {
-            return Count.workers() >= 20 ? 4 : 1;
-        }
-
         int workers = Count.workers();
+
+        if (workers <= 10 && !A.hasMinerals(100)) return 0;
+        if (workers <= 10) return 1;
+
+        if (!A.hasMinerals(0)) {
+            return workers >= 20 ? 4 : 1;
+        }
 
         if (workers <= 20) {
             if (!A.hasMinerals(1)) {
@@ -178,7 +181,6 @@ public class ProtectorCommander extends Commander {
                 unitToProtect,
                 unitToProtect.isBunker() || unitToProtect.isTank()
             );
-//            System.err.println("worker = " + worker);
 
             if (worker != null) RepairAssignments.addProtector(worker, unitToProtect);
         }

@@ -15,10 +15,12 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.TimeMoment;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class SupplyCommander extends Commander {
+    private TimeMoment lastAdded = new TimeMoment(0);
     private int supplyTotal;
     private int supplyFree;
     private int requestedConstructionsOfSupply;
@@ -33,8 +35,8 @@ public class SupplyCommander extends Commander {
         supplyTotal = AGame.supplyTotal();
 
         if (supplyTotal >= 200) return;
-//        if (A.supplyTotal() <= 50 && A.hasFreeSupply(4)) return;
         if (A.hasFreeSupply(10)) return;
+        if (lastAdded.lessThanSecondsAgo(7)) return;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
 //        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 2) return;
@@ -117,6 +119,12 @@ public class SupplyCommander extends Commander {
 
         if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
             System.err.println("EXIT!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
+            return;
+        }
+
+        int notFinished = ConstructionRequests.countNotFinishedOfType(AUnitType.Terran_Supply_Depot);
+        if (notFinished >= maxAtOnce) {
+            System.err.println("TOO MANY CONSTRS! " + notFinished);
             return;
         }
 

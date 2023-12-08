@@ -26,11 +26,12 @@ public class Unfreezer extends Manager {
 //                + " / " +
 //                unit.lastActionFramesAgo()
 //        );
-        if (true) return false;
 
         return unit.isCombatUnit()
             && !unit.isLoaded()
             && !unit.isMoving()
+            && !unit.isMoving()
+            && A.now() % 123 == 0
             && A.now() >= 10
             && unit.looksIdle()
 //            && (unit.position().equals(unit.lastPosition()))

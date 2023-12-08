@@ -27,11 +27,13 @@ public class AvoidPsionicStorm extends Manager {
 
     @Override
     protected Manager handle() {
-        ArrayList<Bullet> bullets = BulletsOnMap.ofType(BulletType.Psionic_Storm, 5, unit);
+        ArrayList<Bullet> bullets = BulletsOnMap.ofType(BulletType.Psionic_Storm, 999999, unit);
 
         if (bullets.isEmpty()) return null;
 
+        AAdvancedPainter.forcePainting();
         paintBullets(bullets, Color.Cyan);
+        AAdvancedPainter.liftForcedPainting();
 
         if (handleMoveAwayIfPsionicCloserThan(bullets, 4)) return usedManager(this);
 
@@ -46,20 +48,21 @@ public class AvoidPsionicStorm extends Manager {
 
     protected boolean handleMoveAwayIfPsionicCloserThan(ArrayList<Bullet> bullets, double minDist) {
         APosition avoidCenter = psionicCenter(bullets);
+//        System.out.println("PSIONIC avoidCenter = " +  avoidCenter + " / " + unit.distTo(avoidCenter));
 
         if (unit.distTo(avoidCenter) < minDist) {
             unit.runningManager().runFromAndNotifyOthersToMove(avoidCenter, "PSIONIC-STORM");
 
-            AAdvancedPainter.forcePainting();
-            AAdvancedPainter.paintCircle(unit, 13, Color.Cyan);
-            AAdvancedPainter.paintLine(unit, avoidCenter, Color.Cyan);
-            AAdvancedPainter.paintLine(unit, unit.targetPosition(), Color.Cyan);
-            AAdvancedPainter.liftForcedPainting();
-            System.err.println("RUNNING FROM PSIONIC / unit:" + unit.position() + " to " + unit.targetPosition() + " " +
-                "/ " +
-                "psionic: " + avoidCenter + " / dist:" + unit.distTo(avoidCenter) + " / runTo:" + unit.distTo(unit.targetPosition()));
-            CameraCommander.centerCameraOn(avoidCenter);
-            if (GameSpeed.speed() <= 1) GameSpeed.changeSpeedTo(100);
+//            AAdvancedPainter.forcePainting();
+//            AAdvancedPainter.paintCircle(unit, 13, Color.Cyan);
+//            AAdvancedPainter.paintLine(unit, avoidCenter, Color.Cyan);
+//            AAdvancedPainter.paintLine(unit, unit.targetPosition(), Color.Cyan);
+//            AAdvancedPainter.liftForcedPainting();
+//            System.err.println("RUNNING FROM PSIONIC / unit:" + unit.position() + " to " + unit.targetPosition() + " " +
+//                "/ " +
+//                "psionic: " + avoidCenter + " / dist:" + unit.distTo(avoidCenter) + " / runTo:" + unit.distTo(unit.targetPosition()));
+//            CameraCommander.centerCameraOn(avoidCenter);
+//            if (GameSpeed.speed() <= 1) GameSpeed.changeSpeedTo(100);
             return true;
         }
 
@@ -69,9 +72,9 @@ public class AvoidPsionicStorm extends Manager {
     private APosition psionicCenter(ArrayList<Bullet> bullets) {
         Positions<APosition> positions = new Positions<>();
         for (Bullet bullet : bullets) {
-            positions.addPosition(APosition.create(bullet.getPosition()));
+            if (bullet.isVisible()) positions.addPosition(APosition.create(bullet.getPosition()));
         }
 
-        return positions.average();
+        return positions.isEmpty() ? null : positions.average();
     }
 }
