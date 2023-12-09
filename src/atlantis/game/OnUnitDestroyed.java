@@ -5,6 +5,7 @@ import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.debug.OurWorkerWasKilled;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.UnitsArchive;
+import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
@@ -12,6 +13,7 @@ import atlantis.units.select.Select;
 
 public class OnUnitDestroyed {
     public static void update(AUnit unit) {
+        if (unit.isOur() && unit.isBase()) OurClosestBaseToEnemy.clearCache();
 
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {

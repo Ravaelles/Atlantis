@@ -39,7 +39,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (A.seconds() >= 600 && Atlantis.LOST >= 15 && Count.tanks() <= 8) return false;
 
-        if (ActiveMap.isMapGosu()) {
+        if (ActiveMap.isGosu()) {
             int alphaSize = Alpha.get().size();
             if (alphaSize <= 15) return false;
             if (AGame.killsLossesResourceBalance() < 1800) return false;
@@ -75,6 +75,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
                 && !EnemyInfo.isEnemyNearAnyOurBase()
                 && (A.seconds() >= 370 || !EnemyStrategy.get().isRushOrCheese())
                 && (Count.medics() >= 2 || Count.tanks() >= 2)
+                && (!Enemy.zerg() || Count.tanks() >= 4)
         ) {
             if (DEBUG) reason = "Comfortably stronger (" + ourRelativeStrength + "%)";
             return true;

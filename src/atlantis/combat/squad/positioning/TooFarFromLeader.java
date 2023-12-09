@@ -2,6 +2,7 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -15,6 +16,10 @@ public class TooFarFromLeader extends Manager {
 
     @Override
     public boolean applies() {
+        if (A.supplyUsed() >= 90 && (
+            unit.enemiesNear().empty() || EnemyUnits.discovered().buildings().atMost(1)
+        )) return false;
+
         leader = unit.squad().leader();
         if (leader == null) return false;
 
@@ -51,7 +56,9 @@ public class TooFarFromLeader extends Manager {
     }
 
     private double maxDistFromLeader() {
-        return Math.min(7, 4 + unit.squadSize() / 5.0);
+        if (unit.squadSize() >= 30) return 20;
+
+        return Math.min(7, 4 + unit.squadSize() / 4);
     }
 
     protected Manager handle() {

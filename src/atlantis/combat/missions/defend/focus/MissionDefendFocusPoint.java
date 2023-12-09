@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend.focus;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.missions.defend.focus.terran.TerranMissionDefendFocus;
+import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
@@ -49,7 +50,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Main choke ================================================
 
-                if (!Enemy.terran() && Count.ourCombatUnits() <= 4) {
+                if (!Enemy.terran() && (Count.ourCombatUnits() <= 4 || ActiveMap.isGosu())) {
                     if ((focus = atMainChoke()) != null) return focus;
                 }
 
@@ -59,7 +60,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Natural choke ================================================
 
-                if (Count.ourCombatUnits() >= 8 && Count.bases() >= 2) {
+                if (Count.ourCombatUnits() >= 8 && Count.basesWithUnfinished() >= 2) {
                     if ((focus = atNaturalChoke()) != null) return focus;
                 }
 

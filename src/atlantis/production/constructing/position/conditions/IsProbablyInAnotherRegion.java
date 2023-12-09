@@ -14,7 +14,7 @@ public class IsProbablyInAnotherRegion {
     public static boolean differentRegion(AUnit builder, AUnitType building, APosition position, HasPosition nearTo) {
         if (handleIsBadRegionForFirstBunker(building, position)) return true;
 
-        if (building.isBase() || building.isCombatBuilding()) return false;
+        if (building.isBase()) return false;
 
         if (
             nearTo != null
@@ -40,7 +40,7 @@ public class IsProbablyInAnotherRegion {
 
     private static boolean handleIsBadRegionForFirstBunker(AUnitType building, APosition position) {
         if (!We.terran() || !building.isBunker()) return false;
-        if (Count.bunkers() >= 1) return false;
+        if (Count.bunkers() >= 2) return false;
 
 //        System.err.println("MISMATCH = " + !position.regionsMatch(MainRegion.mainRegion()));
         if (!position.regionsMatch(MainRegion.mainRegion())) {

@@ -13,14 +13,18 @@ public class UnitUnderAttackAndNotAttacking extends Manager {
     @Override
     public boolean applies() {
         return !unit.isAttacking()
+            && unit.isGroundUnit()
+            && unit.noCooldown()
+            && !unit.isTank()
             && unit.lastUnderAttackLessThanAgo(40)
+            && (unit.hp() >= 18 || !unit.recentlyMoved() || unit.lastAttackFrameMoreThanAgo(30 * 6))
             && unit.hasAnyWeapon()
+            && unit.enemiesNear().canBeAttackedBy(unit, 0).notEmpty()
             && shouldAttackBackBecauseOverstackedAndCantRun();
     }
 
     private boolean shouldAttackBackBecauseOverstackedAndCantRun() {
-        if (!unit.isRunning()) return false;
-        if (unit.hasCooldown()) return false;
+//        if (!unit.isRunning()) return false;
         if (unit.allUnitsNear().groundUnits().inRadius(0.7, unit).atMost(2)) return false;
         if (unit.friendsNear().groundUnits().combatUnits().inRadius(3, unit).atMost(4)) return false;
 

@@ -14,9 +14,9 @@ public class TooCloseToBase {
     public static boolean isTooCloseToBase(AUnitType building, APosition position) {
         if (building.isGasBuilding()) return false;
 
-        double minDistToBase = building.isSupplyDepot() ? 4.1 : 3.1;
+        double minDistToBase = building.isSupplyDepot() ? 5.1 : 4.1;
 
-        if (building.isCombatBuilding()) minDistToBase = 2.4;
+        if (building.isCombatBuilding()) minDistToBase = 3.4;
 
         if (Select.ourBasesWithUnfinished().inRadius(minDistToBase, position).notEmpty()) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to base";

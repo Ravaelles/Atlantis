@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
     private Selection enemies;
@@ -14,9 +15,10 @@ public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
 
     @Override
     public boolean applies() {
-        boolean hasCooldown = unit.cooldown() >= 3;
+//        boolean hasCooldown = unit.cooldown() >= 3;
 
-        double minDist = (hasCooldown ? 6.8 : 6.12) - (unit.isHealthy() ? 1.65 : 0);
+        double base = Enemy.protoss() ? 6.7 : 5.7;
+        double minDist = base - (unit.isHealthy() ? 0.8 : 0);
         enemies = unit.enemiesNear()
             .groundUnits()
             .nonBuildings()

@@ -53,7 +53,10 @@ public class LoadIntoTheBunker extends Manager {
         AUnit bunker = bunkerToLoadTo();
 //        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
 
-        if (unit.lastActionLessThanAgo(5, Actions.LOAD)) return usedManager(this);
+        if (
+            unit.hp() >= (Enemy.protoss() ? 18 : 6)
+            && unit.lastActionLessThanAgo(15, Actions.LOAD)
+        ) return usedManager(this);
 
         if (bunker != null && bunker.hasFreeSpaceFor(unit)) {
             double unitDistToBunker = bunker.distTo(unit);

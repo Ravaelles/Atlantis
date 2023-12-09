@@ -1,14 +1,15 @@
 package atlantis.production.constructing;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.builders.TerranKilledBuilderCommander;
-import atlantis.production.constructing.position.APositionFinder;
+import atlantis.production.constructing.commanders.ConstructionStatusChanger;
+import atlantis.production.constructing.commanders.ConstructionThatLooksBugged;
+import atlantis.production.constructing.commanders.ConstructionUnderAttack;
+import atlantis.production.constructing.commanders.IdleBuildersFix;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -26,258 +27,33 @@ public class ConstructionsCommander extends Commander {
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[]{
             TerranKilledBuilderCommander.class,
+            ConstructionStatusChanger.class,
+            ConstructionUnderAttack.class,
+            ConstructionThatLooksBugged.class,
+            IdleBuildersFix.class,
         };
     }
 
-    /**
-     * Manages all pending construction orders. Ensures builders are assigned to constructions, removes
-     * finished objects etc.
-     */
-    @Override
-    protected void handle() {
-        for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
-            Construction construction = iterator.next();
-            checkForConstructionStatusChange(construction, construction.construction());
-            checkIfTerranBuilderGotKilled(construction);
-            handleConstructionUnderAttack(construction);
-            handleConstructionThatLooksBugged(construction);
-        }
-
-        fixForIdleBuilders();
-
-        handleSubcommanders();
-    }
-
-    // =========================================================
-
-    private boolean fixForIdleBuilders() {
-        if (!We.terran()) return false;
-        if (A.everyFrameExceptNthFrame(27)) return false;
-
-        for (AUnit worker : FreeWorkers.get().list()) {
-            if (!worker.recentlyMoved(40)) continue;
-
-            if (worker.isIdle() && !worker.isGatheringMinerals()) {
-                List<AUnit> unfinished = Select.ourUnfinished()
-                    .buildings()
-                    .excludeTypes(AUnitType.Terran_Refinery)
-                    .sortDataByDistanceTo(worker, true);
-                for (AUnit construction : unfinished) {
-                    if (construction.type().isAddon()) continue;
-
-                    if (construction.friendsNear().workers().inRadius(1.6, construction).empty()) {
-                        worker.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction);
-                        worker.setTooltip("ConstructionUglyFix");
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * If builder has died when constructing, replace him with new one.
-     */
-    private void checkIfTerranBuilderGotKilled(Construction construction) {
-        if (!We.terran()) return;
-
-        // When playing as Terran, it's possible that SCV gets killed and we should send another unit to
-        // finish the construction.
-        AUnit builder = construction.builder();
-
-        if (
-            (builder == null || !builder.exists() || !builder.isAlive() || builder.hp() <= 0)
-        ) {
-//            System.err.println("Dead builder for " + construction.construction());
-            if (isItSafeToAssignNewBuilderTo(construction)) {
-                construction.assignOptimalBuilder();
-
-                builder = construction.builder();
-//                System.err.println("   Assigned new: " + builder);
-                if (
-                    builder != null && construction.construction() != null
-                        && construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)
-                ) {
-//                    System.err.println("     Should be good now!");
-                    construction.setBuilder(builder);
-                    builder.doRightClickAndYesIKnowIShouldAvoidUsingIt(construction.construction());
-                    builder.setTooltipTactical("Resume");
-                }
-                else {
-                    ErrorLog.printMaxOncePerMinute("Problem with construction " + construction + " / " + builder);
-                }
-            }
-            else {
-                if (A.seconds() <= 500) ErrorLog.printMaxOncePerMinute("Not safe to assign builder to " + construction);
-            }
-        }
-    }
-
-    private boolean isItSafeToAssignNewBuilderTo(Construction construction) {
-        if (construction.buildingType().isBunker()) return true;
-
-        HasPosition position = construction.construction() != null
-            ? construction.construction() : construction.buildPosition();
-
-        if (position == null) {
-            System.err.println("Null position in isItSafeToAssignNewBuilderTo");
-            System.err.println(construction);
-            return false;
-        }
-
-        if (
-            EnemyUnits.discovered().combatUnits().inRadius(8, position).empty()
-                || (construction.buildingType().isCombatBuilding() && Select.our().inRadius(7, position).atLeast(2))
-                || A.hasMinerals(700)
-        ) return true;
-
-        return false;
-    }
-
-    /**
-     * If building is completed, mark construction as finished and remove it.
-     */
-    private void checkForConstructionStatusChange(Construction order, AUnit building) {
-        if (
-            !We.zerg()
-                && order.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
-                && order.startedAgo() >= 30
-                && (building == null || !building.isAlive())
-        ) {
-            order.cancel();
-            A.println("Building destroyed - cancel construction");
-            return;
-        }
-
-        // =========================================================
-        AUnit builder = order.builder();
-
-        // ...change builder into building (it just happens, yeah, weird stuff)
-        if (building == null || !building.exists()) {
-            if (builder != null) {
-
-                // If builder has changed its type and became Zerg Extractor
-                if (!builder.is(AtlantisRaceConfig.WORKER)) {
-
-                    // Happens for Extractor
-                    if (builder.buildType() == null || builder.buildType().equals(AUnitType.None)) {
-                        building = builder;
-                        order.setBuild(builder);
-                    }
-                }
-
-                // Builder did not change it's type so it's not Zerg Extractor case
-                else {
-                    AUnit buildUnit = builder.buildUnit();
-                    if (buildUnit != null) {
-                        building = buildUnit;
-                        order.setBuild(buildUnit);
-                    }
-                }
-            }
-        }
-
-        // If playing as ZERG...
-        if (AGame.isPlayingAsZerg()) {
-            handleZergConstructionsWhichBecameBuildings();
-        }
-
-        // If building exists
-        if (building != null) {
-
-            // Finished: building is completed, remove the construction order object
-            if (building.isCompleted()) {
-                order.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
-                ConstructionRequests.removeOrder(order);
-            } // In progress
-            else if (order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
-                order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
-            }
-        }
-
-        // Building doesn't exist yet, means builder is travelling to the construction place
-        else if (builder != null && !builder.isMoving()) {
-            if (order.buildPosition() == null) {
-                APosition positionToBuild = APositionFinder.findPositionForNew(
-                    order.builder(), order.buildingType(), order
-                );
-                order.setPositionToBuild(positionToBuild);
-            }
-        }
-
-        // =========================================================
-        // Check if both building and builder are destroyed
-        if (order.builder() == null && order.construction() == null) {
-            order.cancel();
-        }
-    }
-
-    // === Zerg ========================================
-
-    /**
-     * The moment zerg drone starts building a building we're not detecting it without this method. This
-     * method looks for constructions for which builder.type and builder.builds.type is the same, meaning that
-     * the drone actually became a building (sweet metamorphosis, yay!).
-     */
-    private void handleZergConstructionsWhichBecameBuildings() {
-        if (AGame.isPlayingAsZerg()) {
-            ArrayList<Construction> allOrders = ConstructionRequests.all();
-            if (!allOrders.isEmpty()) {
-                for (Construction construction : allOrders) {
-                    AUnit builder = construction.builder();
-                    if (construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
-                        if (builder != null) {
-                            if (builder.is(construction.buildingType())) {
-                                construction.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void handleConstructionUnderAttack(Construction order) {
-        AUnit building = order.construction();
-
-        // If unfinished building is under attack
-        if (building != null && !building.isCompleted() && building.lastUnderAttackLessThanAgo(20)) {
-
-            // If it has less than 71HP or less than 60% and is close to being finished
-            if (building.hp() <= 32 || building.getRemainingBuildTime() <= 30) {
-                order.cancel();
-            }
-        }
-    }
-
-    private void handleConstructionThatLooksBugged(Construction order) {
-        if (order.status() != ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
-            return;
-        }
-
-        if (order.builder() == null) {
-            if (Count.workers() >= 3) {
-                ErrorLog.printMaxOncePerMinute("Weird case, " + order.buildingType() + " has no builder. Cancel.");
-            }
-            order.cancel();
-            return;
-        }
-
-        AUnit main = Select.main();
-        int timeout = 30 * (
-            8
-                + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 40 : 10)
-                + ((int) (2.9 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
-        );
-
-        if (AGame.now() - order.timeOrdered() > timeout) {
-//            System.err.println(" // " + AGame.now() + " // " + order.timeOrdered() + " // > " + timeout);
-            ErrorLog.printMaxOncePerMinute("Cancel construction of " + order.buildingType() + " (Took too long)");
-            order.cancel();
-        }
-    }
+//    private boolean isItSafeToAssignNewBuilderTo(Construction construction) {
+//        if (construction.buildingType().isBunker()) return true;
+//
+//        HasPosition position = construction.buildingUnit() != null
+//            ? construction.buildingUnit() : construction.buildPosition();
+//
+//        if (position == null) {
+//            System.err.println("Null position in isItSafeToAssignNewBuilderTo");
+//            System.err.println(construction);
+//            return false;
+//        }
+//
+//        if (
+//            EnemyUnits.discovered().combatUnits().inRadius(8, position).empty()
+//                || (construction.buildingType().isCombatBuilding() && Select.our().inRadius(7, position).atLeast(2))
+//                || A.hasMinerals(700)
+//        ) return true;
+//
+//        return false;
+//    }
 
     public static ArrayList<AUnit> builders() {
         ArrayList<AUnit> units = new ArrayList<>();

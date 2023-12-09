@@ -1,12 +1,12 @@
 package atlantis.production.constructing;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.DefineExactPositionForNewConstruction;
-import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -51,7 +51,7 @@ public class NewConstructionRequest {
 
         if (SpecificConstructionRequests.handledAsSpecialBuilding(building, order)) return true;
 
-        if (!Requirements.hasRequirements(building)) return handleRequirementsNotFullfilledFor(building);
+        if (!Requirements.hasRequirements(building)) return handleRequirementMissingFor(building);
 
         // =========================================================
         // Create ConstructionOrder object, assign random worker for the time being
@@ -132,6 +132,7 @@ public class NewConstructionRequest {
 
         if (
             building.isSupplyDepot()
+                && A.supplyTotal() > 10
                 && order != null
                 && (
                     CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2
@@ -155,18 +156,28 @@ public class NewConstructionRequest {
         return false;
     }
 
-    private static boolean handleRequirementsNotFullfilledFor(AUnitType building) {
+    private static boolean handleRequirementMissingFor(AUnitType building) {
         if (We.protoss() && AGame.supplyTotal() <= 10) return false;
 
         AUnitType requiredBuilding = building.whatIsRequired();
 
         if (requiredBuilding == null) return false;
 
-//        if (countExistingAndNotFinished(requiredBuilding) == 0) {
-        if (Count.existing(requiredBuilding) == 0 && Count.inProductionOrInQueue(requiredBuilding) == 0) {
-            requestConstructionOf(requiredBuilding);
+//        System.out.println("requiredBuilding for " + building + " = " + requiredBuilding);
+
+//        if (Count.existing(requiredBuilding) == 0 && Count.inProductionOrInQueue(requiredBuilding) == 0) {
+        if (Count.existing(requiredBuilding) == 0) {
+//            System.out.println("---------- NOOOOO QUIT");
             return true;
         }
+//        System.out.println("OK");
+
+        // =========================================================
+//        if (Count.existing(requiredBuilding) == 0 && Count.inProductionOrInQueue(requiredBuilding) == 0) {
+//            requestConstructionOf(requiredBuilding); // WTF
+//            return true;
+//        }
+        // =========================================================
 
 //        ErrorLog.printMaxOncePerMinute(
 //            "Uhmmm... shouldn't reach here. "

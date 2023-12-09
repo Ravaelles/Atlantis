@@ -1,22 +1,14 @@
 ### BUGS ###
 
+---- Still 6k constructions of depot
+
+
+
+
 .--- Add UnitUnderAttack manager that forces unit to fight back otherwise some broken mechanics are lookin awful
-
--- Refactor ConstructionsCommander, it's a fucking mess
-
-.---- GatherResources "KindGuy" is holding idle forever
-.---- Another one (GatherResources?) "MakeSpace" also idle
-?--- DynamicRepairsNearby  ("Kind") is holding idle forever
-???---- Wraith got "Constructing!" tooltip
-.--- Wraith 20hp getting to repair once, then attacks even with workers near.
-
-.---- PsionicNotReallyTriggered
-
-----------------
 
 - Still no Turrets against Scouts
 - No bunker no turret at natural
-
 - Distinct SecureBunker logic from SecureTurret
 
 .------ RunFrom1.0 goes like 30, psionic broken! :O
@@ -24,8 +16,6 @@
 ### FEATURES ###
 
 .+++ Road to enemy base
-
-++ Performance improvement for situation when there's Combat Building nearby. 3x slower when one cannon nearby.
 
 .+ Consider high ground for tanks
 

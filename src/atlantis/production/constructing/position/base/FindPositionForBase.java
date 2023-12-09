@@ -66,10 +66,10 @@ public class FindPositionForBase {
     }
 
     public static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, Construction construction) {
-        APosition near = Select.main().translateByPixels(-64, -64);
+        APosition near = Select.main().translateByPixels(0, -64);
 
         construction.setNearTo(near);
-        construction.setMaxDistance(15);
+        construction.setMaxDistance(25);
 
 //        if (Select.main() != null) System.err.println("near = " + near + ", distToMain = " + A.dist(Select.main(), near));
 //        if (true) A.printStackTrace("findPositionForBase_nearMainBase");

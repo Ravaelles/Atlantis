@@ -33,7 +33,6 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.base.NextBasePosition;
-import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.production.dynamic.expansion.ShouldExpand;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -941,7 +940,7 @@ public class AAdvancedPainter extends APainter {
         setTextSizeMedium();
 //        for (AUnit unit : Select.ourBuildingsWithUnfinished().listUnits()) {
         for (Construction order : ConstructionRequests.all()) {
-            AUnit building = order.construction();
+            AUnit building = order.buildingUnit();
             if (building == null || building.isCompleted()) {
                 continue;
             }

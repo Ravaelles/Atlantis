@@ -13,7 +13,10 @@ public class TerranMarineDontAvoidEnemy extends Manager {
     public boolean applies() {
         if (!unit.isMarine()) return false;
 
+        if (unit.friendsNear().groundUnits().inRadius(1, unit).atLeast(3)) return true;
+        if (longDidntShootHydra()) return true;
         if (protectMainChokeDuringMissionDefend()) return true;
+        if (protectTanksNearby()) return true;
 
         if (
             unit.isMissionDefend()
@@ -30,15 +33,25 @@ public class TerranMarineDontAvoidEnemy extends Manager {
         return false;
     }
 
+    private boolean longDidntShootHydra() {
+        return unit.lastAttackFrameMoreThanAgo(30 * 7) && unit.enemiesNear().hydralisks().notEmpty();
+    }
+
+    private boolean protectTanksNearby() {
+        return unit.friendsNear().tanks().inRadius(6, unit).atLeast(2);
+    }
+
     private boolean protectMainChokeDuringMissionDefend() {
         if (
             unit.isMissionDefend()
-                && unit.hp() >= 22
+                && unit.hp() >= 18
                 && unit.mission().focusPoint() != null
                 && unit.mission().focusPoint().isAroundChoke()
         ) {
             return true;
         }
+
+        if (unit.hp() >= 18 && unit.friendsNear().bunkers().inRadius(4, unit).count() > 0) return true;
 
         return false;
     }

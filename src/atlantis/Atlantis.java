@@ -7,6 +7,7 @@ import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.enemy.UnitsArchive;
+import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.constructing.ProtossWarping;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
@@ -136,7 +137,7 @@ public class Atlantis implements BWEventListener {
             }
 
             if (unit.isABuilding()) {
-
+                if (unit.isBase()) OurClosestBaseToEnemy.clearCache();
             }
         }
     }

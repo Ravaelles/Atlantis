@@ -17,6 +17,7 @@ public class TerranDontAvoidEnemy extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            DontAvoidEnemyWhenCloseToTank.class,
             ScvDontAvoidEnemy.class,
             WraithDontAvoidEnemy.class,
             TerranMarineDontAvoidEnemy.class,

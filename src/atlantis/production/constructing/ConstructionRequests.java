@@ -208,8 +208,7 @@ public class ConstructionRequests {
         int[] result = {mineralsNeeded, gasNeeded};
         return result;
     }
-
-    protected static void removeOrder(Construction construction) {
+    public static void removeOrder(Construction construction) {
         if (construction != null) {
             constructions.remove(construction);
         }

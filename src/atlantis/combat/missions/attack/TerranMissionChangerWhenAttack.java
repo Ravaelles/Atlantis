@@ -85,8 +85,9 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
         return !Enemy.terran()
             && A.seconds() >= 500
             && Atlantis.LOST >= 10
-            && Count.tanks() <= 6
-            && ArmyStrength.ourArmyRelativeStrength() <= 300;
+            && Count.tanks() <= 4
+            && ArmyStrength.ourArmyRelativeStrength() <= 300
+            && !A.hasMinerals(700);
     }
 
     private boolean enemyHasHiddenUnitsAndWeDontHaveEnoughDetection() {

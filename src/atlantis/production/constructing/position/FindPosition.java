@@ -23,6 +23,9 @@ public class FindPosition {
         if (nearTo == null && building.isSupplyDepot() && A.chance(50)) {
             nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
         }
+        if (A.chance(50)) {
+            if (nearTo == null) nearTo = Select.ourBuildings().last();
+        }
         if (nearTo == null) nearTo = Select.mainOrAnyBuilding();
 
         if (maxDistance <= 5 && building.isBunker()) maxDistance = 10;

@@ -86,10 +86,14 @@ public class Chokes {
             () -> {
                 if (!ActiveMap.isMap("7th")) {
                     AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
-                    if (choke != null && !choke.position().isCloseToMapBounds(10)) {
-//                        System.err.println("choke.position() = " + choke.position());
-//                        System.err.println("AMap.getMapHeightInTiles() = " + AMap.getMapHeightInTiles());
-                        return choke;
+                    if (
+                        choke != null
+                            && !choke.position().isCloseToMapBounds(10)
+                            && choke.distTo(mainChoke()) > 4
+                    ) {
+    //                        System.err.println("choke.position() = " + choke.position());
+    //                        System.err.println("AMap.getMapHeightInTiles() = " + AMap.getMapHeightInTiles());
+                            return choke;
                     }
                 }
 

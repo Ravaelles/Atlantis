@@ -13,6 +13,7 @@ public class AttackTargetInRangeIfRanTooLong extends AttackTargetInRange {
     @Override
     public boolean applies() {
         if (unit.enemiesNear().inShootRangeOf(unit).empty()) return false;
+        if (unit.enemiesNear().groundUnits().canAttack(unit, 1).notEmpty()) return false;
 
         if (unit.noCooldown() && unit.lastStartedRunningLessThanAgo(30 * 3) && unit.hp() >= 70) return true;
 

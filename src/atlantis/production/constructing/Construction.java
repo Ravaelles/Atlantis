@@ -39,6 +39,10 @@ public class Construction implements Comparable<Construction> {
 
         status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
         timeOrdered = AGame.now();
+
+        if (id() >= 1000) {
+            System.out.println("@ " + A.now() + " - new constr: " + id() + " / " + buildingType);
+        }
     }
 
     // =========================================================
@@ -57,8 +61,8 @@ public class Construction implements Comparable<Construction> {
     private String genericCacheKey() {
         String cacheKey = "";
 
-        if (builder != null) cacheKey += builder.id() + ",";
         if (buildingType != null) cacheKey += buildingType.id() + ",";
+        if (builder != null) cacheKey += builder.id() + ",";
         if (build != null) cacheKey += build.position();
 
         return cacheKey;
@@ -186,7 +190,7 @@ public class Construction implements Comparable<Construction> {
         this.positionToBuild = positionToBuild;
     }
 
-    public AUnit construction() {
+    public AUnit buildingUnit() {
         return build;
     }
 

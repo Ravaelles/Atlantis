@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid.margin;
 import atlantis.combat.micro.avoid.margin.terran.BonusForWraith;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Color;
@@ -15,6 +16,11 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
 
     public double calculateAgainst(AUnit attacker) {
         double criticalDist;
+
+        if (A.hasMinerals(2000) && defender.isGroundUnit()) {
+            if (defender.hp() >= 20 && defender.maxHp() <= 60) return 0;
+            if (defender.hp() >= 90 && defender.maxHp() > 60) return 0;
+        }
 
         // GROUND unit
         if (defender.isGroundUnit()) {

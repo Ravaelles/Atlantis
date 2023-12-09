@@ -37,7 +37,7 @@ public class CacheKey {
         if (object instanceof AUnit) return ((AUnit) object).typeWithUnitId();
         if (object instanceof AUnitType) return ((AUnitType) object).name();
         if (object instanceof APosition) return ((APosition) object).toStringPixels();
-        if (object instanceof Construction) return ((Construction) object).id() + "";
+        if (object instanceof Construction) return "Constr#" + ((Construction) object).id();
         if (object instanceof Selection) return ((Selection) object).unitIds();
         if (object instanceof BaseLocation) return ((BaseLocation) object).toString();
         if (object instanceof ABaseLocation) return ((ABaseLocation) object).toString();

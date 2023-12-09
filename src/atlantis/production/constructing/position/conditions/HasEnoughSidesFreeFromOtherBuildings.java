@@ -12,11 +12,11 @@ public class HasEnoughSidesFreeFromOtherBuildings {
 
         if (!building.isBunker()) {
             if (
-                !BuildingTileHelper.tileRightFrom(building, position).isWalkable()
+                !BuildingTileHelper.tileLeftFrom(building, position).isWalkable()
                     && !BuildingTileHelper.tileLeftFrom(building, position).isWalkable()
             ) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "Not enough side on left";
-                return false;
+                return fail();
             }
 
             if (building.canHaveAddon()) {
@@ -24,7 +24,7 @@ public class HasEnoughSidesFreeFromOtherBuildings {
                     building, position.translateByTiles(2, 0)
                 ).isWalkable()) {
                     AbstractPositionFinder._CONDITION_THAT_FAILED = "Not enough side on right";
-                    return false;
+                    return fail();
                 }
             }
 
@@ -33,7 +33,7 @@ public class HasEnoughSidesFreeFromOtherBuildings {
                 !BuildingTileHelper.tileDownFrom(building, position).isWalkable()
             ) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "Not enough side down";
-                return false;
+                return fail();
             }
         }
 
@@ -45,7 +45,7 @@ public class HasEnoughSidesFreeFromOtherBuildings {
                     && !BuildingTileHelper.tileLeftFrom(building, position.translateByTiles(-margin, 0)).isWalkable()
             ) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "Bunker not enough side on left/right";
-                return false;
+                return fail();
             }
 
             if (
@@ -53,10 +53,14 @@ public class HasEnoughSidesFreeFromOtherBuildings {
                     && !BuildingTileHelper.tileDownFrom(building, position.translateByTiles(0, margin)).isWalkable()
             ) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "Bunker not enough side on up/down";
-                return false;
+                return fail();
             }
         }
 
         return true;
+    }
+
+    private static boolean fail() {
+        return false;
     }
 }

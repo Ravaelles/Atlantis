@@ -18,7 +18,7 @@ public class AdvanceStandard extends MissionManager {
             && !squad.isLeader(unit)
             && unit.combatEvalRelative() > 1.5
             && (
-                A.seconds() % 5 <= 1 || (unit.distToLeader() <= 7 + (A.supplyUsed() / 25.0))
+                A.seconds() % 6 <= 2 || (unit.distToLeader() <= 7 + (A.supplyUsed() / 25.0))
             );
     }
 

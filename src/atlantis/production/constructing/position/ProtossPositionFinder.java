@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.conditions.*;
@@ -71,10 +72,10 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
 
         while (searchRadius < maxDistance) {
-            int xMin = nearTo.tx() - searchRadius;
-            int xMax = nearTo.tx() + searchRadius;
-            int yMin = nearTo.ty() - searchRadius;
-            int yMax = nearTo.ty() + searchRadius;
+            int xMin = Math.max(0, nearTo.tx() - searchRadius);
+            int xMax = Math.min(AMap.getMapWidthInTiles() - 1, nearTo.tx() + searchRadius);
+            int yMin = Math.max(0, nearTo.ty() - searchRadius);
+            int yMax = Math.min(AMap.getMapHeightInTiles() - 1, nearTo.ty() + searchRadius);
             for (int tileX = xMin; tileX <= xMax; tileX++) {
                 for (int tileY = yMin; tileY <= yMax; tileY++) {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {

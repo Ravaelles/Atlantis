@@ -5,10 +5,12 @@ import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 
 public class MedicChokeBlockMoveAway extends Manager {
     private AChoke choke;
@@ -27,7 +29,9 @@ public class MedicChokeBlockMoveAway extends Manager {
 
     @Override
     public Manager handle() {
-        APosition goTo = choke.center();
+        if (unit.distTo(this.choke) >= 6) return null;
+
+        HasPosition goTo = Select.mainOrAnyBuilding();
 
         if (goTo != null && goTo.distTo(unit) > 0.03) {
             if (A.now() % 5 == 0) {

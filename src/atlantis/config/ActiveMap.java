@@ -17,7 +17,7 @@ public class ActiveMap {
         return activeMap().contains(mapPartialName);
     }
 
-    public static boolean isMapGosu() {
+    public static boolean isGosu() {
         return isMap("7th.scx") || isMap("/exp_") || isMap("vsGosu");
     }
 }

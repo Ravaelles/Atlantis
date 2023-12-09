@@ -3,6 +3,7 @@ package atlantis.terran.repair;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -126,6 +127,8 @@ public class OptimalNumOfBunkerRepairers {
     }
 
     private static int whenAlmostNooneInside(AUnit bunker) {
+        if (bunker.isWounded()) return 1;
+
         if (enemiesNear == 0 && enemiesFar == 0) return A.seconds() <= 300 ? 1 : 0;
 
         if ((enemiesFar + enemiesNear) >= 5 && bunker.loadedUnits().size() > 0) return 2;

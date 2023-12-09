@@ -14,6 +14,8 @@ public class TooLowSquadCohesion extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (A.seconds() % 8 <= 3) return false;
 
         return unit.isGroundUnit() || (unit.isAir() && unit.isMutalisk());
