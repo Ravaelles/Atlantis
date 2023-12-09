@@ -26,7 +26,7 @@ public class CombatUnitManager extends Manager {
             CombatManagerMediumPriority.class,
             ImproveCombatManagerPerformance.class,
             CombatManagerLowPriority.class,
-            DebugIdleUnitsManager.class,
+            UnitUnderAttackAndNotAttacking.class,
         };
     }
 

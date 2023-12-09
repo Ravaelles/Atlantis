@@ -1,5 +1,7 @@
 ### BUGS ###
 
+.--- Add UnitUnderAttack manager that forces unit to fight back otherwise some broken mechanics are lookin awful
+
 -- Refactor ConstructionsCommander, it's a fucking mess
 
 .---- GatherResources "KindGuy" is holding idle forever

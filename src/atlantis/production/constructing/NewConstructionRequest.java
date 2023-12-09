@@ -133,7 +133,10 @@ public class NewConstructionRequest {
         if (
             building.isSupplyDepot()
                 && order != null
-                && CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 3
+                && (
+                    CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2
+                || AGame.supplyFree() >= 3
+            )
         ) order.cancel();
 
 //        ErrorLog.printMaxOncePerMinute("(Construction: " + newConstruction + ")");
