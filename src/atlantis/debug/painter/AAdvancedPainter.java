@@ -410,7 +410,7 @@ public class AAdvancedPainter extends APainter {
         AUnit mainBase = Select.main();
         String desc = "";
         String focusPointString = focusPoint != null
-            ? (focusPoint.getName() != null ? focusPoint.getName() : focusPoint.toString())
+            ? (focusPoint.name() != null ? focusPoint.name() : focusPoint.toString())
             : "NONE";
         if (focusPoint != null && mainBase != null) {
             desc = "(" + ((int) mainBase.distTo(focusPoint)) + " tiles)";

@@ -8,9 +8,12 @@ import atlantis.units.AUnitType;
 
 public class HasEnoughSidesFreeFromOtherBuildings {
     public static boolean isOkay(AUnit builder, AUnitType building, APosition position) {
+
         if (building.isBase()) return true;
 
-        if (!building.isBunker()) {
+        boolean specialCombatBuildings = building.isBunker() || building.isMissileTurret();
+
+        if (!specialCombatBuildings) {
             if (
                 !BuildingTileHelper.tileLeftFrom(building, position).isWalkable()
                     && !BuildingTileHelper.tileLeftFrom(building, position).isWalkable()
@@ -37,25 +40,26 @@ public class HasEnoughSidesFreeFromOtherBuildings {
             }
         }
 
-        if (building.isBunker()) {
-            double margin = 2.5;
-
-            if (
-                !BuildingTileHelper.tileRightFrom(building, position.translateByTiles(margin, 0)).isWalkable()
-                    && !BuildingTileHelper.tileLeftFrom(building, position.translateByTiles(-margin, 0)).isWalkable()
-            ) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "Bunker not enough side on left/right";
-                return fail();
-            }
-
-            if (
-                !BuildingTileHelper.tileUpFrom(building, position.translateByTiles(0, -margin)).isWalkable()
-                    && !BuildingTileHelper.tileDownFrom(building, position.translateByTiles(0, margin)).isWalkable()
-            ) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "Bunker not enough side on up/down";
-                return fail();
-            }
-        }
+        // specialCombatBuildings
+//        else {
+//            double margin = 2.5;
+//
+//            if (
+//                !BuildingTileHelper.tileLeftFrom(building, position.translateByTiles(margin, 0)).isWalkable()
+//                    && !BuildingTileHelper.tileLeftFrom(building, position.translateByTiles(-margin, 0)).isWalkable()
+//            ) {
+//                AbstractPositionFinder._CONDITION_THAT_FAILED = "Bunker/turret not enough side on left/right";
+//                return fail();
+//            }
+//
+//            if (
+//                !BuildingTileHelper.tileUpFrom(building, position.translateByTiles(0, -margin)).isWalkable()
+//                    && !BuildingTileHelper.tileDownFrom(building, position.translateByTiles(0, margin)).isWalkable()
+//            ) {
+//                AbstractPositionFinder._CONDITION_THAT_FAILED = "Bunker/turret not enough side on up/down";
+//                return fail();
+//            }
+//        }
 
         return true;
     }

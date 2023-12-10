@@ -34,9 +34,9 @@ public class SiegeAgainstSpecificEnemies extends Manager {
                     AUnitType.Protoss_Dragoon,
                     AUnitType.Protoss_Reaver,
                     AUnitType.Protoss_High_Templar,
-                    AUnitType.Zerg_Hydralisk,
-                    AUnitType.Zerg_Defiler,
-                    AUnitType.Zerg_Lurker
+                    AUnitType.Zerg_Defiler
+//                    AUnitType.Zerg_Hydralisk,
+//                    AUnitType.Zerg_Lurker
                 )
                 .inRadius(17, unit);
         }
@@ -44,7 +44,7 @@ public class SiegeAgainstSpecificEnemies extends Manager {
         AUnit enemy = unit.nearestEnemy();
 
         double minDist = enemy != null && enemy.isMoving() && enemy.isFacing(unit) ? 15.5 : 11.98;
-        if (enemies.notEmpty()) {
+        if (enemies.notEmpty() && (enemy == null || unit.distTo(enemy) >= minDist)) {
             return wantsToSiegeAgainst(enemy, enemies);
         }
 

@@ -1,14 +1,12 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class ChokeBlockerMoveAway extends Manager {
@@ -22,7 +20,7 @@ public class ChokeBlockerMoveAway extends Manager {
 
     @Override
     public boolean applies() {
-        return ChokeBlockersCommander.checkIfApplies()
+        return NeedChokeBlockers.check()
             && unit.enemiesNear().inRadius(11, unit).empty()
             && (choke = ChokeToBlock.get()) != null
             && needToMoveSpaceForWorkers();

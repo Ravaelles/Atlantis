@@ -29,14 +29,17 @@ public class ForbiddenByStreetGrid {
 
         if (We.protoss() && A.supplyTotal() <= 10) return false;
 
-        if (
-            building.isMissileTurret() && Select.ourBuildingsWithUnfinished().inRadius(3, position).empty()
-        ) return false;
+//        if (
+//            building.isMissileTurret() && Select.ourBuildingsWithUnfinished().inRadius(3, position).empty()
+//        ) return false;
 
         // =========================================================
 
-        if (position.tx() % GRID_VALUE_X <= 0) return fail("TX modulo");
-        if (position.ty() % GRID_VALUE_Y <= 0) return fail("TY modulo");
+//        if (position.tx() % GRID_VALUE_X <= 0) return fail("TX modulo");
+//        if (position.ty() % GRID_VALUE_Y <= 0) return fail("TY modulo");
+
+        if ((position.tx() + building.dimensionRightPx() * 32) % GRID_VALUE_X <= 0) return fail("TX modulo");
+        if ((position.ty() + building.dimensionDownPx() * 32) % GRID_VALUE_Y <= 0) return fail("TY modulo");
 
 //        if (building.getTileWidth() >= 4) {
 //            if (position.tx() % 4 >= 2) return fail("TX big modulo");

@@ -12,10 +12,10 @@ public class ForbiddenByStreetGridForSupplyDepot {
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!building.isSupplyDepot()) return false;
 
-//        if (!streetGridMatches(position)) {
-//            AbstractPositionFinder._CONDITION_THAT_FAILED = "Depot street grid doesn't allow it";
-//            return true;
-//        }
+        if (!streetGridMatches(position)) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Depot street grid doesn't allow it";
+            return true;
+        }
 
         return otherSupplyDepotConstructionsAreTooClose(position);
     }

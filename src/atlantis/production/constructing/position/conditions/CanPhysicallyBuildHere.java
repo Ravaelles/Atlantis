@@ -31,7 +31,9 @@ public class CanPhysicallyBuildHere {
         // Fix for bases & bunkers - allow in unknown locations
         if (building.isBase() && (!position.isExplored() || !position.isPositionVisible())) return true;
 //        if (building.isCombatBuilding() && !position.isExplored()) return true;
-        if (!position.isExplored() && position.regionsMatch(MainRegion.mainRegion())) return true;
+
+//        if (!position.isExplored() && position.regionsMatch(MainRegion.mainRegion())) return true;
+
 //        if (
 //            (!position.isExplored() || !position.isPositionVisible())
 //                &&

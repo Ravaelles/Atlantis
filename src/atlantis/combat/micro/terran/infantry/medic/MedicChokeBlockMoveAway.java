@@ -52,8 +52,8 @@ public class MedicChokeBlockMoveAway extends Manager {
             .notRepairing()
             .notProtectors()
             .notSpecialAction()
-            .notConstructing()
-            .notScout()
+//            .notConstructing()
+//            .notScout()
             .inRadius(6, unit)
             .atLeast(1);
     }

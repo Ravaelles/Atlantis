@@ -54,6 +54,7 @@ public class FindPosition {
             }
 
             if (position != null) return position;
+            return null;
         }
 
         // === Combat building =====================================

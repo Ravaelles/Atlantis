@@ -149,9 +149,7 @@ public class Chokes {
                 AChoke nearest = null;
 
                 for (AChoke chokePoint : chokes()) {
-                    if (
-                        chokePoint.width() >= 8 || chokePoint.position().isCloseToMapBounds()
-                    ) continue;
+                    if (chokePoint.width() >= 8 || chokePoint.position().isCloseToMapBounds(6)) continue;
 
 //                    double dist = position.position().groundDistanceTo(chokePoint.center()) - (chokePoint.width() / 64.0);
                     double dist = position.position().groundDistanceTo(chokePoint.center());

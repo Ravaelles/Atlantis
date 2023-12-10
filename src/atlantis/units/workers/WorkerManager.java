@@ -32,6 +32,8 @@ public class WorkerManager extends Manager {
             DynamicRepairsNearby.class,
 
             GatherResources.class,
+
+            IdleWorker.class,
         };
     }
 }

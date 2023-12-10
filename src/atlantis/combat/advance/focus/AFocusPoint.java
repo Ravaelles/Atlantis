@@ -14,7 +14,6 @@ import atlantis.units.select.Select;
  * This point should tell units from which side they should stand.
  */
 public class AFocusPoint extends APosition {
-
     private APosition fromSide = null;
     private AChoke choke = null;
     private AUnit unit = null;
@@ -104,7 +103,7 @@ public class AFocusPoint extends APosition {
         return choke != null;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 }

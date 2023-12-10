@@ -137,7 +137,7 @@ public class PositionModifier {
 
         if (modifier.equals(MAIN_CHOKE)) {
             if (construction != null) {
-                construction.setMaxDistance(7);
+                construction.setMaxDistance(9);
             }
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke != null) {
@@ -151,7 +151,7 @@ public class PositionModifier {
         }
         else if (modifier.equals(NATURAL_CHOKE)) {
             if (construction != null) {
-                construction.setMaxDistance(6);
+                construction.setMaxDistance(9);
             }
             AChoke chokepointForNatural = Chokes.natural(main.position());
             if (chokepointForNatural != null && main != null) {

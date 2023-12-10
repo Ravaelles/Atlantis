@@ -15,7 +15,7 @@ import static atlantis.units.AUnitType.Terran_Missile_Turret;
 
 public class ReinforceBunkersWithTurrets extends Commander {
 
-    public static final int MAX_DISTANCE_FROM_BUNKER = 6;
+    public static final int MAX_DISTANCE_FROM_BUNKER = 12;
 
     @Override
     public boolean applies() {

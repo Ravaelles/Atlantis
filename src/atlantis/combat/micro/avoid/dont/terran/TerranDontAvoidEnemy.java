@@ -22,6 +22,7 @@ public class TerranDontAvoidEnemy extends Manager {
             WraithDontAvoidEnemy.class,
             TerranMarineDontAvoidEnemy.class,
             TerranWraithDontAvoidEnemy.class,
+            TerranGroundDontAvoidEnemy.class,
         };
     }
 

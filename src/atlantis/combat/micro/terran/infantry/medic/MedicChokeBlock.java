@@ -1,15 +1,15 @@
 package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.missions.Missions;
+import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.terran.chokeblockers.ChokeBlockers;
-import atlantis.terran.chokeblockers.ChokeToBlock;
+import atlantis.terran.chokeblockers.NeedChokeBlockers;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
 
 public class MedicChokeBlock extends Manager {
     private AChoke choke;
@@ -20,9 +20,14 @@ public class MedicChokeBlock extends Manager {
 
     @Override
     public boolean applies() {
-        return Missions.isGlobalMissionDefend()
-            && Count.ourCombatUnits() <= 30
-            && (choke = ChokeToBlock.get()) != null;
+        AFocusPoint focus = Alpha.get().mission().focusPoint();
+        return focus != null
+            && "MainChoke".equals(focus.name())
+            && NeedChokeBlockers.check();
+
+//        return Missions.isGlobalMissionDefend()
+//            && Count.ourCombatUnits() <= 30
+//            && (choke = ChokeToBlock.get()) != null;
     }
 
     @Override
