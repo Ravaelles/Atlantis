@@ -33,7 +33,7 @@ public class SquadTransfersCommander extends Commander {
         if (EnemyWhoBreachedBase.numberOfAttacksOnBase() > 0) return true;
 
 //        return false;
-        return (A.supplyUsed(85) || Missions.isGlobalMissionAttack() || Count.ourCombatUnits() >= 25);
+        return (A.supplyUsed(85) || Missions.isGlobalMissionAttack() || Count.ourCombatUnits() >= 20);
     }
 
     private static void removeBeta() {

@@ -4,8 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
-public class ImproveCombatManagerPerformance extends Manager {
-    public ImproveCombatManagerPerformance(AUnit unit) {
+public class ImproveCombatPerformance extends Manager {
+    public ImproveCombatPerformance(AUnit unit) {
         super(unit);
     }
 
@@ -13,6 +13,7 @@ public class ImproveCombatManagerPerformance extends Manager {
     public boolean applies() {
         if (unit.isAttacking()) return false;
         if (A.everyNthGameFrame(9)) return false;
+        if (unit.squad().isLeader(unit)) return false;
         if (unit.enemiesNear().notEmpty()) return false;
 
         return true;

@@ -23,6 +23,8 @@ import atlantis.util.We;
 import static atlantis.units.AUnitType.*;
 
 public class AutoProduceWorkersCommander extends Commander {
+    public static String REASON = "";
+
     /**
      * Selects the least worker-saturated base to build a worker.
      */
@@ -36,42 +38,41 @@ public class AutoProduceWorkersCommander extends Commander {
     // =========================================================
 
     public static boolean shouldProduceWorkers() {
+        if (AGame.supplyFree() == 0 || !AGame.hasMinerals(50)) return dont("CantAfford");
         if (
-            AGame.supplyFree() == 0
-                || !AGame.hasMinerals(50)
-                || (A.minerals() < A.reservedMinerals() + 50)
-        ) return false;
-
-        if (CountInQueue.count(Terran_Comsat_Station, 2) > 0) return false;
-
-        int workers = Select.ourWorkers().count();
-
-        if (workers <= 20 && A.seconds() >= 500) return true;
+            A.supplyUsed() <= 30 && Count.workers() >= 15 && (
+                (!A.hasMinerals(100) || A.minerals() < A.reservedMinerals() + 100))
+        ) return dont("FollowBO");
 
         // === Terran ===========================================
 
         if (We.terran()) {
             if (
-                !A.hasMinerals(100)
-                    && SoonInQueue.have(AUnitType.Terran_Comsat_Station, 1)
-            ) return false;
+                A.hasGas(50) && SoonInQueue.have(AUnitType.Terran_Comsat_Station, 1)
+            ) return dont("Wait4Comsat");
         }
+
+        // =========================================================
+
+        int workers = Select.ourWorkers().count();
+
+        if (workers <= 20 && A.seconds() >= 500) return true;
 
         // === Zerg ===========================================
 
-        else if (We.zerg()) {
+        if (We.zerg()) {
             if (!A.hasMinerals(75 * Count.creepColonies())) return false;
             if (A.supplyUsed() <= 20 && !AGame.canAffordWithReserved(50, 0)) return false;
             if (!A.hasMinerals(250) && SoonInQueue.have(Zerg_Spawning_Pool, 1)) {
                 ProductionOrder order = Queue.get().nextOrders(1).ofType(Zerg_Spawning_Pool).get(0);
                 if (order != null && order.supplyRequirementFulfilled()) {
-                    return !A.hasMinerals(250);
+                    return dont("Not250Min");
                 }
             }
 
             if (A.supplyUsed() <= 15 && Count.zerglings() < 4) {
                 int zerglingsInQueue = CountInQueue.count(AUnitType.Zerg_Zergling, 2);
-                if (!A.hasMinerals(zerglingsInQueue * 50 + 50)) return false;
+                if (!A.hasMinerals(zerglingsInQueue * 50 + 50)) return dont("TooFewMin");
             }
         }
 
@@ -79,20 +80,19 @@ public class AutoProduceWorkersCommander extends Commander {
 
         // Check if not TOO MANY WORKERS
         int workersBonus = We.terran() ? 4 : 0; // For repairers
-        if (workers >= (workersBonus + 25 * Select.ourBuildingsWithUnfinished().bases().count())) return false;
+        if (workers >= (workersBonus + 25 * Select.ourBuildingsWithUnfinished().bases().count())) {
+            return dont("TooMany");
+        }
 
         // =========================================================
         // Check if AUTO-PRODUCTION of WORKERS is active.
 
-        if (!isAutoProduceWorkersActive(workers)) {
-//            System.err.println("AUTO WORKERS DISABLED");
-            return false;
-        }
+        return isAutoProduceWorkersActive(workers) || dont("Limit");
+    }
 
-        // =========================================================
-
-//        System.err.println("### AUTO-PRODUCE WORKERS ACTIVE");
-        return Count.workers() < 60;
+    private static boolean dont(String reason) {
+        REASON = reason;
+        return false;
     }
 
     /**

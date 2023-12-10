@@ -47,7 +47,6 @@ public class PositionFulfillsAllConditions {
         }
 
         if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
-        if (ForbiddenByStreetGridForSupplyDepot.isForbidden(builder, building, position)) return false;
         if (!HasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return false;
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return false;
         if (OverlappingBaseLocation.isOverlappingBaseLocation(building, position)) return false;

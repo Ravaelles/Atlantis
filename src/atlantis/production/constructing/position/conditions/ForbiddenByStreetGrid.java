@@ -20,6 +20,9 @@ public class ForbiddenByStreetGrid {
      * So disallow building in e.g. 0,1, 6,7, 12,13, horizontally and vertically
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
+        if (ForbiddenByStreetGridForSupplyDepot.isForbidden(builder, building, position)) return false;
+        if (ForbiddenByStreetGridForBarracks.isForbidden(builder, building, position)) return false;
+
         if (
             building.isBase()
                 || building.isGasBuilding()

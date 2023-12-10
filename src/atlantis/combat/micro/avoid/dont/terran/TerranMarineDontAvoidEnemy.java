@@ -13,10 +13,9 @@ public class TerranMarineDontAvoidEnemy extends Manager {
     public boolean applies() {
         if (!unit.isMarine()) return false;
 
-        if (unit.friendsNear().groundUnits().inRadius(1, unit).atLeast(3)) return true;
         if (longDidntShootHydra()) return true;
         if (protectMainChokeDuringMissionDefend()) return true;
-        if (protectTanksNearby()) return true;
+        if (unit.isMissionAttack() && protectTanksNearby()) return true;
 
         if (
             unit.isMissionDefend()
@@ -29,6 +28,10 @@ public class TerranMarineDontAvoidEnemy extends Manager {
 
             if (unit.nearestOurTankDist() <= 3 && unit.nearestEnemyDist() > 3) return true;
         }
+
+        if (unit.meleeEnemiesNearCount(1.8) > 0) return false;
+
+        if (unit.isHealthy() && unit.friendsNear().groundUnits().inRadius(1, unit).atLeast(3)) return true;
 
         return false;
     }

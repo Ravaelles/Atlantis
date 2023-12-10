@@ -20,8 +20,11 @@ public class ChokeBlockerMoveAway extends Manager {
 
     @Override
     public boolean applies() {
-        return NeedChokeBlockers.check()
-            && unit.enemiesNear().inRadius(11, unit).empty()
+        if (!NeedChokeBlockers.check()) return false;
+
+        if (unit.hp() <= 16) return true;
+
+        return unit.enemiesNear().inRadius(11, unit).empty()
             && (choke = ChokeToBlock.get()) != null
             && needToMoveSpaceForWorkers();
     }

@@ -27,7 +27,7 @@ public class Beta extends Squad {
     public int expectedUnits() {
         return Math.max(
             1,
-            Math.min(4, Count.ourCombatUnits() / 13)
+            Math.min(3, (int) (Count.ourCombatUnits() / 9.5))
         );
     }
 

@@ -33,6 +33,7 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.base.NextBasePosition;
+import atlantis.production.dynamic.AutoProduceWorkersCommander;
 import atlantis.production.dynamic.expansion.ShouldExpand;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -441,7 +442,7 @@ public class AAdvancedPainter extends APainter {
 //        paintSideMessage("Find build. place: " + AtlantisPositionFinder.totalRequests,
 //                prevTotalFindBuildPlace != AtlantisPositionFinder.totalRequests ? Color.Red : Color.Grey);
 //        prevTotalFindBuildPlace = AtlantisPositionFinder.totalRequests;
-        paintSideMessage("Workers: " + Count.workers(), Color.White);
+        paintSideMessage("Workers: " + Count.workers() + " (" + AutoProduceWorkersCommander.REASON + ")", Color.White);
         if (We.terran()) {
             int tanks = Count.tanks();
             paintSideMessage("Tanks: " + tanks, tanks >= 1 ? Yellow : Color.White);

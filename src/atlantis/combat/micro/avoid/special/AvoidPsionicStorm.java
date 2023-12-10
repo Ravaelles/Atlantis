@@ -50,7 +50,7 @@ public class AvoidPsionicStorm extends Manager {
         APosition avoidCenter = psionicCenter(bullets);
 //        System.out.println("PSIONIC avoidCenter = " +  avoidCenter + " / " + unit.distTo(avoidCenter));
 
-        if (unit.distTo(avoidCenter) < minDist) {
+        if (avoidCenter != null && unit.distTo(avoidCenter) < minDist) {
             unit.runningManager().runFromAndNotifyOthersToMove(avoidCenter, "PSIONIC-STORM");
 
 //            AAdvancedPainter.forcePainting();
