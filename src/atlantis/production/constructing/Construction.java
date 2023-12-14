@@ -81,7 +81,7 @@ public class Construction implements Comparable<Construction> {
      *
      * @return AUnit for convenience it returns
      */
-    protected AUnit assignOptimalBuilder() {
+    public AUnit assignOptimalBuilder() {
         AUnit optimalBuilder = GetOptimalBuilder.forPosition(this, productionOrder);
 
         if (optimalBuilder != null) builder = optimalBuilder;

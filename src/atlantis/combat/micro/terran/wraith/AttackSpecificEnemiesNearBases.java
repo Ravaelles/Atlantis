@@ -21,9 +21,13 @@ public class AttackSpecificEnemiesNearBases extends Manager {
     }
 
     private Selection targets() {
+        Selection basesWithUnfinished = Select.ourBasesWithUnfinished();
+
+        if (basesWithUnfinished.empty()) return basesWithUnfinished;
+
         return EnemyUnits.discovered()
             .ofType(targetTypes())
-            .inRadius(30, Select.ourBasesWithUnfinished())
+            .inRadius(30, basesWithUnfinished)
             .effVisible();
     }
 

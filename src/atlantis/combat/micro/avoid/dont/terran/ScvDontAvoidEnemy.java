@@ -20,14 +20,8 @@ public class ScvDontAvoidEnemy extends Manager {
     protected Manager handle() {
         Selection enemiesNear = unit.enemiesNear().inRadius(11, unit);
 
-        if (enemiesNear.onlyAir()
-            && (
-            enemiesNear.onlyOfType(AUnitType.Protoss_Scout)
-                || enemiesNear.canAttack(unit, 0).atMost(2)
-        )
-        ) {
-            return usedManager(this);
-        }
+        if (onlyScouts(enemiesNear)) return usedManager(this);
+        if (onlyMutalisks(enemiesNear)) return usedManager(this);
 
         AUnit nearest = enemiesNear.nearestTo(unit);
         if (nearest != null && nearest.isDragoon() && !nearest.regionsMatch(unit)) {
@@ -36,5 +30,26 @@ public class ScvDontAvoidEnemy extends Manager {
         }
 
         return null;
+    }
+
+    private boolean onlyMutalisks(Selection enemiesNear) {
+        return unit.isHealthy()
+            && enemiesNear.onlyAir()
+            && (
+            enemiesNear.onlyOfType(AUnitType.Zerg_Mutalisk)
+                || enemiesNear.canAttack(unit, 0).atMost(2)
+        );
+    }
+
+    private boolean onlyScouts(Selection enemiesNear) {
+        if (enemiesNear.onlyAir()
+            && (
+            enemiesNear.onlyOfType(AUnitType.Protoss_Scout)
+                || enemiesNear.canAttack(unit, 0).atMost(2)
+        )
+        ) {
+            return true;
+        }
+        return false;
     }
 }

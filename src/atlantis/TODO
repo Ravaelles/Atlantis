@@ -1,11 +1,8 @@
 ### BUGS ###
 
----- Still 6k constructions of depot
-
-
-
-
-.--- Add UnitUnderAttack manager that forces unit to fight back otherwise some broken mechanics are lookin awful
+---- Travel to construct???
+--- GatherResources "KindGuy" idle standing
+--- Medics not choke blocking / also scv too quick
 
 - Still no Turrets against Scouts
 - No bunker no turret at natural

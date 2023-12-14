@@ -76,11 +76,12 @@ public class ConstructionStatusChanger extends Commander {
         // If building exists
         if (building != null) {
 
-            // Finished: building is completed, remove the construction construction object
+            // Finished: building is completed, remove the construction object
             if (building.isCompleted()) {
                 construction.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
                 ConstructionRequests.removeOrder(construction);
-            } // In progress
+            }
+            // In progress
             else if (construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
                 construction.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
             }
@@ -96,12 +97,30 @@ public class ConstructionStatusChanger extends Commander {
             }
         }
 
+        // === Not started =========================================
+
+        if ((builder == null || builder.isDead()) && !construction.hasStarted()) {
+            builder = construction.assignOptimalBuilder();
+            System.err.println("Builder was NULL for " + building + " / now = " + builder);
+        }
+//        builder = assignBuilderToConstructionIfNeeded(construction);
+
         // =========================================================
         // Check if both building and builder are destroyed
         if ((builder == null || builder.isDead()) && (building == null || building.isDead())) {
             construction.cancel();
         }
     }
+
+//    private void assignBuilderToConstructionIfNeeded(Construction construction) {
+//        AUnit builder = construction.builder();
+//
+//        if (!construction.hasStarted() && builder == null) {
+//            construction.assignOptimalBuilder();
+//        }
+//
+//        return builder;
+//    }
 
     /**
      * The moment zerg drone starts building a building we're not detecting it without this method. This

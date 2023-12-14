@@ -17,7 +17,7 @@ public class Main {
     public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Zerg";
 
-        public static final String ENEMY_RACE = "Protoss";
+    public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
 //    public static final String ENEMY_RACE = "Zerg";
 
@@ -77,7 +77,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My favorite map for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-        if (true) return "ums/7th.scx";
+//        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
