@@ -2,7 +2,7 @@ package atlantis.map.base;
 
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
@@ -263,7 +263,7 @@ public class BaseLocations {
                     return null;
                 }
 
-                ABaseLocation baseLocation = DefineNatural.naturalIfMainIsAt(enemyBase.position());
+                ABaseLocation baseLocation = DefineNaturalBase.naturalIfMainIsAt(enemyBase.position());
                 if (baseLocation != null) {
                     return baseLocation.position().translateByTiles(2, 0);
                 }
@@ -278,7 +278,7 @@ public class BaseLocations {
             "hasBaseAtNatural",
             57,
             () -> {
-                APosition natural = DefineNatural.natural();
+                APosition natural = DefineNaturalBase.natural();
                 if (natural == null) return false;
 
                 return Select.ourBuildingsWithUnfinished().bases().inRadius(8, natural).notEmpty();
@@ -291,7 +291,7 @@ public class BaseLocations {
             "hasBunkerAtNatural",
             57,
             () -> {
-                APosition natural = DefineNatural.natural();
+                APosition natural = DefineNaturalBase.natural();
                 if (natural == null) return null;
 
                 return Select.ourWithUnfinishedOfType(AUnitType.Terran_Bunker)

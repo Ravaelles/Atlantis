@@ -13,9 +13,9 @@ import atlantis.util.ProcessHelper;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-    //        public static final String OUR_RACE = "Protoss";
-    public static final String OUR_RACE = "Terran";
-//    public static final String OUR_RACE = "Zerg";
+    //    public static final String OUR_RACE = "Protoss";
+//    public static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Zerg";
 
     public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
@@ -67,8 +67,8 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
-//        if (true) return "sscai/(4)Roadrunner.scx";
+        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(4)Roa.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
 

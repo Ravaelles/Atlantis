@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.reinforce.terran.turrets;
 
 import atlantis.game.A;
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -54,7 +54,7 @@ public class TurretsForNonMain extends TerranMissileTurret {
     }
 
     protected HasPosition turretForNatural() {
-        APosition natural = DefineNatural.natural();
+        APosition natural = DefineNaturalBase.natural();
         if (natural == null) {
             return null;
         }

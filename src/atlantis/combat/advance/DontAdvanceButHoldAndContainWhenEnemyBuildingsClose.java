@@ -30,7 +30,8 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
         tanks = Count.tanks();
 
         return
-            (unit.isWounded() || (A.supplyUsed() < 185 && tanks <= 18))
+            Count.ourCombatUnits() <= 25
+                && (unit.isWounded() || (A.supplyUsed() < 185 && tanks <= 18))
                 && A.minerals() < 2000
                 && unit.isCombatUnit()
                 && safeWithTanksSoSkip()

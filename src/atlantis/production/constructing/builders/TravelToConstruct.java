@@ -46,13 +46,16 @@ public class TravelToConstruct extends HasUnit {
 //        CameraCommander.centerCameraOn(unit.getPosition());
 
         if (distance > minDistanceToIssueBuildOrder) {
+//            if (buildingType.isBase()) System.err.println("MoveToConstruct " + distance);
             return moveToConstruct(construction, buildingType, distance, distString);
         }
         else {
             if ((A.everyNthGameFrame(77) || unit.hasNotMovedInAWhile()) && distance <= 0.5) {
+//                if (buildingType.isBase()) System.err.println("----------- REFRESH BASE POSITION");
                 refreshConstructionPositionIfNeeded(construction, buildingType);
             }
 
+//            if (buildingType.isBase()) System.err.println("@@@@@@@@@@ ISSUE BUILD ORDER");
             return issueBuildOrder(construction);
         }
     }
@@ -201,7 +204,7 @@ public class TravelToConstruct extends HasUnit {
 //    }
 
     private void moveOtherUnitsOutOfConstructionPlace(APosition buildPosition) {
-        for (AUnit unit : unit.friendsNear().inRadius(2.3, buildPosition).exclude(unit).list()) {
+        for (AUnit unit : unit.friendsNear().groundUnits().inRadius(2.3, buildPosition).exclude(unit).list()) {
             unit.moveAwayFrom(buildPosition, 1, Actions.SPECIAL, "Construction!");
         }
     }
@@ -209,6 +212,8 @@ public class TravelToConstruct extends HasUnit {
     // =========================================================
 
     private boolean shouldNotTravelYet(AUnitType building, double distance) {
+        if (We.zerg()) return false;
+
 //        if (AGame.timeSeconds() < 300 && !building.isBase()) {
         if (AGame.timeSeconds() < 300) {
             int baseBonus = building.isBase() ? 80 : 0;

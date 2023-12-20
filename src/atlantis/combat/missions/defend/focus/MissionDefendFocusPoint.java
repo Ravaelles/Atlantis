@@ -8,7 +8,7 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
@@ -257,7 +257,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             return null;
         }
 
-        APosition natural = DefineNatural.natural();
+        APosition natural = DefineNaturalBase.natural();
         return new AFocusPoint(
             natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
             natural,

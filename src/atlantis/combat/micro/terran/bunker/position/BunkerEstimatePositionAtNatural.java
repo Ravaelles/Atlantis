@@ -1,13 +1,13 @@
 package atlantis.combat.micro.terran.bunker.position;
 
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 
 public class BunkerEstimatePositionAtNatural {
     public static APosition define() {
-        APosition naturalBase = DefineNatural.natural();
+        APosition naturalBase = DefineNaturalBase.natural();
         AChoke naturalChoke = Chokes.natural();
 
         if (naturalBase == null || naturalChoke == null) return null;

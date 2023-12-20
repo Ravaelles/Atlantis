@@ -184,13 +184,15 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Go to random INVISIBLE
-        _temporaryTarget = AMap.randomInvisiblePosition(our);
-        if (_temporaryTarget != null && _temporaryTarget.hasPathTo(our.position())) {
-            return new AFocusPoint(
-                _temporaryTarget,
-                our,
-                "RandomInvisible"
-            );
+        for (int i = 0; i < 40; i++) {
+            _temporaryTarget = AMap.randomInvisiblePosition(our);
+            if (_temporaryTarget != null && _temporaryTarget.hasPathTo(our.position())) {
+                return new AFocusPoint(
+                    _temporaryTarget,
+                    our,
+                    "RandomInvisible"
+                );
+            }
         }
 
         ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");

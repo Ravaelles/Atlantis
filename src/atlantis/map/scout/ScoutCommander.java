@@ -6,12 +6,11 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
@@ -115,7 +114,7 @@ public class ScoutCommander extends Commander {
     }
 
     private static List<AUnit> candidates() {
-        return FreeWorkers.get().sortDataByDistanceTo(DefineNatural.natural(), true);
+        return FreeWorkers.get().sortDataByDistanceTo(DefineNaturalBase.natural(), true);
     }
 
     private void removeExcessiveScouts() {

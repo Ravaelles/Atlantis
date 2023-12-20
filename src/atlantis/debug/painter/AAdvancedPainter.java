@@ -20,7 +20,7 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -171,6 +171,7 @@ public class AAdvancedPainter extends APainter {
             if (unit.isWorker() && unit.lastActionMoreThanAgo(30 * 4)) continue;
 
 //            paintUnitInRangeInfo(unit);
+            paintUnitWithinChoke(unit);
 
             // =========================================================
             // === Paint targets for combat units
@@ -225,6 +226,17 @@ public class AAdvancedPainter extends APainter {
             paintSquad(unit);
             paintLastAction(unit);
             paintLog(unit);
+        }
+    }
+
+    private static void paintUnitWithinChoke(AUnit unit) {
+        if (unit.isWithinChoke()) {
+            paintCircle(unit, 15, Orange);
+            paintCircle(unit, 14, Orange);
+            paintCircle(unit, 13, Yellow);
+            paintCircle(unit, 12, Yellow);
+            paintCircle(unit, 11, Orange);
+            paintCircle(unit, 10, Orange);
         }
     }
 
@@ -1492,7 +1504,7 @@ public class AAdvancedPainter extends APainter {
         setTextSizeMedium();
 
         // Natural base
-        HasPosition natural = DefineNatural.natural();
+        HasPosition natural = DefineNaturalBase.natural();
         paintBase(natural, "Our natural", Color.Grey, 0);
 
         // Enemy base
@@ -1500,8 +1512,10 @@ public class AAdvancedPainter extends APainter {
         paintBase(enemyBase, "Enemy natural", Color.Orange, 0);
 
         // Our natural choke
-        AChoke naturalChoke = Chokes.natural(DefineNatural.natural());
-        paintChoke(naturalChoke, Green, "Natural choke");
+        AChoke naturalChoke = Chokes.natural(DefineNaturalBase.natural());
+        if (naturalChoke != null) {
+            paintChoke(naturalChoke, Green, "Natural choke " + naturalChoke.position().distToMapBorders());
+        }
 
         // Our main choke
         AChoke mainChoke = Chokes.mainChoke();

@@ -4,11 +4,10 @@ import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
-import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 
-public class DefineNatural {
+public class DefineNaturalBase {
     private static Cache<Object> cache = new Cache<>();
 
     /**
@@ -50,6 +49,7 @@ public class DefineNatural {
                     if (nearestTo.distTo(baseLocation) <= 6 || !nearestTo.hasPathTo(baseLocation.position())) {
                         continue;
                     }
+//                    if (!Chokes.fullfillsConditionsForNatural(choke, Chokes.mainChoke())) continue;
 
                     return baseLocation;
                 }

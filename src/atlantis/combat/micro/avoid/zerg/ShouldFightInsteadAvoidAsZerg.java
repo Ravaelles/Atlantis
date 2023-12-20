@@ -55,6 +55,7 @@ public class ShouldFightInsteadAvoidAsZerg {
 
     private static boolean asZergling(AUnit unit) {
         if (!unit.isZergling()) return false;
+        if (unit.hp() <= 18 && unit.enemiesNear().ranged().inRadius(7, unit).empty()) return false;
 
         int meleeEnemiesVeryNear = unit.meleeEnemiesNearCount(1.2);
 

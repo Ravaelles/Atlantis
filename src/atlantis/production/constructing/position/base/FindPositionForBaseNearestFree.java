@@ -48,7 +48,7 @@ public class FindPositionForBaseNearestFree {
 //                System.err.println("Bases.natural() = " + Bases.natural());
 
                 if (result == null && We.zerg()) {
-                    A.errPrintln("Fallback to standard building position");
+                    A.errPrintln("Fallback to standard building position for " + building);
                     result = APositionFinder.findStandardPosition(builder, building, Select.main(), 50);
                 }
 

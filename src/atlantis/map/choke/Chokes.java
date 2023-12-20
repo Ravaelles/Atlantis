@@ -5,14 +5,12 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.map.base.BaseLocations;
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
-import atlantis.map.region.MainRegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 import bwem.ChokePoint;
 import jbweb.JBWEB;
@@ -86,18 +84,14 @@ public class Chokes {
             () -> {
                 if (!ActiveMap.isMap("7th")) {
                     AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
-                    if (
-                        choke != null
-                            && !choke.position().isCloseToMapBounds(10)
-                            && choke.distTo(mainChoke()) > 4
-                    ) {
-    //                        System.err.println("choke.position() = " + choke.position());
-    //                        System.err.println("AMap.getMapHeightInTiles() = " + AMap.getMapHeightInTiles());
-                            return choke;
+                    if (fullfillsConditionsForNatural(choke, Chokes.mainChoke())) {
+                        //                        System.err.println("choke.position() = " + choke.position());
+                        //                        System.err.println("AMap.getMapHeightInTiles() = " + AMap.getMapHeightInTiles());
+                        return choke;
                     }
                 }
 
-                return nearestChoke(DefineNatural.natural());
+                return nearestChoke(DefineNaturalBase.natural());
             }
         );
     }
@@ -111,31 +105,35 @@ public class Chokes {
             "natural:" + relativeTo.toStringPixels(),
             403,
             () -> {
-                ARegion naturalRegion = Regions.getRegion(DefineNatural.naturalIfMainIsAt(relativeTo.position()));
+                ARegion naturalRegion = Regions.getRegion(DefineNaturalBase.naturalIfMainIsAt(relativeTo.position()));
                 if (naturalRegion == null) {
                     System.err.println("Can't find region for natural base");
                     AGame.setUmsMode();
                     return null;
                 }
 
-                AChoke chokeForMainBase = mainChoke();
-                if (chokeForMainBase == null) {
+                AChoke mainChoke = mainChoke();
+                if (mainChoke == null) {
                     return null;
                 }
 
                 for (AChoke choke : naturalRegion.chokes()) {
-                    if (
-                        choke.width() <= 7
-                            && choke.center().distTo(chokeForMainBase) > 1
-                            && choke.center().distTo(chokeForMainBase) <= 15
-                    ) {
-                        return choke;
-                    }
+                    if (fullfillsConditionsForNatural(choke, mainChoke)) return choke;
                 }
 
                 return null;
             }
         );
+    }
+
+    public static boolean fullfillsConditionsForNatural(AChoke choke, AChoke mainChoke) {
+        if (choke == null) return false;
+        if (mainChoke == null) return false;
+
+        return choke.width() <= 7
+            && choke.center().distTo(mainChoke) > 7
+//            && choke.center().distTo(mainChoke) <= 17
+            && choke.position().distToMapBorders() > 9;
     }
 
     public static AChoke nearestChoke(HasPosition position) {
@@ -148,14 +146,14 @@ public class Chokes {
                 double nearestDist = 99999;
                 AChoke nearest = null;
 
-                for (AChoke chokePoint : chokes()) {
-                    if (chokePoint.width() >= 8 || chokePoint.position().isCloseToMapBounds(6)) continue;
+                for (AChoke choke : chokes()) {
+                    if (!fullfillsConditionsForNatural(choke, Chokes.mainChoke())) continue;
 
-//                    double dist = position.position().groundDistanceTo(chokePoint.center()) - (chokePoint.width() / 64.0);
-                    double dist = position.position().groundDistanceTo(chokePoint.center());
+//                    double dist = position.position().groundDistanceTo(choke.center()) - (choke.width() / 64.0);
+                    double dist = position.position().groundDistanceTo(choke.center());
                     if (dist < nearestDist) {
                         nearestDist = dist;
-                        nearest = chokePoint;
+                        nearest = choke;
                     }
                 }
 

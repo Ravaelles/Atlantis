@@ -9,12 +9,15 @@ import atlantis.map.choke.AChoke;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 public class NeedChokeBlockers {
     private static AChoke choke;
 
     public static boolean check() {
+        if (We.zerg()) return false;
         if (Enemy.terran()) return false;
+        
         if (AGame.notNthGameFrame(5)) return false;
         if (Missions.isGlobalMissionAttack()) return false;
 

@@ -366,6 +366,13 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         else return py >= (32 * AMap.getMapHeightInTiles() - txAwayFromEdge * 32);
     }
 
+    public double distToMapBorders() {
+        return Math.min(
+            Math.min(tx(), ty()),
+            Math.min((AMap.getMapWidthInTiles() - tx()), (AMap.getMapHeightInTiles() - ty()))
+        );
+    }
+
     public APosition randomizePosition(int maxTiles) {
         return APosition.create(
             tx() - (A.chance(50) ? 0 : maxTiles + A.rand(0, 2 * maxTiles)),

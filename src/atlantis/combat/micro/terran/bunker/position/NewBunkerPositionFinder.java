@@ -1,6 +1,6 @@
 package atlantis.combat.micro.terran.bunker.position;
 
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.base.NextBasePosition;
@@ -82,7 +82,7 @@ public class NewBunkerPositionFinder {
         if (positionToSecure == null) return true;
 
         nearestBasePosition = NextBasePosition.nextBasePosition();
-        naturalBase = DefineNatural.natural();
+        naturalBase = DefineNaturalBase.natural();
 
         // @FIX?
         return nearestBasePosition == null && naturalBase == null;

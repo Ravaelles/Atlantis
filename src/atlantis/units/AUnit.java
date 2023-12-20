@@ -19,6 +19,9 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.information.tech.ATech;
 import atlantis.information.tech.SpellCoordinator;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
+import atlantis.map.choke.IsUnitWithinChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
@@ -2933,5 +2936,25 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isSpecialAction() {
         return lastActionLessThanAgo(50, Actions.SPECIAL);
+    }
+
+    public boolean isWithinChoke() {
+        AChoke closestChoke = nearestChoke();
+
+        if (closestChoke == null) return false;
+
+        return cacheBoolean.get(
+            "isWithinChoke",
+            1,
+            () -> IsUnitWithinChoke.check(closestChoke, this)
+        );
+    }
+
+    private AChoke nearestChoke() {
+        return (AChoke) cache.get(
+            "nearestChoke",
+            167,
+            () -> Chokes.nearestChoke(this)
+        );
     }
 }

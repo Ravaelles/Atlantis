@@ -2,6 +2,7 @@ package atlantis.util.cache;
 
 import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
+import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.units.AUnit;
@@ -41,6 +42,7 @@ public class CacheKey {
         if (object instanceof Selection) return ((Selection) object).unitIds();
         if (object instanceof BaseLocation) return ((BaseLocation) object).toString();
         if (object instanceof ABaseLocation) return ((ABaseLocation) object).toString();
+        if (object instanceof AChoke) return ((AChoke) object).toString();
 
         ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
             "Unknown object to CacheKey: " + object.getClass().getName()

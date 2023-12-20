@@ -5,6 +5,7 @@ import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.units.select.Count;
 import atlantis.util.log.ErrorLog;
 
 public class IsReadyToProduceOrder {
@@ -43,12 +44,20 @@ public class IsReadyToProduceOrder {
 //            }
             return false;
         }
-//        if (!canAffordWithReserved(order)) return false;
+
+        if (cantAffordAndDidntExpandYet(order)) return false;
+
 //        if (!order.checkIfHasWhatRequired()) return false;
 
         return true;
 
 //        boolean isReady = order.supplyRequirementFulfilled() && order.checkIfHasWhatRequired();
+    }
+
+    private static boolean cantAffordAndDidntExpandYet(ProductionOrder order) {
+        return
+            (A.seconds() >= 700 && Count.basesWithUnfinished() <= 1)
+                && !canAffordWithReserved(order);
     }
 
     public static boolean canAffordWithReserved(ProductionOrder order) {

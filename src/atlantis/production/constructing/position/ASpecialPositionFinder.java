@@ -1,7 +1,7 @@
 package atlantis.production.constructing.position;
 
 import atlantis.map.base.ABaseLocation;
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -48,7 +48,7 @@ public class ASpecialPositionFinder {
         else if (modifier.equals(PositionModifier.NATURAL_CHOKE)) {
             AChoke chokepointForNatural = Chokes.natural(Select.main().position());
             if (chokepointForNatural != null && Select.main() != null) {
-                ABaseLocation natural = DefineNatural.naturalIfMainIsAt(Select.main().position());
+                ABaseLocation natural = DefineNaturalBase.naturalIfMainIsAt(Select.main().position());
                 return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);
             }
         }

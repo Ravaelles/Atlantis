@@ -5,7 +5,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.*;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
-import atlantis.map.base.define.DefineNatural;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -155,7 +155,7 @@ public class PositionModifier {
             }
             AChoke chokepointForNatural = Chokes.natural(main.position());
             if (chokepointForNatural != null && main != null) {
-                ABaseLocation natural = DefineNatural.naturalIfMainIsAt(main.position());
+                ABaseLocation natural = DefineNaturalBase.naturalIfMainIsAt(main.position());
 //                return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);
                 return natural.translateTilesTowards(chokepointForNatural.center(), 8);
             }
