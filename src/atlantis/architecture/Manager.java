@@ -2,6 +2,7 @@ package atlantis.architecture;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.util.log.ErrorLog;
 
 /**
  * Unit manager. Can contain submanagers (see managers() method).
@@ -36,14 +37,16 @@ public abstract class Manager extends BaseManager {
         return true;
     }
 
-    public Manager invokeFromParent(Manager parent) {
+    private Manager invokeFromParent(Object parent) {
         if (A.now() != parentsLastTimestamp) {
             parents.clear();
         }
-        this.parents.add(parent);
         this.parentsLastTimestamp = A.now();
 
         if (!applies()) return null;
+
+        if (parent != null) this.parents.add(parentToString(parent));
+        else ErrorLog.printErrorOnce("Parent is null for " + this.getClass().getSimpleName() + "!");
 
         Manager manager = handle();
         if (manager != null) {
@@ -53,9 +56,21 @@ public abstract class Manager extends BaseManager {
         return handleSubmanagers();
     }
 
-    public Manager invoke(Manager parent) {
-        return invokeFromParent(parent);
+    public Manager invoke(Object parent) {
+        return invokeFromParent(parentToString(parent));
     }
+
+    private String parentToString(Object parent) {
+        if (parent instanceof String) return (String) parent;
+
+        return parent != null
+            ? parent.getClass().getSimpleName()
+            : null;
+    }
+
+//    public Manager invoke(Commander parent) {
+//        return invokeFromParent(parent != null ? parent.getClass() : null);
+//    }
 
     public Manager forceHandle() {
         return handle();

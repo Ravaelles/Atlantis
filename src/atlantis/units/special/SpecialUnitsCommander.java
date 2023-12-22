@@ -11,7 +11,7 @@ public class SpecialUnitsCommander extends Commander {
     protected void handle() {
         for (AUnit building : Select.ourBuildings().list()) {
             if (building.is(AUnitType.Protoss_Shield_Battery)) {
-                (new ProtossShieldBattery(building)).invoke();
+                (new ProtossShieldBattery(building)).invoke(this);
             }
         }
     }

@@ -25,6 +25,8 @@ public class RunShowBackToEnemy {
 
         AUnit unit = runningManager.unit;
 
+//        if (unit.hp() <= 18) return false;
+
 //        if (unit.isGroundUnit() && unit.meleeEnemiesNearCount(1.5) >= 0) return true;
 
         if (unit.isGroundUnit() && unit.meleeEnemiesNearCount(2.5) >= 0) return true;

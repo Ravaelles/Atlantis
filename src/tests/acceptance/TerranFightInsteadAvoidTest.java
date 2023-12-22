@@ -19,10 +19,10 @@ public class TerranFightInsteadAvoidTest extends AbstractTestFakingGame {
             ShouldFightInsteadAvoidAsTerran manager = new ShouldFightInsteadAvoidAsTerran(ourWraith);
 
 //            System.err.println("manager.applies() = " + manager.applies());
-//            System.err.println("manager.invoke() = " + manager.invoke());
+//            System.err.println("manager.invoke(this) = " + manager.invoke(this));
 
             assertTrue(manager.applies());
-            assertEquals(new TerranFightInsteadAvoidAsWraith(ourWraith), manager.invoke());
+            assertEquals(new TerranFightInsteadAvoidAsWraith(ourWraith), manager.invoke(this));
 
 //            System.err.println(ourWraith.managerLogs().toString());
         });

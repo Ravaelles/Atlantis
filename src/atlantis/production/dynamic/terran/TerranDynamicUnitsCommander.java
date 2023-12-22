@@ -5,7 +5,6 @@ import atlantis.game.A;
 import atlantis.production.dynamic.terran.abundance.TerranAbundance;
 import atlantis.production.dynamic.terran.units.*;
 import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
@@ -48,7 +47,7 @@ public class TerranDynamicUnitsCommander extends Commander {
             }
         }
 
-        (new TerranAbundance()).invoke();
+        (new TerranAbundance()).invokeCommander();
     }
 
     // =========================================================

@@ -22,7 +22,7 @@ public class OnEveryFrame {
 
         try {
             AGame.cacheFrameNow();
-            Atlantis.getInstance().getGameCommander().invoke();
+            Atlantis.getInstance().getGameCommander().invokeCommander();
         }
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================

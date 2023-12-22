@@ -131,6 +131,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int _lastX;
     public int _lastY;
     public HasPosition _lastPositionRunInAnyDir = null;
+    private AUnit _targetUnitToAttack;
 
     // =========================================================
 
@@ -1355,6 +1356,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public AUnit target() {
         if (u.getTarget() != null) {
             return AUnit.getById(u.getTarget());
+        }
+
+        if (Actions.MOVE_ATTACK.equals(unitAction)) {
+            return targetUnitToAttack();
         }
 
         return orderTarget();
@@ -2962,5 +2967,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             167,
             () -> Chokes.nearestChoke(this)
         );
+    }
+
+    public void setTargetUnitToAttack(AUnit target) {
+        this._targetUnitToAttack = target;
+    }
+
+    public AUnit targetUnitToAttack() {
+        return this._targetUnitToAttack;
     }
 }

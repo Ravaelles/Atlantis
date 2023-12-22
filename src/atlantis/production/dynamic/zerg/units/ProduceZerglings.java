@@ -27,7 +27,7 @@ public class ProduceZerglings {
             if (!A.hasMinerals(210) && zerglings >= 4) return false;
         }
 
-        if (zerglings <= 5) return produceZergling();
+        if (zerglings <= 5 && (A.hasMinerals(500) || !A.hasGas(300))) return produceZergling();
 
         if (larvas >= 2 && A.supplyUsed() <= 180 && A.hasMinerals(400)) return produceZergling();
 

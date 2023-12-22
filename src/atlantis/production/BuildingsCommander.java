@@ -16,7 +16,7 @@ public class BuildingsCommander extends Commander {
     @Override
     protected void handle() {
         for (AUnit unit : Select.ourBuildings().list()) {
-            (new BuildingManager(unit)).invoke();
+            (new BuildingManager(unit)).invoke(this);
         }
     }
 

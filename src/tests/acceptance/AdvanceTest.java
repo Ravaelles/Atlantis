@@ -40,7 +40,7 @@ public class AdvanceTest extends NonAbstractTestFakingGame {
 //            if (true) return;
 
             for (AUnit unit : Select.ourCombatUnits().list()) {
-                (new CombatUnitManager(unit)).invoke();
+                (new CombatUnitManager(unit)).invoke(this);
 
                 //            boolean printUnit = false;
                 boolean printUnit = true;

@@ -19,7 +19,7 @@ public class DoNothing extends Manager {
 //        if (unit.isAir() && unit.hasAnyWeapon()) {
 
 //            AsAirAttackAnyone asAirUnitAttackAnyEnemy = new AsAirAttackAnyone(unit);
-//            return asAirUnitAttackAnyEnemy.invoke();
+//            return asAirUnitAttackAnyEnemy.invoke(this);
 //        }
 
         return null;

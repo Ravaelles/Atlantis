@@ -20,7 +20,7 @@ public class CrucialRepairsNearbyCommander extends Commander {
         if (tooManyRepairers()) return;
 
         for (AUnit worker : FreeWorkers.get().list()) {
-            (new DoRepairsNearby(worker)).invoke();
+            (new DoRepairsNearby(worker)).invoke(this);
         }
     }
 

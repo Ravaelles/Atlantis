@@ -23,7 +23,7 @@ public class ShouldFightInsteadAvoidAsRanged extends Manager {
 //            "dist: " + unit.nearestEnemyDist() + " / " +
 //            "cooldown: " + unit.cooldown());
 
-        if ((new AttackNearbyEnemies(unit)).invoke() != null) {
+        if ((new AttackNearbyEnemies(unit)).invoke(this) != null) {
             return usedManager(this);
         }
 

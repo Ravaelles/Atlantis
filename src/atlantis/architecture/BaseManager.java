@@ -16,7 +16,7 @@ public abstract class BaseManager {
     protected final AUnit unit;
     protected final Squad squad;
 
-    protected List<Manager> parents = new ArrayList<>(); // Useful for debugging
+    protected List<String> parents = new ArrayList<>(); // Useful for debugging
     protected int parentsLastTimestamp = -1;
 
     public BaseManager(AUnit unit) {
@@ -85,15 +85,15 @@ public abstract class BaseManager {
         return A.substring(name, 0, 30);
     }
 
-    public Manager parents() {
-        return parents.get(parents.size() - 1);
-    }
+//    public Manager parents() {
+//        return parents.get(parents.size() - 1);
+//    }
 
     public String parentsStack() {
         // Convert parents to string
         StringBuilder sb = new StringBuilder();
-        for (Manager parent : parents) {
-            sb.append(parent.toString()).append(" > ");
+        for (String parent : parents) {
+            sb.append(parent).append(" > ");
         }
         return sb.toString();
     }

@@ -13,7 +13,7 @@ public class SiegeVsRegularBuildings extends Manager {
 
     @Override
     public boolean applies() {
-        if ((new WouldBlockChokeBySieging(unit)).invoke() != null) return false;
+        if ((new WouldBlockChokeBySieging(unit)).invoke(this) != null) return false;
         if (unit.lastSiegedOrUnsiegedAgo() <= 30 * (10 + unit.id() % 5)) return false;
 
         if (
@@ -29,7 +29,7 @@ public class SiegeVsRegularBuildings extends Manager {
     }
 
     protected Manager handle() {
-        if (WantsToSiege.wantsToSiegeNow(unit, "SiegeBuilding")) return usedManager(this);
+        if (WantsToSiege.wantsToSiegeNow(unit, this, "SiegeBuilding")) return usedManager(this);
 
         return null;
     }

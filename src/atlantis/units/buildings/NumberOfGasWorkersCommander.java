@@ -41,7 +41,7 @@ public class NumberOfGasWorkersCommander extends Commander {
                 if (worker != null && worker.isGatheringGas()) {
 //                    System.out.println("FIRE GAS WORKER = " + worker + " / " + worker.getLastCommand());
                     worker.stop("Fired!");
-                    (new GatherResources(worker)).invoke();
+                    (new GatherResources(worker)).invoke(this);
                 }
                 break; // Only one worker per execution - prevent weird runs
             }

@@ -14,8 +14,8 @@ import atlantis.util.ProcessHelper;
  */
 public class Main {
     //    public static final String OUR_RACE = "Protoss";
-//    public static final String OUR_RACE = "Terran";
-    public static final String OUR_RACE = "Zerg";
+    public static final String OUR_RACE = "Terran";
+//    public static final String OUR_RACE = "Zerg";
 
     public static final String ENEMY_RACE = "Protoss";
 //    public static final String ENEMY_RACE = "Terran";
@@ -74,11 +74,12 @@ public class Main {
 
         // vs PROTOSS cheat-bots
         /**
-         * vs AI Protoss player - ♥‿♥ - My favorite map for testing,
+         * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
 //        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
+
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
 //        if (true) return "ums/LostTemple.scm"; // v. 3x Protoss players, again Zealot rush
 
@@ -110,8 +111,8 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-//        if (true) return "ums/rav/Bunker_v_Zealots.scx";
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+        if (true) return "ums/rav/Bunker_v_Zealots.scx";
+        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
@@ -151,12 +152,14 @@ public class Main {
 
         // === Maps for testing as Protoss ========================
 
-        if (true) return "ums/rav/1Drag_v_1Drag.scm";
+//        if (true) return "ums/rav/1Drag_v_1Drag.scm";
+//        if (true) return "ums/rav/2Drag_v_2Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";
+        if (true) return "ums/rav/3Drag_v_3Drag.scm";
 //        if (true) return "ums/rav/3Zeal_v_1Zeal.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag_withBase.scm";
-//@        if (true) return "ums/rav/4Drag_v_4Drag.scm";
+//        if (true) return "ums/rav/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_Zeal.scm";
 //@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";

@@ -29,7 +29,7 @@ public class Sparta extends MissionDefend {
 //    public boolean handle(AUnit unit) {
 //        focusPoint = focusPoint();
 //        if (!focusPoint.isAroundChoke() || unit.hasNoWeaponAtAll()) {
-//            return super.invoke();
+//            return super.invoke(this);
 //        }
 //
 //        this.unit = unit;

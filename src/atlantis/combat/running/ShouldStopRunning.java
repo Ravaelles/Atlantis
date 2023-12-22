@@ -1,6 +1,8 @@
 package atlantis.combat.running;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.managers.HoldToShoot;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
@@ -27,6 +29,8 @@ public class ShouldStopRunning extends Manager {
     }
 
     public boolean check() {
+        if (unit.isActiveManager(HoldToShoot.class)) return false;
+
         if (!unit.isRunning()) {
             return decisionStopRunning();
         }
@@ -121,8 +125,10 @@ public class ShouldStopRunning extends Manager {
 //            }
 //        }
 
+//        System.out.println("@ " + A.now() + " - stop running, near enemy =  " + unit.nearestEnemyDist() + " / " + unit.tooltip());
+
         unit.runningManager().stopRunning();
-        unit.holdPosition("StopRunning");
+        unit.stop("StopRunning");
         return false;
     }
 }

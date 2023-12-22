@@ -74,7 +74,7 @@ public class PreventMaginotLine extends Manager {
         }
 
         if (!unit.isAttacking() && !unit.isMoving()) {
-            (new AttackNearbyEnemies(unit)).invoke();
+            (new AttackNearbyEnemies(unit)).invoke(this);
             return usedManager(this);
         }
 

@@ -24,7 +24,7 @@ public class TerranShouldNotRetreat extends Manager {
         Manager manager = shouldNotRetreat();
 
         if (manager != null) {
-            (new AttackNearbyEnemies(unit)).invoke();
+            (new AttackNearbyEnemies(unit)).invoke(this);
             return manager;
         }
 

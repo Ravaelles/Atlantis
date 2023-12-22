@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.util.Enemy;
 
 public class TerranFightInsteadAvoidAsStandard extends Manager {
     public TerranFightInsteadAvoidAsStandard(AUnit unit) {
@@ -20,6 +21,10 @@ public class TerranFightInsteadAvoidAsStandard extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit.isMarine() && Enemy.protoss() && unit.meleeEnemiesNearCount(1.9) >= 2) {
+            return null;
+        }
+
         return usedManager(this);
     }
 }

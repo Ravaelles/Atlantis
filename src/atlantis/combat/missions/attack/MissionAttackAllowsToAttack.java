@@ -36,7 +36,7 @@ public class MissionAttackAllowsToAttack extends HasUnit {
 
     private boolean forbiddenToAttackCombatBuilding(AUnit enemy) {
         if (enemy.isABuilding()) {
-            Manager manager = (new DontAdvanceButHoldAndContainWhenEnemyBuildingsClose(unit)).invoke();
+            Manager manager = (new DontAdvanceButHoldAndContainWhenEnemyBuildingsClose(unit)).invoke(this);
 
             if (manager != null) return true;
         }

@@ -22,8 +22,11 @@ public class AvoidSingleEnemy extends Manager {
     public Manager avoid() {
         if (doNotAvoid()) return null;
 
+//        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
+//        if (true) return null;
+
 //        if (enemy.isCombatBuilding()) {
-//            return (new AvoidCombatBuilding(unit, enemy)).invoke();
+//            return (new AvoidCombatBuilding(unit, enemy)).invoke(this);
 //        }
 
 //        A.printStackTrace("AvoidSingleEnemy");
@@ -49,7 +52,7 @@ public class AvoidSingleEnemy extends Manager {
             return true;
         }
 
-        if ((new DontAvoidEnemy(unit)).invoke() != null) return true;
+        if ((new DontAvoidEnemy(unit)).invoke(this) != null) return true;
 
         return false;
     }

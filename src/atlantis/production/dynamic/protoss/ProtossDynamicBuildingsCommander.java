@@ -21,7 +21,7 @@ import static atlantis.util.Helpers.*;
 public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     protected void handle() {
-        super.invoke();
+        super.invokeCommander();
 
         if (AGame.notNthGameFrame(7) || (!A.hasMinerals(550) && noSupply(25))) {
             return;

@@ -42,7 +42,7 @@ public class ATargeting extends HasUnit {
      */
     protected AUnit defineBestEnemyToAttack(double maxDistFromEnemy) {
 //        if (true) return null;
-        if (unit.hp() <= 18) return FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
+//        if (unit.hp() <= 18) return FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
 
@@ -52,7 +52,7 @@ public class ATargeting extends HasUnit {
 
         if (enemy != null && enemy.isAlive() && unit.canAttackTarget(enemy)) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
-            return enemy;
+            if (unit.hasCooldown() || unit.hasWeaponRangeByGame(enemy)) return enemy;
         }
 
         // Used when something went wrong there ^
@@ -66,6 +66,7 @@ public class ATargeting extends HasUnit {
         if (unit.isTankSieged()) return (new ATankTargeting(unit)).targetForTank();
 
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
+//        System.out.println("BASE enemy = " + enemy);
 
         if (enemy == null && maxDistFromEnemy >= 8) {
             enemy = unit.enemiesNear()
@@ -113,9 +114,11 @@ public class ATargeting extends HasUnit {
 
         // Most wounded enemy IN RANGE
         AUnit enemy = selectWeakestEnemyOfType(enemyType, unit, 0);
-//        A.errPrintln("enemy A = " + enemy);
+//        A.errPrintln("@ " + A.now() + " enemy A = " + enemy);
+
         if (enemy != null) {
 //            unit.addLog("AttackClose");
+//            System.err.println("AttackClose");
             return enemy;
         }
 
@@ -123,6 +126,7 @@ public class ATargeting extends HasUnit {
         enemy = selectWeakestEnemyOfType(enemyType, unit, 1);
 //        A.errPrintln("enemy B = " + enemy);
         if (enemy != null) {
+//            System.err.println("Attack 1 range");
             return enemy;
         }
 
@@ -130,6 +134,7 @@ public class ATargeting extends HasUnit {
         enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.maxDistToAttack(unit));
 //        A.errPrintln("enemy B3 = " + enemy);
         if (enemy != null) {
+//            System.err.println("Attack max");
             return enemy;
         }
 
@@ -140,6 +145,7 @@ public class ATargeting extends HasUnit {
         enemy = enemyUnits.canBeAttackedBy(unit, 20).nearestTo(unit);
         if (enemy != null) {
             unit.addLog("AttackNearest");
+//            System.err.println("Attack NEAREST");
             return enemy;
         }
 
@@ -183,21 +189,21 @@ public class ATargeting extends HasUnit {
             .canBeAttackedBy(ourUnit, extraRange);
 //                .hasPathFrom(ourUnit);
 
-        // It makes sense to focus fire on units that have lot of HP
-        boolean shouldFocusFire = ourUnit.friendsNearCount() <= 7
-            || (type.maxHp() > 35 && !type.isWorker());
-
-        if (shouldFocusFire) {
-//            .inShootRangeOf(extraRange, ourUnit)
-            AUnit mostWounded = targets.mostWounded();
-            if (mostWounded != null && mostWounded.isWounded() && mostWounded.hp() >= 21) {
-                return mostWounded;
-            }
-        }
+//        // It makes sense to focus fire on units that have lot of HP
+//        boolean shouldFocusFire = ourUnit.friendsNearCount() <= 7
+//            || (type.maxHp() > 35 && !type.isWorker());
+//
+//        if (shouldFocusFire) {
+////            .inShootRangeOf(extraRange, ourUnit)
+//            AUnit mostWounded = targets.mostWounded();
+//            if (mostWounded != null && mostWounded.isWounded() && mostWounded.hp() >= 21) {
+//                return mostWounded;
+//            }
+//        }
 
         // For units with low HP (Zerglings, workers), it makes sense to spread the fire across multiple units,
         // otherwise enemy that dies consumes unit's cooldown and effectively - it stops shooting at all.
-        else if (targets.notEmpty() && ourUnit.isRanged()) {
+        if (targets.notEmpty() && ourUnit.isRanged()) {
             List<AUnit> enemies = targets.sortByHealth().limit(Enemy.zerg() ? 4 : 2).list();
 
             // Randomize enemy target based on unit id
@@ -207,8 +213,10 @@ public class ATargeting extends HasUnit {
             }
         }
 
-        HasPosition relativeTo = ourUnit.squadCenter() != null ? ourUnit.squadCenter() : ourUnit;
-        return targets.clone().nearestTo(relativeTo);
+        return targets.first();
+
+//        HasPosition relativeTo = ourUnit.squadCenter() != null ? ourUnit.squadCenter() : ourUnit;
+//        return targets.nearestTo(relativeTo);
     }
 
     private AUnit handleTanksSpecially(AUnit unit, AUnit weakestEnemy) {

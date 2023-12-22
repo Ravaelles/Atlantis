@@ -16,7 +16,7 @@ public class Commander extends BaseCommander {
         return true;
     }
 
-    public void invoke() {
+    public void invokeCommander() {
         if (A.now() == lastFrameInvoked) return;
         lastFrameInvoked = A.now();
 
@@ -41,7 +41,7 @@ public class Commander extends BaseCommander {
 
     public void handleSubcommanders() {
         for (Commander commander : commanderObjects) {
-            commander.invoke();
+            commander.invokeCommander();
         }
     }
 }

@@ -28,11 +28,11 @@ public class TerranGhostTest extends AbstractTestFakingGame {
                 TerranGhost manager3 = new TerranGhost(ghost3);
                 TerranGhost manager4 = new TerranGhost(ghost4);
                 TerranGhost manager5 = new TerranGhost(ghost5);
-                manager1.invoke();
-                manager2.invoke();
-                manager3.invoke();
-                manager4.invoke();
-                manager5.invoke();
+                manager1.invoke(this);
+                manager2.invoke(this);
+                manager3.invoke(this);
+                manager4.invoke(this);
+                manager5.invoke(this);
 
 //                System.err.println("Lockdown targetFor(ghost1) = " + TerranGhost.lockdownTargets.targetFor(ghost1));
 //                System.err.println("Lockdown targetFor(ghost2) = " + TerranGhost.lockdownTargets.targetFor(ghost2));

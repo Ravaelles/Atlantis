@@ -30,7 +30,7 @@ public class TerranReinforceBasesWithCombatBuildings extends ReinforceBasesWithC
 
         if (ArmyStrength.ourArmyRelativeStrength() <= 70) {
             if (Count.bunkers() <= 2) {
-                (new ReinforceWithBunkerAtNearestChoke(Chokes.mainChoke())).invoke();
+                (new ReinforceWithBunkerAtNearestChoke(Chokes.mainChoke())).invokeCommander();
                 return true;
             }
         }
@@ -40,6 +40,6 @@ public class TerranReinforceBasesWithCombatBuildings extends ReinforceBasesWithC
 
     @Override
     protected void makeSureIsReinforced(HasPosition basePosition) {
-        (new ReinforceWithBunkerAtNearestChoke(basePosition)).invoke();
+        (new ReinforceWithBunkerAtNearestChoke(basePosition)).invokeCommander();
     }
 }

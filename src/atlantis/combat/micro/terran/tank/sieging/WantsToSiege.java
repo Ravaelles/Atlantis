@@ -1,12 +1,11 @@
 package atlantis.combat.micro.terran.tank.sieging;
 
-import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 
 public class WantsToSiege {
-    public static boolean wantsToSiegeNow(AUnit unit, String tooltip) {
-        if ((new WouldBlockChokeBySieging(unit)).invoke() != null) return false;
+    public static boolean wantsToSiegeNow(AUnit unit, Object parent, String tooltip) {
+        if ((new WouldBlockChokeBySieging(unit)).invoke(parent) != null) return false;
         if (unit.lastStartedRunningLessThanAgo(30 * (3 + unit.id() % 4))) return false;
 
         if (!Enemy.terran()) {

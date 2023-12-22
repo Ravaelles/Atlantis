@@ -22,7 +22,7 @@ public class ScoutRunning extends Manager {
         nextPositionToUnit = null;
         scoutingAroundBaseWasInterrupted = true;
         if (A.seconds() >= 300) {
-            return (new ScoutFreeBases(unit)).invoke();
+            return (new ScoutFreeBases(unit)).invoke(this);
         }
 
         return null;

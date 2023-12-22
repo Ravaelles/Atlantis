@@ -13,13 +13,15 @@ public class DanceAfterShoot extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
+        if (true) return false;
 
         boolean applies = unit.isRanged()
 //            && !unit.isAttacking()
             && unit.cooldownRemaining() >= cooldownRemainingThreshold()
+//            && unit.cooldownRemaining() <= unit.cooldownAbsolute() - UnitAttackWaitFrames.effectiveStopFrames(unit.type())
             && unit.lastActionMoreThanAgo(6, Actions.ATTACK_UNIT)
             && UnitAttackWaitFrames.waitedLongEnoughForAttackFrameToFinish(unit)
+//            && UnitAttackWaitFrames.waitedLongEnoughForStartedAttack(unit)
             && !unit.isHoldingPosition()
             && !unit.isStartingAttack()
             && !unit.isAttackFrame()
@@ -94,7 +96,7 @@ public class DanceAfterShoot extends Manager {
 
         // Small step BACK
         if (shouldDanceAway(dist, weaponRange, target)) {
-            System.err.println("^^^^^^ DANCE AWAY (" + dist + ")");
+//            System.err.println("^^^^^^ DANCE AWAY (" + dist + ")");
             unit.addLog(danceAway);
             return unit.moveAwayFrom(target.position(), 0.5, Actions.MOVE_DANCE_AWAY, danceAway);
         }

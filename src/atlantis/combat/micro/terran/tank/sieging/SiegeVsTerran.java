@@ -31,7 +31,7 @@ public class SiegeVsTerran extends Manager {
 
     @Override
     protected Manager handle() {
-        if (WantsToSiege.wantsToSiegeNow(unit, "vTerran!")) return usedManager(this);
+        if (WantsToSiege.wantsToSiegeNow(unit, this, "vTerran!")) return usedManager(this);
 
         return null;
     }

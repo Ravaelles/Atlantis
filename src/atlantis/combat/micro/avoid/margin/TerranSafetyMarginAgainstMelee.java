@@ -24,8 +24,8 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         // === MEDIC in range ===========================================
 
         boolean medicInRange = defender.hasMedicInRange();
-        if (medicInRange) {
-            if (defender.isHealthy() && defender.enemiesNearInRadius(3) <= 1) {
+        if (medicInRange && defender.hp() >= 35) {
+            if (defender.isHealthy() && defender.enemiesNearInRadius(3) <= 2) {
                 defender.setTooltipTactical("Healthy");
                 return enemyUnitsNearBonus(defender);
             }
@@ -81,8 +81,9 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
     private double cooldownBonus(AUnit defender) {
         int cooldown = defender.cooldown();
+
         if (cooldown >= 4) {
-            return cooldown / 6.0;
+            return 1;
         }
 
         return 0;

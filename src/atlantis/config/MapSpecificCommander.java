@@ -163,6 +163,15 @@ public class MapSpecificCommander extends Commander {
                 GameSpeed.changeFrameSkipTo(0);
             }
         }
+
+        // =========================================================
+
+        else if (ActiveMap.isMap("M&M_v_Zealots")) {
+            if (A.now() <= 1) {
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+//                CameraCommander.centerCameraNowOnSquadCenter();
+            }
+        }
     }
 
     private static AUnit ourUnitNearestToEnemy() {

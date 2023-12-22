@@ -26,11 +26,13 @@ public class HoldToShoot extends Manager {
 //        if (true) return false;
 
         if (!unit.isRanged()) return false;
+        if (unit.cooldown() >= 8) return false;
 
         target = unit.target();
 
         if (target == null) return false;
         if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
+        if (unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)) return false;
 
         if (unit.lastActionMoreThanAgo(5, Actions.HOLD_POSITION)) return true;
 
@@ -49,7 +51,7 @@ public class HoldToShoot extends Manager {
      */
     @Override
     protected Manager handle() {
-        System.err.println("@ " + A.now() + " ........ (cooldown: " + unit.cooldown() + ")");
+//        System.err.println("@ " + A.now() + " ........ (cooldown: " + unit.cooldown() + ")");
 
         distToTarget = unit.distTo(target);
         unitWeaponRange = unit.weaponRangeAgainst(target);
@@ -61,7 +63,7 @@ public class HoldToShoot extends Manager {
         // HOLD
         if (shouldHold()) {
 //            GameSpeed.changeSpeedTo(30);
-            System.err.println("************************** HOLD & SHOOT - " + distToTarget + " ");
+//            System.err.println("************************** HOLD & SHOOT - " + distToTarget + " ");
             unit.holdPosition("HoldToShoot");
 //            System.err.println("@ " + A.now() + " HOLD TO SHOOT - " + distToEnemy + " / " + unit);
             return usedManager(this);
@@ -96,6 +98,11 @@ public class HoldToShoot extends Manager {
     }
 
     private double extraMargin() {
+        if (unit.isMarine()) {
+            if (target.isMoving() && target.isFacing(unit)) return 1;
+            return 0;
+        }
+
         return (target.isMoving() ? (target.isFacing(unit) ? -1.4 : 1.0) : -1.0);
     }
 

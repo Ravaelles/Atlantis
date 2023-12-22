@@ -26,7 +26,7 @@ public class WantsToAvoid extends Manager {
         // =========================================================
 
         FightInsteadAvoid fightInsteadAvoid = new FightInsteadAvoid(unit, enemies);
-        if (fightInsteadAvoid.invoke() != null) {
+        if (fightInsteadAvoid.invoke(this) != null) {
             return usedManager(fightInsteadAvoid);
         }
 

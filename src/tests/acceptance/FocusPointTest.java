@@ -43,7 +43,7 @@ public class FocusPointTest extends AbstractTestFakingGame {
                 fifthFrame();
             }
 
-            gameCommander.invoke();
+            gameCommander.invokeCommander();
         });
     }
 

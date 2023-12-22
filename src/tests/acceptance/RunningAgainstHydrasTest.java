@@ -13,7 +13,7 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
         createWorld(10, () -> {
             FakeUnit unit = ourFirst;
             unit.setSquad(Alpha.get());
-            (new CombatUnitManager(unit)).invoke();
+            (new CombatUnitManager(unit)).invoke(this);
 
             FakeUnit enemy = nearestEnemy(unit);
 

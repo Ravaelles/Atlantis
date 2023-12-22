@@ -27,6 +27,6 @@ public class IdleProtector extends Manager {
             target.isBunker() && target.enemiesNear().havingWeapon().inRadius(9, target).atMost(1)
         ) return null;
 
-        return (new IdleProtectorRepairs(unit)).invoke();
+        return (new IdleProtectorRepairs(unit)).invoke(this);
     }
 }

@@ -20,8 +20,8 @@ import tests.unit.FakeUnitData;
 public interface AUnitOrders {
     int DEBUG_MIN_FRAMES = 0;
 
-//    boolean DEBUG_ALL = false;
-    boolean DEBUG_ALL = true;
+    boolean DEBUG_ALL = false;
+//    boolean DEBUG_ALL = true;
 
     boolean DEBUG_COMBAT = false;
 //    boolean DEBUG_COMBAT = true;
@@ -92,6 +92,9 @@ public interface AUnitOrders {
             return false;
         }
 
+        if (!unit().hasWeaponRangeByGame(target)) {
+            return move(target, Actions.MOVE_ATTACK, null, false);
+        }
 
         // Do NOT issue double orders
 //        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
@@ -189,9 +192,7 @@ public interface AUnitOrders {
     }
 
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
-        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / " + tooltip);
-        }
+
         if (target == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit().typeWithHash());
             return false;
@@ -237,6 +238,12 @@ public interface AUnitOrders {
 
         APosition currentTarget = unit().targetPosition();
 
+        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+            if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
+                System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / " + tooltip);
+            }
+        }
+
         if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
             if (unit().isSieged() && ShouldUnsiegeToMove.shouldUnsiege(unit())) {
                 unit().unsiege();
@@ -247,6 +254,10 @@ public interface AUnitOrders {
 
 //            }
             u().move(target.position().p());
+
+            if (target instanceof AUnit) {
+                unit().setTargetUnitToAttack((AUnit) target);
+            }
 
             unit().setLastActionReceivedNow()
                 .setAction(unitAction);

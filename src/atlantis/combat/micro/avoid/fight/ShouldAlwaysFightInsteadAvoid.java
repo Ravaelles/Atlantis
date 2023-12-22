@@ -70,8 +70,9 @@ public class ShouldAlwaysFightInsteadAvoid {
 
                 Manager m;
 
-                if ((m = new ShouldFightInsteadAvoidAsRanged(unit)).invoke() != null) return true;
-                if ((m = new ShouldFightInsteadAvoidAsTerran(unit)).invoke() != null) return true;
+//                if ((m = new ShouldFightInsteadAvoidAsRanged(unit)).invoke(this) != null) return true;
+                if ((m = new ShouldFightInsteadAvoidAsRanged(unit)).applies()) return true;
+                if ((m = new ShouldFightInsteadAvoidAsTerran(unit)).invoke(this) != null) return true;
                 if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) return true;
 
                 if (unit.isMelee() && unit.shouldRetreat()) return false;

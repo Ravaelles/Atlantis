@@ -11,7 +11,7 @@ public class RepairerCommander extends Commander {
     @Override
     protected void handle() {
         boolean noMineralsToContinueRepairs = !A.hasMinerals(4);
-        
+
         for (Iterator<AUnit> iterator = RepairAssignments.getRepairers().iterator(); iterator.hasNext(); ) {
             AUnit repairer = iterator.next();
 
@@ -25,7 +25,7 @@ public class RepairerCommander extends Commander {
                 continue;
             }
 
-            (new RepairerManager(repairer)).invoke();
+            (new RepairerManager(repairer)).invoke(this);
         }
     }
 }

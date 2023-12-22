@@ -142,7 +142,7 @@ public class AvoidCombatBuilding extends Manager {
 
     private Manager thereIsNoSafetyMarginAtAll(AUnit combatBuilding) {
         AvoidCombatBuildingCriticallyClose avoidCombatBuildingCriticallyClose = new AvoidCombatBuildingCriticallyClose(unit, combatBuilding);
-        if (avoidCombatBuildingCriticallyClose.invoke() != null) {
+        if (avoidCombatBuildingCriticallyClose.invoke(this) != null) {
             return avoidCombatBuildingCriticallyClose;
         }
 
@@ -168,7 +168,7 @@ public class AvoidCombatBuilding extends Manager {
     }
 
     private Manager stillSomePlaceLeft(AUnit combatBuilding) {
-        return (new CircumnavigateCombatBuilding(unit, combatBuilding)).invoke();
+        return (new CircumnavigateCombatBuilding(unit, combatBuilding)).invoke(this);
 //        APosition runFrom = combatBuilding.position();
 //
 ////        if (A.chance(70)) {

@@ -7,6 +7,6 @@ public class StopRunningAsMarine {
         if (!unit.isMarine()) return false;
         if (unit.isHealthy() && unit.hasMedicInRange()) return false;
 
-        return unit.isWounded() && unit.meleeEnemiesNearCount(1.9) > 0;
+        return unit.meleeEnemiesNearCount(2.1) > 0;
     }
 }

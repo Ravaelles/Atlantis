@@ -184,7 +184,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // Go to random INVISIBLE
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 6; i++) {
             _temporaryTarget = AMap.randomInvisiblePosition(our);
             if (_temporaryTarget != null && _temporaryTarget.hasPathTo(our.position())) {
                 return new AFocusPoint(

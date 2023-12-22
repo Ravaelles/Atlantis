@@ -70,7 +70,7 @@ public class LoadIntoTheBunker extends Manager {
 
             if (isItSafeToLoadIntoBunker) {
                 PreventMaginotLine preventMaginotLine = new PreventMaginotLine(unit);
-                if (preventMaginotLine.invoke() != null) {
+                if (preventMaginotLine.invoke(this) != null) {
                     return usedManager(preventMaginotLine);
                 }
 
@@ -83,7 +83,7 @@ public class LoadIntoTheBunker extends Manager {
             }
         }
 
-        return (new MoveToBunkerWhenCantLoadIntoIt(unit)).invoke();
+        return (new MoveToBunkerWhenCantLoadIntoIt(unit)).invoke(this);
     }
 
     private double maxDistanceToLoad() {

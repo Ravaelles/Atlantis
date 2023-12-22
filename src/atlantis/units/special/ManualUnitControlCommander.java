@@ -8,7 +8,7 @@ public class ManualUnitControlCommander extends Commander {
     @Override
     protected void handle() {
         for (AUnit unit : Select.ourRealUnits().list()) {
-            (new ManualOverrideManager(unit)).invoke();
+            (new ManualOverrideManager(unit)).invoke(this);
         }
     }
 }

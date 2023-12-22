@@ -39,7 +39,7 @@ public class SiegeVsRegularEnemies extends Manager {
 
     @Override
     protected Manager handle() {
-        if (WantsToSiege.wantsToSiegeNow(unit, "Enemies!")) return usedManager(this);
+        if (WantsToSiege.wantsToSiegeNow(unit, this, "Enemies!")) return usedManager(this);
 
         return null;
     }

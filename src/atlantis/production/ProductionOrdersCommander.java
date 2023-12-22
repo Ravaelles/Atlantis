@@ -29,7 +29,7 @@ public class ProductionOrdersCommander extends Commander {
 
     private static void handleProductionOrder(ProductionOrder order) {
         try {
-            (new ProductionOrderHandler(order)).invoke();
+            (new ProductionOrderHandler(order)).invokeCommander();
         } catch (Exception e) {
             order.setStatus(OrderStatus.COMPLETED);
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancelled " + order + " as there was: " + e.getClass());

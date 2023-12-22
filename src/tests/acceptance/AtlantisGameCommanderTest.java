@@ -12,7 +12,7 @@ public class AtlantisGameCommanderTest extends AbstractTestFakingGame {
     @Test
     public void mainGameLoopWorksAsExpected() {
         createWorld(1, () -> {
-            (new AtlantisGameCommander()).invoke();
+            (new AtlantisGameCommander()).invokeCommander();
 
             CodeProfiler.printSummary();
 

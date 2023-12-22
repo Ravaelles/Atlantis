@@ -51,7 +51,7 @@ public class ScoutCommander extends Commander {
 
                 if (unit != null && unit.isAlive()) {
                     Manager scoutManager = new ScoutManager(unit);
-                    scoutManager.invoke();
+                    scoutManager.invoke(this);
                 }
             }
         } catch (ConcurrentModificationException ignore) {

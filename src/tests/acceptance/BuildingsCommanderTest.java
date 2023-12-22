@@ -9,7 +9,7 @@ public class BuildingsCommanderTest extends AbstractTestFakingGame {
     @Test
     public void iteratesOverBuildings() {
         createWorld(1, () -> {
-            (new BuildingsCommander()).invoke();
+            (new BuildingsCommander()).invokeCommander();
         });
     }
 

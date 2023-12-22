@@ -11,10 +11,14 @@ public class ImproveCombatPerformance extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isAttacking()) return false;
-        if (A.everyNthGameFrame(9)) return false;
-        if (unit.squad().isLeader(unit)) return false;
         if (unit.enemiesNear().notEmpty()) return false;
+        if (unit.isAttacking()) return false;
+        if (unit.squad().isLeader(unit)) return false;
+
+        if (unit.isMoving()) return true;
+
+//        if (A.everyNthGameFrame(11)) return false;
+//        if (unit.hasNotMovedInAWhile()) return false;
 
         return true;
 //        return !unit.looksIdle() && A.everyFrameExceptNthFrame(A.rand(2, 15)) && unit.isCombatUnit() && unit.enemiesNear().empty();

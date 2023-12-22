@@ -23,6 +23,6 @@ public class ActWithSquadsCommander extends Commander {
             SquadMissionChanger.changeSquadMissionIfNeeded(squad);
         }
 
-        (new ASquadCommander(squad)).invoke();
+        (new ASquadCommander(squad)).invokeCommander();
     }
 }

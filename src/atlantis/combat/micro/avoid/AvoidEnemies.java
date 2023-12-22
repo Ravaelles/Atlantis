@@ -12,14 +12,14 @@ import java.util.List;
 public class AvoidEnemies extends Manager {
     private static Cache<Units> cache = new Cache<>();
     private WantsToAvoid wantsToAvoid;
-    private Units enemiesDangerouslyClose;
+//    private Units enemiesDangerouslyClose;
     private EnemyUnitsToAvoid enemyUnitsToAvoid;
 
     public AvoidEnemies(AUnit unit) {
         super(unit);
         wantsToAvoid = new WantsToAvoid(unit);
         enemyUnitsToAvoid = new EnemyUnitsToAvoid(unit);
-        enemiesDangerouslyClose = new Units();
+//        enemiesDangerouslyClose = new Units();
     }
 
     public static void clearCache() {
@@ -30,24 +30,22 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        enemiesDangerouslyClose = enemyUnitsToAvoid.enemiesDangerouslyClose();
+//        enemiesDangerouslyClose = enemyUnitsToAvoid.enemiesDangerouslyClose();
 
         if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
 
-        return !(new ShouldNotAvoid(unit, enemiesDangerouslyClose)).shouldNotAvoid();
+        return !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid();
     }
 
     @Override
     protected Manager handle() {
         Manager manager = avoidEnemiesIfNeeded();
 
-        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
-
         return manager;
     }
 
     public Manager avoidEnemiesIfNeeded() {
-        if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose) != null) {
+        if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose()) != null) {
             return usedManager(unit.manager());
         }
 
@@ -57,11 +55,11 @@ public class AvoidEnemies extends Manager {
     // =========================================================
 
     public Units enemiesDangerouslyClose() {
-        return enemiesDangerouslyClose;
+        return enemyUnitsToAvoid.enemiesDangerouslyClose();
     }
 
     public boolean shouldAvoidAnyUnit() {
-        return enemiesDangerouslyClose.isNotEmpty();
+        return enemiesDangerouslyClose().isNotEmpty();
     }
 
     public boolean shouldNotAvoidAnyUnit() {

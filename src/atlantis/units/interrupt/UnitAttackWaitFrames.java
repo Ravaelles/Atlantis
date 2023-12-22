@@ -21,6 +21,10 @@ public class UnitAttackWaitFrames {
         return unit.lastAttackFrameAgo() <= attackAnimationFrames(unit.type());
     }
 
+    public static boolean waitedLongEnoughForStartedAttack(AUnit unit) {
+        return !(unit.lastFrameOfStartingAttackAgo() <= effectiveStopFrames(unit.type()));
+    }
+
     public static boolean unitAlreadyStartedAttackAnimation(AUnit unit) {
 //        return unit.isAttackingOrMovingToAttack()
 //        return unit.isAttackingOrMovingToAttack()

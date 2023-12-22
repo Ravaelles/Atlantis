@@ -27,7 +27,7 @@ public class ASquadCommander extends Commander {
 
         // Act with every combat unit
         for (AUnit unit : squad.units().list()) {
-            (new CombatUnitManager(unit)).invoke();
+            (new CombatUnitManager(unit)).invoke(this);
 
 //            AAdvancedPainter.paintTextCentered(
 //                unit.position().translateByTiles(0, 0.6),

@@ -23,7 +23,7 @@ public class TerranAlwaysAvoidAsTerran extends Manager {
     private boolean asInfantry() {
         if (!unit.isTerranInfantry()) return false;
 
-        return unit.cooldown() >= 3 && unit.meleeEnemiesNearCount(2) >= 1;
+        return MarineCanAttackNearEnemy.allowedForThisUnit(unit);
     }
 
     private boolean asVulture() {

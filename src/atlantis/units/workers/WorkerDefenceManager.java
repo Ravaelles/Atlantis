@@ -55,7 +55,7 @@ public class WorkerDefenceManager extends Manager {
 
         if (handleFightEnemyIfNeeded(unit)) return true;
 
-        if ((new AvoidEnemies(unit)).invoke() != null) {
+        if ((new AvoidEnemies(unit)).invoke(this) != null) {
             unit.addLog("WorkerAvoid");
             return true;
         }

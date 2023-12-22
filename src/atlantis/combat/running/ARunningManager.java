@@ -83,10 +83,11 @@ public class ARunningManager {
 
     private boolean handleContinueRunning() {
         if (unit.isRunning()) {
-            if (unit.lastStartedRunningLessThanAgo(5)) {
+            double distToTargetPosition = unit.targetPosition() != null ? unit.distTo(unit.targetPosition()) : -1;
 
-                return true;
-            }
+            if (distToTargetPosition >= 2.5) return true;
+            if (distToTargetPosition >= 2 && unit.meleeEnemiesNearCount(1.7) > 0) return true;
+            if (unit.lastStartedRunningLessThanAgo(5)) return true;
 
             if (
                 unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)

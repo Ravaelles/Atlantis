@@ -1,14 +1,12 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.terran.wraith.AttackAsWraith;
+import atlantis.combat.micro.avoid.terran.MarineCanAttackNearEnemy;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLog;
-import org.junit.runners.Parameterized;
 
 public class AttackNearbyEnemies extends Manager {
     private static Cache<AUnit> cache = new Cache<>();
@@ -34,11 +32,11 @@ public class AttackNearbyEnemies extends Manager {
     @Override
     public boolean applies() {
         if (unit.cooldown() >= 8) return false;
-
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
         if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
-
         if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
+
+        if (unit.isMarine()) return MarineCanAttackNearEnemy.allowedForThisUnit(unit);
 
         return unit.hasAnyWeapon();
     }
@@ -46,7 +44,7 @@ public class AttackNearbyEnemies extends Manager {
     @Override
     protected Manager handle() {
 //        PreventFreeze preventFreeze = new PreventFreeze(unit);
-//        if (preventFreeze.invoke() != null) {
+//        if (preventFreeze.invoke(this) != null) {
 //            return usedManager(preventFreeze);
 //        }
 
@@ -143,7 +141,7 @@ public class AttackNearbyEnemies extends Manager {
 //                && unit.lastActionMoreThanAgo(30 * 3, Actions.MOVE_SPECIAL)
 //        ) {
 //            MoveAsLooksIdle moveAsLooksIdle = new MoveAsLooksIdle(unit);
-//            moveAsLooksIdle.invoke();
+//            moveAsLooksIdle.invoke(this);
 //            usedManager(moveAsLooksIdle);
 //            return false;
 //        }
@@ -162,7 +160,7 @@ public class AttackNearbyEnemies extends Manager {
     protected AUnit defineEnemyToAttackFor() {
         return cache.getIfValid(
             "defineEnemyToAttackFor",
-            7,
+            5,
             () -> {
                 reasonNotToAttack = null;
 

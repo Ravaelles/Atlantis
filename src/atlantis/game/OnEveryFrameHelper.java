@@ -58,7 +58,7 @@ public class OnEveryFrameHelper {
 
 //        validateNextDepotPosition();
 
-        printFirstCombatUnitStatus();
+//        printFirstCombatUnitStatus();
     }
 
     private static void printFirstCombatUnitStatus() {
@@ -71,6 +71,8 @@ public class OnEveryFrameHelper {
         System.err.println("@ " + A.now() + ": " + unit.manager()
             + " \\ dist: " + A.digit(enemyDist)
             + " \\ cool:" + unit.cooldown());
+
+//        unit.setTooltip("Cooldown:" + unit.cooldown());
 
         if (unit.isAttacking())  {
             AAdvancedPainter.paintCircle(unit, 12, Color.Orange);
