@@ -20,8 +20,9 @@ import tests.unit.FakeUnitData;
 public interface AUnitOrders {
     int DEBUG_MIN_FRAMES = 0;
 
-//    boolean DEBUG_ALL = false;
-    boolean DEBUG_ALL = true;
+
+    boolean DEBUG_ALL = false;
+//    boolean DEBUG_ALL = true;
 
     boolean DEBUG_COMBAT = false;
 //    boolean DEBUG_COMBAT = true;
@@ -280,6 +281,8 @@ public interface AUnitOrders {
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
     default boolean holdPosition(String tooltip) {
+        if (unit().isCommand(UnitCommandType.Hold_Position)) return false;
+
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println(unit().typeWithHash() + " HOLD @" + A.now() + " / " + tooltip);
         }

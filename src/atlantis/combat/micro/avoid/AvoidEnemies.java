@@ -38,7 +38,7 @@ public class AvoidEnemies extends Manager {
     protected Manager handle() {
         Manager manager = avoidEnemiesIfNeeded();
 
-        System.err.println("AVOID PARENTS = " + parentsStack());
+//        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
 
         return manager;
     }

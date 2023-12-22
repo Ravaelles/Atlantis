@@ -56,6 +56,24 @@ public class OnEveryFrameHelper {
 //        printQueue();
 
 //        validateNextDepotPosition();
+
+        printFirstCombatUnitStatus();
+    }
+
+    private static void printFirstCombatUnitStatus() {
+        AUnit unit = Select.ourCombatUnits().first();
+        if (unit == null) return;
+
+        double enemyDist = unit.nearestEnemyDist();
+        System.err.println("@ " + A.now() + ": " + unit.manager()
+            + " \\ dist: " + A.digit(enemyDist)
+            + " \\ cool:" + unit.cooldown());
+
+        if (unit.isAttacking())  {
+            AAdvancedPainter.paintCircle(unit, 12, Color.Orange);
+            AAdvancedPainter.paintCircle(unit, 10, Color.Orange);
+            AAdvancedPainter.paintCircle(unit, 8, Color.Orange);
+        }
     }
 
 //    private static void validateNextDepotPosition() {
