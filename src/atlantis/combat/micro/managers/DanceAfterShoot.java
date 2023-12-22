@@ -12,6 +12,8 @@ public class DanceAfterShoot extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         return unit.isRanged()
             && !unit.isWraith()
             && !unit.isTank()

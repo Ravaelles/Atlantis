@@ -1,8 +1,7 @@
 package atlantis.architecture;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.select.Selection;
-import atlantis.util.log.ErrorLog;
 
 /**
  * Unit manager. Can contain submanagers (see managers() method).
@@ -37,7 +36,13 @@ public abstract class Manager extends BaseManager {
         return true;
     }
 
-    public Manager invoke() {
+    public Manager invokeFromParent(Manager parent) {
+        if (A.now() != parentsLastTimestamp) {
+            parents.clear();
+        }
+        this.parents.add(parent);
+        this.parentsLastTimestamp = A.now();
+
         if (!applies()) return null;
 
         Manager manager = handle();
@@ -46,6 +51,10 @@ public abstract class Manager extends BaseManager {
         }
 
         return handleSubmanagers();
+    }
+
+    public Manager invoke() {
+        return invokeFromParent(null);
     }
 
     public Manager forceHandle() {
@@ -68,7 +77,7 @@ public abstract class Manager extends BaseManager {
 
     protected Manager handleSubmanagers() {
         for (Manager submanager : submanagerObjects) {
-            if (submanager.invoke() != null) {
+            if (submanager.invokeFromParent(this) != null) {
                 return submanager;
             }
         }
@@ -85,10 +94,10 @@ public abstract class Manager extends BaseManager {
         return usedManager(manager, null);
     }
 
-    public Manager fallbackToUseManager(Class<? extends Manager> classObject) {
+    public Manager fallbackToUseManager(Class<? extends Manager> classObject, Manager parent) {
         Manager manager = instantiateManager(classObject);
 
-        return manager.invoke();
+        return manager.invokeFromParent(parent);
     }
 
     /**

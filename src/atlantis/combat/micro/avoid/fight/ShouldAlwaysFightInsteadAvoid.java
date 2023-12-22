@@ -14,7 +14,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
-public class FightInsteadAvoid {
+public class ShouldAlwaysFightInsteadAvoid {
 
     private Cache<Boolean> cache = new Cache<>();
 
@@ -39,7 +39,7 @@ public class FightInsteadAvoid {
 
     // =========================================================
 
-    public FightInsteadAvoid(AUnit unit, Units enemies) {
+    public ShouldAlwaysFightInsteadAvoid(AUnit unit, Units enemies) {
         this.unit = unit;
         this.enemies = enemies;
         this.enemiesSelection = Select.from(enemies);
@@ -70,6 +70,7 @@ public class FightInsteadAvoid {
 
                 Manager m;
 
+                if ((m = new ShouldFightInsteadAvoidAsRanged(unit)).invoke() != null) return true;
                 if ((m = new ShouldFightInsteadAvoidAsTerran(unit)).invoke() != null) return true;
                 if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) return true;
 

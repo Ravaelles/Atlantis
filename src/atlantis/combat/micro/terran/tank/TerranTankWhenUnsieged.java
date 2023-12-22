@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.unsieged.AvoidCloseEnemiesToUnsiegedTank;
 import atlantis.combat.micro.terran.tank.sieging.ThinkOfSieging;
 import atlantis.combat.micro.terran.tank.unsieged.AvoidCloseMeleeEnemiesToUnsiegedTank;
+import atlantis.combat.micro.terran.tank.unsieged.HighGroundSiegeDuringDefend;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -27,6 +28,7 @@ public class TerranTankWhenUnsieged extends Manager {
             AvoidCloseMeleeEnemiesToUnsiegedTank.class,
             AvoidCloseEnemiesToUnsiegedTank.class,
             UnitBeingReparedManager.class,
+            HighGroundSiegeDuringDefend.class,
             ThinkOfSieging.class,
         };
     }

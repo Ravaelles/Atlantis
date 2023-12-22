@@ -2502,10 +2502,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        APainter.paintTextCentered(this, text, color, 0, dty / 32.0);
 //    }
 
-    public void addLog(String message) {
+    public boolean addLog(String message) {
         if (!log.lastMessageWas(message)) {
             log.addMessage(message, this);
         }
+
+        return true;
     }
 
     public void addFileLog(String message) {

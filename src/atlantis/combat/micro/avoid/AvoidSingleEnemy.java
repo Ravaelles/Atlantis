@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -19,22 +20,13 @@ public class AvoidSingleEnemy extends Manager {
     }
 
     public Manager avoid() {
-        if (unit.effUndetected()) return null;
-        if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return null;
-        if (isEnemyFacingOtherWayAndWeLookSafe()) return null;
-
-        APainter.paintCircle(enemy, 16, Color.Orange);
-
-        if (enemy.position() == null) {
-            System.err.println("enemy.position() is NULL for " + enemy);
-            return null;
-        }
-
-        if ((new DontAvoidEnemy(unit)).invoke() != null) return null;
+        if (doNotAvoid()) return null;
 
 //        if (enemy.isCombatBuilding()) {
 //            return (new AvoidCombatBuilding(unit, enemy)).invoke();
 //        }
+
+//        A.printStackTrace("AvoidSingleEnemy");
 
         if (unit.runningManager().runFrom(
             enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, false
@@ -45,16 +37,27 @@ public class AvoidSingleEnemy extends Manager {
         return runError.handleErrorRun(unit);
     }
 
-//    private Manager avoidCombatBuildingAsGround() {
-////        if (unit.holdPosition("AvoidCombatBuilding")) return usedManager(this);
-//        unit.move(Select.mainOrAnyBuilding(), Actions.MOVE_AVOID, "Wit hdrawB");
-//        return usedManager(this);
-//    }
+    private boolean doNotAvoid() {
+        if (unit.effUndetected()) return true;
+        if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
+        if (isEnemyFacingOtherWayAndWeLookSafe()) return true;
+
+        APainter.paintCircle(enemy, 16, Color.Orange);
+
+        if (enemy.position() == null) {
+            System.err.println("enemy.position() is NULL for " + enemy);
+            return true;
+        }
+
+        if ((new DontAvoidEnemy(unit)).invoke() != null) return true;
+
+        return false;
+    }
 
     private boolean isEnemyFacingOtherWayAndWeLookSafe() {
         return enemy.isMelee()
             && unit.hp() >= 18
-            && enemy.distTo(unit) >= 1.5
+            && enemy.distTo(unit) >= 1.4
             && !unit.isOtherUnitFacingThisUnit(enemy);
     }
 

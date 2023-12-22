@@ -18,7 +18,8 @@ public class StopAndShoot extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
+        if (true) return false;
+
         return unit.isRanged();
     }
 
@@ -57,7 +58,7 @@ public class StopAndShoot extends Manager {
             unit.addLog(tooltip);
 //            return unit.attackUnit(target);
 //            return AttackNearbyEnemies.handleAttackNearEnemyUnits();
-            return fallbackToUseManager(AttackNearbyEnemies.class);
+            return fallbackToUseManager(AttackNearbyEnemies.class, this);
         }
 //        else {
 //            GameSpeed.changeSpeedTo(1);
@@ -76,7 +77,7 @@ public class StopAndShoot extends Manager {
             && (c2 = unit.cooldown() <= 2)
 //            && unit.combatEvalRelative() > 0.8
 //            && AvoidEnemies.unitsToAvoid(unit, true).isEmpty()
-            && unit.avoidEnemiesManager().unitsToAvoid(true).isEmpty()
+            && unit.avoidEnemiesManager().enemiesDangerouslyClose().isEmpty()
             && (c3 = distToEnemy <= minDistToStop())
             && (c4 = unit.lastActionMoreThanAgo(10, Actions.HOLD_POSITION));
 //            && (c4 = !unit.isStartingAttack());

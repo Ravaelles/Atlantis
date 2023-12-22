@@ -18,14 +18,10 @@ public class WantsToAvoid extends Manager {
         return true;
     }
 
-    public Manager unitOrUnits(Units enemies) {
-        if (enemies.isEmpty()) {
-            return null;
-        }
 
-        if (shouldNeverAvoidIf(enemies)) {
-            return null;
-        }
+    public Manager unitOrUnits(Units enemies) {
+        if (enemies.isEmpty()) return null;
+        if (shouldNeverAvoidIf(enemies)) return null;
 
         // =========================================================
 

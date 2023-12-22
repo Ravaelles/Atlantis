@@ -1,6 +1,7 @@
 package tests.acceptance;
 
 import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
@@ -53,7 +54,7 @@ public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                 new FakeUnit[]{drone, ling1, hydra, sunken},
-                (new AvoidEnemies(our)).unitsToAvoid().array()
+                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
             );
         });
     }
@@ -82,7 +83,7 @@ public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                 new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
-                (new AvoidEnemies(our)).unitsToAvoid().array()
+                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
             );
         });
     }
@@ -113,7 +114,7 @@ public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                 new FakeUnit[]{cannon, sunken, bunker},
-                (new AvoidEnemies(our)).unitsToAvoid().array()
+                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
             );
         });
     }
@@ -146,7 +147,7 @@ public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             assertContainsAll(
                 new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
-                (new AvoidEnemies(our)).unitsToAvoid().array()
+                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
             );
         });
     }
@@ -198,7 +199,7 @@ public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
 
                 assertContainsAll(
                     new AUnit[]{enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, enemy7},
-                    (new AvoidEnemies(ourUnit)).unitsToAvoid().array()
+                    (new EnemyUnitsToAvoid(ourUnit)).enemiesDangerouslyClose().array()
                 );
             },
             () -> ours,

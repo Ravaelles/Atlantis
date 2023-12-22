@@ -2,6 +2,7 @@ package atlantis.config;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
+import atlantis.combat.advance.Advance;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
@@ -30,6 +31,15 @@ public class MapSpecificCommander extends Commander {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(30);
                 GameSpeed.changeFrameSkipTo(0);
+                CameraCommander.centerCameraNowOnSquadCenter();
+            }
+        }
+
+        // =========================================================
+
+        else if (ActiveMap.isMap("Drag_v_")) {
+            if (A.now() <= 200) {
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
                 CameraCommander.centerCameraNowOnSquadCenter();
             }
         }

@@ -5,7 +5,9 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 public abstract class BaseManager {
@@ -13,6 +15,9 @@ public abstract class BaseManager {
 
     protected final AUnit unit;
     protected final Squad squad;
+
+    protected List<Manager> parents = new ArrayList<>(); // Useful for debugging
+    protected int parentsLastTimestamp = -1;
 
     public BaseManager(AUnit unit) {
         this.unit = unit;
@@ -78,5 +83,18 @@ public abstract class BaseManager {
         String name = getClass().getSimpleName();
         if (name.startsWith("Terran")) name = name.replace("Terran", "");
         return A.substring(name, 0, 30);
+    }
+
+    public Manager parents() {
+        return parents.get(parents.size() - 1);
+    }
+
+    public String parentsStack() {
+        // Convert parents to string
+        StringBuilder sb = new StringBuilder();
+        for (Manager parent : parents) {
+            sb.append(parent.toString()).append(" > ");
+        }
+        return sb.toString();
     }
 }

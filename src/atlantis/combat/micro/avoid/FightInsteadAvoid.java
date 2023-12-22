@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.avoid.fight.ShouldAlwaysFightInsteadAvoid;
 import atlantis.combat.micro.avoid.terran.TerranAlwaysAvoidAsTerran;
 import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
@@ -29,6 +30,11 @@ public class FightInsteadAvoid extends Manager {
 //            "### " + unit.type() + "(" + unit.idWithHash() + ").combatEvalRelative() = " + unit.combatEvalRelative()
 //        );
 
+        if (new ShouldAlwaysFightInsteadAvoid(unit, enemies).shouldFight()) {
+            unit.addLog("SHOULD FightInsteadAvoid");
+            return true;
+        }
+
         if (unit.combatEvalRelative() < 0.6) return false;
         if (shouldAlwaysAvoidAsTerran.shouldAlwaysAvoid()) return false;
         if (shouldAlwaysAvoidAsZerg.shouldAlwaysAvoid()) return false;
@@ -47,11 +53,6 @@ public class FightInsteadAvoid extends Manager {
         ) {
             unit.setTooltip("AttackWorkersWhenItMakesSense-LURKER!");
             return false;
-        }
-
-        if (new atlantis.combat.micro.avoid.fight.FightInsteadAvoid(unit, enemies).shouldFight()) {
-            unit.addLog("SHOULD FightInsteadAvoid");
-            return true;
         }
 
         if (unit.hpLessThan(17) && !enemies.onlyMelee() && !Enemy.terran()) {

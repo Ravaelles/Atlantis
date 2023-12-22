@@ -3,7 +3,6 @@
 ------- High ground for tank as (any high ground | in radius 7 | having ground path) + force eager siege during defend
 --- Broken natural - 3 different logics
 
----- Travel to construct???
 --- GatherResources "KindGuy" idle standing
 --- Medics not choke blocking / also scv too quick
 

@@ -67,7 +67,7 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roa.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -86,7 +86,7 @@ public class Main {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Maps for testing as Terran ==========================
@@ -151,11 +151,12 @@ public class Main {
 
         // === Maps for testing as Protoss ========================
 
+        if (true) return "ums/rav/1Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/3Zeal_v_1Zeal.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag_withBase.scm";
-//        if (true) return "ums/rav/4Drag_v_4Drag.scm";
+//@        if (true) return "ums/rav/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_Zeal.scm";
 //@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
