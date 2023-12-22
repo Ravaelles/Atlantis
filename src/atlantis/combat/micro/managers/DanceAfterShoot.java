@@ -3,6 +3,7 @@ package atlantis.combat.micro.managers;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.interrupt.DontInterruptStartedAttacks;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
 
 public class DanceAfterShoot extends Manager {
@@ -12,13 +13,33 @@ public class DanceAfterShoot extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
-        return unit.isRanged()
-            && !unit.isWraith()
-            && !unit.isTank()
-            && unit.enemiesNear().ranged().inRadius(6, unit).empty()
+        boolean applies = unit.isRanged()
+//            && !unit.isAttacking()
+            && unit.cooldownRemaining() >= cooldownRemainingThreshold()
+            && unit.lastActionMoreThanAgo(6, Actions.ATTACK_UNIT)
+            && UnitAttackWaitFrames.waitedLongEnoughForAttackFrameToFinish(unit)
+            && !unit.isHoldingPosition()
+            && !unit.isStartingAttack()
+            && !unit.isAttackFrame()
+            && !isExcludedUnit()
+            && (!unit.hasTarget() || !unit.target().isABuilding())
+//            && unit.enemiesNear().ranged().havingGreaterRanged().inRadius(6, unit).empty()
             && !shouldSkip();
+
+//        System.err.println("APPLIES = " + (applies));
+
+        return applies;
+    }
+
+    private boolean isExcludedUnit() {
+        return unit.isWraith()
+            || unit.isTank();
+    }
+
+    private int cooldownRemainingThreshold() {
+        return 7;
     }
 
     @Override
@@ -57,28 +78,35 @@ public class DanceAfterShoot extends Manager {
         // =========================================================
 
         // Step FORWARD
-        if (shouldDanceTowards(target, dist)) {
-            unit.addLog(danceTo);
-            return unit.move(
-                unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE_TO, danceTo, false
-            );
-        }
+//        if (shouldDanceTowards(target, dist)) {
+//            System.err.println("______ DANCE TO (" + dist + ")");
+//            unit.addLog(danceTo);
+//            return unit.move(
+//                unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE_TO, danceTo, false
+//            );
+//        }
+
 //        // Big step BACK
 //        else if (shouldDanceBigStepBackwards(dist, weaponRange, target)) {
 //            unit.addLog(danceAway);
 //            return unit.moveAwayFrom(target, 0.9, Actions.MOVE_DANCE_AWAY, danceAway);
 //        }
+
         // Small step BACK
-        else if (shouldDanceBackwards(dist, weaponRange, target)) {
+        if (shouldDanceAway(dist, weaponRange, target)) {
+            System.err.println("^^^^^^ DANCE AWAY (" + dist + ")");
             unit.addLog(danceAway);
-            return unit.moveAwayFrom(target, 0.35, Actions.MOVE_DANCE_AWAY, danceAway);
+            return unit.moveAwayFrom(target.position(), 0.5, Actions.MOVE_DANCE_AWAY, danceAway);
         }
 
         return false;
     }
 
-    private boolean shouldDanceBackwards(double dist, int weaponRange, AUnit target) {
-        return unit.cooldownRemaining() >= 8 && dist <= weaponRange - 0.5 && !target.isCombatBuilding();
+    private boolean shouldDanceAway(double dist, int weaponRange, AUnit target) {
+        return unit.cooldownRemaining() >= Math.max(14, cooldownRemainingThreshold())
+            && dist <= weaponRange + 0.2
+            && unit.lastAttackFrameLessThanAgo(20)
+            && !target.hasBiggerWeaponRangeThan(unit);
     }
 
 //    private static boolean shouldDanceBigStepBackwards(double dist, int weaponRange, AUnit target) {
@@ -90,8 +118,9 @@ public class DanceAfterShoot extends Manager {
     private boolean shouldDanceTowards(AUnit target, double dist) {
         return target.isVisibleUnitOnMap()
             && target.effVisible()
-            && unit.distToMoreThan(target, 3.7)
-            && dist >= (unit.enemyWeaponRangeAgainstThisUnit(target))
+//            && unit.distToMoreThan(target, 3.7)
+//            && dist >= (unit.enemyWeaponRangeAgainstThisUnit(target))
+            && !unit.isTargetInWeaponRangeAccordingToGame(target)
             && (
             (!target.isABuilding() && dist >= 1.6)
                 || target.hasNoWeaponAtAll()
@@ -100,6 +129,7 @@ public class DanceAfterShoot extends Manager {
 
     private boolean shouldSkip() {
 //        if (true) return true;
+//        if (true) return false;
 
         if (unit.isMelee()) return true;
         if (unit.target() == null) return true;
@@ -112,26 +142,21 @@ public class DanceAfterShoot extends Manager {
 //            return true;
 //        }
 
-        // Can start shooting
-        if (unit.cooldownRemaining() <= 3) return true;
-
         if (unit.isMissionSparta()) return true;
 
-        int lastAttackFrameAgo = unit.lastAttackFrameAgo();
-        int cooldownAbsolute = unit.cooldownAbsolute();
-
-        int minStop = UnitAttackWaitFrames.effectiveStopFrames(unit.type());
-
-        if (lastAttackFrameAgo <= minStop || lastAttackFrameAgo >= cooldownAbsolute) return true;
-//        if (unit.lastAttackFrameMoreThanAgo(unit.cooldownAbsolute() - 3)) {
-//            return true;
-//        }
+//        int lastAttackFrameAgo = unit.lastAttackFrameAgo();
+//        int cooldownAbsolute = unit.cooldownAbsolute();
+//
+//        int minStop = UnitAttackWaitFrames.effectiveStopFrames(unit.type());
+//
+//        // @CheckB
+////        if (lastAttackFrameAgo <= minStop || lastAttackFrameAgo >= cooldownAbsolute) return true;
 
         // In process of shooting
-        if ((unit.cooldownRemaining() + minStop) >= cooldownAbsolute) return true;
+        // @CheckA
+//        if ((unit.cooldownRemaining() + minStop) >= cooldownAbsolute) return true;
 
         if (!unit.isAttacking() && unit.noCooldown()) return true;
-
 
         return false;
     }

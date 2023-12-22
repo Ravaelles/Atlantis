@@ -17,6 +17,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.interrupt.DontInterruptShootingUnits;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.Color;
@@ -61,6 +62,8 @@ public class OnEveryFrameHelper {
     }
 
     private static void printFirstCombatUnitStatus() {
+        if (A.now() <= 21) return;
+
         AUnit unit = Select.ourCombatUnits().first();
         if (unit == null) return;
 
@@ -71,8 +74,17 @@ public class OnEveryFrameHelper {
 
         if (unit.isAttacking())  {
             AAdvancedPainter.paintCircle(unit, 12, Color.Orange);
-            AAdvancedPainter.paintCircle(unit, 10, Color.Orange);
+            AAdvancedPainter.paintCircle(unit, 11, Color.Orange);
             AAdvancedPainter.paintCircle(unit, 8, Color.Orange);
+            AAdvancedPainter.paintCircle(unit, 7, Color.Orange);
+        }
+
+        if ((new DontInterruptShootingUnits(unit)).applies())  {
+            AAdvancedPainter.paintCircle(unit, 10, Color.Teal);
+            AAdvancedPainter.paintCircle(unit, 9, Color.Teal);
+            AAdvancedPainter.paintCircle(unit, 6, Color.Teal);
+            AAdvancedPainter.paintCircle(unit, 5, Color.Teal);
+            AAdvancedPainter.paintCircle(unit, 4, Color.Teal);
         }
     }
 

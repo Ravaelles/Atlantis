@@ -35,7 +35,7 @@ public class ProtectorCommander extends Commander {
 
         for (Iterator<AUnit> iterator = RepairAssignments.getProtectors().iterator(); iterator.hasNext(); ) {
             AUnit unit = iterator.next();
-            (new ProtectorManager(unit)).invoke();
+            (new ProtectorManager(unit)).invoke(this);
         }
     }
 

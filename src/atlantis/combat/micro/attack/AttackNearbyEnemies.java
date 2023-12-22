@@ -33,6 +33,8 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.cooldown() >= 8) return false;
+
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
         if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
 
@@ -52,7 +54,7 @@ public class AttackNearbyEnemies extends Manager {
 
         Manager dedicatedManager = dedicatedManager();
         if (dedicatedManager != null) {
-            return usedManager(dedicatedManager.invoke());
+            return usedManager(dedicatedManager.invoke(this));
         }
 
 //        if (this.equals(unit.manager()) && justHandledRecently() && !unit.looksIdle()) {

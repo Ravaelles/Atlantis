@@ -15,8 +15,19 @@ public class DontInterruptShootingUnits extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
+        if (!unit.isAttacking()) return false;
+
+        // =========================================================
+//        if (UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)) return true;
+        // =========================================================
+
         AUnit target = unit.target();
-        if (target != null && target.isABuilding() && !target.isCombatBuilding()) return false;
+
+        // === Stop & Shoot ========================================
+//        if (unit.isMoving() && target != null && unit.isTargetInWeaponRangeAccordingToGame(target)) return false;
+        // =========================================================
+
+//        if (target != null && target.isABuilding() && !target.isCombatBuilding()) return false;
 
         if (unit.isMarine()) return true;
 
@@ -61,6 +72,8 @@ public class DontInterruptShootingUnits extends Manager {
 
     @Override
     protected Manager handle() {
+//        if (UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)) return usedManager(this);
+
         if (!unit.isMarine()) {
             if (act()) return usedManager(this);
         }

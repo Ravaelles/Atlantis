@@ -20,9 +20,8 @@ import tests.unit.FakeUnitData;
 public interface AUnitOrders {
     int DEBUG_MIN_FRAMES = 0;
 
-
-    boolean DEBUG_ALL = false;
-//    boolean DEBUG_ALL = true;
+//    boolean DEBUG_ALL = false;
+    boolean DEBUG_ALL = true;
 
     boolean DEBUG_COMBAT = false;
 //    boolean DEBUG_COMBAT = true;
@@ -102,7 +101,7 @@ public interface AUnitOrders {
         }
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(unit().typeWithHash() + " @ " + A.now() + " ATTACK " + target);
+            System.out.println(unit().typeWithHash() + " @ " + A.now() + " ATTACK_UNIT " + target);
         }
 
 //        if (unit().outsideSquadRadius()) {

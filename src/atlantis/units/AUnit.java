@@ -1610,6 +1610,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return true;
         }
 
+//        if (unitAction.equals(Actions.ATTACK_UNIT)) {
+//            System.out.println("lastActionAgo(ATTACK_UNIT) = " + lastActionAgo(unitAction));
+//        }
+
         return lastActionAgo(unitAction) >= framesAgo;
     }
 

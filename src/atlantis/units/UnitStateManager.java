@@ -24,6 +24,7 @@ public class UnitStateManager extends Manager {
         }
 
         if (unit.isAttackFrame()) {
+//            System.err.println("%%%%%%%%% ATTACK FRAME - " + timeNow);
             unit._lastAttackFrame = timeNow;
 //            APainter.paintCircleFilled(unit, 8, Color.Yellow);
 //            if (unit.isFirstCombatUnit()) {
@@ -37,9 +38,12 @@ public class UnitStateManager extends Manager {
 
         unit._lastCooldown = unit.cooldownRemaining();
 
-        if (unit.isStartingAttack() && unit.cooldownRemaining() > unit._lastCooldown) {
+        if (unit.isStartingAttack()) {
 //            APainter.paintCircleFilled(unit, 8, Color.Orange);
-            unit._lastFrameOfStartingAttack = timeNow;
+            if (unit.cooldownRemaining() > unit._lastCooldown) {
+                unit._lastFrameOfStartingAttack = timeNow;
+            }
+//            System.err.println("@@@@@@@@@@@@@@@@@ UPDATED STARTING ATTACK - " + timeNow);
 //            if (unit.isFirstCombatUnit()) {
 
 //            }

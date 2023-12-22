@@ -68,15 +68,7 @@ public class DontInterruptStartedAttacks {
 
         if (
             UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)
-//                        && NearestEnemy.rangedHasSmallerRangeThan(unit)
         ) {
-//            if (unit.isFirstCombatUnit()) {
-
-//            }
-//            APainter.paintCircle(unit, 15, Color.Green);
-//            APainter.paintCircle(unit, 13, Color.Green);
-//            APainter.paintCircle(unit, 11, Color.Green);
-//            unit.setTooltip("Shoot(" + unit.lastFrameOfStartingAttackAgo() + ")");
             return true;
         }
 

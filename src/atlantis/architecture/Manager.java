@@ -53,8 +53,8 @@ public abstract class Manager extends BaseManager {
         return handleSubmanagers();
     }
 
-    public Manager invoke() {
-        return invokeFromParent(null);
+    public Manager invoke(Manager parent) {
+        return invokeFromParent(parent);
     }
 
     public Manager forceHandle() {

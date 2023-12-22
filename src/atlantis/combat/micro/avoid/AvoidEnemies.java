@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
 import java.util.List;
@@ -31,6 +32,8 @@ public class AvoidEnemies extends Manager {
     public boolean applies() {
         enemiesDangerouslyClose = enemyUnitsToAvoid.enemiesDangerouslyClose();
 
+        if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
+
         return !(new ShouldNotAvoid(unit, enemiesDangerouslyClose)).shouldNotAvoid();
     }
 
@@ -38,7 +41,7 @@ public class AvoidEnemies extends Manager {
     protected Manager handle() {
         Manager manager = avoidEnemiesIfNeeded();
 
-//        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
+        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
 
         return manager;
     }
