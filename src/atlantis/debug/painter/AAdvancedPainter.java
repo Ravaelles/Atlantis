@@ -1,6 +1,7 @@
 package atlantis.debug.painter;
 
 import atlantis.Atlantis;
+import atlantis.config.env.Env;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.avoid.AvoidEnemies;
@@ -13,6 +14,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.CameraCommander;
 import atlantis.game.GameLog;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
@@ -771,13 +773,26 @@ public class AAdvancedPainter extends APainter {
                 }
 
                 String status = construction.status().toString().replace("CONSTRUCTION_", "");
-                String builderDist = A.dist(construction.builder(), construction.buildPosition());
-                if (construction.builder() != null) {
-                    String builder = (construction.builder().idWithHash() + " " + builderDist);
+                AUnit builder = construction.builder();
+                String builderDist = A.dist(builder, construction.buildPosition());
+                if (builder != null) {
+                    String builderString = (builder.idWithHash() + " " + builderDist);
+                    if (!builder.isAlive()) builderString += "(DEAD)";
+                    if (builder.isStuck()) builderString += "(STUCK)";
+                    if (construction.isOverdue()) {
+                        builderString += "(" + builder.manager() +")";
+                        if (Env.isLocal()) {
+                            AAdvancedPainter.paintCircle(builder, 10, Color.Teal);
+                            AAdvancedPainter.paintCircle(builder, 8, Color.Teal);
+                            AAdvancedPainter.paintCircle(builder, 6, Color.Teal);
+                            CameraCommander.centerCameraOn(builder);
+                        }
+                    }
+
                     paintSideMessage(
                         construction.buildingType().name()
                             + ", " + construction.buildPosition()
-                            + ", " + status + ", " + builder,
+                            + ", " + status + ", " + builderString,
                         color,
                         yOffset
                     );

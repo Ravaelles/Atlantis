@@ -48,9 +48,6 @@ public class CanPhysicallyBuildHere {
         if (!Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u())) {
 //            if (!position.isPositionVisible() && !position.isExplored()) return true;
 
-            // Allow building bases in unexplored areas - otherwise we only build in explored areas
-            if (building.isBase() && !position.isExplored()) return true;
-
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Can't physically build here";
             return false;
         }

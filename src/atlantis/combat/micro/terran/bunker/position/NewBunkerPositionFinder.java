@@ -1,5 +1,6 @@
 package atlantis.combat.micro.terran.bunker.position;
 
+import atlantis.game.A;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -25,6 +26,8 @@ public class NewBunkerPositionFinder {
     public NewBunkerPositionFinder(HasPosition positionToSecure, AUnit builder) {
         this.positionToSecure = positionToSecure;
         this.builder = builder;
+
+//        System.out.println(A.now() + " BUNKER positionToSecure = " + positionToSecure);
 
         if (positionToSecure == null) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("NewBunkerPositionFinder: positionToSecure got null");

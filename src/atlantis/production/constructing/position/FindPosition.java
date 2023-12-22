@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.region.MainRegion;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.base.FindPositionForBaseNearestFree;
 import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
@@ -36,7 +37,7 @@ public class FindPosition {
 
         if (building.isGasBuilding()) return GasBuildingPositionFinder.findPositionForGasBuilding(building, nearTo);
 
-            // === Base ================================================
+        // === Base ================================================
 
         else if (building.isBase()) {
             return forNewBase(builder, building, construction, nearTo);
@@ -120,7 +121,19 @@ public class FindPosition {
         if (building.isBunker()) {
 //            return TerranBunkerPositionFinder.findPosition(builder, construction, nearTo);
 //            return (new NewBunkerPositionFinder(nearTo, builder, construction)).find();
-            return (new NewBunkerPositionFinder(nearTo, builder)).find();
+            APosition thePosition = (new NewBunkerPositionFinder(nearTo, builder)).find();
+
+            if (Count.bunkers() <= 0 && thePosition != null && !thePosition.regionsMatch(MainRegion.mainRegion())) {
+                if (
+                    construction.productionOrder().getModifier() != null
+                    && construction.productionOrder().getModifier().equals("MAIN_CHOKE")
+                ) {
+                    ErrorLog.printMaxOncePerMinute("Fix for first MAIN_CHOKE bunker, place it in main.");
+                    return (new NewBunkerPositionFinder(Select.main(), builder)).find();
+                }
+            }
+
+            return thePosition;
         }
 
         // =========================================================

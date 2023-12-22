@@ -29,17 +29,16 @@ public class Unfreezer extends Manager {
 
         return unit.isCombatUnit()
             && !unit.isLoaded()
-            && !unit.isMoving()
-            && !unit.isMoving()
-            && A.now() % 123 == 0
+//            && !unit.isMoving()
+            && A.now() % 73 == 0
             && A.now() >= 10
             && unit.looksIdle()
 //            && (unit.position().equals(unit.lastPosition()))
             && unit.lastStartedRunningMoreThanAgo(50)
-            && unit.lastActionMoreThanAgo(150, Actions.MOVE_UNFREEZE)
+            && unit.lastActionMoreThanAgo(30 * 12, Actions.MOVE_UNFREEZE)
             && unit.hasNotMovedInAWhile()
             && unit.nearestEnemyDist() >= 4
-            && unit.lastActionMoreThanAgo(45)
+            && unit.lastActionMoreThanAgo(35)
             && (!unit.isTank() || unit.lastSiegedAgo() >= 30 * 9);
 //            (unit.looksIdle()
 //                || (unit.lastActionMoreThanAgo(30) && unit.hasNotMovedInAWhile())

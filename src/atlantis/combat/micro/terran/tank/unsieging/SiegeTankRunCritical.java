@@ -29,7 +29,7 @@ public class SiegeTankRunCritical extends Manager {
 
     private boolean darkTemplarsVeryNear() {
         return unit.enemiesNear().ofType(AUnitType.Protoss_Dark_Templar).inRadius(3, unit).notEmpty()
-            && unit.friendsNear().havingAntiGroundWeapon().inRadius(7, unit).atMost(3);
+            && (unit.isWounded() || unit.friendsNear().havingAntiGroundWeapon().inRadius(9, unit).atMost(5));
     }
 
     protected Manager handle() {

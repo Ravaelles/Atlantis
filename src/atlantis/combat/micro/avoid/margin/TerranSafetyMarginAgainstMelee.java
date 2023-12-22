@@ -76,6 +76,10 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
             criticalDist = Math.min(3.6, criticalDist);
         }
 
+        if (criticalDist >= 2.2 && !attacker.isFacing(defender)) {
+            criticalDist = 2.2;
+        }
+
         return criticalDist;
     }
 

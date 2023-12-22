@@ -20,7 +20,13 @@ public class DoRepairsNearby extends Manager {
         target = RepairableUnits.get().nearestTo(unit);
         return target != null
             && target.distTo(unit) < (target.isAir() ? 2 : 6)
-            && RepairAssignments.countRepairersForUnit(target) < 6;
+            && RepairAssignments.countRepairersForUnit(target) < 6
+            && preventAwfulStacks();
+    }
+
+    private boolean preventAwfulStacks() {
+        int workersNear = unit.friendsNear().workers().inRadius(5, unit).count();
+        return workersNear <= 4 || unit.id() % 3 == 0 || unit.id() % 5 == 0;
     }
 
     @Override

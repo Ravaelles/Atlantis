@@ -48,6 +48,9 @@ public class IsProbablyInAnotherRegion {
             return true;
         }
 
+        System.out.println("position = " + position.region());
+        System.out.println("MainRegion.mainRegion() = " + MainRegion.mainRegion());
+
         return false;
     }
 }

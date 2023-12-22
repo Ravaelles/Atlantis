@@ -246,4 +246,11 @@ public class Construction implements Comparable<Construction> {
     public static void clearCache() {
         cache.clear();
     }
+
+    public boolean isOverdue() {
+        if (hasStarted()) return false;
+        if (buildingType != null && buildingType.isBase()) return false;
+
+        return A.ago(timeOrdered) > 30 * 15;
+    }
 }

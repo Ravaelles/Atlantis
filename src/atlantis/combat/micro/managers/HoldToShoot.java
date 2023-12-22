@@ -99,7 +99,7 @@ public class HoldToShoot extends Manager {
 
     private double extraMargin() {
         if (unit.isMarine()) {
-            if (target.isMoving() && target.isFacing(unit)) return 1;
+            if (target.isMoving() && (unit.equals(target.target()) || target.isFacing(unit))) return 1.2;
             return 0;
         }
 

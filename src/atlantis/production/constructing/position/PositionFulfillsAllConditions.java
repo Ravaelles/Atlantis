@@ -53,15 +53,18 @@ public class PositionFulfillsAllConditions {
         if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return false;
         if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return false;
         if (TooCloseToChoke.isTooCloseToChoke(building, position)) return false;
-        if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return false;
 
-        if (building.isMissileTurret()) return true;
+        if (building.isMissileTurret()) {
+            if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return false;
+            return true;
+        }
 
         if (TooCloseToBunker.isTooCloseToBunker(building, position)) return false;
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return false;
         if (TooCloseToBase.isTooCloseToBase(building, position)) return false;
         if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) return false;
         if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) return false;
+        if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return false;
 
         // All conditions are fullfilled, return this position
         return true;
