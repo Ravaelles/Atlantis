@@ -23,7 +23,7 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
         if (focusPoint == null) return true;
 
         if (
-            unit.isEnemyInWeaponRangeByGame(enemy)
+            unit.isTargetInWeaponRangeAccordingToGame(enemy)
                 || (unit.noCooldown() && enemy.canAttackTarget(unit) && focusPoint.regionsMatch(enemy))
                 || ourBuildingIsInDanger(unit, enemy)
         ) return true;

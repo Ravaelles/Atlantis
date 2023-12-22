@@ -65,13 +65,13 @@ public class UnitAttackWaitFrames {
         else return 2; // Arbitrary
     }
 
-    protected static int minStop(AUnitType type) {
-//        if (type == AUnitType.Protoss_Dragoon) return 5; // Original
-        if (type == AUnitType.Protoss_Dragoon) return 6; // Raised to 6, still some glitches
-        else if (type == AUnitType.Protoss_Carrier) return 48;
-        else if (type == AUnitType.Zerg_Devourer) return 7;
-        else return 0;
-    }
+//    protected static int minStop(AUnitType type) {
+////        if (type == AUnitType.Protoss_Dragoon) return 5; // Original
+//        if (type == AUnitType.Protoss_Dragoon) return 6; // Raised to 6, still some glitches
+//        else if (type == AUnitType.Protoss_Carrier) return 48;
+//        else if (type == AUnitType.Zerg_Devourer) return 7;
+//        else return 0;
+//    }
 
     protected static int attackAnimationFrames(AUnitType type) {
         if (type == AUnitType.Terran_SCV) return 2;

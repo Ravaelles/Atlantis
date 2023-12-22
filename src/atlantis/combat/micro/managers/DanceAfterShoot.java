@@ -77,8 +77,8 @@ public class DanceAfterShoot extends Manager {
         return false;
     }
 
-    private static boolean shouldDanceBackwards(double dist, int weaponRange, AUnit target) {
-        return dist <= weaponRange - 0.5 && !target.isCombatBuilding();
+    private boolean shouldDanceBackwards(double dist, int weaponRange, AUnit target) {
+        return unit.cooldownRemaining() >= 8 && dist <= weaponRange - 0.5 && !target.isCombatBuilding();
     }
 
 //    private static boolean shouldDanceBigStepBackwards(double dist, int weaponRange, AUnit target) {

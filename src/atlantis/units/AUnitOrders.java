@@ -18,10 +18,11 @@ import tests.unit.FakeUnitData;
  * Class using default methods which are extracted from AUnit class to separate this functionality.
  */
 public interface AUnitOrders {
-
     int DEBUG_MIN_FRAMES = 0;
-    boolean DEBUG_ALL = false;
-    //    boolean DEBUG_ALL = true;
+
+//    boolean DEBUG_ALL = false;
+    boolean DEBUG_ALL = true;
+
     boolean DEBUG_COMBAT = false;
 //    boolean DEBUG_COMBAT = true;
 
