@@ -3,6 +3,7 @@ package atlantis.terran.repair;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.workers.GatherResources;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,6 +82,11 @@ public class RepairAssignments {
     }
 
     public static void addProtector(AUnit protector, AUnit unit) {
+        if (protector.isBuilder()) {
+            ErrorLog.printMaxOncePerMinute("Protector is builder: " + protector + ", dont assign!");
+            return;
+        }
+
         if (addLogs) {
             protector.addLog("Added PROTECTOR of " + unit);
         }

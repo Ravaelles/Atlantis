@@ -1,7 +1,8 @@
-package atlantis.combat.squad;
+package atlantis.combat.squad.commanders;
 
 import atlantis.architecture.Commander;
 import atlantis.combat.CombatUnitManager;
+import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.mission.SquadMissionChanger;
 import atlantis.game.A;
 import atlantis.units.AUnit;

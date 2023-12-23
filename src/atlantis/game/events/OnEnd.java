@@ -1,4 +1,4 @@
-package atlantis.game;
+package atlantis.game.events;
 
 import atlantis.config.env.Env;
 import atlantis.debug.tweaker.ParamTweakerEvaluator;

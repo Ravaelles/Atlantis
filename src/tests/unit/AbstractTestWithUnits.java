@@ -6,7 +6,7 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.game.AGame;
-import atlantis.game.OnStart;
+import atlantis.game.events.OnStart;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.OurStrategy;

@@ -21,12 +21,15 @@ public class IdleProtector extends Manager {
     public Manager handle() {
         target = RepairAssignments.getUnitToProtectFor(unit);
 
-//        if (unit.idIsOdd()) return usedManager(this); // Only half of the protectors can do dynamic repairs if idle
-
-        if (
-            target.isBunker() && target.enemiesNear().havingWeapon().inRadius(9, target).atMost(1)
-        ) return null;
+        if (dontLeaveBunkerYouAreProtecting()) return null;
 
         return (new IdleProtectorRepairs(unit)).invoke(this);
+    }
+
+    private boolean dontLeaveBunkerYouAreProtecting() {
+        return target.isBunker()
+            && target.enemiesNear().havingWeapon().inRadius(6, target).atLeast(
+            target.hp() <= 320 ? 1 : 3
+        );
     }
 }

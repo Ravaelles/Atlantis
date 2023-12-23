@@ -11,7 +11,8 @@ public class DontRepairWithoutMineralsCommander extends Commander {
         int minMineralsForRepairers = totalRepairers * 20;
         if (totalRepairers >= 1 && ReservedResources.minerals() <= minMineralsForRepairers) {
             ReservedResources.reserveMinerals(
-                Math.max(ReservedResources.minerals(), minMineralsForRepairers)
+                Math.max(ReservedResources.minerals(), minMineralsForRepairers),
+                "repairs"
             );
         }
     }

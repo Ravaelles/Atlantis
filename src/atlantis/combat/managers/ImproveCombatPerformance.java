@@ -14,6 +14,7 @@ public class ImproveCombatPerformance extends Manager {
         if (unit.enemiesNear().notEmpty()) return false;
         if (unit.isAttacking()) return false;
         if (unit.squad().isLeader(unit)) return false;
+        if (unit.distToLeader() <= 8) return false;
 
         if (unit.isMoving()) return true;
 

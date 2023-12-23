@@ -2,7 +2,10 @@ package atlantis.combat.targeting;
 
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.targeting.tanks.ATankTargeting;
+import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -16,7 +19,7 @@ import java.util.List;
 
 public class ATargeting extends HasUnit {
 
-    //    protected static final boolean DEBUG = true;
+//        protected static final boolean DEBUG = true;
     protected static final boolean DEBUG = false;
 
     protected Selection enemyBuildings;
@@ -46,14 +49,18 @@ public class ATargeting extends HasUnit {
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
 
+//        System.out.println("A enemy = " +  enemy);
+
 //        if (enemy != null && enemy.isAlive() && !unit.canAttackTarget(enemy)) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit " + unit + " cannot attack " + enemy);
 //        }
 
         if (enemy != null && enemy.isAlive() && unit.canAttackTarget(enemy)) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
+//            System.out.println("B enemy = " +  enemy);
             if (unit.hasCooldown() || unit.hasWeaponRangeByGame(enemy)) return enemy;
         }
+//        System.out.println("C enemy = " +  enemy);
 
         // Used when something went wrong there ^
         AttackNearbyEnemies.reasonNotToAttack = null;
@@ -66,7 +73,7 @@ public class ATargeting extends HasUnit {
         if (unit.isTankSieged()) return (new ATankTargeting(unit)).targetForTank();
 
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
-//        System.out.println("BASE enemy = " + enemy);
+//        System.out.println("BASE enemy = " + enemy + " / " +maxDistFromEnemy);
 
         if (enemy == null && maxDistFromEnemy >= 8) {
             enemy = unit.enemiesNear()
@@ -256,10 +263,14 @@ public class ATargeting extends HasUnit {
             .inRadius(maxDistFromEnemy, unit)
             .canBeAttackedBy(unit, maxDistFromEnemy);
 
+//        enemyBuildings.print("F");
+
         // If early in the game, don't attack regular buildings, storm into the base and kill workers/bases
-        if (unit.isMissionAttack() && A.seconds() <= 700) {
+        if (shouldOnlyAttackBases(unit)) {
             enemyBuildings = enemyBuildings.bases();
         }
+
+//        enemyBuildings.print("G");
 
         enemyUnits = Select.enemyRealUnitsWithBuildings()
             .nonBuildingsOrCombatBuildings()
@@ -317,6 +328,14 @@ public class ATargeting extends HasUnit {
         // =====
 
         return target;
+    }
+
+    private static boolean shouldOnlyAttackBases(AUnit unit) {
+        if (Env.isTesting()) return false;
+
+        return unit.isMissionAttack()
+            && A.seconds() <= 650
+            && (EnemyUnits.discovered().workers().atMost(4) && UnitsArchive.enemyDestroyedWorkers() <= 5);
     }
 
     protected static void debug(String message) {

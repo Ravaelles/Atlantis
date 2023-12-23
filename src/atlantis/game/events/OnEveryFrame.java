@@ -1,8 +1,11 @@
-package atlantis.game;
+package atlantis.game.events;
 
 import atlantis.Atlantis;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.debug.profiler.LongFrames;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.game.GameSpeed;
 import atlantis.production.orders.build.CurrentBuildOrder;
 
 public class OnEveryFrame {

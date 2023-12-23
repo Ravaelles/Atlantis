@@ -1,9 +1,9 @@
 package tests.acceptance;
 
-import atlantis.OnUnitDiscover;
+import atlantis.game.events.OnUnitDiscover;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
-import atlantis.game.OnUnitMorph;
+import atlantis.game.events.OnUnitMorph;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;

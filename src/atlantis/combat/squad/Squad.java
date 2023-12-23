@@ -26,6 +26,7 @@ public abstract class Squad extends Units {
     private static Cache<Boolean> cacheBoolean = new Cache<>();
     private static Cache<Double> cacheDouble = new Cache<>();
     private static Cache<Integer> cacheInteger = new Cache<>();
+    private static Cache<AUnit> cacheUnit = new Cache<>();
 
     /**
      * Auxilary name for the squad e.g. "Alpha", "Bravo", "Delta".
@@ -200,18 +201,23 @@ public abstract class Squad extends Units {
     }
 
     public AUnit squadScout() {
-        if (!isMainSquad() || Count.ourCombatUnits() < 3) {
-            return null;
-        }
+        return cacheUnit.getIfValid(
+            "squadScout",
+            1111,
+            () -> {
+                if (!isMainSquad() || Count.ourCombatUnits() < 3) {
+                    return null;
+                }
 
-        Selection groundUnits = Select.from(this).groundUnits();
-        AUnit ranged = groundUnits.ranged().first();
-        if (ranged != null) {
+                Selection groundUnits = units().groundUnits();
+                AUnit ranged = groundUnits.ranged().nonTanks().healthy().mostDistantToBase();
+                if (ranged != null) {
+                    return ranged;
+                }
 
-            return ranged;
-        }
-
-        return groundUnits.melee().first();
+                return groundUnits.melee().havingAtLeastHp(30).mostDistantToBase();
+            }
+        );
     }
 
     public AUnit leader() {

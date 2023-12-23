@@ -18,24 +18,26 @@ public class IsProbablyInAnotherRegion {
 
         if (
             nearTo != null
-                && (A.supplyTotal() <= 50 || building.isCombatBuilding())
+//                && (A.supplyTotal() <= 50 || building.isCombatBuilding())
                 && !nearTo.regionsMatch(position)
         ) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Region mismatch";
             return true;
         }
 
-        double groundDistance = builder.position().groundDistanceTo(position);
+        return false;
 
-        boolean result = groundDistance >= 30
-            && builder.distTo(position) * 2 >= groundDistance
-            && position.regionsMatch(nearTo);
-
-        if (result) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Probably in another region";
-        }
-
-        return result;
+//        double groundDistance = builder.position().groundDistanceTo(position);
+//
+//        boolean result = groundDistance >= 20
+//            && builder.distTo(position) * 1.5 >= groundDistance
+//            && position.regionsMatch(nearTo);
+//
+//        if (result) {
+//            AbstractPositionFinder._CONDITION_THAT_FAILED = "Probably in another region";
+//        }
+//
+//        return result;
     }
 
     private static boolean handleIsBadRegionForFirstBunker(AUnitType building, APosition position) {
@@ -48,8 +50,9 @@ public class IsProbablyInAnotherRegion {
             return true;
         }
 
-        System.out.println("position = " + position.region());
-        System.out.println("MainRegion.mainRegion() = " + MainRegion.mainRegion());
+//        System.out.println("position = " + position.region());
+//        System.out.println("MainRegion.mainRegion() = " + MainRegion.mainRegion());
+//        System.out.println("position.regionsMatch(MainRegion.mainRegion()) = " + position.regionsMatch(MainRegion.mainRegion()));
 
         return false;
     }

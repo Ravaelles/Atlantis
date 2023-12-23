@@ -1,6 +1,7 @@
 package atlantis.map.choke;
 
 import atlantis.config.ActiveMap;
+import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
@@ -138,6 +139,7 @@ public class Chokes {
 
     public static AChoke nearestChoke(HasPosition position) {
         if (position == null) return null;
+        if (Env.isTesting()) return null;
 
         return (AChoke) cache.get(
             "nearestChoke:" + position.toStringPixels(),

@@ -32,6 +32,8 @@ public class UnitBeingReparedManager extends Manager {
     protected Manager handle() {
         double distanceToRepairer = repairer.distTo(unit);
 
+        if (handleRun()) return usedManager(this, "ShitRun");
+
         if (
             distanceToRepairer <= 1.7
                 && repairer.isRepairing()
@@ -98,5 +100,13 @@ public class UnitBeingReparedManager extends Manager {
         }
 
         return usedManager(this);
+    }
+
+    private boolean handleRun() {
+        return unit.woundPercent() >= 40
+            && (
+            unit.lastUnderAttackLessThanAgo(50)
+                || unit.enemiesNear().canAttack(unit, 1.7).atLeast(1)
+        );
     }
 }

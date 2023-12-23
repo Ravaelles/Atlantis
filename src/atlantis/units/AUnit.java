@@ -12,6 +12,7 @@ import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.running.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.APlayer;
@@ -535,7 +536,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isTargetInWeaponRangeAccordingToGame(AUnit target) {
-        return u.isInWeaponRange(target.u);
+        return hasWeaponRangeByGame(target);
     }
 
     /**
@@ -836,6 +837,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * conditions fulfilled.
      */
     public boolean hasWeaponRangeByGame(AUnit targetUnit) {
+        if (Env.isTesting()) return hasWeaponRangeToAttack(targetUnit, 0);
+
         return this.u.isInWeaponRange(targetUnit.u);
     }
 
@@ -1834,6 +1837,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isFacing(AUnit otherUnit) {
         if (otherUnit.hasNoU()) return false;
+        if (hasNoU()) return false;
 
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector thisUnitLookingVector = Vectors.vectorFromAngle(this.getAngle(), positionDifference.length());
@@ -2052,9 +2056,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isSquadScout() {
-        if (squad() == null || A.isUms() || Count.ourCombatUnits() <= 7) return false;
+        if (squad() == null || A.isUms() || Count.ourCombatUnits() <= 4) return false;
 
-        return equals(squad().squadScout()) && Missions.CONTAIN.equals(squadMission());
+        return equals(squad().squadScout());
     }
 
     private Mission squadMission() {

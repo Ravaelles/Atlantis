@@ -28,7 +28,7 @@ public class DynamicRepairsNearby extends Manager {
     private boolean check() {
         if (!A.hasMinerals(15)) return false;
 
-        AUnit repairable = unit.friendsNear().mechanical().wounded().inRadius(2.5, unit).nearestTo(unit);
+        AUnit repairable = repairable();
 
         if (repairable != null && repairable.isWalkable() && repairable.isAlive()) {
             if (ShouldNotRepairUnit.shouldNotRepairUnit(unit, repairable)) return false;
@@ -61,5 +61,15 @@ public class DynamicRepairsNearby extends Manager {
         }
 
         return false;
+    }
+
+    private AUnit repairable() {
+        return unit.friendsNear()
+            .mechanical()
+            .wounded()
+            .exclude(unit)
+            .inRadius(2.5, unit)
+            .hasPathFrom(unit)
+            .nearestTo(unit);
     }
 }

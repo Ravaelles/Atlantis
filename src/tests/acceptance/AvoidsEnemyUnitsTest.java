@@ -20,7 +20,7 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
      */
     @Test
     public void marinesAreAvoidingZealots() {
-        createWorld(100, () -> {
+        createWorld(70, () -> {
 //            Select.our().print();
 //            Select.enemy().print();
 

@@ -250,7 +250,8 @@ public class Construction implements Comparable<Construction> {
     public boolean isOverdue() {
         if (hasStarted()) return false;
         if (buildingType != null && buildingType.isBase()) return false;
+        if (!A.canAfford(buildingType)) return false;
 
-        return A.ago(timeOrdered) > 30 * 15;
+        return A.ago(timeOrdered) > 30 * 22;
     }
 }

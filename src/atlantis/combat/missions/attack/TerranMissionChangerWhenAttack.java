@@ -35,9 +35,14 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
-        if (A.minerals() >= 2000) {
-            return false;
+        if (armyStrengthTooWeak()) {
+            if (DEBUG) reason = "Army too weak (" + ArmyStrength.ourArmyRelativeStrength() + ")";
+            return true;
         }
+
+//        if (A.minerals() >= 2000) {
+//            return false;
+//        }
 
         if (enemyHasDefensiveBuildingsAndWeArentStrongEnough()) {
             if (DEBUG) reason = "Not enough tanks to break defences";
@@ -79,6 +84,14 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 //        }
 
         return false;
+    }
+
+    private boolean armyStrengthTooWeak() {
+        int ourArmyRelativeStrength = ArmyStrength.ourArmyRelativeStrength();
+
+        if (ourArmyRelativeStrength <= 90) return true;
+
+        return ourArmyRelativeStrength <= 115 && A.seconds() % 7 == 0;
     }
 
     private boolean notEnoughTanksAndNotEarlyGame() {

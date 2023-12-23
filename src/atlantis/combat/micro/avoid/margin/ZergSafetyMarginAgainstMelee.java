@@ -1,6 +1,5 @@
 package atlantis.combat.micro.avoid.margin;
 
-import atlantis.game.OnEveryFrameHelper;
 import atlantis.units.AUnit;
 
 public class ZergSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {

@@ -1,10 +1,13 @@
-package atlantis.game;
+package atlantis.game.events;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.debug.tweaker.ParamTweakerFactory;
+import atlantis.game.A;
+import atlantis.game.AGame;
+import atlantis.game.GameSpeed;
 import atlantis.information.strategy.ProtossStrategies;
 import atlantis.information.strategy.StrategyChooser;
 import atlantis.information.strategy.TerranStrategies;

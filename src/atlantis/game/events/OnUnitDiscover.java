@@ -1,5 +1,6 @@
-package atlantis;
+package atlantis.game.events;
 
+import atlantis.Atlantis;
 import atlantis.units.AUnit;
 
 public class OnUnitDiscover {

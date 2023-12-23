@@ -1,4 +1,4 @@
-package atlantis.combat.squad;
+package atlantis.combat.squad.squad_scout;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
@@ -8,27 +8,20 @@ import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.Enemy;
 import bwapi.Color;
 
-public class SquadScout extends Manager {
-    public SquadScout(AUnit unit) {
+public class SquadScoutProceed extends Manager {
+    public SquadScoutProceed(AUnit unit) {
         super(unit);
     }
 
-    @Override
-    public boolean applies() {
-        return unit.isSquadScout();
-    }
-
     protected Manager handle() {
-        if (unit.isSquadScout()) {
-            return handleSquadScout();
-        }
-
-        return null;
+        return handleSquadScout();
     }
 
     // =========================================================
@@ -57,6 +50,13 @@ public class SquadScout extends Manager {
         }
 
         return null;
+    }
+
+    private boolean allowedToUseScout() {
+        if (Enemy.terran()) return false;
+        if (A.seconds() >= 800) return false;
+
+        return ArmyStrength.ourArmyRelativeStrength() >= 120 && unit.hp() >= 30;
     }
 
     private boolean engageWorkersNow(AUnit squadScout) {

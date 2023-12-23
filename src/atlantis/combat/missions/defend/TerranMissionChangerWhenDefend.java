@@ -40,13 +40,13 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (A.seconds() >= 600 && Atlantis.LOST >= 15 && Count.tanks() <= 8) return false;
 
         if (ActiveMap.isGosu()) {
-            int alphaSize = Alpha.get().size();
-            if (alphaSize <= 15) return false;
-            if (AGame.killsLossesResourceBalance() < 1800) return false;
-            else if (alphaSize >= 23) {
-                if (DEBUG) reason = "Alpha size big enough";
-                return true;
-            }
+//            int alphaSize = Alpha.get().size();
+//            if (alphaSize <= 15) return false;
+//            if (AGame.killsLossesResourceBalance() < 1800) return false;
+//            if (alphaSize >= 23) {
+//                if (DEBUG) reason = "Alpha size big enough";
+//                return true;
+//            }
         }
 
         if (A.seconds() <= 450 && AGame.killsLossesResourceBalance() >= 600) {

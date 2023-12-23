@@ -294,6 +294,10 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(unit -> !unit.isTank(), "tanks");
     }
 
+    public Selection nonTanks() {
+        return cloneByRemovingIf(unit -> unit.isTank(), "nonTanks");
+    }
+
     public Selection groundUnits() {
         return cloneByRemovingIf(
             (unit -> !unit.isGroundUnit()),
@@ -893,6 +897,10 @@ public class Selection extends BaseSelection {
         sortDataByDistanceTo(position, false);
 
         return data.isEmpty() ? null : (AUnit) data.get(0);
+    }
+
+    public AUnit mostDistantToBase() {
+        return mostDistantTo(Select.mainOrAnyBuilding());
     }
 
     public AUnit closestToEnemyBase() {

@@ -1,6 +1,8 @@
-package atlantis.game;
+package atlantis.game.events;
 
 import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.game.A;
+import atlantis.game.CameraCommander;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;

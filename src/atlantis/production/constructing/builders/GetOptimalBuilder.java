@@ -5,6 +5,7 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.log.ErrorLog;
 
 public class GetOptimalBuilder {
@@ -19,6 +20,7 @@ public class GetOptimalBuilder {
 
         boolean allowRepairers = true;
 
-        return Select.ourWorkersFreeToBuildOrRepair(allowRepairers).nearestTo(positionToBuild);
+//        return Select.ourWorkersFreeToBuildOrRepair(allowRepairers).nearestTo(positionToBuild);
+        return FreeWorkers.get().nearestTo(positionToBuild);
     }
 }

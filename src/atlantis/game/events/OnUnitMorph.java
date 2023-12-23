@@ -1,4 +1,4 @@
-package atlantis.game;
+package atlantis.game.events;
 
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.transfers.SquadTransfersCommander;

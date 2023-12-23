@@ -5,6 +5,7 @@ import atlantis.config.AtlantisConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
+import atlantis.game.events.*;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.path.OurClosestBaseToEnemy;
@@ -119,27 +120,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitCreate(Unit u) {
-        if (u == null) {
-            System.err.println("onUnitCreate got null");
-            return;
-        }
-
-        AUnit unit = AUnit.createFrom(u);
-
-        // Our unit
-        if (unit.isOur() && A.now() >= 2) {
-//            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-            Queue.get().refresh();
-
-            // Apply construction fix: detect new Protoss buildings and remove them from queue.
-            if (AGame.isPlayingAsProtoss() && unit.type().isABuilding()) {
-                ProtossWarping.handleWarpingNewBuilding(unit);
-            }
-
-            if (unit.isABuilding()) {
-                if (unit.isBase()) OurClosestBaseToEnemy.clearCache();
-            }
-        }
+        OnUnitCreated.onUnitCreated(u);
     }
 
     /**

@@ -8,6 +8,7 @@ import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
@@ -39,7 +40,7 @@ public class PositionFulfillsAllConditions {
         }
 
         if (builder == null) {
-            builder = Select.ourWorkers().nearestTo(position);
+            builder = FreeWorkers.get().nearestTo(position);
             if (builder == null) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
                 return false;

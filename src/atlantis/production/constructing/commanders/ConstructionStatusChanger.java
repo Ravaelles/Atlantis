@@ -23,6 +23,14 @@ public class ConstructionStatusChanger extends Commander {
             Construction construction = iterator.next();
 
             checkForConstructionStatusChange(construction);
+            checkForOverdueConstructions(construction);
+        }
+    }
+
+    private void checkForOverdueConstructions(Construction construction) {
+        if (A.everyNthGameFrame(31) && construction.isOverdue()) {
+            construction.setBuilder(null);
+            construction.assignOptimalBuilder();
         }
     }
 

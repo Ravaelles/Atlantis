@@ -320,6 +320,9 @@ public interface AUnitOrders {
 
         unit().setTooltip(tooltip)
             .setAction(Actions.STOP);
+
+        if (Env.isTesting()) return true;
+
         return u().stop();
     }
 

@@ -1,10 +1,16 @@
 ### BUGS ###
 
+---- Depot too close, meaning dist to buildings is shit
+
+----- Paint active manager (purple) on top of other debug info
+
+--------------- UBR - tank not avoiding super-close zealots, STUCK on geyser? BUT FACT - UBR
+--------------- MARINE close to bunker - died. test on minimap. Also fighting near tanks.
+???----- Early push, 45%, no defend
+
+
 ------- High ground for tank as (any high ground | in radius 7 | having ground path) + force eager siege during defend
 --- Broken natural - 3 different logics
-
---- GatherResources "KindGuy" idle standing
---- Medics not choke blocking / also scv too quick
 
 - Still no Turrets against Scouts
 - No bunker no turret at natural

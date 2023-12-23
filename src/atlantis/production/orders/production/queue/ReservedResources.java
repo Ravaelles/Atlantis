@@ -1,9 +1,7 @@
 package atlantis.production.orders.production.queue;
 
-import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.util.log.ErrorLog;
 
 public class ReservedResources {
     public static final int MAX_VALUE = 500;
@@ -20,20 +18,24 @@ public class ReservedResources {
 
     // =========================================================
 
-    public static void reserveMinerals(int minerals) {
+    public static void reserveMinerals(int minerals, String whatFor) {
         ReservedResources.minerals += minerals;
         if (ReservedResources.minerals >= MAX_VALUE) ReservedResources.minerals = MAX_VALUE;
         if (ReservedResources.minerals < 0) ReservedResources.minerals = 0;
+
+//        System.out.println("Reserved MINERALS = " + ReservedResources.minerals + " / " + whatFor);
 
 //        if (ReservedResources.minerals < 0 && !Env.isTesting()) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Trying to reserve negative minerals");
 //        }
     }
 
-    public static void reserveGas(int gas) {
+    public static void reserveGas(int gas, String whatFor) {
         ReservedResources.gas += gas;
         if (ReservedResources.gas >= MAX_VALUE) ReservedResources.gas = MAX_VALUE;
         if (ReservedResources.gas < 0) ReservedResources.gas = 0;
+
+//        System.out.println("Reserved GAS = " + ReservedResources.gas + " / " + whatFor);
 
 //        if (ReservedResources.gas < 0 && !Env.isTesting()) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Trying to reserve negative gas");
@@ -43,11 +45,11 @@ public class ReservedResources {
     // =========================================================
 
     public static int minerals() {
-        return minerals;
+        return ReservedResources.minerals;
     }
 
     public static int gas() {
-        return gas;
+        return ReservedResources.gas;
     }
 
     public static void printMinerals() {

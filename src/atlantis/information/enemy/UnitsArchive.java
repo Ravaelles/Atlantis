@@ -123,4 +123,9 @@ public class UnitsArchive {
         return destroyedUnitIds.containsKey(unitId);
     }
 
+    public static int enemyDestroyedWorkers() {
+        return enemyLostTypes.getValueFor(AUnitType.Terran_SCV)
+            + enemyLostTypes.getValueFor(AUnitType.Protoss_Probe)
+            + enemyLostTypes.getValueFor(AUnitType.Zerg_Drone);
+    }
 }

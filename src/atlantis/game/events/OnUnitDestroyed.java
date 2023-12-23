@@ -1,8 +1,9 @@
-package atlantis.game;
+package atlantis.game.events;
 
 import atlantis.Atlantis;
 import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.debug.OurWorkerWasKilled;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.path.OurClosestBaseToEnemy;

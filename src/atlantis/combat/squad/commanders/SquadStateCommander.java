@@ -1,4 +1,4 @@
-package atlantis.combat.squad;
+package atlantis.combat.squad.commanders;
 
 import atlantis.architecture.Commander;
 
@@ -7,6 +7,12 @@ public class SquadStateCommander extends Commander {
     @Override
     protected void handle() {
 //        makeSureSquadObjectsAreInitialized();
+
+        assignAlphaSquadScout();
+    }
+
+    private void assignAlphaSquadScout() {
+
     }
 
     private void makeSureSquadObjectsAreInitialized() {

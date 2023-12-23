@@ -1,4 +1,4 @@
-package atlantis.game;
+package atlantis.game.events;
 
 import atlantis.Atlantis;
 import atlantis.units.AUnit;
