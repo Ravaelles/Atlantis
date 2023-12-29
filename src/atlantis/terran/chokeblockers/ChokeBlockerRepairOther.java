@@ -2,6 +2,7 @@ package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.util.We;
 
 public class ChokeBlockerRepairOther extends Manager {
     private final AUnit otherBlocker;
@@ -13,7 +14,7 @@ public class ChokeBlockerRepairOther extends Manager {
 
     @Override
     public boolean applies() {
-        return otherBlocker != null && otherBlocker.isWounded();
+        return We.terran() && otherBlocker != null && otherBlocker.isWounded();
     }
 
     public Manager handle() {

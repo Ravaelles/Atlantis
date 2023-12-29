@@ -38,7 +38,7 @@ public class WantsToAvoid extends Manager {
 
 //        return avoid.singleUnit(enemies.first());
 
-        if (enemies.size() == 1) {
+        if (enemies.size() == 1 || unit.isDragoon()) {
             return avoid.singleUnit(enemies.first());
         }
         else {

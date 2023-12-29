@@ -2,6 +2,7 @@ package atlantis.production.orders.production.queue.order;
 
 import atlantis.architecture.Commander;
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.production.requests.produce.ProduceUnit;
@@ -10,6 +11,8 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class ProductionOrderHandler extends Commander {
+    private static int TIMES_MISSION_ENFORCED = 0;
+
     private ProductionOrder order;
 
     public ProductionOrderHandler(ProductionOrder order) {
@@ -51,7 +54,11 @@ public class ProductionOrderHandler extends Commander {
         // Mission CHANGE
 
         else if (order.mission() != null) {
-            Missions.setGlobalMissionTo(order.mission(), "Build Order enforced: " + order.mission());
+            if (TIMES_MISSION_ENFORCED <= 2) {
+                Missions.setGlobalMissionTo(order.mission(), "Build Order enforced: " + order.mission());
+
+                TIMES_MISSION_ENFORCED++;
+            }
         }
 
         // === Nothing! ============================================

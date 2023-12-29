@@ -38,7 +38,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return true;
         }
 
-        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 75) {
+        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 95) {
             if (DEBUG) reason = "Rush or cheese and strength ok";
             return true;
         }

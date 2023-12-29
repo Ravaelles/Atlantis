@@ -13,6 +13,9 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
 public class Unfreezer extends Manager {
+
+    private boolean simpleRunFix;
+
     public Unfreezer(AUnit unit) {
         super(unit);
     }
@@ -36,10 +39,16 @@ public class Unfreezer extends Manager {
             && unit.hasNotMovedInAWhile()
             && unit.lastActionMoreThanAgo(30 * 12, Actions.MOVE_UNFREEZE)
 //            && (unit.position().equals(unit.lastPosition()))
-            && (whenRunning(unit) || whenAttacking(unit));
+            && (isSimpleRunFix() || whenRunning(unit) || whenAttacking(unit));
 //            (unit.looksIdle()
 //                || (unit.lastActionMoreThanAgo(30) && unit.hasNotMovedInAWhile())
 //            );
+    }
+
+    private boolean isSimpleRunFix() {
+        return unit.lastStartedRunningMoreThanAgo(20)
+            && !unit.lastStartedRunningLessThanAgo(7)
+            && unit.hasNotMovedInAWhile();
     }
 
     private boolean whenAttacking(AUnit unit) {
@@ -59,6 +68,16 @@ public class Unfreezer extends Manager {
 
     @Override
     public Manager handle() {
+        if (simpleRunFix) {
+            System.out.println("@ " + A.now() + " - UNFREEZE " + unit);
+            if (A.now() % 2 == 0) {
+                unit.holdPosition("UnfreezeA");
+            } else {
+                unit.stop("UnfreezeB");
+            }
+            return usedManager(this);
+        }
+
 //        System.err.println(A.now() + " Unfreezing " + unit + " / " + unit.action());
         if (unit.isMoving()) {
             unit.holdPosition("Unfreeze");

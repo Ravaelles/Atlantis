@@ -177,6 +177,8 @@ public class Decisions {
     public static boolean needToProduceZealotsNow() {
         int zealots = Count.zealots();
 
+        if (Have.cyberneticsCore() && !A.hasMinerals(175) && A.hasGas(100)) return false;
+
         // Early game
         if (GamePhase.isEarlyGame()) {
             if (

@@ -16,6 +16,7 @@ public class NeedChokeBlockers {
     private static AChoke choke;
 
     public static boolean check() {
+        if (We.protoss()) return false;
         if (We.zerg()) return false;
         if (Enemy.terran()) return false;
 
