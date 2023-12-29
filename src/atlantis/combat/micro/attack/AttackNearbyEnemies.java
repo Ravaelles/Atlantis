@@ -33,6 +33,7 @@ public class AttackNearbyEnemies extends Manager {
     public boolean applies() {
         if (unit.cooldown() >= 8) return false;
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
+        if (unit.lastStartedRunningLessThanAgo(3)) return false;
         if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
         if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
 

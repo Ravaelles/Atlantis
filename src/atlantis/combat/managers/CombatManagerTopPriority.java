@@ -29,7 +29,7 @@ public class CombatManagerTopPriority extends Manager {
             ImprovePerformanceHavingBigSupply.class,
             DontInterruptShootingUnits.class,
             HoldToShoot.class,
-//            DanceAfterShoot.class,
+            DanceAfterShoot.class,
             TransportUnits.class,
             ShouldStopRunning.class,
         };

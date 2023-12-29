@@ -9,11 +9,25 @@ public class ShouldNeverAvoidAsTerran extends HasUnit {
     }
 
     public boolean shouldNeverAvoid() {
-        if (unit.isMarine() && enemyWeakAirUnitsNearby()) {
+        if (asMarine()) return true;
+        if (asMedic()) return true;
+
+        return false;
+    }
+
+    private boolean asMedic() {
+        if (!unit.isMedic()) return false;
+
+        return unit.isHealthy();
+    }
+
+    private boolean asMarine() {
+        if (!unit.isMarine()) return false;
+
+        if (enemyWeakAirUnitsNearby()) {
             unit.addLog("NeverAvoidMarine");
             return true;
         }
-
         return false;
     }
 

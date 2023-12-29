@@ -16,7 +16,7 @@ public class GoTowardsMedic extends Manager {
         if (!unit.isTerranInfantryWithoutMedics()) return false;
         if (unit.isHealthy()) return false;
         if (unit.cooldownRemaining() <= 3 || unit.hp() >= 33) return false;
-        if (unit.meleeEnemiesNear().inRadius(3.5, unit).notEmpty()) return false;
+        if (unit.meleeEnemiesNear().inRadius(3.1, unit).notEmpty()) return false;
 
         if (
             unit.isWounded()

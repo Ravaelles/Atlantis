@@ -41,7 +41,6 @@ public class RunToPositionFinder {
         // === Run directly away from the enemy ========================
 
         if (running.showBackToEnemy.shouldRunByShowingBackToEnemy()) {
-            System.out.println("positionForShowingBackToEnemy(runAwayFrom) = " + positionForShowingBackToEnemy(runAwayFrom));
             if (positionForShowingBackToEnemy(runAwayFrom)) {
                 return running.runTo();
             }
@@ -65,7 +64,6 @@ public class RunToPositionFinder {
 
     private boolean positionForShowingBackToEnemy(HasPosition runAwayFrom) {
         if (running.runTo() == null || running.unit().lastActionMoreThanAgo(4)) {
-            System.out.println("findRunPositionShowYourBackToEnemy(runAwayFrom) = " + findRunPositionShowYourBackToEnemy(runAwayFrom));
             running.setRunTo(findRunPositionShowYourBackToEnemy(runAwayFrom));
         }
 
@@ -83,7 +81,6 @@ public class RunToPositionFinder {
      */
     APosition findRunPositionShowYourBackToEnemy(HasPosition runAwayFrom) {
         APosition runTo = showBackToEnemyIfPossible(runAwayFrom);
-        System.out.println("runTo = " + runTo + " / runAwayFrom = " + runAwayFrom + " / unit=" + running.unit);
 
         if (runTo != null && running.unit().distToMoreThan(runTo, 0.002)) {
             return runTo;

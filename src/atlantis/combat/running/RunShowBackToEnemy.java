@@ -20,7 +20,7 @@ public class RunShowBackToEnemy {
     // =========================================================
 
     protected boolean shouldRunByShowingBackToEnemy() {
-        if (true) return false;
+//        if (true) return false;
 //        if (true) return true;
 
         AUnit unit = runningManager.unit;
@@ -29,7 +29,10 @@ public class RunShowBackToEnemy {
 
 //        if (unit.isGroundUnit() && unit.meleeEnemiesNearCount(1.5) >= 0) return true;
 
-        if (unit.isGroundUnit() && unit.meleeEnemiesNearCount(2.5) >= 0) return true;
+        if (
+            unit.isGroundUnit()
+                && unit.meleeEnemiesNearCount(1.6) >= 0
+        ) return true;
 
 //        if (
 //            (
@@ -47,7 +50,6 @@ public class RunShowBackToEnemy {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     HasPosition findRunPositionShowYourBackToEnemy(HasPosition runAwayFrom) {
-
         return runningManager.runPositionFinder.findRunPositionShowYourBackToEnemy(runAwayFrom);
     }
 

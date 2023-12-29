@@ -5,7 +5,11 @@ import atlantis.units.actions.Actions;
 
 public class ShouldContinueRunning {
     public static boolean handleContinueRunning(AUnit unit) {
+        if (unit.lastStartedRunningLessThanAgo(3)) return true;
+
         if (unit.isRunning()) {
+            if (unit.lastStartedRunningLessThanAgo(3)) return true;
+
             if (unit.cooldown() <= 2) {
 //                double rangeBonus = unit.isHealthy() ? 0.5 : 1.2;
                 double rangeBonus = 1.1;
@@ -18,11 +22,10 @@ public class ShouldContinueRunning {
 
 //            if (distToTargetPosition >= 2.5) return true;
 //            if (distToTargetPosition >= 2 && unit.meleeEnemiesNearCount(1.7) > 0) return true;
-//            if (unit.lastStartedRunningLessThanAgo(5)) return true;
 
             if (
-                unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
-                    || unit.lastActionLessThanAgo(18, Actions.RUN_IN_ANY_DIRECTION)
+//                unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
+                unit.lastActionLessThanAgo(8, Actions.RUN_IN_ANY_DIRECTION)
             ) {
 //                System.err.println("@ " + A.now() + " - " + unit);
                 return true;

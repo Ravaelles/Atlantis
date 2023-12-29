@@ -1,7 +1,9 @@
 package atlantis.combat.micro.avoid.margin;
 
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.units.AUnit;
 import atlantis.util.We;
+import bwapi.Color;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
 import static atlantis.units.AUnitType.Zerg_Devourer;
@@ -72,11 +74,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     protected double enemyFacingThisUnitBonus(AUnit attacker) {
-        if (defender.isOtherUnitFacingThisUnit(attacker)) {
-            return -0.3;
+        if (attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker)) {
+//            AAdvancedPainter.paintCircleFilled(defender, 12, Color.Red);
+            return -0.2;
         }
 
-        return +0.2;
+//        AAdvancedPainter.paintCircleFilled(defender, 12, Color.Green);
+        return +0.15;
     }
 
     private double forDragoon(AUnit attacker) {

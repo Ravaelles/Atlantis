@@ -6,18 +6,25 @@ import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.requests.ProductionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class EnemyUnitDiscoveredResponse {
 
     public static void updateEnemyUnitDiscovered(AUnit enemyUnit) {
         if (A.isUms()) return;
-        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) return;
+//        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) return;
+
+        asTerranDontHaveBunkersAndEnemyIsStrong();
 
         // HIDDEN units and buildings to produce it
         handleHiddenUnitDetected(enemyUnit);
@@ -47,6 +54,20 @@ public class EnemyUnitDiscoveredResponse {
             }
 
             if (EnemyUnits.discovered().buildings().atMost(3)) OurClosestBaseToEnemy.clearCache();
+        }
+    }
+
+    private static void  asTerranDontHaveBunkersAndEnemyIsStrong() {
+        if (
+            We.terran()
+                && ArmyStrength.ourArmyRelativeStrength() <= 90
+                && Count.withPlanned(AUnitType.Terran_Bunker) == 0
+        ) {
+            AddToQueue.withTopPriority(AUnitType.Terran_Bunker, Select.mainOrAnyBuilding());
+
+            if (ArmyStrength.ourArmyRelativeStrength() <= 60) {
+                AddToQueue.withHighPriority(AUnitType.Terran_Bunker, Chokes.mainChoke());
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import bwapi.Color;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 public class RunInAnyDirection {
     public static int ANY_DIRECTION_RADIUS_DEFAULT = 3;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 4;
-    public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 3;
+    public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 4;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
 
     private AUnit unit = null;
@@ -34,30 +35,23 @@ public class RunInAnyDirection {
 
         // =========================================================
 
-//        if (
-//            unit._lastPositionRunInAnyDir != null
-//                && unit.lastActionLessThanAgo(12, Actions.RUN_IN_ANY_DIRECTION)
-//                && unit.distTo(runningManager.runTo().position()) > 1
-//        ) {
-//            return unit._lastPositionRunInAnyDir;
-//        }
-
-//        if (runningManager.runTo() == null) {
         runningManager.setRunTo(findRunPositionInAnyDirection(runAwayFrom));
+
 //        System.err.println("findRunPositionInAnyDirection(runAwayFrom) = " + findRunPositionInAnyDirection(runAwayFrom));
 //        System.err.println("runAwayFrom = " + runAwayFrom);
 //        System.err.println("unit = " + unit);
 //        System.err.println("-----------------");
-//        }
 
         // =============================================================================
 
-        APainter.paintLine(unit, runningManager.runTo(), Color.Purple);
-        APainter.paintLine(
-                unit.translateByPixels(0, 1),
-                runningManager.runTo().translateByPixels(0, 1),
-                Color.Purple
-        );
+        if (runningManager.runTo() != null) {
+            APainter.paintLine(unit, runningManager.runTo(), Color.Purple);
+            APainter.paintLine(
+                    unit.translateByPixels(0, 1),
+                    runningManager.runTo().translateByPixels(0, 1),
+                    Color.Purple
+            );
+        }
 
         if (handleInvalidCaseWhenRunToIsTooClose()) return runningManager.setRunTo(null);
 
@@ -121,9 +115,7 @@ public class RunInAnyDirection {
 
             // Score is calculated as:
             // - being most distant to enemy we're running from,
-//            AUnit closestAlly = unit.friendsNear().nearestTo(unit);
-//            double tooCloseFriendFactor = (closestAlly == null ? 0 : closestAlly.distTo(position) / 10);
-//            double positionScore = runAwayFrom.distTo(position) - tooCloseFriendFactor;
+            // - not close to ground friends,
             double positionScore = calculatePositionScore(unit, position, runAwayFrom);
 
             boolean isNewBest = bestPosition == null || positionScore >= bestScore;
@@ -150,8 +142,9 @@ public class RunInAnyDirection {
     }
 
     private static double calculatePositionScore(AUnit unit, APosition position, HasPosition runAwayFrom) {
-//        return position.distTo(runAwayFrom) - unit.distTo(position);
-        return position.distTo(runAwayFrom);
+        return position.distTo(runAwayFrom)
+            - position.distTo(unit)
+            - Select.all().inRadius(0.6, position).exclude(unit).count() * 0.2;
     }
 
     private void positionSearchLoop(int radius, ArrayList<APosition> potentialPositionsList) {

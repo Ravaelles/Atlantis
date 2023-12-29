@@ -30,19 +30,31 @@ public class Unfreezer extends Manager {
         return unit.isCombatUnit()
             && !unit.isLoaded()
 //            && !unit.isMoving()
-            && A.now() % 73 == 0
+//            && A.now() % 73 == 0
             && A.now() >= 10
-            && unit.looksIdle()
-//            && (unit.position().equals(unit.lastPosition()))
-            && unit.lastStartedRunningMoreThanAgo(50)
-            && unit.lastActionMoreThanAgo(30 * 12, Actions.MOVE_UNFREEZE)
+//            && unit.looksIdle()
             && unit.hasNotMovedInAWhile()
-            && unit.nearestEnemyDist() >= 4
-            && unit.lastActionMoreThanAgo(35)
-            && (!unit.isTank() || unit.lastSiegedAgo() >= 30 * 9);
+            && unit.lastActionMoreThanAgo(30 * 12, Actions.MOVE_UNFREEZE)
+//            && (unit.position().equals(unit.lastPosition()))
+            && (whenRunning(unit) || whenAttacking(unit));
 //            (unit.looksIdle()
 //                || (unit.lastActionMoreThanAgo(30) && unit.hasNotMovedInAWhile())
 //            );
+    }
+
+    private boolean whenAttacking(AUnit unit) {
+        return unit.lastActionLessThanAgo(40, Actions.ATTACK_UNIT)
+            && unit.noCooldown()
+            && !unit.isMoving()
+            && (unit.hasTarget() && !unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
+    }
+
+    private boolean whenRunning(AUnit unit) {
+            return unit.lastStartedRunningMoreThanAgo(50)
+                && unit.hasNotMovedInAWhile()
+                && unit.nearestEnemyDist() >= 4
+                && unit.lastActionMoreThanAgo(35)
+                && (!unit.isTank() || unit.lastSiegedAgo() >= 30 * 9);
     }
 
     @Override

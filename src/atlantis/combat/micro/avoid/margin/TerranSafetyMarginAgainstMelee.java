@@ -87,7 +87,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         int cooldown = defender.cooldown();
 
         if (cooldown >= 4) {
-            return 1;
+            return 1.3;
         }
 
         return 0;
