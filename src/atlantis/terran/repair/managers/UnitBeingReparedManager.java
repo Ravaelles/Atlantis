@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class UnitBeingReparedManager extends Manager {
@@ -103,7 +104,30 @@ public class UnitBeingReparedManager extends Manager {
     }
 
     private boolean handleRun() {
-        return unit.woundPercent() >= 40
+        return shouldRun() && run();
+    }
+
+    private boolean run() {
+        AUnit main = Select.mainOrAnyBuilding();
+        if (main == null) return false;
+
+        boolean shouldRunToMain = main.distTo(unit) >= 30;
+
+        if (shouldRunToMain) {
+            return unit.move(main, Actions.RUN_ENEMY, "BackToMain");
+        }
+        else {
+            if (unit.runningManager().runFrom(main, 3, Actions.RUN_ENEMY, false)) {
+                unit.setTooltip("RunFromClose");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean shouldRun() {
+        return (unit.woundPercent() >= 40 || unit.hasCooldown())
             && (
             unit.lastUnderAttackLessThanAgo(50)
                 || unit.enemiesNear().canAttack(unit, 1.7).atLeast(1)

@@ -14,6 +14,7 @@ import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
@@ -56,6 +57,11 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (Enemy.terran() && TerranMissionChangerWhenDefendVsTerran.get().shouldChangeMissionToAttack()) {
             if (DEBUG) reason = "vs Terran change to attack";
+            return true;
+        }
+
+        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 75) {
+            if (DEBUG) reason = "Rush or cheese and strength ok";
             return true;
         }
 

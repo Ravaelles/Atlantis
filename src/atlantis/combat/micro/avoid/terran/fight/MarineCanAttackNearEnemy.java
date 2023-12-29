@@ -1,4 +1,4 @@
-package atlantis.combat.micro.avoid.terran;
+package atlantis.combat.micro.avoid.terran.fight;
 
 import atlantis.units.AUnit;
 import atlantis.util.Enemy;

@@ -44,9 +44,9 @@ public class SquadScoutProceed extends Manager {
         }
         else {
             unit.setTooltipTactical("NoEngagePosition");
-            if (EnemyInfo.hasDiscoveredAnyBuilding()) {
-                System.err.println("positionToEngage null, base = " + EnemyUnits.enemyBase());
-            }
+//            if (EnemyInfo.hasDiscoveredAnyBuilding()) {
+//                System.err.println("positionToEngage null, base = " + EnemyUnits.enemyBase());
+//            }
         }
 
         return null;

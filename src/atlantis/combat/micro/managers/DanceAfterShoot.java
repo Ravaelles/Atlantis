@@ -13,7 +13,7 @@ public class DanceAfterShoot extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
         boolean applies = unit.isRanged()
 //            && !unit.isAttacking()

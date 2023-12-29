@@ -3,7 +3,6 @@ package atlantis.combat.micro.avoid.dont.terran;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class DontAvoidEnemyWhenCloseToTank extends Manager {
@@ -18,7 +17,9 @@ public class DontAvoidEnemyWhenCloseToTank extends Manager {
         if (unit.hp() <= 18) return false;
         if (unit.hasCooldown()) return false;
 
-        return unit.friendsNear().tanksSieged().inRadius(4, unit).count() > 0;
+        return unit.friendsNear().tanksSieged().inRadius(2.2, unit).count() > 0
+            && unit.hp() >= 25
+            && unit.meleeEnemiesNearCount(1.5) == 0;
     }
 
     @Override

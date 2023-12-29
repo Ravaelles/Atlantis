@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.reinforce.terran.turrets.here;
+package atlantis.production.dynamic.reinforce.terran.turrets.offensive;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;

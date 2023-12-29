@@ -1,6 +1,7 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
@@ -29,7 +30,10 @@ public class DontInterruptShootingUnits extends Manager {
 
 //        if (target != null && target.isABuilding() && !target.isCombatBuilding()) return false;
 
-        if (unit.isMarine()) return true;
+//        if (unit.isMarine()) {
+//            System.err.println("@ " + A.now() + " -- " + unit);
+//            return true;
+//        }
 
         if (unit.isZergling()) {
             if (unit.combatEvalRelative() < 1) return false;

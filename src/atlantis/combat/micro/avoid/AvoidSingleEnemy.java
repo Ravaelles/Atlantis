@@ -37,6 +37,8 @@ public class AvoidSingleEnemy extends Manager {
             return usedManager(this);
         }
 
+//        System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
+
         return runError.handleErrorRun(unit);
     }
 

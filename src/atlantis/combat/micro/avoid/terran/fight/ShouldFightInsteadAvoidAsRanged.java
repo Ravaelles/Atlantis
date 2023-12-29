@@ -1,4 +1,4 @@
-package atlantis.combat.micro.avoid.fight;
+package atlantis.combat.micro.avoid.terran.fight;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;

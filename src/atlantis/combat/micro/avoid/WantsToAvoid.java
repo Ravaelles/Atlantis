@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.terran.ShouldNeverAvoidAsTerran;
+import atlantis.combat.micro.avoid.terran.avoid.ShouldNeverAvoidAsTerran;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 
@@ -49,7 +49,10 @@ public class WantsToAvoid extends Manager {
     // =========================================================
 
     private boolean shouldNeverAvoidIf(Units enemies) {
-        if (unit.isWorker() && enemies.onlyMelee()) return unit.hp() >= 40;
+        if (unit.isWorker() && enemies.onlyMelee()) {
+            unit.addLog("BraveWorker");
+            return unit.hp() >= 40;
+        }
 
         if ((new ShouldNeverAvoidAsTerran(unit)).shouldNeverAvoid()) return true;
 

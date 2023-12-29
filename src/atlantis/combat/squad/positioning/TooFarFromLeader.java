@@ -34,7 +34,7 @@ public class TooFarFromLeader extends Manager {
     }
 
     private boolean wayTooFarFromLeader() {
-        return distToLeader >= 9;
+        return distToLeader >= 8;
     }
 
     private boolean unitIsOvercrowded() {

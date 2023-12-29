@@ -790,6 +790,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return canAttackTarget(target, checkShootingRange, checkVisibility, false, 0);
     }
 
+    public boolean canAttackTargetWithBonus(
+        AUnit target,
+        double rangeBonus
+    ) {
+        return canAttackTarget(target, false, false, false, rangeBonus);
+    }
+
     public boolean canAttackTarget(
         AUnit target,
         boolean checkShootingRange,
@@ -1907,7 +1914,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public Mission mission() {
         if (squad == null) {
             if (isCombatUnit() && !isABuilding()) {
-                System.err.println("Empty unit squad for: " + this);
+                if (!A.isUms()) System.err.println("Empty unit squad for: " + this);
                 (new NewUnitsToSquadsAssigner(this)).possibleCombatUnitCreated();
             }
             return Missions.DEFEND;

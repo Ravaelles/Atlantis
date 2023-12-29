@@ -58,7 +58,7 @@ public class LoadIntoTheBunker extends Manager {
             && unit.lastActionLessThanAgo(15, Actions.LOAD)
         ) return usedManager(this);
 
-        if (bunker != null && bunker.hasFreeSpaceFor(unit)) {
+        if (bunker != null && hasSpaceForThisUnit(unit, bunker)) {
             double unitDistToBunker = bunker.distTo(unit);
             double maxDistanceToLoad = maxDistanceToLoad();
 
@@ -84,6 +84,11 @@ public class LoadIntoTheBunker extends Manager {
         }
 
         return (new MoveToBunkerWhenCantLoadIntoIt(unit)).invoke(this);
+    }
+
+    private boolean hasSpaceForThisUnit(AUnit unit, AUnit bunker) {
+        return bunker.hasFreeSpaceFor(unit)
+            && (unit.id() % 2 == 0 || bunker.loadedUnits().size() <= 2);
     }
 
     private double maxDistanceToLoad() {

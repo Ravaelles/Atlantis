@@ -7,7 +7,6 @@ import atlantis.units.select.Selection;
 import atlantis.units.workers.GatherResources;
 
 public class IdleProtectorRepairs extends Manager {
-
     private Selection repairable;
     private AUnit assignment;
 
@@ -30,10 +29,10 @@ public class IdleProtectorRepairs extends Manager {
             if (repairTanks(13)) return usedManager(this);
 
             // Try finding any repairable nearby
-            if (repairAnyGround(7)) return usedManager(this);
+            if (repairAnyGround(10)) return usedManager(this);
 
             // Try finding any repairable nearby
-            if (repairAir(4)) return usedManager(this);
+            if (repairAir(5)) return usedManager(this);
         }
 
         RepairAssignments.removeRepairer(unit);

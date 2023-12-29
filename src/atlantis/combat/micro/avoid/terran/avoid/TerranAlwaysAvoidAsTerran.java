@@ -1,6 +1,7 @@
-package atlantis.combat.micro.avoid.terran;
+package atlantis.combat.micro.avoid.terran.avoid;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.terran.fight.MarineCanAttackNearEnemy;
 import atlantis.units.AUnit;
 
 public class TerranAlwaysAvoidAsTerran extends Manager {

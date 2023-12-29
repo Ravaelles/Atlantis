@@ -10,7 +10,6 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.running.ShouldStopRunning;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.DontInterruptShootingUnits;
-import atlantis.units.interrupt.DontInterruptStartedAttacks;
 
 public class CombatManagerTopPriority extends Manager {
     public CombatManagerTopPriority(AUnit unit) {
@@ -30,7 +29,7 @@ public class CombatManagerTopPriority extends Manager {
             ImprovePerformanceHavingBigSupply.class,
             DontInterruptShootingUnits.class,
             HoldToShoot.class,
-            DanceAfterShoot.class,
+//            DanceAfterShoot.class,
             TransportUnits.class,
             ShouldStopRunning.class,
         };

@@ -1,11 +1,14 @@
 package atlantis.game.events;
 
 import atlantis.Atlantis;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.debug.OurWorkerWasKilled;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.UnitsArchive;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.terran.repair.RepairAssignments;
@@ -18,18 +21,7 @@ public class OnUnitDestroyed {
 
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {
-            RepairAssignments.removeRepairer(unit);
-
-//            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-            Queue.get().refresh();
-
-            if (!unit.type().isGasBuilding()) {
-                Atlantis.LOST++;
-                Atlantis.LOST_RESOURCES += unit.type().getTotalResources();
-            }
-
-            OurWorkerWasKilled.onWorkedKilled(unit);
-            SquadTransfersCommander.removeUnitFromSquads(unit);
+            handleForOurUnit(unit);
         }
 //        else if (unit.isEnemy() && unit.isRealUnit()) {
         else if (unit.isEnemy()) {
@@ -49,6 +41,27 @@ public class OnUnitDestroyed {
             System.out.println("### ROUND END at " + A.seconds() + "s ###");
             UnitsArchive.paintLostUnits();
             UnitsArchive.paintKilledUnits();
+        }
+    }
+
+    private static void handleForOurUnit(AUnit unit) {
+        RepairAssignments.removeRepairer(unit);
+
+//            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
+        Queue.get().refresh();
+
+        if (!unit.type().isGasBuilding()) {
+            Atlantis.LOST++;
+            Atlantis.LOST_RESOURCES += unit.type().getTotalResources();
+        }
+
+        OurWorkerWasKilled.onWorkedKilled(unit);
+        SquadTransfersCommander.removeUnitFromSquads(unit);
+
+        // =========================================================
+
+        if (unit.isMissionAttack() && ArmyStrength.ourArmyRelativeStrength() <= 85) {
+            Missions.forceGlobalMissionDefend("Far too weak to attack!");
         }
     }
 

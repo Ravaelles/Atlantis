@@ -1669,7 +1669,8 @@ public class AAdvancedPainter extends APainter {
                 paintCircle(unit, 15, cloakedColor);
             }
 
-            Color color = unit.looksIdle() ? Color.Purple : Grey;
+//            Color color = unit.looksIdle() ? Color.Purple : Purple;
+            Color color = Purple;
             paintTextCentered(unit, unit.manager().toString(), color, 0, -0.6);
         }
     }

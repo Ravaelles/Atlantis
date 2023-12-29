@@ -38,7 +38,8 @@ public class StrategyChooser {
 //        if (true) { return TerranStrategies.TERRAN_BBS; }
 
         if (Enemy.protoss()) {
-            return TerranStrategies.TERRAN_Shallow_Two_vP;
+            return TerranStrategies.TERRAN_Sparks;
+//            return TerranStrategies.TERRAN_Shallow_Two_vP;
 //            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_Nada_2_Fac;
@@ -48,8 +49,9 @@ public class StrategyChooser {
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
         }
         else {
+            return TerranStrategies.TERRAN_Sparks;
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
-            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
         }
     }
 

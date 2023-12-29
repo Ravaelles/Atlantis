@@ -1,9 +1,8 @@
-package atlantis.production.dynamic.reinforce.terran.turrets.here;
+package atlantis.production.dynamic.reinforce.terran.turrets.offensive;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
-import atlantis.production.dynamic.reinforce.terran.turrets.OffensiveTurrets;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -11,11 +10,9 @@ import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Terran_Missile_Turret;
 
-public class OffensiveTurretsCommander extends Commander {
+public class TurretNeededHereCommander extends Commander {
     @Override
     public boolean applies() {
-//        if (true) return false;
-
         return turretNeeded();
 //            && EnemyInfo.hasLotOfAirUnits();
     }

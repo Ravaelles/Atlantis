@@ -2,8 +2,8 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.fight.ShouldAlwaysFightInsteadAvoid;
-import atlantis.combat.micro.avoid.terran.TerranAlwaysAvoidAsTerran;
+import atlantis.combat.micro.avoid.terran.fight.ShouldAlwaysFightInsteadAvoid;
+import atlantis.combat.micro.avoid.terran.avoid.TerranAlwaysAvoidAsTerran;
 import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

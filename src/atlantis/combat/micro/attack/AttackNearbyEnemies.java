@@ -1,7 +1,7 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.terran.MarineCanAttackNearEnemy;
+import atlantis.combat.micro.avoid.terran.fight.MarineCanAttackNearEnemy;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -50,13 +50,9 @@ public class AttackNearbyEnemies extends Manager {
 
 //        why();
 
-        Manager dedicatedManager = dedicatedManager();
-        if (dedicatedManager != null) {
-            return usedManager(dedicatedManager.invoke(this));
-        }
-
-//        if (this.equals(unit.manager()) && justHandledRecently() && !unit.looksIdle()) {
-//            return usedManager(this);
+//        Manager dedicatedManager = dedicatedManager();
+//        if (dedicatedManager != null) {
+//            return usedManager(dedicatedManager.invoke(this));
 //        }
 
         if (handleAttackNearEnemyUnits()) {
@@ -71,21 +67,22 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     private void why() {
-        if (unit.combatEvalRelative() < 1) {
-            A.printStackTrace("Why is this unit attacking?");
+//        if (unit.combatEvalRelative() < 1) {
+        if (unit.isWounded()) {
+            A.printStackTrace("Why is this unit attacking? " + unit);
         }
     }
 
-    private Manager dedicatedManager() {
-//        if (unit.isWraith()) return new AttackAsWraith(unit);
+//    private Manager dedicatedManager() {
+////        if (unit.isWraith()) return new AttackAsWraith(unit);
+//
+//        return null;
+//    }
 
-        return null;
-    }
-
-    private boolean justHandledRecently() {
-        return unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
-            || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK);
-    }
+//    private boolean justHandledRecently() {
+//        return unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
+//            || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK);
+//    }
 
     /**
      * Selects the best enemy unit and issues attack order.
@@ -99,20 +96,15 @@ public class AttackNearbyEnemies extends Manager {
             "handleAttackNearEnemyUnits: " + unit.id(),
             1,
             () -> {
+//                if (true) return false; // Temp disable attacking
+
                 if (!applies()) return false;
                 if (unit.target() != null && !unit.mission().allowsToAttackEnemyUnit(unit, unit.target())) return false;
                 if (!allowedToAttack.canAttackNow()) return false;
 
-//                if (unit.isAttacking() && (
-//                    unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
-//                        || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)
-//                )) {
-//                    if (unit.target() != null && unit.hasPosition() && (!unit.looksIdle() || unit.hasCooldown())) {
-//                        return true;
-//                    }
-//                }
-
                 // =========================================================
+
+//                why();
 
                 AUnit enemy = (new AttackNearbyEnemies(unit)).defineEnemyToAttackFor();
 
@@ -132,24 +124,6 @@ public class AttackNearbyEnemies extends Manager {
                 return false;
             });
     }
-
-//    private boolean handleWraith() {
-//        if (
-//            unit.lastActionMoreThanAgo(10)
-//                && unit.enemiesNear().notEmpty()
-//                && A.chance(10)
-//                && unit.lastActionMoreThanAgo(30 * 3, Actions.MOVE_SPECIAL)
-//        ) {
-//            MoveAsLooksIdle moveAsLooksIdle = new MoveAsLooksIdle(unit);
-//            moveAsLooksIdle.invoke(this);
-//            usedManager(moveAsLooksIdle);
-//            return false;
-//        }
-//
-//        if (A.chance(5)) return true;
-//
-//        return false;
-//    }
 
     public String canAttackEnemiesNowString() {
         return allowedToAttack.canAttackEnemiesNowString();

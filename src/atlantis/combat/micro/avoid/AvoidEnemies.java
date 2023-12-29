@@ -34,6 +34,7 @@ public class AvoidEnemies extends Manager {
 
         if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
 
+//        return true;
         return !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid();
     }
 

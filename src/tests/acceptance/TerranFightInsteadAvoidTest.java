@@ -1,7 +1,7 @@
 package tests.acceptance;
 
-import atlantis.combat.micro.avoid.terran.ShouldFightInsteadAvoidAsTerran;
-import atlantis.combat.micro.avoid.terran.TerranFightInsteadAvoidAsWraith;
+import atlantis.combat.micro.avoid.terran.fight.ShouldFightInsteadAvoidAsTerran;
+import atlantis.combat.micro.avoid.terran.fight.TerranFightInsteadAvoidAsWraith;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import tests.unit.FakeUnit;

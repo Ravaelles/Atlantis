@@ -9,13 +9,14 @@ public class TerranStrategies extends AStrategy {
     public static final AStrategy TERRAN_BBS = new AStrategy();
 
     // Rush
+    public static final AStrategy TERRAN_Sparks = new AStrategy(); // Marine Medic Ghost (with Lockdown)
+    public static final AStrategy TERRAN_Shallow_Two_vP = new AStrategy(); // Marine Medic Ghost (with Lockdown)
     public static final AStrategy TERRAN_2_Rax_MnM = new AStrategy();
     public static final AStrategy TERRAN_3_Rax_MnM = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vZ = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vP = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vT = new AStrategy();
     public static final AStrategy TERRAN_3_Rax_Academy_vP = new AStrategy();
-    public static final AStrategy TERRAN_Shallow_Two_vP = new AStrategy(); // Marine Medic Ghost (with Lockdown)
 
     // Expansion
     public static final AStrategy TERRAN_1_Rax_FE = new AStrategy();
@@ -32,6 +33,10 @@ public class TerranStrategies extends AStrategy {
 
         // === Rushes ========================================
 
+        TERRAN_Sparks.setTerran().setName("Sparks").setGoingBio().setGoingRush();
+
+        TERRAN_Shallow_Two_vP.setTerran().setName("Shallow Two vP").setGoingBio();
+
         TERRAN_2_Rax_MnM.setTerran().setName("Double Rax MnM").setGoingRush().setGoingBio();
 
         TERRAN_2_Rax_Academy_vZ.setTerran().setName("2 Rax Academy vZ").setGoingRush().setGoingBio();
@@ -41,8 +46,6 @@ public class TerranStrategies extends AStrategy {
         TERRAN_2_Rax_Academy_vT.setTerran().setName("2 Rax Academy vT").setGoingRush().setGoingBio();
 
         TERRAN_3_Rax_Academy_vP.setTerran().setName("3 Rax Academy vP").setGoingRush().setGoingBio();
-
-        TERRAN_Shallow_Two_vP.setTerran().setName("Shallow Two vP").setGoingBio();
 
         // === Cheese =================================
 

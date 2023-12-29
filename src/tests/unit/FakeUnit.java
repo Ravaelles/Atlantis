@@ -52,7 +52,8 @@ public class FakeUnit extends AUnit {
         this.id = firstFreeId++;
         this.rawType = type;
         this._lastType = type;
-        this.position = APosition.createFromPixels((int) tx * 32, (int) ty * 32);
+//        this.position = APosition.createFromPixels((int) tx * 32, (int) ty * 32);
+        this.position = APosition.createFromPixels((int) (tx * 32), (int) (ty * 32));
     }
 
     // =========================================================
@@ -307,32 +308,34 @@ public class FakeUnit extends AUnit {
         return null;
     }
 
-    @Override
-    public double distTo(AUnit otherUnit) {
-//        System.err.println("FakeUnit::distTo (AUnit)");
-
-        int dx = otherUnit.x() - position.x();
-        int dy = otherUnit.y() - position.y();
-
-//        System.err.println("this = " + this.position + " // " + this);
-//        System.err.println("otherUnit = " + ((FakeUnit) otherUnit).position);
-//        System.err.println("dx = " + dx + ", dy = " + dy);
-//        System.err.println("Fake dist = " + (Math.sqrt(dx * dx + dy * dy) / 32.0));
-
-//        System.err.println("X =  " + otherUnit.x() + " // " + position.x() + " // " + dx);
-//        System.err.println("Y =  " + otherUnit.y() + " // " + position.y() + " // " + dy);
-//        System.err.println("Length = " + Math.sqrt(dx * dx + dy * dy) / 32.0);
-
-        return Math.sqrt(dx * dx + dy * dy) / 32.0;
-    }
+//    @Override
+//    public double distTo(AUnit otherUnit) {
+////        System.err.println("FakeUnit::distTo (AUnit)");
+//
+//        int dx = otherUnit.x() - position.x();
+//        int dy = otherUnit.y() - position.y();
+//
+////        System.err.println("this = " + this.position + " // " + this);
+////        System.err.println("otherUnit = " + ((FakeUnit) otherUnit).position);
+////        System.err.println("dx = " + dx + ", dy = " + dy);
+////        System.err.println("Fake dist = " + (Math.sqrt(dx * dx + dy * dy) / 32.0));
+//
+////        System.err.println("X =  " + otherUnit.x() + " // " + position.x() + " // " + dx);
+////        System.err.println("Y =  " + otherUnit.y() + " // " + position.y() + " // " + dy);
+////        System.err.println("Length = " + Math.sqrt(dx * dx + dy * dy) / 32.0);
+//
+//        return Math.sqrt(dx * dx + dy * dy) / 32.0;
+//    }
 
     @Override
     public double distTo(HasPosition otherPosition) {
-//        System.err.println("FakeUnit::distTo (HasPosition)");
-
         int dx = otherPosition.x() - position.x();
         int dy = otherPosition.y() - position.y();
-        return Math.sqrt(dx * dx + dy * dy) / 32.0;
+        double dist = Math.sqrt(dx * dx + dy * dy) / 32.0;
+
+//        System.err.println("FakeUnit::distTo (HasPosition), dx:" + dx + ", dy:" + dy + ", dist:" + dist);
+
+        return dist;
     }
 
     @Override

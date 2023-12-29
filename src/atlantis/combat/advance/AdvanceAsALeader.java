@@ -2,6 +2,7 @@ package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -24,6 +25,10 @@ public class AdvanceAsALeader extends MissionManager {
     protected Manager handle() {
 //        if (unit.isMissionAttackOrGlobalAttack()) return null;
 
+        if (handleWhenLonely()) {
+            return usedManager(this);
+        }
+
         int cohesionPercent = unit.squad().cohesionPercent();
         int friendsNear = unit.friendsInRadius(7).count();
 
@@ -43,6 +48,22 @@ public class AdvanceAsALeader extends MissionManager {
         }
 
         return null;
+    }
+
+    private boolean handleWhenLonely() {
+        Squad squad = unit.squad();
+        if (squad.size() <= 3) return false;
+
+        Selection friends = squad.units().inRadius(3, unit).exclude(unit);
+        if (friends.empty()) {
+            APosition moveTo = squad.center();
+            if (moveTo != null) {
+                unit.move(moveTo, Actions.MOVE_FORMATION, "LeaderLonely");
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean actWithCohesionTooLow(String tooltip) {

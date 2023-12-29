@@ -1,10 +1,8 @@
 ### BUGS ###
 
----- Depot too close, meaning dist to buildings is shit
+..----- Paint active manager (purple) on top of other debug info
 
------ Paint active manager (purple) on top of other debug info
-
---------------- UBR - tank not avoiding super-close zealots, STUCK on geyser? BUT FACT - UBR
+.--------------- UBR - tank not avoiding super-close zealots, STUCK on geyser? BUT FACT - UBR
 --------------- MARINE close to bunker - died. test on minimap. Also fighting near tanks.
 ???----- Early push, 45%, no defend
 

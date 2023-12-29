@@ -1,7 +1,6 @@
-package atlantis.combat.micro.avoid.fight;
+package atlantis.combat.micro.avoid.terran.fight;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.terran.ShouldFightInsteadAvoidAsTerran;
 import atlantis.combat.micro.avoid.zerg.ShouldFightInsteadAvoidAsZerg;
 import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.targeting.ATargetingCrucial;
@@ -35,7 +34,7 @@ public class ShouldAlwaysFightInsteadAvoid {
     protected final AUnit vulture;
     protected final AUnit ranged;
     protected final AUnit melee;
-    private final atlantis.combat.micro.avoid.fight.TerranFightInsteadAvoid terranFightInsteadAvoid;
+    private final TerranFightInsteadAvoid terranFightInsteadAvoid;
 
     // =========================================================
 
@@ -44,7 +43,7 @@ public class ShouldAlwaysFightInsteadAvoid {
         this.enemies = enemies;
         this.enemiesSelection = Select.from(enemies);
 
-        terranFightInsteadAvoid = new atlantis.combat.micro.avoid.fight.TerranFightInsteadAvoid(unit);
+        terranFightInsteadAvoid = new TerranFightInsteadAvoid(unit);
 
         Selection selector = Select.from(enemies);
         invisibleDT = selector.ofType(AUnitType.Protoss_Dark_Templar).effUndetected().first();
@@ -70,7 +69,6 @@ public class ShouldAlwaysFightInsteadAvoid {
 
                 Manager m;
 
-//                if ((m = new ShouldFightInsteadAvoidAsRanged(unit)).invoke(this) != null) return true;
                 if ((m = new ShouldFightInsteadAvoidAsRanged(unit)).applies()) return true;
                 if ((m = new ShouldFightInsteadAvoidAsTerran(unit)).invoke(this) != null) return true;
                 if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) return true;
@@ -106,11 +104,6 @@ public class ShouldAlwaysFightInsteadAvoid {
             }
         );
     }
-
-//    public  boolean shouldFightCached() {
-//        String key = "shouldFight:" + unit.idWithHash();
-//        return cache.has(key) ? cache.get(key) : false;
-//    }
 
     // =========================================================
 

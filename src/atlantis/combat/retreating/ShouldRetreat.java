@@ -48,7 +48,10 @@ public class ShouldRetreat extends Manager {
                 if (A.isUms() && A.supplyUsed() <= 30) return false;
 
 //                if (unit.isRunning()) return false;
-                if (shouldNotRunInMissionDefend(unit)) return false;
+                if (shouldNotRunInMissionDefend(unit)) {
+                    unit.addLog("NoRunInDefend");
+                    return false;
+                }
 
 //                if (TempDontRetreat.temporarilyDontRetreat()) {
 //                    return false;
@@ -62,7 +65,7 @@ public class ShouldRetreat extends Manager {
                 terranShouldNotRetreat = new TerranShouldNotRetreat(unit);
 
                 if (terranShouldRetreat.shouldRetreat() != null) return true;
-                if (terranShouldNotRetreat.shouldNotRetreat() != null) return false;
+                if (terranShouldNotRetreat.shouldNotRetreat()) return false;
 
                 if (shouldNotConsiderRetreatingNow(unit)) return false;
 
@@ -105,7 +108,9 @@ public class ShouldRetreat extends Manager {
 
     private static boolean shouldNotRunInMissionDefend(AUnit unit) {
         return unit.isMissionDefend()
-            && (unit.hp() >= 25 || unit.enemiesNear().melee().nearestToDistMore(unit, 2.1))
+            && unit.hp() >= 25
+            && unit.cooldown() >= 2
+            && unit.enemiesNear().melee().nearestToDistMore(unit, 2.1)
             && unit.friendsNear().buildings().nearestToDistLess(unit, 4);
     }
 
@@ -137,49 +142,6 @@ public class ShouldRetreat extends Manager {
         return false;
     }
 
-//    private boolean shouldLargeScaleRetreat(Selection enemies) {
-//        if (shouldRetreatDueToSquadMostlyRetreating()) {
-//            unit.addLog("SquadMostlyRetreating");
-//            return true;
-//        }
-//
-////        boolean isSituationFavorable = OldUnusedCombatEvaluator.isSituationFavorable();
-////
-////        if (!isSituationFavorable) {
-////            unit._lastRetreat = AGame.now();
-////            unit.setTooltipTactical("Retreat");
-////            MissionChanger.notifyThatUnitRetreated();
-////            APosition averageEnemyPosition = enemies.units().average();
-////
-////            if (unit.position().equals(averageEnemyPosition)) {
-////                averageEnemyPosition = averageEnemyPosition.translateByPixels(1, 1);
-////            }
-////
-////            if (averageEnemyPosition == null) {
-////                return false;
-////            }
-////
-////            return unit.runningManager().runFrom(averageEnemyPosition, 5, Actions.RUN_RETREAT);
-////        }
-//
-//        return false;
-//    }
-
-//    private boolean shouldRetreatDueToSquadMostlyRetreating() {
-//        Squad squad = unit.squad();
-//        if (squad == null || squad.size() <= 1 || unit.isMissionDefendOrSparta()) {
-//            return false;
-//        }
-//
-//        if (unit.distToNearestChokeLessThan(5) && unit.combatEvalRelative() <= 4) {
-//            unit.addLog("ChokeDanger");
-//            return true;
-//        }
-//
-//        int countRunning = squad.selection().countRetreating();
-//        return countRunning >= 0.5 * squad.size();
-//    }
-
     protected static boolean shouldNotConsiderRetreatingNow(AUnit unit) {
         if (A.supplyUsed() >= 182) return true;
 
@@ -198,13 +160,13 @@ public class ShouldRetreat extends Manager {
         AUnit main = Select.main();
         if (main != null) {
             if (main.distTo(unit) <= 8 && unit.hp() >= 19 && unit.noCooldown()) {
-                unit.setTooltip("ProtectMain");
+                unit.addLog("ProtectMain");
                 return true;
             }
         }
 
         if (A.seconds() <= 400 && OurStrategy.get().isRushOrCheese() && unit.enemiesNear().ranged().empty()) {
-            unit.setTooltip("Rush");
+            unit.addLog("Rush");
             return true;
         }
 

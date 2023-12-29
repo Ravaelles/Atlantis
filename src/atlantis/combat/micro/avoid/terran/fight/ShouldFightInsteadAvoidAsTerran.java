@@ -1,6 +1,7 @@
-package atlantis.combat.micro.avoid.terran;
+package atlantis.combat.micro.avoid.terran.fight;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.terran.fight.*;
 import atlantis.units.AUnit;
 
 public class ShouldFightInsteadAvoidAsTerran extends Manager {

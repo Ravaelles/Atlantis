@@ -1,16 +1,12 @@
 package atlantis.combat.running;
 
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
-import bwapi.Color;
 
 public class ARunningManager {
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
@@ -51,12 +47,11 @@ public class ARunningManager {
 
         this.runFrom = runFrom;
         this.allowedToNotifyNearUnitsToMakeSpace = allowedToNotifyNearUnitsToMakeSpace;
+        verifyRunFromPosition(runFrom);
 
-        handleInvalidRunFromPosition(runFrom);
+        // =========================================================
 
-//        if (handleOnlyCombatBuildingsAreDangerouslyClose()) return true;
-
-        if (handleContinueRunning()) return true;
+        if (ShouldContinueRunning.handleContinueRunning(unit)) return true;
 
         // === Define run to position ==============================
 
@@ -65,43 +60,28 @@ public class ARunningManager {
 
         // === Actual run order ====================================
 
-        if (runTo != null && unit.distTo(runTo) >= 0.001) {
+        if (runTo != null && unit.distTo(runTo.position()) >= 0.05) {
             dist = unit.distTo(runTo);
             unit.setTooltip("RunToDist(" + String.format("%.1f", dist) + ")", false);
             return makeUnitRun(action);
         }
 
-//        System.err.println("=== RUN ERROR =================");
+        System.err.println(
+            "=== RUN ERROR ================= run:"
+                + (runTo != null ? runTo.toStringPixels() : "-")
+                + " / unit:" + unit.position().toStringPixels()
+        );
+
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
 //        System.err.println("Our count = " + Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
 //        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
 
-        unit.setTooltip("Cant run", false);
+        unit.addLog("CantRun");
         return false;
     }
 
-    private boolean handleContinueRunning() {
-        if (unit.isRunning()) {
-            double distToTargetPosition = unit.targetPosition() != null ? unit.distTo(unit.targetPosition()) : -1;
-
-            if (distToTargetPosition >= 2.5) return true;
-            if (distToTargetPosition >= 2 && unit.meleeEnemiesNearCount(1.7) > 0) return true;
-            if (unit.lastStartedRunningLessThanAgo(5)) return true;
-
-            if (
-                unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
-                    || unit.lastActionLessThanAgo(18, Actions.RUN_IN_ANY_DIRECTION)
-            ) {
-//                System.err.println("@ " + A.now() + " - " + unit);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void handleInvalidRunFromPosition(HasPosition runAwayFrom) {
+    private void verifyRunFromPosition(HasPosition runAwayFrom) {
         if (runAwayFrom == null || runAwayFrom.position() == null) {
             System.err.println("Null unit to run from");
             stopRunning();
@@ -112,8 +92,6 @@ public class ARunningManager {
     private HasPosition adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(HasPosition runAwayFrom) {
         Selection friendsVeryNear = unit.friendsNear().inRadius(1.2, unit);
         if (friendsVeryNear.size() == 1) {
-
-
             return runAwayFrom.translatePercentTowards(35, friendsVeryNear.first());
         }
 
@@ -248,7 +226,7 @@ public class ARunningManager {
         return runTo;
     }
 
-    protected HasPosition setRunTo(HasPosition runTo) {
+    public HasPosition setRunTo(HasPosition runTo) {
         this.runTo = runTo;
         return runTo;
     }

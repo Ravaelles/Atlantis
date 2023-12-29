@@ -5,6 +5,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.map.choke.AChoke;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -17,7 +18,9 @@ public class NeedChokeBlockers {
     public static boolean check() {
         if (We.zerg()) return false;
         if (Enemy.terran()) return false;
-        
+
+        if (OurStrategy.get().isRushOrCheese()) return false;
+
         if (AGame.notNthGameFrame(5)) return false;
         if (Missions.isGlobalMissionAttack()) return false;
 

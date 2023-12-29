@@ -32,7 +32,7 @@ public class MoveToBunkerWhenCantLoadIntoIt extends Manager {
 
         double unitDistToBunker = bunker.distTo(unit);
 
-        if (unitDistToBunker <= 4.9) {
+        if (unitDistToBunker <= 4.2) {
             return null;
         }
 

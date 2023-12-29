@@ -61,6 +61,16 @@ public class OnEveryFrameHelper {
 //        validateNextDepotPosition();
 
 //        printFirstCombatUnitStatus();
+
+//        printMarineManagers();
+    }
+
+    private static void printMarineManagers() {
+        for (AUnit unit : Select.ourOfType(AUnitType.Terran_Marine).list()) {
+            System.out.println("@ " + A.now() + " - Marine#" + unit.id() + " - " + unit.manager());
+            System.out.println(unit.managerLogs().toString());
+//            System.out.println(unit.target());
+        }
     }
 
     private static void printFirstCombatUnitStatus() {

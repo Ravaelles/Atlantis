@@ -1,5 +1,6 @@
 package atlantis.combat.running;
 
+import atlantis.combat.running.any_direction.RunInAnyDirection;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -22,25 +23,28 @@ public class RunToPositionFinder {
      * Running behavior which will make unit run straight away from the enemy.
      */
     protected HasPosition findBestPositionToRun(HasPosition runAwayFrom, double dist) {
-        if (!running.allowedToNotifyNearUnitsToMakeSpace) {
-            if ((running.setRunTo(running.runTowardsNonStandard.shouldRunTowardsBunker())) != null) {
-                return running.runTo();
-            }
-
-            if (running.runTowardsNonStandard.shouldRunTowardsBase()) {
-                return running.setRunTo(Select.main().position());
-            }
-        }
-
-        // =========================================================
-
-        // Force units like Marines to slightly run away from each other to avoid one blob of running units
-        runAwayFrom = separateEarlyFromFriends(runAwayFrom);
+//        if (!running.allowedToNotifyNearUnitsToMakeSpace) {
+//            if ((running.setRunTo(running.runTowardsNonStandard.shouldRunTowardsBunker())) != null) {
+//                return running.runTo();
+//            }
+//
+//            if (running.runTowardsNonStandard.shouldRunTowardsBase()) {
+//                return running.setRunTo(Select.main().position());
+//            }
+//        }
+//
+//        // =========================================================
+//
+//        // Force units like Marines to slightly run away from each other to avoid one blob of running units
+//        runAwayFrom = separateEarlyFromFriends(runAwayFrom);
 
         // === Run directly away from the enemy ========================
 
         if (running.showBackToEnemy.shouldRunByShowingBackToEnemy()) {
-            if (positionForShowingBackToEnemy(runAwayFrom)) return running.runTo();
+            System.out.println("positionForShowingBackToEnemy(runAwayFrom) = " + positionForShowingBackToEnemy(runAwayFrom));
+            if (positionForShowingBackToEnemy(runAwayFrom)) {
+                return running.runTo();
+            }
         }
 
         // === Run as far from enemy as possible =====================
@@ -61,14 +65,16 @@ public class RunToPositionFinder {
 
     private boolean positionForShowingBackToEnemy(HasPosition runAwayFrom) {
         if (running.runTo() == null || running.unit().lastActionMoreThanAgo(4)) {
+            System.out.println("findRunPositionShowYourBackToEnemy(runAwayFrom) = " + findRunPositionShowYourBackToEnemy(runAwayFrom));
             running.setRunTo(findRunPositionShowYourBackToEnemy(runAwayFrom));
         }
 
-        APainter.paintCircleFilled(running.runTo(), 3, Color.Brown);
-        APainter.paintLine(running.unit(), running.runTo(), Color.Brown);
-        running.unit().setTooltip("ShowBack");
+        if (running.runTo() != null) {
+            APainter.paintCircleFilled(running.runTo(), 3, Color.Brown);
+            APainter.paintLine(running.unit(), running.runTo(), Color.Brown);
+            running.unit().setTooltip("ShowBack");
+        }
 
-        if (running.runTo() != null) return true;
         return false;
     }
 
@@ -77,6 +83,7 @@ public class RunToPositionFinder {
      */
     APosition findRunPositionShowYourBackToEnemy(HasPosition runAwayFrom) {
         APosition runTo = showBackToEnemyIfPossible(runAwayFrom);
+        System.out.println("runTo = " + runTo + " / runAwayFrom = " + runAwayFrom + " / unit=" + running.unit);
 
         if (runTo != null && running.unit().distToMoreThan(runTo, 0.002)) {
             return runTo;
@@ -86,7 +93,7 @@ public class RunToPositionFinder {
     }
 
     APosition showBackToEnemyIfPossible(HasPosition runAwayFrom) {
-        if (running.unit().isGroundUnit()) return null;
+//        if (running.unit().isGroundUnit()) return null;
 
         APosition runTo;
         runAwayFrom = runAwayFrom.position();
@@ -268,5 +275,11 @@ public class RunToPositionFinder {
         }
 
         return isOkay;
+    }
+
+    // =========================================================
+
+    public ARunningManager running() {
+        return running;
     }
 }

@@ -12,9 +12,7 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
     }
 
     public void possibleCombatUnitCreated() {
-        if (shouldSkipUnit()) {
-            return;
-        }
+        if (shouldSkipUnit()) return;
 
         Squad squad = chooseSquadFor();
 
@@ -30,14 +28,14 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
     private Squad chooseSquadFor() {
         Alpha alpha = Alpha.get();
 
-        if (assignToDelta()) {
+        if (shouldAssignToDelta()) {
             return Delta.get();
         }
 
         return alpha;
     }
 
-    private boolean assignToDelta() {
+    private boolean shouldAssignToDelta() {
         return (unit.isAir() && !unit.type().isTransport())
             || unit.type().isDetectorNonBuilding();
     }

@@ -20,8 +20,8 @@ public class RunShowBackToEnemy {
     // =========================================================
 
     protected boolean shouldRunByShowingBackToEnemy() {
+        if (true) return false;
 //        if (true) return true;
-//        if (true) return false;
 
         AUnit unit = runningManager.unit;
 
