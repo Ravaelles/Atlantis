@@ -66,11 +66,11 @@ public class ARunningManager {
             return makeUnitRun(action);
         }
 
-        System.err.println(
-            "=== RUN ERROR ================= run:"
-                + (runTo != null ? runTo.toStringPixels() : "-")
-                + " / unit:" + unit.position().toStringPixels()
-        );
+//        System.err.println(
+//            "=== RUN ERROR ================= run:"
+//                + (runTo != null ? runTo.toStringPixels() : "-")
+//                + " / unit:" + unit.position().toStringPixels()
+//        );
 
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);

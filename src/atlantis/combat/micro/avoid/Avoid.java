@@ -27,17 +27,19 @@ public class Avoid extends Manager {
         return (new AvoidSingleEnemy(unit, enemy)).avoid();
     }
 
-//    public Manager groupOfUnits(Units enemiesDangerouslyClose) {
-//        this.enemy = enemy;
-//
-//        HasPosition runFrom = defineRunFromForGroupOfUnits(enemiesDangerouslyClose);
-//
-//        if (runFrom == null) {
-//            System.err.println("Run from group is null for " + unit);
-//            enemiesDangerouslyClose.print("Group of units to run from");
-//            return null;
-//        }
-//
+    public Manager groupOfUnits(Units enemiesDangerouslyClose) {
+        this.enemy = enemy;
+
+        HasPosition runFrom = defineRunFromForGroupOfUnits(enemiesDangerouslyClose);
+
+        if (runFrom == null) {
+            System.err.println("Run from group is null for " + unit);
+            enemiesDangerouslyClose.print("Group of units to run from");
+            return null;
+        }
+
+        return (new AvoidGroupOfEnemies(unit, runFrom)).avoid();
+
 //        APainter.paintCircle(runFrom, 6, Color.Orange);
 //        APainter.paintCircle(runFrom, 4, Color.Orange);
 //        APainter.paintCircle(runFrom, 2, Color.Orange);
@@ -52,7 +54,7 @@ public class Avoid extends Manager {
 //        }
 //
 //        return runError.handleErrorRun(unit);
-//    }
+    }
 
     // =========================================================
 
@@ -63,6 +65,8 @@ public class Avoid extends Manager {
         if (enemies.size() >= takeOnly) {
             return enemies.limit(takeOnly).units().average();
         }
+
+        if (enemies.empty()) return null;
 
         for (AUnit enemy : enemiesDangerouslyClose.list()) {
             APainter.paintCircle(enemy, 16, Color.Orange);

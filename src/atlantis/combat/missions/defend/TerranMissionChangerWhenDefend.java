@@ -38,7 +38,14 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return true;
         }
 
-        if (A.seconds() >= 600 && Atlantis.LOST >= 15 && Count.tanks() <= 8) return false;
+        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 75) {
+            if (DEBUG) reason = "Rush or cheese and strength ok";
+            return true;
+        }
+
+        if (
+            A.seconds() >= 600 && Atlantis.LOST >= 15 && Count.tanks() <= 8 && !OurStrategy.get().isRushOrCheese()
+        ) return false;
 
         if (ActiveMap.isGosu()) {
 //            int alphaSize = Alpha.get().size();
@@ -57,11 +64,6 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (Enemy.terran() && TerranMissionChangerWhenDefendVsTerran.get().shouldChangeMissionToAttack()) {
             if (DEBUG) reason = "vs Terran change to attack";
-            return true;
-        }
-
-        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 75) {
-            if (DEBUG) reason = "Rush or cheese and strength ok";
             return true;
         }
 

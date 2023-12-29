@@ -18,8 +18,8 @@ public class DontGoTooFarFromBunkers extends Manager {
     public boolean applies() {
         if (EnemyWhoBreachedBase.get() != null) return false;
 
-        if (GamePhase.isEarlyGame() && unit.isMissionDefend() && Count.bunkers() > 0) {
-            if (unit.isWounded() && unit.meleeEnemiesNearCount() >= 1) return false;
+        if (unit.isMissionDefend() && GamePhase.isEarlyGame() && Count.bunkers() > 0) {
+            if (unit.isWounded() && unit.meleeEnemiesNearCount(3.3) >= 1) return false;
 
             return true;
         }
@@ -41,7 +41,7 @@ public class DontGoTooFarFromBunkers extends Manager {
 
         if (bunker == null) return false;
 
-        if (unit.distTo(bunker) >= 22) {
+        if (unit.distTo(bunker) >= 22 && unit.lastUnderAttackLessThanAgo(30 * 15)) {
             if (!unit.lastActionLessThanAgo(3)) {
                 unit.move(bunker, Actions.MOVE_SAFETY, "CloserToBunker");
             }

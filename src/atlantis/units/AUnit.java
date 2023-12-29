@@ -6,6 +6,7 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.margin.UnitRange;
+import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
@@ -2474,7 +2475,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return cacheBoolean.get(
             "isBeingHealed",
             6,
-            () -> friendsInRadius(2).ofType(AUnitType.Terran_Medic).havingTargeted(this).notEmpty()
+            () -> (
+                friendsInRadius(3).ofType(AUnitType.Terran_Medic).havingTargeted(this).notEmpty()
+                || TerranMedic.isAnyMedicAssigedTo(this)
+            )
         );
     }
 

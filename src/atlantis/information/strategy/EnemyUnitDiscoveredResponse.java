@@ -11,6 +11,7 @@ import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.ProductionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -57,17 +58,22 @@ public class EnemyUnitDiscoveredResponse {
         }
     }
 
-    private static void  asTerranDontHaveBunkersAndEnemyIsStrong() {
+    private static void asTerranDontHaveBunkersAndEnemyIsStrong() {
         if (
             We.terran()
-                && ArmyStrength.ourArmyRelativeStrength() <= 90
+                && ArmyStrength.ourArmyRelativeStrength() <= 97
                 && Count.withPlanned(AUnitType.Terran_Bunker) == 0
         ) {
-            AddToQueue.withTopPriority(AUnitType.Terran_Bunker, Select.mainOrAnyBuilding());
-
-            if (ArmyStrength.ourArmyRelativeStrength() <= 60) {
-                AddToQueue.withHighPriority(AUnitType.Terran_Bunker, Chokes.mainChoke());
+            ProductionOrder order = AddToQueue.withTopPriority(AUnitType.Terran_Bunker, Chokes.mainChoke());
+            if (order != null) {
+                order.setMinSupply(1);
             }
+
+//            AddToQueue.withTopPriority(AUnitType.Terran_Bunker, Select.mainOrAnyBuilding());
+
+//            if (ArmyStrength.ourArmyRelativeStrength() <= 60) {
+//                AddToQueue.withHighPriority(AUnitType.Terran_Bunker, Chokes.mainChoke());
+//            }
         }
     }
 

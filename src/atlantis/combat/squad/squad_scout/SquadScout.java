@@ -69,7 +69,8 @@ public class SquadScout extends Manager {
         if (Enemy.terran()) return false;
         if (A.seconds() >= 800) return false;
 
-        return ArmyStrength.ourArmyRelativeStrength() >= 120 && unit.hp() >= 30;
+//        return ArmyStrength.ourArmyRelativeStrength() >= 120 && unit.hp() >= 30;
+        return unit.hp() >= 30;
     }
 
     private boolean engageWorkersNow(AUnit squadScout) {

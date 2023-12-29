@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -33,6 +34,11 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
         if (MissionDecisions.baseUnderSeriousAttack()) {
             if (DEBUG) reason = "Protect base";
             return true;
+        }
+
+        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 95) {
+            if (DEBUG) reason = "Rush or cheese and strength still ok";
+            return false;
         }
 
         if (armyStrengthTooWeak()) {

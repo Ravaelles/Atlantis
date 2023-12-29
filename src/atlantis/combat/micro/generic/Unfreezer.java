@@ -60,6 +60,10 @@ public class Unfreezer extends Manager {
     @Override
     public Manager handle() {
 //        System.err.println(A.now() + " Unfreezing " + unit + " / " + unit.action());
+        if (unit.isMoving()) {
+            unit.holdPosition("Unfreeze");
+            return usedManager(this);
+        }
 
         if (unit.distToFocusPoint() >= 3) {
             unit.moveTactical(unit.micro().focusPoint(), Actions.MOVE_UNFREEZE, "Unfreeze");

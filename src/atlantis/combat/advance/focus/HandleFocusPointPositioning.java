@@ -4,13 +4,15 @@ import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 
-public class ContainFocusPoint extends MissionManager {
-    public ContainFocusPoint(AUnit unit) {
+public class HandleFocusPointPositioning extends MissionManager {
+    public HandleFocusPointPositioning(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
+        if (unit.isSquadScout()) return false;
+
         return unit.enemiesNear().inRadius(10, unit).empty();
     }
 

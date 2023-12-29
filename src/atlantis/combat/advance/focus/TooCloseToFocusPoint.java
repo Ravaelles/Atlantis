@@ -19,6 +19,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
         if (EnemyWhoBreachedBase.notNull()) return false;
+        if (unit.isSquadScout()) return false;
 
         if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_CLOSE) {
             // Be brave with ChokeBlockers

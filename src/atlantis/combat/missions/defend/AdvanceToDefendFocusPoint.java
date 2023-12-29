@@ -1,7 +1,7 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.ContainFocusPoint;
+import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
 import atlantis.combat.squad.positioning.EarlyGameTooClustered;
 import atlantis.combat.squad.positioning.TooClustered;
@@ -21,7 +21,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
         return new Class[]{
             EarlyGameTooClustered.class,
             TooClustered.class,
-            ContainFocusPoint.class,
+            HandleFocusPointPositioning.class,
         };
     }
 

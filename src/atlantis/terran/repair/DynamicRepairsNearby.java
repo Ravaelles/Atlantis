@@ -37,10 +37,8 @@ public class DynamicRepairsNearby extends Manager {
 
             RepairAssignments.addRepairer(unit, repairable);
             if (!unit.isRepairing()) {
-                unit.repair(unit, "DynaRepair");
+                unit.repair(repairable, "DynaRepair");
             }
-
-            unit.setTooltip("KindGuy");
 
             if (repairable.looksIdle()) {
                 if (repairable.isScv()) {

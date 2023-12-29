@@ -50,4 +50,8 @@ public class TerranMedic extends Manager {
             AvoidEnemies.class,
         };
     }
+
+    public static boolean isAnyMedicAssigedTo(AUnit target) {
+        return medicsToAssignments.containsValue(target);
+    }
 }

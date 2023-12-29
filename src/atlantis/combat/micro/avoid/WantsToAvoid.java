@@ -36,14 +36,14 @@ public class WantsToAvoid extends Manager {
 //            A.printStackTrace();
 //        }
 
-        return avoid.singleUnit(enemies.first());
+//        return avoid.singleUnit(enemies.first());
 
-//        if (enemies.size() == 1) {
-//            return Avoid.singleUnit(enemies.first());
-//        }
-//        else {
-//            return Avoid.groupOfUnits(enemies);
-//        }
+        if (enemies.size() == 1) {
+            return avoid.singleUnit(enemies.first());
+        }
+        else {
+            return avoid.groupOfUnits(enemies);
+        }
     }
 
     // =========================================================

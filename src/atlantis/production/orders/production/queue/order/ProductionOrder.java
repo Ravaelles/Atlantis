@@ -375,6 +375,11 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         return this;
     }
 
+    public ProductionOrder setMinSupply(int minSupply) {
+        this.minSupply = minSupply;
+        return this;
+    }
+
     public int id() {
         return id;
     }

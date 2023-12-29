@@ -1,5 +1,6 @@
 package atlantis.units.select;
 
+import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.path.ClosestToEnemyBase;
