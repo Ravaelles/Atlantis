@@ -1276,6 +1276,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isCarryingGas() {
+        if (u == null) return false;
+
         return u.isCarryingGas();
     }
 
@@ -1318,6 +1320,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isStuck() {
+        if (u == null) return false;
+
         return u.isStuck();
     }
 
@@ -2478,7 +2482,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             6,
             () -> (
                 friendsInRadius(3).ofType(AUnitType.Terran_Medic).havingTargeted(this).notEmpty()
-                || TerranMedic.isAnyMedicAssigedTo(this)
+                    || TerranMedic.isAnyMedicAssigedTo(this)
             )
         );
     }

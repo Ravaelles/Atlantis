@@ -75,28 +75,29 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     // =========================================================
 
     public ProductionOrder(AUnitType unitOrBuilding, int minSupply) {
-        this(unitOrBuilding, null, null, null, minSupply);
+        this(unitOrBuilding, null, null, null, null, minSupply);
     }
 
     public ProductionOrder(UpgradeType upgrade, int minSupply) {
-        this(null, null, null, upgrade, minSupply);
+        this(null, null, null, upgrade, null, minSupply);
     }
 
     public ProductionOrder(TechType tech, int minSupply) {
-        this(null, null, tech, null, minSupply);
+        this(null, null, tech, null, null, minSupply);
     }
 
     public ProductionOrder(Mission mission, int minSupply) {
-        this(null, null, null, null, minSupply);
-        setMission(mission);
+        this(null, null, null, null, mission, minSupply);
     }
 
     public ProductionOrder(AUnitType unitOrBuilding, HasPosition position, int minSupply) {
-        this(unitOrBuilding, position, null, null, minSupply);
+        this(unitOrBuilding, position, null, null, null, minSupply);
     }
 
-    public ProductionOrder(AUnitType type, HasPosition position, TechType tech, UpgradeType upgrade, int minSupply) {
-        assert type != null || tech != null || upgrade != null;
+    public ProductionOrder(
+        AUnitType type, HasPosition position, TechType tech, UpgradeType upgrade, Mission mission, int minSupply
+    ) {
+        assert type != null || tech != null || upgrade != null || mission != null : "Invalid order, all null";
 
         this.id = firstFreeId++;
         this.unitOrBuilding = type;
@@ -104,6 +105,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         this.minSupply = minSupply;
         this.tech = tech;
         this.upgrade = upgrade;
+        this.mission = mission;
 
 //        if (unitOrBuilding != null && unitOrBuilding.isBunker()) {
 //            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

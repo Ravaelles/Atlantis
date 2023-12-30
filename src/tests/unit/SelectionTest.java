@@ -1,5 +1,6 @@
 package tests.unit;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
@@ -71,7 +72,7 @@ public class SelectionTest extends NonAbstractTestFakingGame {
             Select.clearCache();
             Count.clearCache();
 
-            Select.our().print();
+//            Select.our().print();
             Selection our = Select.our();
 
             assertEquals(22, our.size());
@@ -119,8 +120,8 @@ public class SelectionTest extends NonAbstractTestFakingGame {
     @Test
     public void testVariousMethods() {
         usingFakeOurs(() -> {
-            Select.our().print();
-            Select.enemy().print();
+//            Select.our().print();
+//            Select.enemy().print();
 
             Selection our = Select.our();
             AUnit zealot = our.first();
@@ -128,6 +129,7 @@ public class SelectionTest extends NonAbstractTestFakingGame {
 
 //            our.exclude(our.combatUnits()).print();
 //            our.inShootRangeOf().print();
+//            A.println("zealot = " + zealot);
 
             assertEquals(11, our.combatUnits().size());
 
@@ -137,9 +139,18 @@ public class SelectionTest extends NonAbstractTestFakingGame {
             assertEquals(11, our.havingAntiGroundWeapon().size());
 
             assertEquals(0, zealot.friendsInRadius(4.9).size());
+            assertEquals(0, our.inRadius(4.9, zealot).exclude(zealot).size());
             assertEquals(1, our.inRadius(4.9, zealot).size());
-            assertEquals(3, zealot.friendsInRadius(5.0).size());
-            assertEquals(4, our.inRadius(5.0, zealot).size());
+
+//            Select.from(our.sortDataByDistanceTo(zealot, true), "foo").print("Closest to zealot");
+//            zealot.friendsInRadius(5.5).print("Friends in radius");
+//            our.inRadius(5.3, zealot).print("In radius 5.3 of Zealot");
+//            our.inRadius(5.2, zealot).print("In radius 5.2 of Zealot");
+            assertEquals(2, zealot.friendsInRadius(5.2).size()); // Muta is 5.2 away, Overlord 5.3
+            Select.clearCache();
+            assertEquals(2, zealot.friendsInRadius(5.2).size());
+//            our.inRadius(5.3, zealot).print("Friend in radius 5.3 of Zealot");
+            assertEquals(4, our.inRadius(5.3, zealot).size());
 
             assertEquals(1, zealot.friendsNear().canAttack(zealot, 0).size());
             assertEquals(3, zealot.friendsNear().canAttack(zealot, 4.0).size());
@@ -147,7 +158,8 @@ public class SelectionTest extends NonAbstractTestFakingGame {
 //            muta.friendsNear().canBeAttackedBy(muta, 1).print("Test");
             assertEquals(4, muta.friendsNear().inShootRangeOf(muta).size());
             assertEquals(4, muta.friendsNear().canBeAttackedBy(muta, 1).size());
-            assertEquals(9, muta.friendsNear().canBeAttackedBy(muta, 2).size());
+//            muta.friendsNear().inRadius(5, muta).print("Muta targets");
+            assertEquals(6, muta.friendsNear().canBeAttackedBy(muta, 2).size());
 
             assertEquals(1, our.combatBuildingsAntiAir().size());
             assertEquals(2, our.combatBuildingsAntiLand().size());

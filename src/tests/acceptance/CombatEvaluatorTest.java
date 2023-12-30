@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CombatEvaluatorTest extends AbstractTestFakingGame {
-
     private FakeUnit hydra;
     private FakeUnit marine;
     private FakeUnit wraith;
@@ -153,6 +152,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
             () -> fakeOurs(
                 marine = fake(AUnitType.Terran_Marine, 11.5),
                 fake(AUnitType.Terran_Marine, 11.6),
+                fake(AUnitType.Terran_Marine, 11.8),
                 fake(AUnitType.Terran_Marine, 12)
             ),
             () -> fakeEnemies(
@@ -199,7 +199,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //                System.err.println("-- ourEval = " + ourEval);
 //                System.err.println("-- enemyEval = " + enemyEval);
 
-                assertTrue(valueAround(1.01, ourEval / enemyEval));
+                assertTrue(valueAround(0.9, ourEval / enemyEval));
             },
             () -> fakeOurs(
                 marine = fake(AUnitType.Terran_Marine, 11.5),

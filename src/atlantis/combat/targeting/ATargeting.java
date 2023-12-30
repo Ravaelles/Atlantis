@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ATargeting extends HasUnit {
 
-//        protected static final boolean DEBUG = true;
+    //    protected static final boolean DEBUG = true;
     protected static final boolean DEBUG = false;
 
     protected Selection enemyBuildings;
@@ -49,7 +49,7 @@ public class ATargeting extends HasUnit {
 
         AUnit enemy = defineTarget(unit, maxDistFromEnemy);
 
-//        System.out.println("A enemy = " +  enemy);
+        if (DEBUG) A.println("A enemy = " + enemy);
 
 //        if (enemy != null && enemy.isAlive() && !unit.canAttackTarget(enemy)) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit " + unit + " cannot attack " + enemy);
@@ -57,14 +57,16 @@ public class ATargeting extends HasUnit {
 
         if (enemy != null && enemy.isAlive() && unit.canAttackTarget(enemy)) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
-//            System.out.println("B enemy = " +  enemy);
-            if (unit.hasCooldown() || unit.hasWeaponRangeByGame(enemy)) return enemy;
+            if (DEBUG) A.println("B enemy = " + enemy);
+
+            if (unit.hasCooldown() || (!enemy.isABuilding() || unit.hasWeaponRangeByGame(enemy))) return enemy;
         }
-//        System.out.println("C enemy = " +  enemy);
 
         // Used when something went wrong there ^
         AttackNearbyEnemies.reasonNotToAttack = null;
-        return FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
+        AUnit fallback = FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
+        if (DEBUG) A.println("C fallback = " + fallback);
+        return fallback;
     }
 
     // =========================================================
