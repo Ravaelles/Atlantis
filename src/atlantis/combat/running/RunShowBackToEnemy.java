@@ -20,7 +20,7 @@ public class RunShowBackToEnemy {
     // =========================================================
 
     protected boolean shouldRunByShowingBackToEnemy() {
-//        if (true) return false;
+        if (true) return false;
 //        if (true) return true;
 
         AUnit unit = runningManager.unit;
@@ -44,31 +44,5 @@ public class RunShowBackToEnemy {
 //        ) return true;
 
         return unit.isFlying();
-    }
-
-    /**
-     * Simplest case: add enemy-to-you-vector to your own position.
-     */
-    HasPosition findRunPositionShowYourBackToEnemy(HasPosition runAwayFrom) {
-        return runningManager.runPositionFinder.findRunPositionShowYourBackToEnemy(runAwayFrom);
-    }
-
-    HasPosition showBackToEnemyIfPossible(HasPosition runAwayFrom) {
-
-        // Apply opposite 2D vector
-
-        // === Ensure position is in bounds ========================================
-
-        // If vector changed (meaning we almost reached map boundaries) disallow it
-
-        // =========================================================
-
-        // If run distance is acceptably long and it's connected, it's ok.
-        return runningManager.runPositionFinder.showBackToEnemyIfPossible(runAwayFrom);
-    }
-
-    double showBackRunPixelRadius(AUnit unit, HasPosition runAwayFrom) {
-
-        return runningManager.runPositionFinder.showBackRunPixelRadius(unit, runAwayFrom);
     }
 }

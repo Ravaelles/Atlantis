@@ -55,7 +55,7 @@ public class LoadIntoTheBunker extends Manager {
 
         if (
             unit.hp() >= (Enemy.protoss() ? 18 : 6)
-            && unit.lastActionLessThanAgo(15, Actions.LOAD)
+                && unit.lastActionLessThanAgo(15, Actions.LOAD)
         ) return usedManager(this);
 
         if (bunker != null && hasSpaceForThisUnit(unit, bunker)) {
@@ -124,6 +124,7 @@ public class LoadIntoTheBunker extends Manager {
     private boolean wouldOverstack() {
         if (unit.hp() <= 18) return false;
         if (Count.marines() <= 5) return false;
+        if (unit.squad().isLeader(unit)) return false;
 
         return unit.id() % 3 != 0 && unit.friendsNear().marines().count() >= 6;
     }

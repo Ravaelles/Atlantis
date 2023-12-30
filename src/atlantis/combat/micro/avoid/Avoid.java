@@ -72,7 +72,11 @@ public class Avoid extends Manager {
             APainter.paintCircle(enemy, 16, Color.Orange);
         }
 
-        return enemies.first().translatePercentTowards(15, enemies.second());
+        AUnit firstEnemy = enemies.first();
+        AUnit secondEnemy = enemies.second();
+        if (secondEnemy == null || !secondEnemy.hasPosition()) return firstEnemy;
+
+        return firstEnemy.translatePercentTowards(15, secondEnemy);
     }
 
     protected String getTooltip(AUnit enemy) {

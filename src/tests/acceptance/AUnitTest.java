@@ -3,6 +3,7 @@ package tests.acceptance;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
+import atlantis.util.Angle;
 import org.junit.Test;
 import tests.unit.FakeUnit;
 
@@ -195,6 +196,54 @@ public class AUnitTest extends AbstractTestFakingGame {
 
             assertTrue(our.hasWeaponRangeToAttack(ling2, 4.0));
             assertTrue(our.canAttackTarget(ling2, true, true, true, 4.0));
+        });
+    }
+
+    @Test
+    public void facingUnitAndShowingBack() {
+        FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit zergling1, zergling2, hydra;
+
+        FakeUnit[] enemies = fakeEnemies(
+            zergling1 = fake(AUnitType.Zerg_Zergling, 13),
+            zergling2 = fake(AUnitType.Zerg_Zergling, 14),
+            hydra = fake(AUnitType.Zerg_Hydralisk, 15)
+        );
+
+        marine.setAngle(Angle.degreesToRadians(0));
+        zergling1.setAngle(Angle.degreesToRadians(50));
+        zergling2.setAngle(Angle.degreesToRadians(110));
+        hydra.setAngle(Angle.degreesToRadians(180));
+
+        usingFakeOurAndFakeEnemies(marine, enemies, () -> {
+//            System.out.println(marine.getAngle() + " / " + zergling1.getAngle() + " / " + zergling2.getAngle() + " / " + hydra.getAngle());
+
+//            System.err.println("zergling1.isOtherUnitFacingThisUnit(marine) = " + zergling1.isOtherUnitFacingThisUnit(marine));
+//            System.err.println("zergling1.isOtherUnitShowingBackTo(marine) = " + zergling1.isOtherUnitShowingBackTo(marine));
+//            System.err.println("marine.isOtherUnitFacingThisUnit(zergling2) = " + marine.isOtherUnitFacingThisUnit(zergling2));
+//            System.err.println("zergling2.isOtherUnitFacingThisUnit(marine) = " + zergling2.isOtherUnitFacingThisUnit(marine));
+//            System.err.println("marine.isOtherUnitFacingThisUnit(zergling1) = " + marine.isOtherUnitFacingThisUnit(zergling1));
+//            System.err.println("marine.isOtherUnitFacingThisUnit(hydra) = " + marine.isOtherUnitFacingThisUnit(hydra));
+
+//            System.err.println("marine.isOtherUnitFacingThisUnit(hydra) = " + marine.isOtherUnitFacingThisUnit(hydra));
+//            System.err.println("hydra.isOtherUnitFacingThisUnit(marine) = " + hydra.isOtherUnitFacingThisUnit(marine));
+
+            assertFalse(marine.isOtherUnitFacingThisUnit(zergling1));
+            assertTrue(zergling1.isOtherUnitFacingThisUnit(marine));
+
+            assertTrue(marine.isOtherUnitShowingBackToUs(zergling1));
+            assertFalse(zergling1.isOtherUnitShowingBackToUs(marine));
+
+            assertFalse(marine.isOtherUnitFacingThisUnit(zergling2));
+            assertTrue(zergling2.isOtherUnitFacingThisUnit(marine));
+
+            assertFalse(marine.isOtherUnitShowingBackToUs(zergling2));
+
+            assertTrue(marine.isOtherUnitFacingThisUnit(hydra));
+            assertTrue(hydra.isOtherUnitFacingThisUnit(marine));
+
+            assertFalse(hydra.isOtherUnitShowingBackToUs(marine));
+            assertFalse(marine.isOtherUnitShowingBackToUs(hydra));
         });
     }
 

@@ -34,9 +34,7 @@ public abstract class MissionChanger {
      * Takes care of current strategy.
      */
     public static void evaluateGlobalMission() {
-        if (A.everyFrameExceptNthFrame(26)) {
-            return;
-        }
+        if (A.everyFrameExceptNthFrame(26)) return;
 
         // === Handle UMS ==========================================
 
@@ -121,7 +119,9 @@ public abstract class MissionChanger {
     }
 
     public static void forceMissionAttack(String reason) {
-        Missions.forceGlobalMissionAttack(reason);
+        if (ArmyStrength.ourArmyRelativeStrength() >= 90 || Count.ourCombatUnits() <= 4) {
+            Missions.forceGlobalMissionAttack(reason);
+        }
     }
 
     public static void forceMissionContain(String reason) {

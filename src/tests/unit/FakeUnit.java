@@ -2,7 +2,6 @@ package tests.unit;
 
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.config.env.Env;
 import atlantis.game.APlayer;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -24,6 +23,7 @@ public class FakeUnit extends AUnit {
     public boolean neutral = false;
     public APosition targetPosition = null;
 
+    public double angle = 0;
     public boolean burrowed = false;
     public boolean busy = false;
     public boolean cloaked = false;
@@ -300,6 +300,11 @@ public class FakeUnit extends AUnit {
         return targetPosition;
     }
 
+    @Override
+    public double getAngle() {
+        return angle;
+    }
+
     // =========================================================
 
     @Override
@@ -343,10 +348,10 @@ public class FakeUnit extends AUnit {
         return distTo(other);
     }
 
-    @Override
-    public boolean isFacing(AUnit otherUnit) {
-        return true;
-    }
+//    @Override
+//    public boolean isFacing(AUnit otherUnit) {
+//        return true;
+//    }
 
     // =========================================================
     // Orders
@@ -518,5 +523,10 @@ public class FakeUnit extends AUnit {
     @Override
     public boolean canLift() {
         return true;
+    }
+
+    public FakeUnit setAngle(double angle) {
+        this.angle = angle;
+        return this;
     }
 }

@@ -2,14 +2,7 @@ package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
-import bwapi.TechType;
 
 import java.util.HashMap;
 
@@ -51,7 +44,13 @@ public class TerranMedic extends Manager {
         };
     }
 
-    public static boolean isAnyMedicAssigedTo(AUnit target) {
+    public static boolean isAnyMedicAssignedTo(AUnit target) {
         return medicsToAssignments.containsValue(target);
+    }
+
+    public static boolean isAnyCloseMedicAssignedTo(AUnit target) {
+        AUnit medic = assignmentsToMedics.get(target);
+
+        return medic != null && medic.distToLessThan(target, 2);
     }
 }

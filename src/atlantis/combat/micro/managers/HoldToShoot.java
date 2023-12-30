@@ -27,6 +27,7 @@ public class HoldToShoot extends Manager {
 
         if (!unit.isRanged()) return false;
         if (unit.isMarine()) return false;
+        if (unit.isTank()) return false;
         if (unit.cooldown() >= 8) return false;
 
         target = unit.target();

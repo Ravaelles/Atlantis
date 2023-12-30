@@ -1845,7 +1845,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector otherUnitLookingVector = Vectors.vectorFromAngle(otherUnit.getAngle(), positionDifference.length());
 
-        return positionDifference.isParallelTo(otherUnitLookingVector);
+        return positionDifference.isAngleAlmostIdentical(otherUnitLookingVector);
+    }
+
+    public boolean isOtherUnitShowingBackToUs(AUnit otherUnit) {
+        if (otherUnit.hasNoU()) return false;
+
+        Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
+        Vector otherUnitLookingVector = Vectors.vectorFromAngle(otherUnit.getAngle(), positionDifference.length());
+
+        return positionDifference.isAngleAlmostOpposite(otherUnitLookingVector);
     }
 
     public boolean isFacing(AUnit otherUnit) {
@@ -1855,7 +1864,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector thisUnitLookingVector = Vectors.vectorFromAngle(this.getAngle(), positionDifference.length());
 
-        return positionDifference.isParallelTo(thisUnitLookingVector);
+        return positionDifference.isAngleAlmostIdentical(thisUnitLookingVector);
     }
 
     /**
@@ -2481,8 +2490,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             "isBeingHealed",
             6,
             () -> (
-                friendsInRadius(3).ofType(AUnitType.Terran_Medic).havingTargeted(this).notEmpty()
-                    || TerranMedic.isAnyMedicAssigedTo(this)
+                friendsInRadius(2).ofType(AUnitType.Terran_Medic).havingTargeted(this).notEmpty()
+                    || TerranMedic.isAnyCloseMedicAssignedTo(this)
             )
         );
     }

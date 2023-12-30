@@ -1,7 +1,9 @@
 package atlantis.combat.running;
 
 import atlantis.combat.running.any_direction.RunInAnyDirection;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -80,6 +82,18 @@ public class RunToPositionFinder {
      * Simplest case: add enemy-to-you-vector to your own position.
      */
     APosition findRunPositionShowYourBackToEnemy(HasPosition runAwayFrom) {
+        HasPosition runToPosition = running.runToPosition();
+        if (
+            runToPosition != null
+                && !A.everyNthGameFrame(3)
+                && runToPosition.distTo(running.unit) > 1
+        ) {
+//            running.unit.paintCircleFilled(8, Color.Red);
+            return runToPosition.position();
+        }
+
+        // =========================================================
+
         APosition runTo = showBackToEnemyIfPossible(runAwayFrom);
 
         if (runTo != null && running.unit().distToMoreThan(runTo, 0.002)) {

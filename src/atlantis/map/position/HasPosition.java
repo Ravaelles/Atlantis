@@ -1,6 +1,7 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.region.ARegion;
@@ -8,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Vector;
+import bwapi.Color;
 
 /**
  * This interface helps ease problems of overriding native bridge classes like e.g. BaseLocation which doesn't
@@ -323,5 +325,9 @@ public interface HasPosition {
         }
 
         return null;
+    }
+
+    default void paintCircleFilled(int radius, Color color) {
+        AAdvancedPainter.paintCircleFilled(this, radius, color);
     }
 }

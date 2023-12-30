@@ -110,7 +110,7 @@ public class SupplyCommander extends Commander {
 //            + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size()
 //        );
 
-        int maxAtOnce = A.supplyUsed() >= 40 ? (2 + A.supplyUsed() / 50) : 2;
+        int maxAtOnce = A.supplyUsed() >= 40 ? (3 + A.supplyUsed() / 50) : 2;
 
         if (requestedConstructionsOfSupply >= maxAtOnce) {
             System.err.println("TOO MANY REQUESTED SUPPLIES: " + requestedConstructionsOfSupply);

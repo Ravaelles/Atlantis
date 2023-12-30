@@ -15,9 +15,8 @@ public class Vectors {
 
     public static Vector vectorFromAngle(double angleInRadians, double radius) {
         return new Vector(
-                radius * Math.cos(angleInRadians),
-                radius * Math.sin(angleInRadians)
+            radius * Math.cos(angleInRadians),
+            radius * Math.sin(angleInRadians)
         );
     }
-
 }

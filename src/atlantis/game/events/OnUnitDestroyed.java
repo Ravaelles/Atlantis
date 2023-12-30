@@ -60,7 +60,7 @@ public class OnUnitDestroyed {
 
         // =========================================================
 
-        if (unit.isMissionAttack() && ArmyStrength.ourArmyRelativeStrength() <= 85) {
+        if (unit.isMissionAttack() && ArmyStrength.ourArmyRelativeStrength() <= 85 && !A.isUms()) {
             Missions.forceGlobalMissionDefend("Far too weak to attack!");
         }
     }

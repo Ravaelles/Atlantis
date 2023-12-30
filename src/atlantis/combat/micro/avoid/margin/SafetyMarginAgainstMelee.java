@@ -1,6 +1,5 @@
 package atlantis.combat.micro.avoid.margin;
 
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 import bwapi.Color;
@@ -75,12 +74,16 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     protected double enemyFacingThisUnitBonus(AUnit attacker) {
         if (attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker)) {
-//            AAdvancedPainter.paintCircleFilled(defender, 12, Color.Red);
+            defender.paintCircleFilled(12, Color.Red);
             return -0.35;
         }
 
-//        AAdvancedPainter.paintCircleFilled(defender, 12, Color.Green);
-        return +0.25;
+        if (defender.isOtherUnitShowingBackToUs(attacker)) {
+            defender.paintCircleFilled(12, Color.Green);
+            return +1.8;
+        }
+
+        return 0;
     }
 
     private double forDragoon(AUnit attacker) {

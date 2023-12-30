@@ -52,16 +52,13 @@ public class AdvanceAsALeader extends MissionManager {
 
     private boolean handleWhenLonely() {
         Squad squad = unit.squad();
-        if (squad.size() <= 3) return false;
+        if (squad.size() <= 2) return false;
 
-//        Selection friends = unit().friendsNear().combatUnits().inRadius(2, unit);
-//        if (friends.empty()) {
-        APosition moveTo = squad.center();
-        if (moveTo != null && moveTo.distTo(unit) > 4) {
+        AUnit moveTo = squad.units().exclude(unit).nearestTo(squad.center());
+        if (moveTo != null && moveTo.distTo(unit) > 3) {
             unit.move(moveTo, Actions.MOVE_FORMATION, "LeaderLonely");
             return true;
         }
-//        }
 
         return false;
     }

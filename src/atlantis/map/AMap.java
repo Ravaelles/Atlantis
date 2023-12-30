@@ -53,7 +53,7 @@ public class AMap {
         try {
             InitJBWEB.init();
         } catch (Exception e) {
-            System.err.println("JBWEB exception");
+            A.errPrintln("JBWEB exception, but dont worry. We can continue.");
             e.printStackTrace();
         }
     }
