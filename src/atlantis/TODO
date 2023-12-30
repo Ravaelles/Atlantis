@@ -1,6 +1,6 @@
 ### BUGS ###
 
-..----- Paint active manager (purple) on top of other debug info
++++ Implement ContinueAttackOrder that forces full attack sequence every time attack was issued
 
 .--------------- UBR - tank not avoiding super-close zealots, STUCK on geyser? BUT FACT - UBR
 --------------- MARINE close to bunker - died. test on minimap. Also fighting near tanks.

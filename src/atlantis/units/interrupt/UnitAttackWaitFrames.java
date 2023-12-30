@@ -50,7 +50,7 @@ public class UnitAttackWaitFrames {
         return stopFrames(type) + attackAnimationFrames(type);
     }
 
-    protected static int stopFrames(AUnitType type) {
+    public static int stopFrames(AUnitType type) {
         if (type.equals(AUnitType.Terran_SCV)) return 2;
         else if (type.equals(AUnitType.Terran_Marine)) return 8; // original 8
         else if (type.equals(AUnitType.Terran_Firebat)) return 8;
@@ -92,7 +92,7 @@ public class UnitAttackWaitFrames {
 
     protected static int attackAnimationFrames(AUnitType type) {
         if (type.equals(AUnitType.Terran_SCV)) return 2;
-        else if (type.equals(AUnitType.Terran_Marine)) return 8;
+        else if (type.equals(AUnitType.Terran_Marine)) return 9; // Original 8
         else if (type.equals(AUnitType.Terran_Firebat)) return 8;
         else if (type.equals(AUnitType.Terran_Ghost)) return 4;
         else if (type.equals(AUnitType.Terran_Goliath)) return 1;

@@ -67,7 +67,7 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roa.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -77,7 +77,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-        if (true) return "ums/7th.scx";
+//        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush

@@ -9,6 +9,7 @@ import atlantis.combat.micro.managers.HoldToShoot;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.running.ShouldStopRunning;
 import atlantis.units.AUnit;
+import atlantis.units.interrupt.ContinueAttackOrder;
 import atlantis.units.interrupt.DontInterruptShootingUnits;
 
 public class CombatManagerTopPriority extends Manager {
@@ -27,6 +28,7 @@ public class CombatManagerTopPriority extends Manager {
             AvoidCriticalUnits.class,
             Unfreezer.class,
             ImprovePerformanceHavingBigSupply.class,
+            ContinueAttackOrder.class,
             DontInterruptShootingUnits.class,
             HoldToShoot.class,
             DanceAfterShoot.class,

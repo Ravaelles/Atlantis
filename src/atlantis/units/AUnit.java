@@ -39,6 +39,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.detected.IsOurUnitUndetected;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
+import atlantis.units.interrupt.UnitAttackWaitFrames;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -2990,5 +2991,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public AUnit targetUnitToAttack() {
         return this._targetUnitToAttack;
+    }
+
+    public int attackWaitFrames() {
+        return UnitAttackWaitFrames.stopFrames(this.type());
     }
 }

@@ -76,11 +76,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     protected double enemyFacingThisUnitBonus(AUnit attacker) {
         if (attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker)) {
 //            AAdvancedPainter.paintCircleFilled(defender, 12, Color.Red);
-            return -0.2;
+            return -0.35;
         }
 
 //        AAdvancedPainter.paintCircleFilled(defender, 12, Color.Green);
-        return +0.15;
+        return +0.25;
     }
 
     private double forDragoon(AUnit attacker) {
