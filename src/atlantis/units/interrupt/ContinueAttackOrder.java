@@ -11,7 +11,10 @@ public class ContinueAttackOrder extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.lastActionLessThanAgo(unit.attackWaitFrames(), Actions.ATTACK_UNIT);
+        return unit.lastActionLessThanAgo(unit.attackWaitFrames(), Actions.ATTACK_UNIT)
+            && unit.hasTarget()
+            && unit.target().hasPosition()
+            && unit.target().isAlive();
     }
 
     public Manager handle() {
