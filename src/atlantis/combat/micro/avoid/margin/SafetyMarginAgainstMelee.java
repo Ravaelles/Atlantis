@@ -80,7 +80,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         if (defender.isOtherUnitShowingBackToUs(attacker)) {
             defender.paintCircleFilled(12, Color.Green);
-            return +1.8;
+            return +1.9;
         }
 
         return 0;

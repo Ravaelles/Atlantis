@@ -784,7 +784,7 @@ public class AAdvancedPainter extends APainter {
                     if (construction.isOverdue()) {
                         builderString += "(" + builder.manager() + ")";
                         if (Env.isLocal()) {
-                            ErrorLog.printMaxOncePerMinute("Construction is overdue: " + construction);
+//                            ErrorLog.printMaxOncePerMinute("Construction is overdue: " + construction);
                             AAdvancedPainter.paintCircle(builder, 10, Color.Teal);
                             AAdvancedPainter.paintCircle(builder, 8, Color.Teal);
                             AAdvancedPainter.paintCircle(builder, 6, Color.Teal);
