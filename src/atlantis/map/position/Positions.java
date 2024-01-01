@@ -33,7 +33,9 @@ public class Positions<T extends HasPosition> {
     // =====================================================================
     // Basic functionality methods
     public Positions<T> addPosition(T positionToAdd) {
-        positions.add(positionToAdd);
+        if (positionToAdd != null && positionToAdd.hasPosition()) {
+            positions.add(positionToAdd);
+        }
         return this;
     }
 

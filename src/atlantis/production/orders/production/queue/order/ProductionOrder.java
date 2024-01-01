@@ -132,7 +132,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
         if (unitOrBuilding != null) {
             if (otherOrder.minSupply == this.minSupply) {
-                if (unitOrBuilding.isSupplyDepot() && otherOrder.unitOrBuilding.isSupplyDepot()) return true;
+//                if (unitOrBuilding.isSupplyDepot() && otherOrder.unitOrBuilding.isSupplyDepot()) return true;
                 if (unitOrBuilding.isCombatBuilding() && otherOrder.unitOrBuilding.isCombatBuilding()) return true;
             }
         }

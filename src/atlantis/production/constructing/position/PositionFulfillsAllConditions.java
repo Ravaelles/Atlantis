@@ -7,7 +7,6 @@ import atlantis.production.constructing.position.conditions.*;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
@@ -25,27 +24,10 @@ public class PositionFulfillsAllConditions {
     ) {
 //        System.out.println(position + " / " + AbstractPositionFinder._CONDITION_THAT_FAILED);
 
-        if (position.isOutOfBounds()) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = POSITION_OUT_OF_BOUNDS;
-            return false;
-        }
-
         APainter.paintCircle(position, 6, Color.Red);
 //        if (building.isBunker()) PauseAndCenter.on(position, true);
 
-        if (position == null) {
-            ErrorLog.printMaxOncePerMinute("PositionFulfillsAllConditions: position is null");
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "POSITION ARGUMENT IS NULL";
-            return false;
-        }
-
-        if (builder == null) {
-            builder = FreeWorkers.get().nearestTo(position);
-            if (builder == null) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
-                return false;
-            }
-        }
+        if (!verifyPositionAndBuilder(builder, position)) return false;
 
         if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
         if (!HasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return false;
@@ -68,6 +50,26 @@ public class PositionFulfillsAllConditions {
         if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return false;
 
         // All conditions are fullfilled, return this position
+        return true;
+    }
+
+    private static boolean verifyPositionAndBuilder(AUnit builder, APosition position) {
+        if (position == null) {
+            ErrorLog.printMaxOncePerMinute("PositionFulfillsAllConditions: position is null");
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "POSITION ARGUMENT IS NULL";
+            return false;
+        }
+
+        if (position.isOutOfBounds()) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = POSITION_OUT_OF_BOUNDS;
+            return false;
+        }
+
+        if (builder == null) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
+            return false;
+        }
+
         return true;
     }
 }

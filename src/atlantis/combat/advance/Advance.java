@@ -20,10 +20,10 @@ public class Advance extends MissionManager {
             WeDontKnowWhereEnemyIs.class,
             RetreatManager.class,
             DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class,
-            AdvanceAsTerran.class,
             AdvanceAsALeader.class,
-            AdvanceAsTank.class,
             TooFarFromLeader.class,
+            AdvanceAsTerran.class,
+            AdvanceAsTank.class,
             AdvanceStandard.class,
             AsAirAttackAnyone.class,
         };

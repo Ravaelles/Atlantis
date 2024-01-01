@@ -73,7 +73,12 @@ public class Construction implements Comparable<Construction> {
      * and we're cool, bro.
      */
     protected void assignRandomBuilderForNow() {
-        builder = FreeWorkers.get().first();
+        if (near != null) {
+            builder = FreeWorkers.get().nearestTo(near);
+        }
+        else {
+            builder = FreeWorkers.get().first();
+        }
     }
 
     /**

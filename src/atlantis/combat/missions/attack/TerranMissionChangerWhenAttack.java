@@ -36,7 +36,16 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
-        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 95) {
+        if (enemyHasHiddenUnitsAndWeDontHaveEnoughDetection()) {
+            if (DEBUG) reason = "Not enough detection";
+            return true;
+        }
+
+        if (
+            OurStrategy.get().isRushOrCheese()
+                && ArmyStrength.ourArmyRelativeStrength() >= 95
+                && A.seconds() <= 400
+        ) {
             if (DEBUG) reason = "Rush or cheese and strength still ok";
             return false;
         }
@@ -62,11 +71,6 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
         if (notEnoughTanksAndNotEarlyGame()) {
             if (DEBUG) reason = "Not enough tanks to attack safely";
-            return true;
-        }
-
-        if (enemyHasHiddenUnitsAndWeDontHaveEnoughDetection()) {
-            if (DEBUG) reason = "Not enough detection";
             return true;
         }
 

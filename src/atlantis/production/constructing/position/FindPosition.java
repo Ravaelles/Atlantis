@@ -14,6 +14,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -28,6 +29,7 @@ public class FindPosition {
             if (nearTo == null) nearTo = Select.ourBuildings().last();
         }
         if (nearTo == null) nearTo = Select.mainOrAnyBuilding();
+        if (builder == null) builder = FreeWorkers.get().first();
 
         if (maxDistance <= 5 && building.isBunker()) maxDistance = 10;
         if (maxDistance < 0) maxDistance = 50;
@@ -37,7 +39,7 @@ public class FindPosition {
 
         if (building.isGasBuilding()) return GasBuildingPositionFinder.findPositionForGasBuilding(building, nearTo);
 
-        // === Base ================================================
+            // === Base ================================================
 
         else if (building.isBase()) {
             return forNewBase(builder, building, construction, nearTo);
@@ -52,6 +54,11 @@ public class FindPosition {
                     "SupplyDepotPositionFinder returned null \n    / near:" + nearTo
                         + "\n    Fallback to default now"
                 );
+
+                AUnit lastBuilding = Select.ourBuildings().last();
+                if (nearTo != null && !nearTo.equals(lastBuilding)) {
+                    return findForBuilding(builder, building, construction, lastBuilding, 35);
+                }
             }
 
             if (position != null) return position;
@@ -126,7 +133,7 @@ public class FindPosition {
             if (Count.bunkers() <= 0 && thePosition != null && !thePosition.regionsMatch(MainRegion.mainRegion())) {
                 if (
                     construction.productionOrder().getModifier() != null
-                    && construction.productionOrder().getModifier().equals("MAIN_CHOKE")
+                        && construction.productionOrder().getModifier().equals("MAIN_CHOKE")
                 ) {
                     ErrorLog.printMaxOncePerMinute("Fix for first MAIN_CHOKE bunker, place it in main.");
                     return (new NewBunkerPositionFinder(Select.main(), builder)).find();

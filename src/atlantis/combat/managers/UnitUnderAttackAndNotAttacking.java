@@ -12,7 +12,7 @@ public class UnitUnderAttackAndNotAttacking extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false; // @Check
+//        if (true) return false; // @Check
 
         return !unit.isAttacking()
             && unit.isGroundUnit()

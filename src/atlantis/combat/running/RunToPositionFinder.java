@@ -1,6 +1,7 @@
 package atlantis.combat.running;
 
 import atlantis.combat.running.any_direction.RunInAnyDirection;
+import atlantis.combat.running.to_base.ShouldRunToBase;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
@@ -39,6 +40,17 @@ public class RunToPositionFinder {
 //
 //        // Force units like Marines to slightly run away from each other to avoid one blob of running units
 //        runAwayFrom = separateEarlyFromFriends(runAwayFrom);
+
+
+        // === Run directly to base ========================
+
+        if (ShouldRunToBase.check(running.unit, runAwayFrom)) {
+            AUnit position = ShouldRunToBase.position();
+            if (position != null) {
+                running.unit.paintCircleFilled(8, Color.Yellow);
+                return running.setRunTo(position);
+            }
+        }
 
         // === Run directly away from the enemy ========================
 

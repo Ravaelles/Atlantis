@@ -188,9 +188,7 @@ public class Selection extends BaseSelection {
     }
 
     public Selection limit(int limit) {
-        if (data.isEmpty()) {
-            return this;
-        }
+        if (data.isEmpty()) return this;
 
         List<AUnit> newData = new ArrayList<>();
         int max = Math.min(limit, data.size());

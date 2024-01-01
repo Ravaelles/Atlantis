@@ -8,6 +8,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.builders.TravelToConstruct;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -29,8 +30,18 @@ public class ConstructionStatusChanger extends Commander {
 
     private void checkForOverdueConstructions(Construction construction) {
         if (A.everyNthGameFrame(31) && construction.isOverdue()) {
+            AUnitType building = construction.buildingType();
+
             construction.setBuilder(null);
+
+            TravelToConstruct.refreshConstructionPositionIfNeeded(construction, building);
             construction.assignOptimalBuilder();
+
+//            if (building != null && building.isBunker()) {
+//            construction.cancel();
+//            }
+//            else {
+//            }
         }
     }
 

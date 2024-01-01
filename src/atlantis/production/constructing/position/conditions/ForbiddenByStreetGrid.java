@@ -2,11 +2,9 @@ package atlantis.production.constructing.position.conditions;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ForbiddenByStreetGrid {
@@ -20,7 +18,7 @@ public class ForbiddenByStreetGrid {
      * So disallow building in e.g. 0,1, 6,7, 12,13, horizontally and vertically
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
-        if (ForbiddenByStreetGridForSupplyDepot.isForbidden(builder, building, position)) return true;
+        if (ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position)) return true;
         if (ForbiddenByStreetGridForBarracks.isForbidden(builder, building, position)) return true;
 
         if (

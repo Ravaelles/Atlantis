@@ -35,6 +35,8 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.base.NextBasePosition;
+import atlantis.production.constructing.position.terran.TerranPositionFinder;
+import atlantis.production.constructing.position.terran.TerranSupplyDepot;
 import atlantis.production.dynamic.AutoProduceWorkersCommander;
 import atlantis.production.dynamic.expansion.ShouldExpand;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
@@ -780,12 +782,13 @@ public class AAdvancedPainter extends APainter {
                     if (!builder.isAlive()) builderString += "(DEAD)";
                     if (builder.isStuck()) builderString += "(STUCK)";
                     if (construction.isOverdue()) {
-                        builderString += "(" + builder.manager() +")";
+                        builderString += "(" + builder.manager() + ")";
                         if (Env.isLocal()) {
+                            ErrorLog.printMaxOncePerMinute("Construction is overdue: " + construction);
                             AAdvancedPainter.paintCircle(builder, 10, Color.Teal);
                             AAdvancedPainter.paintCircle(builder, 8, Color.Teal);
                             AAdvancedPainter.paintCircle(builder, 6, Color.Teal);
-                            CameraCommander.centerCameraOn(builder);
+//                            CameraCommander.centerCameraOn(builder);
                         }
                     }
 
@@ -1512,9 +1515,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     protected static void paintStrategicLocations() {
-        if (AGame.isUms()) {
-            return;
-        }
+        if (AGame.isUms()) return;
 
         setTextSizeMedium();
 
@@ -1552,7 +1553,12 @@ public class AAdvancedPainter extends APainter {
         if (We.zerg()) {
             paintBuildingPosition((new ZergSunkenColony()).nextPosition(), "Next Sunken");
         }
-        if (We.terran()) {
+        else if (We.terran()) {
+            HasPosition nextDepot = (new TerranSupplyDepot()).nextPosition();
+//            System.err.println("nextDepot = " + nextDepot);
+//            if (nextDepot != null) System.err.println(nextDepot.distTo(Select.mainOrAnyBuilding()));
+
+            paintBuildingPosition(nextDepot, "Next DEPOT");
 //            paintBuildingPosition((new TerranBunker()).nextPosition(), "Next Bunker");
 //            paintBuildingPosition((new NewBunkerPositionFinder(null)).find(), "Next Bunker");
             paintBuildingPosition(NextBasePosition.nextBasePosition(), "Next BASE");

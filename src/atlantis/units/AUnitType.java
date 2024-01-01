@@ -614,6 +614,10 @@ public class AUnitType implements Comparable<Object> {
         return is(Terran_Supply_Depot);
     }
 
+    public boolean isAcademy() {
+        return is(Terran_Academy);
+    }
+
     public boolean isCarrier() {
         return is(Protoss_Carrier);
     }

@@ -28,8 +28,6 @@ public class Avoid extends Manager {
     }
 
     public Manager groupOfUnits(Units enemiesDangerouslyClose) {
-        this.enemy = enemy;
-
         HasPosition runFrom = defineRunFromForGroupOfUnits(enemiesDangerouslyClose);
 
         if (runFrom == null) {
@@ -61,10 +59,10 @@ public class Avoid extends Manager {
     private HasPosition defineRunFromForGroupOfUnits(Units enemiesDangerouslyClose) {
         Selection enemies = enemiesDangerouslyClose.selection().havingPosition();
 
-        int takeOnly = unit.isDragoon() ? 2 : 3;
-        if (enemies.size() >= takeOnly) {
-            return enemies.limit(takeOnly).units().average();
-        }
+//        int takeOnly = unit.isDragoon() ? 2 : 3;
+//        if (enemies.size() >= takeOnly) {
+//            return enemies.limit(takeOnly).units().average();
+//        }
 
         if (enemies.empty()) return null;
 

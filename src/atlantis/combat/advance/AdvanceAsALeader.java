@@ -8,8 +8,10 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class AdvanceAsALeader extends MissionManager {
     public AdvanceAsALeader(AUnit unit) {
@@ -18,6 +20,8 @@ public class AdvanceAsALeader extends MissionManager {
 
     @Override
     public boolean applies() {
+        if (A.seconds() <= 220 && !Enemy.terran()) return false;
+
         return squad.isLeader(unit);
     }
 

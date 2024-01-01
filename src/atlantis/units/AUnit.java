@@ -1929,13 +1929,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public Mission mission() {
         if (squad == null) {
             if (isCombatUnit() && !isABuilding()) {
-                if (!A.isUms()) System.err.println("Empty unit squad for: " + this);
+//                if (!A.isUms()) System.err.println("Empty unit squad for: " + this);
                 (new NewUnitsToSquadsAssigner(this)).possibleCombatUnitCreated();
             }
             return Missions.DEFEND;
         }
         else if (squad.mission() == null) {
-            System.err.println("Empty squad mission for: " + squad);
+            A.errPrintln("Empty squad mission for: " + squad);
             return Missions.DEFEND;
         }
 
@@ -2644,6 +2644,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double nearestEnemyDist() {
         AUnit nearestEnemy = nearestEnemy();
+
+        if (nearestEnemy != null) {
+            return distTo(nearestEnemy);
+        }
+
+        return 999;
+    }
+
+    public double nearestMeleeEnemyDist() {
+        AUnit nearestEnemy = meleeEnemiesNear().nearestTo(this);
 
         if (nearestEnemy != null) {
             return distTo(nearestEnemy);

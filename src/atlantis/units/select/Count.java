@@ -231,6 +231,10 @@ public class Count {
         );
     }
 
+    public static int bunkersWithUnfinished() {
+        return Select.ourWithUnfinished().bunkers().count();
+    }
+
     public static int basesWithUnfinished() {
         return Select.ourWithUnfinished().bases().count();
     }

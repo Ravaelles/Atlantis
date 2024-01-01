@@ -41,6 +41,10 @@ public class ARunningManager {
 
     //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
+        if (ShouldContinueRunning.handleContinueRunning(unit)) return true;
+
+        // =========================================================
+
         if (runFrom instanceof AUnit) {
             unit.setRunningFrom((AUnit) runFrom);
         }
@@ -48,10 +52,6 @@ public class ARunningManager {
         this.runFrom = runFrom;
         this.allowedToNotifyNearUnitsToMakeSpace = allowedToNotifyNearUnitsToMakeSpace;
         verifyRunFromPosition(runFrom);
-
-        // =========================================================
-
-        if (ShouldContinueRunning.handleContinueRunning(unit)) return true;
 
         // === Define run to position ==============================
 

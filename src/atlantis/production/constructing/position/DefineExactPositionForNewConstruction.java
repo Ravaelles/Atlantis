@@ -22,15 +22,17 @@ public class DefineExactPositionForNewConstruction {
 
         // =========================================================
 
+//        if (order.isUsingExactPosition() && order.atPosition() != null) {
         if (order != null && order.isUsingExactPosition() && order.atPosition() != null) {
-//            System.err.println("Using exact position for " + building + " - " + order);
+            //            System.err.println("Using exact position for " + building + " - " + order);
             positionToBuild = APosition.create(order.atPosition());
-//            CameraCommander.centerCameraOn(positionToBuild);
+            //            CameraCommander.centerCameraOn(positionToBuild);
         }
         else {
             positionToBuild = newConstructionOrder.findPositionForNewBuilding();
         }
         newConstructionOrder.setPositionToBuild(positionToBuild);
+//        }
 
         // =========================================================
 

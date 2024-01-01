@@ -8,12 +8,12 @@ import atlantis.units.AUnitType;
 
 import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
-public class ForbiddenByStreetGridForSupplyDepot {
+public class ForbiddenByStreetGridForSupplyDepotAndAcademy {
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
-        if (!building.isSupplyDepot()) return false;
+        if (!building.isSupplyDepot() && !building.isAcademy()) return false;
 
         if (!streetGridMatches(position)) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Depot street grid doesn't allow it";
+            AbstractPositionFinder._CONDITION_THAT_FAILED = building.name() + " street grid doesn't allow it";
             return true;
         }
 

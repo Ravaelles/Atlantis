@@ -21,6 +21,6 @@ public class ForbiddenByStreetGridForBarracks {
     }
 
     private static boolean streetGridMatches(APosition position) {
-        return position.tx() % 4 == 0 && position.ty() % 2 == 0;
+        return position.tx() % 4 == 0 && position.ty() % 4 == 0;
     }
 }

@@ -50,9 +50,13 @@ public class TravelToConstruct extends HasUnit {
             return moveToConstruct(construction, buildingType, distance, distString);
         }
         else {
-            if ((A.everyNthGameFrame(77) || unit.hasNotMovedInAWhile()) && distance <= 0.5) {
+            if (
+                ((A.everyNthGameFrame(77) || unit.hasNotMovedInAWhile()) && distance <= 1)
+                    || !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition)
+            ) {
 //                if (buildingType.isBase()) System.err.println("----------- REFRESH BASE POSITION");
                 refreshConstructionPositionIfNeeded(construction, buildingType);
+                return false;
             }
 
 //            if (buildingType.isBase()) System.err.println("@@@@@@@@@@ ISSUE BUILD ORDER");
@@ -78,7 +82,7 @@ public class TravelToConstruct extends HasUnit {
         return minDistanceToIssueBuildOrder;
     }
 
-    private static APosition refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
+    public static APosition refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
         if (
             buildingType.isGasBuilding() || buildingType.isBase()
         ) return construction.buildPosition();

@@ -10,6 +10,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
+import atlantis.production.constructing.position.modifier.PositionModifier;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.ProductionRequests;
@@ -62,11 +63,16 @@ public class EnemyUnitDiscoveredResponse {
         if (
             We.terran()
                 && ArmyStrength.ourArmyRelativeStrength() <= 97
+                && Count.bunkersWithUnfinished() == 0
                 && Count.withPlanned(AUnitType.Terran_Bunker) == 0
         ) {
-            ProductionOrder order = AddToQueue.withTopPriority(AUnitType.Terran_Bunker, Chokes.mainChoke());
+            ProductionOrder order = AddToQueue.withTopPriority(AUnitType.Terran_Bunker);
             if (order != null) {
                 order.setMinSupply(1);
+                order.setModifier(PositionModifier.MAIN_CHOKE);
+
+                System.out.println("Count.bunkersWithUnfinished() = " + Count.bunkersWithUnfinished());
+                System.out.println("Count.withPlanned(AUnitType.Terran_Bunker) = " + Count.withPlanned(AUnitType.Terran_Bunker));
             }
 
 //            AddToQueue.withTopPriority(AUnitType.Terran_Bunker, Select.mainOrAnyBuilding());

@@ -5,6 +5,8 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
+import atlantis.util.Enemy;
 
 public class TooFarFromLeader extends Manager {
     private double distToLeader;
@@ -16,6 +18,8 @@ public class TooFarFromLeader extends Manager {
 
     @Override
     public boolean applies() {
+        if (A.seconds() <= 220 && !Enemy.terran()) return false;
+
         if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
 
         if (A.supplyUsed() >= 90 && (

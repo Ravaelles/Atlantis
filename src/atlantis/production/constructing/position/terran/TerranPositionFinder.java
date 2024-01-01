@@ -1,9 +1,6 @@
 package atlantis.production.constructing.position.terran;
 
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
-import atlantis.game.CameraCommander;
-import atlantis.game.GameSpeed;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -13,10 +10,9 @@ import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHe
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.cache.Cache;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.cache.CacheKey;
 import atlantis.util.log.ErrorLog;
-import bwapi.Color;
 
 public class TerranPositionFinder extends AbstractPositionFinder {
 
@@ -29,33 +25,50 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(
         AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance
     ) {
-//        int cacheForFrames = building.isCombatBuilding() ? 27 : 77;
         int cacheForFrames = 83;
+
+        ValidateParams validator = validateParams(builder, building, nearTo, maxDistance);
 
         String cacheKey = CacheKey.create(
             "findStandardPositionFor",
             building,
             nearTo,
-            A.digit(maxDistance)
+            A.digit(validator.maxDistance)
         );
 
+        return cache.get(
+            cacheKey,
+            cacheForFrames,
+            () -> findNewPosition(validator.finalBuilder, building, validator.finalNearTo, validator.maxDistance)
+        );
+    }
+
+    private static ValidateParams validateParams(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
+        if (maxDistance < 0) maxDistance = 28;
+
+        if (builder == null) {
+            A.errPrintln("builder is null for " + building + ", fallback to any builder");
+            builder = FreeWorkers.get().first();
+        }
         if (nearTo == null) {
             ErrorLog.printMaxOncePerMinute("nearTo is null for " + building + ", fallback to any building");
         }
 
         HasPosition finalNearTo = nearTo != null ? nearTo : Select.mainOrAnyBuilding();
+        AUnit finalBuilder = builder;
+        return new ValidateParams(maxDistance, finalNearTo, finalBuilder);
+    }
 
-//        String cacheKey = "findStandardPositionFor:" + building.name()
-//            + "," + (nearTo != null ? nearTo.toStringPixels() : nearTo)
-//            + "," + (builder != null ? builder.id() : "-");
+    private static class ValidateParams {
+        public final double maxDistance;
+        public final HasPosition finalNearTo;
+        public final AUnit finalBuilder;
 
-//        System.err.println("@ " + A.now() + " - " + building + " / near " + nearTo + " / maxDistance " + maxDistance);
-
-        return cache.get(
-            cacheKey,
-            cacheForFrames,
-            () -> findNewPosition(builder, building, finalNearTo, maxDistance)
-        );
+        public ValidateParams(double maxDistance, HasPosition finalNearTo, AUnit finalBuilder) {
+            this.maxDistance = maxDistance;
+            this.finalNearTo = finalNearTo;
+            this.finalBuilder = finalBuilder;
+        }
     }
 
     private static APosition findNewPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
