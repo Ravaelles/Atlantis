@@ -27,7 +27,8 @@ public class ProcessHelper {
             String command = "cmd /c " + AtlantisIgniter.getChaosLauncherPath();
 
             executeInCommandLine(command);
-        } catch (InterruptedException ignored) { }
+        } catch (InterruptedException ignored) {
+        }
     }
 
     // =========================================================

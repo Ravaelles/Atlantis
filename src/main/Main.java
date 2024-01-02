@@ -3,6 +3,7 @@ package main;
 import atlantis.Atlantis;
 import atlantis.config.AtlantisIgniter;
 import atlantis.config.ActiveMap;
+import atlantis.config.RunChaosLauncherOnly;
 import atlantis.config.env.Env;
 import atlantis.keyboard.AKeyboard;
 import atlantis.util.ProcessHelper;
@@ -46,6 +47,8 @@ public class Main {
 
             // IMPORTANT: Make sure Chaoslauncher -> Settings -> "Run Starcraft on Startup" is checked
             ProcessHelper.startChaosLauncherProcess();
+
+            //if (RunChaosLauncherOnly.run()) return; // Uncomment to run Chaoslauncher only without running the bot
         }
 
         // =============================================================
@@ -67,7 +70,7 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roa.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -111,13 +114,13 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx";
 //        if (true) return "ums/rav/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
-        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
+//        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
 //        if (true) return "ums/rav/M_v_Zealots.scx"; // Many Zealots v Many Marines in a Terran base
 //        if (true) return "ums/rav/Wraiths_v_Protoss.scm"; // Wraiths v Reavers & HT & Observer

@@ -3,7 +3,7 @@ package atlantis.combat.managers;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.ImprovePerformanceHavingBigSupply;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
-import atlantis.combat.micro.generic.Unfreezer;
+import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.managers.DanceAfterShoot;
 import atlantis.combat.micro.managers.HoldToShoot;
 import atlantis.combat.micro.transport.TransportUnits;

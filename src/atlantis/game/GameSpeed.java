@@ -10,6 +10,9 @@ import bwapi.Game;
 import static atlantis.Atlantis.game;
 
 public class GameSpeed {
+    public static final int NORMAL_SPEED = 20;
+    public static final int FASTER_SPEED = 1;
+    private static final int FASTEST_SPEED = 0;
 
     private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
 
@@ -26,7 +29,6 @@ public class GameSpeed {
     public static int frameSkip;
 
     // 0 speed - fastest, use positive frame skip to skip rendering and make it even quicker
-    private static final int NORMAL_GAME_SPEED = 0;
     private static final int NORMAL_FRAME_SKIP = 0;
 
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
@@ -51,7 +53,7 @@ public class GameSpeed {
         }
 
         GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
-        Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
+        Atlantis.game().setLocalSpeed(FASTEST_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
     }
 
@@ -93,7 +95,7 @@ public class GameSpeed {
         dynamicSlowdownIsAllowed = true;
         dynamicSlowdownIsActive = false;
 
-        Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
+        Atlantis.game().setLocalSpeed(FASTEST_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
         System.out.println("SLOWDOWN is allowed. Frame skip = " + DYNAMIC_SLOWDOWN_FRAME_SKIP);
@@ -115,7 +117,7 @@ public class GameSpeed {
     public static void deactivateDynamicSlowdown() {
         dynamicSlowdownIsActive = false;
 
-        Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
+        Atlantis.game().setLocalSpeed(FASTEST_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
         System.out.println("Disabled SLOWDOWN");

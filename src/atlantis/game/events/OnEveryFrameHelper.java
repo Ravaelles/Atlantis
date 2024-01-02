@@ -60,7 +60,7 @@ public class OnEveryFrameHelper {
 
 //        validateNextDepotPosition();
 
-//        printFirstCombatUnitStatus();
+        printFirstCombatUnitStatus();
 
 //        printMarineManagers();
     }
@@ -79,21 +79,23 @@ public class OnEveryFrameHelper {
         AUnit unit = Select.ourCombatUnits().first();
         if (unit == null) return;
 
-        double enemyDist = unit.nearestEnemyDist();
-        System.err.println("@ " + A.now() + ": " + unit.manager()
-            + " \\ dist: " + A.digit(enemyDist)
-            + " \\ cool:" + unit.cooldown());
+//        double enemyDist = unit.nearestEnemyDist();
+//        System.err.println("@ " + A.now() + ": " + unit.manager()
+//            + " \\ dist: " + A.digit(enemyDist)
+//            + " \\ cool:" + unit.cooldown());
+
+        System.err.println("@ " + A.now() + " - " + unit.managerLogs().toString());
 
 //        unit.setTooltip("Cooldown:" + unit.cooldown());
 
-        if (unit.isAttacking())  {
+        if (unit.isAttacking()) {
             AAdvancedPainter.paintCircle(unit, 12, Color.Orange);
             AAdvancedPainter.paintCircle(unit, 11, Color.Orange);
             AAdvancedPainter.paintCircle(unit, 8, Color.Orange);
             AAdvancedPainter.paintCircle(unit, 7, Color.Orange);
         }
 
-        if ((new DontInterruptShootingUnits(unit)).applies())  {
+        if ((new DontInterruptShootingUnits(unit)).applies()) {
             AAdvancedPainter.paintCircle(unit, 10, Color.Teal);
             AAdvancedPainter.paintCircle(unit, 9, Color.Teal);
             AAdvancedPainter.paintCircle(unit, 6, Color.Teal);

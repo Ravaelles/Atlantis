@@ -59,7 +59,11 @@ public class ATargeting extends HasUnit {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
             if (DEBUG) A.println("B enemy = " + enemy);
 
-            if (unit.hasCooldown() || (!enemy.isABuilding() || unit.hasWeaponRangeByGame(enemy))) return enemy;
+            if (
+                unit.hasCooldown()
+                    || !enemy.isABuilding()
+                    || unit.canAttackTargetWithBonus(enemy, 1)
+            ) return enemy;
         }
 
         // Used when something went wrong there ^

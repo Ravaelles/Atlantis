@@ -27,19 +27,22 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
         // Marines & Medics v. Zealots
 
-        if (ActiveMap.isMap("minimaps/")) {
-            if (A.now() <= 1) {
-                GameSpeed.changeSpeedTo(30);
-                GameSpeed.changeFrameSkipTo(0);
-                CameraCommander.centerCameraNowOnSquadCenter();
-            }
-        }
+//        if (ActiveMap.isMap("minimaps/")) {
+//            if (A.now() <= 1) {
+//                GameSpeed.changeSpeedTo(30);
+//                GameSpeed.changeFrameSkipTo(0);
+//                CameraCommander.centerCameraNowOnSquadCenter();
+//            }
+//        }
 
         // =========================================================
 
-        else if (ActiveMap.isMap("Drag_v_")) {
-            if (A.now() <= 200) {
+        if (ActiveMap.isMap("Drag_v_")) {
+            if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
+            }
+            if (A.now() <= 200) {
                 CameraCommander.centerCameraNowOnSquadCenter();
             }
         }

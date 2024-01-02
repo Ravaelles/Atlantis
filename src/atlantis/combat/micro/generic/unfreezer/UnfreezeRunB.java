@@ -1,22 +1,16 @@
-package atlantis.combat.micro.generic;
+package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.UnitStateManager;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import bwapi.Color;
 
-import atlantis.architecture.Manager;
-import atlantis.units.AUnit;
-
-public class Unfreezer extends Manager {
+public class UnfreezeRunB extends Manager {
 
     private boolean simpleRunFix;
 
-    public Unfreezer(AUnit unit) {
+    public UnfreezeRunB(AUnit unit) {
         super(unit);
     }
 
@@ -30,55 +24,22 @@ public class Unfreezer extends Manager {
 //                unit.lastActionFramesAgo()
 //        );
 
-        return unit.isCombatUnit()
-            && !unit.isLoaded()
-//            && !unit.isMoving()
-//            && A.now() % 73 == 0
-            && A.now() >= 10
-//            && unit.looksIdle()
-            && unit.hasNotMovedInAWhile()
-            && unit.lastActionMoreThanAgo(30 * 12, Actions.MOVE_UNFREEZE)
-//            && (unit.position().equals(unit.lastPosition()))
-            && (isSimpleRunFix() || whenRunning(unit) || whenAttacking(unit));
+        return whenRunning(unit);
 //            (unit.looksIdle()
 //                || (unit.lastActionMoreThanAgo(30) && unit.hasNotMovedInAWhile())
 //            );
     }
 
-    private boolean isSimpleRunFix() {
-        return unit.lastStartedRunningMoreThanAgo(20)
-            && !unit.lastStartedRunningLessThanAgo(7)
-            && unit.hasNotMovedInAWhile();
-    }
-
-    private boolean whenAttacking(AUnit unit) {
-        return unit.lastActionLessThanAgo(40, Actions.ATTACK_UNIT)
-            && unit.noCooldown()
-            && !unit.isMoving()
-            && (unit.hasTarget() && !unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
-    }
-
     private boolean whenRunning(AUnit unit) {
-            return unit.lastStartedRunningMoreThanAgo(50)
-                && unit.hasNotMovedInAWhile()
-                && unit.nearestEnemyDist() >= 4
-                && unit.lastActionMoreThanAgo(35)
-                && (!unit.isTank() || unit.lastSiegedAgo() >= 30 * 9);
+        return unit.lastStartedRunningMoreThanAgo(70)
+            && unit.hasNotMovedInAWhile()
+            && unit.nearestEnemyDist() >= 4
+            && unit.lastActionMoreThanAgo(35)
+            && (!unit.isTank() || unit.lastSiegedAgo() >= 30 * 9);
     }
 
     @Override
     public Manager handle() {
-        if (simpleRunFix) {
-            System.out.println("@ " + A.now() + " - UNFREEZE " + unit);
-            if (A.now() % 2 == 0) {
-                unit.holdPosition("UnfreezeA");
-            } else {
-                unit.stop("UnfreezeB");
-            }
-            return usedManager(this);
-        }
-
-//        System.err.println(A.now() + " Unfreezing " + unit + " / " + unit.action());
         if (unit.isMoving()) {
             unit.holdPosition("Unfreeze");
             return usedManager(this);
