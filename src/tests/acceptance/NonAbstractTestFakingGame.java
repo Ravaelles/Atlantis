@@ -7,6 +7,7 @@ import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.AUnitType;
+import starengine.StarEngine;
 import tests.unit.FakeUnit;
 
 public class NonAbstractTestFakingGame extends AbstractTestFakingGame {
@@ -79,5 +80,10 @@ public class NonAbstractTestFakingGame extends AbstractTestFakingGame {
         QueueInitializer.initializeProductionQueue();
 
         return queue = Queue.get();
+    }
+
+    public StarEngine createEngine() {
+        StarEngine engine = new StarEngine();
+        return engine;
     }
 }

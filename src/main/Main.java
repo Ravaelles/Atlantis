@@ -7,6 +7,7 @@ import atlantis.config.RunChaosLauncherOnly;
 import atlantis.config.env.Env;
 import atlantis.keyboard.AKeyboard;
 import atlantis.util.ProcessHelper;
+import starengine.StarEngineLauncher;
 
 /**
  * This is the main class of the bot. Here everything starts.
@@ -35,6 +36,10 @@ public class Main {
 
         // If run locally (not in tournament) auto-start Starcraft.exe and Chaoslauncher, modify bwapi.ini etc
         if (Env.isLocal()) {
+            AKeyboard.listenForKeyEvents();
+
+            StarEngineLauncher.launchStarEngine(); if (true) return;
+
             ProcessHelper.killStarcraftProcess();
             ProcessHelper.killChaosLauncherProcess();
 
@@ -42,13 +47,10 @@ public class Main {
             // If you want to change your/enemy race, edit AtlantisRaceConfig constants.
             AtlantisIgniter.modifyBwapiFileIfNeeded();
 
-            // Listen for keyboard events
-            AKeyboard.listenForKeyEvents();
-
             // IMPORTANT: Make sure Chaoslauncher -> Settings -> "Run Starcraft on Startup" is checked
             ProcessHelper.startChaosLauncherProcess();
 
-            //if (RunChaosLauncherOnly.run()) return; // Uncomment to run Chaoslauncher only without running the bot
+//            if (RunChaosLauncherOnly.run()) return; // Uncomment to run Chaoslauncher only without running the bot
         }
 
         // =============================================================

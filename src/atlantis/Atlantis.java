@@ -240,6 +240,11 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onEnd(boolean winner) {
+        if (Env.isTesting()) {
+            exitGame();
+            return;
+        }
+
         String result = "#####################################\n";
         result += "############ " + (winner ? "VICTORY!" : "Defeat...") + " ###############\n";
         result += "############ Lost: " + Atlantis.LOST + " ################\n";
@@ -248,7 +253,7 @@ public class Atlantis implements BWEventListener {
 
         LongFrames.printSummary();
 
-        (System.out).println(result);
+        A.println(result);
 
         OnEnd.execute(winner);
 
@@ -256,7 +261,7 @@ public class Atlantis implements BWEventListener {
     }
 
     public void exitGame() {
-        gameSummary();
+        if (!Env.isTesting()) gameSummary();
         killProcesses();
     }
 

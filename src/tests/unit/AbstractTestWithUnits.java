@@ -305,7 +305,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         return new FakeUnit(type, x, 10).setEnemy();
     }
 
-    protected static FakeUnit fake(AUnitType type, int x, int y) {
+    protected static FakeUnit fake(AUnitType type, double x, double y) {
         return new FakeUnit(type, x, y);
     }
 

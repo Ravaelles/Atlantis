@@ -1,13 +1,17 @@
 package tests.acceptance;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.GameSpeed;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.keyboard.AKeyboard;
 import atlantis.units.select.BaseSelect;
 import atlantis.util.Options;
 import org.junit.After;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import starengine.StarEngine;
+import starengine.StarEngineLauncher;
 import tests.unit.AbstractTestWithUnits;
 import tests.unit.FakeUnit;
 
@@ -23,6 +27,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
     protected FakeUnit ourFirst;
     protected FakeUnit[] enemies;
     protected FakeUnit[] neutral;
+    protected StarEngine engine = null;
 
     // =========================================================
 
@@ -112,18 +117,35 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
                 useFakeTime(framesNow);
 
                 onFrame.run();
+                if (framesNow == 1 && isUsingEngine()) launchEngine();
 
-                framesNow++;
+                if (isUsingEngine()) {
+                    while (GameSpeed.isPaused()) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {}
+                    }
+                }
 
                 FakeOnFrameEnd.onFrameEnd(this);
+                framesNow++;
             }
         }
+
+        if (isUsingEngine()) A.sleep(1000 * 30);
     }
 
     protected void useFakeTime(int framesNow) {
         super.useFakeTime(framesNow);
 
         aGame.when(AGame::now).thenReturn(framesNow);
+    }
+
+    // =========================================================
+
+    private void launchEngine() {
+        StarEngineLauncher.launchStarEngine();
+        AKeyboard.listenForKeyEvents();
     }
 
     // =========================================================
@@ -146,4 +168,11 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         return unit.distTo(nearestEnemy(unit));
     }
 
+    protected void useEngine(StarEngine engine) {
+        this.engine = engine;
+    }
+
+    public boolean isUsingEngine() {
+        return engine != null;
+    }
 }

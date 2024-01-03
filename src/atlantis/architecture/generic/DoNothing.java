@@ -14,13 +14,7 @@ public class DoNothing extends Manager {
     @Override
     protected Manager handle() {
         AAdvancedPainter.paintTextCentered(unit, unit.idWithHash(), Color.Red);
-        System.out.println("@ " + A.now() + " - DoNothing " + unit.id());
-
-//        if (unit.isAir() && unit.hasAnyWeapon()) {
-
-//            AsAirAttackAnyone asAirUnitAttackAnyEnemy = new AsAirAttackAnyone(unit);
-//            return asAirUnitAttackAnyEnemy.invoke(this);
-//        }
+        A.errPrintln("@ " + A.now() + " - DoNothing " + unit.id());
 
         return null;
     }

@@ -1,11 +1,6 @@
 ### BUGS ###
 
-+++ Implement ContinueAttackOrder that forces full attack sequence every time attack was issued
-
-.--------------- UBR - tank not avoiding super-close zealots, STUCK on geyser? BUT FACT - UBR
 --------------- MARINE close to bunker - died. test on minimap. Also fighting near tanks.
-???----- Early push, 45%, no defend
-
 
 ------- High ground for tank as (any high ground | in radius 7 | having ground path) + force eager siege during defend
 --- Broken natural - 3 different logics

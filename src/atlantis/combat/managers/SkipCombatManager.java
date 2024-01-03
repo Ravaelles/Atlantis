@@ -34,12 +34,12 @@ public class SkipCombatManager extends Manager {
 //        }
 
         if (!unit.isRealUnit()) {
-            System.err.println("Not real unit: " + unit.name());
+            A.errPrintln("Not real unit: " + unit.name());
             return true;
         }
 
         if (unit.isWorker() && unit.squad() == null) {
-            System.err.println("Worker being executed in CombatManager");
+            A.errPrintln("Worker being executed in CombatManager");
             return true;
         }
 

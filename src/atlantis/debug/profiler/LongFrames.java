@@ -21,7 +21,7 @@ public class LongFrames {
         if (framesOver10000 > 0) A.println("Frames over 10s  : " + framesOver10000);
         else if (framesOver1000 > 0) A.println("Frames over 1s   : " + framesOver1000);
         else if (framesOver85 > 0) A.println("Frames over 85ms : " + framesOver85);
-        else A.println("No long frames above 85ms");
+//        else A.println("No long frames above 85ms");
         A.println();
     }
 

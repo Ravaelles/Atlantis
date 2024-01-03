@@ -1663,7 +1663,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        }
 
         if (time == null) {
-            return 999;
+            return 9997;
         }
         return A.now() - time;
     }

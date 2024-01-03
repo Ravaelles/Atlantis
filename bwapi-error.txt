@@ -1,0 +1,5 @@
+[2024-01-03 17:16:13] Injection failed.
+This is caused when BWAPI crashes before injecting completely.
+ID 00000000: 
+The operation completed successfully.
+

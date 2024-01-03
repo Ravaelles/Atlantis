@@ -42,7 +42,7 @@ Templar Archive
 4) Number of Cannons depends on the scouted behaviour of Zerg. More Zerglings mean a second Cannon, build order following needs to be changed in this scenario
 5) Zealots will be trained constantly from the first Gateway
 6) One single Dragoon can be built first to kill a scouting Overlord. This is optional
-7) Pylon needs space, as Gateways will be built around it
+7) Pylon needs canvas, as Gateways will be built around it
 8) A third Gateway can be added to train more Zealots. To do so, the Probe production must be stopped from here on and resumed when the attack starts
 9) Resume Probe production if you built a third Gateway after the Citadel
 10) Pylons must be added to avoid supply blocks
