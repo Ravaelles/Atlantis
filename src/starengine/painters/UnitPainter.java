@@ -1,15 +1,16 @@
 package starengine.painters;
 
-import atlantis.units.AUnit;
+
 import starengine.units.Unit;
 import starengine.units.Units;
+import tests.unit.FakeUnit;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class UnitPainter {
     private final CanvasPainter canvasPainter;
-    private AUnit au;
+    private FakeUnit au;
     private Graphics g;
 
     public UnitPainter(CanvasPainter canvasPainter) {
@@ -26,7 +27,9 @@ public class UnitPainter {
     }
 
     private void paintUnit(Unit unit) {
-        au = unit.aUnit();
+        au = unit.FakeUnit();
+
+        if (au.isDead() || !au.isCompleted()) return;
 
         paintTarget(unit);
         paintBackground(unit);

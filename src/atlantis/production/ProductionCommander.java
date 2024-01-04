@@ -24,6 +24,6 @@ public class ProductionCommander extends Commander {
 
     @Override
     public boolean applies() {
-        return !AGame.isUms() || (Have.base() && Count.workers() >= 4);
+        return (Have.base() && Count.workers() >= 4);
     }
 }

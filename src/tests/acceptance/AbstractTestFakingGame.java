@@ -12,6 +12,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import starengine.StarEngine;
 import starengine.StarEngineLauncher;
+import starengine.events.OnStarEngineFrameEnd;
 import tests.unit.AbstractTestWithUnits;
 import tests.unit.FakeUnit;
 
@@ -94,6 +95,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
         // === Mock static classes ========================================
 
+        boolean usingEngine = isUsingEngine();
         try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
             baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
@@ -114,25 +116,32 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
             int framesNow = 1;
             while (framesNow <= proceedUntilFrameReached) {
-                useFakeTime(framesNow);
-
-                onFrame.run();
-                if (framesNow == 1 && isUsingEngine()) launchEngine();
-
-                if (isUsingEngine()) {
-                    while (GameSpeed.isPaused()) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {}
-                    }
-                }
-
-                FakeOnFrameEnd.onFrameEnd(this);
-                framesNow++;
+                framesNow = onFrameEnd(onFrame, framesNow, usingEngine);
             }
         }
 
-        if (isUsingEngine()) A.sleep(1000 * 30);
+        if (usingEngine) A.sleep(1000 * 30);
+    }
+
+    private int onFrameEnd(Runnable onFrame, int framesNow, boolean usingEngine) {
+        useFakeTime(framesNow);
+
+        onFrame.run();
+        if (framesNow == 1 && usingEngine) launchEngine();
+
+        // Use StarEngine for onFrameEnd logic
+        if (usingEngine) {
+            OnStarEngineFrameEnd.onFrameEnd(this);
+            GameSpeed.keepGamePaused();
+        }
+
+        // Simple implementation of onFrameEnd for tests, just move units
+        else {
+            FakeOnFrameEnd.onFrameEnd(this);
+        }
+
+        framesNow++;
+        return framesNow;
     }
 
     protected void useFakeTime(int framesNow) {
@@ -174,5 +183,9 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
     public boolean isUsingEngine() {
         return engine != null;
+    }
+
+    public StarEngine engine() {
+        return engine;
     }
 }

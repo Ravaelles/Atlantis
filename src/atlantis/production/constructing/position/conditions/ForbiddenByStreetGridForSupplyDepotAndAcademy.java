@@ -27,6 +27,7 @@ public class ForbiddenByStreetGridForSupplyDepotAndAcademy {
     }
 
     private static boolean streetGridMatches(APosition position) {
+        if (true) return true;
         return position.tx() % 3 == 0 && position.ty() % 2 == 0;
 //            && position.tx() % 12 != 6 && position.ty() % 8 != 4;
 //            && position.tx() % 9 != 0 && position.ty() % 6 != 0;

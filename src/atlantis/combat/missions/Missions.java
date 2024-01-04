@@ -151,8 +151,7 @@ public class Missions {
 
             if (MissionChanger.DEBUG) {
                 A.println(
-                    "CHANGED MISSION AT " + A.seconds() + " TO: " + mission.name()
-                        + ", reason: " + reason
+                    "CHANGED MISSION @" + A.seconds() + "s TO " + mission.name() + ": " + reason
                 );
 
 //                A.printStackTrace("Changing mission to " + mission);

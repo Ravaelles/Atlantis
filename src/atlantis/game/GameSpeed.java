@@ -218,6 +218,14 @@ public class GameSpeed {
         }
     }
 
+    public static void keepGamePaused() {
+        while (GameSpeed.isPaused()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {}
+        }
+    }
+
     public static void pauseGame() {
         isPaused = true;
     }
@@ -251,4 +259,5 @@ public class GameSpeed {
     public static int speed() {
         return gameSpeed;
     }
+
 }

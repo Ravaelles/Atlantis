@@ -7,7 +7,6 @@ import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.constructing.position.modifier.PositionModifier;
@@ -17,7 +16,6 @@ import atlantis.production.requests.ProductionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class EnemyUnitDiscoveredResponse {
@@ -26,7 +24,9 @@ public class EnemyUnitDiscoveredResponse {
         if (A.isUms()) return;
 //        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) return;
 
-        asTerranDontHaveBunkersAndEnemyIsStrong();
+        if (OurStrategy.get().isRushOrCheese()) {
+            whenRushOrCheese(enemyUnit);
+        }
 
         // HIDDEN units and buildings to produce it
         handleHiddenUnitDetected(enemyUnit);
@@ -59,7 +59,26 @@ public class EnemyUnitDiscoveredResponse {
         }
     }
 
-    private static void asTerranDontHaveBunkersAndEnemyIsStrong() {
+    private static void whenRushOrCheese(AUnit enemyUnit) {
+        if (asTerranDontPushWhenEnemyHasDragoons()) return;
+        if (asTerranDontHaveBunkersAndEnemyIsStrong()) return;
+    }
+
+    private static boolean asTerranDontPushWhenEnemyHasDragoons() {
+        if (!We.terran()) return false;
+
+        if (
+            EnemyUnits.has(AUnitType.Protoss_Dragoon)
+                && (ArmyStrength.ourArmyRelativeStrength() < 120 || Count.medics() <= 1)
+        ) {
+            MissionChanger.forceMissionSpartaOrDefend("Enemy dragoons & not enough power");
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean asTerranDontHaveBunkersAndEnemyIsStrong() {
         if (
             We.terran()
                 && ArmyStrength.ourArmyRelativeStrength() <= 97
@@ -73,6 +92,7 @@ public class EnemyUnitDiscoveredResponse {
 
                 System.out.println("Count.bunkersWithUnfinished() = " + Count.bunkersWithUnfinished());
                 System.out.println("Count.withPlanned(AUnitType.Terran_Bunker) = " + Count.withPlanned(AUnitType.Terran_Bunker));
+                return true;
             }
 
 //            AddToQueue.withTopPriority(AUnitType.Terran_Bunker, Select.mainOrAnyBuilding());
@@ -81,6 +101,7 @@ public class EnemyUnitDiscoveredResponse {
 //                AddToQueue.withHighPriority(AUnitType.Terran_Bunker, Chokes.mainChoke());
 //            }
         }
+        return false;
     }
 
     // =========================================================

@@ -28,6 +28,7 @@ public class PreventAddDuplicate {
         if (We.protoss() && type.isABuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
             if (A.seconds() < 200) {
                 System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
+                A.printStackTrace("Niezle");
             }
             return true;
         }

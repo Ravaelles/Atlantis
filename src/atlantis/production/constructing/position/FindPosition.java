@@ -55,9 +55,18 @@ public class FindPosition {
                         + "\n    Fallback to default now"
                 );
 
-                AUnit lastBuilding = Select.ourBuildings().last();
-                if (nearTo != null && !nearTo.equals(lastBuilding)) {
-                    return findForBuilding(builder, building, construction, lastBuilding, 35);
+                AUnit near = Select.ourBuildings().notInRadius(3, nearTo).random();
+                if (nearTo != null && near.distTo(near) >= 3) {
+                    position = findForBuilding(builder, building, construction, near, 35);
+
+                    if (position == null) {
+                        ErrorLog.printMaxOncePerMinute(
+                            "SupplyDepotPositionFinder CONSEQUENTLY returned null \n    / near:" + nearTo
+                                + "\n    There's no hope now."
+                        );
+                    } else {
+                        ErrorLog.printMaxOncePerMinute("Interestingly, Depot fix helped this time. Near: " + near);
+                    }
                 }
             }
 

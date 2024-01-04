@@ -1,17 +1,21 @@
-package tests.acceptance;
+package starengine.events;
 
 import atlantis.game.A;
+import starengine.sc_logic.UpdateUnits;
+import tests.acceptance.AbstractTestFakingGame;
 import tests.unit.FakeUnit;
 
-public class FakeOnFrameEnd {
+public class OnStarEngineFrameEnd {
     public static double UNIT_SPEED_MODIFIER_PER_FRAME = 1;
 
-    protected static void onFrameEnd(AbstractTestFakingGame game) {
-        for (FakeUnit unit : game.our) {
-            updatePosition(unit);
-        }
+    public static void onFrameEnd(AbstractTestFakingGame test) {
+//        for (FakeUnit unit : test.our) {
+//            updatePosition(unit);
+//        }
 
-        if (game.isUsingEngine()) game.engine.updateOnFrameEnd();
+        UpdateUnits.update();
+
+        test.engine().updateOnFrameEnd();
     }
 
     // =========================================================

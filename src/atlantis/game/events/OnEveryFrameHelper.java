@@ -60,7 +60,7 @@ public class OnEveryFrameHelper {
 
 //        validateNextDepotPosition();
 
-        printFirstCombatUnitStatus();
+//        printFirstCombatUnitStatus();
 
 //        printMarineManagers();
     }

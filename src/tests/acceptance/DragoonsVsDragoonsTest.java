@@ -61,7 +61,7 @@ public class DragoonsVsDragoonsTest extends NonAbstractTestFakingGame {
 //            A.errPrintln("_______________________________________");
         }, () -> our, () -> enemies);
 
-        A.errPrintln("Test finioshed");
+        A.errPrintln("Test finished");
     }
 
     // =========================================================

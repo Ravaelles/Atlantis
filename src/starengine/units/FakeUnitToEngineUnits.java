@@ -1,25 +1,26 @@
 package starengine.units;
 
 import atlantis.units.AUnit;
-
+import tests.unit.FakeUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AUnitToEngineUnits {
-    public static List<Unit> convert(List<AUnit> aunits) {
+public class FakeUnitToEngineUnits {
+    public static List<Unit> convert(List<AUnit> FakeUnits) {
         List<Unit> engineUnits = new ArrayList<>();
 
-        for (AUnit unit : aunits) {
-            engineUnits.add(aUnitToEngineUnit(unit));
+        for (AUnit unit : FakeUnits) {
+            FakeUnit fakeUnit = (FakeUnit) unit;
+            engineUnits.add(fakeUnitToEngineUnit(fakeUnit));
         }
 
         return engineUnits;
     }
 
-    private static Unit aUnitToEngineUnit(AUnit unit) {
+    private static Unit fakeUnitToEngineUnit(FakeUnit unit) {
         Owner owner = unit.isOur() ? Owner.PLAYER : (unit.isEnemy() ? Owner.ENEMY : Owner.NEUTRAL);
 
         return new Unit(unit.x(), unit.y(), 0, 0, owner)
-            .setAUnit(unit);
+            .setFakeUnit(unit);
     }
 }

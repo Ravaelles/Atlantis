@@ -38,8 +38,6 @@ public class Main {
         if (Env.isLocal()) {
             AKeyboard.listenForKeyEvents();
 
-            StarEngineLauncher.launchStarEngine(); if (true) return;
-
             ProcessHelper.killStarcraftProcess();
             ProcessHelper.killChaosLauncherProcess();
 

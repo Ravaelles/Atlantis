@@ -1,7 +1,7 @@
 package starengine.units;
 
-import atlantis.units.AUnit;
 import starengine.Images;
+import tests.unit.FakeUnit;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,7 +10,7 @@ public class Unit {
     private int x, y, dx, dy;
     private Owner owner;
     private Color color;
-    private AUnit unit;
+    private FakeUnit unit;
 
     public Unit(int x, int y, int dx, int dy, Owner owner) {
         this.x = x;
@@ -74,11 +74,11 @@ public class Unit {
         dy = -dy;
     }
 
-    public AUnit aUnit() {
+    public FakeUnit FakeUnit() {
         return unit;
     }
 
-    public Unit setAUnit(AUnit unit) {
+    public Unit setFakeUnit(FakeUnit unit) {
         this.unit = unit;
         return this;
     }

@@ -10,9 +10,16 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderHandler;
+import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 
 public class ProductionOrdersCommander extends Commander {
+    @Override
+    public boolean applies() {
+        return Count.workers() > 0 && Select.ourBuildings().notEmpty();
+    }
+
     /**
      * Is responsible for training new units and issuing construction requests for buildings.
      */

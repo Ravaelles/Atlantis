@@ -13,12 +13,18 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.We;
 import bwapi.TechType;
 
 import static atlantis.units.AUnitType.*;
 import static atlantis.util.Helpers.*;
 
 public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
+    @Override
+    public boolean applies() {
+        return We.protoss();
+    }
+
     @Override
     protected void handle() {
         super.invokeCommander();

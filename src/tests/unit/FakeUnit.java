@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.game.APlayer;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -11,6 +12,8 @@ import atlantis.units.actions.Action;
 import bwapi.TechType;
 import bwapi.UnitType;
 import bwapi.UpgradeType;
+import starengine.sc_logic.AttackState;
+import starengine.units.state.EngineUnitState;
 import tests.fakes.FakePlayer;
 
 public class FakeUnit extends AUnit {
@@ -23,14 +26,22 @@ public class FakeUnit extends AUnit {
     public boolean neutral = false;
     public APosition targetPosition = null;
 
+    public EngineUnitState state = EngineUnitState.STOP;
+    public EngineUnitState previousState = EngineUnitState.STOP;
+    public AttackState attackState = AttackState.READY;
+    public int attackStartedAt = -1;
+
     public double angle = 0;
     public boolean burrowed = false;
     public boolean busy = false;
     public boolean cloaked = false;
     public boolean completed = true;
+    public int cooldown = 0;
     public boolean detected = true;
+    public int energy = 0;
     public boolean effCloaked = false;
     public boolean effVisible = true;
+    public int hp;
     public boolean idle = false;
     public boolean isVisibleUnitOnMap = true;
     public boolean lifted = false;
@@ -39,7 +50,6 @@ public class FakeUnit extends AUnit {
     public boolean stasised = false;
     public boolean stimmed = false;
     public FakeUnit target = null;
-    public int energy = 0;
     public String lastCommand = "None";
     public TechType lastTechUsed = null;
     public TechType researching = null;
@@ -54,6 +64,8 @@ public class FakeUnit extends AUnit {
         this._lastType = type;
 //        this.position = APosition.createFromPixels((int) tx * 32, (int) ty * 32);
         this.position = APosition.createFromPixels((int) (tx * 32), (int) (ty * 32));
+
+        this.hp = maxHp();
     }
 
     // =========================================================
@@ -98,6 +110,11 @@ public class FakeUnit extends AUnit {
     @Override
     public UnitType bwapiType() {
         return rawType.ut();
+    }
+
+    @Override
+    public AUnitType type() {
+        return rawType;
     }
 
     @Override
@@ -158,7 +175,7 @@ public class FakeUnit extends AUnit {
 
     @Override
     public int hp() {
-        return maxHp();
+        return hp;
     }
 
     @Override
@@ -173,12 +190,12 @@ public class FakeUnit extends AUnit {
 
     @Override
     public int groundWeaponCooldown() {
-        return 0;
+        return cooldown;
     }
 
     @Override
     public int airWeaponCooldown() {
-        return 0;
+        return cooldown;
     }
 
     @Override
@@ -188,7 +205,7 @@ public class FakeUnit extends AUnit {
 
     @Override
     public boolean isAlive() {
-        return true;
+        return hp > 0;
     }
 
     @Override
@@ -218,12 +235,12 @@ public class FakeUnit extends AUnit {
 
     @Override
     public boolean isAttackFrame() {
-        return false;
+        return isAttacking() && attackState.equals(AttackState.ATTACK_FRAME);
     }
 
     @Override
     public boolean isStartingAttack() {
-        return false;
+        return isAttacking() && attackState.equals(AttackState.STARTING_ATTACK);
     }
 
     @Override
@@ -527,6 +544,11 @@ public class FakeUnit extends AUnit {
 
     public FakeUnit setAngle(double angle) {
         this.angle = angle;
+        return this;
+    }
+
+    public FakeUnit injectCooldown() {
+        this.cooldown = cooldownAbsolute() - 1 + A.rand(0, 2);
         return this;
     }
 }

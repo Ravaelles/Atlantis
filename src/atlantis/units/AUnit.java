@@ -1382,7 +1382,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasTarget() {
-        return u.getTarget() != null;
+        return target() != null;
     }
 
     public boolean hasTargetPosition() {

@@ -5,11 +5,16 @@ import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Zerg_Creep_Colony;
 import static atlantis.units.AUnitType.Zerg_Hydralisk_Den;
 
 public class ZergDynamicBuildingsCommander extends DynamicCommanderHelpers {
+    @Override
+    public boolean applies() {
+        return We.zerg();
+    }
     @Override
     protected void handle() {
         hydraDen();

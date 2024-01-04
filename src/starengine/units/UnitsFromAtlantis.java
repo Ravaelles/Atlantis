@@ -3,6 +3,7 @@ package starengine.units;
 import atlantis.units.select.Select;
 import starengine.Map;
 import starengine.StarEngine;
+import tests.unit.FakeUnit;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,6 +22,6 @@ public class UnitsFromAtlantis extends Units {
     }
 
     public List<Unit> allUnits() {
-        return AUnitToEngineUnits.convert(Select.all().list());
+        return FakeUnitToEngineUnits.convert(Select.all().list());
     }
 }

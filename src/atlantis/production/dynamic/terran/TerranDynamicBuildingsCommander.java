@@ -5,11 +5,12 @@ import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.reinforce.terran.turrets.OffensiveTurretsCommander;
 import atlantis.production.dynamic.terran.buildings.*;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.util.We;
 
 public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     public boolean applies() {
-        return CountInQueue.countDynamicBuildingsOrders() <= 6;
+        return We.terran() && CountInQueue.countDynamicBuildingsOrders() <= 6;
     }
 
     @Override
