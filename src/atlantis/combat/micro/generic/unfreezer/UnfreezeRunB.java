@@ -16,6 +16,8 @@ public class UnfreezeRunB extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
 //        System.err.println(
 //            unit.lastActionAgo(Actions.MOVE_UNFREEZE)
 //                + " / " +

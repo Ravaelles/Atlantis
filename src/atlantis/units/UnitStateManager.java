@@ -5,7 +5,7 @@ import atlantis.game.AGame;
 import atlantis.units.select.Select;
 
 public class UnitStateManager extends Manager {
-    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 30;
+    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 31;
     private int timeNow;
     private boolean shouldUpdatePosition;
 

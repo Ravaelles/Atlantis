@@ -24,7 +24,7 @@ public class TooFarFromMedic extends Manager {
         AUnit medic = Select.ourOfType(AUnitType.Terran_Medic).nearestTo(unit);
         if (medic != null && medic.distToMoreThan(unit, maxDistToMedic())) {
             unit.move(medic, Actions.MOVE_FORMATION, "HugMedic");
-            if (!medic.isMoving() || medic.hasCooldown()) {
+            if (isMedicFree(medic)) {
                 medic.move(unit, Actions.MOVE_FORMATION, "HugUnit");
             }
             return usedManager(this);
@@ -33,7 +33,11 @@ public class TooFarFromMedic extends Manager {
         return null;
     }
 
+    private static boolean isMedicFree(AUnit medic) {
+        return !medic.isMoving() && medic.noCooldown() && medic.friendsNear().wounded().inRadius(3, medic).empty();
+    }
+
     private double maxDistToMedic() {
-        return unit.enemiesNear().ranged().isEmpty() ? 5 : 2.3;
+        return unit.enemiesNear().ranged().isEmpty() ? 3.5 : 2.3;
     }
 }

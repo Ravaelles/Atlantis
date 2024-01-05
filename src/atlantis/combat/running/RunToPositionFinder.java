@@ -1,8 +1,8 @@
 package atlantis.combat.running;
 
 import atlantis.combat.running.any_direction.RunInAnyDirection;
-import atlantis.combat.running.to_base.ShouldRunToBase;
-import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.combat.running.to_building.ShouldRunTowardsBase;
+import atlantis.combat.running.to_building.ShouldRunTowardsBunker;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -26,28 +26,22 @@ public class RunToPositionFinder {
      * Running behavior which will make unit run straight away from the enemy.
      */
     protected HasPosition findBestPositionToRun(HasPosition runAwayFrom, double dist) {
-//        if (!running.allowedToNotifyNearUnitsToMakeSpace) {
-//            if ((running.setRunTo(running.runTowardsNonStandard.shouldRunTowardsBunker())) != null) {
-//                return running.runTo();
-//            }
-//
-//            if (running.runTowardsNonStandard.shouldRunTowardsBase()) {
-//                return running.setRunTo(Select.main().position());
-//            }
-//        }
-//
-//        // =========================================================
-//
-//        // Force units like Marines to slightly run away from each other to avoid one blob of running units
-//        runAwayFrom = separateEarlyFromFriends(runAwayFrom);
+        // Run to BUNKER
 
+        if (ShouldRunTowardsBunker.check(running.unit, runAwayFrom)) {
+            AUnit position = ShouldRunTowardsBunker.position();
+            if (position != null) {
+                running.unit.paintCircleFilled(8, Color.Teal);
+                return running.setRunTo(position);
+            }
+        }
 
         // === Run directly to base ========================
 
-        if (ShouldRunToBase.check(running.unit, runAwayFrom)) {
-            AUnit position = ShouldRunToBase.position();
+        if (ShouldRunTowardsBase.check(running.unit, runAwayFrom)) {
+            AUnit position = ShouldRunTowardsBase.position();
             if (position != null) {
-                running.unit.paintCircleFilled(8, Color.Yellow);
+                running.unit.paintCircleFilled(3, Color.Yellow);
                 return running.setRunTo(position);
             }
         }

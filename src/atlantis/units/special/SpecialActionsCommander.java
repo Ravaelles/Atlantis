@@ -10,7 +10,6 @@ public class SpecialActionsCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[]{
-            ManualUnitControlCommander.class,
             UmsSpecialBehaviorCommander.class,
         };
     }

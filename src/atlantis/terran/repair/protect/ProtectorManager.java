@@ -1,11 +1,8 @@
 package atlantis.terran.repair.protect;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
-import atlantis.terran.repair.IdleProtectorRepairs;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
-import atlantis.units.special.ManualUnitControlCommander;
 
 /**
  * unit is a unit that is close to another unit (bunker or tank), ready to repair it,

@@ -20,7 +20,7 @@ public class UnfreezeAttack extends Manager {
         return
             unit.isMoving()
             && unit.noCooldown()
-            && (unit.hasNotMovedInAWhile() || unit.lastActionLessThanAgo(40, Actions.ATTACK_UNIT))
+            && (unit.hasNotMovedInAWhile() || unit.lastActionLessThanAgo(62, Actions.ATTACK_UNIT))
             && (unit.hasTarget() && !unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
     }
 
@@ -32,8 +32,8 @@ public class UnfreezeAttack extends Manager {
 //            return usedManager(this);
 //        }
 
-        UnfreezerShakeUnit.shake(unit);
+        if (UnfreezerShakeUnit.shake(unit)) return usedManager(this);
 
-        return usedManager(this);
+        return null;
     }
 }

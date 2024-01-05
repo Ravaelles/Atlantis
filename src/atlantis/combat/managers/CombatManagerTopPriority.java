@@ -11,6 +11,7 @@ import atlantis.combat.running.ShouldStopRunning;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.ContinueAttackOrder;
 import atlantis.units.interrupt.DontInterruptShootingUnits;
+import atlantis.units.special.ManualOverrideManager;
 
 public class CombatManagerTopPriority extends Manager {
     public CombatManagerTopPriority(AUnit unit) {
@@ -25,6 +26,7 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ManualOverrideManager.class,
             AvoidCriticalUnits.class,
             Unfreezer.class,
             ImprovePerformanceHavingBigSupply.class,

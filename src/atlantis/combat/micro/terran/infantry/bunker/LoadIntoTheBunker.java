@@ -87,8 +87,12 @@ public class LoadIntoTheBunker extends Manager {
     }
 
     private boolean hasSpaceForThisUnit(AUnit unit, AUnit bunker) {
-        return bunker.hasFreeSpaceFor(unit)
-            && (unit.id() % 2 == 0 || bunker.loadedUnits().size() <= 2);
+        if (!bunker.hasFreeSpaceFor(unit)) return false;
+
+        if (unit.meleeEnemiesNearCount(4) == 0) return true;
+
+        return bunker.loadedUnits().size() <= 2
+            || ((unit.isWounded() || unit.hasCooldown()) && unit.enemiesNearInRadius(1.8) == 0);
     }
 
     private double maxDistanceToLoad() {
@@ -126,6 +130,7 @@ public class LoadIntoTheBunker extends Manager {
         if (Count.marines() <= 5) return false;
         if (unit.squad().isLeader(unit)) return false;
 
-        return unit.id() % 3 != 0 && unit.friendsNear().marines().count() >= 6;
+        return unit.id() % 3 != 0
+            && unit.friendsNear().marines().inRadius(1, unit).count() >= 2;
     }
 }

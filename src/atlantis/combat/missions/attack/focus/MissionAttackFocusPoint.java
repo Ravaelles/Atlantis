@@ -195,7 +195,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             }
         }
 
-        ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
+        if (!A.isUms()) ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
         return null;
     }
 

@@ -19,7 +19,7 @@ public class OptimalNumOfRepairers {
 
         double maxRepairersAtOnce = Math.min(MAX_REPAIRERS_AT_ONCE, Count.workers() * 0.6);
         if (Count.workers() <= 10) maxRepairersAtOnce = Math.min(3, maxRepairersAtOnce);
-        if (Count.workers() <= 10 && !A.hasMinerals(100)) maxRepairersAtOnce = Math.min(1, maxRepairersAtOnce);
+        if (Count.workers() <= 10 && !A.hasMinerals(100)) maxRepairersAtOnce = Math.min(3, maxRepairersAtOnce);
 
         return repairers > maxRepairersAtOnce;
     }

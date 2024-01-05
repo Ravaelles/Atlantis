@@ -105,7 +105,20 @@ public class OptimalNumOfBunkerRepairers {
 
         // =========================================================
 
-        return Math.min(7, (int) Math.floor(optimalNumber));
+        int result = Math.min(7, (int) Math.floor(optimalNumber));
+
+        // =========================================================
+
+        if (
+            result >= 4
+                && !A.hasMinerals(16)
+                && (
+                Count.workers() <= (result + 3)
+                    || Select.ourWorkers().gatheringMinerals(false).atMost(3)
+            )
+        ) return 4;
+
+        return result;
     }
 
     private static boolean thereIsFewAttackers(AUnit bunker) {
