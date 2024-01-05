@@ -12,9 +12,9 @@ public class ProcessMoveUnit {
     public static boolean update(FakeUnit unit) {
         unit.lastCommand = "Move";
 
-        APosition target = unit.targetPosition();
+        APosition target = targetPosition(unit);
         if (target == null) {
-            ErrorLog.printErrorOnce("Unit " + unit + " is moving but has no target position");
+//            ErrorLog.printErrorOnce("Unit " + unit + " is moving but has no target position");
             return false;
         }
 
@@ -35,6 +35,12 @@ public class ProcessMoveUnit {
         unit.previousState = EngineUnitState.MOVING;
 
         return true;
+    }
+
+    private static APosition targetPosition(FakeUnit unit) {
+        if (unit.targetPosition != null) return unit.targetPosition;
+
+        return unit.target != null && unit.target.isAlive() ? unit.target.position : null;
     }
 
 

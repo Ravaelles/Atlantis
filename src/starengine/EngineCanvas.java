@@ -25,7 +25,7 @@ public class EngineCanvas extends JPanel {
 
     private void startPainter() {
         // Timer for animation
-        Timer timer = new Timer(20, e -> updateOnFrameEnd());
+        Timer timer = new Timer(1, e -> updateOnFrameEnd());
         timer.start();
     }
 

@@ -11,7 +11,9 @@ public class FakeUnitToEngineUnits {
 
         for (AUnit unit : FakeUnits) {
             FakeUnit fakeUnit = (FakeUnit) unit;
-            engineUnits.add(fakeUnitToEngineUnit(fakeUnit));
+            if (fakeUnit.isAlive() && fakeUnit.isCompleted()) {
+                engineUnits.add(fakeUnitToEngineUnit(fakeUnit));
+            }
         }
 
         return engineUnits;

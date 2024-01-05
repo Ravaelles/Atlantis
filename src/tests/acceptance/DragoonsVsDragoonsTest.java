@@ -81,7 +81,7 @@ public class DragoonsVsDragoonsTest extends NonAbstractTestFakingGame {
     protected FakeUnit[] defineEnemies() {
         int enemyTy = 16;
         return fakeEnemies(
-            fake(AUnitType.Zerg_Hydralisk, 10, enemyTy),
+            fake(AUnitType.Protoss_Dragoon, 10, enemyTy),
             fake(AUnitType.Protoss_Dragoon, 13, enemyTy + 1),
             fake(AUnitType.Protoss_Dragoon, 19, enemyTy)
         );

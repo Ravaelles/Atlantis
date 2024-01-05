@@ -24,4 +24,8 @@ public class UnitsFromAtlantis extends Units {
     public List<Unit> allUnits() {
         return FakeUnitToEngineUnits.convert(Select.all().list());
     }
+
+    public List<Unit> ourUnits() {
+        return FakeUnitToEngineUnits.convert(Select.all().our.list());
+    }
 }

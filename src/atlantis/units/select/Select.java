@@ -84,7 +84,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         data.add(unit);
                     }
                     else {
-                        System.err.println("Enemy unit but no alive = " + unit);
+                        System.err.println("Enemy unit found but not alive = " + unit);
                     }
                 }
 
