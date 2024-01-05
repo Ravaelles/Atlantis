@@ -73,14 +73,16 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     protected double enemyFacingThisUnitBonus(AUnit attacker) {
-        if (attacker.isTarget(defender)) {
-            defender.paintCircleFilled(12, Color.Red);
-            return -0.45;
-        }
+        if (defender.isWounded() || !defender.hasMedicInRange()) {
+            if (attacker.isTarget(defender)) {
+                defender.paintCircleFilled(12, Color.Red);
+                return -0.7;
+            }
 
-        if (defender.isOtherUnitFacingThisUnit(attacker)) {
-            defender.paintCircleFilled(12, Color.Red);
-            return -0.35;
+            if (defender.isOtherUnitFacingThisUnit(attacker)) {
+                defender.paintCircleFilled(12, Color.Red);
+                return -0.6;
+            }
         }
 
         if (defender.isOtherUnitShowingBackToUs(attacker)) {

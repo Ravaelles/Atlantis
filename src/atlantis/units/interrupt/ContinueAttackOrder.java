@@ -11,10 +11,15 @@ public class ContinueAttackOrder extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.hp() <= 17) return false;
+        if (unit.hp() <= 32 && !unit.hasMedicInRange()) return false;
+
+        AUnit target = unit.target();
+
         return unit.lastActionLessThanAgo(unit.attackWaitFrames(), Actions.ATTACK_UNIT)
-            && unit.hasTarget()
-            && unit.target().hasPosition()
-            && unit.target().isAlive();
+            && target != null
+            && target.hasPosition()
+            && target.isAlive();
     }
 
     public Manager handle() {

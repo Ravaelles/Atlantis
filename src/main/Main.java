@@ -15,8 +15,8 @@ import starengine.StarEngineLauncher;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-    public static final String OUR_RACE = "Protoss";
-//    public static final String OUR_RACE = "Terran";
+//    public static final String OUR_RACE = "Protoss";
+    public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Zerg";
 
     public static final String ENEMY_RACE = "Protoss";
@@ -114,7 +114,7 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx";
 //        if (true) return "ums/rav/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots

@@ -9,10 +9,10 @@ import atlantis.units.Units;
 import atlantis.units.select.Selection;
 import bwapi.Color;
 
-public class Avoid extends Manager {
+public class ProcessAvoid extends Manager {
     protected AUnit enemy;
 
-    public Avoid(AUnit unit) {
+    public ProcessAvoid(AUnit unit) {
         super(unit);
     }
 

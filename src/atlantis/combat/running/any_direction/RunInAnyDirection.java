@@ -144,7 +144,7 @@ public class RunInAnyDirection {
     private static double calculatePositionScore(AUnit unit, APosition position, HasPosition runAwayFrom) {
         return position.distTo(runAwayFrom)
             - position.distTo(unit)
-            - Select.all().inRadius(0.6, position).exclude(unit).count() * 0.2;
+            - Select.all().inRadius(1.2, position).exclude(unit).count() * 0.5;
     }
 
     private void positionSearchLoop(int radius, ArrayList<APosition> potentialPositionsList) {

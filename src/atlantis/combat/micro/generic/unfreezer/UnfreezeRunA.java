@@ -34,13 +34,16 @@ public class UnfreezeRunA extends Manager {
     @Override
     public Manager handle() {
         if (simpleRunFix) {
-            System.out.println("@ " + A.now() + " - UNFREEZE " + unit);
-            if (A.now() % 2 == 0) {
-                unit.holdPosition("UnfreezeA");
-            }
-            else {
-                unit.stop("UnfreezeB");
-            }
+//            System.out.println("@ " + A.now() + " - UNFREEZE RUN A " + unit);
+//            if (A.now() % 2 == 0) {
+//                unit.holdPosition("UnfreezeA");
+//            }
+//            else {
+//                unit.stop("UnfreezeB");
+//            }
+
+            UnfreezerShakeUnit.shake(unit);
+
             return usedManager(this);
         }
 

@@ -26,6 +26,7 @@ public class HoldToShoot extends Manager {
 //        if (true) return false;
 
         if (!unit.isDragoon()) return false;
+//        if (!unit.isDragoon() && !unit.isMarine()) return false;
 //        if (!unit.isRanged()) return false;
 //        if (unit.isMarine()) return false;
 //        if (unit.isTank()) return false;
@@ -119,7 +120,6 @@ public class HoldToShoot extends Manager {
 //        System.out.println("M:" + unit.isMoving() + " / A:" + unit.isAttacking() + " / H:" + unit.isHoldingPosition());
 
         boolean enemyIsWithinRealRange = enemyIsWithinRealRange();
-
         if (enemyIsWithinRealRange) return false;
 
         if (unit.lastActionLessThanAgo(150, Actions.HOLD_POSITION)) {

@@ -28,10 +28,10 @@ public class CombatManagerTopPriority extends Manager {
             AvoidCriticalUnits.class,
             Unfreezer.class,
             ImprovePerformanceHavingBigSupply.class,
-            ContinueAttackOrder.class,
             DontInterruptShootingUnits.class,
             HoldToShoot.class,
             DanceAfterShoot.class,
+            ContinueAttackOrder.class,
             TransportUnits.class,
             ShouldStopRunning.class,
         };

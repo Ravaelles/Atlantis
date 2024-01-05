@@ -6,11 +6,11 @@ import atlantis.units.AUnit;
 import atlantis.units.Units;
 
 public class WantsToAvoid extends Manager {
-    private Avoid avoid;
+    private ProcessAvoid avoid;
 
     public WantsToAvoid(AUnit unit) {
         super(unit);
-        avoid = new Avoid(unit);
+        avoid = new ProcessAvoid(unit);
     }
 
     @Override

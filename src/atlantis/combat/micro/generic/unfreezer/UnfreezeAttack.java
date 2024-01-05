@@ -17,30 +17,22 @@ public class UnfreezeAttack extends Manager {
     }
 
     private boolean whenAttacking(AUnit unit) {
-        return unit.lastActionLessThanAgo(40, Actions.ATTACK_UNIT)
+        return
+            unit.isMoving()
             && unit.noCooldown()
-            && !unit.isMoving()
+            && (unit.hasNotMovedInAWhile() || unit.lastActionLessThanAgo(40, Actions.ATTACK_UNIT))
             && (unit.hasTarget() && !unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
     }
 
     @Override
     public Manager handle() {
-//        System.err.println(A.now() + " Unfreezing " + unit + " / " + unit.action());
-        if (unit.isMoving()) {
-            unit.holdPosition("Unfreeze");
-            return usedManager(this);
-        }
+//        System.err.println(A.now() + " Unfreezing ATTACK " + unit + " / " + unit.action());
+//        if (unit.isMoving() || unit.) {
+//            unit.holdPosition("Unfreeze");
+//            return usedManager(this);
+//        }
 
-        if (unit.distToFocusPoint() >= 3) {
-            unit.moveTactical(unit.micro().focusPoint(), Actions.MOVE_UNFREEZE, "Unfreeze");
-        }
-        else {
-            AUnit goTo = Select.ourBuildings().random();
-            if (goTo == null) goTo = unit.friendsNear().mostDistantTo(unit);
-            if (goTo == null) return null;
-
-            unit.moveTactical(goTo, Actions.MOVE_UNFREEZE, "Unfreezing");
-        }
+        UnfreezerShakeUnit.shake(unit);
 
         return usedManager(this);
     }

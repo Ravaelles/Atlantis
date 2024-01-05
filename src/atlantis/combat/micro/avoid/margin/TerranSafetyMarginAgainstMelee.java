@@ -11,9 +11,9 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     protected double handleTerranInfantry(AUnit attacker) {
-        if (canIgnoreThisEnemyForNow(attacker)) {
-            return 2;
-        }
+//        if (canIgnoreThisEnemyForNow(attacker)) {
+//            return 2;
+//        }
 
         // =========================================================
 

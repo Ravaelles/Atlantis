@@ -6,9 +6,6 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class Unfreezer extends Manager {
-
-    private boolean simpleRunFix;
-
     public Unfreezer(AUnit unit) {
         super(unit);
     }
@@ -20,7 +17,7 @@ public class Unfreezer extends Manager {
             && !unit.isLoaded()
 //            && !unit.isMoving()
 //            && A.now() % 73 == 0
-            && A.now() >= 10
+            && A.now() >= 20
 //            && unit.looksIdle()
             && unit.hasNotMovedInAWhile()
             && unit.lastActionMoreThanAgo(30 * 12, Actions.MOVE_UNFREEZE);
@@ -29,9 +26,9 @@ public class Unfreezer extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            UnfreezeAttack.class,
             UnfreezeRunA.class,
             UnfreezeRunB.class,
-            UnfreezeAttack.class,
         };
     }
 }

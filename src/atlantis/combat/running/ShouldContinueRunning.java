@@ -1,6 +1,7 @@
 package atlantis.combat.running;
 
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import bwapi.Color;
@@ -8,13 +9,18 @@ import bwapi.Color;
 public class ShouldContinueRunning {
     public static boolean handleContinueRunning(AUnit unit) {
         if (unit.isRunning()) {
-            if (unit.lastStartedRunningLessThanAgo(3)) return truth(unit);
-            if (unit.lastActionLessThanAgo(5, Actions.MOVE_AVOID)) return truth(unit);
+            APosition targetPosition = unit.targetPosition();
+            if (targetPosition == null || targetPosition.distTo(unit) <= 1.2) return false;
+
+            if (justStartedRunning(unit)) return truth(unit);
 
             if (unit.cooldown() <= 2) {
 //                double rangeBonus = unit.isHealthy() ? 0.5 : 1.2;
-                double rangeBonus = 1.1;
-                if (unit.runningFrom() != null && unit.runningFrom().canAttackTargetWithBonus(unit, rangeBonus)) {
+                double rangeBonus = unitInDifficultSituation(unit) ? 2.7 : 1.1;
+                if (
+                    unit.runningFrom() != null
+                        && unit.runningFrom().canAttackTargetWithBonus(unit, rangeBonus)
+                ) {
 //                    System.err.println("@ " + A.now() + " - stahp");
                     return false;
                 }
@@ -33,6 +39,23 @@ public class ShouldContinueRunning {
                 return truth(unit);
             }
         }
+
+        return false;
+    }
+
+    private static boolean unitInDifficultSituation(AUnit unit) {
+        if (unit.hp() <= 17) return true;
+
+        return !unit.hasMedicInHealRange()
+            && unit.runningFrom() != null
+            && unit.runningFrom().isFacing(unit);
+    }
+
+    private static boolean justStartedRunning(AUnit unit) {
+        int MAX_FRAMES_AGO = 15;
+
+        if (unit.lastStartedRunningLessThanAgo(MAX_FRAMES_AGO)) return true;
+        if (unit.lastActionLessThanAgo(MAX_FRAMES_AGO, Actions.MOVE_AVOID)) return true;
 
         return false;
     }
