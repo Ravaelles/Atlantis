@@ -1,6 +1,8 @@
 package starengine.painters;
 
 
+import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import starengine.units.Unit;
 import starengine.units.Units;
 import tests.unit.FakeUnit;
@@ -21,13 +23,15 @@ public class UnitPainter {
         this.g = g;
 
         // Draw units
-        for (Unit unit : canvasPainter.engine.units.allUnits()) {
+        for (AUnit au : Select.all().list()) {
+            FakeUnit unit = (FakeUnit) au;
             paintUnit(unit);
         }
     }
 
-    private void paintUnit(Unit unit) {
-        au = unit.FakeUnit();
+    private void paintUnit(FakeUnit unit) {
+//        au = unit.FakeUnit();
+        au = unit;
 
         if (au.isDead() || !au.isCompleted()) return;
 
@@ -40,7 +44,7 @@ public class UnitPainter {
 
     // =========================================================
 
-    private void paintTarget(Unit unit) {
+    private void paintTarget(FakeUnit unit) {
         if (au.targetPosition() != null) {
             g.setColor(targetLineColor());
             g.drawLine(
@@ -59,12 +63,12 @@ public class UnitPainter {
         return Color.WHITE;
     }
 
-    private void paintTextsOverUnit(Unit unit) {
+    private void paintTextsOverUnit(FakeUnit unit) {
         paintText(unit, au.typeWithUnitId(), -20);
         paintText(unit, au.manager().toString(), 9);
     }
 
-    private void paintLifeBar(Unit unit) {
+    private void paintLifeBar(FakeUnit unit) {
         int width = unitWidth() / 2;
         int height = 2;
 
@@ -85,17 +89,17 @@ public class UnitPainter {
         );
     }
 
-    private void paintText(Unit unit, String text, int dy) {
+    private void paintText(FakeUnit unit, String text, int dy) {
         g.setColor(Color.WHITE);
         g.drawString(text, (int) (unit.x() + text.length() * -2.5), unit.y() + dy);
     }
 
-    private void paintText(Unit unit, String text, int dx, int dy) {
+    private void paintText(FakeUnit unit, String text, int dx, int dy) {
         g.setColor(Color.WHITE);
         g.drawString(text, unit.x() + dx, unit.y() + dy);
     }
 
-    private void paintBorder(Unit unit) {
+    private void paintBorder(FakeUnit unit) {
         g.setColor(Color.BLACK);
         g.drawOval(
             unit.x() - unitWidth() / 2,
@@ -113,7 +117,7 @@ public class UnitPainter {
         return Units.UNIT_HEIGHT;
     }
 
-    private void paintBackground(Unit unit) {
+    private void paintBackground(FakeUnit unit) {
 //        g.setColor(unit.getColor());
 //        g.fillOval(
 //            unit.x() - unitSize() / 2,

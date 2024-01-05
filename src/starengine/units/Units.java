@@ -2,6 +2,7 @@ package starengine.units;
 
 import starengine.Map;
 import starengine.StarEngine;
+import tests.unit.FakeUnit;
 
 import java.awt.*;
 import java.util.List;
@@ -24,27 +25,27 @@ public abstract class Units {
 //    public abstract void updateUnits();
 
     public void updateUnits() {
-        for (Unit unit : allUnits()) {
-            unit.move();
-
-            // Check if the unit is inside a non-walkable area
-            for (Rectangle nonWalkableArea : engine.map.nonWalkableAreas) {
-                if (nonWalkableArea.contains(unit.x(), unit.y())) {
-                    unit.reverseDirection();
-                    break;
-                }
-            }
-
-            // Check if the unit is within the starEngine bounds
-            if (unit.x() < UNIT_WIDTH || unit.x() > SPACE_WIDTH - UNIT_WIDTH) {
-                unit.reverseXDirection();
-            }
-            if (unit.y() < UNIT_WIDTH || unit.y() > SPACE_HEIGHT - UNIT_WIDTH) {
-                unit.reverseYDirection();
-            }
-        }
+//        for (FakeUnit unit : allUnits()) {
+//            unit.move();
+//
+//            // Check if the unit is inside a non-walkable area
+//            for (Rectangle nonWalkableArea : engine.map.nonWalkableAreas) {
+//                if (nonWalkableArea.contains(unit.x(), unit.y())) {
+//                    unit.reverseDirection();
+//                    break;
+//                }
+//            }
+//
+//            // Check if the unit is within the starEngine bounds
+//            if (unit.x() < UNIT_WIDTH || unit.x() > SPACE_WIDTH - UNIT_WIDTH) {
+//                unit.reverseXDirection();
+//            }
+//            if (unit.y() < UNIT_WIDTH || unit.y() > SPACE_HEIGHT - UNIT_WIDTH) {
+//                unit.reverseYDirection();
+//            }
+//        }
     }
 
-    public abstract List<Unit> allUnits();
+//    public abstract List<FakeUnit> allUnits();
 
 }

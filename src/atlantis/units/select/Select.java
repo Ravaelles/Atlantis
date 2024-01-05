@@ -1,6 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.config.env.Env;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.production.constructing.builders.BuilderManager;
 import atlantis.units.AUnit;
@@ -84,7 +85,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                         data.add(unit);
                     }
                     else {
-                        System.err.println("Enemy unit found but not alive = " + unit);
+                        if (!Env.isTesting() && !Env.isStarEngine()) {
+                            System.err.println("Enemy unit found but not alive = " + unit);
+                        }
                     }
                 }
 

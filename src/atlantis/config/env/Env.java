@@ -13,6 +13,7 @@ import java.io.File;
 public class Env {
     private static boolean isLocal = false;
     private static boolean isTesting = false;
+    private static boolean isStarEngine = false;
     private static boolean firstRun = true;
     private static boolean paramTweaker = false;
 
@@ -114,7 +115,15 @@ public class Env {
         return isTesting;
     }
 
+    public static boolean isStarEngine() {
+        return isStarEngine;
+    }
+
     public static void markIsTesting(boolean enabled) {
         isTesting = enabled;
+    }
+
+    public static void markUsingStarEngine(boolean enabled) {
+        isStarEngine = enabled;
     }
 }

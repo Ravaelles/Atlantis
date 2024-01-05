@@ -1,8 +1,7 @@
 package starengine;
 
-import starengine.units.SimpleUnits;
 import starengine.units.Units;
-import starengine.units.UnitsFromAtlantis;
+import starengine.units.UnitsFromFakes;
 
 public class StarEngine {
     public Map map;
@@ -15,7 +14,7 @@ public class StarEngine {
         map.init();
 
 //        units = new SimpleUnits(this, map);
-        units = new UnitsFromAtlantis(this, map);
+        units = new UnitsFromFakes(this, map);
     }
 
     public void updateOnFrameEnd() {

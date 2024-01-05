@@ -46,7 +46,7 @@ public class ProcessAttackUnit {
             return inAttackFrameState(unit);
         }
 
-        ErrorLog.printErrorOnce("Unknown attack state: " + unit.attackState + " for unit " + unit);
+//        ErrorLog.printErrorOnce("Unknown attack state: " + unit.attackState + " for unit " + unit);
         return false;
     }
 

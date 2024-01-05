@@ -82,8 +82,4 @@ public class Unit {
         this.unit = unit;
         return this;
     }
-
-    public BufferedImage image() {
-        return isOur() ? Images.dragoonOur : Images.dragoonEnemy;
-    }
 }

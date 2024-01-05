@@ -83,6 +83,8 @@ public class DragoonsVsDragoonsTest extends NonAbstractTestFakingGame {
         return fakeEnemies(
             fake(AUnitType.Protoss_Dragoon, 10, enemyTy),
             fake(AUnitType.Protoss_Dragoon, 13, enemyTy + 1),
+            fake(AUnitType.Protoss_Dragoon, 16, enemyTy + 4),
+            fake(AUnitType.Protoss_Dragoon, 17, enemyTy + 1),
             fake(AUnitType.Protoss_Dragoon, 19, enemyTy)
         );
     }

@@ -12,9 +12,12 @@ import atlantis.units.actions.Action;
 import bwapi.TechType;
 import bwapi.UnitType;
 import bwapi.UpgradeType;
+import starengine.Images;
 import starengine.sc_logic.AttackState;
 import starengine.units.state.EngineUnitState;
 import tests.fakes.FakePlayer;
+
+import java.awt.image.BufferedImage;
 
 public class FakeUnit extends AUnit {
     public static int firstFreeId = 10;
@@ -85,7 +88,13 @@ public class FakeUnit extends AUnit {
         return lastCommand;
     }
 
-    // =========================================================
+    // === StarEngine ==========================================
+
+    public BufferedImage image() {
+        return isOur() ? Images.dragoonOur : Images.dragoonEnemy;
+    }
+
+    // === END OF StarEngine ===================================
 
     @Override
     public int id() {
