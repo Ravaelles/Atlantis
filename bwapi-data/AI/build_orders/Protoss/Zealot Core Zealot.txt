@@ -23,7 +23,7 @@ Zealot Core Zealot
 13 - Zealot
 16 - Pylon
 17 - Cybernetics Core
-18 - Zealot
+//18 - Zealot
 @100% Cybernetics Core - Dragoon
 */
 
@@ -32,9 +32,9 @@ Zealot Core Zealot
 @ - Name - Modifier
 8 - Pylon
 10 - Gateway
-12 - Assimilator
 13 - Zealot
-16 - Pylon
-17 - Cybernetics Core
+14 - Assimilator
+16 - Cybernetics Core
+17 - Pylon
 18 - Zealot
 20 - Dragoon

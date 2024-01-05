@@ -17,33 +17,12 @@ public class QueueRefresher {
     }
 
     public void refresh() {
-//        A.errPrintln("@ " + A.now() + " - REFRESH QUEUE -----------------------------");
-//        noMoreNewReadyOrdersFromNowOn = false;
-
-//        ArrayList<ProductionOrder> completed = new ArrayList<>();
-
         for (ProductionOrder order : queue.allOrders().list()) {
+            if (order.shouldIgnore()) continue;
+
             updateOrderStatus(order);
-
-//            if (order.isCompleted()) completed.add(order);
         }
-
-//        cleanUpCompleted(completed);
-
-//        queue.clearCache();
-//        queue.allOrders().print("ALL");
-//        ReservedResources.print();
     }
-
-//    private static void cleanUpCompleted(ArrayList<ProductionOrder> completed) {
-//        if (A.now() < 300) return;
-//
-//        // Iterate over all orders using iterator and remove those that are completed
-//        for (ProductionOrder order : completed) {
-//            order.cancel();
-//        }
-//        Queue.get().clearCache();
-//    }
 
     private OrderStatus updateOrderStatus(ProductionOrder order) {
         if (IsOrderCompleted.isCompleted(order, existingCounter)) return markAsComplete(order);

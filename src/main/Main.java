@@ -80,7 +80,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-//        if (true) return "ums/7th.scx";
+        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 
 //        if (true) return "ums/member_test.scx"; // v. AI 2x Protoss players, massive Zealot rush
@@ -120,7 +120,7 @@ public class Main {
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
-        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
+//        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
 //        if (true) return "ums/rav/M_v_Zealots.scx"; // Many Zealots v Many Marines in a Terran base
 //        if (true) return "ums/rav/Wraiths_v_Protoss.scm"; // Wraiths v Reavers & HT & Observer
@@ -160,7 +160,7 @@ public class Main {
 //        if (true) return "ums/rav/2Drag_v_2Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";
-        if (true) return "ums/rav/3Drag_v_3Drag.scm";
+//        if (true) return "ums/rav/3Drag_v_3Drag.scm";
 //@        if (true) return "ums/rav/3Zeal_v_1Zeal.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag_withBase.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag.scm";
@@ -175,17 +175,17 @@ public class Main {
 //        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
 //        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
 //@        if (true) return "ums/rav/Zeal_v_Zeal.scm";
-//        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
+//@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 //        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
 //        if (true) return "ums/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers
 
         // === Generic ======================================================
 
 //        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
+//        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
 //        if (true) return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons v. mines
 //        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map
 //        if (true) return "ums/NeWconTrol.scx"; // Cool minigames, starting with 2 drones v. 2 drones, lings v. goons etc
-//        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
 //        if (true) return "ums/marines_v_zerglings.scm"; // 12 marines v. 24 zerglings
 //        if (true) return "ums/ConTrol2.scx"; // More minigames
 //        if (true) return "ums/micro challenge.scx"; // Even more minigames

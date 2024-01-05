@@ -16,7 +16,7 @@ public class ShouldContinueRunning {
 
             if (unit.cooldown() <= 2) {
 //                double rangeBonus = unit.isHealthy() ? 0.5 : 1.2;
-                double rangeBonus = unitInDifficultSituation(unit) ? 2.7 : 1.1;
+                double rangeBonus = unitInDifficultSituation(unit) ? 2.9 : 1.1;
                 if (
                     unit.runningFrom() != null
                         && unit.runningFrom().canAttackTargetWithBonus(unit, rangeBonus)

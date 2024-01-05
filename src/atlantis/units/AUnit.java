@@ -1899,6 +1899,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return squad().center();
     }
 
+    public Selection squadCenterEnemiesNear() {
+        return (Selection) cache.get(
+            "squadCenterEnemiesNear",
+            1,
+            () -> Select.enemy().inRadius(18, squadCenter())
+        );
+    }
+
     public int energy() {
         return u.getEnergy();
     }
@@ -3019,4 +3027,5 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int attackWaitFrames() {
         return UnitAttackWaitFrames.stopFrames(this.type());
     }
+
 }

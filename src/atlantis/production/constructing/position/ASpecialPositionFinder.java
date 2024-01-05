@@ -12,6 +12,7 @@ import atlantis.production.constructing.position.modifier.PositionModifier;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.cache.Cache;
 
 public class ASpecialPositionFinder {
@@ -26,7 +27,8 @@ public class ASpecialPositionFinder {
             if (construction != null && construction.maxDistance() < 0) {
                 construction.setMaxDistance(40);
             }
-            return FindPositionForBaseNearestFree.find(building, builder, construction);
+//            return FindPositionForBaseNearestFree.find(building, builder, construction);
+            return APositionFinder.findPositionForNew(builder, building, construction);
         }
         else if (modifier.equals(PositionModifier.NATURAL)) {
             if (construction != null && construction.maxDistance() < 0) {

@@ -6,6 +6,8 @@ import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
+import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class TerranBunker extends AntiLandBuildingCommander {
     @Override
@@ -24,6 +26,11 @@ public class TerranBunker extends AntiLandBuildingCommander {
 
     @Override
     public boolean shouldBuildNew() {
+        if (!We.terran()) {
+            ErrorLog.printMaxOncePerMinute("shouldBuildNew (Bunker) called for non-terran");
+            return false;
+        }
+
         if (!Have.barracks()) return false;
 
         return (new ShouldBuildNewBunker()).shouldBuildNew();

@@ -6,14 +6,12 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
-import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import atlantis.util.log.ErrorLog;
 
 import java.util.List;
 
@@ -68,7 +66,8 @@ public class ATargeting extends HasUnit {
 
         // Used when something went wrong there ^
         AttackNearbyEnemies.reasonNotToAttack = null;
-        AUnit fallback = FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
+        AUnit fallback = FallbackTargeting.fallbackTarget(unit, maxDistFromEnemy);
+//        AUnit fallback = null;
         if (DEBUG) A.println("C fallback = " + fallback);
         return fallback;
     }

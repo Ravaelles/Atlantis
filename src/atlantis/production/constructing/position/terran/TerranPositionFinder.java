@@ -47,7 +47,8 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         if (maxDistance < 0) maxDistance = 28;
 
         if (builder == null) {
-            A.errPrintln("builder is null for " + building + ", fallback to any builder");
+//            A.errPrintln("builder is null for " + building + ", fallback to any builder");
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("builder is null for " + building + ", fallback to any");
             builder = FreeWorkers.get().first();
         }
         if (nearTo == null) {

@@ -15,7 +15,6 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 public class ZergSunkenColony extends AntiLandBuildingCommander {
-
     @Override
     public AUnitType type() {
         return AUnitType.Zerg_Sunken_Colony;
@@ -103,6 +102,11 @@ public class ZergSunkenColony extends AntiLandBuildingCommander {
         }
 
         return false;
+    }
+
+    @Override
+    public HasPosition nextPosition() {
+        return nextPosition(Select.mainOrAnyBuilding());
     }
 
     @Override

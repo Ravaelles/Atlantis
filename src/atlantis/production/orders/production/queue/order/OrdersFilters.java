@@ -4,6 +4,7 @@ import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,12 @@ public interface OrdersFilters {
     default Orders all() {
         return (Orders) this;
     }
+
+//    default Orders all() {
+//        return new Orders(
+//            new ArrayList<>(list())
+//        );
+//    }
 
     default Orders readyToProduce() {
         return new Orders(

@@ -12,18 +12,25 @@ public class AvoidTanksSieged extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isMissionAttack()) return false;
+
         return Enemy.terran() && unit.isGroundUnit() && !unit.isSieged() && unit.combatEvalRelative() <= 2;
     }
 
     @Override
     protected Manager handle() {
-        AUnit tankSieged = unit.enemiesNear().tanksSieged().inRadius(13.1, unit).nearestTo(unit);
+        AUnit tankSieged = unit.enemiesNear().tanksSieged().inRadius(13.5, unit).nearestTo(unit);
         if (tankSieged == null) {
             return null;
         }
 
+        if (!unit.isAttacking() && unit.distTo(tankSieged) <= 1.9) {
+            unit.holdPosition("TANK!");
+            return usedManager(this);
+        }
+
         unit.setTooltip("TANK!");
-        unit.runningManager().runFrom(tankSieged, 0.5, Actions.MOVE_AVOID, false);
+        unit.runningManager().runFrom(tankSieged, 2, Actions.MOVE_AVOID, false);
         return usedManager(this);
     }
 }

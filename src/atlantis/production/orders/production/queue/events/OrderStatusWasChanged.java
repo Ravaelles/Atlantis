@@ -1,6 +1,5 @@
 package atlantis.production.orders.production.queue.events;
 
-import atlantis.game.A;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.Orders;
@@ -14,6 +13,10 @@ public class OrderStatusWasChanged {
         else order.makeSureToClearReservedResources();
 
         removeSameTechFromQueue(order);
+
+        if (order.isCompleted() && order.isUnit()) {
+            Queue.get().markAsProducedAndForget(order.unitType());
+        }
     }
 
     private static void removeSameTechFromQueue(ProductionOrder order) {

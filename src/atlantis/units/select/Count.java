@@ -360,6 +360,10 @@ public class Count {
         return ofTypeFree(AUnitType.Terran_Factory);
     }
 
+    public static int freeGateways() {
+        return ofTypeFree(AUnitType.Protoss_Gateway);
+    }
+
 //    public static int () {
 //        return ofType(AUnitType.);
 //    }

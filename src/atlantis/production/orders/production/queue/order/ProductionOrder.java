@@ -55,6 +55,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     private String modifier = null;
 
     private boolean dynamic = true;
+    private boolean ignore = false;
 
     /**
      * If true, then the building will be built exactly at given position, without any modifications.
@@ -420,6 +421,10 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         return unitOrBuilding != null && unitOrBuilding.isABuilding();
     }
 
+    public boolean isUnit() {
+        return unitOrBuilding != null && !unitOrBuilding.isABuilding();
+    }
+
     public void markAsNotDynamic() {
         dynamic = false;
     }
@@ -460,5 +465,13 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public Construction construction() {
         return this.construction;
+    }
+
+    public void setIgnore(boolean ignore) {
+        this.ignore = ignore;
+    }
+
+    public boolean shouldIgnore() {
+        return ignore;
     }
 }

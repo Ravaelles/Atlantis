@@ -38,6 +38,10 @@ public class HoldToShoot extends Manager {
         if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
         if (unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)) return false;
 
+        if (
+            unit.enemiesNear().canBeAttackedBy(unit, 2).inRadius(1.2, unit).empty()
+        ) return false;
+
         if (unit.lastActionMoreThanAgo(5, Actions.HOLD_POSITION)) return true;
 
         if (shouldSkip()) return false;

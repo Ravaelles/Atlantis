@@ -2,17 +2,14 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.ProtossArmyComposition;
-import atlantis.information.strategy.GamePhase;
-import atlantis.production.orders.build.BuildOrderSettings;
+import atlantis.production.dynamic.protoss.units.ProduceDragoon;
+import atlantis.production.dynamic.protoss.units.ProduceZealot;
 import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -43,8 +40,8 @@ public class ProtossDynamicUnitsCommander extends Commander {
         shuttles();
         reavers();
 
-        dragoons();
-        zealots();
+        ProduceDragoon.dragoon();
+        ProduceZealot.produce();
     }
 
     // =========================================================
@@ -104,96 +101,8 @@ public class ProtossDynamicUnitsCommander extends Commander {
         buildToHave(AUnitType.Protoss_Reaver, maxReavers);
     }
 
-    private static boolean dragoons() {
-        if (Have.notEvenPlanned(AUnitType.Protoss_Gateway) || Have.notEvenPlanned(AUnitType.Protoss_Cybernetics_Core))
-            return false;
-
-//        if (!A.hasGas(50) && !A.hasMinerals(125)) {
-//            return;
-//        }
-
-        if (
-            Decisions.needToProduceZealotsNow()
-                && !A.hasGas(50)
-//                && !A.hasMinerals(225)
-        ) return false;
-
-        if (!A.hasMineralsAndGas(700, 250) && !A.canAffordWithReserved(125, 50)) return false;
-
-        if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
-//            trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
-            return produceDragoon();
-        }
-
-        if (A.hasGas(100) && A.supplyUsed() <= 38) {
-            return produceDragoon();
-        }
-
-//        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
-//            return;
-//        }
-
-        return trainIfPossible(Protoss_Dragoon);
-    }
-
-    private static boolean produceDragoon() {
-        return AddToQueue.maxAtATime(Protoss_Dragoon, freeGateways()) != null;
-    }
-
-    private static int freeGateways() {
+    public static int freeGateways() {
         return Select.ourFree(Protoss_Gateway).count();
-    }
-
-    private static void zealots() {
-        if (Have.notEvenPlanned(AUnitType.Protoss_Gateway)) {
-            return;
-        }
-
-//        if (!AGame.canAffordWithReserved(125, 0)) {
-//            return;
-//        }
-
-        if (dragoonInsteadOfZealot()) {
-            return;
-        }
-
-        if (Decisions.needToProduceZealotsNow()) {
-            trainIfPossible(AUnitType.Protoss_Zealot);
-            return;
-        }
-
-        if (BuildOrderSettings.autoProduceZealots()) {
-            trainIfPossible(AUnitType.Protoss_Zealot);
-            return;
-        }
-
-        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
-            trainIfPossible(AUnitType.Protoss_Zealot);
-            return;
-        }
-
-        if (AGame.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) {
-            trainIfPossible(AUnitType.Protoss_Zealot);
-            return;
-        }
-    }
-
-    private static boolean dragoonInsteadOfZealot() {
-        int mutas = EnemyUnits.count(AUnitType.Zerg_Mutalisk);
-        if (mutas >= 3) {
-            if (GamePhase.isEarlyGame()) {
-                return true;
-            }
-
-            if (mutas >= 8) {
-                return true;
-            }
-        }
-
-        if (A.hasGas(50) && !A.hasMinerals(225) && Have.cyberneticsCore() && Count.dragoons() <= 2 && Count.zealots() >= 1)
-            return true;
-
-        return false;
     }
 
     private static void scarabs() {

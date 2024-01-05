@@ -21,6 +21,8 @@ public class ProduceZerglings {
 
         if (larvas <= 1 && zerglings >= 2) return false;
 
+        if (A.hasGas(150) && Have.hydraliskDen()) return false;
+
         if (larvas >= 3 && A.supplyUsed() <= 180 && A.hasMinerals(600)) return produceZergling();
 
         if (Have.hydraliskDen()) {

@@ -2,6 +2,7 @@ package atlantis.units.special;
 
 import atlantis.architecture.Manager;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -12,7 +13,7 @@ public class ManualOverrideManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isPatrolling() && unit.lastActionLessThanAgo(30 * 4, Actions.PATROL);
+        return unit.isPatrolling() && !A.everyNthGameFrame(40 * 5);
     }
 
     protected Manager handle() {

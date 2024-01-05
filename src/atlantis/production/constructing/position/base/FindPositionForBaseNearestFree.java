@@ -8,6 +8,7 @@ import atlantis.map.position.Positions;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.ASpecialPositionFinder;
+import atlantis.production.constructing.position.modifier.PositionModifier;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -20,7 +21,7 @@ public class FindPositionForBaseNearestFree {
      */
     public static APosition find(AUnitType building, AUnit builder, Construction construction) {
         return FindPositionForBase.cache.get(
-            "findPositionForBase:" + builder + "," + (construction != null ? construction.id() : "-"),
+            "findPositionForBase:" + null + "," + (construction != null ? construction.id() : "-"),
             53,
             () -> {
                 String modifier = construction != null && construction.productionOrder() != null ?
@@ -28,7 +29,8 @@ public class FindPositionForBaseNearestFree {
 
                 APosition position = null;
                 if (modifier != null) {
-                    position = ASpecialPositionFinder.positionModifierToPosition(modifier, building, builder, construction);
+//                    position = ASpecialPositionFinder.positionModifierToPosition(modifier, building, builder, construction);
+                    position = PositionModifier.toPosition(modifier, building, builder, construction);
                 }
 
                 if (position == null) {
