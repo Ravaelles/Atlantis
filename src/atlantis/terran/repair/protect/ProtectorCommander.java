@@ -100,7 +100,7 @@ public class ProtectorCommander extends Commander {
 //            }
         }
 
-        return MAX_PROTECTORS;
+        return (int) Math.min(workers / 2.5, MAX_PROTECTORS);
     }
 
     protected static boolean assignUnitsProtectorsIfNeeded() {

@@ -101,6 +101,10 @@ public class AddToQueue {
 //                );
 //            }
 
+            if (type.isBunker()) {
+                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position);
+            }
+
             Select.clearCache();
             Count.clearCache();
 

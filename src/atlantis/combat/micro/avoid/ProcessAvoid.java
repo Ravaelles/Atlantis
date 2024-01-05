@@ -31,8 +31,8 @@ public class ProcessAvoid extends Manager {
         HasPosition runFrom = defineRunFromForGroupOfUnits(enemiesDangerouslyClose);
 
         if (runFrom == null) {
-            System.err.println("Run from group is null for " + unit);
-            enemiesDangerouslyClose.print("Group of units to run from");
+//            System.err.println("Run from group is null for " + unit);
+//            enemiesDangerouslyClose.print("Group of units to run from");
             return null;
         }
 
