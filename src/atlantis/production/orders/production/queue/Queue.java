@@ -15,6 +15,7 @@ public class Queue extends AbstractQueue {
     // =========================================================
 
     public void refresh() {
+        clearCache();
         (new QueueRefresher(this)).refresh();
         clearCache();
     }

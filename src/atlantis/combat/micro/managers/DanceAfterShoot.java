@@ -3,7 +3,6 @@ package atlantis.combat.micro.managers;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.interrupt.DontInterruptStartedAttacks;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
 
 public class DanceAfterShoot extends Manager {
@@ -79,15 +78,6 @@ public class DanceAfterShoot extends Manager {
 
         // =========================================================
 
-        // Step FORWARD
-//        if (shouldDanceTowards(target, dist)) {
-//            System.err.println("______ DANCE TO (" + dist + ")");
-//            unit.addLog(danceTo);
-//            return unit.move(
-//                unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE_TO, danceTo, false
-//            );
-//        }
-
 //        // Big step BACK
 //        else if (shouldDanceBigStepBackwards(dist, weaponRange, target)) {
 //            unit.addLog(danceAway);
@@ -101,7 +91,20 @@ public class DanceAfterShoot extends Manager {
             return unit.moveAwayFrom(target.position(), 0.5, Actions.MOVE_DANCE_AWAY, danceAway);
         }
 
+        // Step FORWARD
+        if (shouldDanceTo(target, dist)) {
+            return danceTo(dist, danceTo, target);
+        }
+
         return false;
+    }
+
+    private boolean danceTo(double dist, String danceTo, AUnit target) {
+//        System.err.println("______ DANCE TO (" + dist + ")");
+        unit.addLog(danceTo);
+        return unit.move(
+            unit.translateTilesTowards(0.2, target), Actions.MOVE_DANCE_TO, danceTo, false
+        );
     }
 
     private boolean shouldDanceAway(double dist, int weaponRange, AUnit target) {
@@ -118,16 +121,14 @@ public class DanceAfterShoot extends Manager {
 
     // =========================================================
 
-    private boolean shouldDanceTowards(AUnit target, double dist) {
+    private boolean shouldDanceTo(AUnit target, double dist) {
         return target.isVisibleUnitOnMap()
             && target.effVisible()
+            && (target.isMelee() || target.isABuilding())
 //            && unit.distToMoreThan(target, 3.7)
 //            && dist >= (unit.enemyWeaponRangeAgainstThisUnit(target))
             && !unit.isTargetInWeaponRangeAccordingToGame(target)
-            && (
-            (!target.isABuilding() && dist >= 1.6)
-                || target.hasNoWeaponAtAll()
-        );
+            && (dist >= 1.6 || target.hasNoWeaponAtAll());
     }
 
     private boolean shouldSkip() {

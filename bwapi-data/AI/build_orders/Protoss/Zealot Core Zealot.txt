@@ -4,7 +4,7 @@
 #SCOUT_IS_NTH_WORKER=9
 
 // When supply is bigger than N, then start auto-producing supply units
-#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=14
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=30
 
 // If have empty slot for a worker, force to build new workers
 #AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
@@ -33,8 +33,7 @@ Zealot Core Zealot
 8 - Pylon
 10 - Gateway
 13 - Zealot
-14 - Assimilator
 16 - Cybernetics Core
 17 - Pylon
-18 - Zealot
-20 - Dragoon
+19 - Assimilator
+24 - Pylon

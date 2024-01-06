@@ -37,7 +37,7 @@ public class Construction implements Comparable<Construction> {
     public Construction(AUnitType buildingType) {
         this.buildingType = buildingType;
 
-        status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
+        status = ConstructionOrderStatus.NOT_STARTED;
         timeOrdered = AGame.now();
 
 //        if (id() >= 1000) {
@@ -182,7 +182,7 @@ public class Construction implements Comparable<Construction> {
     public void setStatus(ConstructionOrderStatus status) {
         this.status = status;
 
-        if (status.equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)) {
+        if (status.equals(ConstructionOrderStatus.IN_PROGRESS)) {
             timeBecameInProgress = A.now();
         }
     }
@@ -241,11 +241,11 @@ public class Construction implements Comparable<Construction> {
     }
 
     public boolean hasStarted() {
-        return !status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED);
+        return !status().equals(ConstructionOrderStatus.NOT_STARTED);
     }
 
     public boolean notStarted() {
-        return ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(status);
+        return ConstructionOrderStatus.NOT_STARTED.equals(status);
     }
 
     public static void clearCache() {

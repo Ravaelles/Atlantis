@@ -77,8 +77,9 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // First pylon should be orientated towards the nearest choke
         else if (AGame.supplyTotal() <= 18) {
-            nearTo = PylonPosition.positionForSecondPylon();
+            nearTo = PylonPosition.positionForSecondPylon(nearTo.position());
         }
+
         return nearTo;
     }
 

@@ -2,7 +2,6 @@ package atlantis.game.events;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.constructing.ProtossWarping;
@@ -31,12 +30,11 @@ public class OnUnitCreated {
     private static void handleOurUnit(AUnit unit) {
         Count.clearCache();
         Select.clearCache();
-
         Queue.get().refresh();
 
         // Apply construction fix: detect new Protoss buildings and remove them from queue.
         if (We.protoss() && unit.type().isABuilding()) {
-            ProtossWarping.handleWarpingNewBuilding(unit);
+            ProtossWarping.handleNewBuildingWarped(unit);
         }
 
         if (unit.isABuilding()) {
@@ -44,6 +42,6 @@ public class OnUnitCreated {
         }
 
         // CENTER CAMERA ON THE FIRST BUNKER
-        if (unit.isBunker() && Env.isLocal() && Count.bunkers() == 0) CameraCommander.centerCameraOn(unit);
+//        if (unit.isBunker() && Env.isLocal() && Count.bunkers() == 0) CameraCommander.centerCameraOn(unit);
     }
 }

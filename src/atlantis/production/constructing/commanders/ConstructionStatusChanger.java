@@ -13,6 +13,7 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,12 +37,6 @@ public class ConstructionStatusChanger extends Commander {
 
             TravelToConstruct.refreshConstructionPositionIfNeeded(construction, building);
             construction.assignOptimalBuilder();
-
-//            if (building != null && building.isBunker()) {
-//            construction.cancel();
-//            }
-//            else {
-//            }
         }
     }
 
@@ -50,7 +45,7 @@ public class ConstructionStatusChanger extends Commander {
 
         if (
             !We.zerg()
-                && construction.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+                && construction.status() == ConstructionOrderStatus.IN_PROGRESS
                 && construction.startedAgo() >= 30
                 && (building == null || !building.isAlive())
         ) {
@@ -97,12 +92,12 @@ public class ConstructionStatusChanger extends Commander {
 
             // Finished: building is completed, remove the construction object
             if (building.isCompleted()) {
-                construction.setStatus(ConstructionOrderStatus.CONSTRUCTION_FINISHED);
+                construction.setStatus(ConstructionOrderStatus.FINISHED);
                 ConstructionRequests.removeOrder(construction);
             }
             // In progress
-            else if (construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
-                construction.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+            else if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
+                construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
             }
         }
 
@@ -126,7 +121,11 @@ public class ConstructionStatusChanger extends Commander {
 
         // =========================================================
         // Check if both building and builder are destroyed
-        if ((builder == null || builder.isDead()) && (building == null || building.isDead())) {
+        if (
+            (builder == null || builder.isDead())
+                && (building == null || building.isDead())
+        ) {
+            ErrorLog.printMaxOncePerMinute("Builder and building are dead for " + construction + ", cancel");
             construction.cancel();
         }
     }
@@ -152,10 +151,10 @@ public class ConstructionStatusChanger extends Commander {
             if (!allOrders.isEmpty()) {
                 for (Construction construction : allOrders) {
                     AUnit builder = construction.builder();
-                    if (construction.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                    if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
                         if (builder != null) {
                             if (builder.is(construction.buildingType())) {
-                                construction.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
+                                construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
                             }
                         }
                     }

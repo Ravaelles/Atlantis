@@ -7,6 +7,7 @@ import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class BuilderManager extends Manager {
     public BuilderManager(AUnit unit) {
@@ -47,18 +48,18 @@ public class BuilderManager extends Manager {
         if (construction != null) {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
-            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
-                return (new TravelToConstruct(unit)).travelIfReady(construction);
+            if (construction.status() == ConstructionOrderStatus.NOT_STARTED) {
+                return (new TravelToConstruct(unit)).travelWhenReady(construction);
             }
-            else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS) {
-                // Do nothing - construction is pending
-            }
-            else if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
-                // Do nothing - construction is finished
-            }
+//            else if (construction.status() == ConstructionOrderStatus.IN_PROGRESS) {
+//                // Do nothing - construction is pending
+//            }
+//            else if (construction.status() == ConstructionOrderStatus.FINISHED) {
+//                // Do nothing - construction is finished
+//            }
         }
         else {
-//            System.err.println("construction null for " + unit);
+            ErrorLog.printMaxOncePerMinute("construction null for " + unit);
             return false;
         }
         return false;
@@ -83,7 +84,7 @@ public class BuilderManager extends Manager {
                 // Pending Protoss buildings allow unit to go away
                 // Terran and Zerg need to use the worker until construction is finished
                 return !We.protoss()
-                    || !ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS.equals(construction.status());
+                    || !ConstructionOrderStatus.IN_PROGRESS.equals(construction.status());
             }
         }
 

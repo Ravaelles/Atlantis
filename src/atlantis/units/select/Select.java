@@ -394,6 +394,13 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     if (unit.is(type)) total++;
                 }
 
+                if (!type.isABuilding()) {
+                    AUnitType producer = type.whatBuildsIt();
+                    for (AUnit producingUnit : Select.ourOfType(producer).list()) {
+                        if (producingUnit.buildUnit() != null && producingUnit.buildUnit().type().is(type)) total++;
+                    }
+                }
+
                 return total;
             }
         );

@@ -18,21 +18,12 @@ import static atlantis.units.AUnitType.Terran_Marine;
 
 public class ProduceDragoon {
     public static boolean dragoon() {
-        if (
-            Have.notEvenPlanned(AUnitType.Protoss_Gateway) || Have.notEvenPlanned(AUnitType.Protoss_Cybernetics_Core)
-        ) return false;
-        if (Select.ourFree(Protoss_Gateway).isEmpty()) return false;
+        int dragoons = Count.dragoons();
 
-//        if (!A.hasGas(50) && !A.hasMinerals(125)) {
-//            return;
-//        }
-
-        if (
-            Decisions.needToProduceZealotsNow()
-                && !A.hasGas(50)
-//                && !A.hasMinerals(225)
-        ) return false;
-
+        if (noProperBuildings()) return false;
+        if (dragoons >= 2 && (!A.hasMinerals(250) || !A.hasGas(150))) return false;
+        if (A.supplyUsed() >= 50 && (!A.hasMinerals(300) || !A.hasGas(200))) return false;
+        if (Decisions.needToProduceZealotsNow() && !A.hasGas(50)) return false;
         if (!A.hasMineralsAndGas(700, 250) && !A.canAffordWithReserved(125, 50)) return false;
 
         if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
@@ -44,11 +35,13 @@ public class ProduceDragoon {
             return produceDragoon();
         }
 
-//        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
-//            return;
-//        }
+        return produceDragoon();
+    }
 
-        return trainIfPossible(Protoss_Dragoon);
+    private static boolean noProperBuildings() {
+        return Select.ourFree(Protoss_Gateway).isEmpty()
+            || Have.notEvenPlanned(AUnitType.Protoss_Gateway)
+            || Have.notEvenPlanned(AUnitType.Protoss_Cybernetics_Core);
     }
 
     private static boolean produceDragoon() {

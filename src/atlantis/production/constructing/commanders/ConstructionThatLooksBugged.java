@@ -8,6 +8,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 import java.util.Iterator;
@@ -23,7 +24,7 @@ public class ConstructionThatLooksBugged extends Commander {
     }
 
     private void handleConstructionThatLooksBugged(Construction order) {
-        if (order.status() != ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+        if (order.status() != ConstructionOrderStatus.NOT_STARTED) {
             return;
         }
 
@@ -36,7 +37,8 @@ public class ConstructionThatLooksBugged extends Commander {
         }
 
         AUnit main = Select.main();
-        int timeout = 30 * (
+        int bonus = We.protoss() ? 30 * 8 : 0;
+        int timeout = bonus + 30 * (
             8
                 + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 40 : 10)
                 + ((int) (2.9 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))

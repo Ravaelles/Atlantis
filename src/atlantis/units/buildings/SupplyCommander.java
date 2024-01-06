@@ -17,7 +17,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.TimeMoment;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
 
 public class SupplyCommander extends Commander {
     private TimeMoment lastAdded = new TimeMoment(0);
@@ -110,15 +109,15 @@ public class SupplyCommander extends Commander {
 //            + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size()
 //        );
 
-        int maxAtOnce = A.supplyUsed() >= 40 ? (3 + A.supplyUsed() / 50) : 2;
+        int maxAtOnce = maxAtOnce();
 
         if (requestedConstructionsOfSupply >= maxAtOnce) {
-            System.err.println("TOO MANY REQUESTED SUPPLIES: " + requestedConstructionsOfSupply);
+//            System.err.println("TOO MANY REQUESTED SUPPLIES: " + requestedConstructionsOfSupply);
             return;
         }
 
         if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
-            System.err.println("EXIT!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
+//            System.err.println("Too many SUPPLY!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
             return;
         }
 
@@ -140,6 +139,12 @@ public class SupplyCommander extends Commander {
 //        System.err.println("------------------ REQUEST SUPPLY AT " + A.supplyUsed() + " / " + A.supplyTotal());
         ProductionOrder order = AddToQueue.withTopPriority(AtlantisRaceConfig.SUPPLY);
         if (order != null) order.setStatus(OrderStatus.READY_TO_PRODUCE);
+    }
+
+    private static int maxAtOnce() {
+        if (We.protoss() && !A.hasFreeSupply(1)) return 1;
+
+        return A.seconds() <= 300 ? 1 : 2;
     }
 
     private boolean tooManyNotStartedConstructions() {

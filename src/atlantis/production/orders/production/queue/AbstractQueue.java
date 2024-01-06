@@ -15,9 +15,17 @@ public abstract class AbstractQueue {
         cache.clear();
     }
 
+    public Orders nextOrders() {
+        return cache.get(
+            "nextOrders:9999",
+            CACHE_FOR_FRAMES,
+            () -> orders.next(9999)
+        );
+    }
+
     public Orders nextOrders(int n) {
         return cache.get(
-            "abstractNextOrders:" + n,
+            "nextOrders:" + n,
             CACHE_FOR_FRAMES,
             () -> orders.next(n)
         );
@@ -28,8 +36,6 @@ public abstract class AbstractQueue {
     }
 
     public void markAsProducedAndForget(AUnitType type) {
-        ProductionOrder forgetOrder = null;
-
         for (ProductionOrder order : orders.list()){
             if (order.isUnit() && order.unitType().equals(type)) {
                 order.setIgnore(true);

@@ -20,10 +20,14 @@ public class UnitUnderAttackAndNotAttacking extends Manager {
             && !unit.isTank()
             && !unit.recentlyMoved(30)
             && unit.lastUnderAttackLessThanAgo(40)
-            && (unit.hp() >= 18 || !unit.recentlyMoved() || unit.lastAttackFrameMoreThanAgo(30 * 6))
             && unit.hasAnyWeapon()
-            && unit.enemiesNear().canBeAttackedBy(unit, 0).notEmpty()
-            && shouldAttackBackBecauseOverstackedAndCantRun();
+            && (
+                unit.hp() >= 18
+                    || !unit.recentlyMoved()
+                    || unit.lastAttackFrameMoreThanAgo(30 * 4)
+                    || shouldAttackBackBecauseOverstackedAndCantRun()
+        )
+            && unit.enemiesNear().canBeAttackedBy(unit, 1).notEmpty();
     }
 
     private boolean shouldAttackBackBecauseOverstackedAndCantRun() {

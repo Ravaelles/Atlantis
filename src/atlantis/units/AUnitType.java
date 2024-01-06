@@ -1568,4 +1568,12 @@ public class AUnitType implements Comparable<Object> {
             () -> is(Terran_Science_Vessel)
         );
     }
+
+    public boolean isResource() {
+        return (boolean) cache.get(
+            "isResource",
+            -1,
+            () -> isGasBuilding() || is(Terran_Supply_Depot, Protoss_Pylon, Zerg_Overlord)
+        );
+    }
 }

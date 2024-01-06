@@ -14,7 +14,6 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.CameraCommander;
 import atlantis.game.GameLog;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
@@ -35,7 +34,6 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.base.NextBasePosition;
-import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.constructing.position.terran.TerranSupplyDepot;
 import atlantis.production.dynamic.AutoProduceWorkersCommander;
 import atlantis.production.dynamic.expansion.ShouldExpand;
@@ -760,13 +758,13 @@ public class AAdvancedPainter extends APainter {
             for (Construction construction : allOrders) {
                 Color color = null;
                 switch (construction.status()) {
-                    case CONSTRUCTION_NOT_STARTED:
+                    case NOT_STARTED:
                         color = Color.Red;
                         break;
-                    case CONSTRUCTION_IN_PROGRESS:
+                    case IN_PROGRESS:
                         color = Color.Blue;
                         break;
-                    case CONSTRUCTION_FINISHED:
+                    case FINISHED:
                         color = Color.Teal;
                         break;
                     default:
@@ -810,7 +808,7 @@ public class AAdvancedPainter extends APainter {
     static void paintConstructionPlaces() {
         Color color = Color.Grey;
         for (Construction order : ConstructionRequests.all()) {
-            if (order.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+            if (order.status() == ConstructionOrderStatus.NOT_STARTED) {
 //            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
                 APosition positionToBuild = order.buildPosition();
                 AUnitType buildingType = order.buildingType();
@@ -1038,7 +1036,7 @@ public class AAdvancedPainter extends APainter {
             AUnit builder = order.builder();
             boolean builderProblem = builder == null || !builder.isAlive();
             paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 15),
-                builderProblem ? "NO BUILDER" : "", builderProblem ? Color.Red : Green);
+                builderProblem ? (We.protoss() ? "" : "NO BUILDER") : "", builderProblem ? Color.Red : Green);
         }
 
         setTextSizeSmall();
@@ -1146,12 +1144,14 @@ public class AAdvancedPainter extends APainter {
             // UPGRADING
             else if (building.isUpgrading()) {
                 UpgradeType upgradeType = building.whatIsUpgrading();
-                paintBuildingActionProgress(
-                    building,
-                    upgradeType.name(),
-                    building.remainingUpgradeTime(),
-                    upgradeType.upgradeTime()
-                );
+                if (upgradeType != null) {
+                    paintBuildingActionProgress(
+                        building,
+                        upgradeType.name(),
+                        building.remainingUpgradeTime(),
+                        upgradeType.upgradeTime()
+                    );
+                }
             }
         }
         setTextSizeSmall();

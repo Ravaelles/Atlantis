@@ -13,6 +13,8 @@ import atlantis.map.region.ARegion;
 import atlantis.map.region.MainRegion;
 import atlantis.map.wall.GetWallIn;
 import atlantis.map.wall.Structure;
+import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.orders.production.queue.Queue;
@@ -63,6 +65,17 @@ public class OnEveryFrameHelper {
 //        printFirstCombatUnitStatus();
 
 //        printMarineManagers();
+
+//        paintAllConstructions();
+    }
+
+    private static void paintAllConstructions() {
+        if (!A.everyNthGameFrame(117)) return;
+
+        System.out.println("@ " + A.now() + " - ");
+        for (Construction construction : ConstructionRequests.all()) {
+            System.out.println("construction = " + construction);
+        }
     }
 
     private static void printMarineManagers() {

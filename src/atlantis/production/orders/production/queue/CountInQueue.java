@@ -46,4 +46,8 @@ public class CountInQueue {
     public static int bases() {
         return count(AtlantisRaceConfig.BASE);
     }
+
+    public static int countInProgress(AUnitType type) {
+        return Queue.get().inProgressOrders().ofType(type).size();
+    }
 }

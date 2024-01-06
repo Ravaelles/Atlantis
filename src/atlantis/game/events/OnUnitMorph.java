@@ -38,7 +38,7 @@ public class OnUnitMorph {
             if (unit.type().isGasBuilding()) {
                 for (Construction order : ConstructionRequests.all()) {
                     if (order.buildingType().equals(AtlantisRaceConfig.GAS_BUILDING)
-                        && order.status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED)) {
+                        && order.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
                         order.setBuild(unit);
                         break;
                     }

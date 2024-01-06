@@ -1,15 +1,12 @@
 package atlantis.production.constructing.position.protoss;
 
 import atlantis.map.base.ABaseLocation;
-import atlantis.map.choke.AChoke;
-import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
 public class PylonPosition {
-
     public static APosition positionForFirstPylon() {
         AUnit base = Select.main();
         if (base == null) {
@@ -40,14 +37,16 @@ public class PylonPosition {
         return position;
     }
 
-    public static APosition positionForSecondPylon() {
-        AUnit base = Select.main();
-        AChoke mainChoke = Chokes.mainChoke();
-        if (base == null || mainChoke == null) {
-            return fallback();
-        }
+    public static APosition positionForSecondPylon(APosition initialNearTo) {
+        return initialNearTo;
 
-        return mainChoke.translateTilesTowards(base, 8);
+//        AUnit base = Select.main();
+//        AChoke mainChoke = Chokes.mainChoke();
+//        if (base == null || mainChoke == null) {
+//            return fallback();
+//        }
+//
+//        return mainChoke.translateTilesTowards(base, 8);
     }
 
     // =========================================================

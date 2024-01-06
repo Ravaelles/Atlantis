@@ -665,6 +665,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection builders() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isBuilder()), "builders"
+        );
+    }
+
     public Selection notProtectors() {
         return cloneByRemovingIf(
             (AUnit::isProtector), "notProtectors"

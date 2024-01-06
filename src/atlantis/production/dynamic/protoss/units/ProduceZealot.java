@@ -19,11 +19,10 @@ public class ProduceZealot {
     public static boolean produce() {
         if (Have.notEvenPlanned(AUnitType.Protoss_Gateway)) return false;
         if (Select.ourFree(Protoss_Gateway).isEmpty()) return false;
+        if (A.supplyUsed() >= 50 && !A.hasMinerals(350)) return false;
+        if (dragoonInsteadOfZealot()) return false;
 
-        if (dragoonInsteadOfZealot()) {
-            return true;
-        }
-
+//        System.out.println("Count.ourWithUnfinished(Protoss_Zealot) = " + Count.ourWithUnfinished(Protoss_Zealot));
         if (Count.ourWithUnfinished(Protoss_Zealot) >= 1 && !A.hasMinerals(250)) return false;
 
         if (A.hasGas(100) && Have.cyberneticsCore() && !A.hasMinerals(500) && Count.freeGateways() >= 2) {

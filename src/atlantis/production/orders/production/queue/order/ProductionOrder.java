@@ -243,7 +243,15 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     public boolean supplyRequirementFulfilled() {
         int bonus = unitOrBuilding != null && A.supplyUsed() >= 10 && unitOrBuilding.isABuilding() ? 1 : 0;
 
-        return AGame.supplyUsed() + bonus >= minSupply;
+        return A.supplyUsed() + bonus >= minSupply
+            || canSkipSupplyRequirement();
+    }
+
+    private boolean canSkipSupplyRequirement() {
+        return A.supplyUsed() >= 12
+            && A.supplyUsed() <= minSupply + 3
+            && (unitOrBuilding != null && !unitOrBuilding.isResource())
+            && A.canAfford(mineralPrice() + 100, gasPrice() > 0 ? gasPrice() + 50 : 0);
     }
 
     public void cancel() {
@@ -358,7 +366,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     }
 
     public boolean isReadyToProduce() {
-        return isStatus(OrderStatus.READY_TO_PRODUCE);
+        return !shouldIgnore() && isStatus(OrderStatus.READY_TO_PRODUCE);
     }
 
     public Mission mission() {

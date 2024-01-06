@@ -42,7 +42,7 @@ public class ConstructionRequests {
     public static int countNotStartedOfType(AUnitType type) {
         int total = 0;
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+            if (construction.status() == ConstructionOrderStatus.NOT_STARTED
                 && construction.buildingType().equals(type)) {
                 total++;
             }
@@ -60,7 +60,7 @@ public class ConstructionRequests {
     public static Construction getNotStartedOfType(AUnitType type) {
         for (Construction construction : constructions) {
             if (
-                construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+                construction.status() == ConstructionOrderStatus.NOT_STARTED
                     && construction.buildingType().equals(type)
             ) {
                 return construction;
@@ -73,7 +73,7 @@ public class ConstructionRequests {
     public static int countNotStartedOfTypeInRadius(AUnitType type, double radius, HasPosition position) {
         int total = 0;
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+            if (construction.status() == ConstructionOrderStatus.NOT_STARTED
                 && construction.buildingType().equals(type)
                 && construction.positionToBuildCenter() != null
                 && position.distTo(construction.positionToBuildCenter()) <= radius) {
@@ -107,7 +107,7 @@ public class ConstructionRequests {
     public static int countPendingOfType(AUnitType type) {
         int total = 0;
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS
+            if (construction.status() == ConstructionOrderStatus.IN_PROGRESS
                 && construction.buildingType().equals(type)) {
                 total++;
             }
@@ -157,7 +157,7 @@ public class ConstructionRequests {
     public static ArrayList<Construction> notStartedOfType(AUnitType type) {
         ArrayList<Construction> notStarted = new ArrayList<>();
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED
+            if (construction.status() == ConstructionOrderStatus.NOT_STARTED
                 && (type == null || construction.buildingType().equals(type))) {
                 notStarted.add(construction);
             }
@@ -168,7 +168,7 @@ public class ConstructionRequests {
     public static ArrayList<Construction> notStarted() {
         ArrayList<Construction> notStarted = new ArrayList<>();
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED) {
+            if (construction.status() == ConstructionOrderStatus.NOT_STARTED) {
                 notStarted.add(construction);
             }
         }

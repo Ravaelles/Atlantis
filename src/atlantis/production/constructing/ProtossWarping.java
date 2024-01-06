@@ -1,7 +1,11 @@
 package atlantis.production.constructing;
 
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.units.select.Select;
+import atlantis.units.workers.GatherResources;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 
@@ -9,36 +13,51 @@ public class ProtossWarping {
 
     /**
      * Handle construction fix: detect new Protoss buildings and remove them from construction queue.
-     * It's because the construction of Protoss buildings is immediate and we have no way of telling
+     * It's because the construction of Protoss buildings is immediate, and we have no way of telling
      * that the Probe has actually started a construction.
      */
-    public static void handleWarpingNewBuilding(AUnit newBuilding) {
-        ArrayList<Construction> notStartedConstructions =
-                ConstructionRequests.notStartedOfType(newBuilding.type());
+    public static void handleNewBuildingWarped(AUnit newBuilding) {
+        assert newBuilding.isABuilding();
 
-        // Find a Probe-builder closest to the constructions of given type and cancel this construction
-        Units closestBuilders = new Units();
-        for (Construction order : notStartedConstructions) {
-            if (order.builder() == null || order.buildPosition() == null) {
-                continue;
-            }
-            int distBuilderToConstruction = (int) (order.builder().distTo(order.buildPosition())) * 10;
-            closestBuilders.changeValueBy(order.builder(), distBuilderToConstruction);
+        Construction construction = defineConstruction(newBuilding);
+
+        if (construction == null) return;
+
+        construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+        construction.setBuild(newBuilding);
+
+        if (construction.builder() != null) (new GatherResources(construction.builder())).forceHandle();
+
+        construction.setBuilder(null);
+    }
+
+    private static Construction defineConstruction(AUnit newBuilding) {
+        ArrayList<Construction> notStartedConstructions = ConstructionRequests.notStartedOfType(newBuilding.type());
+
+        if (notStartedConstructions.isEmpty()) {
+            ErrorLog.printMaxOncePerMinute("!!! No not started constructions for " + newBuilding);
+            return null;
         }
 
-        // =========================================================
+        int nearest = -1;
+        Construction nearestConstruction = null;
 
-        if (!closestBuilders.isEmpty()) {
-            AUnit closestBuilder = closestBuilders.unitWithLowestValue();
+        for (Construction construction : notStartedConstructions) {
+            APosition position = construction.buildPosition();
+            if (construction.builder() == null || position == null) continue;
 
-            // Assume that closest builder is the one that has just constructed a building.
-            if (closestBuilder != null) {
-                Construction order = ConstructionRequests.constructionFor(closestBuilder);
-                if (order != null) {
-                    order.cancel();
-                }
+            if (nearestConstruction == null || position.distTo(newBuilding) < nearest) {
+                nearestConstruction = construction;
+                nearest = (int) position.distTo(newBuilding);
             }
         }
+
+        if (nearestConstruction == null) {
+            ErrorLog.printMaxOncePerMinute("!!! nearestConstruction not found for " + newBuilding);
+            return null;
+        }
+
+        return nearestConstruction;
     }
 
 }

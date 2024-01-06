@@ -20,7 +20,7 @@ public class TravelToConstruct extends HasUnit {
         super(unit);
     }
 
-    protected boolean travelIfReady(Construction construction) {
+    protected boolean travelWhenReady(Construction construction) {
         APosition buildPosition = construction.buildPosition();
         APosition buildPositionCenter = construction.positionToBuildCenter();
         AUnitType buildingType = construction.buildingType();
@@ -50,16 +50,17 @@ public class TravelToConstruct extends HasUnit {
             return moveToConstruct(construction, buildingType, distance, distString);
         }
         else {
+//            if (
+//                ((A.everyNthGameFrame(77) || unit.hasNotMovedInAWhile()) && distance <= 2.1)
+//                    || !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition)
+//            ) {
             if (
-                ((A.everyNthGameFrame(77) || unit.hasNotMovedInAWhile()) && distance <= 1)
-                    || !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition)
+                A.everyNthGameFrame(37) && !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition)
             ) {
-//                if (buildingType.isBase()) System.err.println("----------- REFRESH BASE POSITION");
                 refreshConstructionPositionIfNeeded(construction, buildingType);
                 return false;
             }
 
-//            if (buildingType.isBase()) System.err.println("@@@@@@@@@@ ISSUE BUILD ORDER");
             return issueBuildOrder(construction);
         }
     }
@@ -130,10 +131,10 @@ public class TravelToConstruct extends HasUnit {
         return true;
     }
 
-    private boolean issueBuildOrder(Construction order) {
-        AUnitType buildingType = order.buildingType();
+    private boolean issueBuildOrder(Construction construction) {
+        AUnitType buildingType = construction.buildingType();
 
-        AUnit builder = order.builder();
+        AUnit builder = construction.builder();
         if (builder != null && builder.buildUnit() != null) {
             System.err.println("builder = " + builder);
             System.err.println("builder.buildUnit() = " + builder.buildUnit());
@@ -141,35 +142,36 @@ public class TravelToConstruct extends HasUnit {
             System.err.println("builder.productionOrder() = " + builder.construction().productionOrder());
         }
 
-        if (We.protoss()) {
-            AUnit newBuilding = Select.ourUnfinished()
-                .ofType(buildingType)
-                .inRadius(2, unit).nearestTo(unit);
-            if (newBuilding != null) {
-                order.setStatus(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS);
-                order.setBuilder(null);
-                unit.stop("Finished!");
-                return false;
-            }
-        }
+//        if (We.protoss()) {
+//            AUnit newBuilding = Select.ourUnfinished()
+//                .ofType(buildingType)
+//                .inRadius(2, unit).nearestTo(unit);
+//            if (newBuilding != null) {
+//                construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+//                construction.setBuilder(null);
+//                unit.stop("Finished!");
+//                return false;
+//            }
+//        }
 
         if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
-//            System.err.println("buildPosition PRE = " + order.buildPosition());
-//            APosition buildPosition = refreshBuildPosition(order);
-            APosition buildPosition = refreshConstructionPositionIfNeeded(order, buildingType);
+//            System.err.println("buildPosition PRE = " + construction.buildPosition());
+//            APosition buildPosition = refreshBuildPosition(construction);
+//            APosition buildPosition = refreshConstructionPositionIfNeeded(construction, buildingType);
+            APosition buildPosition = construction.buildPosition();
 
             if (buildPosition == null) return false;
 
 //            System.err.println("buildPosition POST = " + buildPosition);
 //            System.err.println("buildPosition.translateByTiles(1, 1) = " + buildPosition.translateByTiles(1, 1));
 
-            moveOtherUnitsOutOfConstructionPlace(buildPosition.translateByTiles(1, 1));
+            moveOtherUnitsOutOfConstructionPlace(buildPosition.translateByTiles(-3, -3));
 
             // If place is ok, unit isn't constructing, and we can afford it, issue the build command.
             buildPosition = (new GasBuildingFix(unit)).applyGasBuildingFixIfNeeded(buildPosition, buildingType);
 
             if (buildPosition == null) {
-                order.cancel();
+                construction.cancel();
                 ErrorLog.printMaxOncePerMinute("Cancel construction of " + buildingType + " because position null");
                 return false;
             }
@@ -179,11 +181,11 @@ public class TravelToConstruct extends HasUnit {
             );
 
 //            if (Select.ourWithUnfinishedOfType(AtlantisRaceConfig.GAS_BUILDING).inRadius(3, buildPosition).notEmpty()) {
-//                order.cancel();
+//                construction.cancel();
 //                return false;
 //            }
 
-            if (!unit.isConstructing() || unit.isIdle() || AGame.now() % 7 == 0) {
+            if (!unit.isConstructing() || unit.isIdle() || AGame.now() % 5 == 0) {
                 unit.build(buildingType, buildTilePosition);
                 return true;
             }

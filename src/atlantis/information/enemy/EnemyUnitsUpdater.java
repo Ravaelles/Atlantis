@@ -1,7 +1,7 @@
 package atlantis.information.enemy;
 
 import atlantis.game.A;
-import atlantis.information.strategy.EnemyUnitDiscoveredResponse;
+import atlantis.information.strategy.response.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;

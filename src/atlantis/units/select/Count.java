@@ -324,6 +324,10 @@ public class Count {
         return Select.countOurOfType(AUnitType.Protoss_Photon_Cannon);
     }
 
+    public static int cannonsWithUnfinished() {
+        return Select.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon).count();
+    }
+
     public static int sunkens() {
         return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony);
     }
