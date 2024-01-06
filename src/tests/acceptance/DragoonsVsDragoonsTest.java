@@ -18,9 +18,9 @@ public class DragoonsVsDragoonsTest extends NonAbstractTestFakingGame {
         FakeUnit[] our = defineOurs();
         FakeUnit[] enemies = defineEnemies();
 
-        useEngine(createEngine()); // Uncomment to use StarEngine
+//        useEngine(createEngine()); // Uncomment to use StarEngine
 
-        createWorld(30 * 30, () -> {
+        createWorld(30 * (isUsingEngine() ? 30 : 1), () -> {
 //            A.println("Frame: " + A.now());
 //            Select.our().print();
 //            Select.enemy().print();

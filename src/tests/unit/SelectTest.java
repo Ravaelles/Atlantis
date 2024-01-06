@@ -1,6 +1,8 @@
 package tests.unit;
 
+import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -16,6 +18,33 @@ public class SelectTest extends AbstractTestWithUnits {
     public void our() {
         usingFakeOurs(() -> {
             assertEquals(ourUnits.length, Select.our().size());
+        });
+    }
+
+    @Test
+    public void ourWithUnfinished() {
+        int ourTx = 10;
+        int enemyTx = 30;
+
+        FakeUnit[] ours = fakeOurs(
+            fake(AUnitType.Terran_Missile_Turret, 8),
+            fake(AUnitType.Terran_Wraith, 9),
+            fake(AUnitType.Terran_Bunker, 10),
+            fake(AUnitType.Terran_Bunker, 11).setHp(0),
+            fake(AUnitType.Terran_Bunker, 12).setCompleted(false)
+        );
+
+        FakeUnit[] enemies = fakeEnemies();
+
+        usingFakeOursAndFakeEnemies(ours, enemies, () -> {
+//            Select.our().print("Our");
+//            Select.ourWithUnfinished().print("Our with UNF");
+
+            assertEquals(4, Select.ourWithUnfinished().size());
+            assertEquals(3, Select.ourWithUnfinished().combatBuildings(true).size());
+            assertEquals(2, Select.ourWithUnfinished().bunkers().size());
+            assertEquals(2, Select.ourOfType(AUnitType.Terran_Bunker).size());
+            assertEquals(2, Select.our().bunkers().size());
         });
     }
 

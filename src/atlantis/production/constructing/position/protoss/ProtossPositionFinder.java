@@ -1,4 +1,4 @@
-package atlantis.production.constructing.position;
+package atlantis.production.constructing.position.protoss;
 
 import atlantis.Atlantis;
 import atlantis.debug.painter.APainter;
@@ -7,8 +7,11 @@ import atlantis.game.AGame;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.position.AbstractPositionFinder;
+import atlantis.production.constructing.position.PositionFulfillsAllConditions;
+import atlantis.production.constructing.position.TooCloseToRegionBoundaries;
 import atlantis.production.constructing.position.conditions.*;
-import atlantis.production.constructing.position.protoss.PylonPosition;
+import atlantis.production.constructing.position.terran.TerranForbiddenByStreetGrid;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -29,45 +32,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
 
-        if (building.isPylon()) {
-
-            // First pylon should be close to Nexus for shorter travel dist
-            if (AGame.supplyTotal() <= 10) {
-                nearTo = PylonPosition.positionForFirstPylon();
-//                AAdvancedPainter.paintPosition(nearTo, "PylonPosition");
-            }
-
-            // First pylon should be orientated towards the nearest choke
-            else if (AGame.supplyTotal() <= 18) {
-                nearTo = PylonPosition.positionForSecondPylon();
-            }
-        }
-
-        // =========================================================
-
-//        int searchRadius = initSearchRadius;
-//        while (searchRadius < maxDistance) {
-//            int xMin = nearTo.tx() - searchRadius;
-//            int xMax = nearTo.tx() + searchRadius;
-//            int yMin = nearTo.ty() - searchRadius;
-//            int yMax = nearTo.ty() + searchRadius;
-//            for (int tileX = xMin; tileX <= xMax; tileX++) {
-//                for (int tileY = yMin; tileY <= yMax; tileY++) {
-//                    if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
-//                        APosition constructionPosition = APosition.create(tileX, tileY);
-//                        if (doesPositionFulfillAllConditions(builder, building, constructionPosition)) {
-//                            return constructionPosition;
-//                        }
-//
-////                        System.err.println(building + ": " + AbstractPositionFinder._CONDITION_THAT_FAILED);
-//                    }
-//                }
-//            }
-//
-//            searchRadius++;
-//        }
-
-        // =========================================================
+        if (building.isPylon()) nearTo = defineNearToForPylon(nearTo);
 
         int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
 
@@ -103,6 +68,20 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         return null;
     }
 
+    private static HasPosition defineNearToForPylon(HasPosition nearTo) {
+        // First pylon should be close to Nexus for shorter travel dist
+        if (AGame.supplyTotal() <= 10) {
+            nearTo = PylonPosition.positionForFirstPylon();
+//                AAdvancedPainter.paintPosition(nearTo, "PylonPosition");
+        }
+
+        // First pylon should be orientated towards the nearest choke
+        else if (AGame.supplyTotal() <= 18) {
+            nearTo = PylonPosition.positionForSecondPylon();
+        }
+        return nearTo;
+    }
+
     // =========================================================
     // Hi-level
 
@@ -136,7 +115,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // Leave entire horizontal (same tileX) and vertical (same tileY) corridors free for units to pass
         // So disallow building in e.g. 1, 5, 9, 13, 16 horizontally and 3, 7, 11, 15, 19 vertically
-        if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
+        if (TerranForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
 
         // If other buildings too close
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return false;

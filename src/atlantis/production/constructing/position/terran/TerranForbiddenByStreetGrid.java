@@ -1,4 +1,4 @@
-package atlantis.production.constructing.position.conditions;
+package atlantis.production.constructing.position.terran;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -7,7 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
 
-public class ForbiddenByStreetGrid {
+public class TerranForbiddenByStreetGrid {
     private static final int GRID_VALUE_X = 9;
     private static final int GRID_VALUE_Y = 6;
 
@@ -18,6 +18,8 @@ public class ForbiddenByStreetGrid {
      * So disallow building in e.g. 0,1, 6,7, 12,13, horizontally and vertically
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
+        if (!We.terran()) return false;
+
         if (ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position)) return true;
         if (ForbiddenByStreetGridForBarracks.isForbidden(builder, building, position)) return true;
 
@@ -39,8 +41,11 @@ public class ForbiddenByStreetGrid {
 //        if (position.tx() % GRID_VALUE_X <= 0) return fail("TX modulo");
 //        if (position.ty() % GRID_VALUE_Y <= 0) return fail("TY modulo");
 
-        if ((position.tx() + building.dimensionRightPx() * 32) % GRID_VALUE_X <= 0) return fail("TX modulo");
-        if ((position.ty() + building.dimensionDownPx() * 32) % GRID_VALUE_Y <= 0) return fail("TY modulo");
+        if ((position.tx() + building.dimensionRightPx() / 32) % GRID_VALUE_X <= 0) return fail("TX modulo");
+        if ((position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE_Y <= 0) return fail("TY modulo");
+
+//        if ((position.tx() + building.dimensionRightPx() * 32) % GRID_VALUE_X <= 0) return fail("TX modulo");
+//        if ((position.ty() + building.dimensionDownPx() * 32) % GRID_VALUE_Y <= 0) return fail("TY modulo");
 
 //        if (building.getTileWidth() >= 4) {
 //            if (position.tx() % 4 >= 2) return fail("TX big modulo");

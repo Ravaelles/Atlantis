@@ -1840,7 +1840,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isOtherUnitFacingThisUnit(AUnit otherUnit) {
-        if (otherUnit.hasNoU()) return false;
+        if (otherUnit.hasNoU() && !Env.isTesting()) return false;
 
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector otherUnitLookingVector = Vectors.vectorFromAngle(otherUnit.getAngle(), positionDifference.length());
@@ -1849,7 +1849,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isOtherUnitShowingBackToUs(AUnit otherUnit) {
-        if (otherUnit.hasNoU()) return false;
+        if (otherUnit.hasNoU() && !Env.isTesting()) return false;
 
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector otherUnitLookingVector = Vectors.vectorFromAngle(otherUnit.getAngle(), positionDifference.length());
@@ -1858,8 +1858,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isFacing(AUnit otherUnit) {
-        if (otherUnit.hasNoU()) return false;
-        if (hasNoU()) return false;
+        if (otherUnit.hasNoU() && !Env.isTesting()) return false;
+        if (hasNoU() && !Env.isTesting()) return false;
 
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
         Vector thisUnitLookingVector = Vectors.vectorFromAngle(this.getAngle(), positionDifference.length());

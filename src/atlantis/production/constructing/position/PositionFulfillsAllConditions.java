@@ -4,10 +4,12 @@ import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.conditions.*;
+import atlantis.production.constructing.position.protoss.ProtossForbiddenByStreetGrid;
+import atlantis.production.constructing.position.terran.TerranForbiddenByStreetGrid;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
+import atlantis.production.constructing.position.terran.TooCloseToBunker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.workers.FreeWorkers;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
@@ -29,7 +31,8 @@ public class PositionFulfillsAllConditions {
 
         if (!verifyPositionAndBuilder(builder, position)) return false;
 
-        if (ForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
+        if (TerranForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
+        if (ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
         if (!HasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return false;
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return false;
         if (OverlappingBaseLocation.isOverlappingBaseLocation(building, position)) return false;

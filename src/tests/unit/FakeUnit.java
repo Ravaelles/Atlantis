@@ -560,4 +560,9 @@ public class FakeUnit extends AUnit {
         this.cooldown = cooldownAbsolute() - 1 + A.rand(0, 2);
         return this;
     }
+
+    public FakeUnit setHp(int hp) {
+        this.hp = hp;
+        return this;
+    }
 }

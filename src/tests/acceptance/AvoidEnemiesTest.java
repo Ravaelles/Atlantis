@@ -11,6 +11,7 @@ import atlantis.units.Units;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
+import atlantis.util.Angle;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -41,12 +42,12 @@ public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
             hydra = fake(AUnitType.Zerg_Hydralisk, 14),
             sunken = fake(AUnitType.Zerg_Sunken_Colony, 16),
             fake(AUnitType.Zerg_Creep_Colony, 11),
-            ling2 = fake(AUnitType.Zerg_Zergling, 12.9),
-            fake(AUnitType.Zerg_Zergling, 13),
-            fake(AUnitType.Zerg_Zergling, 14),
-            fake(AUnitType.Zerg_Zergling, 15),
-            fake(AUnitType.Zerg_Zergling, 16),
-            fake(AUnitType.Zerg_Zergling, 17),
+            ling2 = fake(AUnitType.Zerg_Zergling, 12.9).setAngle(Angle.degreesToRadians(180)),
+            fake(AUnitType.Zerg_Zergling, 13).setAngle(Angle.degreesToRadians(180)),
+            fake(AUnitType.Zerg_Zergling, 14).setAngle(Angle.degreesToRadians(180)),
+            fake(AUnitType.Zerg_Zergling, 15).setAngle(Angle.degreesToRadians(180)),
+            fake(AUnitType.Zerg_Zergling, 16).setAngle(Angle.degreesToRadians(180)),
+            fake(AUnitType.Zerg_Zergling, 17).setAngle(Angle.degreesToRadians(180)),
             fake(AUnitType.Zerg_Hydralisk, 19),
             fake(AUnitType.Zerg_Sunken_Colony, 28)
         );

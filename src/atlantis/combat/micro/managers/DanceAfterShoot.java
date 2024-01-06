@@ -105,10 +105,10 @@ public class DanceAfterShoot extends Manager {
     }
 
     private boolean shouldDanceAway(double dist, int weaponRange, AUnit target) {
-        return unit.cooldownRemaining() >= Math.max(14, cooldownRemainingThreshold())
-            && dist <= weaponRange + 0.4
+        return unit.cooldownRemaining() >= Math.max(9, cooldownRemainingThreshold())
+            && dist <= weaponRange + 0.2
             && unit.lastAttackFrameLessThanAgo(30)
-            && !UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)
+//            && !UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)
             && !target.hasBiggerWeaponRangeThan(unit);
     }
 

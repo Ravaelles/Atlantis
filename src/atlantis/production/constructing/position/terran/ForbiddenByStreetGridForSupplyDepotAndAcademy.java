@@ -1,4 +1,4 @@
-package atlantis.production.constructing.position.conditions;
+package atlantis.production.constructing.position.terran;
 
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;

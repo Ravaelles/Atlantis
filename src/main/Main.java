@@ -15,8 +15,8 @@ import starengine.StarEngineLauncher;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-//    public static final String OUR_RACE = "Protoss";
-    public static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Protoss";
+//    public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Zerg";
 
     public static final String ENEMY_RACE = "Protoss";
@@ -160,8 +160,8 @@ public class Main {
 //        if (true) return "ums/rav/2Drag_v_2Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";
-//        if (true) return "ums/rav/3Drag_v_3Drag.scm";
-//@        if (true) return "ums/rav/3Zeal_v_1Zeal.scm";
+        if (true) return "ums/rav/3Drag_v_3Drag.scm";
+//@        if (true) return "ums/rav/3Ze/al_v_1Zeal.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag_withBase.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";

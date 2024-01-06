@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.util.We;
 import atlantis.util.cache.CacheKey;
 import atlantis.util.log.ErrorLog;
 
@@ -134,6 +135,8 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     // Low-level
 
     public static boolean isNotEnoughPlaceLeftForAddons(AUnit builder, AUnitType building, APosition position) {
+        if (!We.terran()) return false;
+
         if (
             building.canHaveAddon()
                 && !building.isBase()

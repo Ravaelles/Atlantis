@@ -14,9 +14,9 @@ public class BaseSelectTest extends AbstractTestWithUnits {
         try (
                 MockedStatic<BaseSelect> baseSelectMock = Mockito.mockStatic(BaseSelect.class)
         ) {
-            baseSelectMock.when(BaseSelect::ourUnits).thenReturn(mockOurUnits());
+            baseSelectMock.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(mockOurUnits());
 
-            assertEquals(ourUnits.length, BaseSelect.ourUnits().size());
+            assertEquals(ourUnits.length, BaseSelect.ourUnitsWithUnfinishedList().size());
         }
     }
 

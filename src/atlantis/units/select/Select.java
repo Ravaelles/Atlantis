@@ -58,7 +58,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.isCompleted()) {
                         data.add(unit);
                     }
@@ -182,7 +182,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 //                SortedSet<AUnit> data = new ArrayList<>();
                 TreeSet<AUnit> data = new TreeSet<>();
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.isWorker()) {
                         data.add(unit);
                     }
@@ -274,7 +274,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.isCompleted() && unit.is(type)) {
                         data.add(unit);
                     }
@@ -312,7 +312,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.isCompleted() && unit.is(types)) {
                         data.add(unit);
                     }
@@ -333,7 +333,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 int total = 0;
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.isCompleted() && unit.is(type)) {
                         total++;
                     }
@@ -351,7 +351,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 int total = 0;
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.isCompleted() && unit.is(types)) {
                         total++;
                     }
@@ -369,7 +369,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 int total = 0;
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.is(types)) {
                         total++;
                     }
@@ -390,7 +390,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 int total = 0;
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.is(type)) total++;
                 }
 
@@ -406,7 +406,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 int total = 0;
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (!unit.isCompleted() && unit.is(type)) total++;
                 }
 
@@ -426,7 +426,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.is(type)) {
                         data.add(unit);
                     }
@@ -448,7 +448,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.isCompleted() && unit.isCombatUnit()) {
                         data.add(unit);
                     }
@@ -468,7 +468,16 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             cachePath = "ourWithUnfinished",
             microCacheForFrames,
             () -> {
-                List<AUnit> data = new ArrayList<>(ourUnits());
+                List<AUnit> data = new ArrayList<>();
+
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
+                    if (unit.isAlive()) {
+                        data.add(unit);
+                    }
+//                    else {
+//                        System.err.println(unit + " not alive");
+//                    }
+                }
 
                 return new Selection(data, cachePath);
             }
@@ -483,7 +492,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (AUnit unit : ourWithUnfinishedUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.is(type)) {
                         data.add(unit);
                     }
@@ -525,7 +534,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (!unit.isCompleted()) {
                         data.add(unit);
                     }
@@ -547,7 +556,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.isCompleted() && unit.isRealUnit()) {
                         data.add(unit);
                     }
@@ -569,7 +578,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (AUnit unit : ourUnits()) {
+                for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (!unit.isCompleted() && unit.isRealUnit()) {
                         data.add(unit);
                     }
@@ -898,7 +907,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Returns first idle our unit of given type or null if no idle units found.
      */
     public static AUnit ourOneNotTrainingUnits(AUnitType type) {
-        for (AUnit unit : ourUnits()) {
+        for (AUnit unit : ourUnitsWithUnfinishedList()) {
             if (unit.isCompleted() && !unit.isTrainingAnyUnit() && unit.is(type) && !unit.isLifted()) {
                 return unit;
             }

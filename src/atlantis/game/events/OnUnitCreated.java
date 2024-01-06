@@ -9,6 +9,7 @@ import atlantis.production.constructing.ProtossWarping;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 import bwapi.Unit;
 
@@ -28,6 +29,9 @@ public class OnUnitCreated {
     }
 
     private static void handleOurUnit(AUnit unit) {
+        Count.clearCache();
+        Select.clearCache();
+
         Queue.get().refresh();
 
         // Apply construction fix: detect new Protoss buildings and remove them from queue.

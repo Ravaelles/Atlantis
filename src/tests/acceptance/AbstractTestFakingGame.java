@@ -46,7 +46,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
     ) {
         try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-            baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(ours));
+            baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(Arrays.asList(ours));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
 
@@ -99,7 +99,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
         boolean usingEngine = isUsingEngine();
         try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
 //            if (!usingEngine) {
-            baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(our));
+            baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(Arrays.asList(our));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
 //            } else {

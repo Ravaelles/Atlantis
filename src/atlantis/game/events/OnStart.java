@@ -135,6 +135,7 @@ public class OnStart {
                     + CurrentBuildOrder.get().getName()
             );
             A.errPrintln("Error: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Exception when loading build orders file");
         }
     }

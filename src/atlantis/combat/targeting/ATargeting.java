@@ -66,8 +66,8 @@ public class ATargeting extends HasUnit {
 
         // Used when something went wrong there ^
         AttackNearbyEnemies.reasonNotToAttack = null;
-        AUnit fallback = FallbackTargeting.fallbackTarget(unit, maxDistFromEnemy);
-//        AUnit fallback = null;
+//        AUnit fallback = FallbackTargeting.fallbackTarget(unit, maxDistFromEnemy);
+        AUnit fallback = null;
         if (DEBUG) A.println("C fallback = " + fallback);
         return fallback;
     }

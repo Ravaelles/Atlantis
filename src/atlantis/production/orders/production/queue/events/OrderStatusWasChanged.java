@@ -14,7 +14,7 @@ public class OrderStatusWasChanged {
 
         removeSameTechFromQueue(order);
 
-        if (order.isCompleted() && order.isUnit()) {
+        if (order.isCompleted() && order.isUnit() && Queue.get() != null) {
             Queue.get().markAsProducedAndForget(order.unitType());
         }
     }

@@ -1,4 +1,4 @@
-package atlantis.production.constructing.position.conditions;
+package atlantis.production.constructing.position.terran;
 
 import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.information.strategy.GamePhase;

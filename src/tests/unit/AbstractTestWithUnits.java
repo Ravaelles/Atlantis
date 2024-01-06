@@ -237,7 +237,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     protected void usingFakeOurs(Runnable runnable) {
         try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-            baseSelect.when(BaseSelect::ourUnits).thenReturn(mockOurUnits());
+            baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(mockOurUnits());
 
             runnable.run();
         }
@@ -283,7 +283,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
             mockEverything();
 
-            baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(ours));
+            baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(Arrays.asList(ours));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
 

@@ -7,7 +7,7 @@ public class UnitStateCommander extends Commander {
 
     @Override
     protected void handle() {
-        for (AUnit unit : Select.ourWithUnfinishedUnits()) {
+        for (AUnit unit : Select.ourUnitsWithUnfinishedList()) {
             (new UnitStateManager(unit)).invoke(this);
         }
     }
