@@ -26,31 +26,19 @@ public class ProduceZealot {
 
         if (A.supplyUsed() >= 50 && !A.hasMinerals(350)) return false;
         if (dragoonInsteadOfZealot()) return false;
-
-//        System.out.println("Count.ourWithUnfinished(Protoss_Zealot) = " + Count.ourWithUnfinished(Protoss_Zealot));
         if (Count.ourWithUnfinished(Protoss_Zealot) >= 1 && !A.hasMinerals(250)) return false;
 
-        if (A.hasGas(100) && Have.cyberneticsCore() && !A.hasMinerals(500) && Count.freeGateways() >= 2) {
-            return produceZealot();
-        }
-
-        if (Decisions.needToProduceZealotsNow()) {
-            return produceZealot();
-        }
-
-        if (BuildOrderSettings.autoProduceZealots()) {
-            return produceZealot();
-        }
-
-        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) {
-            return produceZealot();
-        }
-
-        if (AGame.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) {
-            return produceZealot();
-        }
+        if (couldProduceDragoonsButHaveLotsOfMineralsAndFreeGatewaySoMakeZealot()) return produceZealot();
+        if (Decisions.needToProduceZealotsNow()) return produceZealot();
+        if (BuildOrderSettings.autoProduceZealots()) return produceZealot();
+        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) return produceZealot();
+        if (AGame.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) return produceZealot();
 
         return false;
+    }
+
+    private static boolean couldProduceDragoonsButHaveLotsOfMineralsAndFreeGatewaySoMakeZealot() {
+        return A.hasGas(100) && Have.cyberneticsCore() && !A.hasMinerals(500) && Count.freeGateways() >= 1;
     }
 
     private static boolean produceZealot() {

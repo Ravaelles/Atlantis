@@ -17,7 +17,9 @@ public class ProduceGateway {
                 || Count.inQueueOrUnfinished(Protoss_Gateway, 10) > (A.minerals() >= 500 ? 2 : 1)
         ) return;
 
-        if (Count.gatewaysWithUnfinished() >= 4 && Count.basesWithUnfinished() <= 1) return;
+        int gatewaysWithUnfinished = Count.gatewaysWithUnfinished();
+
+        if (gatewaysWithUnfinished >= 3 && !A.hasMinerals(550) && Count.basesWithUnfinished() <= 1) return;
 
         if (
             GamePhase.isEarlyGame()

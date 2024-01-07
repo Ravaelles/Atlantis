@@ -6,28 +6,23 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChokeBlockersAssignments {
     private static ChokeBlockersAssignments instance = null;
-
-    private static AChoke choke;
-
-    public AUnit unit1 = null;
-    public AUnit unit2 = null;
-
-    private static APosition blockingPoint1;
-    private static APosition blockingPoint2;
+    public List<AUnit> blockers = new ArrayList<>();
+    protected AChoke choke;
 
     private ChokeBlockersAssignments(AChoke choke) {
         this.choke = choke;
-
-        defineBlockingPoints();
     }
 
     public static ChokeBlockersAssignments get() {
@@ -36,92 +31,97 @@ public class ChokeBlockersAssignments {
         return instance;
     }
 
-    private static void defineBlockingPoints() {
-        if (choke == null) return;
-
-        blockingPoint1 = choke.firstPoint();
-        blockingPoint2 = choke.lastPoint();
-
-        blockingPoint1 = choke.firstPoint().translatePercentTowards(choke.lastPoint(), 20);
-        blockingPoint2 = choke.lastPoint().translatePercentTowards(choke.firstPoint(), 20);
-    }
-
     // =========================================================
 
     public void assignWorkersWhenNeeded() {
         if (!We.terran()) return;
         if (A.everyFrameExceptNthFrame(13)) return;
 
-        boolean unit1IsOk = unit1IsOk();
-        boolean unit2IsOk = unit2IsOk();
-        if (unit1IsOk && unit2IsOk) return;
+        int newWorkersNeeded = workersNeeded() - blockers.size();
 
-        Selection workers = FreeWorkers.get();
-
-        if (!unit1IsOk) {
-            unit1 = workers.first();
-            if (unit1 != null) unit1.setSpecialPosition(blockingPoint1);
-        }
-
-        if (We.protoss()) return;
-
-        if (!unit2IsOk) {
-            unit2 = workers.second();
-            if (unit2 != null) unit2.setSpecialPosition(blockingPoint2);
+        for (int i = 1; i <= newWorkersNeeded; i++) {
+            AUnit worker = FreeWorkers.get().first();
+            if (worker != null) {
+                blockers.add(worker);
+                worker.setSpecialPosition(ChokeBlockerPosition.positionForBlocker(worker));
+            }
         }
     }
 
-    private boolean unit1IsOk() {
-        return unit1 != null && unit1.isAlive();
-    }
+    private int workersNeeded() {
+        if (We.protoss()) {
+            if (Enemy.zerg()) return Math.max(0, 2 - Count.zealots());
+            return 0;
+        }
 
-    private boolean unit2IsOk() {
-        return unit2 != null && unit2.isAlive() && (!We.protoss() || unit2.isZealot());
+        if (We.terran()) return 2;
+
+        return 0;
     }
 
     public void assignZealotsWhenNeeded() {
         if (!We.protoss()) return;
-        boolean unit1IsOk = unit1IsOk();
-        boolean unit2IsOk = unit2IsOk();
-        if (unit1IsOk && unit2IsOk) return;
 
-        List<AUnit> zealots = Select.ourOfType(AUnitType.Protoss_Zealot).exclude(unit1).exclude(unit2).list();
-        for (AUnit zealot : zealots) {
-            if (!unit2IsOk) {
-                if (unit2 != null) unit2.setSpecialPosition(null);
+        Selection freeZealots = Select.ourOfType(AUnitType.Protoss_Zealot).exclude(blockers);
+        if (freeZealots.isEmpty()) return;
 
-                unit2 = zealot;
-                unit2.setSpecialPosition(blockingPoint2);
+        for (AUnit worker : blockers) {
+            if (worker.isWorker()) {
+                worker.setSpecialPosition(null);
                 break;
             }
-            if (!unit1IsOk) {
-                unit1 = zealot;
-                unit1.setSpecialPosition(blockingPoint1);
-                break;
-            }
+        }
+
+        if (blockers.size() >= 3) return;
+
+        AUnit zealot = freeZealots.nearestTo(choke);
+        if (zealot != null) {
+            addNewBlocker(zealot);
+        }
+
+        assignWorkersWhenNeeded();
+    }
+
+    private void addNewBlocker(AUnit unit) {
+        blockers.add(unit);
+
+        for (AUnit blocker : blockers) {
+            blocker.setSpecialPosition(ChokeBlockerPosition.positionForBlocker(blocker));
         }
     }
 
     // =========================================================
 
-    public AUnit otherBlocker(AUnit unit) {
-        if (unit.equals(unit1)) return unit2;
-        else return unit1;
-    }
+//    public AUnit otherBlocker(AUnit unit) {
+//        if (unit.equals(unit1)) return unit2;
+//        else return unit1;
+//    }
+//
+//    public boolean noEnemiesVeryNear() {
+//        return unit1 != null && unit1.enemiesNear().inRadius(6, unit1).empty();
+//    }
+//
+//    public static APosition chokeBlockPoint1() {
+//        if (blockingPoint1 == null) defineBlockingPoints();
+//
+//        return blockingPoint1;
+//    }
+//
+//    public static APosition chokeBlockPoint2() {
+//        if (blockingPoint1 == null) defineBlockingPoints();
+//
+//        return blockingPoint1;
+//    }
 
-    public boolean noEnemiesVeryNear() {
-        return unit1 != null && unit1.enemiesNear().inRadius(6, unit1).empty();
-    }
-
-    public static APosition chokeBlockPoint1() {
-        if (blockingPoint1 == null) defineBlockingPoints();
-
-        return blockingPoint1;
-    }
-
-    public static APosition chokeBlockPoint2() {
-        if (blockingPoint1 == null) defineBlockingPoints();
-
-        return blockingPoint1;
+    public void removeDeadUnits() {
+        while (true) {
+            for (AUnit unit : blockers) {
+                if (unit.isDead()) {
+                    blockers.remove(unit);
+                    break;
+                }
+            }
+            break;
+        }
     }
 }
