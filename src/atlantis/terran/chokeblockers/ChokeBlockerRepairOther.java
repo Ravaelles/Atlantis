@@ -9,7 +9,7 @@ public class ChokeBlockerRepairOther extends Manager {
 
     public ChokeBlockerRepairOther(AUnit unit) {
         super(unit);
-        this.otherBlocker = ChokeBlockers.get().otherBlocker(unit);
+        this.otherBlocker = ChokeBlockersAssignments.get().otherBlocker(unit);
     }
 
     @Override

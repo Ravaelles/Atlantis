@@ -1,7 +1,6 @@
 package atlantis.units.special;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.protoss.PreventForMissionSparta;
 import atlantis.combat.micro.protoss.ProtossShieldBattery;
 import atlantis.combat.micro.terran.TerranCloakableManager;
 import atlantis.combat.micro.terran.vessel.TerranScienceVessel;
@@ -35,7 +34,6 @@ public class SpecialUnitsManager extends Manager {
         }
         else if (unit.isProtoss()) {
             raceSpecific = new Class[]{
-                PreventForMissionSparta.class,
                 ProtossShieldBattery.class,
                 ProtossObserver.class,
                 ProtossHighTemplar.class,

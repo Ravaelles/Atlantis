@@ -49,6 +49,12 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
+        else if (ActiveMap.isMap("Dragoons_v_Zealots")) {
+            if (A.now() <= 1) GameSpeed.changeSpeedToNormal();
+        }
+
+        // =========================================================
+
         else if (ActiveMap.isMap("Wraith_v_Wraith")) {
             if (A.now() <= 1) GameSpeed.changeSpeedToNormal();
             if (A.seconds() <= 3) CameraCommander.centerCameraOn(Select.ourCombatUnits().first());

@@ -25,7 +25,7 @@ public class ProduceUnit {
         // =========================================================
         // Non-worker
 
-        else if (AGame.canAfford(type.getMineralPrice(), type.getGasPrice())) {
+        else if (AGame.canAfford(type.mineralPrice(), type.gasPrice())) {
             return CurrentBuildOrder.get().produceUnit(type, order);
         }
 //        else {

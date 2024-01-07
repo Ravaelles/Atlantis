@@ -46,7 +46,7 @@ public class ProductionOrdersCommander extends Commander {
     }
 
     private static boolean newBaseInProgressAndCantAffordThisOrder(ProductionOrder order) {
-        return !A.hasMinerals(AtlantisRaceConfig.BASE.getMineralPrice() + order.mineralPrice())
+        return !A.hasMinerals(AtlantisRaceConfig.BASE.mineralPrice() + order.mineralPrice())
             && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.BASE) > 0;
     }
 }

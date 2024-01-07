@@ -35,6 +35,5 @@ Zealot Core Zealot
 13 - Zealot
 16 - Cybernetics Core
 17 - Pylon
-18 - Assimilator
-19 - Zealot
+19 - Assimilator
 24 - Pylon

@@ -11,7 +11,7 @@ public class ChokeBlockersCommander extends Commander {
 
     @Override
     protected void handle() {
-        ChokeBlockers chokeBlockers = ChokeBlockers.get();
+        ChokeBlockersAssignments chokeBlockers = ChokeBlockersAssignments.get();
 
         chokeBlockers.assignWorkersWhenNeeded();
         chokeBlockers.assignZealotsWhenNeeded();

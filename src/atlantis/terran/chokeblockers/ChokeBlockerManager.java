@@ -1,11 +1,8 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class ChokeBlockerManager extends Manager {
     private final AUnit otherBlocker;
@@ -13,7 +10,7 @@ public class ChokeBlockerManager extends Manager {
 
     public ChokeBlockerManager(AUnit unit) {
         super(unit);
-        this.otherBlocker = ChokeBlockers.get().otherBlocker(unit);
+        this.otherBlocker = ChokeBlockersAssignments.get().otherBlocker(unit);
         this.blockChokePoint = unit.specialPosition();
     }
 

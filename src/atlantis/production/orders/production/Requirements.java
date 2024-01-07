@@ -3,12 +3,10 @@ package atlantis.production.orders.production;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
-import atlantis.production.dynamic.terran.tech.U238;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 import atlantis.util.Counter;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
@@ -68,9 +66,9 @@ public class Requirements {
     }
 
     private static boolean dontHaveEnoughGasAsRequirement(AUnitType type) {
-        if (type.getGasPrice() == 0) return false;
+        if (type.gasPrice() == 0) return false;
 
-        return AGame.gas() < (int) (type.getGasPrice() * 0.7);
+        return AGame.gas() < (int) (type.gasPrice() * 0.7);
     }
 
     private static boolean hasRequiredTechForUnit(AUnitType type) {

@@ -5,8 +5,8 @@ import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.log.ErrorLog;
 
 public class IsReadyToProduceOrder {
     protected static boolean isReadyToProduce(ProductionOrder order) {
@@ -33,31 +33,31 @@ public class IsReadyToProduceOrder {
             if (EnemyWhoBreachedBase.get() != null) return false;
         }
 
-        boolean a, b = false;
+        boolean notEnoughSupplyResources, noRequirement = false;
         if (
-//             && !A.canAfford(150 + order.mineralPrice(), order.gasPrice())
-            (a = (!order.supplyRequirementFulfilled()))
-                || (b = !order.checkIfHasWhatRequired())
+            (notEnoughSupplyResources = (!order.supplyRequirementFulfilled() && !canSkip(order)))
+                || (noRequirement = !order.checkIfHasWhatRequired())
         ) {
-//            if (order.isBuilding() && order.unitType().isSupplyDepot()) {
-//                ErrorLog.printMaxOncePerMinute("Return Supply depot as not ready, a=" + a + ", b=" + b);
-//            }
             return false;
         }
 
         if (cantAffordAndDidntExpandYet(order)) return false;
 
-//        if (!order.checkIfHasWhatRequired()) return false;
-
         return true;
+    }
 
-//        boolean isReady = order.supplyRequirementFulfilled() && order.checkIfHasWhatRequired();
+    private static boolean canSkip(ProductionOrder order) {
+        AUnitType type = order.unitType();
+
+        return A.supplyUsed() >= 12
+            && A.supplyUsed() <= order.minSupply() + 3
+            && (order.isUnit() && type.isResource())
+            && A.canAfford(type.mineralPrice() + 100, type.gasPrice() > 0 ? type.gasPrice() + 50 : 0);
     }
 
     private static boolean cantAffordAndDidntExpandYet(ProductionOrder order) {
-        return
-            (A.seconds() >= 700 && Count.basesWithUnfinished() <= 1)
-                && !canAffordWithReserved(order);
+        return A.hasMinerals(550)
+            && (A.seconds() >= 700 && Count.basesWithUnfinished() <= 1);
     }
 
     public static boolean canAffordWithReserved(ProductionOrder order) {

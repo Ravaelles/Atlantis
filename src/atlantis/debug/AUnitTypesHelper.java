@@ -23,13 +23,13 @@ public class AUnitTypesHelper {
 
         for (AUnitType type : AUnitType.getAllUnitTypes()) {
             if (type.fullName().startsWith("Hero") || type.fullName().startsWith("Special")
-                    || type.fullName().startsWith("Powerup") || type.fullName().startsWith("Critter")) {
+                || type.fullName().startsWith("Powerup") || type.fullName().startsWith("Critter")) {
                 continue;
             }
 
             double dmgGround = WeaponUtil.damageNormalized(type.groundWeapon());
             double dmgAir = WeaponUtil.damageNormalized(type.airWeapon());
-            double unitPrice = type.getMineralPrice() + type.getGasPrice() * 1.5;
+            double unitPrice = type.mineralPrice() + type.gasPrice() * 1.5;
 
             if (dmgGround > 0) {
                 unitsPerGroundDamage.put(type, dmgGround);
@@ -50,19 +50,19 @@ public class AUnitTypesHelper {
         // Display all results
 
         A.println("Displaying top damage units and most economical ground and air units "
-                + "in terms of offensive power.\n");
+            + "in terms of offensive power.\n");
 
         A.println("===== Best ground damage =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
             A.println(unitType.name() + " (" + unitType.groundWeapon() + ", range "
-                    + (unitType.groundWeapon().maxRange() / 32) + "), damage: " + bestGroundDamage.get(unitType));
+                + (unitType.groundWeapon().maxRange() / 32) + "), damage: " + bestGroundDamage.get(unitType));
         }
         A.println("");
 
         A.println("===== Best air damage =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
             A.println(unitType.name() + "(" + unitType.groundWeapon() + ", range "
-                    + (unitType.airWeapon().maxRange() / 32) + "), damage: " + bestAirDamage.get(unitType));
+                + (unitType.airWeapon().maxRange() / 32) + "), damage: " + bestAirDamage.get(unitType));
         }
         A.println("");
 

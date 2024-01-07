@@ -17,15 +17,14 @@ public class UnitUnderAttackAndNotAttacking extends Manager {
         return !unit.isAttacking()
             && unit.isGroundUnit()
             && unit.noCooldown()
-            && !unit.isTank()
-            && !unit.recentlyMoved(30)
-            && unit.lastUnderAttackLessThanAgo(40)
+            && (unit.hp() >= 61 || !unit.isTank())
+            && unit.lastUnderAttackLessThanAgo(70)
             && unit.hasAnyWeapon()
             && (
-                unit.hp() >= 18
-                    || !unit.recentlyMoved()
-                    || unit.lastAttackFrameMoreThanAgo(30 * 4)
-                    || shouldAttackBackBecauseOverstackedAndCantRun()
+            unit.hp() >= 18
+                || !unit.recentlyMoved(30)
+                || unit.lastAttackFrameMoreThanAgo(30 * 5)
+                || shouldAttackBackBecauseOverstackedAndCantRun()
         )
             && unit.enemiesNear().canBeAttackedBy(unit, 1).notEmpty();
     }

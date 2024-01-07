@@ -2,17 +2,14 @@ package atlantis.production.orders.production.queue.order;
 
 import atlantis.combat.missions.Mission;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.orders.production.Requirements;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
-import bwapi.Color;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -243,15 +240,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     public boolean supplyRequirementFulfilled() {
         int bonus = unitOrBuilding != null && A.supplyUsed() >= 10 && unitOrBuilding.isABuilding() ? 1 : 0;
 
-        return A.supplyUsed() + bonus >= minSupply
-            || canSkipSupplyRequirement();
-    }
-
-    private boolean canSkipSupplyRequirement() {
-        return A.supplyUsed() >= 12
-            && A.supplyUsed() <= minSupply + 3
-            && (unitOrBuilding != null && !unitOrBuilding.isResource())
-            && A.canAfford(mineralPrice() + 100, gasPrice() > 0 ? gasPrice() + 50 : 0);
+        return A.supplyUsed() + bonus >= minSupply;
     }
 
     public void cancel() {
@@ -262,7 +251,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public int mineralPrice() {
         if (unitOrBuilding != null) {
-            return unitOrBuilding.getMineralPrice();
+            return unitOrBuilding.mineralPrice();
         }
         else if (upgrade != null) {
             return upgrade.mineralPrice();
@@ -277,7 +266,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public int gasPrice() {
         if (unitOrBuilding != null) {
-            return unitOrBuilding.getGasPrice();
+            return unitOrBuilding.gasPrice();
         }
         else if (upgrade != null) {
             return upgrade.gasPrice();

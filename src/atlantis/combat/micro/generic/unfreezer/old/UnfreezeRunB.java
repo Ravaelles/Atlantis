@@ -1,6 +1,7 @@
-package atlantis.combat.micro.generic.unfreezer;
+package atlantis.combat.micro.generic.unfreezer.old;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.generic.unfreezer.UnfreezerShakeUnit;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

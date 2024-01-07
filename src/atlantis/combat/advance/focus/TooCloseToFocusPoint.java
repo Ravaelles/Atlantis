@@ -22,7 +22,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         if (unit.isSquadScout()) return false;
 
         if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_CLOSE) {
-            // Be brave with ChokeBlockers
+            // Be brave with ChokeBlockersAssignments
 //            if (unit.friendsNear().workers().specialAction().inRadius(7, unit).atLeast(2)) return false;
 
             if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;

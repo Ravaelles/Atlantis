@@ -24,11 +24,11 @@ public class AbstractDynamicUnits extends Helpers {
     public static boolean trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {
         if (noSupply(minSupply)) return false;
 
-        return trainIfPossible(type, onlyOneAtTime, type.getMineralPrice(), type.getGasPrice());
+        return trainIfPossible(type, onlyOneAtTime, type.mineralPrice(), type.gasPrice());
     }
 
     public static boolean trainIfPossible(AUnitType type) {
-        return trainIfPossible(type, false, type.getMineralPrice(), type.getGasPrice());
+        return trainIfPossible(type, false, type.mineralPrice(), type.gasPrice());
     }
 
     public static boolean trainIfPossible(AUnitType type, boolean onlyOneAtTime) {

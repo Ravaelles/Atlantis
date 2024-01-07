@@ -6,7 +6,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
-import atlantis.terran.chokeblockers.ChokeBlockers;
+import atlantis.terran.chokeblockers.ChokeBlockersAssignments;
 import atlantis.terran.chokeblockers.NeedChokeBlockers;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -55,6 +55,6 @@ public class MedicChokeBlock extends Manager {
 //        int index = unit.getUnitIndexInBwapi();
 
         return unit.getUnitIndexInBwapi() % 2 == 0
-            ? ChokeBlockers.chokeBlockPoint1() : ChokeBlockers.chokeBlockPoint2();
+            ? ChokeBlockersAssignments.chokeBlockPoint1() : ChokeBlockersAssignments.chokeBlockPoint2();
     }
 }

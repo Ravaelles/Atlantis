@@ -30,18 +30,18 @@ public class DynamicCommanderHelpers extends Commander {
     }
 
     public static void buildIfHaveMineralsAndGas(AUnitType type) {
-        buildIfHaveMineralsAndGas(type, true, type.getMineralPrice() + 100, type.getGasPrice() + 50);
+        buildIfHaveMineralsAndGas(type, true, type.mineralPrice() + 100, type.gasPrice() + 50);
     }
 
     public static void buildIfCanAffordWithReserved(AUnitType type) {
-        buildIfCanAffordWithReserved(type, true, type.getMineralPrice(), type.getGasPrice());
+        buildIfCanAffordWithReserved(type, true, type.mineralPrice(), type.gasPrice());
     }
 
     public static boolean buildIfAllBusyButCanAfford(AUnitType type, int extraMinerals, int extraGas) {
         if (Count.inProductionOrInQueue(type) > 0) return false;
 
         if (Select.ourOfType(type).areAllBusy()) {
-            return buildIfHaveMineralsAndGas(type, true, type.getMineralPrice() + extraMinerals, type.getGasPrice() + extraGas);
+            return buildIfHaveMineralsAndGas(type, true, type.mineralPrice() + extraMinerals, type.gasPrice() + extraGas);
         }
 
         return false;

@@ -202,12 +202,13 @@ public class ConstructionRequests {
         int mineralsNeeded = 0;
         int gasNeeded = 0;
         for (Construction construction : notStartedOfType(null)) {
-            mineralsNeeded += construction.buildingType().getMineralPrice();
-            gasNeeded += construction.buildingType().getGasPrice();
+            mineralsNeeded += construction.buildingType().mineralPrice();
+            gasNeeded += construction.buildingType().gasPrice();
         }
         int[] result = {mineralsNeeded, gasNeeded};
         return result;
     }
+
     public static void removeOrder(Construction construction) {
         if (construction != null) {
             constructions.remove(construction);

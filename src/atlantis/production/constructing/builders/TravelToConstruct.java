@@ -4,13 +4,11 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.TilePosition;
@@ -68,7 +66,7 @@ public class TravelToConstruct extends HasUnit {
     private boolean notEnoughMineralsYet(double distance, AUnitType buildingType) {
         if (
             distance <= 12
-                && !A.canAfford(buildingType.getMineralPrice() - 35, buildingType.getGasPrice() - 20)
+                && !A.canAfford(buildingType.mineralPrice() - 35, buildingType.gasPrice() - 20)
         ) return true;
 
         return false;
@@ -154,7 +152,7 @@ public class TravelToConstruct extends HasUnit {
 //            }
 //        }
 
-        if (AGame.canAfford(buildingType.getMineralPrice(), buildingType.getGasPrice())) {
+        if (AGame.canAfford(buildingType.mineralPrice(), buildingType.gasPrice())) {
 //            System.err.println("buildPosition PRE = " + construction.buildPosition());
 //            APosition buildPosition = refreshBuildPosition(construction);
 //            APosition buildPosition = refreshConstructionPositionIfNeeded(construction, buildingType);
@@ -234,8 +232,8 @@ public class TravelToConstruct extends HasUnit {
 
 //            if (ProductionQueue.isAtTheTopOfQueue(building, 1)) {
             return !AGame.canAfford(
-                building.getMineralPrice() - 32 - (int) (distance * 1.3) - baseBonus,
-                building.getGasPrice() - 16 - (int) distance
+                building.mineralPrice() - 32 - (int) (distance * 1.3) - baseBonus,
+                building.gasPrice() - 16 - (int) distance
             );
 //            }
 //

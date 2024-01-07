@@ -12,7 +12,7 @@ import java.util.List;
 public class AvoidEnemies extends Manager {
     private static Cache<Units> cache = new Cache<>();
     private WantsToAvoid wantsToAvoid;
-//    private Units enemiesDangerouslyClose;
+    //    private Units enemiesDangerouslyClose;
     private EnemyUnitsToAvoid enemyUnitsToAvoid;
 
     public AvoidEnemies(AUnit unit) {
@@ -30,6 +30,11 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isObserver()) {
+            System.err.println("unit.isObserver() = " + unit.isObserver());
+        }
+
+//        if (unit.effUndetected()) return false;
 //        enemiesDangerouslyClose = enemyUnitsToAvoid.enemiesDangerouslyClose();
 
         if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;

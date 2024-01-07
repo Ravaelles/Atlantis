@@ -2644,7 +2644,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean recentlyMoved(int framesAgo) {
-        return action().isMoving() && lastActionLessThanAgo(framesAgo);
+//        return action().isMoving() && lastActionLessThanAgo(framesAgo);
+        return lastPositioningActionLessThanAgo(framesAgo);
     }
 
     public boolean idIsEven() {

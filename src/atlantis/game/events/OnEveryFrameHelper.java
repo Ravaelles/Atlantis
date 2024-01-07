@@ -67,6 +67,15 @@ public class OnEveryFrameHelper {
 //        printMarineManagers();
 
 //        paintAllConstructions();
+
+//        printObserverStatus();
+    }
+
+    private static void printObserverStatus() {
+        AUnit first = Select.our().ofType(AUnitType.Protoss_Observer).first();
+        if (first == null) return;
+
+        System.out.println("@ " + A.now() + " - " + first + " - " + first.manager());
     }
 
     private static void paintAllConstructions() {

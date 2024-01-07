@@ -22,8 +22,9 @@ public class UnfreezeRun extends Manager {
 //        );
 
         return unit.isRunning()
-            && unit.lastStartedRunningMoreThanAgo(5)
-            && unit.lastPositionChangedMoreThanAgo(5);
+            && unit.lastStartedRunningLessThanAgo(10)
+//            && unit.lastStartedRunningMoreThanAgo(5)
+            && unit.lastPositionChangedMoreThanAgo(8);
     }
 
     @Override

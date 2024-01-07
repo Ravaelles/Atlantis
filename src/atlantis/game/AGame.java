@@ -276,7 +276,7 @@ public class AGame {
      * Returns true if we can afford minerals and gas for given unit type.
      */
     public static boolean canAfford(AUnitType unitType) {
-        return hasMinerals(unitType.getMineralPrice()) && hasGas(unitType.getGasPrice());
+        return hasMinerals(unitType.mineralPrice()) && hasGas(unitType.gasPrice());
     }
 
     /**
@@ -311,7 +311,7 @@ public class AGame {
     }
 
     public static boolean canAffordWithReserved(AUnitType type) {
-        return canAffordWithReserved(type.getMineralPrice(), type.getGasPrice());
+        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
     }
 
     public static boolean canAffordWithReserved(TechType type) {

@@ -723,11 +723,11 @@ public class AUnitType implements Comparable<Object> {
         return ut.isBuilding();
     }
 
-    public int getGasPrice() {
+    public int gasPrice() {
         return ut.gasPrice();
     }
 
-    public int getMineralPrice() {
+    public int mineralPrice() {
         return ut.mineralPrice();
     }
 
@@ -1464,7 +1464,7 @@ public class AUnitType implements Comparable<Object> {
                     baseCost += requiredUnits().size() * requiredUnits().first().totalCost();
                 }
 
-                return baseCost + getMineralPrice() + getGasPrice();
+                return baseCost + mineralPrice() + gasPrice();
             }
         );
     }
