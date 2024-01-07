@@ -368,7 +368,15 @@ public class Count {
         return ofTypeFree(AUnitType.Protoss_Gateway);
     }
 
-//    public static int () {
-//        return ofType(AUnitType.);
-//    }
+    public static int gateways() {
+        return ofType(AUnitType.Protoss_Gateway);
+    }
+
+    public static int gatewaysWithUnfinished() {
+        return ourWithUnfinished(AUnitType.Protoss_Gateway);
+    }
+
+    public static int zealotsWithUnfinished() {
+        return ourWithUnfinished(AUnitType.Protoss_Zealot);
+    }
 }

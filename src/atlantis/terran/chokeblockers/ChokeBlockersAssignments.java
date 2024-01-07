@@ -42,8 +42,8 @@ public class ChokeBlockersAssignments {
         blockingPoint1 = choke.firstPoint();
         blockingPoint2 = choke.lastPoint();
 
-        blockingPoint1 = blockingPoint1.translatePercentTowards(blockingPoint2, 21);
-        blockingPoint2 = blockingPoint2.translatePercentTowards(blockingPoint1, 21);
+        blockingPoint1 = choke.firstPoint().translatePercentTowards(choke.lastPoint(), 20);
+        blockingPoint2 = choke.lastPoint().translatePercentTowards(choke.firstPoint(), 20);
     }
 
     // =========================================================

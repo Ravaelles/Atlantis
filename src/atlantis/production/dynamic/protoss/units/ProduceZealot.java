@@ -8,10 +8,12 @@ import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.*;
 
@@ -19,6 +21,9 @@ public class ProduceZealot {
     public static boolean produce() {
         if (Have.notEvenPlanned(AUnitType.Protoss_Gateway)) return false;
         if (Select.ourFree(Protoss_Gateway).isEmpty()) return false;
+
+        if (Enemy.zerg() && Count.zealotsWithUnfinished() < 3) return produceZealot();
+
         if (A.supplyUsed() >= 50 && !A.hasMinerals(350)) return false;
         if (dragoonInsteadOfZealot()) return false;
 
@@ -49,7 +54,10 @@ public class ProduceZealot {
     }
 
     private static boolean produceZealot() {
-        return Select.ourFree(Protoss_Gateway).random().train(
+        AUnit gateway = Select.ourFree(Protoss_Gateway).random();
+        if (gateway == null) return false;
+
+        return gateway.train(
             Protoss_Zealot, ForcedDirectProductionOrder.create(Protoss_Zealot)
         );
     }

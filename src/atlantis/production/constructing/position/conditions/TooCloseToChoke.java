@@ -17,7 +17,7 @@ public class TooCloseToChoke {
                 continue;
             }
 
-            double distToChoke = choke.center().distTo(position) - choke.width();
+            double distToChoke = minDistToChoke(position, choke);
             if (distToChoke <= minDist) {
                 AbstractPositionFinder._CONDITION_THAT_FAILED = "Overlaps choke (" + distToChoke + ")";
                 return true;
@@ -25,5 +25,9 @@ public class TooCloseToChoke {
         }
 
         return false;
+    }
+
+    private static double minDistToChoke(APosition position, AChoke choke) {
+        return choke.center().distTo(position) - choke.width();
     }
 }

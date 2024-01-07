@@ -52,11 +52,15 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
         }
 
         return Math.max(
-            (unit.isRanged() ? 3.7 : 0),
-            base
-                + letWorkersComeThroughBonus()
-                + (unit.isDragoon() ? 1.7 : 0)
+            baseForRanged(),
+            base + letWorkersComeThroughBonus()
         );
+    }
+
+    private double baseForRanged() {
+        if (unit.isDragoon()) return 2.3;
+
+        return unit.isRanged() ? 3.7 : 0;
     }
 
     private double letWorkersComeThroughBonus() {
