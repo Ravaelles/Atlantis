@@ -172,10 +172,10 @@ public class ARunningManager {
         // === Valid run position ==============================
 
         else {
-            // Update last time run order was issued
-            unit._lastStartedRunning = A.now();
-
             if (unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false)) {
+                // Update last time run order was issued
+                if (!unit.isRunning()) unit._lastStartedRunning = A.now();
+
                 // Make all other units very close to it run as well
                 if (allowedToNotifyNearUnitsToMakeSpace) {
                     (new NotifyNearUnitsToMakeSpaceToRun(unit)).notifyNearUnits();

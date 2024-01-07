@@ -5,18 +5,21 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.util.We;
+
+import java.util.List;
 
 public class ChokeBlockers {
     private static ChokeBlockers instance = null;
 
     private static AChoke choke;
 
-    public AUnit worker1 = null;
-    public AUnit worker2 = null;
+    public AUnit unit1 = null;
+    public AUnit unit2 = null;
 
     private static APosition blockingPoint1;
     private static APosition blockingPoint2;
@@ -43,36 +46,66 @@ public class ChokeBlockers {
         blockingPoint2 = blockingPoint2.translatePercentTowards(blockingPoint1, 21);
     }
 
-    public void assignWorkersIfNeeded() {
-        if (A.everyFrameExceptNthFrame(13)) return;
-//
-//        if (Count.ourCombatUnits() >= 18) {
-//            worker1 = null;
-//            worker2 = null;
-//            return;
-//        }
+    // =========================================================
 
-        if (worker1 != null && worker1.isAlive() && worker2 != null && worker2.isAlive()) return;
+    public void assignWorkersWhenNeeded() {
+        if (!We.terran()) return;
+        if (A.everyFrameExceptNthFrame(13)) return;
+
+        boolean unit1IsOk = unit1IsOk();
+        boolean unit2IsOk = unit2IsOk();
+        if (unit1IsOk && unit2IsOk) return;
 
         Selection workers = FreeWorkers.get();
 
-        if (worker1 == null || !worker1.isAlive()) {
-            worker1 = workers.first();
-            if (worker1 != null) worker1.setSpecialPosition(blockingPoint1);
+        if (!unit1IsOk) {
+            unit1 = workers.first();
+            if (unit1 != null) unit1.setSpecialPosition(blockingPoint1);
         }
-        if (worker2 == null || !worker2.isAlive()) {
-            worker2 = workers.second();
-            if (worker2 != null) worker2.setSpecialPosition(blockingPoint2);
+        if (!unit2IsOk) {
+            unit2 = workers.second();
+            if (unit2 != null) unit2.setSpecialPosition(blockingPoint2);
         }
     }
 
+    private boolean unit1IsOk() {
+        return unit1 != null && unit1.isAlive();
+    }
+
+    private boolean unit2IsOk() {
+        return unit2 != null && unit2.isAlive();
+    }
+
+    public void assignZealotsWhenNeeded() {
+        if (!We.protoss()) return;
+        boolean unit1IsOk = unit1IsOk();
+        boolean unit2IsOk = unit2IsOk();
+        if (unit1IsOk && unit2IsOk) return;
+
+        List<AUnit> zealots = Select.ourOfType(AUnitType.Protoss_Zealot).exclude(unit1).exclude(unit2).list();
+        for (AUnit zealot : zealots) {
+            if (!unit1IsOk) {
+                unit1 = zealot;
+                unit1.setSpecialPosition(blockingPoint1);
+                break;
+            }
+            if (!unit2IsOk) {
+                unit2 = zealot;
+                unit2.setSpecialPosition(blockingPoint2);
+                break;
+            }
+        }
+    }
+
+    // =========================================================
+
     public AUnit otherBlocker(AUnit unit) {
-        if (unit.equals(worker1)) return worker2;
-        else return worker1;
+        if (unit.equals(unit1)) return unit2;
+        else return unit1;
     }
 
     public boolean noEnemiesVeryNear() {
-        return worker1 != null && worker1.enemiesNear().inRadius(6, worker1).empty();
+        return unit1 != null && unit1.enemiesNear().inRadius(6, unit1).empty();
     }
 
     public static APosition chokeBlockPoint1() {

@@ -5,23 +5,17 @@ import atlantis.game.AGame;
 import atlantis.units.select.Select;
 
 public class UnitStateManager extends Manager {
-    public static final int UPDATE_UNIT_POSITION_EVERY_FRAMES = 31;
     private int timeNow;
-    private boolean shouldUpdatePosition;
 
     public UnitStateManager(AUnit unit) {
         super(unit);
 
         timeNow = AGame.now();
-        shouldUpdatePosition = AGame.everyNthGameFrame(UPDATE_UNIT_POSITION_EVERY_FRAMES);
     }
 
     @Override
     protected Manager handle() {
-        if (shouldUpdatePosition) {
-            unit._lastX = unit.x();
-            unit._lastY = unit.y();
-        }
+        rememberLastPositionAndLastPositionChange();
 
         if (unit.isAttackFrame()) {
 //            System.err.println("%%%%%%%%% ATTACK FRAME - " + timeNow);
@@ -53,9 +47,6 @@ public class UnitStateManager extends Manager {
 
         if (unit.isStartingAttack()) {
             unit._lastStartedAttack = timeNow;
-//            if (unit.isFirstCombatUnit()) {
-
-//            }
         }
 
         AUnit _oldLastTargetToAttack = unit._lastTargetToAttack;
@@ -66,17 +57,23 @@ public class UnitStateManager extends Manager {
 
         if (unit.isUnderAttack(3)) {
             unit._lastUnderAttack = timeNow;
-
-            AUnit enemy = Select.enemy().nearestTo(unit);
-
-
-
         }
+
+//            AUnit enemy = Select.enemy().nearestTo(unit);
 //        if (unit.id() == Select.ourCombatUnits().first().getID()) {
 
 //                    + unit._lastAttackOrder + " // " + unit._lastAttackFrame + " // " + unit._lastStartingAttack);
 //        }
 
         return null;
+    }
+
+    private void rememberLastPositionAndLastPositionChange() {
+        if (unit._lastX != unit.x() || unit._lastY != unit.y()) {
+            unit._lastPositionChanged = timeNow;
+        }
+
+        unit._lastX = unit.x();
+        unit._lastY = unit.y();
     }
 }

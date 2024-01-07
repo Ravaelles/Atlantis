@@ -13,10 +13,11 @@ public class ChokeBlockersCommander extends Commander {
     protected void handle() {
         ChokeBlockers chokeBlockers = ChokeBlockers.get();
 
-        chokeBlockers.assignWorkersIfNeeded();
+        chokeBlockers.assignWorkersWhenNeeded();
+        chokeBlockers.assignZealotsWhenNeeded();
 
-        actWithWorker(chokeBlockers.worker1);
-        actWithWorker(chokeBlockers.worker2);
+        actWithWorker(chokeBlockers.unit1);
+        actWithWorker(chokeBlockers.unit2);
     }
 
     private void actWithWorker(AUnit unit) {

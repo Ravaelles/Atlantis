@@ -16,16 +16,28 @@ public class NeedChokeBlockers {
     private static AChoke choke;
 
     public static boolean check() {
-        if (We.protoss()) return false;
         if (We.zerg()) return false;
         if (Enemy.terran()) return false;
 
+        if (We.protoss()) return forProtoss();
+        if (We.terran()) return forTerran();
+
+        return false;
+    }
+
+    private static boolean forProtoss() {
+        if (A.supplyUsed() >= 45) return false;
+        if (Missions.isGlobalMissionAttack()) return false;
+
+        return Missions.isGlobalMissionDefendOrSparta();
+    }
+
+    private static boolean forTerran() {
         if (OurStrategy.get().isRushOrCheese()) return false;
 
         if (AGame.notNthGameFrame(5)) return false;
         if (Missions.isGlobalMissionAttack()) return false;
 
-        if (A.supplyUsed() <= 13) return false;
         if (A.supplyUsed() >= 45) return false;
 
         choke = ChokeToBlock.get();

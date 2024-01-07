@@ -1,13 +1,11 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
-public class UnfreezeAttack extends Manager {
-    public UnfreezeAttack(AUnit unit) {
+public class UnfreezeAttackOld extends Manager {
+    public UnfreezeAttackOld(AUnit unit) {
         super(unit);
     }
 
@@ -18,11 +16,9 @@ public class UnfreezeAttack extends Manager {
 
     private boolean whenAttacking(AUnit unit) {
         return
-            unit.isAttackingOrMovingToAttack()
-//            && unit.noCooldown()
-//            && (unit.hasNotMovedInAWhile() || unit.lastActionLessThanAgo(62, Actions.ATTACK_UNIT))
-                && unit.lastActionMoreThanAgo(3, Actions.ATTACK_UNIT)
-                && unit.lastPositionChangedMoreThanAgo(3)
+            unit.isMoving()
+                && unit.noCooldown()
+                && (unit.hasNotMovedInAWhile() || unit.lastActionLessThanAgo(62, Actions.ATTACK_UNIT))
                 && (unit.hasTarget() && !unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
     }
 

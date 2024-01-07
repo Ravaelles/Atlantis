@@ -1033,12 +1033,11 @@ public class Selection extends BaseSelection {
      * @return all units except for the given one
      */
     public Selection exclude(AUnit unitToExclude) {
-//        if (unitToExclude != null) {
-//            data.remove(unitToExclude);
-//        }
+        if (unitToExclude == null) return new Selection(new ArrayList<>(data), null);
+
         List<AUnit> newData = new ArrayList<>(data);
         newData.remove(unitToExclude);
-        return new Selection(newData, null);
+        return new Selection(newData, "exclude:" + unitToExclude.id());
     }
 
     public Selection exclude(Collection unitsToExclude) {

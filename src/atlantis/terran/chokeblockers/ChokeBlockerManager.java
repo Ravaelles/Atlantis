@@ -28,6 +28,7 @@ public class ChokeBlockerManager extends Manager {
         return new Class[]{
             ChokeBlockerRepairOther.class,
             ChokeBlockerMoveAway.class,
+            ChokeBlockerFightBack.class,
             ChokeBlockerMoveToBlock.class,
         };
     }

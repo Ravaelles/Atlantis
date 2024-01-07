@@ -131,8 +131,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public APosition _lastTechPosition;
     public AUnit _lastTechUnit;
     public int _lastUnderAttack;
-    public int _lastX;
-    public int _lastY;
+    public int _lastX = -1;
+    public int _lastY = -1;
+    public int _lastPositionChanged;
     public HasPosition _lastPositionRunInAnyDir = null;
     private AUnit _targetUnitToAttack;
 
@@ -1737,6 +1738,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean lastUnderAttackMoreThanAgo(int framesAgo) {
         return A.ago(_lastUnderAttack) >= framesAgo;
+    }
+
+    public boolean lastPositionChangedLessThanAgo(int framesAgo) {
+        return A.ago(_lastPositionChanged) <= framesAgo;
+    }
+
+    public boolean lastPositionChangedMoreThanAgo(int framesAgo) {
+        return A.ago(_lastPositionChanged) >= framesAgo;
+    }
+
+    public int lastPositionChangedAgo() {
+        return A.ago(_lastPositionChanged);
     }
 
     public boolean lastAttackFrameMoreThanAgo(int framesAgo) {

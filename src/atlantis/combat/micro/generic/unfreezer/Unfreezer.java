@@ -13,22 +13,23 @@ public class Unfreezer extends Manager {
     @Override
     public boolean applies() {
         return unit.isCombatUnit()
-            && unit.noCooldown()
+//            && unit.noCooldown()
             && !unit.isLoaded()
 //            && !unit.isMoving()
 //            && A.now() % 73 == 0
             && A.now() >= 20
 //            && unit.looksIdle()
-            && unit.hasNotMovedInAWhile()
-            && unit.lastActionMoreThanAgo(30 * 12, Actions.MOVE_UNFREEZE);
+            && unit.lastPositionChangedMoreThanAgo(3);
+//            && unit.lastActionMoreThanAgo(30 * 3, Actions.MOVE_UNFREEZE);
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             UnfreezeAttack.class,
-            UnfreezeRunA.class,
-            UnfreezeRunB.class,
+            UnfreezeRun.class,
+//            UnfreezeRunA.class,
+//            UnfreezeRunB.class,
         };
     }
 }
