@@ -261,10 +261,10 @@ public class WorkerDefenceManager extends Manager {
     }
 
     private static boolean attackNearestEnemy(AUnit worker) {
-        AUnit enemy = worker.enemiesNear().canBeAttackedBy(worker, 8).nearestTo(worker);
+        AUnit enemy = worker.enemiesNear().canBeAttackedBy(worker, 2).nearestTo(worker);
         if (enemy == null) return false;
 
-        worker.setTooltip("Protect", true);
+        worker.setTooltip("WDM:Attack", true);
         worker.attackUnit(enemy);
         return true;
     }

@@ -154,6 +154,42 @@ public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
     }
 
     @Test
+    public void wraithAvoidsEnemies() {
+        FakeUnit our = fake(AUnitType.Terran_Wraith, 10);
+        FakeUnit enemy1, enemy2, enemy3, enemy4, enemy5;
+
+        int inRange = 19; // Range is 7, but we need some safety margin which varies depending on the unit
+        int outsideRange = 24;
+
+        FakeUnit[] enemies = fakeEnemies(
+            enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange),
+            fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
+
+            fake(AUnitType.Zerg_Sunken_Colony, inRange),
+            fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
+
+            enemy2 = fake(AUnitType.Terran_Missile_Turret, inRange),
+            fake(AUnitType.Terran_Missile_Turret, outsideRange),
+
+            enemy3 = fake(AUnitType.Zerg_Spore_Colony, inRange),
+            fake(AUnitType.Zerg_Spore_Colony, outsideRange),
+
+            enemy4 = fake(AUnitType.Terran_Bunker, inRange - 5),
+            fake(AUnitType.Terran_Bunker, outsideRange),
+
+            enemy5 = fake(AUnitType.Protoss_Dragoon, inRange - 5),
+            fake(AUnitType.Protoss_Dragoon, outsideRange)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertContainsAll(
+                new FakeUnit[]{enemy1, enemy2, enemy3, enemy4, enemy5},
+                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
+            );
+        });
+    }
+
+    @Test
     public void avoidsFuckedSorryFoggedUnits() {
         AUnit enemy1;
         final int inRange = 12;

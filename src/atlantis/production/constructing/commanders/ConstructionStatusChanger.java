@@ -115,7 +115,7 @@ public class ConstructionStatusChanger extends Commander {
 
         if ((builder == null || builder.isDead()) && !construction.hasStarted()) {
             builder = construction.assignOptimalBuilder();
-            System.err.println("Builder was NULL for " + building + " / now = " + builder);
+//            System.err.println("Builder was NULL for " + building + " / now = " + builder);
         }
 //        builder = assignBuilderToConstructionIfNeeded(construction);
 

@@ -142,6 +142,8 @@ public class OptimalNumOfBunkerRepairers {
     private static int whenAlmostNooneInside(AUnit bunker) {
         if (bunker.isWounded()) return 1;
 
+        if (bunker.loadedUnits().isEmpty() && bunker.friendsNear().terranInfantryWithoutMedics().empty()) return 0;
+
         if (enemiesNear == 0 && enemiesFar == 0) return A.seconds() <= 300 ? 1 : 0;
 
         if ((enemiesFar + enemiesNear) >= 5 && bunker.loadedUnits().size() > 0) return 2;

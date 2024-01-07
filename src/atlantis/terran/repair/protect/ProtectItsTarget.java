@@ -23,10 +23,14 @@ public class ProtectItsTarget extends Manager {
 
         if (target != null && target.isAlive()) {
             if (target.isWounded() || target.isBunker() || A.everyNthGameFrame(11)) {
-                unit.repair(target, "Protect" + target.name());
+                if (A.hasMinerals(1)) {
+                    unit.repair(target, "Protect" + target.name());
+                    return usedManager(this);
+                }
+                else {
+                    RepairAssignments.removeRepairer(unit);
+                }
             }
-
-            return usedManager(this);
         }
 
         return null;

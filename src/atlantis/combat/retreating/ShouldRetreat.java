@@ -165,7 +165,12 @@ public class ShouldRetreat extends Manager {
             }
         }
 
-        if (A.seconds() <= 400 && OurStrategy.get().isRushOrCheese() && unit.enemiesNear().ranged().empty()) {
+        if (
+            OurStrategy.get().isRushOrCheese()
+                && A.seconds() <= 400
+                && unit.isGroundUnit()
+                && unit.enemiesNear().ranged().empty()
+        ) {
             unit.addLog("Rush");
             return true;
         }

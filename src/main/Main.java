@@ -15,8 +15,8 @@ import starengine.StarEngineLauncher;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-    public static final String OUR_RACE = "Protoss";
-//    public static final String OUR_RACE = "Terran";
+    //    public static final String OUR_RACE = "Protoss";
+    public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Zerg";
 
     public static final String ENEMY_RACE = "Protoss";
@@ -69,7 +69,7 @@ public class Main {
 
         // === Popular SSCAIT maps =================================
 
-//        if (true) return "sscai/(2)HeartbreakRidge.scx";
+        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roa.scx";
 
@@ -90,7 +90,7 @@ public class Main {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
+//        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
         // === Maps for testing as Terran ==========================
@@ -116,7 +116,7 @@ public class Main {
         // vs Protoss
 //        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx";
-        if (true) return "ums/rav/minimaps/Dragoons_v_Zealots.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/minimaps/Dragoons_v_Zealots.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
