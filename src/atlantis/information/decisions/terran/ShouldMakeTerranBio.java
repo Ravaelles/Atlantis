@@ -2,7 +2,6 @@ package atlantis.information.decisions.terran;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.FocusOnProducingUnits;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
@@ -57,7 +56,7 @@ public class ShouldMakeTerranBio {
             return false;
         }
 
-        if (!Decisions.maxFocusOnTanks()) {
+        if (!TerranDecisions.maxFocusOnTanks()) {
             reason = "maxFocusOnTanks";
             return false;
         }

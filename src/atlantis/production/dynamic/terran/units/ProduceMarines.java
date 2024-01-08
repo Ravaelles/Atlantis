@@ -2,25 +2,21 @@ package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
+import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
 import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import atlantis.util.log.ConsoleLog;
 
 import static atlantis.units.AUnitType.Terran_Barracks;
 import static atlantis.units.AUnitType.Terran_Marine;
@@ -78,7 +74,7 @@ public class ProduceMarines {
 
         if (!A.hasMinerals(200) && marines >= 4 && !A.canAffordWithReserved(50, 0)) return false;
 
-        if (!Decisions.shouldMakeTerranBio()) {
+        if (!TerranDecisions.shouldMakeTerranBio()) {
             if (TerranDynamicInfantry.DEBUG)
                 System.out.println("Marines - Dont - shouldNOTMakeTerranBio - " + ShouldMakeTerranBio.reason);
             return false;

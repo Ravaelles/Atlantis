@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.response.AStrategyResponseFactory;
 
+import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.util.Enemy;
 
 public class StrategyCommander extends Commander {

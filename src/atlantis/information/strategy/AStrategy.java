@@ -33,7 +33,7 @@ public class AStrategy {
 
     // =========================================================
 
-    protected AStrategy() {
+    public AStrategy() {
         allStrategies.add(this);
     }
 
@@ -221,5 +221,8 @@ public class AStrategy {
         else {
             return "Zerg";
         }
+    }
+
+    public void applyDecisions() {
     }
 }

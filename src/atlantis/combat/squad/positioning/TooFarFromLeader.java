@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 public class TooFarFromLeader extends Manager {
     private double distToLeader;
@@ -42,7 +43,9 @@ public class TooFarFromLeader extends Manager {
     }
 
     private boolean wayTooFarFromLeader() {
-        return distToLeader >= 8;
+        int maxDistance = We.terran() ? 8 : 12;
+
+        return distToLeader >= maxDistance;
     }
 
     private boolean unitIsOvercrowded() {

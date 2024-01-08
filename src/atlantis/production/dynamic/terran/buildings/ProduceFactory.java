@@ -22,7 +22,7 @@ public class ProduceFactory {
         if (OurStrategy.get().goingBio()) return false; // See: ProduceFactoryWhenBioOnly
         if (!Have.academy() && !A.canAfford(350, 100)) return false;
         if (Count.inProductionOrInQueue(Terran_Factory) >= 1) return false;
-        if (CountInQueue.count(Terran_Factory) >= 1) return false;
+        if (Count.freeFactories() >= 1) return false;
 
         int existing = Count.existing(Terran_Factory);
         int existingAndPlanned = Count.withPlanned(Terran_Factory);

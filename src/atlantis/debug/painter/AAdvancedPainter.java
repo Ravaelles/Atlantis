@@ -409,7 +409,7 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage("Alpha mission: " + Alpha.get().mission().name(), color);
 
 
-        String shouldExpand = ShouldExpand.shouldBuildNewBase() ? "YES" : "NO";
+        String shouldExpand = ShouldExpand.shouldExpand() ? "YES" : "NO";
         paintSideMessage("Should expand: " + shouldExpand, shouldExpand == "YES" ? Green : Grey);
 
 //        AFocusPoint focus = mission.focusPoint();

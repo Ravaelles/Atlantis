@@ -1,17 +1,8 @@
 package tests.acceptance;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.strategy.OurStrategy;
-import atlantis.information.strategy.TerranStrategies;
-import atlantis.production.orders.build.ABuildOrder;
-import atlantis.production.orders.production.queue.QueueInitializer;
-import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.Queue;
-import atlantis.units.select.Select;
 import atlantis.util.Options;
-import bwapi.TechType;
 import org.junit.Test;
 import tests.unit.DynamicMockOurUnits;
 import tests.unit.FakeUnit;
@@ -19,7 +10,6 @@ import tests.unit.FakeUnitHelper;
 
 import java.util.ArrayList;
 
-import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 

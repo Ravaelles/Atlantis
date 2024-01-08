@@ -3,6 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionDecisions;
 import atlantis.game.A;
+import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
@@ -106,6 +107,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     private boolean notEnoughTanksAndNotEarlyGame() {
         return !Enemy.terran()
+            && TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isTrue()
             && A.seconds() >= 500
             && Atlantis.LOST >= 10
             && Count.tanks() <= 4

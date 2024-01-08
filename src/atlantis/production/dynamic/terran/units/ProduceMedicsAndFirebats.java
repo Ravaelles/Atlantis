@@ -2,11 +2,9 @@ package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.decisions.Decisions;
+import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.generic.TerranArmyComposition;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
-import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -35,7 +33,7 @@ public class ProduceMedicsAndFirebats {
 
         if (medicsUnfinished >= 3) return false;
 
-        if (!Decisions.shouldMakeTerranBio()) {
+        if (!TerranDecisions.shouldMakeTerranBio()) {
             if (Have.academy() && Count.infantry() >= 4 && medics <= 0) return false;
         }
 

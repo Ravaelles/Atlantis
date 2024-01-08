@@ -2,16 +2,12 @@ package atlantis.information.decisions;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.production.dynamic.zerg.units.ProduceZerglings;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
 
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
@@ -20,22 +16,11 @@ import atlantis.util.cache.Cache;
 import static atlantis.units.AUnitType.*;
 
 public class Decisions {
-
-    private static Cache<Boolean> cache = new Cache<>();
+    protected static Cache<Boolean> cache = new Cache<>();
 
     // =========================================================
 
-    public static boolean haveFactories() {
-        return cache.get(
-            "haveFactories",
-            91,
-            () -> {
-                return OurStrategy.get().goingBio();
-            }
-        );
-    }
-
-//    public static boolean wantsToBeAbleToProduceTanksSoon() {
+    //    public static boolean wantsToBeAbleToProduceTanksSoon() {
 //        return cache.get(
 //            "beAbleToProduceTanks",
 //            93,
@@ -52,73 +37,11 @@ public class Decisions {
 //        );
 //    }
 
-    public static boolean shouldMakeTerranBio() {
-        return cache.get(
-            "shouldMakeTerranBio",
-            95,
-            () -> ShouldMakeTerranBio.should()
-        );
-    }
-
     public static boolean shouldMakeZerglings() {
         return cache.get(
             "shouldMakeTerranBio",
             97,
             () -> ProduceZerglings.zerglings()
-        );
-    }
-
-    public static boolean produceVultures() {
-//        return true;
-        return cache.get(
-            "produceVultures",
-            99,
-            () -> {
-                int vultures = Count.vultures();
-
-                if (FocusOnProducingUnits.isFocusedOn(Terran_Vulture)) {
-                    if (vultures < 4) {
-                        return true;
-                    }
-                }
-
-//                if (true) return true;
-
-//                if (vultures < 12 && (A.hasMinerals(800) && !A.hasGas(200))) {
-//                    return true;
-//                }
-
-                if (vultures == 0 && EnemyUnits.count(Zerg_Zergling) >= 7) return true;
-
-                if (vultures <= 2 && EnemyUnits.count(Protoss_Zealot) >= 6) return false;
-
-                if (
-                    GamePhase.isEarlyGame()
-                        && vultures <= 3
-                        && EnemyUnits.discovered().ofType(Protoss_Zealot).atLeast(5)
-                ) return false;
-
-                return (maxFocusOnTanks() && vultures >= 1)
-                    || (Enemy.terran() && vultures >= 1)
-                    || (vultures >= 2 && Count.tanks() < 2)
-                    || vultures >= 15;
-            }
-//                () -> Count.vultures() >= 1
-//                () -> maxFocusOnTanks() || (shouldBuildBio() && Count.vultures() <= 1)
-        );
-    }
-
-    public static boolean maxFocusOnTanks() {
-        return cache.get(
-            "maxFocusOnTanks",
-            91,
-            () ->
-//                    GamePhase.isEarlyGame()
-                (
-                    EnemyInfo.startedWithCombatBuilding
-                        || EnemyUnits.discovered().combatBuildings(true).atLeast(2)
-                )
-//                        && Have.factory() && Have.machineShop()
         );
     }
 
@@ -135,20 +58,6 @@ public class Decisions {
                 return false;
             }
         );
-    }
-
-    public static boolean weHaveBunkerAndDontHaveToDefendAnyLonger() {
-        if (Enemy.zerg()) {
-            if (GamePhase.isEarlyGame()) {
-                if (EnemyUnits.discovered().countOfType(AUnitType.Zerg_Zergling) >= 9) {
-                    return Count.ourCombatUnits() >= 13;
-                }
-
-                if (Count.medics() <= 3) return false;
-            }
-        }
-
-        return Count.ourCombatUnits() >= 8;
     }
 
     public static boolean buildRoboticsFacility() {

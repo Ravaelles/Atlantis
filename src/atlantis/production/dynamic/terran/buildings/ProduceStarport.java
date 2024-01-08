@@ -17,20 +17,22 @@ public class ProduceStarport {
     }
 
     private static boolean shouldBuild() {
+        if (Count.freeStarports() > 0) return false;
+
         int minSupply = Enemy.zerg() ? 55 : 65;
 
         return (A.supplyUsed() >= minSupply || A.hasMinerals(500))
             && Have.factory()
-            && noStarportsOrAllBusy();
+            && noStarports();
     }
 
-    private static boolean noStarportsOrAllBusy() {
-        int all = Count.existingOrInProductionOrInQueue(Terran_Starport);
+    private static boolean noStarports() {
+        int all = Count.withPlanned(Terran_Starport);
         return all == 0 || existingOnesAreBusyAndWeHaveResources();
     }
 
     private static boolean existingOnesAreBusyAndWeHaveResources() {
-        return A.canAfford(800, 350)
+        return A.canAfford(700, 350)
             && Select.ourFree(Terran_Starport).isEmpty()
             && Count.notBeingProduced(Terran_Starport);
     }

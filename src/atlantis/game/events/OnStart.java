@@ -10,7 +10,7 @@ import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
 import atlantis.information.strategy.ProtossStrategies;
 import atlantis.information.strategy.StrategyChooser;
-import atlantis.information.strategy.TerranStrategies;
+import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.strategy.ZergStrategies;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
@@ -96,7 +96,7 @@ public class OnStart {
     }
 
     public static void initializeAllStrategies() {
-        TerranStrategies.initialize();
+        TerranStrategies.loadAll();
         ProtossStrategies.initialize();
         ZergStrategies.initialize();
     }

@@ -9,6 +9,7 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.base.BaseLocations;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.dynamic.expansion.terran.TerranShouldExpand;
 import atlantis.production.dynamic.expansion.terran.TerranShouldExpandToNatural;
 import atlantis.production.dynamic.zerg.ZergExpansionCommander;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -19,7 +20,9 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ShouldExpand {
-    public static boolean shouldBuildNewBase() {
+    public static boolean shouldExpand() {
+        if (We.terran()) return TerranShouldExpand.shouldExpand();
+
         if (We.terran()) {
             if (TerranShouldExpandToNatural.shouldExpandToNatural()) return true;
 

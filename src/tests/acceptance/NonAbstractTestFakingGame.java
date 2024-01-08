@@ -2,7 +2,7 @@ package tests.acceptance;
 
 import atlantis.game.AGame;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.information.strategy.TerranStrategies;
+import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueInitializer;

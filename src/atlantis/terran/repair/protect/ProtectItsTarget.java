@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
+import atlantis.units.workers.GatherResources;
 
 public class ProtectItsTarget extends Manager {
     private AUnit target;
@@ -27,12 +28,16 @@ public class ProtectItsTarget extends Manager {
                     unit.repair(target, "Protect" + target.name());
                     return usedManager(this);
                 }
-                else {
-                    RepairAssignments.removeRepairer(unit);
-                }
             }
+
+            removeRepairer();
         }
 
         return null;
+    }
+
+    private void removeRepairer() {
+        RepairAssignments.removeRepairer(unit);
+        (new GatherResources(unit)).forceHandle();
     }
 }

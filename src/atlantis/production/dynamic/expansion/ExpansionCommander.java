@@ -24,11 +24,11 @@ public class ExpansionCommander extends Commander {
 
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(37)
+        return A.everyNthGameFrame(67)
             && Have.barracks()
 //            && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) <= 1
             && CountInQueue.count(AUnitType.Terran_Bunker) <= 0
-            && ShouldExpand.shouldBuildNewBase();
+            && ShouldExpand.shouldExpand();
 //        return ShouldExpand.shouldBuildNewBase();
     }
 

@@ -3,11 +3,10 @@ package atlantis.combat.missions.defend;
 import atlantis.Atlantis;
 import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.alpha.Alpha;
 import atlantis.config.ActiveMap;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.decisions.Decisions;
+import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
@@ -73,6 +72,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (
             ourRelativeStrength <= 600
+                && TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isFalse()
                 && EnemyUnits.discovered().combatBuildingsAntiLand().atLeast(2)
                 && Count.tanks() <= 3
                 && !TankDecisions.siegeResearched()
@@ -139,7 +139,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         if (Count.bunkers() >= 1) {
-            if (Decisions.weHaveBunkerAndDontHaveToDefendAnyLonger()) {
+            if (TerranDecisions.weHaveBunkerAndDontHaveToDefendAnyLonger()) {
                 if (DEBUG) reason = "No longer have to defend (" + ourRelativeStrength + "%)";
                 return true;
             }

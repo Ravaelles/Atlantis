@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.generic.OurArmyStrength;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -20,6 +21,7 @@ public class SiegeMode extends Commander {
     }
 
     private static boolean shouldResearchNow() {
+        if (TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isFalse()) return false;
         if (!ATech.isNotResearchedOrPlanned(TechType.Tank_Siege_Mode)) return false;
 
         return Enemy.terran() ? shouldResearchAgainstTerran() : shouldResearchAgainstProtossAndZerg();
@@ -40,9 +42,7 @@ public class SiegeMode extends Commander {
     @Override
     protected void handle() {
         AUnit machineShop = Select.ourOfType(AUnitType.Terran_Machine_Shop).random();
-//            System.err.println("-------- machineShop = " + machineShop);
         if (machineShop != null) {
-//            System.err.println("Tank_Siege_Mode @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             AddToQueue.tech(TechType.Tank_Siege_Mode);
         }
 
@@ -50,7 +50,6 @@ public class SiegeMode extends Commander {
         else {
             if (Count.existingOrInProductionOrInQueue(AUnitType.Terran_Machine_Shop) == 0) {
                 AddToQueue.withTopPriority(AUnitType.Terran_Machine_Shop);
-                System.out.println("Enqueueing Machine Shop for Siege Mode");
             }
         }
     }

@@ -15,7 +15,6 @@ public class EnemyWhoBreachedBase {
         }
 
         _lastEnemy = enemy;
-
         return enemy;
     }
 

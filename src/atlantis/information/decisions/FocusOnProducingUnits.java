@@ -5,7 +5,6 @@ import atlantis.units.AUnitType;
 import java.util.TreeSet;
 
 public class FocusOnProducingUnits {
-
     private static TreeSet<AUnitType> unitsToFocusOn = new TreeSet();
 
     public static void addUnitTypeToFocusOn(AUnitType type) {

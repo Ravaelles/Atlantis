@@ -10,7 +10,7 @@ import atlantis.game.events.OnStart;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.information.strategy.TerranStrategies;
+import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;

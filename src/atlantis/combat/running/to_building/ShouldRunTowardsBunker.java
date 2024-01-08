@@ -12,7 +12,7 @@ import atlantis.util.We;
 public class ShouldRunTowardsBunker {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
         if (!We.terran()) return false;
-        if (A.seconds() >= 600) return false;
+        if (A.seconds() >= 600 && Count.marines() >= 13) return false;
         if (unit.distTo(runAwayFrom) <= 2) return false;
         if (unit.enemiesNearInRadius(2) > 0) return false;
 

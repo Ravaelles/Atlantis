@@ -19,7 +19,8 @@ public class ProduceFactoryWhenBioOnly {
         if (!OurStrategy.get().goingBio()) return false; // See: ProduceFactory
         if (A.supplyUsed() <= 25 || !A.hasGas(90)) return false;
         if (Count.inProductionOrInQueue(Terran_Factory) >= 1) return false;
-        if (CountInQueue.count(Terran_Factory) >= 1) return false;
+//        if (CountInQueue.count(Terran_Factory) >= 1) return false;
+        if (!A.canAfford(350, 200) && Count.factories() > 0) return false;
 
         Selection freeFactories = Select.ourFree(Terran_Factory);
 

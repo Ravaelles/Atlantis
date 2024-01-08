@@ -1,6 +1,7 @@
-package atlantis.information.strategy;
+package atlantis.information.strategy.terran;
 
 import atlantis.game.AGame;
+import atlantis.information.strategy.AStrategy;
 import atlantis.units.AUnitType;
 
 public class TerranStrategies extends AStrategy {
@@ -9,7 +10,7 @@ public class TerranStrategies extends AStrategy {
     public static final AStrategy TERRAN_BBS = new AStrategy();
 
     // Rush
-    public static final AStrategy TERRAN_Sparks = new AStrategy(); // Marine Medic Ghost (with Lockdown)
+    public static final AStrategy TERRAN_Sparks = new Sparks();
     public static final AStrategy TERRAN_Shallow_Two_vP = new AStrategy(); // Marine Medic Ghost (with Lockdown)
     public static final AStrategy TERRAN_2_Rax_MnM = new AStrategy();
     public static final AStrategy TERRAN_3_Rax_MnM = new AStrategy();
@@ -29,11 +30,11 @@ public class TerranStrategies extends AStrategy {
 
     // =========================================================
 
-    public static void initialize() {
+    public static void loadAll() {
 
         // === Rushes ========================================
 
-        TERRAN_Sparks.setTerran().setName("Sparks").setGoingBio().setGoingRush();
+//        TERRAN_Sparks.setTerran().setName("Sparks").setGoingBio().setGoingRush();
 
         TERRAN_Shallow_Two_vP.setTerran().setName("Shallow Two vP").setGoingBio();
 

@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.terran;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.terran.units.ProduceGoliaths;
@@ -15,32 +16,28 @@ import atlantis.units.select.Select;
 public class TerranDynamicFactoryUnits extends TerranDynamicUnitsCommander {
 
     protected static boolean handleFactoryProduction() {
-//        if (!AGame.canAfford(200, 150) && !AGame.canAffordWithReserved(150, 100)) {
-//            return;
+        return false;
+
+//        if (!Have.factory()) return false;
+//
+//        for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).free().list()) {
+//            requestFactoryUnit(factory);
 //        }
-
-        if (!Have.factory()) {
-            return false;
-        }
-
-        for (AUnit factory : Select.ourOfType(AUnitType.Terran_Factory).free().list()) {
-            requestFactoryUnit(factory);
-        }
-
-        return false;
+//
+//        return false;
     }
 
-    protected static boolean requestFactoryUnit(AUnit factory) {
-        if (ProduceGoliaths.goliaths(factory)) {
-//            return true;
-        }
-        if (ProduceTanks.tanks(factory)) {
-//            return true;
-        }
-        if (ProduceVultures.vultures()) {
-//            return true;
-        }
-
-        return false;
-    }
+//    protected static boolean requestFactoryUnit(AUnit factory) {
+//        if (ProduceGoliaths.goliaths(factory)) {
+////            return true;
+//        }
+//        if (ProduceTanks.tanks(factory)) {
+////            return true;
+//        }
+//        if (ProduceVultures.vultures()) {
+////            return true;
+//        }
+//
+//        return false;
+//    }
 }

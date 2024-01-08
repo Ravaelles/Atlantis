@@ -2,15 +2,7 @@ package tests.acceptance;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.strategy.OurStrategy;
-import atlantis.information.strategy.TerranStrategies;
-import atlantis.production.dynamic.terran.tech.U238;
-import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.QueueInitializer;
-import atlantis.production.orders.production.queue.ReservedResources;
-import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Select;
 import atlantis.util.Options;

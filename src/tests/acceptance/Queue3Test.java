@@ -1,12 +1,6 @@
 package tests.acceptance;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.strategy.OurStrategy;
-import atlantis.information.strategy.TerranStrategies;
-import atlantis.production.orders.build.ABuildOrder;
-import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.util.Options;

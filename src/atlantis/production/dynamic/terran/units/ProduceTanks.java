@@ -2,9 +2,8 @@ package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.decisions.Decisions;
+import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.production.dynamic.terran.tech.SiegeMode;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -14,6 +13,7 @@ import atlantis.util.Enemy;
 
 public class ProduceTanks {
     public static boolean tanks(AUnit factory) {
+        if (TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isFalse()) return false;
         if (!Have.machineShop() || !Have.factory()) return false;
 
         int tanks = Select.ourWithUnfinished().tanks().count();
@@ -40,7 +40,7 @@ public class ProduceTanks {
         }
 
 //        int vultures = Count.vultures();
-        if (!Decisions.produceVultures() || tanks <= 5 || A.canAfford(700, 250)) {
+        if (!TerranDecisions.produceVultures() || tanks <= 5 || A.canAfford(700, 250)) {
             return produceTank();
         }
 

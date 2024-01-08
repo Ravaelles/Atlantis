@@ -28,7 +28,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
     @Override
     public AFocusPoint focusPoint() {
-        return cache.get(
+        return cache.getIfValid(
             "focusPoint",
             29,
             () -> {

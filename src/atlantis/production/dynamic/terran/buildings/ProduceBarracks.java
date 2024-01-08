@@ -16,9 +16,12 @@ public class ProduceBarracks {
         int freeBarracks = Select.ourFree(Terran_Barracks).size();
 
         if (freeBarracks >= 1) return false;
-        if (barracks <= 8 && A.hasMinerals(800) && A.hasFreeSupply(4)) return produce();
-        if (barracks >= 3 && !A.hasMinerals(800)) return false;
+//        if (barracks <= 8 && A.hasMinerals(800) && A.hasFreeSupply(4)) return produce();
+//        if (barracks >= 3 && !A.hasMinerals(800)) return false;
         if (barracks >= 2 && (!A.hasMinerals(450) || Enemy.terran())) return false;
+        if (freeBarracks == 0 && A.hasMinerals(350) && (
+            Count.basesWithUnfinished() >= 2 || A.seconds() >= 800
+        )) return true;
 
 //        if (barracks <= 6 && A.hasMinerals(800) && A.hasFreeSupply(6)) return produce();
 

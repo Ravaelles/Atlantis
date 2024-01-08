@@ -45,6 +45,7 @@ public class OurStrategy {
         if (ourStrategy == strategy) return;
 
         ourStrategy = strategy;
+        ourStrategy.applyDecisions();
 
         QueueInitializer.initializeProductionQueue();
     }
