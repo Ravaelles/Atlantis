@@ -44,5 +44,4 @@ public class ZergExpansionCommander extends Commander {
     private static boolean lastExpandedLessThanSecondsAgo(int seconds) {
         return (A.now() - _lastExpandedAt) <= 30 * seconds;
     }
-
 }
