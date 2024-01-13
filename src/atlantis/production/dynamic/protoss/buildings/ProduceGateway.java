@@ -14,12 +14,13 @@ public class ProduceGateway {
         if (
             !A.hasMinerals(230)
                 || Count.freeGateways() > 0
-                || Count.inQueueOrUnfinished(Protoss_Gateway, 10) > (A.minerals() >= 500 ? 2 : 1)
+                || Count.inQueueOrUnfinished(Protoss_Gateway, 10) > (A.minerals() >= 650 ? 2 : 1)
         ) return;
 
         int gatewaysWithUnfinished = Count.gatewaysWithUnfinished();
 
-        if (gatewaysWithUnfinished >= 3 && !A.hasMinerals(550) && Count.basesWithUnfinished() <= 1) return;
+        if (gatewaysWithUnfinished >= 1 && !A.hasMinerals(550) && Count.basesWithUnfinished() <= 1) return;
+        if (gatewaysWithUnfinished >= 2 && !A.hasMinerals(450) && Count.basesWithUnfinished() <= 1) return;
 
         if (
             GamePhase.isEarlyGame()

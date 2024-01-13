@@ -30,16 +30,8 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isObserver()) {
-            System.err.println("unit.isObserver() = " + unit.isObserver());
-        }
-
-//        if (unit.effUndetected()) return false;
-//        enemiesDangerouslyClose = enemyUnitsToAvoid.enemiesDangerouslyClose();
-
         if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
 
-//        return true;
         return !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid();
     }
 

@@ -13,7 +13,7 @@ import atlantis.util.Enemy;
 
 public class ProduceTanks {
     public static boolean tanks(AUnit factory) {
-        if (TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isFalse()) return false;
+        if (TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isTrue()) return false;
         if (!Have.machineShop() || !Have.factory()) return false;
 
         int tanks = Select.ourWithUnfinished().tanks().count();

@@ -38,4 +38,3 @@ Constant Marine production
 20 - Refinery
 24 - Academy
 25 - Supply Depot
-27 - Barracks

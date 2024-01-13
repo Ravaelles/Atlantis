@@ -12,6 +12,7 @@ import atlantis.terran.repair.managers.GoToRepairAsAirUnit;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import bwapi.Color;
 
 public class ProtossObserver extends MobileDetector {
     public ProtossObserver(AUnit unit) {
@@ -20,6 +21,10 @@ public class ProtossObserver extends MobileDetector {
 
     @Override
     public boolean applies() {
+        if (unit.isObserver()) {
+            unit.paintCircleFilled(6, Color.Purple);
+        }
+
         return unit.isObserver();
     }
 

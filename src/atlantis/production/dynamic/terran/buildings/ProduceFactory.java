@@ -27,11 +27,9 @@ public class ProduceFactory {
     // =========================================================
 
     private static boolean whenBioOnly() {
-        if (true) return false;
-
         if (!Have.barracks()) return false;
-        if (!OurStrategy.get().goingBio()) return false; // See: ProduceFactory
-        if (A.supplyUsed() <= 25 || !A.hasGas(90)) return false;
+        if (A.supplyUsed() <= 25) return false;
+        if (!A.hasGas(260)) return false;
         if (Count.inProductionOrInQueue(Terran_Factory) >= 1) return false;
 //        if (CountInQueue.count(Terran_Factory) >= 1) return false;
         if (!A.canAfford(350, 200) && Count.factories() > 0) return false;

@@ -1,22 +1,37 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
-public class UnfreezeAttack extends Manager {
-    public UnfreezeAttack(AUnit unit) {
+public class UnfreezeAttackOrMove extends Manager {
+    public UnfreezeAttackOrMove(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return whenAttacking(unit);
+        if (unit.lastActionMoreThanAgo(57, Actions.MOVE_UNFREEZE)) return false;
+
+        return whenLongWithoutAction() || whenActionInit() || whenAttacking() || whenMoving();
     }
 
-    private boolean whenAttacking(AUnit unit) {
+    private boolean whenLongWithoutAction() {
+        return !unit.isWorker() && unit.lastActionMoreThanAgo(21);
+    }
+
+    private boolean whenActionInit() {
+        return unit.action().equals(Actions.INIT);
+    }
+
+    private boolean whenMoving() {
+        return (unit.isMoving() || unit.action().isMoving())
+            && unit.lastActionMoreThanAgo(33)
+            && unit.lastPositionChangedMoreThanAgo(5)
+            && unit.targetPosition() != null;
+    }
+
+    private boolean whenAttacking() {
         return
             unit.isAttackingOrMovingToAttack()
 //            && unit.noCooldown()

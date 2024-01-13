@@ -2,6 +2,8 @@ package atlantis.units.special;
 
 import atlantis.architecture.Manager;
 
+import atlantis.architecture.generic.DoNothing;
+import atlantis.combat.missions.Mission;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

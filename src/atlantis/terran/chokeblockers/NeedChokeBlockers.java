@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.choke.AChoke;
@@ -28,6 +29,8 @@ public class NeedChokeBlockers {
     private static boolean forProtoss() {
         if (A.supplyUsed() >= 45) return false;
         if (Missions.isGlobalMissionAttack()) return false;
+        
+        if (EnemyWhoBreachedBase.notNull()) return false;
 
         return Missions.isGlobalMissionDefendOrSparta();
     }

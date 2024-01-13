@@ -8,9 +8,9 @@ import bwapi.Color;
 
 public class ShouldContinueRunning {
     public static boolean handleContinueRunning(AUnit unit) {
-        if (justStartedRunning(unit)) return truth(unit);
-
         if (unit.isRunning()) {
+            if (justStartedRunning(unit)) return truth(unit);
+
             APosition targetPosition = unit.targetPosition();
             if (targetPosition == null || targetPosition.distTo(unit) <= 1.2) return false;
 
@@ -52,12 +52,20 @@ public class ShouldContinueRunning {
     }
 
     private static boolean justStartedRunning(AUnit unit) {
-        int MAX_FRAMES_AGO = 15;
+        int MAX_FRAMES_AGO = justStartedRunningFramesThreshold(unit);
+
+//        if (!unit.isMoving() && !unit.isRunning()) return false;
 
         if (unit.lastStartedRunningLessThanAgo(MAX_FRAMES_AGO)) return true;
         if (unit.lastActionLessThanAgo(MAX_FRAMES_AGO, Actions.MOVE_AVOID)) return true;
 
         return false;
+    }
+
+    private static int justStartedRunningFramesThreshold(AUnit unit) {
+        if (unit.isDragoon()) return 25;
+
+        return 15;
     }
 
     private static boolean truth(AUnit unit) {

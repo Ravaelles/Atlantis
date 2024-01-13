@@ -52,7 +52,13 @@ public class FallbackTargeting {
     }
 
     private static AUnit forRanged(AUnit unit) {
-        AUnit inRange = unit.enemiesNear().canBeAttackedBy(unit, 0).mostWounded();
+        AUnit inRange;
+
+        inRange = unit.enemiesNear().canBeAttackedBy(unit, 0).wounded().mostWounded();
+
+        if (inRange != null) return inRange;
+
+        inRange = unit.enemiesNear().canBeAttackedBy(unit, 0).nearestTo(unit);
 
         if (inRange != null) return inRange;
 

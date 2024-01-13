@@ -14,7 +14,8 @@ public class ChokeBlockerFight extends Manager {
     @Override
     public boolean applies() {
         return !unit.isScv()
-            && unit.lastUnderAttackLessThanAgo(40);
+            && unit.hp() >= 32;
+//            && unit.lastUnderAttackLessThanAgo(40);
     }
 
     @Override
@@ -33,6 +34,12 @@ public class ChokeBlockerFight extends Manager {
     }
 
     private AUnit enemyInRange() {
-        return unit.enemiesNear().inRadius(1.02, unit).groundUnits().mostWounded();
+        return unit.enemiesNear().inRadius(maxDistToAttack(), unit).groundUnits().mostWounded();
+    }
+
+    private double maxDistToAttack() {
+        if (unit.enemiesNear().inRadius(4, unit).groundUnits().count() <= 1) return 2.5;
+
+        return 1.02;
     }
 }

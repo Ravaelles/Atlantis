@@ -1,5 +1,6 @@
-package atlantis.combat.micro.avoid.margin;
+package atlantis.combat.micro.avoid.margin.zerg;
 
+import atlantis.combat.micro.avoid.margin.SafetyMarginAgainstMelee;
 import atlantis.units.AUnit;
 
 public class ZergSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
@@ -8,9 +9,7 @@ public class ZergSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     public double handle(AUnit attacker) {
-        if (defender.isHydralisk()) {
-            return forHydralisk(attacker);
-        }
+        if (defender.isHydralisk()) return forHydralisk(attacker);
 
         if (attacker.isZealot()) return 0.8;
 
@@ -18,14 +17,8 @@ public class ZergSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     private double forHydralisk(AUnit attacker) {
-        if (!defender.isHydralisk()) {
-            return -1;
-        }
+        if (defender.isHealthy()) return 0;
 
-        if (defender.isHealthy()) {
-            return 0;
-        }
-
-        return defender.woundPercent() / 33;
+        return defender.woundPercent() / 33.0;
     }
 }

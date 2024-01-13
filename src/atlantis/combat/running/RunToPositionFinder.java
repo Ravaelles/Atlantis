@@ -31,22 +31,24 @@ public class RunToPositionFinder {
     protected HasPosition findBestPositionToRun(HasPosition runAwayFrom, double dist) {
         AUnit unit = running.unit;
 
-        // Run to BUNKER
-        if (ShouldRunTowardsBunker.check(unit, runAwayFrom)) {
-            AUnit position = ShouldRunTowardsBunker.position();
-            if (position != null) {
-                unit.paintCircleFilled(8, Color.Teal);
-                return running.setRunTo(position);
+        if (!unit.isFlying()) {
+            // Run to BUNKER
+            if (ShouldRunTowardsBunker.check(unit, runAwayFrom)) {
+                AUnit position = ShouldRunTowardsBunker.position();
+                if (position != null) {
+                    unit.paintCircleFilled(8, Color.Teal);
+                    return running.setRunTo(position);
+                }
             }
-        }
 
-        // === Run directly to base ========================
+            // === Run directly to base ========================
 
-        if (ShouldRunTowardsBase.check(unit, runAwayFrom)) {
-            AUnit position = ShouldRunTowardsBase.position();
-            if (position != null) {
-                unit.paintCircleFilled(3, Color.Yellow);
-                return running.setRunTo(position);
+            if (ShouldRunTowardsBase.check(unit, runAwayFrom)) {
+                AUnit position = ShouldRunTowardsBase.position();
+                if (position != null) {
+                    unit.paintCircleFilled(3, Color.Yellow);
+                    return running.setRunTo(position);
+                }
             }
         }
 
@@ -82,63 +84,6 @@ public class RunToPositionFinder {
         }
         return runAwayFrom;
     }
-
-    /**
-     * Returns a place where run to, searching in all directions, which is walkable, inbounds and most distant
-     * to given runAwayFrom position.
-     */
-//    private APosition findPositionToRunInAnyDirection(AUnit unit, HasPosition runAwayFrom) {
-//
-//        // === Define run from ====================================================
-////        Units unitsInRadius = Select.enemyRealUnits().melee().inRadius(4, unit).units();
-////        APosition runAwayFrom = unitsInRadius.median();
-//        if (runAwayFrom == null) {
-//            System.err.println("Run away from is null in findRunPositionAtAnyDirection");
-//            return null;
-//        }
-//
-//        // === Define if we don't want to go towards region polygon points ========
-//
-////        boolean avoidCornerPoints = AMap.getDistanceToAnyRegionPolygonPoint(unit.getPosition()) > 1.5;
-//
-//        // ========================================================================
-//
-//        APosition unitPosition = unit.position();
-//        int radius = runAnyDirectionInitialRadius();
-//        APosition bestPosition = null;
-//        while (bestPosition == null && radius >= 0.3) {
-//            bestPosition = findRunPositionInAnyDirection(unitPosition, runAwayFrom, radius);
-//            radius -= 1;
-//        }
-//
-//        // =========================================================
-//
-////        if (bestPosition != null) {
-////            APainter.paintLine(unit, bestPosition, Color.Green);
-////            APainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
-////        }
-//
-////        AtlantisPainter.paintCircleFilled(unit.getPosition(), 7, Color.Purple);
-////        AtlantisPainter.paintLine(unit.getPosition(), bestPosition, Color.Green);
-////        AtlantisPainter.paintLine(unit.getPosition().translateByPixels(1, 1), bestPosition.translateByPixels(1, 1), Color.Green);
-//        return bestPosition;
-//    }
-    APosition findRunPositionInAnyDirection(HasPosition runAwayFrom) {
-
-        // Build list of possible run positions, basically around the clock
-        //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
-
-
-        // =========================================================
-        // Find the location that would be most distant to the enemy location
-
-        return runInAnyDirection.findRunPositionInAnyDirection(runAwayFrom);
-    }
-
-//    int runAnyDirectionInitialRadius(AUnit unit) {
-//
-//        return runInAnyDirection.runAnyDirectionInitialRadius(unit, running.runFrom);
-//    }
 
     /**
      * Returns true if given run position is traversable, land-connected and not very, very far

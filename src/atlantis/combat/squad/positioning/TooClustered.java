@@ -10,6 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 
 public class TooClustered extends Manager {
     public TooClustered(AUnit unit) {
@@ -18,6 +19,8 @@ public class TooClustered extends Manager {
 
     @Override
     public boolean applies() {
+        if (!We.terran()) return false;
+
         int seconds = A.seconds();
 
         if (seconds >= 300 && seconds % 10 <= 4) return false;

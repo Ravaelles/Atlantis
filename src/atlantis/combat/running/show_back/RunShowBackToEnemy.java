@@ -33,9 +33,10 @@ public class RunShowBackToEnemy {
 //        if (true) return false;
 //        if (true) return true;
 
+        if (unit.isFlying()) return true;
+
         if (!unit.isWorker() && !unit.isDragoon()) return false;
 
-        if (unit.isFlying()) return true;
         if (unit.isGroundUnit() && unit.meleeEnemiesNearCount(1.9) > 0) return true;
 
         return false;

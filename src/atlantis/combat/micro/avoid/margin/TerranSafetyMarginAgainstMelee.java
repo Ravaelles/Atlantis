@@ -99,9 +99,17 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
     private boolean canIgnoreThisEnemyForNow(AUnit attacker) {
         if (attacker.isMelee()) {
-            if (attacker.cooldownRemaining() >= 9) return true;
+//            if (defender.isOtherUnitShowingBackToUs(attacker)) {
+//                System.err.println("defender.isOtherUnitShowingBackToUs(attacker) = " + defender.isOtherUnitShowingBackToUs(attacker));
+//                System.err.println(defender + " / " + defender.getAngle() + " // " + attacker + " / " + attacker.getAngle());
+//            }
             if (defender.isOtherUnitShowingBackToUs(attacker)) return true;
-            if (defender.hp() >= 18 && !attacker.hasTargetted(defender) && !attacker.isFacing(defender)) return true;
+//            if (attacker.isOtherUnitShowingBackToUs(defender)) return true;
+
+            if (defender.hp() <= 18) return false;
+
+            if (attacker.cooldownRemaining() >= 9) return true;
+//            if (defender.hp() >= 18 && !attacker.hasTargetted(defender) && !attacker.isFacing(defender)) return true;
         }
 
 //        if (attacker.isRanged()) return false;

@@ -15,8 +15,8 @@ import starengine.StarEngineLauncher;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-    //    public static final String OUR_RACE = "Protoss";
-    public static final String OUR_RACE = "Terran";
+    public static final String OUR_RACE = "Protoss";
+//    public static final String OUR_RACE = "Terran";
 //    public static final String OUR_RACE = "Zerg";
 
     public static final String ENEMY_RACE = "Protoss";
@@ -70,7 +70,7 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roa.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -80,7 +80,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-//        if (true) return "ums/7th.scx";
+        if (true) return "ums/7th.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_skilltest_asP.scx"; // Protoss v. AI Protoss player
 
@@ -162,7 +162,7 @@ public class Main {
 //        if (true) return "ums/rav/2Drag_v_2Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";
-        if (true) return "ums/rav/3Drag_v_3Drag.scm";
+//        if (true) return "ums/rav/3Drag_v_3Drag.scm";
 //@        if (true) return "ums/rav/3Ze/al_v_1Zeal.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag_withBase.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag.scm";

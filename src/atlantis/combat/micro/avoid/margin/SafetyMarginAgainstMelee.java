@@ -1,5 +1,7 @@
 package atlantis.combat.micro.avoid.margin;
 
+import atlantis.combat.micro.avoid.margin.protoss.ProtossSafetyMarginAgainstMelee;
+import atlantis.combat.micro.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 import bwapi.Color;
@@ -37,6 +39,12 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
         else if (defender.isTerranInfantry()) {
             criticalDist = (new TerranSafetyMarginAgainstMelee(defender)).handleTerranInfantry(attacker);
+        }
+
+        // === Protoss ===============================================
+
+        else if (defender.isProtoss()) {
+            criticalDist = (new ProtossSafetyMarginAgainstMelee(defender)).handle(attacker);
         }
 
         // === Zerg ===============================================
@@ -171,9 +179,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     }
 
     protected double woundedAgainstMeleeBonus(AUnit attacker) {
-//        if (attacker.isRanged()) {
-//            return 2;
-//        }
+        if (defender.isHealthy()) return 0;
+
+        if (defender.isDragoon()) {
+            return 0.5 + defender.woundPercent() / 33.0;
+        }
 
         if (defender.isZealot()) {
             return defender.hpLessThan(21) ? 1.8 : 0;

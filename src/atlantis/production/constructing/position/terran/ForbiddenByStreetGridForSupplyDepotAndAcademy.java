@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.terran;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.AbstractPositionFinder;
@@ -10,7 +11,8 @@ import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
 public class ForbiddenByStreetGridForSupplyDepotAndAcademy {
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
-        if (true) return false;
+//        if (true) return false;
+//        if (A.supplyTotal() <= 20) return false;
 
         if (!building.isSupplyDepot() && !building.isAcademy()) return false;
 
@@ -29,7 +31,7 @@ public class ForbiddenByStreetGridForSupplyDepotAndAcademy {
     }
 
     private static boolean streetGridMatches(APosition position) {
-        return position.tx() % 3 == 0 && position.ty() % 2 == 0;
+        return position.tx() % 3 == 1 && position.ty() % 2 == 0;
 //            && position.tx() % 12 != 6 && position.ty() % 8 != 4;
 //            && position.tx() % 9 != 0 && position.ty() % 6 != 0;
     }

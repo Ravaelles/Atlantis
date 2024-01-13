@@ -9,12 +9,7 @@ import atlantis.production.dynamic.zerg.ZergDynamicTechResearch;
 import atlantis.production.dynamic.zerg.ZergDynamicUnitsCommander;
 import atlantis.util.We;
 
-public class DynamicUnitProducerCommander extends Commander {
-    @Override
-    public boolean applies() {
-        return true;
-    }
-
+public class DynamicUnitAndTechProducerCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         Class[] raceSpecific = null;
@@ -25,13 +20,13 @@ public class DynamicUnitProducerCommander extends Commander {
                 TerranDynamicUnitsCommander.class,
             };
         }
-        else if (We.protoss()) {
+        if (We.protoss()) {
             raceSpecific = new Class[]{
                 ProtossDynamicTechResearch.class,
                 ProtossDynamicUnitsCommander.class,
             };
         }
-        else if (We.zerg()) {
+        if (We.zerg()) {
             raceSpecific = new Class[]{
                 ZergDynamicTechResearch.class,
                 ZergDynamicUnitsCommander.class,

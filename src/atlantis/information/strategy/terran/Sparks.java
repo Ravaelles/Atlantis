@@ -10,6 +10,6 @@ public class Sparks extends AStrategy {
 
     @Override
     public void applyDecisions() {
-        TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.setCurrentValue(true);
+//        TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.setCurrentValue(true);
     }
 }

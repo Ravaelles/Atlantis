@@ -76,7 +76,7 @@ public class AddToQueue {
         if (Count.inQueueOrUnfinished(upgrade, MAX) > 0) {
             ProductionOrder existingOrder = Queue.get().nextOrders(MAX).upgradeType(upgrade).first();
 
-            if (existingOrder != null) Queue.get().removeOrder(existingOrder);
+            if (existingOrder != null && !existingOrder.isInProgress()) Queue.get().removeOrder(existingOrder);
             else ErrorLog.printMaxOncePerMinute("Could not find existing order for " + upgrade + " to remove");
 
             return false;

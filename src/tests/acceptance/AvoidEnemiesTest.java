@@ -24,7 +24,7 @@ public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
 
     @Test
     public void zergUnits() {
-        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10).setAngle(0);
         FakeUnit drone, ling1, hydra, sunken, ling2;
 
         FakeUnit[] enemies = fakeEnemies(
@@ -38,7 +38,8 @@ public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
             fake(AUnitType.Zerg_Spore_Colony, 12),
             fake(AUnitType.Zerg_Drone, 13),
             fake(AUnitType.Zerg_Drone, 14),
-            ling1 = fake(AUnitType.Zerg_Zergling, 11.8),
+            ling1 = fake(AUnitType.Zerg_Zergling, 10.1).setAngle(Angle.degreesToRadians(180)),
+//            ling1 = fake(AUnitType.Zerg_Zergling, 11.8).setAngle(Angle.degreesToRadians(0)),
             hydra = fake(AUnitType.Zerg_Hydralisk, 14),
             sunken = fake(AUnitType.Zerg_Sunken_Colony, 16),
             fake(AUnitType.Zerg_Creep_Colony, 11),

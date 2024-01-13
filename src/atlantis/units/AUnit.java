@@ -13,6 +13,7 @@ import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.running.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -808,7 +809,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         double extraMargin
     ) {
         if (hasNoWeaponAtAll() || !hasWeaponToAttackThisUnit(target)) return false;
-        if (target.isFoggedUnitWithUnknownPosition()) return false;
+        if (!target.hasPosition()) return false;
         if (checkVisibility && target.effUndetected()) return false;
 
         // Target is GROUND unit
@@ -1913,8 +1914,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public HasPosition squadCenter() {
         if (!hasSquad()) {
-            return null;
+            if (Env.isTesting()) return Select.our().nonBuildings().first();
+            return Alpha.alphaCenter();
         }
+
         return squad().center();
     }
 
@@ -1922,7 +1925,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (Selection) cache.get(
             "squadCenterEnemiesNear",
             1,
-            () -> Select.enemy().inRadius(18, squadCenter())
+            () -> Select.enemy().havingPosition().inRadius(18, squadCenter())
         );
     }
 
