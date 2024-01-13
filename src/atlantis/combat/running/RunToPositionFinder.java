@@ -29,22 +29,23 @@ public class RunToPositionFinder {
      * Running behavior which will make unit run straight away from the enemy.
      */
     protected HasPosition findBestPositionToRun(HasPosition runAwayFrom, double dist) {
-        // Run to BUNKER
+        AUnit unit = running.unit;
 
-        if (ShouldRunTowardsBunker.check(running.unit, runAwayFrom)) {
+        // Run to BUNKER
+        if (ShouldRunTowardsBunker.check(unit, runAwayFrom)) {
             AUnit position = ShouldRunTowardsBunker.position();
             if (position != null) {
-                running.unit.paintCircleFilled(8, Color.Teal);
+                unit.paintCircleFilled(8, Color.Teal);
                 return running.setRunTo(position);
             }
         }
 
         // === Run directly to base ========================
 
-        if (ShouldRunTowardsBase.check(running.unit, runAwayFrom)) {
+        if (ShouldRunTowardsBase.check(unit, runAwayFrom)) {
             AUnit position = ShouldRunTowardsBase.position();
             if (position != null) {
-                running.unit.paintCircleFilled(3, Color.Yellow);
+                unit.paintCircleFilled(3, Color.Yellow);
                 return running.setRunTo(position);
             }
         }
@@ -53,6 +54,15 @@ public class RunToPositionFinder {
 
         if (running.showBackToEnemy.shouldRunByShowingBackToEnemy()) {
             if (runShowBackToEnemy.positionForShowingBackToEnemy(runAwayFrom)) {
+                Color color = Color.Blue;
+                HasPosition runTo = unit.runningManager().runTo;
+                APainter.paintLine(unit, runTo, color);
+                APainter.paintLine(
+                    unit.translateByPixels(0, 1),
+                    runTo.translateByPixels(0, 1),
+                    color
+                );
+
                 return running.runTo();
             }
         }

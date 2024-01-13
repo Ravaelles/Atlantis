@@ -5,7 +5,6 @@ import atlantis.combat.running.RunToPositionFinder;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
-import atlantis.game.CameraCommander;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -45,11 +44,12 @@ public class RunInAnyDirection {
         // =============================================================================
 
         if (runningManager.runTo() != null) {
-            APainter.paintLine(unit, runningManager.runTo(), Color.Purple);
+            Color color = Color.Purple;
+            APainter.paintLine(unit, runningManager.runTo(), color);
             APainter.paintLine(
-                    unit.translateByPixels(0, 1),
-                    runningManager.runTo().translateByPixels(0, 1),
-                    Color.Purple
+                unit.translateByPixels(0, 1),
+                runningManager.runTo().translateByPixels(0, 1),
+                color
             );
         }
 

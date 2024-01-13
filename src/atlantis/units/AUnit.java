@@ -539,7 +539,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isTargetInWeaponRangeAccordingToGame(AUnit target) {
-        return hasWeaponRangeByGame(target);
+        return target == null || hasWeaponRangeByGame(target);
     }
 
     /**
@@ -1032,6 +1032,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * E.g. for Dragoon this value will vary between 0 and 30 inclusive.
      */
     public int cooldownRemaining() {
+        if (u == null || !isVisibleUnitOnMap()) return 0;
+
         if (canAttackGroundUnits()) {
             return groundWeaponCooldown();
         }
@@ -1384,6 +1386,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean hasTarget() {
         return target() != null;
+    }
+
+    public boolean noTarget() {
+        return target() == null;
     }
 
     public boolean hasTargetPosition() {
@@ -3042,4 +3048,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return UnitAttackWaitFrames.stopFrames(this.type());
     }
 
+    public boolean hasTargetted(AUnit defender) {
+        return target() != null && target().equals(defender);
+    }
 }

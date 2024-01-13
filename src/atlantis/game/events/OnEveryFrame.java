@@ -7,6 +7,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
 import atlantis.production.orders.build.CurrentBuildOrder;
+import atlantis.util.log.ErrorLog;
 
 public class OnEveryFrame {
     public static void update() {
@@ -31,10 +32,9 @@ public class OnEveryFrame {
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
         catch (Exception e) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("### AN ERROR HAS OCCURRED ###");
-//            A.printStackTrace("### AN ERROR HAS OCCURRED ###");
             System.err.println("### AN ERROR HAS OCCURRED ###");
-//            if (true) throw e;
             e.printStackTrace();
+//            if (true) throw e;
         }
 
         if (A.notUms() && A.now() == 1) {

@@ -21,9 +21,9 @@ public class UnfreezeAttack extends Manager {
             unit.isAttackingOrMovingToAttack()
 //            && unit.noCooldown()
 //            && (unit.hasNotMovedInAWhile() || unit.lastActionLessThanAgo(62, Actions.ATTACK_UNIT))
-                && unit.lastActionMoreThanAgo(3, Actions.ATTACK_UNIT)
-                && unit.lastPositionChangedMoreThanAgo(3)
-                && (unit.hasTarget() && !unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
+//                && unit.lastActionMoreThanAgo(3, Actions.ATTACK_UNIT)
+                && unit.lastPositionChangedMoreThanAgo(4)
+                && (unit.noTarget() || !unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
     }
 
     @Override

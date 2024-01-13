@@ -336,12 +336,11 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintEnemyCombatUnits() {
         for (AUnit enemy : Select.enemy().combatUnits().list()) {
-            if (!enemy.isAlive()) {
-                continue;
-            }
+            if (!enemy.isAlive()) continue;
 
             paintCombatEval(enemy);
             paintLifeBar(enemy);
+//            paintCooldown(enemy);
 //            paintEnemyTargets(enemy);
             paintTextCentered(enemy, enemy.idWithHash(), Color.Grey, 0, 1);
         }
@@ -1415,10 +1414,18 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCooldown(AUnit unit) {
-        boolean shouldAvoidAnyUnit = (new AvoidEnemies(unit)).shouldAvoidAnyUnit();
+        Color color;
+
+        if (unit.isOur()) {
+            boolean shouldAvoidAnyUnit = (new AvoidEnemies(unit)).shouldAvoidAnyUnit();
+            color = shouldAvoidAnyUnit ? Red : Teal;
+        }
+        else {
+            color = Brown;
+        }
 
 //        paintUnitProgressBar(unit, 27, 100, Color.Grey);
-        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), shouldAvoidAnyUnit ? Color.Red : Color.Teal);
+        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), color);
     }
 
     private static void paintLifeBar(AUnit unit) {

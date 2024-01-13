@@ -1,6 +1,6 @@
 ### BUGS ###
 
------- 1500 min / 1500 gas for bio only - probably no upgrades and not enough upgrades
+.------ 1500 min / 1500 gas for bio only - probably no upgrades and not enough upgrades
 
 
 ---- Double robotics & observatory
@@ -13,10 +13,7 @@
 
 .---- Wraiths sacrificing v Goons, only run near 30hp, Should go 2 repair, obviously die at spot
 
---------------- MARINE close to bunker - died. test on minimap. Also fighting near tanks.
-
 ------- High ground for tank as (any high ground | in radius 7 | having ground path) + force eager siege during defend
---- Broken natural - 3 different logics
 
 - Still no Turrets against Scouts
 - No bunker no turret at natural

@@ -11,9 +11,9 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     protected double handleTerranInfantry(AUnit attacker) {
-//        if (canIgnoreThisEnemyForNow(attacker)) {
-//            return 2;
-//        }
+        if (canIgnoreThisEnemyForNow(attacker)) {
+            return -0.1;
+        }
 
         // =========================================================
 
@@ -98,12 +98,18 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     private boolean canIgnoreThisEnemyForNow(AUnit attacker) {
-        if (attacker.isRanged()) return false;
+        if (attacker.isMelee()) {
+            if (attacker.cooldownRemaining() >= 9) return true;
+            if (defender.isOtherUnitShowingBackToUs(attacker)) return true;
+            if (defender.hp() >= 18 && !attacker.hasTargetted(defender) && !attacker.isFacing(defender)) return true;
+        }
 
-        double distTo = defender.distTo(attacker);
-        if (distTo >= 4) return true;
-
-        if (distTo >= 2 && !defender.isOtherUnitFacingThisUnit(attacker)) return true;
+//        if (attacker.isRanged()) return false;
+//
+//        double distTo = defender.distTo(attacker);
+//        if (distTo >= 4) return true;
+//
+//        if (distTo >= 2 && !defender.isOtherUnitFacingThisUnit(attacker)) return true;
 
         return false;
     }

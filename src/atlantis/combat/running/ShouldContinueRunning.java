@@ -8,11 +8,11 @@ import bwapi.Color;
 
 public class ShouldContinueRunning {
     public static boolean handleContinueRunning(AUnit unit) {
+        if (justStartedRunning(unit)) return truth(unit);
+
         if (unit.isRunning()) {
             APosition targetPosition = unit.targetPosition();
             if (targetPosition == null || targetPosition.distTo(unit) <= 1.2) return false;
-
-            if (justStartedRunning(unit)) return truth(unit);
 
             if (unit.cooldown() <= 2) {
 //                double rangeBonus = unit.isHealthy() ? 0.5 : 1.2;
