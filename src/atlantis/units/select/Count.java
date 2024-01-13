@@ -368,6 +368,10 @@ public class Count {
         return ofTypeFree(AUnitType.Terran_Starport);
     }
 
+    public static int freeBarracks() {
+        return ofTypeFree(AUnitType.Terran_Barracks);
+    }
+
     public static int freeGateways() {
         return ofTypeFree(AUnitType.Protoss_Gateway);
     }

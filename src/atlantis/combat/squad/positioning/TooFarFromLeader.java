@@ -21,6 +21,7 @@ public class TooFarFromLeader extends Manager {
     public boolean applies() {
         if (A.seconds() <= 220 && !Enemy.terran()) return false;
         if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
+        if (!unit.squad().isLeader(unit)) return false;
 
         if (A.supplyUsed() >= 90 && (
             unit.enemiesNear().empty() || EnemyUnits.discovered().buildings().atMost(1)
@@ -36,8 +37,7 @@ public class TooFarFromLeader extends Manager {
 
         if (wayTooFarFromLeader) return true;
 
-        return !unit.squad().isLeader(unit)
-            && tooFarFromLeader()
+        return tooFarFromLeader()
             && (wayTooFarFromLeader || !leaderIsOvercrowded())
             && (wayTooFarFromLeader || !unitIsOvercrowded());
     }

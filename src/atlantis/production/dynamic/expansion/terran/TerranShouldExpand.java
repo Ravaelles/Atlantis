@@ -121,7 +121,7 @@ public class TerranShouldExpand {
     }
 
     private static boolean forThirdAndLater() {
-
+        return false;
     }
 
     private static boolean forSecond() {

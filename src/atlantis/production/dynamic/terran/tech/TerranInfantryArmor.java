@@ -7,15 +7,15 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
+import atlantis.util.Enemy;
 import bwapi.UpgradeType;
 
 public class TerranInfantryArmor extends Commander {
     @Override
     public boolean applies() {
-        if (!A.hasMinerals(1000)) return false;
-        if (A.seconds() <= 600) return false;
+        if (!A.canAfford(550 + delayBonus(), 250)) return false;
 
-        if (OurStrategy.get().goingBio()) {
+        if (OurStrategy.get().goingBio() && Count.infantry() >= 8) {
             if (OurStrategy.get().goingBio()) {
 
                 int currentUpgradeLevel = ATech.getUpgradeLevel(UpgradeType.Terran_Infantry_Armor);
@@ -23,7 +23,6 @@ public class TerranInfantryArmor extends Commander {
                 if (
                     currentUpgradeLevel <= 2
                         && Count.infantry() >= minInfantry
-                        && AGame.canAffordWithReserved(100, 150)
                 ) {
                     if (ATech.isNotResearchedOrPlanned(UpgradeType.Terran_Infantry_Armor)) {
                         return true;
@@ -33,6 +32,10 @@ public class TerranInfantryArmor extends Commander {
         }
 
         return false;
+    }
+
+    private int delayBonus() {
+        return Enemy.protoss() ? 100 : 0;
     }
 
     @Override

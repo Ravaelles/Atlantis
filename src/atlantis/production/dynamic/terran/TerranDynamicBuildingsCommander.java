@@ -35,7 +35,6 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
             ProduceComsatStation.comsats();
             ProduceControlTower.controlTowers();
             ProduceBarracks.barracks();
-            ProduceFactoryWhenBioOnly.factoryIfBioOnly();
         }
 
         if (A.everyNthGameFrame(33)) {
@@ -45,7 +44,7 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
         if (A.everyNthGameFrame(37)) {
             ProduceMachineShop.produce();
-            ProduceFactory.factories();
+            ProduceFactory.factory();
         }
     }
 }

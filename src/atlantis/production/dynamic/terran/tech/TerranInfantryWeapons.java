@@ -7,21 +7,20 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
+import atlantis.util.Enemy;
 import bwapi.UpgradeType;
 
 public class TerranInfantryWeapons extends Commander {
     @Override
     public boolean applies() {
-        if (!A.hasMinerals(800)) return false;
-        if (A.seconds() <= 600) return false;
+        if (!A.canAfford(550 + delayBonus(), 250)) return false;
 
-        if (OurStrategy.get().goingBio()) {
+        if (OurStrategy.get().goingBio() && Count.infantry() >= 8) {
             int currentUpgradeLevel = upgradeLevel();
             int minInfantry = 12 + currentUpgradeLevel * 9;
             if (
                 currentUpgradeLevel <= 2
                     && Count.infantry() >= minInfantry
-                    && AGame.canAffordWithReserved(100, 150)
             ) {
                 if (ATech.isNotResearchedOrPlanned(UpgradeType.Terran_Infantry_Weapons)) {
                     return true;
@@ -30,6 +29,10 @@ public class TerranInfantryWeapons extends Commander {
         }
 
         return false;
+    }
+
+    private int delayBonus() {
+        return Enemy.zerg() ? 100 : 0;
     }
 
     public static int upgradeLevel() {

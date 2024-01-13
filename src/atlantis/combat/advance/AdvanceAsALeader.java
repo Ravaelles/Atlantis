@@ -55,16 +55,27 @@ public class AdvanceAsALeader extends MissionManager {
     }
 
     private boolean handleWhenLonely() {
-        Squad squad = unit.squad();
-        if (squad.size() <= 2) return false;
+        if (!isLonely()) return false;
 
-        AUnit moveTo = squad.units().exclude(unit).nearestTo(squad.center());
+        AUnit moveTo = whenLonelyGoTo(squad);
         if (moveTo != null && moveTo.distTo(unit) > 3) {
             unit.move(moveTo, Actions.MOVE_FORMATION, "LeaderLonely");
             return true;
         }
 
         return false;
+    }
+
+    private boolean isLonely() {
+        Squad squad = unit.squad();
+        if (squad.size() <= 2) return false;
+
+        return unit.friendsNear().inRadius(5, unit).atMost(squad.size() / 2);
+    }
+
+    private AUnit whenLonelyGoTo(Squad squad) {
+        return squad.units().exclude(unit).nearestTo(squad.center());
+//        return squad.units().exclude(unit).groundUnits().mostDistantTo(Select.mainOrAnyBuilding());
     }
 
     private boolean actWithCohesionTooLow(String tooltip) {

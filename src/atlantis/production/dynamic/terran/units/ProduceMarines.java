@@ -27,10 +27,10 @@ public class ProduceMarines {
     private static int marines;
 
     public static boolean marines() {
-        int freeBarracks = Select.ourFree(Terran_Barracks).size();
+        int freeBarracks = Count.freeBarracks();
 
-        if (freeBarracks <= 0 || freeBarracks < CountInQueue.count(Terran_Marine)) return false;
-        if (Count.ofType(AUnitType.Terran_Barracks) == 0) return false;
+        if (freeBarracks <= 0) return false;
+//        freeBarracks < CountInQueue.count(Terran_Marine)
 
         marines = Count.marines();
 
@@ -50,7 +50,6 @@ public class ProduceMarines {
 //            return AddToQueue.maxAtATime(Terran_Marine, 1) != null;
 //        }
 
-        if (Select.ourFree(Terran_Barracks).empty()) return false;
         if (Enemy.terran() && (marines >= 4 && !A.hasMinerals(700 + 100 * marines))) return false;
         if (inRelationToTanks(marines)) return false;
 

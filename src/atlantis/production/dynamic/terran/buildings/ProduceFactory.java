@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -17,9 +18,59 @@ public class ProduceFactory {
     /**
      * If all factories are busy (training units) request new ones.
      */
-    public static boolean factories() {
+    public static boolean factory() {
+        if (OurStrategy.get().goingBio()) return whenBioOnly();
+
+        return whenNotBioOnly();
+    }
+
+    // =========================================================
+
+    private static boolean whenBioOnly() {
+        if (true) return false;
+
         if (!Have.barracks()) return false;
-        if (OurStrategy.get().goingBio()) return false; // See: ProduceFactoryWhenBioOnly
+        if (!OurStrategy.get().goingBio()) return false; // See: ProduceFactory
+        if (A.supplyUsed() <= 25 || !A.hasGas(90)) return false;
+        if (Count.inProductionOrInQueue(Terran_Factory) >= 1) return false;
+//        if (CountInQueue.count(Terran_Factory) >= 1) return false;
+        if (!A.canAfford(350, 200) && Count.factories() > 0) return false;
+
+        Selection freeFactories = Select.ourFree(Terran_Factory);
+
+        if (freeFactories.notEmpty()) return false;
+
+        if (secondFactory()) return true;
+
+        if (freeFactories.size() <= 0 && A.canAfford(300, 200)) {
+            produce();
+            return true;
+        }
+
+        if (
+            A.canAfford(160, 80)
+                && CountInQueue.bases() == 0
+                && ArmyStrength.weAreStronger()
+        ) return produce() != null;
+
+        if (
+            Count.ourCombatUnits() >= 3
+                && ArmyStrength.weAreStronger()
+                &&
+                (
+                    (Count.withPlanned(Terran_Factory) == 0)
+                        || (A.supplyUsed() >= 32 && Count.withPlanned(Terran_Factory) == 0)
+                )
+        ) {
+            return produce() != null;
+        }
+
+        return false;
+    }
+
+    private static boolean whenNotBioOnly() {
+        if (!Have.barracks()) return false;
+        if (OurStrategy.get().goingBio()) return false;
         if (!Have.academy() && !A.canAfford(350, 100)) return false;
         if (Count.inProductionOrInQueue(Terran_Factory) >= 1) return false;
         if (Count.freeFactories() >= 1) return false;
@@ -88,6 +139,8 @@ public class ProduceFactory {
 
         return false;
     }
+
+    // =========================================================
 
     private static ProductionOrder produce() {
         return AddToQueue.withHighPriority(Terran_Factory);
