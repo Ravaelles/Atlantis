@@ -14,6 +14,12 @@ public class ChokeBlockerMoveToBlock extends Manager {
         this.blockChokePoint = unit.specialPosition();
     }
 
+    @Override
+    public boolean applies() {
+        return unit.hp() >= 25
+            || unit.enemiesNear().inRadius(7, unit).groundUnits().havingAntiGroundWeapon().empty();
+    }
+
     public Manager handle() {
         double dist = unit.distTo(blockChokePoint);
         unit.paintLine(blockChokePoint, Color.White);

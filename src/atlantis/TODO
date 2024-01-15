@@ -1,5 +1,13 @@
 ### BUGS ###
 
+# Protoss
+
+- No logic to prevent base mining out
+- Dragoons getting stuck
+- STILL double obs/facility
+
+# Terran
+
 .------ 1500 min / 1500 gas for bio only - probably no upgrades and not enough upgrades
 
 

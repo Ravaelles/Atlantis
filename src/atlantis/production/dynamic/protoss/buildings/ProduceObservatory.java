@@ -14,7 +14,7 @@ public class ProduceObservatory {
         }
 
         if (Count.withPlanned(Protoss_Observatory) == 0) {
-            DynamicCommanderHelpers.buildNow(Protoss_Observatory);
+            DynamicCommanderHelpers.buildNow(Protoss_Observatory, true);
         }
     }
 }

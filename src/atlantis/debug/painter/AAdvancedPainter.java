@@ -853,7 +853,7 @@ public class AAdvancedPainter extends APainter {
 
         // Draw text
         paintTextCentered(
-            positionToBuild.translateByPixels(buildingType.dimensionLeftPx(), 69), text, color
+            positionToBuild.translateByPixels(buildingType.dimensionLeftPixels(), 69), text, color
         );
     }
 
@@ -868,7 +868,7 @@ public class AAdvancedPainter extends APainter {
 
             APosition unitPosition = unit.position();
             APosition targetPosition = unit.targetPosition();
-            int unitRadius = unit.type().dimensionLeftPx();
+            int unitRadius = unit.type().dimensionLeftPixels();
 
             // STARTING ATTACK
 //            if (unit.isStartingAttack()) {
@@ -1256,13 +1256,13 @@ public class AAdvancedPainter extends APainter {
             APosition topLeft;
             AUnitType type = foggedEnemy.type();
             topLeft = foggedEnemy.translateByPixels(
-                -type.dimensionLeftPx(),
-                -type.dimensionUpPx()
+                -type.dimensionLeftPixels(),
+                -type.dimensionUpPixels()
             );
             paintRectangle(
                 foggedEnemy.position(),
-                type.dimensionRightPx() / 32,
-                type.dimensionDownPx() / 32,
+                type.dimensionRightPixels() / 32,
+                type.dimensionDownPixels() / 32,
                 Color.Grey
             );
             paintText(topLeft, type.name() + " (" + foggedEnemy.lastPositionUpdatedAgo() + ")", Color.White);

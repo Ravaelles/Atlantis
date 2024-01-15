@@ -586,6 +586,30 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isGateway() {
+        return (boolean) cache.get(
+            "isGateway",
+            -1,
+            () -> is(Protoss_Gateway)
+        );
+    }
+
+    public boolean isStargate() {
+        return (boolean) cache.get(
+            "isStargate",
+            -1,
+            () -> is(Protoss_Stargate)
+        );
+    }
+
+    public boolean isRoboticsFacility() {
+        return (boolean) cache.get(
+            "isRoboticsFacility",
+            -1,
+            () -> is(Protoss_Robotics_Facility)
+        );
+    }
+
     public boolean isPylon() {
         return (boolean) cache.get(
             "isPylon",
@@ -893,44 +917,44 @@ public class AUnitType implements Comparable<Object> {
     /**
      * In pixels (1 tile = 32px)
      */
-    public int dimensionLeftPx() {
+    public int dimensionLeftPixels() {
         return ut.dimensionLeft();
     }
 
-    public int dimensionLeftTx() {
+    public int dimensionLeftTiles() {
         return ut.dimensionLeft() / 32;
     }
 
     /**
      * In pixels (1 tile = 32px)
      */
-    public int dimensionRightPx() {
+    public int dimensionRightPixels() {
         return ut.dimensionRight();
     }
 
-    public int dimensionRightTx() {
+    public int dimensionRightTiles() {
         return ut.dimensionRight() / 32;
     }
 
     /**
      * In pixels (1 tile = 32px)
      */
-    public int dimensionUpPx() {
+    public int dimensionUpPixels() {
         return ut.dimensionUp();
     }
 
-    public int dimensionUpTx() {
+    public int dimensionUpTiles() {
         return ut.dimensionUp() / 32;
     }
 
     /**
      * In pixels (1 tile = 32px)
      */
-    public int dimensionDownPx() {
+    public int dimensionDownPixels() {
         return ut.dimensionDown();
     }
 
-    public int dimensionDownTx() {
+    public int dimensionDownTiles() {
         return ut.dimensionDown() / 32;
     }
 
@@ -962,7 +986,7 @@ public class AUnitType implements Comparable<Object> {
     }
 
     private int calculateAddonWidthInPx(AUnitType addon) {
-        return addon.dimensionLeftPx() + addon.dimensionRightPx();
+        return addon.dimensionLeftPixels() + addon.dimensionRightPixels();
     }
 
     /**
@@ -1574,6 +1598,14 @@ public class AUnitType implements Comparable<Object> {
             "isResource",
             -1,
             () -> isGasBuilding() || is(Terran_Supply_Depot, Protoss_Pylon, Zerg_Overlord)
+        );
+    }
+
+    public boolean needsPower() {
+        return (boolean) cache.get(
+            "needsPower",
+            -1,
+            () -> isABuilding() && isProtoss() && !is(Protoss_Pylon, Protoss_Assimilator, Protoss_Nexus)
         );
     }
 }

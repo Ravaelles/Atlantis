@@ -23,10 +23,15 @@ public class OverlappingBaseLocation {
                 || checkExistingConstructionsOfOtherBase(position)
         ) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Base to close to anotha base";
-            return true;
+            return failed("Base to close to anotha base");
         }
 
         return false;
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 
     private static boolean checkExistingConstructionsOfOtherBase(APosition position) {
@@ -49,8 +54,7 @@ public class OverlappingBaseLocation {
 //                System.err.println("   --- BASE " + base.position() + " Out with dist: " + base.translateByTiles(4,
 //                    1).distTo(position) + " / " + position);
 //                APosition natural = Bases.natural();
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "Overlaps base location";
-                return true;
+                return failed("Overlaps base location");
             }
         }
 
@@ -59,8 +63,7 @@ public class OverlappingBaseLocation {
 
     private static boolean checkExistingBasesIncludingUnfinished(APosition position) {
         if (Select.ourBuildingsWithUnfinished().bases().inRadius(10, position).isNotEmpty()) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Base already exists here";
-            return true;
+            return failed("Base already exists here");
         }
 
         return false;

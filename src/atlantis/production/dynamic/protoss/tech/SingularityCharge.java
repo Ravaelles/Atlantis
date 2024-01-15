@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
@@ -15,9 +16,9 @@ public class SingularityCharge extends Commander {
 
         int dragoons = Count.dragoons();
 
-        if (A.hasGas(150) && (A.hasGas(260) || dragoons >= 3)) {
-            return true;
-        }
+        if (!A.hasMinerals(300) && ArmyStrength.ourArmyRelativeStrength() <= 80) return false;
+
+        if (A.hasGas(150) && (A.hasGas(260) || dragoons >= 3)) return true;
 
         return false;
     }

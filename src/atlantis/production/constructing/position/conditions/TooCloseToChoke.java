@@ -19,12 +19,16 @@ public class TooCloseToChoke {
 
             double distToChoke = minDistToChoke(position, choke);
             if (distToChoke <= minDist) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "Overlaps choke (" + distToChoke + ")";
-                return true;
+                return failed("Overlaps choke (" + distToChoke + ")");
             }
         }
 
         return false;
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 
     private static double minDistToChoke(APosition position, AChoke choke) {

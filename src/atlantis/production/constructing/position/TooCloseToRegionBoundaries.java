@@ -12,6 +12,11 @@ public class TooCloseToRegionBoundaries {
         ARegionBoundary nearestBoundary = region.nearestBoundary(position);
         if (nearestBoundary == null) return false;
 
-        return nearestBoundary.distTo(position) <= 2.5;
+        return nearestBoundary.distTo(position) <= 2.5 ? failed("Too close to region boundary") : false;
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 }

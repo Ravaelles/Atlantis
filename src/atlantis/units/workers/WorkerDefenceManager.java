@@ -45,12 +45,12 @@ public class WorkerDefenceManager extends Manager {
         if (unit.enemiesNear().combatUnits().isEmpty()) return false;
 
         // Don't run from little dangerous enemies
-        if (unit.hp() >= 35) {
+        if (unit.hp() >= 38) {
             Selection baseEnemies = unit.enemiesNear().ofType(
                 AUnitType.Protoss_Scout, AUnitType.Protoss_Arbiter,
                 AUnitType.Terran_Wraith, AUnitType.Terran_Science_Vessel
             );
-            if (baseEnemies.inRadius(6, unit).atMost(3)) return false;
+            if (baseEnemies.inRadius(6, unit).atLeast(4)) return false;
         }
 
         if (handleFightEnemyIfNeeded(unit)) return true;
@@ -122,7 +122,7 @@ public class WorkerDefenceManager extends Manager {
      * Sometimes workers need to fight.
      */
     private static boolean handleFightEnemyIfNeeded(AUnit worker) {
-        if (shouldNotFight(worker)) return false;
+//        if (shouldNotFight(worker)) return false;
 
         // DESTROY ENEMY BUILDINGS that are being built close to main base.
         if (handleEnemyBuildingsOffensive(worker)) return true;
@@ -203,6 +203,7 @@ public class WorkerDefenceManager extends Manager {
     }
 
     private static boolean handleFightEnemyCombatUnits(AUnit worker) {
+        if (Enemy.protoss() && worker.hp() <= 38) return false;
         if (worker.hp() <= 20) return false;
 
         if (worker.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
@@ -225,21 +226,7 @@ public class WorkerDefenceManager extends Manager {
 //                AUnitType.Protoss_Zealot
         ).inRadius(8, worker).count() >= 1) return false;
 
-        // FIGHT against ZERGLINGS
-        for (AUnit enemy : Select.enemies(AUnitType.Zerg_Zergling).inRadius(2, worker).list()) {
-//            if ((worker.hp() <= 20 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
-            if (
-                worker.hp() <= 20
-                    || (worker.hp() <= 54 && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty())
-            ) {
-                worker.setTooltipTactical("Aaargh!");
-                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, true);
-                return true;
-            }
-            worker.attackUnit(enemy);
-            worker.setTooltipTactical("ForMotherland!");
-            return true;
-        }
+        if (fightGroundEnemies(worker)) return true;
 
         // FIGHT against COMBAT UNITS
         List<AUnit> enemies = worker.enemiesNear()
@@ -257,6 +244,28 @@ public class WorkerDefenceManager extends Manager {
             return worker.attackUnit(enemy);
         }
 
+        return false;
+    }
+
+    private static boolean fightGroundEnemies(AUnit worker) {
+        // FIGHT against ZERGLINGS
+        for (AUnit enemy : worker.enemiesNear().groundUnits().inRadius(4.2, worker).list()) {
+            if (worker.hp() <= 37) continue;
+            if (worker.noCooldown() && worker.distToBase() >= 8) continue;
+
+//            if ((worker.hp() <= 20 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
+            if (
+                worker.isScv() && worker.hp() <= 54
+                    && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty()
+            ) {
+                worker.setTooltipTactical("Aaargh!");
+                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, true);
+                return true;
+            }
+            worker.attackUnit(enemy);
+            worker.setTooltipTactical("ForMotherland!");
+            return true;
+        }
         return false;
     }
 

@@ -21,8 +21,7 @@ public class IsProbablyInAnotherRegion {
 //                && (A.supplyTotal() <= 50 || building.isCombatBuilding())
                 && !nearTo.regionsMatch(position)
         ) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Region mismatch";
-            return true;
+            return failed("Region mismatch");
         }
 
         return false;
@@ -40,14 +39,18 @@ public class IsProbablyInAnotherRegion {
 //        return result;
     }
 
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
+    }
+
     private static boolean handleIsBadRegionForFirstBunker(AUnitType building, APosition position) {
         if (!We.terran() || !building.isBunker()) return false;
         if (Count.bunkers() >= 2) return false;
 
 //        System.err.println("MISMATCH = " + !position.regionsMatch(MainRegion.mainRegion()));
         if (!position.regionsMatch(MainRegion.mainRegion())) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Bad region for first bunker";
-            return true;
+            return failed("Bad region for first bunker");
         }
 
 //        System.out.println("position = " + position.region());

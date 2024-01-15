@@ -14,7 +14,6 @@ import atlantis.util.We;
 public class TooCloseToBase {
     public static boolean isTooCloseToBase(AUnitType building, APosition position) {
         if (!We.terran()) return false;
-
         if (building.isGasBuilding()) return false;
 
         double minDistToBase = building.isSupplyDepot() ? 4 : 3;
@@ -27,7 +26,7 @@ public class TooCloseToBase {
 
         if (
             base.translateByTiles(3, 1).distTo(position) <= minDistToBase
-            || base.distTo(position) <= minDistToBase
+                || base.distTo(position) <= minDistToBase
         ) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to base";
             return true;

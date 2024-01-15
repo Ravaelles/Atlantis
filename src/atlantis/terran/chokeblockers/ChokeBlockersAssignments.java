@@ -34,7 +34,8 @@ public class ChokeBlockersAssignments {
     // =========================================================
 
     public void assignWorkersWhenNeeded() {
-        if (!We.terran()) return;
+        if (We.protoss() && Count.ourCombatUnits() >= 4) return;
+//        if (!We.terran()) return;
         if (A.everyFrameExceptNthFrame(13)) return;
 
         int newWorkersNeeded = workersNeeded() - blockers.size();
@@ -51,7 +52,7 @@ public class ChokeBlockersAssignments {
     private int workersNeeded() {
         if (We.protoss()) {
             if (Enemy.zerg()) return Math.max(0, 2 - Count.zealots());
-            return 0;
+            return A.seconds() >= 60 ? 1 : 0;
         }
 
         if (We.terran()) return 2;

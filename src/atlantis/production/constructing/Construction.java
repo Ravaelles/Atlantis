@@ -151,7 +151,7 @@ public class Construction implements Comparable<Construction> {
         APosition positionToBuild = buildPosition();
         if (positionToBuild != null) {
             return positionToBuild.translateByPixels(
-                buildingType().dimensionLeftPx(), buildingType().dimensionUpPx()
+                buildingType().dimensionLeftPixels(), buildingType().dimensionUpPixels()
             );
         }
         else {

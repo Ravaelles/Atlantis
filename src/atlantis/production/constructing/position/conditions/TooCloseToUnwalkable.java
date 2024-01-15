@@ -17,8 +17,12 @@ public class TooCloseToUnwalkable {
 
         if (isTooClose(building, position)) return true;
 
-        AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to unwalkable";
-        return false;
+        return failed("Too close to unwalkable");
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 
     protected static boolean isTooClose(AUnitType building, APosition position) {
@@ -29,8 +33,7 @@ public class TooCloseToUnwalkable {
         APosition down = BuildingTileHelper.tileDownFrom(building, position);
 
         if (!left.isWalkable() && !down.isWalkable()) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Left and down from unwalkable";
-            return true;
+            return failed("Left and down from unwalkable");
         }
 
 //        if (

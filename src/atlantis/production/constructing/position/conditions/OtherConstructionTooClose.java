@@ -38,13 +38,17 @@ public class OtherConstructionTooClose {
 
                 // Look for two bases that would be built too close one to another
                 if (distance <= (building.canHaveAddon() ? 4 : 2.5)) {
-                    AbstractPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" + building + ", DIST: " + distance + ")";
-                    return true;
+                    return failed("Planned building too close (" + building + ", dist: " + distance + ")");
                 }
             }
         }
 
         // No collisions detected
         return false;
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 }

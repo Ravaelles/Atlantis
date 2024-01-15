@@ -18,10 +18,12 @@ import static atlantis.units.AUnitType.Terran_Marine;
 
 public class ProduceDragoon {
     public static boolean dragoon() {
+        if (!A.hasGas(50)) return false;
+
         int dragoons = Count.dragoons();
 
         if (noProperBuildings()) return false;
-        if (dragoons >= 2 && (!A.hasMinerals(250) || !A.hasGas(150))) return false;
+        if (dragoons >= 3 && (!A.hasMinerals(250) || !A.hasGas(150))) return false;
         if (A.supplyUsed() >= 50 && (!A.hasMinerals(300) || !A.hasGas(200))) return false;
         if (Decisions.needToProduceZealotsNow() && !A.hasGas(50)) return false;
         if (!A.hasMineralsAndGas(700, 250) && !A.canAffordWithReserved(125, 50)) return false;
@@ -31,11 +33,11 @@ public class ProduceDragoon {
             return produceDragoon();
         }
 
-        if (A.hasGas(100) && A.supplyUsed() <= 38) {
+        if (A.hasGas(50) && A.supplyUsed() <= 38) {
             return produceDragoon();
         }
 
-        return produceDragoon();
+        return A.hasGas(200) && produceDragoon();
     }
 
     private static boolean noProperBuildings() {

@@ -2214,7 +2214,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // Approximate unit width (in tiles).
     public double size() {
-        return (type().dimensionLeftPx() + type().dimensionRightPx() + 2) / 64.0;
+        return (type().dimensionLeftPixels() + type().dimensionRightPixels() + 2) / 64.0;
     }
 
     public boolean isMarine() {
@@ -2766,6 +2766,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         return focusPoint.distTo(this);
+    }
+
+    public double distToBase() {
+        AUnit base = Select.ourBases().nearestTo(this);
+        if (base == null) return 999;
+
+        return base.distTo(this);
     }
 
     public boolean lastPositioningActionMoreThanAgo(int minFramesAgo) {

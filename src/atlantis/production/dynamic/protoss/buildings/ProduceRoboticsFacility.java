@@ -14,13 +14,8 @@ public class ProduceRoboticsFacility {
             return;
         }
 
-        if (Have.notEvenPlanned(Protoss_Robotics_Facility)) {
-            AddToQueue.withHighPriority(Protoss_Robotics_Facility);
-            return;
-        }
-
         if (Count.withPlanned(Protoss_Robotics_Facility) == 0) {
-            DynamicCommanderHelpers.buildNow(Protoss_Robotics_Facility);
+            DynamicCommanderHelpers.buildNow(Protoss_Robotics_Facility, true);
         }
     }
 }

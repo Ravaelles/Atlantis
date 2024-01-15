@@ -41,8 +41,8 @@ public class TerranForbiddenByStreetGrid {
 //        if (position.tx() % GRID_VALUE_X <= 0) return fail("TX modulo");
 //        if (position.ty() % GRID_VALUE_Y <= 0) return fail("TY modulo");
 
-        if ((position.tx() + building.dimensionRightPx() / 32) % GRID_VALUE_X <= 0) return fail("TX modulo");
-        if ((position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE_Y <= 0) return fail("TY modulo");
+        if ((position.tx() + building.dimensionRightPixels() / 32) % GRID_VALUE_X <= 0) return fail("TX modulo");
+        if ((position.ty() + building.dimensionDownPixels() / 32) % GRID_VALUE_Y <= 0) return fail("TY modulo");
 
 //        if ((position.tx() + building.dimensionRightPx() * 32) % GRID_VALUE_X <= 0) return fail("TX modulo");
 //        if ((position.ty() + building.dimensionDownPx() * 32) % GRID_VALUE_Y <= 0) return fail("TY modulo");
@@ -93,12 +93,12 @@ public class TerranForbiddenByStreetGrid {
     }
 
     private static int buildingLeftTx(AUnitType building, APosition position) {
-        return position.tx() - building.dimensionLeftPx() / 32;
+        return position.tx() - building.dimensionLeftPixels() / 32;
     }
 
     private static int buildingRightTx(AUnitType building, APosition position) {
         int addonBonus = building.addonWidthInPx();
 
-        return (int) (position.tx() + (building.dimensionRightPx() + addonBonus) / 32);
+        return (int) (position.tx() + (building.dimensionRightPixels() + addonBonus) / 32);
     }
 }

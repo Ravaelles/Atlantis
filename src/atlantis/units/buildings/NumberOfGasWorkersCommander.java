@@ -51,13 +51,15 @@ public class NumberOfGasWorkersCommander extends Commander {
     // =========================================================
 
     public static int defineGasWorkersPerBuilding() {
-//        return 3;
-
         int workers = Count.workers();
 
 //        if (workers <= 8) {
 //            return 0;
 //        }
+
+        if (workers <= 7) {
+            return 0;
+        }
 
         if (workers <= 13 && !A.hasMinerals(150)) {
             return 1;

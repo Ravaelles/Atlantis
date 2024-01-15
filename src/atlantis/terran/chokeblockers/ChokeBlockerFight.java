@@ -14,7 +14,7 @@ public class ChokeBlockerFight extends Manager {
     @Override
     public boolean applies() {
         return !unit.isScv()
-            && unit.hp() >= 32;
+            && unit.hp() >= 40;
 //            && unit.lastUnderAttackLessThanAgo(40);
     }
 

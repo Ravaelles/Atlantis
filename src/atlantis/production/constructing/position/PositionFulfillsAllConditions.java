@@ -4,12 +4,16 @@ import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.conditions.*;
+import atlantis.production.constructing.position.protoss.IsPositionPowered;
+import atlantis.production.constructing.position.protoss.ProtossForProducerBuilding;
 import atlantis.production.constructing.position.protoss.ProtossForbiddenByStreetGrid;
+import atlantis.production.constructing.position.protoss.TooCloseToOtherPylons;
 import atlantis.production.constructing.position.terran.TerranForbiddenByStreetGrid;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.constructing.position.terran.TooCloseToBunker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
@@ -27,25 +31,32 @@ public class PositionFulfillsAllConditions {
 //        System.out.println(position + " / " + AbstractPositionFinder._CONDITION_THAT_FAILED);
 
         APainter.paintCircle(position, 6, Color.Red);
-//        if (building.isBunker()) PauseAndCenter.on(position, true);
 
-        if (!verifyPositionAndBuilder(builder, position)) return false;
+        if (!verifyInvalidPositionOrBuilder(builder, position)) return false;
 
-        if (TerranForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
-        if (ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
-        if (!HasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return false;
+        if (We.protoss()) {
+            if (ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
+//            if (IsPositionPowered.isNotPowered(building, position)) return false;
+//            if (TooCloseToOtherPylons.isTooCloseToOtherPylons(builder, building, position)) return false;
+//            if (ProtossForProducerBuilding.isForbidden(builder, building, position)) return false;
+        }
+
+        if (We.terran()) {
+            if (TerranForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
+            if (!HasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return false;
+            if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return false;
+            if (building.isMissileTurret()) {
+                if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return false;
+            }
+            if (TooCloseToBunker.isTooCloseToBunker(building, position)) return false;
+        }
+
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return false;
         if (OverlappingBaseLocation.isOverlappingBaseLocation(building, position)) return false;
         if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return false;
-        if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return false;
         if (TooCloseToChoke.isTooCloseToChoke(building, position)) return false;
 
-        if (building.isMissileTurret()) {
-            if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return false;
-            return true;
-        }
 
-        if (TooCloseToBunker.isTooCloseToBunker(building, position)) return false;
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return false;
         if (TooCloseToBase.isTooCloseToBase(building, position)) return false;
         if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) return false;
@@ -56,7 +67,7 @@ public class PositionFulfillsAllConditions {
         return true;
     }
 
-    private static boolean verifyPositionAndBuilder(AUnit builder, APosition position) {
+    private static boolean verifyInvalidPositionOrBuilder(AUnit builder, APosition position) {
         if (position == null) {
             ErrorLog.printMaxOncePerMinute("PositionFulfillsAllConditions: position is null");
             AbstractPositionFinder._CONDITION_THAT_FAILED = "POSITION ARGUMENT IS NULL";

@@ -1,7 +1,7 @@
 // === CUSTOMIZABLE VARIABLES =========================================
 
 // Which worker (1st, 8th etc) should scout and try to find enemy base
-#SCOUT_IS_NTH_WORKER=9
+#SCOUT_IS_NTH_WORKER=14
 
 // When supply is bigger than N, then start auto-producing supply units
 #AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=30
@@ -34,7 +34,8 @@ Zealot Core Zealot
 10 - Gateway
 13 - Zealot
 16 - Cybernetics Core
-17 - Pylon
+18 - Pylon
 18 - Assimilator
+18 - Gateway
 19 - Zealot
 24 - Pylon

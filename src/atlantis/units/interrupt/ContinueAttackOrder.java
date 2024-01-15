@@ -21,7 +21,8 @@ public class ContinueAttackOrder extends Manager {
         return unit.lastActionLessThanAgo(unit.attackWaitFrames(), Actions.ATTACK_UNIT)
             && target != null
             && target.hasPosition()
-            && target.isAlive();
+            && target.isAlive()
+            && unit.hasWeaponRangeByGame(target);
     }
 
     public Manager handle() {

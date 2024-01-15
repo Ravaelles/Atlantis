@@ -23,17 +23,20 @@ public class TooCloseToMineralsOrGeyser {
         double minDistToMineral = minDistToMineral(building);
 
         if (mineral != null && mineral.distTo(position) <= minDistToMineral) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to mineral";
-            return true;
+            return failed("Too close to mineral");
         }
 
         AUnit gasBuilding = Select.geysersAndGasBuildings().nearestTo(position);
         if (gasBuilding != null && gasBuilding.distTo(position) <= 3.2) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to geyser";
-            return true;
+            return failed("Too close to geyser");
         }
 
         return false;
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 
     private static double minDistToMineral(AUnitType building) {

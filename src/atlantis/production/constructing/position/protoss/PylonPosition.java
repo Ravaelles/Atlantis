@@ -26,13 +26,15 @@ public class PylonPosition {
         }
 
         if (mineralsCenter != null) {
-            position = position.translateTilesTowards(mineralsCenter, -3);
+            position = position.translateTilesTowards(mineralsCenter, -2);
 //            AAdvancedPainter.paintPosition(position, "AwayFromMinerals");
         }
         if (geyser != null) {
-            position = position.translateTilesTowards(geyser, -2);
+            position = position.translateTilesTowards(geyser, -1);
 //            AAdvancedPainter.paintPosition(position, "AwayFromGeyserAndMinerals");
         }
+        if (position != null) position = position.translatePercentTowards(base, 90);
+        if (position != null) position = position.translateTilesTowards(base, -1);
 
         return position;
     }

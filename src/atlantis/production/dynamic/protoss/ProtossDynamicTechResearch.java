@@ -28,26 +28,9 @@ public class ProtossDynamicTechResearch extends Commander {
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[]{
             SingularityCharge.class,
-//            LegEnhancements.class,
-//            ProtossGroundWeapons.class,
-//            ProtossGroundArmor.class,
+            LegEnhancements.class,
+            ProtossGroundWeapons.class,
+            ProtossGroundArmor.class,
         };
     }
-
-//    @Override
-//    public void handle() {
-//        if (singularityCharge()) return;
-//
-//        if (!A.canAfford(500, 200)) return;
-//
-//        if (Count.zealots() >= 10) {
-//            if (DynamicTech.handleUpgrade(UpgradeType.Leg_Enhancements)) return;
-//        }
-//        if (Count.ourCombatUnits() >= 16) {
-//            if (DynamicTech.handleUpgrade(UpgradeType.Protoss_Ground_Weapons)) return;
-//        }
-//        else if (Count.ourCombatUnits() >= 25) {
-//            if (DynamicTech.handleUpgrade(UpgradeType.Protoss_Ground_Armor)) return;
-//        }
-//    }
 }
