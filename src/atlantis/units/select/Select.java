@@ -9,6 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 import java.util.*;
 
@@ -86,7 +87,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     }
                     else {
                         if (!Env.isTesting() && !Env.isStarEngine()) {
-                            System.err.println("Enemy unit found but not alive = " + unit);
+                            ErrorLog.printMaxOncePerMinute(
+                                "Enemy unit found but not alive = " + unit + " / hp=" + unit.hp() + " / u=" + unit.u()
+                            );
                         }
                     }
                 }

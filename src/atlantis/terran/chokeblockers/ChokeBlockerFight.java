@@ -28,7 +28,7 @@ public class ChokeBlockerFight extends Manager {
         }
 
         AUnit breachedBase = EnemyWhoBreachedBase.get();
-        if (breachedBase != null && unit.canAttackTarget(breachedBase)) {
+        if (breachedBase != null && breachedBase.isDetected() && unit.canAttackTarget(breachedBase)) {
             if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(breachedBase)) return usedManager(this);
         }
 
@@ -36,11 +36,14 @@ public class ChokeBlockerFight extends Manager {
     }
 
     private AUnit enemyInRange() {
-        return unit.enemiesNear().inRadius(maxDistToAttack(), unit).groundUnits().mostWounded();
+        return unit.enemiesNear().groundUnits().canBeAttackedBy(unit, maxDistToAttack() - 1).mostWounded();
     }
 
     private double maxDistToAttack() {
-        if (unit.enemiesNear().inRadius(4, unit).groundUnits().count() <= 1) return 2.5;
+        if (
+            unit.enemiesNear().inRadius(4, unit).groundUnits().count() <= 1
+                && unit.enemiesNear().inRadius(9, unit).groundUnits().count() <= 1
+        ) return 2.5;
 
         return 1.02;
     }

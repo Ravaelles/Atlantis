@@ -20,7 +20,8 @@ public class ProcessAttackUnit extends Manager {
             return false;
         }
         if (target.hp() <= 0) {
-            ErrorLog.printMaxOncePerMinute(
+//            ErrorLog.printMaxOncePerMinute(
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                 unit.type() + " AttackUnit got target.hp = " + target.hp() + " - " + target.type()
             );
             return false;

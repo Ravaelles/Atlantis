@@ -95,7 +95,7 @@ public class NumberOfGasWorkersCommander extends Commander {
     private static void assignBestWorkerToGasBuilding(AUnit gasBuilding) {
         AUnit worker = getWorkerForGasBuilding(gasBuilding);
         if (worker == null) {
-            if (Count.workers() >= 6) ErrorLog.printMaxOncePerMinute("No worker for gas building");
+//            if (Count.workers() >= 8) ErrorLog.printMaxOncePerMinute("No worker for gas building");
             return;
         }
 

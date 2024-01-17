@@ -58,7 +58,7 @@ public class AttackNearbyEnemies extends Manager {
 
         if (handleAttackNearEnemyUnits()) {
             if (unit.isAttacking() && (unit.target() == null || unit.target().hp() <= 0)) {
-                System.err.println(unit + " handleAttackNearEnemyUnits got " + unit.target());
+                A.errPrintln(unit + " handleAttackNearEnemyUnits got " + unit.target());
                 return null;
             }
             return usedManager(this);

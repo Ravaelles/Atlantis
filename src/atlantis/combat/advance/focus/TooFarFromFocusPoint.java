@@ -41,7 +41,10 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     }
 
     protected boolean act() {
-        APosition goTo = unit.distTo(focusPoint) <= 3 ? unit.translateTilesTowards(0.15, focusPoint) : focusPoint;
+        double distToFocus = unit.distTo(focusPoint);
+        APosition goTo = distToFocus <= 4
+            ? goToWhenCloseToFocus()
+            : goToWhenFarFromFocus();
 
         if (goTo != null && goTo.isWalkable()) {
             unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
@@ -49,6 +52,16 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         }
 
         return false;
+    }
+
+    private APosition goToWhenFarFromFocus() {
+        if (!focusPoint.isAroundChoke()) return focusPoint;
+
+        return focusPoint.translateTilesTowards(-3, focusPoint.choke());
+    }
+
+    private APosition goToWhenCloseToFocus() {
+        return unit.translateTilesTowards(0.15, focusPoint);
     }
 }
 

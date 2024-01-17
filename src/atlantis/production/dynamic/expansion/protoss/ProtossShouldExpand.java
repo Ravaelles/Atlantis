@@ -85,8 +85,8 @@ public class ProtossShouldExpand {
         int seconds = A.seconds();
         int armyStrength = OurArmyStrength.relative();
 
-        if (armyStrength <= 90) return no("TooWeak");
-        if (seconds <= 400 && armyStrength < 110) return no("Weak");
+        if (armyStrength <= 80) return no("TooWeak");
+        if (Count.gateways() >= 3) return yes("ManyGateways");
 
         if (bases <= 1 && basesInProduction <= 0) {
             if (Count.workers() >= 22) return yes("ManyWorkers");
@@ -102,6 +102,8 @@ public class ProtossShouldExpand {
         if (secondsAllow) return yes("StrongEnough");
 
         if (AGame.canAfford(360, 0)) return yes("CanAfford");
+
+        if (seconds <= 400 && armyStrength < 100) return no("Weak");
 
         return no("JustDont");
     }

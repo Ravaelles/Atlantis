@@ -8,7 +8,7 @@ import atlantis.util.log.ErrorLog;
 
 public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
-        if (preventTooManyUnfreezingActions(unit)) return true;
+        if (shouldNotDoAnythingButContinue(unit)) return true;
 
 //        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(10, Actions.HOLD_POSITION)) {
         if (!unit.isHoldingPosition()) {
@@ -22,8 +22,8 @@ public class UnfreezerShakeUnit {
 
 //        HasPosition goTo = Select.ourBuildings().random();
         HasPosition goTo = unit.enemiesNear().nearestTo(unit);
-        if (goTo == null && unit.distToLeader() > 7) goTo = unit.squadLeader();
-        if (goTo == null) goTo = unit.friendsNear().notInRadius(2, unit).nearestTo(unit);
+        if (goTo == null && unit.distToLeader() > 3) goTo = unit.squadLeader();
+//        if (goTo == null) goTo = unit.friendsNear().notInRadius(2, unit).nearestTo(unit);
 //            if (goTo == null) goTo = unit.friendsNear().mostDistantTo(unit);
 //            if (goTo == null) goTo = Select.our().exclude(unit).nearestTo(unit);
         if (goTo == null) goTo = Select.our().exclude(unit).groundUnits().random();
@@ -38,8 +38,8 @@ public class UnfreezerShakeUnit {
         return false;
     }
 
-    private static boolean preventTooManyUnfreezingActions(AUnit unit) {
+    private static boolean shouldNotDoAnythingButContinue(AUnit unit) {
         return unit.isAccelerating()
-            || unit.lastActionLessThanAgo(5, Actions.HOLD_POSITION, Actions.MOVE_UNFREEZE);
+            || unit.lastActionLessThanAgo(7, Actions.HOLD_POSITION, Actions.MOVE_UNFREEZE);
     }
 }

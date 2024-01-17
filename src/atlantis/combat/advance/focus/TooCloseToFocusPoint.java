@@ -41,10 +41,20 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     protected boolean act() {
+        if (forDragoon()) return true;
+
 //        APosition goTo = isTooFar ? focusPoint : unit.translateTilesTowards(0.1, focusPoint);
         if (goAwayFromCenter()) return true;
         if (goToMain()) return true;
 
+        return false;
+    }
+
+    private boolean forDragoon() {
+        if (unit.isDragoon() && unit.isHealthy()) {
+            unit.holdPosition("DragoonHold");
+            return true;
+        }
         return false;
     }
 

@@ -35,7 +35,10 @@ public class ProtossWarping {
         ArrayList<Construction> notStartedConstructions = ConstructionRequests.notStartedOfType(newBuilding.type());
 
         if (notStartedConstructions.isEmpty()) {
-            ErrorLog.printMaxOncePerMinute("!!! No not started constructions for " + newBuilding);
+            ErrorLog.printMaxOncePerMinute(
+                "!!! No not started constructions for " + newBuilding
+                    + " / " + ConstructionRequests.countPendingOfType(newBuilding.type())
+            );
             return null;
         }
 
