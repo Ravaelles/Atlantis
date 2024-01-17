@@ -1,7 +1,7 @@
 package atlantis.production.constructing;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
-import atlantis.game.AGame;
+import atlantis.game.race.MyRace;
 import atlantis.production.constructing.position.terran.TerranAddonBuilder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
@@ -37,7 +37,7 @@ public class SpecificConstructionRequests {
     // === Zerg ========================================
 
     private static boolean handledZergSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (!AGame.isPlayingAsZerg()) return false;
+        if (!MyRace.isPlayingAsZerg()) return false;
 
         if (building.equals(AUnitType.Zerg_Sunken_Colony)) {
             ZergCreepColony.creepOneIntoSunkenColony();

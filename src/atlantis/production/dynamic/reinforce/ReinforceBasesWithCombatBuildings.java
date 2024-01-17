@@ -3,7 +3,7 @@ package atlantis.production.dynamic.reinforce;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
-import atlantis.production.dynamic.expansion.AllOfOurBasePositions;
+import atlantis.information.generic.AllOfOurBasePositions;
 import atlantis.production.dynamic.reinforce.terran.TerranReinforceBasesWithCombatBuildings;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForNonMain;

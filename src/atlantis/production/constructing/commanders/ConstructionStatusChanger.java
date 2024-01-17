@@ -3,7 +3,7 @@ package atlantis.production.constructing.commanders;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.game.AGame;
+import atlantis.game.race.MyRace;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
@@ -83,7 +83,7 @@ public class ConstructionStatusChanger extends Commander {
         }
 
         // If playing as ZERG...
-        if (AGame.isPlayingAsZerg()) {
+        if (MyRace.isPlayingAsZerg()) {
             handleZergConstructionsWhichBecameBuildings();
         }
 
@@ -146,7 +146,7 @@ public class ConstructionStatusChanger extends Commander {
      * the drone actually became a building (sweet metamorphosis, yay!).
      */
     private void handleZergConstructionsWhichBecameBuildings() {
-        if (AGame.isPlayingAsZerg()) {
+        if (MyRace.isPlayingAsZerg()) {
             ArrayList<Construction> allOrders = ConstructionRequests.all();
             if (!allOrders.isEmpty()) {
                 for (Construction construction : allOrders) {

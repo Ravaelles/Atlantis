@@ -14,7 +14,6 @@ public class TerranRepairsCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[]{
-            ChokeBlockersCommander.class,
             NewRepairsCommander.class,
             RepairerCommander.class,
             ProtectorCommander.class,

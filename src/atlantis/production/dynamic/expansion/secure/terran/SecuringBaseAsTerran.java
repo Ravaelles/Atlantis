@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.expansion.secure;
+package atlantis.production.dynamic.expansion.secure.terran;
 
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.game.A;
@@ -15,7 +15,7 @@ import atlantis.util.log.ErrorLog;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
 
-public class SecuringBase {
+public class SecuringBaseAsTerran {
     public static final int DIST_FROM_BASE = 14;
 
     private final SecuringWithBunker securingWithBunker;
@@ -23,7 +23,7 @@ public class SecuringBase {
 
     private APosition baseToSecure;
 
-    public SecuringBase(APosition baseToSecure) {
+    public SecuringBaseAsTerran(APosition baseToSecure) {
         this.baseToSecure = baseToSecure;
         this.securingWithBunker = new SecuringWithBunker(this);
         this.securingWithTurret = new SecuringWithTurret(this);
@@ -44,7 +44,7 @@ public class SecuringBase {
     private boolean errorDetectedSameRegionAsMain(APosition bunkerPosition) {
         // @Fix
         if (bunkerPosition.regionsMatch(Select.main())) {
-            ErrorLog.printMaxOncePerMinute("Trying SecuringBase main - ignore");
+            ErrorLog.printMaxOncePerMinute("Trying SecuringBaseAsTerran main - ignore");
             return true;
         }
         return false;

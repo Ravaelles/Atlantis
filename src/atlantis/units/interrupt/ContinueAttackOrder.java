@@ -22,7 +22,7 @@ public class ContinueAttackOrder extends Manager {
             && target != null
             && target.hasPosition()
             && target.isAlive()
-            && unit.hasWeaponRangeByGame(target);
+            && unit.canAttackTargetWithBonus(target, 1);
     }
 
     public Manager handle() {

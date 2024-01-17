@@ -7,6 +7,7 @@ import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.game.AGame;
 import atlantis.game.events.OnStart;
+import atlantis.game.race.EnemyRace;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.OurStrategy;
@@ -22,7 +23,12 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.Options;
-import bwapi.*;
+import atlantis.util.We;
+import bwapi.Game;
+import bwapi.Race;
+import bwapi.TechType;
+import bwapi.WalkPosition;
+import main.Main;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockedStatic;
@@ -34,7 +40,8 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -46,6 +53,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     public MockedStatic<AGame> aGame;
     public MockedStatic<ATech> aTech;
     public MockedStatic<Enemy> enemy;
+    public MockedStatic<EnemyRace> enemyRace;
 
     protected Options options = new Options();
 
@@ -211,12 +219,12 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
         aGame.when(AGame::minerals).thenReturn(444);
         aGame.when(AGame::gas).thenReturn(333);
-        aGame.when(AGame::isPlayingAsTerran).thenReturn(true);
-        aGame.when(AGame::isEnemyProtoss).thenReturn(true);
 
-//        try (MockedStatic<We> we = Mockito.mockStatic(We.class)) {
-//            we.when(We::terran).thenReturn(true);
-//        }
+        Main.OUR_RACE = "Terran";
+        enemyRace = Mockito.mockStatic(EnemyRace.class);
+        enemyRace.when(EnemyRace::isEnemyProtoss).thenReturn(true);
+        enemyRace.when(EnemyRace::isEnemyTerran).thenReturn(false);
+        enemyRace.when(EnemyRace::isEnemyZerg).thenReturn(false);
     }
 
     protected void setUpStrategy() {

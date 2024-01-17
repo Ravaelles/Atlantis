@@ -3,7 +3,6 @@ package atlantis.information.decisions;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.dynamic.zerg.units.ProduceZerglings;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -60,23 +59,6 @@ public class Decisions {
         );
     }
 
-    public static boolean buildRoboticsFacility() {
-        if (Have.roboticsFacility() || Have.notEvenPlanned(Protoss_Forge)) return false;
-
-        if (EnemyInfo.hasHiddenUnits()) {
-//            System.err.println("roboticsFacility because hasHiddenUnits");
-            return true;
-        }
-        if (A.supplyUsed() <= 44 && enemyStrategyIsRushOrCheese()) return false;
-        if (A.supplyUsed() <= 46 && Have.cannon()) return false;
-
-//        System.err.println("----- buildRoboticsFacility OK" );
-//        System.err.println("EnemyStrategy.get().isRushOrCheese() = " + EnemyStrategy.get().isRushOrCheese());
-//        System.err.println("EnemyStrategy.get().isRush() = " + EnemyStrategy.get().isRush());
-
-        return true;
-    }
-
     public static int minZealotsAgainstEnemyRush() {
         if (Enemy.protoss()) return enemyStrategyIsRushOrCheese() ? 4 : 3;
         if (Enemy.terran()) return 1;
@@ -116,7 +98,7 @@ public class Decisions {
         return false;
     }
 
-    protected static boolean enemyStrategyIsRushOrCheese() {
+    public static boolean enemyStrategyIsRushOrCheese() {
         return EnemyStrategy.get().isRushOrCheese();
     }
 }

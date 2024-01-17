@@ -33,9 +33,10 @@ public class IsReadyToProduceOrder {
             if (EnemyWhoBreachedBase.get() != null) return false;
         }
 
-        boolean notEnoughSupplyResources, noRequirement = false;
+        boolean notEnoughResources, notEnoughSupplyResources, noRequirement = false;
         if (
-            (notEnoughSupplyResources = (!order.supplyRequirementFulfilled() && !canSkip(order)))
+            (notEnoughSupplyResources = !order.supplyRequirementFulfilled())
+                || (notEnoughResources = !hasEnoughResourcesFor(order))
                 || (noRequirement = !order.checkIfHasWhatRequired())
         ) {
             return false;
@@ -46,13 +47,15 @@ public class IsReadyToProduceOrder {
         return true;
     }
 
-    private static boolean canSkip(ProductionOrder order) {
-        AUnitType type = order.unitType();
+    private static boolean hasEnoughResourcesFor(ProductionOrder order) {
+        AUnitType unitType = order.unitType();
 
-        return A.supplyUsed() >= 12
-            && A.supplyUsed() <= order.minSupply() + 3
-            && (order.isUnit() && type.isResource())
-            && A.canAfford(type.mineralPrice() + 100, type.gasPrice() > 0 ? type.gasPrice() + 50 : 0);
+        if (unitType == null) return true;
+
+        return A.supplyUsed() + 3 >= order.minSupply()
+//            && (order.isUnit() && unitType.isResource())
+            && A.canAffordWithReserved(unitType.mineralPrice() + 34, unitType.gasPrice());
+//            && A.canAfford(unitType.mineralPrice() + 100, unitType.gasPrice() > 0 ? unitType.gasPrice() + 50 : 0);
     }
 
     private static boolean cantAffordAndDidntExpandYet(ProductionOrder order) {

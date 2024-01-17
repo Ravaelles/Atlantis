@@ -1,5 +1,7 @@
 package atlantis.units;
 
+import atlantis.units.range.EnemyDragoonWeaponRange;
+import atlantis.units.range.OurDragoonWeaponRange;
 import atlantis.units.select.Count;
 import atlantis.util.Counter;
 import atlantis.util.cache.Cache;
@@ -1123,15 +1125,24 @@ public class AUnitType implements Comparable<Object> {
     }
 
     public int weaponRangeAgainst(AUnit anotherUnit) {
+        int cacheForFrames = -1;
+        if (isDragoon()) cacheForFrames = 113;
+
         return (int) cache.get(
             "weaponRangeAgainst:" + anotherUnit.type().name(),
-            -1,
+            cacheForFrames,
             () -> {
                 if (isCannon() || isSunken() || isSporeColony()) {
                     return 7;
                 }
                 if (isBunker()) {
                     return 6;
+                }
+                if (isDragoon()) {
+                    if (anotherUnit.isEnemy()) {
+                        return OurDragoonWeaponRange.range();
+                    }
+                    return EnemyDragoonWeaponRange.range();
                 }
 
                 if (isGroundUnit()) {

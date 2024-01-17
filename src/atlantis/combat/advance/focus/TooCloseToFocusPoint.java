@@ -3,6 +3,7 @@ package atlantis.combat.advance.focus;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -41,21 +42,40 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
 
     protected boolean act() {
 //        APosition goTo = isTooFar ? focusPoint : unit.translateTilesTowards(0.1, focusPoint);
-        HasPosition goTo = fromSide != null ? fromSide : Select.main();
+        if (goAwayFromCenter()) return true;
+        if (goToMain()) return true;
 
-        if (goTo != null && goTo.isWalkable()) {
+        return false;
+    }
+
+    private boolean goAwayFromCenter() {
+        AChoke choke = focusPoint.choke();
+        HasPosition goTo = choke;
+
+        if (goTo == null) return false;
+
+        goTo = goTo.translateTilesTowards(-0.2, choke);
+
+        if (goTo.isWalkable()) {
             unit.move(goTo, Actions.MOVE_FOCUS, "TooClose", true);
             return true;
         }
+        return false;
+    }
 
+    private boolean goToMain() {
+        HasPosition goTo = fromSide != null ? fromSide : Select.main();
+
+        if (goTo != null && goTo.isWalkable()) {
+            unit.move(goTo, Actions.MOVE_FOCUS, "TooCloseB", true);
+            return true;
+        }
         return false;
     }
 
     @Override
     public double optimalDist() {
-        if (unit.isMedic()) return 0.5;
-        if (unit.isMelee()) return 2;
-        return 4;
+        return OptimalDistanceToFocusPoint.forUnit(unit);
     }
 }
 

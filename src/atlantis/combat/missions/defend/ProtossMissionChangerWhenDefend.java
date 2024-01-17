@@ -2,11 +2,13 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
@@ -22,6 +24,13 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     public boolean canChange() {
         if (EnemyInfo.isEnemyNearAnyOurBase()) return false;
+        if (A.seconds() <= 200) {
+            if (!OurStrategy.get().isRushOrCheese()) return false;
+        }
+
+        if (A.seconds() <= 260) {
+            if (AGame.killsLossesResourceBalance() < 0) return false;
+        }
 
 //        if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {
         if (GamePhase.isEarlyGame()) {

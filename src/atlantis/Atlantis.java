@@ -6,10 +6,7 @@ import atlantis.config.env.Env;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
 import atlantis.game.events.*;
-import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.enemy.UnitsArchive;
-import atlantis.map.path.OurClosestBaseToEnemy;
-import atlantis.production.constructing.ProtossWarping;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -163,7 +160,7 @@ public class Atlantis implements BWEventListener {
     public void onUnitDiscover(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
-            OnUnitDiscover.update(unit);
+            OnEnemyNewUnitDiscovered.update(unit);
         }
     }
 
@@ -220,10 +217,6 @@ public class Atlantis implements BWEventListener {
         onUnitDestroy(u);
         AUnit newUnit = AUnit.createFrom(u);
         OnUnitRenegade.update(newUnit);
-    }
-
-    public static void enemyNewUnit(AUnit unit) {
-        EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
     }
 
     public static void ourNewUnit(AUnit unit) {

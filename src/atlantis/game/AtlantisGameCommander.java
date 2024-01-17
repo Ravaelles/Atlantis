@@ -11,6 +11,7 @@ import atlantis.map.scout.ScoutCommander;
 import atlantis.production.BuildingsCommander;
 import atlantis.production.ProductionCommander;
 import atlantis.production.constructing.ConstructionsCommander;
+import atlantis.terran.chokeblockers.ChokeBlockersCommander;
 import atlantis.terran.repair.TerranRepairsCommander;
 import atlantis.units.special.SpecialUnitsCommander;
 import atlantis.units.special.SpecialActionsCommander;
@@ -34,6 +35,7 @@ public class AtlantisGameCommander extends Commander {
             BuildingsCommander.class,
             ConstructionsCommander.class,
             TerranRepairsCommander.class,
+            ChokeBlockersCommander.class,
             SpecialUnitsCommander.class,
             UnitStateCommander.class,
 

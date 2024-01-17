@@ -101,6 +101,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Barracks) > 0;
     }
 
+    public static boolean gateway() {
+        return Count.ofType(AUnitType.Protoss_Gateway) > 0;
+    }
+
     public static boolean academy() {
         return Count.ofType(AUnitType.Terran_Academy) > 0;
     }
@@ -127,6 +131,10 @@ public class Have {
 
     public static boolean roboticsFacility() {
         return have(AUnitType.Protoss_Robotics_Facility);
+    }
+
+    public static boolean forge() {
+        return have(AUnitType.Protoss_Forge);
     }
 
     public static boolean larvas(int minLarvas) {

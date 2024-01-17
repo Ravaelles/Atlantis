@@ -1,17 +1,16 @@
-package atlantis.production.dynamic.expansion.secure;
+package atlantis.production.dynamic.expansion.secure.terran;
 
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.map.base.IsNatural;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.We;
 
 public class SecuringWithBunker {
-    private final SecuringBase securingBase;
+    private final SecuringBaseAsTerran securingBase;
     private NewBunkerPositionFinder newBunkerPositionFinder;
 
-    public SecuringWithBunker(SecuringBase securingBase) {
+    public SecuringWithBunker(SecuringBaseAsTerran securingBase) {
         this.securingBase = securingBase;
         newBunkerPositionFinder = (new NewBunkerPositionFinder(securingBase.baseToSecure()));
     }

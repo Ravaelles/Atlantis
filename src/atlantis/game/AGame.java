@@ -3,13 +3,11 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.MapSpecificCommander;
 
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnitType;
 import bwapi.*;
-import main.Main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -207,55 +205,6 @@ public class AGame {
      */
     public static int rand(int min, int max) {
         return A.rand(min, max);
-    }
-
-    /**
-     * Returns true if user plays as Terran.
-     */
-    public static boolean isPlayingAsTerran() {
-        if (AtlantisRaceConfig.MY_RACE == null) return "Terran".equals(Main.OUR_RACE);
-
-        return AtlantisRaceConfig.MY_RACE.equals(Race.Terran);
-    }
-
-    /**
-     * Returns true if user plays as Protoss.
-     */
-    public static boolean isPlayingAsProtoss() {
-        if (AtlantisRaceConfig.MY_RACE == null) return "Protoss".equals(Main.OUR_RACE);
-
-        return AtlantisRaceConfig.MY_RACE.equals(Race.Protoss);
-    }
-
-    /**
-     * Returns true if user plays as Zerg.
-     */
-    public static boolean isPlayingAsZerg() {
-        if (AtlantisRaceConfig.MY_RACE == null) return "Zerg".equals(Main.OUR_RACE);
-
-        return AGame.getPlayerUs().getRace().equals(Race.Zerg);
-//        return AtlantisRaceConfig.MY_RACE.equals(Race.Zerg);
-    }
-
-    /**
-     * Returns true if enemy plays as Terran.
-     */
-    public static boolean isEnemyTerran() {
-        return AGame.enemy().getRace().equals(Race.Terran);
-    }
-
-    /**
-     * Returns true if enemy plays as Protoss.
-     */
-    public static boolean isEnemyProtoss() {
-        return AGame.enemy().getRace().equals(Race.Protoss);
-    }
-
-    /**
-     * Returns true if enemy plays as Zerg.
-     */
-    public static boolean isEnemyZerg() {
-        return AGame.enemy().getRace().equals(Race.Zerg);
     }
 
     /**

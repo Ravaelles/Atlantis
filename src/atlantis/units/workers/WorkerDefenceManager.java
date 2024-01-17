@@ -249,7 +249,7 @@ public class WorkerDefenceManager extends Manager {
 
     private static boolean fightGroundEnemies(AUnit worker) {
         // FIGHT against ZERGLINGS
-        for (AUnit enemy : worker.enemiesNear().groundUnits().inRadius(4.2, worker).list()) {
+        for (AUnit enemy : worker.enemiesNear().groundUnits().inRadius(3.2, worker).list()) {
             if (worker.hp() <= 37) continue;
             if (worker.noCooldown() && worker.distToBase() >= 8) continue;
 

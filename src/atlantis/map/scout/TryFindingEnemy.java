@@ -23,6 +23,7 @@ public class TryFindingEnemy extends Manager {
         return unit != null
             && !EnemyInfo.hasDiscoveredAnyBuilding()
             && A.notUms()
+            && !unit.isSpecialMission()
             && Select.main() != null;
     }
 

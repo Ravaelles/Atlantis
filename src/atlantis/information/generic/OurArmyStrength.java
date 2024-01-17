@@ -4,6 +4,9 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class OurArmyStrength {
+    public static int relative() {
+        return ArmyStrength.ourArmyRelativeStrength();
+    }
 
     public static double calculate() {
         double total = 0;

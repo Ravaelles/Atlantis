@@ -13,6 +13,8 @@ public class ChokeBlockerFight extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isZealot() && unit.hp() <= 24) return false;
+
         return !unit.isScv()
             && unit.hp() >= 40;
 //            && unit.lastUnderAttackLessThanAgo(40);

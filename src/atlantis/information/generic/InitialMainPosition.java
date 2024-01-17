@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.expansion;
+package atlantis.information.generic;
 
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;

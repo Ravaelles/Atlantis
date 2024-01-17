@@ -409,7 +409,11 @@ public class AAdvancedPainter extends APainter {
 
 
         String shouldExpand = ShouldExpand.shouldExpand() ? "YES" : "NO";
-        paintSideMessage("Should expand: " + shouldExpand, shouldExpand == "YES" ? Green : Grey);
+        String reason = ShouldExpand.reason != null ? " (" + ShouldExpand.reason + ")" : "";
+        paintSideMessage(
+            "Should expand: " + shouldExpand + reason,
+            shouldExpand == "YES" ? Green : Grey
+        );
 
 //        AFocusPoint focus = mission.focusPoint();
         paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.Grey);

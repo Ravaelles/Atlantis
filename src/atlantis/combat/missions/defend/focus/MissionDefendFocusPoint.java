@@ -19,6 +19,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
@@ -66,7 +67,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Main choke ================================================
 
-                if (A.supplyUsed() >= 50 && (focus = atMainChoke()) != null) return focus;
+                if ((focus = atMainChoke()) != null) return focus;
 
                 // ===============================================================
                 // === Around combat buildings ===================================
@@ -230,6 +231,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     // =========================================================
 
     public static AFocusPoint atMainChoke() {
+//        if (We.terran() && A.supplyUsed() < 50) return null;
+
         AChoke mainChoke = Chokes.mainChoke();
         if (mainChoke == null) {
             return null;

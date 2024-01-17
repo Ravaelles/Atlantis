@@ -16,6 +16,9 @@ public class ChokeBlockerMoveToBlock extends Manager {
 
     @Override
     public boolean applies() {
+        if (blockChokePoint == null) return false;
+        if (unit.isZealot() && unit.enemiesNearInRadius(1.15) > 0) return false;
+
         return unit.hp() >= 25
             || unit.enemiesNear().inRadius(7, unit).groundUnits().havingAntiGroundWeapon().empty();
     }
@@ -23,8 +26,9 @@ public class ChokeBlockerMoveToBlock extends Manager {
     public Manager handle() {
         double dist = unit.distTo(blockChokePoint);
         unit.paintLine(blockChokePoint, Color.White);
+        unit.paintLine(blockChokePoint.translateByPixels(1, 1), Color.White);
 
-        if (dist > 1 || (dist > 0.05 && !unit.isHoldingPosition())) {
+        if (dist > 0.12 || (dist > 0.02 && !unit.isHoldingPosition())) {
             unit.move(blockChokePoint, Actions.SPECIAL, "ChokeBlocker");
         }
         else {

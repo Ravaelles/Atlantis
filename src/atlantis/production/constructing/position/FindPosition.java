@@ -2,7 +2,7 @@ package atlantis.production.constructing.position;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.game.A;
-import atlantis.game.AGame;
+import atlantis.game.race.MyRace;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
@@ -64,7 +64,8 @@ public class FindPosition {
                             "SupplyDepotPositionFinder CONSEQUENTLY returned null \n    / near:" + nearTo
                                 + "\n    There's no hope now."
                         );
-                    } else {
+                    }
+                    else {
                         ErrorLog.printMaxOncePerMinute("Interestingly, Depot fix helped this time. Near: " + near);
                     }
                 }
@@ -101,7 +102,7 @@ public class FindPosition {
 
     private static HasPosition defineNearTo(HasPosition nearTo) {
         if (nearTo == null) {
-            if (AGame.isPlayingAsZerg()) {
+            if (MyRace.isPlayingAsZerg()) {
                 nearTo = Select.main().position();
             }
             else {

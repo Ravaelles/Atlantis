@@ -2,7 +2,7 @@ package atlantis.util;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
-import atlantis.game.AGame;
+import atlantis.game.race.MyRace;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
@@ -18,13 +18,13 @@ public class We {
             "race",
             -1,
             () -> {
-                if (AGame.isPlayingAsProtoss()) {
+                if (MyRace.isPlayingAsProtoss()) {
                     return Race.Protoss;
                 }
-                else if (AGame.isPlayingAsTerran()) {
+                else if (MyRace.isPlayingAsTerran()) {
                     return Race.Terran;
                 }
-                else if (AGame.isPlayingAsZerg()) {
+                else if (MyRace.isPlayingAsZerg()) {
                     return Race.Zerg;
                 }
 
@@ -40,15 +40,15 @@ public class We {
     }
 
     public static boolean terran() {
-        return AGame.isPlayingAsTerran() || Race.Terran.equals(AtlantisRaceConfig.MY_RACE);
+        return MyRace.isPlayingAsTerran() || Race.Terran.equals(AtlantisRaceConfig.MY_RACE);
     }
 
     public static boolean protoss() {
-        return AGame.isPlayingAsProtoss();
+        return MyRace.isPlayingAsProtoss();
     }
 
     public static boolean zerg() {
-        return AGame.isPlayingAsZerg();
+        return MyRace.isPlayingAsZerg();
     }
 
     public static boolean haveBase() {

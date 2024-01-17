@@ -1,7 +1,7 @@
 package atlantis.production.constructing.builders;
 
 import atlantis.architecture.Manager;
-import atlantis.game.AGame;
+import atlantis.game.race.MyRace;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
@@ -74,7 +74,7 @@ public class BuilderManager extends Manager {
     public static boolean isBuilder(AUnit worker) {
         if (
             worker.isConstructing()
-                || (!AGame.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)
+                || (!MyRace.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)
         ) return true;
 
         for (Construction construction : ConstructionRequests.constructions) {

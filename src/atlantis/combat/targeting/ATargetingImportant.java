@@ -219,10 +219,13 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Terran_Missile_Turret
             )
             .inRadius(14, unit)
-            .canBeAttackedBy(unit, 1)
+//            .canBeAttackedBy(unit, 6)
             .mostWounded();
 
-        debug("C5c = " + target);
+        if (target != null) {
+            debug("C5c = " + target);
+            return target;
+        }
 
         // === Damaged bases ======================================================
 
@@ -231,6 +234,7 @@ public class ATargetingImportant extends ATargeting {
             .notHavingHp(140)
             .inRadius(15, unit)
             .mostWounded();
+
         if (target != null) {
             debug("C6 = " + target);
             return target;
@@ -252,6 +256,7 @@ public class ATargetingImportant extends ATargeting {
             )
             .inRadius(15, unit)
             .nearestTo(unit);
+
         if (target != null) {
             debug("D6b = " + target);
             return target;

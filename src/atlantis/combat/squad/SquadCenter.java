@@ -105,7 +105,8 @@ public class SquadCenter {
     private static Selection potentialLeaders(Selection units) {
         return units
             .groundUnits()
-            .excludeMedics();
+            .excludeMedics()
+            .notSpecialAction();
     }
 
 }

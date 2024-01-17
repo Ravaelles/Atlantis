@@ -3,7 +3,6 @@ package atlantis.terran.chokeblockers;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -38,15 +37,20 @@ public class ChokeBlockersAssignments {
 //        if (!We.terran()) return;
         if (A.everyFrameExceptNthFrame(13)) return;
 
-        int newWorkersNeeded = workersNeeded() - blockers.size();
+        int blockersNeeded = blockersNeeded();
 
-        for (int i = 1; i <= newWorkersNeeded; i++) {
+        for (int i = 1; i <= blockersNeeded; i++) {
             AUnit worker = FreeWorkers.get().first();
             if (worker != null) {
                 blockers.add(worker);
                 worker.setSpecialPosition(ChokeBlockerPosition.positionForBlocker(worker));
             }
         }
+    }
+
+    private int blockersNeeded() {
+        int available = A.inRange(3, blockers.size() + Count.zealots(), 4);
+        return workersNeeded() - available;
     }
 
     private int workersNeeded() {

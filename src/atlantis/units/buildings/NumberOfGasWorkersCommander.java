@@ -65,6 +65,15 @@ public class NumberOfGasWorkersCommander extends Commander {
             return 1;
         }
 
+        if (A.seconds() <= 900) {
+            if (workers <= 23 && A.hasGas(270)) {
+                return 2;
+            }
+            if (workers <= 30 && A.hasGas(350)) {
+                return 2;
+            }
+        }
+
         if (A.gas() >= 380 && A.minerals() <= 280) {
             return A.inRange(1, Count.workers() / 12, 3);
         }

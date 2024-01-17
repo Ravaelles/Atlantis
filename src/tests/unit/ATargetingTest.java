@@ -137,6 +137,28 @@ public class ATargetingTest extends AbstractTestWithUnits {
     }
 
     @Test
+    public void targetsCannonOverOtherBuildingsAndWorkers() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit cannon;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Protoss_Pylon, 11),
+            fake(AUnitType.Protoss_Gateway, 12),
+            fake(AUnitType.Protoss_Fleet_Beacon, 13),
+            fake(AUnitType.Protoss_Nexus, 14),
+            cannon = fake(AUnitType.Protoss_Photon_Cannon, 15),
+            fake(AUnitType.Protoss_Pylon, 16),
+            fake(AUnitType.Protoss_Pylon, 17),
+            fake(AUnitType.Protoss_Dragoon, 21),
+            fake(AUnitType.Protoss_Zealot, 22)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(cannon, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
     public void doesNotTargetLarvas() {
         FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
         FakeUnit building;

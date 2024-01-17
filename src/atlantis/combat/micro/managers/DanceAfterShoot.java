@@ -84,14 +84,14 @@ public class DanceAfterShoot extends Manager {
 //            return unit.moveAwayFrom(target, 0.9, Actions.MOVE_DANCE_AWAY, danceAway);
 //        }
 
-        // Small step BACK
+        // DANCE AWAY - Small step BACK
         if (shouldDanceAway(dist, weaponRange, target)) {
 //            System.err.println("^^^^^^ DANCE AWAY (" + dist + ")");
             unit.addLog(danceAway);
             return unit.moveAwayFrom(target.position(), 0.5, Actions.MOVE_DANCE_AWAY, danceAway);
         }
 
-        // Step FORWARD
+        // DANCE TO - Step FORWARD
         if (shouldDanceTo(target, dist)) {
             return danceTo(dist, danceTo, target);
         }
@@ -109,6 +109,7 @@ public class DanceAfterShoot extends Manager {
 
     private boolean shouldDanceAway(double dist, int weaponRange, AUnit target) {
         return unit.cooldownRemaining() >= Math.max(9, cooldownRemainingThreshold())
+            && !target.isABuilding()
             && dist <= weaponRange + 0.2
             && unit.lastAttackFrameLessThanAgo(30)
 //            && !UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)

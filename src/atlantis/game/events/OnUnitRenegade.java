@@ -40,7 +40,7 @@ public class OnUnitRenegade {
                 return;
             }
 
-            Atlantis.enemyNewUnit(unit);
+            OnEnemyNewUnitDiscovered.update(unit);
 
             if (!unit.type().isGasBuildingOrGeyser()) {
                 System.out.println("NEW RENEGADE FOR ENEMY " + unit.name());

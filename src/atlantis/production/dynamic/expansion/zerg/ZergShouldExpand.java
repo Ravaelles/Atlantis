@@ -3,6 +3,7 @@ package atlantis.production.dynamic.expansion.zerg;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.race.MyRace;
 import atlantis.map.base.BaseLocations;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.zerg.ZergExpansionCommander;
@@ -54,7 +55,7 @@ public class ZergShouldExpand {
         if (bases >= 3 && Count.workers() <= 17 * (bases + basesInProduction)) return false;
 
         boolean hasPlentyOfMinerals = AGame.hasMinerals(580);
-        int minMinerals = 100 + (AGame.isPlayingAsZerg() ? 268 : 356);
+        int minMinerals = 100 + (MyRace.isPlayingAsZerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
         if (!AGame.canAffordWithReserved(minMinerals, 0)) return false;

@@ -293,6 +293,13 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection dragoons() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Protoss_Dragoon)),
+            "dragoons"
+        );
+    }
+
     public Selection sunkens() {
         return cloneByRemovingIf(
             (unit -> !unit.is(AUnitType.Zerg_Sunken_Colony)),

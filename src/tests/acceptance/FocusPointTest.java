@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.game.events.OnUnitDiscover;
+import atlantis.game.events.OnEnemyNewUnitDiscovered;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
 import atlantis.game.events.OnUnitMorph;
@@ -48,7 +48,7 @@ public class FocusPointTest extends AbstractTestFakingGame {
     }
 
     private void firstFrame() {
-        OnUnitDiscover.update(assimilator);
+        OnEnemyNewUnitDiscovered.update(assimilator);
 //        EnemyInfo.weDiscoveredEnemyUnit(assimilator);
     }
 

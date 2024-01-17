@@ -1,20 +1,20 @@
 package atlantis.production.requests;
 
-import atlantis.game.AGame;
+import atlantis.game.race.MyRace;
 import atlantis.map.position.APosition;
 import atlantis.production.requests.zerg.ZergRequests;
 
 
 public abstract class ProductionRequests {
-    
+
     private static ProductionRequests instance = null;
-    
+
     public static ProductionRequests getInstance() {
         if (instance == null) {
-            if (AGame.isPlayingAsTerran()) {
+            if (MyRace.isPlayingAsTerran()) {
                 instance = new TerranRequests();
             }
-            else if (AGame.isPlayingAsProtoss()) {
+            else if (MyRace.isPlayingAsProtoss()) {
                 instance = new ProtossRequests();
             }
             else {

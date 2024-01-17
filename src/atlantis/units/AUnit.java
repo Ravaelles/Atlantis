@@ -41,6 +41,7 @@ import atlantis.units.detected.IsOurUnitUndetected;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
+import atlantis.units.range.OurDragoonWeaponRange;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -808,9 +809,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         boolean includeCooldown,
         double extraMargin
     ) {
-        if (hasNoWeaponAtAll() || !hasWeaponToAttackThisUnit(target)) return false;
         if (!target.hasPosition()) return false;
-        if (checkVisibility && target.effUndetected()) return false;
 
         // Target is GROUND unit
         if (target.isGroundUnit() && (!canAttackGroundUnits() || (includeCooldown && cooldownRemaining() >= 4)))
@@ -818,14 +817,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         // Target is AIR unit
         if (target.isAir() && (!canAttackAirUnits() || (includeCooldown && cooldownRemaining() >= 4))) return false;
-
-        // Shooting RANGE
-        if (checkShootingRange && !hasWeaponRangeToAttack(target, extraMargin)) {
-            return false;
-        }
-
+        if (hasNoWeaponAtAll() || !hasWeaponToAttackThisUnit(target)) return false;
+        if (checkVisibility && target.effUndetected()) return false;
+        if (checkShootingRange && !hasWeaponRangeToAttack(target, extraMargin)) return false;
         if (isRanged() && target.isUnderDarkSwarm()) return false;
-
         if (isABuilding() && isProtoss() && !isPowered()) return false;
 
         return true;
@@ -854,19 +849,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasWeaponRangeToAttack(AUnit targetUnit, double extraMargin) {
-        if (isBunker()) {
-            return distToLessThan(targetUnit, 7);
-        }
-
         if (!targetUnit.isDetected() || targetUnit.position() == null) return false;
-
-        WeaponType weaponAgainstThisUnit = weaponAgainst(targetUnit);
-        if (weaponAgainstThisUnit == WeaponType.None) return false;
+//
+//        if (isDragoon()) return distToLessThan(targetUnit, OurDragoonWeaponRange.range());
+//        if (isBunker()) return distToLessThan(targetUnit, 7);
+//
+//        WeaponType weaponAgainstThisUnit = weaponAgainst(targetUnit);
+//        if (weaponAgainstThisUnit == WeaponType.None) return false;
 
         double dist = this.distTo(targetUnit);
 
-        return (weaponAgainstThisUnit.minRange() / 32) <= dist
-            && dist <= (weaponAgainstThisUnit.maxRange() / 32 + extraMargin);
+        if (isTankSieged() && dist < 2) return false;
+
+        return dist <= (weaponRangeAgainst(targetUnit) + extraMargin);
     }
 
     /**
@@ -1559,6 +1554,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return unitAction == constant;
     }
 
+    public boolean isAction(Action... oneOfActions) {
+        for (Action action : oneOfActions) {
+            if (unitAction == action) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isUnitActionAttack() {
         return unitAction == Actions.ATTACK_POSITION || unitAction == Actions.ATTACK_UNIT
             || unitAction == Actions.MOVE_ENGAGE;
@@ -1650,6 +1654,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (unitAction == null) return false;
 
         return lastActionAgo(unitAction) <= framesAgo;
+    }
+
+    public boolean lastActionLessThanAgo(int framesAgo, Action... oneOfUnitActions) {
+        if (oneOfUnitActions == null || !isAction(oneOfUnitActions)) return false;
+
+        for (Action action : oneOfUnitActions) {
+            if (lastActionAgo(action) <= framesAgo) return true;
+        }
+
+        return false;
     }
 
     public int lastActionAgo(Action unitAction) {

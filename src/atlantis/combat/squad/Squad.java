@@ -14,6 +14,7 @@ import atlantis.units.Units;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 /**
@@ -203,11 +204,10 @@ public abstract class Squad extends Units {
     public AUnit squadScout() {
         return cacheUnit.getIfValid(
             "squadScout",
-            1111,
+            131,
             () -> {
-                if (!isMainSquad() || Count.ourCombatUnits() < 3) {
-                    return null;
-                }
+                if (!isMainSquad()) return null;
+                if (!We.zerg() && Select.ourCombatUnits().ranged().empty()) return null;
 
                 Selection groundUnits = units().groundUnits();
                 AUnit ranged = groundUnits.ranged().nonTanks().healthy().mostDistantToBase();

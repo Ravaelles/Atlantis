@@ -23,6 +23,8 @@ import atlantis.util.We;
 import org.junit.Assert;
 
 public class ShouldExpand {
+    public static String reason = "---";
+
     public static boolean shouldExpand() {
         if (A.isUms() && !Have.base()) return false;
 

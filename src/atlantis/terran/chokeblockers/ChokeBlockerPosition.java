@@ -3,6 +3,7 @@ package atlantis.terran.chokeblockers;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.util.We;
 
 public class ChokeBlockerPosition {
     public static APosition positionForBlocker(AUnit unit) {
@@ -14,7 +15,11 @@ public class ChokeBlockerPosition {
         APosition first = choke.firstPoint();
         APosition last = choke.lastPoint();
 
-        return first.translatePercentTowards(last, offset(indexOf, totalBlockers));
+        APosition position = first.translatePercentTowards(last, offset(indexOf, totalBlockers));
+
+        if (!We.terran() && unit.isWorker()) position = position.translateTilesTowards(choke.center(), -0.8);
+
+        return position;
     }
 
     private static int indexOfUnit(AUnit unit, ChokeBlockersAssignments assignments) {

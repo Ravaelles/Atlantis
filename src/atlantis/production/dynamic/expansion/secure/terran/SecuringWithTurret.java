@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.expansion.secure;
+package atlantis.production.dynamic.expansion.secure.terran;
 
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.map.position.APosition;
@@ -7,9 +7,9 @@ import atlantis.units.select.Count;
 import static atlantis.units.AUnitType.Terran_Missile_Turret;
 
 public class SecuringWithTurret {
-    private final SecuringBase securingBase;
+    private final SecuringBaseAsTerran securingBase;
 
-    public SecuringWithTurret(SecuringBase securingBase) {
+    public SecuringWithTurret(SecuringBaseAsTerran securingBase) {
         this.securingBase = securingBase;
     }
 

@@ -12,8 +12,9 @@ public class UnfreezeGeneric extends Manager {
     @Override
     public boolean applies() {
         if (unit.isAttacking()) return false;
-        if (unit.hasCooldown() || unit.lastPositionChangedLessThanAgo(20)) return false;
-        if (unit.lastStartedAttackLessThanAgo(13)) return false;
+        if (unit.hasCooldown() || unit.lastPositionChangedLessThanAgo(40)) return false;
+        if (unit.lastActionLessThanAgo(12)) return false;
+        if (unit.lastStartedAttackLessThanAgo(20)) return false;
 
         return true;
     }

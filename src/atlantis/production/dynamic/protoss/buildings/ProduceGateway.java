@@ -1,11 +1,7 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
-import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmyStrength;
-import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.strategy.GamePhase;
-import atlantis.production.dynamic.DynamicCommanderHelpers;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -15,19 +11,20 @@ import static atlantis.units.AUnitType.Protoss_Gateway;
 
 public class ProduceGateway {
 
-    private static int gatewaysWithUnfinished;
+    private static int unfinishedGateways;
 
     public static void produce() {
         if (!A.hasMinerals(220)) return;
         if (Count.freeGateways() > 0) return;
-        if (Count.inQueueOrUnfinished(Protoss_Gateway, 6) >= 2) return;
+//        if (Count.inQueueOrUnfinished(Protoss_Gateway, 6) >= 2) return;
 
-        gatewaysWithUnfinished = Select.countOurUnfinishedOfType(Protoss_Gateway);
+//        unfinishedGateways = Select.countOurUnfinishedOfType(Protoss_Gateway);
+        unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
+
+        if (unfinishedGateways >= 1 && !A.hasMinerals(550)) return;
+        if (unfinishedGateways >= 2 && !A.hasMinerals(450)) return;
 
         if (tooManyGatewaysForNow()) return;
-
-        if (gatewaysWithUnfinished >= 1 && !A.hasMinerals(550)) return;
-        if (gatewaysWithUnfinished >= 2 && !A.hasMinerals(450)) return;
 
 //        if (
 //            GamePhase.isEarlyGame()
@@ -43,8 +40,8 @@ public class ProduceGateway {
     }
 
     private static boolean tooManyGatewaysForNow() {
-        return gatewaysWithUnfinished >= 4
-            && !A.hasMinerals(650)
+        return Count.gatewaysWithUnfinished() >= 3
+            && !A.hasMinerals(260)
             && (!Have.roboticsFacility() || Count.basesWithUnfinished() <= 1);
     }
 }

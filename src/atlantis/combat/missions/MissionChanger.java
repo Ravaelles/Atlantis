@@ -61,6 +61,10 @@ public abstract class MissionChanger {
         MissionChanger.changeCurrentMissionIfNeeded();
     }
 
+    public static void forceEvaluateGlobalMission() {
+        changeCurrentMissionIfNeeded();
+    }
+
     protected abstract void changeMissionIfNeeded();
 
     private static void changeCurrentMissionIfNeeded() {

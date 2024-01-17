@@ -51,34 +51,34 @@ public class UnitAttackWaitFrames {
     }
 
     public static int stopFrames(AUnitType type) {
-        if (type.equals(AUnitType.Terran_SCV)) return 2;
-        else if (type.equals(AUnitType.Terran_Marine)) return 8; // original 8
-        else if (type.equals(AUnitType.Terran_Firebat)) return 8;
-        else if (type.equals(AUnitType.Terran_Ghost)) return 3;
-        else if (type.equals(AUnitType.Terran_Vulture)) return 2;
-        else if (type.equals(AUnitType.Terran_Goliath)) return 1;
-        else if (type.equals(AUnitType.Terran_Siege_Tank_Tank_Mode)) return 1;
-        else if (type.equals(AUnitType.Terran_Siege_Tank_Siege_Mode)) return 1;
-        else if (type.equals(AUnitType.Terran_Wraith)) return 2;
-        else if (type.equals(AUnitType.Terran_Battlecruiser)) return 2;
-        else if (type.equals(AUnitType.Terran_Valkyrie)) return 40;
-        else if (type.equals(AUnitType.Protoss_Probe)) return 2;
-        else if (type.equals(AUnitType.Protoss_Zealot)) return 7;
-        else if (type.equals(AUnitType.Protoss_Dragoon)) return 8; // Original 7
-        else if (type.equals(AUnitType.Protoss_Dark_Templar)) return 9;
+        if (type.equals(AUnitType.Protoss_Arbiter)) return 4;
         else if (type.equals(AUnitType.Protoss_Archon)) return 15;
+        else if (type.equals(AUnitType.Protoss_Corsair)) return 8;
+        else if (type.equals(AUnitType.Protoss_Dark_Templar)) return 9;
+        else if (type.equals(AUnitType.Protoss_Dragoon)) return 9; // Original 7
+        else if (type.equals(AUnitType.Protoss_Photon_Cannon)) return 7;
+        else if (type.equals(AUnitType.Protoss_Probe)) return 2;
         else if (type.equals(AUnitType.Protoss_Reaver)) return 1;
         else if (type.equals(AUnitType.Protoss_Scout)) return 2;
-        else if (type.equals(AUnitType.Protoss_Corsair)) return 8;
-        else if (type.equals(AUnitType.Protoss_Arbiter)) return 4;
-        else if (type.equals(AUnitType.Protoss_Photon_Cannon)) return 7;
+        else if (type.equals(AUnitType.Protoss_Zealot)) return 7;
+        else if (type.equals(AUnitType.Terran_SCV)) return 2;
+        else if (type.equals(AUnitType.Terran_Battlecruiser)) return 2;
+        else if (type.equals(AUnitType.Terran_Firebat)) return 8;
+        else if (type.equals(AUnitType.Terran_Ghost)) return 3;
+        else if (type.equals(AUnitType.Terran_Goliath)) return 1;
+        else if (type.equals(AUnitType.Terran_Marine)) return 8; // original 8
+        else if (type.equals(AUnitType.Terran_Siege_Tank_Siege_Mode)) return 1;
+        else if (type.equals(AUnitType.Terran_Siege_Tank_Tank_Mode)) return 1;
+        else if (type.equals(AUnitType.Terran_Valkyrie)) return 40;
+        else if (type.equals(AUnitType.Terran_Vulture)) return 2;
+        else if (type.equals(AUnitType.Terran_Wraith)) return 2;
+        else if (type.equals(AUnitType.Zerg_Devourer)) return 9;
         else if (type.equals(AUnitType.Zerg_Drone)) return 2;
-        else if (type.equals(AUnitType.Zerg_Zergling)) return 4;
         else if (type.equals(AUnitType.Zerg_Hydralisk)) return 3;
         else if (type.equals(AUnitType.Zerg_Lurker)) return 2;
-        else if (type.equals(AUnitType.Zerg_Ultralisk)) return 14;
         else if (type.equals(AUnitType.Zerg_Mutalisk)) return 2;
-        else if (type.equals(AUnitType.Zerg_Devourer)) return 9;
+        else if (type.equals(AUnitType.Zerg_Ultralisk)) return 14;
+        else if (type.equals(AUnitType.Zerg_Zergling)) return 4;
         else return 2; // Arbitrary
     }
 
@@ -91,22 +91,22 @@ public class UnitAttackWaitFrames {
 //    }
 
     protected static int attackAnimationFrames(AUnitType type) {
-        if (type.equals(AUnitType.Terran_SCV)) return 2;
-        else if (type.equals(AUnitType.Terran_Marine)) return 9; // Original 8
+        if (type.equals(AUnitType.Protoss_Arbiter)) return 5;
+        else if (type.equals(AUnitType.Protoss_Corsair)) return 8;
+        else if (type.equals(AUnitType.Protoss_Dark_Templar)) return 9;
+        else if (type.equals(AUnitType.Protoss_Dragoon)) return 10; // Original 9
+        else if (type.equals(AUnitType.Protoss_Reaver)) return 1;
+        else if (type.equals(AUnitType.Protoss_Zealot)) return 9; // Original 8
+        else if (type.equals(AUnitType.Terran_SCV)) return 2;
         else if (type.equals(AUnitType.Terran_Firebat)) return 8;
         else if (type.equals(AUnitType.Terran_Ghost)) return 4;
         else if (type.equals(AUnitType.Terran_Goliath)) return 1;
-        else if (type.equals(AUnitType.Terran_Siege_Tank_Tank_Mode)) return 1;
+        else if (type.equals(AUnitType.Terran_Marine)) return 9; // Original 8
         else if (type.equals(AUnitType.Terran_Siege_Tank_Siege_Mode)) return 1;
-        else if (type.equals(AUnitType.Protoss_Zealot)) return 9; // Original 8
-        else if (type.equals(AUnitType.Protoss_Dragoon)) return 10; // Original 9
-        else if (type.equals(AUnitType.Protoss_Dark_Templar)) return 9;
-        else if (type.equals(AUnitType.Protoss_Reaver)) return 1;
-        else if (type.equals(AUnitType.Protoss_Corsair)) return 8;
-        else if (type.equals(AUnitType.Protoss_Arbiter)) return 5;
-        else if (type.equals(AUnitType.Zerg_Zergling)) return 5;
+        else if (type.equals(AUnitType.Terran_Siege_Tank_Tank_Mode)) return 1;
         else if (type.equals(AUnitType.Zerg_Hydralisk)) return 3;
         else if (type.equals(AUnitType.Zerg_Ultralisk)) return 15;
+        else if (type.equals(AUnitType.Zerg_Zergling)) return 5;
         else return 0;
     }
 

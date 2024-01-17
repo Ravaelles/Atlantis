@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -66,7 +67,10 @@ public class DynamicCommanderHelpers extends Commander {
     }
 
     public static boolean buildNow(AUnitType type, boolean onlyOneAtTime) {
-        if (onlyOneAtTime && ConstructionRequests.hasRequestedConstructionOf(type)) return false;
+        if (onlyOneAtTime && (
+            CountInQueue.count(type, 5) > 0
+                || ConstructionRequests.hasRequestedConstructionOf(type)
+        )) return false;
 
         if (!type.hasRequiredUnit()) {
             buildToHaveOne(type.whatIsRequired());

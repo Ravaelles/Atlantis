@@ -1,11 +1,16 @@
 package atlantis.production.dynamic.expansion;
 
 import atlantis.architecture.Commander;
+import atlantis.combat.missions.MissionCommander;
+import atlantis.combat.squad.commanders.SquadsCommander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.production.constructing.position.base.NextBasePosition;
-import atlantis.production.dynamic.expansion.secure.SecuringBase;
+import atlantis.production.dynamic.expansion.protoss.ProtossExpansionCommander;
+import atlantis.production.dynamic.expansion.secure.terran.SecuringBaseAsTerran;
 import atlantis.production.dynamic.expansion.terran.TerranEarlyExpansion;
+import atlantis.production.dynamic.expansion.terran.TerranExpansionCommander;
+import atlantis.production.dynamic.expansion.zerg.ZergExpansionCommander;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -16,67 +21,12 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ExpansionCommander extends Commander {
-
-    private SecuringBase securingBase;
-
-    public ExpansionCommander() {
-    }
-
     @Override
-    public boolean applies() {
-        return A.everyNthGameFrame(67)
-            && Have.barracks()
-//            && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) <= 1
-            && CountInQueue.count(AUnitType.Terran_Bunker) <= 0
-            && ShouldExpand.shouldExpand();
-//        return ShouldExpand.shouldBuildNewBase();
-    }
-
-    @Override
-    protected void handle() {
-        securingBase = (new SecuringBase(NextBasePosition.nextBasePosition()));
-
-//        System.err.println("ExpansionCommander.handle() @ " + A.now());
-        prepareNewBase();
-    }
-
-    protected void prepareNewBase() {
-//        System.err.println("@ " + A.now() + " newExpansionIsSecured() - " + newExpansionIsSecured());
-        if (canProceedWithBaseConstruction()) {
-            requestNewBase();
-        }
-        else {
-            secureNewBase();
-        }
-    }
-
-    private boolean canProceedWithBaseConstruction() {
-        if (TerranEarlyExpansion.shouldExpandEarly()) return true;
-
-        return newExpansionIsSecured();
-    }
-
-    private void secureNewBase() {
-        securingBase.secureWithCombatBuildings();
-    }
-
-    protected boolean newExpansionIsSecured() {
-        if (!We.terran()) return true;
-
-        return securingBase.isSecure();
-    }
-
-    private static void requestNewBase() {
-        // ZERG case
-        if (We.zerg()) {
-            AddToQueue.withStandardPriority(AtlantisRaceConfig.BASE, Select.naturalOrMain());
-        }
-
-        // TERRAN and PROTOSS
-        else {
-            ProductionOrder productionOrder = AddToQueue.maxAtATime(AtlantisRaceConfig.BASE, 1);
-
-            if (productionOrder != null && Count.bases() <= 1) productionOrder.setModifier("NATURAL");
-        }
+    protected Class<? extends Commander>[] subcommanders() {
+        return new Class[]{
+            ProtossExpansionCommander.class,
+            TerranExpansionCommander.class,
+            ZergExpansionCommander.class,
+        };
     }
 }

@@ -14,7 +14,7 @@ import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.strategy.ZergStrategies;
 import atlantis.init.AInitialActions;
 import atlantis.map.AMap;
-import atlantis.production.dynamic.expansion.InitialMainPosition;
+import atlantis.information.generic.InitialMainPosition;
 import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;

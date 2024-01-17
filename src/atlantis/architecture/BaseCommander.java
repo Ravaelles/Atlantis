@@ -9,18 +9,8 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public abstract class BaseCommander {
-    /**
-     * Commanders can have subcommanders. This is the hierarchy level of this commander e.g.
-     * 0 - top Commander (AtlantisGameCommander)
-     * 1 - Commanders just below, children of AtlantisGameCommander
-     * 2 - children of 1
-     */
-//    protected int hierarchy = 0;
-//    protected Commander parent;
-    protected boolean shouldProfile;
-
-
     protected Commander[] commanderObjects;
+    protected boolean shouldProfile;
     protected int lastFrameInvoked = -1;
 
     public BaseCommander() {

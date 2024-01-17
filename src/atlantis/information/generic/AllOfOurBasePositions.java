@@ -1,10 +1,11 @@
-package atlantis.production.dynamic.expansion;
+package atlantis.information.generic;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.dynamic.expansion.PendingNextBase;
 import atlantis.units.select.Select;
 
 import java.util.ArrayList;

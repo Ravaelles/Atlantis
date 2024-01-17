@@ -24,11 +24,11 @@ public class Commander extends BaseCommander {
 
         if (applies()) {
             handle();
+
+            handleSubcommanders();
         }
 
         CodeProfiler.endMeasuring(this);
-
-        handleSubcommanders();
     }
 
     public void forceHandle() {

@@ -3,6 +3,7 @@ package atlantis.combat.micro.generic.unfreezer;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 
 public class Unfreezer extends Manager {
     public Unfreezer(AUnit unit) {
@@ -15,11 +16,13 @@ public class Unfreezer extends Manager {
 //            && unit.noCooldown()
             && !unit.isAir()
             && !unit.isLoaded()
+            && !unit.isSpecialMission()
 //            && !unit.isMoving()
 //            && A.now() % 73 == 0
             && A.now() >= 20
 //            && unit.looksIdle()
-            && unit.lastPositionChangedMoreThanAgo(3);
+            && unit.lastPositionChangedMoreThanAgo(12)
+            && unit.lastActionMoreThanAgo(5, Actions.HOLD_POSITION);
 //            && unit.lastActionMoreThanAgo(30 * 3, Actions.MOVE_UNFREEZE);
     }
 
@@ -27,7 +30,7 @@ public class Unfreezer extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             UnfreezeGeneric.class,
-            UnfreezeAttackOrMove.class,
+//            UnfreezeAttackOrMove.class,
             UnfreezeRun.class,
 //            UnfreezeRunA.class,
 //            UnfreezeRunB.class,

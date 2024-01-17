@@ -3,7 +3,7 @@ package atlantis.production.dynamic.expansion;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.production.dynamic.expansion.secure.SecuringBase;
+import atlantis.production.dynamic.expansion.secure.terran.SecuringBaseAsTerran;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -16,7 +16,7 @@ import atlantis.util.We;
 import java.util.List;
 
 public class SecureBasesCommander extends Commander {
-    private static SecuringBase securingBase;
+    private static SecuringBaseAsTerran securingBase;
     private Selection bases;
 
     public SecureBasesCommander() {
@@ -42,7 +42,7 @@ public class SecureBasesCommander extends Commander {
         for (AUnit base : basesReversed) {
             if (baseNumber++ >= bases.count() - 1 && A.seconds() <= 1000) continue; // Skip for main
 
-            securingBase = (new SecuringBase(base.position()));
+            securingBase = (new SecuringBaseAsTerran(base.position()));
 
             secureBaseWithCombatBuildings();
         }
@@ -59,7 +59,7 @@ public class SecureBasesCommander extends Commander {
     protected boolean isBaseSecured() {
         if (!We.terran()) return true;
 
-//        System.err.println("@ " + A.now() + " - isSecure base? " + base + " / " + (new SecuringBase(base.position())).isSecure());
+//        System.err.println("@ " + A.now() + " - isSecure base? " + base + " / " + (new SecuringBaseAsTerran(base.position())).isSecure());
 
         return securingBase.isSecure();
     }

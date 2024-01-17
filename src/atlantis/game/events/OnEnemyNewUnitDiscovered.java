@@ -1,17 +1,19 @@
 package atlantis.game.events;
 
-import atlantis.Atlantis;
+import atlantis.combat.missions.MissionChanger;
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnit;
 
-public class OnUnitDiscover {
-
+public class OnEnemyNewUnitDiscovered {
     public static void update(AUnit unit) {
         // Enemy unit
         if (unit.isEnemy()) {
-            Atlantis.enemyNewUnit(unit);
+            handleForEnemy(unit);
         }
 
         else if (unit.isOur()) {
+            // Won't trigger... right?
         }
 
         else {
@@ -21,5 +23,11 @@ public class OnUnitDiscover {
 //                }
             }
         }
+    }
+
+    protected static void handleForEnemy(AUnit unit) {
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
+
+        if (A.seconds() <= 600) MissionChanger.forceEvaluateGlobalMission();
     }
 }

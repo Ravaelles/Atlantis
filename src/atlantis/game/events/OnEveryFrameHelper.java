@@ -69,6 +69,16 @@ public class OnEveryFrameHelper {
 //        paintAllConstructions();
 
 //        printObserverStatus();
+
+        paintAttackTargetsForOur();
+    }
+
+    private static void paintAttackTargetsForOur() {
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            if (unit.noTarget()) continue;
+
+            unit.paintLine(unit.target(), Color.Orange);
+        }
     }
 
     private static void printObserverStatus() {

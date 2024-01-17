@@ -4,6 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.race.MyRace;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -133,7 +134,7 @@ public class SupplyCommander extends Commander {
         }
 
         // Zerg handles supply a bit differently
-        if (AGame.isPlayingAsZerg()) {
+        if (MyRace.isPlayingAsZerg()) {
             ProduceZergUnit.produceZergUnit(
                 AUnitType.Zerg_Overlord, ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
             );

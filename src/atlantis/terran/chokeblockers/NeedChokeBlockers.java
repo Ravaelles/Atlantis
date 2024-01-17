@@ -27,7 +27,7 @@ public class NeedChokeBlockers {
     }
 
     private static boolean forProtoss() {
-        if (A.supplyUsed() >= 45) return false;
+//        if (A.supplyUsed() >= 45) return false;
         if (Missions.isGlobalMissionAttack()) return false;
         if (EnemyWhoBreachedBase.notNull()) return false;
 
