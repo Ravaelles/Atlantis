@@ -21,6 +21,7 @@ public class OnUnitDestroyed {
 
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {
+            printOurDeadUnit(unit);
             handleForOurUnit(unit);
         }
 //        else if (unit.isEnemy() && unit.isRealUnit()) {
@@ -42,6 +43,11 @@ public class OnUnitDestroyed {
             UnitsArchive.paintLostUnits();
             UnitsArchive.paintKilledUnits();
         }
+    }
+
+    private static void printOurDeadUnit(AUnit unit) {
+        System.err.println("@ " + A.now() + " - Our unit DIED: " + unit.typeWithUnitId());
+        System.err.println(unit.managerLogs().toString());
     }
 
     private static void handleForOurUnit(AUnit unit) {

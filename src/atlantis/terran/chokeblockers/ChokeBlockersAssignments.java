@@ -11,6 +11,7 @@ import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.Enemy;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +89,10 @@ public class ChokeBlockersAssignments {
     }
 
     private void addNewBlocker(AUnit unit) {
+        if (unit.isRanged()) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Trying to add ranged unit as blocker: " + unit);
+        }
+
         blockers.add(unit);
 
         for (AUnit blocker : blockers) {

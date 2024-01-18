@@ -15,7 +15,7 @@ public class ManualOverrideManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isPatrolling() && !A.everyNthGameFrame(40 * 5);
+        return unit.isPatrolling() && unit.lastActionMoreThanAgo(200);
     }
 
     protected Manager handle() {

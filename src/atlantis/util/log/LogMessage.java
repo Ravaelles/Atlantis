@@ -33,6 +33,10 @@ public class LogMessage {
         return message;
     }
 
+    public String messageWithTime() {
+        return createdAtFrames + ": " + message;
+    }
+
     public int createdFramesAgo() {
         return A.ago(createdAtFrames);
     }

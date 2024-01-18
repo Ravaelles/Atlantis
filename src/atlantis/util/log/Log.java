@@ -42,7 +42,6 @@ public class Log {
         }
 
 
-
         if (messages.size() > limit) {
             messages.remove(0);
         }
@@ -79,7 +78,7 @@ public class Log {
         StringBuilder result = new StringBuilder("Log{\n");
 
         for (LogMessage logMessage : messages) {
-            result.append("    ").append(logMessage.message()).append(",\n");
+            result.append("    ").append(logMessage.messageWithTime()).append(",\n");
         }
 
         return result + "}";

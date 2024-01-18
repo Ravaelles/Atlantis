@@ -3,6 +3,7 @@ package atlantis.terran.chokeblockers;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
 
@@ -13,7 +14,9 @@ public class ChokeBlockerFight extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isZealot() && unit.hp() <= 24) return false;
+        if (unit.hp() <= 24) return false;
+
+        if (unit.isZealot() && A.seconds() <= 220) return true;
 
         return !unit.isScv()
             && unit.hp() >= 40;
@@ -41,10 +44,9 @@ public class ChokeBlockerFight extends Manager {
 
     private double maxDistToAttack() {
         if (
-            unit.enemiesNear().inRadius(4, unit).groundUnits().count() <= 1
-                && unit.enemiesNear().inRadius(9, unit).groundUnits().count() <= 1
-        ) return 2.5;
+            unit.enemiesNear().inRadius(7, unit).groundUnits().count() <= 1
+        ) return 3;
 
-        return 1.02;
+        return 1.05;
     }
 }

@@ -55,7 +55,8 @@ public class WorkerDefenceManager extends Manager {
 
         if (handleFightEnemyIfNeeded(unit)) return true;
 
-        if ((new AvoidEnemies(unit)).invoke(this) != null) {
+        boolean dontNeedToAvoid = unit.woundHp() <= 4 && unit.enemiesNear().inRadius(6, unit).atMost(1);
+        if (!dontNeedToAvoid && (new AvoidEnemies(unit)).invoke(this) != null) {
             unit.addLog("WorkerAvoid");
             return true;
         }

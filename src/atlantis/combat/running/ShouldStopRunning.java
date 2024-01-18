@@ -1,8 +1,7 @@
 package atlantis.combat.running;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.managers.HoldToShoot;
-import atlantis.game.A;
+import atlantis.combat.micro.dancing.HoldToShoot;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;

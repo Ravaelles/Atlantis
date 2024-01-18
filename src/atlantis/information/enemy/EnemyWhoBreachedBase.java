@@ -25,4 +25,8 @@ public class EnemyWhoBreachedBase {
     public static boolean notNull() {
         return get() != null;
     }
+
+    public static boolean noone() {
+        return get() == null;
+    }
 }

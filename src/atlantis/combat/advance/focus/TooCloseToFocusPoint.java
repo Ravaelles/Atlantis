@@ -2,6 +2,7 @@ package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;
@@ -75,7 +76,12 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     private boolean goToMain() {
-        if (unit.isDragoon()) return false;
+        if (unit.isDragoon()) {
+            if (A.everyNthGameFrame(3)) {
+                unit.holdPosition("SlowlyTooClose");
+            }
+            return false;
+        }
 
         HasPosition goTo = fromSide != null ? fromSide : Select.main();
 

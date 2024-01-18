@@ -1,8 +1,6 @@
-package atlantis.combat.micro.managers;
+package atlantis.combat.micro.dancing;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;

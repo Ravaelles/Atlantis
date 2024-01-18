@@ -14,7 +14,7 @@ import atlantis.units.AUnit;
 import atlantis.util.log.ErrorLog;
 
 /**
- * Porblematic thing that happens for Marines when they get produced and just stand outside Barracks.
+ * Porblematic thing that happens for new units (e.g. Marines) when they come out and just stand outside Barracks.
  */
 public class PreventDoNothing extends Manager {
     public PreventDoNothing(AUnit unit) {
@@ -25,7 +25,7 @@ public class PreventDoNothing extends Manager {
     public boolean applies() {
         return unit.isActiveManager(DoNothing.class)
             && unit.lastPositionChangedMoreThanAgo(33)
-            && unit.lastActionMoreThanAgo(11);
+            && (unit.isStopped() || unit.lastActionMoreThanAgo(11));
     }
 
     @Override
