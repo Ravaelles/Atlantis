@@ -6,6 +6,7 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.running.ShouldStopRunning;
 import atlantis.combat.squad.squad_scout.SquadScout;
 import atlantis.terran.repair.DontMoveWhenBeingRepared;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
@@ -25,6 +26,8 @@ public class CombatManagerMediumPriority extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             ContinueRunning.class,
+            ShouldStopRunning.class,
+
             AvoidCombatBuilding.class,
             AvoidEnemies.class,
             DontMoveWhenBeingRepared.class,

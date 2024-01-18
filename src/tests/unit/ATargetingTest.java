@@ -200,6 +200,44 @@ public class ATargetingTest extends AbstractTestWithUnits {
     }
 
     @Test
+    public void targetsZerglingsOverSunkensWhenSiegingZerg() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit target;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Larva, 10.8),
+            fake(AUnitType.Zerg_Egg, 10.9),
+            fake(AUnitType.Zerg_Lurker_Egg, 10.95),
+            target = fake(AUnitType.Zerg_Zergling, 11.5),
+            fake(AUnitType.Zerg_Sunken_Colony, 13.8),
+            fake(AUnitType.Zerg_Sunken_Colony, 29)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(target, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsSunkensOverZerglingsWhenSiegingZerg() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit target;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Larva, 10.8),
+            fake(AUnitType.Zerg_Egg, 10.9),
+            fake(AUnitType.Zerg_Lurker_Egg, 10.95),
+            target = fake(AUnitType.Zerg_Zergling, 11.5),
+            fake(AUnitType.Zerg_Sunken_Colony, 13.8),
+            fake(AUnitType.Zerg_Sunken_Colony, 29)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(target, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
     public void zerglingsOverDrones() {
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
         FakeUnit expectedTarget;

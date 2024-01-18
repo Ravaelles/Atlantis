@@ -2,7 +2,6 @@ package atlantis.combat.micro.avoid.margin.protoss;
 
 import atlantis.combat.micro.avoid.margin.SafetyMarginAgainstMelee;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 
 public class ProtossSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     public ProtossSafetyMarginAgainstMelee(AUnit defender) {
@@ -13,6 +12,7 @@ public class ProtossSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 //        if (defender.isDragoon()) return forDragoon(attacker);
 
         if (defender.isZealot()) return forZealot(attacker);
+        if (defender.isDragoon()) return (new DragoonSafetyMarginAgainstMelee(defender)).marginAgainst(attacker);
 
         return -1;
     }
@@ -22,10 +22,4 @@ public class ProtossSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
         return -1;
     }
-
-//    private double forDragoon(AUnit attacker) {
-//        if (defender.isHealthy()) return 0;
-//
-//        return defender.woundPercent() / 33.0;
-//    }
 }

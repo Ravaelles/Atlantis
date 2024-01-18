@@ -21,6 +21,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
         if (EnemyWhoBreachedBase.notNull()) return false;
         if (unit.isSquadScout()) return false;
+        if (unit.isSpecialMission()) return false;
 
         if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_CLOSE) {
             // Be brave with ChokeBlockersAssignments
@@ -51,7 +52,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     private boolean forDragoon() {
-        if (unit.isDragoon() && unit.isHealthy()) {
+        if (unit.isDragoon() && unit.hp() >= 30) {
             unit.holdPosition("DragoonHold");
             return true;
         }
@@ -74,6 +75,8 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     private boolean goToMain() {
+        if (unit.isDragoon()) return false;
+
         HasPosition goTo = fromSide != null ? fromSide : Select.main();
 
         if (goTo != null && goTo.isWalkable()) {

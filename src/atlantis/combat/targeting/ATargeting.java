@@ -109,11 +109,14 @@ public class ATargeting extends HasUnit {
             return null;
         }
 
+        if (unit.enemiesNear().inRadius(9, unit).empty()) return enemy;
+//        if (true) return enemy;
+
 //        A.errPrintln("BEFORE weakestEnemy = " + enemy + "\n");
         AUnit weakestEnemy = WeakestOfType.selectWeakestEnemyOfType(enemy.type(), unit);
 //        A.errPrintln("AFTER weakestEnemy = " + weakestEnemy + "\n");
 
-        return weakestEnemy;
+        return weakestEnemy != null ? weakestEnemy : enemy;
     }
 
     // =========================================================

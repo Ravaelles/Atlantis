@@ -331,6 +331,10 @@ public interface HasPosition {
         AAdvancedPainter.paintCircleFilled(this, radius, color);
     }
 
+    default void paintCircle(int radius, Color color) {
+        AAdvancedPainter.paintCircle(this, radius, color);
+    }
+
     default void paintLine(HasPosition to, Color color) {
         AAdvancedPainter.paintLine(this, to, color);
     }

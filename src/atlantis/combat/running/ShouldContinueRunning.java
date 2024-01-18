@@ -4,15 +4,34 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.PauseAndCenter;
 import bwapi.Color;
 
 public class ShouldContinueRunning {
     public static boolean handleContinueRunning(AUnit unit) {
+//        if (unit.isRunning()) {
+//            unit.paintCircleFilled(18, Color.Blue);
+//        }
+//        else {
+//            unit.paintCircle(19, Color.Grey);
+//            unit.paintCircle(18, Color.Grey);
+//            unit.paintCircle(13, Color.Grey);
+//            unit.paintCircle(12, Color.Grey);
+//        }
+
         if (unit.isRunning()) {
             if (justStartedRunning(unit)) return truth(unit);
 
+            if (
+//                unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
+                unit.lastActionLessThanAgo(8, Actions.RUN_IN_ANY_DIRECTION)
+            ) {
+//                System.err.println("@ " + A.now() + " - " + unit);
+                return truth(unit);
+            }
+
             APosition targetPosition = unit.targetPosition();
-            if (targetPosition == null || targetPosition.distTo(unit) <= 1.2) return false;
+            if (targetPosition == null || targetPosition.distTo(unit) <= 0.75) return false;
 
             if (unit.cooldown() <= 2) {
 //                double rangeBonus = unit.isHealthy() ? 0.5 : 1.2;
@@ -30,14 +49,6 @@ public class ShouldContinueRunning {
 
 //            if (distToTargetPosition >= 2.5) return truth(unit);
 //            if (distToTargetPosition >= 2 && unit.meleeEnemiesNearCount(1.7) > 0) return truth(unit);
-
-            if (
-//                unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
-                unit.lastActionLessThanAgo(8, Actions.RUN_IN_ANY_DIRECTION)
-            ) {
-//                System.err.println("@ " + A.now() + " - " + unit);
-                return truth(unit);
-            }
         }
 
         return false;
@@ -69,8 +80,10 @@ public class ShouldContinueRunning {
     }
 
     private static boolean truth(AUnit unit) {
-//        System.err.println("@ " + A.now() + " - CONTINUE");
+        System.err.println("@ " + A.now() + " - CONTINUE RUN " + unit.idWithHash());
         unit.paintCircleFilled(5, Color.White);
+        unit.paintCircle(9, Color.White);
+        unit.paintCircle(10, Color.White);
         return true;
     }
 }

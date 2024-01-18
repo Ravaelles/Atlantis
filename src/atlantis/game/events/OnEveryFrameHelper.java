@@ -120,12 +120,12 @@ public class OnEveryFrameHelper {
 
 //        unit.setTooltip("Cooldown:" + unit.cooldown());
 
-        if (unit.isAttacking()) {
-            AAdvancedPainter.paintCircle(unit, 12, Color.Orange);
-            AAdvancedPainter.paintCircle(unit, 11, Color.Orange);
-            AAdvancedPainter.paintCircle(unit, 8, Color.Orange);
-            AAdvancedPainter.paintCircle(unit, 7, Color.Orange);
-        }
+//        if (unit.isAttacking()) {
+//            AAdvancedPainter.paintCircle(unit, 12, Color.Orange);
+//            AAdvancedPainter.paintCircle(unit, 11, Color.Orange);
+//            AAdvancedPainter.paintCircle(unit, 8, Color.Orange);
+//            AAdvancedPainter.paintCircle(unit, 7, Color.Orange);
+//        }
 
         if ((new DontInterruptShootingUnits(unit)).applies()) {
             AAdvancedPainter.paintCircle(unit, 10, Color.Teal);

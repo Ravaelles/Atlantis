@@ -23,19 +23,14 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         super(defender);
     }
 
-    public double calculateAgainst(AUnit attacker) {
+    public double marginAgainst(AUnit attacker) {
         double criticalDist = -1;
 
         // === Protoss ===============================================
 
-        if ((criticalDist = forDragoon(attacker)) >= 0) {
-            return criticalDist;
-        }
-        else if (defender.isDT()) {
-            return 0;
-        }
+        if (defender.isDT() && !defender.isDetected()) return 0;
 
-        // === Terran ===============================================
+            // === Terran ===============================================
 
         else if (defender.isTerranInfantry()) {
             criticalDist = (new TerranSafetyMarginAgainstMelee(defender)).handleTerranInfantry(attacker);
@@ -101,31 +96,33 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return 0;
     }
 
-    private double forDragoon(AUnit attacker) {
-        if (!defender.isDragoon()) {
-            return -1;
-        }
-
-        if (defender.shieldDamageAtMost(23) && !attacker.isDT()) {
-            if (defender.friendsInRadiusCount(1.5) >= 3) {
-                return 1.1;
-            }
-
-            if (defender.cooldownRemaining() <= 3) {
-                return 0;
-            }
-
-//            if (defender.lastUnderAttackMoreThanAgo(150) && defender.shieldDamageAtMost(16)) {
+//    private double forDragoon(AUnit attacker) {
+//        if (!defender.isDragoon()) return -1;
+//
+//        double base = 0;
+//
+//        double cooldownBonus = defender.cooldownRemaining() <= 5 ? 0.7 : 0;
+//
+//        if (defender.shieldDamageAtMost(23) && !attacker.isDT()) {
+//            if (defender.friendsInRadiusCount(1.5) >= 3) {
+//                return 1.1;
+//            }
+//
+//            if (true) {
 //                return 0;
 //            }
-        }
-
-        if (attacker.isZergling()) {
-            return (0.2 + defender.woundPercent() / 40);
-        }
-
-        return -1;
-    }
+//
+////            if (defender.lastUnderAttackMoreThanAgo(150) && defender.shieldDamageAtMost(16)) {
+////                return 0;
+////            }
+//        }
+//
+//        if (attacker.isZergling()) {
+//            return (0.2 + defender.woundPercent() / 40);
+//        }
+//
+//        return -1;
+//    }
 
     // =========================================================
 

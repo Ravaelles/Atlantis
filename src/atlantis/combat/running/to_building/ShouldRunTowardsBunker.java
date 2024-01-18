@@ -12,12 +12,16 @@ import atlantis.util.We;
 public class ShouldRunTowardsBunker {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
         if (!We.terran()) return false;
+
         if (A.seconds() >= 600 && Count.marines() >= 13) return false;
-        if (unit.distTo(runAwayFrom) <= 2) return false;
-        if (unit.enemiesNearInRadius(2) > 0) return false;
+//        if (unit.distTo(runAwayFrom) <= 2) return false;
+//        if (unit.enemiesNearInRadius(2) > 0) return false;
 
         AUnit bunker = position();
-        if (bunker == null || bunker.distTo(unit) <= 4) return false;
+        if (bunker == null) return false;
+
+        double distTo = bunker.distTo(unit);
+        if (distTo >= 6 && distTo <= 30) return false;
 
         return true;
 

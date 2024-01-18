@@ -14,7 +14,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         super(defender);
     }
 
-    public double calculateAgainst(AUnit attacker) {
+    public double marginAgainst(AUnit attacker) {
         double criticalDist;
 
         if (A.hasMinerals(2000) && defender.isGroundUnit()) {

@@ -26,7 +26,7 @@ public class SafetyMargin {
      * Defending Dragoon is 5.5 tiles away from attacking Zealot (MELEE unit, range 1).
      * Margin =  5.5 - 1 = 4.5  tiles
      */
-    public double calculateAgainst(AUnit attacker) {
+    public double marginAgainst(AUnit attacker) {
         if (attacker == null) {
             throw new RuntimeException("Attacker is null");
         }
@@ -39,10 +39,10 @@ public class SafetyMargin {
 
         }
         else if (attacker.isMelee()) {
-            calculated = (new SafetyMarginAgainstMelee(defender)).calculateAgainst(attacker);
+            calculated = (new SafetyMarginAgainstMelee(defender)).marginAgainst(attacker);
         }
         else {
-            calculated = (new SafetyMarginAgainstRanged(defender)).calculateAgainst(attacker);
+            calculated = (new SafetyMarginAgainstRanged(defender)).marginAgainst(attacker);
         }
 
 

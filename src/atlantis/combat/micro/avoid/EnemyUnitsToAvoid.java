@@ -30,7 +30,7 @@ public class EnemyUnitsToAvoid extends HasUnit {
                 enemies = new Units();
 
                 for (AUnit enemy : enemyUnitsToPotentiallyAvoid()) {
-                    double safetyMargin = (new SafetyMargin(unit)).calculateAgainst(enemy);
+                    double safetyMargin = (new SafetyMargin(unit)).marginAgainst(enemy);
 //                    System.err.println(
 //                        enemy + " // " + String.format("%.2f", safetyMargin) + " // " + A.dist(enemy.distTo(unit))
 //                    );

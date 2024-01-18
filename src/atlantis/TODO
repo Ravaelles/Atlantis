@@ -1,21 +1,24 @@
-### BUGS ###
-
-# Protoss
+### Protoss ############################################################################################################
 
 - Make Goons stand very close to Focus; look for when it's showing back and hold
 - Base is still not built because there is an order, but NextBase is dunno, null? Check NextBasePosition
-!- Make Dragoons a pioneer, not zealots
+!- Make Goons a pioneer, not zealots
 
-# Terran
+- When attacking a zergling, always fire when no cooldown
+
++ Create minimap - dragoons attacking zerglings
++ Create minimap - dragoons attacking sunkens
++ Create minimap - dragoons + zealots attacking sunkens
++ Create minimap - zealots attacking sunkens
++ Create more minimaps
+
+
+### Terran #############################################################################################################
 
 .------ 1500 min / 1500 gas for bio only - probably no upgrades and not enough upgrades
 
-
 ---- Double robotics & observatory
 !!!!!!!!!!!!!!!!!!!!!!!-------------------- No OBSERVER movement
-
-
-
 
 --------------------------------- Terribly broken Targeting
 

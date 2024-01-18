@@ -1,5 +1,6 @@
 package atlantis.combat.micro.generic.unfreezer;
 
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -27,7 +28,7 @@ public class UnfreezerShakeUnit {
 //            if (goTo == null) goTo = unit.friendsNear().mostDistantTo(unit);
 //            if (goTo == null) goTo = Select.our().exclude(unit).nearestTo(unit);
         if (goTo == null) goTo = Select.our().exclude(unit).groundUnits().random();
-        if (goTo == null) goTo = unit.position().translateByPixels(8, 8);
+        if (goTo == null) goTo = goToPositionNearby(unit);
 
         if (goTo != null) {
             unit.moveTactical(goTo, Actions.MOVE_UNFREEZE, "UnfreezeByMove");
@@ -36,6 +37,11 @@ public class UnfreezerShakeUnit {
 
         ErrorLog.printErrorOnce("Unfreezing ATTACK unit " + unit + " has no place to go");
         return false;
+    }
+
+    private static APosition goToPositionNearby(AUnit unit) {
+        int moduloId = unit.id() % 5;
+        return unit.position().translateByPixels(-16 + moduloId * 8, 16 - moduloId * 8);
     }
 
     private static boolean shouldNotDoAnythingButContinue(AUnit unit) {

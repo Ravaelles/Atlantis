@@ -61,13 +61,13 @@ public class WeakestOfType {
             return enemy;
         }
 
-        // Ok, any possible of this type
-        enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.maxDistToAttack(unit));
-//        A.errPrintln("enemy B3 = " + enemy);
-        if (enemy != null) {
-//            System.err.println("Attack max");
-            return enemy;
-        }
+//        // Ok, any possible of this type
+//        enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.maxDistToAttack(unit));
+////        A.errPrintln("enemy B3 = " + enemy);
+//        if (enemy != null) {
+////            System.err.println("Attack max");
+//            return enemy;
+//        }
 
         // =====================================================================
         // Couldn't find enemy of given type in/near weapon range. Change target

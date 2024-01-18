@@ -12,7 +12,7 @@ public class ContinueAttackOrder extends Manager {
     @Override
     public boolean applies() {
         if (unit.isMarine()) {
-            if (unit.hp() <= 17) return false;
+            if (unit.hp() <= 18) return false;
             if (unit.hp() <= 32 && !unit.hasMedicInRange()) return false;
         }
 

@@ -1,7 +1,6 @@
 package atlantis.information.strategy;
 
 import atlantis.information.strategy.terran.TerranStrategies;
-import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -17,10 +16,10 @@ public class StrategyChooser {
             strategy = ProtossStrategies.initForProtoss();
         }
         else if (We.terran()) {
-            strategy = initForTerran();
+            strategy = TerranStrategies.initForTerran();
         }
         else if (We.zerg()) {
-            strategy = initForZerg();
+            strategy = ZergStrategies.initForZerg();
         }
         else {
             ErrorLog.printErrorOnce("Unhandled race in StrategyChooser::initialize()");
@@ -29,52 +28,4 @@ public class StrategyChooser {
 
         OurStrategy.setTo(strategy);
     }
-
-    // =========================================================
-
-    private static AStrategy initForTerran() {
-//        return TerranStrategies.TERRAN_3_Rax_MnM;
-//        return TerranStrategies.TERRAN_Nada_2_Fac;
-//        return TerranStrategies.TERRAN_1_Base_Vultures;
-//        if (true) { return TerranStrategies.TERRAN_BBS; }
-
-        if (Enemy.protoss()) {
-            return TerranStrategies.TERRAN_Sparks;
-//            return TerranStrategies.TERRAN_Shallow_Two_vP;
-//            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
-//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
-//            return TerranStrategies.TERRAN_Nada_2_Fac;
-        }
-        else if (Enemy.terran()) {
-            return TerranStrategies.TERRAN_Mech;
-//            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
-        }
-        else {
-            return TerranStrategies.TERRAN_Sparks;
-//            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
-//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
-        }
-    }
-
-    private static AStrategy initForZerg() {
-        if (Enemy.protoss()) {
-//            return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
-            return ZergStrategies.ZERG_9_Hatch_Fast_Expo;
-//            return ZergStrategies.ZERG_9_Pool_vP;
-//            return ZergStrategies.ZERG_3_Hatch_Lurker;
-        }
-        else if (Enemy.terran()) {
-            return ZergStrategies.ZERG_9_Pool_vT;
-        }
-        else {
-            return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
-//            return ZergStrategies.ZERG_9_Hatch_Fast_Expo;
-//            return ZergStrategies.ZERG_9_Pool_vZ;
-        }
-
-//        return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
-//        return ZergStrategies.ZERG_13_Pool_Muta;
-//        return ZergStrategies.ZERG_12_Hatch_vZ;
-    }
-
 }

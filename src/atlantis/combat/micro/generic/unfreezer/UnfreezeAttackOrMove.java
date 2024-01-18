@@ -11,6 +11,8 @@ public class UnfreezeAttackOrMove extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (unit.lastActionMoreThanAgo(57, Actions.MOVE_UNFREEZE)) return false;
 
         return whenLongWithoutAction() || whenActionInit() || whenAttacking() || whenMoving();

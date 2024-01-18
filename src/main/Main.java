@@ -19,8 +19,8 @@ public class Main {
 //    public static String OUR_RACE = "Terran";
 //    public static String OUR_RACE = "Zerg";
 
-    public static String ENEMY_RACE = "Protoss";
-//    public static String ENEMY_RACE = "Terran";
+    //    public static String ENEMY_RACE = "Protoss";
+    public static String ENEMY_RACE = "Terran";
 //    public static String ENEMY_RACE = "Zerg";
 
     /**
@@ -70,7 +70,7 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -105,7 +105,8 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Base.scx"; // Wraiths v CC & Turret & Workers
 //        if (true) return "ums/rav/Wraiths_v_Base2.scm"; // Wraiths v Hatchery & Spore & Workers
 
-        // vs Terran
+        // for Terran
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/Wraith_v_Wraith.scm";
 //        if (true) return "ums/rav/Wraiths_v_Base.scx";
 //@        if (true) return "ums/rav/Bunker_v_M&M.scx";
@@ -114,10 +115,12 @@ public class Main {
 //        if (true) return "ums/rav/Tanks_v_Wraiths.scm"; // Make sure that SCVs can construct turrets ad hoc
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
-        // vs Protoss
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+        // for Protoss
+//        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
+        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx";
-        if (true) return "ums/rav/minimaps/Dragoons_v_Zealots.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";

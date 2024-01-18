@@ -210,7 +210,7 @@ public abstract class Squad extends Units {
                 if (!We.zerg() && Select.ourCombatUnits().ranged().empty()) return null;
 
                 Selection groundUnits = units().groundUnits();
-                AUnit ranged = groundUnits.ranged().nonTanks().healthy().mostDistantToBase();
+                AUnit ranged = groundUnits.ranged().nonTanks().healthy().notSpecialAction().mostDistantToBase();
                 if (ranged != null) {
                     return ranged;
                 }
