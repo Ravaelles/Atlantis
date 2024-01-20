@@ -41,6 +41,7 @@ public class PreventAddDuplicate {
 
         int max = type.isABuilding() ? (type.isCombatBuilding() ? 5 : 2) : 4;
         if (type.isSupplyDepot() && A.supplyTotal() <= 32) max = 1;
+        if (type.isPylon() && A.supplyTotal() <= 32) max = 1;
 
         if (existingInQueue >= max) {
             if (type.isSupplyDepot()) ErrorLog.printMaxOncePerMinute("Exceeded DEPOTS allowed: " + existingInQueue);
@@ -49,6 +50,7 @@ public class PreventAddDuplicate {
         }
 
         if (tooManyDepots(type, position)) return true;
+        if (tooManyPylons(type, position)) return true;
         if (tooManyBunkers(type, position)) return true;
 
         return false;
@@ -60,6 +62,19 @@ public class PreventAddDuplicate {
         if (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2) {
             ErrorLog.printMaxOncePerMinute(
                 "Exceeded DEPOTS allowed: " + CountInQueue.count(AUnitType.Terran_Supply_Depot)
+            );
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean tooManyPylons(AUnitType type, HasPosition position) {
+        if (!type.isPylon()) return false;
+
+        if (CountInQueue.count(AUnitType.Protoss_Pylon) >= 2) {
+            ErrorLog.printMaxOncePerMinute(
+                "Exceeded PYLON allowed: " + CountInQueue.count(AUnitType.Protoss_Pylon)
             );
             return true;
         }

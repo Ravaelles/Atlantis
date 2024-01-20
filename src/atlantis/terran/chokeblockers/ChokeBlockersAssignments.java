@@ -71,13 +71,6 @@ public class ChokeBlockersAssignments {
         Selection freeZealots = Select.ourOfType(AUnitType.Protoss_Zealot).exclude(blockers);
         if (freeZealots.isEmpty()) return;
 
-        for (AUnit worker : blockers) {
-            if (worker.isWorker()) {
-                worker.setSpecialPosition(null);
-                break;
-            }
-        }
-
         if (blockers.size() >= 3) return;
 
         AUnit zealot = freeZealots.nearestTo(choke);
@@ -133,5 +126,9 @@ public class ChokeBlockersAssignments {
             }
             break;
         }
+    }
+
+    public boolean isChokeBlocker(AUnit unit) {
+        return blockers.contains(unit);
     }
 }

@@ -1,6 +1,8 @@
 package atlantis.combat;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.generic.ImproveCombatPerformance;
+import atlantis.combat.generic.UnitUnderAttackAndNotAttacking;
 import atlantis.combat.managers.*;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.units.AUnit;

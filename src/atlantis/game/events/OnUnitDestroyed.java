@@ -21,7 +21,7 @@ public class OnUnitDestroyed {
 
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {
-            printOurDeadUnit(unit);
+//            printOurDeadUnit(unit);
             handleForOurUnit(unit);
         }
 //        else if (unit.isEnemy() && unit.isRealUnit()) {

@@ -1,6 +1,7 @@
 package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.ContinueRunning;
@@ -36,6 +37,8 @@ public class CombatManagerMediumPriority extends Manager {
             AttackNearbyEnemies.class,
 
             SquadScout.class,
+
+            WeDontKnowWhereEnemyIs.class,
         };
     }
 }

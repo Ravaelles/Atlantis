@@ -15,6 +15,7 @@ import atlantis.map.wall.GetWallIn;
 import atlantis.map.wall.Structure;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.position.base.NextBasePosition;
 import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.orders.production.queue.Queue;
@@ -70,7 +71,19 @@ public class OnEveryFrameHelper {
 
 //        printObserverStatus();
 
-        paintAttackTargetsForOur();
+//        paintAttackTargetsForOur();
+
+        paintNextBasePosition();
+    }
+
+    private static void paintNextBasePosition() {
+        APosition nextBase = NextBasePosition.nextBasePosition();
+
+//        System.out.println("NextBasePosition = " + nextBase);
+
+        if (nextBase == null) return;
+
+        AAdvancedPainter.paintBuildingPosition(nextBase, "Next_BASE");
     }
 
     private static void paintAttackTargetsForOur() {

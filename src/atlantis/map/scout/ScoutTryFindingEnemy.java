@@ -13,8 +13,8 @@ import atlantis.units.select.Select;
 /**
  * We don't know any enemy building, unit nearest starting location.
  */
-public class TryFindingEnemy extends Manager {
-    public TryFindingEnemy(AUnit unit) {
+public class ScoutTryFindingEnemy extends Manager {
+    public ScoutTryFindingEnemy(AUnit unit) {
         super(unit);
     }
 

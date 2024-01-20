@@ -141,15 +141,15 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             cachePath = "ourBases",
             0,
             () -> {
-                if (We.zerg()) {
+//                if (We.zerg()) {
                     return ourOfType(
                         AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
                         AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
                     );
-                }
-                else {
-                    return ourOfType(AtlantisRaceConfig.BASE);
-                }
+//                }
+//                else {
+//                    return ourOfType(AtlantisRaceConfig.BASE);
+//                }
             }
         );
     }

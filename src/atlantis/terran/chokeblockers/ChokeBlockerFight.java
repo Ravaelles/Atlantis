@@ -6,6 +6,7 @@ import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
+import atlantis.util.Enemy;
 
 public class ChokeBlockerFight extends Manager {
     public ChokeBlockerFight(AUnit unit) {
@@ -16,7 +17,11 @@ public class ChokeBlockerFight extends Manager {
     public boolean applies() {
         if (unit.hp() <= 24) return false;
 
-        if (unit.isZealot() && A.seconds() <= 220) return true;
+        if (unit.isZealot()) {
+            if (unit.hp() <= 36 && unit.hasCooldown()) return false;
+
+            return true;
+        }
 
         return !unit.isScv()
             && unit.hp() >= 40;
@@ -43,10 +48,12 @@ public class ChokeBlockerFight extends Manager {
     }
 
     private double maxDistToAttack() {
-        if (
-            unit.enemiesNear().inRadius(7, unit).groundUnits().count() <= 1
-        ) return 3;
+        int maxEnemies = Enemy.protoss() ? 1 : 3;
 
-        return 1.05;
+        if (
+            unit.enemiesNear().inRadius(7, unit).groundUnits().count() <= maxEnemies
+        ) return 2.5;
+
+        return 1.4;
     }
 }

@@ -19,7 +19,7 @@ public class ScoutManager extends Manager {
         return new Class[]{
             AvoidEnemies.class,
             ScoutRunning.class,
-            TryFindingEnemy.class,
+            ScoutTryFindingEnemy.class,
             RoamAroundEnemyBase.class,
             ScoutFreeBases.class,
 //            TestRoamingAroundBase.class,

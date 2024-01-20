@@ -1,4 +1,4 @@
-package atlantis.combat.managers;
+package atlantis.combat.generic;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;

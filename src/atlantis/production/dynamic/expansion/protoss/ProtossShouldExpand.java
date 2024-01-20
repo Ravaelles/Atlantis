@@ -119,8 +119,8 @@ public class ProtossShouldExpand {
     }
 
     public static boolean needToSaveMineralsForExpansion() {
-//        boolean needToSave = !A.hasMinerals(570) && CountInQueue.bases() > 0;
-        boolean needToSave = !A.hasMinerals(530) && ReservedResources.minerals() >= 400;
+//        boolean needToSave = !A.hasMinerals(530) && ReservedResources.minerals() >= 400;
+        boolean needToSave = A.minerals() < 100 + ReservedResources.minerals();
 
 //        if (needToSave) System.err.println("@ " + A.now() + " - needToSave (" + A.minerals());
 

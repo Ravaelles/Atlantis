@@ -1,13 +1,27 @@
 ### Protoss ############################################################################################################
 
---- Pylon - force GRID. Currently impassable circle
+!.- Dragoons unable to get OnTheWrongSide
+Dragoons not choosing AroundFocus targets
+
+
+--- NextBaseHasNoPosition
+---- Scouts getting killed easily; dont use more than 2, then use Dragoon?
+
+- Dragoon not attacking most Wounded Dragoon, out of 3, he chose 2nd least wounded
+
+--- No army cohesion, no line
+
+!.------ ChokeBlocker - 1 of 2 zealots not attacking enemy zealot, has mision move
+.---- Still Dragoon (and Probe) production even with only 230 minerals and SHOULD EXPAND
+.--- Dragoons getting stuck near unwalkable and other Gateway
+
+
+.?--- Pylon - force GRID. Currently impassable circle
 - Base is still not built because there is an order, but NextBase is dunno, null? Check NextBasePosition
-!- Make Goons a pioneer, not zealots
+.(!)!- Make Goons a pioneer, not zealots
 
-- When attacking a zergling, always fire when no cooldown
-
-+ Create minimap - zealots attacking sunkens
 + Create more minimaps
+
 
 
 ### Terran #############################################################################################################

@@ -36,7 +36,7 @@ public class FindPositionForBase {
 //        }
 
         if (near == null) {
-            if (ourBasesCount <= 1) {
+            if (ourBasesCount <= 1 && !A.isUms()) {
                 ErrorLog.printMaxOncePerMinute("findPositionForBase_nearestFreeBase is null");
             }
             return null;

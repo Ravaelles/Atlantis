@@ -34,16 +34,24 @@ public class ChokeBlockerPosition {
         if (totalBlockers == 1) return 50;
 
         if (totalBlockers == 2) {
-            if (indexOf == 0) return 20;
-            return 80;
+            int offset = 17;
+            if (indexOf == 0) return offset;
+            return 100 - offset;
         }
 
         if (totalBlockers == 3) {
-            if (indexOf == 0) return 17;
+            int offset = 12;
+            if (indexOf == 0) return offset;
             if (indexOf == 1) return 50;
-            if (indexOf == 2) return 83;
+            if (indexOf == 2) return 100 - offset;
         }
 
+        indexOf = (totalBlockers + indexOf) % indexOf;
+        int offset = 25;
+        if (indexOf == 0) return 1;
+        if (indexOf == 1) return offset;
+        if (indexOf == 2) return 100 - offset;
+        if (indexOf == 3) return 99;
         return 50;
     }
 }

@@ -17,12 +17,17 @@ public class DontInterruptShootingUnits extends Manager {
 //        if (true) return false;
 
         if (!unit.isAttacking()) return false;
+        if (unit.isMelee()) return false;
+        if (!unit.hasValidTarget()) return false;
+
+//        if (unit.lastAttackOrderMoreThanAgo(30)) return false;
+
+//        AUnit target = unit.target();
 
         // =========================================================
 //        if (UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)) return true;
         // =========================================================
 
-        AUnit target = unit.target();
 
         // === Stop & Shoot ========================================
 //        if (unit.isMoving() && target != null && unit.isTargetInWeaponRangeAccordingToGame(target)) return false;
@@ -42,8 +47,6 @@ public class DontInterruptShootingUnits extends Manager {
             ) return false;
         }
 
-        if (!unit.isAttacking()) return false;
-        if (!unit.isRanged()) return false;
         if (isMeleeEnemyNear()) return false;
 
         if (unit.isWraith()) {

@@ -6,6 +6,8 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.delta.Delta;
 import atlantis.combat.squad.positioning.SquadCohesion;
+import atlantis.combat.squad.squad_scout.DefineSquadScout;
+import atlantis.combat.squad.squad_scout.SquadScout;
 import atlantis.combat.squad.transfers.SquadReinforcements;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -205,18 +207,7 @@ public abstract class Squad extends Units {
         return cacheUnit.getIfValid(
             "squadScout",
             131,
-            () -> {
-                if (!isMainSquad()) return null;
-                if (!We.zerg() && Select.ourCombatUnits().ranged().empty()) return null;
-
-                Selection groundUnits = units().groundUnits();
-                AUnit ranged = groundUnits.ranged().nonTanks().healthy().notSpecialAction().mostDistantToBase();
-                if (ranged != null) {
-                    return ranged;
-                }
-
-                return groundUnits.melee().havingAtLeastHp(30).mostDistantToBase();
-            }
+            () -> (new DefineSquadScout(this)).define()
         );
     }
 

@@ -32,13 +32,7 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
 
         APosition withdrawTo = focusPoint.fromSide();
 
-        if (!focusPoint.isAroundChoke() || withdrawTo == null) {
-
-
-
-
-            return false;
-        }
+        if (!focusPoint.isAroundChoke() || withdrawTo == null) return false;
 
         double distToFocusPoint = unit.distToFocusPoint();
 //        double optimalDist = unit.mission().optimalDist();

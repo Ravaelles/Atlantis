@@ -1,0 +1,44 @@
+package atlantis.combat.squad.positioning;
+
+import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
+import atlantis.terran.chokeblockers.ChokeBlockersAssignments;
+import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
+
+public class MakeSpaceForWrongSideOfFocusFriends extends Manager {
+    private AUnit friendToLetGo;
+
+    public MakeSpaceForWrongSideOfFocusFriends(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isMissionSparta()
+            && ChokeBlockersAssignments.get().isChokeBlocker(unit)
+            && friendNearOnWrongSideOfFocus();
+    }
+
+    private boolean friendNearOnWrongSideOfFocus() {
+        for (AUnit friend : unit.friendsNear().groundUnits().combatUnits().list()) {
+            if (friend.isActiveManager(OnWrongSideOfFocusPoint.class)) {
+                friendToLetGo = friend;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public Manager handle() {
+        if (
+            friendToLetGo != null &&
+                unit.moveAwayFrom(friendToLetGo, 3, Actions.MOVE_SPACE, "Space4Friend")
+        ) {
+            return usedManager(this);
+        }
+
+        return null;
+    }
+}

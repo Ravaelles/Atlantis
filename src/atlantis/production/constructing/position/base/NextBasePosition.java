@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position.base;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
@@ -23,7 +24,7 @@ public class NextBasePosition {
                 APosition basePosition = FindPositionForBaseNearestFree.find(building, builder, null);
 
                 if (basePosition == null) {
-                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null base position, exiting");
+                    if (!A.isUms()) ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null base position, exiting");
                     return null;
                 }
 

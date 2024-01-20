@@ -44,8 +44,12 @@ public class DanceAway extends Manager {
 
     private boolean continueDancingAway() {
         return unit.isMoving()
-            && (unit.hasCooldown() || unit.hp() <= minHp() || unit.lastUnderAttackLessThanAgo(60))
-            && unit.lastActionLessThanAgo(90, Actions.MOVE_DANCE_AWAY);
+            && unit.lastActionLessThanAgo((int) (70 + unit.woundPercent() / 39.0), Actions.MOVE_DANCE_AWAY)
+            && (
+                unit.hasCooldown()
+                    || unit.hp() <= minHp()
+                    || unit.lastUnderAttackLessThanAgo((int) (20 + unit.woundPercent() / 20.0))
+        );
     }
 
     private int minHp() {

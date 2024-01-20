@@ -88,9 +88,10 @@ public class OnStart {
 //            AGame.setUmsMode();
 //        }
 
-        int ours = Select.our().count();
+//        int ours = Select.our().count();
 
-        if (We.zerg() ? ours != 9 : ours != 5) {
+//        if (We.zerg() ? ours != 9 : ours != 5) {
+        if (Select.our().workers().atMost(3) || Select.ourBases().empty()) {
             AGame.setUmsMode();
         }
     }

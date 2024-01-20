@@ -71,6 +71,12 @@ public class ATargeting extends HasUnit {
     // =========================================================
 
     private AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
+        DefendingAroundFocus defendingAroundFocus = new DefendingAroundFocus(unit);
+        if (defendingAroundFocus.applies()) {
+            unit.setManagerUsed(defendingAroundFocus);
+            return defendingAroundFocus.targetToAttack();
+        }
+
         if (unit.isTankSieged()) return (new ATankTargeting(unit)).targetForTank();
 
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
@@ -141,17 +147,17 @@ public class ATargeting extends HasUnit {
     private AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
         AUnit target;
 
-//        System.err.println("Aaaaaaaa " + Select.enemyRealUnits(true, false, true).size());
-        Select.enemyRealUnits(true, false, true)
-//            .print("A")
-            .visibleOnMap()
-//            .print("B")
-            .buildings()
-//            .print("C")
-            .inRadius(maxDistFromEnemy, unit)
-//            .print("D")
-            .canBeAttackedBy(unit, maxDistFromEnemy);
-//            .print("E");
+////        System.err.println("Aaaaaaaa " + Select.enemyRealUnits(true, false, true).size());
+//        Select.enemyRealUnits(true, false, true)
+////            .print("A")
+//            .visibleOnMap()
+////            .print("B")
+//            .buildings()
+////            .print("C")
+//            .inRadius(maxDistFromEnemy, unit)
+////            .print("D")
+//            .canBeAttackedBy(unit, maxDistFromEnemy);
+////            .print("E");
 
         enemyBuildings = Select.enemyRealUnits(true, false, true)
             .buildings()
@@ -167,12 +173,7 @@ public class ATargeting extends HasUnit {
 
 //        enemyBuildings.print("G");
 
-        enemyUnits = Select.enemyRealUnitsWithBuildings()
-            .nonBuildingsOrCombatBuildings()
-            .inRadius(maxDistFromEnemy, unit)
-            .maxGroundDist(maxDistFromEnemy, unit)
-            .effVisibleOrFoggedWithKnownPosition()
-            .canBeAttackedBy(unit, maxDistFromEnemy);
+        enemyUnits = possibleEnemyUnitsToAttack(unit, maxDistFromEnemy);
 
 //        System.err.println("enemyBuildings = " + enemyBuildings.size());
 //        System.err.println("enemyUnits = " + enemyUnits.size());
@@ -223,6 +224,15 @@ public class ATargeting extends HasUnit {
         // =====
 
         return target;
+    }
+
+    public static Selection possibleEnemyUnitsToAttack(AUnit unit, double maxDistFromEnemy) {
+        return Select.enemyRealUnitsWithBuildings()
+            .nonBuildingsOrCombatBuildings()
+            .inRadius(maxDistFromEnemy, unit)
+            .maxGroundDist(maxDistFromEnemy, unit)
+            .effVisibleOrFoggedWithKnownPosition()
+            .canBeAttackedBy(unit, maxDistFromEnemy);
     }
 
     private static boolean shouldOnlyAttackBases(AUnit unit) {

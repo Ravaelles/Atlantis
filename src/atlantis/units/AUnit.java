@@ -2794,13 +2794,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean lastPositioningActionMoreThanAgo(int minFramesAgo) {
-        return lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_FORMATION)
-            && lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
+        return lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_FORMATION);
+//            && lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
 
     public boolean lastPositioningActionLessThanAgo(int minFramesAgo) {
-        return lastActionLessThanAgo(minFramesAgo, Actions.MOVE_FORMATION)
-            && lastActionLessThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
+        return lastActionLessThanAgo(minFramesAgo, Actions.MOVE_FORMATION);
+//            && lastActionLessThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
 
     public boolean shouldRetreat() {

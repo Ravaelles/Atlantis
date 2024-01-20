@@ -106,4 +106,9 @@ public class AFocusPoint extends APosition {
     public String name() {
         return name;
     }
+
+    public AFocusPoint forceAroundChoke(AChoke choke) {
+        this.choke = choke;
+        return this;
+    }
 }

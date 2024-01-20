@@ -19,7 +19,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
@@ -239,10 +238,11 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         }
 
         return new AFocusPoint(
-            mainChoke.translateTilesTowards(0.5, Select.main()),
+//            mainChoke.translateTilesTowards(0.5, Select.main()),
+            mainChoke,
             Select.main(),
             "MainChoke"
-        );
+        ).forceAroundChoke(mainChoke);
     }
 
     private AFocusPoint atNaturalChoke() {
@@ -265,7 +265,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
             natural,
             "NaturalChoke"
-        );
+        ).forceAroundChoke(naturalChoke);
     }
 
 }
