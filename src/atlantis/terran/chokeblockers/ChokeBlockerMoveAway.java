@@ -1,6 +1,8 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
+import atlantis.combat.squad.squad_scout.SquadScoutProceed;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
@@ -10,6 +12,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class ChokeBlockerMoveAway extends Manager {
+    public static final int MOVE_AWAY_DISTANCE = 4;
     private final APosition chokeBlockPoint;
     private AChoke choke;
 
@@ -25,9 +28,18 @@ public class ChokeBlockerMoveAway extends Manager {
 
         if (unit.hp() <= 16 && unit.enemiesNear().inRadius(2, unit).notEmpty()) return true;
 
-        return unit.enemiesNear().inRadius(11, unit).empty()
+        return unit.enemiesNear().inRadius(7, unit).empty()
             && (choke = ChokeToBlock.get()) != null
-            && needToMoveSpaceForWorkers();
+            && (needToMoveSpaceForWorkers() || needToMoveForCombatUnits());
+    }
+
+    private boolean needToMoveForCombatUnits() {
+        return unit.friendsNear()
+            .combatUnits()
+            .exclude(unit)
+            .notSpecialAction()
+            .havingActiveManager(OnWrongSideOfFocusPoint.class, SquadScoutProceed.class)
+            .notEmpty();
     }
 
     private boolean needToMoveSpaceForWorkers() {
@@ -45,7 +57,7 @@ public class ChokeBlockerMoveAway extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.distTo(this.chokeBlockPoint) >= 5) return null;
+        if (unit.distTo(this.chokeBlockPoint) >= MOVE_AWAY_DISTANCE) return null;
 
         HasPosition goTo = Select.mainOrAnyBuilding();
 

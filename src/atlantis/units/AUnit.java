@@ -41,7 +41,6 @@ import atlantis.units.detected.IsOurUnitUndetected;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
-import atlantis.units.range.OurDragoonWeaponRange;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -358,6 +357,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                     typeWithHash() + "::moveAwayFrom: distTo: " + distTo
                         + " / " + "moveDistance: " + moveDistance
                 );
+                return false;
             }
         }
         this.setTooltip(tooltip, false);
@@ -2214,6 +2214,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isLurker();
     }
 
+    public boolean isLurkerEgg() {
+        return type().isLurkerEgg();
+    }
+
     public boolean hpLessThan(int min) {
         return hp() < min;
     }
@@ -2896,6 +2900,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return manager.getClass().equals(aClass);
     }
 
+    public boolean isActiveManager(Class... classes) {
+        for (Class aClass : classes) {
+            if (isActiveManager(aClass)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean canLift() {
         return u().canLift();
     }
@@ -3032,6 +3045,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         this.specialPosition = specialPosition;
     }
 
+    public double distToTarget() {
+        if (target() == null) return 999;
+
+        return distTo(target());
+    }
+
     public boolean distToTargetLessThan(double dist) {
         return target() != null && distTo(target()) <= dist;
     }
@@ -3078,5 +3097,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean hasTargetted(AUnit defender) {
         return target() != null && target().equals(defender);
+    }
+
+    public double distToNearestChoke() {
+        return (double) cache.get(
+            "distToNearestChoke",
+            47,
+            () -> {
+                AChoke nearestChoke = nearestChoke();
+                if (nearestChoke == null) return 999;
+
+                return distTo(nearestChoke);
+            }
+        );
     }
 }

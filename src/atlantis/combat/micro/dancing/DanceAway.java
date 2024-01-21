@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import bwapi.Color;
 
 public class DanceAway extends Manager {
     private AUnit enemy;
@@ -45,16 +46,18 @@ public class DanceAway extends Manager {
     }
 
     private boolean enemyIsTooClose(double dist) {
-        return enemy.weaponRangeAgainst(unit) + 0.85 + (unit.woundPercent() / 70.0) >= dist;
+        double woundBonus = unit.woundPercent() / 70.0 + (unit.hp() <= 30 ? 0.8 : 0);
+
+        return enemy.weaponRangeAgainst(unit) + 0.85 + woundBonus >= dist;
     }
 
     private boolean continueDancingAway() {
         return unit.isMoving()
             && unit.lastActionLessThanAgo((int) (70 + unit.woundPercent() / 39.0), Actions.MOVE_DANCE_AWAY)
             && (
-                unit.hasCooldown()
-                    || unit.hp() <= minHp()
-                    || unit.lastUnderAttackLessThanAgo((int) (20 + unit.woundPercent() / 20.0))
+            unit.hasCooldown()
+                || unit.hp() <= minHp()
+                || unit.lastUnderAttackLessThanAgo((int) (20 + unit.woundPercent() / 20.0))
         );
     }
 
@@ -65,11 +68,11 @@ public class DanceAway extends Manager {
     }
 
     private AUnit defineUnitToDanceAwayFrom() {
-        AUnit target = unit.lastTarget();
+        return unit.enemiesNear().havingPosition().havingWeapon().nearestTo(unit);
 
-        if (target != null) return target;
-
-        return unit.enemiesNear().nearestTo(unit);
+//        if (target != null) return target;
+//
+//        return unit.enemiesNear().nearestTo(unit);
     }
 
     @Override
@@ -77,7 +80,7 @@ public class DanceAway extends Manager {
 //        unit.paintCircleFilled(24, Color.Purple);
 
         if (continueDancingAway()) {
-//            unit.paintCircleFilled(24, Color.Blue);
+            unit.paintCircleFilled(24, Color.Blue);
 //            unit.paintLine(unit.targetPosition(), Color.Teal);
 //            unit.paintLine(unit.targetPosition().translateByPixels(1, 1), Color.Teal);
             return usedManager(this);
@@ -88,6 +91,7 @@ public class DanceAway extends Manager {
 //        System.err.println("@ " + A.now() + " - " + unit.id() + " - DANCE AWAY FROM " + awayFrom);
 
         if (danceAwayFromTarget(logString)) {
+            unit.paintCircleFilled(18, Color.Teal);
             return usedManager(this);
         }
 

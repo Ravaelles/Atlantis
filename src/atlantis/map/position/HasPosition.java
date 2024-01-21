@@ -338,4 +338,9 @@ public interface HasPosition {
     default void paintLine(HasPosition to, Color color) {
         AAdvancedPainter.paintLine(this, to, color);
     }
+
+    default void paintLineDouble(HasPosition to, Color color) {
+        AAdvancedPainter.paintLine(this, to, color);
+        AAdvancedPainter.paintLine(this.translateByPixels(1, 1), to.translateByPixels(1, 1), color);
+    }
 }

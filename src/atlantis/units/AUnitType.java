@@ -1449,6 +1449,14 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isLurkerEgg() {
+        return (boolean) cache.get(
+            "isLurkerEgg",
+            -1,
+            () -> is(Zerg_Lurker_Egg)
+        );
+    }
+
     public boolean isDefiler() {
         return (boolean) cache.get(
             "isDefiler",

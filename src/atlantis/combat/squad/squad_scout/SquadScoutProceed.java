@@ -52,13 +52,6 @@ public class SquadScoutProceed extends Manager {
         return null;
     }
 
-    private boolean allowedToUseScout() {
-        if (Enemy.terran()) return false;
-        if (A.seconds() >= 800) return false;
-
-        return ArmyStrength.ourArmyRelativeStrength() >= 120 && unit.hp() >= 30;
-    }
-
     private boolean engageWorkersNow(AUnit squadScout) {
         if ((new AttackNearbyEnemies(squadScout)).handleAttackNearEnemyUnits()) {
             squadScout.setTooltipTactical("MadeContact");

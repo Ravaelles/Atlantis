@@ -85,13 +85,13 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                     if (unit.isAlive()) {
                         data.add(unit);
                     }
-                    else {
-                        if (!Env.isTesting() && !Env.isStarEngine()) {
-                            ErrorLog.printMaxOncePerMinute(
-                                "Enemy unit found but not alive = " + unit + " / hp=" + unit.hp() + " / u=" + unit.u()
-                            );
-                        }
-                    }
+//                    else {
+//                        if (!Env.isTesting() && !Env.isStarEngine()) {
+//                            ErrorLog.printMaxOncePerMinute(
+//                                "Enemy unit found but not alive = " + unit + " / hp=" + unit.hp() + " / u=" + unit.u()
+//                            );
+//                        }
+//                    }
                 }
 
                 return new Selection(data, cachePath);
@@ -142,10 +142,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             0,
             () -> {
 //                if (We.zerg()) {
-                    return ourOfType(
-                        AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
-                        AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
-                    );
+                return ourOfType(
+                    AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
+                    AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
+                );
 //                }
 //                else {
 //                    return ourOfType(AtlantisRaceConfig.BASE);

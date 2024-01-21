@@ -71,7 +71,7 @@ public class ATargeting extends HasUnit {
     // =========================================================
 
     private AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
-        DefendingAroundFocus defendingAroundFocus = new DefendingAroundFocus(unit);
+        TargetingWhenDefendingAroundFocus defendingAroundFocus = new TargetingWhenDefendingAroundFocus(unit);
         if (defendingAroundFocus.applies()) {
             unit.setManagerUsed(defendingAroundFocus);
             return defendingAroundFocus.targetToAttack();

@@ -57,6 +57,7 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
 
     private boolean canBeNotifiedToMakeSpace(AUnit unit) {
         return !unit.isRunning()
+            && unit.isGroundUnit()
             && unit.lastStartedRunningMoreThanAgo(3)
             && !unit.isTankSieged()
             && !unit.type().isReaver();

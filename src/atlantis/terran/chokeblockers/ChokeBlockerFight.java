@@ -19,6 +19,7 @@ public class ChokeBlockerFight extends Manager {
 
         if (unit.isZealot()) {
             if (unit.hp() <= 36 && unit.hasCooldown()) return false;
+            if (anyOtherBlockerIsFighting()) return true;
 
             return true;
         }
@@ -41,6 +42,16 @@ public class ChokeBlockerFight extends Manager {
         }
 
         return null;
+    }
+
+    private boolean anyOtherBlockerIsFighting() {
+        for (AUnit blocker : ChokeBlockersAssignments.get().blockers) {
+            if (unit.equals(blocker)) continue;
+
+            if (blocker.isAttacking()) return true;
+        }
+
+        return false;
     }
 
     private AUnit enemyInRange() {

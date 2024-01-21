@@ -26,7 +26,7 @@ public class DontInterruptShootingUnits extends Manager {
         Decision decision;
 
         if ((decision = ContinueDragoonAttack.asDragoon(unit)).notIndifferent()) {
-            System.out.println("@ " + A.now() + " - DECISION DontInterruptShootingUnits " + decision);
+//            System.out.println("@ " + A.now() + " - DECISION DontInterruptShootingUnits " + decision);
             return decision.toBoolean();
         }
 

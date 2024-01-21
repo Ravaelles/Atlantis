@@ -17,7 +17,12 @@ public class ChokeBlockerPosition {
 
         APosition position = first.translatePercentTowards(last, offset(indexOf, totalBlockers));
 
-        if (!We.terran() && unit.isWorker()) position = position.translateTilesTowards(choke.center(), -0.8);
+//        if (!We.terran() && unit.isWorker()) position = position.translateTilesTowards(choke.center(), -0.8);
+//        double translate = We.protoss() ? -1.5 : -0.8;
+//        double translate = -0.4;
+
+        // FOR THE LOVE OF GOD, DONT USE THIS WITH -DIST FROM CHOKE.CENTER. IT BREAKS THE LOGIC.
+//        position = position.translateTilesTowards(choke.center(), translate);
 
         return position;
     }

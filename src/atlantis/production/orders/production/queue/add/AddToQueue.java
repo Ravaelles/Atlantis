@@ -106,7 +106,11 @@ public class AddToQueue {
 //            }
 
 //            if (type.isPylon()) {
-//                A.printStackTrace(A.now() + ": Adding PYLON to queue at " + position);
+//                A(A.now() + ": Adding PYLON to queue at " + position);
+//            }
+
+//            if (type.is(AUnitType.Protoss_Robotics_Facility)) {
+//                A.printStackTrace("Robotics Facility ADDED TO QUEUE");
 //            }
 
             Select.clearCache();

@@ -33,7 +33,7 @@ public class ContinueAttackOrder extends Manager {
         Decision decision;
 
         if ((decision = ContinueDragoonAttack.asDragoon(unit)).notIndifferent()) {
-            System.out.println("@ " + A.now() + " - DECISION ContinueAttackOrder " + decision);
+//            System.out.println("@ " + A.now() + " - DECISION ContinueAttackOrder " + decision);
             return decision.toBoolean();
         }
 

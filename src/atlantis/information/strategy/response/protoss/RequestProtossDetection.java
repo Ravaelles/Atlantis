@@ -11,9 +11,11 @@ import atlantis.units.select.Have;
 public class RequestProtossDetection {
     public static boolean needDetectionAgainst(AUnit enemy) {
 //        OurStrategicBuildings.setDetectorsNeeded(2);
-        ProductionRequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
+//        ProductionRequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
 
-        return requestAtLeastOneCannon() || requestAtLeastOneObserver();
+        return requestAtLeastOneObserver();
+
+//        return requestAtLeastOneCannon() || requestAtLeastOneObserver();
     }
 
     private static boolean requestAtLeastOneObserver() {

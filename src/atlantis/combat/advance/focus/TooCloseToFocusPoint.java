@@ -1,7 +1,6 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.choke.AChoke;
@@ -11,6 +10,9 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class TooCloseToFocusPoint extends MoveToFocusPoint {
+
+    private DistFromFocus distFromFocus;
+
     public TooCloseToFocusPoint(AUnit unit) {
         super(unit);
     }
@@ -24,7 +26,9 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         if (EnemyWhoBreachedBase.notNull()) return false;
         if (unit.isSquadScout()) return false;
 
-        if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_CLOSE) {
+        distFromFocus = evaluateDistFromFocusPoint();
+
+        if (distFromFocus == DistFromFocus.TOO_CLOSE) {
             // Be brave with ChokeBlockersAssignments
 //            if (unit.friendsNear().workers().specialAction().inRadius(7, unit).atLeast(2)) return false;
 
@@ -43,7 +47,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     protected boolean act() {
-        if (forDragoon()) return true;
+        if (asDragoon()) return true;
 
 //        APosition goTo = isTooFar ? focusPoint : unit.translateTilesTowards(0.1, focusPoint);
         if (goAwayFromCenter()) return true;
@@ -52,11 +56,19 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         return false;
     }
 
-    private boolean forDragoon() {
-        if (unit.isDragoon() && unit.hp() >= 30) {
+    private boolean asDragoon() {
+        if (!unit.isDragoon()) return true;
+
+        if (unit.distToFocusPoint() <= 1.7) {
+            if (A.everyNthGameFrame(12)) unit.holdPosition("DragoonTooCloseA");
+            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
+        }
+
+        if (unit.hp() >= 30) {
             unit.holdPosition("DragoonHold");
             return true;
         }
+        
         return false;
     }
 

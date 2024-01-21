@@ -12,17 +12,16 @@ public class AvoidDT extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isGroundUnit();
+        return unit.isGroundUnit() && !unit.isABuilding();
     }
 
     @Override
     protected Manager handle() {
-        if (unit.isAir() || unit.isABuilding()) {
-            return null;
-        }
-
-        AUnit dt = unit.enemiesNear().ofType(AUnitType.Protoss_Dark_Templar).effUndetected()
-            .inRadius(2.5, unit).nearestTo(unit);
+        AUnit dt = unit.enemiesNear().ofType(AUnitType.Protoss_Dark_Templar)
+            .effUndetected()
+            .inRadius(2.5, unit)
+            .nearestTo(unit);
+        
         if (dt == null) {
             return null;
         }

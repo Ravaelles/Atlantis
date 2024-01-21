@@ -50,7 +50,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     public boolean shouldChangeMissionToAttack() {
         if (!canChange()) return false;
 
-        if (ArmyStrength.ourArmyRelativeStrength() >= 200) {
+        if (ArmyStrength.ourArmyRelativeStrength() >= 200 && Count.dragoons() >= 4) {
             if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }

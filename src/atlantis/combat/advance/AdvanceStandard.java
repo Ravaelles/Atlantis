@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
+import atlantis.util.We;
 
 public class AdvanceStandard extends MissionManager {
     public AdvanceStandard(AUnit unit) {
@@ -18,15 +19,13 @@ public class AdvanceStandard extends MissionManager {
             && !squad.isLeader(unit)
             && unit.combatEvalRelative() > 1.5
             && (
-                (unit.distToLeader() <= 7 + (A.supplyUsed() / 25.0))
+            (unit.distToLeader() <= 7 + (A.supplyUsed() / 25.0))
 //                A.seconds() % 6 <= 2 || (unit.distToLeader() <= 7 + (A.supplyUsed() / 25.0))
-            );
+        );
     }
 
     protected Manager handle() {
-        if (unit.isGroundUnit() && !unit.isTank() && Count.tanks() >= 2) {
-            if (tooFarFromTank()) return usedManager(this);
-        }
+        if (asTerran()) return usedManager(this);
 
         if (A.seconds() % 6 <= 3 && (!unit.isMoving() && !unit.isAttacking())) {
             return usedManager(this, "AdvanceContinue");
@@ -38,6 +37,15 @@ public class AdvanceStandard extends MissionManager {
         }
 
         return null;
+    }
+
+    private boolean asTerran() {
+        if (!We.terran()) return false;
+
+        if (unit.isGroundUnit() && !unit.isTank() && Count.tanks() >= 2) {
+            if (tooFarFromTank()) return true;
+        }
+        return false;
     }
 
     private boolean tooFarFromTank() {

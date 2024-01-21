@@ -88,7 +88,7 @@ public class MapSpecificCommander extends Commander {
                 || ActiveMap.isMap("exp_skilltest")
                 || ActiveMap.isMap("7th")
         ) {
-            int initFrameSkip = 80;
+            int initFrameSkip = 300;
 
             if (A.now() <= 0) {
                 AAdvancedPainter.disablePainting();
@@ -98,6 +98,11 @@ public class MapSpecificCommander extends Commander {
                 if (ActiveMap.isMap("vsGosuRav")) {
                     CameraCommander.centerCameraOn((new MissionDefendFocusPoint()).focusPoint());
                 }
+            }
+
+            if (A.now() == 120 * 30) {
+                GameSpeed.changeFrameSkipTo(0);
+                GameSpeed.changeSpeedTo(0);
             }
 
 //            if (ActiveMap.isMap("exp_skilltest") && !Have.controlTower()) {

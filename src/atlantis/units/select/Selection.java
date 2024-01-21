@@ -1,5 +1,6 @@
 package atlantis.units.select;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
@@ -368,6 +369,13 @@ public class Selection extends BaseSelection {
     public Selection notSpecialAction() {
         return cloneByRemovingIf(
             (unit -> unit.lastActionLessThanAgo(100, Actions.SPECIAL)), "notSpecialAction"
+        );
+    }
+
+    public Selection havingActiveManager(Class... activeManagers) {
+        return cloneByRemovingIf(
+            (unit -> !unit.isActiveManager(activeManagers)),
+            "havingActiveManager:" + CacheKey.toKey(activeManagers)
         );
     }
 

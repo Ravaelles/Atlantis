@@ -33,7 +33,7 @@ public class ARunningManager {
     // =========================================================
 
     public boolean runFromAndNotifyOthersToMove(HasPosition runFrom, String tooltip) {
-        if (runFrom(runFrom, 0.5, Actions.RUN_ENEMY, true)) {
+        if (runFrom(runFrom, 1, Actions.RUN_ENEMY, true)) {
             unit.setTooltip(tooltip);
             return true;
         }
