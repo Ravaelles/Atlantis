@@ -1,9 +1,11 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
+import atlantis.decions.Decision;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.interrupt.protoss.ContinueDragoonAttack;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
@@ -19,6 +21,14 @@ public class DontInterruptShootingUnits extends Manager {
         if (!unit.isAttacking()) return false;
         if (unit.isMelee()) return false;
         if (!unit.hasValidTarget()) return false;
+        if (isMeleeEnemyNear()) return false;
+
+        Decision decision;
+
+        if ((decision = ContinueDragoonAttack.asDragoon(unit)).notIndifferent()) {
+            System.out.println("@ " + A.now() + " - DECISION DontInterruptShootingUnits " + decision);
+            return decision.toBoolean();
+        }
 
 //        if (unit.lastAttackOrderMoreThanAgo(30)) return false;
 
@@ -46,8 +56,6 @@ public class DontInterruptShootingUnits extends Manager {
                 unit.combatEvalRelative() < 1 && unit.enemiesNear().ranged().canAttack(unit, 1).notEmpty()
             ) return false;
         }
-
-        if (isMeleeEnemyNear()) return false;
 
         if (unit.isWraith()) {
             if (unit.hp() < 110 || unit.enemiesNear().buildings().canAttack(unit, 1.1).notEmpty()) return false;

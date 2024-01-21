@@ -27,7 +27,7 @@ public class Unfreezer extends Manager {
             && A.now() >= 20
 //            && unit.looksIdle()
             && unit.lastPositionChangedMoreThanAgo(12)
-            && unit.lastActionMoreThanAgo(5, Actions.HOLD_POSITION);
+            && unit.lastActionMoreThanAgo(2, Actions.HOLD_POSITION);
 //            && unit.lastActionMoreThanAgo(30 * 3, Actions.MOVE_UNFREEZE);
     }
 

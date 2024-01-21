@@ -1,8 +1,11 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
+import atlantis.decions.Decision;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.interrupt.protoss.ContinueDragoonAttack;
 
 public class ContinueAttackOrder extends Manager {
     public ContinueAttackOrder(AUnit unit) {
@@ -22,7 +25,19 @@ public class ContinueAttackOrder extends Manager {
             && target != null
             && target.hasPosition()
             && target.isAlive()
-            && unit.canAttackTargetWithBonus(target, 1);
+            && unit.canAttackTargetWithBonus(target, 1)
+            && asDragoon();
+    }
+
+    private boolean asDragoon() {
+        Decision decision;
+
+        if ((decision = ContinueDragoonAttack.asDragoon(unit)).notIndifferent()) {
+            System.out.println("@ " + A.now() + " - DECISION ContinueAttackOrder " + decision);
+            return decision.toBoolean();
+        }
+
+        return true;
     }
 
     public Manager handle() {

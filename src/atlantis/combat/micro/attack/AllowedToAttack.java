@@ -103,7 +103,7 @@ public class AllowedToAttack {
 
         Decision decision = unit.mission().permissionToAttack(unit);
         if (decision.notIndifferent()) {
-            return decision.toTrueOrFalse();
+            return decision.toBoolean();
         }
 
 //        Decision decision = unit.mission().allowsToAttackEnemyUnit(unit);

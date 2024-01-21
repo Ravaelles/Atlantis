@@ -5,7 +5,6 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import bwapi.Color;
 
 public class DanceAway extends Manager {
     private AUnit enemy;
@@ -18,6 +17,9 @@ public class DanceAway extends Manager {
     public boolean applies() {
         enemy = defineUnitToDanceAwayFrom();
         if (enemy == null) return false;
+        if (!enemy.effVisible()) return false;
+
+        if (dragoonLowHpAndStillUnderAttack()) return true;
 
 //        if (continueDancingAway()) return true;
 
@@ -29,13 +31,17 @@ public class DanceAway extends Manager {
 
         double dist = unit.distTo(enemy);
 
-        return enemy.effVisible()
-//            && (awayFrom.isMelee() || awayFrom.isABuilding())
-//            && unit.distToMoreThan(target, 3.7)
-            && (enemyIsTooClose(dist) || unit.hp() <= minHp())
+        return (enemyIsTooClose(dist) || unit.hp() <= minHp())
             && !unit.isStartingAttack()
             && !unit.isAttackFrame();
 //            && dist >= (unit.enemyWeaponRangeAgainstThisUnit(awayFrom));
+    }
+
+    private boolean dragoonLowHpAndStillUnderAttack() {
+        return unit.isDragoon()
+            && unit.hp() <= 40
+            && unit.lastUnderAttackLessThanAgo(70)
+            && unit.enemiesNearInRadius(4) > 0;
     }
 
     private boolean enemyIsTooClose(double dist) {

@@ -22,7 +22,7 @@ public enum Decision {
         return !this.equals(INDIFFERENT);
     }
 
-    public boolean toTrueOrFalse() {
+    public boolean toBoolean() {
         assert !isIndifferent();
 
         return isAllowed();
