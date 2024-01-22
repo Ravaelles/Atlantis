@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid.special;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.actions.Actions;
 
 public class AvoidDT extends Manager {
 
@@ -21,10 +22,10 @@ public class AvoidDT extends Manager {
             .effUndetected()
             .inRadius(2.5, unit)
             .nearestTo(unit);
-        
-        if (dt == null) {
-            return null;
-        }
+
+        if (dt == null) return null;
+
+        if (unit.lastActionLessThanAgo(11, Actions.RUN_ENEMY)) return null;
 
         unit.runningManager().runFromAndNotifyOthersToMove(dt, "DT!");
         return usedManager(this);

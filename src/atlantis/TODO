@@ -1,14 +1,7 @@
 ### Protoss ############################################################################################################
 
-?------- Extrenely slow performance (110-120) against DT, even for ONLY OBSERVER (100% confirmed)
+--- Disable ContinueAttackOrder, make sure to ALWAYS use DontInterrupt, base on WaitAttackFrames
 
----- Lots of Pylons instead of Observatory
-
-.!.- Dragoons unable to get OnTheWrongSide
-.Dragoons not choosing AroundFocus targets
-
-
-?--- NextBaseHasNoPosition
 .---- Scouts getting killed easily; dont use more than 2, then use Dragoon?
 
 - Dragoon not attacking most Wounded Dragoon, out of 3, he chose 2nd least wounded

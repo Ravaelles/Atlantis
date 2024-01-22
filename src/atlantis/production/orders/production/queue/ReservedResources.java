@@ -45,11 +45,11 @@ public class ReservedResources {
     // =========================================================
 
     public static int minerals() {
-        return ReservedResources.minerals;
+        return Math.min(500, ReservedResources.minerals);
     }
 
     public static int gas() {
-        return ReservedResources.gas;
+        return Math.min(250, ReservedResources.gas);
     }
 
     public static void printMinerals() {

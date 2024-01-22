@@ -2,10 +2,9 @@ package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
 import atlantis.decions.Decision;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.interrupt.protoss.ContinueDragoonAttack;
+import atlantis.units.interrupt.protoss.ContinueDragoonAttackOrder;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
@@ -25,7 +24,7 @@ public class DontInterruptShootingUnits extends Manager {
 
         Decision decision;
 
-        if ((decision = ContinueDragoonAttack.asDragoon(unit)).notIndifferent()) {
+        if ((decision = ContinueDragoonAttackOrder.asDragoon(unit)).notIndifferent()) {
 //            System.out.println("@ " + A.now() + " - DECISION DontInterruptShootingUnits " + decision);
             return decision.toBoolean();
         }

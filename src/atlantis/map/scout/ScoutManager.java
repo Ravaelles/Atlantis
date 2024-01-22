@@ -2,6 +2,7 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.game.CameraCommander;
 import atlantis.units.AUnit;
 
 public class ScoutManager extends Manager {
@@ -17,8 +18,8 @@ public class ScoutManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            AvoidEnemies.class,
             ScoutSafetyFarFromEnemy.class,
+            AvoidEnemies.class,
             ScoutRoaming.class,
             ScoutTryFindingEnemy.class,
             RoamAroundEnemyBase.class,
@@ -30,6 +31,8 @@ public class ScoutManager extends Manager {
     @Override
     protected Manager handle() {
         unit.setTooltipTactical("Scout...");
+
+//        CameraCommander.centerCameraOn(unit);
 
         if (unit.isRepairing()) return usedManager(this, "UhmRepairing");
 

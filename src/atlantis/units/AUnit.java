@@ -3111,4 +3111,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             }
         );
     }
+
+    public double distToSquadCenter() {
+        return squad != null ? distTo(squad.center()) : -1;
+    }
 }

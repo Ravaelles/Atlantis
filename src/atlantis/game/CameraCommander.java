@@ -62,9 +62,7 @@ public class CameraCommander extends Commander {
 //    }
 
     public static void centerCameraOn(HasPosition position) {
-        if (position == null) {
-            return;
-        }
+        if (position == null) return;
 
         Atlantis.game().setScreenPosition(
             position.translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7).p()

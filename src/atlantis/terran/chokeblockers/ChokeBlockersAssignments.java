@@ -23,6 +23,7 @@ public class ChokeBlockersAssignments {
 
     private ChokeBlockersAssignments(AChoke choke) {
         this.choke = choke;
+//        System.err.println("this.choke = " + this.choke.width());
     }
 
     public static ChokeBlockersAssignments get() {
@@ -50,7 +51,7 @@ public class ChokeBlockersAssignments {
     }
 
     private int blockersNeeded() {
-        int available = A.inRange(3, blockers.size() + Count.zealots(), 4);
+        int available = A.inRange(3, blockers.size() + Count.zealots(), (int) (choke.width() * 1.7));
         return workersNeeded() - available;
     }
 

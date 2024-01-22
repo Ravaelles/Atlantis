@@ -8,7 +8,6 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.terran.repair.RepairAssignments;
@@ -16,21 +15,16 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
 public class OnUnitDestroyed {
-    public static void update(AUnit unit) {
+    public static void onUnitDestroyed(AUnit unit) {
         if (unit.isOur() && unit.isBase()) OurClosestBaseToEnemy.clearCache();
 
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {
-//            printOurDeadUnit(unit);
-            handleForOurUnit(unit);
+            onOurUnitDestroyed(unit);
         }
 //        else if (unit.isEnemy() && unit.isRealUnit()) {
         else if (unit.isEnemy()) {
-            EnemyInfo.removeDiscoveredUnit(unit);
-            if (!unit.type().isGeyser()) {
-                Atlantis.KILLED++;
-                Atlantis.KILLED_RESOURCES += unit.type().getTotalResources();
-            }
+            onEnemyUnitDestroyed(unit);
         }
 
         // Needs to be at the end, otherwise unit is reported as dead too early
@@ -45,12 +39,22 @@ public class OnUnitDestroyed {
         }
     }
 
+    private static void onEnemyUnitDestroyed(AUnit unit) {
+        EnemyInfo.removeDiscoveredUnit(unit);
+        if (!unit.type().isGeyser()) {
+            Atlantis.KILLED++;
+            Atlantis.KILLED_RESOURCES += unit.type().getTotalResources();
+        }
+    }
+
     private static void printOurDeadUnit(AUnit unit) {
         System.err.println("@ " + A.now() + " - Our unit DIED: " + unit.typeWithUnitId());
         System.err.println(unit.managerLogs().toString());
     }
 
-    private static void handleForOurUnit(AUnit unit) {
+    private static void onOurUnitDestroyed(AUnit unit) {
+        printOurDeadUnit(unit);
+
         RepairAssignments.removeRepairer(unit);
 
 //            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();

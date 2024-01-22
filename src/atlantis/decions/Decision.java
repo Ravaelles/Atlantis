@@ -22,6 +22,10 @@ public enum Decision {
         return !this.equals(INDIFFERENT);
     }
 
+    public boolean notForbidden() {
+        return !this.equals(FORBIDDEN);
+    }
+
     public boolean toBoolean() {
         assert !isIndifferent();
 

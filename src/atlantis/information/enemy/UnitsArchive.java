@@ -109,7 +109,6 @@ public class UnitsArchive {
 
         AUnit ourKiller = ourUnitThatKilledEnemy(enemy);
         if (ourKiller != null && !enemy.isABuilding()) {
-
             ourKillCountersPerUnitTypes.incrementValueFor(ourKiller.type());
             ourKilledResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
         }

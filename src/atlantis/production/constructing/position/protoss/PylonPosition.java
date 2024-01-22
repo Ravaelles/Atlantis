@@ -1,6 +1,8 @@
 package atlantis.production.constructing.position.protoss;
 
 import atlantis.map.base.ABaseLocation;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -40,15 +42,15 @@ public class PylonPosition {
     }
 
     public static APosition positionForSecondPylon(APosition initialNearTo) {
-        return initialNearTo;
+//        return initialNearTo;
 
-//        AUnit base = Select.main();
-//        AChoke mainChoke = Chokes.mainChoke();
-//        if (base == null || mainChoke == null) {
-//            return fallback();
-//        }
-//
-//        return mainChoke.translateTilesTowards(base, 8);
+        AUnit base = Select.main();
+        AChoke mainChoke = Chokes.mainChoke();
+        if (base == null || mainChoke == null) {
+            return fallback();
+        }
+
+        return mainChoke.translateTilesTowards(base, 8);
     }
 
     // =========================================================

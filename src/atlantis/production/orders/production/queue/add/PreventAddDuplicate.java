@@ -16,12 +16,19 @@ public class PreventAddDuplicate {
     protected static boolean preventExcessiveOrInvalidOrders(AUnitType type, HasPosition position) {
         assert type != null;
 
+        if (excessivePylon(type, position)) return true;
         if (tooManyOrdersOfThisType(type, position)) return true;
         if (tooManyOrdersInGeneral(type)) return true;
 
         if (forProtossEnforceHavingAPylonFirst(type)) return true;
 
         return false;
+    }
+
+    private static boolean excessivePylon(AUnitType type, HasPosition position) {
+        if (!type.isPylon()) return false;
+
+        return A.hasFreeSupply(10);
     }
 
     private static boolean forProtossEnforceHavingAPylonFirst(AUnitType type) {

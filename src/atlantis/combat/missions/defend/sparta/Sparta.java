@@ -1,5 +1,6 @@
-package atlantis.combat.missions.defend;
+package atlantis.combat.missions.defend.sparta;
 
+import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.util.Enemy;
 import atlantis.util.We;

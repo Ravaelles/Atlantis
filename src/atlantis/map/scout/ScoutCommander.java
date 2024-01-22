@@ -24,7 +24,8 @@ import java.util.List;
 public class ScoutCommander extends Commander {
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(17);
+        return true;
+//        return A.everyNthGameFrame(7);
     }
 
     /**

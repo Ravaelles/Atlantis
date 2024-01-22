@@ -21,14 +21,15 @@ public class UnfreezerShakeUnit {
 //            return true;
 //        }
 
+        HasPosition goTo = goToPositionNearby(unit);
 //        HasPosition goTo = Select.ourBuildings().random();
-        HasPosition goTo = unit.enemiesNear().nearestTo(unit);
-        if (goTo == null && unit.distToLeader() > 3) goTo = unit.squadLeader();
+//        HasPosition goTo = unit.enemiesNear().nearestTo(unit);
+//        if (goTo == null && unit.distToLeader() > 3) goTo = unit.squadLeader();
 //        if (goTo == null) goTo = unit.friendsNear().notInRadius(2, unit).nearestTo(unit);
 //            if (goTo == null) goTo = unit.friendsNear().mostDistantTo(unit);
-//            if (goTo == null) goTo = Select.our().exclude(unit).nearestTo(unit);
-        if (goTo == null) goTo = Select.our().exclude(unit).groundUnits().random();
-        if (goTo == null) goTo = goToPositionNearby(unit);
+        if (goTo == null) goTo = Select.our().combatUnits().exclude(unit).nearestTo(unit);
+//        if (goTo == null) goTo = Select.our().exclude(unit).groundUnits().random();
+//        if (goTo == null) goTo = goToPositionNearby(unit);
 
         if (goTo != null) {
             unit.moveTactical(goTo, Actions.MOVE_UNFREEZE, "UnfreezeByMove");

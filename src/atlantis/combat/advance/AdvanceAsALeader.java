@@ -29,9 +29,11 @@ public class AdvanceAsALeader extends MissionManager {
     protected Manager handle() {
 //        if (unit.isMissionAttackOrGlobalAttack()) return null;
 
-        if (handleWhenLonely()) {
-            return usedManager(this);
+        if (handleWhenTooFarFromSquadCenter()) {
+            return usedManager(this, "ToSquadCenter");
         }
+
+        if (handleWhenLonely()) return usedManager(this, "LonelyLeader");
 
         int cohesionPercent = unit.squad().cohesionPercent();
         int friendsNear = unit.friendsInRadius(7).count();
@@ -52,6 +54,12 @@ public class AdvanceAsALeader extends MissionManager {
         }
 
         return null;
+    }
+
+    private boolean handleWhenTooFarFromSquadCenter() {
+        if (unit.distToSquadCenter() <= 9) return false;
+
+        return unit.move(squad.center(), Actions.MOVE_FORMATION, "LeaderToSquadCenter");
     }
 
     private boolean handleWhenLonely() {

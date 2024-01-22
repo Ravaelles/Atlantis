@@ -12,16 +12,21 @@ public class ScoutSafetyFarFromEnemy extends Manager {
     @Override
     public boolean applies() {
         return unit.enemiesNear().buildings().inRadius(9, unit).empty()
-            && unit.enemiesNear().combatUnits().canAttack(unit, safetyMargin()).notEmpty();
+            && unit.enemiesNear().combatUnits().canAttack(unit, safetyMargin()).notEmpty()
+            && unit.friendsNear().specialAction().inRadius(11, unit).empty();
     }
 
     private double safetyMargin() {
-        return 2.7 + unit.woundPercent() / 60.0;
+        return 3.1 + unit.woundPercent() / 40.0;
     }
 
     @Override
     public Manager handle() {
-        if (unit.distToBase() >= 15 && unit.moveToMain(Actions.MOVE_AVOID)) return usedManager(this);
+        if (
+            (unit.isHealthy() || unit.enemiesNearInRadius(2.1) == 0)
+                && unit.distToBase() >= 35
+                && unit.moveToMain(Actions.MOVE_AVOID)
+        ) return usedManager(this);
 
         return null;
     }

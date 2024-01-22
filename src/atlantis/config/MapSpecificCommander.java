@@ -88,7 +88,7 @@ public class MapSpecificCommander extends Commander {
                 || ActiveMap.isMap("exp_skilltest")
                 || ActiveMap.isMap("7th")
         ) {
-            int initFrameSkip = 300;
+            int initFrameSkip = 500;
 
             if (A.now() <= 0) {
                 AAdvancedPainter.disablePainting();

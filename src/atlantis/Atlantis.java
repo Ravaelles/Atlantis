@@ -149,7 +149,7 @@ public class Atlantis implements BWEventListener {
             return;
         }
 
-        OnUnitDestroyed.update(AUnit.createFrom(u));
+        OnUnitDestroyed.onUnitDestroyed(AUnit.createFrom(u));
     }
 
     /**
