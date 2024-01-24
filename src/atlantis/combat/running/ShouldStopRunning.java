@@ -77,7 +77,7 @@ public class ShouldStopRunning extends Manager {
         if (
             unit.noCooldown()
                 && unit.lastStartedRunningMoreThanAgo(15)
-//                && !AvoidEnemies.shouldNotAvoidAnyUnit()) {
+//                && !AvoidEnemiesIfNeeded.shouldNotAvoidAnyUnit()) {
                 && unit.avoidEnemiesManager().shouldNotAvoidAnyUnit()) {
             unit.setTooltip("StopDawg", false);
             unit.addLog("StopDawg");

@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.architecture.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.combat.micro.avoid.margin.UnitRange;
 import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
 import atlantis.combat.missions.Mission;
@@ -220,7 +220,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         manager = new DoNothing(this);
 
         runningManager = new ARunningManager(this);
-        avoidEnemiesManager = new AvoidEnemies(this);
+        avoidEnemiesManager = new AvoidEnemiesIfNeeded(this);
     }
 
     /**
@@ -309,7 +309,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     private Squad squad;
     private ARunningManager runningManager;
-    private AvoidEnemies avoidEnemiesManager;
+    private AvoidEnemiesIfNeeded avoidEnemiesManager;
 
     private boolean _repairableMechanically = false;
     private boolean _healable = false;
@@ -320,13 +320,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // Important methods
 
     /**
-     * Unit will move by given distance (in build tiles) from given position.
+     * Unit will move by given distance (in build tiles) from given *from*.
      */
-    public boolean moveAwayFrom(HasPosition position, double moveDistance, Action action, String tooltip) {
-        if (position == null || moveDistance < 0.01) return false;
+    public boolean moveAwayFrom(HasPosition from, double moveDistance, Action action, String tooltip) {
+        if (from == null || moveDistance < 0.01) return false;
 
-        int dx = position.x() - x();
-        int dy = position.y() - y();
+        int dx = from.x() - x();
+        int dy = from.y() - y();
         double vectorLength = Math.sqrt(dx * dx + dy * dy);
         double modifier = (moveDistance * 32) / vectorLength;
         dx = (int) (dx * modifier);
@@ -342,7 +342,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         if (newPosition == null) {
-            ErrorLog.printErrorOnce("Cannot moveAwayFrom " + position + " for " + name());
+            ErrorLog.printErrorOnce("Cannot moveAwayFrom " + from + " for " + name());
             return false;
         }
 
@@ -352,9 +352,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                && (unit().isAir() || Select.all().groundUnits().inRadius(0.05, newPosition).empty())
         ) {
             double distTo = this.distTo(newPosition);
-            if (distTo >= 3 && distTo > 2 * moveDistance) {
+            if (distTo >= 0.9 && distTo > 3 * moveDistance) {
+                if (moveDistance != 1) return moveAwayFrom(from, 1, action, tooltip);
+
                 ErrorLog.printMaxOncePerMinute(
-                    typeWithHash() + "::moveAwayFrom: distTo: " + distTo
+                    typeWithUnitId() + "::moveAwayFrom: distTo: " + distTo
                         + " / " + "moveDistance: " + moveDistance
                 );
                 return false;
@@ -1109,6 +1111,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return "#" + id();
     }
 
+    public String idWithType() {
+        return typeWithUnitId();
+    }
+
     public String typeWithHash() {
         return "#" + type();
     }
@@ -1538,7 +1544,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isInterruptible();
     }
 
-    public UnitCommand getLastCommand() {
+    public UnitCommand getLastCommandRaw() {
         return u.getLastCommand();
     }
 
@@ -2355,6 +2361,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         ));
     }
 
+    public Selection enemiesNear(double radius) {
+        return enemiesNear().inRadius(radius, this);
+    }
+
     public int enemiesNearInRadius(double maxDist) {
         return enemiesNear().inRadius(maxDist, this).count();
 //        return ((Selection) cache.get(
@@ -2872,7 +2882,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return squad != null ? squad.leader() : null;
     }
 
-    public AvoidEnemies avoidEnemiesManager() {
+    public AvoidEnemiesIfNeeded avoidEnemiesManager() {
         return avoidEnemiesManager;
     }
 
@@ -3114,5 +3124,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double distToSquadCenter() {
         return squad != null ? distTo(squad.center()) : -1;
+    }
+
+    public String lastCommandName() {
+        if (getLastCommandRaw() == null) return "NO_COMMAND";
+
+        return getLastCommandRaw().getType().name();
     }
 }

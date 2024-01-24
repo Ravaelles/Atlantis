@@ -9,7 +9,9 @@ import atlantis.units.select.Selection;
 
 public class WeakestOfType {
     protected static AUnit selectWeakestEnemyOfType(AUnitType type, AUnit ourUnit, double extraRange) {
-        Selection targets = Select.enemies(type)
+        Selection targets = ourUnit
+            .enemiesNear()
+            .ofType(type)
             .canBeAttackedBy(ourUnit, extraRange);
 //                .hasPathFrom(ourUnit);
 
@@ -28,13 +30,19 @@ public class WeakestOfType {
 //            }
 //        }
 
-        // For units with low HP (Zerglings, workers), it makes sense to spread the fire across multiple units,
-        // otherwise enemy that dies consumes unit's cooldown and effectively - it stops shooting at all.
+//        targets.print("targets with extraRange=" + extraRange + " / mostWounded=" + targets.mostWounded());
+
+        /**
+         * For units with low HP (Zerglings, workers), it makes sense to spread the fire across multiple units,
+         * otherwise enemy that dies consumes unit's cooldown and effectively - it stops shooting at all.
+         */
         SpreadFire spreadFire = new SpreadFire(ourUnit, targets);
         if (spreadFire.shouldSpreadFire(ourUnit, targets)) {
             AUnit randomPeasant = spreadFire.spreadFire(ourUnit, targets);
             if (randomPeasant != null) return randomPeasant;
         }
+
+        if (extraRange <= 0.1) return targets.mostWounded();
 
         return targets.first();
 
@@ -60,42 +68,6 @@ public class WeakestOfType {
 //            System.err.println("Attack 1 range");
             return enemy;
         }
-
-//        // Ok, any possible of this type
-//        enemy = selectWeakestEnemyOfType(enemyType, unit, AttackNearbyEnemies.maxDistToAttack(unit));
-////        A.errPrintln("enemy B3 = " + enemy);
-//        if (enemy != null) {
-////            System.err.println("Attack max");
-//            return enemy;
-//        }
-
-        // =====================================================================
-        // Couldn't find enemy of given type in/near weapon range. Change target
-
-        // Nearest enemy
-//        enemy = enemyUnits.canBeAttackedBy(unit, 50).nearestTo(unit);
-//        if (enemy != null) {
-//            unit.addLog("AttackNearest");
-////            System.err.println("Attack NEAREST");
-//            return enemy;
-//        }
-
-//        // Most wounded enemy OF DIFFERENT TYPE, but IN RANGE
-//        enemy = Select.enemyRealUnits().canBeAttackedBy(unit, 0).mostWounded();
-//        if (enemy != null) {
-////            unit.addLog("AttackMostWounded");
-//            return enemy;
-//        }
-//
-////        int nearbyEnemiesCount = unit.enemiesNear().inRadius(4, unit).count();
-////        System.err.println("Man, how comes we're here? " + unit + " // " + nearbyEnemiesCount);
-////        if (nearbyEnemiesCount > 0) {
-////            A.printStackTrace("Lets debug this");
-////        }
-//
-//        double maxDistToEnemy = unit.mission() != null && unit.isMissionDefend() ? 6 : 999;
-//
-//        return Select.enemyRealUnits().canBeAttackedBy(unit, maxDistToEnemy).nearestTo(unit);
 
         return null;
     }

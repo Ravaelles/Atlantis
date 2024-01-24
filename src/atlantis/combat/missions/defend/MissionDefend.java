@@ -5,6 +5,7 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.units.AUnit;
+import atlantis.units.Units;
 
 public class MissionDefend extends Mission {
     protected AUnit unit;
@@ -27,6 +28,11 @@ public class MissionDefend extends Mission {
     @Override
     protected Manager managerClass(AUnit unit) {
         return new MissionDefendManager(unit);
+    }
+
+    @Override
+    public boolean forcesUnitToFight(AUnit unit, Units enemies) {
+        return ((MissionDefendManager) managerClass(unit)).forcesUnitToFight(unit, enemies);
     }
 
     @Override

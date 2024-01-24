@@ -2,6 +2,7 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
+import atlantis.game.A;
 import atlantis.terran.chokeblockers.ChokeBlockersAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -15,7 +16,10 @@ public class MakeSpaceForWrongSideOfFocusFriends extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.lastActionLessThanAgo(30 * 3, Actions.MOVE_SPACE)) return true;
+
         return unit.isMissionSparta()
+            && A.everyNthGameFrame(35)
             && ChokeBlockersAssignments.get().isChokeBlocker(unit)
             && friendNearOnWrongSideOfFocus();
     }

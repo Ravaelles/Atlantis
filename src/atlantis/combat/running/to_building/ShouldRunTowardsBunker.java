@@ -13,15 +13,17 @@ public class ShouldRunTowardsBunker {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
         if (!We.terran()) return false;
 
-        if (A.seconds() >= 600 && Count.marines() >= 13) return false;
 //        if (unit.distTo(runAwayFrom) <= 2) return false;
 //        if (unit.enemiesNearInRadius(2) > 0) return false;
 
         AUnit bunker = position();
         if (bunker == null) return false;
 
+        if (A.seconds() >= 600 && Count.marines() >= 13) return false;
+        if (unit.meleeEnemiesNearCount(1.7 + unit.woundPercent() / 75.0) > 0) return false;
+
         double distTo = bunker.distTo(unit);
-        if (distTo >= 6 && distTo <= 30) return false;
+        if (distTo <= 6 || distTo >= 30) return false;
 
         return true;
 

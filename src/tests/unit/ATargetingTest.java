@@ -9,10 +9,7 @@ import org.mockito.MockedStatic;
 import static org.junit.Assert.*;
 
 public class ATargetingTest extends AbstractTestWithUnits {
-
     public MockedStatic<AGame> aGame;
-//    public MockedStatic<EnemyInfo> enemyInformation;
-//    public MockedStatic<EnemyUnits> enemyUnitsMock;
 
     @Test
     public void targetsWorkers() {
@@ -227,8 +224,8 @@ public class ATargetingTest extends AbstractTestWithUnits {
             fake(AUnitType.Zerg_Larva, 10.8),
             fake(AUnitType.Zerg_Egg, 10.9),
             fake(AUnitType.Zerg_Lurker_Egg, 10.95),
-            target = fake(AUnitType.Zerg_Zergling, 11.5),
-            fake(AUnitType.Zerg_Sunken_Colony, 13.8),
+            fake(AUnitType.Zerg_Zergling, 13.5),
+            target = fake(AUnitType.Zerg_Sunken_Colony, 13.8),
             fake(AUnitType.Zerg_Sunken_Colony, 29)
         );
 
@@ -313,6 +310,40 @@ public class ATargetingTest extends AbstractTestWithUnits {
             fake(AUnitType.Zerg_Drone, 12),
             expectedTarget = fake(AUnitType.Zerg_Guardian, 12.5),
             fake(AUnitType.Zerg_Zergling, 19)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsMarinesOverBunker() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            expectedTarget = fake(AUnitType.Terran_Marine, 11.1),
+            fake(AUnitType.Terran_Marine, 12.1),
+            fake(AUnitType.Terran_Bunker, 13.1),
+            fake(AUnitType.Terran_Marine, 13.2)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsMostWoundedMarineOverBunker() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Terran_Marine, 11.1),
+            expectedTarget = fake(AUnitType.Terran_Marine, 12.1).setHp(11),
+            fake(AUnitType.Terran_Bunker, 13.1),
+            fake(AUnitType.Terran_Marine, 13.2)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {

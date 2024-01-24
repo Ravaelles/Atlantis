@@ -1,10 +1,9 @@
 package atlantis.combat.micro.terran.wraith;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.combat.micro.terran.air.RunForYourLife;
 import atlantis.terran.repair.managers.GoToRepairAsAirUnit;
-import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 
 public class TerranWraith extends Manager {
@@ -22,7 +21,7 @@ public class TerranWraith extends Manager {
         return new Class[]{
             WraithBeingReparedManager.class,
             RunForYourLife.class,
-            AvoidEnemies.class,
+            AvoidEnemiesIfNeeded.class,
             GoToRepairAsAirUnit.class,
 
             // Attack-related

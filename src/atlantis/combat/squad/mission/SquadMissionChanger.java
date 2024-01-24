@@ -1,6 +1,7 @@
 package atlantis.combat.squad.mission;
 
 import atlantis.combat.squad.Squad;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
@@ -11,6 +12,7 @@ public class SquadMissionChanger {
     // =========================================================
 
     public static boolean changeSquadMissionIfNeeded(Squad squad) {
+        if (A.isUms()) return false;
         if (squad.hasMostlyOffensiveRole()) return false;
 
         unit = squad.leader();

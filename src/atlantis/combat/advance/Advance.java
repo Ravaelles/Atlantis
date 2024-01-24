@@ -14,6 +14,11 @@ public class Advance extends MissionManager {
         super(unit);
     }
 
+//    @Override
+//    public boolean applies() {
+//        return false;
+//    }
+
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{

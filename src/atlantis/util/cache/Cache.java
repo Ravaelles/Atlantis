@@ -83,7 +83,7 @@ public class Cache<V> {
     }
 
     public V set(String cacheKey, int cacheForFrames, Callback callback) {
-        if (cacheKey == null || cacheKey.length() <= 2) {
+        if (cacheKey == null || cacheKey.length() <= 1) {
             throw new RuntimeException("Invalid cacheKey = /" + cacheKey + "/");
         }
 

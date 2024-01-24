@@ -3,15 +3,15 @@ package atlantis.combat.managers;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.ImprovePerformanceHavingBigSupply;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
-import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.HoldToShoot;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.units.AUnit;
-import atlantis.units.interrupt.ContinueAttackOrder;
-import atlantis.units.interrupt.DontInterruptShootingUnits;
+import atlantis.units.fix.PreventAttackNull;
+import atlantis.units.fix.PreventAttackTooLong;
+import atlantis.units.interrupt.ContinueCurrentAction;
 import atlantis.units.special.ManualOverrideManager;
-import atlantis.units.special.PreventDoNothing;
+import atlantis.units.fix.PreventDoNothing;
 
 public class CombatManagerTopPriority extends Manager {
     public CombatManagerTopPriority(AUnit unit) {
@@ -26,15 +26,21 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ManualOverrideManager.class,
-            PreventDoNothing.class,
-            Unfreezer.class,
             ImprovePerformanceHavingBigSupply.class,
-            AvoidCriticalUnits.class,
+            ManualOverrideManager.class,
+
+            PreventDoNothing.class,
+            PreventAttackTooLong.class,
+            PreventAttackNull.class,
+
+            ContinueCurrentAction.class,
             DanceAfterShoot.class,
+//            ContinueShooting.class,
             HoldToShoot.class,
-            DontInterruptShootingUnits.class,
-            ContinueAttackOrder.class,
+//            Unfreezer.class,
+            AvoidCriticalUnits.class,
+//            DanceAfterShoot.class,
+//            HoldToShoot.class,
             TransportUnits.class,
         };
     }

@@ -33,20 +33,20 @@ public class AdvanceAsALeader extends MissionManager {
             return usedManager(this, "ToSquadCenter");
         }
 
-        if (handleWhenLonely()) return usedManager(this, "LonelyLeader");
-
+//        if (handleWhenLonely()) return usedManager(this, "LonelyLeader");
+//
         int cohesionPercent = unit.squad().cohesionPercent();
-        int friendsNear = unit.friendsInRadius(7).count();
-
-        if (cohesionPercent <= 84 && friendsNear <= squad.size() * 0.7) {
-            actWithCohesionTooLow("LeaderWaitA");
-            return usedManager(this);
-        }
-
-        if (cohesionPercent <= 74 && friendsNear <= squad.size() * 0.8) {
-            actWithCohesionTooLow("LeaderWaitB");
-            return usedManager(this);
-        }
+//        int friendsNear = unit.friendsInRadius(7).count();
+//
+//        if (cohesionPercent <= 84 && friendsNear <= squad.size() * 0.7) {
+//            actWithCohesionTooLow("LeaderWaitA");
+//            return usedManager(this);
+//        }
+//
+//        if (cohesionPercent <= 74 && friendsNear <= squad.size() * 0.8) {
+//            actWithCohesionTooLow("LeaderWaitB");
+//            return usedManager(this);
+//        }
 
         if (cohesionPercent <= 69) {
             actWithCohesionTooLow("LeaderWaitC");

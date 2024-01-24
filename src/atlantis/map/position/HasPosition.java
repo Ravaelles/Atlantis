@@ -343,4 +343,8 @@ public interface HasPosition {
         AAdvancedPainter.paintLine(this, to, color);
         AAdvancedPainter.paintLine(this.translateByPixels(1, 1), to.translateByPixels(1, 1), color);
     }
+
+    default void paintTextCentered(HasPosition position, String text, Color color) {
+        AAdvancedPainter.paintTextCentered(position, text, color, false);
+    }
 }

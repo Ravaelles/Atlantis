@@ -16,7 +16,7 @@ public class ContinueDragoonAttackOrder {
 
         if (unit.noCooldown() || unit.lastAttackFrameLessThanAgo(30)) return Decision.ALLOWED;
 
-        if (dontShootWhenAlmostDeadAndRangedEnemyIsNear(unit)) return Decision.FORBIDDEN;
+//        if (dontShootWhenAlmostDeadAndRangedEnemyIsNear(unit)) return Decision.FORBIDDEN;
 
         return Decision.INDIFFERENT;
     }
@@ -29,7 +29,8 @@ public class ContinueDragoonAttackOrder {
     private static boolean preventMissionSpartaTooFarTargets(AUnit unit) {
         return unit.hasTarget()
             && unit.isMissionDefendOrSparta()
-//            && unit.mission().focusPoint().isAroundChoke()
+            && unit.mission().focusPoint().isAroundChoke()
+            && unit.distToNearestChoke() <= 4
             && unit.distToTarget() > OurDragoonWeaponRange.range();
     }
 }

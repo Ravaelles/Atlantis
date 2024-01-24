@@ -82,6 +82,7 @@ public class AsTerranUnitDiscoveredResponse {
         if (
             We.terran()
                 && ArmyStrength.ourArmyRelativeStrength() <= 97
+                && Count.clearCache()
                 && Count.bunkersWithUnfinished() == 0
                 && Count.withPlanned(AUnitType.Terran_Bunker) == 0
         ) {

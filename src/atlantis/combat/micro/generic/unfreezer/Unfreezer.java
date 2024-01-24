@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.special.PreventDoNothing;
+import atlantis.units.fix.PreventDoNothing;
 
 public class Unfreezer extends Manager {
     public Unfreezer(AUnit unit) {
@@ -13,10 +13,10 @@ public class Unfreezer extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
+        if (true) return false;
 
+        if (unit.lastActionLessThanAgo(100)) return false;
         if (unit.isHoldingPosition() && unit.isSpecialMission()) return false;
-        if (unit.lastActionLessThanAgo(50)) return false;
         if (unit.lastPositionChangedLessThanAgo(30)) return false;
         if (unit.isActiveManager(PreventDoNothing.class)) return false;
 

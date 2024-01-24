@@ -5,7 +5,6 @@ import atlantis.combat.micro.avoid.terran.fight.MarineCanAttackNearEnemy;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
 public class AttackNearbyEnemies extends Manager {
@@ -14,6 +13,7 @@ public class AttackNearbyEnemies extends Manager {
     public static String reasonNotToAttack;
     private static ProcessAttackUnit processAttackUnit;
     private final AllowedToAttack allowedToAttack;
+    private AUnit targetToAttack;
 
     // =========================================================
 
@@ -24,22 +24,28 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     public static double maxDistToAttack(AUnit unit) {
-        return unit.isAir() ? 999 : 25;
+        return unit.isAir() ? 876 : 765;
     }
 
     // =========================================================
 
     @Override
     public boolean applies() {
-        if (unit.cooldown() >= 8) return false;
+        if (unit.isDragoon() && unit.cooldown() > 0) return false;
+
+        if (unit.cooldown() >= 7) return false;
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
         if (unit.lastStartedRunningLessThanAgo(8)) return false;
         if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
+        if (!unit.hasAnyWeapon()) return false;
         if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
 
         if (unit.isMarine()) return MarineCanAttackNearEnemy.allowedForThisUnit(unit);
 
-        return unit.hasAnyWeapon();
+        targetToAttack = defineBestEnemyToAttack(unit);
+        if (targetToAttack == null || targetToAttack.hp() <= 0) return false;
+
+        return true;
     }
 
     @Override
@@ -95,7 +101,7 @@ public class AttackNearbyEnemies extends Manager {
     public boolean handleAttackNearEnemyUnits() {
         return (boolean) cacheObject.getIfValid(
             "handleAttackNearEnemyUnits: " + unit.id(),
-            1,
+            3,
             () -> {
 //                if (true) return false; // Temp disable attacking
 
@@ -107,7 +113,7 @@ public class AttackNearbyEnemies extends Manager {
 
 //                why();
 
-                AUnit enemy = (new AttackNearbyEnemies(unit)).defineEnemyToAttackFor();
+                AUnit enemy = this.defineBestEnemyToAttack(unit);
 
                 if (enemy == null) return false;
                 if (!unit.canAttackTarget(enemy) || !unit.isAlive()) {
@@ -132,14 +138,20 @@ public class AttackNearbyEnemies extends Manager {
 
     // =========================================================
 
-    protected AUnit defineEnemyToAttackFor() {
+    protected AUnit defineBestEnemyToAttack(AUnit unit) {
         return cache.getIfValid(
-            "defineEnemyToAttackFor",
+            "defineBestEnemyToAttack:" + unit.id(),
             5,
             () -> {
                 reasonNotToAttack = null;
 
                 AUnit enemy = bestTargetToAttack();
+
+                if (enemy == null) {
+                    enemy = fallbackToSquadLeaderTarget();
+                    if (enemy != null)
+                        System.err.println("FALLBACK LEADER ENEMY FOR " + unit.typeWithUnitId() + " = " + enemy);
+                }
 
                 if (enemy == null) {
                     return null;
@@ -151,6 +163,13 @@ public class AttackNearbyEnemies extends Manager {
                 return enemy;
             }
         );
+    }
+
+    private AUnit fallbackToSquadLeaderTarget() {
+        AUnit leader = unit.squadLeader();
+        if (leader == null || unit.equals(leader)) return null;
+
+        return (new AttackNearbyEnemies(leader)).defineBestEnemyToAttack(leader);
     }
 
     protected AUnit bestTargetToAttack() {

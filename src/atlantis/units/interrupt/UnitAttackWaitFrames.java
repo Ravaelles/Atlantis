@@ -55,7 +55,7 @@ public class UnitAttackWaitFrames {
         else if (type.equals(AUnitType.Protoss_Archon)) return 15;
         else if (type.equals(AUnitType.Protoss_Corsair)) return 8;
         else if (type.equals(AUnitType.Protoss_Dark_Templar)) return 9;
-        else if (type.equals(AUnitType.Protoss_Dragoon)) return 9; // Original 7
+        else if (type.equals(AUnitType.Protoss_Dragoon)) return 8; // Original 7
         else if (type.equals(AUnitType.Protoss_Photon_Cannon)) return 7;
         else if (type.equals(AUnitType.Protoss_Probe)) return 2;
         else if (type.equals(AUnitType.Protoss_Reaver)) return 1;
@@ -94,7 +94,7 @@ public class UnitAttackWaitFrames {
         if (type.equals(AUnitType.Protoss_Arbiter)) return 5;
         else if (type.equals(AUnitType.Protoss_Corsair)) return 8;
         else if (type.equals(AUnitType.Protoss_Dark_Templar)) return 9;
-        else if (type.equals(AUnitType.Protoss_Dragoon)) return 9; // Original 9
+        else if (type.equals(AUnitType.Protoss_Dragoon)) return 12; // Original 9
         else if (type.equals(AUnitType.Protoss_Reaver)) return 1;
         else if (type.equals(AUnitType.Protoss_Zealot)) return 9; // Original 8
         else if (type.equals(AUnitType.Terran_SCV)) return 2;

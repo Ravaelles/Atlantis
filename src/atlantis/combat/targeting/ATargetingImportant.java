@@ -63,6 +63,21 @@ public class ATargetingImportant extends ATargeting {
         }
 
         // =========================================================
+        // Close Zerglings/Zealots/Firebats IN RANGE
+
+        target = Select.enemy()
+            .ofType(
+                AUnitType.Protoss_Zealot,
+                AUnitType.Terran_Firebat,
+                AUnitType.Terran_Marine,
+                AUnitType.Zerg_Zergling
+            )
+            .inRadius(5, unit)
+            .canBeAttackedBy(unit, 0)
+            .mostWounded();
+        if (target != null) return target;
+
+        // =========================================================
         // Defensive buildings IN RANGE
 
         target = Select.enemy()
@@ -193,6 +208,25 @@ public class ATargetingImportant extends ATargeting {
             .mostWounded();
 
         debug("C5 = " + target);
+
+
+        // =========================================================
+        // Close Zerglings/Zealots/Firebats OUT OF RANGE
+
+        target = Select.enemy()
+            .ofType(
+                AUnitType.Protoss_Probe,
+                AUnitType.Protoss_Zealot,
+                AUnitType.Terran_SCV,
+                AUnitType.Terran_Firebat,
+                AUnitType.Terran_Marine,
+                AUnitType.Zerg_Drone,
+                AUnitType.Zerg_Zergling
+            )
+            .inRadius(9, unit)
+            .canBeAttackedBy(unit, 999)
+            .nearestTo(unit);
+        if (target != null) return target;
 
         // === WORKERS ======================================================
 

@@ -16,15 +16,13 @@ import atlantis.map.wall.Structure;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.base.NextBasePosition;
-import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.units.interrupt.DontInterruptShootingUnits;
+import atlantis.units.interrupt.ContinueShooting;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import bwapi.Color;
 import jbweb.Block;
 import jbweb.Blocks;
@@ -73,7 +71,27 @@ public class OnEveryFrameHelper {
 
 //        paintAttackTargetsForOur();
 
-        paintNextBasePosition();
+//        paintNextBasePosition();
+
+//        printCombatUnitStatus();
+    }
+
+    private static void printCombatUnitStatus() {
+        System.out.println("@ " + A.now() + " - ");
+
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            unit.paintLine(unit.position().translateByTiles(0, 2), Color.Black);
+            unit.paintTextCentered(
+                unit.position().translateByTiles(0, 2),
+                unit.idWithHash(), // + " (" + unit.squad() + ")",
+                Color.Black
+            );
+
+            System.out.println(
+                unit.typeWithUnitId() + " - " + unit.manager() + " - " + unit.lastCommandName()
+                    + " / target:" + unit.target() + " / orderTarget=" + unit.orderTarget()
+            );
+        }
     }
 
     private static void paintNextBasePosition() {
@@ -140,7 +158,7 @@ public class OnEveryFrameHelper {
 //            AAdvancedPainter.paintCircle(unit, 7, Color.Orange);
 //        }
 
-        if ((new DontInterruptShootingUnits(unit)).applies()) {
+        if ((new ContinueShooting(unit)).applies()) {
             AAdvancedPainter.paintCircle(unit, 10, Color.Teal);
             AAdvancedPainter.paintCircle(unit, 9, Color.Teal);
             AAdvancedPainter.paintCircle(unit, 6, Color.Teal);

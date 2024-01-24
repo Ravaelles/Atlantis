@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.air;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.units.AUnit;
 
 public class RunForYourLife extends Manager {
@@ -29,7 +29,7 @@ public class RunForYourLife extends Manager {
     protected Manager handle() {
         if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(16)) return usedManager(this);
 
-        if ((new AvoidEnemies(unit)).invoke(this) != null) return usedManager(this);
+        if ((new AvoidEnemiesIfNeeded(unit)).invoke(this) != null) return usedManager(this);
 
         return null;
     }

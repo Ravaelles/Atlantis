@@ -118,7 +118,7 @@ public class ARunningManager {
 //        }
 //
 //        // Check if only combat buildings are dangerously close. If so, don't run in any direction.
-//        Units dangerous = AvoidEnemies.unitsToAvoid(unit, true);
+//        Units dangerous = AvoidEnemiesIfNeeded.unitsToAvoid(unit, true);
 //
 //        if (dangerous.isEmpty()) {
 //            return false;

@@ -7,15 +7,14 @@ import atlantis.units.Units;
 import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
-import java.util.List;
-
-public class AvoidEnemies extends Manager {
+public class AvoidEnemiesIfNeeded extends Manager {
     private static Cache<Units> cache = new Cache<>();
     private WantsToAvoid wantsToAvoid;
     //    private Units enemiesDangerouslyClose;
     private EnemyUnitsToAvoid enemyUnitsToAvoid;
+    public boolean forceAvoid = false;
 
-    public AvoidEnemies(AUnit unit) {
+    public AvoidEnemiesIfNeeded(AUnit unit) {
         super(unit);
         wantsToAvoid = new WantsToAvoid(unit);
         enemyUnitsToAvoid = new EnemyUnitsToAvoid(unit);
@@ -30,7 +29,9 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
+        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
+
+        if (forceAvoid) return true;
 
         return !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid();
     }
@@ -75,6 +76,6 @@ public class AvoidEnemies extends Manager {
             enemyString = A.substring(enemy.type().name(), 0, 10);
         }
 
-        return "AvoidEnemies(" + enemyString + ')';
+        return "AvoidEnemiesIfNeeded(" + enemyString + ')';
     }
 }

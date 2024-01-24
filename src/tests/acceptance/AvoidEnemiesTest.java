@@ -1,23 +1,15 @@
 package tests.acceptance;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
 import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Units;
 import atlantis.units.fogged.FakeFoggedUnit;
-import atlantis.units.select.BaseSelect;
-import atlantis.units.select.Select;
 import atlantis.util.Angle;
 import org.junit.Test;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import tests.unit.FakeUnit;
-
-import java.util.Arrays;
 
 public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
     public MockedStatic<AGame> aGame;

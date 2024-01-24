@@ -8,8 +8,8 @@ import atlantis.units.interrupt.protoss.ContinueDragoonAttackOrder;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
-public class DontInterruptShootingUnits extends Manager {
-    public DontInterruptShootingUnits(AUnit unit) {
+public class ContinueShooting extends Manager {
+    public ContinueShooting(AUnit unit) {
         super(unit);
     }
 
@@ -25,7 +25,7 @@ public class DontInterruptShootingUnits extends Manager {
         Decision decision;
 
         if ((decision = ContinueDragoonAttackOrder.asDragoon(unit)).notIndifferent()) {
-//            System.out.println("@ " + A.now() + " - DECISION DontInterruptShootingUnits " + decision);
+//            System.out.println("@ " + A.now() + " - DECISION ContinueShooting " + decision);
             return decision.toBoolean();
         }
 

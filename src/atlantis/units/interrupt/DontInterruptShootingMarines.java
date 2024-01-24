@@ -1,7 +1,7 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
@@ -33,7 +33,7 @@ public class DontInterruptShootingMarines extends Manager {
 
     @Override
     public Manager handle() {
-        AvoidEnemies avoidEnemies = new AvoidEnemies(unit);
+        AvoidEnemiesIfNeeded avoidEnemies = new AvoidEnemiesIfNeeded(unit);
         if (avoidEnemies.avoidEnemiesIfNeeded() != null) {
             return usedManager(avoidEnemies, "Avoid");
         }

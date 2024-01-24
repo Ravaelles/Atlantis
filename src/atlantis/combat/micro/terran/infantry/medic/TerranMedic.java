@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.units.AUnit;
 
 import java.util.HashMap;
@@ -40,7 +40,7 @@ public class TerranMedic extends Manager {
             TooFarFromNearestInfantry.class,
             MoveAwayMedicFromTanks.class,
             StickToAssignments.class,
-            AvoidEnemies.class,
+            AvoidEnemiesIfNeeded.class,
         };
     }
 

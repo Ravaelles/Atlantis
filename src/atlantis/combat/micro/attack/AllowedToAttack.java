@@ -59,7 +59,7 @@ public class AllowedToAttack {
     public boolean canAttackEnemiesNow() {
         if (AttackNearbyEnemies.reasonNotToAttack == null) return true;
 
-        return attackNearbyEnemies.defineEnemyToAttackFor() != null;
+        return attackNearbyEnemies.defineBestEnemyToAttack(unit) != null;
     }
 
     public String canAttackEnemiesNowString() {

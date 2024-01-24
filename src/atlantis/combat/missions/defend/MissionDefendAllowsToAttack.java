@@ -22,6 +22,8 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
         }
         if (focusPoint == null) return true;
 
+//        if (forbidAsTooFarFromFocusPoint(enemy)) return false;
+
         if (
             unit.isTargetInWeaponRangeAccordingToGame(enemy)
                 || (unit.noCooldown() && enemy.canAttackTarget(unit) && focusPoint.regionsMatch(enemy))
@@ -38,6 +40,13 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 //        else {
 //            return whenTargetInDifferentRegions(unit, enemy);
 //        }
+    }
+
+    private boolean forbidAsTooFarFromFocusPoint(AUnit enemy) {
+        if (unit.distToFocusPoint() < 15) return false;
+        if (unit.distToBase() < 10) return false;
+
+        return unit.hp() <= 20 || unit.lastAttackFrameMoreThanAgo(30 * 4);
     }
 
     private boolean whenTargetInSameRegion(AUnit unit, AUnit enemy) {

@@ -24,7 +24,7 @@ public class ScoutSafetyFarFromEnemy extends Manager {
     public Manager handle() {
         if (
             (unit.isHealthy() || unit.enemiesNearInRadius(2.1) == 0)
-                && unit.distToBase() >= 35
+                && unit.distToBase() >= 40
                 && unit.moveToMain(Actions.MOVE_AVOID)
         ) return usedManager(this);
 

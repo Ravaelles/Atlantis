@@ -1,6 +1,7 @@
-package atlantis.combat.micro.generic.unfreezer;
+package atlantis.combat.micro.generic.unfreezer.old;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.generic.unfreezer.UnfreezerShakeUnit;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -11,7 +12,7 @@ public class UnfreezeAttackOrMove extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
         if (unit.lastActionMoreThanAgo(57, Actions.MOVE_UNFREEZE)) return false;
 

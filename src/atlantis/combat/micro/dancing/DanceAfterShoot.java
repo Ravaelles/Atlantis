@@ -15,7 +15,7 @@ public class DanceAfterShoot extends Manager {
 
     @Override
     public boolean applies() {
-//        if (!unit.isMarine()) return false;
+        if (unit.isMarine()) return false;
 
         boolean applies = unit.isRanged()
 //            && !unit.isAttacking()

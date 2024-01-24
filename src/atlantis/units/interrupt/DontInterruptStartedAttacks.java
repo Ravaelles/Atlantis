@@ -10,7 +10,8 @@ public class DontInterruptStartedAttacks {
     public static boolean shouldNotInterrupt(AUnit unit) {
 //        if (true) return false;
 
-        if (unit.lastActionMoreThanAgo(15)) return false;
+//        if (unit.lastActionMoreThanAgo(15)) return false; // Changed
+        if (unit.lastActionMoreThanAgo(30)) return false;
 
         AUnit target = unit.target();
         if (target != null && target.isCombatBuilding() && unit.friendsInRadiusCount(4) <= 7) return false;

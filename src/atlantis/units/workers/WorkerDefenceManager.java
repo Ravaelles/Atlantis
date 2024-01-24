@@ -1,7 +1,7 @@
 package atlantis.units.workers;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
@@ -56,7 +56,7 @@ public class WorkerDefenceManager extends Manager {
         if (handleFightEnemyIfNeeded(unit)) return true;
 
         boolean dontNeedToAvoid = unit.woundHp() <= 4 && unit.enemiesNear().inRadius(6, unit).atMost(1);
-        if (!dontNeedToAvoid && (new AvoidEnemies(unit)).invoke(this) != null) {
+        if (!dontNeedToAvoid && (new AvoidEnemiesIfNeeded(unit)).invoke(this) != null) {
             unit.addLog("WorkerAvoid");
             return true;
         }

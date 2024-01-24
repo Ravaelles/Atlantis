@@ -3,6 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.attack.focus.MissionAttackFocusPoint;
+import atlantis.decions.Decision;
 import atlantis.units.AUnit;
 
 /**
@@ -10,7 +11,6 @@ import atlantis.units.AUnit;
  * the enemy at the <b>focusPoint</b>.
  */
 public class MissionAttack extends Mission {
-
 //    private final MissionAttackPermissionToAttack missionAttackPermissionToAttack = new MissionAttackPermissionToAttack();
 
     public MissionAttack() {
@@ -32,9 +32,10 @@ public class MissionAttack extends Mission {
 
     // =========================================================
 
-//    public Decision permissionToAttack() {
-//        return missionAttackPermissionToAttack.permissionToAttack();
-//    }
+    @Override
+    public Decision permissionToAttack(AUnit unit) {
+        return (new MissionAttackPermissionToAttack(unit)).permissionToAttack();
+    }
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {

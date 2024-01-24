@@ -1,8 +1,10 @@
 package atlantis.combat.micro.dancing;
 
 import atlantis.architecture.Manager;
+import atlantis.decions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import bwapi.Color;
@@ -20,7 +22,11 @@ public class DanceAway extends Manager {
         if (enemy == null) return false;
         if (!enemy.effVisible()) return false;
 
-        if (dragoonLowHpAndStillUnderAttack()) return true;
+        Decision decision = dragoonDecision();
+        if (decision.notIndifferent()) {
+            if (decision.isForbidden()) return false;
+            if (decision.isAllowed()) return true;
+        }
 
 //        if (continueDancingAway()) return true;
 
@@ -38,11 +44,27 @@ public class DanceAway extends Manager {
 //            && dist >= (unit.enemyWeaponRangeAgainstThisUnit(awayFrom));
     }
 
+    private Decision dragoonDecision() {
+        if (dragoonLowHpAndStillUnderAttack()) return Decision.FORBIDDEN;
+        if (dragoonEnemyClose()) return Decision.FORBIDDEN;
+
+        return Decision.INDIFFERENT;
+    }
+
+    private boolean dragoonEnemyClose() {
+        return unit.isDragoon()
+//            && unit.lastAttackFrameLessThanAgo(150)
+            && unit.enemiesNearInRadius(enemiesRadius()) > 0;
+    }
+
     private boolean dragoonLowHpAndStillUnderAttack() {
         return unit.isDragoon()
+            && !ProtossFlags.dragoonBeBrave()
             && unit.hp() <= 40
-            && unit.lastUnderAttackLessThanAgo(70)
-            && unit.enemiesNearInRadius(4) > 0;
+            && (
+            unit.lastUnderAttackLessThanAgo(90)
+                || unit.enemiesNearInRadius(enemiesRadius()) > 0
+        );
     }
 
     private boolean enemyIsTooClose(double dist) {
@@ -52,13 +74,25 @@ public class DanceAway extends Manager {
     }
 
     private boolean continueDancingAway() {
+//        return (unit.isMoving() || unit.isAccelerating())
+//            && unit.lastActionLessThanAgo((int) (90 + unit.woundPercent() / 39.0), Actions.MOVE_DANCE_AWAY)
         return unit.isMoving()
-            && unit.lastActionLessThanAgo((int) (70 + unit.woundPercent() / 39.0), Actions.MOVE_DANCE_AWAY)
-            && (
-            unit.hasCooldown()
-                || unit.hp() <= minHp()
-                || unit.lastUnderAttackLessThanAgo((int) (20 + unit.woundPercent() / 20.0))
-        );
+            && unit.lastActionLessThanAgo((int) (90 + unit.woundPercent() / 36.0), Actions.MOVE_DANCE_AWAY)
+            && (unit.cooldown() >= 3 || unit.enemiesNearInRadius(enemiesRadius()) > 0);
+//            && (
+//            unit.hasCooldown()
+//                || unit.hp() <= minHp()
+//                || unit.lastUnderAttackLessThanAgo((int) (20 + unit.woundPercent() / 13.0))
+//                || unit.enemiesNearInRadius(4) > 0
+//        );
+    }
+
+    private double enemiesRadius() {
+        if (unit.isDragoon()) return 4.1
+            + (enemy.isFacing(unit) ? 0.4 : -1)
+            + (unit.hp() <= 40 ? 0.6 : 0);
+
+        return 4;
     }
 
     private int minHp() {
@@ -91,7 +125,7 @@ public class DanceAway extends Manager {
 //        System.err.println("@ " + A.now() + " - " + unit.id() + " - DANCE AWAY FROM " + awayFrom);
 
         if (danceAwayFromTarget(logString)) {
-            unit.paintCircleFilled(18, Color.Teal);
+//            unit.paintCircleFilled(18, Color.Teal);
             return usedManager(this);
         }
 
@@ -100,6 +134,6 @@ public class DanceAway extends Manager {
     }
 
     private boolean danceAwayFromTarget(String logString) {
-        return unit.moveAwayFrom(enemy.position(), 1.7, Actions.MOVE_DANCE_AWAY, logString);
+        return unit.moveAwayFrom(enemy.position(), enemiesRadius(), Actions.MOVE_DANCE_AWAY, logString);
     }
 }

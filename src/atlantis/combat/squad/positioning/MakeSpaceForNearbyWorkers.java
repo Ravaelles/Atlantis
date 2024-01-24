@@ -44,23 +44,25 @@ public class MakeSpaceForNearbyWorkers extends Manager {
 
         if (nearWorker != null) {
             unit.setTooltipAndLog("Space4Worker");
-            if (unit.isTankSieged()) {
-                if (TerranTank.wantsToUnsiege(unit)) {
-                    return usedManager(this);
-                }
-            }
+
+            if (asTerran()) return usedManager(this);
             else {
                 if (unit.moveAwayFrom(nearWorker, 3, Actions.MOVE_SPACE, "Space4W01rker")) {
                     return usedManager(this, "Space4W0rker");
                 }
-//                AUnit main = Select.main();
-//                if (main != null && main.distToMoreThan(unit, 5)) {
-//                    unit.move(main, Actions.MOVE_SPACE, "Space4Worker");
-//                    return usedManager(this);
-//                }
             }
         }
 
         return null;
+    }
+
+    private boolean asTerran() {
+        if (unit.isTankSieged()) {
+            if (TerranTank.wantsToUnsiege(unit)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

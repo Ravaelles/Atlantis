@@ -152,7 +152,7 @@ public class HoldToShoot extends Manager {
         return (c1 = unit.isMoving())
             && (c2 = unit.cooldown() <= 4)
 //            && unit.combatEvalRelative() > 0.8
-//            && AvoidEnemies.unitsToAvoid(unit, true).isEmpty()
+//            && AvoidEnemiesIfNeeded.unitsToAvoid(unit, true).isEmpty()
             && unit.avoidEnemiesManager().enemiesDangerouslyClose().isEmpty()
             && (c3 = distToTarget <= minDistToHold());
 //            && (c4 = (

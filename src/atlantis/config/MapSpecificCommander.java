@@ -42,7 +42,7 @@ public class MapSpecificCommander extends Commander {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
                 GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
             }
-            if (A.now() <= 200) {
+            if (A.now() <= 1) {
                 CameraCommander.centerCameraNowOnSquadCenter();
             }
         }

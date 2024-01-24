@@ -196,7 +196,7 @@ public class APainter {
         paintTextCentered(position, text, null, screenCords);
     }
 
-    public static void paintTextCentered(APosition position, String text, Color color, boolean screenCoords) {
+    public static void paintTextCentered(HasPosition position, String text, Color color, boolean screenCoords) {
         if (position == null || text == null || isDisabled()) {
             return;
         }

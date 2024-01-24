@@ -1,10 +1,10 @@
 package atlantis.debug.painter;
 
 import atlantis.Atlantis;
+import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.ShouldRetreat;
@@ -1421,7 +1421,7 @@ public class AAdvancedPainter extends APainter {
         Color color;
 
         if (unit.isOur()) {
-            boolean shouldAvoidAnyUnit = (new AvoidEnemies(unit)).shouldAvoidAnyUnit();
+            boolean shouldAvoidAnyUnit = (new AvoidEnemiesIfNeeded(unit)).shouldAvoidAnyUnit();
             color = shouldAvoidAnyUnit ? Red : Teal;
         }
         else {

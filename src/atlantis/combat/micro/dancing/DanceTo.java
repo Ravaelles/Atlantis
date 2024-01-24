@@ -33,6 +33,8 @@ public class DanceTo extends Manager {
     }
 
     private boolean isATargetThatWeCanDanceTo() {
+        if (target.isRanged() && unit.isRanged()) return false;
+
         return !target.isCombatBuilding() || unit.friendsInRadiusCount(1.5) >= 4;
     }
 

@@ -13,6 +13,7 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -39,7 +40,7 @@ public abstract class MissionChanger {
         // === Handle UMS ==========================================
 
         if (AGame.isUms()) {
-            forceMissionAttack("UmsAlwaysAttack");
+            if (!Missions.isGlobalMissionAttack()) forceMissionAttack("UmsAlwaysAttack");
             return;
         }
 
@@ -49,16 +50,17 @@ public abstract class MissionChanger {
             return;
         }
 
-//        if (
-//            !Have.main()
-//                || (Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS * 30 && !ArmyStrength.weAreMuchStronger()
-//        )) {
-//            return;
-//        }
+        if (!Have.main() || lastMissionChangedJustSomeTimeAgo()) {
+            return;
+        }
 
         reason = "";
 
         MissionChanger.changeCurrentMissionIfNeeded();
+    }
+
+    private static boolean lastMissionChangedJustSomeTimeAgo() {
+        return Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS * 30;
     }
 
     public static void forceEvaluateGlobalMission() {

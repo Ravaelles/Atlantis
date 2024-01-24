@@ -1,7 +1,7 @@
 package atlantis.units.workers;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.production.constructing.builders.BuilderManager;
@@ -26,7 +26,7 @@ public class WorkerManager extends Manager {
 
             AvoidCriticalUnits.class,
             WorkerDefenceManager.class,
-            AvoidEnemies.class,
+            AvoidEnemiesIfNeeded.class,
 
             BuilderManager.class,
             DynamicRepairsNearby.class,

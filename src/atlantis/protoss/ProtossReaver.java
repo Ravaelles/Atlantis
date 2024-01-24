@@ -19,7 +19,7 @@ public class ProtossReaver extends Manager {
     protected Manager handle() {
 //        if (unit.scarabCount() <= 0) {
 //            unit.setTooltipTactical("NoScarab");
-//            return (new AvoidEnemies.avoidEnemiesIfNeeded(unit);
+//            return (new AvoidEnemiesIfNeeded.avoidEnemiesIfNeeded(unit);
 //        }
 
         if (unit.cooldownRemaining() >= 10) {

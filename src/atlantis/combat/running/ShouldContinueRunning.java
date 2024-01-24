@@ -80,10 +80,10 @@ public class ShouldContinueRunning {
     }
 
     private static boolean truth(AUnit unit) {
-        System.err.println("@ " + A.now() + " - CONTINUE RUN " + unit.idWithHash());
-        unit.paintCircleFilled(5, Color.White);
-        unit.paintCircle(9, Color.White);
-        unit.paintCircle(10, Color.White);
+//        System.err.println("@ " + A.now() + " - CONTINUE RUN " + unit.idWithHash());
+//        unit.paintCircleFilled(5, Color.White);
+//        unit.paintCircle(9, Color.White);
+//        unit.paintCircle(10, Color.White);
         return true;
     }
 }

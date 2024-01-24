@@ -32,7 +32,6 @@ public class MissionDefendManager extends MissionManager {
 //        return allowsToAttack.allowsToAttackEnemyUnit(unit, enemy);
 //    }
 
-    //    @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
         if (We.terran()) return false;
 

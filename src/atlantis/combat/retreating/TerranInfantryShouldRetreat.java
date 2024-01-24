@@ -1,6 +1,8 @@
 package atlantis.combat.retreating;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.units.AUnit;
 
 public class TerranInfantryShouldRetreat extends Manager {
@@ -16,6 +18,8 @@ public class TerranInfantryShouldRetreat extends Manager {
     public Manager shouldRetreat() {
         if (!applies()) return null;
 
+        if (shouldEarlyGameRetreat()) return usedManager(this);
+
         if (shouldRetreatFromCombatBuildings()) return usedManager(this);
 
         if (!unit.mission().isMissionDefend()) {
@@ -29,6 +33,12 @@ public class TerranInfantryShouldRetreat extends Manager {
         }
 
         return null;
+    }
+
+    private boolean shouldEarlyGameRetreat() {
+        return unit.isMissionAttack()
+            && A.seconds() <= 350
+            && OurArmyStrength.relative() <= 94;
     }
 
     private boolean shouldRetreatFromCombatBuildings() {

@@ -20,7 +20,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             EarlyGameTooClustered.class,
-            TooClustered.class,
+//            TooClustered.class,
             HandleFocusPointPositioning.class,
         };
     }
