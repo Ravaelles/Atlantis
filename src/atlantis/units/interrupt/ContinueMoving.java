@@ -14,7 +14,7 @@ public class ContinueMoving extends Manager {
 
         return (unit.isMoving() && !unit.isBraking() && !unit.isStopped())
             && !unit.isAttackingOrMovingToAttack()
-            && unit.lastActionLessThanAgo(3)
+            && unit.lastActionLessThanAgo(2)
             && unit.targetPosition() != null;
 //            && unit.distTo(unit.targetPosition()) >= 1;
     }

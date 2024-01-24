@@ -154,7 +154,7 @@ public class Missions {
                     "CHANGED MISSION @" + A.seconds() + "s TO " + mission.name() + ": " + reason
                 );
 
-                A.printStackTrace("Changing mission to " + mission);
+//                A.printStackTrace("Changing mission to " + mission);
             }
             MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         }

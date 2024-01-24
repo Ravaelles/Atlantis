@@ -240,7 +240,7 @@ public interface AUnitOrders {
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
             if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
-                System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / " + tooltip);
+                System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / to:" + target + " / " + tooltip);
             }
         }
 

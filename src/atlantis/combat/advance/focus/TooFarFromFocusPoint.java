@@ -41,6 +41,8 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     }
 
     protected boolean act() {
+        if (focusPoint == null) return false;
+
         double distToFocus = unit.distTo(focusPoint);
         APosition goTo = distToFocus <= 4
             ? goToWhenCloseToFocus()

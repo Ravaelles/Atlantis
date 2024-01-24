@@ -203,8 +203,8 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Terran_Bunker,
                 AUnitType.Terran_Missile_Turret
             )
-            .inRadius(14, unit)
-            .canBeAttackedBy(unit, 1)
+            .inRadius(9, unit)
+            .canBeAttackedBy(unit, 999)
             .mostWounded();
 
         debug("C5 = " + target);

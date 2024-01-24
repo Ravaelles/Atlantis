@@ -352,8 +352,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                && (unit().isAir() || Select.all().groundUnits().inRadius(0.05, newPosition).empty())
         ) {
             double distTo = this.distTo(newPosition);
-            if (distTo >= 0.9 && distTo > 3 * moveDistance) {
-                if (moveDistance != 1) return moveAwayFrom(from, 1, action, tooltip);
+            if (distTo >= 1.9 && distTo > 3 * moveDistance) {
+                if (moveDistance != 2.5) return moveAwayFrom(from, 2.5, action, tooltip);
 
                 ErrorLog.printMaxOncePerMinute(
                     typeWithUnitId() + "::moveAwayFrom: distTo: " + distTo

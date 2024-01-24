@@ -17,14 +17,15 @@ public class PreventAttackTooLong extends Manager {
         if (unit.isStartingAttack()) return false;
         if (unit.isAttackFrame()) return false;
 
-        if (unit.lastActionLessThanAgo(10)) return false;
+        int DELAY = 23;
+        if (unit.lastActionLessThanAgo(DELAY)) return false;
 
-        return unit.lastActionMoreThanAgo(unit.cooldownAbsolute() + 16, Actions.ATTACK_UNIT);
+        return unit.lastActionMoreThanAgo(unit.cooldownAbsolute() + DELAY, Actions.ATTACK_UNIT);
     }
 
     @Override
     public Manager handle() {
-        System.err.println("PreventAttackTooLong for " + unit.idWithType() + " / isAttacking:" + unit.isAttacking());
+//        System.err.println("PreventAttackTooLong for " + unit.idWithType() + " / isAttacking:" + unit.isAttacking());
 
         return DoPreventLogic.handle(unit) ? usedManager(this) : null;
     }

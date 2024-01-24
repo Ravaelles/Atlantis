@@ -149,8 +149,8 @@ public class AttackNearbyEnemies extends Manager {
 
                 if (enemy == null) {
                     enemy = fallbackToSquadLeaderTarget();
-                    if (enemy != null)
-                        System.err.println("FALLBACK LEADER ENEMY FOR " + unit.typeWithUnitId() + " = " + enemy);
+//                    if (enemy != null)
+//                        System.err.println("FALLBACK LEADER ENEMY FOR " + unit.typeWithUnitId() + " = " + enemy);
                 }
 
                 if (enemy == null) {

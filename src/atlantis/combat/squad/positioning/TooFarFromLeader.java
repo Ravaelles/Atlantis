@@ -73,6 +73,8 @@ public class TooFarFromLeader extends Manager {
     }
 
     protected Manager handle() {
+        if (leader == null) leader = unit.squadLeader();
+
         if (!unit.isMoving() || A.everyNthGameFrame(5)) {
             unit.move(leader, Actions.MOVE_FORMATION, "Coordinate");
         }

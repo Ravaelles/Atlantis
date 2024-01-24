@@ -6,18 +6,14 @@ import atlantis.units.AUnit;
 import atlantis.units.Units;
 
 public class WantsToAvoid extends Manager {
-    private ProcessAvoid avoid;
-
     public WantsToAvoid(AUnit unit) {
         super(unit);
-        avoid = new ProcessAvoid(unit);
     }
 
     @Override
     public boolean applies() {
         return true;
     }
-
 
     public Manager unitOrUnits(Units enemies) {
         if (enemies.isEmpty()) return null;
@@ -38,12 +34,14 @@ public class WantsToAvoid extends Manager {
 
 //        return avoid.singleUnit(enemies.first());
 
-        if (enemies.size() == 1 || unit.isDragoon()) {
-            return avoid.singleUnit(enemies.first());
-        }
-        else {
-            return avoid.groupOfUnits(enemies);
-        }
+//        if (enemies.size() == 1 || unit.isDragoon()) {
+//            return avoid.singleUnit(enemies.first());
+//        }
+//        else {
+//            return avoid.groupOfUnits(enemies);
+//        }
+
+        return (new DoAvoidEnemies(unit)).handle();
     }
 
     // =========================================================

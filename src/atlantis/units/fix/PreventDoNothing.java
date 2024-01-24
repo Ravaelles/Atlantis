@@ -12,6 +12,9 @@ import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.MissionAttack;
+import atlantis.combat.missions.attack.MissionAttackManager;
+import atlantis.combat.missions.defend.MissionDefend;
+import atlantis.combat.missions.defend.MissionDefendManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.TerranSquadCohesionManager;
 import atlantis.combat.squad.positioning.SquadCohesion;
@@ -35,11 +38,17 @@ public class PreventDoNothing extends Manager {
 //        if (true) return false;
 
 //        return unit.isActiveManager(DoNothing.class) || unit.isAction(Actions.INIT);
-        return unit.isActiveManager(DoNothing.class);
+
+        return (
+            unit.isActiveManager(DoNothing.class)
+                || unit.lastActionMoreThanAgo(30 * 3)
+        ) && !unit.isSpecialAction();
     }
 
     @Override
     public Manager handle() {
+//        System.err.println("@ " + A.now() + " - " + unit.id() + " - PreventDoNothing");
+
 //        System.err.println("SAquad: " + unit.squad());
 //        (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
 
@@ -48,26 +57,47 @@ public class PreventDoNothing extends Manager {
 //        unit.managerLogs().addMessage("Squad:" + (unit.squad() == null ? "NONE..." : unit.squad().name()), unit);
 
         Manager manager;
-
-        if ((manager = new AttackNearbyEnemies(unit)).invoke(this) != null) return usedManager(manager);
-
-        if ((manager = new TooFarFromLeader(unit)).invoke(this) != null) return usedManager(manager);
-
-        if (unit.mission() == null) {
-            if ((manager = Missions.ATTACK.handleManagerClass(unit)) != null) return usedManager(manager);
-        }
-
-        if ((manager = new TooFarFromFocusPoint(unit)).invoke(this) != null) return usedManager(manager);
-
+//        boolean isLeader = unit.squad().isLeader(unit);
 //
-//        if ((manager = Missions.globalMission().handleManagerClass(unit)) != null) return usedManager(manager);
+//        if (!isLeader) {
+//            if ((manager = new TooFarFromLeader(unit)).invoke(this) != null) return usedManager(manager);
+//        }
 //
+//        if ((manager = new AttackNearbyEnemies(unit)).invoke(this) != null) return usedManager(manager);
+//
+//        if (unit.mission() == null) {
+//            if ((manager = Missions.ATTACK.handleManagerClass(unit)) != null) return usedManager(manager);
+//        }
+//
+////        if ((manager = new TooFarFromFocusPoint(unit)).invoke(this) != null) return usedManager(manager);
+        if ((manager = new TooFarFromFocusPoint(unit)).forceHandle() != null) return usedManager(manager);
+//
+//        if (!isLeader) {
+//            if ((manager = new TooFarFromLeader(unit)).forceHandle() != null) return usedManager(manager);
+//        }
 ////
-//        if ((manager = new Unfreezer(unit)).forceHandle() != null) return usedManager(manager);
+////        if ((manager = Missions.globalMission().handleManagerClass(unit)) != null) return usedManager(manager);
+////
+//////
+////        if ((manager = new Unfreezer(unit)).forceHandle() != null) return usedManager(manager);
+////
+//////        if (A.everyNthGameFrame(3)) {
+//////            if ((new TooFarFromFocusPoint(unit)).forceHandle() != null) return usedManager(this);
+//////        }
 //
-////        if (A.everyNthGameFrame(3)) {
-////            if ((new TooFarFromFocusPoint(unit)).forceHandle() != null) return usedManager(this);
-////        }
+//        System.err.println("LOL NOTHING! " + unit);
+//
+//        if (A.now() % 8 <= 3) {
+//            if ((new MissionAttackManager(unit)).forceHandle() != null) return usedManager(this);
+//        }
+//        else {
+//            if ((new MissionDefendManager(unit)).forceHandle() != null) return usedManager(this);
+//        }
+//
+
+        if (DoPreventLogic.handle(unit)) return usedManager(this);
+
+        System.err.println("OMFG STILL NOTHING! " + unit);
 
         return null;
     }

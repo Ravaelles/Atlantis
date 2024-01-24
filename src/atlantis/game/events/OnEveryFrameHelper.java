@@ -73,11 +73,11 @@ public class OnEveryFrameHelper {
 
 //        paintNextBasePosition();
 
-//        printCombatUnitStatus();
+        printCombatUnitStatus();
     }
 
     private static void printCombatUnitStatus() {
-        System.out.println("@ " + A.now() + " - ");
+//        System.out.println("@ " + A.now() + " - ");
 
         for (AUnit unit : Select.ourCombatUnits().list()) {
             unit.paintLine(unit.position().translateByTiles(0, 2), Color.Black);
@@ -87,10 +87,10 @@ public class OnEveryFrameHelper {
                 Color.Black
             );
 
-            System.out.println(
-                unit.typeWithUnitId() + " - " + unit.manager() + " - " + unit.lastCommandName()
-                    + " / target:" + unit.target() + " / orderTarget=" + unit.orderTarget()
-            );
+//            System.out.println(
+//                unit.typeWithUnitId() + " - " + unit.manager() + " - " + unit.lastCommandName()
+//                    + " / target:" + unit.target() + " / orderTarget=" + unit.orderTarget()
+//            );
         }
     }
 

@@ -26,12 +26,12 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ImprovePerformanceHavingBigSupply.class,
-            ManualOverrideManager.class,
+//            ImprovePerformanceHavingBigSupply.class,
+//            ManualOverrideManager.class,
 
             PreventDoNothing.class,
-            PreventAttackTooLong.class,
             PreventAttackNull.class,
+//            PreventAttackTooLong.class,
 
             ContinueCurrentAction.class,
             DanceAfterShoot.class,
@@ -39,8 +39,6 @@ public class CombatManagerTopPriority extends Manager {
             HoldToShoot.class,
 //            Unfreezer.class,
             AvoidCriticalUnits.class,
-//            DanceAfterShoot.class,
-//            HoldToShoot.class,
             TransportUnits.class,
         };
     }
