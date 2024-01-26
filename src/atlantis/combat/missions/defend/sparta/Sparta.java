@@ -1,7 +1,10 @@
 package atlantis.combat.missions.defend.sparta;
 
+import atlantis.architecture.Manager;
 import atlantis.combat.missions.defend.MissionDefend;
+import atlantis.combat.missions.defend.MissionDefendManager;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
+import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -23,5 +26,12 @@ public class Sparta extends MissionDefend {
         if (We.zerg() && Enemy.protoss()) return false;
 
         return true;
+    }
+
+    // =========================================================
+
+    @Override
+    protected Manager managerClass(AUnit unit) {
+        return new MissionDefendManager(unit);
     }
 }

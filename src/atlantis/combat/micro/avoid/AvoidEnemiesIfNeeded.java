@@ -29,9 +29,9 @@ public class AvoidEnemiesIfNeeded extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
-
         if (forceAvoid) return true;
+
+        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
 
         return !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid();
     }

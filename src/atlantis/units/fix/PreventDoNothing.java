@@ -39,10 +39,14 @@ public class PreventDoNothing extends Manager {
 
 //        return unit.isActiveManager(DoNothing.class) || unit.isAction(Actions.INIT);
 
-        return (
-            unit.isActiveManager(DoNothing.class)
-                || unit.lastActionMoreThanAgo(30 * 3)
-        ) && !unit.isSpecialAction();
+        if (!unit.isStopped()) return false;
+        if (unit.action().equals(Actions.INIT)) return true;
+//        if (unit.isActiveManager(DoNothing.class)) return true;
+
+        if (unit.isSpecialAction()) return false;
+        if (unit.isMissionSparta()) return false;
+
+        return (unit.lastActionMoreThanAgo(30 * 3));
     }
 
     @Override
@@ -70,7 +74,7 @@ public class PreventDoNothing extends Manager {
 //        }
 //
 ////        if ((manager = new TooFarFromFocusPoint(unit)).invoke(this) != null) return usedManager(manager);
-        if ((manager = new TooFarFromFocusPoint(unit)).forceHandle() != null) return usedManager(manager);
+//        if ((manager = new TooFarFromFocusPoint(unit)).forceHandle() != null) return usedManager(manager);
 //
 //        if (!isLeader) {
 //            if ((manager = new TooFarFromLeader(unit)).forceHandle() != null) return usedManager(manager);
@@ -97,7 +101,7 @@ public class PreventDoNothing extends Manager {
 
         if (DoPreventLogic.handle(unit)) return usedManager(this);
 
-        System.err.println("OMFG STILL NOTHING! " + unit);
+//        System.err.println("OMFG STILL NOTHING! " + unit);
 
         return null;
     }

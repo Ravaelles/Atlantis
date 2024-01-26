@@ -21,7 +21,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.units.interrupt.ContinueShooting;
+import atlantis.units.interrupt.ContinueOldBroklenShootingOld;
 import atlantis.units.select.Select;
 import bwapi.Color;
 import jbweb.Block;
@@ -158,7 +158,7 @@ public class OnEveryFrameHelper {
 //            AAdvancedPainter.paintCircle(unit, 7, Color.Orange);
 //        }
 
-        if ((new ContinueShooting(unit)).applies()) {
+        if ((new ContinueOldBroklenShootingOld(unit)).applies()) {
             AAdvancedPainter.paintCircle(unit, 10, Color.Teal);
             AAdvancedPainter.paintCircle(unit, 9, Color.Teal);
             AAdvancedPainter.paintCircle(unit, 6, Color.Teal);

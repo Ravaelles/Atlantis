@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.util.Vector;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
@@ -35,6 +36,7 @@ public class RunShowBackToEnemy {
 
         if (unit.isFlying()) return true;
 
+        if (unit.lastActionMoreThanAgo(30, Actions.RUN_IN_ANY_DIRECTION)) return false;
         if (unit.hp() <= 18 || unit.lastUnderAttackLessThanAgo(90)) return false;
         if (!unit.isWorker() && !unit.isDragoon()) return false;
 

@@ -28,7 +28,12 @@ public class DoAvoidEnemies extends Manager {
     @Override
     public Manager handle() {
 //        if (enemies.size() == 1) {
-        if (enemies.size() == 1 || (unit.isDragoon() && enemies.onlyRanged())) {
+        if (
+            enemies.size() == 1
+                ||
+                (unit.isDragoon() && enemies.onlyRanged())
+                || unit.isScout()
+        ) {
             return avoid.singleUnit(enemies.first());
         }
         else if (enemies.size() >= 2) {

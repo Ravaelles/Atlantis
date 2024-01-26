@@ -280,7 +280,9 @@ public class WorkerDefenceManager extends Manager {
     }
 
     private static boolean handleEnemyWorkersNear(AUnit worker) {
-        Selection enemyWorkers = Select.enemy().workers().inRadius(1.3, worker);
+        if (worker.hp() <= 10) return false;
+
+        Selection enemyWorkers = worker.enemiesNear().workers().inRadius(1.3, worker);
         for (AUnit enemy : enemyWorkers.list()) {
             worker.setTooltipTactical("NastyFuckers!");
             worker.attackUnit(enemy);

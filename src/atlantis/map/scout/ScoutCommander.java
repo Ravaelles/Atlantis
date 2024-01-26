@@ -22,12 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ScoutCommander extends Commander {
-    @Override
-    public boolean applies() {
-        return true;
-//        return A.everyNthGameFrame(7);
-    }
-
     /**
      * If we don't have unit scout assigns one of workers to become one and then, <b>scouts and harasses</b>
      * the enemy base or tries to find it if we still don't know where the enemy is.

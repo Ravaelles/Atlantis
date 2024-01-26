@@ -12,12 +12,17 @@ public class AvoidReavers extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isGroundUnit() && !unit.isABuilding() && !unit.isTank() && !unit.isMissionDefend();
+        return unit.isGroundUnit()
+            && !unit.isABuilding()
+            && !unit.isTank()
+            && !unit.isZealot()
+            && !unit.isDragoon()
+            && !unit.isMissionDefend();
     }
 
     @Override
     protected Manager handle() {
-        AUnit reaver = unit.enemiesNear().reavers().inRadius(9.9, unit).nearestTo(unit);
+        AUnit reaver = unit.enemiesNear().reavers().inRadius(10.2 + distBonus(), unit).nearestTo(unit);
         if (reaver == null) {
             return null;
         }
@@ -35,6 +40,10 @@ public class AvoidReavers extends Manager {
 
         unit.runningManager().runFromAndNotifyOthersToMove(reaver, "REAVER!");
         return usedManager(this);
+    }
+
+    private double distBonus() {
+        return unit.isWorker() ? 1.5 : 0;
     }
 
     private boolean enoughForcesNotToRunFromReaver(AUnit reaver) {

@@ -31,7 +31,11 @@ public class RunToPositionFinder {
     protected HasPosition findBestPositionToRun(HasPosition runAwayFrom, double dist, Action action) {
         AUnit unit = running.unit;
 
-        if (!unit.isFlying() && !action.equals(Actions.MOVE_DANCE_AWAY)) {
+        if (
+            !unit.isFlying()
+                && !unit.isScout()
+                && !action.equals(Actions.MOVE_DANCE_AWAY)
+        ) {
             // Run to BUNKER
             if (ShouldRunTowardsBunker.check(unit, runAwayFrom)) {
                 AUnit position = ShouldRunTowardsBunker.position();

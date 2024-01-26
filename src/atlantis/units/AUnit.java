@@ -3115,7 +3115,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             47,
             () -> {
                 AChoke nearestChoke = nearestChoke();
-                if (nearestChoke == null) return 999;
+                if (nearestChoke == null) return 999.0;
 
                 return distTo(nearestChoke);
             }

@@ -1,11 +1,26 @@
 package atlantis.units.interrupt.protoss;
 
+import atlantis.architecture.Manager;
 import atlantis.decions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.range.OurDragoonWeaponRange;
 import bwapi.Color;
 
-public class ContinueDragoonAttackOrder {
+public class ContinueDragoonAttackOrder extends Manager {
+    public ContinueDragoonAttackOrder(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        return unit.isAttacking() && unit.isDragoon() && asDragoon(unit).isTrue();
+    }
+
+    @Override
+    protected Manager handle() {
+        return usedManager(this);
+    }
+
     public static Decision asDragoon(AUnit unit) {
         if (!unit.isDragoon()) return Decision.INDIFFERENT;
 
@@ -21,10 +36,10 @@ public class ContinueDragoonAttackOrder {
         return Decision.INDIFFERENT;
     }
 
-    private static boolean dontShootWhenAlmostDeadAndRangedEnemyIsNear(AUnit unit) {
-        return unit.shields() <= 18
-            && unit.enemiesNear().ranged().inRadius(4.3, unit).notEmpty();
-    }
+//    private static boolean dontShootWhenAlmostDeadAndRangedEnemyIsNear(AUnit unit) {
+//        return unit.shields() <= 18
+//            && unit.enemiesNear().ranged().inRadius(4.3, unit).notEmpty();
+//    }
 
     private static boolean preventMissionSpartaTooFarTargets(AUnit unit) {
         return unit.hasTarget()

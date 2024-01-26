@@ -12,6 +12,7 @@ public class ShouldRunTowardsBase {
         if (A.seconds() >= 500) return false;
         if (unit.isFlying()) return false;
         if (unit.hp() <= 20) return false;
+        if (unit.isScout()) return false;
         if (unit.isDragoon() || unit.isTank()) return false;
 
         AUnit main = Select.main();

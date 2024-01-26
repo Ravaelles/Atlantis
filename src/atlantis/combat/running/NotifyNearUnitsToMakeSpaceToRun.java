@@ -22,7 +22,7 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
      * Tell other units that might be blocking our escape route to move.
      */
     public boolean notifyNearUnits() {
-        if (We.protoss() && unit.friendsNear().inRadius(0.3, unit).atMost(1)) return false;
+        if (We.protoss() && unit.friendsNear().inRadius(0.35, unit).atMost(1)) return false;
 
         if (unit.isFlying() || unit.isLoaded()) return false;
 
@@ -30,8 +30,11 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
 //            return false;
 //        }
 
-        Selection friendsTooClose = Select.ourRealUnits()
+        Selection friendsTooClose = unit
+            .friendsNear()
             .groundUnits()
+            .excludeRunning()
+            .realUnits()
             .exclude(unit)
             .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
 

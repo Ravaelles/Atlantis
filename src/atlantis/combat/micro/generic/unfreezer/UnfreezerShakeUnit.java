@@ -1,6 +1,7 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -12,14 +13,34 @@ public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (shouldNotDoAnythingButContinue(unit)) return true;
 
+        if (unit.isMissionDefendOrSparta() && unit.lastActionMoreThanAgo(30 * 2, Actions.MOVE_UNFREEZE)) {
+//            if (unit.lastActionLessThanAgo(30 * 2, Actions.MOVE_UNFREEZE)) return true;
+
+            if (!unit.isMoving()) {
+                APosition focus = unit.focusPoint();
+                if (focus != null) focus = focus.translateTilesTowards(2.1, Select.mainOrAnyBuilding());
+                if (focus != null && unit.distTo(focus) >= 2) {
+                    unit.move(focus, Actions.MOVE_UNFREEZE, "UnfreezeByFocus");
+                    return true;
+                }
+            }
+        }
+
         if (!unit.isStopped()) {
             unit.stop("UnfreezeByStop");
             return true;
         }
 
+//        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(30 * 2)) {
+//            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
+//                unit.setTooltip("UnfreezeByAttack");
+//                return true;
+//            }
+//        }
+
         if (!unit.isMoving()) {
             AFocusPoint focus = unit.focusPoint();
-            if (focus != null && unit.distTo(focus) >= 6) {
+            if (focus != null && unit.distTo(focus) >= 2.5) {
                 unit.move(focus, Actions.MOVE_UNFREEZE, "UnfreezeByMove");
                 return true;
             }

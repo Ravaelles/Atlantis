@@ -6,6 +6,7 @@ import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 
 public class ChokeBlockerFight extends Manager {
@@ -18,8 +19,11 @@ public class ChokeBlockerFight extends Manager {
         if (unit.hp() <= 24) return false;
 
         if (unit.isZealot()) {
-            if (unit.hp() <= 36 && unit.hasCooldown()) return false;
-            if (anyOtherBlockerIsFighting()) return true;
+            if (unit.hp() <= 46) {
+                if (unit.hasCooldown()) return false;
+                if (unit.hp() <= 34 && unit.lastAttackFrameLessThanAgo(30 * 9)) return false;
+            }
+//            if (anyOtherBlockerIsFighting()) return true;
 
             return true;
         }

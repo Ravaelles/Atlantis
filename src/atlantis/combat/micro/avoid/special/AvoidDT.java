@@ -18,14 +18,17 @@ public class AvoidDT extends Manager {
 
     @Override
     protected Manager handle() {
+        if (unit.isMoving()) {
+            if (unit.isRunning()) return null;
+            if (unit.lastActionLessThanAgo(11, Actions.RUN_ENEMY)) return null;
+        }
+
         AUnit dt = unit.enemiesNear().ofType(AUnitType.Protoss_Dark_Templar)
+            .inRadius(2.4 + unit.woundPercent() / 150.0, unit)
             .effUndetected()
-            .inRadius(2.5, unit)
             .nearestTo(unit);
 
         if (dt == null) return null;
-
-        if (unit.lastActionLessThanAgo(11, Actions.RUN_ENEMY)) return null;
 
         unit.runningManager().runFromAndNotifyOthersToMove(dt, "DT!");
         return usedManager(this);

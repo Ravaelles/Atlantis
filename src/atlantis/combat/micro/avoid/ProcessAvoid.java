@@ -36,7 +36,7 @@ public class ProcessAvoid extends Manager {
             return null;
         }
 
-        return (new AvoidGroupOfEnemies(unit, runFrom)).avoid();
+        return (new AvoidGroupOfEnemies(unit, enemiesDangerouslyClose, runFrom)).avoid();
 
 //        APainter.paintCircle(runFrom, 6, Color.Orange);
 //        APainter.paintCircle(runFrom, 4, Color.Orange);
@@ -66,15 +66,15 @@ public class ProcessAvoid extends Manager {
 
         if (enemies.empty()) return null;
 
-        for (AUnit enemy : enemiesDangerouslyClose.list()) {
-            APainter.paintCircle(enemy, 16, Color.Orange);
-        }
+//        for (AUnit enemy : enemiesDangerouslyClose.list()) {
+//            APainter.paintCircle(enemy, 16, Color.Orange);
+//        }
 
         AUnit firstEnemy = enemies.first();
         AUnit secondEnemy = enemies.second();
         if (secondEnemy == null || !secondEnemy.hasPosition()) return firstEnemy;
 
-        return firstEnemy.translatePercentTowards(15, secondEnemy);
+        return firstEnemy.translatePercentTowards(5, secondEnemy);
     }
 
     protected String getTooltip(AUnit enemy) {

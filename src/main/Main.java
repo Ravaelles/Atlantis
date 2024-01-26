@@ -70,7 +70,7 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -80,7 +80,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-//        if (true) return "ums/rav/7th_rav.scx";
+        if (true) return "ums/rav/7th_rav.scx";
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_skilltest_asP.scx"; // Protoss v. AI Protoss player
@@ -97,13 +97,15 @@ public class Main {
 
         // === Maps for testing as PROTOSS =============================================================================
 
-//        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm"; // Dragoons v Zealots
-//        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
-//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/protoss/Drag_v_M&M.scx"; // Goons vs M&M + Bunker
 //        if (true) return "ums/rav/protoss/Drag_v_Bunker.scm";
-        if (true) return "ums/rav/protoss/Drag_v_M&M.scx"; // Goons vs M&M + Bunker
 //        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
 //        if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
+//        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/3Drag_v_Zealots.scm";
+//        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
+//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
 

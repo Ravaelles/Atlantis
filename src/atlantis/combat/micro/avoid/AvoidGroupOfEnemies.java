@@ -2,18 +2,19 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
-import atlantis.debug.painter.APainter;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.Units;
 import atlantis.units.actions.Actions;
-import bwapi.Color;
 
 public class AvoidGroupOfEnemies extends Manager {
     protected final RunError runError;
+    private final Units enemies;
     private final HasPosition centerOfEnemies;
 
-    public AvoidGroupOfEnemies(AUnit unit, HasPosition centerOfEnemies) {
+    public AvoidGroupOfEnemies(AUnit unit, Units enemies, HasPosition centerOfEnemies) {
         super(unit);
+        this.enemies = enemies;
         this.centerOfEnemies = centerOfEnemies;
         runError = new RunError(unit);
     }
@@ -65,7 +66,7 @@ public class AvoidGroupOfEnemies extends Manager {
 
     @Override
     public String toString() {
-        String target = unit.runningFrom() == null ? "NULL_FROM" : unit.runningFrom().type().name();
-        return super.toString() + "(" + target + ")";
+//        String target = unit.runningFrom() == null ? "NULL_FROM" : unit.runningFrom().type().name();
+        return super.toString() + "(" + enemies.size() + ")";
     }
 }

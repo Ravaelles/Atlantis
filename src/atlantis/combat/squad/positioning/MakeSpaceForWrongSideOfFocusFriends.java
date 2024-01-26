@@ -19,7 +19,7 @@ public class MakeSpaceForWrongSideOfFocusFriends extends Manager {
         if (unit.lastActionLessThanAgo(30 * 3, Actions.MOVE_SPACE)) return true;
 
         return unit.isMissionSparta()
-            && A.everyNthGameFrame(35)
+//            && A.everyNthGameFrame(35)
             && ChokeBlockersAssignments.get().isChokeBlocker(unit)
             && friendNearOnWrongSideOfFocus();
     }
