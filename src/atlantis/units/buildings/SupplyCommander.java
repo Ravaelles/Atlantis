@@ -35,7 +35,7 @@ public class SupplyCommander extends Commander {
         supplyTotal = AGame.supplyTotal();
 
         if (supplyTotal >= 200) return;
-        if (A.hasFreeSupply(10)) return;
+        if (A.hasFreeSupply(9)) return;
         if (lastAdded.lessThanSecondsAgo(7)) return;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
@@ -81,22 +81,22 @@ public class SupplyCommander extends Commander {
                 }
             }
             else if (supplyTotal <= 46) {
-                if (supplyFree <= 8 && noSuppliesBeingBuilt || supplyFree <= 1) {
+                if (supplyFree <= 6 && noSuppliesBeingBuilt || supplyFree <= 1) {
                     requestAdditionalSupply();
                 }
             }
             else if (supplyTotal <= 70) {
-                if (supplyFree <= 11 && suppliesBeingBuilt <= 1 || supplyFree <= 1) {
+                if (supplyFree <= 9 && suppliesBeingBuilt <= 1 || supplyFree <= 1) {
                     requestAdditionalSupply();
                 }
             }
             else if (supplyTotal <= 170) {
-                if (supplyFree <= 13 && suppliesBeingBuilt <= 1) {
+                if (supplyFree <= 12 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
                 }
             }
             else if (supplyTotal <= 200) {
-                if (supplyFree <= 25 && suppliesBeingBuilt <= 1) {
+                if (supplyFree <= 15 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
                 }
             }
@@ -172,7 +172,7 @@ public class SupplyCommander extends Commander {
         return Math.max(
 //            Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size(),
             ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),
-            CountInQueue.count(AtlantisRaceConfig.SUPPLY, 10)
+            CountInQueue.count(AtlantisRaceConfig.SUPPLY)
         );
 //        return ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
 

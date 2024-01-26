@@ -1,16 +1,8 @@
 ### Protoss ############################################################################################################
 
---- Disable ContinueAttackOrder, make sure to ALWAYS use DontInterrupt, base on WaitAttackFrames
+- 150 Supply for 30 Pylons
 
-.---- Scouts getting killed easily; dont use more than 2, then use Dragoon?
-
-- Dragoon not attacking most Wounded Dragoon, out of 3, he chose 2nd least wounded
-
---- No army cohesion, no line
-
-?.---- Still Dragoon (and Probe) production even with only 230 minerals and SHOULD EXPAND
 .--- Dragoons getting stuck near unwalkable and other Gateway
-
 
 .?--- Pylon - force GRID. Currently impassable circle
 .(!)!- Make Goons a pioneer, not zealots

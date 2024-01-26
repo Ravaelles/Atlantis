@@ -11,25 +11,36 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.Enemy;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     // === CONTAIN =============================================
 
-    private boolean changeFromSpartaToDefend() {
-        if (Missions.isGlobalMissionSparta() && Count.basesWithUnfinished() >= 2) return true;
-
-        return false;
-    }
+//    private boolean changeFromSpartaToDefend() {
+//        if (Missions.isGlobalMissionSparta() && Count.basesWithUnfinished() >= 2) return true;
+//
+//        return false;
+//    }
 
     public boolean canChange() {
         if (EnemyInfo.isEnemyNearAnyOurBase()) return false;
+
         if (A.seconds() <= 200) {
             if (!OurStrategy.get().isRushOrCheese()) return false;
         }
 
-        if (A.seconds() <= 260) {
+        if (A.seconds() <= 360) {
             if (AGame.killsLossesResourceBalance() < 0) return false;
+            else {
+                if (Enemy.terran() && ArmyStrength.ourArmyRelativeStrength() >= 110) {
+                    reason = "Early game pressure (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
         }
 
 //        if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {

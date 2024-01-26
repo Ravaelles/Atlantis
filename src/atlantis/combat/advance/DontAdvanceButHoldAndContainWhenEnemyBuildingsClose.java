@@ -13,9 +13,10 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends MissionManager {
-    public static final int DIST_TO_ENEMY_MAIN_CHOKE = 8;
+    public static final int DIST_TO_ENEMY_MAIN_CHOKE = 10;
 
     private AChoke enemyMainChoke;
     private AChoke enemyNaturalChoke;
@@ -27,15 +28,28 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
 
     @Override
     public boolean applies() {
+        return appliesForTerran() || appliesForProtoss();
+    }
+
+    private boolean appliesForProtoss() {
+        if (!We.protoss()) return false;
+
+        return A.supplyUsed() < 190
+            && A.minerals() < 2000
+            && closeToEnemyBuildingsOrChoke();
+    }
+
+    private boolean appliesForTerran() {
+        if (!We.terran()) return false;
+
         tanks = Count.tanks();
 
-        return
-            Count.ourCombatUnits() <= 25
-                && (unit.isWounded() || (A.supplyUsed() < 185 && tanks <= 18))
-                && A.minerals() < 2000
-                && unit.isCombatUnit()
-                && safeWithTanksSoSkip()
-                && closeToEnemyBuildingsOrChoke();
+        return Count.ourCombatUnits() <= 25
+            && (unit.isWounded() || (A.supplyUsed() < 185 && tanks <= 18))
+            && A.minerals() < 2000
+            && unit.isCombatUnit()
+            && safeWithTanksSoSkip()
+            && closeToEnemyBuildingsOrChoke();
     }
 
     private boolean safeWithTanksSoSkip() {
@@ -47,6 +61,35 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
     protected Manager handle() {
 //        System.err.println("@ " + A.now() + " - DontAdvanceButHoldAndContainWhenEnemyBuildingsClose " + unit);
 
+        if (We.protoss()) return handleAsProtoss();
+        if (We.terran()) return handleAsTerran();
+
+        return null;
+    }
+
+    private Manager handleAsProtoss() {
+        AUnit nearestEnemyBuilding = EnemyUnits.discovered().buildings().nearestTo(unit);
+
+        if (nearestEnemyBuilding != null) {
+            double dist = unit.distTo(nearestEnemyBuilding);
+
+            if (dist <= 14) {
+                unit.moveToMain(Actions.MOVE_FORMATION, "ContainOut");
+                return usedManager(this);
+            }
+            if (dist > 16) {
+                unit.move(nearestEnemyBuilding, Actions.MOVE_FORMATION, "ContainIn");
+                return usedManager(this);
+            }
+
+            unit.holdPosition("ContainHold");
+            return usedManager(this);
+        }
+
+        return null;
+    }
+
+    private Manager handleAsTerran() {
         if (unit.isTank()) return asTank();
 
         return asNonTank();
@@ -114,6 +157,8 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
     }
 
     private double minDistToEnemyBuilding() {
+        if (We.protoss()) return 15;
+
         return unit.isTank() ? 11.8 : 13.3;
     }
 }

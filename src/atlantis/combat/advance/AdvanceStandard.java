@@ -45,6 +45,7 @@ public class AdvanceStandard extends MissionManager {
         if (unit.isGroundUnit() && !unit.isTank() && Count.tanks() >= 2) {
             if (tooFarFromTank()) return true;
         }
+
         return false;
     }
 
