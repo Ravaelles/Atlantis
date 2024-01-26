@@ -511,7 +511,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isWounded() {
-        return hp() < maxHP();
+        return hp() < maxHP() || shields() < maxShields();
     }
 
     public boolean isExists() {
@@ -3130,5 +3130,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (getLastCommandRaw() == null) return "NO_COMMAND";
 
         return getLastCommandRaw().getType().name();
+    }
+
+    public AFocusPoint focusPoint() {
+        if (mission() == null) return null;
+        return mission().focusPoint();
     }
 }

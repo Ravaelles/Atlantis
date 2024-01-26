@@ -1,10 +1,12 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
+import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.Units;
 import atlantis.util.cache.Cache;
+import bwapi.Color;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +36,7 @@ public class EnemyUnitsToAvoid extends HasUnit {
 //                    System.err.println(
 //                        enemy + " // " + String.format("%.2f", safetyMargin) + " // " + A.dist(enemy.distTo(unit))
 //                    );
-//                    APainter.paintLine(enemy, Color.Yellow);
+//                    enemy.paintLine(unit, Color.Yellow);
                     enemies.addUnitWithValue(enemy, safetyMargin);
                 }
 //                enemies.print("Enemies to avoid");

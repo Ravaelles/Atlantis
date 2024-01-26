@@ -1,5 +1,6 @@
 package atlantis.combat.micro.generic.unfreezer;
 
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -14,6 +15,14 @@ public class UnfreezerShakeUnit {
         if (!unit.isStopped()) {
             unit.stop("UnfreezeByStop");
             return true;
+        }
+
+        if (!unit.isMoving()) {
+            AFocusPoint focus = unit.focusPoint();
+            if (focus != null && unit.distTo(focus) >= 6) {
+                unit.move(focus, Actions.MOVE_UNFREEZE, "UnfreezeByMove");
+                return true;
+            }
         }
 
         if (!unit.isHoldingPosition()) {
@@ -52,6 +61,6 @@ public class UnfreezerShakeUnit {
 
     private static boolean shouldNotDoAnythingButContinue(AUnit unit) {
         return unit.isAccelerating()
-            || unit.lastActionLessThanAgo(3, Actions.HOLD_POSITION, Actions.MOVE_UNFREEZE);
+            || unit.lastActionLessThanAgo(6, Actions.HOLD_POSITION, Actions.MOVE_UNFREEZE);
     }
 }

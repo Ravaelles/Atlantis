@@ -13,10 +13,10 @@ public class Unfreezer extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
-
-        if (unit.lastActionLessThanAgo(100)) return false;
-        if (unit.isHoldingPosition() && unit.isSpecialMission()) return false;
+        if (unit.hasCooldown()) return false;
+        if (unit.lastActionLessThanAgo(40)) return false;
+//        if (unit.isHoldingPosition() && unit.isSpecialMission()) return false;
+        if (unit.isSpecialMission()) return false;
         if (unit.lastPositionChangedLessThanAgo(30)) return false;
         if (unit.isActiveManager(PreventDoNothing.class)) return false;
 

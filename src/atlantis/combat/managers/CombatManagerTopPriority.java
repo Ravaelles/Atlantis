@@ -5,6 +5,7 @@ import atlantis.combat.advance.special.ImprovePerformanceHavingBigSupply;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.HoldToShoot;
+import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.units.AUnit;
 import atlantis.units.fix.PreventAttackNull;
@@ -26,18 +27,18 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-//            ImprovePerformanceHavingBigSupply.class,
-//            ManualOverrideManager.class,
+            ImprovePerformanceHavingBigSupply.class,
+            ManualOverrideManager.class,
 
             PreventDoNothing.class,
             PreventAttackNull.class,
+            Unfreezer.class,
 //            PreventAttackTooLong.class,
 
             ContinueCurrentAction.class,
             DanceAfterShoot.class,
 //            ContinueShooting.class,
             HoldToShoot.class,
-//            Unfreezer.class,
             AvoidCriticalUnits.class,
             TransportUnits.class,
         };

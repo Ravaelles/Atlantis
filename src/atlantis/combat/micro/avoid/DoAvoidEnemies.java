@@ -16,18 +16,19 @@ public class DoAvoidEnemies extends Manager {
 
     private static Units defineEnemies(AUnit unit) {
         EnemyUnitsToAvoid enemyUnitsToAvoid = new EnemyUnitsToAvoid(unit);
+        Units enemies = enemyUnitsToAvoid.unitsToAvoid(false);
 
-        if (unit.hp() <= 30) {
+        if (enemies.isEmpty() && (unit.hp() <= 30 || unit.woundPercent() >= 25)) {
             return enemyUnitsToAvoid.unitsToAvoid(false);
         }
 
-        return enemyUnitsToAvoid.enemiesDangerouslyClose();
+        return enemies; // Can be empty
     }
 
     @Override
     public Manager handle() {
-//        if (enemies.size() == 1 || unit.isDragoon()) {
-        if (enemies.size() == 1) {
+//        if (enemies.size() == 1) {
+        if (enemies.size() == 1 || (unit.isDragoon() && enemies.onlyRanged())) {
             return avoid.singleUnit(enemies.first());
         }
         else if (enemies.size() >= 2) {

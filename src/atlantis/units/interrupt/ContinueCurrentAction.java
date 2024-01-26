@@ -13,7 +13,7 @@ public class ContinueCurrentAction extends Manager {
         return new Class[]{
 //            ContinueShooting.class, // Dont!
 //            ContinueAttack.class, // Dont!
-            ContinueMoving.class,
+//            ContinueMoving.class,
         };
     }
 }

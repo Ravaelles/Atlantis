@@ -72,7 +72,7 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Terran_Marine,
                 AUnitType.Zerg_Zergling
             )
-            .inRadius(5, unit)
+            .inRadius(6.5, unit)
             .canBeAttackedBy(unit, 0)
             .mostWounded();
         if (target != null) return target;

@@ -30,7 +30,7 @@ public class PreventAttackNull extends Manager {
 //                    unit.typeWithUnitId() + " NULL ATTACK target:" + unit.target()
 //                        + " / orderTarget=" + unit.orderTarget() + " / isAttacking()=" + unit.isAttacking()
 //                );
-                unit.paintCircleFilled(22, Color.Red);
+                unit.paintCircleFilled(22, Color.Black);
                 return true;
             }
         }

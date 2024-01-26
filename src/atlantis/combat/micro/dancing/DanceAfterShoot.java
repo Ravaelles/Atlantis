@@ -1,12 +1,9 @@
 package atlantis.combat.micro.dancing;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.managers.*;
-import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
+import atlantis.combat.micro.dancing.away.DanceAway;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
-import atlantis.units.special.SpecialUnitsManager;
 
 public class DanceAfterShoot extends Manager {
     public DanceAfterShoot(AUnit unit) {

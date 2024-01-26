@@ -53,7 +53,7 @@ public class ARunningManager {
         // === Define run to position ==============================
 
         runTo = adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(runFrom);
-        runTo = runPositionFinder.findBestPositionToRun(runFrom, dist);
+        runTo = runPositionFinder.findBestPositionToRun(runFrom, dist, action);
 
         // === Actual run order ====================================
 

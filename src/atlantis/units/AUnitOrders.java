@@ -104,7 +104,7 @@ public interface AUnitOrders {
         }
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(unit().typeWithHash() + " @ " + A.now() + " ATTACK_UNIT " + target);
+            System.out.println("@" + A.now() + "  " + unit().typeWithUnitId() + "  ATTACK_UNIT " + target);
         }
 
 //        if (unit().outsideSquadRadius()) {
@@ -240,7 +240,11 @@ public interface AUnitOrders {
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
             if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
-                System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / to:" + target + " / " + tooltip);
+//                System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / to:" + target + " / " + tooltip);
+                A.println(
+                    "@" + A.now() + "  " + unit().typeWithUnitId() + "  MOVE / to:" + target
+                );
+//                A.printStackTrace(unit().idWithHash() + " MOVE @" + A.now());
             }
         }
 
@@ -315,7 +319,8 @@ public interface AUnitOrders {
      */
     default boolean stop(String tooltip) {
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println(unit().typeWithHash() + "STOP @" + A.now() + " / " + tooltip);
+            System.out.println("@" + A.now() + "  " + unit().idWithHash() + "  STOP / " + tooltip);
+//            A.printStackTrace(unit().idWithHash() + " Stopped @" + A.now());
         }
 
         unit().setTooltip(tooltip)
@@ -747,6 +752,7 @@ public interface AUnitOrders {
     }
 
     default boolean shouldPrint() {
+        if (unit().isHealthy()) return false;
         return (DEBUG_ALL || (DEBUG_COMBAT && unit().isCombatUnit()));
     }
 

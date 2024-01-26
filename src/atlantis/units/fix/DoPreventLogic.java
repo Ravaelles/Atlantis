@@ -1,9 +1,6 @@
 package atlantis.units.fix;
 
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.combat.micro.avoid.DoAvoidEnemies;
-import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -14,23 +11,18 @@ public class DoPreventLogic {
 //        if (unit.lastUnderAttackLessThanAgo(30 * 3)) {
 //            unit.paintCircleFilled(22, Color.Orange);
 //        }
-        DoAvoidEnemies avoidEnemies = new DoAvoidEnemies(unit);
 
-        if (avoidEnemies.handle() != null) {
-            unit.paintCircleFilled(22, Color.Orange);
-            return true;
+        if (shouldAvoidEnemies(unit)) {
+            if (avoidEnemies(unit)) {
+                unit.paintCircleFilled(22, Color.Orange);
+                return true;
+            }
         }
 
-//        AvoidEnemiesIfNeeded avoidEnemies = new AvoidEnemiesIfNeeded(unit);
-//        avoidEnemies.forceAvoid = true;
-//
-//        if (avoidEnemies.avoidEnemiesIfNeeded() != null) {
-//            unit.paintCircleFilled(22, Color.Orange);
-//            return true;
-//        }
-
-//        System.err.println("Interesting - fight!?");
-//        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) return true;
+        if (!unit.isStopped() && unit.lastActionMoreThanAgo(30 * 4, Actions.STOP)) {
+            unit.stop("DoPreventStop");
+            return true;
+        }
 
         unit.paintCircleFilled(22, Color.Yellow);
         if (goToNearestEnemy(unit)) return true;
@@ -38,11 +30,22 @@ public class DoPreventLogic {
         return false;
     }
 
+    private static boolean shouldAvoidEnemies(AUnit unit) {
+        return unit.cooldown() >= 13
+            || unit.woundPercent() >= 30;
+    }
+
+    private static boolean avoidEnemies(AUnit unit) {
+        DoAvoidEnemies avoidEnemies = new DoAvoidEnemies(unit);
+
+        return avoidEnemies.handle() != null;
+    }
+
     private static boolean goToNearestEnemy(AUnit unit) {
         AUnit nearestEnemy = EnemyUnits.discovered().groundUnits().havingPosition().nearestTo(unit);
         if (nearestEnemy == null) return false;
 
-        unit.move(nearestEnemy, Actions.MOVE_ENGAGE, "EngageAnEnemy");
+        unit.move(nearestEnemy, Actions.MOVE_ENGAGE, "EngageAnyEnemy");
 //        if (A.seconds() % 2 == 0)
 //        else unit.attackUnit(nearestEnemy);
 

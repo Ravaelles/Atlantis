@@ -335,6 +335,22 @@ public class ATargetingTest extends AbstractTestWithUnits {
     }
 
     @Test
+    public void targetsMarinesOverBunkerYup() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+//            fake(AUnitType.Terran_Marine, 12.9),
+            fake(AUnitType.Terran_Bunker, 13.1),
+            expectedTarget = fake(AUnitType.Terran_Marine, 13.2)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
     public void targetsMostWoundedMarineOverBunker() {
         FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
         FakeUnit expectedTarget;

@@ -20,6 +20,8 @@ public class AvoidSingleEnemy extends Manager {
     }
 
     public Manager avoid() {
+        if (this.enemy == null) return null;
+
         if (doNotAvoid()) return null;
 
 //        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
@@ -43,6 +45,7 @@ public class AvoidSingleEnemy extends Manager {
     }
 
     private boolean doNotAvoid() {
+        if (this.enemy == null) return true;
         if (unit.effUndetected()) return true;
         if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
         if (isEnemyFacingOtherWayAndWeLookSafe()) return true;

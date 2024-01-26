@@ -5,12 +5,13 @@ import atlantis.combat.micro.avoid.terran.fight.MarineCanAttackNearEnemy;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
 public class AttackNearbyEnemies extends Manager {
+    public static String reasonNotToAttack;
     private static Cache<AUnit> cache = new Cache<>();
     private static Cache<Object> cacheObject = new Cache<>();
-    public static String reasonNotToAttack;
     private static ProcessAttackUnit processAttackUnit;
     private final AllowedToAttack allowedToAttack;
     private AUnit targetToAttack;
@@ -62,6 +63,8 @@ public class AttackNearbyEnemies extends Manager {
 //            return usedManager(dedicatedManager.invoke(this));
 //        }
 
+        if (continueLastAttack()) return usedManager(this);
+
         if (handleAttackNearEnemyUnits()) {
             if (unit.isAttacking() && (unit.target() == null || unit.target().hp() <= 0)) {
                 A.errPrintln(unit + " handleAttackNearEnemyUnits got " + unit.target());
@@ -71,6 +74,19 @@ public class AttackNearbyEnemies extends Manager {
         }
 
         return null;
+    }
+
+    private boolean continueLastAttack() {
+        AUnit target = unit.targetUnitToAttack();
+
+        if (target != null && target.hp() > 0 && (
+            unit.lastActionLessThanAgo(4, Actions.ATTACK_UNIT)
+                || unit.lastActionLessThanAgo(4, Actions.MOVE_ATTACK)
+        )) {
+            return true;
+        }
+
+        return false;
     }
 
     private void why() {

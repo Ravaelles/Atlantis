@@ -5,13 +5,13 @@ import atlantis.combat.running.show_back.RunShowBackToEnemy;
 import atlantis.combat.running.to_building.ShouldRunTowardsBase;
 import atlantis.combat.running.to_building.ShouldRunTowardsBunker;
 import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Action;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Vector;
 import bwapi.Color;
 
 public class RunToPositionFinder {
@@ -28,10 +28,10 @@ public class RunToPositionFinder {
     /**
      * Running behavior which will make unit run straight away from the enemy.
      */
-    protected HasPosition findBestPositionToRun(HasPosition runAwayFrom, double dist) {
+    protected HasPosition findBestPositionToRun(HasPosition runAwayFrom, double dist, Action action) {
         AUnit unit = running.unit;
 
-        if (!unit.isFlying()) {
+        if (!unit.isFlying() && !action.equals(Actions.MOVE_DANCE_AWAY)) {
             // Run to BUNKER
             if (ShouldRunTowardsBunker.check(unit, runAwayFrom)) {
                 AUnit position = ShouldRunTowardsBunker.position();
