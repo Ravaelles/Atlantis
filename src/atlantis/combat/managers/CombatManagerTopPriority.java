@@ -32,10 +32,11 @@ public class CombatManagerTopPriority extends Manager {
 
             PreventDoNothing.class,
             PreventAttackNull.class,
-            Unfreezer.class,
-//            PreventAttackTooLong.class,
+            PreventAttackTooLong.class,
 
             ContinueCurrentAction.class,
+            
+            Unfreezer.class,
             DanceAfterShoot.class,
 //            ContinueShooting.class,
             HoldToShoot.class,
