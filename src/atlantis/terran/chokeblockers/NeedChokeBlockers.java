@@ -11,10 +11,12 @@ import atlantis.map.choke.AChoke;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
+import atlantis.util.Vector;
 import atlantis.util.We;
 
 public class NeedChokeBlockers {
     private static AChoke choke;
+    public static Vector translationVectorInRelationToChoke = null;
 
     public static boolean check() {
         if (We.zerg()) return false;
@@ -31,7 +33,15 @@ public class NeedChokeBlockers {
         if (Missions.isGlobalMissionAttack()) return false;
         if (EnemyWhoBreachedBase.notNull()) return false;
 
-        return Missions.isGlobalMissionDefendOrSparta();
+        if (Missions.isGlobalMissionDefendOrSparta()) {
+            if (choke == null) {
+                choke = ChokeToBlock.get();
+                translationVectorInRelationToChoke = ChokeToBlock.defineTranslationVector(choke);
+            }
+            return choke != null;
+        }
+
+        return false;
     }
 
     private static boolean forTerran() {

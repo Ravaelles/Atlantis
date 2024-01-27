@@ -7,16 +7,16 @@ import atlantis.units.actions.Actions;
 import bwapi.Color;
 
 public class ChokeBlockerMoveToBlock extends Manager {
-    private final APosition blockChokePoint;
+    private final APosition blockChokePosition;
 
     public ChokeBlockerMoveToBlock(AUnit unit) {
         super(unit);
-        this.blockChokePoint = unit.specialPosition();
+        this.blockChokePosition = unit.specialPosition();
     }
 
     @Override
     public boolean applies() {
-        if (blockChokePoint == null) return false;
+        if (blockChokePosition == null) return false;
         if (unit.isZealot() && unit.enemiesNearInRadius(1.15) > 0) return false;
 
         return unit.hp() >= 25
@@ -24,12 +24,12 @@ public class ChokeBlockerMoveToBlock extends Manager {
     }
 
     public Manager handle() {
-        double dist = unit.distTo(blockChokePoint);
-        unit.paintLine(blockChokePoint, Color.White);
-        unit.paintLine(blockChokePoint.translateByPixels(1, 1), Color.White);
+        double dist = unit.distTo(blockChokePosition);
+        unit.paintLine(blockChokePosition, Color.White);
+        unit.paintLine(blockChokePosition.translateByPixels(1, 1), Color.White);
 
         if (dist > 0.12 || (dist > 0.02 && !unit.isHoldingPosition())) {
-            unit.move(blockChokePoint, Actions.SPECIAL, "ChokeBlocker");
+            unit.move(blockChokePosition, Actions.SPECIAL, "ChokeBlocker");
         }
         else {
             unit.holdPosition("ChokeBlocker");

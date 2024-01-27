@@ -18,11 +18,13 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.base.NextBasePosition;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.ContinueOldBroklenShootingOld;
 import atlantis.units.select.Select;
+import atlantis.util.Vector;
 import bwapi.Color;
 import jbweb.Block;
 import jbweb.Blocks;
@@ -73,7 +75,29 @@ public class OnEveryFrameHelper {
 
 //        paintNextBasePosition();
 
-        printCombatUnitStatus();
+//        printCombatUnitStatus();
+
+//        paintChokeBlock();
+    }
+
+    private static void paintChokeBlock() {
+        AChoke choke = ChokeToBlock.get();
+        if (choke == null) return;
+
+        AAdvancedPainter.forcePainting();
+
+        AAdvancedPainter.paintCircleFilled(choke.pointA(), 5, Color.Orange);
+        AAdvancedPainter.paintCircleFilled(choke.pointB(), 5, Color.Yellow);
+
+        Vector vector = ChokeToBlock.defineTranslationVector(choke);
+
+        APosition position = choke.center().translateByVector(vector);
+        AAdvancedPainter.paintCircleFilled(
+            position,
+            10, Color.Green
+        );
+
+        CameraCommander.centerCameraOn(position);
     }
 
     private static void printCombatUnitStatus() {

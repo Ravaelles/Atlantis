@@ -224,7 +224,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
             fake(AUnitType.Zerg_Larva, 10.8),
             fake(AUnitType.Zerg_Egg, 10.9),
             fake(AUnitType.Zerg_Lurker_Egg, 10.95),
-            fake(AUnitType.Zerg_Zergling, 13.5),
+            fake(AUnitType.Zerg_Zergling, 14.9),
             target = fake(AUnitType.Zerg_Sunken_Colony, 13.8),
             fake(AUnitType.Zerg_Sunken_Colony, 29)
         );

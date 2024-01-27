@@ -4,7 +4,9 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
-import atlantis.units.AUnit;
+import atlantis.util.Angle;
+import atlantis.util.Vector;
+import atlantis.util.Vectors;
 import bwapi.Pair;
 import bwapi.Position;
 import bwapi.WalkPosition;
@@ -23,6 +25,8 @@ public class AChoke implements HasPosition {
     private ChokePoint choke;
     private Position[] sides;
     private APosition center;
+    private APosition pointA;
+    private APosition pointB;
     private double width;
     private List<APosition> perpendicular;
     private APosition firstPoint;
@@ -55,6 +59,7 @@ public class AChoke implements HasPosition {
         wrapper.perpendicular = wrapper.createPerpendicular();
         wrapper.firstPoint = APosition.create(chokepoint.getGeometry().get(0));
         wrapper.lastPoint = APosition.create(chokepoint.getGeometry().get(chokepoint.getGeometry().size() - 1));
+        wrapper.calculatePointsAB();
 
         all.put(chokepoint.hashCode(), wrapper);
 
@@ -144,6 +149,13 @@ public class AChoke implements HasPosition {
         return perpendicular;
     }
 
+    private void calculatePointsAB() {
+        Vector vector = Vectors.fromPositionsBetween(center(), firstPoint);
+
+        pointA = center().translateByVector(vector.rotate(Angle.degreesToRadians(90)));
+        pointB = center().translateByVector(vector.rotate(Angle.degreesToRadians(270)));
+    }
+
     // =========================================================
 
     public APosition center() {
@@ -194,5 +206,24 @@ public class AChoke implements HasPosition {
 
     public int pathToEnemyBaseIndex() {
         return pathToEnemyBaseIndex;
+    }
+
+    public APosition getClosestPointABTo(HasPosition closerToPosition) {
+        if (closerToPosition == null) return center();
+
+        double groundDistA = pointA.groundDist(closerToPosition);
+        double groundDistB = pointB.groundDist(closerToPosition);
+//        System.err.println("groundDistA = " + groundDistA + " / " + pointA.getApproxDistance(closerToPosition.position().p()));
+//        System.err.println("groundDistB = " + groundDistB + " / " + pointB.getApproxDistance(closerToPosition.position().p()));
+
+        return groundDistA < groundDistB ? pointA : pointB;
+    }
+
+    public APosition pointA() {
+        return pointA;
+    }
+
+    public APosition pointB() {
+        return pointB;
     }
 }

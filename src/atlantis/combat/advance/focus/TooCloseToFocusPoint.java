@@ -59,7 +59,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     private boolean asDragoon() {
         if (!unit.isDragoon()) return true;
 
-        if (unit.distToFocusPoint() <= 1.7) {
+        if (unit.distToFocusPoint() <= 2.6) {
             if (A.everyNthGameFrame(12)) unit.holdPosition("DragoonTooCloseA");
             else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
         }
@@ -68,7 +68,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
             unit.holdPosition("DragoonHold");
             return true;
         }
-        
+
         return false;
     }
 

@@ -6,7 +6,6 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ATargetingImportant extends ATargeting {
-
     public ATargetingImportant(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
         super(unit, enemyUnits, enemyBuildings);
     }
@@ -207,8 +206,10 @@ public class ATargetingImportant extends ATargeting {
             .canBeAttackedBy(unit, 999)
             .mostWounded();
 
-        debug("C5 = " + target);
-
+        if (target != null) {
+            debug("C = " + target);
+            return target;
+        }
 
         // =========================================================
         // Close Zerglings/Zealots/Firebats OUT OF RANGE
@@ -224,9 +225,13 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Zerg_Zergling
             )
             .inRadius(9, unit)
-            .canBeAttackedBy(unit, 999)
+            .canBeAttackedBy(unit, 2)
             .nearestTo(unit);
-        if (target != null) return target;
+
+        if (target != null) {
+            debug("C5a = " + target);
+            return target;
+        }
 
         // === WORKERS ======================================================
 

@@ -6,11 +6,11 @@ import atlantis.units.AUnit;
 public class Vectors {
 
     public static Vector fromPositionsBetween(AUnit unit1, AUnit unit2) {
-        return fromPositionsBetween(unit1.position(), unit2.position());
+        return fromPositionsBetween(unit2.position(), unit1.position());
     }
 
     public static Vector fromPositionsBetween(APosition p1, APosition p2) {
-        return new Vector(p1.x - p2.x, p1.y - p2.y);
+        return new Vector(p2.x - p1.x, p2.y - p1.y);
     }
 
     public static Vector vectorFromAngle(double angleInRadians, double radius) {

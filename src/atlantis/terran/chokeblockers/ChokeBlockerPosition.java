@@ -3,6 +3,7 @@ package atlantis.terran.chokeblockers;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.util.Vector;
 import atlantis.util.We;
 
 public class ChokeBlockerPosition {
@@ -21,8 +22,12 @@ public class ChokeBlockerPosition {
 //        double translate = We.protoss() ? -1.5 : -0.8;
 //        double translate = -0.4;
 
-        // FOR THE LOVE OF GOD, DONT USE THIS WITH -DIST FROM CHOKE.CENTER. IT BREAKS THE LOGIC.
-//        position = position.translateTilesTowards(choke.center(), translate);
+        Vector translationVector = NeedChokeBlockers.translationVectorInRelationToChoke;
+        if (translationVector != null) {
+//            System.err.println("APPLY VECTOR before = " + position.toStringPixels());
+            position = position.translateByVector(translationVector);
+//            System.err.println("APPLY VECTOR after = " + position.toStringPixels());
+        }
 
         return position;
     }

@@ -72,7 +72,7 @@ public class WorkerDefenceManager extends Manager {
         if (reaver != null) {
             double distTo = reaver.distTo(worker);
 
-            if (distTo <= 10.2) {
+            if (distTo <= 11.4) {
                 runFromEnemyToAnotherRegion(worker, reaver);
                 worker.setTooltip("OhFuckReaver!", true);
                 worker.addLog("OhFuckReaver!");

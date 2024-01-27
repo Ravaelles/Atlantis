@@ -1407,6 +1407,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit orderTarget() {
+        if (u == null) return null;
         return u.getOrderTarget() != null ? AUnit.getById(u.getOrderTarget()) : null;
     }
 
@@ -1545,6 +1546,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public UnitCommand getLastCommandRaw() {
+        if (u == null) return null;
         return u.getLastCommand();
     }
 
