@@ -89,7 +89,7 @@ public class AddToQueue {
     // =========================================================
 
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
-        if (PreventAddDuplicate.preventExcessiveOrInvalidOrders(type, position)) return null;
+        if (PreventAddDuplicateOrder.preventExcessiveOrInvalidOrders(type, position)) return null;
 
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
 
@@ -105,8 +105,8 @@ public class AddToQueue {
 //                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position);
 //            }
 
-//            if (type.isPylon()) {
-//                A(A.now() + ": Adding PYLON to queue at " + position);
+//            if (A.supplyTotal() >= 30 && type.isPylon()) {
+//                A.printStackTrace(A.now() + ": Adding PYLON to queue at " + position);
 //            }
 
 //            if (type.is(AUnitType.Protoss_Robotics_Facility)) {

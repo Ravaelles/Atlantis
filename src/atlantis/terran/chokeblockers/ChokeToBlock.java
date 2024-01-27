@@ -8,6 +8,8 @@ import atlantis.util.Vector;
 import atlantis.util.Vectors;
 
 public class ChokeToBlock {
+    public static final double DIST_FROM_CHOKE_CENTER = 1.2;
+
     public static AChoke get() {
         AChoke choke = Chokes.mainChoke();
 
@@ -25,6 +27,6 @@ public class ChokeToBlock {
 //        System.err.println("closerPoint = " + closerPoint.toStringPixels());
 //        System.err.println("vector = " + Vectors.fromPositionsBetween(choke.center(), closerPoint).normalizeTo(2.0).toString());
 
-        return Vectors.fromPositionsBetween(choke.center(), closerPoint).multiplyVector(0.8);
+        return Vectors.fromPositionsBetween(choke.center(), closerPoint).multiplyVector(DIST_FROM_CHOKE_CENTER);
     }
 }

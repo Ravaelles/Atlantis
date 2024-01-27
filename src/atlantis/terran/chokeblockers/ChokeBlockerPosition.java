@@ -50,7 +50,7 @@ public class ChokeBlockerPosition {
         }
 
         if (totalBlockers == 3) {
-            int offset = 12;
+            int offset = 2;
             if (indexOf == 0) return offset;
             if (indexOf == 1) return 50;
             if (indexOf == 2) return 100 - offset;

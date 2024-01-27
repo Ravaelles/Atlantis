@@ -10,7 +10,7 @@ import atlantis.units.select.Count;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
-public class PreventAddDuplicate {
+public class PreventAddDuplicateOrder {
     public static final int MAX_NONCOMPLETED_ORDERS_AT_ONCE = 20;
 
     protected static boolean preventExcessiveOrInvalidOrders(AUnitType type, HasPosition position) {

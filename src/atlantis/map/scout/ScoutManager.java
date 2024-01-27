@@ -17,7 +17,7 @@ public class ScoutManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-//            AvoidEnemiesIfNeeded.class,
+            AvoidEnemiesIfNeeded.class,
             ScoutSafetyFarFromEnemy.class,
             ScoutRoaming.class,
             ScoutTryFindingEnemy.class,

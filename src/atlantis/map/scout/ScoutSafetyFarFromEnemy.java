@@ -2,6 +2,7 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
+import atlantis.combat.micro.avoid.AvoidSingleEnemy;
 import atlantis.combat.micro.avoid.DoAvoidEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -31,7 +32,7 @@ public class ScoutSafetyFarFromEnemy extends Manager {
     @Override
     public Manager handle() {
         if (enemy != null) {
-            Manager manager = (new DoAvoidEnemies(unit)).forceHandle();
+            Manager manager = (new AvoidSingleEnemy(unit, enemy)).forceHandle();
             if (manager != null) return usedManager(manager);
         }
 

@@ -203,7 +203,7 @@ public class WorkerDefenceManager extends Manager {
         return false;
     }
 
-    private static boolean handleFightEnemyCombatUnits(AUnit worker) {
+    private boolean handleFightEnemyCombatUnits(AUnit worker) {
         if (Enemy.protoss() && worker.hp() <= 38) return false;
         if (worker.hp() <= 20) return false;
 
@@ -225,7 +225,9 @@ public class WorkerDefenceManager extends Manager {
             AUnitType.Protoss_Dark_Templar,
             AUnitType.Protoss_Reaver
 //                AUnitType.Protoss_Zealot
-        ).inRadius(8, worker).count() >= 1) return false;
+        ).inRadius(8, worker).count() >= 1) {
+            return false;
+        }
 
         if (fightGroundEnemies(worker)) return true;
 

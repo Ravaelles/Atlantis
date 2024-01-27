@@ -26,6 +26,7 @@ public class WorkerManager extends Manager {
 
             AvoidCriticalUnits.class,
             WorkerDefenceManager.class,
+            WorkerAvoidManager.class,
             AvoidEnemiesIfNeeded.class,
 
             BuilderManager.class,
