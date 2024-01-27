@@ -10,13 +10,18 @@ public class ContinueMoving extends Manager {
 
     @Override
     public boolean applies() {
-        if (!unit.isDragoon()) return false;
+//        if (!unit.isDragoon()) return false;
 
-        return (unit.isMoving() && !unit.isBraking() && !unit.isStopped())
-            && !unit.isAttackingOrMovingToAttack()
+        return unit.isMoving()
             && unit.lastActionLessThanAgo(2)
             && unit.targetPosition() != null;
-//            && unit.distTo(unit.targetPosition()) >= 1;
+
+//        if (!unit.isDragoon()) return false;
+//
+//        return (unit.isMoving() && !unit.isBraking() && !unit.isStopped())
+//            && !unit.isAttackingOrMovingToAttack()
+//            && unit.lastActionLessThanAgo(2)
+//            && unit.targetPosition() != null;
     }
 
     public Manager handle() {

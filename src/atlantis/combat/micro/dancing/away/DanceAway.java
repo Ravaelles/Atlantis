@@ -58,9 +58,10 @@ public class DanceAway extends Manager {
         if (!unit.isMoving()) return false;
         if (unit.isStopped()) return false;
         if (!unit.isRunning()) return false;
-        if (unit.enemiesNear().inRadius(7, unit).empty()) return false;
+        if (unit.enemiesNear().inRadius(7 + unit.woundPercent() >= 50 ? 1 : 0, unit).empty()) return false;
 
         if (decision.isTrue()) {
+            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - CONTINUE DANCE AWAY");
             return true;
         }
 
@@ -77,7 +78,7 @@ public class DanceAway extends Manager {
     }
 
     private double enemiesRadius() {
-        return 4;
+        return 4 + unit.woundPercent() / 100.0;
     }
 
     private int minHp() {
@@ -114,7 +115,17 @@ public class DanceAway extends Manager {
             return usedManager(this);
         }
 
-        System.err.println("@@@@@@@@@@@@ " + A.now() + " - " + unit.id() + " - DANCE AWAY ERROR " + enemy);
+        return danceAwayError();
+    }
+
+    private Manager danceAwayError() {
+//        System.err.println("@@@@@@@@@@@@ " + A.now() + " - " + unit.id() + " - DANCE AWAY ERROR " + enemy);
+
+        if (unit.hasCooldown()) {
+            unit.moveToMain(Actions.MOVE_DANCE_AWAY, "DanceAwayError");
+            return usedManager(this);
+        }
+
         return null;
     }
 

@@ -15,12 +15,13 @@ public class DanceAwayAsDragoon extends HasUnit {
 
     protected Decision applies() {
         if (tooHealthy()) return Decision.FALSE;
-        if (quiteHealthyAndNotUnderAttack()) return Decision.FALSE;
 
         if (unit.enemiesNear().inRadius(8, unit).notEmpty()) {
             if (dragoonLowHpAndStillUnderAttack()) return Decision.TRUE;
             if (dragoonEnemyClose()) return Decision.TRUE;
         }
+        
+        if (quiteHealthyAndNotUnderAttack()) return Decision.FALSE;
 
         return Decision.INDIFFERENT;
     }

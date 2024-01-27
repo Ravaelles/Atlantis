@@ -18,7 +18,10 @@ public class UnfreezerShakeUnit {
 
             if (!unit.isMoving()) {
                 APosition focus = unit.focusPoint();
-                if (focus != null) focus = focus.translateTilesTowards(2.1, Select.mainOrAnyBuilding());
+                AUnit towards = Select.mainOrAnyBuilding();
+
+                if (focus != null && towards != null) focus = focus.translateTilesTowards(2.1, towards);
+
                 if (focus != null && unit.distTo(focus) >= 2) {
                     unit.move(focus, Actions.MOVE_UNFREEZE, "UnfreezeByFocus");
                     return true;

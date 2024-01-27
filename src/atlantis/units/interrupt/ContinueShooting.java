@@ -12,6 +12,7 @@ public class ContinueShooting extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isAttacking()) return false;
+        if (unit.hp() <= 20 && unit.isDragoon()) return false;
 
 //        if (!unit.isStartingAttack()) return false;
 //        if (!unit.isAttackFrame()) return false;
