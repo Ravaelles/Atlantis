@@ -13,8 +13,8 @@ public class ProtossDynamicUnitProductionCommander extends Commander {
     @Override
     public boolean applies() {
         return We.protoss()
-            && !needToSaveResources()
-            && !ProtossShouldExpand.needToSaveMineralsForExpansion();
+            && !needToSaveResources();
+//            && !ProtossShouldExpand.needToSaveMineralsForExpansion();
     }
 
     private static boolean needToSaveResources() {
@@ -23,8 +23,11 @@ public class ProtossDynamicUnitProductionCommander extends Commander {
 
         if (reservedMinerals <= 0 && reservedGas <= 0) return false;
 
-        if (reservedMinerals > 0 && A.minerals() + 100 < reservedMinerals) return true;
-        if (reservedGas > 0 && A.gas() + 100 < reservedGas) return true;
+        int mineralsMargin = A.supplyUsed() < 40 ? 150 : 200;
+        int gasMargin = A.supplyUsed() < 40 ? 100 : 150;
+
+        if (reservedMinerals > 0 && A.minerals() + mineralsMargin < reservedMinerals) return true;
+        if (reservedGas > 0 && A.gas() + gasMargin < reservedGas) return true;
 
         return false;
     }

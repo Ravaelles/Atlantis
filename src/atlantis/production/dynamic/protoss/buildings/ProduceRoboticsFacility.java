@@ -22,16 +22,17 @@ public class ProduceRoboticsFacility {
     }
 
     public static boolean shouldBuild() {
+        if (Count.workers() <= 17) return false;
         if (Have.roboticsFacility() || !Have.forge()) return false;
-        if (A.seconds() <= 450 && OurArmyStrength.relative() <= 90) return false;
-        if (Count.workers() <= 19) return false;
+        if (A.seconds() <= 390 && OurArmyStrength.relative() <= 90) return false;
+
+        if (A.supplyUsed() <= 38 && Decisions.enemyStrategyIsRushOrCheese()) return false;
+        if (A.supplyUsed() <= 43 && Have.cannon()) return false;
 
         if (EnemyInfo.hasHiddenUnits()) {
 //            System.err.println("roboticsFacility because hasHiddenUnits");
             return true;
         }
-        if (A.supplyUsed() <= 44 && Decisions.enemyStrategyIsRushOrCheese()) return false;
-        if (A.supplyUsed() <= 46 && Have.cannon()) return false;
 
 //        System.err.println("----- buildRoboticsFacility OK" );
 //        System.err.println("EnemyStrategy.get().isRushOrCheese() = " + EnemyStrategy.get().isRushOrCheese());

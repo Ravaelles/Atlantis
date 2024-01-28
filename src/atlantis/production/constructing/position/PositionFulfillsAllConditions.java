@@ -35,7 +35,6 @@ public class PositionFulfillsAllConditions {
             if (ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
 //            if (IsPositionPowered.isNotPowered(building, position)) return false;
 //            if (TooCloseToOtherPylons.isTooCloseToOtherPylons(builder, building, position)) return false;
-//            if (ProtossForProducerBuilding.isForbidden(builder, building, position)) return false;
         }
 
         if (We.terran()) {
@@ -50,7 +49,7 @@ public class PositionFulfillsAllConditions {
 
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return false;
         if (OverlappingBaseLocation.isOverlappingBaseLocation(building, position)) return false;
-        if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return false;
+//        if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return false;
         if (TooCloseToChoke.isTooCloseToChoke(building, position)) return false;
 
 

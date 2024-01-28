@@ -18,6 +18,7 @@ public class ShouldNotAvoid extends HasUnit {
     public boolean shouldNotAvoid() {
         if (enemiesDangerouslyClose.isEmpty()) return true;
         if (unit.isLoaded()) return true;
+        if (unit.isScout()) return false;
         if (unit.enemiesNear().canAttack(unit, 6).empty()) return true;
         if (unit.lastActionLessThanAgo(50, Actions.SPECIAL)) return true;
         if (isUnitCloakedAndRelativelySafe()) return true;

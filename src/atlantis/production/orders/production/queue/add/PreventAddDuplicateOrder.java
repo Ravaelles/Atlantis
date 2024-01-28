@@ -19,6 +19,7 @@ public class PreventAddDuplicateOrder {
         if (excessivePylon(type, position)) return true;
         if (tooManyOrdersOfThisType(type, position)) return true;
         if (tooManyOrdersInGeneral(type)) return true;
+        if (justRequestedThisType(type)) return true;
 
         if (forProtossEnforceHavingAPylonFirst(type)) return true;
 

@@ -6,6 +6,7 @@ import atlantis.units.select.Count;
 import atlantis.util.Counter;
 import atlantis.util.cache.Cache;
 import bwapi.*;
+import net.bytebuddy.dynamic.Nexus;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -1625,6 +1626,17 @@ public class AUnitType implements Comparable<Object> {
             "needsPower",
             -1,
             () -> isABuilding() && isProtoss() && !is(Protoss_Pylon, Protoss_Assimilator, Protoss_Nexus)
+        );
+    }
+
+    public boolean producesLandUnits() {
+        return (boolean) cache.get(
+            "producesLandUnits",
+            -1,
+            () -> isABuilding() && is(
+                Protoss_Gateway, Protoss_Robotics_Facility, Protoss_Nexus,
+                Terran_Barracks, Terran_Factory, Terran_Command_Center
+            )
         );
     }
 }

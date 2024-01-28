@@ -48,10 +48,10 @@ public class OnUnitDestroyed {
     }
 
     private static void printOurDeadUnit(AUnit unit) {
-        if (unit.type().isGasBuilding()) return;
-
-        System.err.println("@ " + A.now() + " - Our unit DIED: " + unit.typeWithUnitId());
-        System.err.println(unit.managerLogs().toString());
+//        if (unit.type().isGasBuilding()) return;
+//
+//        System.err.println("@ " + A.now() + " - Our unit DIED: " + unit.typeWithUnitId());
+//        System.err.println(unit.managerLogs().toString());
     }
 
     private static void onOurUnitDestroyed(AUnit unit) {

@@ -16,7 +16,6 @@ import atlantis.util.cache.CacheKey;
 import atlantis.util.log.ErrorLog;
 
 public class TerranPositionFinder extends AbstractPositionFinder {
-
     /**
      * Returns best position for given <b>building</b>, maximum <b>maxDistance</b> build tiles from
      * <b>nearTo</b>

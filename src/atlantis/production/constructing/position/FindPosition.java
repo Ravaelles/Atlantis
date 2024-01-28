@@ -3,6 +3,7 @@ package atlantis.production.constructing.position;
 import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.game.A;
 import atlantis.game.race.MyRace;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
@@ -22,18 +23,13 @@ public class FindPosition {
     public static APosition findForBuilding(
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {
-        if (nearTo == null && building.isSupplyDepot() && A.chance(50)) {
-            nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
-        }
-        if (A.chance(50)) {
-            if (nearTo == null) nearTo = Select.ourBuildings().last();
-        }
-        if (nearTo == null) nearTo = Select.mainOrAnyBuilding();
+        nearTo = defineNearTo(building, nearTo);
+
         if (builder == null) builder = FreeWorkers.get().first();
 
         if (maxDistance <= 5 && building.isBunker()) maxDistance = 10;
-        if (maxDistance < 0) maxDistance = 50;
-        construction.setMaxDistance(maxDistance);
+        if (maxDistance < 0) maxDistance = 29;
+        if (construction != null) construction.setMaxDistance(maxDistance);
 
         // === GAS extracting buildings ============================
 
@@ -55,20 +51,20 @@ public class FindPosition {
                         + "\n    Fallback to default now"
                 );
 
-                AUnit near = Select.ourBuildings().notInRadius(3, nearTo).random();
-                if (nearTo != null && near.distTo(near) >= 3) {
-                    position = findForBuilding(builder, building, construction, near, 35);
-
-                    if (position == null) {
-                        ErrorLog.printMaxOncePerMinute(
-                            "SupplyDepotPositionFinder CONSEQUENTLY returned null \n    / near:" + nearTo
-                                + "\n    There's no hope now."
-                        );
-                    }
-                    else {
-                        ErrorLog.printMaxOncePerMinute("Interestingly, Depot fix helped this time. Near: " + near);
-                    }
-                }
+//                AUnit near = Select.ourBuildings().notInRadius(3, nearTo).random();
+//                if (nearTo != null && nearTo.distTo(near) >= 3) {
+//                    position = findForBuilding(builder, building, construction, near, 35);
+//
+//                    if (position == null) {
+//                        ErrorLog.printMaxOncePerMinute(
+//                            "SupplyDepotPositionFinder CONSEQUENTLY returned null \n    / near:" + nearTo
+//                                + "\n    There's no hope now."
+//                        );
+//                    }
+//                    else {
+//                        ErrorLog.printMaxOncePerMinute("Interestingly, Depot fix helped this time. Near: " + near);
+//                    }
+//                }
             }
 
             if (position != null) return position;
@@ -97,7 +93,37 @@ public class FindPosition {
         // =========================================================
         // Standard place
 
-        return APositionFinder.findStandardPosition(builder, building, nearTo, maxDistance);
+        APosition standardPosition = APositionFinder.findStandardPosition(builder, building, nearTo, maxDistance);
+
+        if (standardPosition == null) {
+            ErrorLog.printMaxOncePerMinute(
+                "findStandardPosition returned null"
+                    + "\n    / builder:" + builder
+                    + "\n    / near:" + nearTo
+                    + "\n    / building:" + building
+                    + "\n    / max:" + maxDistance
+            );
+        }
+
+        return standardPosition;
+    }
+
+    private static HasPosition defineNearTo(AUnitType building, HasPosition nearTo) {
+        if (nearTo == null && building.isSupplyDepot() && A.chance(50)) {
+            nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
+        }
+
+        if (A.chance(50)) {
+            if (nearTo == null) nearTo = Select.ourBuildings().last();
+        }
+
+        if (nearTo == null) nearTo = Select.mainOrAnyBuilding();
+        if (nearTo == null) {
+            ErrorLog.printMaxOncePerMinute(A.now() + " apply dirty hack as nearTo is still null for " + building);
+            nearTo = APosition.create(50, 50);
+        }
+
+        return nearTo;
     }
 
     private static HasPosition defineNearTo(HasPosition nearTo) {

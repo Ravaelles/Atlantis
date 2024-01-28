@@ -5,10 +5,25 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.position.APositionFinder;
+import atlantis.production.constructing.position.FindPosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 
 public class PylonPosition {
+    public static HasPosition nextPosition() {
+//        return APositionFinder.findStandardPosition(
+        return FindPosition.findForBuilding(
+            FreeWorkers.get().first(),
+            AUnitType.Protoss_Pylon,
+            null,
+            Select.mainOrAnyBuilding(),
+            27
+        );
+    }
+
     public static APosition positionForFirstPylon() {
         AUnit base = Select.main();
         if (base == null) {

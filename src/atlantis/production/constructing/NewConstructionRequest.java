@@ -99,9 +99,9 @@ public class NewConstructionRequest {
 
         // Add to list of pending orders
         if (ConstructionRequests.alreadyExists(newConstruction)) {
+//            ErrorLog.printMaxOncePerMinute("Cancel as construction already exists: " + newConstruction);
             newConstruction.cancel();
 //            if (order.isBuilding() && !order.unitType().isMissileTurret()) {
-//                ErrorLog.printMaxOncePerMinute("Cancel as construction already exists: " + newConstruction);
 //            }
             return false;
         }
@@ -135,23 +135,25 @@ public class NewConstructionRequest {
                 && A.supplyTotal() > 10
                 && order != null
                 && (
-                    CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2
-                || AGame.supplyFree() >= 3
+                CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2
+                    || AGame.supplyFree() >= 3
             )
         ) order.cancel();
 
 //        ErrorLog.printMaxOncePerMinute("(Construction: " + newConstruction + ")");
 
-        if (order != null)
-            ErrorLog.printMaxOncePerMinute("(Max search distance was: " + order.maximumDistance() + ")");
-
-        if (order != null && order.maximumDistance() < 0) {
-            ErrorLog.printMaxOncePerMinute("(Max search distance was not defined - bug)");
+        if (order != null) {
+            if (order.maximumDistance() < 0) {
+                ErrorLog.printMaxOncePerMinute("(Max search distance was not defined - bug)");
+            }
+            else {
+                ErrorLog.printMaxOncePerMinute("(Max search distance was: " + order.maximumDistance() + ")");
+            }
         }
 
 //        if (order != null) order.cancel();
         AbstractPositionFinder.clearCache();
-        newConstruction.findPositionForNewBuilding();
+//        newConstruction.findPositionForNewBuilding();
 
         return false;
     }

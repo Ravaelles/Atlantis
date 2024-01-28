@@ -36,7 +36,6 @@ public class SafetyMargin {
 
         if ((calculated = (new SafetyMarginAgainstSpecial(defender)).handle(attacker)) != -1) {
             // Do nothing
-
         }
         else if (attacker.isMelee()) {
             calculated = (new SafetyMarginAgainstMelee(defender)).marginAgainst(attacker);
@@ -45,9 +44,7 @@ public class SafetyMargin {
             calculated = (new SafetyMarginAgainstRanged(defender)).marginAgainst(attacker);
         }
 
-
         double safetyMargin = base + defender.distTo(attacker) - calculated;
-
 
 //        Color color = safetyMargin < 0 ? Color.Red : Color.Green;
 //        APainter.paintLine(attacker, color);

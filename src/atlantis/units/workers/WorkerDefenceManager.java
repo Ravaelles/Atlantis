@@ -67,7 +67,7 @@ public class WorkerDefenceManager extends Manager {
         return false;
     }
 
-    private static boolean runFromReaver(AUnit worker) {
+    private boolean runFromReaver(AUnit worker) {
         AUnit reaver = worker.enemiesNear().ofType(AUnitType.Protoss_Reaver).nearestTo(worker);
         if (reaver != null) {
             double distTo = reaver.distTo(worker);
@@ -99,7 +99,7 @@ public class WorkerDefenceManager extends Manager {
         return false;
     }
 
-    private static void runFromEnemyToAnotherRegion(AUnit worker, AUnit reaver) {
+    private void runFromEnemyToAnotherRegion(AUnit worker, AUnit reaver) {
 //        worker.runningManager().runFrom(reaver, 10, Actions.RUN_ENEMY, true);
 
         AUnit main = Select.mainOrAnyBuilding();
@@ -122,7 +122,7 @@ public class WorkerDefenceManager extends Manager {
     /**
      * Sometimes workers need to fight.
      */
-    private static boolean handleFightEnemyIfNeeded(AUnit worker) {
+    private boolean handleFightEnemyIfNeeded(AUnit worker) {
 //        if (shouldNotFight(worker)) return false;
 
         // DESTROY ENEMY BUILDINGS that are being built close to main base.
@@ -139,7 +139,7 @@ public class WorkerDefenceManager extends Manager {
         return false;
     }
 
-    private static boolean handleProtectScvBusyConstructing(AUnit worker) {
+    private boolean handleProtectScvBusyConstructing(AUnit worker) {
         if (Count.ourCombatUnits() >= 1) return false;
 
         if (worker.id() % 6 != 0 || worker.hp() <= 13) return false;

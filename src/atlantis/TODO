@@ -1,10 +1,14 @@
 ### Protoss ############################################################################################################
 
------ Dont producre dynamically if not 400 minerals and 50 supply
---- Too late Robotics Facility
----- Move ChokePoint towards closer base
+- Cache entire FindPosition for all 3 races
 
-- 150 Supply for 30 Pylons
+.--- Scout getting killed, force Avoid on every frame
+
+.---- Gateway grid, force away from bounds
+
+.----- Dont producre dynamically if not 400 minerals and 50 supply
+
+.--- Too late Robotics Facility
 
 .--- Dragoons getting stuck near unwalkable and other Gateway
 

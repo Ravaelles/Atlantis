@@ -38,9 +38,7 @@ public class AvoidEnemiesIfNeeded extends Manager {
 
     @Override
     protected Manager handle() {
-        Manager manager = avoidEnemiesIfNeeded();
-
-        return manager;
+        return avoidEnemiesIfNeeded();
     }
 
     public Manager avoidEnemiesIfNeeded() {

@@ -1,6 +1,8 @@
 package atlantis.combat.micro.avoid.margin;
 
 import atlantis.combat.micro.avoid.margin.protoss.ProtossSafetyMarginAgainstMelee;
+import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstMelee_Special;
+import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstSpecial;
 import atlantis.combat.micro.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
 import atlantis.units.AUnit;
 import atlantis.util.We;
@@ -10,7 +12,6 @@ import static atlantis.units.AUnitType.Protoss_Zealot;
 import static atlantis.units.AUnitType.Zerg_Devourer;
 
 public class SafetyMarginAgainstMelee extends SafetyMargin {
-
     public static double INFANTRY_BASE_IF_MEDIC = 0;
     public static int INFANTRY_WOUND_MODIFIER_WITH_MEDIC = 19;
     public static double INFANTRY_BASE_IF_NO_MEDIC = 2.95;
@@ -26,13 +27,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
     public double marginAgainst(AUnit attacker) {
         double criticalDist = -1;
 
-        // === Protoss ===============================================
+        SafetyMarginAgainstMelee_Special special = new SafetyMarginAgainstMelee_Special(defender);
+        double specialMargin = special.handleSpecially(attacker);
+        if (specialMargin >= 0) return specialMargin;
 
-        if (defender.isDT() && !defender.isDetected()) return 0;
+        // === Terran ===============================================
 
-            // === Terran ===============================================
-
-        else if (defender.isTerranInfantry()) {
+        if (defender.isTerranInfantry()) {
             criticalDist = (new TerranSafetyMarginAgainstMelee(defender)).handleTerranInfantry(attacker);
         }
 

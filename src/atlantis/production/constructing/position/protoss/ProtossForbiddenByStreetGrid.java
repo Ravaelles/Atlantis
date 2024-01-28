@@ -7,8 +7,8 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ProtossForbiddenByStreetGrid {
-    private static final int GRID_VALUE_X = 7;
-    private static final int GRID_VALUE_Y = 7;
+    public static final int GRID_VALUE_X = 8;
+    public static final int GRID_VALUE_Y = 8;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -24,6 +24,8 @@ public class ProtossForbiddenByStreetGrid {
 
         if (building.isPylon()) return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
 
+//        if (ProtossForProducerBuilding.isForbidden(builder, building, position)) return true;
+
         // =========================================================
 
 //        System.err.println("------------------");
@@ -35,11 +37,22 @@ public class ProtossForbiddenByStreetGrid {
 //            + (((position.y() - building.dimensionUpPixels()) / 32) % GRID_VALUE_Y)
 //        );
 
-        if (((position.x() - building.dimensionLeftPixels()) / 32) % GRID_VALUE_X == 1) return failed("TX modulo A");
-        if (((position.x() + building.dimensionRightPixels()) / 32) % GRID_VALUE_X == 1) return failed("TX modulo B");
+        int modulo;
+        if ((modulo = (position.x() / 32) % GRID_VALUE_X) <= 1) return failed("TX modulo A = " + modulo);
+        if ((modulo = (position.y() / 32) % GRID_VALUE_Y) <= 0) return failed("TY modulo C = " + modulo);
 
-        if (((position.y() - building.dimensionUpPixels()) / 32) % GRID_VALUE_Y == 1) return failed("TY modulo C");
-        if (((position.y() + building.dimensionDownPixels()) / 32) % GRID_VALUE_Y == 1) return failed("TY modulo D");
+//        if (((position.x() + building.dimensionRightPixels()) / 32) % GRID_VALUE_X == 1) return failed("TX modulo B");
+//        if (((position.y() + building.dimensionDownPixels()) / 32) % GRID_VALUE_Y == 1) return failed("TY modulo D");
+
+        // =========================================================
+
+//        if (((position.x() - building.dimensionLeftPixels()) / 32) % GRID_VALUE_X == 1) return failed("TX modulo A");
+//        if (((position.x() + building.dimensionRightPixels()) / 32) % GRID_VALUE_X == 1) return failed("TX modulo B");
+//
+//        if (((position.y() - building.dimensionUpPixels()) / 32) % GRID_VALUE_Y == 1) return failed("TY modulo C");
+//        if (((position.y() + building.dimensionDownPixels()) / 32) % GRID_VALUE_Y == 1) return failed("TY modulo D");
+
+        // =========================================================
 
         return false;
     }

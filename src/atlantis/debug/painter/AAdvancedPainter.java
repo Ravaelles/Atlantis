@@ -34,6 +34,9 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.base.NextBasePosition;
+import atlantis.production.constructing.position.protoss.GatewayPosition;
+import atlantis.production.constructing.position.protoss.PylonPosition;
+import atlantis.production.constructing.position.terran.BarracksPosition;
 import atlantis.production.constructing.position.terran.TerranSupplyDepot;
 import atlantis.production.dynamic.AutoProduceWorkersCommander;
 import atlantis.production.dynamic.expansion.ShouldExpand;
@@ -68,6 +71,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static atlantis.units.AUnitType.*;
 import static bwapi.Color.*;
 
 public class AAdvancedPainter extends APainter {
@@ -1562,17 +1566,24 @@ public class AAdvancedPainter extends APainter {
 
         // Sunken
         if (We.zerg()) {
-            paintBuildingPosition((new ZergSunkenColony()).nextPosition(), "Next Sunken");
+            paintBuildingPosition((new ZergSunkenColony()).nextPosition(), "Next Sunken", Zerg_Sunken_Colony);
+        }
+        else if (We.protoss()) {
+            paintBuildingPosition(PylonPosition.nextPosition(), "Next PYLON", Protoss_Pylon);
+            if (A.supplyTotal() >= 17) {
+                paintBuildingPosition(GatewayPosition.nextPosition(), "Next GATEWAY", Protoss_Gateway);
+            }
         }
         else if (We.terran()) {
-            HasPosition nextDepot = (new TerranSupplyDepot()).nextPosition();
+//            HasPosition nextDepot = (new TerranSupplyDepot()).nextPosition();
 //            System.err.println("nextDepot = " + nextDepot);
 //            if (nextDepot != null) System.err.println(nextDepot.distTo(Select.mainOrAnyBuilding()));
 
-            paintBuildingPosition(nextDepot, "Next DEPOT");
+            paintBuildingPosition(TerranSupplyDepot.nextPosition(), "Next DEPOT", Terran_Supply_Depot);
+            paintBuildingPosition(BarracksPosition.nextPosition(), "Next BARRACKS", Terran_Barracks);
 //            paintBuildingPosition((new TerranBunker()).nextPosition(), "Next Bunker");
 //            paintBuildingPosition((new NewBunkerPositionFinder(null)).find(), "Next Bunker");
-            paintBuildingPosition(NextBasePosition.nextBasePosition(), "Next BASE");
+            paintBuildingPosition(NextBasePosition.nextBasePosition(), "Next BASE", Terran_Command_Center);
         }
 
         // Next defensive building position
@@ -1617,14 +1628,18 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    public static void paintBuildingPosition(HasPosition position, String text) {
-        if (position == null) {
-            return;
-        }
+//    public static void paintBuildingPosition(HasPosition position, String text) {
+//        paintBuildingPosition(position, text, null);
+//    }
 
-        double dtx = 1;
-        paintRectangle(position, 2, 2, Color.Orange);
-        paintTextCentered(position.translateByTiles(dtx, 1), text, Color.Orange);
+    public static void paintBuildingPosition(HasPosition position, String text, AUnitType type) {
+        if (position == null) return;
+
+        int tw = type.getTileWidth();
+        int th = type.getTileHeight();
+
+        paintRectangle(position, tw * 32, th * 32, Color.Orange);
+        paintTextCentered(position.translateByTiles(tw / 2.0, th / 2.0), text, Color.Orange);
     }
 
     public static void paintPosition(HasPosition position, String text) {

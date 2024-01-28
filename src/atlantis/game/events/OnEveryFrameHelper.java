@@ -1,5 +1,7 @@
 package atlantis.game.events;
 
+import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.CameraCommander;
@@ -9,6 +11,7 @@ import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 
+import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.MainRegion;
 import atlantis.map.wall.GetWallIn;
@@ -16,6 +19,9 @@ import atlantis.map.wall.Structure;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.base.NextBasePosition;
+import atlantis.production.constructing.position.protoss.GatewayPosition;
+import atlantis.production.constructing.position.protoss.PylonPosition;
+import atlantis.production.constructing.position.terran.BarracksPosition;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.terran.chokeblockers.ChokeToBlock;
@@ -78,6 +84,28 @@ public class OnEveryFrameHelper {
 //        printCombatUnitStatus();
 
 //        paintChokeBlock();
+
+//        printNextGateway();
+//        printNextBarracks();
+    }
+
+    private static void printNextBarracks() {
+        if (A.seconds() <= 2) return;
+        if (A.now() % 30 != 0) return;
+
+        HasPosition barracks = BarracksPosition.nextPosition();
+        System.err.println("---------------------------");
+        System.err.println("barracks = " + barracks);
+    }
+
+    private static void printNextGateway() {
+        if (A.now() % 30 != 0) return;
+
+        HasPosition nextGateway = GatewayPosition.nextPosition();
+        HasPosition nextPylon = PylonPosition.nextPosition();
+        System.err.println("---------------------------");
+        System.err.println("nextPylon = " + nextPylon);
+        System.err.println("nextGateway = " + nextGateway);
     }
 
     private static void paintChokeBlock() {
@@ -125,7 +153,7 @@ public class OnEveryFrameHelper {
 
         if (nextBase == null) return;
 
-        AAdvancedPainter.paintBuildingPosition(nextBase, "Next_BASE");
+        AAdvancedPainter.paintBuildingPosition(nextBase, "Next_BASE", AtlantisRaceConfig.BASE);
     }
 
     private static void paintAttackTargetsForOur() {

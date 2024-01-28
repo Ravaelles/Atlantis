@@ -6,6 +6,7 @@ import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
+import static atlantis.units.AUnitType.Terran_Barracks;
 import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
 public class ForbiddenByStreetGridForBarracks {
@@ -21,6 +22,7 @@ public class ForbiddenByStreetGridForBarracks {
     }
 
     private static boolean streetGridMatches(APosition position) {
-        return position.tx() % 4 == 0 && position.ty() % 4 == 0;
+        return position.tx() % Terran_Barracks.getTileWidth() == 0
+            && position.ty() % Terran_Barracks.getTileHeight() == 0;
     }
 }

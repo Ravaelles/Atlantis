@@ -12,6 +12,7 @@ import atlantis.production.constructing.position.terran.TerranPositionFinder;
 import atlantis.production.constructing.position.zerg.ZergPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 import atlantis.util.cache.CacheKey;
@@ -64,6 +65,9 @@ public class APositionFinder {
         HasPosition nearTo, double maxDistance
     ) {
         String cacheKey = CacheKey.create("findPositionForNew", building, nearTo, construction, A.digit(maxDistance));
+//        System.err.println("cacheKey = " + cacheKey);
+
+//        if (true) return FindPosition.findForBuilding(builder, building, construction, nearTo, maxDistance);
 
         return cache.get(
             cacheKey,
@@ -84,6 +88,8 @@ public class APositionFinder {
 //            () -> {
 //            }
 //        );
+
+        if (maxDistance < 0) maxDistance = 28;
 
         // ===========================================================
         // = Handle standard building position according to the race =

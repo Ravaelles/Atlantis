@@ -92,6 +92,7 @@ public class MapSpecificCommander extends Commander {
 
             if (A.now() <= 0) {
                 AAdvancedPainter.disablePainting();
+//                AAdvancedPainter.enablePainting();
                 GameSpeed.changeSpeedTo(0);
                 GameSpeed.changeFrameSkipTo(initFrameSkip);
 
