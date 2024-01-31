@@ -19,8 +19,14 @@ public class RequestProtossDetection {
     }
 
     private static boolean requestAtLeastOneObserver() {
-        return AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observatory, 1)
-            || AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observer, 1);
+        AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Robotics_Facility, 1);
+        AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observatory, 1);
+        AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observer, 1);
+        return true;
+
+//        return AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Robotics_Facility, 1)
+//            || AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observatory, 1)
+//            || AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observer, 1);
     }
 
     private static boolean requestAtLeastOneCannon() {

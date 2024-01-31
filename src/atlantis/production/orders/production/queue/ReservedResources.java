@@ -20,8 +20,9 @@ public class ReservedResources {
 
     public static void reserveMinerals(int minerals, String whatFor) {
         ReservedResources.minerals += minerals;
-        if (ReservedResources.minerals >= MAX_VALUE) ReservedResources.minerals = MAX_VALUE;
-        if (ReservedResources.minerals < 0) ReservedResources.minerals = 0;
+
+//        if (ReservedResources.minerals >= MAX_VALUE) ReservedResources.minerals = MAX_VALUE;
+//        if (ReservedResources.minerals < 0) ReservedResources.minerals = 0;
 
 //        System.out.println("Reserved MINERALS = " + ReservedResources.minerals + " / " + whatFor);
 
@@ -32,10 +33,12 @@ public class ReservedResources {
 
     public static void reserveGas(int gas, String whatFor) {
         ReservedResources.gas += gas;
-        if (ReservedResources.gas >= MAX_VALUE) ReservedResources.gas = MAX_VALUE;
-        if (ReservedResources.gas < 0) ReservedResources.gas = 0;
 
-//        System.out.println("Reserved GAS = " + ReservedResources.gas + " / " + whatFor);
+//        if (ReservedResources.gas >= MAX_VALUE) ReservedResources.gas = MAX_VALUE;
+//        if (ReservedResources.gas < 0) ReservedResources.gas = 0;
+
+//        if (gas > 0)
+//            System.out.println("Reserved GAS = " + ReservedResources.gas + " / " + whatFor);
 
 //        if (ReservedResources.gas < 0 && !Env.isTesting()) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Trying to reserve negative gas");

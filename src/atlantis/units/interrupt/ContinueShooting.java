@@ -15,7 +15,8 @@ public class ContinueShooting extends Manager {
         if (unit.hp() <= 20 && unit.isDragoon()) return false;
         if (unit.lastActionMoreThanAgo(25)) return false;
 
-        if (unit.isMissionSparta() && unit.isDragoon() && unit.distToTarget() > 4) return false;
+//        if (unit.isMissionSparta() && unit.isDragoon() && unit.distToTarget() > 4) return false;
+        if (unit.isDragoon() && unit.isMissionDefendOrSparta()) return false;
 
 //        if (!unit.isStartingAttack()) return false;
 //        if (!unit.isAttackFrame()) return false;

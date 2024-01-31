@@ -15,15 +15,14 @@ public class ProduceRoboticsFacility {
     public static void produce() {
         if (!shouldBuild()) return;
 
-        if (Count.withPlanned(Protoss_Robotics_Facility) == 0) {
 //            System.err.println("@ " + A.now() + " - REQUESTED Protoss_Robotics_Facility");
-            DynamicCommanderHelpers.buildNow(Protoss_Robotics_Facility, true);
-        }
+        DynamicCommanderHelpers.buildNow(Protoss_Robotics_Facility, true);
     }
 
     public static boolean shouldBuild() {
-        if (Count.workers() <= 17) return false;
         if (Have.roboticsFacility() || !Have.forge()) return false;
+        if (Count.workers() <= 17) return false;
+        if (Count.withPlanned(Protoss_Robotics_Facility) > 0) return false;
         if (A.seconds() <= 390 && OurArmyStrength.relative() <= 90) return false;
 
         if (A.supplyUsed() <= 38 && Decisions.enemyStrategyIsRushOrCheese()) return false;

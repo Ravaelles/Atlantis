@@ -32,4 +32,11 @@ public class DynamicBuildingsCommander extends Commander {
 
         return mergeCommanders(generic, raceSpecific);
     }
+
+    public static Commander get() {
+        if (We.terran()) return (new TerranDynamicBuildingsCommander());
+        if (We.protoss()) return (new ProtossDynamicBuildingsCommander());
+        if (We.zerg()) return (new ZergDynamicBuildingsCommander());
+        return null;
+    }
 }

@@ -39,12 +39,16 @@ import atlantis.production.constructing.position.protoss.PylonPosition;
 import atlantis.production.constructing.position.terran.BarracksPosition;
 import atlantis.production.constructing.position.terran.TerranSupplyDepot;
 import atlantis.production.dynamic.AutoProduceWorkersCommander;
+import atlantis.production.dynamic.DynamicBuildingsCommander;
+import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import atlantis.production.dynamic.expansion.ShouldExpand;
+import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
 import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.requests.DynamicBuildingCommander;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.terran.repair.OptimalNumOfBunkerRepairers;
 import atlantis.terran.repair.RepairAssignments;
@@ -417,6 +421,18 @@ public class AAdvancedPainter extends APainter {
         paintSideMessage(
             "Should expand: " + shouldExpand + reason,
             shouldExpand == "YES" ? Green : Grey
+        );
+
+        boolean applies = (DynamicBuildingsCommander.get()).applies();
+        paintSideMessage(
+            "DynamicBuildings: " + (applies ? "V" : "x"),
+            applies ? Green : Grey
+        );
+
+        applies = DynamicUnitAndTechProducerCommander.get().applies();
+        paintSideMessage(
+            "DynamicUnits: " + (applies ? "V" : "x"),
+            applies ? Green : Grey
         );
 
 //        AFocusPoint focus = mission.focusPoint();

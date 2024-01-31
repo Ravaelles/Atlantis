@@ -26,6 +26,19 @@ public class PreventAddDuplicateOrder {
         return false;
     }
 
+    private static boolean justRequestedThisType(AUnitType type) {
+        if (type == null) return false;
+        if (!type.isResource()) return false;
+
+        int lastRequestedAgo = Queue.get().history().lastHappenedAgo(type.name());
+        if (lastRequestedAgo <= 30 * 2) {
+            ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
+            return true;
+        }
+
+        return false;
+    }
+
     private static boolean excessivePylon(AUnitType type, HasPosition position) {
         if (!type.isPylon()) return false;
 

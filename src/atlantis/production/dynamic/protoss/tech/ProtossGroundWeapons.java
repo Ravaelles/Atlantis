@@ -13,7 +13,7 @@ public class ProtossGroundWeapons extends Commander {
     public boolean applies() {
         if (ATech.isResearched(Protoss_Ground_Weapons)) return false;
 
-        if (A.hasGas(320 + (Enemy.zerg() ? 80 : 0)) && A.hasMinerals(400)) {
+        if (A.hasGas(320 + (Enemy.zerg() ? 80 : 0)) && A.hasMinerals(550)) {
             return true;
         }
 

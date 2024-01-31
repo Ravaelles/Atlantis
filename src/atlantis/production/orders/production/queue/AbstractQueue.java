@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue;
 
+import atlantis.production.orders.production.queue.add.History;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -10,6 +11,7 @@ public abstract class AbstractQueue {
 
     protected static Cache<Orders> cache = new Cache<>();
     protected final Orders orders = new Orders();
+    protected History history = new History();
 
     public void clearCache() {
         cache.clear();
@@ -36,11 +38,16 @@ public abstract class AbstractQueue {
     }
 
     public void markAsProducedAndForget(AUnitType type) {
-        for (ProductionOrder order : orders.list()){
+        for (ProductionOrder order : orders.list()) {
             if (order.isUnit() && order.unitType().equals(type)) {
                 order.setIgnore(true);
                 break;
             }
         }
+    }
+
+
+    public History history() {
+        return history;
     }
 }

@@ -20,10 +20,7 @@ public class ChokeBlockerFight extends Manager {
         if (unit.hp() <= 24) return false;
 
         if (unit.isZealot()) {
-            if (unit.hp() <= 46) {
-                if (unit.hasCooldown()) return false;
-                if (unit.hp() <= 34 && unit.lastAttackFrameLessThanAgo(30 * 9)) return false;
-            }
+            if (appliesAsWoundedZealot()) return false;
             if (anyOtherBlockerIsFighting()) return true;
 
             return false;
@@ -32,6 +29,18 @@ public class ChokeBlockerFight extends Manager {
         return !unit.isScv()
             && unit.hp() >= 40;
 //            && unit.lastUnderAttackLessThanAgo(40);
+    }
+
+    private boolean appliesAsWoundedZealot() {
+        if (unit.hp() <= 46) {
+            if (unit.hasCooldown()) return true;
+            if (
+                unit.hp() <= 34
+                    && Count.dragoons() <= 3
+                    && unit.lastAttackFrameLessThanAgo(30 * 9)
+            ) return true;
+        }
+        return false;
     }
 
     @Override

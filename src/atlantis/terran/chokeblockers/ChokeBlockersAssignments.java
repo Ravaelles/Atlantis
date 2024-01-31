@@ -43,10 +43,7 @@ public class ChokeBlockersAssignments {
 
         for (int i = 1; i <= blockersNeeded; i++) {
             AUnit worker = FreeWorkers.get().first();
-            if (worker != null) {
-                blockers.add(worker);
-                worker.setSpecialPosition(ChokeBlockerPosition.positionForBlocker(worker));
-            }
+            if (worker != null) addNewBlocker(worker);
         }
     }
 
@@ -78,8 +75,6 @@ public class ChokeBlockersAssignments {
         if (zealot != null) {
             addNewBlocker(zealot);
         }
-
-        assignWorkersWhenNeeded();
     }
 
     private void addNewBlocker(AUnit unit) {

@@ -20,6 +20,7 @@ public class DanceAway extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isRanged()) return false;
+        if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return false;
 
         enemy = defineUnitToDanceAwayFrom();
         if (enemy == null) return false;

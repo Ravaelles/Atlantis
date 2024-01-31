@@ -18,6 +18,7 @@ public class Unfreezer extends Manager {
         if (unit.lastAttackFrameLessThanAgo(33)) return false;
 //        if (unit.isHoldingPosition() && unit.isSpecialMission()) return false;
         if (unit.isSpecialMission()) return false;
+        if (unit.isMissionDefendOrSparta() && unit.lastActionLessThanAgo(30 * 5)) return false;
         if (unit.lastPositionChangedLessThanAgo(30)) return false;
         if (unit.isActiveManager(PreventDoNothing.class)) return false;
 

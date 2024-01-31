@@ -16,9 +16,11 @@ import atlantis.util.Enemy;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceZealot {
-    public static boolean produce() {
+    public static boolean zealot() {
         if (!A.hasMinerals(100)) return false;
         if (Count.freeGateways() == 0) return false;
+
+        if (A.hasMinerals(650)) return produceZealot();
 
 //        System.err.println("@ " + A.now() + " - produceZealot?");
 

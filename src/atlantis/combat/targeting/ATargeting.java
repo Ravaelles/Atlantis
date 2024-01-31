@@ -40,7 +40,7 @@ public class ATargeting extends HasUnit {
 //        if (true) return null;
 //        if (unit.hp() <= 18) return FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
 
-        if (unit.lastAttackFrameMoreThanAgo(100)) {
+        if (unit.isMissionDefendOrSparta() || unit.lastAttackFrameMoreThanAgo(100)) {
             return FallbackTargeting.fallbackTarget(unit, maxDistFromEnemy);
         }
 

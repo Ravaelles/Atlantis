@@ -192,6 +192,24 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         }
     }
 
+    public String whatToString() {
+        if (unitOrBuilding != null) {
+            return unitOrBuilding.name();
+        }
+        else if (upgrade != null) {
+            return upgrade.name();
+        }
+        else if (tech != null) {
+            return tech.name();
+        }
+        else if (mission != null) {
+            return mission.name();
+        }
+        else {
+            return "InvalidEmptyOrder";
+        }
+    }
+
     private String statusString() {
         if (isStatus(OrderStatus.NOT_READY)) return "";
         else if (isStatus(OrderStatus.IN_PROGRESS)) return "(IN_PROGRESS)";

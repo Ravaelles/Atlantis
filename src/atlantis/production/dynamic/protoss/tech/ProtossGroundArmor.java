@@ -13,7 +13,7 @@ public class ProtossGroundArmor extends Commander {
     public boolean applies() {
         if (ATech.isResearched(Protoss_Ground_Armor)) return false;
 
-        if (A.hasGas(320 + (Enemy.protoss() ? 100 : 0)) && A.hasMinerals(400)) {
+        if (A.hasGas(320 + (Enemy.protoss() ? 100 : 0)) && A.hasMinerals(550)) {
             return true;
         }
 

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.decions.Decision;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -131,6 +132,7 @@ public class AllowedToAttack {
             unit.setTooltipTactical(AttackNearbyEnemies.reasonNotToAttack);
             unit.addLog(AttackNearbyEnemies.reasonNotToAttack);
             System.err.println(AttackNearbyEnemies.reasonNotToAttack + " for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
+//            A.printStackTrace("Invalid target");
             return false;
         }
 

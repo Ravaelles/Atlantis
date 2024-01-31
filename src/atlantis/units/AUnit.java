@@ -819,6 +819,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         // Target is AIR unit
         if (target.isAir() && (!canAttackAirUnits() || (includeCooldown && cooldownRemaining() >= 4))) return false;
+
         if (hasNoWeaponAtAll() || !hasWeaponToAttackThisUnit(target)) return false;
         if (checkVisibility && target.effUndetected()) return false;
         if (checkShootingRange && !hasWeaponRangeToAttack(target, extraMargin)) return false;

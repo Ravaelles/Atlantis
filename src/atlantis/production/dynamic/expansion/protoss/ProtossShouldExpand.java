@@ -42,7 +42,7 @@ public class ProtossShouldExpand {
     }
 
     private static boolean forThirdAndLaterBases() {
-        if (bases >= 3 && Count.workers() <= 17 * (bases + basesInProduction)) return no("TooFewWorkers");
+        if (Count.workers() <= 17 * (bases + basesInProduction)) return no("TooFewWorkers");
 
 //        boolean hasPlentyOfMinerals = AGame.hasMinerals(580);
         int minMinerals = 100 + (MyRace.isPlayingAsZerg() ? 268 : 356);

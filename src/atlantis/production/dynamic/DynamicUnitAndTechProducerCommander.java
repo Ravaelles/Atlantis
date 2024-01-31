@@ -1,10 +1,13 @@
 package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
+import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicTechResearch;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
+import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
 import atlantis.production.dynamic.terran.TerranDynamicTechResearch;
 import atlantis.production.dynamic.terran.TerranDynamicUnitsCommander;
+import atlantis.production.dynamic.zerg.ZergDynamicBuildingsCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicTechResearch;
 import atlantis.production.dynamic.zerg.ZergDynamicUnitsCommander;
 import atlantis.util.We;
@@ -38,5 +41,12 @@ public class DynamicUnitAndTechProducerCommander extends Commander {
         };
 
         return mergeCommanders(raceSpecific, generic);
+    }
+
+    public static Commander get() {
+        if (We.terran()) return (new TerranDynamicUnitsCommander());
+        if (We.protoss()) return (new ProtossDynamicUnitProductionCommander());
+        if (We.zerg()) return (new ZergDynamicUnitsCommander());
+        return null;
     }
 }

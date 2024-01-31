@@ -184,6 +184,7 @@ public class TravelToConstruct extends HasUnit {
 //            }
 
             if (!unit.isConstructing() || unit.isIdle() || AGame.now() % 5 == 0) {
+//                A.println("Building " + buildingType + " at " + buildTilePosition + ", construction: " + construction);
                 unit.build(buildingType, buildTilePosition);
                 return true;
             }

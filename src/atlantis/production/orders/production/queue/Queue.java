@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue;
 
+import atlantis.production.orders.production.queue.add.History;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.updater.QueueRefresher;
@@ -23,12 +24,16 @@ public class Queue extends AbstractQueue {
     // =========================================================
 
     public boolean addNew(int index, ProductionOrder productionOrder) {
-        boolean result = allOrders().add(index, productionOrder);
+        boolean added = allOrders().add(index, productionOrder);
 
-        clearCache();
+        if (added) {
+            history.addNow(productionOrder.whatToString());
+            clearCache();
+        }
+
 //        allOrders().print("Added");
 
-        return result;
+        return added;
     }
 
     // =========================================================

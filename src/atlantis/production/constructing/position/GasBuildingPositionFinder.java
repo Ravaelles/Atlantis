@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -22,11 +23,11 @@ public class GasBuildingPositionFinder {
 //                + Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING)
 //        );
 
-        if (Count.inProduction(AtlantisRaceConfig.GAS_BUILDING) >= 2) {
-//            A.printStackTrace("Too many refineries");
-            ErrorLog.printMaxOncePerMinute("Too many refineries, don't build for now");
-            return null;
-        }
+//        if (Count.inProduction(AtlantisRaceConfig.GAS_BUILDING) >= 2) {
+////            A.printStackTrace("Too many refineries");
+//            ErrorLog.printMaxOncePerMinute("Too many refineries, don't build for now");
+//            return null;
+//        }
 
         for (AUnit base : Select.ourBases().list()) {
             Selection geysers = Select.geysers();
@@ -45,7 +46,8 @@ public class GasBuildingPositionFinder {
             }
         }
 
-//        System.err.println("Couldn't find geyser for " + building);
+//        A.errPrintln("Couldn't find geyser for " + building);
+//        A.printStackTrace("Couldn't find geyser for " + building);
         return null;
     }
 }

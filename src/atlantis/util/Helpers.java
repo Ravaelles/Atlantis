@@ -27,11 +27,11 @@ public class Helpers {
         return AGame.canAfford(mineralPrice, gasPrice);
     }
 
-    public static boolean supply(int minSupply) {
+    public static boolean supplyUsedAtLeast(int minSupply) {
         return AGame.supplyUsed() >= minSupply;
     }
 
-    public static boolean noSupply(int minSupply) {
-        return AGame.supplyUsed() < minSupply;
+    public static boolean supplyUsedAtMost(int maxSupply) {
+        return AGame.supplyUsed() <= maxSupply;
     }
 }

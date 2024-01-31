@@ -5,6 +5,7 @@ import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.tank.sieging.ForceSiege;
 import atlantis.combat.micro.terran.tank.sieging.WantsToSiege;
 import atlantis.combat.missions.MissionManager;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.choke.AChoke;
@@ -16,7 +17,7 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends MissionManager {
-    public static final int DIST_TO_ENEMY_MAIN_CHOKE = 10;
+    public static final int DIST_TO_ENEMY_MAIN_CHOKE = 11;
 
     private AChoke enemyMainChoke;
     private AChoke enemyNaturalChoke;
@@ -34,8 +35,9 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
     private boolean appliesForProtoss() {
         if (!We.protoss()) return false;
 
-        return A.supplyUsed() < 190
-            && A.minerals() < 2000
+        return Alpha.get().size() <= 40
+            && A.supplyUsed() < 160
+            && A.minerals() < 1500
             && closeToEnemyBuildingsOrChoke();
     }
 

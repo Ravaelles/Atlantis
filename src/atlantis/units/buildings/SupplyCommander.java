@@ -122,6 +122,12 @@ public class SupplyCommander extends Commander {
             return;
         }
 
+        int lastRequestedAgo = Queue.get().history().lastHappenedAgo(AtlantisRaceConfig.SUPPLY.name());
+        if (lastRequestedAgo <= 30 * 2) {
+            System.err.println("@" + A.now() + " SUPPLY TOO RECENTLY REQUESTED " + lastRequestedAgo);
+            return;
+        }
+
         if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
 //            System.err.println("Too many SUPPLY!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
             return;
@@ -129,7 +135,7 @@ public class SupplyCommander extends Commander {
 
         int notFinished = ConstructionRequests.countNotFinishedOfType(AUnitType.Terran_Supply_Depot);
         if (notFinished >= maxAtOnce) {
-            System.err.println("TOO MANY CONSTRS! " + notFinished);
+//            System.err.println("TOO MANY CONSTRS! " + notFinished);
             return;
         }
 
@@ -142,7 +148,8 @@ public class SupplyCommander extends Commander {
         }
 
         // Terran + Protoss
-//        System.err.println("------------------ REQUEST SUPPLY AT " + A.supplyUsed() + " / " + A.supplyTotal());
+//        System.err.println("------------------ REQUEST SUPPLY AT " + A.supplyUsed() + " / " + A.supplyTotal()
+//            + " / InProgress=" + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
         ProductionOrder order = AddToQueue.withTopPriority(AtlantisRaceConfig.SUPPLY);
         if (order != null) order.setStatus(OrderStatus.READY_TO_PRODUCE);
     }
@@ -172,7 +179,8 @@ public class SupplyCommander extends Commander {
         return Math.max(
 //            Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size(),
             ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),
-            CountInQueue.count(AtlantisRaceConfig.SUPPLY)
+//            CountInQueue.count(AtlantisRaceConfig.SUPPLY)
+            Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY)
         );
 //        return ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
 

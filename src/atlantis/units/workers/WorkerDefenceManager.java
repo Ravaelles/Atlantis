@@ -205,6 +205,7 @@ public class WorkerDefenceManager extends Manager {
 
     private boolean handleFightEnemyCombatUnits(AUnit worker) {
         if (Enemy.protoss() && worker.hp() <= 38) return false;
+        if (Enemy.protoss() && worker.enemiesNear().combatUnits().inRadius(2.6, unit).atLeast(2)) return false;
         if (worker.hp() <= 20) return false;
 
         if (worker.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {

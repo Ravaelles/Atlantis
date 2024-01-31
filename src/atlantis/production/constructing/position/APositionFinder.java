@@ -82,40 +82,40 @@ public class APositionFinder {
      * Returns standard build position for building near given position.
      */
     public static APosition findStandardPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
-//        return cache.get(
-//            "findStandardPosition:" + building + "," + nearTo + "," + builder + "," + A.digit(maxDistance),
-//            41,
-//            () -> {
-//            }
-//        );
+        return cache.get(
+            "findStandardPosition:" + building + "," + nearTo + "," + builder + "," + A.digit(maxDistance),
+            41,
+            () -> {
+                assert maxDistance >= 0 : "Negative maxDistance = " + maxDistance;
+                assert nearTo != null : "Null nearTo!";
 
-        if (maxDistance < 0) maxDistance = 28;
+                // ===========================================================
+                // = Handle standard building position according to the race =
+                // = as every race uses completely different approach        =
+                // ===========================================================
 
-        // ===========================================================
-        // = Handle standard building position according to the race =
-        // = as every race uses completely different approach        =
-        // ===========================================================
+                // Terran
+                if (We.terran()) {
+                    return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+                }
 
-        // Terran
-        if (We.terran()) {
-            return TerranPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-        }
+                // Protoss
+                else if (We.protoss()) {
+                    return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+                }
 
-        // Protoss
-        else if (We.protoss()) {
-            return ProtossPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-        }
+                // Zerg
+                else if (We.zerg()) {
+                    return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
+                }
 
-        // Zerg
-        else if (We.zerg()) {
-            return ZergPositionFinder.findStandardPositionFor(builder, building, nearTo, maxDistance);
-        }
-
-        else {
-            System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
-            System.exit(-1);
-            return null;
-        }
+                else {
+                    System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
+                    System.exit(-1);
+                    return null;
+                }
+            }
+        );
     }
 
 }

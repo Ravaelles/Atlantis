@@ -21,8 +21,13 @@ public class ForbiddenByStreetGridForPylon {
     }
 
     private static boolean streetGridMatches(APosition position) {
-        return position.tx() % ProtossForbiddenByStreetGrid.GRID_VALUE_X <= 1
-            || position.ty() % ProtossForbiddenByStreetGrid.GRID_VALUE_Y <= 1;
+        return position.tx() % ProtossForbiddenByStreetGrid.GRID_VALUE_X >= 2
+            && position.tx() % ProtossForbiddenByStreetGrid.GRID_VALUE_X <= 6
+            && position.ty() % ProtossForbiddenByStreetGrid.GRID_VALUE_Y >= 2
+            && position.ty() % ProtossForbiddenByStreetGrid.GRID_VALUE_Y <= 6;
+
+//            && position.tx() %  >= 1
+//            && position.ty() % ProtossForbiddenByStreetGrid.GRID_VALUE_Y >= 1;
 //        return position.tx() % 4 <= 1 && position.ty() % 6 <= 1;
 //        return position.tx() % 3 == 1 && position.ty() % 2 == 0;
 //            && position.tx() % 12 != 6 && position.ty() % 8 != 4;
