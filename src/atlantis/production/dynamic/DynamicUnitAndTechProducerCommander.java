@@ -10,9 +10,10 @@ import atlantis.production.dynamic.terran.TerranDynamicUnitsCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicBuildingsCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicTechResearch;
 import atlantis.production.dynamic.zerg.ZergDynamicUnitsCommander;
+import atlantis.util.HasReason;
 import atlantis.util.We;
 
-public class DynamicUnitAndTechProducerCommander extends Commander {
+public class DynamicUnitAndTechProducerCommander extends Commander implements HasReason {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         Class[] raceSpecific = null;
@@ -48,5 +49,10 @@ public class DynamicUnitAndTechProducerCommander extends Commander {
         if (We.protoss()) return (new ProtossDynamicUnitProductionCommander());
         if (We.zerg()) return (new ZergDynamicUnitsCommander());
         return null;
+    }
+
+    @Override
+    public String reason() {
+        return "ToBeImplemented";
     }
 }

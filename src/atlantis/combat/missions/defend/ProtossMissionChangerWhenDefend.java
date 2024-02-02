@@ -30,16 +30,24 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             if (!OurStrategy.get().isRushOrCheese()) return false;
         }
 
+        int relativeStrength = ArmyStrength.ourArmyRelativeStrength();
+
         if (A.seconds() <= 360) {
             if (AGame.killsLossesResourceBalance() < 0) return false;
             else {
-                if (Enemy.terran() && ArmyStrength.ourArmyRelativeStrength() >= 110) {
-                    reason = "Early game pressure (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                if (Enemy.terran() && relativeStrength >= 110) {
+                    reason = "Early game pressure (" + relativeStrength + "%)";
                     return true;
                 }
-                else {
-                    return false;
+
+                if (Enemy.protoss() && relativeStrength >= 200) {
+                    reason = "Early game push (" + relativeStrength + "%)";
+                    return true;
                 }
+
+//                else {
+//                    return false;
+//                }
             }
         }
 

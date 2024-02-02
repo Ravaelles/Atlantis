@@ -65,6 +65,14 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Armory) > 0;
     }
 
+    public static boolean observer() {
+        return Count.ofType(AUnitType.Protoss_Observer) > 0;
+    }
+
+    public static boolean observatory() {
+        return Count.ofType(AUnitType.Protoss_Observatory) > 0;
+    }
+
     public static boolean hydraliskDen() {
         return Count.ofType(AUnitType.Zerg_Hydralisk_Den) > 0;
     }

@@ -36,7 +36,7 @@ public class ChokeBlockerFight extends Manager {
             if (unit.hasCooldown()) return true;
             if (
                 unit.hp() <= 34
-                    && Count.dragoons() <= 3
+                    && Count.dragoons() <= 2
                     && unit.lastAttackFrameLessThanAgo(30 * 9)
             ) return true;
         }

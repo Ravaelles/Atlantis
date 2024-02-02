@@ -4,12 +4,16 @@ package atlantis.production.dynamic.protoss;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.production.dynamic.protoss.units.*;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
+import atlantis.util.HasReason;
 import atlantis.util.We;
 
-public class ProtossDynamicUnitProductionCommander extends Commander {
+public class ProtossDynamicUnitProductionCommander extends Commander implements HasReason {
+    public static String reason = "-";
+
     @Override
     public boolean applies() {
         return We.protoss()
@@ -18,21 +22,46 @@ public class ProtossDynamicUnitProductionCommander extends Commander {
     }
 
     private static boolean freeToSpendResources() {
-        if (A.hasMinerals(550)) return true;
+        if (A.hasMinerals(550)) return decision(true, "Minerals++");
+        if (hasTooFewUnits()) return decision(true, "TooFewUnits");
+        if (inEarlyGamePhaseMakeSureNotToBeTooWeak()) return decision(true, "PreventWeak");
 
-        if (keepSomeResourcesInLaterGamePhases()) return false;
+        if (keepSomeResourcesInLaterGamePhases()) return decision(false, "KeepResources");
 
         int reservedMinerals = ReservedResources.minerals();
         int reservedGas = ReservedResources.gas();
         int mineralsMargin = A.supplyUsed() < 40 ? 150 : 200;
         int gasMargin = A.supplyUsed() < 40 ? 100 : 150;
 
-        if (reservedMinerals > 0 && !A.hasMinerals(mineralsMargin + reservedMinerals)) return false;
-        if (reservedGas > 0 && !A.hasGas(gasMargin + reservedMinerals)) return false;
+        if (reservedMinerals > 0 && !A.hasMinerals(mineralsMargin + reservedMinerals))
+            return decision(false, "MissingMinerals");
+        if (reservedGas > 0 && !A.hasGas(gasMargin + reservedMinerals))
+            return decision(false, "MissingGas");
 
 //        System.err.println(A.now() + " 2dyna produce: " + A.minerals() + "/" + reservedMinerals);
 
-        return true;
+        return decision(true, "OK");
+    }
+
+    private static boolean hasTooFewUnits() {
+        int combatUnits = Count.ourCombatUnits();
+
+        if (A.seconds() >= 700 && combatUnits <= 30) return true;
+        if (A.seconds() >= 600 && combatUnits <= 27) return true;
+        if (A.seconds() >= 500 && combatUnits <= 23) return true;
+        if (A.seconds() >= 400 && combatUnits <= 18) return true;
+
+        return false;
+    }
+
+    private static boolean decision(boolean b, String reason) {
+        ProtossDynamicUnitProductionCommander.reason = reason;
+        return b;
+    }
+
+    private static boolean inEarlyGamePhaseMakeSureNotToBeTooWeak() {
+        return A.seconds() <= 400
+            && OurArmyStrength.relative() < 0.85;
     }
 
     private static boolean keepSomeResourcesInLaterGamePhases() {
@@ -57,5 +86,10 @@ public class ProtossDynamicUnitProductionCommander extends Commander {
 
         ProduceDragoon.dragoon();
         ProduceZealot.zealot();
+    }
+
+    @Override
+    public String reason() {
+        return reason;
     }
 }

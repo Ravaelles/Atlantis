@@ -160,7 +160,8 @@ public class Atlantis implements BWEventListener {
     public void onUnitDiscover(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
-            OnEnemyNewUnitDiscovered.update(unit);
+            if (unit.isEnemy()) OnEnemyNewUnitDiscovered.update(unit);
+//            if (!unit.isRealUnit() && !unit.type().isInvincible()) {
         }
     }
 

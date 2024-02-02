@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.util.Enemy;
@@ -12,6 +13,7 @@ public class ProtossGroundWeapons extends Commander {
     @Override
     public boolean applies() {
         if (ATech.isResearched(Protoss_Ground_Weapons)) return false;
+        if (TooWeakToTech.check()) return false;
 
         if (A.hasGas(320 + (Enemy.zerg() ? 80 : 0)) && A.hasMinerals(550)) {
             return true;

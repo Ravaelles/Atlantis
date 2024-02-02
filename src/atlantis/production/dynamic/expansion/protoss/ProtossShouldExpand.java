@@ -11,6 +11,8 @@ import atlantis.production.dynamic.expansion.ShouldExpand;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
+import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
 public class ProtossShouldExpand {
@@ -24,7 +26,7 @@ public class ProtossShouldExpand {
             "shouldExpand",
             67,
             () -> {
-                bases = Count.bases();
+                bases = Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE);
                 basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 
                 if (basesInProduction >= 2) return no("InProduction");
@@ -43,6 +45,7 @@ public class ProtossShouldExpand {
 
     private static boolean forThirdAndLaterBases() {
         if (Count.workers() <= 17 * (bases + basesInProduction)) return no("TooFewWorkers");
+        if (Enemy.protoss() && Have.observatory()) return no("NoObservatory");
 
 //        boolean hasPlentyOfMinerals = AGame.hasMinerals(580);
         int minMinerals = 100 + (MyRace.isPlayingAsZerg() ? 268 : 356);

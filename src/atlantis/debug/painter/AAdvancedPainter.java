@@ -1,6 +1,7 @@
 package atlantis.debug.painter;
 
 import atlantis.Atlantis;
+import atlantis.architecture.Commander;
 import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.CodeProfiler;
@@ -63,6 +64,7 @@ import atlantis.units.select.Selection;
 import atlantis.units.workers.WorkerRepository;
 import atlantis.util.ColorUtil;
 import atlantis.util.Counter;
+import atlantis.util.HasReason;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
@@ -429,9 +431,11 @@ public class AAdvancedPainter extends APainter {
             applies ? Green : Grey
         );
 
-        applies = DynamicUnitAndTechProducerCommander.get().applies();
+        Commander unitProducer = DynamicUnitAndTechProducerCommander.get();
+        applies = unitProducer.applies();
+        reason = ((HasReason) unitProducer).reason();
         paintSideMessage(
-            "DynamicUnits: " + (applies ? "V" : "x"),
+            "DynamicUnits: " + (applies ? "V" : "x") + " (" + reason + ")",
             applies ? Green : Grey
         );
 

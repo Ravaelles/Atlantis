@@ -14,7 +14,7 @@ public class ContinueMoving extends Manager {
 
         return unit.isMoving()
             && unit.targetPosition() != null
-            && unit.lastActionLessThanAgo(5)
+            && unit.lastActionLessThanAgo(unit.enemiesNear().empty() ? 14 : 5)
             && unit.distTo(unit.targetPosition()) >= 0.5;
 
 //        if (!unit.isDragoon()) return false;

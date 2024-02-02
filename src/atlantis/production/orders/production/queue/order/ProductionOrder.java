@@ -262,6 +262,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     }
 
     public void cancel() {
+        if (construction() != null) construction().cancel();
+
         Queue.get().removeOrder(this);
     }
 
@@ -488,5 +490,10 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public boolean shouldIgnore() {
         return ignore;
+    }
+
+    public int progressPercent() {
+        if (construction == null) return 0;
+        return construction.progressPercent();
     }
 }
