@@ -9,6 +9,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class ChokeBlockerMoveAway extends Manager {
@@ -26,11 +27,17 @@ public class ChokeBlockerMoveAway extends Manager {
         if (chokeBlockPoint == null) return false;
         if (!NeedChokeBlockers.check()) return false;
 
-        if (unit.hp() <= 16 && unit.enemiesNear().inRadius(2, unit).notEmpty()) return true;
+        if (shouldRunFromNearEnemy()) return true;
 
         return unit.enemiesNear().inRadius(7, unit).empty()
             && (choke = ChokeToBlock.get()) != null
             && (needToMoveSpaceForWorkers() || needToMoveForCombatUnits());
+    }
+
+    private boolean shouldRunFromNearEnemy() {
+        return unit.hp() <= 16
+            && (!unit.isZealot() || Count.dragoons() <= 3)
+            && unit.enemiesNear().inRadius(2, unit).notEmpty();
     }
 
     private boolean needToMoveForCombatUnits() {

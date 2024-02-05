@@ -25,14 +25,26 @@ public class History {
     }
 
     public int lastHappenedAgo(String event) {
-        if (cacheInt.get("lastPositionUpdated") == null) {
-            return 99998765;
-        }
+        if (cacheInt.get(event) == null) return 99998765;
 
-        return A.ago(lastHappenedAt());
+        return A.ago(lastHappenedAt(event));
     }
 
-    private int lastHappenedAt() {
-        return cacheInt.get("event");
+    private int lastHappenedAt(String event) {
+        return cacheInt.get(event);
+    }
+
+    public int size() {
+        return allEvents.size();
+    }
+
+    public String get(int i) {
+        return allEvents.get(i);
+    }
+
+    public String last() {
+        if (allEvents.isEmpty()) return null;
+
+        return allEvents.get(allEvents.size() - 1);
     }
 }

@@ -124,7 +124,7 @@ public class SupplyCommander extends Commander {
 
         int lastRequestedAgo = Queue.get().history().lastHappenedAgo(AtlantisRaceConfig.SUPPLY.name());
         if (lastRequestedAgo <= 30 * 2) {
-            System.err.println("@" + A.now() + " SUPPLY TOO RECENTLY REQUESTED " + lastRequestedAgo);
+//            System.err.println("@" + A.now() + " SUPPLY TOO RECENTLY REQUESTED " + lastRequestedAgo);
             return;
         }
 
@@ -161,10 +161,11 @@ public class SupplyCommander extends Commander {
     }
 
     private boolean tooManyNotStartedConstructions() {
-        if (requestedConstructionsOfSupply >= 3) return true;
+        int maxAtOnce = A.supplyUsed() >= 90 ? 3 : 2;
+
+        if (requestedConstructionsOfSupply >= maxAtOnce) return true;
 
         return false;
-//        return ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.SUPPLY) >= 4;
     }
 
     private int requestedConstructionsOfSupply() {

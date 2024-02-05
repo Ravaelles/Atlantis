@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.combat.missions.defend.sparta.SpartaSpecific;
 import atlantis.combat.squad.positioning.AllowTimeToReposition;
 import atlantis.combat.squad.positioning.MakeSpaceForNearbyWorkers;
 import atlantis.combat.squad.positioning.MakeSpaceForWrongSideOfFocusFriends;
@@ -18,6 +19,7 @@ public class MissionDefendManager extends MissionManager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            SpartaSpecific.class,
             MakeSpaceForNearbyWorkers.class,
             MakeSpaceForWrongSideOfFocusFriends.class,
             AllowTimeToReposition.class,

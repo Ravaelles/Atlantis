@@ -1113,7 +1113,7 @@ public class A {
     }
 
     public static int ago(int frame) {
-        return AGame.now() - frame;
+        return A.now() - frame;
     }
 
     public static boolean atMostFramesAgo(int frame, int maxFramesAgo) {

@@ -27,8 +27,10 @@ public class Queue extends AbstractQueue {
         boolean added = allOrders().add(index, productionOrder);
 
         if (added) {
+//            System.err.println("productionOrder.whatToString() = " + productionOrder.whatToString());
             history.addNow(productionOrder.whatToString());
             clearCache();
+//            System.err.println("history.size = " + history.size() + " / last:" + history.last());
         }
 
 //        allOrders().print("Added");

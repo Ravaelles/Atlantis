@@ -12,6 +12,8 @@ public class ContinueMoving extends Manager {
     public boolean applies() {
 //        if (!unit.isDragoon()) return false;
 
+        if (dontApplyDuringMissionDefendOrSparta()) return false;
+
         return unit.isMoving()
             && unit.targetPosition() != null
             && unit.lastActionLessThanAgo(unit.enemiesNear().empty() ? 14 : 5)
@@ -23,6 +25,13 @@ public class ContinueMoving extends Manager {
 //            && !unit.isAttackingOrMovingToAttack()
 //            && unit.lastActionLessThanAgo(2)
 //            && unit.targetPosition() != null;
+    }
+
+    private boolean dontApplyDuringMissionDefendOrSparta() {
+        return unit.isMissionDefendOrSparta()
+            && unit.isRanged()
+            && !unit.isRunning()
+            && unit.meleeEnemiesNearCount(1.3) == 0;
     }
 
     public Manager handle() {

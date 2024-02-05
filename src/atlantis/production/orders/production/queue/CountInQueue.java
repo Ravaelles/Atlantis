@@ -8,7 +8,7 @@ import bwapi.UpgradeType;
 
 public class CountInQueue {
     public static int count(AUnitType type) {
-        return count(type, 50);
+        return count(type, 999);
     }
 
     public static int count(AUnitType type, int numberOfNextOrdersToCheck) {

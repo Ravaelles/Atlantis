@@ -84,6 +84,8 @@ public class ScoutCommander extends Commander {
             // TERRAN + PROTOSS
 
             else if (ScoutState.scouts.isEmpty()) {
+                if (ScoutState.scoutsKilledCount >= 2) return;
+
                 if (ScoutState.scoutsKilledCount <= 1 && OurStrategy.get().isRushOrCheese()) {
                     return;
                 }

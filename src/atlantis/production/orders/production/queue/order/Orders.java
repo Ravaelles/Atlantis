@@ -87,7 +87,7 @@ public class Orders implements OrdersFilters {
 
     public ProductionOrder first() {
         if (orders.isEmpty()) return null;
-        
+
         return orders.get(0);
     }
 
@@ -99,5 +99,11 @@ public class Orders implements OrdersFilters {
 
     public ProductionOrder get(int index) {
         return orders.get(index);
+    }
+
+    public void cancelAll() {
+        for (ProductionOrder order : orders) {
+            order.cancel();
+        }
     }
 }

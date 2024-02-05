@@ -24,8 +24,8 @@ public class ProduceGateway {
 
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
 
-        if (unfinishedGateways >= 1 && !A.hasMinerals(550)) return false;
-        if (unfinishedGateways >= 2 && !A.hasMinerals(450)) return false;
+        if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;
+        if (unfinishedGateways >= 2 && !A.hasMinerals(700)) return false;
 
         if (tooManyGatewaysForNow()) return false;
 

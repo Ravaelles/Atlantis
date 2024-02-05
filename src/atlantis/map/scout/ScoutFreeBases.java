@@ -18,8 +18,10 @@ public class ScoutFreeBases extends Manager {
 
     @Override
     public boolean applies() {
-        return (unit.isScout() && unit.hasNotMovedInAWhile())
-            || (unit.hasNotMovedInAWhile() && unit.looksIdle());
+        if (!unit.isScout()) return false;
+        if (unit.enemiesNear().combatUnits().inRadius(6, unit).notEmpty()) return false;
+
+        return unit.hasNotMovedInAWhile() || (unit.hasNotMovedInAWhile() && unit.looksIdle());
     }
 
     @Override

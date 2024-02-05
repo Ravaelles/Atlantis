@@ -31,6 +31,10 @@ public class PreventAddDuplicateOrder {
         if (!type.isResource()) return false;
 
         int lastRequestedAgo = Queue.get().history().lastHappenedAgo(type.name());
+//        System.err.println(
+//            A.now() + " - " + type + " lastRequestedAgo = " + lastRequestedAgo + " / CIQ="
+//                + CountInQueue.count(type)
+//        );
         if (lastRequestedAgo <= 30 * 2) {
             ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
             return true;

@@ -10,44 +10,39 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
+import atlantis.util.cache.Cache;
+import atlantis.util.cache.CacheKey;
 import atlantis.util.log.ErrorLog;
 
 public class GasBuildingPositionFinder {
+    private static Cache<APosition> cache = new Cache<>();
+
     /**
      * Returns build position for next Refinery/Assimilator/Extractor. It will be chosen for the oldest base
      * that doesn't have gas extracting building.
      */
     protected static APosition findPositionForGasBuilding(AUnitType building, HasPosition nearTo) {
-//        System.err.println(
-//            "Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) = "
-//                + Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING)
-//        );
+        return cache.get(
+            CacheKey.create("findPositionForGasBuilding", building, nearTo),
+            177,
+            () -> {
+                for (AUnit base : Select.ourBases().list()) {
+                    Selection geysers = Select.geysers();
 
-//        if (Count.inProduction(AtlantisRaceConfig.GAS_BUILDING) >= 2) {
-////            A.printStackTrace("Too many refineries");
-//            ErrorLog.printMaxOncePerMinute("Too many refineries, don't build for now");
-//            return null;
-//        }
+                    int maxDistFromBase = We.zerg() ? 7 : 12;
 
-        for (AUnit base : Select.ourBases().list()) {
-            Selection geysers = Select.geysers();
+//                    HasPosition innerNearTo = nearTo;
+//                    if (innerNearTo == null) innerNearTo = Select.ourBases().last();
+//                    if (innerNearTo != null) geysers = geysers.inRadius(maxDistFromBase, innerNearTo);
 
-            int maxDistFromBase = We.zerg() ? 7 : 12;
-            if (nearTo != null) {
-                geysers = geysers.inRadius(maxDistFromBase, nearTo);
+                    AUnit geyser = geysers.nearestTo(base);
+                    if (geyser != null && geyser.distTo(base) < maxDistFromBase) {
+                        return geyser.translateByPixels(-64, -32);
+                    }
+                }
+
+                return null;
             }
-            else {
-                nearTo = Select.ourBases().last();
-            }
-
-            AUnit geyser = geysers.nearestTo(base);
-            if (geyser != null && geyser.distTo(base) < maxDistFromBase) {
-                return geyser.translateByPixels(-64, -32);
-            }
-        }
-
-//        A.errPrintln("Couldn't find geyser for " + building);
-//        A.printStackTrace("Couldn't find geyser for " + building);
-        return null;
+        );
     }
 }

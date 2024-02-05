@@ -13,14 +13,18 @@ public class ProduceObservers {
         if (Have.notEvenPlanned(AUnitType.Protoss_Observatory)) {
             if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
                 AddToQueue.withTopPriority(AUnitType.Protoss_Observatory);
-                AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
+                if (Have.notEvenPlanned(AUnitType.Protoss_Observer)) {
+                    AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
+                }
             }
             return;
         }
 
         if (Have.notEvenPlanned(AUnitType.Protoss_Observer)) {
             if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
-                AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
+                if (Have.notEvenPlanned(AUnitType.Protoss_Observer)) {
+                    AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
+                }
                 return;
             }
         }

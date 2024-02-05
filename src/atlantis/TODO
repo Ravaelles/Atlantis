@@ -1,15 +1,10 @@
 ### Protoss ############################################################################################################
 
---- Reavers must have priority to shoot, thety had continue moving
-
-.-- Pylon Grid 10
-
-?-- Assimilator requested bot not getting built
+--- Third base way too early, prevent it somehow
 
 -- broken base locations
-
-
-
+.------ SHitload of Assimilators ub qyeye (at 120, at 120, at 120)
+.------ SHitload of Observers in qyeye (at 119, at 119, at 119)
 
 
 ### Terran #############################################################################################################
