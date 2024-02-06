@@ -3,7 +3,7 @@ package atlantis.production.dynamic.expansion.protoss;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.production.dynamic.expansion.ShouldExpand;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;

@@ -5,9 +5,11 @@ import atlantis.production.orders.production.queue.CountInQueue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
-public class Orders implements OrdersFilters {
+public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
     private final ArrayList<ProductionOrder> orders = new ArrayList<>();
 
     // =========================================================
@@ -19,7 +21,14 @@ public class Orders implements OrdersFilters {
         addAll(orders);
     }
 
-    // === Add ==================================================
+    // =========================================================
+
+    @Override
+    public Iterator<ProductionOrder> iterator() {
+        return orders.iterator();
+    }
+
+    // === Add =================================================
 
     public boolean add(int index, ProductionOrder item) {
 //        if (!orders.contains(item)) {

@@ -26,7 +26,6 @@ public class ProduceGateway {
 
         if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;
         if (unfinishedGateways >= 2 && !A.hasMinerals(700)) return false;
-
         if (tooManyGatewaysForNow()) return false;
 
         if (A.hasMinerals(350) && freeGateways == 0) return produceGateway();

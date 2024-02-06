@@ -1727,6 +1727,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isRepairerOfAnyKind() {
+        if (!We.terran()) return false;
+
         return RepairAssignments.isRepairerOfAnyKind(this) || RepairAssignments.isProtector(this);
     }
 

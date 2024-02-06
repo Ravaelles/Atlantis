@@ -40,6 +40,7 @@ public class Construction implements Comparable<Construction> {
         status = ConstructionOrderStatus.NOT_STARTED;
         timeOrdered = AGame.now();
 
+//        System.out.println("@@@@@ " + A.now() + " - new constr: " + id() + " / " + buildingType);
 //        if (id() >= 1000) {
 //            System.out.println("@ " + A.now() + " - new constr: " + id() + " / " + buildingType);
 //        }

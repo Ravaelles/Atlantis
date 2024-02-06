@@ -119,7 +119,7 @@ public class FindPosition {
 
         if (nearTo == null) nearTo = Select.mainOrAnyBuilding();
         if (nearTo == null) {
-            ErrorLog.printMaxOncePerMinute(A.now() + " apply dirty hack as nearTo is still null for " + building);
+            ErrorLog.printMaxOncePerMinute("Apply dirty hack as nearTo is still null for " + building);
             nearTo = APosition.create(50, 50);
         }
 
@@ -141,10 +141,11 @@ public class FindPosition {
             }
         }
 
+        if (nearTo == null) nearTo = Select.ourBuildings().first().position();
+
         // If all of our bases have been destroyed, build somewhere near our first unit alive
-        if (nearTo == null) {
-            nearTo = Select.our().first().position();
-        }
+        if (nearTo == null) nearTo = Select.our().first().position();
+
         return nearTo;
     }
 

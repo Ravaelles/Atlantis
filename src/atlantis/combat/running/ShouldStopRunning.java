@@ -2,6 +2,7 @@ package atlantis.combat.running;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.dancing.HoldToShoot;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
@@ -19,7 +20,6 @@ public class ShouldStopRunning extends Manager {
 
     @Override
     protected Manager handle() {
-
         if (check()) {
             unit.runningManager().stopRunning();
             return usedManager(this);
@@ -30,6 +30,8 @@ public class ShouldStopRunning extends Manager {
 
     public boolean check() {
 //        if (unit.isActiveManager(HoldToShoot.class)) return false;
+
+        if (dontStopRunningAsWorker()) return false;
 
         if (!unit.isRunning()) {
             return decisionStopRunning();
@@ -79,6 +81,11 @@ public class ShouldStopRunning extends Manager {
 //        return false;
     }
 
+    private boolean dontStopRunningAsWorker() {
+        return unit.isWorker()
+            && unit.enemiesNear().inRadius(4, unit).havingAntiGroundWeapon().notEmpty();
+    }
+
     private boolean checkAsMelee() {
         return checkAsZergling() || checkAsZealot();
     }
@@ -102,7 +109,7 @@ public class ShouldStopRunning extends Manager {
 //            }
 //        }
 
-//        System.out.println("@ " + A.now() + " - stop running, near enemy =  " + unit.nearestEnemyDist() + " / " + unit.tooltip());
+        System.out.println("@ " + A.now() + " - stop running, near enemy =  " + unit.nearestEnemyDist() + " / " + unit.tooltip());
 
         unit.runningManager().stopRunning();
         unit.stop("StopRunning");

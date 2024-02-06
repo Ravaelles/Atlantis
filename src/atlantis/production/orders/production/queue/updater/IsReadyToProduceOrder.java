@@ -51,6 +51,7 @@ public class IsReadyToProduceOrder {
         AUnitType unitType = order.unitType();
 
         if (unitType == null) return true;
+        if (unitType.isBase()) return A.hasMinerals(310);
 
         return A.supplyUsed() + 3 >= order.minSupply()
 //            && (order.isUnit() && unitType.isResource())

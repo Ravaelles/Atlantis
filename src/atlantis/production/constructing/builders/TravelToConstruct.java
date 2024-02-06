@@ -39,12 +39,15 @@ public class TravelToConstruct extends HasUnit {
         double distance = unit.distTo(buildPositionCenter);
         String distString = "(" + A.digit(distance) + ")";
 
+//        System.err.println(A.now() + " distance = " + distString + " / minerals=" + A.minerals());
+
         if (notEnoughMineralsYet(distance, buildingType)) return false;
 
 //        CameraCommander.centerCameraOn(unit.getPosition());
 
         if (distance > minDistanceToIssueBuildOrder) {
 //            if (buildingType.isBase()) System.err.println("MoveToConstruct " + distance);
+//            System.err.println(A.now() + " MOVE TO CONS = " + distString + " / minerals=" + A.minerals());
             return moveToConstruct(construction, buildingType, distance, distString);
         }
         else {
@@ -52,15 +55,20 @@ public class TravelToConstruct extends HasUnit {
 //                ((A.everyNthGameFrame(77) || unit.hasNotMovedInAWhile()) && distance <= 2.1)
 //                    || !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition)
 //            ) {
-            if (
-                A.everyNthGameFrame(37) && !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition)
-            ) {
+            if (shouldRefreshConstructionPosition(buildingType, buildPosition)) {
+                System.err.println(A.now() + " Refresh " + buildingType + " position");
                 refreshConstructionPositionIfNeeded(construction, buildingType);
                 return false;
             }
 
             return issueBuildOrder(construction);
         }
+    }
+
+    private boolean shouldRefreshConstructionPosition(AUnitType buildingType, APosition buildPosition) {
+        return A.everyNthGameFrame(47)
+            && buildPosition.isPositionVisible()
+            && !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition);
     }
 
     private boolean notEnoughMineralsYet(double distance, AUnitType buildingType) {

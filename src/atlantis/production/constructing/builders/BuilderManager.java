@@ -1,6 +1,7 @@
 package atlantis.production.constructing.builders;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.game.race.MyRace;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
@@ -46,6 +47,7 @@ public class BuilderManager extends Manager {
     private boolean handleConstruction() {
         Construction construction = ConstructionRequests.constructionFor(unit);
         if (construction != null) {
+//            System.err.println("@ " + A.now() + " - construction.status() = " + construction.status());
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (construction.status() == ConstructionOrderStatus.NOT_STARTED) {

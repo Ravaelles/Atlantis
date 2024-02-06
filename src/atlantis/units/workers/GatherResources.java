@@ -11,8 +11,9 @@ public class GatherResources extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isWorker()
-            && !unit.isGatheringGas()
+        if (!unit.isWorker()) return false;
+
+        return !unit.isGatheringGas()
             && !unit.isBuilder()
             && !unit.isRunning()
             && !unit.isConstructing()
@@ -20,13 +21,21 @@ public class GatherResources extends Manager {
             && !unit.isProtector()
             && !unit.isScout()
             && unit.lastActionMoreThanAgo(20, Actions.REPAIR)
-            && unit.lastActionMoreThanAgo(50, Actions.SPECIAL);
+            && unit.lastActionMoreThanAgo(50, Actions.SPECIAL)
+            && unit.enemiesNear().inRadius(2 + unit.woundPercent() / 40.0, unit).combatUnits().empty();
     }
 
     protected Manager handle() {
+        if (itIsNotSafeToGather()) return null;
+
         if (handleGatherMineralsOrGas()) return usedManager(this);
 
         return null;
+    }
+
+    private boolean itIsNotSafeToGather() {
+        return unit.lastStartedRunningLessThanAgo(100)
+            || unit.enemiesNear().combatUnits().inRadius(2 + unit.woundPercent() / 30.0, unit).notEmpty();
     }
 
     /**

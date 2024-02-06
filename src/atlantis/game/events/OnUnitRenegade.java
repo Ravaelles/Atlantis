@@ -1,6 +1,5 @@
 package atlantis.game.events;
 
-import atlantis.Atlantis;
 import atlantis.units.AUnit;
 import atlantis.units.special.ums.GoToNeutralNewCompanions;
 
@@ -22,7 +21,7 @@ public class OnUnitRenegade {
 
         // New unit for us e.g. some UMS maps give units
         if (unit.isOur()) {
-            Atlantis.ourNewUnit(unit);
+            OnUnitCompleted.ourNewUnit(unit);
 
             if (!unit.type().isGasBuildingOrGeyser() && !unit.type().isMineralField()) {
 

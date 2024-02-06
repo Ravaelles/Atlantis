@@ -1,10 +1,9 @@
 package atlantis.game.events;
 
-import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.game.CameraCommander;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.constructing.ProtossWarping;
+import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -23,19 +22,23 @@ public class OnUnitCreated {
 
         // Our unit
         if (unit.isOur() && A.now() >= 2) {
-            handleOurUnit(unit);
+            handleOurUnitCreated(unit);
         }
     }
 
-    private static void handleOurUnit(AUnit unit) {
-        Count.clearCache();
-        Select.clearCache();
-        Queue.get().refresh();
-
+    private static void handleOurUnitCreated(AUnit unit) {
         // Apply construction fix: detect new Protoss buildings and remove them from queue.
         if (We.protoss() && unit.type().isABuilding()) {
             ProtossWarping.handleNewBuildingWarped(unit);
         }
+
+        if (unit.isABuilding()) {
+            if (unit.isBase()) CancelNotStartedBases.cancelNotStartedBases();
+        }
+
+        Count.clearCache();
+        Select.clearCache();
+        Queue.get().refresh();
 
         if (unit.isABuilding()) {
             if (unit.isBase()) OurClosestBaseToEnemy.clearCache();

@@ -28,14 +28,14 @@ public class PreventAddDuplicateOrder {
 
     private static boolean justRequestedThisType(AUnitType type) {
         if (type == null) return false;
-        if (!type.isResource()) return false;
+//        if (!type.isResource()) return false;
 
         int lastRequestedAgo = Queue.get().history().lastHappenedAgo(type.name());
 //        System.err.println(
 //            A.now() + " - " + type + " lastRequestedAgo = " + lastRequestedAgo + " / CIQ="
 //                + CountInQueue.count(type)
 //        );
-        if (lastRequestedAgo <= 30 * 2) {
+        if (lastRequestedAgo <= 30 * 2 && !type.isCombatBuilding()) {
             ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
             return true;
         }

@@ -17,12 +17,19 @@ public class ScoutSafetyFarFromEnemy extends Manager {
 
     @Override
     public boolean applies() {
-        enemy = (new AvoidEnemiesIfNeeded(unit)).enemiesDangerouslyClose().first();
+        enemy = defineEnemyToRunFrom();
         if (enemy != null) return true;
 
         return unit.enemiesNear().buildings().inRadius(9, unit).empty()
             && unit.enemiesNear().combatUnits().canAttack(unit, safetyMargin()).notEmpty()
             && unit.friendsNear().specialAction().inRadius(11, unit).empty();
+    }
+
+    private AUnit defineEnemyToRunFrom() {
+        AUnit enemy = (new AvoidEnemiesIfNeeded(unit)).enemiesDangerouslyClose().first();
+        if (enemy != null) return enemy;
+
+        return unit.enemiesNear().combatUnits().inRadius(7, unit).nearestTo(unit);
     }
 
     private double safetyMargin() {

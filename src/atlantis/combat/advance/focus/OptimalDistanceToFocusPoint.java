@@ -11,7 +11,6 @@ public class OptimalDistanceToFocusPoint {
                 + 3.5
                 + (unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(0.5, unit).notEmpty() ? 2 : 0);
         }
-        ;
 
         if (unit.isMedic()) return 0.5;
         if (unit.isMelee()) return 2;

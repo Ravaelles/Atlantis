@@ -1,15 +1,12 @@
 package atlantis;
 
-import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
 import atlantis.game.events.*;
 import atlantis.information.enemy.UnitsArchive;
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
 
@@ -126,16 +123,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-        AUnit unit = AUnit.getById(u);
-        if (unit != null) {
-            unit.refreshType();
-            if (unit.isOur()) {
-                ourNewUnit(unit);
-            }
-        }
-        else {
-            System.err.println("onUnitComplete null for " + u);
-        }
+        OnUnitCompleted.onUnitCompleted(u);
     }
 
     /**
@@ -143,12 +131,6 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitDestroy(Unit u) {
-
-        // Some ums maps have funky stuff happening at the start, exclude first 20 frames
-        if (A.now() <= 20) {
-            return;
-        }
-
         OnUnitDestroyed.onUnitDestroyed(AUnit.createFrom(u));
     }
 
@@ -218,15 +200,6 @@ public class Atlantis implements BWEventListener {
         onUnitDestroy(u);
         AUnit newUnit = AUnit.createFrom(u);
         OnUnitRenegade.update(newUnit);
-    }
-
-    public static void ourNewUnit(AUnit unit) {
-//        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-        Queue.get().refresh();
-
-        (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
-
-        if (Env.isLocal() && unit.isBunker() && Count.bunkers() == 1) CameraCommander.centerCameraOn(unit);
     }
 
     /**

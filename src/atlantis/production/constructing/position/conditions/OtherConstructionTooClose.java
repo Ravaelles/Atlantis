@@ -27,13 +27,8 @@ public class OtherConstructionTooClose {
                 double distance = position.distTo(constructionPosition);
 
                 if (distance >= 2) {
-                    if (building.isSunkenOrCreep() && order.buildingType().isSunkenOrCreep()) {
-                        return false;
-                    }
-
-                    if (building.isCannon() && order.buildingType().isCannon()) {
-                        return false;
-                    }
+                    if (building.isSunkenOrCreep() && order.buildingType().isSunkenOrCreep()) return false;
+                    if (building.isCannon() && order.buildingType().isCannon()) return false;
                 }
 
                 // Look for two bases that would be built too close one to another

@@ -16,6 +16,9 @@ import atlantis.units.select.Select;
 
 public class OnUnitDestroyed {
     public static void onUnitDestroyed(AUnit unit) {
+        // Some ums maps have funky stuff happening at the start, exclude first 20 frames
+        if (A.now() <= 20) return;
+
         if (unit.isOur() && unit.isBase()) OurClosestBaseToEnemy.clearCache();
 
         // Our unit

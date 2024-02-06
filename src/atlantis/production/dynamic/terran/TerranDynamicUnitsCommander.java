@@ -4,7 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.production.dynamic.expansion.ShouldExpand;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.terran.abundance.TerranAbundance;
 import atlantis.production.dynamic.terran.units.*;
 import atlantis.production.orders.production.queue.CountInQueue;

@@ -3,6 +3,7 @@ package atlantis.map.scout;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.units.AUnit;
+import atlantis.units.workers.WorkerAvoidManager;
 
 public class ScoutManager extends Manager {
     public ScoutManager(AUnit unit) {
@@ -20,6 +21,7 @@ public class ScoutManager extends Manager {
             AvoidEnemiesIfNeeded.class,
             ScoutSafetyFarFromEnemy.class,
             ScoutRoaming.class,
+            WorkerAvoidManager.class,
             ScoutTryFindingEnemy.class,
             RoamAroundEnemyBase.class,
             ScoutFreeBases.class,

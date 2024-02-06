@@ -7,7 +7,7 @@ import atlantis.game.race.MyRace;
 import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.base.BaseLocations;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.dynamic.expansion.ShouldExpand;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
