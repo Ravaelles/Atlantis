@@ -212,6 +212,7 @@ public class ARunningManager {
 
     public void stopRunning() {
         runTo = null;
+        runFrom = null;
         unit._lastStoppedRunning = A.now();
     }
 

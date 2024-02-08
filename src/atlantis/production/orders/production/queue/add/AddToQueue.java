@@ -3,11 +3,13 @@ package atlantis.production.orders.production.queue.add;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
+import atlantis.production.requests.RemoveExcessiveOrders;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -105,13 +107,27 @@ public class AddToQueue {
 //                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position);
 //            }
 
-//            if (A.supplyTotal() >= 30 && type.isPylon()) {
-//                A.printStackTrace(A.now() + ": Adding PYLON to queue at " + position);
-//            }
+            if (A.supplyTotal() >= 30 && type.isPylon()) {
+                int inQueue = CountInQueue.count(AUnitType.Protoss_Pylon);
+
+                if (inQueue >= 2) {
+                    A.println(A.now() + ": @@@@@@@@@@@@@ Add PYLON @@@@ " + position + " / " +
+                        inQueue);
+                }
+
+                if (inQueue >= 3) A.printStackTrace("Too many pylons in queue (" + inQueue + ")");
+            }
 
 //            if (type.is(AUnitType.Protoss_Robotics_Facility)) {
 //                A.printStackTrace("Robotics Facility ADDED TO QUEUE");
 //            }
+
+            if (type.is(AUnitType.Protoss_Nexus)) {
+                A.println(A.now() + " Nexus ADDED TO QUEUE, min=" + A.minerals()
+                    + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
+            }
+
+            RemoveExcessiveOrders.removeExcessive(type);
 
             Select.clearCache();
             Count.clearCache();

@@ -4,8 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
-public class PreventAttackTooLong extends Manager {
-    public PreventAttackTooLong(AUnit unit) {
+public class PreventAttackForTooLong extends Manager {
+    public PreventAttackForTooLong(AUnit unit) {
         super(unit);
     }
 
@@ -20,13 +20,15 @@ public class PreventAttackTooLong extends Manager {
         int DELAY = 23;
         if (unit.lastActionLessThanAgo(DELAY)) return false;
 
+        if (unit.isMissionSparta() && unit.isMelee()) return false;
+
         return unit.lastActionMoreThanAgo(unit.cooldownAbsolute() + DELAY, Actions.ATTACK_UNIT);
     }
 
     @Override
     public Manager handle() {
-//        System.err.println("PreventAttackTooLong for " + unit.idWithType() + " / isAttacking:" + unit.isAttacking());
+//        System.err.println("PreventAttackForTooLong for " + unit.idWithType() + " / isAttacking:" + unit.isAttacking());
 
-        return DoPreventLogic.handle(unit) ? usedManager(this) : null;
+        return DoPreventFreezesLogic.handle(unit) ? usedManager(this) : null;
     }
 }

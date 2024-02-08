@@ -9,7 +9,7 @@ import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.units.AUnit;
 import atlantis.units.fix.PreventAttackNull;
-import atlantis.units.fix.PreventAttackTooLong;
+import atlantis.units.fix.PreventAttackForTooLong;
 import atlantis.units.interrupt.ContinueCurrentAction;
 import atlantis.units.special.ManualOverrideManager;
 import atlantis.units.fix.PreventDoNothing;
@@ -32,10 +32,10 @@ public class CombatManagerTopPriority extends Manager {
 
             PreventDoNothing.class,
             PreventAttackNull.class,
-            PreventAttackTooLong.class,
+            PreventAttackForTooLong.class,
 
             ContinueCurrentAction.class,
-            
+
             Unfreezer.class,
             DanceAfterShoot.class,
 //            ContinueShooting.class,

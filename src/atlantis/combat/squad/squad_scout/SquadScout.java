@@ -25,9 +25,10 @@ public class SquadScout extends Manager {
 
     @Override
     public boolean applies() {
-        return allowedToUseScout()
+        return unit.isSquadScout()
+            && allowedToUseScout()
             && !unit.isSpecialMission()
-            && unit.isSquadScout();
+            && beNormalUnitInsteadOfScout();
     }
 
     @Override
@@ -40,9 +41,15 @@ public class SquadScout extends Manager {
 
     // =========================================================
 
+    private boolean beNormalUnitInsteadOfScout() {
+        return unit.hp() >= 40 && unit.friendsNear().atLeast(6) && unit.enemiesNearInRadius(5) > 0;
+    }
+
     private boolean allowedToUseScout() {
         if (Enemy.terran()) return false;
         if (A.seconds() >= 800) return false;
+
+        if (unit.friendsNear().inRadius(5, unit).combatUnits().atLeast(8)) return false;
 
 //        return ArmyStrength.ourArmyRelativeStrength() >= 120 && unit.hp() >= 30;
         return unit.hp() >= 30;

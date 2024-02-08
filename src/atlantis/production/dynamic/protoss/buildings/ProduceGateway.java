@@ -16,7 +16,7 @@ public class ProduceGateway {
     public static boolean produce() {
         minerals = A.minerals();
 
-        if (minerals < 220) return false;
+        if (minerals < 205) return false;
 
         freeGateways = Count.freeGateways();
 

@@ -20,6 +20,16 @@ public class SquadScoutProceed extends Manager {
         super(unit);
     }
 
+    @Override
+    public boolean applies() {
+        return cloneEnoughToFriends()
+            && unit.enemiesNear().combatUnits().havingAntiGroundWeapon().canAttack(unit, 2.8).empty();
+    }
+
+    private boolean cloneEnoughToFriends() {
+        return unit.distToBase() <= 40 || unit.friendsNear().inRadius(8, unit).count() >= 2;
+    }
+
     protected Manager handle() {
         return handleSquadScout();
     }

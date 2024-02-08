@@ -1,29 +1,8 @@
 package atlantis.units.fix;
 
 import atlantis.architecture.Manager;
-import atlantis.architecture.generic.DoNothing;
-import atlantis.combat.advance.AdvanceStandard;
-import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.advance.focus.MoveToFocusPoint;
-import atlantis.combat.advance.focus.TooFarFromFocusPoint;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.micro.generic.unfreezer.UnfreezeGeneric;
-import atlantis.combat.micro.generic.unfreezer.Unfreezer;
-import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.missions.attack.MissionAttack;
-import atlantis.combat.missions.attack.MissionAttackManager;
-import atlantis.combat.missions.defend.MissionDefend;
-import atlantis.combat.missions.defend.MissionDefendManager;
-import atlantis.combat.squad.NewUnitsToSquadsAssigner;
-import atlantis.combat.squad.TerranSquadCohesionManager;
-import atlantis.combat.squad.positioning.SquadCohesion;
-import atlantis.combat.squad.positioning.TooFarFromLeader;
-import atlantis.game.A;
-import atlantis.game.events.OnUnitCreated;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.log.ErrorLog;
 
 /**
  * Porblematic thing that happens for new units (e.g. Marines) when they come out and just stand outside Barracks.
@@ -99,7 +78,7 @@ public class PreventDoNothing extends Manager {
 //        }
 //
 
-        if (DoPreventLogic.handle(unit)) return usedManager(this);
+        if (DoPreventFreezesLogic.handle(unit)) return usedManager(this);
 
 //        System.err.println("OMFG STILL NOTHING! " + unit);
 

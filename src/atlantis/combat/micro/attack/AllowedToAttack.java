@@ -7,6 +7,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
+import atlantis.util.log.ErrorLog;
 
 public class AllowedToAttack {
     private final AttackNearbyEnemies attackNearbyEnemies;
@@ -128,6 +129,8 @@ public class AllowedToAttack {
         }
 
         if (!unit.canAttackTarget(target, false, true)) {
+            if (target.isOverlord()) ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Overlord for " + unit);
+
             AttackNearbyEnemies.reasonNotToAttack = "InvalidTarget";
             unit.setTooltipTactical(AttackNearbyEnemies.reasonNotToAttack);
             unit.addLog(AttackNearbyEnemies.reasonNotToAttack);

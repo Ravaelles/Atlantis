@@ -1,7 +1,6 @@
 package atlantis.production;
 
 import atlantis.architecture.Commander;
-import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionsCommander;
 import atlantis.production.dynamic.DynamicProductionCommander;
 import atlantis.units.buildings.SupplyCommander;
@@ -19,6 +18,7 @@ public class ProductionCommander extends Commander {
             SupplyCommander.class,
             ConstructionsCommander.class,
             DynamicProductionCommander.class,
+//            RemoveExcessiveOrders.class,
         };
     }
 

@@ -46,6 +46,8 @@ public abstract class Squad extends Units {
      */
     protected AUnit _leader = null;
 
+    private SquadTargeting targeting = new SquadTargeting();
+
     private SquadCenter squadCenter = new SquadCenter(this);
     private SquadCohesion squadCohesion = new SquadCohesion(this);
 
@@ -333,4 +335,7 @@ public abstract class Squad extends Units {
         (new SquadReinforcements(this)).handleReinforcements();
     }
 
+    public SquadTargeting targeting() {
+        return targeting;
+    }
 }

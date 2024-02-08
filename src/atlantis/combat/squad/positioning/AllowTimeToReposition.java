@@ -9,7 +9,7 @@ public class AllowTimeToReposition extends Manager {
     }
 
     protected Manager handle() {
-        if (!unit.looksIdle() && unit.isMoving() && unit.lastPositioningActionLessThanAgo(13)) {
+        if (unit.isMoving() && unit.lastPositioningActionLessThanAgo(13) && !unit.isLeader()) {
             return usedManager(this);
         }
 

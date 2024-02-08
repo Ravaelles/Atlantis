@@ -55,8 +55,16 @@ public class IsReadyToProduceOrder {
 
         return A.supplyUsed() + 3 >= order.minSupply()
 //            && (order.isUnit() && unitType.isResource())
-            && A.canAffordWithReserved(unitType.mineralPrice() + 34, unitType.gasPrice());
+            && A.canAffordWithReserved(
+            unitType.mineralPrice() + mineralBonusToHave(unitType), unitType.gasPrice()
+        );
 //            && A.canAfford(unitType.mineralPrice() + 100, unitType.gasPrice() > 0 ? unitType.gasPrice() + 50 : 0);
+    }
+
+    private static int mineralBonusToHave(AUnitType type) {
+        if (type.isABuilding()) return -48;
+
+        return 34;
     }
 
     private static boolean cantAffordAndDidntExpandYet(ProductionOrder order) {

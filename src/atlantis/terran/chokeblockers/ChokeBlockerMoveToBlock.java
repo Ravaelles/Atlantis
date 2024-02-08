@@ -29,7 +29,10 @@ public class ChokeBlockerMoveToBlock extends Manager {
         unit.paintLine(blockChokePosition.translateByPixels(1, 1), Color.White);
 
         if (dist > 0.12 || (dist > 0.02 && !unit.isHoldingPosition())) {
-            unit.move(blockChokePosition, Actions.SPECIAL, "ChokeBlocker");
+//            if (unit.lastActionMoreThanAgo(7, Actions.SPECIAL) || dist >= 1) {
+            if ((!unit.isMoving() && unit.lastPositionChangedMoreThanAgo(20)) || dist >= 1) {
+                unit.move(blockChokePosition, Actions.SPECIAL, "ChokeBlocker");
+            }
         }
         else {
             unit.holdPosition("ChokeBlocker");

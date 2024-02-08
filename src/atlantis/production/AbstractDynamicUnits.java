@@ -12,9 +12,7 @@ import atlantis.util.Helpers;
 
 public class AbstractDynamicUnits extends Helpers {
     public static void buildToHave(AUnitType type, int haveN) {
-        if (haveN <= 0) {
-            return;
-        }
+        if (haveN <= 0) return;
 
         if (Count.withPlanned(type) < haveN) {
             trainIfPossible(type);

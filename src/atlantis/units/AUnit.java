@@ -3117,7 +3117,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public double distToNearestChoke() {
         return (double) cache.get(
             "distToNearestChoke",
-            47,
+            77,
             () -> {
                 AChoke nearestChoke = nearestChoke();
                 if (nearestChoke == null) return 999.0;
@@ -3140,5 +3140,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public AFocusPoint focusPoint() {
         if (mission() == null) return null;
         return mission().focusPoint();
+    }
+
+    public boolean isLeader() {
+        return squad != null && this.equals(squad.leader());
     }
 }

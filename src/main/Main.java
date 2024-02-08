@@ -19,9 +19,9 @@ public class Main {
 //    public static String OUR_RACE = "Terran";
 //    public static String OUR_RACE = "Zerg";
 
-    public static String ENEMY_RACE = "Protoss";
+    //    public static String ENEMY_RACE = "Protoss";
 //    public static String ENEMY_RACE = "Terran";
-//    public static String ENEMY_RACE = "Zerg";
+    public static String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -101,8 +101,8 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Drag_v_Bunker.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
         if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
-//        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Zealots.scm";
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";

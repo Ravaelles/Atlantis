@@ -11,9 +11,11 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
+import atlantis.util.HasReason;
 import atlantis.util.We;
 
-public class TerranDynamicUnitsCommander extends Commander {
+public class TerranDynamicUnitsCommander extends Commander implements HasReason {
+    public static String reason = "-";
 
     private int dynamicOrders;
 
@@ -65,6 +67,11 @@ public class TerranDynamicUnitsCommander extends Commander {
         }
 
         (new TerranAbundance()).invokeCommander();
+    }
+
+    @Override
+    public String reason() {
+        return reason;
     }
 
     // =========================================================

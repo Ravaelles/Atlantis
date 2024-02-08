@@ -4,13 +4,15 @@ import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.TooCloseToFocusPoint;
 import atlantis.combat.advance.focus.TooFarFromFocusPoint;
 import atlantis.combat.micro.avoid.DoAvoidEnemies;
+import atlantis.combat.squad.SquadTargeting;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import bwapi.Color;
 
-public class DoPreventLogic {
+public class DoPreventFreezesLogic {
     public static boolean handle(AUnit unit) {
 //        if (unit.lastUnderAttackLessThanAgo(30 * 3)) {
 //            unit.paintCircleFilled(22, Color.Orange);
@@ -23,7 +25,15 @@ public class DoPreventLogic {
             }
         }
 
-        if (!unit.isStopped() && unit.lastActionMoreThanAgo(30 * 4, Actions.STOP)) {
+        if (goToSquadTarget(unit)) {
+            return true;
+        }
+
+        if (goToNearestCombatFriend(unit)) {
+            return true;
+        }
+
+        if (!unit.isStopped() && unit.lastActionMoreThanAgo(44, Actions.STOP)) {
             unit.stop("DoPreventStop");
             return true;
         }
@@ -35,6 +45,34 @@ public class DoPreventLogic {
         unit.paintCircleFilled(22, Color.Yellow);
 //        if (goToNearestEnemy(unit)) return true;
         if (goToCombatUnit(unit)) return true;
+
+        return false;
+    }
+
+    private static boolean goToSquadTarget(AUnit unit) {
+        SquadTargeting targeting = unit.squad().targeting();
+        AUnit target = targeting.lastTargetIfAlive();
+
+        if (target == null) {
+            target = EnemyUnits.discovered().groundUnits().nearestTo(unit);
+            if (target == null) return false;
+            else targeting.forceTarget(target);
+        }
+
+        if (target.distTo(unit) > 6 && unit.move(target, Actions.MOVE_FORMATION, "ToSquadTarget")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean goToNearestCombatFriend(AUnit unit) {
+        AUnit nearest = unit.friendsNear().combatUnits().groundUnits().nearestTo(unit);
+        if (nearest != null && nearest.distTo(unit) >= 2) {
+            if (unit.move(nearest, Actions.MOVE_FORMATION, "PreventMove2Friend")) {
+                return true;
+            }
+        }
 
         return false;
     }

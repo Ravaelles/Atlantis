@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class DetectHiddenEnemyClosestToBase extends Manager {
     private AUnit dangerousInvisibleEnemy;
@@ -32,7 +33,16 @@ public class DetectHiddenEnemyClosestToBase extends Manager {
     }
 
     protected AUnit enemyHiddenUnitCloseToBase() {
-        AUnit enemy = EnemyUnits.discovered().effUndetected().havingAntiGroundWeapon().nearestTo(Select.mainOrAnyBuilding());
+        Selection undetectedEnemies = EnemyUnits.discovered().effUndetected().havingAntiGroundWeapon();
+//        AUnit enemy = undetectedEnemies.nearestTo(Select.mainOrAnyBuilding());
+        AUnit enemy = null;
+
+        for (AUnit undetected : undetectedEnemies.list()) {
+            if (undetected.friendsNear().detectors().inRadius(9, undetected).isEmpty()) {
+                enemy = undetected;
+                break;
+            }
+        }
 
         if (enemy == null) return null;
 

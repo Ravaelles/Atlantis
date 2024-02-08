@@ -6,7 +6,6 @@ import atlantis.units.AUnit;
 import java.util.ArrayList;
 
 public class Log {
-
     /**
      * Write every tooltip to logs/units/unit_file.txt, so it's possible to debug things.
      */

@@ -11,6 +11,7 @@ import atlantis.units.select.Select;
 import java.util.Collection;
 
 public class WorkerTransferCommander extends Commander {
+    private int maxAtOnceBonus = 8;
 
     /**
      * Every base should have similar number of workers, more or less.
@@ -30,13 +31,22 @@ public class WorkerTransferCommander extends Commander {
 
         // =========================================================
 
+        boolean result = false;
+        for (int i = 0; i < maxAtOnceBonus; i++) {
+            result = doTheTransferIfNeeded(ourBases) || result;
+        }
+
+        if (result) maxAtOnceBonus = 1;
+    }
+
+    private boolean doTheTransferIfNeeded(Collection<AUnit> ourBases) {
         // Count ratios of workers / minerals for every base
         Units baseWorkersRatios = new Units();
         for (AUnit base : ourBases) {
             if (
                 base.isLifted()
-                    || base.lastUnderAttackLessThanAgo(30 * 30)
-                    || base.enemiesNear().combatUnits().inRadius(15, base).isNotEmpty()
+                    || base.lastUnderAttackLessThanAgo(30 * 10)
+                    || base.enemiesNear().combatUnits().inRadius(10, base).atLeast(1)
             ) {
                 continue;
             }
@@ -54,7 +64,7 @@ public class WorkerTransferCommander extends Commander {
         if (baseWithFewestWorkers == null || baseWithMostWorkers == null) {
 //            System.err.println("baseWithFewestWorkers = " + baseWithFewestWorkers);
 //            System.err.println("baseWithMostWorkers = " + baseWithMostWorkers);
-            return;
+            return false;
         }
 
         double fewestWorkersRatio = baseWorkersRatios.valueFor(baseWithFewestWorkers);
@@ -62,30 +72,38 @@ public class WorkerTransferCommander extends Commander {
         double workerRatioDiff = mostWorkersRatio - fewestWorkersRatio;
 
         if (mostWorkersRatio < 2.0 || workerRatioDiff < 1.0 || baseWithMostWorkers.distTo(baseWithFewestWorkers) < 8) {
-            return;
+            return false;
         }
 
-
-//                "Fewest: " + baseWithFewestWorkers
-//                        + " (" + baseWorkersRatios.valueFor(baseWithFewestWorkers)
-//                        + ") / " + fewestWorkersRatio
+//        System.err.println(
+//            "Fewest: " + baseWithFewestWorkers
+//                + " (" + baseWorkersRatios.valueFor(baseWithFewestWorkers)
+//                + ") / " + fewestWorkersRatio
 //        );
-
-//                "Most: " + baseWithMostWorkers
-//                        + " (" + baseWorkersRatios.valueFor(baseWithMostWorkers)
-//                        + ") / " + fewestWorkersRatio
+//
+//        System.err.println(
+//            "Most: " + baseWithMostWorkers
+//                + " (" + baseWorkersRatios.valueFor(baseWithMostWorkers)
+//                + ") / " + fewestWorkersRatio
 //        );
 
 
         // === Perform worker transfer from base to base ========================================
 
         AUnit worker = Select.ourWorkersThatGather(true)
-            .inRadius(16, baseWithMostWorkers)
+            .inRadius(6, baseWithMostWorkers)
             .nearestTo(baseWithFewestWorkers);
+
+//        System.err.println(
+//            "transfer worker = " + worker + " to " + baseWithFewestWorkers + " dist:"
+//                + baseWithFewestWorkers.distTo(worker)
+//        );
 
         if (worker != null) {
             transferWorkerTo(worker, baseWithFewestWorkers);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -93,11 +111,14 @@ public class WorkerTransferCommander extends Commander {
      */
     private void transferWorkerTo(AUnit worker, AUnit baseWithFewestWorkers) {
         AUnit mineral = Select.minerals().inRadius(10, baseWithFewestWorkers).first();
+//        System.err.println("mineral = " + mineral);
 
         if (mineral == null) return;
 
         if (worker.distTo(mineral) > 8) {
-            worker.move(baseWithFewestWorkers.position(), Actions.TRANSFER, "Transfer", true);
+//            worker.move(baseWithFewestWorkers.position(), Actions.TRANSFER, "Transfer", true);
+            worker.gather(mineral);
+            worker.setTooltip("Transfer");
         }
         else {
             AMineralGathering.gatherResources(worker);

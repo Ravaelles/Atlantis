@@ -20,7 +20,7 @@ public class DanceAwayAsDragoon extends HasUnit {
             if (dragoonLowHpAndStillUnderAttack()) return Decision.TRUE;
             if (dragoonEnemyClose()) return Decision.TRUE;
         }
-        
+
         if (quiteHealthyAndNotUnderAttack()) return Decision.FALSE;
 
         return Decision.INDIFFERENT;
@@ -43,14 +43,14 @@ public class DanceAwayAsDragoon extends HasUnit {
 
     private double enemiesRadius() {
         return 4.1
-            + (enemy.isFacing(unit) ? 0.4 : -1)
-            + (unit.hp() <= 40 ? 0.6 : 0);
+            + (enemy.isFacing(unit) ? 0.4 : -1.6)
+            + (unit.hp() <= 60 ? 0.7 : 0);
     }
 
     private boolean dragoonLowHpAndStillUnderAttack() {
         return unit.isDragoon()
             && !ProtossFlags.dragoonBeBrave()
-            && unit.hp() <= 40
+            && unit.hp() <= 60
             && (
             unit.lastUnderAttackLessThanAgo(90)
                 || unit.enemiesNearInRadius(enemiesRadius()) > 0

@@ -13,7 +13,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class ChokeBlockerMoveAway extends Manager {
-    public static final int MOVE_AWAY_DISTANCE = 4;
+    public static final int MOVE_AWAY_DISTANCE = 3;
     private final APosition chokeBlockPoint;
     private AChoke choke;
 
@@ -29,9 +29,15 @@ public class ChokeBlockerMoveAway extends Manager {
 
         if (shouldRunFromNearEnemy()) return true;
 
-        return unit.enemiesNear().inRadius(7, unit).empty()
+        if (randomly()) return true;
+
+        return unit.enemiesNear().inRadius(9, unit).empty()
             && (choke = ChokeToBlock.get()) != null
             && (needToMoveSpaceForWorkers() || needToMoveForCombatUnits());
+    }
+
+    private boolean randomly() {
+        return A.seconds() % 10 <= 1 && unit.enemiesNear().inRadius(9, unit).empty();
     }
 
     private boolean shouldRunFromNearEnemy() {

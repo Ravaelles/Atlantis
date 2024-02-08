@@ -4,11 +4,9 @@ import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -29,13 +27,15 @@ public class AdvanceAsALeader extends MissionManager {
     protected Manager handle() {
 //        if (unit.isMissionAttackOrGlobalAttack()) return null;
 
+        if (ToLastSquadTarget.goToSquadTarget(unit)) return usedManager(this, "ToSquadTarget");
+
         if (handleWhenTooFarFromSquadCenter()) {
             return usedManager(this, "ToSquadCenter");
         }
 
 //        if (handleWhenLonely()) return usedManager(this, "LonelyLeader");
 //
-        int cohesionPercent = unit.squad().cohesionPercent();
+//        int cohesionPercent = unit.squad().cohesionPercent();
 //        int friendsNear = unit.friendsInRadius(7).count();
 //
 //        if (cohesionPercent <= 84 && friendsNear <= squad.size() * 0.7) {
@@ -48,18 +48,26 @@ public class AdvanceAsALeader extends MissionManager {
 //            return usedManager(this);
 //        }
 
-        if (cohesionPercent <= 69) {
-            actWithCohesionTooLow("LeaderWaitC");
-            return usedManager(this);
-        }
+//        if (cohesionPercent <= 69) {
+//            actWithCohesionTooLow("LeaderWaitC");
+//            return usedManager(this);
+//        }
 
         return null;
     }
 
     private boolean handleWhenTooFarFromSquadCenter() {
-        if (unit.distToSquadCenter() <= 9) return false;
+        double distToSquadCenter = unit.distToSquadCenter();
+        if (distToSquadCenter <= 3) return false;
 
-        return unit.move(squad.center(), Actions.MOVE_FORMATION, "LeaderToSquadCenter");
+        if (
+            distToSquadCenter >= 10
+                || unit.friendsNear().groundUnits().inRadius(3, unit).atMost(2)
+        ) {
+            return unit.move(squad.center(), Actions.MOVE_FORMATION, "LeaderToSquadCenter");
+        }
+
+        return false;
     }
 
     private boolean handleWhenLonely() {

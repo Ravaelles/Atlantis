@@ -24,6 +24,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
     private static boolean freeToSpendResources() {
         if (A.hasMinerals(550)) return decision(true, "Minerals++");
         if (hasTooFewUnits()) return decision(true, "TooFewUnits");
+        if (manyBasesAndHasMinerals()) return decision(true, "ConstStream");
         if (inEarlyGamePhaseMakeSureNotToBeTooWeak()) return decision(true, "PreventWeak");
 
         if (keepSomeResourcesInLaterGamePhases()) return decision(false, "KeepResources");
@@ -41,6 +42,10 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 //        System.err.println(A.now() + " 2dyna produce: " + A.minerals() + "/" + reservedMinerals);
 
         return decision(true, "OK");
+    }
+
+    private static boolean manyBasesAndHasMinerals() {
+        return A.hasMinerals(A.supplyUsed() <= 36 ? 250 : 310) && Count.basesWithUnfinished() >= 2;
     }
 
     private static boolean hasTooFewUnits() {
@@ -61,7 +66,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
     private static boolean inEarlyGamePhaseMakeSureNotToBeTooWeak() {
         return A.seconds() <= 400
-            && OurArmyStrength.relative() < 0.85;
+            && (OurArmyStrength.relative() < 0.85 || Count.zealots() <= 2 || Count.dragoons() <= 3);
     }
 
     private static boolean keepSomeResourcesInLaterGamePhases() {

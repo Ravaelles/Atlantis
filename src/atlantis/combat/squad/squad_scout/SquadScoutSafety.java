@@ -15,8 +15,6 @@ public class SquadScoutSafety extends Manager {
 
     @Override
     public boolean applies() {
-        
-
         enemies = unit.enemiesNear().canAttack(unit, 3.2 - (unit.hasCooldown() ? 0 : 0.7));
         return enemies.notEmpty();
     }

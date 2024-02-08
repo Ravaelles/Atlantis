@@ -22,11 +22,9 @@ public class ProduceObservers {
 
         if (Have.notEvenPlanned(AUnitType.Protoss_Observer)) {
             if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
-                if (Have.notEvenPlanned(AUnitType.Protoss_Observer)) {
-                    AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
-                }
-                return;
+                AddToQueue.withTopPriority(AUnitType.Protoss_Observer);
             }
+            return;
         }
 
         int limit = Math.max(

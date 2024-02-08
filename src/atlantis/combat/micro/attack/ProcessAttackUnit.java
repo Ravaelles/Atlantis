@@ -1,6 +1,7 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -87,6 +88,9 @@ public class ProcessAttackUnit extends Manager {
 //    }
 
     private boolean confirmAttack(AUnit target) {
+        Squad squad = unit.squad();
+        if (squad != null) squad.targeting().justAttacked(target);
+
         return unit.attackUnit(target);
     }
 

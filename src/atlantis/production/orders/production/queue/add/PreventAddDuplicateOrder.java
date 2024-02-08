@@ -29,6 +29,7 @@ public class PreventAddDuplicateOrder {
     private static boolean justRequestedThisType(AUnitType type) {
         if (type == null) return false;
 //        if (!type.isResource()) return false;
+        if (!type.isABuilding()) return false;
 
         int lastRequestedAgo = Queue.get().history().lastHappenedAgo(type.name());
 //        System.err.println(

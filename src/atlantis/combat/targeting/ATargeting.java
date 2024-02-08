@@ -109,7 +109,7 @@ public class ATargeting extends HasUnit {
 //            if (possible.atLeast(1) && unit.canAttackGroundUnits()) {
 //                System.err.println(unit + " return NULL target WTF");
 //                possible.print("These could be targetted");
-//                System.err.println("As a fix return: " + possible.nearestTo(unit));
+//                System.err.println("RemoveExcessiveOrders a fix return: " + possible.nearestTo(unit));
 //                return possible.nearestTo(unit);
 //            }
 //            return null;

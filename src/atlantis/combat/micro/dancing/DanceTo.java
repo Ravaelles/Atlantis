@@ -29,7 +29,16 @@ public class DanceTo extends Manager {
     }
 
     private boolean distanceConditionIsOk() {
-        return unit.distTo(target) <= unit.weaponRangeAgainst(target) + 0.2;
+        double distTo = unit.distTo(target);
+        int weaponRange = unit.weaponRangeAgainst(target);
+
+        if (
+            distTo <= (weaponRange - 1)
+                && unit.isDragoon()
+                && unit.friendsNear().dragoons().inRadius(1, unit).atMost(1)
+        ) return false;
+
+        return distTo <= weaponRange + 0.2;
     }
 
     private boolean isATargetThatWeCanDanceTo() {

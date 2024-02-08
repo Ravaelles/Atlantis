@@ -74,7 +74,10 @@ public class DanceAway extends Manager {
 
     private boolean continueDancingAway() {
         if (!unit.isMoving()) return false;
-        if (unit.lastActionMoreThanAgo(40, Actions.MOVE_DANCE_AWAY)) return false;
+        if (
+            unit.lastActionMoreThanAgo(40, Actions.MOVE_DANCE_AWAY)
+                && unit.lastUnderAttackMoreThanAgo((int) (10 + unit.woundPercent() / 2))
+        ) return false;
         if (unit.targetPosition() == null) return false;
 //        if (unit.distTo(unit.targetPosition()) <= 0.5) return false;
 
