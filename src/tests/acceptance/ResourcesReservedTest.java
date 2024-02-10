@@ -24,16 +24,28 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
 
     @Test
     public void reservedMineralsAndGasAreUpdatedAsOrderStatusChanges() {
-        if (true) return;
+//        if (true) return;
 
         ReservedResources.reset();
-        initialReservedMinerals = 450;
+        initialReservedMinerals = 100;
         afterInProgressMinerals = initialReservedMinerals - 100;
 
         createWorld(1,
             () -> {
-                mineralsAreReservedForOrdersMarkedAsReady();
+//                mineralsAreReservedForOrdersMarkedAsReady();
+
+                int haveMinerals = 460;
+
+                queue = initQueue(haveMinerals, 2323);
+                queue.refresh();
+                readyToProduceOrders = queue.readyToProduceOrders();
+
                 ProductionOrder order = readyToProduceOrders.first();
+
+//                System.out.println("A.supplyUsed() = " + A.supplyUsed());
+//                System.out.println("ReservedResources.minerals() = " + ReservedResources.minerals());
+//                System.out.println("first READY order = " + order);
+//                Queue.get().allOrders().print("All orders");
 
                 assertEquals(initialReservedMinerals, ReservedResources.minerals());
 
@@ -77,6 +89,7 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
 
         queue = initQueue(weHaveMinerals, 2323);
         queue.refresh();
+        readyToProduceOrders = queue.readyToProduceOrders();
 
         assertEquals(weHaveMinerals, A.minerals());
 

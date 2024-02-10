@@ -61,9 +61,9 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
     }
 
     private boolean makeFriendsHelpWithdraw(AUnit unit, AFocusPoint focus) {
-        if (unit.enemiesNear().combatUnits().empty()) {
-            for (AUnit friend : unit.friendsNear().inRadius(0.3, unit).combatUnits().list()) {
-                APosition withdrawFriendTo = friend.translateTilesTowards(1, focusPoint.fromSide());
+        if (unit.enemiesNear().combatUnits().inRadius(8, unit).empty()) {
+            for (AUnit friend : unit.friendsNear().inRadius(5, unit).combatUnits().list()) {
+                APosition withdrawFriendTo = friend.translateTilesTowards(2, focusPoint.fromSide());
                 if (friend.move(withdrawFriendTo, Actions.MOVE_FOCUS, "HelpWithdraw", true)) {
                     friend.setTooltip("HelpWithdraw", true);
                 }

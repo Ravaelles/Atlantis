@@ -218,7 +218,13 @@ public interface HasPosition {
 
     default double distToOr999(HasPosition position) {
         if (position == null) return 999;
-        
+
+        return PositionUtil.distanceTo(this, position);
+    }
+
+    default double distToOrMinus1(HasPosition position) {
+        if (position == null) return -1;
+
         return PositionUtil.distanceTo(this, position);
     }
 

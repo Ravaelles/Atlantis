@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend.sparta;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -28,11 +29,13 @@ public class DragoonSeparateFromZealots extends Manager {
     }
 
     private boolean separateFromZealots() {
-        APosition center = unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(0.8, unit).center();
-        if (center == null) return false;
+        AUnit zealot = unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(0.8, unit).first();
+        if (zealot == null) return false;
 
-        if (unit.distTo(center) < 0.7) {
-            unit.moveAwayFrom(center, 0.25, Actions.MOVE_SPACE, "SpaceForZealots");
+        if (unit.distTo(zealot) < 2) {
+//            System.out.println("@ " + A.now() + " - SEPARATE " + unit.id() + " / " + unit.distTo(zealot));
+//            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZealots");
+            unit.moveAwayFrom(zealot, 1.2, Actions.MOVE_SPACE, "SpaceForZealots");
             return true;
         }
 

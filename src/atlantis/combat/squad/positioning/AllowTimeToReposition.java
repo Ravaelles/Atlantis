@@ -8,11 +8,16 @@ public class AllowTimeToReposition extends Manager {
         super(unit);
     }
 
-    protected Manager handle() {
-        if (unit.isMoving() && unit.lastPositioningActionLessThanAgo(13) && !unit.isLeader()) {
-            return usedManager(this);
-        }
+    @Override
+    public boolean applies() {
+        return unit.isMoving()
+            && unit.lastPositioningActionLessThanAgo(13)
+            && unit.lastActionLessThanAgo(91)
+            && unit.enemiesNear().empty()
+            && !unit.isLeader();
+    }
 
-        return null;
+    protected Manager handle() {
+        return usedManager(this);
     }
 }

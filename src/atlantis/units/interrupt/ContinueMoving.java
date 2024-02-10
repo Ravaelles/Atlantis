@@ -14,9 +14,11 @@ public class ContinueMoving extends Manager {
 //        if (!unit.isDragoon()) return false;
         if (!unit.isMoving()) return false;
         if (unit.isStopped()) return false;
+        if (unit.lastActionMoreThanAgo(37)) return false;
         if (unit.lastPositionChangedMoreThanAgo(10)) return false;
 
         if (dontApplyDuringMissionDefendOrSparta()) return false;
+        if (unit.isScout() || unit.isSquadScout()) return false;
 
         return unit.targetPosition() != null
             && unit.lastActionLessThanAgo(unit.enemiesNear().empty() ? 14 : 5)
@@ -38,7 +40,7 @@ public class ContinueMoving extends Manager {
     }
 
     public Manager handle() {
-        unit.paintCircleFilled(26, Color.Purple);
+//        unit.paintCircleFilled(26, Color.Purple);
         return usedManager(this);
     }
 }

@@ -21,18 +21,16 @@ public class OtherConstructionTooClose {
         for (Construction order : ConstructionRequests.all()) {
             HasPosition constructionPosition = order.buildPosition();
 
-            if (
-                position != null && constructionPosition != null
-            ) {
+            if (position != null && constructionPosition != null) {
                 double distance = position.distTo(constructionPosition);
 
                 if (distance >= 2) {
-                    if (building.isSunkenOrCreep() && order.buildingType().isSunkenOrCreep()) return false;
                     if (building.isCannon() && order.buildingType().isCannon()) return false;
+                    if (building.isSunkenOrCreep() && order.buildingType().isSunkenOrCreep()) return false;
                 }
 
-                // Look for two bases that would be built too close one to another
-                if (distance <= (building.canHaveAddon() ? 4 : 2.5)) {
+                // Look for two positions that could overlap one another
+                if (distance <= (building.canHaveAddon() ? 4 : 3)) {
                     return failed("Planned building too close (" + building + ", dist: " + distance + ")");
                 }
             }

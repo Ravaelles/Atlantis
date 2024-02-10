@@ -12,6 +12,9 @@ public class ReservedResources {
     // =========================================================
 
     public static void reset() {
+//        System.out.println("---------------------- RESET");
+//        if (minerals > 0) A.printStackTrace("Ah!");
+
         minerals = 0;
         gas = 0;
     }

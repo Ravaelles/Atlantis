@@ -30,12 +30,21 @@ public class PreventAddDuplicateOrder {
         if (type == null) return false;
 //        if (!type.isResource()) return false;
         if (!type.isABuilding()) return false;
+        if (Count.withPlanned(type) == 0) return false;
 
         int lastRequestedAgo = Queue.get().history().lastHappenedAgo(type.name());
 //        System.err.println(
 //            A.now() + " - " + type + " lastRequestedAgo = " + lastRequestedAgo + " / CIQ="
 //                + CountInQueue.count(type)
 //        );
+
+        if (type.is(AUnitType.Protoss_Observatory)) {
+            A.printStackTrace("Excessive observatory // " + Count.withPlanned(type));
+        }
+        if (type.is(AUnitType.Protoss_Observer)) {
+            A.printStackTrace("Excessive observER // " + Count.withPlanned(type));
+        }
+
         if (lastRequestedAgo <= 30 * 2 && !type.isCombatBuilding()) {
             ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
             return true;

@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.information.generic.OurArmyStrength;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 
 import static bwapi.UpgradeType.Protoss_Ground_Armor;
@@ -16,6 +17,8 @@ public class ProtossGroundArmor extends Commander {
         if (TooWeakToTech.check()) return false;
 
         if (A.hasGas(320 + (Enemy.protoss() ? 100 : 0)) && A.hasMinerals(550)) {
+            if (Count.ourCombatUnits() <= 17) return false;
+
             return true;
         }
 

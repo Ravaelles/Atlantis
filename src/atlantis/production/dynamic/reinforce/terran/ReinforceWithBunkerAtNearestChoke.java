@@ -36,7 +36,7 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
         if (Count.inProductionOrInQueue(Terran_Bunker) > 0) return false;
 
         position = initialPositionToReinforce;
-        AChoke choke = Chokes.nearestChoke(initialPositionToReinforce);
+        AChoke choke = Chokes.nearestChoke(initialPositionToReinforce, "MAIN");
 
         if (choke != null) {
             translateChokeTowardsOurSide(choke);

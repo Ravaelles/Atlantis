@@ -208,7 +208,7 @@ public abstract class Squad extends Units {
     public AUnit squadScout() {
         return cacheUnit.getIfValid(
             "squadScout",
-            131,
+            -1,
             () -> (new DefineSquadScout(this)).define()
         );
     }

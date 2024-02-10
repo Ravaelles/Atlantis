@@ -27,7 +27,7 @@ public class SquadScoutProceed extends Manager {
     }
 
     private boolean cloneEnoughToFriends() {
-        return unit.distToBase() <= 40 || unit.friendsNear().inRadius(8, unit).count() >= 2;
+        return unit.distToBase() <= 30 || unit.friendsNear().groundUnits().inRadius(15, unit).count() >= 2;
     }
 
     protected Manager handle() {

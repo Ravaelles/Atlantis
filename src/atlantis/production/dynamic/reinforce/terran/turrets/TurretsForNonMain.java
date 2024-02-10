@@ -59,7 +59,7 @@ public class TurretsForNonMain extends TerranMissileTurret {
             return null;
         }
 
-        AChoke choke = Chokes.nearestChoke(natural);
+        AChoke choke = Chokes.nearestChoke(natural, "MAIN");
         if (choke == null) {
             return null;
         }

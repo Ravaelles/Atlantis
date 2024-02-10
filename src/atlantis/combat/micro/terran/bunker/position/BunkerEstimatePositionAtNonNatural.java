@@ -11,7 +11,7 @@ public class BunkerEstimatePositionAtNonNatural {
         if (positionToSecure == null) positionToSecure = Select.ourBases().last();
 
         AChoke choke;
-        if ((choke = Chokes.nearestChoke(positionToSecure)) != null) {
+        if ((choke = Chokes.nearestChoke(positionToSecure, "MAIN")) != null) {
             return positionToSecure.translateTilesTowards(3, choke);
         }
 

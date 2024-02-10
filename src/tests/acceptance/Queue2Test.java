@@ -38,10 +38,11 @@ public class Queue2Test extends NonAbstractTestFakingGame {
 
     private void frame1_queueIsInitializedFromBuildOrder() {
         queue = initQueue();
+        queue.refresh();
         allOrders = buildOrder.productionOrders();
 
-//        queue.allOrders().print("All orders");
-//        queue.readyToProduceOrders().print("Ready to produce orders");
+        queue.allOrders().print("All orders");
+        queue.readyToProduceOrders().print("Ready to produce orders");
 
         assertEquals(allOrders.size(), queue.allOrders().size());
         assertEquals(0, queue.inProgressOrders().size());

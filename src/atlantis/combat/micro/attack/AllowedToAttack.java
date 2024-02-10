@@ -129,12 +129,15 @@ public class AllowedToAttack {
         }
 
         if (!unit.canAttackTarget(target, false, true)) {
-            if (target.isOverlord()) ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Overlord for " + unit);
+//            if (target.isOverlord()) ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Overlord for " + unit);
 
             AttackNearbyEnemies.reasonNotToAttack = "InvalidTarget";
             unit.setTooltipTactical(AttackNearbyEnemies.reasonNotToAttack);
             unit.addLog(AttackNearbyEnemies.reasonNotToAttack);
-            System.err.println(AttackNearbyEnemies.reasonNotToAttack + " for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
+
+            if (!target.isOverlord()) {
+                System.err.println(AttackNearbyEnemies.reasonNotToAttack + " for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
+            }
 //            A.printStackTrace("Invalid target");
             return false;
         }

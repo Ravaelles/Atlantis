@@ -8,8 +8,8 @@ import atlantis.units.select.Count;
 
 public class AddToQueueToHave {
     public static boolean haveAtLeastOneWithTopPriority(AUnitType type, int howMany) {
-        cancelPreviousNonStartedOrdersOf(type);
-        Count.clearCache();
+//        cancelPreviousNonStartedOrdersOf(type);
+//        Count.clearCache();
 
         if (Count.withPlanned(type) >= howMany) return false;
 

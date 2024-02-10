@@ -1,26 +1,22 @@
 package atlantis.combat.advance.contain;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.contain.protoss.AppliesForProtoss;
+import atlantis.combat.advance.contain.protoss.AppliesContainForProtoss;
 import atlantis.combat.advance.contain.protoss.ContainAsProtoss;
-import atlantis.combat.advance.contain.terran.AppliesForTerran;
+import atlantis.combat.advance.contain.terran.AppliesContainForTerran;
 import atlantis.combat.advance.contain.terran.ContainAsTerran;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.micro.terran.tank.sieging.ForceSiege;
 import atlantis.combat.missions.MissionManager;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends MissionManager {
     private static final int DIST_TO_ENEMY_MAIN_CHOKE = 9;
-    
-    private final AppliesForTerran appliesForTerran = new AppliesForTerran(this);
-    private final AppliesForProtoss appliesForProtoss = new AppliesForProtoss(this);
+
+    private final AppliesContainForTerran appliesForTerran = new AppliesContainForTerran(this);
+    private final AppliesContainForProtoss appliesForProtoss = new AppliesContainForProtoss(this);
 
     public AChoke enemyMainChoke;
     public AChoke enemyNaturalChoke;
@@ -52,17 +48,17 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
     }
 
     public boolean closeToEnemyChokes() {
+        enemyMainChoke = Chokes.enemyMainChoke();
+
         return
             (
-                (enemyMainChoke = Chokes.enemyMainChoke()) != null
-                    && enemyMainChoke.distTo(unit) < DIST_TO_ENEMY_MAIN_CHOKE
+                enemyMainChoke != null && unit.distTo(enemyMainChoke) < DIST_TO_ENEMY_MAIN_CHOKE
             )
-//                ||
-//                (
-//                    (enemyNaturalChoke = Chokes.enemyNaturalChoke()) != null
-//                        && enemyNaturalChoke.distTo(unit) < 5
-//                )
-            ;
+            ||
+            (
+                (enemyNaturalChoke = Chokes.enemyNaturalChoke()) != null
+                    && unit.distTo(enemyNaturalChoke) < 8
+            );
     }
 
     public double minDistToEnemyBuilding() {

@@ -79,10 +79,15 @@ public class AttackNearbyEnemies extends Manager {
     private boolean continueLastAttack() {
         AUnit target = unit.targetUnitToAttack();
 
-        if (target != null && target.hp() > 0 && (
-            unit.lastActionLessThanAgo(4, Actions.ATTACK_UNIT)
-                || unit.lastActionLessThanAgo(4, Actions.MOVE_ATTACK)
-        )) {
+        if (
+            target != null
+                && target.hp() > 0
+                && unit.distTo(target) <= unit.weaponRangeAgainst(target)
+                && (
+                unit.lastActionLessThanAgo(4, Actions.ATTACK_UNIT)
+                    || unit.lastActionLessThanAgo(4, Actions.MOVE_ATTACK)
+            )
+        ) {
             return true;
         }
 

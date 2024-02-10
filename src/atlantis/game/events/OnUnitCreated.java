@@ -27,6 +27,9 @@ public class OnUnitCreated {
     }
 
     private static void handleOurUnitCreated(AUnit unit) {
+        Count.clearCache();
+        Select.clearCache();
+
         // Apply construction fix: detect new Protoss buildings and remove them from queue.
         if (We.protoss() && unit.type().isABuilding()) {
             ProtossWarping.handleNewBuildingWarped(unit);
@@ -36,8 +39,6 @@ public class OnUnitCreated {
             if (unit.isBase()) CancelNotStartedBases.cancelNotStartedBases();
         }
 
-        Count.clearCache();
-        Select.clearCache();
         Queue.get().refresh();
 
         if (unit.isABuilding()) {

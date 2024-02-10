@@ -30,7 +30,7 @@ public class WouldBlockChokeBySieging extends Manager {
                     Select.enemy().combatBuildings(false).inRadius(8.2, unit).notEmpty()
                 ) return false;
 
-                AChoke choke = Chokes.nearestChoke(unit);
+                AChoke choke = Chokes.nearestChoke(unit, "MAIN");
                 if (choke != null && choke.width() <= 2.5) {
                     if (unit.distTo(choke) < -1) {
                         System.out.println("unit.distTo(choke) = " + unit.distTo(choke));

@@ -56,7 +56,7 @@ public class TravelToConstruct extends HasUnit {
 //                    || !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition)
 //            ) {
             if (shouldRefreshConstructionPosition(buildingType, buildPosition)) {
-                System.err.println(A.now() + " Refresh " + buildingType + " position");
+//                System.err.println(A.now() + " Refresh " + buildingType + " position");
                 refreshConstructionPositionIfNeeded(construction, buildingType);
                 return false;
             }

@@ -7,8 +7,8 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ProtossForbiddenByStreetGrid {
-    public static final int GRID_VALUE_X = 8;
-    public static final int GRID_VALUE_Y = 8;
+    public static final int GRID_VALUE_X = 12;
+    public static final int GRID_VALUE_Y = 12;
 
     /**
      * Returns true if game says it's possible to build given building at this position.

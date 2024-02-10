@@ -8,15 +8,17 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ProtossForProducerBuilding {
-    private static int A = 2;
-    private static int B = 6;
+    private static int A = 0;
+    private static int B = 8;
 
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!We.protoss()) return false;
         if (!isProducingBuilding(building)) return false;
 
-        return (position.tx() % 8 == A || position.tx() % 8 == B)
-            && (position.ty() % 8 == A || position.ty() % 8 == B);
+        int GRID_SIZE = ProtossForbiddenByStreetGrid.GRID_VALUE_X;
+
+        return (position.tx() % GRID_SIZE == A || position.tx() % GRID_SIZE == B)
+            && (position.ty() % GRID_SIZE == A || position.ty() % GRID_SIZE == B);
 
 //        return !isNextToAPylon(builder, building, position);
     }

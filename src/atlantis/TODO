@@ -1,8 +1,13 @@
 ### Protoss ############################################################################################################
 
---- Split unit focus with 2nd base. Dont use Sparta in MAIN
 
-.- DontAdvanceButSiege is causing units to attack sunkens on their own
+---------------- Robotics Fac and Gateway constructions colliding position
+
+?- SeparateFromZealot for both scout and ss
+
+.-- scout RunningFromGroup and doesn run towards base
+
+.--- No WithdrawWrongSide, Dragoon holding choke!
 
 -- Zealots try to attack Goons in another region (close to base). Introduce one Shuttle?
 

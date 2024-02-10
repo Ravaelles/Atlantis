@@ -6,11 +6,11 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
-public class AppliesForProtoss {
+public class AppliesContainForProtoss {
     private final DontAdvanceButHoldAndContainWhenEnemyBuildingsClose manager;
     private final AUnit unit;
 
-    public AppliesForProtoss(DontAdvanceButHoldAndContainWhenEnemyBuildingsClose manager) {
+    public AppliesContainForProtoss(DontAdvanceButHoldAndContainWhenEnemyBuildingsClose manager) {
         this.manager = manager;
         this.unit = this.manager.unit();
     }
@@ -20,11 +20,11 @@ public class AppliesForProtoss {
         if (weAreTooStrongToJustContain()) return false;
 
         return manager.closeToEnemyBuildingsOrChoke()
-            && (noPlentyOfFriendsNearby() || tooManyDefences());
+            && (noPlentyOfFriendsNearby() || enemyHasDefences());
     }
 
-    protected boolean tooManyDefences() {
-        boolean isNotVeryStrong = A.supplyUsed() <= 185 && unit.friendsNear().atMost(33);
+    protected boolean enemyHasDefences() {
+        boolean isNotVeryStrong = A.supplyUsed() <= 185 && unit.friendsNear().atMost(25);
 
         return isNotVeryStrong && unit.enemiesNear().combatBuildingsAntiLand().notEmpty();
     }
@@ -33,10 +33,13 @@ public class AppliesForProtoss {
         return unit.friendsNear().inRadius(8, unit).atMost(10);
     }
 
-    protected static boolean weAreTooStrongToJustContain() {
+    protected boolean weAreTooStrongToJustContain() {
+        if (A.supplyUsed() > 185) return true;
+        if (A.minerals() > 2000) return true;
+
+        if (unit.friendsNear().combatUnits().atMost(15)) return false;
+
         return Alpha.get().size() >= 40
-            || A.supplyUsed() > 180
-            || A.minerals() > 2000
             || A.resourcesBalance() >= 1300;
     }
 }

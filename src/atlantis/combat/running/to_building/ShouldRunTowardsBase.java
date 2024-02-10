@@ -9,10 +9,12 @@ import atlantis.units.select.Select;
 
 public class ShouldRunTowardsBase {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
+        if (unit.isScout() && unit.enemiesNear().buildings().notEmpty()) return true;
+        if (unit.isSquadScout()) return true;
+
         if (A.seconds() >= 500) return false;
         if (unit.isFlying()) return false;
         if (unit.hp() <= 20) return false;
-        if (unit.isScout()) return false;
         if (unit.isDragoon() || unit.isTank()) return false;
 
         AUnit main = Select.main();

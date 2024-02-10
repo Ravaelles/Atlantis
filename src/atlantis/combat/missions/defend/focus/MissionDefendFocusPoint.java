@@ -99,7 +99,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
         if (lastBase == null) return null;
 
-        AChoke choke = Chokes.nearestChoke(lastBase.position());
+        AChoke choke = Chokes.nearestChoke(lastBase.position(), "MAIN");
 
         return new AFocusPoint(
             choke != null ? choke : lastBase,

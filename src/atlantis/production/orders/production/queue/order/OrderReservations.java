@@ -23,7 +23,7 @@ public class OrderReservations {
         ReservedResources.reserveGas(reservedGas, order.toString());
         alreadyReserved = true;
 
-//        System.err.println("        reserved=" + reservedMinerals + " for " + order + " / " + ReservedResources.minerals());
+        System.out.println("        reserved=" + reservedMinerals + " for " + order + " / " + ReservedResources.minerals());
     }
 
     public void clearResourcesReserved() {

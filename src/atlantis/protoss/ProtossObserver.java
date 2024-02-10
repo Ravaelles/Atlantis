@@ -18,10 +18,6 @@ public class ProtossObserver extends MobileDetector {
 
     @Override
     public boolean applies() {
-        if (unit.isObserver()) {
-            unit.paintCircleFilled(6, Color.Purple);
-        }
-
         return unit.isObserver();
     }
 

@@ -153,7 +153,7 @@ public class PositionModifier {
             if (construction != null) {
                 construction.setMaxDistance(9);
             }
-            AChoke chokepointForNatural = Chokes.natural(main.position());
+            AChoke chokepointForNatural = Chokes.natural();
             if (chokepointForNatural != null && main != null) {
                 ABaseLocation natural = DefineNaturalBase.naturalIfMainIsAt(main.position());
 //                return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);

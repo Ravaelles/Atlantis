@@ -60,9 +60,17 @@ public class ScoutCommander extends Commander {
     private void removeOverlordsAsScouts() {
         if (We.zerg()) {
             if (EnemyInfo.hasDiscoveredAnyBuilding()) {
-                ScoutState.scouts.clear();
+                removeAllScouts();
             }
         }
+    }
+
+    private void removeAllScouts() {
+        for (AUnit scout : ScoutState.scouts) {
+            scout.setScout(false);
+        }
+
+        ScoutState.scouts.clear();
     }
 
 
@@ -102,12 +110,16 @@ public class ScoutCommander extends Commander {
                     }
 
                     if (ScoutState.scouts.isEmpty()) {
-
-                        ScoutState.scouts.add(scout);
+                        addScout(scout);
                         return;
                     }
                 }
             }
+    }
+
+    private static void addScout(AUnit newScout) {
+        ScoutState.scouts.add(newScout);
+        newScout.setScout(true);
     }
 
     private static List<AUnit> candidates() {
@@ -117,8 +129,9 @@ public class ScoutCommander extends Commander {
     private void removeExcessiveScouts() {
         if (ScoutState.scouts.size() > 1) {
             AUnit leaveThisScout = ScoutState.scouts.get(ScoutState.scouts.size() - 1);
-            ScoutState.scouts.clear();
-            ScoutState.scouts.add(leaveThisScout);
+            removeAllScouts();
+
+            addScout(leaveThisScout);
         }
     }
 
@@ -126,7 +139,7 @@ public class ScoutCommander extends Commander {
         for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
             AUnit scout = iterator.next();
             if (!scout.isAlive()) {
-
+                scout.setScout(false);
                 iterator.remove();
                 ScoutState.scoutsKilledCount++;
             }

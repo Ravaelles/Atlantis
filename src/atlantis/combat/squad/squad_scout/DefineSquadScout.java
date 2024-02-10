@@ -1,7 +1,9 @@
 package atlantis.combat.squad.squad_scout;
 
 import atlantis.combat.squad.Squad;
+import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
@@ -14,6 +16,8 @@ public class DefineSquadScout {
     }
 
     public AUnit define() {
+        if (squad == null || A.isUms() || Count.ourCombatUnits() <= 4) return null;
+
         if (!squad.isMainSquad()) return null;
         if (We.terran() && Select.ourCombatUnits().ranged().empty()) return null;
 
@@ -21,10 +25,22 @@ public class DefineSquadScout {
         Selection groundUnits = squad.units().groundUnits();
         AUnit ranged = groundUnits.ranged().nonTanks().healthy().notSpecialAction().mostDistantToBase();
         if (ranged != null) {
-            return ranged;
+            return defineNewSquadScout(ranged);
+        }
+
+        ranged = groundUnits.ranged().nonTanks().mostDistantToBase();
+        if (ranged != null) {
+            return defineNewSquadScout(ranged);
         }
 
         // If no ranged unit is available, use melee (Zealot). Not perfect, but better than nothing.
-        return groundUnits.melee().havingAtLeastHp(30).mostDistantToBase();
+        return defineNewSquadScout(groundUnits.melee().havingAtLeastHp(30).mostDistantToBase());
+    }
+
+    private static AUnit defineNewSquadScout(AUnit squadScout) {
+        if (squadScout == null) return null;
+
+        squadScout.setSquadScout();
+        return squadScout;
     }
 }

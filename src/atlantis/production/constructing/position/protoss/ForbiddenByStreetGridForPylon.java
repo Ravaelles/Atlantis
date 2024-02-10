@@ -9,6 +9,9 @@ import atlantis.units.AUnitType;
 import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
 public class ForbiddenByStreetGridForPylon {
+    public static final int A = 4;
+    public static final int B = 6;
+
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!building.isPylon()) return false;
 
@@ -21,10 +24,11 @@ public class ForbiddenByStreetGridForPylon {
     }
 
     private static boolean streetGridMatches(APosition position) {
-        return position.tx() % ProtossForbiddenByStreetGrid.GRID_VALUE_X >= 2
-            && position.tx() % ProtossForbiddenByStreetGrid.GRID_VALUE_X <= 6
-            && position.ty() % ProtossForbiddenByStreetGrid.GRID_VALUE_Y >= 2
-            && position.ty() % ProtossForbiddenByStreetGrid.GRID_VALUE_Y <= 6;
+        int GRID_SIZE_X = ProtossForbiddenByStreetGrid.GRID_VALUE_X;
+        int GRID_SIZE_Y = ProtossForbiddenByStreetGrid.GRID_VALUE_Y;
+
+        return (position.tx() % GRID_SIZE_X == A || position.tx() % GRID_SIZE_X == B)
+            && (position.ty() % GRID_SIZE_Y == A || position.ty() % GRID_SIZE_Y == B);
 
 //            && position.tx() %  >= 1
 //            && position.ty() % ProtossForbiddenByStreetGrid.GRID_VALUE_Y >= 1;

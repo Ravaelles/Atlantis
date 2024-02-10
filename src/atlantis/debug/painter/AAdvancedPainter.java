@@ -1561,7 +1561,7 @@ public class AAdvancedPainter extends APainter {
         paintBase(enemyBase, "Enemy natural", Color.Orange, 0);
 
         // Our natural choke
-        AChoke naturalChoke = Chokes.natural(DefineNaturalBase.natural());
+        AChoke naturalChoke = Chokes.natural();
         if (naturalChoke != null) {
             paintChoke(naturalChoke, Green, "Natural choke " + naturalChoke.position().distToMapBorders());
         }

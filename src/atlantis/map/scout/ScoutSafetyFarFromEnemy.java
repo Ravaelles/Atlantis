@@ -8,7 +8,6 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class ScoutSafetyFarFromEnemy extends Manager {
-
     private AUnit enemy;
 
     public ScoutSafetyFarFromEnemy(AUnit unit) {

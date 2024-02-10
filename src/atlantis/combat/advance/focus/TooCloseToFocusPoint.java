@@ -10,7 +10,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class TooCloseToFocusPoint extends MoveToFocusPoint {
-
     private DistFromFocus distFromFocus;
 
     public TooCloseToFocusPoint(AUnit unit) {
@@ -57,19 +56,21 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     private boolean asDragoon() {
-        if (!unit.isDragoon()) return true;
+        if (!unit.isDragoon()) return false;
 
-        if (unit.distToFocusPoint() <= 2.6) {
-            if (A.everyNthGameFrame(12)) unit.holdPosition("DragoonTooCloseA");
-            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
-        }
+//        if (unit.distToFocusPoint() <= 2.6) {
+        if (A.everyNthGameFrame(15)) unit.holdPosition("DragoonTooCloseA");
+        else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
+//        }
 
-        if (unit.hp() >= 30) {
-            unit.holdPosition("DragoonHold");
-            return true;
-        }
+        return true;
 
-        return false;
+//        if (unit.hp() >= 30) {
+//            unit.holdPosition("DragoonHold");
+//            return true;
+//        }
+//
+//        return false;
     }
 
     private boolean goAwayFromCenter() {

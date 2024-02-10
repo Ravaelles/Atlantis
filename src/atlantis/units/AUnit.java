@@ -28,7 +28,6 @@ import atlantis.map.choke.IsUnitWithinChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
-import atlantis.map.scout.ScoutCommander;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.builders.BuilderManager;
@@ -41,7 +40,6 @@ import atlantis.units.detected.IsOurUnitUndetected;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.AMineralGathering;
@@ -137,6 +135,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int _lastPositionChanged;
     public HasPosition _lastPositionRunInAnyDir = null;
     private AUnit _targetUnitToAttack;
+
+    private boolean isScout = false;
+    private boolean isSquadScout = false;
 
     // =========================================================
 
@@ -1733,8 +1734,24 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isScout() {
-        return ScoutCommander.isScout(this);
+        return isScout;
     }
+
+    public void setScout(boolean isScout) {
+        this.isScout = isScout;
+    }
+
+    public boolean isSquadScout() {
+        return isSquadScout;
+    }
+
+    public void setSquadScout() {
+        isSquadScout = true;
+    }
+
+//    public boolean isScout() {
+//        return ScoutCommander.isScout(this);
+//    }
 
     public boolean isFlyingScout() {
         return FlyingBuildingScoutCommander.isFlyingBuilding(this);
@@ -2136,12 +2153,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isAirUnitAntiAir();
     }
 
-    public boolean isSquadScout() {
-        if (squad() == null || A.isUms() || Count.ourCombatUnits() <= 4) return false;
-
-        return equals(squad().squadScout());
-    }
-
     private Mission squadMission() {
         if (squad() == null) {
             return null;
@@ -2342,7 +2353,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public Selection enemiesNear() {
         return ((Selection) cache.get(
             "enemiesNear",
-            5,
+            7,
             () -> {
                 if (unit().isOur()) {
                     return EnemyUnits.discovered()
@@ -2398,7 +2409,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public Selection friendsNear() {
         return ((Selection) cache.get(
             "friendsNear",
-            5,
+            7,
             () -> {
                 if (unit().isOur()) {
                     return Select.ourRealUnits()
@@ -3094,7 +3105,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (AChoke) cache.get(
             "nearestChoke",
             167,
-            () -> Chokes.nearestChoke(this)
+            () -> Chokes.nearestChoke(this, "MAIN")
         );
     }
 

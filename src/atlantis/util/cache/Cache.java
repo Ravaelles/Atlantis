@@ -78,8 +78,15 @@ public class Cache<V> {
             }
         }
 
-        set(cacheKey, cacheForFrames, callback);
-        return get(cacheKey, cacheForFrames, callback);
+        @SuppressWarnings("unchecked") V newValue = (V) callback.run();
+        set(cacheKey, cacheForFrames, newValue);
+
+        return newValue;
+
+//        set(cacheKey, cacheForFrames, callback);
+//        return get(cacheKey, cacheForFrames, callback);
+
+//        return (V) callback.run();
     }
 
     public V set(String cacheKey, int cacheForFrames, Callback callback) {

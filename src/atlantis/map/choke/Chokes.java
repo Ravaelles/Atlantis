@@ -5,6 +5,7 @@ import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
+import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
@@ -85,26 +86,26 @@ public class Chokes {
             () -> {
                 if (!ActiveMap.isMap("7th")) {
                     AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
-                    if (fullfillsConditionsForNatural(choke, Chokes.mainChoke())) {
+                    if (fullfillsConditionsForNatural(choke, "NATURAL")) {
                         //                        System.err.println("choke.position() = " + choke.position());
                         //                        System.err.println("AMap.getMapHeightInTiles() = " + AMap.getMapHeightInTiles());
                         return choke;
                     }
                 }
 
-                return nearestChoke(DefineNaturalBase.natural());
+                return nearestChoke(DefineNaturalBase.natural(), "MAIN");
             }
         );
     }
 
-    public static AChoke natural(HasPosition relativeTo) {
+    public static AChoke natural(HasPosition relativeTo, String flag) {
         if (relativeTo == null) {
             return null;
         }
 
         return (AChoke) cache.get(
             "natural:" + relativeTo.toStringPixels(),
-            403,
+            -1,
             () -> {
                 ARegion naturalRegion = Regions.getRegion(DefineNaturalBase.naturalIfMainIsAt(relativeTo.position()));
                 if (naturalRegion == null) {
@@ -119,7 +120,7 @@ public class Chokes {
                 }
 
                 for (AChoke choke : naturalRegion.chokes()) {
-                    if (fullfillsConditionsForNatural(choke, mainChoke)) return choke;
+                    if (fullfillsConditionsForNatural(choke, flag)) return choke;
                 }
 
                 return null;
@@ -127,17 +128,26 @@ public class Chokes {
         );
     }
 
-    public static boolean fullfillsConditionsForNatural(AChoke choke, AChoke mainChoke) {
+    public static boolean fullfillsConditionsForNatural(AChoke choke, String flag) {
         if (choke == null) return false;
-        if (mainChoke == null) return false;
 
         return choke.width() <= 7
-            && choke.center().distTo(mainChoke) > 7
-//            && choke.center().distTo(mainChoke) <= 17
-            && choke.position().distToMapBorders() > 9;
+            && choke.position().distToMapBorders() > 9
+            && choke.center().distToOr999(flagToChoke(flag)) >= 10;
+    }
+
+    private static AChoke flagToChoke(String flag) {
+        if (flag.equals("NATURAL")) return Chokes.mainChoke();
+        if (flag.equals("ENEMY_NATURAL")) return Chokes.enemyMainChoke();
+
+        return null;
     }
 
     public static AChoke nearestChoke(HasPosition position) {
+        return nearestChoke(position, "");
+    }
+
+    public static AChoke nearestChoke(HasPosition position, final String flag) {
         if (position == null) return null;
         if (Env.isTesting()) return null;
 
@@ -149,7 +159,7 @@ public class Chokes {
                 AChoke nearest = null;
 
                 for (AChoke choke : chokes()) {
-                    if (!fullfillsConditionsForNatural(choke, Chokes.mainChoke())) continue;
+                    if (!fullfillsConditionsForNatural(choke, flag)) continue;
 
 //                    double dist = position.position().groundDistanceTo(choke.center()) - (choke.width() / 64.0);
                     double dist = position.position().groundDistanceTo(choke.center());
@@ -191,13 +201,32 @@ public class Chokes {
 
     public static AChoke enemyMainChoke() {
         AUnit enemyMain = EnemyUnits.enemyBase();
-        if (enemyMain == null) return null;
 
-        return (AChoke) cache.get(
+        return (AChoke) cache.getIfValid(
             "enemyMainChoke",
-            151,
-            () -> nearestChoke(enemyMain)
+            -1,
+//            () -> nearestChoke(enemyMain, "MAIN")
+            () -> {
+                HasPosition nearTo = enemyMain;
+
+                if (nearTo == null) nearTo = enemyMainGuessWhenEnemyBaseIsUnknown();
+
+                return nearestChoke(nearTo, "MAIN");
+            }
         );
+    }
+
+    private static AChoke enemyMainGuessWhenEnemyBaseIsUnknown() {
+        AChoke mainChoke = mainChoke();
+        if (mainChoke == null) return null;
+
+        List<ABaseLocation> possibleLocationsOfEnemyBase = BaseLocations.startingLocations(true);
+
+        if (possibleLocationsOfEnemyBase.size() == 1) {
+            return nearestChoke(possibleLocationsOfEnemyBase.get(0), "ENEMY_MAIN");
+        }
+
+        return null;
     }
 
     public static AChoke enemyNaturalChoke() {
@@ -208,8 +237,8 @@ public class Chokes {
 
         return (AChoke) cache.get(
             "enemyNaturalChoke",
-            101,
-            () -> natural(enemyNatural)
+            -1,
+            () -> natural(enemyNatural, "ENEMY_NATURAL")
         );
     }
 

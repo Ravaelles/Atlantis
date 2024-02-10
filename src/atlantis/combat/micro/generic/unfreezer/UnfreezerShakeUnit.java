@@ -13,6 +13,11 @@ public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (shouldNotDoAnythingButContinue(unit)) return true;
 
+        if (!unit.isStopped() && unit.lastActionMoreThanAgo(30 * 8, Actions.STOP)) {
+            unit.stop("UnfreezeByStop");
+            return true;
+        }
+
         if (unit.isMissionDefendOrSparta() && unit.lastActionMoreThanAgo(30 * 2, Actions.MOVE_UNFREEZE)) {
 //            if (unit.lastActionLessThanAgo(30 * 2, Actions.MOVE_UNFREEZE)) return true;
 
