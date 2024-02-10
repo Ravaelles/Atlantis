@@ -7,6 +7,7 @@ import atlantis.information.tech.ATechRequests;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.production.requests.produce.ProduceUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -21,10 +22,14 @@ public class ProductionOrderHandler extends Commander {
 
     @Override
     protected void handle() {
-
         // Produce UNIT
         if (order.unitType() != null) {
             AUnitType unitType = order.unitType();
+
+            if (order.construction() != null) {
+                ErrorLog.printMaxOncePerMinute("Construction already begun for " + order);
+                return;
+            }
 
             if (unitType.isABuilding()) {
                 ProduceBuilding.produceBuilding(unitType, order);

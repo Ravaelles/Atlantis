@@ -80,6 +80,14 @@ public class Queue extends AbstractQueue {
         );
     }
 
+    public Orders nonCompletedNext30() {
+        return cache.get(
+            "nonCompletedNext30",
+            CACHE_FOR_FRAMES,
+            orders::nonCompletedNext30
+        );
+    }
+
     public Orders completedOrders() {
         return cache.get(
             "completedOrders",

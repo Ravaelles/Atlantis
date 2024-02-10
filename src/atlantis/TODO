@@ -1,11 +1,11 @@
 ### Protoss ############################################################################################################
 
 
----------------- Robotics Fac and Gateway constructions colliding position
+--- Prod. Queue  -> does not contain pending constructions at all
 
-?- SeparateFromZealot for both scout and ss
+----- 2nd pylon gets doubled
 
-.-- scout RunningFromGroup and doesn run towards base
+----- Pylon grid and Gateway. Make Pylon always on the left
 
 .--- No WithdrawWrongSide, Dragoon holding choke!
 

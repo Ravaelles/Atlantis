@@ -30,7 +30,10 @@ public class UnfreezeGeneric extends Manager {
     private boolean isDragoonDuringSpartaMission() {
         return unit.isDragoon()
             && unit.isMissionSparta()
-            && unit.friendsNear().zealots().inRadius(3, unit).notEmpty();
+            && (
+                unit.lastAttackFrameLessThanAgo(30 * 3)
+                || unit.friendsNear().zealots().inRadius(5, unit).notEmpty()
+        );
     }
 
     @Override

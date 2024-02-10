@@ -47,6 +47,15 @@ public interface OrdersFilters {
         );
     }
 
+    default Orders nonCompletedNext30() {
+        return new Orders(
+            list().stream()
+                .filter(order -> !order.isCompleted())
+                .limit(30)
+                .collect(Collectors.toList())
+        );
+    }
+
     default Orders notInProgress() {
         return new Orders(
             list().stream()

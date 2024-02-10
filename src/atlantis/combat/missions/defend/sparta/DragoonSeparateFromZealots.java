@@ -32,10 +32,15 @@ public class DragoonSeparateFromZealots extends Manager {
         AUnit zealot = unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(0.8, unit).first();
         if (zealot == null) return false;
 
-        if (unit.distTo(zealot) < 2) {
+        if (unit.distToNearestChokeCenter() <= 2.7) {
+            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZeal!");
+            return true;
+        }
+
+        if (unit.distTo(zealot) < 1) {
 //            System.out.println("@ " + A.now() + " - SEPARATE " + unit.id() + " / " + unit.distTo(zealot));
 //            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZealots");
-            unit.moveAwayFrom(zealot, 1.2, Actions.MOVE_SPACE, "SpaceForZealots");
+            unit.moveAwayFrom(zealot, 0.5, Actions.MOVE_SPACE, "SpaceForZealots");
             return true;
         }
 

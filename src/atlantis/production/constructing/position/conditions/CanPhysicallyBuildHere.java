@@ -27,9 +27,12 @@ public class CanPhysicallyBuildHere {
             AAdvancedPainter.paintCircleFilled(position, 5, Color.Red);
         }
 
-        // Fix for bases & bunkers - allow in unknown locations
-        if (building.isBase() && (!position.isExplored() || !position.isPositionVisible())) return true;
-//        if (building.isCombatBuilding() && !position.isExplored()) return true;
+        // Fix to allow UNEXPLORED positions and treat them as buildable
+        if (
+            (!building.isGasBuilding())
+//            building.isBase()
+                && (!position.isExplored() || !position.isPositionVisible())
+        ) return true;
 
 //        if (!position.isExplored() && position.regionsMatch(MainRegion.mainRegion())) return true;
 

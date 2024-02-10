@@ -125,6 +125,11 @@ public class AddToQueue {
 //                A.printStackTrace("Robotics Facility ADDED TO QUEUE");
 //            }
 
+            if (A.supplyTotal() >= 16 && type.is(AUnitType.Protoss_Pylon) && A.supplyTotal() <= 26) {
+                A.printStackTrace("Pylon ADDED TO QUEUE (Supply:" + A.supplyTotal()
+                    + ", IN_PROD:" + Count.inProductionOrInQueue(AUnitType.Protoss_Pylon) + ")");
+            }
+
             if (type.is(AUnitType.Protoss_Nexus)) {
                 A.println(A.now() + " Nexus ADDED TO QUEUE, min=" + A.minerals()
                     + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);

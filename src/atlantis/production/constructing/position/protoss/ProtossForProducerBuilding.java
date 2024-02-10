@@ -8,8 +8,8 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ProtossForProducerBuilding {
-    private static int A = 0;
-    private static int B = 8;
+    private static int A = 3;
+    private static int B = 10;
 
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!We.protoss()) return false;

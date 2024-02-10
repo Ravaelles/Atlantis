@@ -3152,6 +3152,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public double distToNearestChokeCenter() {
+        return (double) cache.get(
+            "distToNearestChokeCenter",
+            77,
+            () -> {
+                AChoke nearestChoke = nearestChoke();
+                if (nearestChoke == null) return 999.0;
+
+                return distTo(nearestChoke.center());
+            }
+        );
+    }
+
     public double distToSquadCenter() {
         return squad != null ? distTo(squad.center()) : -1;
     }

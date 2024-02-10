@@ -676,7 +676,8 @@ public class AAdvancedPainter extends APainter {
      * Paints next units to build in top left corner.
      */
     static void paintProductionQueue() {
-        Orders nextOrders = Queue.get().nextOrders(30);
+//        Orders nextOrders = Queue.get().nextOrders(30);
+        Orders nextOrders = Queue.get().nonCompletedNext30();
         int size = nextOrders.size();
 
         paintSideMessage("", Color.White);

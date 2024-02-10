@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
 import atlantis.combat.squad.positioning.EarlyGameTooClustered;
-import atlantis.combat.squad.positioning.TooClustered;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -52,12 +51,12 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
         }
 
         return Math.max(
-            baseForRanged(),
+            baseForUnit(),
             base + letWorkersComeThroughBonus()
         );
     }
 
-    private double baseForRanged() {
+    private double baseForUnit() {
         if (unit.isDragoon()) return 2.3;
 
         return unit.isRanged() ? 3.7 : 0;

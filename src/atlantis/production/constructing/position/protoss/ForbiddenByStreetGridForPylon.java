@@ -9,8 +9,8 @@ import atlantis.units.AUnitType;
 import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
 public class ForbiddenByStreetGridForPylon {
-    public static final int A = 4;
-    public static final int B = 6;
+    public static final int A = 1;
+    public static final int B = 8;
 
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!building.isPylon()) return false;

@@ -40,6 +40,10 @@ public class Construction implements Comparable<Construction> {
         status = ConstructionOrderStatus.NOT_STARTED;
         timeOrdered = AGame.now();
 
+        if (A.supplyTotal() == 17 && buildingType.isPylon()) {
+            A.printStackTrace("Pylon at 17 supply");
+        }
+
 //        System.out.println("@@@@@ " + A.now() + " - new constr: " + id() + " / " + buildingType);
 //        if (id() >= 1000) {
 //            System.out.println("@ " + A.now() + " - new constr: " + id() + " / " + buildingType);

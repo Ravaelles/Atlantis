@@ -33,7 +33,7 @@ public class ProtossShouldExpand {
                 bases = Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE);
                 basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 
-                if (basesInProduction >= 2) return no("InProduction");
+                if (basesInProduction >= (A.supplyUsed() <= 80 ? 1 : 2)) return no("InProduction");
                 if (bases >= 7) return no("TooManyBases");
 
                 // === Second base ===========================================
@@ -95,11 +95,11 @@ public class ProtossShouldExpand {
         if (armyStrength <= 80) return no("TooWeak");
 
         if (bases <= 1 && basesInProduction <= 0) {
-            if (Count.workers() >= 22) return yes("ManyWorkers");
             if (A.hasMinerals(350)) return yes("ManyMinerals");
+            if (Count.workers() >= 22) return yes("ManyWorkers");
+            if (seconds >= 750) return yes("GettingLate");
             if (A.hasMinerals(230) && Count.gateways() >= 3) return yes("ManyGateways");
         }
-        if (seconds >= 700 && bases <= 1 && basesInProduction <= 0) return yes("GettingLate");
 
         boolean secondsAllow = (
             (seconds >= 400 && Count.ourCombatUnits() >= 20)
@@ -107,7 +107,6 @@ public class ProtossShouldExpand {
         );
 
         if (secondsAllow) return yes("StrongEnough");
-
         if (basesInProduction == 0 && AGame.canAfford(360, 0)) return yes("CanAfford");
 
         if (seconds <= 400 && armyStrength < 100) return no("Weak");
