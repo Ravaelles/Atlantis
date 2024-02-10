@@ -93,19 +93,19 @@ public class AddToQueue {
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
         if (PreventAddDuplicateOrder.preventExcessiveOrInvalidOrders(type, position)) return null;
 
-            if (A.supplyTotal() >= 30 && type.isPylon()) {
-                int inQueue = CountInQueue.count(AUnitType.Protoss_Pylon);
+        if (A.supplyTotal() >= 30 && type.isPylon()) {
+            int inQueue = CountInQueue.count(AUnitType.Protoss_Pylon);
 
-                if (inQueue >= 2) {
-                    A.println(A.now() + ": @@@@@@@@@@@@@ Add PYLON @@@@ " + position + " / " +
-                        inQueue);
-                }
-
-                if (inQueue >= 2) {
-                    A.printStackTrace("Too many pylons in queue (" + inQueue + ")");
-                    return null;
-                }
+            if (inQueue >= 2) {
+                A.println(A.now() + ": @@@@@@@@@@@@@ Add PYLON @@@@ " + position + " / " +
+                    inQueue);
             }
+
+            if (inQueue >= 2) {
+                A.printStackTrace("Too many pylons in queue (" + inQueue + ")");
+                return null;
+            }
+        }
 
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
 

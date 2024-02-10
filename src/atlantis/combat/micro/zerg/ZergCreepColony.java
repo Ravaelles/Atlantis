@@ -5,6 +5,7 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.APositionFinder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -31,10 +32,10 @@ public class ZergCreepColony {
 
     // =========================================================
 
-    public static void creepOneIntoSunkenColony() {
+    public static void creepOneIntoSunkenColony(ProductionOrder order) {
         AUnit creepColony = Select.ourBuildings().ofType(AUnitType.Zerg_Creep_Colony).first();
         if (creepColony != null) {
-            creepColony.morph(AUnitType.Zerg_Sunken_Colony);
+            creepColony.morph(AUnitType.Zerg_Sunken_Colony, order);
         }
     }
 

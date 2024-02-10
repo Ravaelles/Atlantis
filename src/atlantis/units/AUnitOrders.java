@@ -134,21 +134,35 @@ public interface AUnitOrders {
         return false;
     }
 
-    default boolean train(AUnitType unitToTrain, ProductionOrder productionOrder) {
+    default boolean train(AUnitType unitToTrain, ProductionOrder order) {
         unit().setAction(Actions.TRAIN);
-        unit().setProductionOrder(productionOrder);
-        return u() != null ? u().train(unitToTrain.ut()) : FakeUnitData.TRAIN.add(unitToTrain);
+        unit().setProductionOrder(order);
+        return u() != null
+            ? processTrain(unitToTrain, order)
+            : FakeUnitData.TRAIN.add(unitToTrain);
     }
 
     default boolean trainForced(AUnitType unitToTrain) {
         unit().setAction(Actions.TRAIN);
         unit().setProductionOrder(ForcedDirectProductionOrder.create(unitToTrain));
-        return u() != null ? u().train(unitToTrain.ut()) : FakeUnitData.TRAIN.add(unitToTrain);
+        return u() != null ? processTrain(unitToTrain, null) : FakeUnitData.TRAIN.add(unitToTrain);
     }
 
-    default boolean morph(AUnitType into) {
+    private boolean processTrain(AUnitType unitToTrain, ProductionOrder order) {
+        return u().train(unitToTrain.ut())
+            && order != null
+            && order.releasedReservedResources();
+    }
+
+    default boolean morph(AUnitType into, ProductionOrder order) {
         unit().setAction(Actions.MORPH);
-        return u().morph(into.ut());
+        return processMorph(into, order);
+    }
+
+    private boolean processMorph(AUnitType into, ProductionOrder order) {
+        return u().morph(into.ut())
+            && order != null
+            && order.releasedReservedResources();
     }
 
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition) {

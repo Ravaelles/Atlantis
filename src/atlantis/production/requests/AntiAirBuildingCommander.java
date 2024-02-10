@@ -41,7 +41,7 @@ public abstract class AntiAirBuildingCommander extends DynamicBuildingCommander 
         if (We.zerg()) {
             AUnit creep = Select.ourOfType(AUnitType.Zerg_Creep_Colony).first();
             if (creep != null) {
-                return creep.morph(buildType);
+                return creep.morph(buildType, null);
             }
         }
 

@@ -21,7 +21,7 @@ public class SpecificConstructionRequests {
         return handledZergSpecialBuilding(building, order);
     }
 
-    // === Terran ========================================    
+    // === Terran ========================================
 
     private static boolean handledTerranSpecialBuilding(AUnitType building, ProductionOrder order) {
         if (!We.terran()) return false;
@@ -40,35 +40,35 @@ public class SpecificConstructionRequests {
         if (!MyRace.isPlayingAsZerg()) return false;
 
         if (building.equals(AUnitType.Zerg_Sunken_Colony)) {
-            ZergCreepColony.creepOneIntoSunkenColony();
+            ZergCreepColony.creepOneIntoSunkenColony(order);
             return true;
         }
 
         else if (building.is(AUnitType.Zerg_Lair)) {
-            morphFromZergBuildingInto(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair);
+            morphFromZergBuildingInto(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, order);
             return true;
         }
 
         else if (building.is(AUnitType.Zerg_Hive)) {
-            morphFromZergBuildingInto(AUnitType.Zerg_Lair, AUnitType.Zerg_Hive);
+            morphFromZergBuildingInto(AUnitType.Zerg_Lair, AUnitType.Zerg_Hive, order);
             return true;
         }
 
         else if (building.is(AUnitType.Zerg_Greater_Spire)) {
-            morphFromZergBuildingInto(AUnitType.Zerg_Spire, AUnitType.Zerg_Greater_Spire);
+            morphFromZergBuildingInto(AUnitType.Zerg_Spire, AUnitType.Zerg_Greater_Spire, order);
             return true;
         }
 
         return false;
     }
 
-    private static void morphFromZergBuildingInto(AUnitType from, AUnitType into) {
+    private static void morphFromZergBuildingInto(AUnitType from, AUnitType into, ProductionOrder order) {
         AUnit building = Select.ourBuildings().ofType(from).first();
         if (building == null) {
             System.err.println("No " + from + " found to morph into " + into);
         }
         else {
-            building.morph(into);
+            building.morph(into, order);
         }
     }
 

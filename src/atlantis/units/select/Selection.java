@@ -301,6 +301,13 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection zealots() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Protoss_Zealot)),
+            "zealots"
+        );
+    }
+
     public Selection sunkens() {
         return cloneByRemovingIf(
             (unit -> !unit.is(AUnitType.Zerg_Sunken_Colony)),

@@ -36,8 +36,17 @@ public class OnUnitCompleted {
         Select.clearCache();
         Queue.get().refresh();
 
+        cleanUpProductionOrderAndConstruction(unit);
+
         (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
 
         if (Env.isLocal() && unit.isBunker() && Count.bunkers() == 1) CameraCommander.centerCameraOn(unit);
+    }
+
+    private static void cleanUpProductionOrderAndConstruction(AUnit unit) {
+        if (unit.isABuilding()) unit.setConstruction(null);
+
+        ProductionOrder order = unit.productionOrder();
+        if (order != null) order.releasedReservedResources();
     }
 }

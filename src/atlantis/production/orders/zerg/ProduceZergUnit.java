@@ -1,7 +1,6 @@
 package atlantis.production.orders.zerg;
 
 import atlantis.production.constructing.NewConstructionRequest;
-import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -40,28 +39,28 @@ public class ProduceZergUnit {
         }
 
         if (type.isSunken()) {
-            return morphBuildingFromTo(AUnitType.Zerg_Creep_Colony, type);
+            return morphBuildingFromTo(AUnitType.Zerg_Creep_Colony, type, order);
         }
         else if (type.isSporeColony()) {
-            return morphBuildingFromTo(AUnitType.Zerg_Creep_Colony, type);
+            return morphBuildingFromTo(AUnitType.Zerg_Creep_Colony, type, order);
         }
         else if (type.isLair()) {
-            return morphBuildingFromTo(AUnitType.Zerg_Hatchery, type);
+            return morphBuildingFromTo(AUnitType.Zerg_Hatchery, type, order);
         }
         else if (type.isHive()) {
-            return morphBuildingFromTo(AUnitType.Zerg_Lair, type);
+            return morphBuildingFromTo(AUnitType.Zerg_Lair, type, order);
         }
         else if (type.isGreaterSpire()) {
-            return morphBuildingFromTo(AUnitType.Zerg_Spire, type);
+            return morphBuildingFromTo(AUnitType.Zerg_Spire, type, order);
         }
 
         return NewConstructionRequest.requestConstructionOf(order);
     }
 
-    private static boolean morphBuildingFromTo(AUnitType from, AUnitType into) {
+    private static boolean morphBuildingFromTo(AUnitType from, AUnitType into, ProductionOrder order) {
         AUnit fromUnit = Select.ourOfType(from).last();
         if (fromUnit != null) {
-            return fromUnit.morph(into);
+            return fromUnit.morph(into, order);
         }
 
         return false;

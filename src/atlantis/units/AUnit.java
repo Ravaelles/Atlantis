@@ -103,10 +103,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Log managerLogs = new Log(30 * 30, 5);
     private Action unitAction = Actions.INIT;
     private Action _prevAction = null;
+
     /**
      * Production order object for a unit that's currently being trained/produced by this unit.
      */
     private ProductionOrder productionOrder = null;
+
+    /**
+     * For buildings, this is the construction object that represents the building process.
+     */
+    private Construction construction = null;
 
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
     private AUnit runningFrom = null;
@@ -1070,8 +1076,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * construction.
      */
     public Construction construction() {
-        return ConstructionRequests.constructionFor(this);
+        return construction;
     }
+
+    public void setConstruction(Construction construction) {
+        this.construction = construction;
+    }
+
+//    public Construction construction() {
+//        return ConstructionRequests.constructionFor(this);
+//    }
 
     /**
      * Returns true if this unit belongs to the enemy.

@@ -264,6 +264,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     public void cancel() {
         if (construction() != null) construction().cancel();
 
+        releasedReservedResources();
+
         Queue.get().removeOrder(this);
     }
 
@@ -426,8 +428,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         orderReservations.reserveResources();
     }
 
-    public void makeSureToClearReservedResources() {
-        orderReservations.clearResourcesReserved();
+    public boolean releasedReservedResources() {
+        orderReservations.releaseResourcesReserved();
+        return true;
     }
 
     public OrderReservations reservations() {

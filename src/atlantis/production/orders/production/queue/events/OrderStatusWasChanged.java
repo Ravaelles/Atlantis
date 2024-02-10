@@ -10,7 +10,8 @@ public class OrderStatusWasChanged {
 //        A.errPrintln("OrderStatusWasChanged(" + order + ", " + status + ")");
 
         if (status.ready()) order.makeSureResourcesAreReserved();
-        else order.makeSureToClearReservedResources();
+        else if (status.inProgress() && order.isUnit()) order.makeSureResourcesAreReserved();
+//        else order.makeSureToClearReservedResources();
 
         removeSameTechFromQueue(order);
 

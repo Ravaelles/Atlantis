@@ -265,4 +265,9 @@ public class Construction implements Comparable<Construction> {
         if (build == null) return 0;
         return (int) build.hpPercent();
     }
+
+    public void releaseReservedResources() {
+        ProductionOrder order = productionOrder();
+        if (order != null) order.releasedReservedResources();
+    }
 }

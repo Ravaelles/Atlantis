@@ -35,7 +35,7 @@ public class ContinueMoving extends Manager {
     private boolean dontApplyDuringMissionDefendOrSparta() {
         return unit.isMissionDefendOrSparta()
             && unit.isRanged()
-            && !unit.isRunning()
+//            && !unit.isRunning()
             && unit.meleeEnemiesNearCount(1.3) == 0;
     }
 

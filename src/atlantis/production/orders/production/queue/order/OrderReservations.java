@@ -5,6 +5,7 @@ import atlantis.production.orders.production.queue.ReservedResources;
 public class OrderReservations {
     private final ProductionOrder order;
     private boolean alreadyReserved = false;
+    private boolean alreadyReleased = false;
     private int reservedMinerals = 0;
     private int reservedGas = 0;
 
@@ -22,20 +23,19 @@ public class OrderReservations {
         ReservedResources.reserveMinerals(reservedMinerals, order.toString());
         ReservedResources.reserveGas(reservedGas, order.toString());
         alreadyReserved = true;
-
-        System.out.println("        reserved=" + reservedMinerals + " for " + order + " / " + ReservedResources.minerals());
     }
 
-    public void clearResourcesReserved() {
+    public void releaseResourcesReserved() {
 //        if (!alreadyReserved) ErrorLog.printMaxOncePerMinute("Trying to clear resources not reserved: " + order);
         if (!alreadyReserved) return;
+        if (alreadyReleased) return;
 
         ReservedResources.reserveMinerals(-reservedMinerals, order.toString());
         ReservedResources.reserveGas(-reservedGas, order.toString());
 
         reservedMinerals = 0;
         reservedGas = 0;
-        alreadyReserved = false;
+        alreadyReleased = true;
 
 //        System.err.println("CLEARED reservedMinerals = " + reservedMinerals + " for " + order + " / " + ReservedResources.minerals());
     }

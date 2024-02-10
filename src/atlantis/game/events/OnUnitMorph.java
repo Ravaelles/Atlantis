@@ -3,11 +3,13 @@ package atlantis.game.events;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.ProtossWarping;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 
@@ -32,18 +34,9 @@ public class OnUnitMorph {
 
         // Our unit
         if (unit.isOur()) {
-
-            // === Fix for Zerg Extractor ========================================
-            // Detect morphed gas building meaning construction has just started
-            if (unit.type().isGasBuilding()) {
-                for (Construction order : ConstructionRequests.all()) {
-                    if (order.buildingType().equals(AtlantisRaceConfig.GAS_BUILDING)
-                        && order.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
-                        order.setBuild(unit);
-                        break;
-                    }
-                }
-            }
+            updateGasBuildingSpecialCaseWhereGeyserMorphsIntoAGasBuilding(unit);
+            ProtossWarping.updateNewBuildingJustWarped(unit);
+            releaseReservedResources(unit);
 
             // =========================================================
 
@@ -60,6 +53,28 @@ public class OnUnitMorph {
         // Enemy unit
         else if (unit.isEnemy()) {
             EnemyInfo.refreshEnemyUnit(unit);
+        }
+    }
+
+    private static void updateGasBuildingSpecialCaseWhereGeyserMorphsIntoAGasBuilding(AUnit unit) {
+        if (unit.type().isGasBuilding()) {
+            for (Construction order : ConstructionRequests.all()) {
+                if (order.buildingType().equals(AtlantisRaceConfig.GAS_BUILDING)
+                    && order.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
+                    order.setBuild(unit);
+                    break;
+                }
+            }
+        }
+    }
+
+    private static void releaseReservedResources(AUnit unit) {
+        Construction construction = unit.construction();
+        if (construction == null) {
+            A.errPrintln("No construction for " + unit);
+        }
+        if (construction != null) {
+            construction.releaseReservedResources();
         }
     }
 }

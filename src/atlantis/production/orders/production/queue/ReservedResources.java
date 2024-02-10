@@ -27,7 +27,7 @@ public class ReservedResources {
 //        if (ReservedResources.minerals >= MAX_VALUE) ReservedResources.minerals = MAX_VALUE;
 //        if (ReservedResources.minerals < 0) ReservedResources.minerals = 0;
 
-//        System.out.println("Reserved MINERALS = " + ReservedResources.minerals + " / " + whatFor);
+//        A.errPrintln("        Reserved MINERALS = " + minerals + " - " + whatFor);
 
 //        if (ReservedResources.minerals < 0 && !Env.isTesting()) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Trying to reserve negative minerals");

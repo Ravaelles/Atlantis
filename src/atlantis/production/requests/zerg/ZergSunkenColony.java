@@ -92,7 +92,7 @@ public class ZergSunkenColony extends AntiLandBuildingCommander {
         for (AUnit colony : Select.ourOfType(AUnitType.Zerg_Creep_Colony).list()) {
 //            if (existingWithUnfinished() < expected()) {
             if (A.hasMinerals(75)) {
-                colony.morph(type());
+                colony.morph(type(), null);
                 String tooltip = "Into" + type();
                 colony.addLog(tooltip);
                 colony.setTooltip(tooltip);

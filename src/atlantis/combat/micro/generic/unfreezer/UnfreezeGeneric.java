@@ -22,7 +22,15 @@ public class UnfreezeGeneric extends Manager {
         if (unit.lastStartedAttackLessThanAgo(20)) return false;
         if (unit.lastActionLessThanAgo(20, Actions.MOVE_DANCE_AWAY)) return false;
 
+        if (isDragoonDuringSpartaMission()) return false;
+
         return true;
+    }
+
+    private boolean isDragoonDuringSpartaMission() {
+        return unit.isDragoon()
+            && unit.isMissionSparta()
+            && unit.friendsNear().zealots().inRadius(3, unit).notEmpty();
     }
 
     @Override

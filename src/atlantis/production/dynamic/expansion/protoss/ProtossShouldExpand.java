@@ -28,6 +28,8 @@ public class ProtossShouldExpand {
             () -> {
                 if (A.minerals() <= 140) return false;
 
+                Count.clearCache();
+
                 bases = Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE);
                 basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 

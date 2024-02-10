@@ -2,9 +2,8 @@ package atlantis.production.constructing;
 
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.Units;
-import atlantis.units.select.Select;
 import atlantis.units.workers.GatherResources;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
@@ -16,8 +15,8 @@ public class ProtossWarping {
      * It's because the construction of Protoss buildings is immediate, and we have no way of telling
      * that the Probe has actually started a construction.
      */
-    public static void handleNewBuildingWarped(AUnit newBuilding) {
-        assert newBuilding.isABuilding();
+    public static void updateNewBuildingJustWarped(AUnit newBuilding) {
+        if (!We.protoss() || !newBuilding.type().isABuilding()) return;
 
         Construction construction = defineConstruction(newBuilding);
 
@@ -25,6 +24,7 @@ public class ProtossWarping {
 
         construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
         construction.setBuild(newBuilding);
+        newBuilding.setConstruction(construction);
 
         if (construction.builder() != null) (new GatherResources(construction.builder())).forceHandle();
 
