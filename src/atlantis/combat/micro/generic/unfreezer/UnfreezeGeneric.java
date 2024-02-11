@@ -3,6 +3,7 @@ package atlantis.combat.micro.generic.unfreezer;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.map.position.APosition;
+import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -30,6 +31,7 @@ public class UnfreezeGeneric extends Manager {
     private boolean isDragoonDuringSpartaMission() {
         return unit.isDragoon()
             && unit.isMissionSparta()
+            && unit.distToOr999(ChokeToBlock.get()) <= 3
             && (
                 unit.lastAttackFrameLessThanAgo(30 * 3)
                 || unit.friendsNear().zealots().inRadius(5, unit).notEmpty()

@@ -6,19 +6,18 @@ import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 
 public class ProduceBuilding {
-    public static void produceBuilding(AUnitType type, ProductionOrder order) {
+    public static boolean produceBuilding(AUnitType type, ProductionOrder order) {
         assert type.isABuilding();
 
         if (type.isZerg()) {
-            ProduceZergUnit.produceZergBuilding(type, order);
-            return;
+            return ProduceZergUnit.produceZergBuilding(type, order);
         }
 
         if (type.isAddon()) {
-            ProduceAddon.produceAddon(type);
+            return ProduceAddon.produceAddon(type);
         }
         else {
-            NewConstructionRequest.requestConstructionOf(order);
+            return NewConstructionRequest.requestConstructionOf(order);
         }
     }
 }

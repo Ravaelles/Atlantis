@@ -5,10 +5,11 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 public class ProduceAddon {
-    public static void produceAddon(AUnitType addon) {
+    public static boolean produceAddon(AUnitType addon) {
         for (AUnit building : Select.ourOfType(addon.whatBuildsIt()).free().list()) {
-            building.buildAddon(addon);
-            return;
+            if (building.buildAddon(addon)) return true;
         }
+
+        return false;
     }
 }

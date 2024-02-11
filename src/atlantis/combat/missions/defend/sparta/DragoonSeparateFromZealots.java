@@ -16,7 +16,7 @@ public class DragoonSeparateFromZealots extends Manager {
     public boolean applies() {
         return unit.isDragoon()
             && unit.noCooldown()
-            && unit.enemiesNear().inRadius(8, unit).empty();
+            && unit.enemiesNear().inRadius(6, unit).empty();
     }
 
     @Override

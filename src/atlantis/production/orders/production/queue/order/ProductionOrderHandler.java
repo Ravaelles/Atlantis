@@ -22,6 +22,14 @@ public class ProductionOrderHandler extends Commander {
 
     @Override
     protected void handle() {
+        if (order.isConsumed()) {
+            A.errPrintln("Order " + order + " is already consumed!");
+            order.cancel();
+            return;
+        }
+
+        // =========================================================
+
         // Produce UNIT
         if (order.unitType() != null) {
             AUnitType unitType = order.unitType();
@@ -32,10 +40,14 @@ public class ProductionOrderHandler extends Commander {
             }
 
             if (unitType.isABuilding()) {
-                ProduceBuilding.produceBuilding(unitType, order);
+                if (ProduceBuilding.produceBuilding(unitType, order)) {
+                    order.consume();
+                }
             }
             else {
-                ProduceUnit.produceUnit(unitType, order);
+                if (ProduceUnit.produceUnit(unitType, order)) {
+                    order.consume();
+                }
             }
         }
 
@@ -44,7 +56,9 @@ public class ProductionOrderHandler extends Commander {
 
         else if (order.upgrade() != null) {
             UpgradeType upgrade = order.upgrade();
-            ATechRequests.researchUpgrade(upgrade);
+            if (ATechRequests.researchUpgrade(upgrade)) {
+                order.consume();
+            }
         }
 
         // =========================================================
@@ -52,7 +66,9 @@ public class ProductionOrderHandler extends Commander {
 
         else if (order.tech() != null) {
             TechType tech = order.tech();
-            ATechRequests.researchTech(tech);
+            if (ATechRequests.researchTech(tech)) {
+                order.consume();
+            }
         }
 
         // =========================================================
@@ -61,15 +77,16 @@ public class ProductionOrderHandler extends Commander {
         else if (order.mission() != null) {
             if (TIMES_MISSION_ENFORCED <= 2) {
                 Missions.setGlobalMissionTo(order.mission(), "Build Order enforced: " + order.mission());
-
                 TIMES_MISSION_ENFORCED++;
+
+                order.consume();
             }
         }
 
         // === Nothing! ============================================
 
         else {
-            System.err.println(order + " was not handled at all!");
+            ErrorLog.printMaxOncePerMinute(order + " was not handled at all!");
         }
     }
 }

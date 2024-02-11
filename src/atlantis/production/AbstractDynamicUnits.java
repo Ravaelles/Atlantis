@@ -11,12 +11,14 @@ import atlantis.units.select.Count;
 import atlantis.util.Helpers;
 
 public class AbstractDynamicUnits extends Helpers {
-    public static void buildToHave(AUnitType type, int haveN) {
-        if (haveN <= 0) return;
+    public static boolean buildToHave(AUnitType type, int haveN) {
+        if (haveN <= 0) return false;
 
         if (Count.withPlanned(type) < haveN) {
-            trainIfPossible(type);
+            return trainIfPossible(type);
         }
+
+        return false;
     }
 
     public static boolean trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {

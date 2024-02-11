@@ -2,6 +2,8 @@ package atlantis.production.constructing.position.base;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
@@ -21,7 +23,9 @@ public class NextBasePosition {
             () -> {
                 AUnit builder = FreeWorkers.get().first();
                 AUnitType building = AtlantisRaceConfig.BASE;
-                APosition basePosition = FindPositionForBaseNearestFree.find(building, builder, null);
+
+//                APosition basePosition = FindPositionForBaseNearestFree.find(building, builder, null);
+                APosition basePosition = findApproximate(building, builder);
 
                 if (basePosition == null) {
                     if (!A.isUms()) ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null base position, exiting");
@@ -43,5 +47,11 @@ public class NextBasePosition {
 //                AtlantisRaceConfig.BASE, Select.ourWorkers().first(), null
 //            )
         );
+    }
+
+    private static APosition findApproximate(AUnitType building, AUnit builder) {
+        ABaseLocation baseLocation = BaseLocations.expansionFreeBaseLocationNearestTo(Select.mainOrAnyBuilding());
+
+        return baseLocation != null ? baseLocation.position() : null;
     }
 }

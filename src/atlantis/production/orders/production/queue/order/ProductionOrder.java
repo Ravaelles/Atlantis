@@ -15,6 +15,12 @@ import bwapi.UpgradeType;
 
 public class ProductionOrder implements Comparable<ProductionOrder> {
     private static int firstFreeId = 1;
+
+    /**
+     * True when already executed. Prevents double execution.
+     */
+    private boolean consumed = false;
+
     /**
      * Upgrade type to research. Can be null if this production order is for something else than upgrade.
      */
@@ -498,5 +504,14 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     public int progressPercent() {
         if (construction == null) return 0;
         return construction.progressPercent();
+    }
+
+    public boolean isConsumed() {
+        return consumed;
+    }
+
+    public void consume() {
+        System.out.println("@ " + A.now() + " - consuming order " + this);
+        consumed = true;
     }
 }
