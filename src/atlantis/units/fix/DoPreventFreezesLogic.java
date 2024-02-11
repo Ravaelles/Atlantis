@@ -53,13 +53,19 @@ public class DoPreventFreezesLogic {
         SquadTargeting targeting = unit.squad().targeting();
         AUnit target = targeting.lastTargetIfAlive();
 
-        if (target == null) {
-            target = EnemyUnits.discovered().groundUnits().nearestTo(unit);
-            if (target == null) return false;
-            else targeting.forceTarget(target);
-        }
+        if (target == null) return false;
 
-        if (target.distTo(unit) > 6 && unit.move(target, Actions.MOVE_FORMATION, "ToSquadTarget")) {
+//        if (target == null) {
+//            target = EnemyUnits.discovered().groundUnits().nearestTo(unit);
+//            if (target == null) return false;
+//            else targeting.forceTarget(target);
+//        }
+
+        if (
+            target.distTo(unit) > 6
+                && unit.hasWeaponToAttackThisUnit(target)
+                && unit.move(target, Actions.MOVE_FORMATION, "ToSquadTarget")
+        ) {
             return true;
         }
 

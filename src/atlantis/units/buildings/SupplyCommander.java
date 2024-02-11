@@ -33,9 +33,10 @@ public class SupplyCommander extends Commander {
     @Override
     protected void handle() {
         supplyTotal = AGame.supplyTotal();
+        supplyFree = AGame.supplyFree();
 
         if (supplyTotal >= 200) return;
-        if (A.hasFreeSupply(9)) return;
+        if (supplyFree >= 9) return;
         if (lastAdded.lessThanSecondsAgo(7)) return;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
@@ -50,8 +51,6 @@ public class SupplyCommander extends Commander {
             return;
         }
 
-        if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 48) return;
-
         // Fix for UMS maps
         if (A.isUms() && AGame.supplyFree() <= 1) {
             requestAdditionalSupply();
@@ -60,7 +59,7 @@ public class SupplyCommander extends Commander {
 
         // Should use auto supply manager
 
-        if (supplyTotal >= BuildOrderSettings.autoSupplyManagerWhenSupplyExceeds()) {
+        if (supplyFree == 0 || supplyTotal >= BuildOrderSettings.autoSupplyManagerWhenSupplyExceeds()) {
             supplyFree = AGame.supplyFree();
 
             int suppliesBeingBuilt = requestedConstructionsOfSupply;
@@ -161,9 +160,8 @@ public class SupplyCommander extends Commander {
     }
 
     private boolean tooManyNotStartedConstructions() {
-        int maxAtOnce = A.supplyUsed() >= 90 ? 3 : 2;
-
-        if (requestedConstructionsOfSupply >= maxAtOnce) return true;
+        if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 38) return true;
+        if (requestedConstructionsOfSupply >= (A.supplyUsed() >= 70 ? 4 : 3)) return true;
 
         return false;
     }

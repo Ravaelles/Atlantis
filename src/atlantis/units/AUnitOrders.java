@@ -149,9 +149,12 @@ public interface AUnitOrders {
     }
 
     private boolean processTrain(AUnitType unitToTrain, ProductionOrder order) {
-        return u().train(unitToTrain.ut())
-            && order != null
-            && order.releasedReservedResources();
+        if (u().train(unitToTrain.ut())) {
+            if (order != null) order.releasedReservedResources();
+            return true;
+        }
+
+        return false;
     }
 
     default boolean morph(AUnitType into, ProductionOrder order) {
@@ -160,9 +163,12 @@ public interface AUnitOrders {
     }
 
     private boolean processMorph(AUnitType into, ProductionOrder order) {
-        return u().morph(into.ut())
-            && order != null
-            && order.releasedReservedResources();
+        if (u().morph(into.ut())) {
+            if (order != null) order.releasedReservedResources();
+            return true;
+        }
+
+        return false;
     }
 
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition) {

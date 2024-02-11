@@ -117,6 +117,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Academy) > 0;
     }
 
+    public static boolean citadel() {
+        return Count.ofType(AUnitType.Protoss_Citadel_of_Adun) > 0;
+    }
+
     public static boolean cyberneticsCore() {
         return Count.ofType(AUnitType.Protoss_Cybernetics_Core) > 0;
     }

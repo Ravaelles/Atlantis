@@ -51,9 +51,10 @@ public class ProduceDragoon {
     }
 
     private static boolean produceDragoon() {
-        return Select.ourFree(Protoss_Gateway).random().train(
+        boolean result = Select.ourFree(Protoss_Gateway).random().train(
             Protoss_Dragoon, ForcedDirectProductionOrder.create(Protoss_Dragoon)
         );
-//        return AddToQueue.maxAtATime(Protoss_Dragoon, freeGateways()) != null;
+        System.err.println("ProduceDragoon = " + result);
+        return result;
     }
 }

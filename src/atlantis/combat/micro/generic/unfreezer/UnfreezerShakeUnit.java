@@ -13,8 +13,13 @@ public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (shouldNotDoAnythingButContinue(unit)) return true;
 
-        if (!unit.isStopped() && unit.lastActionMoreThanAgo(30 * 8, Actions.STOP)) {
+        if (!unit.isStopped() && unit.lastActionMoreThanAgo(30 * 2, Actions.STOP)) {
             unit.stop("UnfreezeByStop");
+            return true;
+        }
+
+        if (goToNearestCombatFriend(unit)) {
+            unit.setTooltip("UnfreezeByFriend");
             return true;
         }
 
@@ -34,10 +39,16 @@ public class UnfreezerShakeUnit {
             }
         }
 
-        if (!unit.isStopped()) {
-            unit.stop("UnfreezeByStop");
+
+        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30 * 2, Actions.HOLD_POSITION)) {
+            unit.holdPosition("UnfreezeByHold");
             return true;
         }
+
+//        if (!unit.isStopped()) {
+//            unit.stop("UnfreezeByStop");
+//            return true;
+//        }
 
 //        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(30 * 2)) {
 //            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
@@ -54,10 +65,10 @@ public class UnfreezerShakeUnit {
             }
         }
 
-        if (!unit.isHoldingPosition()) {
-            unit.holdPosition("UnfreezeByHold");
-            return true;
-        }
+//        if (!unit.isHoldingPosition()) {
+//            unit.holdPosition("UnfreezeByHold");
+//            return true;
+//        }
 
 //        if (unit.lastActionMoreThanAgo(10, Actions.HOLD_POSITION)) {
 //            unit.holdPosition("Unfreeze!!!");
@@ -83,6 +94,18 @@ public class UnfreezerShakeUnit {
         return false;
     }
 
+    private static boolean goToNearestCombatFriend(AUnit unit) {
+        AUnit nearest = unit.friendsNear().combatUnits().groundUnits().nearestTo(unit);
+
+        if (nearest != null && nearest.distTo(unit) >= 2) {
+            if (unit.move(nearest, Actions.MOVE_FORMATION, "PreventMove2Friend")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static APosition goToPositionNearby(AUnit unit) {
         int moduloId = unit.id() % 5;
         return unit.position().translateByPixels(-16 + moduloId * 8, 16 - moduloId * 8);
@@ -90,6 +113,6 @@ public class UnfreezerShakeUnit {
 
     private static boolean shouldNotDoAnythingButContinue(AUnit unit) {
         return unit.isAccelerating()
-            || unit.lastActionLessThanAgo(6, Actions.HOLD_POSITION, Actions.MOVE_UNFREEZE);
+            || unit.lastActionLessThanAgo(3, Actions.HOLD_POSITION, Actions.STOP, Actions.MOVE_UNFREEZE);
     }
 }

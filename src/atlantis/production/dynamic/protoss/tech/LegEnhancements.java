@@ -6,12 +6,14 @@ import atlantis.information.generic.OurArmyStrength;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 
 import static bwapi.UpgradeType.Leg_Enhancements;
 
 public class LegEnhancements extends Commander {
     @Override
     public boolean applies() {
+        if (!Have.citadel()) return false;
         if (ATech.isResearched(Leg_Enhancements)) return false;
         if (TooWeakToTech.check()) return false;
 

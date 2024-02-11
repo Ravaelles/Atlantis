@@ -113,7 +113,7 @@ public class AAdvancedPainter extends APainter {
 //        // CodeProfiler.startMeasuring(// CodeProfiler.ASPECT_PAINTING);
         setTextSizeMedium();
 
-        paintSidebarInfo();
+        paintSideInfo();
         paintKilledAndLost();
         paintProductionQueue();
         paintSidebarConstructionsPending();
@@ -372,7 +372,7 @@ public class AAdvancedPainter extends APainter {
     /**
      * Paint focus point for global attack mission etc.
      */
-    static void paintSidebarInfo() {
+    static void paintSideInfo() {
         Color color;
 
         // Time
@@ -780,7 +780,7 @@ public class AAdvancedPainter extends APainter {
         int yOffset = 250;
         ArrayList<Construction> allOrders = ConstructionRequests.all();
         if (!allOrders.isEmpty()) {
-            paintSideMessage("Constructing (" + allOrders.size() + ")", Color.White, yOffset);
+            paintSideMessage("Constructions (" + allOrders.size() + ")", Color.White, yOffset);
             for (Construction construction : allOrders) {
                 Color color = null;
                 switch (construction.status()) {
@@ -801,29 +801,31 @@ public class AAdvancedPainter extends APainter {
                 String status = construction.status().toString().replace("CONSTRUCTION_", "");
                 AUnit builder = construction.builder();
                 String builderDist = A.dist(builder, construction.buildPosition());
+                String builderString = "NO_BUILDER";
                 if (builder != null) {
-                    String builderString = (builder.idWithHash() + " " + builderDist);
+                    builderString = (builder.idWithHash() + " " + builderDist);
                     if (!builder.isAlive()) builderString += "(DEAD)";
                     if (builder.isStuck()) builderString += "(STUCK)";
-                    if (construction.isOverdue()) {
-                        builderString += "(" + builder.manager() + ")";
-                        if (Env.isLocal()) {
-//                            ErrorLog.printMaxOncePerMinute("Construction is overdue: " + construction);
-                            AAdvancedPainter.paintCircle(builder, 10, Color.Teal);
-                            AAdvancedPainter.paintCircle(builder, 8, Color.Teal);
-                            AAdvancedPainter.paintCircle(builder, 6, Color.Teal);
-//                            CameraCommander.centerCameraOn(builder);
-                        }
-                    }
-
-                    paintSideMessage(
-                        construction.buildingType().name()
-                            + ", " + construction.buildPosition()
-                            + ", " + status + ", " + builderString,
-                        color,
-                        yOffset
-                    );
                 }
+
+                if (construction.isOverdue()) {
+                    if (builder != null) builderString += "(" + builder.manager() + ")";
+                    if (Env.isLocal()) {
+//                            ErrorLog.printMaxOncePerMinute("Construction is overdue: " + construction);
+                        AAdvancedPainter.paintCircle(builder, 10, Color.Teal);
+                        AAdvancedPainter.paintCircle(builder, 8, Color.Teal);
+                        AAdvancedPainter.paintCircle(builder, 6, Color.Teal);
+//                            CameraCommander.centerCameraOn(builder);
+                    }
+                }
+
+                paintSideMessage(
+                    construction.buildingType().name()
+                        + ", " + construction.buildPosition()
+                        + ", " + status + ", " + builderString,
+                    color,
+                    yOffset
+                );
             }
         }
     }

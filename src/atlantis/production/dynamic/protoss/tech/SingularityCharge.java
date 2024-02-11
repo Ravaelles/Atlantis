@@ -6,6 +6,7 @@ import atlantis.decions.Decision;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.tech.ATech;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.range.OurDragoonWeaponRange;
 import atlantis.units.select.Count;
@@ -14,15 +15,22 @@ import atlantis.util.Enemy;
 import static bwapi.UpgradeType.Singularity_Charge;
 
 public class SingularityCharge extends Commander {
+    private boolean isResearched = false;
 
     private int dragoons;
 
     @Override
     public boolean applies() {
+        if (isResearched) return false;
+
         if (ATech.isResearched(Singularity_Charge)) {
             OurDragoonWeaponRange.onSingularityChargeResearched();
+            isResearched = true;
+            System.out.println(" Singularity_Charge isResearched = " + isResearched);
             return false;
         }
+
+        if (CountInQueue.count(Singularity_Charge, 5) > 0) return false;
 
         dragoons = Count.dragoons();
 

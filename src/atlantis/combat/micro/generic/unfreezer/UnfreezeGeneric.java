@@ -24,16 +24,23 @@ public class UnfreezeGeneric extends Manager {
         if (unit.lastActionLessThanAgo(20, Actions.MOVE_DANCE_AWAY)) return false;
 
         if (isDragoonDuringSpartaMission()) return false;
+        else if (isDuringSpartaMission()) return false;
 
         return true;
+    }
+
+    private boolean isDuringSpartaMission() {
+        return unit.isMissionSparta()
+            && unit.distToOr999(ChokeToBlock.get()) <= 3;
     }
 
     private boolean isDragoonDuringSpartaMission() {
         return unit.isDragoon()
             && unit.isMissionSparta()
+            && unit.noCooldown()
             && unit.distToOr999(ChokeToBlock.get()) <= 3
             && (
-                unit.lastAttackFrameLessThanAgo(30 * 3)
+                unit.lastAttackFrameLessThanAgo(30)
                 || unit.friendsNear().zealots().inRadius(5, unit).notEmpty()
         );
     }
