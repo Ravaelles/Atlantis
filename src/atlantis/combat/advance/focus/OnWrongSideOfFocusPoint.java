@@ -5,6 +5,9 @@ import atlantis.combat.missions.MissionManager;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import bwapi.Color;
+
+import static bwapi.Text.Red;
 
 public class OnWrongSideOfFocusPoint extends MissionManager {
     public OnWrongSideOfFocusPoint(AUnit unit) {
@@ -37,9 +40,9 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
 //        double optimalDist = unit.mission().optimalDist();
 
         boolean onValidSideOfChoke = IsOnValidSideOfChoke.check(unit, focusPoint);
-//        APainter.paintCircleFilled(unit, 6, onValidSideOfChoke ? Color.Green : Color.Red);
 
         if (!onValidSideOfChoke && distToFocusPoint <= 7) {
+            unit.paintCircleFilled(6, Color.Red);
             makeFriendsHelpWithdraw(unit, focusPoint);
 
             unit.move(withdrawTo, Actions.MOVE_FOCUS, "Withdraw", true);

@@ -91,7 +91,7 @@ public class AddToQueue {
     // =========================================================
 
     private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
-        if (PreventAddDuplicateOrder.preventExcessiveOrInvalidOrders(type, position)) return null;
+        if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) return null;
 
         if (A.supplyTotal() >= 30 && type.isPylon()) {
             int inQueue = CountInQueue.count(AUnitType.Protoss_Pylon);
@@ -125,10 +125,10 @@ public class AddToQueue {
 //                A.printStackTrace("Robotics Facility ADDED TO QUEUE");
 //            }
 
-            if (A.supplyTotal() >= 16 && type.is(AUnitType.Protoss_Pylon) && A.supplyTotal() <= 26) {
-                A.printStackTrace("Pylon ADDED TO QUEUE (Supply:" + A.supplyTotal()
-                    + ", IN_PROD:" + Count.inProductionOrInQueue(AUnitType.Protoss_Pylon) + ")");
-            }
+//            if (A.supplyTotal() >= 16 && type.is(AUnitType.Protoss_Pylon) && A.supplyTotal() <= 26) {
+//                A.printStackTrace("Pylon ADDED TO QUEUE (Supply:" + A.supplyTotal()
+//                    + ", IN_PROD:" + Count.inProductionOrInQueue(AUnitType.Protoss_Pylon) + ")");
+//            }
 
             if (type.is(AUnitType.Protoss_Nexus)) {
                 A.println(A.now() + " Nexus ADDED TO QUEUE, min=" + A.minerals()

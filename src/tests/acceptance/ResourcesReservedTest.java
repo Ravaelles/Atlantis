@@ -2,6 +2,7 @@ package tests.acceptance;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.events.OnUnitCreated;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
@@ -55,6 +56,8 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
 //                Queue.get().allOrders().print("Before in progress");
 
                 order.setStatus(OrderStatus.IN_PROGRESS);
+                order.releasedReservedResources();
+//                OnUnitCreated.onUnitCreated();
 
 //                Queue.get().allOrders().print("After in progress");
 

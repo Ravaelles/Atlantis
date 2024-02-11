@@ -39,8 +39,9 @@ public class UnfreezeGeneric extends Manager {
             && unit.isMissionSparta()
             && unit.noCooldown()
             && unit.distToOr999(ChokeToBlock.get()) <= 3
+            && unit.enemiesNear().zealots().inRadius(1, unit).notEmpty()
             && (
-                unit.lastAttackFrameLessThanAgo(30)
+            unit.lastAttackFrameLessThanAgo(30)
                 || unit.friendsNear().zealots().inRadius(5, unit).notEmpty()
         );
     }

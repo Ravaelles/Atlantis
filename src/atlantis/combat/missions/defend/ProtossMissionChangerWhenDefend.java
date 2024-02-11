@@ -69,8 +69,17 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     public boolean shouldChangeMissionToAttack() {
         if (!canChange()) return false;
 
-        if (ArmyStrength.ourArmyRelativeStrength() >= 200 && Count.dragoons() >= 4) {
-            if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+        boolean isSparta = Missions.isGlobalMissionSparta();
+
+        if (isSparta) {
+            if (ArmyStrength.ourArmyRelativeStrength() >= 300 && Count.dragoons() >= 2) {
+                if (DEBUG) reason = "Spartans strong! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                return true;
+            }
+        }
+
+        else if (ArmyStrength.ourArmyRelativeStrength() >= 240 && Count.dragoons() >= 2) {
+            if (DEBUG) reason = "Ah, much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 

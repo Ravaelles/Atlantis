@@ -19,9 +19,9 @@ public class Main {
 //    public static String OUR_RACE = "Terran";
 //    public static String OUR_RACE = "Zerg";
 
-    //    public static String ENEMY_RACE = "Protoss";
+    public static String ENEMY_RACE = "Protoss";
 //    public static String ENEMY_RACE = "Terran";
-    public static String ENEMY_RACE = "Zerg";
+//    public static String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.

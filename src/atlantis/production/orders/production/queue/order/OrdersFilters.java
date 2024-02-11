@@ -88,6 +88,22 @@ public interface OrdersFilters {
         );
     }
 
+    default Orders ofType(UpgradeType upgrade) {
+        return new Orders(
+            list().stream()
+                .filter(order -> (order.upgrade() != null && order.upgrade().equals(upgrade)))
+                .collect(Collectors.toList())
+        );
+    }
+
+    default Orders ofType(TechType tech) {
+        return new Orders(
+            list().stream()
+                .filter(order -> (order.tech() != null && order.tech().equals(tech)))
+                .collect(Collectors.toList())
+        );
+    }
+
     default Orders exclude(ProductionOrder orderToExclude) {
         return new Orders(
             list().stream()

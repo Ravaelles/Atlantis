@@ -18,6 +18,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.TimeMoment;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class SupplyCommander extends Commander {
     private TimeMoment lastAdded = new TimeMoment(0);
@@ -51,6 +52,12 @@ public class SupplyCommander extends Commander {
             return;
         }
 
+        if (supplyFree <= 1 && requestedConstructionsOfSupply <= (A.supplyUsed() <= 33 ? 1 : 2)) {
+//            ErrorLog.printMaxOncePerMinute("Supply free is very low, force additional.");
+            requestAdditionalSupply();
+            return;
+        }
+
         // Fix for UMS maps
         if (A.isUms() && AGame.supplyFree() <= 1) {
             requestAdditionalSupply();
@@ -59,9 +66,7 @@ public class SupplyCommander extends Commander {
 
         // Should use auto supply manager
 
-        if (supplyFree == 0 || supplyTotal >= BuildOrderSettings.autoSupplyManagerWhenSupplyExceeds()) {
-            supplyFree = AGame.supplyFree();
-
+        if (supplyTotal >= BuildOrderSettings.autoSupplyManagerWhenSupplyExceeds()) {
             int suppliesBeingBuilt = requestedConstructionsOfSupply;
             boolean noSuppliesBeingBuilt = suppliesBeingBuilt == 0;
             if (supplyTotal <= 11) {

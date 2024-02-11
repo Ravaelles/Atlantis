@@ -2,8 +2,8 @@ package atlantis.production.orders.production.queue.order;
 
 import atlantis.architecture.Commander;
 import atlantis.combat.missions.Missions;
-import atlantis.game.A;
 import atlantis.information.tech.ATechRequests;
+import atlantis.production.orders.production.queue.add.PreventDuplicateOrders;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.production.requests.produce.ProduceUnit;
 import atlantis.units.AUnitType;
@@ -22,8 +22,9 @@ public class ProductionOrderHandler extends Commander {
 
     @Override
     protected void handle() {
-        if (order.isConsumed()) {
-            A.errPrintln("Order " + order + " is already consumed!");
+        if (isAlreadyConsumed()) {
+//            A.errPrintln("Order " + order + " is already consumed!");
+            order.setStatus(OrderStatus.COMPLETED);
             order.cancel();
             return;
         }
@@ -35,18 +36,20 @@ public class ProductionOrderHandler extends Commander {
             AUnitType unitType = order.unitType();
 
             if (order.construction() != null) {
-                ErrorLog.printMaxOncePerMinute("Construction already begun for " + order);
+//                ErrorLog.printMaxOncePerMinute("Construction already begun for " + order);
                 return;
             }
 
             if (unitType.isABuilding()) {
                 if (ProduceBuilding.produceBuilding(unitType, order)) {
                     order.consume();
+                    order.setStatus(OrderStatus.IN_PROGRESS);
                 }
             }
             else {
                 if (ProduceUnit.produceUnit(unitType, order)) {
                     order.consume();
+                    order.setStatus(OrderStatus.IN_PROGRESS);
                 }
             }
         }
@@ -57,7 +60,10 @@ public class ProductionOrderHandler extends Commander {
         else if (order.upgrade() != null) {
             UpgradeType upgrade = order.upgrade();
             if (ATechRequests.researchUpgrade(upgrade)) {
+                order.setStatus(OrderStatus.IN_PROGRESS);
                 order.consume();
+
+                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(upgrade);
             }
         }
 
@@ -67,7 +73,10 @@ public class ProductionOrderHandler extends Commander {
         else if (order.tech() != null) {
             TechType tech = order.tech();
             if (ATechRequests.researchTech(tech)) {
+                order.setStatus(OrderStatus.IN_PROGRESS);
                 order.consume();
+
+                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(tech);
             }
         }
 
@@ -79,7 +88,9 @@ public class ProductionOrderHandler extends Commander {
                 Missions.setGlobalMissionTo(order.mission(), "Build Order enforced: " + order.mission());
                 TIMES_MISSION_ENFORCED++;
 
+                order.setStatus(OrderStatus.COMPLETED);
                 order.consume();
+                order.cancel();
             }
         }
 
@@ -88,5 +99,24 @@ public class ProductionOrderHandler extends Commander {
         else {
             ErrorLog.printMaxOncePerMinute(order + " was not handled at all!");
         }
+    }
+
+    private boolean isAlreadyConsumed() {
+        if (!order.isConsumed()) return false;
+
+        if (
+            order.isBuilding() && (
+                order.construction() == null
+                    || order.construction().buildingUnit() == null
+                    || order.construction().buildingUnit().hp() <= 0
+                    || order.construction().buildingUnit().isDead()
+            )
+        ) return false;
+
+//        if (order.isBuilding()) {
+//            A.errPrintln("Building " + order + " is already consumed! Const = " + order.construction());
+//        }
+
+        return true;
     }
 }

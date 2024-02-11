@@ -1,11 +1,10 @@
 package atlantis.units.fix;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.ToLastSquadTarget;
 import atlantis.combat.advance.focus.TooCloseToFocusPoint;
 import atlantis.combat.advance.focus.TooFarFromFocusPoint;
 import atlantis.combat.micro.avoid.DoAvoidEnemies;
-import atlantis.combat.squad.SquadTargeting;
-import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -25,7 +24,7 @@ public class DoPreventFreezesLogic {
             }
         }
 
-        if (goToSquadTarget(unit)) {
+        if (ToLastSquadTarget.goTo(unit)) {
             return true;
         }
 
@@ -45,29 +44,6 @@ public class DoPreventFreezesLogic {
         unit.paintCircleFilled(22, Color.Yellow);
 //        if (goToNearestEnemy(unit)) return true;
         if (goToCombatUnit(unit)) return true;
-
-        return false;
-    }
-
-    private static boolean goToSquadTarget(AUnit unit) {
-        SquadTargeting targeting = unit.squad().targeting();
-        AUnit target = targeting.lastTargetIfAlive();
-
-        if (target == null) return false;
-
-//        if (target == null) {
-//            target = EnemyUnits.discovered().groundUnits().nearestTo(unit);
-//            if (target == null) return false;
-//            else targeting.forceTarget(target);
-//        }
-
-        if (
-            target.distTo(unit) > 6
-                && unit.hasWeaponToAttackThisUnit(target)
-                && unit.move(target, Actions.MOVE_FORMATION, "ToSquadTarget")
-        ) {
-            return true;
-        }
 
         return false;
     }

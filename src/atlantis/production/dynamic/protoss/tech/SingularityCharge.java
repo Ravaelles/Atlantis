@@ -23,14 +23,13 @@ public class SingularityCharge extends Commander {
     public boolean applies() {
         if (isResearched) return false;
 
+        if (CountInQueue.count(Singularity_Charge, 10) > 0) return false;
+
         if (ATech.isResearched(Singularity_Charge)) {
             OurDragoonWeaponRange.onSingularityChargeResearched();
             isResearched = true;
-            System.out.println(" Singularity_Charge isResearched = " + isResearched);
             return false;
         }
-
-        if (CountInQueue.count(Singularity_Charge, 5) > 0) return false;
 
         dragoons = Count.dragoons();
 

@@ -96,7 +96,7 @@ public class ProtossShouldExpand {
 
         if (bases <= 1 && basesInProduction <= 0) {
             if (A.hasMinerals(350) && Count.workers() >= 18) return yes("ManyMinerals");
-            if (Count.workers() >= 22) return yes("ManyWorkers");
+            if (Count.workers() >= 24) return yes("ManyWorkers");
             if (seconds >= 750) return yes("GettingLate");
             if (A.hasMinerals(230) && Count.gateways() >= 3) return yes("ManyGateways");
         }

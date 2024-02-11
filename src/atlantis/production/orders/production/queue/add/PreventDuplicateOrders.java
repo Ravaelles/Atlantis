@@ -5,12 +5,15 @@ import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import bwapi.TechType;
+import bwapi.UpgradeType;
 
-public class PreventAddDuplicateOrder {
+public class PreventDuplicateOrders {
     public static final int MAX_NONCOMPLETED_ORDERS_AT_ONCE = 20;
 
     protected static boolean preventExcessiveOrInvalidOrders(AUnitType type, HasPosition position) {
@@ -140,5 +143,51 @@ public class PreventAddDuplicateOrder {
         }
 
         return false;
+    }
+
+    public static boolean cancelPreviousNonStartedOrdersOf(AUnitType type) {
+        boolean result = false;
+
+        for (ProductionOrder order : Queue.get().nextOrders().ofType(type).list()) {
+            if (order.isInProgress()) return true;
+            order.setIgnore(true);
+
+            if (order.construction() != null) {
+                order.construction().setBuilder(null);
+            }
+
+            order.cancel();
+            result = true;
+        }
+
+        return result;
+    }
+
+    public static boolean cancelPreviousNonStartedOrdersOf(UpgradeType upgrade) {
+        boolean result = false;
+
+        for (ProductionOrder order : Queue.get().nonCompleted().ofType(upgrade).list()) {
+            if (order.isInProgress()) return true;
+            order.setIgnore(true);
+
+            order.cancel();
+            result = true;
+        }
+
+        return result;
+    }
+
+    public static boolean cancelPreviousNonStartedOrdersOf(TechType tech) {
+        boolean result = false;
+
+        for (ProductionOrder order : Queue.get().nonCompleted().ofType(tech).list()) {
+            if (order.isInProgress()) return true;
+            order.setIgnore(true);
+
+            order.cancel();
+            result = true;
+        }
+
+        return result;
     }
 }

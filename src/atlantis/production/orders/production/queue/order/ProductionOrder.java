@@ -511,7 +511,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     }
 
     public void consume() {
-        System.out.println("@ " + A.now() + " - consuming order " + this);
+//        System.out.println("@ " + A.now() + " - consuming order " + this);
         consumed = true;
     }
 }

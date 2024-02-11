@@ -2,13 +2,11 @@
 
 ----- Dragoons go out from main, 0 dist from Zealot and dont attack, AdvanceStandard
 
----- Goons also go to a killed LastTarget and dont do anything. Check if unit is visible
+..---- Goons also go to a killed LastTarget and dont do anything. Check if unit is visible
 
-.!!!--- Units often freeze after attack during Defend. Unfreezer
+!!!.!!!--- Units often freeze after attack during Defend. Unfreezer
 
 !!!.--- No WithdrawWrongSide, Dragoon holding choke!
-
------ Pylon grid and Gateway. Make Pylon always on the left
 
 
 -- Zealots try to attack Goons in another region (close to base). Introduce one Shuttle?

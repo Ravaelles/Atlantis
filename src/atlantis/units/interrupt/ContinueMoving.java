@@ -2,7 +2,6 @@ package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
-import bwapi.Color;
 
 public class ContinueMoving extends Manager {
     public ContinueMoving(AUnit unit) {
@@ -17,7 +16,7 @@ public class ContinueMoving extends Manager {
         if (unit.lastActionMoreThanAgo(37)) return false;
         if (unit.lastPositionChangedMoreThanAgo(10)) return false;
 
-        if (dontApplyDuringMissionDefendOrSparta()) return false;
+        if (dontApplyDuringMissionSparta()) return false;
         if (unit.isScout() || unit.isSquadScout()) return false;
 
         return unit.targetPosition() != null
@@ -32,11 +31,11 @@ public class ContinueMoving extends Manager {
 //            && unit.targetPosition() != null;
     }
 
-    private boolean dontApplyDuringMissionDefendOrSparta() {
-        return unit.isMissionDefendOrSparta()
-            && unit.isRanged()
+    private boolean dontApplyDuringMissionSparta() {
+        return unit.isMissionSparta()
+            && unit.isRanged();
 //            && !unit.isRunning()
-            && unit.meleeEnemiesNearCount(1.3) == 0;
+//            && unit.meleeEnemiesNearCount(1.3) == 0;
     }
 
     public Manager handle() {

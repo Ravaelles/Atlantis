@@ -54,7 +54,7 @@ public class ProduceDragoon {
         boolean result = Select.ourFree(Protoss_Gateway).random().train(
             Protoss_Dragoon, ForcedDirectProductionOrder.create(Protoss_Dragoon)
         );
-        System.err.println("ProduceDragoon = " + result);
+//        System.err.println("ProduceDragoon = " + result);
         return result;
     }
 }

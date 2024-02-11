@@ -28,7 +28,7 @@ public class AdvanceStandard extends MissionManager {
     protected Manager handle() {
         if (asTerran()) return usedManager(this);
 
-        if (ToLastSquadTarget.goToSquadTarget(unit)) return usedManager(this, "ToSquadTarget");
+        if (ToLastSquadTarget.goTo(unit)) return usedManager(this, "ToSquadTarget");
 
         if (A.seconds() % 6 <= 3 && (!unit.isMoving() && !unit.isAttacking())) {
             return usedManager(this, "AdvanceContinue");
