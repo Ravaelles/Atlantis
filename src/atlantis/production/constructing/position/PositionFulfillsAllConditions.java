@@ -39,7 +39,7 @@ public class PositionFulfillsAllConditions {
 
         if (We.terran()) {
             if (TerranForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
-            if (!HasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return false;
+            if (!TerranHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return false;
             if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return false;
             if (building.isMissileTurret()) {
                 if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return false;
@@ -57,6 +57,7 @@ public class PositionFulfillsAllConditions {
             if (OverlappingBaseLocation.isOverlappingBaseLocation(building, position)) return false;
             if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) return false;
             if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) return false;
+            if (!ProtossHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return false;
             if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return false;
         }
 

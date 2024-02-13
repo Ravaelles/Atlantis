@@ -97,8 +97,14 @@ public class NewConstructionRequest {
         // Assign optimal builder for this building
         newConstruction.assignOptimalBuilder();
 
-        // Add to list of pending orders
-        if (ConstructionRequests.alreadyExists(newConstruction)) {
+        if (ConstructionRequests.alreadyExists(newConstruction, false)) {
+            Construction.clearCache();
+            APositionFinder.clearCache();
+//            A.errPrintln("Construction had the same position, find new: " + newConstruction);
+            newConstruction.findPositionForNewBuilding();
+        }
+
+        if (ConstructionRequests.alreadyExists(newConstruction, true)) {
 //            ErrorLog.printMaxOncePerMinute("Cancel as construction already exists: " + newConstruction);
             newConstruction.cancel();
 //            if (order.isBuilding() && !order.unitType().isMissileTurret()) {
@@ -106,6 +112,7 @@ public class NewConstructionRequest {
             return false;
         }
         else {
+            // Add to list of pending orders
             ConstructionRequests.constructions.add(newConstruction);
         }
 

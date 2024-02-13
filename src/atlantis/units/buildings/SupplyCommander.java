@@ -52,8 +52,8 @@ public class SupplyCommander extends Commander {
             return;
         }
 
-        if (supplyFree <= 1 && requestedConstructionsOfSupply <= (A.supplyUsed() <= 33 ? 1 : 2)) {
-//            ErrorLog.printMaxOncePerMinute("Supply free is very low, force additional.");
+        if (supplyFree <= 1 && A.hasMinerals(76) && requestedConstructionsOfSupply <= (A.supplyUsed() <= 33 ? 2 : 3)) {
+            ErrorLog.printMaxOncePerMinute("Supply free is very low, force additional.");
             requestAdditionalSupply();
             return;
         }
@@ -156,10 +156,12 @@ public class SupplyCommander extends Commander {
 //            + " / InProgress=" + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
         ProductionOrder order = AddToQueue.withTopPriority(AtlantisRaceConfig.SUPPLY);
         if (order != null) order.setStatus(OrderStatus.READY_TO_PRODUCE);
+        if (order != null) order.setMinSupply(A.supplyUsed() - 1);
+//        System.err.println("order = " + order);
     }
 
     private static int maxAtOnce() {
-        if (We.protoss() && !A.hasFreeSupply(1)) return 1;
+        if (We.protoss() && !A.hasFreeSupply(1)) return 2;
 
         return A.seconds() <= 300 ? 1 : 2;
     }

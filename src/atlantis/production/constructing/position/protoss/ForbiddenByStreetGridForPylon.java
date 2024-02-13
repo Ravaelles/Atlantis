@@ -9,8 +9,10 @@ import atlantis.units.AUnitType;
 import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
 public class ForbiddenByStreetGridForPylon {
-    public static final int A = 1;
-    public static final int B = 8;
+    private static int X1 = 1;
+    private static int X2 = 3;
+    private static int Y1 = 1;
+    private static int Y2 = 3;
 
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!building.isPylon()) return false;
@@ -27,8 +29,11 @@ public class ForbiddenByStreetGridForPylon {
         int GRID_SIZE_X = ProtossForbiddenByStreetGrid.GRID_VALUE_X;
         int GRID_SIZE_Y = ProtossForbiddenByStreetGrid.GRID_VALUE_Y;
 
-        return (position.tx() % GRID_SIZE_X == A || position.tx() % GRID_SIZE_X == B)
-            && (position.ty() % GRID_SIZE_Y == A || position.ty() % GRID_SIZE_Y == B);
+        return (position.tx() % GRID_SIZE_X == X1 || position.tx() % GRID_SIZE_X == X2)
+            && (position.ty() % GRID_SIZE_Y == Y1 || position.ty() % GRID_SIZE_Y == Y2);
+
+//        return (position.tx() % GRID_SIZE_X == A || position.tx() % GRID_SIZE_X == B)
+//            && (position.ty() % GRID_SIZE_Y == A || position.ty() % GRID_SIZE_Y == B);
 
 //            && position.tx() %  >= 1
 //            && position.ty() % ProtossForbiddenByStreetGrid.GRID_VALUE_Y >= 1;

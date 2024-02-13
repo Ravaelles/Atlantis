@@ -2928,6 +2928,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
             addLog(managerUsed.toString());
         }
+        else {
+            managerLogs.replaceLastWith(managerUsed.toString(), this);
+        }
 
         this.tooltipForManager = message;
     }

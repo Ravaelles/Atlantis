@@ -17,6 +17,7 @@ public class UnfreezeGeneric extends Manager {
     public boolean applies() {
         if (unit.hasCooldown()) return false;
         if (unit.isAccelerating()) return false;
+        if (duringMissionAttack()) return false;
         if (unit.lastPositionChangedLessThanAgo(22)) return false;
         if (unit.lastActionLessThanAgo(16)) return false;
 //        if (unit.isAttacking()) return false;
@@ -27,6 +28,12 @@ public class UnfreezeGeneric extends Manager {
         else if (isDuringSpartaMission()) return false;
 
         return true;
+    }
+
+    private boolean duringMissionAttack() {
+        return unit.isMissionAttack()
+            && unit.noCooldown()
+            && unit.lastPositionChangedMoreThanAgo(52);
     }
 
     private boolean isDuringSpartaMission() {

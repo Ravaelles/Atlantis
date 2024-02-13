@@ -81,4 +81,8 @@ public class LogMessage {
     public String toString() {
         return message;
     }
+
+    public void setMessage(String newMessage) {
+        this.message = newMessage;
+    }
 }

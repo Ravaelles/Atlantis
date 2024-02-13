@@ -28,7 +28,7 @@ public class RemoveExcessiveOrders {
             if (Protoss_Pylon.equals(type)) return 2;
             if (Protoss_Nexus.equals(type)) return 1;
             if (Protoss_Observatory.equals(type)) return 1;
-            if (Protoss_Observer.equals(type)) return 2;
+            if (Protoss_Observer.equals(type)) return 4;
         }
         else {
             if (Terran_Supply_Depot.equals(type)) return 2;
@@ -47,8 +47,13 @@ public class RemoveExcessiveOrders {
 
         if (orders.size() > max) {
             for (int i = orders.size() - 1; i >= 0; i--) {
+//                if (orders.get(i).isUnit() && orders.get(i).unitType().is(Protoss_Observer)) {
+//                    A.printStackTrace("Observer excessive");
+//                }
+
                 orders.get(i).cancel();
                 A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE UNIT " + type);
+
             }
             return true;
         }

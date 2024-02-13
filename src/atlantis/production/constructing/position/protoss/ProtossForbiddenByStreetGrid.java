@@ -7,8 +7,8 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ProtossForbiddenByStreetGrid {
-    public static final int GRID_VALUE_X = 12;
-    public static final int GRID_VALUE_Y = 12;
+    public static final int GRID_VALUE_X = 13;
+    public static final int GRID_VALUE_Y = 13;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -24,7 +24,7 @@ public class ProtossForbiddenByStreetGrid {
 
         if (building.isPylon()) return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
 
-        if (ProtossForProducerBuilding.isForbidden(builder, building, position)) return true;
+        if (ProtossForbiddenForProducerBuildings.isForbidden(builder, building, position)) return true;
 
         // =========================================================
 

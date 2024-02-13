@@ -137,8 +137,8 @@ public class AllowedToAttack {
 
             if (!target.isOverlord()) {
                 System.err.println(AttackNearbyEnemies.reasonNotToAttack + " for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Invalid target");
             }
-//            A.printStackTrace("Invalid target");
             return false;
         }
 

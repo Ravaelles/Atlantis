@@ -49,7 +49,7 @@ public class PreventDuplicateOrders {
         }
 
         if (lastRequestedAgo <= 30 * 2 && !type.isCombatBuilding()) {
-            ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
+//            ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
             return true;
         }
 

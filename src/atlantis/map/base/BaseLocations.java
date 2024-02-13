@@ -98,28 +98,31 @@ public class BaseLocations {
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation) || !baseLocation.isExplored()) {
-                if (hasBaseMinerals(baseLocation)) {
-                    return baseLocation;
-                }
+            if (isBaseLocationSeeminglyFree(baseLocation) && !baseLocation.isExplored()) {
+//                if (hasBaseMinerals(baseLocation)) {
+                return baseLocation;
+//                }
             }
         }
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation) || !baseLocation.isPositionVisible()) {
-                if (hasBaseMinerals(baseLocation)) {
-                    return baseLocation;
-                }
+            if (isBaseLocationSeeminglyFree(baseLocation) && !baseLocation.isPositionVisible()) {
+//                if (hasBaseMinerals(baseLocation)) {
+                return baseLocation;
+//                }
             }
         }
 
         return null;
     }
 
-    public static boolean hasBaseMinerals(HasPosition baseLocation) {
-        return Select.minerals().inRadius(8, baseLocation).count() >= 3;
-    }
+//    public static boolean hasBaseMinerals(HasPosition baseLocation) {
+//        // Doesn't work due to fog of war removing visible units.
+//        // To make this work, need to cache previously seen minerals.
+//        System.err.println("Select.minerals().inRadius(10, baseLocation).count() = " + Select.minerals().inRadius(10, baseLocation).count());
+//        return Select.minerals().inRadius(10, baseLocation).count() >= 5;
+//    }
 
     /**
      * Returns free base location which is as far from enemy starting location as possible.
@@ -141,7 +144,7 @@ public class BaseLocations {
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (isBaseLocationFreeOfBuildingsAndEnemyUnits(baseLocation)) {
+            if (isBaseLocationSeeminglyFree(baseLocation)) {
                 return baseLocation;
             }
         }
@@ -229,19 +232,19 @@ public class BaseLocations {
      * - any enemy units
      * - planned constructions
      */
-    public static boolean isBaseLocationFreeOfBuildingsAndEnemyUnits(ABaseLocation baseLocation) {
+    public static boolean isBaseLocationSeeminglyFree(ABaseLocation baseLocation) {
 
         // If we have any base, FALSE.
 //        List<AUnit> ourUnits = Select.ourBuildingsWithUnfinished()
-        List<AUnit> ourUnits = Select.ourBuildingsWithUnfinished()
-            .bases()
+        List<AUnit> ourUnits = Select.ourBasesWithUnfinished()
             .inRadius(7, baseLocation.position()).list();
         for (AUnit our : ourUnits) {
             if (!our.isLifted()) return false;
         }
 
         // If any enemy unit is Near
-        if (Select.enemy().inRadius(14, baseLocation.position()).effVisible().count() >= 2) return false;
+        if (Select.enemyRealUnitsWithBuildings().inRadius(8, baseLocation.position()).effVisible().count() >= 2)
+            return false;
 
         // Check for planned constructions
         for (Construction construction : ConstructionRequests.all()) {

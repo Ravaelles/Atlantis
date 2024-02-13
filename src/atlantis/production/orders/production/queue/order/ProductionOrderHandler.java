@@ -25,7 +25,6 @@ public class ProductionOrderHandler extends Commander {
         if (isAlreadyConsumed()) {
 //            A.errPrintln("Order " + order + " is already consumed!");
             order.setStatus(OrderStatus.COMPLETED);
-            order.cancel();
             return;
         }
 

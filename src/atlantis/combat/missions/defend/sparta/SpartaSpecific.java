@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend.sparta;
 
 import atlantis.architecture.Manager;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
 
 public class SpartaSpecific extends Manager {
@@ -10,7 +11,8 @@ public class SpartaSpecific extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isMissionSparta();
+        return unit.isMissionSparta()
+            && EnemyWhoBreachedBase.noone();
     }
 
     @Override

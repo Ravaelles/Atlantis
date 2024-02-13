@@ -95,6 +95,8 @@ public class Construction implements Comparable<Construction> {
      * Fully delete this construction, remove the building if needed by cancelling it.
      */
     public void cancel() {
+//        A.printStackTrace("Construction.cancel() - " + this);
+
         if (build != null) {
             build.cancelConstruction();
         }
@@ -125,10 +127,12 @@ public class Construction implements Comparable<Construction> {
 
         if (buildingType == null || positionToBuild == null) return false;
 
-        return this.ID == other.ID
-            || (
-            this.buildingType.equals(other.buildingType) && positionToBuild.equals(other.positionToBuild)
-        );
+        return this.ID == other.ID;
+    }
+
+    public boolean sameAs(Construction other) {
+        return this.buildingType.equals(other.buildingType)
+            && (positionToBuild == other.positionToBuild || positionToBuild.equals(other.positionToBuild));
     }
 
     @Override

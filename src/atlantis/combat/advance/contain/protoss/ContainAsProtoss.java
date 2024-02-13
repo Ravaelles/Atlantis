@@ -9,7 +9,7 @@ import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
 public class ContainAsProtoss extends Manager {
-    public static final int DIST_TO_ENEMY_MAIN_CHOKE = 7;
+    public static final int DIST_TO_ENEMY_MAIN_CHOKE = 9;
 
     public ContainAsProtoss(AUnit unit) {
         super(unit);

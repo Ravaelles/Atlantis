@@ -61,7 +61,7 @@ public class AdvanceAsALeader extends MissionManager {
         if (distToSquadCenter <= 3) return false;
 
         if (
-            distToSquadCenter >= 10
+            distToSquadCenter >= 3
                 || unit.friendsNear().groundUnits().inRadius(3, unit).atMost(2)
         ) {
             return unit.move(squad.center(), Actions.MOVE_FORMATION, "LeaderToSquadCenter");

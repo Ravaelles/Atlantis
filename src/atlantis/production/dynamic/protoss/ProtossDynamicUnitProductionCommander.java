@@ -83,7 +83,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         if (!AGame.everyNthGameFrame(7)) return;
 
         ProduceScarabs.scarabs();
-        ProduceObservers.observers();
+        ProduceObserver.observers();
         ProduceArbiters.arbiters();
         ProduceCorsairs.corsairs();
         ProduceShuttles.shuttles();

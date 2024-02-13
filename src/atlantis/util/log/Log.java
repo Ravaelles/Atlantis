@@ -40,10 +40,7 @@ public class Log {
             LogUnitsToFiles.saveUnitLogToFile(message, unit);
         }
 
-
-        if (messages.size() > limit) {
-            messages.remove(0);
-        }
+        if (messages.size() > limit) messages.remove(0);
     }
 
     public ArrayList<LogMessage> messages() {
@@ -64,6 +61,15 @@ public class Log {
         }
 
         return messages.get(messages.size() - 1);
+    }
+
+    public void replaceLastWith(String replaceWith, AUnit unit) {
+        if (messages.isEmpty()) {
+            addMessage(replaceWith, unit);
+            return;
+        }
+
+        messages.get(messages.size() - 1).setMessage(replaceWith);
     }
 
     public boolean isNotEmpty() {

@@ -8,6 +8,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -23,31 +24,35 @@ public class ConstructionThatLooksBugged extends Commander {
         }
     }
 
-    private void handleConstructionThatLooksBugged(Construction order) {
-        if (order.status() != ConstructionOrderStatus.NOT_STARTED) {
-            return;
-        }
+    private void handleConstructionThatLooksBugged(Construction constr) {
+        if (constr.status() != ConstructionOrderStatus.NOT_STARTED) return;
+        if (constr.buildingUnit() != null) return;
 
-        if (order.builder() == null) {
-            if (Count.workers() >= 3) {
-                ErrorLog.printMaxOncePerMinute("Weird case, " + order.buildingType() + " has no builder. Cancel.");
+        if (constr.builder() == null) {
+            if (constr.status() != ConstructionOrderStatus.NOT_STARTED) {
+                constr.setBuilder(FreeWorkers.getOne());
             }
-            order.cancel();
-            return;
+            else {
+                if (Count.workers() >= 3) {
+                    ErrorLog.printMaxOncePerMinute("Weird case, " + constr.buildingType() + " has no builder. Cancel.");
+                }
+                constr.productionOrder().cancel();
+                return;
+            }
         }
 
         AUnit main = Select.main();
         int bonus = We.protoss() ? 30 * 8 : 0;
         int timeout = bonus + 30 * (
             8
-                + (order.buildingType().isBase() || order.buildingType().isCombatBuilding() ? 40 : 10)
-                + ((int) (2.9 * order.buildPosition().groundDistanceTo(main != null ? main : order.builder())))
+                + (constr.buildingType().isBase() || constr.buildingType().isCombatBuilding() ? 40 : 10)
+                + ((int) (2.9 * constr.buildPosition().groundDistanceTo(main != null ? main : constr.builder())))
         );
 
-        if (AGame.now() - order.timeOrdered() > timeout) {
-//            System.err.println(" // " + AGame.now() + " // " + order.timeOrdered() + " // > " + timeout);
-            ErrorLog.printMaxOncePerMinute("Cancel construction of " + order.buildingType() + " (Took too long)");
-            order.cancel();
+        if (AGame.now() - constr.timeOrdered() > timeout) {
+//            System.err.println(" // " + AGame.now() + " // " + constr.timeOrdered() + " // > " + timeout);
+            ErrorLog.printMaxOncePerMinute("Cancel constr of " + constr.buildingType() + " (Took too long)");
+            constr.cancel();
         }
     }
 }

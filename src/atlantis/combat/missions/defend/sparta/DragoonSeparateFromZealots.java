@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend.sparta;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

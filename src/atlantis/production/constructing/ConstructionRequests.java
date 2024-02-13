@@ -1,11 +1,13 @@
 package atlantis.production.constructing;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -236,10 +238,13 @@ public class ConstructionRequests {
         return false;
     }
 
-    public static boolean alreadyExists(Construction newConstructionOrder) {
+    public static boolean alreadyExists(Construction newConstructionOrder, boolean allowPrint) {
         for (Construction construction : constructions) {
-            if (construction.equals(newConstructionOrder)) {
-//                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Construction already exists: " + newConstructionOrder);
+            if (
+                !construction.equals(newConstructionOrder)
+                    && construction.sameAs(newConstructionOrder)
+            ) {
+                if (allowPrint) A.errPrintln("Cancel identical construction: " + newConstructionOrder);
                 return true;
             }
         }

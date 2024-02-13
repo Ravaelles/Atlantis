@@ -35,11 +35,14 @@ public class AppliesContainForProtoss {
 
     protected boolean weAreTooStrongToJustContain() {
         if (A.supplyUsed() > 185) return true;
-        if (A.minerals() > 2000) return true;
+        if (A.minerals() > 2500) return true;
 
-        if (unit.friendsNear().combatUnits().atMost(15)) return false;
+//        if (unit.friendsNear().combatUnits().inRadius(10, unit).atMost(8)) return false;
 
-        return Alpha.get().size() >= 40
-            || A.resourcesBalance() >= 1300;
+        if (Alpha.get().size() >= 40) return true;
+
+        if (unit.friendsNear().combatUnits().atMost(18)) return false;
+
+        return A.resourcesBalance() >= 1300;
     }
 }

@@ -23,7 +23,7 @@ public class TooFarFromLeader extends Manager {
         if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
         if (unit.squad().isLeader(unit)) return false;
 
-        if (A.supplyUsed() >= 90 && (
+        if (A.supplyUsed() >= 170 && (
             unit.enemiesNear().empty() || EnemyUnits.discovered().buildings().atMost(1)
         )) return false;
 

@@ -17,7 +17,7 @@ public class AdvanceStandard extends MissionManager {
     public boolean applies() {
         return unit.isCombatUnit()
             && !squad.isLeader(unit)
-            && unit.combatEvalRelative() > 1.5
+//            && unit.combatEvalRelative() > 1.5
             && unit.enemiesNear().canBeAttackedBy(unit, 0).empty()
             && (
             (unit.distToLeader() <= 7 + (A.supplyUsed() / 25.0))

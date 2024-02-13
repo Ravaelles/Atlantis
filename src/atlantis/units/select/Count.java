@@ -157,13 +157,13 @@ public class Count {
     public static int existingOrPlannedBuildingsNear(AUnitType type, double radius, HasPosition position) {
         assert type.isABuilding();
 
-        return ourWithUnfinished(type, position, radius) + plannedBuildingsNear(type, radius, position);
+        return ourWithUnfinished(type, radius, position) + plannedBuildingsNear(type, radius, position);
     }
 
     public static int existingOrUnfinishedBuildingsNear(AUnitType type, double radius, HasPosition position) {
         assert type.isABuilding();
 
-        return ourWithUnfinished(type, position, radius);
+        return ourWithUnfinished(type, radius, position);
     }
 
     public static int plannedBuildingsNear(AUnitType type, double radius, HasPosition position) {
@@ -176,7 +176,7 @@ public class Count {
 //        return Select.ourOfType(type).count() + ProductionQueue.countInQueue(type, 6);
 //    }
 
-    public static int ourWithUnfinished(AUnitType type, HasPosition near, double radius) {
+    public static int ourWithUnfinished(AUnitType type, double radius, HasPosition near) {
         return Select.ourWithUnfinishedOfType(type).inRadius(radius, near).count();
     }
 
