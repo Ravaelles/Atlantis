@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue;
 
+import atlantis.game.A;
 import atlantis.production.orders.production.queue.add.History;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -31,6 +32,9 @@ public class Queue extends AbstractQueue {
             history.addNow(productionOrder.whatToString());
             clearCache();
 //            System.err.println("history.size = " + history.size() + " / last:" + history.last());
+        }
+        else {
+            A.errPrintln("Failed to add " + productionOrder.whatToString());
         }
 
 //        allOrders().print("Added");

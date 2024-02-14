@@ -160,7 +160,7 @@ public class TravelToConstruct extends HasUnit {
 //            }
 //        }
 
-        if (AGame.canAfford(buildingType.mineralPrice(), buildingType.gasPrice())) {
+        if (A.canAfford(buildingType.mineralPrice(), buildingType.gasPrice())) {
 //            System.err.println("buildPosition PRE = " + construction.buildPosition());
 //            APosition buildPosition = refreshBuildPosition(construction);
 //            APosition buildPosition = refreshConstructionPositionIfNeeded(construction, buildingType);
@@ -240,7 +240,7 @@ public class TravelToConstruct extends HasUnit {
 //            }
 
 //            if (ProductionQueue.isAtTheTopOfQueue(building, 1)) {
-            return !AGame.canAfford(
+            return !A.canAfford(
                 building.mineralPrice() - 32 - (int) (distance * 1.3) - baseBonus,
                 building.gasPrice() - 16 - (int) distance
             );

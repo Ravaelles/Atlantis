@@ -2,7 +2,6 @@ package atlantis.production.dynamic.expansion.protoss;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.game.race.MyRace;
 import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.base.BaseLocations;
@@ -55,7 +54,7 @@ public class ProtossShouldExpand {
         int minMinerals = 100 + (MyRace.isPlayingAsZerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
-        if (!AGame.canAffordWithReserved(minMinerals, 0)) return no("CannotAfford");
+        if (!A.canAffordWithReserved(minMinerals, 0)) return no("CannotAfford");
 
         // === False again ===========================================
 
@@ -71,10 +70,10 @@ public class ProtossShouldExpand {
 
         int numberOfUnfinishedBases = ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.BASE);
 
-        boolean haveEnoughMinerals = AGame.hasMinerals(minMinerals);
+        boolean haveEnoughMinerals = A.hasMinerals(minMinerals);
 //        boolean haveEnoughBases = bases >= 4 && AGame.isPlayingAsZerg() && Select.ourLarva().count() >= 2;
         boolean noBaseToConstruct = numberOfUnfinishedBases == 0;
-        boolean allowExtraExpansion = AGame.hasMinerals(minMinerals + 200) && numberOfUnfinishedBases <= 1;
+        boolean allowExtraExpansion = A.hasMinerals(minMinerals + 200) && numberOfUnfinishedBases <= 1;
 
         boolean result = haveEnoughMinerals && (noBaseToConstruct || allowExtraExpansion);
 
@@ -107,7 +106,7 @@ public class ProtossShouldExpand {
         );
 
         if (secondsAllow) return yes("StrongEnough");
-        if (basesInProduction == 0 && AGame.canAfford(360, 0)) return yes("CanAfford");
+        if (basesInProduction == 0 && A.canAfford(360, 0)) return yes("CanAfford");
 
         if (seconds <= 400 && armyStrength < 100) return no("Weak");
 

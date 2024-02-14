@@ -1,6 +1,7 @@
 package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
@@ -27,6 +28,7 @@ public class DynamicCommanderHelpers extends Commander {
             return;
         }
 
+        System.out.println("@" + A.now() + " buildToHaveOne " + type);
         buildNow(type, true);
     }
 
@@ -49,13 +51,13 @@ public class DynamicCommanderHelpers extends Commander {
     }
 
     public static boolean buildIfHaveMineralsAndGas(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
-        if (!AGame.canAfford(hasMinerals, hasGas)) return false;
+        if (!A.canAfford(hasMinerals, hasGas)) return false;
 
         return buildNow(type, onlyOneAtTime);
     }
 
     public static void buildIfCanAffordWithReserved(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
-        if (!AGame.canAffordWithReserved(hasMinerals, hasGas)) {
+        if (!A.canAffordWithReserved(hasMinerals, hasGas)) {
             return;
         }
 

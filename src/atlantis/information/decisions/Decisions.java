@@ -1,7 +1,6 @@
 package atlantis.information.decisions;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.production.dynamic.zerg.units.ProduceZerglings;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
@@ -90,7 +89,7 @@ public class Decisions {
                 return true;
             }
 
-            if (AGame.canAffordWithReserved(130, 0)) {
+            if (A.canAffordWithReserved(130, 0)) {
                 return true;
             }
         }

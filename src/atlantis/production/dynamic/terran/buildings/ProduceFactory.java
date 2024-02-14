@@ -94,7 +94,7 @@ public class ProduceFactory {
             return true;
         }
 
-        if (AGame.canAffordWithReserved(160, 120)) {
+        if (A.canAffordWithReserved(160, 120)) {
             Selection factories = Select.ourOfType(Terran_Factory);
 
             if (inProgress >= A.inRange(1, AGame.gas() / 150, 3)) return false;
@@ -108,7 +108,7 @@ public class ProduceFactory {
                     produce();
                     return true;
                 }
-                else if (inProgress >= 1 && AGame.canAfford(
+                else if (inProgress >= 1 && A.canAfford(
                     100 + 200 * inProgress, 100 + 100 * inProgress
                 )) {
                     produce();

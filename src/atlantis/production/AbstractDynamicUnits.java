@@ -1,5 +1,6 @@
 package atlantis.production;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -15,7 +16,9 @@ public class AbstractDynamicUnits extends Helpers {
         if (haveN <= 0) return false;
 
         if (Count.withPlanned(type) < haveN) {
-            return trainIfPossible(type);
+//            System.err.println(Count.withPlanned(type) + " A/E " + haveN);
+            if (type.isABuilding()) return AddToQueue.toHave(type, haveN);
+            else return trainIfPossible(type);
         }
 
         return false;
@@ -36,7 +39,7 @@ public class AbstractDynamicUnits extends Helpers {
     }
 
     public static boolean trainIfPossible(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
-        if (!AGame.canAffordWithReserved(hasMinerals, hasGas)) return false;
+        if (!A.canAffordWithReserved(hasMinerals, hasGas)) return false;
 
         if (onlyOneAtTime) {
             if (type.isABuilding() && ConstructionRequests.hasRequestedConstructionOf(type)) return false;

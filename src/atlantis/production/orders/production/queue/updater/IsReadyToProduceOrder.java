@@ -1,6 +1,7 @@
 package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
@@ -18,14 +19,17 @@ public class IsReadyToProduceOrder {
 //        if (order.unitType() == AUnitType.Terran_Machine_Shop) {
 //        if (order.tech() == TechType.Stim_Packs) {
 //        if (order.upgrade() == U238.upgradeType()) {
-//            A.errPrintln("----------- Order: " + order + " / now: " + A.now());
-//            A.errPrintln(
-//                "order.supplyRequirementFulfilled() = "
-//                    + order.supplyRequirementFulfilled() + " // "
-//                    + order.minSupply() + "/" + AGame.supplyUsed()
-//            );
-//            A.errPrintln("order.checkIfHasWhatRequired() = " + order.checkIfHasWhatRequired());
-//            A.errPrintln("-----------");
+//        A.errPrintln("----------- Order: " + order + " / now: " + A.now());
+//        A.errPrintln(
+//            "supplyRequirementFulfilled: " + order.supplyRequirementFulfilled() + "\r\n"
+//                + "hasEnoughResourcesFor: " + hasEnoughResourcesFor(order) + " / res_min:"
+//                + ReservedResources.minerals() + "\r\n"
+//                + "canAffordWithReserved: " + A.canAffordWithReserved(150, 0) + "\r\n"
+//                + "canAfford bonus: " + A.canAfford(150 + 150, 0) + "\r\n"
+//                + "checkIfHasWhatRequired: " + order.checkIfHasWhatRequired() + "\r\n"
+//                + order.minSupply() + "/" + A.supplyUsed()
+//        );
+//        A.errPrintln("-----------");
 //        }
 
         // Prioritize combat unit production when base is under attack
@@ -52,6 +56,11 @@ public class IsReadyToProduceOrder {
 
         if (unitType == null) return true;
         if (unitType.isBase()) return A.hasMinerals(310);
+
+//        System.err.println("      SUP?!? = " + (A.supplyUsed() + 3 >= order.minSupply()));
+//        System.err.println("      unitType.mineralPrice() = " + unitType.mineralPrice());
+//        System.err.println("      mineralBonusToHave(unitType) = " + mineralBonusToHave(unitType));
+//        System.err.println("      ReservedResources.minerals() = " + ReservedResources.minerals());
 
         return A.supplyUsed() + 3 >= order.minSupply()
 //            && (order.isUnit() && unitType.isResource())

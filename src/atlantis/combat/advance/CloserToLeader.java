@@ -16,8 +16,7 @@ public class CloserToLeader extends MissionManager {
     @Override
     public boolean applies() {
         return !unit.isAir()
-            && squad.leader() != null
-            && !squad.isLeader(unit)
+            && !unit.isLeader()
 //            && unit.mission().focusPoint() != null
             && A.seconds() % 6 <= 3
             && (unit.noCooldown() && unit.enemiesNearInRadius(8) == 0)
@@ -44,8 +43,11 @@ public class CloserToLeader extends MissionManager {
     }
 
     private boolean shouldGetBackToLeader() {
+        if (squad == null) return false;
+        
         AUnit leader = squad.leader();
 
+        if (leader == null) return false;
         if (!isLeaderOvercrowded(leader)) return false;
 
         if (unit.distTo(leader) >= 7) return true;

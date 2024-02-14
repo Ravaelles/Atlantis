@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.reinforce.terran.turrets;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -28,7 +27,7 @@ public class TerranMissileTurret extends AntiAirBuildingCommander {
 
     protected boolean handleReinforcePosition(HasPosition position, double inRadius) {
         if (position == null) return false;
-        if (!AGame.canAffordWithReserved(75, 0)) return false;
+        if (!A.canAffordWithReserved(75, 0)) return false;
         if (Count.existingOrInProductionOrInQueue(type()) >= 3) return false;
 
         if (!Have.existingOrPlannedOrInQueue(type(), position, inRadius)) {

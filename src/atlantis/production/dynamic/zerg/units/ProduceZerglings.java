@@ -2,13 +2,11 @@ package atlantis.production.dynamic.zerg.units;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 
 import static atlantis.units.AUnitType.*;
 
@@ -35,10 +33,10 @@ public class ProduceZerglings {
 
         if (larvas <= (A.seconds() <= 200 ? 1 : 2)) return false;
 
-        if (AGame.supplyFree() <= 1 || !AGame.canAffordWithReserved(150, 0)) return false;
+        if (AGame.supplyFree() <= 1 || !A.canAffordWithReserved(150, 0)) return false;
 
         if (
-            zerglings <= 40 && (AGame.canAffordWithReserved(50, 0))
+            zerglings <= 40 && (A.canAffordWithReserved(50, 0))
         ) {
 //            System.err.println(A.now() + " zergling enqueued");
             return produceZergling();

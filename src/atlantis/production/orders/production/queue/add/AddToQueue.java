@@ -1,9 +1,9 @@
 package atlantis.production.orders.production.queue.add;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
+import atlantis.production.orders.production.queue.ClearCountCache;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.Orders;
@@ -110,6 +110,8 @@ public class AddToQueue {
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
 
         if (Queue.get().addNew(index, productionOrder)) {
+//            A.println(A.now() + ": Adding " + type + " to queue");
+
 //            if (type.isSupplyDepot()) {
 //                System.out.println("@ " + A.now() + " - ADDED DEPOT = "
 //                    + CountInQueue.count(AUnitType.Terran_Supply_Depot)
@@ -137,8 +139,7 @@ public class AddToQueue {
 
             RemoveExcessiveOrders.removeExcessive(type);
 
-            Select.clearCache();
-            Count.clearCache();
+            ClearCountCache.clear();
 
 //            if (type.isSupplyDepot()) {
 //                System.out.println("@ " + A.now() + " - ADDED DEPOT - POST CLEAR CACHE = "
@@ -235,18 +236,28 @@ public class AddToQueue {
         return toHave(type, inTotal, ProductionOrderPriority.STANDARD);
     }
 
-    public static boolean toHave(AUnitType type, int inTotal, ProductionOrderPriority priority) {
-        if (Count.existingOrInProductionOrInQueue(type) < inTotal) {
-            return withPriority(type, priority) != null;
+    public static boolean toHave(AUnitType type, int expectedInTotal, ProductionOrderPriority priority) {
+        int existing = Count.withPlanned(type);
+        boolean result = false;
+
+        if (existing < expectedInTotal) {
+            PreventDuplicateOrders.tempDisabled = true;
+
+            for (int i = 0; i < expectedInTotal - existing; i++) {
+//                System.err.println("_Adding " + existing + " / " + expectedInTotal + " " + type + " to queue");
+                result = withPriority(type, priority) != null || result;
+            }
+
+            PreventDuplicateOrders.tempDisabled = false;
         }
 
-        return false;
+        return result;
     }
 
     public static boolean addToQueueIfHaveFreeBuilding(AUnitType type) {
         AUnitType building = type.whatBuildsIt();
-        for (AUnit buildingProducing : Select.ourOfType(building).list()) {
-            if (!buildingProducing.isTrainingAnyUnit() && AGame.canAffordWithReserved(type)) {
+        for (AUnit buildingProducing : Select.ourFree(building).list()) {
+            if (!buildingProducing.isTrainingAnyUnit() && A.canAffordWithReserved(type)) {
                 addToQueue(type);
                 return true;
             }

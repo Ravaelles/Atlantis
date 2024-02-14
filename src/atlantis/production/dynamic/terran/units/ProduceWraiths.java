@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
@@ -21,7 +20,7 @@ public class ProduceWraiths {
         boolean produceWraiths = A.supplyUsed() >= 90 || A.canAfford(600, 400);
 
         int wraiths = Count.ofType(AUnitType.Terran_Wraith);
-        boolean canAffordWithReserved = AGame.canAffordWithReserved(150, 100);
+        boolean canAffordWithReserved = A.canAffordWithReserved(150, 100);
 
         if (wraiths >= 5 && !canAffordWithReserved) return false;
 

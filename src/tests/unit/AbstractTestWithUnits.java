@@ -216,8 +216,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
             aGame.when(AGame::supplyFree).thenReturn(4);
         }
 
-        aGame.when(AGame::minerals).thenReturn(444);
-        aGame.when(AGame::gas).thenReturn(333);
+        aGame.when(AGame::minerals).thenReturn(888);
+        aGame.when(AGame::gas).thenReturn(777);
 
         Main.OUR_RACE = "Terran";
         enemyRace = Mockito.mockStatic(EnemyRace.class);

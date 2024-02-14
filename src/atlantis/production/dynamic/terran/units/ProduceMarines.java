@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
@@ -9,7 +8,6 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -84,7 +82,7 @@ public class ProduceMarines {
             return false;
         }
 
-        if (A.supplyUsed() >= 32 && !AGame.canAffordWithReserved(80, 0)) {
+        if (A.supplyUsed() >= 32 && !A.canAffordWithReserved(80, 0)) {
             if (TerranDynamicInfantry.DEBUG) System.out.println("Marines - Dont - cantNOTAffordWithReserved");
             return false;
         }

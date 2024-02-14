@@ -1,6 +1,6 @@
 package atlantis.production.requests.produce;
 
-import atlantis.game.AGame;
+import atlantis.game.A;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -25,7 +25,7 @@ public class ProduceUnit {
         // =========================================================
         // Non-worker
 
-        else if (AGame.canAfford(type.mineralPrice(), type.gasPrice())) {
+        else if (A.canAfford(type.mineralPrice(), type.gasPrice())) {
             return CurrentBuildOrder.get().produceUnit(type, order);
         }
 //        else {

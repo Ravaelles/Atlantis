@@ -2922,6 +2922,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public void setManagerUsed(Manager managerUsed, String message) {
         if (!manager.equals(managerUsed)) {
+            System.err.println("A");
             managerLogs.addMessage(managerUsed.toString(), this);
 
             this.manager = managerUsed;
@@ -2929,6 +2930,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             addLog(managerUsed.toString());
         }
         else {
+            System.err.println("B");
             managerLogs.replaceLastWith(managerUsed.toString(), this);
         }
 

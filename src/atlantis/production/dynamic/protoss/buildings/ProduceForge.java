@@ -8,6 +8,7 @@ import static atlantis.units.AUnitType.Protoss_Forge;
 public class ProduceForge {
     public static void produce() {
         int buildAtSupply = EnemyStrategy.get().isRushOrCheese() ? 46 : 36;
+        
         DynamicCommanderHelpers.buildToHaveOne(buildAtSupply, Protoss_Forge);
     }
 }

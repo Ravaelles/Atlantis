@@ -2,7 +2,6 @@ package atlantis.production.dynamic.zerg;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -25,7 +24,7 @@ public class ZergExpansionCommander extends Commander {
         if (lastExpandedLessThanSecondsAgo(6)) return false;
 
 //        A.seconds() >= 200 &&
-        if (AGame.canAfford(223, 0)) {
+        if (A.canAfford(223, 0)) {
             return markExpandedNow();
         }
 

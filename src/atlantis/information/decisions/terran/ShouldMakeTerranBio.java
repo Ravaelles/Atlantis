@@ -1,7 +1,6 @@
 package atlantis.information.decisions.terran;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.decisions.FocusOnProducingUnits;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
@@ -81,7 +80,7 @@ public class ShouldMakeTerranBio {
 //            return true;
 //        }
 
-        return AGame.canAffordWithReserved(50, 0);
+        return A.canAffordWithReserved(50, 0);
     }
 
 }

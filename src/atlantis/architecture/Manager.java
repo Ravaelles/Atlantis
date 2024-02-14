@@ -119,9 +119,7 @@ public abstract class Manager extends BaseManager {
      * Indicates this Manager was just used by the unit.
      */
     public Manager usedManager(Manager manager, String message) {
-        if (manager == null) {
-            return null;
-        }
+        if (manager == null) return null;
 
         if (message != null && !message.isEmpty()) {
             unit.setManagerUsed(manager, message);
@@ -129,6 +127,7 @@ public abstract class Manager extends BaseManager {
         else {
             unit.setManagerUsed(manager);
         }
+
         return manager;
     }
 

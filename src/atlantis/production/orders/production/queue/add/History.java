@@ -47,4 +47,9 @@ public class History {
 
         return allEvents.get(allEvents.size() - 1);
     }
+
+    public void clear() {
+        allEvents.clear();
+        cacheInt.clear();
+    }
 }

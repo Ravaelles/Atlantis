@@ -15,8 +15,11 @@ import bwapi.UpgradeType;
 
 public class PreventDuplicateOrders {
     public static final int MAX_NONCOMPLETED_ORDERS_AT_ONCE = 20;
+    public static boolean tempDisabled = false;
 
     protected static boolean preventExcessiveOrInvalidOrders(AUnitType type, HasPosition position) {
+        if (tempDisabled) return false;
+
         assert type != null;
 
         if (excessivePylon(type, position)) return true;

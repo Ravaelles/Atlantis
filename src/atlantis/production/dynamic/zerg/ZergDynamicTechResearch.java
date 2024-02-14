@@ -2,7 +2,6 @@ package atlantis.production.dynamic.zerg;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
@@ -24,7 +23,7 @@ public class ZergDynamicTechResearch extends Commander {
         }
 
         int hydras = Count.hydralisks();
-        if (hydras >= 8 && AGame.canAffordWithReserved(70, 50)) {
+        if (hydras >= 8 && A.canAffordWithReserved(70, 50)) {
             if (
                 !ATech.isResearched(UpgradeType.Muscular_Augments)
             ) {

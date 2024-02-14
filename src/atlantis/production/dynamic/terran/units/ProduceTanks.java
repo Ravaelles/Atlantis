@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.production.dynamic.terran.tech.SiegeMode;
 import atlantis.units.AUnit;
@@ -56,6 +55,6 @@ public class ProduceTanks {
     }
 
     private static boolean canAffordWithReserved() {
-        return AGame.canAffordWithReserved(150, 100);
+        return A.canAffordWithReserved(150, 100);
     }
 }

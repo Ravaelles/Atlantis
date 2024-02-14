@@ -9,7 +9,6 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.SoonInQueue;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
@@ -38,7 +37,7 @@ public class AutoProduceWorkersCommander extends Commander {
     // =========================================================
 
     public static boolean shouldProduceWorkers() {
-        if (AGame.supplyFree() == 0 || !AGame.hasMinerals(50)) return dont("CantAfford");
+        if (AGame.supplyFree() == 0 || !A.hasMinerals(50)) return dont("CantAfford");
         if (
             A.supplyUsed() <= 30 && Count.workers() >= 15 && (
                 (!A.hasMinerals(100) || A.minerals() < A.reservedMinerals() + 100))
@@ -62,7 +61,7 @@ public class AutoProduceWorkersCommander extends Commander {
 
         if (We.zerg()) {
             if (!A.hasMinerals(75 * Count.creepColonies())) return false;
-            if (A.supplyUsed() <= 20 && !AGame.canAffordWithReserved(50, 0)) return false;
+            if (A.supplyUsed() <= 20 && !A.canAffordWithReserved(50, 0)) return false;
             if (!A.hasMinerals(250) && SoonInQueue.have(Zerg_Spawning_Pool, 1)) {
                 ProductionOrder order = Queue.get().nextOrders(1).ofType(Zerg_Spawning_Pool).get(0);
                 if (order != null && order.supplyRequirementFulfilled()) {
@@ -102,7 +101,7 @@ public class AutoProduceWorkersCommander extends Commander {
      * See AutoProduceWorkersCommander which is also used to produce workers.
      */
     public static boolean produceWorker(AUnit base) {
-        if (AGame.supplyFree() == 0 || !AGame.canAfford(50, 0)) return false;
+        if (AGame.supplyFree() == 0 || !A.canAfford(50, 0)) return false;
         if (A.supplyUsed() >= 8 && !hasEnoughMineralsToConsiderProducingWorker()) return false;
 
         if (We.zerg()) return ProduceZergUnit.produceZergUnit(

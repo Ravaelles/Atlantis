@@ -1,6 +1,6 @@
 package atlantis.production.dynamic.terran.units;
 
-import atlantis.game.AGame;
+import atlantis.game.A;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
@@ -13,7 +13,7 @@ public class ProduceGoliaths {
         if (!Have.armory()) return false;
 
         if (EnemyStrategy.get().isAirUnits() && Count.withPlanned(AUnitType.Terran_Goliath) <= 20) {
-            if (AGame.canAffordWithReserved(150, 100)) {
+            if (A.canAffordWithReserved(150, 100)) {
                 return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Goliath);
             }
         }

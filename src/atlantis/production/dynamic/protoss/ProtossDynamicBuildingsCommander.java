@@ -34,8 +34,8 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
             ProduceObservatory.produce();
             ProduceRoboticsSupportBay.produce();
             ProduceRoboticsFacility.produce();
-            ProduceShieldBattery.produce();
             ProduceForge.produce();
+            ProduceShieldBattery.produce();
         }
 
         ProduceGateway.produce();

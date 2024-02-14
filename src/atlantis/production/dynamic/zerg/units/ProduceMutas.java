@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.zerg.units;
 
-import atlantis.game.AGame;
-import atlantis.production.dynamic.zerg.ZergDynamicUnitsCommander;
+import atlantis.game.A;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -21,11 +20,11 @@ public class ProduceMutas {
             AddToQueue.withHighPriority(AUnitType.Zerg_Mutalisk);
         }
         else {
-            if (!AGame.canAffordWithReserved(75, 75)) {
+            if (!A.canAffordWithReserved(75, 75)) {
                 return;
             }
 
-            if (Have.larvas(1) && AGame.canAffordWithReserved(50, 0)) {
+            if (Have.larvas(1) && A.canAffordWithReserved(50, 0)) {
                 AddToQueue.withStandardPriority(AUnitType.Zerg_Mutalisk);
             }
         }

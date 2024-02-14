@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.generic.TerranArmyComposition;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
@@ -40,7 +39,7 @@ public class ProduceMedicsAndFirebats {
 //        if (!ShouldProduceInfantry.canProduceInfantry(medics)) return false;
 
         if (TerranDynamicInfantry.needToSaveForFactory()) return false;
-        if (!AGame.canAffordWithReserved(60, 30)) return false;
+        if (!A.canAffordWithReserved(60, 30)) return false;
 
         if (medicsRatioTooLow) {
             if (medicsUnfinished <= 0 && marines >= 2) {

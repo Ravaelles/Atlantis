@@ -46,7 +46,6 @@ public abstract class AbstractQueue {
         }
     }
 
-
     public History history() {
         return history;
     }

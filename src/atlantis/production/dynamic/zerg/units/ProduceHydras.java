@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.zerg.units;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -23,7 +22,7 @@ public class ProduceHydras {
     }
 
     private static boolean canAfford() {
-        return A.canAfford(450, 200) || AGame.canAffordWithReserved(50, 150);
+        return A.canAfford(450, 200) || A.canAffordWithReserved(50, 150);
     }
 
     private static boolean produceHydra() {

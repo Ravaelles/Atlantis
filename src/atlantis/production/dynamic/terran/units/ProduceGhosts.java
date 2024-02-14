@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -22,7 +21,7 @@ public class ProduceGhosts {
 
         if (ghosts >= 8 || A.supplyUsed() <= 80 + 5 * ghosts) return false;
 
-        if (ghosts >= 4 && !AGame.canAffordWithReserved(60, 200)) return false;
+        if (ghosts >= 4 && !A.canAffordWithReserved(60, 200)) return false;
 
         if (!A.hasGas(ghosts * 25)) return false;
 

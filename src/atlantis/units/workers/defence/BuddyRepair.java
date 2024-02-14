@@ -2,7 +2,6 @@ package atlantis.units.workers.defence;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.We;
@@ -14,7 +13,7 @@ public class BuddyRepair extends Manager {
 
     @Override
     public boolean applies() {
-        return We.terran() && AGame.canAfford(20, 0);
+        return We.terran() && A.canAfford(20, 0);
     }
 
     @Override

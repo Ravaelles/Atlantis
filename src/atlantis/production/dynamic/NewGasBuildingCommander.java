@@ -59,7 +59,7 @@ public class NewGasBuildingCommander extends Commander {
         int numberOfGasBuildings = Count.withPlanned(AtlantisRaceConfig.GAS_BUILDING);
         if (
             numberOfBases >= 2
-                && numberOfBases > numberOfGasBuildings && !AGame.canAfford(0, 350)
+                && numberOfBases > numberOfGasBuildings && !A.canAfford(0, 350)
                 && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.GAS_BUILDING) == 0
                 && hasABaseWithFreeGeyser()
         ) {

@@ -5,8 +5,6 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.MapSpecificCommander;
 
-import atlantis.production.orders.production.queue.ReservedResources;
-import atlantis.units.AUnitType;
 import bwapi.*;
 
 import java.util.ArrayList;
@@ -205,70 +203,6 @@ public class AGame {
      */
     public static int rand(int min, int max) {
         return A.rand(min, max);
-    }
-
-    /**
-     * Returns true if we can afford given amount of minerals.
-     */
-    public static boolean hasMinerals(int mineralsToAfford) {
-        return minerals() >= mineralsToAfford;
-    }
-
-    /**
-     * Returns true if we can afford given amount of gas.
-     */
-    public static boolean hasGas(int gasToAfford) {
-        return gas() >= gasToAfford;
-    }
-
-    /**
-     * Returns true if we can afford minerals and gas for given unit type.
-     */
-    public static boolean canAfford(AUnitType unitType) {
-        return hasMinerals(unitType.mineralPrice()) && hasGas(unitType.gasPrice());
-    }
-
-    /**
-     * Returns true if we can afford minerals and gas for given upgrade.
-     */
-    public static boolean canAfford(UpgradeType upgrade) {
-        //TODO: check whether we need to pass level 0 to match getMineral/GasPriceBase()
-        return hasMinerals(upgrade.mineralPrice()) && hasGas(upgrade.gasPrice());
-    }
-
-    public static boolean canAfford(TechType tech) {
-        return hasMinerals(tech.mineralPrice()) && hasGas(tech.gasPrice());
-    }
-
-    /**
-     * Returns true if we can afford both so many minerals and gas at the same time.
-     */
-    public static boolean canAfford(int minerals, int gas) {
-        return hasMinerals(minerals) && hasGas(gas);
-    }
-
-    /**
-     * Returns true if we can afford both so many minerals and gas at the same time.
-     * Takes into account planned constructions and orders.
-     */
-    public static boolean canAffordWithReserved(int minerals, int gas) {
-        return canAfford(
-            minerals + ReservedResources.minerals(),
-            gas + ReservedResources.gas()
-        )
-            || canAfford(Math.min(minerals, 550), Math.min(minerals, 250));
-    }
-
-    public static boolean canAffordWithReserved(AUnitType type) {
-        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
-    }
-
-    public static boolean canAffordWithReserved(TechType type) {
-        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
-    }
-
-    public static boolean canAffordWithReserved(UpgradeType type) {
-        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
     }
 
     public static int killsLossesResourceBalance() {
