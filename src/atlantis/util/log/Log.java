@@ -36,7 +36,6 @@ public class Log {
 
     public void addMessage(String message, AUnit unit) {
         messages.add(new LogMessage(message, expireAfterFrames));
-        System.err.println("messages = " + messages);
         if (SAVE_UNIT_LOGS_TO_FILES > 0) {
             LogUnitsToFiles.saveUnitLogToFile(message, unit);
         }
@@ -70,7 +69,8 @@ public class Log {
             return;
         }
 
-        messages.get(messages.size() - 1).setMessage(replaceWith);
+        messages.remove(messages.size() - 1);
+        addMessage(replaceWith, unit);
     }
 
     public boolean isNotEmpty() {

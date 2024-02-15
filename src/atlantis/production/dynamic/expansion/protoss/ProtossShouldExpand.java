@@ -23,7 +23,7 @@ public class ProtossShouldExpand {
     public static boolean shouldExpand() {
         return cache.get(
             "shouldExpand",
-            67,
+            91,
             () -> {
                 if (A.minerals() <= 140) return false;
 
@@ -32,7 +32,7 @@ public class ProtossShouldExpand {
                 bases = Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE);
                 basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 
-                if (basesInProduction >= (A.supplyUsed() <= 80 ? 1 : 2)) return no("InProduction");
+                if (basesInProduction >= (A.minerals() <= 1300 ? 1 : 2)) return no("HavePending");
                 if (bases >= 7) return no("TooManyBases");
 
                 // === Second base ===========================================

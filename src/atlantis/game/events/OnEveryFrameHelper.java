@@ -18,6 +18,7 @@ import atlantis.map.wall.GetWallIn;
 import atlantis.map.wall.Structure;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.position.PositionFulfillsAllConditions;
 import atlantis.production.constructing.position.base.NextBasePosition;
 import atlantis.production.constructing.position.protoss.GatewayPosition;
 import atlantis.production.constructing.position.protoss.PylonPosition;
@@ -30,6 +31,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.ContinueOldBroklenShootingOld;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.Vector;
 import bwapi.Color;
 import jbweb.Block;
@@ -87,6 +89,49 @@ public class OnEveryFrameHelper {
 
 //        printNextGateway();
 //        printNextBarracks();
+
+//        paintWalkableTiles();
+        paintAllowedGatewayPositions();
+    }
+
+    private static void paintAllowedGatewayPositions() {
+        HasPosition nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
+        if (nearTo == null) return;
+
+        int x0 = nearTo.tx();
+        int y0 = nearTo.ty();
+        int delta = 23;
+
+        for (int tx = x0 - delta; tx <= x0 + delta; tx++) {
+            for (int ty = y0 - delta; ty <= y0 + delta; ty++) {
+                APosition position = APosition.create(tx, ty);
+                Color color = canBuildGatewayHere(position, nearTo) ? Color.Teal : Color.Orange;
+                AAdvancedPainter.paintRectangle(position, 32, 32, color);
+            }
+        }
+    }
+
+    private static boolean canBuildGatewayHere(APosition constructionPosition, HasPosition nearTo) {
+        AUnit builder = FreeWorkers.getOne();
+        AUnitType building = AUnitType.Protoss_Gateway;
+
+        return PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
+            builder, building, constructionPosition, nearTo
+        );
+    }
+
+    private static void paintWalkableTiles() {
+        int x0 = Select.main().tx();
+        int y0 = Select.main().ty();
+        int delta = 23;
+
+        for (int tx = x0 - delta; tx <= x0 + delta; tx++) {
+            for (int ty = y0 - delta; ty <= y0 + delta; ty++) {
+                APosition position = APosition.create(tx, ty);
+                Color color = position.isWalkable() ? Color.Teal : Color.Orange;
+                AAdvancedPainter.paintRectangle(position, 32, 32, color);
+            }
+        }
     }
 
     private static void printNextBarracks() {

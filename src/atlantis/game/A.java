@@ -1127,7 +1127,7 @@ public class A {
     }
 
     public static boolean everyNthGameFrame(int n) {
-        return Atlantis.game().getFrameCount() % n == 0;
+        return A.now() % n == 0;
     }
 
     public static double inRange(double min, double value, double max) {

@@ -49,7 +49,7 @@ public class PositionFulfillsAllConditions {
         }
 
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return false;
-//        if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return false;
+        if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return false;
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return false;
 
         if (!building.isBase()) {

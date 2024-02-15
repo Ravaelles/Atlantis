@@ -156,7 +156,7 @@ public class Missions {
 
 //                A.printStackTrace("Changing mission to " + mission);
             }
-            MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
+            MissionHistory.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         }
     }
 
@@ -169,12 +169,12 @@ public class Missions {
     }
 
     public static int counter() {
-        return MissionChanger.missionHistory.size();
+        return MissionHistory.missionHistory.size();
     }
 
     public static Mission prevMission() {
-        if (MissionChanger.missionHistory.size() >= 2) {
-            return MissionChanger.missionHistory.get(MissionChanger.missionHistory.size() - 2);
+        if (MissionHistory.missionHistory.size() >= 2) {
+            return MissionHistory.missionHistory.get(MissionHistory.missionHistory.size() - 2);
         }
         else {
             return null;
@@ -182,7 +182,7 @@ public class Missions {
     }
 
     public static boolean isFirstMission() {
-        return MissionChanger.missionHistory.size() == 1;
+        return MissionHistory.missionHistory.size() == 1;
     }
 
     public static int lastMissionEnforcedAgo() {

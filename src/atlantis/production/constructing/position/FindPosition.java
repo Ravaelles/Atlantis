@@ -98,9 +98,10 @@ public class FindPosition {
         if (standardPosition == null) {
             ErrorLog.printMaxOncePerMinute(
                 "findStandardPosition returned null"
-                    + "\n    / builder:" + builder
-                    + "\n    / near:" + nearTo
+                    + "\n    / reason:" + AbstractPositionFinder._CONDITION_THAT_FAILED
                     + "\n    / building:" + building
+                    + "\n    / near:" + nearTo
+                    + "\n    / builder:" + builder
                     + "\n    / max:" + maxDistance
             );
         }

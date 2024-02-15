@@ -11,9 +11,8 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class ChangeSquadToDefend extends SquadMissionChanger {
-
     public static boolean shouldChangeToDefend(Squad squad) {
-        if (squad.leader().combatEvalRelative() >= 1.2) return false;
+        if (squad.leader().combatEvalRelative() >= 1.15) return false;
         if (ArmyStrength.ourArmyRelativeStrength() >= 170) return false;
 
         boolean offensiveRole = squad.hasMostlyOffensiveRole();
@@ -56,14 +55,14 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
         int infantry = units.terranInfantryWithoutMedics().count();
 
         // Hydralisk fix
-        int hydras = unit.enemiesNear().ofType(AUnitType.Zerg_Hydralisk).count();
+        int hydras = leader.enemiesNear().ofType(AUnitType.Zerg_Hydralisk).count();
 
         if (infantry * 0.4 < hydras && tanks <= 5) {
             changeMissionToDefend(squad, "Mass hydras (" + hydras + " vs " + units.count() + ")");
         }
 
         // Dragoon fix
-        int dragoons = unit.enemiesNear().ofType(AUnitType.Protoss_Dragoon).count();
+        int dragoons = leader.enemiesNear().ofType(AUnitType.Protoss_Dragoon).count();
         if (infantry <= 2 && infantry * 0.6 < dragoons && tanks <= 5) {
             return changeMissionToDefend(squad, "Mass goons (" + hydras + " vs " + units.count() + ")");
         }

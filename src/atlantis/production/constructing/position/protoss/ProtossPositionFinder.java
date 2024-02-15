@@ -41,11 +41,15 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 //        boolean logToFile = building.isGateway();
 //        if (logToFile) LogToFile.info("------------\n");
 
+        int xMapMax = AMap.getMapWidthInTiles() - 1;
+        int yMapMax = AMap.getMapHeightInTiles() - 1;
+
         while (searchRadius < maxDistance) {
             int xMin = Math.max(0, nearTo.tx() - searchRadius);
-            int xMax = Math.min(AMap.getMapWidthInTiles() - 1, nearTo.tx() + searchRadius);
+            int xMax = Math.min(xMapMax, nearTo.tx() + searchRadius);
             int yMin = Math.max(0, nearTo.ty() - searchRadius);
-            int yMax = Math.min(AMap.getMapHeightInTiles() - 1, nearTo.ty() + searchRadius);
+            int yMax = Math.min(yMapMax, nearTo.ty() + searchRadius);
+
             for (int tileX = xMin; tileX <= xMax; tileX++) {
                 for (int tileY = yMin; tileY <= yMax; tileY++) {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
@@ -75,6 +79,10 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     }
 
     private static HasPosition defineNearToForPylon(HasPosition nearTo) {
+        int supply = A.supplyTotal();
+
+        if (supply > 17) return nearTo;
+
         // First pylon should be close to Nexus for shorter travel dist
         if (AGame.supplyTotal() <= 10) {
             nearTo = PylonPosition.positionForFirstPylon();
@@ -82,7 +90,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         }
 
         // First pylon should be orientated towards the nearest choke
-        else if (AGame.supplyTotal() <= 18) {
+        else if (supply <= 17) {
             nearTo = PylonPosition.positionForSecondPylon(nearTo.position());
         }
 

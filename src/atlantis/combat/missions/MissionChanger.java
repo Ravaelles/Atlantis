@@ -17,17 +17,12 @@ import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-import java.util.ArrayList;
-
 public abstract class MissionChanger {
-
     public static final int MISSIONS_ENFORCED_FOR_SECONDS = 20;
 
     public static final boolean DEBUG = true;
     //    public static final boolean DEBUG = false;
     public static String reason = "";
-
-    protected static ArrayList<Mission> missionHistory = new ArrayList<>();
 
     // =========================================================
 
@@ -80,7 +75,7 @@ public abstract class MissionChanger {
         else if (Missions.isGlobalMissionContain()) {
             MissionChangerWhenContain.get().changeMissionIfNeeded();
         }
-        else if (Missions.isGlobalMissionDefend() || Missions.isGlobalMissionSparta()) {
+        else if (Missions.isGlobalMissionDefendOrSparta()) {
             MissionChangerWhenDefend.get().changeMissionIfNeeded();
         }
     }
@@ -119,7 +114,7 @@ public abstract class MissionChanger {
 
     protected static void changeMissionTo(Mission newMission) {
         Missions.setGlobalMissionTo(newMission, reason);
-        missionHistory.add(newMission);
+        MissionHistory.missionHistory.add(newMission);
 
 //        A.printStackTrace("Change to " + newMission);
     }

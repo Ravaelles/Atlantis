@@ -13,12 +13,12 @@ public class ForbiddenByStreetGridForPylon {
     private static int X2 = 3;
     private static int Y1 = 1;
     private static int Y2 = 3;
+    private static int Y3 = 5;
 
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!building.isPylon()) return false;
 
         if (!streetGridMatches(position)) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Pylon street grid forbidden";
             return true;
         }
 
@@ -29,8 +29,19 @@ public class ForbiddenByStreetGridForPylon {
         int GRID_SIZE_X = ProtossForbiddenByStreetGrid.GRID_VALUE_X;
         int GRID_SIZE_Y = ProtossForbiddenByStreetGrid.GRID_VALUE_Y;
 
-        return (position.tx() % GRID_SIZE_X == X1 || position.tx() % GRID_SIZE_X == X2)
-            && (position.ty() % GRID_SIZE_Y == Y1 || position.ty() % GRID_SIZE_Y == Y2);
+        int moduloX = position.tx() % GRID_SIZE_X;
+        if (moduloX != X1 && moduloX != X2) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Pylon street grid forbidden (X)";
+            return false;
+        }
+
+        int moduloY = position.ty() % GRID_SIZE_Y;
+        if (moduloY != Y1 && moduloY != Y2 && moduloY != Y3) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Pylon street grid forbidden (Y)";
+            return false;
+        }
+
+        return true;
 
 //        return (position.tx() % GRID_SIZE_X == A || position.tx() % GRID_SIZE_X == B)
 //            && (position.ty() % GRID_SIZE_Y == A || position.ty() % GRID_SIZE_Y == B);

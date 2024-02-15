@@ -1,6 +1,7 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 
 public class ContinueMoving extends Manager {
@@ -15,6 +16,7 @@ public class ContinueMoving extends Manager {
         if (unit.isStopped()) return false;
         if (unit.lastActionMoreThanAgo(37)) return false;
         if (unit.lastPositionChangedMoreThanAgo(10)) return false;
+        if (A.now() % 16 == 0 && unit.lastActionMoreThanAgo(14)) return false;
 
         if (dontApplyDuringMissionSparta()) return false;
         if (unit.isScout() || unit.isSquadScout()) return false;

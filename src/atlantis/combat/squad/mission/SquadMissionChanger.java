@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
 public class SquadMissionChanger {
-    protected static AUnit unit;
+    protected static AUnit leader;
     protected static Selection units;
 
     // =========================================================
@@ -15,10 +15,10 @@ public class SquadMissionChanger {
         if (A.isUms()) return false;
         if (squad.hasMostlyOffensiveRole()) return false;
 
-        unit = squad.leader();
+        leader = squad.leader();
         units = squad.selection();
 
-        if (unit == null) return false;
+        if (leader == null) return false;
 
         if (ChangeSquadToDefend.shouldChangeToDefend(squad)) return true;
         else if (ChangeSquadToDefault.shouldChangeToDefault(squad)) return true;

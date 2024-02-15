@@ -17,9 +17,9 @@ public class TooCloseToUnwalkable {
 //        if (building.isCombatBuilding()) return false;
 ////        if (building.isBase() || building.isGasBuilding()) return false;
 
-        if (isTooClose(building, position)) return true;
+        if (isTooClose(building, position)) return failed("Too close to unwalkable");
 
-        return failed("Too close to unwalkable");
+        return false;
     }
 
     private static boolean failed(String reason) {
@@ -31,11 +31,17 @@ public class TooCloseToUnwalkable {
 //        APosturn true;
 
         APosition left = BuildingTileHelper.tileLeftFrom(building, position);
-        APosition up = BuildingTileHelper.tileUpFrom(building, position);
         APosition down = BuildingTileHelper.tileDownFrom(building, position);
 
         if (!left.isWalkable() && !down.isWalkable()) {
             return failed("Left and down from unwalkable");
+        }
+
+        APosition up = BuildingTileHelper.tileUpFrom(building, position);
+        APosition right = BuildingTileHelper.tileRightFrom(building, position);
+
+        if (!up.isWalkable() && !right.isWalkable()) {
+            return failed("Up and right from unwalkable");
         }
 
 //        if (
