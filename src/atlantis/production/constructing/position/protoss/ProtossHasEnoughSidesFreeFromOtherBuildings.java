@@ -9,7 +9,7 @@ import atlantis.util.We;
 
 public class ProtossHasEnoughSidesFreeFromOtherBuildings {
     public static boolean isOkay(AUnit builder, AUnitType building, APosition position) {
-        if (!We.protoss()) return false;
+        if (!We.protoss()) return true;
         if (building.isPylon()) return true;
         if (building.isBase()) return true;
         if (building.isCannon()) return true;
