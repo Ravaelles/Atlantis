@@ -3,6 +3,7 @@ package atlantis.production.dynamic.protoss.units;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.generic.OurArmyStrength;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -17,6 +18,7 @@ public class ProduceDragoon {
     public static boolean dragoon() {
         if (!A.hasGas(50) || !A.hasMinerals(125)) return false;
         if (noProperBuildings()) return false;
+        if (waitForDT()) return false;
 
         int dragoons = Count.dragoons();
 
@@ -38,6 +40,12 @@ public class ProduceDragoon {
         }
 
         return A.hasGas(200) && produceDragoon();
+    }
+
+    private static boolean waitForDT() {
+        return A.seconds() <= 500
+            && !A.canAfford(300, 220)
+            && CountInQueue.count(Protoss_Dark_Templar, 6) > 0;
     }
 
     private static boolean againstEarlyProtossRush() {

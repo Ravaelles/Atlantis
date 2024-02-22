@@ -46,6 +46,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             OurStrategy.get().isRushOrCheese()
                 && ArmyStrength.ourArmyRelativeStrength() >= 95
                 && A.seconds() <= 400
+                && (!OurStrategy.get().goingBio() || Count.medics() >= 2)
         ) {
             if (DEBUG) reason = "Rush or cheese and strength still ok";
             return false;

@@ -9,7 +9,7 @@ import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.ProtossWarping;
+import atlantis.production.constructing.protoss.ProtossWarping;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 

@@ -15,7 +15,7 @@
 // === Raw build order used - taken from Liquipedia or so =============
 
 /**
-https://www.cs.mun.ca/~dchurchill/boss/
+Unavailable
 */
 
 // === Build order for Atlantis =======================================
@@ -31,8 +31,8 @@ https://www.cs.mun.ca/~dchurchill/boss/
 17 - Templar Archives
 17 - Gateway
 19 - Zealot
-20 - MISSION=ATTACK
-Dark Templar
-Dark Templar
-Dark Templar
-Dark Templar
+23 - Dark Templar
+25 - Dark Templar
+27 - Dark Templar
+28 - MISSION=ATTACK
+29 - Dark Templar

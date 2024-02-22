@@ -8,8 +8,10 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class TerranForbiddenByStreetGrid {
-    private static final int GRID_VALUE_X = 9;
-    private static final int GRID_VALUE_Y = 6;
+    //    private static final int GRID_VALUE_X = 9;
+//    private static final int GRID_VALUE_Y = 6;
+    public static final int GRID_VALUE_X = 13;
+    public static final int GRID_VALUE_Y = 13;
 
     /**
      * Returns true if game says it's possible to build given building at this position.

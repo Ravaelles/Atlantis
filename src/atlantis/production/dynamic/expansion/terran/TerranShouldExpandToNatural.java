@@ -9,6 +9,8 @@ import atlantis.units.select.Count;
 
 public class TerranShouldExpandToNatural {
     public static boolean shouldExpandToNatural() {
+        if (A.supplyUsed() <= 20) return false;
+
         if (A.hasMinerals(400) && Count.basesWithUnfinished() <= 1 && CountInQueue.bases() == 0) return true;
 
         if (Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) > 1) return false;

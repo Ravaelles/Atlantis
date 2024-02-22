@@ -1,5 +1,6 @@
 package atlantis.information.enemy;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -8,13 +9,14 @@ import atlantis.util.Counter;
 import java.util.HashMap;
 
 public class UnitsArchive {
-
     protected static HashMap<Integer, AUnit> destroyedUnitIds = new HashMap<>();
     protected static Counter<AUnitType> enemyLostTypes = new Counter<>();
     protected static Counter<AUnitType> ourLostTypes = new Counter<>();
     protected static Counter<AUnitType> ourKilledResourcesPerUnitTypes = new Counter<>();
     protected static Counter<AUnitType> ourLostResourcesPerUnitTypes = new Counter<>();
     protected static Counter<AUnitType> ourKillCountersPerUnitTypes = new Counter<>();
+
+    protected static int lastTimeOurCombatUnitDied = -9999;
 
     // =========================================================
 
@@ -101,6 +103,8 @@ public class UnitsArchive {
 
         if (!unit.isABuilding()) {
             ourLostResourcesPerUnitTypes.changeValueBy(unit.type(), unit.totalCost());
+
+            if (unit.isCombatUnit()) lastTimeOurCombatUnitDied = A.now();
         }
     }
 
@@ -126,5 +130,13 @@ public class UnitsArchive {
         return enemyLostTypes.getValueFor(AUnitType.Terran_SCV)
             + enemyLostTypes.getValueFor(AUnitType.Protoss_Probe)
             + enemyLostTypes.getValueFor(AUnitType.Zerg_Drone);
+    }
+
+    public static boolean lastTimeOurCombatUnitDiedLessThanAgo(int frames) {
+        return A.ago(lastTimeOurCombatUnitDied) < frames;
+    }
+
+    public static boolean lastTimeOurCombatUnitDiedMoreThanAgo(int frames) {
+        return A.ago(lastTimeOurCombatUnitDied) > frames;
     }
 }

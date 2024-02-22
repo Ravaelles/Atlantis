@@ -1161,7 +1161,7 @@ public class AAdvancedPainter extends APainter {
             // RESEARCHING
             else if (building.isResearching()) {
                 TechType techType = building.whatIsResearching();
-                paintBuildingActionProgress(
+                if (techType != null) paintBuildingActionProgress(
                     building,
                     techType.name(),
                     building.remainingResearchTime(),

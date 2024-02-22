@@ -11,6 +11,8 @@ public class ComeCloser extends MissionManager {
 
     @Override
     public boolean applies() {
+        if (unit.isDT()) return false;
+
         if (unit.isGroundUnit() && focusPoint != null && (
             unit.friendsInRadius(1).groundUnits().atMost(1)
                 && unit.friendsInRadius(2).groundUnits().atMost(5)

@@ -3,13 +3,13 @@ package atlantis.game.events;
 import atlantis.game.A;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ProtossWarping;
+import atlantis.production.constructing.protoss.ProtossWarping;
+import atlantis.production.constructing.terran.TerranNewBuilding;
 import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.We;
 import bwapi.Unit;
 
 public class OnUnitCreated {
@@ -31,9 +31,10 @@ public class OnUnitCreated {
         Count.clearCache();
         Select.clearCache();
 
-        ProtossWarping.updateNewBuildingJustWarped(unit);
-
         if (unit.isABuilding()) {
+            ProtossWarping.updateNewBuildingJustWarped(unit);
+            TerranNewBuilding.updateNewBuilding(unit);
+    
             if (unit.isBase()) CancelNotStartedBases.cancelNotStartedBases();
 
             Construction construction = unit.construction();

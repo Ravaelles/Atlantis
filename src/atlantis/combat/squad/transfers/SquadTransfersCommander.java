@@ -53,6 +53,9 @@ public class SquadTransfersCommander extends Commander {
             squad.removeUnit(unit);
             unit.setSquad(null);
         }
+
+        Alpha.get().removeUnit(unit);
+
 //        if (unit.isOur() && unit.isCombatUnit()) {
 
 //        }

@@ -37,13 +37,7 @@ public class NewRepairsCommander extends Commander {
 
 //            }
 
-            if (ShouldNotRepairUnit.shouldNotRepairUnit(null, woundedUnit)) {
-                continue;
-            }
-
-            if (OptimalNumOfRepairers.hasUnitTooManyRepairers(woundedUnit)) {
-                continue;
-            }
+            if (!ShouldRepairUnit.check(woundedUnit)) continue;
 
             int newRepairersNeeded = optimalNumOfRepairersFor(woundedUnit);
 //            if (woundedUnit.is(AUnitType.Terran_Missile_Turret)) {

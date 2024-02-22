@@ -3,9 +3,12 @@ package atlantis.combat.advance.contain.protoss;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.UnitsArchive;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class ContainAsProtoss extends Manager {
@@ -17,12 +20,18 @@ public class ContainAsProtoss extends Manager {
 
     @Override
     public boolean applies() {
-        return We.protoss();
+        if (!We.protoss()) return false;
+
+        if (unit.isDT() && (unit.woundHp() <= 40 || unit.effUndetected())) return false;
+
+        if (OurArmyStrength.relative() >= 500) return false;
+
+        return true;
     }
 
     @Override
     public Manager handle() {
-        AUnit nearestEnemyBuilding = EnemyUnits.discovered().buildings().nearestTo(unit);
+        AUnit nearestEnemyBuilding = nearestEnemyBuilding();
 
         if (nearestEnemyBuilding != null) {
             double dist = unit.distTo(nearestEnemyBuilding);
@@ -46,5 +55,15 @@ public class ContainAsProtoss extends Manager {
         }
 
         return null;
+    }
+
+    private AUnit nearestEnemyBuilding() {
+        Selection enemyBuildings = EnemyUnits.discovered().buildings();
+
+        if (UnitsArchive.lastTimeOurCombatUnitDiedMoreThanAgo(30 * 5)) {
+            enemyBuildings = enemyBuildings.combatBuildingsAntiLand();
+        }
+
+        return enemyBuildings.nearestTo(unit);
     }
 }
