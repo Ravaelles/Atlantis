@@ -8,10 +8,12 @@ import java.util.ArrayList;
 public class History {
     private Cache<Integer> cacheInt = new Cache<>();
     private ArrayList<String> allEvents = new ArrayList<>();
+    private ArrayList<Integer> allEventsTimestamps = new ArrayList<>();
 
     public void addNow(String event) {
         cacheInt.set(event, -1, A.now());
         allEvents.add(event);
+        allEventsTimestamps.add(A.now());
     }
 
     public int countEvents(String event) {
@@ -50,6 +52,35 @@ public class History {
 
     public void clear() {
         allEvents.clear();
+        allEventsTimestamps.clear();
         cacheInt.clear();
+    }
+
+    public boolean lastHappenedLessThanAgo(String event, int maxFramesAgo) {
+        return lastHappenedAgo(event) <= maxFramesAgo;
+    }
+
+    public boolean lastHappenedLessThanSecondsAgo(String event, int maxSecondsAgo) {
+        return lastHappenedAgo(event) <= 30 * maxSecondsAgo;
+    }
+
+    public int countInLastSeconds(String event, int includeSecondsAgo) {
+        int maxSecondsAgo = includeSecondsAgo * 30;
+        int minHistoryIndex = Math.max(0, allEvents.size() - 40);
+
+        int count = minHistoryIndex;
+        for (int i = allEvents.size() - 1; i >= minHistoryIndex; i--) {
+            String pastEvent = allEvents.get(i);
+
+            if (pastEvent.equals(event)) {
+                if (A.ago(allEventsTimestamps.get(i)) <= maxSecondsAgo) {
+                    count++;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        return count;
     }
 }

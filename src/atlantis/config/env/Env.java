@@ -37,6 +37,9 @@ public class Env {
             if (key.trim().length() == 0) {
                 continue;
             }
+            if (line.length < 2) {
+                continue;
+            }
             String value = line[1];
 
             switch (key) {
@@ -58,8 +61,9 @@ public class Env {
     }
 
     private static String envFilePath() {
-        if (A.currentPath().contains("src")) {
-            return "../ENV";
+//        if (A.currentPath().contains("D:\\")) {
+        if (A.fileExists("bwapi-data/AI/ENV")) {
+            return "bwapi-data/AI/ENV";
         }
 
         return "ENV";

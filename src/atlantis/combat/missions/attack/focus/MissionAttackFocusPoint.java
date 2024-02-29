@@ -133,7 +133,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
-        if (Count.ourCombatUnits() <= 40) {
+        if (Count.ourCombatUnits() <= 40 && EnemyUnits.nearestEnemyBuilding() != null) {
             AChoke mainChoke = Chokes.enemyMainChoke();
             if (mainChoke != null) {
                 return new AFocusPoint(

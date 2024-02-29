@@ -244,7 +244,11 @@ public class ConstructionRequests {
                 !construction.equals(newConstructionOrder)
                     && construction.sameAs(newConstructionOrder)
             ) {
-                if (allowPrint) A.errPrintln("Cancel identical construction: " + newConstructionOrder);
+                if (allowPrint) {
+                    A.errPrintln("Cancel same construction: ");
+                    A.errPrintln("A (old): " + construction);
+                    A.errPrintln("B (new): " + newConstructionOrder);
+                }
                 return true;
             }
         }

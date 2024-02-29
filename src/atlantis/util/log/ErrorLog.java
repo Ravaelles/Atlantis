@@ -59,4 +59,10 @@ public class ErrorLog {
         int currentCount = errors.getOrDefault(message, 0);
         errors.put(message, currentCount + 1);
     }
+
+    public static void printPlusToFile(String message) {
+        System.err.println(message);
+        
+        A.saveToFile("error-log.txt", message, true);
+    }
 }

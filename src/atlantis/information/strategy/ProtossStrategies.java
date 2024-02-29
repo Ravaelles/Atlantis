@@ -41,14 +41,14 @@ public class ProtossStrategies extends AStrategy {
 //            return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
         }
 
-//        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
+        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
 //        return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
 //        return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
 //        return ProtossStrategies.PROTOSS_2_Gate_Zealot_vP;
 //        return PROTOSS_Dragoon_First;
 //        return PROTOSS_ZZ_Core;
 //        return PROTOSS_ZZZ_Core;
-        return ProtossStrategies.PROTOSS_Fast_DT;
+//        return ProtossStrategies.PROTOSS_Fast_DT;
     }
 
     // =========================================================

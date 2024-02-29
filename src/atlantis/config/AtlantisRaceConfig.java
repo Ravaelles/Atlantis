@@ -1,6 +1,8 @@
 package atlantis.config;
 
+import atlantis.game.A;
 import atlantis.units.AUnitType;
+import atlantis.util.log.ErrorLog;
 import bwapi.Race;
 
 /**
@@ -39,7 +41,7 @@ public class AtlantisRaceConfig {
         validate("SUPPLY", SUPPLY);
         validate("GAS_BUILDING", GAS_BUILDING);
 
-        System.out.println("Atlantis config is valid.");
+        A.println("Atlantis config is valid.");
     }
 
     // =========================================================
@@ -57,17 +59,17 @@ public class AtlantisRaceConfig {
      * Display error and exit Java.
      */
     private static void error(String title) {
-        System.err.println();
-        System.err.println("#######################################");
-        System.err.println("### ERROR IN ATLANTIS CONFIG ##########");
-        System.err.println("#######################################");
-        System.err.println("Please set variables for AtlantisRaceConfig");
-        System.err.println("before running your bot, read class doc");
-        System.err.println();
-        System.err.println("### What went wrong ###################");
-        System.err.println(title);
-        System.err.println();
-        System.err.println("Program has stopped");
+        ErrorLog.printPlusToFile("");
+        ErrorLog.printPlusToFile("#######################################");
+        ErrorLog.printPlusToFile("### ERROR IN ATLANTIS CONFIG ##########");
+        ErrorLog.printPlusToFile("#######################################");
+        ErrorLog.printPlusToFile("Please set variables for AtlantisRaceConfig");
+        ErrorLog.printPlusToFile("before running your bot, read class doc");
+        ErrorLog.printPlusToFile("");
+        ErrorLog.printPlusToFile("### What went wrong ###################");
+        ErrorLog.printPlusToFile(title);
+        ErrorLog.printPlusToFile("");
+        ErrorLog.printPlusToFile("Program has stopped");
         System.exit(-1);
     }
 

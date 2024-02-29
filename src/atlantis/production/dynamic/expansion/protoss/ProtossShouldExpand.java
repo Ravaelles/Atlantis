@@ -32,7 +32,7 @@ public class ProtossShouldExpand {
                 bases = Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE);
                 basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 
-                if (basesInProduction >= (A.minerals() <= 1300 ? 1 : 2)) return no("HavePending");
+                if (tooManyInProgress()) return no("HaveInProgress");
                 if (bases >= 7) return no("TooManyBases");
 
                 // === Second base ===========================================
@@ -44,6 +44,14 @@ public class ProtossShouldExpand {
                 return forThirdAndLaterBases();
             }
         );
+    }
+
+    private static boolean tooManyInProgress() {
+        int minerals = A.minerals();
+
+        if (minerals <= 700) return true;
+
+        return (minerals / basesInProduction) <= 450;
     }
 
     private static boolean forThirdAndLaterBases() {

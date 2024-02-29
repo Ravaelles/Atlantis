@@ -119,8 +119,7 @@ public class OnStart {
             A.errPrintln("");
             A.errPrintln("#######################################################");
             A.errPrintln(
-                "Make sure that Starcraft/" + ABuildOrderLoader.BUILD_ORDERS_PATH
-                    + " contains build_orders directory,"
+                "Make sure that " + ABuildOrderLoader.BUILD_ORDERS_PATH + " contains build_orders directory,"
             );
             A.errPrintln("copy it from Atlantis/build_orders");
             A.errPrintln("#######################################################");

@@ -259,17 +259,17 @@ public class A {
     /**
      * Displays given exception in user-friendly way (with exception name and stack).
      */
-    public static void displayException(Exception e) {
-        displayException(e, "Error", "An error has occurred");
-    }
-
-    /**
-     * Displays given exception in user-friendly way (with exception name and stack).
-     */
-    public static void displayException(Exception e, String title, String preText) {
-        A.displayError(title,
-            preText + "\n\n" + e.getMessage() + "\n\n" + A.convertStackToString(10, e.getStackTrace()));
-    }
+//    public static void displayException(Exception e) {
+//        displayException(e, "Error", "An error has occurred");
+//    }
+//
+//    /**
+//     * Displays given exception in user-friendly way (with exception name and stack).
+//     */
+//    public static void displayException(Exception e, String title, String preText) {
+//        A.displayError(title,
+//            preText + "\n\n" + e.getMessage() + "\n\n" + A.convertStackToString(10, e.getStackTrace()));
+//    }
 
     /**
      * Displays popup with title @title and content @text with possible options yes and no.
@@ -517,6 +517,7 @@ public class A {
      */
     public static PrintWriter saveToFile(String filePath, String stringToWrite, boolean closeTheStream) {
         try {
+            System.err.println("filePath = " + filePath);
             File file = new File(filePath);
             PrintWriter out = new PrintWriter(file);
             out.print(stringToWrite);
@@ -527,8 +528,9 @@ public class A {
                 return out;
             }
         } catch (Exception e) {
-            A.displayException(e, "Error", "Error while saving to file\n" + "Path(\"" + filePath
+            A.errPrintln("Error while saving to file\n" + "Path(\"" + filePath
                 + "\", \"" + stringToWrite + "\")");
+            e.printStackTrace();
         }
         return null;
     }
@@ -540,8 +542,9 @@ public class A {
             out.print(stringToWrite);
             out.close();
         } catch (Exception e) {
-            A.displayException(e, "Error", "Error while appending to file\n" + "Path(\"" + filePath
+            A.errPrintln("Error while appending to file\n" + "Path(\"" + filePath
                 + "\", \"" + stringToWrite + "\")");
+            e.printStackTrace();
         }
         return null;
     }
@@ -699,7 +702,8 @@ public class A {
 
             scanner.close();
         } catch (Exception e) {
-            A.displayException(e);
+            A.errPrintln(e);
+            e.printStackTrace();
         }
         return resultList;
     }
@@ -835,7 +839,8 @@ public class A {
                 try {
                     callable.call();
                 } catch (Exception ex) {
-                    A.displayException(ex);
+                    A.errPrintln(ex);
+                    ex.printStackTrace();
                 }
             }
         });

@@ -26,9 +26,7 @@ public class ABuildOrderLoader {
         if (strategy == null) throw new RuntimeException("ABuildOrderLoader: Strategy is null.");
         if (strategy.race() == null) throw new RuntimeException("ABuildOrderLoader: Strategy race is null.");
 
-        String buildOrdersDir = buildOrdersDir();
-
-        String filePath = buildOrdersDir + strategy.race() + "/" + strategy.name() + ".txt";
+        String filePath = buildOrdersDir() + strategy.race() + "/" + strategy.name() + ".txt";
 
         File f = new File(filePath);
         if (!f.exists()) {

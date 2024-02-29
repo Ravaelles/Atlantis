@@ -1,7 +1,3 @@
 LOCAL=true
-
 BWAPI_DATA_PATH=C:\\Program Files (x86)\\Starcraft\\
-
-# Change this to the location of ChaosLauncher
 CHAOS_LAUNCHER_PATH=C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe
-

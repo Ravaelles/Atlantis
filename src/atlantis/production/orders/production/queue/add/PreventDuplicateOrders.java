@@ -16,6 +16,7 @@ import bwapi.UpgradeType;
 public class PreventDuplicateOrders {
     public static final int MAX_NONCOMPLETED_ORDERS_AT_ONCE = 20;
     public static boolean tempDisabled = false;
+//    public static History history = new History();
 
     protected static boolean preventExcessiveOrInvalidOrders(AUnitType type, HasPosition position) {
         if (tempDisabled) return false;
@@ -23,9 +24,9 @@ public class PreventDuplicateOrders {
         assert type != null;
 
         if (excessivePylon(type, position)) return true;
+        if (justRequestedThisType(type)) return true;
         if (tooManyOrdersOfThisType(type, position)) return true;
         if (tooManyOrdersInGeneral(type)) return true;
-        if (justRequestedThisType(type)) return true;
 
         if (forProtossEnforceHavingAPylonFirst(type)) return true;
 
@@ -53,6 +54,10 @@ public class PreventDuplicateOrders {
 
         if (lastRequestedAgo <= 30 * 2 && !type.isCombatBuilding()) {
 //            ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
+            return true;
+        }
+
+        if (!type.isCombatBuilding() && Queue.get().history().countInLastSeconds(type.name(), 30) >= 2) {
             return true;
         }
 

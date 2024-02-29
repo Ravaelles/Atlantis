@@ -7,25 +7,32 @@ import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.add.History;
 import atlantis.units.range.OurDragoonWeaponRange;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
+import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Singularity_Charge;
 
 public class SingularityCharge extends Commander {
     private boolean isResearched = false;
-
     private int dragoons;
+
+    public static UpgradeType tech() {
+        return Singularity_Charge;
+    }
 
     @Override
     public boolean applies() {
         if (isResearched) return false;
+        if (Queue.get().history().lastHappenedLessThanSecondsAgo(tech().name(), 30)) return false;
 
-        if (CountInQueue.count(Singularity_Charge, 10) > 0) return false;
+        if (CountInQueue.count(tech(), 10) > 0) return false;
 
-        if (ATech.isResearched(Singularity_Charge)) {
+        if (ATech.isResearched(tech())) {
             OurDragoonWeaponRange.onSingularityChargeResearched();
             isResearched = true;
             return false;
@@ -57,6 +64,8 @@ public class SingularityCharge extends Commander {
 
     @Override
     protected void handle() {
-        AddToQueue.upgrade(Singularity_Charge);
+        if (AddToQueue.upgrade(tech())) {
+            Queue.get().history().addNow(tech().name());
+        }
     }
 }

@@ -52,7 +52,7 @@ public class SupplyCommander extends Commander {
             return;
         }
 
-        if (supplyFree <= 1 && A.hasMinerals(76) && requestedConstructionsOfSupply <= (A.supplyUsed() <= 33 ? 2 : 3)) {
+        if (supplyFree <= 2 && A.hasMinerals(76) && requestedConstructionsOfSupply <= (A.supplyUsed() <= 33 ? 2 : 3)) {
             ErrorLog.printMaxOncePerMinute("Supply free is very low, force additional.");
             requestAdditionalSupply();
             return;
