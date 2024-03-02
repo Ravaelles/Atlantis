@@ -48,6 +48,8 @@ public class ProduceZealot {
     }
 
     private static int minZealotsToHave() {
+        if (Enemy.zerg()) return 4;
+
         return 3;
     }
 

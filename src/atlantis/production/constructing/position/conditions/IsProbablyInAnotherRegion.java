@@ -1,6 +1,5 @@
 package atlantis.production.constructing.position.conditions;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
@@ -16,13 +15,19 @@ public class IsProbablyInAnotherRegion {
 
         if (building.isBase()) return false;
 
+//        if (
+//            nearTo != null
+////                && (A.supplyTotal() <= 50 || building.isCombatBuilding())
+//                && !nearTo.regionsMatch(position)
+//        ) {
         if (
-            nearTo != null
-//                && (A.supplyTotal() <= 50 || building.isCombatBuilding())
-                && !nearTo.regionsMatch(position)
+//            !position.hasPathTo(nearTo.position())
+//                ||
+            position.groundDist(nearTo.position()) >= 30
         ) {
             return failed("Region mismatch");
         }
+//        }
 
         return false;
 

@@ -110,6 +110,10 @@ public class FindPosition {
     }
 
     private static HasPosition defineNearTo(AUnitType building, HasPosition nearTo) {
+        if (nearTo == null && A.supplyUsed() >= 16) {
+            nearTo = MainRegion.center();
+        }
+
         if (nearTo == null && building.isSupplyDepot() && A.chance(50)) {
             nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
         }

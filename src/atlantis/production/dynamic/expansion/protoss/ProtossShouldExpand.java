@@ -47,6 +47,8 @@ public class ProtossShouldExpand {
     }
 
     private static boolean tooManyInProgress() {
+        if (basesInProduction == 0) return false;
+
         int minerals = A.minerals();
 
         if (minerals <= 700) return true;

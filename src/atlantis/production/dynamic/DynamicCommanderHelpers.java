@@ -28,7 +28,7 @@ public class DynamicCommanderHelpers extends Commander {
             return;
         }
 
-        System.out.println("@" + A.now() + " buildToHaveOne " + type);
+//        System.out.println("@" + A.now() + " buildToHaveOne " + type);
         buildNow(type, true);
     }
 

@@ -19,6 +19,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class MissionDefendFocusPoint extends MissionFocusPoint {
@@ -48,6 +49,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 if ((focus = SpecialMissionDefendFocus.define()) != null) return focus;
 
+                // === Natural choke ================================================
+
+                if ((focus = atNaturalChoke()) != null) return focus;
+
                 // === Main choke ================================================
 
                 if (!Enemy.terran() && (Count.ourCombatUnits() <= 4 || ActiveMap.isGosu())) {
@@ -57,12 +62,6 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === Last base ================================================
 
                 if ((focus = atLastBase()) != null) return focus;
-
-                // === Natural choke ================================================
-
-                if (Count.ourCombatUnits() >= 8 && Count.basesWithUnfinished() >= 2) {
-                    if ((focus = atNaturalChoke()) != null) return focus;
-                }
 
                 // === Main choke ================================================
 
@@ -246,6 +245,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint atNaturalChoke() {
+        int minUnits = We.protoss() ? 4 : 8;
+        if (Count.ourCombatUnits() < minUnits) return null;
+        if (Count.basesWithUnfinished() <= 1) return null;
+
 //        AChoke choke = Chokes.nearestChoke(lastBase);
 //        if (choke != null) {
 //            return new AFocusPoint(

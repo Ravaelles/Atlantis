@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.Protoss_Gateway;
 
@@ -24,8 +25,11 @@ public class ProduceGateway {
 
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
 
-        if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;
-        if (unfinishedGateways >= 2 && !A.hasMinerals(700)) return false;
+        if (unfinishedGateways >= 2 || !Enemy.zerg()) {
+            if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;
+            if (unfinishedGateways >= 2 && !A.hasMinerals(700)) return false;
+        }
+
         if (tooManyGatewaysForNow()) return false;
 
         if (A.hasMinerals(350) && freeGateways == 0) return produceGateway();
@@ -39,7 +43,9 @@ public class ProduceGateway {
     }
 
     private static boolean tooManyGatewaysForNow() {
-        return Count.gatewaysWithUnfinished() >= 3
+        int enough = Enemy.zerg() ? 4 : 3;
+
+        return Count.gatewaysWithUnfinished() >= enough
             && !A.hasMinerals(520)
             && (!Have.roboticsFacility() || Count.basesWithUnfinished() <= 1);
     }

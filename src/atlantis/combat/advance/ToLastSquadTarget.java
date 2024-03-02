@@ -9,12 +9,14 @@ public class ToLastSquadTarget {
     public static boolean goTo(AUnit unit) {
         Squad squad = unit.squad();
         if (squad == null) return false;
+        
+        if (unit.lastActionLessThanAgo(2)) return false;
 
         AUnit lastTarget = squad.targeting().lastTargetIfAlive();
         if (!isValidTargetForThisUnit(unit, lastTarget, squad)) return false;
 
         if (unit.distTo(lastTarget) > 10) {
-            unit.move(lastTarget, Actions.MOVE_FORMATION, "LeaderToLastTarget");
+            unit.move(lastTarget, Actions.MOVE_FORMATION, "GoToLastTarget");
             return true;
         }
 

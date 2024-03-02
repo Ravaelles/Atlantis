@@ -40,6 +40,7 @@ public class AttackNearbyEnemies extends Manager {
         if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
         if (!unit.hasAnyWeapon()) return false;
         if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
+        if (dontAttackAlone()) return false;
 
         if (unit.isMarine()) return MarineCanAttackNearEnemy.allowedForThisUnit(unit);
 
@@ -47,6 +48,12 @@ public class AttackNearbyEnemies extends Manager {
         if (targetToAttack == null || targetToAttack.hp() <= 0) return false;
 
         return true;
+    }
+
+    private boolean dontAttackAlone() {
+        return unit.squadSize() >= 6
+            && unit.friendsInRadiusCount(6) == 0
+            && unit.enemiesNear().ranged().notEmpty();
     }
 
     @Override

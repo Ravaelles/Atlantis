@@ -5,12 +5,14 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
@@ -67,6 +69,10 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     }
 
     public boolean shouldChangeMissionToAttack() {
+        if (beBraveProtoss()) {
+            if (DEBUG) reason = "Brave Protoss! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+        }
+
         if (!canChange()) return false;
 
         if (Missions.isGlobalMissionSparta()) {
@@ -79,6 +85,14 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         return false;
+    }
+
+    private static boolean beBraveProtoss() {
+        return AGame.killsLossesResourceBalance() >= 300
+            && Count.ourCombatUnits() >= 3
+            && ArmyStrength.ourArmyRelativeStrength() >= 150
+            && EnemyWhoBreachedBase.noone()
+            && Select.enemyCombatUnits().atMost(3);
     }
 
     private boolean whenSparta() {

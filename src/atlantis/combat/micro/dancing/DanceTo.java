@@ -1,9 +1,12 @@
 package atlantis.combat.micro.dancing;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.Enemy;
 
 public class DanceTo extends Manager {
     private AUnit target;
@@ -23,9 +26,10 @@ public class DanceTo extends Manager {
         return (cooldown >= 6 && cooldown <= 20)
             && isATargetThatWeCanDanceTo()
             && unit.lastAttackFrameLessThanAgo(30)
-            && distanceConditionIsOk()
-//            && !UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)
-            && !target.hasBiggerWeaponRangeThan(unit);
+            && (
+            (unit.isMissionAttack() && Alpha.count() >= 30)
+                || (distanceConditionIsOk() && !target.hasBiggerWeaponRangeThan(unit))
+        );
     }
 
     private boolean distanceConditionIsOk() {

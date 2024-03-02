@@ -14,7 +14,7 @@ public class GatewayPosition {
             FreeWorkers.get().first(),
             AUnitType.Protoss_Gateway,
             null,
-            Select.mainOrAnyBuilding(),
+            null,
             27
         );
     }
