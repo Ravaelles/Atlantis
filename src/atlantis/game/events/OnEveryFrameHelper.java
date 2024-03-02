@@ -91,7 +91,7 @@ public class OnEveryFrameHelper {
 //        printNextBarracks();
 
 //        paintWalkableTiles();
-        paintAllowedGatewayPositions();
+//        paintAllowedGatewayPositions();
     }
 
     private static void paintAllowedGatewayPositions() {

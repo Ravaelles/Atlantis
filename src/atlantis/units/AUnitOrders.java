@@ -148,7 +148,7 @@ public interface AUnitOrders {
         return u() != null ? processTrain(unitToTrain, null) : FakeUnitData.TRAIN.add(unitToTrain);
     }
 
-    private boolean processTrain(AUnitType unitToTrain, ProductionOrder order) {
+    default boolean processTrain(AUnitType unitToTrain, ProductionOrder order) {
         if (u().train(unitToTrain.ut())) {
             if (order != null) order.releasedReservedResources();
             return true;
@@ -162,7 +162,7 @@ public interface AUnitOrders {
         return processMorph(into, order);
     }
 
-    private boolean processMorph(AUnitType into, ProductionOrder order) {
+    default boolean processMorph(AUnitType into, ProductionOrder order) {
         if (u().morph(into.ut())) {
             if (order != null) order.releasedReservedResources();
             return true;

@@ -34,8 +34,12 @@ public class DragoonSeparateFromZealots extends Manager {
         if (zealot == null) return false;
 
         if (unit.distToNearestChokeCenter() <= 2.7) {
-            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZeal!");
-            return true;
+//            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZeal!");
+            if (!unit.moveAwayFrom(zealot, 1, Actions.MOVE_SPACE, "SpaceForZealotA")) {
+                if (unit.moveAwayFrom(zealot, 8, Actions.MOVE_SPACE, "SpaceForZealotB")) {
+                    return true;
+                }
+            }
         }
 
         if (unit.distTo(zealot) < 1) {
