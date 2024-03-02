@@ -10,7 +10,7 @@ public class DefineConstructionForNewUnit {
     public static Construction defineConstruction(AUnit newBuilding) {
         ArrayList<Construction> notStartedConstructions = ConstructionRequests.notStartedOfType(newBuilding.type());
 
-        if (notStartedConstructions.isEmpty()) {
+        if (notStartedConstructions.isEmpty() && !newBuilding.type().isAddon()) {
             ErrorLog.printMaxOncePerMinute(
                 "!!! No not started constructions for " + newBuilding
                     + " / " + ConstructionRequests.countPendingOfType(newBuilding.type())

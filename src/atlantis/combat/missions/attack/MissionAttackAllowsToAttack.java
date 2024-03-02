@@ -5,6 +5,7 @@ import atlantis.combat.advance.contain.DontAdvanceButHoldAndContainWhenEnemyBuil
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
+import atlantis.util.We;
 
 public class MissionAttackAllowsToAttack extends HasUnit {
     public MissionAttackAllowsToAttack(AUnit unit) {
@@ -55,11 +56,22 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     }
 
     private boolean forbiddenToAttackCombatBuilding(AUnit enemy) {
+        if (enemy.isCombatBuilding() && notAllowedToAttackCombatBuilding(enemy)) {
+            return true;
+        }
+
         if (enemy.isABuilding()) {
             Manager manager = (new DontAdvanceButHoldAndContainWhenEnemyBuildingsClose(unit)).invoke(this);
             if (manager != null) return true;
         }
 
         return false;
+    }
+
+    private boolean notAllowedToAttackCombatBuilding(AUnit enemy) {
+        if (unit.distTo(enemy) <= 4) return true;
+
+        int minUnits = We.protoss() ? 5 : 9;
+        return unit.friendsNear().inRadius(5, unit).count() >= minUnits;
     }
 }

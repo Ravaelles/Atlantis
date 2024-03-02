@@ -19,8 +19,9 @@ public class TooFarFromLeader extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isAir()) return false;
         if (unit.isDT()) return false;
-        
+
         if (We.terran() && !Enemy.terran() && A.seconds() <= 220) return false;
         if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
         if (unit.squad().isLeader(unit)) return false;

@@ -32,7 +32,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (EnemyWhoBreachedBase.get() != null) return false;
 
-        if (A.minerals() >= 2000) {
+        if (A.minerals() >= 2000 && A.supplyUsed() >= 90) {
             if (DEBUG) reason = "Abundance of minerals";
             return true;
         }
