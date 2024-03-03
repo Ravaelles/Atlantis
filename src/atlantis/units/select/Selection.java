@@ -941,6 +941,10 @@ public class Selection extends BaseSelection {
         return mostDistantTo(Select.mainOrAnyBuilding());
     }
 
+    public AUnit nearestToBase() {
+        return nearestTo(Select.mainOrAnyBuilding());
+    }
+
     public AUnit closestToEnemyBase() {
         return ClosestToEnemyBase.from(this);
     }

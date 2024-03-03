@@ -1,4 +1,4 @@
-package atlantis.units.workers.defence;
+package atlantis.units.workers.defence.special;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;

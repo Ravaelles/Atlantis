@@ -17,10 +17,10 @@ public class Advance extends MissionManager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            RetreatManager.class,
-            DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class,
             AdvanceAsALeader.class,
             TooFarFromLeader.class,
+            RetreatManager.class,
+            DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class,
             AdvanceAsTerran.class,
             AdvanceAsTank.class,
             AdvanceStandard.class,

@@ -52,8 +52,11 @@ public class SupplyCommander extends Commander {
             return;
         }
 
-        if (supplyFree <= 2 && A.hasMinerals(76) && requestedConstructionsOfSupply <= (A.supplyUsed() <= 33 ? 2 : 3)) {
-            ErrorLog.printMaxOncePerMinute("Supply free is very low, force additional.");
+        if (isSupplyVeryLow()) {
+            ErrorLog.printMaxOncePerMinute(
+                "Supply free is very low, force additional ("
+                    + A.supplyUsed() + A.supplyTotal() + ")"
+            );
             requestAdditionalSupply();
             return;
         }
@@ -105,6 +108,12 @@ public class SupplyCommander extends Commander {
                 }
             }
         }
+    }
+
+    private boolean isSupplyVeryLow() {
+        return supplyFree <= (A.supplyTotal() >= 50 ? 8 : 2)
+            && A.hasMinerals(76)
+            && requestedConstructionsOfSupply <= (A.supplyUsed() <= 33 ? 2 : 3);
     }
 
     // =========================================================

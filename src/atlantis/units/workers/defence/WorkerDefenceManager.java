@@ -4,6 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.workers.defence.fight.WorkerDefenceFight;
 import atlantis.units.workers.defence.run.WorkerDefenceRun;
+import atlantis.units.workers.defence.special.BuddyRepair;
+import atlantis.units.workers.defence.proxy.TrackEnemyEarlyScout;
 
 public class WorkerDefenceManager extends Manager {
     public WorkerDefenceManager(AUnit unit) {

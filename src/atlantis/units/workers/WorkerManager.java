@@ -18,6 +18,7 @@ public class WorkerManager extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isWorker()) return false;
+        if (unit.isSpecialMission()) return false;
 
         return !unit.isScout() && !RepairAssignments.isRepairerOfAnyKind(unit);
     }

@@ -18,7 +18,7 @@ public class AdvanceAsALeader extends MissionManager {
 
     @Override
     public boolean applies() {
-        if (A.seconds() <= 220 && !Enemy.terran()) return false;
+//        if (A.seconds() <= 220 && !Enemy.terran()) return false;
 
         return squad.isLeader(unit);
     }
@@ -27,11 +27,8 @@ public class AdvanceAsALeader extends MissionManager {
     protected Manager handle() {
 //        if (unit.isMissionAttackOrGlobalAttack()) return null;
 
+        if (handleWhenTooFarFromSquadCenter()) return usedManager(this, "ToSquadCenter");
         if (ToLastSquadTarget.goTo(unit)) return usedManager(this, "ToSquadTarget");
-
-        if (handleWhenTooFarFromSquadCenter()) {
-            return usedManager(this, "ToSquadCenter");
-        }
 
 //        if (handleWhenLonely()) return usedManager(this, "LonelyLeader");
 //

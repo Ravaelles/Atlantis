@@ -20,7 +20,7 @@ public class PylonPosition {
             AUnitType.Protoss_Pylon,
             null,
             Select.mainOrAnyBuilding(),
-            27
+            37
         );
     }
 

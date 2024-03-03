@@ -13,6 +13,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -98,6 +99,7 @@ public class NewConstructionRequest {
         newConstruction.assignOptimalBuilder();
 
         if (ConstructionRequests.alreadyExists(newConstruction, false)) {
+            Select.clearCache();
             Construction.clearCache();
             APositionFinder.clearCache();
 //            A.errPrintln("Construction had the same position, find new: " + newConstruction);

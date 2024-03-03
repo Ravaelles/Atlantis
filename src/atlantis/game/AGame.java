@@ -40,7 +40,7 @@ public class AGame {
      * Quits the game gently, killing all processes and cleaning up.
      */
     public static void exit(String message) {
-        System.err.println(message);
+        A.println(message);
         Atlantis.getInstance().exitGame();
     }
 

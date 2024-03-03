@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.conditions;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
@@ -14,6 +15,7 @@ public class IsProbablyInAnotherRegion {
         if (handleIsBadRegionForFirstBunker(building, position)) return true;
 
         if (building.isBase()) return false;
+        if (building.isPylon() && A.supplyTotal() >= 60) return false;
 
 //        if (
 //            nearTo != null

@@ -11,6 +11,7 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
@@ -104,7 +105,12 @@ public class ProtossShouldExpand {
         if (armyStrength <= 80) return no("TooWeak");
 
         if (bases <= 1 && basesInProduction <= 0) {
-            if (A.hasMinerals(350) && Count.workers() >= 18) return yes("ManyMinerals");
+            if (A.hasMinerals(350) && Count.workers() >= 18 && CountInQueue.bases() == 0) {
+                Count.clearCache();
+                if (Count.inProductionOrInQueue(AtlantisRaceConfig.BASE) == 0) {
+                    return yes("ManyMinerals");
+                }
+            }
             if (Count.workers() >= 24) return yes("ManyWorkers");
             if (seconds >= 750) return yes("GettingLate");
             if (A.hasMinerals(230) && Count.gateways() >= 3) return yes("ManyGateways");

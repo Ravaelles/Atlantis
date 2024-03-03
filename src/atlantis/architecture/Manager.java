@@ -62,6 +62,7 @@ public abstract class Manager extends BaseManager {
 
     private String parentToString(Object parent) {
         if (parent instanceof String) return (String) parent;
+        if (parent instanceof Class) return ((Class) parent).getSimpleName();
 
         return parent != null
             ? parent.getClass().getSimpleName()
