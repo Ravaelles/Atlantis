@@ -7,6 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class DragoonSeparateFromZealots extends Manager {
     public DragoonSeparateFromZealots(AUnit unit) {
@@ -36,19 +37,25 @@ public class DragoonSeparateFromZealots extends Manager {
         if (unit.distToNearestChokeCenter() <= 2.7) {
 //            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZeal!");
             if (!unit.moveAwayFrom(zealot, 1, Actions.MOVE_SPACE, "SpaceForZealotA")) {
-                if (unit.moveAwayFrom(zealot, 8, Actions.MOVE_SPACE, "SpaceForZealotB")) {
-                    return true;
+                if (unit.moveAwayFrom(zealot, 3, Actions.MOVE_SPACE, "SpaceForZealotB")) {
+                    if (unit.moveAwayFrom(zealot, 6, Actions.MOVE_SPACE, "SpaceForZealotC")) {
+                        return true;
+                    }
                 }
             }
         }
 
-        if (unit.distTo(zealot) < 1) {
+//        if (unit.distTo(zealot) < 1.5) {
 //            System.out.println("@ " + A.now() + " - SEPARATE " + unit.id() + " / " + unit.distTo(zealot));
 //            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZealots");
-            unit.moveAwayFrom(zealot, 0.5, Actions.MOVE_SPACE, "SpaceForZealots");
-            return true;
-        }
+        if (unit.move(
+            Select.ourBuildings().nearestTo(Select.mainOrAnyBuilding()),
+            Actions.MOVE_SPACE, "SpaceForZealots"
+        )) return true;
 
         return false;
+//        }
+//
+//        return false;
     }
 }

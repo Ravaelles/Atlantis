@@ -18,11 +18,7 @@ public class ForbiddenByStreetGridForPylon {
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!building.isPylon()) return false;
 
-        if (!streetGridMatches(position)) {
-            return true;
-        }
-
-        return false;
+        return streetGridMatches(position);
     }
 
     private static boolean streetGridMatches(APosition position) {

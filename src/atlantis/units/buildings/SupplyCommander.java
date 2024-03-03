@@ -55,7 +55,7 @@ public class SupplyCommander extends Commander {
         if (isSupplyVeryLow()) {
             ErrorLog.printMaxOncePerMinute(
                 "Supply free is very low, force additional ("
-                    + A.supplyUsed() + A.supplyTotal() + ")"
+                    + A.supplyUsed() + "/" + A.supplyTotal() + ")"
             );
             requestAdditionalSupply();
             return;

@@ -2,6 +2,7 @@ package atlantis.units.workers.defence.proxy;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.CameraCommander;
 import atlantis.units.AUnit;
 
 public class TrackEnemyEarlyScout extends Manager {
@@ -19,10 +20,14 @@ public class TrackEnemyEarlyScout extends Manager {
 
     @Override
     public Manager handle() {
-        System.err.println("@ " + A.now() + " - " + unit + " - TrackEnemyEarlyScout");
 
-        unit.attackUnit(enemyScout);
+        if (!unit.isAttacking() || A.everyNthGameFrame(19)) {
+            unit.attackUnit(enemyScout);
+//            System.err.println("@ " + A.now() + " - " + unit + " - Track - " + enemyScout);
+        }
         unit.setTooltip("FollowEnemyScout");
+
+//        CameraCommander.centerCameraOn(unit);
 
         return null;
     }

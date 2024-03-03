@@ -69,7 +69,7 @@ public class Main {
 
         // === Popular SSCAIT maps =================================
 
-        if (true) return "sscai/(2)HeartbreakRidge.scx";
+//        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 

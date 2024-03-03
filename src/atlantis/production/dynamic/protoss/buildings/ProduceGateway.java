@@ -12,6 +12,7 @@ public class ProduceGateway {
 
     private static int unfinishedGateways;
     private static int freeGateways;
+    private static int allGateways;
     private static int minerals;
 
     public static boolean produce() {
@@ -19,9 +20,10 @@ public class ProduceGateway {
 
         if (minerals < 205) return false;
 
+        allGateways = Count.gateways();
         freeGateways = Count.freeGateways();
 
-        if (freeGateways > 0) return false;
+        if (allGateways >= 3 && freeGateways > 0) return false;
 
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
 

@@ -23,9 +23,8 @@ public class EnemyNearBases {
             "enemyNearAnyOurBuilding:" + maxDist,
             47,
             () -> {
-                if (!Have.base()) {
-                    return null;
-                }
+                AUnit main = Select.main();
+                if (main == null) return null;
 
                 AUnit nearCritical = Select.enemy().ofType(
                     AUnitType.Protoss_Dark_Templar, AUnitType.Protoss_Reaver, AUnitType.Protoss_Archon,
@@ -42,7 +41,7 @@ public class EnemyNearBases {
                 );
                 ourBuildings = Select.ourBuildings();
 
-                AUnit enemy = isNearBase(Select.main());
+                AUnit enemy = isNearBase(main);
                 if (enemy != null) {
                     return enemy;
                 }

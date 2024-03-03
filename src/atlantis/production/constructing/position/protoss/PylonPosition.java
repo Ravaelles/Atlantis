@@ -9,6 +9,7 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.FindPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 
@@ -19,9 +20,17 @@ public class PylonPosition {
             FreeWorkers.get().first(),
             AUnitType.Protoss_Pylon,
             null,
-            Select.mainOrAnyBuilding(),
+            defineNearTo(),
             37
         );
+    }
+
+    private static AUnit defineNearTo() {
+        if (Count.bases() >= 2) {
+            return Select.ourBases().random();
+        }
+
+        return Select.mainOrAnyBuilding();
     }
 
     public static APosition positionForFirstPylon() {

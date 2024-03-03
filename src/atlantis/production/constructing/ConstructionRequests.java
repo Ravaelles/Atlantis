@@ -245,9 +245,9 @@ public class ConstructionRequests {
                     && construction.sameAs(newConstructionOrder)
             ) {
                 if (allowPrint) {
-                    A.errPrintln("Cancel same construction: ");
-                    A.errPrintln("A (old): " + construction);
-                    A.errPrintln("B (new): " + newConstructionOrder);
+                    A.errPrintln("Cancel same construction: " + construction.buildingType());
+//                    A.errPrintln("A (old): " + construction);
+//                    A.errPrintln("B (new): " + newConstructionOrder);
                 }
                 return true;
             }

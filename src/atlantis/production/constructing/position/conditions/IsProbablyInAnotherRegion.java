@@ -23,9 +23,9 @@ public class IsProbablyInAnotherRegion {
 //                && !nearTo.regionsMatch(position)
 //        ) {
         if (
-//            !position.hasPathTo(nearTo.position())
-//                ||
-            position.groundDist(nearTo.position()) >= 30
+            !position.hasPathTo(nearTo.position())
+                ||
+                position.groundDist(nearTo.position()) >= 40
         ) {
             return failed("Region mismatch");
         }

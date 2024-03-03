@@ -10,6 +10,7 @@ import static atlantis.production.AbstractDynamicUnits.buildToHave;
 public class ProduceShuttles {
     public static boolean shuttles() {
         if (!Have.roboticsFacility()) return false;
+        if (!Have.observer()) return false;
 
         if (A.supplyUsed() <= 100) {
             if (

@@ -17,7 +17,7 @@ public class ProtossForbiddenForProducerBuildings {
 
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!We.protoss()) return false;
-        if (!isProducingBuilding(building)) return false;
+//        if (!isProducingBuilding(building)) return false;
 
         int GRID_SIZE = ProtossForbiddenByStreetGrid.GRID_VALUE_X;
 
@@ -35,10 +35,6 @@ public class ProtossForbiddenForProducerBuildings {
 
     private static boolean isNextToAPylon(AUnit builder, AUnitType building, APosition position) {
         return Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(3, position).notEmpty();
-    }
-
-    private static boolean isProducingBuilding(AUnitType building) {
-        return building.isGateway() || building.isRoboticsFacility();
     }
 
     private static boolean fail(String reason) {

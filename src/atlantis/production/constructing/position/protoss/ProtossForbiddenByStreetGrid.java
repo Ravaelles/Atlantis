@@ -7,8 +7,10 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ProtossForbiddenByStreetGrid {
-    public static final int GRID_VALUE_X = 13;
-    public static final int GRID_VALUE_Y = 13;
+    public static final int GRID_VALUE_X = 14;
+    public static final int GRID_VALUE_Y = 14;
+//    public static final int GRID_VALUE_X = 13;
+//    public static final int GRID_VALUE_Y = 13;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -22,9 +24,14 @@ public class ProtossForbiddenByStreetGrid {
         if (!We.protoss()) return false;
         if (building.isBase() || building.isGasBuilding()) return false;
 
-        if (building.isPylon()) return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
+        if (building.isPylon()) {
+            return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
+        }
 
-        if (ProtossForbiddenForProducerBuildings.isForbidden(builder, building, position)) return true;
+        if (isProducingBuilding(building)) {
+            if (ProtossForbiddenForProducerBuildings.isForbidden(builder, building, position)) return true;
+            return false;
+        }
 
         // =========================================================
 
@@ -55,6 +62,10 @@ public class ProtossForbiddenByStreetGrid {
         // =========================================================
 
         return false;
+    }
+
+    private static boolean isProducingBuilding(AUnitType building) {
+        return building.isGateway() || building.isRoboticsFacility();
     }
 
     private static boolean failed(String reason) {

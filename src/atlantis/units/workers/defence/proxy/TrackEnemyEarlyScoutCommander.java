@@ -1,6 +1,7 @@
 package atlantis.units.workers.defence.proxy;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -14,7 +15,7 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
 
     @Override
     public boolean applies() {
-        return Enemy.protoss() && A.supplyUsed() <= 28 && A.everyNthGameFrame(7);
+        return Enemy.protoss() && A.supplyUsed() <= 28 && A.everyNthGameFrame(3);
     }
 
     @Override
@@ -22,10 +23,19 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
         if (detectEnemyScout()) {
             haveDefenderAssigned();
             if (ourDefender != null) {
-                (new TrackEnemyEarlyScout(ourDefender, enemyScout)).invoke(this);
+                sendDefenderToFight();
             }
         }
         else noDefenderNeeded();
+    }
+
+    private Manager sendDefenderToFight() {
+        if (ourDefender.hp() <= 18) {
+            (new GatherResources(ourDefender)).invoke(TrackEnemyEarlyScoutCommander.class);
+            ourDefender = FreeWorkers.get().exclude(ourDefender).nearestTo(enemyScout);
+        }
+
+        return (new TrackEnemyEarlyScout(ourDefender, enemyScout)).invoke(this);
     }
 
     private static void noDefenderNeeded() {
