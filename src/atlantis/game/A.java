@@ -1111,6 +1111,10 @@ public class A {
         return bool ? "Yes" : "No";
     }
 
+    public static String at() {
+        return now() + " ";
+    }
+
     public static int now() {
         return AGame.now();
     }

@@ -111,7 +111,12 @@ public class ProtossShouldExpand {
                     return yes("ManyMinerals");
                 }
             }
-            if (Count.workers() >= 24) return yes("ManyWorkers");
+            if (Count.workers() >= 24) {
+                Count.clearCache();
+                if (Count.inProductionOrInQueue(AtlantisRaceConfig.BASE) == 0) {
+                    return yes("ManyWorkers");
+                }
+            }
             if (seconds >= 750) return yes("GettingLate");
             if (A.hasMinerals(230) && Count.gateways() >= 3) return yes("ManyGateways");
         }

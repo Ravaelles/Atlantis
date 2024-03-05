@@ -13,9 +13,9 @@ public class RequestProtossDetection {
 //        OurStrategicBuildings.setDetectorsNeeded(2);
 //        ProductionRequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
 
-        return requestAtLeastOneObserver();
+//        return requestAtLeastOneObserver();
 
-//        return requestAtLeastOneCannon() || requestAtLeastOneObserver();
+        return requestAtLeastOneCannon() || requestAtLeastOneObserver();
     }
 
     private static boolean requestAtLeastOneObserver() {

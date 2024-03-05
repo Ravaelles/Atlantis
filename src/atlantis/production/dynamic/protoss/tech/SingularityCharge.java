@@ -30,7 +30,7 @@ public class SingularityCharge extends Commander {
         if (isResearched) return false;
         if (Queue.get().history().lastHappenedLessThanSecondsAgo(tech().name(), 30)) return false;
 
-        if (CountInQueue.count(tech(), 10) > 0) return false;
+        if (CountInQueue.count(tech(), 20) > 0) return false;
 
         if (ATech.isResearched(tech())) {
             OurDragoonWeaponRange.onSingularityChargeResearched();

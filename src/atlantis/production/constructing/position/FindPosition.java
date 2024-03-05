@@ -20,6 +20,10 @@ import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class FindPosition {
+    public static APosition findForBuildingNear(AUnitType building, HasPosition near) {
+        return findForBuilding(null, building, null, near, 8);
+    }
+
     public static APosition findForBuilding(
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {

@@ -49,7 +49,8 @@ public class ProduceObserver {
 
     public static boolean needObservers() {
         if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) return true;
-        if (A.supplyUsed() >= 45) return true;
+        if (A.supplyUsed() >= 45 && !Have.cannon()) return true;
+        if (A.supplyUsed() >= 60) return true;
 
         return false;
     }

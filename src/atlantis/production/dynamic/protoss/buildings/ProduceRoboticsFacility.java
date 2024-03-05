@@ -26,7 +26,7 @@ public class ProduceRoboticsFacility {
         if (A.seconds() <= 390 && OurArmyStrength.relative() <= 90) return false;
 
         if (A.supplyUsed() <= 38 && Decisions.enemyStrategyIsRushOrCheese()) return false;
-        if (A.supplyUsed() <= 43 && Have.cannon()) return false;
+        if (A.supplyUsed() <= 70 && Have.cannon() && !EnemyInfo.hasHiddenUnits()) return false;
 
         if (EnemyInfo.hasHiddenUnits()) {
 //            System.err.println("roboticsFacility because hasHiddenUnits");

@@ -16,6 +16,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     public boolean applies() {
         return We.protoss()
+            && AGame.everyNthGameFrame(7)
 //            && A.hasMinerals(550)
             && (A.hasMinerals(450) || A.canAffordWithReserved(170, 0))
             && A.supplyUsed(20);
@@ -23,18 +24,15 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
     @Override
     protected void handle() {
-        if (!AGame.everyNthGameFrame(7)) return;
-
-        super.invokeCommander();
+        ProduceCannon.produce();
+        ProduceForge.produce();
 
         if (isItSafeToAddTechBuildings()) {
-            ProduceCannon.produce();
             ProduceArbiterTribunal.produce();
             ProduceStargate.produce();
             ProduceObservatory.produce();
             ProduceRoboticsSupportBay.produce();
             ProduceRoboticsFacility.produce();
-            ProduceForge.produce();
             ProduceShieldBattery.produce();
         }
 

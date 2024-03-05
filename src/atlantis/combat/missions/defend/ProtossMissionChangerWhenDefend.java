@@ -16,6 +16,7 @@ import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
+    private int relativeStrength;
 
     // === CONTAIN =============================================
 
@@ -28,13 +29,17 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     public boolean canChange() {
         if (EnemyInfo.isEnemyNearAnyOurBase()) return false;
 
-        if (A.seconds() <= 200) {
-            if (!OurStrategy.get().isRushOrCheese()) return false;
-        }
-
-        int relativeStrength = ArmyStrength.ourArmyRelativeStrength();
+        relativeStrength = ArmyStrength.ourArmyRelativeStrength();
 
         if (A.seconds() <= 360) {
+            if (Enemy.protoss()) {
+                if (notAllowedToDoEarlyPushVsProtoss()) return false;
+                else if (relativeStrength >= 90 && EnemyUnits.discovered().dragoons().count() <= 2) {
+                    reason = "Early push (" + relativeStrength + "%)";
+                    return true;
+                }
+            }
+
             if (AGame.killsLossesResourceBalance() < 0) return false;
             else {
                 if (Enemy.terran() && relativeStrength >= 110) {
@@ -66,6 +71,10 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         return true;
+    }
+
+    private static boolean notAllowedToDoEarlyPushVsProtoss() {
+        return Count.dragoons() < 2 && Count.ourCombatUnits() <= 5;
     }
 
     public boolean shouldChangeMissionToAttack() {

@@ -33,9 +33,9 @@ public class Queue extends AbstractQueue {
             clearCache();
 //            System.err.println("history.size = " + history.size() + " / last:" + history.last());
         }
-        else {
-            A.errPrintln("Failed to add " + productionOrder.whatToString());
-        }
+//        else {
+//            A.errPrintln("Failed to add " + productionOrder.whatToString());
+//        }
 
 //        allOrders().print("Added");
 

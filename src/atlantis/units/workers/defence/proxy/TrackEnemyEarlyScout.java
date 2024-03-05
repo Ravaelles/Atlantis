@@ -20,7 +20,6 @@ public class TrackEnemyEarlyScout extends Manager {
 
     @Override
     public Manager handle() {
-
         if (!unit.isAttacking() || A.everyNthGameFrame(19)) {
             unit.attackUnit(enemyScout);
 //            System.err.println("@ " + A.now() + " - " + unit + " - Track - " + enemyScout);
@@ -29,6 +28,6 @@ public class TrackEnemyEarlyScout extends Manager {
 
 //        CameraCommander.centerCameraOn(unit);
 
-        return null;
+        return usedManager(this);
     }
 }

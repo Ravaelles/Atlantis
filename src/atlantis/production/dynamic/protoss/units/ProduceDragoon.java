@@ -25,8 +25,8 @@ public class ProduceDragoon {
         if (dragoons <= 1) return produceDragoon();
         if (againstEarlyProtossRush()) return produceDragoon();
 
-        if (dragoons >= 3 && (!A.hasMinerals(250) || !A.hasGas(150))) return false;
-        if (A.supplyUsed() >= 50 && (!A.hasMinerals(300) || !A.hasGas(200))) return false;
+        if (dragoons >= 3 && (!A.hasMinerals(200) || !A.hasGas(100))) return false;
+        if (A.supplyUsed() >= 50 && (!A.hasMinerals(250) || !A.hasGas(150))) return false;
         if (Decisions.needToProduceZealotsNow() && !A.hasGas(50)) return false;
         if (!A.hasMineralsAndGas(700, 250) && !A.canAffordWithReserved(125, 50)) return false;
 

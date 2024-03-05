@@ -47,9 +47,10 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
     }
 
     private void haveDefenderAssigned() {
-        if (ourDefender == null) {
+        if (ourDefender == null || ourDefender.isDead()) {
             ourDefender = FreeWorkers.get().nearestTo(enemyScout);
         }
+//        System.err.println("ourDefender = " + ourDefender);
     }
 
     private boolean detectEnemyScout() {
@@ -59,6 +60,10 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
 
 //            enemyScout = Select.enemy().workers().inRadius(30, main).nearestTo(main);
             enemyScout = Select.enemy().inRadius(30, main).nearestTo(main);
+
+//            if (enemyScout != null) {
+//                System.err.println("Enemy scout detected: " + enemyScout);
+//            }
         }
 
         return enemyScout != null && enemyScout.isAlive();

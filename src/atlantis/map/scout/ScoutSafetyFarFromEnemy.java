@@ -21,7 +21,7 @@ public class ScoutSafetyFarFromEnemy extends Manager {
 
         return unit.enemiesNear().buildings().inRadius(9, unit).empty()
             && unit.enemiesNear().combatUnits().canAttack(unit, safetyMargin()).notEmpty()
-            && unit.friendsNear().specialAction().inRadius(11, unit).empty();
+            && (!unit.isMoving() && unit.friendsNear().specialAction().inRadius(11, unit).empty());
     }
 
     private AUnit defineEnemyToRunFrom() {

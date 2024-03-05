@@ -1,36 +1,37 @@
 package atlantis.production.dynamic.expansion;
 
 import atlantis.architecture.Commander;
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.production.dynamic.expansion.secure.terran.SecuringBaseAsTerran;
-import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.dynamic.protoss.ProtossSecureBasesCommander;
+import atlantis.production.dynamic.reinforce.terran.TerranReinforceBasesWithCombatBuildings;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 import java.util.List;
 
-public class SecureBasesCommander extends Commander {
+public class ReinforceBasesCommander extends Commander {
     private static SecuringBaseAsTerran securingBase;
     private Selection bases;
 
-    public SecureBasesCommander() {
+    public ReinforceBasesCommander() {
+    }
+
+    @Override
+    protected Class<? extends Commander>[] subcommanders() {
+        return new Class[]{
+            ProtossSecureBasesCommander.class,
+            TerranReinforceBasesWithCombatBuildings.class,
+        };
     }
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
-        return A.everyNthGameFrame(53)
-            && Have.barracks()
-            && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) >= 2
-            && Count.withPlanned(AUnitType.Terran_Bunker) <= Count.basesWithPlanned()
-            && CountInQueue.count(AUnitType.Terran_Bunker, 10) <= 0;
+        return A.everyNthGameFrame(43);
     }
 
     @Override

@@ -48,10 +48,10 @@ public class DragoonSeparateFromZealots extends Manager {
 //        if (unit.distTo(zealot) < 1.5) {
 //            System.out.println("@ " + A.now() + " - SEPARATE " + unit.id() + " / " + unit.distTo(zealot));
 //            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZealots");
-        if (unit.move(
-            Select.ourBuildings().nearestTo(Select.mainOrAnyBuilding()),
-            Actions.MOVE_SPACE, "SpaceForZealots"
-        )) return true;
+//        if (unit.move(
+//            Select.ourBuildings().nearestTo(Select.mainOrAnyBuilding()),
+//            Actions.MOVE_SPACE, "SpaceForZealots"
+//        )) return true;
 
         return false;
 //        }

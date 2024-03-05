@@ -1,11 +1,11 @@
 package atlantis.combat.missions.defend.sparta;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.missions.MissionHistory;
 import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.MissionDefendManager;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -26,7 +26,8 @@ public class Sparta extends MissionDefend {
         if (We.terran()) return false;
         if (We.zerg() && Enemy.protoss()) return false;
 
-        return MissionHistory.numOfChanges() <= 1;
+        return Count.basesWithUnfinished() <= 1;
+//        return MissionHistory.numOfChanges() <= 1 &&;
     }
 
     // =========================================================

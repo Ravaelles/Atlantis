@@ -5,7 +5,6 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
 public class ReaverAlwaysAttack extends Manager {
-
     private Selection enemies;
 
     public ReaverAlwaysAttack(AUnit unit) {
@@ -24,6 +23,8 @@ public class ReaverAlwaysAttack extends Manager {
     public Manager handle() {
         AUnit enemy;
 
+        if (shouldContinueAttacking()) return usedManager(this, "GoOn");
+
         // First attack very close enemies
         if ((enemy = enemies.canBeAttackedBy(unit, 0).nearestTo(unit)) != null) {
             unit.attackUnit(enemy);
@@ -39,5 +40,9 @@ public class ReaverAlwaysAttack extends Manager {
         }
 
         return null;
+    }
+
+    private boolean shouldContinueAttacking() {
+        return unit.isAttacking() && unit.lastActionLessThanAgo(30);
     }
 }

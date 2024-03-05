@@ -3186,4 +3186,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isLeader() {
         return squad != null && this.equals(squad.leader());
     }
+
+    public boolean isMainBase() {
+        return this.equals(Select.main());
+    }
 }

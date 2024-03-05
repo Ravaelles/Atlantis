@@ -31,19 +31,30 @@ public class AddToQueue {
 //            A.printStackTrace("Why top priority " + type + "???");
 //        }
 
-        return addToQueue(type, position, IndexForNewOrder.indexForPriority(ProductionOrderPriority.TOP));
+        ProductionOrderPriority priority = ProductionOrderPriority.TOP;
+
+        return addToQueue(type, position, IndexForNewOrder.indexForPriority(priority), priority);
     }
 
     public static ProductionOrder withPriority(AUnitType type, ProductionOrderPriority priority) {
-        return addToQueue(type, null, IndexForNewOrder.indexForPriority(priority));
+        return addToQueue(type, null, IndexForNewOrder.indexForPriority(priority), priority);
     }
 
     public static ProductionOrder withHighPriority(AUnitType type) {
-        return withHighPriority(type, null);
+        return withHighPriority(
+            type,
+            null
+        );
     }
 
     public static ProductionOrder withHighPriority(AUnitType type, HasPosition position) {
-        return addToQueue(type, position != null ? position.position() : null, IndexForNewOrder.indexForPriority(ProductionOrderPriority.HIGH));
+        ProductionOrderPriority high = ProductionOrderPriority.HIGH;
+        return addToQueue(
+            type,
+            position != null ? position.position() : null,
+            IndexForNewOrder.indexForPriority(high),
+            high
+        );
     }
 
     public static ProductionOrder withStandardPriority(AUnitType type) {
@@ -51,7 +62,13 @@ public class AddToQueue {
     }
 
     public static ProductionOrder withStandardPriority(AUnitType type, HasPosition position) {
-        return addToQueue(type, position != null ? position.position() : null, IndexForNewOrder.indexForPriority(ProductionOrderPriority.STANDARD));
+        ProductionOrderPriority priority = ProductionOrderPriority.STANDARD;
+        return addToQueue(
+            type,
+            position != null ? position.position() : null,
+            IndexForNewOrder.indexForPriority(priority),
+            priority
+        );
     }
 
     public static boolean tech(TechType tech) {
@@ -65,7 +82,7 @@ public class AddToQueue {
             return false;
         }
 
-        ProductionOrder productionOrder = new ProductionOrder(tech, 0);
+        ProductionOrder productionOrder = new ProductionOrder(tech, A.supplyUsed());
 
         if (tech.equals(TechType.Tank_Siege_Mode)) productionOrder.setPriority(ProductionOrderPriority.TOP);
 
@@ -84,14 +101,18 @@ public class AddToQueue {
             return false;
         }
 
-        Queue.get().addNew(0, new ProductionOrder(upgrade, 0));
+        Queue.get().addNew(0, new ProductionOrder(upgrade, A.supplyUsed()));
         return true;
     }
 
     // =========================================================
 
-    private static ProductionOrder addToQueue(AUnitType type, HasPosition position, int index) {
-        if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) return null;
+    private static ProductionOrder addToQueue(
+        AUnitType type, HasPosition position, int index, ProductionOrderPriority priority
+    ) {
+        if (priority != ProductionOrderPriority.TOP) {
+            if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) return null;
+        }
 
         if (A.supplyTotal() >= 30 && type.isPylon()) {
             int inQueue = CountInQueue.count(AUnitType.Protoss_Pylon);

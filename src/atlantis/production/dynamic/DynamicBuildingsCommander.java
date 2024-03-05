@@ -2,7 +2,7 @@ package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
-import atlantis.production.dynamic.expansion.SecureBasesCommander;
+import atlantis.production.dynamic.expansion.ReinforceBasesCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
 import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicBuildingsCommander;
@@ -13,8 +13,8 @@ public class DynamicBuildingsCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         Class[] generic = new Class[]{
+            ReinforceBasesCommander.class,
             ExpansionCommander.class,
-            SecureBasesCommander.class,
             NewGasBuildingCommander.class,
         };
 

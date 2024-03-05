@@ -97,7 +97,7 @@ public class ConstructionRequests {
             + countNotStartedOfType(type);
     }
 
-    public static int countNotFinishedOfTypeInRadius(AUnitType type, double radius, APosition position) {
+    public static int countNotFinishedOfTypeInRadius(AUnitType type, double radius, HasPosition position) {
         return Select.ourUnfinished().ofType(type).inRadius(radius, position).count()
             + countNotStartedOfTypeInRadius(type, radius, position);
     }
@@ -142,7 +142,7 @@ public class ConstructionRequests {
             + countNotFinishedOfType(type);
     }
 
-    public static int countExistingAndPlannedInRadius(AUnitType type, double radius, APosition position) {
+    public static int countExistingAndPlannedInRadius(AUnitType type, double radius, HasPosition position) {
         if (!type.isABuilding()) {
             throw new RuntimeException("Can only use it for buildings: " + type);
         }
@@ -245,7 +245,7 @@ public class ConstructionRequests {
                     && construction.sameAs(newConstructionOrder)
             ) {
                 if (allowPrint) {
-                    A.errPrintln("Cancel same construction: " + construction.buildingType());
+//                    A.errPrintln("Cancel same construction: " + construction.buildingType());
 //                    A.errPrintln("A (old): " + construction);
 //                    A.errPrintln("B (new): " + newConstructionOrder);
                 }

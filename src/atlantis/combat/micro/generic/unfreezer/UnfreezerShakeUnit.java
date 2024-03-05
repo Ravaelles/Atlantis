@@ -2,6 +2,7 @@ package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -28,11 +29,16 @@ public class UnfreezerShakeUnit {
 
             if (!unit.isMoving()) {
                 APosition focus = unit.focusPoint();
-                AUnit towards = Select.mainOrAnyBuilding();
+//                AUnit towards = Select.mainOrAnyBuilding();
+                HasPosition towards = unit.translateByPixels(
+                    6 - A.rand(0, 12),
+                    6 - A.rand(0, 12)
+                );
 
-                if (focus != null && towards != null) focus = focus.translateTilesTowards(2.1, towards);
+//                if (focus != null && towards != null) focus = focus.translateTilesTowards(2.1, towards);
 
-                if (focus != null && unit.distTo(focus) >= 2) {
+//                if (focus != null && unit.distTo(focus) >= 2) {
+                if (focus != null) {
                     unit.move(focus, Actions.MOVE_UNFREEZE, "UnfreezeByFocus");
                     return true;
                 }
