@@ -121,12 +121,15 @@ public class ConstructionStatusChanger extends Commander {
 
         // =========================================================
         // Check if both building and builder are destroyed
-        if (
-            (builder == null || builder.isDead())
-                && (building == null || building.isDead())
-        ) {
-            ErrorLog.printMaxOncePerMinute("Builder and building are dead for " + construction + ", cancel");
-            construction.cancel();
+
+        if (!We.protoss()) {
+            if (
+                (builder == null || builder.isDead())
+                    && (building == null || building.isDead())
+            ) {
+                ErrorLog.printMaxOncePerMinute("Builder and building are dead for " + construction + ", cancel");
+                construction.cancel();
+            }
         }
     }
 

@@ -23,11 +23,11 @@ public class ProduceGateway {
         allGateways = Count.gateways();
         freeGateways = Count.freeGateways();
 
-        if (allGateways >= 3 && freeGateways > 0) return false;
+        if (allGateways >= 4 && freeGateways > 0) return false;
 
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
 
-        if (unfinishedGateways >= 2 || !Enemy.zerg()) {
+        if (unfinishedGateways >= 3 || !Enemy.zerg()) {
             if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;
             if (unfinishedGateways >= 2 && !A.hasMinerals(700)) return false;
         }
@@ -47,8 +47,8 @@ public class ProduceGateway {
     private static boolean tooManyGatewaysForNow() {
         int enough = Enemy.zerg() ? 4 : 3;
 
-        return Count.gatewaysWithUnfinished() >= enough
-            && !A.hasMinerals(520)
+        return !A.hasMinerals(450)
+            && Count.gatewaysWithUnfinished() >= enough
             && (!Have.roboticsFacility() || Count.basesWithUnfinished() <= 1);
     }
 }

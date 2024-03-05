@@ -33,7 +33,7 @@ public class ReaverAlwaysAttack extends Manager {
         }
 
         // If no very close enemy, then attack the one most distant
-        if ((enemy = enemies.canBeAttackedBy(unit, 7).nearestTo(unit)) != null) {
+        if ((enemy = enemies.canBeAttackedBy(unit, 4).nearestTo(unit)) != null) {
             unit.attackUnit(enemy);
             unit.setTooltipTactical("Nice" + enemy.name());
             return usedManager(this);
@@ -43,6 +43,6 @@ public class ReaverAlwaysAttack extends Manager {
     }
 
     private boolean shouldContinueAttacking() {
-        return unit.isAttacking() && unit.lastActionLessThanAgo(30);
+        return unit.isAttacking() && unit.lastActionLessThanAgo(50);
     }
 }

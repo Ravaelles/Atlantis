@@ -21,6 +21,10 @@ public class GetOptimalBuilder {
         boolean allowRepairers = true;
 
 //        return Select.ourWorkersFreeToBuildOrRepair(allowRepairers).nearestTo(positionToBuild);
-        return FreeWorkers.get().nearestTo(positionToBuild);
+        AUnit nearest = FreeWorkers.get().nearestTo(positionToBuild);
+
+        if (nearest != null) return nearest;
+
+        return Select.ourWorkers().notSpecialAction().nearestTo(positionToBuild);
     }
 }

@@ -18,8 +18,8 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
-        if (EnemyInfo.isEnemyNearAnyOurBase() && A.supplyUsed() <= 100) {
-            if (DEBUG) reason = "Enemy near our building";
+        if (EnemyInfo.isEnemyNearAnyOurBase() && A.supplyUsed() <= 70) {
+            if (DEBUG) reason = "Enemy is near our building";
             return true;
         }
 
