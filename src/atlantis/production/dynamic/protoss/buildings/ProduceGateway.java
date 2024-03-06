@@ -10,23 +10,25 @@ import static atlantis.units.AUnitType.Protoss_Gateway;
 
 public class ProduceGateway {
 
+    private static int allGateways;
     private static int unfinishedGateways;
     private static int freeGateways;
-    private static int allGateways;
+    private static int existingGateways;
     private static int minerals;
 
     public static boolean produce() {
         minerals = A.minerals();
 
-        allGateways = Count.gateways();
+        existingGateways = Count.gateways();
         freeGateways = Count.freeGateways();
-
-        if (minerals >= 600 && freeGateways <= 2) return produceGateway();
-
-        if (minerals < 205 && allGateways >= 2) return false;
-        if (allGateways >= 5 && freeGateways > 0 && !A.hasMinerals(600)) return false;
-
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
+        allGateways = existingGateways + unfinishedGateways;
+
+        if (freeGateways <= 2 && minerals >= 600) return produceGateway();
+        if (minerals >= 167 && allGateways <= 4 * Count.bases()) return produceGateway();
+
+        if (minerals < 205 && existingGateways >= 3) return false;
+        if (existingGateways >= 5 && freeGateways > 0 && !A.hasMinerals(600)) return false;
 
 //        if (unfinishedGateways >= 3 || !Enemy.zerg()) {
 //            if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;

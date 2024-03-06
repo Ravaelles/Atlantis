@@ -16,6 +16,7 @@ public class AdvanceStandard extends MissionManager {
     @Override
     public boolean applies() {
         return unit.isCombatUnit()
+            && unit.lastActionMoreThanAgo(10)
 //            && !unit.isLeader()
 //            && unit.combatEvalRelative() > 1.5
             && unit.enemiesNear().canBeAttackedBy(unit, 0).empty()
@@ -28,7 +29,7 @@ public class AdvanceStandard extends MissionManager {
     protected Manager handle() {
         if (asTerran()) return usedManager(this);
 
-        if (ToLastSquadTarget.goTo(unit)) return usedManager(this, "ToSquadTarget");
+//        if (ToLastSquadTarget.goTo(unit)) return usedManager(this, "ToSquadTarget");
 
         if (A.seconds() % 6 <= 3 && (!unit.isMoving() && !unit.isAttacking())) {
             return usedManager(this, "AdvanceContinue");

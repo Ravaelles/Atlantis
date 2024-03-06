@@ -56,14 +56,14 @@ public class ReinforceProtossBaseWithCannons {
     }
 
     private boolean ensurePylonExists() {
-        if (ConstructionRequests.countExistingAndPlannedInRadius(Protoss_Pylon, 6, finalPosition) == 0) {
+        if (ConstructionRequests.countExistingAndPlannedInRadius(Protoss_Pylon, 7, finalPosition) == 0) {
             AUnit builder = FreeWorkers.get().nearestTo(finalPosition);
             APosition positionForPylon = FindPosition.findForBuilding(
                 builder,
                 Protoss_Pylon,
                 null,
                 finalPosition,
-                6
+                9
             );
 //            System.err.println("__positionForPylon = " + positionForPylon);
 

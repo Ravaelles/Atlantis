@@ -2,6 +2,7 @@ package atlantis.combat.missions.attack;
 
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionDecisions;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.decisions.terran.TerranDecisions;
@@ -110,6 +111,11 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
                 && Alpha.count() <= 10
         ) {
             if (DEBUG) reason = "Discard early push";
+            return true;
+        }
+
+        if (Missions.counter() >= 1 && Count.ourCombatUnits() <= 30) {
+            if (DEBUG) reason = "Not enough terran units";
             return true;
         }
 

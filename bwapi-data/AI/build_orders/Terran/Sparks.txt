@@ -33,7 +33,6 @@ Constant Marine production
 9 - Supply Depot
 11 - Barracks
 13 - Barracks
-14 - MISSION:ATTACK
 15 - Supply Depot
 20 - Refinery
 24 - Academy

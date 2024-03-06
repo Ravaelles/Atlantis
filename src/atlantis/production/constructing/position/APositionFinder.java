@@ -32,10 +32,10 @@ public class APositionFinder {
      */
     public static APosition findPositionForNew(AUnit builder, AUnitType building, Construction construction) {
         if (construction == null || construction.productionOrder() == null) {
-            ErrorLog.printMaxOncePerMinute(
-                "construction = " + construction + "\n" +
-                    "construction.productionOrder() = " + (construction != null ? construction.productionOrder() : "-")
-            );
+//            ErrorLog.printMaxOncePerMinute(
+//                "construction = " + construction + "\n" +
+//                    "construction.productionOrder() = " + (construction != null ? construction.productionOrder() : "-")
+//            );
             return null;
         }
 

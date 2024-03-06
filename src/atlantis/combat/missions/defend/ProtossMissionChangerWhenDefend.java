@@ -77,8 +77,8 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     private boolean canPushEarlyVsProtoss() {
         if (A.seconds() >= 400) return false;
 
-        return (relativeStrength >= 120 && Count.zealots() >= 2)
-            || (MissionHistory.numOfChanges() <= 2 && Count.dragoons() >= 1);
+        return (relativeStrength >= 160 && MissionHistory.numOfChanges() <= 2 && Count.zealots() >= 3)
+            || (MissionHistory.numOfChanges() <= 3 && Count.dragoons() >= 6);
 //        return relativeStrength >= 90 ;
     }
 
@@ -114,11 +114,10 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     }
 
     private static boolean beBraveProtoss() {
-        return AGame.killsLossesResourceBalance() >= 300
-            && Count.ourCombatUnits() >= 3
-            && ArmyStrength.ourArmyRelativeStrength() >= 150
-            && EnemyWhoBreachedBase.noone()
-            && Select.enemyCombatUnits().atMost(3);
+        return Count.ourCombatUnits() >= 3
+            && ArmyStrength.ourArmyRelativeStrength() >= 300
+            && EnemyWhoBreachedBase.noone();
+//            && Select.enemyCombatUnits().atMost(3);
     }
 
     private boolean whenSparta() {

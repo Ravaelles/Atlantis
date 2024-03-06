@@ -63,7 +63,12 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return false;
         }
 
-        if (A.seconds() >= 360 && (strength <= 500 && Count.dragoons() <= 12)) {
+        if (A.seconds() <= 700 && strength <= 300) {
+            if (DEBUG) reason = "Too much risk, withdraw";
+            return true;
+        }
+
+        if (A.seconds() >= 450 && (strength <= 150 && Count.dragoons() <= 4)) {
             if (DEBUG) reason = "Wait for more Dragoons";
             return true;
         }

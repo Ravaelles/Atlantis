@@ -2,10 +2,13 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
+
+import static atlantis.units.actions.Actions.RUN_ENEMY;
 
 public class AvoidGroupOfEnemies extends Manager {
     protected final RunError runError;
@@ -31,8 +34,17 @@ public class AvoidGroupOfEnemies extends Manager {
 
 //        A.printStackTrace("AvoidSingleEnemy");
 
+        if (
+            unit.hp() >= 40
+                && A.seconds() <= 600
+                && unit.distToBase() >= 50
+                && unit.moveToMain(RUN_ENEMY, "AvoidGroupToBase")
+        ) {
+            return usedManager(this);
+        }
+
         if (unit.runningManager().runFrom(
-            centerOfEnemies, calculateRunDistance(), Actions.RUN_ENEMY, false
+            centerOfEnemies, calculateRunDistance(), RUN_ENEMY, false
         )) {
             return usedManager(this);
         }

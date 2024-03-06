@@ -21,41 +21,48 @@ public class ContainAsProtoss extends Manager {
 
     @Override
     public boolean applies() {
-        if (!We.protoss()) return false;
-
-        if (unit.isDT() && (unit.woundHp() <= 40 || unit.effUndetected())) return false;
-
-        if (OurArmyStrength.relative() >= 800 && Alpha.count() >= 35) return false;
-
-        return true;
+        return (new AppliesContainForProtoss(this)).applies();
     }
 
     @Override
     public Manager handle() {
+        if (whenEnemyBuildingNear()) return usedManager(this);
+
+        return null;
+    }
+
+    private boolean whenEnemyBuildingNear() {
         AUnit nearestEnemyBuilding = nearestEnemyBuilding();
 
         if (nearestEnemyBuilding != null) {
             double dist = unit.distTo(nearestEnemyBuilding);
 
-            if (dist > 17) {
-                unit.move(nearestEnemyBuilding, Actions.MOVE_FORMATION, "ContainIn");
-                return usedManager(this);
+            if (shouldIgnore(dist)) {
+//                unit.move(nearestEnemyBuilding, Actions.MOVE_FORMATION, "ContainIn");
+                return false;
             }
-            else if (dist <= 14 || unit.distToOr999(Chokes.enemyMainChoke()) < DIST_TO_ENEMY_MAIN_CHOKE) {
-                if (A.everyNthGameFrame(13)) {
+//            else if (dist <= 14 || unit.distToOr999(Chokes.enemyMainChoke()) < DIST_TO_ENEMY_MAIN_CHOKE) {
+            else if (dist <= 14) {
+                if (A.everyNthGameFrame(17)) {
                     unit.holdPosition("ContainHold");
                 }
                 else {
                     unit.moveToMain(Actions.MOVE_FORMATION, "ContainOut");
                 }
-                return usedManager(this);
+                return true;
             }
 
             unit.holdPosition("ContainHold");
-            return usedManager(this);
+            return true;
         }
 
-        return null;
+        return false;
+    }
+
+    private boolean shouldIgnore(double dist) {
+        if (unit.enemiesNear().combatBuildingsAntiLand().count() >= 7 * unit.friendsNearCount()) return false;
+
+        return dist > 17 || unit.enemiesNear().combatUnits().atMost(4);
     }
 
     private AUnit nearestEnemyBuilding() {

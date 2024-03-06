@@ -19,6 +19,16 @@ public class UnfreezerShakeUnit {
             return true;
         }
 
+        if (goToLeader(unit)) {
+            unit.setTooltip("UnfreezeByLeader");
+            return true;
+        }
+
+        if (goToFocus(unit)) {
+            unit.setTooltip("UnfreezeByFocus");
+            return true;
+        }
+
         if (goToNearestCombatFriend(unit)) {
             unit.setTooltip("UnfreezeByFriend");
             return true;
@@ -72,11 +82,7 @@ public class UnfreezerShakeUnit {
 //        }
 
         if (!unit.isMoving()) {
-            AFocusPoint focus = unit.focusPoint();
-            if (focus != null && unit.distTo(focus) >= 2.5) {
-                unit.move(focus, Actions.MOVE_UNFREEZE, "UnfreezeByMove");
-                return true;
-            }
+            if (goToFocus(unit)) return true;
         }
 
 //        if (!unit.isHoldingPosition()) {
@@ -105,6 +111,35 @@ public class UnfreezerShakeUnit {
 //        }
 
         ErrorLog.printErrorOnce("Unfreezing ERROR " + unit);
+        return false;
+    }
+
+    private static boolean goToFocus(AUnit unit) {
+        AFocusPoint focus = unit.focusPoint();
+        if (focus != null) {
+            double distToFocus = unit.distTo(focus);
+
+            if (distToFocus <= 3) {
+                unit.moveToMain(Actions.MOVE_UNFREEZE, "UnfreezeByMoveBase");
+                return true;
+            }
+            if (distToFocus >= 6) {
+                unit.move(focus, Actions.MOVE_UNFREEZE, "UnfreezeByMove");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean goToLeader(AUnit unit) {
+        AUnit leader = unit.squadLeader();
+
+        if (leader != null && leader.distTo(unit) >= 6) {
+            if (unit.move(leader, Actions.MOVE_FORMATION, "2Leader")) {
+                return true;
+            }
+        }
+
         return false;
     }
 

@@ -15,8 +15,8 @@ import starengine.StarEngineLauncher;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-    //    public static String OUR_RACE = "Protoss";
-    public static String OUR_RACE = "Terran";
+    public static String OUR_RACE = "Protoss";
+//    public static String OUR_RACE = "Terran";
 //    public static String OUR_RACE = "Zerg";
 
     public static String ENEMY_RACE = "Protoss";

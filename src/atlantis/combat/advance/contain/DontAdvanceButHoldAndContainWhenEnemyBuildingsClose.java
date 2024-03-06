@@ -16,7 +16,7 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
     private static final int DIST_TO_ENEMY_MAIN_CHOKE = 9;
 
     private final AppliesContainForTerran appliesForTerran = new AppliesContainForTerran(this);
-    private final AppliesContainForProtoss appliesForProtoss = new AppliesContainForProtoss(this);
+//    private final AppliesContainForProtoss appliesForProtoss = new AppliesContainForProtoss(this);
 
     public AChoke enemyMainChoke;
     public AChoke enemyNaturalChoke;
@@ -28,7 +28,7 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
 
     @Override
     public boolean applies() {
-        return appliesForTerran.applies() || appliesForProtoss.applies();
+        return appliesForTerran.applies();
     }
 
 
@@ -54,11 +54,11 @@ public class DontAdvanceButHoldAndContainWhenEnemyBuildingsClose extends Mission
             (
                 enemyMainChoke != null && unit.distTo(enemyMainChoke) < DIST_TO_ENEMY_MAIN_CHOKE
             )
-            ||
-            (
-                (enemyNaturalChoke = Chokes.enemyNaturalChoke()) != null
-                    && unit.distTo(enemyNaturalChoke) < 8
-            );
+                ||
+                (
+                    (enemyNaturalChoke = Chokes.enemyNaturalChoke()) != null
+                        && unit.distTo(enemyNaturalChoke) < 8
+                );
     }
 
     public double minDistToEnemyBuilding() {

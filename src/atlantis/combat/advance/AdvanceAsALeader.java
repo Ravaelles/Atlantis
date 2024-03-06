@@ -30,7 +30,7 @@ public class AdvanceAsALeader extends MissionManager {
 //        if (unit.isMissionAttackOrGlobalAttack()) return null;
 
         if (handleWhenTooFarFromSquadCenter()) return usedManager(this, "ToSquadCenter");
-        if (ToLastSquadTarget.goTo(unit)) return usedManager(this, "ToSquadTarget");
+//        if (ToLastSquadTarget.goTo(unit)) return usedManager(this, "ToSquadTarget");
 
 //        if (handleWhenLonely()) return usedManager(this, "LonelyLeader");
 //

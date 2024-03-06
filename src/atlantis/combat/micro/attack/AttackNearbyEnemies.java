@@ -52,12 +52,13 @@ public class AttackNearbyEnemies extends Manager {
 
     private boolean dontAttackAlone() {
         if (unit.canBeLonelyUnit()) return false;
-        if (unit.isRanged() && (
-            unit.lastFrameOfStartingAttackMoreThanAgo(30 * 8)
-                || unit.woundPercent() <= 10
-        )) return false;
+        if (unit.isRanged() && unit.woundPercent() <= 10) return false;
 
-        if (unit.isCombatUnit() && unit.distToLeader() >= 13) return true;
+        if (
+            unit.isCombatUnit()
+                && unit.distToLeader() >= 13
+                && unit.combatEvalRelative() <= 1.6
+        ) return true;
 
         return unit.squadSize() >= 6
             && unit.friendsInRadiusCount(6) == 0

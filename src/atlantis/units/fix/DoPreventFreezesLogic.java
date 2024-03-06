@@ -24,9 +24,9 @@ public class DoPreventFreezesLogic {
             }
         }
 
-        if (ToLastSquadTarget.goTo(unit)) {
-            return true;
-        }
+//        if (ToLastSquadTarget.goTo(unit)) {
+//            return true;
+//        }
 
         if (goToNearestCombatFriend(unit)) {
             return true;
