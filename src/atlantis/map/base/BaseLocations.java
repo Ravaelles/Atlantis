@@ -37,7 +37,7 @@ public class BaseLocations {
         startingLocations.addPositions(startingLocations(true));
 
         // Sort them all by closest to given nearestTo position
-        startingLocations.sortByDistanceTo(nearestTo, true);
+        startingLocations.sortByGroundDistanceTo(nearestTo, true);
 
         // For every location...
         for (ABaseLocation baseLocationPosition : startingLocations.list()) {
@@ -93,7 +93,7 @@ public class BaseLocations {
 
         // Sort them all by closest to given nearestTo position
         if (nearestTo != null) {
-            baseLocations.sortByDistanceTo(nearestTo, true);
+            baseLocations.sortByGroundDistanceTo(nearestTo, true);
         }
 
         // For every location...
@@ -140,7 +140,7 @@ public class BaseLocations {
         baseLocations.addPositions(baseLocations());
 
         // Sort them all by closest to given nearestTo position
-        baseLocations.sortByDistanceTo(farthestTo, false);
+        baseLocations.sortByGroundDistanceTo(farthestTo, false);
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {

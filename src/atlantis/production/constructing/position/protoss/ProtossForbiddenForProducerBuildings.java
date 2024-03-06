@@ -13,9 +13,10 @@ public class ProtossForbiddenForProducerBuildings {
     private static int X2 = 9;
     private static int Y1 = 5;
     private static int Y2 = 8;
-    private static int Y3 = 2;
+//    private static int Y3 = 2;
 
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
+//        if (true) return false;
         if (!We.protoss()) return false;
 //        if (!isProducingBuilding(building)) return false;
 
@@ -29,8 +30,8 @@ public class ProtossForbiddenForProducerBuildings {
 
     private static boolean gridMatches(APosition position, int GRID_SIZE) {
         return (position.tx() % GRID_SIZE == X1 || position.tx() % GRID_SIZE == X2)
-            && (position.ty() % GRID_SIZE == Y1 || position.ty() % GRID_SIZE == Y2 || position.ty() % GRID_SIZE == Y3);
-//            && (position.ty() % GRID_SIZE == Y1 || position.ty() % GRID_SIZE == Y2);
+//            && (position.ty() % GRID_SIZE == Y1 || position.ty() % GRID_SIZE == Y2 || position.ty() % GRID_SIZE == Y3);
+            && (position.ty() % GRID_SIZE == Y1 || position.ty() % GRID_SIZE == Y2);
     }
 
     private static boolean isNextToAPylon(AUnit builder, AUnitType building, APosition position) {

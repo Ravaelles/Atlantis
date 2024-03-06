@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend;
 import atlantis.Atlantis;
 import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.config.ActiveMap;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -31,6 +32,8 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //        }
 
         if (EnemyWhoBreachedBase.get() != null) return false;
+        if (Missions.lastMissionChangedAgo() <= 15) return false;
+        if (Missions.counter() >= 1 && Alpha.count() <= 25) return false;
 
         if (A.minerals() >= 2000 && A.supplyUsed() >= 90) {
             if (DEBUG) reason = "Abundance of minerals";

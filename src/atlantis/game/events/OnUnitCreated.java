@@ -34,11 +34,11 @@ public class OnUnitCreated {
         if (unit.isABuilding()) {
             ProtossWarping.updateNewBuildingJustWarped(unit);
             TerranNewBuilding.updateNewBuilding(unit);
-    
+
             if (unit.isBase()) CancelNotStartedBases.cancelNotStartedBases();
 
             Construction construction = unit.construction();
-            if (construction == null) {
+            if (construction == null && !unit.type().isAddon()) {
                 A.errPrintln("No construction for " + unit);
             }
             if (construction != null) {

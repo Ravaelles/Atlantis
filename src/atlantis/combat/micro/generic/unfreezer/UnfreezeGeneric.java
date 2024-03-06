@@ -18,7 +18,7 @@ public class UnfreezeGeneric extends Manager {
         if (unit.hasCooldown()) return false;
         if (unit.isAccelerating()) return false;
         if (duringMissionAttack()) return false;
-        if (unit.lastPositionChangedLessThanAgo(22)) return false;
+        if (unit.lastPositionChangedLessThanAgo(42)) return false;
         if (unit.lastActionLessThanAgo(16)) return false;
 //        if (unit.isAttacking()) return false;
         if (unit.lastStartedAttackLessThanAgo(20)) return false;

@@ -25,21 +25,19 @@ public class ProduceDragoon {
         if (dragoons <= 1) return produceDragoon();
         if (againstEarlyProtossRush()) return produceDragoon();
 
+//        if (A.hasGas(50) && A.supplyUsed() <= 38) return produceDragoon();
+
         if (dragoons >= 3 && (!A.hasMinerals(200) || !A.hasGas(100))) return false;
-        if (A.supplyUsed() >= 50 && (!A.hasMinerals(250) || !A.hasGas(150))) return false;
+        if (A.supplyUsed() >= 50 && (!A.hasMinerals(250) || !A.hasGas(130))) return false;
         if (Decisions.needToProduceZealotsNow() && !A.hasGas(50)) return false;
-        if (!A.hasMineralsAndGas(700, 250) && !A.canAffordWithReserved(125, 50)) return false;
+        if (!A.hasMineralsAndGas(500, 170) && !A.canAffordWithReserved(125, 50)) return false;
 
         if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
 //            trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);
             return produceDragoon();
         }
 
-        if (A.hasGas(50) && A.supplyUsed() <= 38) {
-            return produceDragoon();
-        }
-
-        return A.hasGas(200) && produceDragoon();
+        return A.hasGas(175) && produceDragoon();
     }
 
     private static boolean waitForDT() {

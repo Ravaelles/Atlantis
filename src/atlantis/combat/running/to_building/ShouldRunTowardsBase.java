@@ -12,7 +12,9 @@ public class ShouldRunTowardsBase {
         if (unit.isScout() && unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.isSquadScout()) return true;
 
-        if (A.seconds() >= 500) return false;
+        if (A.seconds() >= 550) return false;
+        if (unit.isMarine() && unit.isHealthy() && unit.distToBase() >= 40) return true;
+
         if (unit.isFlying()) return false;
         if (unit.hp() <= 20) return false;
         if (unit.isDragoon() || unit.isTank()) return false;

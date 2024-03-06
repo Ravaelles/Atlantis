@@ -32,7 +32,9 @@ public class DefineConstructionForNewUnit {
         }
 
         if (nearestConstruction == null) {
-            ErrorLog.printMaxOncePerMinute("!!! nearestConstruction not found for " + newBuilding);
+            if (!newBuilding.type().isAddon()) {
+                ErrorLog.printMaxOncePerMinute("!!! nearestConstruction not found for " + newBuilding);
+            }
             return null;
         }
 

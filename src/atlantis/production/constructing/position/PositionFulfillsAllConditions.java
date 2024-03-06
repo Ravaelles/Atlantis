@@ -29,6 +29,8 @@ public class PositionFulfillsAllConditions {
 
         APainter.paintCircle(position, 6, Color.Red);
 
+//        if (position.tx() % 2 == 0 && !building.isBase() && !building.isGasBuilding()) return false;
+
         if (!verifyInvalidPositionOrBuilder(builder, position)) return false;
 
         if (We.protoss()) {

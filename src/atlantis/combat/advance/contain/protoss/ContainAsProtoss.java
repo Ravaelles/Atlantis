@@ -1,6 +1,7 @@
 package atlantis.combat.advance.contain.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
@@ -24,7 +25,7 @@ public class ContainAsProtoss extends Manager {
 
         if (unit.isDT() && (unit.woundHp() <= 40 || unit.effUndetected())) return false;
 
-        if (OurArmyStrength.relative() >= 500) return false;
+        if (OurArmyStrength.relative() >= 800 && Alpha.count() >= 35) return false;
 
         return true;
     }

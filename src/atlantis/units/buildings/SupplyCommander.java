@@ -111,8 +111,8 @@ public class SupplyCommander extends Commander {
     }
 
     private boolean isSupplyVeryLow() {
-        return supplyFree <= (A.supplyTotal() >= 50 ? 8 : 2)
-            && A.hasMinerals(76)
+        return supplyFree <= (A.supplyTotal() >= 50 ? 6 : 2)
+            && A.hasMinerals(84)
             && requestedConstructionsOfSupply <= (A.supplyUsed() <= 33 ? 2 : 3);
     }
 

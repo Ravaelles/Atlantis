@@ -32,9 +32,9 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isDragoon() && unit.cooldown() > 0) return false;
-
         if (unit.cooldown() >= 7) return false;
+
+        if (unit.isDragoon() && unit.cooldown() > 0) return false;
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
         if (unit.lastStartedRunningLessThanAgo(8)) return false;
         if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
@@ -51,6 +51,14 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     private boolean dontAttackAlone() {
+        if (unit.canBeLonelyUnit()) return false;
+        if (unit.isRanged() && (
+            unit.lastFrameOfStartingAttackMoreThanAgo(30 * 8)
+                || unit.woundPercent() <= 10
+        )) return false;
+
+        if (unit.isCombatUnit() && unit.distToLeader() >= 13) return true;
+
         return unit.squadSize() >= 6
             && unit.friendsInRadiusCount(6) == 0
             && unit.enemiesNear().ranged().notEmpty();

@@ -16,6 +16,13 @@ public class ForbiddenByStreetGridForSupplyDepotAndAcademy {
 
         if (!building.isSupplyDepot() && !building.isAcademy()) return false;
 
+        int modulo;
+        if ((modulo = (position.tx()) % 2) != 0) return failed("TX modulo M = " + modulo);
+        if ((modulo = (position.ty()) % 2) != 0) return failed("TY modulo N = " + modulo);
+
+        if ((modulo = (position.tx()) % 9) >= 5) return failed("TX modulo M1 = " + modulo);
+        if ((modulo = (position.ty()) % 9) >= 5) return failed("TY modulo N1 = " + modulo);
+
         if (!streetGridMatches(position)) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = building.name() + " street grid doesn't allow it";
             return true;
@@ -35,5 +42,10 @@ public class ForbiddenByStreetGridForSupplyDepotAndAcademy {
 //        return position.tx() % 3 == 1 && position.ty() % 2 == 0;
 //            && position.tx() % 12 != 6 && position.ty() % 8 != 4;
 //            && position.tx() % 9 != 0 && position.ty() % 6 != 0;
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 }

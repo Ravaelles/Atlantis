@@ -33,7 +33,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
 
-        if (building.isPylon()) nearTo = defineNearToForPylon(nearTo);
+        if (nearTo == null && building.isPylon()) nearTo = defineNearToForPylon(nearTo);
 
 //        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
         int searchRadius = 0;

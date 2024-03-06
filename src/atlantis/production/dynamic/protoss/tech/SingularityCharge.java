@@ -18,7 +18,8 @@ import bwapi.UpgradeType;
 import static bwapi.UpgradeType.Singularity_Charge;
 
 public class SingularityCharge extends Commander {
-    private boolean isResearched = false;
+    private static boolean isResearched = false;
+    private static boolean enqueued = false;
     private int dragoons;
 
     public static UpgradeType tech() {
@@ -28,6 +29,7 @@ public class SingularityCharge extends Commander {
     @Override
     public boolean applies() {
         if (isResearched) return false;
+        if (enqueued) return false;
         if (Queue.get().history().lastHappenedLessThanSecondsAgo(tech().name(), 30)) return false;
 
         if (CountInQueue.count(tech(), 20) > 0) return false;
@@ -65,6 +67,7 @@ public class SingularityCharge extends Commander {
     @Override
     protected void handle() {
         if (AddToQueue.upgrade(tech())) {
+            enqueued = true;
             Queue.get().history().addNow(tech().name());
         }
     }

@@ -31,7 +31,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     public AFocusPoint focusPoint() {
         return cache.getIfValid(
             "focusPoint",
-            29,
+            17,
             () -> {
                 AFocusPoint focus = null;
 
@@ -44,6 +44,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === At second base ============================================
 
 //                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
+
+                // =========================================================
+
+                if ((focus = aroundCombatBuilding()) != null) return focus;
 
                 // ===============================================================
 
@@ -75,7 +79,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //                if (Count.ourCombatUnits() <= 8) {
                 if ((focus = ZergMissionDefendFocus.define()) != null) return focus;
                 if ((focus = TerranMissionDefendFocus.define()) != null) return focus;
-                if ((focus = aroundCombatBuilding()) != null) return focus;
+//                if ((focus = aroundCombatBuilding()) != null) return focus;
 //                }
 
                 // === Return position near the first building ===================
@@ -131,19 +135,22 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     }
 
     private static AFocusPoint aroundCombatBuilding() {
-        AUnit base = Select.ourBases().last();
+//        AUnit base = Select.ourBases().last();
+        AUnit base = Select.ourBases().second();
 
         if (base == null) return null;
 
         AUnit combatBuilding = Select
-            .ourOfType(AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND)
-            .mostDistantTo(base);
+            .ourOfTypeWithUnfinished(AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND)
+//            .ourOfType(AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND)
+            .nearestTo(base);
 
-        if (combatBuilding == null) return null;
+        if (combatBuilding == null || combatBuilding.distTo(base) >= 10) return null;
 
         return new AFocusPoint(
-            combatBuilding.translateTilesTowards(base, 5),
-            base,
+            combatBuilding.translateTilesTowards(base, 1),
+            combatBuilding,
+//            base,
             "Around" + combatBuilding.type().name()
         );
     }

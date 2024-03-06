@@ -2,6 +2,7 @@ package atlantis.combat.missions.attack;
 
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionDecisions;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyInfo;
@@ -32,6 +33,10 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     @Override
     public boolean shouldChangeMissionToDefend() {
+        if (Enemy.protoss()) {
+            if (defendVsProtoss()) return true;
+        }
+
         if (MissionDecisions.baseUnderSeriousAttack()) {
             if (DEBUG) reason = "Protect base";
             return true;
@@ -94,6 +99,19 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 //            if (DEBUG) reason = "Hidden unitz";
 //            return true;
 //        }
+
+        return false;
+    }
+
+    private boolean defendVsProtoss() {
+        if (
+            A.seconds() <= 400
+                && EnemyUnits.discovered().combatUnits().atLeast(4)
+                && Alpha.count() <= 10
+        ) {
+            if (DEBUG) reason = "Discard early push";
+            return true;
+        }
 
         return false;
     }

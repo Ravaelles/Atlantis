@@ -3,6 +3,7 @@ package atlantis.combat.advance.contain.terran;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.tank.sieging.ForceSiege;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -15,7 +16,8 @@ public class ContainAsTerran extends Manager {
 
     @Override
     public boolean applies() {
-        return We.terran();
+        return We.terran()
+            && EnemyUnits.discovered().combatBuildingsAntiLand().notEmpty();
     }
 
     @Override

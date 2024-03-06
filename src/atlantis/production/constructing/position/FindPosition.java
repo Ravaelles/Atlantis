@@ -3,12 +3,11 @@ package atlantis.production.constructing.position;
 import atlantis.combat.micro.zerg.ZergCreepColony;
 import atlantis.game.A;
 import atlantis.game.race.MyRace;
-import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
 import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.position.base.FindPositionForBaseNearestFree;
+import atlantis.production.constructing.position.base.FindPositionForBase;
 import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.units.AUnit;
@@ -16,7 +15,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
-import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class FindPosition {
@@ -42,7 +40,7 @@ public class FindPosition {
             // === Base ================================================
 
         else if (building.isBase()) {
-            return forNewBase(builder, building, construction, nearTo);
+            return FindPositionForBase.forNewBase(builder, building, construction, nearTo);
         }
 
         // =========================================================
@@ -110,6 +108,8 @@ public class FindPosition {
             );
         }
 
+//        System.err.println("position for " + building + " = " + standardPosition);
+
         return standardPosition;
     }
 
@@ -156,16 +156,6 @@ public class FindPosition {
         if (nearTo == null) nearTo = Select.our().first().position();
 
         return nearTo;
-    }
-
-    private static APosition forNewBase(AUnit builder, AUnitType building, Construction construction, HasPosition nearTo) {
-        if (We.zerg()) {
-            if (Count.larvas() == 0 || Count.bases() >= 3) {
-                return APositionFinder.findStandardPosition(builder, building, nearTo, 30);
-            }
-        }
-
-        return FindPositionForBaseNearestFree.find(building, builder, construction);
     }
 
     private static APosition forCombatBuilding(

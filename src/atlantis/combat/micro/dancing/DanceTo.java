@@ -27,7 +27,7 @@ public class DanceTo extends Manager {
             && isATargetThatWeCanDanceTo()
             && unit.lastAttackFrameLessThanAgo(30)
             && (
-            (unit.isMissionAttack() && Alpha.count() >= 30)
+            (unit.isMissionAttack() && Alpha.count() >= 30 && unit.friendsNear().inRadius(3, unit).atLeast(4))
                 || (distanceConditionIsOk() && !target.hasBiggerWeaponRangeThan(unit))
         );
     }

@@ -32,7 +32,7 @@ public class SquadCenter {
     }
 
     protected AUnit leader() {
-        int ttl = 93;
+        int ttl = 53;
         AUnit leader = cache.get(
             "leader",
             ttl,

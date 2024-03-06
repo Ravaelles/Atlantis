@@ -18,6 +18,8 @@ public class AdvanceAsALeader extends MissionManager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
 //        if (A.seconds() <= 220 && !Enemy.terran()) return false;
 
         return squad.isLeader(unit);

@@ -28,54 +28,56 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //    }
 
     public boolean canChange() {
+        if (Missions.lastMissionChangedAgo() <= 10) return false;
         if (EnemyInfo.isEnemyNearAnyOurBase()) return false;
 
         relativeStrength = ArmyStrength.ourArmyRelativeStrength();
 
-        if (A.seconds() <= 400) {
-            if (Enemy.protoss()) {
-//                if (notAllowedToDoEarlyPushVsProtoss()) return false;
-                if (canPushEarlyVsProtoss()) {
-                    reason = "Early push (" + relativeStrength + "%)";
-                    return true;
-                }
-            }
-
-            if (AGame.killsLossesResourceBalance() < 0) return false;
-            else {
-                if (Enemy.terran() && relativeStrength >= 110) {
-                    reason = "Early game pressure (" + relativeStrength + "%)";
-                    return true;
-                }
-
-                if (Enemy.protoss() && relativeStrength >= 200) {
-                    reason = "Early game push (" + relativeStrength + "%)";
-                    return true;
-                }
-
-//                else {
-//                    return false;
-//                }
-            }
-        }
-
-//        if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {
-        if (GamePhase.isEarlyGame()) {
-            if (
-                EnemyStrategy.get().isRushOrCheese()
-                    && (A.resourcesBalance() < 350 || !ArmyStrength.weAreMuchStronger())
-            ) return false;
-
-            if (Count.cannons() >= 1 && Count.ourCombatUnits() <= 8) return false;
-
-            if (EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(4)) return false;
-        }
+////        if (A.seconds() <= 400) {
+////            if (Enemy.protoss()) {
+//////                if (notAllowedToDoEarlyPushVsProtoss()) return false;
+////                if (canPushEarlyVsProtoss()) {
+////                    return true;
+////                }
+////            }
+////
+////            if (AGame.killsLossesResourceBalance() < 0) return false;
+////            else {
+////                if (Enemy.terran() && relativeStrength >= 110) {
+////                    reason = "Early game pressure (" + relativeStrength + "%)";
+////                    return true;
+////                }
+////
+////                if (Enemy.protoss() && relativeStrength >= 200) {
+////                    reason = "Early game push (" + relativeStrength + "%)";
+////                    return true;
+////                }
+////
+//////                else {
+//////                    return false;
+//////                }
+////            }
+//        }
+//
+////        if (GamePhase.isEarlyGame() && Count.dragoons() <= 3) {
+//        if (GamePhase.isEarlyGame()) {
+//            if (
+//                EnemyStrategy.get().isRushOrCheese()
+//                    && (A.resourcesBalance() < 350 || !ArmyStrength.weAreMuchStronger())
+//            ) return false;
+//
+//            if (Count.cannons() >= 1 && Count.ourCombatUnits() <= 8) return false;
+//
+//            if (EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(4)) return false;
+//        }
 
         return true;
     }
 
     private boolean canPushEarlyVsProtoss() {
-        return relativeStrength >= 120
+        if (A.seconds() >= 400) return false;
+
+        return (relativeStrength >= 120 && Count.zealots() >= 2)
             || (MissionHistory.numOfChanges() <= 2 && Count.dragoons() >= 1);
 //        return relativeStrength >= 90 ;
     }
@@ -85,11 +87,19 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     }
 
     public boolean shouldChangeMissionToAttack() {
-        if (beBraveProtoss()) {
-            if (DEBUG) reason = "Brave Protoss! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
-        }
-
         if (!canChange()) return false;
+
+        if (Enemy.protoss()) {
+            if (beBraveProtoss()) {
+                if (DEBUG) reason = "Brave Protoss! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+                return true;
+            }
+
+            if (canPushEarlyVsProtoss()) {
+                reason = "Early push (" + relativeStrength + "%)";
+                return true;
+            }
+        }
 
         if (Missions.isGlobalMissionSparta()) {
             return whenSparta();

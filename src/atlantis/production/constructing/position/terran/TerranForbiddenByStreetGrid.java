@@ -22,8 +22,18 @@ public class TerranForbiddenByStreetGrid {
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         if (!We.terran()) return false;
 
-        if (ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position)) return true;
-        if (ForbiddenByStreetGridForBarracks.isForbidden(builder, building, position)) return true;
+        if (building.isSupplyDepot() || building.isAcademy()) {
+            return ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position);
+//            if (ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position)) return true;
+        }
+
+        int modulo;
+        if ((modulo = (position.tx()) % 3) != 0) return failed("TX modulo K = " + modulo);
+        if ((modulo = (position.ty()) % 3) != 0) return failed("TY modulo L = " + modulo);
+
+        if (true) return false;
+
+//        if (ForbiddenByStreetGridForBarracks.isForbidden(builder, building, position)) return true;
 
         if (
             building.isBase()
@@ -102,5 +112,10 @@ public class TerranForbiddenByStreetGrid {
         int addonBonus = building.addonWidthInPx();
 
         return (int) (position.tx() + (building.dimensionRightPixels() + addonBonus) / 32);
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 }

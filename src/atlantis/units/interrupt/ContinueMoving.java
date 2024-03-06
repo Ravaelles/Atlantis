@@ -14,7 +14,7 @@ public class ContinueMoving extends Manager {
 //        if (!unit.isDragoon()) return false;
         if (!unit.isMoving()) return false;
         if (unit.isStopped()) return false;
-        if (A.everyNthGameFrame(77)) return false;
+        if (A.everyNthGameFrame(37)) return false;
         if (unit.lastActionMoreThanAgo(37)) return false;
         if (unit.isLeader()) return false;
         if (unit.lastPositionChangedMoreThanAgo(10)) return false;

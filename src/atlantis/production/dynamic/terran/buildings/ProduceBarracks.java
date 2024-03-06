@@ -13,10 +13,11 @@ import static atlantis.units.AUnitType.Terran_Barracks;
 public class ProduceBarracks {
     public static boolean barracks() {
         int barracks = Count.withPlanned(Terran_Barracks);
-        int freeBarracks = Select.ourFree(Terran_Barracks).notLifted().size();
+        int freeBarracks = Count.freeBarracks();
 
         if (freeBarracks >= 1) return false;
-        else if (A.hasMinerals(600)) return produce();
+        else if (freeBarracks == 0 && barracks <= 3) return produce();
+        else if (A.hasMinerals(550)) return produce();
 
 //        if (barracks <= 8 && A.hasMinerals(800) && A.hasFreeSupply(4)) return produce();
 //        if (barracks >= 3 && !A.hasMinerals(800)) return false;

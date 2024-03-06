@@ -7,8 +7,10 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ProtossForbiddenByStreetGrid {
-    public static final int GRID_VALUE_X = 14;
-    public static final int GRID_VALUE_Y = 14;
+    public static final int GRID_VALUE_X = 15;
+    public static final int GRID_VALUE_Y = 15;
+//    public static final int GRID_VALUE_X = 14;
+//    public static final int GRID_VALUE_Y = 14;
 //    public static final int GRID_VALUE_X = 13;
 //    public static final int GRID_VALUE_Y = 13;
 
@@ -24,9 +26,17 @@ public class ProtossForbiddenByStreetGrid {
         if (!We.protoss()) return false;
         if (building.isBase() || building.isGasBuilding()) return false;
 
+        int modulo;
+
         if (building.isPylon()) {
             return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
         }
+        else {
+            if ((modulo = (position.tx()) % 3) != 0) return failed("TX modulo K = " + modulo);
+            if ((modulo = (position.ty()) % 3) != 0) return failed("TY modulo L = " + modulo);
+        }
+
+        if (true) return false;
 
         if (isProducingBuilding(building)) {
             if (ProtossForbiddenForProducerBuildings.isForbidden(builder, building, position)) return true;
@@ -44,7 +54,9 @@ public class ProtossForbiddenByStreetGrid {
 //            + (((position.y() - building.dimensionUpPixels()) / 32) % GRID_VALUE_Y)
 //        );
 
-        int modulo;
+//        if (position.tx() % 2 == 0 || position.ty() % 2 == 0) return failed("TX modulo even");
+
+//        int modulo;
         if ((modulo = (position.tx()) % GRID_VALUE_X) <= 1) return failed("TX modulo A = " + modulo);
         if ((modulo = (position.ty()) % GRID_VALUE_Y) <= 1) return failed("TY modulo C = " + modulo);
 

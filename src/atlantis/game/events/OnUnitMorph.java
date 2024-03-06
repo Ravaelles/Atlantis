@@ -70,7 +70,7 @@ public class OnUnitMorph {
 
     private static void releaseReservedResources(AUnit unit) {
         Construction construction = unit.construction();
-        if (construction == null && unit.isABuilding()) {
+        if (construction == null && unit.isABuilding() && !unit.type().isAddon()) {
             A.errPrintln("No construction for " + unit);
         }
         if (construction != null) {

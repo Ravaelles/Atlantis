@@ -28,12 +28,20 @@ public class UnfreezerShakeUnit {
 //            if (unit.lastActionLessThanAgo(30 * 2, Actions.MOVE_UNFREEZE)) return true;
 
             if (!unit.isMoving()) {
+                HasPosition towards = unit.translateByPixels(
+                    8 - 16 * A.rand(0, 1),
+                    8 - 16 * A.rand(0, 1)
+                );
+
+                if (towards != null) {
+                    unit.move(towards, Actions.MOVE_UNFREEZE, "UnfreezeByMove");
+                    return true;
+                }
+            }
+
+            if (!unit.isMoving()) {
                 APosition focus = unit.focusPoint();
 //                AUnit towards = Select.mainOrAnyBuilding();
-                HasPosition towards = unit.translateByPixels(
-                    6 - A.rand(0, 12),
-                    6 - A.rand(0, 12)
-                );
 
 //                if (focus != null && towards != null) focus = focus.translateTilesTowards(2.1, towards);
 

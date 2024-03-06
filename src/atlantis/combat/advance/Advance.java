@@ -17,7 +17,7 @@ public class Advance extends MissionManager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            AdvanceAsALeader.class,
+//            AdvanceAsALeader.class,
             TooFarFromLeader.class,
             RetreatManager.class,
             DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class,

@@ -9,7 +9,9 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -18,7 +20,18 @@ public class FindPositionForBase {
 
     // =========================================================
 
-    public static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder, Construction construction) {
+    public static APosition forNewBase(AUnit builder, AUnitType building, Construction construction, HasPosition nearTo) {
+        if (We.zerg()) {
+            if (Count.larvas() == 0 || Count.bases() >= 3) {
+                return APositionFinder.findStandardPosition(builder, building, nearTo, 30);
+            }
+        }
+
+        return FindPositionForBaseNearestFree.find(building, builder, construction);
+    }
+
+    protected static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder,
+                                                                   Construction construction) {
 //        ABaseLocation baseLocationToExpand;
         HasPosition near = null;
         int ourBasesCount = Select.ourBases().count();

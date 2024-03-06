@@ -3190,4 +3190,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isMainBase() {
         return this.equals(Select.main());
     }
+
+    public boolean canBeLonelyUnit() {
+        return type().is(AUnitType.Terran_Vulture, AUnitType.Protoss_Dark_Templar);
+    }
 }

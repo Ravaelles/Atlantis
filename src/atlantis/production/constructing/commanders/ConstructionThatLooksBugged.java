@@ -51,7 +51,11 @@ public class ConstructionThatLooksBugged extends Commander {
 
         if (AGame.now() - constr.timeOrdered() > timeout) {
 //            System.err.println(" // " + AGame.now() + " // " + constr.timeOrdered() + " // > " + timeout);
-            ErrorLog.printMaxOncePerMinute("Cancel constr of " + constr.buildingType() + " (Took too long)");
+            ErrorLog.printMaxOncePerMinute(
+                "Cancel constr of " + constr.buildingType()
+                    + " (Took too long)"
+                    + " buildable:" + constr.buildPosition().isBuildable()
+            );
             constr.cancel();
         }
     }

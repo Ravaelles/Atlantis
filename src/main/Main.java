@@ -15,8 +15,8 @@ import starengine.StarEngineLauncher;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-    public static String OUR_RACE = "Protoss";
-//    public static String OUR_RACE = "Terran";
+    //    public static String OUR_RACE = "Protoss";
+    public static String OUR_RACE = "Terran";
 //    public static String OUR_RACE = "Zerg";
 
     public static String ENEMY_RACE = "Protoss";
@@ -70,7 +70,8 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====

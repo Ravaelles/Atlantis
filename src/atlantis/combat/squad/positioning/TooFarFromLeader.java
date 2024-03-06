@@ -21,9 +21,10 @@ public class TooFarFromLeader extends Manager {
     public boolean applies() {
         if (unit.isAir()) return false;
         if (unit.isDT()) return false;
+        if (A.seconds() % 4 <= 2) return false;
 
         if (We.terran() && !Enemy.terran() && A.seconds() <= 220) return false;
-        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
+//        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
         if (unit.squad().isLeader(unit)) return false;
 
         if (A.supplyUsed() >= 170 && (
@@ -33,7 +34,7 @@ public class TooFarFromLeader extends Manager {
         leader = unit.squad().leader();
         if (leader == null) return false;
 
-        if (unit.distToNearestChokeLessThan(4)) return false;
+        if (unit.distToNearestChokeLessThan(5)) return false;
 
         distToLeader = unit.distTo(leader);
         boolean wayTooFarFromLeader = wayTooFarFromLeader();
@@ -61,8 +62,8 @@ public class TooFarFromLeader extends Manager {
 
     private boolean leaderIsOvercrowded() {
         return leader.isStuck()
-            || unit.friendsNear().groundUnits().countInRadius(2, unit) >= 4
-            || unit.friendsNear().groundUnits().countInRadius(5, unit) >= 11;
+            || unit.friendsNear().groundUnits().countInRadius(3, unit) >= 4
+            || unit.friendsNear().groundUnits().countInRadius(5, unit) >= 9;
     }
 
     private boolean tooFarFromLeader() {

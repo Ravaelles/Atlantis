@@ -1,12 +1,14 @@
 package atlantis.production.requests.protoss;
 
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
@@ -27,9 +29,9 @@ public class ProtossPhotonCannonAntiLand extends AntiLandBuildingCommander {
             return 0;
         }
 
-        if (GamePhase.isEarlyGame() && ArmyStrength.weAreMuchWeaker()) {
-            return 2;
-        }
+//        if (GamePhase.isEarlyGame() && OurArmyStrength.relative() <= 60 && Count.dragoons() <= 2) {
+//            return 2;
+//        }
 
         return 0;
     }

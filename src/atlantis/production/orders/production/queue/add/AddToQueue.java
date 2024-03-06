@@ -122,8 +122,8 @@ public class AddToQueue {
                     inQueue);
             }
 
-            if (inQueue >= 2) {
-                A.printStackTrace("Too many pylons in queue (" + inQueue + ")");
+            if (inQueue >= 4) {
+//                A.printStackTrace("Too many pylons in queue (" + inQueue + ")");
                 return null;
             }
         }

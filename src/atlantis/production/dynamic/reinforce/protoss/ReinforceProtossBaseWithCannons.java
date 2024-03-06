@@ -12,6 +12,7 @@ import atlantis.production.constructing.position.FindPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 
 import static atlantis.units.AUnitType.Protoss_Pylon;
@@ -23,11 +24,21 @@ public class ReinforceProtossBaseWithCannons {
 
     public ReinforceProtossBaseWithCannons(HasPosition position) {
         this.initialPositionToReinforce = position;
-        this.finalPosition = position;
 
         if (isForNatural()) {
-            this.finalPosition = modifyPositionForNatural();
+            this.finalPosition = forNaturalBase();
         }
+        else {
+            this.finalPosition = forNonNaturalBase();
+        }
+    }
+
+    private HasPosition forNonNaturalBase() {
+        APosition center = Select.minerals().inRadius(10, initialPositionToReinforce).center();
+
+        if (center == null) return initialPositionToReinforce;
+
+        return initialPositionToReinforce.translatePercentTowards(center, 50);
     }
 
     public void reinforce() {
@@ -58,13 +69,12 @@ public class ReinforceProtossBaseWithCannons {
 
             if (positionForPylon != null) {
                 ProductionOrder order = AddToQueue.withTopPriority(Protoss_Pylon, positionForPylon);
-                NewConstructionRequest.requestConstructionOf(Protoss_Pylon, positionForPylon, order);
 
-                if (order != null) {
+                if (order != null && NewConstructionRequest.requestConstructionOf(Protoss_Pylon, positionForPylon, order)) {
                     order.forceSetPosition(positionForPylon);
                     order.setMinSupply(0);
 
-//                    System.err.println("---------- HAVE PYLON AT " + positionForPylon + " / " + positionForPylon.isBuildable());
+//                    System.err.println("---------- HAVE PYLON AT " + positionForPylon);
                     //                CameraCommander.centerCameraOn(positionForPylon);
                 }
 
@@ -88,7 +98,7 @@ public class ReinforceProtossBaseWithCannons {
         return true;
     }
 
-    private HasPosition modifyPositionForNatural() {
+    private HasPosition forNaturalBase() {
         AChoke choke = Chokes.natural();
         if (choke == null) return initialPositionToReinforce;
 
@@ -96,7 +106,7 @@ public class ReinforceProtossBaseWithCannons {
     }
 
     private APosition translateChokeTowardsOurSide(AChoke choke) {
-        return initialPositionToReinforce.translateTilesTowards(choke, 3.4);
+        return initialPositionToReinforce.translateTilesTowards(choke, 2);
     }
 
 //    private void haveCannonAtTheNearestChoke() {

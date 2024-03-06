@@ -17,6 +17,8 @@ public class ProduceStarport {
     }
 
     private static boolean shouldBuild() {
+        if (A.supplyUsed() <= 140) return false;
+
         if (Count.freeStarports() > 0) return false;
 
         int minSupply = Enemy.zerg() ? 55 : 65;

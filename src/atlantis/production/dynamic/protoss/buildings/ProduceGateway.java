@@ -18,25 +18,30 @@ public class ProduceGateway {
     public static boolean produce() {
         minerals = A.minerals();
 
-        if (minerals < 205) return false;
-
         allGateways = Count.gateways();
         freeGateways = Count.freeGateways();
 
-        if (allGateways >= 4 && freeGateways > 0) return false;
+        if (minerals >= 600 && freeGateways <= 2) return produceGateway();
+
+        if (minerals < 205 && allGateways >= 2) return false;
+        if (allGateways >= 5 && freeGateways > 0 && !A.hasMinerals(600)) return false;
 
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
 
-        if (unfinishedGateways >= 3 || !Enemy.zerg()) {
-            if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;
-            if (unfinishedGateways >= 2 && !A.hasMinerals(700)) return false;
-        }
+//        if (unfinishedGateways >= 3 || !Enemy.zerg()) {
+//            if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;
+        if (unfinishedGateways >= 2 && !A.hasMinerals(550)) return false;
+//        }
 
         if (tooManyGatewaysForNow()) return false;
 
-        if (A.hasMinerals(350) && freeGateways == 0) return produceGateway();
+        if (continuousGatewayProduction()) return produceGateway();
 
-        return produceGateway();
+        return false;
+    }
+
+    private static boolean continuousGatewayProduction() {
+        return freeGateways <= 1 && (A.hasMinerals(570) || A.canAffordWithReserved(170, 0));
     }
 
     private static boolean produceGateway() {
@@ -45,7 +50,7 @@ public class ProduceGateway {
     }
 
     private static boolean tooManyGatewaysForNow() {
-        int enough = Enemy.zerg() ? 4 : 3;
+        int enough = Enemy.zerg() ? 5 : 4;
 
         return !A.hasMinerals(450)
             && Count.gatewaysWithUnfinished() >= enough

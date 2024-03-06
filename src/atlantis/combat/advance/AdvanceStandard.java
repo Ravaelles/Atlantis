@@ -16,7 +16,7 @@ public class AdvanceStandard extends MissionManager {
     @Override
     public boolean applies() {
         return unit.isCombatUnit()
-            && !unit.isLeader()
+//            && !unit.isLeader()
 //            && unit.combatEvalRelative() > 1.5
             && unit.enemiesNear().canBeAttackedBy(unit, 0).empty()
             && (
