@@ -11,12 +11,12 @@ public class ContinueMoving extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
 //        if (!unit.isDragoon()) return false;
         if (!unit.isMoving()) return false;
         if (unit.isStopped()) return false;
-        if (A.everyNthGameFrame(37)) return false;
+        if (A.everyNthGameFrame(7)) return false;
         if (unit.lastActionMoreThanAgo(37)) return false;
         if (unit.isLeader()) return false;
         if (unit.lastPositionChangedMoreThanAgo(10)) return false;

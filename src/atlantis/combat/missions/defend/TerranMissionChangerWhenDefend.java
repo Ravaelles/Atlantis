@@ -34,7 +34,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (Alpha.count() <= 7) return false;
 
         if (EnemyWhoBreachedBase.get() != null) return false;
-        if (Missions.lastMissionChangedAgo() <= 15) return false;
+        if (Missions.lastMissionChangedSecondsAgo() <= 15) return false;
         if (Missions.counter() >= 1 && Alpha.count() <= 25) return false;
 
         if (A.minerals() >= 2000 && A.supplyUsed() >= 90) {

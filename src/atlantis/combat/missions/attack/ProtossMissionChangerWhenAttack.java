@@ -18,7 +18,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     // === DEFEND ==============================================
     public boolean shouldChangeMissionToDefend() {
-        if (Missions.counter() <= 1 || Missions.lastMissionChangedAgo() <= 20) return false;
+        if (Missions.counter() <= 1 || Missions.lastMissionChangedSecondsAgo() <= 20) return false;
 
         if (Enemy.protoss()) {
             if (defendVsProtoss()) return true;

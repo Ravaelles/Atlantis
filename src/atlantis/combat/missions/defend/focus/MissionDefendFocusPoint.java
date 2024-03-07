@@ -12,6 +12,7 @@ import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
+import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -40,6 +41,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === Enemies that breached into base ===========================
 
                 if ((focus = enemyWhoBreachedBase()) != null) return focus;
+
+                // === Path to enemy =============================================
+
+                if ((focus = PathToEnemyFocus.getIfApplies()) != null) return focus;
 
                 // === At second base ============================================
 

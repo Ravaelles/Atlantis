@@ -164,6 +164,10 @@ public class Missions {
         return A.ago(lastMissionChanged);
     }
 
+    public static double lastMissionChangedSecondsAgo() {
+        return A.secondsAgo(lastMissionChanged);
+    }
+
     public static boolean recentlyChangedMission() {
         return lastMissionChangedAgo() <= 30 * 6;
     }

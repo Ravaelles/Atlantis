@@ -1127,6 +1127,10 @@ public class A {
         return A.now() - frame;
     }
 
+    public static double secondsAgo(int frame) {
+        return (A.now() - frame) / 30;
+    }
+
     public static boolean atMostFramesAgo(int frame, int maxFramesAgo) {
         return A.ago(frame) <= maxFramesAgo;
     }
