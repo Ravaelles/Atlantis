@@ -42,7 +42,7 @@ public class ErrorLog {
     }
 
     private static void print(String message) {
-        System.err.println(message);
+        A.errPrintln(message);
 
         errorTimestamps.put(message, A.seconds());
     }
@@ -62,7 +62,7 @@ public class ErrorLog {
 
     public static void printPlusToFile(String message) {
         System.err.println(message);
-        
+
         A.saveToFile("error-log.txt", message, true);
     }
 }

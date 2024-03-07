@@ -5,6 +5,7 @@ import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.protoss.ProtossWarping;
 import atlantis.production.constructing.terran.TerranNewBuilding;
+import atlantis.production.dynamic.expansion.ExpansionCommander;
 import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
@@ -35,7 +36,10 @@ public class OnUnitCreated {
             ProtossWarping.updateNewBuildingJustWarped(unit);
             TerranNewBuilding.updateNewBuilding(unit);
 
-            if (unit.isBase()) CancelNotStartedBases.cancelNotStartedBases();
+            if (unit.isBase()) {
+                ExpansionCommander.justExpanded();
+                CancelNotStartedBases.cancelNotStartedBases();
+            }
 
             Construction construction = unit.construction();
             if (construction == null && !unit.type().isAddon()) {

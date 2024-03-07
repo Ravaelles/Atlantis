@@ -2,15 +2,19 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.MissionHistory;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.squad.alpha.Alpha;
+import atlantis.decions.Decision;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.production.dynamic.expansion.ExpansionCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -76,9 +80,10 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     private boolean canPushEarlyVsProtoss() {
         if (A.seconds() >= 400) return false;
+        if (EnemyUnits.dragoons() >= 1) return false;
 
-        return (relativeStrength >= 160 && MissionHistory.numOfChanges() <= 2 && Count.zealots() >= 3)
-            || (MissionHistory.numOfChanges() <= 3 && Count.dragoons() >= 6);
+        return (relativeStrength >= 190 && MissionHistory.numOfChanges() <= 2 && Count.zealots() >= 3);
+//            || (MissionHistory.numOfChanges() <= 3 && Count.dragoons() >= 6);
 //        return relativeStrength >= 90 ;
     }
 
@@ -90,15 +95,23 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (!canChange()) return false;
 
         if (Enemy.protoss()) {
-            if (beBraveProtoss()) {
-                if (DEBUG) reason = "Brave Protoss! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
-                return true;
-            }
+            Decision decision = shouldAttackVsProtoss();
 
-            if (canPushEarlyVsProtoss()) {
-                reason = "Early push (" + relativeStrength + "%)";
-                return true;
-            }
+            if (decision.notIndifferent()) return decision.toBoolean();
+
+//            if (postEarlyGameDontAttackProtoss()) return false;
+//
+//            if (Count.basesWithUnfinished() <= 2 && ExpansionCommander.lastExpandedLessThanSecondsAgo(50)) return false;
+//
+//            if (beBraveProtoss()) {
+//                if (DEBUG) reason = "Brave Protoss! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+//                return true;
+//            }
+//
+//            if (canPushEarlyVsProtoss()) {
+//                reason = "Early push (" + relativeStrength + "%)";
+//                return true;
+//            }
         }
 
         if (Missions.isGlobalMissionSparta()) {
@@ -111,6 +124,34 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         return false;
+    }
+
+    private Decision shouldAttackVsProtoss() {
+        if (postEarlyGameDontAttackProtoss()) return Decision.FALSE;
+
+        if (
+            Count.basesWithUnfinished() <= 2
+                && ExpansionCommander.lastExpandedLessThanSecondsAgo(50)
+        ) return Decision.FALSE;
+
+        if (beBraveProtoss()) {
+            if (DEBUG) reason = "Brave Protoss! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            return Decision.TRUE;
+        }
+
+        if (canPushEarlyVsProtoss()) {
+            reason = "Early push (" + relativeStrength + "%)";
+            return Decision.TRUE;
+        }
+
+        return Decision.INDIFFERENT;
+    }
+
+    private static boolean postEarlyGameDontAttackProtoss() {
+        return A.seconds() >= 300
+            && A.supplyUsed() <= 190
+            && A.minerals() <= 1000
+            && OurArmyStrength.relative() <= 800;
     }
 
     private static boolean beBraveProtoss() {

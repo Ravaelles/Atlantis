@@ -65,6 +65,9 @@ public class NumberOfGasWorkersCommander extends Commander {
             return 1;
         }
 
+        if (A.hasGas(240)) return 2;
+        if (A.hasGas(310)) return 1;
+
         if (A.seconds() <= 900) {
             if (workers <= 23 && A.hasGas(270)) {
                 return 2;

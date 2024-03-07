@@ -6,13 +6,13 @@ import atlantis.combat.missions.defend.focus.terran.TerranMissionDefendFocus;
 import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyCloserToBaseThanAlpha;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
-import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -41,13 +41,15 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === Enemies that breached into base ===========================
 
                 if ((focus = enemyWhoBreachedBase()) != null) return focus;
+                if ((focus = enemyCloserToBaseThanAlpha()) != null) return focus;
 
                 // === Path to enemy =============================================
 
                 if ((focus = PathToEnemyFocus.getIfApplies()) != null) return focus;
 
-                // === At second base ============================================
+                // === At third base ============================================
 
+                if ((focus = atThirdBase()) != null) return focus;
 //                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
 
                 // =========================================================
@@ -173,6 +175,25 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         );
     }
 
+    private AFocusPoint atThirdBase() {
+        Selection bases = Select.ourWithUnfinished().bases();
+
+        if (bases.count() >= 3) {
+            AUnit base = bases.list().get(2);
+            AChoke choke = Chokes.nearestChoke(base);
+
+            if (choke != null) {
+                return new AFocusPoint(
+                    choke,
+                    base,
+                    "ThirdBase"
+                );
+            }
+        }
+
+        return null;
+    }
+
     private AFocusPoint somewhereAtNaturalBaseOrNaturalChoke() {
         AFocusPoint focus;
 
@@ -205,6 +226,17 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             return new AFocusPoint(
                 enemyInBase,
                 "EnemyBreachedBase"
+            );
+        }
+        return null;
+    }
+
+    private static AFocusPoint enemyCloserToBaseThanAlpha() {
+        AUnit enemyTooCloseToBase = EnemyCloserToBaseThanAlpha.get();
+        if (enemyTooCloseToBase != null) {
+            return new AFocusPoint(
+                enemyTooCloseToBase,
+                "EnemyCloseToBase"
             );
         }
         return null;

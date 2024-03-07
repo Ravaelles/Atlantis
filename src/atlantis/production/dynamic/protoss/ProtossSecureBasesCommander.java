@@ -18,9 +18,9 @@ import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 public class ProtossSecureBasesCommander extends Commander {
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(43)
+        return A.everyNthGameFrame(65)
             && A.supplyUsed() >= 14
-            && ConstructionRequests.countNotStartedOfType(Protoss_Photon_Cannon) <= 3
+            && ConstructionRequests.countNotStartedOfType(Protoss_Photon_Cannon) <= 0
             && (EnemyInfo.hasHiddenUnits() || Count.basesWithUnfinished() >= 2);
     }
 

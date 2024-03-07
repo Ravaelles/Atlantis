@@ -5,7 +5,6 @@ import atlantis.game.AGame;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 import java.util.Collection;
@@ -20,7 +19,7 @@ public class WorkerTransferCommander extends Commander {
 //        if (true) return;
 
         // Don't run every frame
-        if (!AGame.everyNthGameFrame(GamePhase.isEarlyGame() ? 11 : 41)) {
+        if (!AGame.everyNthGameFrame(41)) {
             return;
         }
 
@@ -51,7 +50,7 @@ public class WorkerTransferCommander extends Commander {
                 continue;
             }
 
-            int numOfWorkersNearBase = WorkerRepository.getHowManyWorkersWorkingNear(base, false);
+            int numOfWorkersNearBase = WorkerRepository.countWorkersHarvestingNear(base, false);
             int numOfMineralsNearBase = Select.minerals().inRadius(10, base).count();
             double workersToMineralsRatio = (double) numOfWorkersNearBase / (numOfMineralsNearBase + 0.1);
             baseWorkersRatios.addUnitWithValue(base, workersToMineralsRatio);
@@ -90,20 +89,30 @@ public class WorkerTransferCommander extends Commander {
 
         // === Perform worker transfer from base to base ========================================
 
-        AUnit worker = Select.ourWorkersThatGather(true)
-            .inRadius(6, baseWithMostWorkers)
-            .nearestTo(baseWithFewestWorkers);
+        return handleTransferWorkers(baseWithMostWorkers, baseWithFewestWorkers, workerRatioDiff);
+    }
+
+    private boolean handleTransferWorkers(AUnit baseWithMostWorkers, AUnit baseWithFewestWorkers, double workerRatioDiff) {
+        boolean result = false;
+        int n = workerRatioDiff > 2.0 ? 6 : 2;
+
+        for (int i = 0; i < n; i++) {
+            AUnit worker = Select.ourWorkersThatGather(true)
+                .inRadius(7, baseWithMostWorkers)
+                .groundNearestTo(baseWithFewestWorkers);
 
 //        System.err.println(
 //            "transfer worker = " + worker + " to " + baseWithFewestWorkers + " dist:"
 //                + baseWithFewestWorkers.distTo(worker)
 //        );
 
-        if (worker != null) {
-            transferWorkerTo(worker, baseWithFewestWorkers);
-            return true;
+            if (worker != null) {
+                transferWorkerTo(worker, baseWithFewestWorkers);
+                result = true;
+            }
         }
-        return false;
+
+        return result;
     }
 
     /**

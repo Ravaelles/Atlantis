@@ -14,19 +14,31 @@ public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (shouldNotDoAnythingButContinue(unit)) return true;
 
-        if (!unit.isStopped() && unit.lastActionMoreThanAgo(30, Actions.STOP)) {
+        if (!unit.isStopped() && unit.lastActionMoreThanAgo(10, Actions.STOP)) {
             unit.stop("UnfreezeByStop");
             return true;
         }
 
-        if (goToLeader(unit)) {
-            unit.setTooltip("UnfreezeByLeader");
+        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30 * 2, Actions.HOLD_POSITION)) {
+            unit.holdPosition("UnfreezeByHold");
             return true;
         }
 
-        if (goToFocus(unit)) {
+//        if (goToLeader(unit)) {
+//            unit.setTooltip("UnfreezeByLeader");
+//            return true;
+//        }
+
+        if (!unit.isMoving() && goToFocus(unit)) {
             unit.setTooltip("UnfreezeByFocus");
             return true;
+        }
+
+        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(30 * 2)) {
+            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
+                unit.setTooltip("UnfreezeByAttack");
+                return true;
+            }
         }
 
         if (goToNearestCombatFriend(unit)) {
@@ -43,7 +55,7 @@ public class UnfreezerShakeUnit {
                     8 - 16 * A.rand(0, 1)
                 );
 
-                if (towards != null) {
+                if (towards != null && towards.isWalkable()) {
                     unit.move(towards, Actions.MOVE_UNFREEZE, "UnfreezeByMove");
                     return true;
                 }
@@ -63,22 +75,9 @@ public class UnfreezerShakeUnit {
             }
         }
 
-
-        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30 * 2, Actions.HOLD_POSITION)) {
-            unit.holdPosition("UnfreezeByHold");
-            return true;
-        }
-
 //        if (!unit.isStopped()) {
 //            unit.stop("UnfreezeByStop");
 //            return true;
-//        }
-
-//        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(30 * 2)) {
-//            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
-//                unit.setTooltip("UnfreezeByAttack");
-//                return true;
-//            }
 //        }
 
         if (!unit.isMoving()) {

@@ -28,9 +28,9 @@ public class ProduceDragoon {
 //        if (A.hasGas(50) && A.supplyUsed() <= 38) return produceDragoon();
 
         if (dragoons >= 3 && (!A.hasMinerals(200) || !A.hasGas(100))) return false;
-        if (A.supplyUsed() >= 50 && (!A.hasMinerals(250) || !A.hasGas(130))) return false;
+        if (A.supplyUsed() >= 50 && (!A.hasMinerals(210) || !A.hasGas(130))) return false;
         if (Decisions.needToProduceZealotsNow() && !A.hasGas(50)) return false;
-        if (!A.hasMineralsAndGas(500, 170) && !A.canAffordWithReserved(125, 50)) return false;
+        if (!A.hasMineralsAndGas(300, 170) && !A.canAffordWithReserved(125, 50)) return false;
 
         if ((A.supplyUsed() <= 38 || Count.observers() >= 1)) {
 //            trainIfPossible(AUnitType.Protoss_Dragoon, false, 125, 50);

@@ -7,12 +7,11 @@ public class WorkerRepository {
     /**
      * Returns total number of units that are currently assigned to this building.
      */
-    public static int getHowManyWorkersWorkingNear(AUnit base, boolean includeMoving) {
+    public static int countWorkersHarvestingNear(AUnit base, boolean includeMoving) {
         int total = 0;
 
         for (AUnit unit : Select.ourWorkers().inRadius(25, base).list()) {
-            if (unit.isMiningOrExtractingGas() || unit.isRepairing() || unit.isConstructing()
-                || (includeMoving && unit.isMoving())) {
+            if (unit.isMiningOrExtractingGas() || unit.isRepairing() || (includeMoving && unit.isMoving())) {
                 total++;
             }
         }

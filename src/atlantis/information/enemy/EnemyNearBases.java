@@ -21,7 +21,7 @@ public class EnemyNearBases {
 
         return (AUnit) cache.getIfValid(
             "enemyNearAnyOurBuilding:" + maxDist,
-            47,
+            17,
             () -> {
                 AUnit main = Select.main();
                 if (main == null) return null;

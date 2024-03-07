@@ -1,8 +1,12 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
+import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
+import atlantis.combat.missions.Missions;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.positioning.EarlyGameTooClustered;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -26,11 +30,14 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
 
     // =========================================================
 
-    public double optimalDist() {
+    public double optimalDist(AFocusPoint focusPoint) {
 //        if (unit.isZealot()) {
 //            private final double SPARTA_MODE_DIST_FROM_FOCUS = 0.55;
 //            return SPARTA_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
 //        }
+
+        double focus = OptimalDistanceToFocusPoint.toFocus(unit, focusPoint);
+        if (focus >= 0) return focus;
 
         double base = 0.0;
 
@@ -45,8 +52,8 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
                 + (unit.isRanged() ? 1 : 0)
                 + Math.min(4, (Select.our().combatUnits().inRadius(8, unit).count() / 6));
 
-            if (We.zerg() && focusPoint.isAroundChoke()) {
-                base += (focusPoint.choke().width() <= 3) ? 3.5 : 0;
+            if (We.zerg() && this.focusPoint.isAroundChoke()) {
+                base += (this.focusPoint.choke().width() <= 3) ? 3.5 : 0;
             }
         }
 

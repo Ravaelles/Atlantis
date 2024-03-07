@@ -11,6 +11,7 @@ public class ContinueCurrentAction extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ContinueLast.class,
             ContinueShooting.class,
 //            ContinueDragoonAttackOrder.class, // Dont!!
 //            ContinueAttack.class, // Dont!

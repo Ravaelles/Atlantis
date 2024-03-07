@@ -60,6 +60,7 @@ public class ContainAsProtoss extends Manager {
     }
 
     private boolean shouldIgnore(double dist) {
+        if (unit.enemiesNear().combatUnits().empty()) return false;
         if (unit.enemiesNear().combatBuildingsAntiLand().count() >= 7 * unit.friendsNearCount()) return false;
 
         return dist > 17 || unit.enemiesNear().combatUnits().atMost(4);

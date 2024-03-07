@@ -1119,7 +1119,7 @@ public class AAdvancedPainter extends APainter {
         setTextSizeLarge();
         for (AUnit building : Select.ourBuildings().list()) {
             if (building.isBase()) {
-                int workers = WorkerRepository.getHowManyWorkersWorkingNear(building, false);
+                int workers = WorkerRepository.countWorkersHarvestingNear(building, false);
                 if (workers > 0) {
                     String workersAssigned = workers + "";
                     paintTextCentered(building.translateByPixels(-5, -36), workersAssigned, Color.Grey);

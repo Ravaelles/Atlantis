@@ -1,13 +1,10 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.missions.Missions;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.position.APosition;
-import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class TooFarFromFocusPoint extends MoveToFocusPoint {
     public TooFarFromFocusPoint(AUnit unit) {
@@ -36,7 +33,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     }
 
     @Override
-    public double optimalDist() {
+    public double optimalDist(AFocusPoint focusPoint) {
         return 4;
     }
 

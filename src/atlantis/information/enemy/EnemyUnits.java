@@ -92,4 +92,8 @@ public class EnemyUnits {
     public static AUnit enemyWhoBreachedBase() {
         return EnemyWhoBreachedBase.get();
     }
+
+    public static int dragoons() {
+        return discovered().dragoons().count();
+    }
 }

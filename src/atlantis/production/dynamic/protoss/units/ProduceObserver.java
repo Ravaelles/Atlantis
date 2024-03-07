@@ -11,6 +11,14 @@ import atlantis.units.select.Have;
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
 
 public class ProduceObserver {
+    public static boolean needObservers() {
+        if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) return true;
+        if (A.supplyUsed() >= 50 && !Have.cannon()) return true;
+        if (A.supplyUsed() >= 74) return true;
+
+        return false;
+    }
+
     public static void observers() {
         if (!needObservers()) return;
 
@@ -45,13 +53,5 @@ public class ProduceObserver {
         if (Count.withPlanned(AUnitType.Protoss_Observer) < limit) {
             buildToHave(AUnitType.Protoss_Observer, limit);
         }
-    }
-
-    public static boolean needObservers() {
-        if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) return true;
-        if (A.supplyUsed() >= 55 && !Have.cannon()) return true;
-        if (A.supplyUsed() >= 80) return true;
-
-        return false;
     }
 }

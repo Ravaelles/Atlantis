@@ -28,6 +28,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         ProduceForge.produce();
 
         if (isItSafeToAddTechBuildings()) {
+            ProduceCyberneticsCore.produce();
             ProduceArbiterTribunal.produce();
             ProduceStargate.produce();
             ProduceObservatory.produce();

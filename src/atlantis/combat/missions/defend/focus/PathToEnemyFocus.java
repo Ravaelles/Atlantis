@@ -21,24 +21,34 @@ public class PathToEnemyFocus {
     }
 
     private static AFocusPoint selectChokeAndReturnFocusPoint(ArrayList<AChoke> chokes) {
+        if (chokes == null) return null;
+
         int currentIndex = 2;
         int prevIndex = currentIndex - 1;
 
-        AChoke best = chokes.get(currentIndex);
-        double bestScore = evalChoke(best);
+        if (chokes.size() - 1 <= currentIndex) return null;
+
+//        AChoke best = chokes.get(currentIndex);
+//        double bestScore = evalChoke(best);
+        AChoke best = null;
+        double bestScore = 9999;
 
         int iMin = currentIndex;
-        int iMax = currentIndex + 3;
+        int iMax = Math.min(currentIndex + 1, chokes.size() - 1);
         for (currentIndex = iMin; currentIndex <= iMax; currentIndex++) {
             AChoke choke = chokes.get(currentIndex);
-            double eval = evalChoke(choke);
 
-            if (eval > bestScore) {
+            if (choke.width() >= 6) continue;
+
+            double eval = evalChoke(choke);
+            if (best == null || eval > bestScore) {
                 prevIndex = currentIndex - 1;
                 best = choke;
                 bestScore = eval;
             }
         }
+
+        if (best == null) return null;
 
         APosition fromSide = chokes.get(prevIndex).center();
         APosition point = best.center().translateTilesTowards(6, fromSide);

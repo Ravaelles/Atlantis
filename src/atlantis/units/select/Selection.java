@@ -917,6 +917,16 @@ public class Selection extends BaseSelection {
         return data.isEmpty() ? null : data.get(0);
     }
 
+    public AUnit groundNearestTo(HasPosition position) {
+        if (data.isEmpty() || position == null) return null;
+
+        if (data.size() == 1) return data.get(0);
+
+        sortDataByGroundDistanceTo(position, true);
+
+        return data.isEmpty() ? null : data.get(0);
+    }
+
     public boolean nearestToDistLess(HasPosition position, double maxDist) {
         AUnit nearest = nearestTo(position);
         return nearest != null && nearest.distTo(position) <= maxDist;

@@ -13,13 +13,13 @@ public class StrategyChooser {
         AStrategy strategy;
 
         if (We.protoss()) {
-            strategy = ProtossStrategies.initForProtoss();
+            strategy = ProtossStrategies.chooseStrategyForProtoss();
         }
         else if (We.terran()) {
-            strategy = TerranStrategies.initForTerran();
+            strategy = TerranStrategies.chooseStrategyForTerran();
         }
         else if (We.zerg()) {
-            strategy = ZergStrategies.initForZerg();
+            strategy = ZergStrategies.chooseStrategyForZerg();
         }
         else {
             ErrorLog.printErrorOnce("Unhandled race in StrategyChooser::initialize()");

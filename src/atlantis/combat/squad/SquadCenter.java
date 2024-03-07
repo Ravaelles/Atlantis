@@ -32,8 +32,8 @@ public class SquadCenter {
     }
 
     protected AUnit leader() {
-        int ttl = 53;
-        AUnit leader = cache.get(
+        int ttl = 103;
+        AUnit leader = cache.getIfValid(
             "leader",
             ttl,
             this::defineLeader
@@ -53,7 +53,8 @@ public class SquadCenter {
         if (squad.isEmpty()) return null;
 
         Selection units = Alpha.get().units();
-        AUnit building = Select.ourBuildings().first();
+
+//        AUnit building = Select.ourBuildings().first();
 
 //        if (units.tanks().atLeast(2)) {
 //            return units.tanks().mostDistantTo(building);
@@ -80,10 +81,10 @@ public class SquadCenter {
 //            .groundUnits()
 //            .excludeMedics();
 
-        APosition median = squad.average();
+//        APosition median = squad.average();
+        APosition median = squad.median();
 
-        AUnit nearestToMedian = potentialLeaders(units)
-            .nearestTo(median);
+        AUnit nearestToMedian = potentialLeaders(units).nearestTo(median);
 
 //        if (nearestToMedian == null) {
 //            nearestToMedian = potentials.nearestTo(median);
@@ -105,7 +106,7 @@ public class SquadCenter {
     private static Selection potentialLeaders(Selection units) {
         return units
             .groundUnits()
-            .excludeMedics()
+            .havingWeapon()
             .notSpecialAction();
     }
 

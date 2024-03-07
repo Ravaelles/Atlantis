@@ -19,13 +19,20 @@ public class ProduceGateway {
     public static boolean produce() {
         minerals = A.minerals();
 
+        if (minerals >= 600) return produceGateway();
+
         existingGateways = Count.gateways();
         freeGateways = Count.freeGateways();
+
+        if (freeGateways >= 2) return false;
+
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
         allGateways = existingGateways + unfinishedGateways;
 
-        if (freeGateways <= 2 && minerals >= 600) return produceGateway();
-        if (minerals >= 167 && allGateways <= 4 * Count.bases()) return produceGateway();
+        if (freeGateways <= 2) {
+            if (minerals >= 600) return produceGateway();
+            if (minerals >= 167 && allGateways <= 5 * Count.bases()) return produceGateway();
+        }
 
         if (minerals < 205 && existingGateways >= 3) return false;
         if (existingGateways >= 5 && freeGateways > 0 && !A.hasMinerals(600)) return false;

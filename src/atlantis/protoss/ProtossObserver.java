@@ -25,10 +25,10 @@ public class ProtossObserver extends MobileDetector {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AvoidEnemiesIfNeeded.class,
+            SpreadOutDetectors.class,
             DetectHiddenEnemyClosestToBase.class,
             FollowArmy.class,
             FollowAlphaScout.class,
-            SpreadOutDetectors.class,
         };
     }
 

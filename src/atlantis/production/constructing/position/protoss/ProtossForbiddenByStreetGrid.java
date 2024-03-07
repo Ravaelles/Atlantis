@@ -32,8 +32,11 @@ public class ProtossForbiddenByStreetGrid {
             return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
         }
         else {
-            if ((modulo = (position.tx()) % 3) != 0) return failed("TX modulo K = " + modulo);
+            if ((modulo = (position.tx()) % 4) != 0) return failed("TX modulo K = " + modulo);
+            if ((modulo = (position.tx()) % 12) == 0) return failed("TX modulo K2 = " + modulo);
+
             if ((modulo = (position.ty()) % 3) != 0) return failed("TY modulo L = " + modulo);
+            if ((modulo = (position.ty()) % 9) != 0) return failed("TY modulo L2 = " + modulo);
         }
 
         if (true) return false;

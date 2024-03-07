@@ -20,7 +20,7 @@ public abstract class MoveToFocusPoint extends MissionManager {
 
         if (focusPoint != null) {
             fromSide = focusPoint.fromSide();
-            optimalDist = optimalDist();
+            optimalDist = optimalDist(focusPoint);
             unitToFocus = unit.distTo(focusPoint);
             unitToFromSide = focusPoint.fromSide() == null ? -1 : unit.distTo(focusPoint.fromSide());
             focusToFromSide = focusPoint.fromSide() == null ? -1 : focusPoint.distTo(focusPoint.fromSide());
@@ -37,7 +37,7 @@ public abstract class MoveToFocusPoint extends MissionManager {
     /**
      * Optimal distance to focus point or -1 if not defined.
      */
-    public abstract double optimalDist();
+    public abstract double optimalDist(AFocusPoint focusPoint);
 
     // =========================================================
 

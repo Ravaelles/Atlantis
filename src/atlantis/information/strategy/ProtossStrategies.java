@@ -34,15 +34,15 @@ public class ProtossStrategies extends AStrategy {
 
     // =========================================================
 
-    public static AStrategy initForProtoss() {
+    public static AStrategy chooseStrategyForProtoss() {
         if (Enemy.zerg()) {
 //            return PROTOSS_2_Gate_Zealot_vZ;
 //            return ProtossStrategies.PROTOSS_Speedzealot;
 //            return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
         }
 
-        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
-//        return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
+//        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
+        return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
 //        return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
 //        return ProtossStrategies.PROTOSS_2_Gate_Zealot_vP;
 //        return PROTOSS_Dragoon_First;

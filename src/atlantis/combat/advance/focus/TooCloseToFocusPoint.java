@@ -106,7 +106,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     @Override
-    public double optimalDist() {
+    public double optimalDist(AFocusPoint focusPoint) {
         return OptimalDistanceToFocusPoint.forUnit(unit);
     }
 }
