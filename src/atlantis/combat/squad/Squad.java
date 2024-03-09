@@ -338,4 +338,9 @@ public abstract class Squad extends Units {
     public SquadTargeting targeting() {
         return targeting;
     }
+
+    public boolean isRetreating() {
+        AUnit leader = leader();
+        return leader != null && leader.isRetreating();
+    }
 }

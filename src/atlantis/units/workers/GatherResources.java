@@ -11,6 +11,7 @@ public class GatherResources extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit == null || unit.isDead()) return false;
         if (!unit.isWorker()) return false;
 
         return !unit.isGatheringGas()

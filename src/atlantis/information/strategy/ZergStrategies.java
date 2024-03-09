@@ -70,7 +70,7 @@ public class ZergStrategies extends AStrategy {
         ZERG_2_Hatch_Hydra_vP.setZerg().setName("2 Hatch Hydra").setGoingTech();
     }
 
-    public static AStrategy chooseStrategyForZerg() {
+    public static AStrategy zergChooseStrategy() {
         if (Enemy.protoss()) {
 //            return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
             return ZERG_9_Hatch_Fast_Expo;

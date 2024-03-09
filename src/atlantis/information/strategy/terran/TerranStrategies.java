@@ -72,7 +72,7 @@ public class TerranStrategies extends AStrategy {
 
     // =========================================================
 
-    public static AStrategy chooseStrategyForTerran() {
+    public static AStrategy terranChooseStrategy() {
 //        return TerranStrategies.TERRAN_3_Rax_MnM;
 //        return TerranStrategies.TERRAN_Nada_2_Fac;
 //        return TerranStrategies.TERRAN_1_Base_Vultures;

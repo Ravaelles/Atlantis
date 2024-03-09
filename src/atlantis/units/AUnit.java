@@ -3194,4 +3194,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean canBeLonelyUnit() {
         return type().is(AUnitType.Terran_Vulture, AUnitType.Protoss_Dark_Templar);
     }
+
+    public boolean squadIsRetreating() {
+        return squad != null && squad.isRetreating();
+    }
 }

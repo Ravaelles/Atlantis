@@ -37,7 +37,6 @@ public class WorkerDefenceFightCombatUnits extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            WorkerFightEnemyProxyBuilding.class,
             ProtectScvBusyConstructing.class,
         };
     }

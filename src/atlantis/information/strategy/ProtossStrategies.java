@@ -6,6 +6,30 @@ import atlantis.util.Enemy;
 
 
 public class ProtossStrategies extends AStrategy {
+    public static AStrategy protossChooseStrategy() {
+        if (Enemy.protoss()) {
+            return ProtossStrategies.PROTOSS_5_Gate_Zealot_vP;
+        }
+
+        if (Enemy.terran()) {
+            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
+        }
+
+        else if (Enemy.zerg()) {
+            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
+        }
+
+//        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
+//        return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
+//        return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
+        return ProtossStrategies.PROTOSS_2_Gate_Zealot_vP;
+//        return PROTOSS_Dragoon_First;
+//        return PROTOSS_ZZ_Core;
+//        return PROTOSS_ZZZ_Core;
+//        return ProtossStrategies.PROTOSS_Fast_DT;
+    }
+
+    // =========================================================
 
     // Standard
     public static final AStrategy PROTOSS_Zealot_Core_Dragoon = protossStrategy();
@@ -15,6 +39,8 @@ public class ProtossStrategies extends AStrategy {
 
     // Rush
     public static final AStrategy PROTOSS_2_Gate_Zealot_vP = protossStrategy();
+    public static final AStrategy PROTOSS_3_Gate_Zealot_vP = protossStrategy();
+    public static final AStrategy PROTOSS_5_Gate_Zealot_vP = protossStrategy();
     public static final AStrategy PROTOSS_2_Gate_Zealot_vZ = protossStrategy();
     public static final AStrategy PROTOSS_Speedzealot = protossStrategy();
     public static final AStrategy PROTOSS_One_Base_Speedzealot = protossStrategy();
@@ -34,25 +60,6 @@ public class ProtossStrategies extends AStrategy {
 
     // =========================================================
 
-    public static AStrategy chooseStrategyForProtoss() {
-        if (Enemy.zerg()) {
-//            return PROTOSS_2_Gate_Zealot_vZ;
-//            return ProtossStrategies.PROTOSS_Speedzealot;
-//            return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
-        }
-
-//        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
-        return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
-//        return ProtossStrategies.PROTOSS_One_Base_Speedzealot;
-//        return ProtossStrategies.PROTOSS_2_Gate_Zealot_vP;
-//        return PROTOSS_Dragoon_First;
-//        return PROTOSS_ZZ_Core;
-//        return PROTOSS_ZZZ_Core;
-//        return ProtossStrategies.PROTOSS_Fast_DT;
-    }
-
-    // =========================================================
-
     public static void initialize() {
 
         // === Balanced ======================================
@@ -65,6 +72,9 @@ public class ProtossStrategies extends AStrategy {
         // === Rushes ========================================
 
         PROTOSS_2_Gate_Zealot_vP.setName("2 Gate Zealot vP").setGoingRush();
+        PROTOSS_3_Gate_Zealot_vP.setName("3 Gate Zealot vP").setGoingRush();
+        PROTOSS_5_Gate_Zealot_vP.setName("5 Gate Zealot vP").setGoingRush();
+
         PROTOSS_2_Gate_Zealot_vZ.setName("2 Gate Zealot vZ").setGoingRush();
 
         PROTOSS_Speedzealot.setName("+1 Speedzealot").setGoingRush();

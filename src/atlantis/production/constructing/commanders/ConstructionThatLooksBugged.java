@@ -6,6 +6,7 @@ import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
@@ -28,13 +29,14 @@ public class ConstructionThatLooksBugged extends Commander {
         if (constr.status() != ConstructionOrderStatus.NOT_STARTED) return;
         if (constr.buildingUnit() != null) return;
 
+        AUnitType type = constr.buildingType();
         if (constr.builder() == null) {
             if (constr.status() != ConstructionOrderStatus.NOT_STARTED) {
                 constr.setBuilder(FreeWorkers.getOne());
             }
             else {
                 if (Count.workers() >= 3) {
-                    ErrorLog.printMaxOncePerMinute("Weird case, " + constr.buildingType() + " has no builder. Cancel.");
+                    ErrorLog.printMaxOncePerMinute("Weird case, " + type + " has no builder. Cancel.");
                 }
                 constr.productionOrder().cancel();
                 return;
@@ -45,14 +47,18 @@ public class ConstructionThatLooksBugged extends Commander {
         int bonus = We.protoss() ? 30 * 8 : 0;
         int timeout = bonus + 30 * (
             8
-                + (constr.buildingType().isBase() || constr.buildingType().isCombatBuilding() ? 40 : 10)
+                + (type.isBase() || type.isCombatBuilding() ? 40 : 10)
                 + ((int) (2.9 * constr.buildPosition().groundDistanceTo(main != null ? main : constr.builder())))
         );
+
+        if (!type.isCombatBuilding() && !type.producesLandUnits()) {
+            timeout += 30 * 40;
+        }
 
         if (AGame.now() - constr.timeOrdered() > timeout) {
 //            System.err.println(" // " + AGame.now() + " // " + constr.timeOrdered() + " // > " + timeout);
             ErrorLog.printMaxOncePerMinute(
-                "Cancel constr of " + constr.buildingType()
+                "Cancel constr of " + type
                     + " (Took too long)"
                     + " buildable:" + constr.buildPosition().isBuildable()
             );

@@ -22,6 +22,8 @@ public class RetreatManager extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.squadIsRetreating()) return true;
+
         return unit.enemiesNear().canAttack(unit, 10).notEmpty();
     }
 
@@ -55,7 +57,7 @@ public class RetreatManager extends Manager {
 //                    System.err.println("@ " + A.now() + " - RETREAT " + unit.typeWithHash());
 
                     if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
-                        unit.addLog("RetreatedFrom" + runAwayFrom);
+                        unitIsRetreating(runAwayFrom);
                         return true;
                     }
                 }
@@ -63,6 +65,18 @@ public class RetreatManager extends Manager {
                 return false;
             }
         );
+    }
+
+    private boolean unitIsRetreating(HasPosition runAwayFrom) {
+        unit.addLog("RetreatedFrom" + runAwayFrom);
+
+        AUnit leader = unit.squadLeader();
+
+        if (leader == null) return false;
+
+        if (unit.distTo(leader) >= 8) return false;
+
+        return (new RetreatManager(leader)).forceHandle() != null;
     }
 
     // =========================================================

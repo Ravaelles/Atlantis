@@ -97,7 +97,7 @@ public class FindPosition {
 
         APosition standardPosition = APositionFinder.findStandardPosition(builder, building, nearTo, maxDistance);
 
-        if (standardPosition == null) {
+        if (standardPosition == null && Count.workers() >= 4) {
             ErrorLog.printMaxOncePerMinute(
                 "findStandardPosition returned null"
                     + "\n    / reason:" + AbstractPositionFinder._CONDITION_THAT_FAILED

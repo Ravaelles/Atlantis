@@ -22,7 +22,7 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
     protected void handle() {
         if (detectEnemyScout()) {
             haveDefenderAssigned();
-            if (ourDefender != null) {
+            if (ourDefender != null && ourDefender.isAlive()) {
                 sendDefenderToFight();
             }
         }
