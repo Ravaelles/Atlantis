@@ -71,7 +71,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-        if (true) return "sscai/(3)TauCross.scx";
+//        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -101,7 +101,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Drag_v_M&M.scx"; // Goons vs M&M + Bunker
 //        if (true) return "ums/rav/protoss/Drag_v_Bunker.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
-        if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
+//        if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Lings.scm";
@@ -129,9 +129,9 @@ public class Main {
 //        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
 //        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
 //        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
-//@        if (true) return "ums/rav/Zeal_v_Zeal.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
-//        if (true) return "ums/rav/ZealDrag_v_ZealDrag.scm";
 //        if (true) return "ums/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers
 
         // === Maps for testing as Terran ==============================================================================
@@ -197,7 +197,7 @@ public class Main {
 
         // === Generic =================================================================================================
 
-//        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
+        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
 //        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
 //        if (true) return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons v. mines
 //        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map

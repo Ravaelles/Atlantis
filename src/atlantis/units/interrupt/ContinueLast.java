@@ -11,10 +11,13 @@ public class ContinueLast extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isStopped()) return false;
-        if (unit.lastActionMoreThanAgo(2)) return false;
+//        if (true) return false;
 
-        return true;
+        if (unit.isStopped()) return false;
+        if (unit.lastActionMoreThanAgo(3)) return false;
+
+        return unit.isAttacking()
+            || (unit.isMoving() && unit.distToTargetMoreThan(2));
     }
 
     public Manager handle() {

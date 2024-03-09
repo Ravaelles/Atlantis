@@ -20,6 +20,7 @@ public class UnfreezeGeneric extends Manager {
         if (duringMissionAttack()) return false;
         if (unit.lastPositionChangedLessThanAgo(42)) return false;
         if (unit.lastActionLessThanAgo(16)) return false;
+        if (unit.isActiveManager(UnfreezeGeneric.class)) return false;
 //        if (unit.isAttacking()) return false;
         if (unit.lastStartedAttackLessThanAgo(20)) return false;
         if (unit.lastActionLessThanAgo(20, Actions.MOVE_DANCE_AWAY)) return false;

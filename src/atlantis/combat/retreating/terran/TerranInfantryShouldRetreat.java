@@ -1,9 +1,13 @@
-package atlantis.combat.retreating;
+package atlantis.combat.retreating.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.retreating.RetreatManager;
+import atlantis.decions.Decision;
 import atlantis.game.A;
 import atlantis.information.generic.OurArmyStrength;
 import atlantis.units.AUnit;
+import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class TerranInfantryShouldRetreat extends Manager {
     public TerranInfantryShouldRetreat(AUnit unit) {
@@ -15,12 +19,14 @@ public class TerranInfantryShouldRetreat extends Manager {
         return unit.isTerranInfantry();
     }
 
-    public Manager shouldRetreat() {
+    public Decision shouldRetreat() {
         if (!applies()) return null;
 
-        if (shouldEarlyGameRetreat()) return usedManager(this);
+        Selection enemies = enemies(unit);
 
-        if (shouldRetreatFromCombatBuildings()) return usedManager(this);
+        if (shouldSmallScaleRetreat(unit, enemies)) return Decision.TRUE;
+        if (shouldEarlyGameRetreat()) return Decision.TRUE;
+        if (shouldRetreatFromCombatBuildings()) return Decision.TRUE;
 
         if (!unit.mission().isMissionDefend()) {
             if (
@@ -28,11 +34,30 @@ public class TerranInfantryShouldRetreat extends Manager {
                     && unit.friendsNear().atMost(4) && unit.combatEvalRelative() <= 2.7
             ) {
                 unit.setTooltipTactical("BewareRanged");
-                return usedManager(this);
+                return Decision.TRUE;
             }
         }
 
         return null;
+    }
+
+    private static Selection enemies(AUnit unit) {
+        return unit.enemiesNear()
+            .ranged()
+            .canAttack(unit, 6);
+    }
+
+    private static boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
+        if (Enemy.terran()) {
+            if (unit.isMarine()) {
+                if (unit.friendsNear().inRadius(5, unit).count() < unit.enemiesNear().inRadius(5, unit).count()) {
+                    unit.addLog("MvM-SmRetreat");
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private boolean shouldEarlyGameRetreat() {

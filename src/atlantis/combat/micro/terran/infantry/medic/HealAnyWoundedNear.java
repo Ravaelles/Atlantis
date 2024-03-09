@@ -2,7 +2,6 @@ package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.TechType;
@@ -31,7 +30,7 @@ public class HealAnyWoundedNear extends Manager {
             .exclude(unit);
 
         target = potentialTargets
-            .excludeRunning()
+            .notRunning()
             .notBeingHealed()
             .nearestTo(unit);
 

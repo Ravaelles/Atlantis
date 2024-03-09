@@ -5,7 +5,6 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 import bwapi.Color;
@@ -33,7 +32,7 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
         Selection friendsTooClose = unit
             .friendsNear()
             .groundUnits()
-            .excludeRunning()
+            .notRunning()
             .realUnits()
             .exclude(unit)
             .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);

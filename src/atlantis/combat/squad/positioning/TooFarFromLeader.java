@@ -47,7 +47,7 @@ public class TooFarFromLeader extends Manager {
     }
 
     private boolean wayTooFarFromLeader() {
-        int maxDistance = We.terran() ? 8 : 12;
+        int maxDistance = We.protoss() ? 9 : 8;
 
         return distToLeader >= maxDistance;
     }

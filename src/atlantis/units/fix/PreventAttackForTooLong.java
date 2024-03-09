@@ -17,8 +17,10 @@ public class PreventAttackForTooLong extends Manager {
         if (unit.isStartingAttack()) return false;
         if (unit.isAttackFrame()) return false;
 
-        int DELAY = 23;
-        if (unit.lastActionLessThanAgo(DELAY)) return false;
+        int DELAY = 113;
+        if (unit.lastActionLessThanAgo(DELAY) && unit.lastAttackFrameMoreThanAgo(DELAY - 3)) {
+            return false;
+        }
 
         if (unit.isMissionSparta() && unit.isMelee()) return false;
 

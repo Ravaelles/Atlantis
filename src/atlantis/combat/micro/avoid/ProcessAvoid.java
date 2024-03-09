@@ -72,9 +72,9 @@ public class ProcessAvoid extends Manager {
 
         AUnit firstEnemy = enemies.first();
         AUnit secondEnemy = enemies.second();
-        if (secondEnemy == null || !secondEnemy.hasPosition()) return firstEnemy;
+        if (secondEnemy == null || !secondEnemy.hasPosition()) return firstEnemy.position();
 
-        return firstEnemy.translatePercentTowards(5, secondEnemy);
+        return firstEnemy.position().translatePercentTowards(5, secondEnemy.position());
     }
 
     protected String getTooltip(AUnit enemy) {

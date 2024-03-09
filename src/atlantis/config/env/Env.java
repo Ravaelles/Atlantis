@@ -62,9 +62,8 @@ public class Env {
 
     private static String envFilePath() {
 //        if (A.currentPath().contains("D:\\")) {
-        if (A.fileExists("bwapi-data/AI/ENV")) {
-            return "bwapi-data/AI/ENV";
-        }
+        if (A.fileExists("bwapi-data/AI/ENV")) return "bwapi-data/AI/ENV";
+        if (A.fileExists("../bwapi-data/AI/ENV")) return "../bwapi-data/AI/ENV";
 
         return "ENV";
     }

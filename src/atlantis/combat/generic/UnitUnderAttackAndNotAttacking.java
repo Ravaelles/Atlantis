@@ -69,8 +69,11 @@ public class UnitUnderAttackAndNotAttacking extends Manager {
 
     @Override
     public Manager handle() {
-        (new AttackNearbyEnemies(unit)).forceHandle();
-        return usedManager(this, "FightBack");
+        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+            return usedManager(this, "FightBack");
+        }
+
+        return null;
     }
 }
 

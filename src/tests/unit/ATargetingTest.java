@@ -366,4 +366,29 @@ public class ATargetingTest extends AbstractTestWithUnits {
             assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
+
+    @Test
+    public void targetsCannonOverOtherUnits() {
+        FakeUnit our = fake(AUnitType.Protoss_Zealot, 10);
+        FakeUnit expectedTarget;
+        FakeUnit gate;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Protoss_Gateway, 10.1),
+            fake(AUnitType.Protoss_Pylon, 10.2),
+            fake(AUnitType.Protoss_Cybernetics_Core, 10.3),
+            gate = fake(AUnitType.Protoss_Gateway, 13.1),
+            fake(AUnitType.Protoss_Pylon, 13.2),
+            fake(AUnitType.Protoss_Templar_Archives, 13.5),
+            expectedTarget = fake(AUnitType.Protoss_Photon_Cannon, 13.6),
+            fake(AUnitType.Protoss_Photon_Cannon, 13.7).setHp(11),
+            fake(AUnitType.Protoss_Nexus, 13.9)
+        );
+
+//        our.attackUnit(gate);
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
 }

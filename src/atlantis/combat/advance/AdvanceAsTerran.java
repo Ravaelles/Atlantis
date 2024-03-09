@@ -1,6 +1,7 @@
 package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.tank.AdvanceAsTank;
 import atlantis.units.AUnit;
 
 public class AdvanceAsTerran extends Manager {
@@ -17,6 +18,7 @@ public class AdvanceAsTerran extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             CloserToLeader.class,
+            AdvanceAsTank.class,
         };
     }
 }

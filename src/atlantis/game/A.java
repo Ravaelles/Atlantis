@@ -517,7 +517,6 @@ public class A {
      */
     public static PrintWriter saveToFile(String filePath, String stringToWrite, boolean closeTheStream) {
         try {
-            System.err.println("filePath = " + filePath);
             File file = new File(filePath);
             PrintWriter out = new PrintWriter(file);
             out.print(stringToWrite);

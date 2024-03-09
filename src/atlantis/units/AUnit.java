@@ -3095,7 +3095,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean distToTargetLessThan(double dist) {
-        return target() != null && distTo(target()) <= dist;
+        return target() != null && distTo(target()) < dist;
+    }
+
+    public boolean distToTargetMoreThan(double dist) {
+        return target() != null && distTo(target()) > dist;
     }
 
     public boolean isSpecialMission() {

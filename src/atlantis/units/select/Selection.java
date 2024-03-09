@@ -1,7 +1,5 @@
 package atlantis.units.select;
 
-import atlantis.architecture.Manager;
-import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.path.ClosestToEnemyBase;
@@ -847,8 +845,8 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(AUnit::isMarine, "excludeMarines");
     }
 
-    public Selection excludeRunning() {
-        return cloneByRemovingIf(AUnit::isRunning, "excludeRunning");
+    public Selection notRunning() {
+        return cloneByRemovingIf(AUnit::isRunning, "notRunning");
     }
 
     public Selection farFromAntiAirBuildings(double minDistToBuilding) {

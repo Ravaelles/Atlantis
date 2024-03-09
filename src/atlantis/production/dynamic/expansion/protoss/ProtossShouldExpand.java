@@ -4,6 +4,7 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.race.MyRace;
 import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.map.base.BaseLocations;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
@@ -118,7 +119,7 @@ public class ProtossShouldExpand {
                 }
             }
             if (seconds >= 750) return yes("GettingLate");
-            if (A.hasMinerals(230) && Count.gateways() >= 3) return yes("ManyGateways");
+            if (manyGateways()) return yes("ManyGateways");
         }
 
         boolean secondsAllow = (
@@ -132,6 +133,11 @@ public class ProtossShouldExpand {
         if (seconds <= 400 && armyStrength < 100) return no("Weak");
 
         return no("JustDont");
+    }
+
+    private static boolean manyGateways() {
+        return A.hasMinerals(230 + (OurStrategy.get().isRushOrCheese() ? 120 : 0))
+            && Count.gateways() >= 3;
     }
 
     private static boolean yes(String reason) {

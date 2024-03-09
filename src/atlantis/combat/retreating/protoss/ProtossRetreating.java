@@ -1,12 +1,21 @@
-//package atlantis.combat.retreating;
-//
-//import atlantis.units.AUnit;
-//import atlantis.units.AUnitType;
-//import atlantis.units.select.Selection;
-//import atlantis.util.Enemy;
-//
-//public class ProtossRetreating {
-//
+package atlantis.combat.retreating.protoss;
+
+import atlantis.decions.Decision;
+import atlantis.units.AUnit;
+
+public class ProtossRetreating {
+    public static Decision decision(AUnit unit) {
+        if (ProtossShouldNotRetreat.shouldNotConsiderRetreatingNow(unit)) {
+            return Decision.FALSE;
+        }
+
+        if (ProtossShouldRetreat.shouldRetreat(unit)) {
+            return Decision.TRUE;
+        }
+
+        return Decision.INDIFFERENT;
+    }
+}
 //    public  boolean shouldSmallScaleRetreat(AUnit unit, Selection enemies) {
 //        if (unit.isRanged()) {
 //            return false;
