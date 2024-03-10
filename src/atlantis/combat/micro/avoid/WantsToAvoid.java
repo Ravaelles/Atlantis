@@ -47,6 +47,8 @@ public class WantsToAvoid extends Manager {
     // =========================================================
 
     private boolean shouldNeverAvoidIf(Units enemies) {
+        if (unit.isMelee() && !unit.isTerran()) return true;
+
         if (unit.isWorker() && enemies.onlyMelee()) {
             unit.addLog("BraveWorker");
             return unit.hp() >= 40;
@@ -56,7 +58,7 @@ public class WantsToAvoid extends Manager {
 
         if (unit.isTank() && unit.cooldownRemaining() <= 0) return true;
 
-        if (unit.isWorker() || unit.isAir()) return false;
+//        if (unit.isWorker() || unit.isAir()) return false;
 
         return false;
     }

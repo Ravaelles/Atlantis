@@ -40,7 +40,7 @@ public class RetreatManager extends Manager {
 
         return cache.get(
             "handleRetreat",
-            9,
+            7,
             () -> {
                 if (ShouldRetreat.shouldRetreat(unit)) {
                     Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
@@ -57,7 +57,7 @@ public class RetreatManager extends Manager {
 //                    System.err.println("@ " + A.now() + " - RETREAT " + unit.typeWithHash());
 
                     if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
-                        unitIsRetreating(runAwayFrom);
+                        unitStartedRetreating(runAwayFrom);
                         return true;
                     }
                 }
@@ -67,13 +67,12 @@ public class RetreatManager extends Manager {
         );
     }
 
-    private boolean unitIsRetreating(HasPosition runAwayFrom) {
+    private boolean unitStartedRetreating(HasPosition runAwayFrom) {
         unit.addLog("RetreatedFrom" + runAwayFrom);
 
         AUnit leader = unit.squadLeader();
 
-        if (leader == null) return false;
-
+        if (leader == null || leader.isRetreating() || leader.equals(unit)) return false;
         if (unit.distTo(leader) >= 8) return false;
 
         return (new RetreatManager(leader)).forceHandle() != null;

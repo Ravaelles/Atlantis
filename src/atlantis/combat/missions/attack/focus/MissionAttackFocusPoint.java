@@ -68,20 +68,11 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
-        // Try going near any enemy building
-        AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
-        if (
-            enemyBuilding != null
-                && enemyBuilding.hasPosition()
-//                && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
-                && enemyBuilding.isAlive()
-        ) {
-            return new AFocusPoint(
-                enemyBuilding,
-                main,
-                "EnemyBuilding(" + enemyBuilding.name() + ")"
-            );
-        }
+        AFocusPoint enemyCombatBuilding = nearestEnemyCombatBuilding(main);
+        if (enemyCombatBuilding != null) return enemyCombatBuilding;
+
+        AFocusPoint enemyBuilding = nearestEnemyBuilding(main);
+        if (enemyBuilding != null) return enemyBuilding;
 
         // Prevent switching bases across entire map
         if (GamePhase.isEarlyGame() || Select.enemy().buildings().atMost(2)) {
@@ -196,6 +187,40 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         if (!A.isUms()) ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
+        return null;
+    }
+
+    private static AFocusPoint nearestEnemyCombatBuilding(AUnit main) {
+        AUnit enemyBuilding = EnemyUnits.nearestEnemyCombatBuilding();
+        if (
+            enemyBuilding != null
+                && enemyBuilding.hasPosition()
+//                && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
+                && enemyBuilding.isAlive()
+        ) {
+            return new AFocusPoint(
+                enemyBuilding,
+                main,
+                "EnemyCB(" + enemyBuilding.name() + ")"
+            );
+        }
+        return null;
+    }
+
+    private static AFocusPoint nearestEnemyBuilding(AUnit main) {
+        AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+        if (
+            enemyBuilding != null
+                && enemyBuilding.hasPosition()
+//                && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
+                && enemyBuilding.isAlive()
+        ) {
+            return new AFocusPoint(
+                enemyBuilding,
+                main,
+                "EnemyBuilding(" + enemyBuilding.name() + ")"
+            );
+        }
         return null;
     }
 

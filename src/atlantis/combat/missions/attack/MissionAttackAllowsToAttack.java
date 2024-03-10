@@ -20,6 +20,8 @@ public class MissionAttackAllowsToAttack extends HasUnit {
 //            }
 //        }
 
+//        if (true) return true;
+
         if (forbiddenToAttackCombatBuilding(enemy)) return false;
         if (forbiddenToAttackWithinChoke(enemy)) return false;
         if (dontAttackAsSquadScout(enemy)) return false;
@@ -42,6 +44,7 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     private boolean dontAttackAsSquadScout(AUnit enemy) {
         if (!unit.isSquadScout()) return false;
         if (enemy.isWorker()) return false;
+        if (unit.friendsNear().inRadius(1.5, unit).count() > 0) return false;
 
         return unit.hasCooldown() || unit.woundPercent() >= 20;
     }

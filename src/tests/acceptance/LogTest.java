@@ -11,25 +11,6 @@ import static org.junit.Assert.*;
 
 public class LogTest extends NonAbstractTestFakingGame {
     @Test
-    public void foo() {
-        Log log = new Log(3, 4);
-
-//        FakeUnit[] our = this.generateOur();
-//        FakeUnit[] enemies = this.generateEnemies();
-
-//        useEngine(createEngine()); // Uncomment to use StarEngine
-
-        createWorld(5, () -> {
-
-        });
-
-//        assertTrue(decision.isAllowed());
-//
-//        assertFalse(decision.isIndifferent());
-    }
-
-    // Test addMessage
-    @Test
     public void testAddMessage() {
         FakeUnit unit = fakeUnit();
         Log log = unit.log();

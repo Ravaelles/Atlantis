@@ -68,23 +68,31 @@ public class EnemyUnits {
     }
 
     public static AUnit enemyBase() {
-        return (AUnit) cache.get(
+        return (AUnit) cache.getIfValid(
             "enemyBase",
-            70,
+            71,
             () -> discovered().bases().first()
         );
     }
 
     public static AUnit nearestEnemyBuilding() {
-        return (AUnit) cache.get(
+        return (AUnit) cache.getIfValid(
             "nearestEnemyBuilding",
-            50,
+            51,
             () -> {
-                AUnit ourUnit = Select.main();
-                if (ourUnit == null) {
-                    ourUnit = Select.ourBuildings().first();
-                }
-                return discovered().buildings().nearestTo(ourUnit);
+                AUnit ourUnit = Select.mainOrAnyBuilding();
+                return discovered().buildings().groundNearestTo(ourUnit);
+            }
+        );
+    }
+
+    public static AUnit nearestEnemyCombatBuilding() {
+        return (AUnit) cache.getIfValid(
+            "nearestEnemyCombatBuilding",
+            51,
+            () -> {
+                AUnit ourUnit = Select.mainOrAnyBuilding();
+                return discovered().combatBuildingsAntiLand().groundNearestTo(ourUnit);
             }
         );
     }

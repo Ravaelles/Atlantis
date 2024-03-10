@@ -7,10 +7,12 @@ import atlantis.units.select.Selection;
 public class ProtossShouldRetreat {
     public static boolean shouldRetreat(AUnit unit) {
         Selection enemies = enemies(unit);
-        Selection friends = unit.friendsNear().notRunning();
+        Selection friends = friends(unit);
 
         if (ProtossSmallScaleRetreat.shouldSmallScaleRetreat(unit, friends, enemies)) {
-            RetreatManager.GLOBAL_RETREAT_COUNTER++;
+            if (unit.isLeader()) {
+                RetreatManager.GLOBAL_RETREAT_COUNTER++;
+            }
             return true;
         }
 
@@ -28,6 +30,11 @@ public class ProtossShouldRetreat {
     }
 
     // =========================================================
+
+    private static Selection friends(AUnit unit) {
+//        return unit.friendsNear().notRunning();
+        return unit.friendsNear().havingAtLeastHp(30);
+    }
 
     private static Selection enemies(AUnit unit) {
         return unit.enemiesNear().canAttack(unit, 6);

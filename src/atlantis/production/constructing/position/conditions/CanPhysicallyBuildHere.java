@@ -2,6 +2,7 @@ package atlantis.production.constructing.position.conditions;
 
 import atlantis.Atlantis;
 import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
@@ -31,6 +32,7 @@ public class CanPhysicallyBuildHere {
         if (
             (!building.isGasBuilding())
 //            building.isBase()
+                && A.supplyTotal() >= 60
                 && (!position.isExplored() || !position.isPositionVisible())
         ) return true;
 

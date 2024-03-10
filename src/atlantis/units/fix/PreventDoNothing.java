@@ -14,7 +14,9 @@ public class PreventDoNothing extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
+
+        if (unit.managerLogs().isNotEmpty()) return false;
 
 //        return unit.isActiveManager(DoNothing.class) || unit.isAction(Actions.INIT);
 

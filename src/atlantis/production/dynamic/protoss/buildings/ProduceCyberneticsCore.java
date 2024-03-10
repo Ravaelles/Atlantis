@@ -5,6 +5,7 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.units.select.Have;
 
+import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 import static atlantis.units.AUnitType.Protoss_Forge;
 
 public class ProduceCyberneticsCore {
@@ -12,7 +13,7 @@ public class ProduceCyberneticsCore {
         if (Have.cyberneticsCore()) return;
 
         int buildAtSupply = buildAtSupply();
-        DynamicCommanderHelpers.buildToHaveOne(buildAtSupply, Protoss_Forge);
+        DynamicCommanderHelpers.buildToHaveOne(buildAtSupply, Protoss_Cybernetics_Core);
     }
 
     private static int buildAtSupply() {

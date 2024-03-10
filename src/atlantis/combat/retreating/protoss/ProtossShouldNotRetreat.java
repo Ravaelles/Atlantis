@@ -131,12 +131,14 @@ public class ProtossShouldNotRetreat extends Manager {
     }
 
     public boolean shouldRetreat() {
-        if (unit.isTerranInfantry()) {
-            if (!unit.mission().isMissionDefend()) {
-                if (unit.enemiesNear().ranged().notEmpty() && unit.friendsNear().atMost(4) && unit.combatEvalRelative() <= 2) {
-                    unit.setTooltipTactical("BewareRanged");
-                    return true;
-                }
+        if (!unit.mission().isMissionDefend()) {
+            if (
+                unit.enemiesNear().ranged().notEmpty()
+                    && unit.friendsNear().atMost(4)
+                    && unit.combatEvalRelative() <= 2
+            ) {
+                unit.setTooltipTactical("BewareRanged");
+                return true;
             }
         }
 

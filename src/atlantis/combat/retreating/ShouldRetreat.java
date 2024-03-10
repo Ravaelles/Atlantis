@@ -41,6 +41,9 @@ public class ShouldRetreat extends Manager {
             () -> {
                 if (unit.enemiesNear().empty()) return false;
                 if (A.isUms() && A.supplyUsed() <= 30) return false;
+
+                if (unit.combatEvalRelative() <= 0.8) return true;
+
                 if (unit.isRunning()) return false;
 
 //                if (TempDontRetreat.temporarilyDontRetreat()) {

@@ -20,6 +20,8 @@ public class TrackEnemyEarlyScout extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit == null || enemyScout == null) return null;
+
         if (!unit.isAttacking() || A.everyNthGameFrame(19)) {
             unit.attackUnit(enemyScout);
 //            System.err.println("@ " + A.now() + " - " + unit + " - Track - " + enemyScout);

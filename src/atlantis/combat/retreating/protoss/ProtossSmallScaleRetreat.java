@@ -5,16 +5,16 @@ import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
 public class ProtossSmallScaleRetreat {
-    protected static boolean shouldSmallScaleRetreat(AUnit unit, Selection friends, Selection enemies) {
+    public static boolean shouldSmallScaleRetreat(AUnit unit, Selection friends, Selection enemies) {
         if (unit.isRanged()) return asRanged(unit, friends, enemies);
-        if (unit.isMelee()) return asMelee(unit, friends, enemies);
-
-        return false;
+        return asMelee(unit, friends, enemies);
     }
 
     private static boolean asMelee(AUnit unit, Selection friends, Selection enemies) {
-        if (meleeOverpoweredInRadius(unit, friends, enemies, 1.1)) return true;
-        if (meleeOverpoweredInRadius(unit, friends, enemies, 3.1)) return true;
+        if (unit.combatEvalRelative() >= 1.2) return false;
+
+//        if (meleeOverpoweredInRadius(unit, friends, enemies, 1.1)) return true;
+//        if (meleeOverpoweredInRadius(unit, friends, enemies, 5)) return true;
 
         return false;
     }
@@ -22,11 +22,15 @@ public class ProtossSmallScaleRetreat {
     private static boolean meleeOverpoweredInRadius(
         AUnit unit, Selection friends, Selection enemies, double radius
     ) {
-        return friends.inRadius(radius, unit).atMost(1 + meleeEnemiesStrength(unit, enemies, radius));
+        return ourMeleeStrength(unit, friends, radius) <= meleeEnemiesStrength(unit, enemies, radius);
     }
 
-    private static int meleeEnemiesStrength(AUnit unit, Selection enemies, double radius) {
-        return (int) (enemies.melee().inRadius(radius, unit).count() * meleeEnemiesMultiplier());
+    private static double ourMeleeStrength(AUnit unit, Selection friends, double radius) {
+        return friends.melee().inRadius(radius, unit).count() + (unit.hp() >= 30 ? 1.1 : 1);
+    }
+
+    private static double meleeEnemiesStrength(AUnit unit, Selection enemies, double radius) {
+        return enemies.melee().inRadius(radius, unit).count() * meleeEnemiesMultiplier();
     }
 
     private static double meleeEnemiesMultiplier() {
@@ -38,7 +42,7 @@ public class ProtossSmallScaleRetreat {
     private static boolean asRanged(AUnit unit, Selection friends, Selection enemies) {
         if (enemies.onlyMelee() && unit.shieldDamageAtMost(30)) return false;
 
-        if (unit.combatEvalRelative() <= 106 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
+        if (unit.combatEvalRelative() <= 1.06 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
 
         return false;
     }

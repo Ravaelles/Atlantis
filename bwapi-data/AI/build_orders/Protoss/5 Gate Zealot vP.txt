@@ -26,5 +26,5 @@
 15 - Pylon
 18 - Gateway
 18 - MISSION=ATTACK
-22 - Gateway
-30 - Gateway
+20 - Gateway
+25 - Gateway

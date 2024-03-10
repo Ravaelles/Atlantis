@@ -69,7 +69,7 @@ public class Main {
 
         // === Popular SSCAIT maps =================================
 
-//        if (true) return "sscai/(2)HeartbreakRidge.scx";
+        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
@@ -129,7 +129,7 @@ public class Main {
 //        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
 //        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
 //        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
-//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 //        if (true) return "ums/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers

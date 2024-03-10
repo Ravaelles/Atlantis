@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.game.race.EnemyRace;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.generic.ProtossArmyComposition;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
@@ -23,15 +24,16 @@ public class ProduceZealot {
 
         if (freeGateways == 0) return false;
 
+        if (DragoonInsteadZealot.dragoonInsteadOfZealot()) return false;
+
+        if (earlyGameZealots()) return produceZealot();
         if (A.hasMinerals(550) && freeGateways >= 2) return produceZealot();
 
 //        System.err.println("@ " + A.now() + " - produceZealot?");
 
         if (Enemy.zerg() && Count.zealotsWithUnfinished() <= minZealotsToHave()) return produceZealot();
-        if (earlyGameDefenceVsProtoss()) return produceZealot();
 
         if (A.supplyUsed() >= 50 && !A.hasMinerals(350)) return false;
-        if (DragoonInsteadZealot.dragoonInsteadOfZealot()) return false;
         if (Count.ourWithUnfinished(Protoss_Zealot) >= 1 && !A.hasMinerals(250)) return false;
 
         if (couldProduceDragoonsButHaveLotsOfMineralsAndFreeGatewaySoMakeZealot()) return produceZealot();
@@ -41,6 +43,17 @@ public class ProduceZealot {
         if (EnemyRace.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) return produceZealot();
 
         return false;
+    }
+
+    private static boolean earlyGameZealots() {
+        if (earlyGameDefenceVsProtoss()) return produceZealot();
+        if (earlyGameRushZealots()) return produceZealot();
+
+        return false;
+    }
+
+    private static boolean earlyGameRushZealots() {
+        return A.seconds() <= 350 && OurStrategy.get().isRushOrCheese() && A.hasMinerals(100);
     }
 
     private static boolean earlyGameDefenceVsProtoss() {

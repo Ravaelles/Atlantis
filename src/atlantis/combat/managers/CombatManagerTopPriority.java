@@ -7,6 +7,7 @@ import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.HoldToShoot;
 import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.units.AUnit;
 import atlantis.units.fix.PreventAttackNull;
 import atlantis.units.fix.PreventAttackForTooLong;
@@ -33,6 +34,8 @@ public class CombatManagerTopPriority extends Manager {
             PreventDoNothing.class,
             PreventAttackNull.class,
             PreventAttackForTooLong.class,
+
+            RetreatManager.class,
 
             ContinueCurrentAction.class,
 

@@ -118,7 +118,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
         APainter.paintCircle(attacker, 7 * 32, Color.Orange);
 
-        return 0.9
+        return 2.2
             + defender.woundPercent() / 70.0
             + (defender.isMoving() ? 0.5 : 0)
             + (defender.isAir() ? -0.9 : 0)

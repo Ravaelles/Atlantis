@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class IsPositionPowered {
@@ -11,11 +12,13 @@ public class IsPositionPowered {
         if (!We.protoss()) return false;
         if (!building.needsPower()) return false;
 
-        return isNotPowered(position) ? failed("No power") : false;
+        return isNotPowered(position) && failed("No power");
     }
 
     private static boolean isNotPowered(APosition position) {
-        return !Atlantis.game().hasPower(position.toTilePosition());
+//        return !Atlantis.game().hasPower(position.toTilePosition());
+
+        return Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(6.8, position).empty();
     }
 
     private static boolean failed(String reason) {

@@ -16,13 +16,14 @@ public class CanAttackAsMelee {
         if (allowForTerran(unit)) return true;
         if (allowForZerg(unit)) return true;
 
-        double combatEval = unit.combatEvalRelative();
-
-        if (combatEval < THRESHOLD_OF_COMBAT_EVAL) return false;
-
-        if (unit.enemiesNear().canBeAttackedBy(unit, 1).notEmpty()) return true;
-
-        return combatEval >= THRESHOLD_OF_COMBAT_EVAL;
+        return true;
+//        double combatEval = unit.combatEvalRelative();
+//
+//        if (combatEval < THRESHOLD_OF_COMBAT_EVAL) return false;
+//
+//        if (unit.enemiesNear().canBeAttackedBy(unit, 1).notEmpty()) return true;
+//
+//        return combatEval >= THRESHOLD_OF_COMBAT_EVAL;
     }
 
     private static boolean allowForTerran(AUnit unit) {

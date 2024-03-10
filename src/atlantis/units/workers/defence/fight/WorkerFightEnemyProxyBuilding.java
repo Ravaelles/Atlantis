@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 
 public class WorkerFightEnemyProxyBuilding extends Manager {
     private static AUnit _enemyProxyBuilding = null;
@@ -40,15 +41,26 @@ public class WorkerFightEnemyProxyBuilding extends Manager {
 
     private AUnit enemyBuilding() {
         if (_enemyProxyBuilding != null) {
-            System.err.println(A.now() + " _enemyProxyBuilding = " + _enemyProxyBuilding);
+//            System.err.println(A.now() + " _enemyProxyBuilding = " + _enemyProxyBuilding);
             if (_enemyProxyBuilding.isDead()) _enemyProxyBuilding = null;
             else return _enemyProxyBuilding;
         }
 
-        return _enemyProxyBuilding = Select
+        Selection baseBuildings = Select
             .enemy()
             .buildings()
-            .inRadius(25, Select.main())
-            .mostWounded();
+            .inRadius(25, Select.mainOrAnyBuilding());
+
+        if (baseBuildings.empty()) return _enemyProxyBuilding = null;
+
+        if ((_enemyProxyBuilding = baseBuildings.onlyCompleted().combatBuildings(true).mostWounded()) != null) {
+            return _enemyProxyBuilding;
+        }
+
+        if ((_enemyProxyBuilding = baseBuildings.combatBuildings(true).mostWounded()) != null) {
+            return _enemyProxyBuilding;
+        }
+
+        return _enemyProxyBuilding = baseBuildings.mostWounded();
     }
 }

@@ -1128,11 +1128,11 @@ public class Selection extends BaseSelection {
         return data.size();
     }
 
-    public boolean atLeast(int min) {
+    public boolean atLeast(double min) {
         return data.size() >= min;
     }
 
-    public boolean atMost(int max) {
+    public boolean atMost(double max) {
         return data.size() <= max;
     }
 

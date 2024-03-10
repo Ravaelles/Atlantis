@@ -107,6 +107,8 @@ public class TravelToConstruct extends HasUnit {
     }
 
     private static boolean shouldRefreshConstructionPosition(Construction construction, AUnitType buildingType) {
+        if (!A.canAfford(buildingType)) return false;
+
         return cantBuildHere(construction, buildingType)
             ||
             builderHasNotMovedInAWhile(construction);
@@ -121,7 +123,8 @@ public class TravelToConstruct extends HasUnit {
     }
 
     private static boolean builderHasNotMovedInAWhile(Construction construction) {
-        return construction.builder().lastPositionChangedMoreThanAgo(90) && construction.builder().distTo(construction.buildPosition()) <= 5;
+        return construction.builder().lastPositionChangedMoreThanAgo(90)
+            && construction.builder().distTo(construction.buildPosition()) <= 5;
     }
 
     private boolean moveToConstruct(Construction construction, AUnitType buildingType, double distance, String distString) {

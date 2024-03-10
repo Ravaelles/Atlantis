@@ -2837,6 +2837,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return base.distTo(this);
     }
 
+    public double distToMain() {
+        AUnit base = Select.main();
+        if (base == null) return 999;
+
+        return base.distTo(this);
+    }
+
     public boolean lastPositioningActionMoreThanAgo(int minFramesAgo) {
         return lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_FORMATION);
 //            && lastActionMoreThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
