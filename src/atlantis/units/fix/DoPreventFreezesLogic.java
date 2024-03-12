@@ -2,6 +2,7 @@ package atlantis.units.fix;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.ToLastSquadTarget;
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.TooCloseToFocusPoint;
 import atlantis.combat.advance.focus.TooFarFromFocusPoint;
 import atlantis.combat.micro.avoid.DoAvoidEnemies;
@@ -28,6 +29,11 @@ public class DoPreventFreezesLogic {
 //        if (ToLastSquadTarget.goTo(unit)) {
 //            return true;
 //        }
+
+        if (!unit.isMoving() && goToFocus(unit)) {
+            unit.setTooltip("Prevent:Focus");
+            return true;
+        }
 
         if (goToLeader(unit)) {
             unit.setTooltip("Prevent:2Leader");
@@ -57,6 +63,22 @@ public class DoPreventFreezesLogic {
 ////        if (goToNearestEnemy(unit)) return true;
 //        if (goToCombatUnit(unit)) return true;
 
+        return false;
+    }
+
+    private static boolean goToFocus(AUnit unit) {
+        AFocusPoint focus = unit.focusPoint();
+        if (focus != null && focus.hasPosition()) {
+            double distToFocus = unit.distTo(focus);
+
+            if (distToFocus <= 3) {
+                return false;
+            }
+            if (distToFocus >= 6) {
+                unit.move(focus, Actions.MOVE_FOCUS, "Prevent:2Focus");
+                return true;
+            }
+        }
         return false;
     }
 

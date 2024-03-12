@@ -34,6 +34,9 @@ public class TooFarFromLeader extends Manager {
         leader = unit.squad().leader();
         if (leader == null) return false;
 
+        if (leaderIsOvercrowded()) return false;
+        if (unitIsOvercrowded()) return false;
+
         distToLeader = unit.distTo(leader);
         boolean wayTooFarFromLeader = wayTooFarFromLeader();
 
@@ -41,9 +44,7 @@ public class TooFarFromLeader extends Manager {
 
         if (unit.distToNearestChokeLessThan(5)) return false;
 
-        return tooFarFromLeader()
-            && !leaderIsOvercrowded()
-            && !unitIsOvercrowded();
+        return tooFarFromLeader();
     }
 
     private boolean wayTooFarFromLeader() {

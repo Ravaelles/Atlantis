@@ -14,6 +14,13 @@ public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (shouldNotDoAnythingButContinue(unit)) return true;
 
+        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(30 * 2)) {
+            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
+                unit.setTooltip("UnfreezeByAttack");
+                return true;
+            }
+        }
+
         if (!unit.isStopped() && unit.lastActionMoreThanAgo(10, Actions.STOP)) {
             unit.stop("UnfreezeByStop");
             return true;
@@ -32,13 +39,6 @@ public class UnfreezerShakeUnit {
         if (!unit.isMoving() && goToFocus(unit)) {
             unit.setTooltip("UnfreezeByFocus");
             return true;
-        }
-
-        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(30 * 2)) {
-            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
-                unit.setTooltip("UnfreezeByAttack");
-                return true;
-            }
         }
 
         if (goToNearestCombatFriend(unit)) {
@@ -161,6 +161,6 @@ public class UnfreezerShakeUnit {
 
     private static boolean shouldNotDoAnythingButContinue(AUnit unit) {
         return unit.isAccelerating()
-            || unit.lastActionLessThanAgo(3, Actions.HOLD_POSITION, Actions.STOP, Actions.MOVE_UNFREEZE);
+            || unit.lastActionLessThanAgo(4, Actions.HOLD_POSITION, Actions.STOP, Actions.MOVE_UNFREEZE);
     }
 }

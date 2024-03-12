@@ -40,11 +40,12 @@ public class RetreatManager extends Manager {
 
         return cache.get(
             "handleRetreat",
-            7,
+            5,
             () -> {
                 if (ShouldRetreat.shouldRetreat(unit)) {
                     Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
                     HasPosition runAwayFrom = nearEnemies.center();
+
                     if (runAwayFrom == null) {
                         runAwayFrom = nearEnemies.first();
                     }

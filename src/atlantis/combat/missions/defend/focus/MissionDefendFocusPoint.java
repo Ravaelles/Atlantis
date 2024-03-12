@@ -130,9 +130,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         AUnit our = Select.ourBuildings().first();
         if (our == null) our = Select.our().first();
 
-        AUnit enemy = EnemyUnits.discovered().groundUnits().havingPosition().nearestTo(our);
+        AUnit enemy = EnemyUnits.discovered().groundUnits()
+            .havingPosition().havingAtLeastHp(1).nearestTo(our);
 
-        if (enemy == null) return null;
+        if (enemy == null || !enemy.hasPosition()) return null;
 
         return new AFocusPoint(
             enemy,

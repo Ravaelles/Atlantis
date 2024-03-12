@@ -21,7 +21,7 @@ public class ProtossForbiddenByStreetGrid {
      * So disallow building in e.g. 0,1, 6,7, 12,13, horizontally and vertically
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
-        if (true) return false;
+//        if (true) return false;
 
         if (!We.protoss()) return false;
         if (building.isBase() || building.isGasBuilding()) return false;
@@ -32,11 +32,11 @@ public class ProtossForbiddenByStreetGrid {
             return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
         }
         else {
-//            if ((modulo = (position.tx()) % 4) != 0) return failed("TX modulo P = " + modulo);
-//            if ((modulo = (position.tx()) % 12) == 0) return failed("TX modulo P2 = " + modulo);
+            if ((modulo = (position.tx()) % 4) != 0) return failed("TX modulo P_X1 = " + modulo);
+            if ((modulo = (position.tx()) % 12) >= 10) return failed("TX modulo P_X2 = " + modulo);
 
-            if ((modulo = (position.ty()) % 3) != 0) return failed("TY modulo R = " + modulo);
-            if ((modulo = (position.ty()) % 9) != 0) return failed("TY modulo R2 = " + modulo);
+            if ((modulo = (position.ty()) % 3) != 0) return failed("TY modulo P_Y1 = " + modulo);
+            if ((modulo = (position.ty()) % 12) >= 10) return failed("TY modulo P_Y2 = " + modulo);
         }
 
         if (true) return false;

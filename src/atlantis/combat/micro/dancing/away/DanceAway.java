@@ -161,7 +161,11 @@ public class DanceAway extends Manager {
     private boolean danceAwayFromTarget(String logString) {
 //        return unit.moveAwayFrom(enemy.position(), enemiesRadius(), Actions.MOVE_DANCE_AWAY, logString);
         return unit.runningManager().runFrom(
-            enemy.position(), enemiesRadius(), Actions.MOVE_DANCE_AWAY, false
+            enemy.position(), danceAwayDist(), Actions.MOVE_DANCE_AWAY, false
         );
+    }
+
+    private double danceAwayDist() {
+        return 2.2 + unit.woundPercent() / 40.0;
     }
 }

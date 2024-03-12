@@ -22,12 +22,13 @@ public class NumberOfGasWorkersCommander extends Commander {
     @Override
     protected void handle() {
         Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisRaceConfig.GAS_BUILDING).list();
+        int expectedGasWorkers = expectedGasWorkers();
 
         for (AUnit gasBuilding : gasBuildings) {
             boolean noBaseIsNearThisGasBuilding = Select.ourBases().inRadius(12, gasBuilding).count() == 0;
 
             int realCount = CountGasWorkers.countWorkersGatheringGasFor(gasBuilding);
-            int expectedCount = noBaseIsNearThisGasBuilding ? 0 : expectedGasWorkers(gasBuilding, realCount);
+            int expectedCount = noBaseIsNearThisGasBuilding ? 0 : expectedGasWorkers;
 
             // Fewer workers gathering gas than optimal
             if (realCount < expectedCount) {
@@ -59,6 +60,15 @@ public class NumberOfGasWorkersCommander extends Commander {
 
         if (workers <= 7) {
             return 0;
+        }
+
+        if (A.gas() >= 300) {
+            if (A.seconds() >= 400) {
+                if (A.minerals() <= 600) return 0;
+            }
+            else {
+                if (A.minerals() <= 300) return 0;
+            }
         }
 
         if (workers <= 13 && !A.hasMinerals(150)) {
@@ -119,7 +129,7 @@ public class NumberOfGasWorkersCommander extends Commander {
         return FreeWorkers.get().gatheringMinerals(true).nearestTo(gasBuilding);
     }
 
-    private static int expectedGasWorkers(AUnit gasBuilding, int numOfWorkersNear) {
+    private static int expectedGasWorkers() {
         return defineGasWorkersPerBuilding();
     }
 }

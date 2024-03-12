@@ -11,7 +11,7 @@ public class ShouldRunTowardsBase {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
         if (unit.isScout() && unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.isSquadScout()) return true;
-        if (A.seconds() <= 400 && unit.isRetreating() && unit.distToMain() >= 40) return true;
+        if (A.seconds() <= 400 && unit.isRetreating() && unit.distToMain() >= 60) return true;
 
         if (A.seconds() >= 550) return false;
         if (unit.isMarine() && unit.isHealthy() && unit.distToBase() >= 40) return true;
