@@ -27,17 +27,19 @@ public class ProtossForbiddenByStreetGrid {
         if (building.isBase() || building.isGasBuilding()) return false;
 
         int modulo;
+        if ((modulo = (position.tx() % 4)) != 0) return failed("TX modulo P_XG = " + modulo);
+        if ((modulo = (position.ty() % 3)) != 0) return failed("TY modulo P_YGs = " + modulo);
 
-        if (building.isPylon()) {
-            return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
-        }
-        else {
-            if ((modulo = (position.tx()) % 4) != 0) return failed("TX modulo P_X1 = " + modulo);
-            if ((modulo = (position.tx()) % 12) >= 10) return failed("TX modulo P_X2 = " + modulo);
-
-            if ((modulo = (position.ty()) % 3) != 0) return failed("TY modulo P_Y1 = " + modulo);
-            if ((modulo = (position.ty()) % 12) >= 10) return failed("TY modulo P_Y2 = " + modulo);
-        }
+//        if (building.isPylon()) {
+//            return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
+//        }
+//        else {
+//            if ((modulo = (position.tx() % 4)) != 0) return failed("TX modulo P_X1 = " + modulo);
+//            if ((modulo = (position.tx() % 13)) >= 11) return failed("TX modulo P_X2 = " + modulo);
+//
+//            if ((modulo = (position.ty() % 3)) != 0) return failed("TY modulo P_Y1 = " + modulo);
+//            if ((modulo = (position.ty() % 10)) >= 8) return failed("TY modulo P_Y2 = " + modulo);
+//        }
 
         if (true) return false;
 

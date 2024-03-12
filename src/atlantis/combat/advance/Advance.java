@@ -23,6 +23,7 @@ public class Advance extends MissionManager {
             DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class,
             AdvanceAsTerran.class,
             AttackNearbyEnemies.class,
+            TooFarFromLeader.class,
             AdvanceStandard.class,
             AsAirAttackAnyone.class,
         };

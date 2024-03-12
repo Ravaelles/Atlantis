@@ -14,7 +14,11 @@ public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (shouldNotDoAnythingButContinue(unit)) return true;
 
-        if (!unit.isAttacking() && unit.lastAttackFrameMoreThanAgo(30 * 2)) {
+        if (
+            !unit.isAttacking()
+                && unit.lastAttackFrameMoreThanAgo(30 * 2)
+                && unit.lastActionMoreThanAgo(30 * 2, Actions.ATTACK_UNIT)
+        ) {
             if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
                 unit.setTooltip("UnfreezeByAttack");
                 return true;

@@ -15,17 +15,20 @@ public class UnfreezeGeneric extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+        if (unit.lastPositionChangedLessThanAgo(52)) return false;
+        if (unit.lastActionLessThanAgo(52)) return false;
 
-        if (unit.hasCooldown()) return false;
-        if (unit.isAccelerating()) return false;
-        if (duringMissionAttack()) return false;
-        if (unit.lastPositionChangedLessThanAgo(42)) return false;
-        if (unit.lastActionLessThanAgo(16)) return false;
-        if (unit.isActiveManager(UnfreezeGeneric.class) && unit.lastActionLessThanAgo(3)) return false;
-//        if (unit.isAttacking()) return false;
-        if (unit.lastStartedAttackLessThanAgo(20)) return false;
-        if (unit.lastActionLessThanAgo(20, Actions.MOVE_DANCE_AWAY)) return false;
+//        if (true) return false;
+//
+//        if (unit.hasCooldown()) return false;
+//        if (unit.isAccelerating()) return false;
+//        if (duringMissionAttack()) return false;
+//        if (unit.lastPositionChangedLessThanAgo(42)) return false;
+//        if (unit.lastActionLessThanAgo(16)) return false;
+//        if (unit.isActiveManager(UnfreezeGeneric.class) && unit.lastActionLessThanAgo(3)) return false;
+////        if (unit.isAttacking()) return false;
+//        if (unit.lastStartedAttackLessThanAgo(20)) return false;
+//        if (unit.lastActionLessThanAgo(20, Actions.MOVE_DANCE_AWAY)) return false;
 
         if (isDragoonDuringSpartaMission()) return false;
         else if (isDuringSpartaMission()) return false;

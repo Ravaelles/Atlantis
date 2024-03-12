@@ -22,8 +22,8 @@ public class ForbiddenByStreetGridForPylon {
         if ((modulo = (position.tx()) % 2) != 0) return failed("TX modulo M = " + modulo);
         if ((modulo = (position.ty()) % 2) != 0) return failed("TY modulo N = " + modulo);
 
-        if ((modulo = (position.tx()) % 9) <= 1) return failed("TX modulo M1 = " + modulo);
-        if ((modulo = (position.ty()) % 9) <= 1) return failed("TY modulo N1 = " + modulo);
+        if ((modulo = (position.tx()) % 13) >= 9) return failed("TX modulo M1 = " + modulo);
+        if ((modulo = (position.ty()) % 10) >= 7) return failed("TY modulo N1 = " + modulo);
 //        if ((modulo = (position.tx()) % 9) >= 7) return failed("TX modulo M1 = " + modulo);
 //        if ((modulo = (position.ty()) % 9) >= 7) return failed("TY modulo N1 = " + modulo);
 

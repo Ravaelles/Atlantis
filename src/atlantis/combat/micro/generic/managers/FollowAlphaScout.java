@@ -38,7 +38,8 @@ public class FollowAlphaScout extends Manager {
 
         if (focus == null) return null;
 
-        basePoint = basePoint.translatePercentTowards(50, unit.squadCenter());
+        HasPosition towards = unit.squadCenter();
+        if (towards != null) basePoint = basePoint.translatePercentTowards(50, towards);
         basePoint = basePoint.translateTilesTowards(10, focus);
 
         AUnit undetected = EnemyUnits.discovered().inRadius(25, unit).havingWeapon().effUndetected().first();
