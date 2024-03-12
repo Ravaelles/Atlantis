@@ -136,7 +136,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         if (enemy == null || !enemy.hasPosition()) return null;
 
         return new AFocusPoint(
-            enemy,
+            enemy.position(),
             our,
             "FallbackEnemy(" + enemy.type() + ")"
         );

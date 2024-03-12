@@ -31,8 +31,6 @@ public class AvoidEnemiesIfNeeded extends Manager {
     public boolean applies() {
         if (forceAvoid) return true;
 
-        if (true) return false;
-
         if (unit.isMissionSparta() && unit.isHealthy()) return false;
         if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
 

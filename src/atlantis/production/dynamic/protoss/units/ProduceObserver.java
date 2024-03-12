@@ -13,8 +13,8 @@ import static atlantis.production.AbstractDynamicUnits.buildToHave;
 public class ProduceObserver {
     public static boolean needObservers() {
         if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) return true;
-        if (A.supplyUsed() >= 50 && !Have.cannon()) return true;
-        if (A.supplyUsed() >= 74) return true;
+        if (A.supplyUsed() >= 47 && !Have.cannon()) return true;
+        if (A.supplyUsed() >= 64) return true;
 
         return false;
     }

@@ -19,8 +19,14 @@ public class DanceAway extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
+        if (unit.noCooldown()) return false;
         if (!unit.isRanged()) return false;
         if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return false;
+        if (unit.lastStartedRunningLessThanAgo(5)) return false;
+
+        if (unit.enemiesNear().ranged().canAttack(unit, 2.1).empty()) return false;
 
         enemy = defineUnitToDanceAwayFrom();
         if (enemy == null) return false;

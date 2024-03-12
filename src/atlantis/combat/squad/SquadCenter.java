@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class SquadCenter {
-
     private Cache<AUnit> cache = new Cache<>();
 
     private Squad squad;
+    private AUnit _prevLeader = null;
 
     // =========================================================
 
@@ -41,10 +41,10 @@ public class SquadCenter {
 
 //        if (leader != null && leader.isAlive() && !leader.isRunning()) {
         if (leader != null && leader.isAlive()) {
-            return leader;
+            return _prevLeader = leader;
         }
 
-        leader = this.defineLeader();
+        _prevLeader = leader = this.defineLeader();
         cache.set("leader", ttl, leader);
         return leader;
     }
@@ -52,62 +52,41 @@ public class SquadCenter {
     protected AUnit defineLeader() {
         if (squad.isEmpty()) return null;
 
-        Selection units = Alpha.get().units();
-
-//        AUnit building = Select.ourBuildings().first();
-
-//        if (units.tanks().atLeast(2)) {
-//            return units.tanks().mostDistantTo(building);
-//        }
-
-//        return potentialLeaders(units)
-////            .mostDistantTo(building);
-//            .mostDistantTo(Select.mainOrAnyBuilding());
-
-//        ArrayList<Integer> xCoords = new ArrayList<>();
-//        ArrayList<Integer> yCoords = new ArrayList<>();
-//
-//        for (AUnit unit : squad.list()) {
-//            xCoords.add(unit.x());
-//            yCoords.add(unit.y());
-//        }
-//
-//        Collections.sort(xCoords);
-//        Collections.sort(yCoords);
-//
-//        APosition median = new APosition(xCoords.get(xCoords.size() / 2), yCoords.get(yCoords.size() / 2));
-//        Selection potentials = Alpha.get()
-//            .units()
-//            .groundUnits()
-//            .excludeMedics();
-
+        Selection units = squad.units();
 //        APosition median = squad.average();
-        APosition median = squad.median();
+//        APosition median = squad.median();
 
-        AUnit nearestToMedian = potentialLeaders(units).nearestTo(median);
+        Selection candidates = potentialLeaders(units);
+        APosition nearestToPosition = nearestToPosition();
+        AUnit unit;
 
-//        if (nearestToMedian == null) {
-//            nearestToMedian = potentials.nearestTo(median);
-//        }
-//
-//        if (nearestToMedian != null && We.terran()) {
-//            if (Count.tanks() >= 2) {
-//                return Select.ourTanks().nearestTo(nearestToMedian);
-//            }
-//
-//            if (Count.medics() >= 2) {
-//                return Select.ourOfType(AUnitType.Terran_Medic).nearestTo(nearestToMedian);
-//            }
-//        }
-//
-        return nearestToMedian;
+        if ((unit = candidates.ranged().nearestTo(nearestToPosition)) != null) {
+            return unit;
+        }
+
+        return candidates.nearestTo(nearestToPosition);
+    }
+
+    private APosition nearestToPosition() {
+        if (_prevLeader != null && _prevLeader.lastPosition() != null) {
+            return _prevLeader.lastPosition();
+        }
+
+        AUnit first = Alpha.get().first();
+        if (first != null && first.lastPosition() != null) {
+            return first.lastPosition();
+        }
+
+        return Select.mainOrAnyBuilding().position();
     }
 
     private static Selection potentialLeaders(Selection units) {
-        return units
+        Selection candidates = units
             .groundUnits()
             .havingWeapon()
             .notSpecialAction();
+
+        return candidates;
     }
 
 }

@@ -27,8 +27,8 @@ public class ProtossObserver extends MobileDetector {
             AvoidEnemiesIfNeeded.class,
             SpreadOutDetectors.class,
             DetectHiddenEnemyClosestToBase.class,
-            FollowArmy.class,
             FollowAlphaScout.class,
+            FollowArmy.class,
         };
     }
 

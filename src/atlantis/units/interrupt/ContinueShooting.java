@@ -18,10 +18,15 @@ public class ContinueShooting extends Manager {
         if (unit.isStartingAttack()) return true;
         if (unit.isAttackFrame()) return true;
 
+        if (
+            unit.isDragoon()
+                && unit.isMissionDefendOrSparta()
+                && unit.meleeEnemiesNearCount(1.2) >= 1
+        ) return false;
+
         if (unit.lastActionMoreThanAgo(15)) return false;
 
 //        if (unit.isMissionSparta() && unit.isDragoon() && unit.distToTarget() > 4) return false;
-        if (unit.isDragoon() && unit.isMissionDefendOrSparta()) return false;
 
 //        if (unit.isStartingAttack()) return true;
 //        if (unit.isAttackFrame()) return true;

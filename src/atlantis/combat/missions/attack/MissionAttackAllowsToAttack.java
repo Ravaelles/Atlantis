@@ -52,10 +52,10 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     private boolean forbiddenToAttackWithinChoke(AUnit enemy) {
         if (unit.isAir() || unit.isMelee()) return false;
         if (enemy.isABuilding()) return false;
-
         if (A.supplyUsed() >= 190 || A.hasMinerals(2500)) return false;
 
-        return unit.isWithinChoke();
+        return (unit.lastUnderAttackLessThanAgo(30 * 9) || unit.hasCooldown())
+            && unit.isWithinChoke();
     }
 
     private boolean forbiddenToAttackCombatBuilding(AUnit enemy) {

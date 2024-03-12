@@ -15,6 +15,7 @@ public class DragoonInsteadZealot {
         if (!A.hasGas(50) || !Have.cyberneticsCore()) return false;
         if (notEnoughZealots()) return false;
 
+        if (A.minerals() >= 150 && Count.freeGateways() >= 2 && Count.basesWithUnfinished() >= 2) return false;
         if (Enemy.zerg() && againstZerg()) return true;
         if (A.hasGas(50) && !A.hasMinerals(225) && Count.dragoons() <= 2 && Count.zealots() >= 1) return true;
 

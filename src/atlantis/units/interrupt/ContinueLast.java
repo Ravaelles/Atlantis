@@ -11,7 +11,7 @@ public class ContinueLast extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
+        if (true) return false;
 
         if (unit.isStopped()) return false;
         if (unit.lastActionMoreThanAgo(3)) return false;

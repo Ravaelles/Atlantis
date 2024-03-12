@@ -17,6 +17,9 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 //            if (true) return true;
         }
 
+        AUnit leader = unit.squadLeader();
+        if (leader != null && leader.lastAttackFrameLessThanAgo(30 * 2)) return true;
+
         if (!enemy.hasPosition() || enemy.effUndetected()) {
             return false;
         }
