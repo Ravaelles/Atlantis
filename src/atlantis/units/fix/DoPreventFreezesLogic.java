@@ -17,33 +17,45 @@ public class DoPreventFreezesLogic {
 //            unit.paintCircleFilled(22, Color.Orange);
 //        }
 
-        if (shouldAvoidEnemies(unit)) {
-            if (avoidEnemies(unit)) {
-                unit.paintCircleFilled(22, Color.Orange);
-                return true;
-            }
-        }
+//        if (shouldAvoidEnemies(unit)) {
+//            if (avoidEnemies(unit)) {
+//                unit.setTooltip("Prevent:Avoid");
+////                unit.paintCircleFilled(22, Color.Orange);
+//                return true;
+//            }
+//        }
 
 //        if (ToLastSquadTarget.goTo(unit)) {
 //            return true;
 //        }
 
-        if (goToNearestCombatFriend(unit)) {
+        if (goToLeader(unit)) {
+            unit.setTooltip("Prevent:2Leader");
             return true;
         }
+
+        if (goToNearestEnemy(unit)) {
+            unit.setTooltip("Prevent:2Enemy");
+            return true;
+        }
+
+//        if (goToNearestCombatFriend(unit)) {
+//            return true;
+//        }
 
         if (!unit.isStopped() && unit.lastActionMoreThanAgo(44, Actions.STOP)) {
-            unit.stop("DoPreventStop");
+            unit.stop("Prevent:Stop");
+//            unit.setTooltip("Prevent:Stop");
             return true;
         }
 
-        Manager manager;
-        if ((manager = new TooFarFromFocusPoint(unit)).invoke(unit) != null) return true;
-        if ((manager = new TooCloseToFocusPoint(unit)).invoke(unit) != null) return true;
-
-        unit.paintCircleFilled(22, Color.Yellow);
-//        if (goToNearestEnemy(unit)) return true;
-        if (goToCombatUnit(unit)) return true;
+//        Manager masnager;
+//        if ((manager = new TooFarFromFocusPoint(unit)).invoke(unit) != null) return true;
+//        if ((manager = new TooCloseToFocusPoint(unit)).invoke(unit) != null) return true;
+//
+//        unit.paintCircleFilled(22, Color.Yellow);
+////        if (goToNearestEnemy(unit)) return true;
+//        if (goToCombatUnit(unit)) return true;
 
         return false;
     }
@@ -57,6 +69,13 @@ public class DoPreventFreezesLogic {
         }
 
         return false;
+    }
+
+    private static boolean goToLeader(AUnit unit) {
+        AUnit leader = unit.squadLeader();
+        if (leader == null || unit.distTo(leader) <= 5) return false;
+
+        return unit.move(leader, Actions.MOVE_FORMATION, null);
     }
 
     private static boolean goToCombatUnit(AUnit unit) {

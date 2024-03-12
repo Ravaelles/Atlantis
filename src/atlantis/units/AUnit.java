@@ -918,6 +918,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //            APainter.paintCircleFilled(this, 5, Color.Red);
 //        }
 
+//        if (true) return false;
+
         return runningManager.isRunning();
     }
 

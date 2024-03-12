@@ -34,13 +34,13 @@ public class AttackNearbyEnemies extends Manager {
     public boolean applies() {
         if (unit.cooldown() >= 7) return false;
 
+        if (unit.enemiesNear().empty()) return false;
+        if (dontAttackAlone()) return false;
         if (unit.isDragoon() && unit.cooldown() > 0) return false;
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
         if (unit.lastStartedRunningLessThanAgo(8)) return false;
-        if (unit.enemiesNear().canBeAttackedBy(unit, 15).empty()) return false;
         if (!unit.hasAnyWeapon()) return false;
         if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
-        if (dontAttackAlone()) return false;
 
         if (unit.isMarine()) return MarineCanAttackNearEnemy.allowedForThisUnit(unit);
 
@@ -52,13 +52,18 @@ public class AttackNearbyEnemies extends Manager {
 
     private boolean dontAttackAlone() {
         if (unit.canBeLonelyUnit()) return false;
-        if (unit.isRanged() && unit.woundPercent() <= 10) return false;
 
-//        if (
-//            unit.isCombatUnit()
-//                && unit.distToLeader() >= 13
-//                && unit.combatEvalRelative() <= 1.6
-//        ) return true;
+        if (
+            unit.isRanged()
+                && unit.woundPercent() <= 10
+                && unit.enemiesNear().onlyMelee()
+        ) return false;
+
+        if (
+            unit.isCombatUnit()
+                && unit.distToLeader() >= 7
+//                && unit.combatEvalRelative() <= 2.6
+        ) return true;
 
         return unit.squadSize() >= 6
             && unit.friendsInRadiusCount(6) == 0
