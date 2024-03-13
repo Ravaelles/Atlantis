@@ -22,12 +22,21 @@ public class MissionAttackAllowsToAttack extends HasUnit {
 
 //        if (true) return true;
 
+        if (leaderJustAttacked()) return true;
+
         if (forbiddenToAttackCombatBuilding(enemy)) return false;
         if (forbiddenToAttackWithinChoke(enemy)) return false;
         if (dontAttackAsSquadScout(enemy)) return false;
         if (dontAttackDuringContain(enemy)) return false;
 
         return true;
+    }
+
+    private boolean leaderJustAttacked() {
+        AUnit leader = unit.squadLeader();
+        return leader != null
+            && leader.distTo(unit) <= 8
+            && leader.lastAttackFrameLessThanAgo(30 * 3);
     }
 
     private boolean dontAttackDuringContain(AUnit enemy) {

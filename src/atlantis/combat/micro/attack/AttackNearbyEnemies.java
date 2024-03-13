@@ -32,8 +32,8 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isAttacking() && unit.lastActionLessThanAgo(6, Actions.ATTACK_UNIT) && unit.hasTarget()) return false;
         if (unit.cooldown() >= 7) return false;
-
         if (unit.enemiesNear().empty()) return false;
         if (dontAttackAlone()) return false;
         if (unit.isDragoon() && unit.cooldown() > 0) return false;
