@@ -3,6 +3,7 @@ package atlantis.combat.advance.focus;
 import atlantis.architecture.Manager;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -41,7 +42,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         if (focusPoint == null) return false;
 
         double distToFocus = unit.distTo(focusPoint);
-        APosition goTo = distToFocus <= 4
+        HasPosition goTo = distToFocus <= 4
             ? goToWhenCloseToFocus()
             : goToWhenFarFromFocus();
 
@@ -53,7 +54,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         return false;
     }
 
-    private APosition goToWhenFarFromFocus() {
+    private HasPosition goToWhenFarFromFocus() {
         if (!focusPoint.isAroundChoke()) return focusPoint;
 
         return focusPoint.translateTilesTowards(-3, focusPoint.choke());

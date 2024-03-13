@@ -65,6 +65,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Armory) > 0;
     }
 
+    public static boolean assimilator() {
+        return Count.withPlanned(AUnitType.Protoss_Assimilator) > 0;
+    }
+
     public static boolean observer() {
         return Count.ofType(AUnitType.Protoss_Observer) > 0;
     }

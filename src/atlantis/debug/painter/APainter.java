@@ -177,7 +177,7 @@ public class APainter {
         paintTextCentered(unit.position(), text, color, false);
     }
 
-    public static void paintTextCentered(APosition position, String text, Color color) {
+    public static void paintTextCentered(HasPosition position, String text, Color color) {
         paintTextCentered(position, text, color, false);
     }
 

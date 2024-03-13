@@ -23,7 +23,9 @@ public class OnEnemyNewUnitDiscovered {
         if (A.minerals() >= 360) return;
         if (!weAreMuchWeaker()) return;
 
-        CancelNotStartedBases.cancelNotStartedOrEarlyBases();
+        if (A.seconds() <= 600) {
+            CancelNotStartedBases.cancelNotStartedOrEarlyBases();
+        }
     }
 
     private static boolean weAreMuchWeaker() {

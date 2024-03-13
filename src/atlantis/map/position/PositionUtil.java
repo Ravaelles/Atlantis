@@ -64,6 +64,9 @@ public class PositionUtil {
         else if (object1 instanceof APosition) {
             fromPosition = ((APosition) object1).p();
         }
+//        else if (object1 instanceof HasPosition) {
+//            fromPosition = ((HasPosition) object1).position().p();
+//        }
         else if (object1 instanceof Position) {
             fromPosition = (Position) object1;
         }
@@ -107,6 +110,9 @@ public class PositionUtil {
         else if (object2 instanceof APosition) {
             toPosition = ((APosition) object2).p();
         }
+//        else if (object1 instanceof HasPosition) {
+//            toPosition = ((HasPosition) object2).position().p();
+//        }
         else if (object2 instanceof Position) {
             toPosition = (Position) object2;
         }

@@ -608,7 +608,7 @@ public class AAdvancedPainter extends APainter {
         // =========================================================
 
 //        APosition missionFocusPoint;
-        APosition missionFocusPoint = Missions.globalMission().focusPoint();
+        HasPosition missionFocusPoint = Missions.globalMission().focusPoint();
 //
         paintCircle(missionFocusPoint, 22, Color.Teal);
         paintCircle(missionFocusPoint, 20, Color.Teal);

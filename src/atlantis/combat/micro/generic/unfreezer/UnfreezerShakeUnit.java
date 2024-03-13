@@ -66,7 +66,7 @@ public class UnfreezerShakeUnit {
             }
 
             if (!unit.isMoving()) {
-                APosition focus = unit.focusPoint();
+                HasPosition focus = unit.focusPoint();
 //                AUnit towards = Select.mainOrAnyBuilding();
 
 //                if (focus != null && towards != null) focus = focus.translateTilesTowards(2.1, towards);

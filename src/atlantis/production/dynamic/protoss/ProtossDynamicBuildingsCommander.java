@@ -10,8 +10,6 @@ import atlantis.production.dynamic.protoss.buildings.*;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
-import static atlantis.util.Helpers.*;
-
 public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     public boolean applies() {
@@ -24,11 +22,13 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
     @Override
     protected void handle() {
+        if (ProduceCyberneticsCore.produce()) return;
+
+        ProduceFirstAssimilator.produce();
         ProduceCannon.produce();
         ProduceForge.produce();
 
         if (isItSafeToAddTechBuildings()) {
-            if (ProduceCyberneticsCore.produce()) return;
             ProduceArbiterTribunal.produce();
             ProduceStargate.produce();
             ProduceObservatory.produce();

@@ -19,7 +19,7 @@ public class ProduceGateway {
     public static boolean produce() {
         minerals = A.minerals();
 
-        if (minerals >= 600) return produceGateway();
+        if (minerals >= 550) return produceGateway();
 
         existingGateways = Count.gateways();
         freeGateways = Count.freeGateways();
@@ -30,7 +30,6 @@ public class ProduceGateway {
         allGateways = existingGateways + unfinishedGateways;
 
         if (freeGateways <= 2) {
-            if (minerals >= 600) return produceGateway();
             if (minerals >= 167 && allGateways <= 5 * Count.bases()) return produceGateway();
         }
 

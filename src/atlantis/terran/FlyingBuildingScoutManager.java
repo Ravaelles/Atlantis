@@ -140,7 +140,7 @@ public class FlyingBuildingScoutManager extends Manager {
     private APosition flyingBuildingFocusPoint() {
         APosition focusPoint = Alpha.get().median();
         if (focusPoint != null) {
-            APosition attackFocusPoint = Missions.ATTACK.focusPoint();
+            HasPosition attackFocusPoint = Missions.ATTACK.focusPoint();
 
             if (attackFocusPoint != null) {
                 focusPoint = focusPoint.translateTilesTowards(16, attackFocusPoint);

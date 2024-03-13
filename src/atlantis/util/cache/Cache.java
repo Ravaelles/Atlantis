@@ -3,6 +3,7 @@ package atlantis.util.cache;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Callback;
 
@@ -80,6 +81,24 @@ public class Cache<V> {
 
         @SuppressWarnings("unchecked") V newValue = (V) callback.run();
         set(cacheKey, cacheForFrames, newValue);
+
+//        if (newValue != null) {
+//            if (newValue instanceof AFocusPoint) {
+//                if (((AFocusPoint) value).isValid()) {
+//                    return value;
+//                }
+//            }
+//            if (newValue instanceof FoggedUnit) {
+//                if (((FoggedUnit) value).isValid()) {
+//                    return value;
+//                }
+//            }
+//            if (newValue instanceof AUnit) {
+//                if (((AUnit) value).isValid()) {
+//                    return value;
+//                }
+//            }
+//        }
 
         return newValue;
 

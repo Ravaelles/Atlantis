@@ -23,6 +23,7 @@ public class RetreatManager extends Manager {
     @Override
     public boolean applies() {
         if (unit.isRunning()) return false;
+        if (unit.enemiesNear().empty()) return false;
 //        if (unit.meleeEnemiesNearCount(1.2) > 0) return false;
 
         if (unit.squadIsRetreating()) return true;

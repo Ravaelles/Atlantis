@@ -24,6 +24,8 @@ public class ContinueShooting extends Manager {
         if (unit.isStartingAttack()) return true;
         if (unit.isAttackFrame()) return true;
 
+        if (true) return false;
+
 //        if (
 //            unit.isDragoon()
 //                && unit.isMissionDefendOrSparta()

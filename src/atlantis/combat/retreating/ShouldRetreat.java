@@ -35,6 +35,8 @@ public class ShouldRetreat extends Manager {
      * If chances to win the skirmish with the Near enemy units aren't favorable, avoid fight and retreat.
      */
     public static boolean shouldRetreat(final AUnit unit) {
+        if (unit.enemiesNear().empty()) return false;
+
         return cache.get(
             "shouldRetreat:" + unit.id(),
             19,

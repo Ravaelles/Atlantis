@@ -2,6 +2,7 @@ package atlantis.combat.advance.focus;
 
 import atlantis.combat.missions.MissionManager;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 
 public abstract class MoveToFocusPoint extends MissionManager {
@@ -11,7 +12,7 @@ public abstract class MoveToFocusPoint extends MissionManager {
     protected double unitToFocus;
     protected double unitToFromSide;
     protected double focusToFromSide;
-    protected APosition fromSide;
+    protected HasPosition fromSide;
 
     // =========================================================
 
@@ -29,7 +30,7 @@ public abstract class MoveToFocusPoint extends MissionManager {
 
     @Override
     public boolean applies() {
-        return focusPoint != null;
+        return focusPoint != null && focusPoint.isValid();
     }
 
     // =========================================================

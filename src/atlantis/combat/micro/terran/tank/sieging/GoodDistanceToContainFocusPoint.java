@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 
@@ -18,7 +19,7 @@ public class GoodDistanceToContainFocusPoint extends Manager {
 
         if (unit.lastSiegedOrUnsiegedAgo() <= 30 * (6 + unit.id() % 3)) return false;
 
-        APosition focusPoint = Missions.globalMission().focusPoint();
+        HasPosition focusPoint = Missions.globalMission().focusPoint();
         if (
             focusPoint != null
                 && goodDistance(focusPoint)
@@ -28,7 +29,7 @@ public class GoodDistanceToContainFocusPoint extends Manager {
         return false;
     }
 
-    private boolean goodDistance(APosition focusPoint) {
+    private boolean goodDistance(HasPosition focusPoint) {
         if (Enemy.terran()) {
             return unit.distTo(focusPoint) <= 2 || unit.lastActionMoreThanAgo(30 * 2);
         }

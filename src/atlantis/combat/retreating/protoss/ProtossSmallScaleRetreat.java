@@ -26,7 +26,7 @@ public class ProtossSmallScaleRetreat {
     }
 
     private static double ourMeleeStrength(AUnit unit, Selection friends, double radius) {
-        return friends.melee().inRadius(radius, unit).count() + (unit.hp() >= 30 ? 1.1 : 1);
+        return friends.melee().inRadius(radius, unit).notRunning().count() + (unit.hp() >= 30 ? 1.1 : 1);
     }
 
     private static double meleeEnemiesStrength(AUnit unit, Selection enemies, double radius) {

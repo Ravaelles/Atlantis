@@ -29,7 +29,7 @@ public class OffensiveTurrets extends TurretsForNonMain {
 //    }
 
     protected boolean handleReinforceMissionContain() {
-        APosition focusPoint = Missions.globalMission().focusPoint();
+        HasPosition focusPoint = Missions.globalMission().focusPoint();
         if (focusPoint == null || !Have.main()) return false;
 
         if (Alpha.count() <= 12) return false;
@@ -37,8 +37,8 @@ public class OffensiveTurrets extends TurretsForNonMain {
         return handleReinforcePosition(containReinforcePoint(focusPoint), 9);
     }
 
-    protected HasPosition containReinforcePoint(APosition focusPoint) {
-        APosition point = focusPoint;
+    protected HasPosition containReinforcePoint(HasPosition focusPoint) {
+        HasPosition point = focusPoint;
 //        FoggedUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
 
         HasPosition alphaCenter = Squad.alphaCenter();
