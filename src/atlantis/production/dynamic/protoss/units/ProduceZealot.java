@@ -59,7 +59,7 @@ public class ProduceZealot {
     private static boolean earlyGameDefenceVsProtoss() {
         return Enemy.protoss()
             && A.seconds() <= 410
-//            && (AGame.killsLossesResourceBalance() < 0 || OurArmyStrength.relative() <= 90)
+//            && (AGame.killsLossesResourceBalance() < 0 || OurArmy.relative() <= 90)
             && Count.zealotsWithUnfinished() < minZealotsToHave();
     }
 

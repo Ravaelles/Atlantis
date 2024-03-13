@@ -2,10 +2,9 @@ package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -48,7 +47,7 @@ public class ProduceDragoon {
 
     private static boolean againstEarlyProtossRush() {
         return Enemy.protoss()
-            && OurArmyStrength.relative() <= 90
+            && OurArmy.strength() <= 90
             && A.seconds() <= 500;
     }
 

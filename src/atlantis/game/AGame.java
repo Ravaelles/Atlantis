@@ -22,6 +22,7 @@ public class AGame {
     private static APlayer _enemy = null; // Cached enemy APlayer
     private static APlayer _our = null; // Cached our APlayer
     private static int _framesNow = 0; // Cached current frames count
+    private static int _secondsNow = 0; // Cached current frames count
 
     // =========================================================
 
@@ -63,7 +64,7 @@ public class AGame {
      * Returns approximate number of in-game seconds elapsed.
      */
     public static int timeSeconds() {
-        return Atlantis.game().getFrameCount() / 30;
+        return _secondsNow;
     }
 
     /**
@@ -211,6 +212,10 @@ public class AGame {
 
     public static String getMapName() {
         return Atlantis.game().mapName();
+    }
+
+    public static void calcSeconds() {
+        _secondsNow = Atlantis.game().getFrameCount() / 30;
     }
 
     // =========================================================

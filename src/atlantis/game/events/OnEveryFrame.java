@@ -25,6 +25,7 @@ public class OnEveryFrame {
         // === All game actions that take place every frame ==================================================
 
         try {
+            AGame.calcSeconds();
             AGame.cacheFrameNow();
             Atlantis.getInstance().getGameCommander().invokeCommander();
         }

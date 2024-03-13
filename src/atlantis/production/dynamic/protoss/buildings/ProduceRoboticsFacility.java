@@ -3,12 +3,11 @@ package atlantis.production.dynamic.protoss.buildings;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
-import static atlantis.units.AUnitType.Protoss_Forge;
 import static atlantis.units.AUnitType.Protoss_Robotics_Facility;
 
 public class ProduceRoboticsFacility {
@@ -23,7 +22,7 @@ public class ProduceRoboticsFacility {
         if (Have.roboticsFacility() || !Have.forge()) return false;
         if (Count.workers() <= 17) return false;
         if (Count.withPlanned(Protoss_Robotics_Facility) > 0) return false;
-        if (A.seconds() <= 390 && OurArmyStrength.relative() <= 90) return false;
+        if (A.seconds() <= 390 && OurArmy.strength() <= 90) return false;
 
         if (A.supplyUsed() <= 38 && Decisions.enemyStrategyIsRushOrCheese()) return false;
         if (A.supplyUsed() <= 70 && Have.cannon() && !EnemyInfo.hasHiddenUnits()) return false;

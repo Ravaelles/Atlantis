@@ -1,17 +1,14 @@
 package atlantis.combat.missions.attack;
 
-import atlantis.combat.missions.MissionHistory;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
 public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
@@ -57,7 +54,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     }
 
     private boolean defendVsProtoss() {
-        int strength = OurArmyStrength.relative();
+        int strength = OurArmy.strength();
 
         if (EnemyUnits.discovered().dragoons().count() > Count.dragoons()) {
             if (DEBUG) reason = "Enemy has more Dragoons";

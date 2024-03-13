@@ -3,8 +3,13 @@ package atlantis.information.generic;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
-public class OurArmyStrength {
-    public static int relative() {
+public class OurArmy {
+    /**
+     * Relative to enemy in %.
+     * <p>
+     * 80 means that our army is 80% as strong as enemy's army.
+     */
+    public static int strength() {
         return ArmyStrength.ourArmyRelativeStrength();
     }
 

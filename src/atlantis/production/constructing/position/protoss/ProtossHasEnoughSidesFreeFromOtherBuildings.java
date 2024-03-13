@@ -2,7 +2,7 @@ package atlantis.production.constructing.position.protoss;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.BuildingTileHelper;
@@ -40,7 +40,7 @@ public class ProtossHasEnoughSidesFreeFromOtherBuildings {
     }
 
     private static boolean preventWhenWeak() {
-        return A.supplyUsed() <= 60 && OurArmyStrength.relative() <= 120;
+        return A.supplyUsed() <= 60 && OurArmy.strength() <= 120;
     }
 
     private static boolean preventEnemyInBaseSituation() {

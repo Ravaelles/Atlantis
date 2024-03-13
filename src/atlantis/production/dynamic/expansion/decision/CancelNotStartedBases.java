@@ -7,7 +7,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.select.Count;
 
 public class CancelNotStartedBases {
-    public static void cancelNotStartedBases() {
+    public static void cancelNotStartedOrEarlyBases() {
         if (A.seconds() >= 700 || Count.bases() >= 3) return;
 
 //        if (CountInQueue.bases() > 0) {
@@ -28,10 +28,16 @@ public class CancelNotStartedBases {
 
         Queue.get().nonCompleted().ofType(AtlantisRaceConfig.BASE).forEach((order) -> {
             Construction construction = order.construction();
-            if (construction != null && !construction.hasStarted()) {
+            if (shouldCancelBase(construction)) {
                 A.errPrintln(A.now() + " Cancelling pending base " + order + " as other just finished!");
                 order.cancel();
+                return;
             }
         });
+    }
+
+    private static boolean shouldCancelBase(Construction construction) {
+        return construction != null
+            && (!construction.hasStarted() || construction.progressPercent() <= 49);
     }
 }

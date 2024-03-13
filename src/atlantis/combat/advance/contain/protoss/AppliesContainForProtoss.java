@@ -1,10 +1,9 @@
 package atlantis.combat.advance.contain.protoss;
 
-import atlantis.combat.advance.contain.DontAdvanceButHoldAndContainWhenEnemyBuildingsClose;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
@@ -68,7 +67,7 @@ public class AppliesContainForProtoss {
         if (A.minerals() > 2500) return true;
 
         if (
-            (OurArmyStrength.relative() >= 800 || Alpha.count() >= 32)
+            (OurArmy.strength() >= 800 || Alpha.count() >= 32)
                 && unit.friendsNear().combatUnits().atLeast(18)
         ) return true;
 

@@ -1,9 +1,8 @@
 package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -25,7 +24,7 @@ public class DragoonInsteadZealot {
     private static boolean notEnoughZealots() {
         if (
             Enemy.protoss()
-                && OurArmyStrength.relative() <= 85
+                && OurArmy.strength() <= 85
                 && A.seconds() <= 400
                 && Count.zealots() <= 1
                 && EnemyUnits.discovered().dragoons().atMost(1)

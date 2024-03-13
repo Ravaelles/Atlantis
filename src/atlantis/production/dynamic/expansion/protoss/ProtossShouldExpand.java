@@ -3,7 +3,7 @@ package atlantis.production.dynamic.expansion.protoss;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.race.MyRace;
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.base.BaseLocations;
 import atlantis.production.constructing.ConstructionRequests;
@@ -12,7 +12,6 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
@@ -101,9 +100,11 @@ public class ProtossShouldExpand {
 
     private static boolean forSecondBase() {
         int seconds = A.seconds();
-        int armyStrength = OurArmyStrength.relative();
+        int armyStrength = OurArmy.strength();
 
-        if (armyStrength <= 80) return no("TooWeak");
+        if (armyStrength <= 90) return no("TooWeak");
+
+//        System.err.println(A.now() + " - armyStrength ok to expand = " + armyStrength);
 
         if (bases <= 1 && basesInProduction <= 0) {
             if (A.hasMinerals(350) && Count.workers() >= 18 && CountInQueue.bases() == 0) {

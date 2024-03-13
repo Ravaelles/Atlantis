@@ -4,7 +4,7 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -20,14 +20,14 @@ public class OnEnemyNewUnitDiscovered {
     }
 
     private static void actIfWeAreMuchWeaker() {
-        if (A.minerals() >= 280) return;
+        if (A.minerals() >= 360) return;
         if (!weAreMuchWeaker()) return;
 
-        CancelNotStartedBases.cancelNotStartedBases();
+        CancelNotStartedBases.cancelNotStartedOrEarlyBases();
     }
 
     private static boolean weAreMuchWeaker() {
-        if (OurArmyStrength.relative() >= 0.7) return false;
+        if (OurArmy.strength() >= 0.7) return false;
 
         int n = (Enemy.protoss() ? 4 : 7) - Count.ourCombatUnits();
         if (EnemyUnits.discovered().combatUnits().atMost(n)) return false;

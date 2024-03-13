@@ -1,16 +1,12 @@
 package atlantis.combat.advance.contain.protoss;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
-import atlantis.information.generic.OurArmyStrength;
-import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 
 public class ContainAsProtoss extends Manager {
     public static final int DIST_TO_ENEMY_MAIN_CHOKE = 9;

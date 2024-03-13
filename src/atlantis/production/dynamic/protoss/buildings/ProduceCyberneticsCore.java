@@ -1,12 +1,11 @@
 package atlantis.production.dynamic.protoss.buildings;
 
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.units.select.Have;
 
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
-import static atlantis.units.AUnitType.Protoss_Forge;
 
 public class ProduceCyberneticsCore {
     public static void produce() {
@@ -21,6 +20,6 @@ public class ProduceCyberneticsCore {
 
 //        if (EnemyStrategy.get().isRushOrCheese()) return 10;
 
-        return OurArmyStrength.relative() >= 120 ? 20 : 30;
+        return OurArmy.strength() >= 120 ? 20 : 30;
     }
 }

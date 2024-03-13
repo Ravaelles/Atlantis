@@ -2,7 +2,6 @@ package atlantis.production.dynamic.protoss.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.information.generic.OurArmyStrength;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -13,7 +12,6 @@ import atlantis.util.Enemy;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Protoss_Ground_Armor;
-import static bwapi.UpgradeType.Protoss_Ground_Weapons;
 
 public class ProtossGroundArmor extends Commander {
     private static UpgradeType tech() {

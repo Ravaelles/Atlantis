@@ -143,6 +143,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     }
 
     private static AFocusPoint aroundCombatBuilding() {
+        if (We.protoss() && Count.basesWithUnfinished() <= 1) return null;
+
 //        AUnit base = Select.ourBases().last();
         AUnit base = Select.ourBases().second();
 

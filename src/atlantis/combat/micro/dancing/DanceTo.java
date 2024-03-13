@@ -1,12 +1,9 @@
 package atlantis.combat.micro.dancing;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
-import atlantis.information.generic.OurArmyStrength;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.Enemy;
 
 public class DanceTo extends Manager {
     private AUnit target;

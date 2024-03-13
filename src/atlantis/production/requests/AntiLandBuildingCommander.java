@@ -36,7 +36,9 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
     @Override
     public boolean shouldBuildNew() {
 //        System.err.println("Expected: " + expected()  + "(" + existingWithUnfinished() + ")");
-        return existingWithUnfinished() < expected();
+        int expected = expected();
+        
+        return expected > 0 && existingWithUnfinished() < expected;
     }
 
     public boolean requestToBuildNewAntiLandCombatBuilding() {
@@ -47,7 +49,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
         return shouldBuildNew() ? requestOne(nextPosition()) : false;
     }
 
-//    public boolean requestOne(HasPosition at, ProductionOrder order) {
+    //    public boolean requestOne(HasPosition at, ProductionOrder order) {
     @Override
     public boolean requestOne(HasPosition at) {
         AUnitType buildType = typeToBuildFirst();

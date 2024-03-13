@@ -4,7 +4,7 @@ package atlantis.production.dynamic.protoss;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.generic.OurArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.production.dynamic.protoss.units.*;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
@@ -66,7 +66,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
     private static boolean inEarlyGamePhaseMakeSureNotToBeTooWeak() {
         return A.seconds() <= 400
-            && (OurArmyStrength.relative() < 0.85 || Count.zealots() <= 2 || Count.dragoons() <= 3);
+            && (OurArmy.strength() < 0.85 || Count.zealots() <= 2 || Count.dragoons() <= 3);
     }
 
     private static boolean keepSomeResourcesInLaterGamePhases() {
