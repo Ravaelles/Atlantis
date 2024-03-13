@@ -14,6 +14,11 @@ public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (shouldNotDoAnythingButContinue(unit)) return true;
 
+        if (!unit.isStopped() && unit.lastActionMoreThanAgo(4, Actions.STOP)) {
+            unit.stop("UnfreezeByStop");
+            return true;
+        }
+
         if (
             !unit.isAttacking()
                 && unit.lastAttackFrameMoreThanAgo(30 * 2)
@@ -23,11 +28,6 @@ public class UnfreezerShakeUnit {
                 unit.setTooltip("UnfreezeByAttack");
                 return true;
             }
-        }
-
-        if (!unit.isStopped() && unit.lastActionMoreThanAgo(10, Actions.STOP)) {
-            unit.stop("UnfreezeByStop");
-            return true;
         }
 
         if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30 * 2, Actions.HOLD_POSITION)) {

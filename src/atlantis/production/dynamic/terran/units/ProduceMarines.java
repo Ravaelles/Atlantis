@@ -30,16 +30,16 @@ public class ProduceMarines {
         if (freeBarracks <= 0) return false;
 //        freeBarracks < CountInQueue.count(Terran_Marine)
 
-        marines = Count.marines();
-
-        if (marines >= 5 && !A.hasMinerals(100)) return false;
-
-        if (marines <= 20 && A.hasMinerals(600)) return forceProduceMarine();
-
-        if (!A.canAffordWithReserved(55, 0)) return false;
-
         if (A.hasMinerals(100) && EnemyWhoBreachedBase.get() != null) return forceProduceMarine();
 
+        marines = Count.marines();
+
+        if (marines <= 3 && A.hasMinerals(100)) return forceProduceMarine();
+        
+        if (marines >= 5 && !A.hasMinerals(100)) return false;
+        if (!A.canAffordWithReserved(55, 0)) return false;
+
+        if (marines <= 20 && A.hasMinerals(150)) return forceProduceMarine();
         if (marines <= 1 && A.hasMinerals(150)) return forceProduceMarine();
 
         if (earlyGameAndWeAreWeak()) return forceProduceMarine();

@@ -38,7 +38,7 @@ public class OnUnitCreated {
 
             if (unit.isBase()) {
                 ExpansionCommander.justExpanded();
-                CancelNotStartedBases.cancelNotStartedOrEarlyBases();
+                CancelNotStartedBases.cancelNotStartedOrEarlyBases(unit);
             }
 
             Construction construction = unit.construction();

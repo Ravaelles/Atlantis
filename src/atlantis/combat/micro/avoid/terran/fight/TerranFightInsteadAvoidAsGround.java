@@ -14,7 +14,7 @@ public class TerranFightInsteadAvoidAsGround extends Manager {
         return unit.isGroundUnit()
             && !unit.isTank()
             && unit.cooldownRemaining() <= 2
-            && unit.hpMoreThan(20)
+            && unit.hpMoreThan(25)
             && unit.friendsNear().tanks().inRadius(8, unit).atLeast(1);
     }
 

@@ -7,12 +7,14 @@ import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
+import atlantis.util.We;
 import bwapi.Color;
 
 import java.util.ArrayList;
 
 public class PathToEnemyFocus {
     public static AFocusPoint getIfApplies() {
+        if (We.terran()) return null;
         if (Alpha.count() <= 7) return null;
         if (doesNotApplyForThisMap()) return null;
 

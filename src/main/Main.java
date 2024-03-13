@@ -69,7 +69,7 @@ public class Main {
 
         // === Popular SSCAIT maps =================================
 
-        if (true) return "sscai/(2)HeartbreakRidge.scx";
+//        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
@@ -81,7 +81,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-//        if (true) return "ums/rav/7th_rav.scx";
+        if (true) return "ums/rav/7th_rav.scx";
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_skilltest_asP.scx"; // Protoss v. AI Protoss player
@@ -99,7 +99,7 @@ public class Main {
         // === Maps for testing as PROTOSS =============================================================================
 
 //        if (true) return "ums/rav/protoss/Drag_v_M&M.scx"; // Goons vs M&M + Bunker
-        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Bunker.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
 //        if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
@@ -157,12 +157,12 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
-//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
+        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
 //        if (true) return "ums/rav/M_v_Zealots.scx"; // Many Zealots v Many Marines in a Terran base

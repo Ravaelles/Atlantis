@@ -16,7 +16,7 @@ public class UnfreezeGeneric extends Manager {
     @Override
     public boolean applies() {
         if (unit.lastPositionChangedLessThanAgo(52)) return false;
-        if (unit.lastActionLessThanAgo(52)) return false;
+//        if (unit.lastActionLessThanAgo(52)) return false;
 
 //        if (true) return false;
 //

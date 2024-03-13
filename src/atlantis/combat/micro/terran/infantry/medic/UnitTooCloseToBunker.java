@@ -14,7 +14,10 @@ public class UnitTooCloseToBunker extends Manager {
 
     @Override
     public boolean applies() {
-        return Enemy.protoss() && unit.isMedic() && (bunker = unit.friendsNear().bunkers().nearestTo(unit)) != null;
+        return unit.isMedic()
+            && !Enemy.terran()
+            && !unit.isSpecialAction()
+            && (bunker = unit.friendsNear().bunkers().nearestTo(unit)) != null;
     }
 
     @Override

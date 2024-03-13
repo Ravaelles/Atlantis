@@ -20,8 +20,8 @@ public class ForbiddenByStreetGridForSupplyDepotAndAcademy {
         if ((modulo = (position.tx()) % 2) != 0) return failed("TX modulo M = " + modulo);
         if ((modulo = (position.ty()) % 2) != 0) return failed("TY modulo N = " + modulo);
 
-        if ((modulo = (position.tx()) % 9) >= 5) return failed("TX modulo M1 = " + modulo);
-        if ((modulo = (position.ty()) % 9) >= 5) return failed("TY modulo N1 = " + modulo);
+        if ((modulo = (position.tx()) % 19) >= 9) return failed("TX modulo M1 = " + modulo);
+        if ((modulo = (position.ty()) % 19) >= 9) return failed("TY modulo N1 = " + modulo);
 
         if (!streetGridMatches(position)) {
             AbstractPositionFinder._CONDITION_THAT_FAILED = building.name() + " street grid doesn't allow it";

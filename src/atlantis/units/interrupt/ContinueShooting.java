@@ -17,9 +17,8 @@ public class ContinueShooting extends Manager {
         if (!unit.isAttacking()) return false;
         if (ShouldRetreat.shouldRetreat(unit)) return false;
 
-        if (unit.isDragoon()) {
-            if (doesNotApplyForDragoon()) return false;
-        }
+        if (unit.isDragoon() && doesNotApplyForDragoon()) return false;
+        if (unit.isMarine() && doesNotApplyForMarine()) return false;
 
         if (unit.isStartingAttack()) return true;
         if (unit.isAttackFrame()) return true;
@@ -54,6 +53,15 @@ public class ContinueShooting extends Manager {
 
         if (unit.hp() <= 30) return true;
         if (unit.meleeEnemiesNearCount(minDistToEnemy) >= 1) return true;
+
+        return false;
+    }
+
+    private boolean doesNotApplyForMarine() {
+        double minDistToEnemy = 1.5 + unit.woundPercent() / 80.0;
+
+        if (unit.hp() <= 21) return true;
+        if (!unit.hasMedicInRange() && unit.meleeEnemiesNearCount(minDistToEnemy) >= 1) return true;
 
         return false;
     }

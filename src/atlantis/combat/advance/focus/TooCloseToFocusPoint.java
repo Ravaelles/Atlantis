@@ -49,10 +49,15 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         if (asDragoon()) return true;
 
 //        APosition goTo = isTooFar ? focusPoint : unit.translateTilesTowards(0.1, focusPoint);
+        if (goAway()) return true;
         if (goAwayFromCenter()) return true;
-        if (goToMain()) return true;
+//        if (goToMain()) return true;
 
         return false;
+    }
+
+    private boolean goAway() {
+        return unit.moveAwayFrom(focusPoint, 0.5, Actions.MOVE_FOCUS, "TooCloseA");
     }
 
     private boolean asDragoon() {
@@ -99,7 +104,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         HasPosition goTo = fromSide != null ? fromSide : Select.main();
 
         if (goTo != null && goTo.isWalkable()) {
-            unit.move(goTo, Actions.MOVE_FOCUS, "TooCloseB", true);
+            unit.move(goTo, Actions.MOVE_FOCUS, "TooCloseM", true);
             return true;
         }
         return false;
