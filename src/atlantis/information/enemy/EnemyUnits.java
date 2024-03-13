@@ -78,7 +78,7 @@ public class EnemyUnits {
     public static AUnit nearestEnemyBuilding() {
         return (AUnit) cache.getIfValid(
             "nearestEnemyBuilding",
-            51,
+            111,
             () -> {
                 AUnit ourUnit = Select.mainOrAnyBuilding();
                 return discovered().buildings().groundNearestTo(ourUnit);

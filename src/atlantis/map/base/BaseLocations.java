@@ -128,7 +128,7 @@ public class BaseLocations {
      * Returns free base location which is as far from enemy starting location as possible.
      */
     public static ABaseLocation expansionBaseLocationMostDistantToEnemy() {
-        AUnit farthestTo = EnemyUnits.enemyBase();
+        AUnit farthestTo = EnemyUnits.nearestEnemyBuilding();
         if (farthestTo == null) {
             return expansionFreeBaseLocationNearestTo(Select.ourBases().first().position());
         }

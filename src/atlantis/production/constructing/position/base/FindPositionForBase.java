@@ -1,7 +1,5 @@
 package atlantis.production.constructing.position.base;
 
-import atlantis.game.A;
-import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -13,7 +11,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLog;
 
 public class FindPositionForBase {
     protected static Cache<APosition> cache = new Cache<>();
@@ -28,54 +25,6 @@ public class FindPositionForBase {
         }
 
         return FindPositionForBaseNearestFree.find(building, builder, construction);
-    }
-
-    protected static APosition findPositionForBase_nearestFreeBase(AUnitType building, AUnit builder,
-                                                                   Construction construction) {
-//        ABaseLocation baseLocationToExpand;
-        HasPosition near = null;
-        int ourBasesCount = Select.ourBases().count();
-
-        if (A.seconds() <= 1000 && ourBasesCount <= 1) {
-            near = DefineNaturalBase.natural();
-        }
-//        else if (ourBasesCount <= 2) {
-        if (near == null) {
-            AUnit mainBase = Select.mainOrAnyBuilding();
-            near = BaseLocations.expansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
-        }
-//        else {
-//            baseLocationToExpand = Bases.expansionBaseLocationMostDistantToEnemy();
-//        }
-
-        if (near == null) {
-            if (ourBasesCount <= 1 && !A.isUms()) {
-                ErrorLog.printMaxOncePerMinute("findPositionForBase_nearestFreeBase is null");
-            }
-            return null;
-        }
-
-//        APosition near = APosition.create(baseLocationToExpand.position()).translateByPixels(-64, -48);
-//        near = APosition.create(baseLocationToExpand.position());
-        if (construction != null) construction.setMaxDistance(3);
-
-        double maxDistance = construction != null && construction.maxDistance() >= 0 ? construction.maxDistance() : 3;
-
-        APosition nearestBase = APositionFinder.findStandardPosition(
-            builder, building, near, maxDistance
-        );
-
-        if (nearestBase == null && Select.ourBases().notEmpty()) {
-            ErrorLog.printMaxOncePerMinute(
-                "Could not find nearest base."
-                    + "\nnear = " + near
-                    + "\nconstruction = " + construction
-            );
-            return null;
-        }
-        ;
-
-        return nearestBase;
     }
 
     public static APosition findPositionForBase_nearMainBase(AUnitType building, AUnit builder, Construction construction) {

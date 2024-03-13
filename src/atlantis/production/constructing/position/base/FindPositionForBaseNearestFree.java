@@ -24,13 +24,11 @@ public class FindPositionForBaseNearestFree {
             "findPositionForBase:" + null + "," + (construction != null ? construction.id() : "-"),
             113,
             () -> {
-                String modifier = construction != null && construction.productionOrder() != null ?
-                    construction.productionOrder().getModifier() : null;
-
                 APosition position = null;
+                String modifier = modifier(construction);
+
                 if (modifier != null) {
-//                    position = ASpecialPositionFinder.positionModifierToPosition(modifier, building, builder, construction);
-                    position = PositionModifier.toPosition(modifier, building, builder, construction);
+                    position = positionIfHasModifier(building, builder, construction, modifier);
                 }
 
                 if (position == null) {
@@ -45,7 +43,7 @@ public class FindPositionForBaseNearestFree {
                     }
                 }
 
-                APosition result = FindPositionForBase.findPositionForBase_nearestFreeBase(building, builder, construction);
+                APosition result = NearestFreeBase.find(building, builder, construction);
 //                System.err.println("result = " + result);
 //                System.err.println("Bases.natural() = " + Bases.natural());
 
@@ -65,6 +63,15 @@ public class FindPositionForBaseNearestFree {
                 return result;
             }
         );
+    }
+
+    private static APosition positionIfHasModifier(AUnitType building, AUnit builder, Construction construction, String modifier) {
+        return PositionModifier.toPosition(modifier, building, builder, construction);
+    }
+
+    private static String modifier(Construction construction) {
+        return construction != null && construction.productionOrder() != null ?
+            construction.productionOrder().getModifier() : null;
     }
 
     private static APosition fallback() {
