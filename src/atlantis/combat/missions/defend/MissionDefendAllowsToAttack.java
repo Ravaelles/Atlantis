@@ -1,5 +1,6 @@
 package atlantis.combat.missions.defend;
 
+import atlantis.combat.micro.attack.DontAttackAlone;
 import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -16,6 +17,8 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
             throw new RuntimeException("aaa");
 //            if (true) return true;
         }
+
+        if (!unit.isMissionSparta() && DontAttackAlone.isAlone(unit)) return false;
 
         AUnit leader = unit.squadLeader();
         if (leader != null) {

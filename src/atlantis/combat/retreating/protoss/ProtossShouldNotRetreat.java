@@ -80,7 +80,7 @@ public class ProtossShouldNotRetreat extends Manager {
 //            if (unit.mission().allowsToRetreat()) {
 //                System.err.println("Sparta allowed " + unit + " to retreat (HP=" + unit.hp() + ")");
 //            }
-            return !unit.mission().allowsToRetreat(unit);
+            return !unit.mission().allowsToRetreat(unit) && unit.distToFocusPoint() <= 8;
         }
 
         if (unit.enemiesNear().tanks().inRadius(5, unit).notEmpty()) {

@@ -71,6 +71,9 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         AFocusPoint enemyCombatBuilding = nearestEnemyCombatBuilding(main);
         if (enemyCombatBuilding != null) return enemyCombatBuilding;
 
+        AFocusPoint enemyUnit = nearestCombatUnit(main);
+        if (enemyUnit != null) return enemyUnit;
+
         AFocusPoint enemyBuilding = nearestEnemyBuilding(main);
         if (enemyBuilding != null) return enemyBuilding;
 
@@ -222,6 +225,23 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
         return null;
+    }
+
+    private static AFocusPoint nearestCombatUnit(AUnit main) {
+//        AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+//        if (enemyBuilding == null) return null;
+
+        AUnit nearestTo = Alpha.get().leader();
+        if (nearestTo == null) nearestTo = main;
+
+        AUnit enemy = Select.enemy().combatUnits().nearestTo(nearestTo);
+        if (enemy == null) return null;
+
+        return new AFocusPoint(
+            enemy,
+            main,
+            "EnemyUnit(" + enemy.name() + ")"
+        );
     }
 
     private boolean isTemporaryTargetStillValid() {

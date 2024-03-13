@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend.focus;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
@@ -13,11 +14,16 @@ import java.util.ArrayList;
 public class PathToEnemyFocus {
     public static AFocusPoint getIfApplies() {
         if (Alpha.count() <= 7) return null;
+        if (doesNotApplyForThisMap()) return null;
 
         ArrayList<AChoke> chokes = PathToEnemyBase.chokesLeadingToEnemyBase();
         return selectChokeAndReturnFocusPoint(chokes);
 
 //        return new AFocusPoint(choke, Select.mainOrAnyBuilding(), "PathToEnemy");
+    }
+
+    private static boolean doesNotApplyForThisMap() {
+        return AMap.getMapName().contains("Heartbreak");
     }
 
     private static AFocusPoint selectChokeAndReturnFocusPoint(ArrayList<AChoke> chokes) {
@@ -38,7 +44,7 @@ public class PathToEnemyFocus {
         for (currentIndex = iMin; currentIndex <= iMax; currentIndex++) {
             AChoke choke = chokes.get(currentIndex);
 
-            if (choke.width() >= 6) continue;
+            if (choke.width() >= 5) continue;
 
             double eval = evalChoke(choke);
             if (best == null || eval > bestScore) {

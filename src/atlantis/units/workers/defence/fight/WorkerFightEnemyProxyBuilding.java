@@ -46,10 +46,13 @@ public class WorkerFightEnemyProxyBuilding extends Manager {
             else return _enemyProxyBuilding;
         }
 
+        AUnit main = Select.mainOrAnyBuilding();
+        if (main == null) return null;
+
         Selection baseBuildings = Select
             .enemy()
             .buildings()
-            .inRadius(25, Select.mainOrAnyBuilding());
+            .inRadius(25, main);
 
         if (baseBuildings.empty()) return _enemyProxyBuilding = null;
 

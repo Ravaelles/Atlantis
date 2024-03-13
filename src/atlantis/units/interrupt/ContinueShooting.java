@@ -1,6 +1,8 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
@@ -13,6 +15,7 @@ public class ContinueShooting extends Manager {
     public boolean applies() {
         if (unit.isStopped()) return false;
         if (!unit.isAttacking()) return false;
+        if (ShouldRetreat.shouldRetreat(unit)) return false;
 
         if (unit.isDragoon()) {
             if (doesNotApplyForDragoon()) return false;
@@ -47,7 +50,7 @@ public class ContinueShooting extends Manager {
     private boolean doesNotApplyForDragoon() {
         double minDistToEnemy = 1.2 + unit.woundPercent() / 80.0;
 
-        if (unit.hp() <= 30) return false;
+        if (unit.hp() <= 30) return true;
         if (unit.meleeEnemiesNearCount(minDistToEnemy) >= 1) return true;
 
         return false;

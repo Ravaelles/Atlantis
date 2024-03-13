@@ -32,46 +32,14 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isAttacking() && unit.lastActionLessThanAgo(6, Actions.ATTACK_UNIT) && unit.hasTarget()) return false;
-        if (unit.cooldown() >= 7) return false;
-        if (unit.enemiesNear().empty()) return false;
-        if (dontAttackAlone()) return false;
-        if (unit.isDragoon() && unit.cooldown() > 0) return false;
-        if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
-        if (unit.lastStartedRunningLessThanAgo(8)) return false;
-        if (!unit.hasAnyWeapon()) return false;
-        if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
-
-        if (unit.isMarine()) return MarineCanAttackNearEnemy.allowedForThisUnit(unit);
-
-        targetToAttack = defineBestEnemyToAttack(unit);
-        if (targetToAttack == null || targetToAttack.hp() <= 0) return false;
-
-        return true;
-    }
-
-    private boolean dontAttackAlone() {
-        if (unit.canBeLonelyUnit()) return false;
-
-        if (
-            unit.isRanged()
-                && unit.woundPercent() <= 10
-                && unit.enemiesNear().onlyMelee()
-        ) return false;
-
-        if (
-            unit.isCombatUnit()
-                && unit.distToLeader() >= 7
-//                && unit.combatEvalRelative() <= 2.6
-        ) return true;
-
-        return unit.squadSize() >= 6
-            && unit.friendsInRadiusCount(6) == 0
-            && unit.enemiesNear().ranged().notEmpty();
+        return (new AttackNearbyEnemiesApplies(unit)).applies();
     }
 
     @Override
     protected Manager handle() {
+        targetToAttack = defineBestEnemyToAttack(unit);
+        if (targetToAttack == null || targetToAttack.hp() <= 0) return null;
+
 //        PreventFreeze preventFreeze = new PreventFreeze(unit);
 //        if (preventFreeze.invoke(this) != null) {
 //            return usedManager(preventFreeze);
@@ -103,7 +71,7 @@ public class AttackNearbyEnemies extends Manager {
         if (
             target != null
                 && target.hp() > 0
-                && unit.distTo(target) <= unit.weaponRangeAgainst(target)
+//                && unit.distTo(target) <= unit.weaponRangeAgainst(target)
                 && (
                 unit.lastActionLessThanAgo(4, Actions.ATTACK_UNIT)
                     || unit.lastActionLessThanAgo(4, Actions.MOVE_ATTACK)

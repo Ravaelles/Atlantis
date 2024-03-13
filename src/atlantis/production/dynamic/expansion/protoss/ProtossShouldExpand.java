@@ -3,6 +3,7 @@ package atlantis.production.dynamic.expansion.protoss;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.race.MyRace;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.base.BaseLocations;
@@ -102,7 +103,10 @@ public class ProtossShouldExpand {
         int seconds = A.seconds();
         int armyStrength = OurArmy.strength();
 
+        if (seconds >= 650) return yes("GettingLate");
+
         if (armyStrength <= 90) return no("TooWeak");
+        if (enemyHasNoCombatBuilding()) return no("NoEnemyCB");
 
 //        System.err.println(A.now() + " - armyStrength ok to expand = " + armyStrength);
 
@@ -119,7 +123,6 @@ public class ProtossShouldExpand {
                     return yes("ManyWorkers");
                 }
             }
-            if (seconds >= 750) return yes("GettingLate");
             if (manyGateways()) return yes("ManyGateways");
         }
 
@@ -134,6 +137,10 @@ public class ProtossShouldExpand {
         if (seconds <= 400 && armyStrength < 100) return no("Weak");
 
         return no("JustDont");
+    }
+
+    private static boolean enemyHasNoCombatBuilding() {
+        return !A.hasMinerals(380) && EnemyUnits.discovered().combatBuildingsAntiLand().empty();
     }
 
     private static boolean manyGateways() {

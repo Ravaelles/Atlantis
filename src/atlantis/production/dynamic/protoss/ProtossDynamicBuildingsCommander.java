@@ -28,7 +28,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         ProduceForge.produce();
 
         if (isItSafeToAddTechBuildings()) {
-            ProduceCyberneticsCore.produce();
+            if (ProduceCyberneticsCore.produce()) return;
             ProduceArbiterTribunal.produce();
             ProduceStargate.produce();
             ProduceObservatory.produce();
@@ -44,7 +44,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 
     protected static boolean isItSafeToAddTechBuildings() {
         if (EnemyStrategy.get().isRushOrCheese()) {
-            if (ArmyStrength.ourArmyRelativeStrength() <= 80 && !A.hasMineralsAndGas(250, 100)) return false;
+            if (ArmyStrength.ourArmyRelativeStrength() <= 80 && !A.hasMinerals(200)) return false;
         }
 
         AUnit enemyUnitInMainBase = EnemyInfo.enemyUnitInMainBase();

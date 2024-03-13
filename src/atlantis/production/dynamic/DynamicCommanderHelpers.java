@@ -17,19 +17,21 @@ public class DynamicCommanderHelpers extends Commander {
         return EnemyStrategy.get();
     }
 
-    public static void buildToHaveOne(int minSupply, AUnitType type) {
+    public static boolean buildToHaveOne(int minSupply, AUnitType type) {
         if (AGame.supplyUsed() >= minSupply) {
-            buildToHaveOne(type);
+            return buildToHaveOne(type);
         }
+
+        return false;
     }
 
-    public static void buildToHaveOne(AUnitType type) {
+    public static boolean buildToHaveOne(AUnitType type) {
         if (Count.withPlanned(type) > 0) {
-            return;
+            return false;
         }
 
 //        System.out.println("@" + A.now() + " buildToHaveOne " + type);
-        buildNow(type, true);
+        return buildNow(type, true);
     }
 
     public static void buildIfHaveMineralsAndGas(AUnitType type) {

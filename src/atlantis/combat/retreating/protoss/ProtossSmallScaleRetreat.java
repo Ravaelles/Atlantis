@@ -13,7 +13,7 @@ public class ProtossSmallScaleRetreat {
     private static boolean asMelee(AUnit unit, Selection friends, Selection enemies) {
         if (unit.combatEvalRelative() >= 1.2) return false;
 
-//        if (meleeOverpoweredInRadius(unit, friends, enemies, 1.1)) return true;
+        if (meleeOverpoweredInRadius(unit, friends, enemies, 2.2)) return true;
 //        if (meleeOverpoweredInRadius(unit, friends, enemies, 5)) return true;
 
         return false;

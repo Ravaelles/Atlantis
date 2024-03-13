@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Chokes {
-
     private static Cache<Object> cache = new Cache<>();
 //    private static HashMap<APosition, AChoke> cached_basesToChokes = new HashMap<>();
 //    protected final Set<AChoke> disabledChokes = new HashSet<>();
@@ -80,10 +79,12 @@ public class Chokes {
      * Returns chokepoint to defend for the natural (second) base.
      */
     public static AChoke natural() {
-        return (AChoke) cache.get(
+        return (AChoke) cache.getIfValid(
             "natural",
             -1,
             () -> {
+                if (mainChoke() == null) return null;
+
                 if (!ActiveMap.isMap("7th")) {
                     AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
                     if (fullfillsConditionsForNatural(choke, "NATURAL")) {
@@ -131,8 +132,7 @@ public class Chokes {
     public static boolean fullfillsConditionsForNatural(AChoke choke, String flag) {
         if (choke == null) return false;
 
-        return choke.width() <= 7
-            && choke.position().distToMapBorders() > 9
+        return choke.position().distToMapBorders() > 9
             && choke.center().distToOr999(flagToChoke(flag)) >= 10;
     }
 
@@ -155,10 +155,15 @@ public class Chokes {
             "nearestChoke:" + position.toStringPixels(),
             -1,
             () -> {
+                AChoke naturalFromJbweb = AChoke.from(JBWEB.getNaturalChoke());
+
+                if (naturalFromJbweb != null) return naturalFromJbweb;
+
                 double nearestDist = 99999;
                 AChoke nearest = null;
 
                 for (AChoke choke : chokes()) {
+                    if (choke.equals(mainChoke())) continue;
                     if (!fullfillsConditionsForNatural(choke, flag)) continue;
 
 //                    double dist = position.position().groundDistanceTo(choke.center()) - (choke.width() / 64.0);
