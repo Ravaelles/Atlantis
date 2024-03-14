@@ -40,8 +40,10 @@ public class ProcessAttackUnit extends Manager {
 
         if (target.isFoggedUnitWithKnownPosition()) {
             if (unit.distTo(target) > unit.weaponRangeAgainst(target)) {
-                unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false);
-                return true;
+//                unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false);
+                if (unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false)) {
+                    return true;
+                }
             }
             return false;
         }
@@ -49,8 +51,8 @@ public class ProcessAttackUnit extends Manager {
         if (handleMoveNextToTanksWhenAttackingThem(target)) return true;
 
         // Come closer when attacking enemy bases
-        if (target.isBase() && unit.hasCooldown() && unit.distToMoreThan(target, 2.8)) {
-            if (unit.move(target, Actions.MOVE_ATTACK, "BaseAttack", false)) {
+        if (comeCloserToBuildingsWhenAttackingThem(target)) {
+            if (unit.move(target, Actions.MOVE_ENGAGE, "GetClosa", false)) {
                 return true;
             }
         }
@@ -77,6 +79,13 @@ public class ProcessAttackUnit extends Manager {
 
         // Melee
         return confirmAttack(target);
+    }
+
+    private boolean comeCloserToBuildingsWhenAttackingThem(AUnit target) {
+        return target.isABuilding()
+            && unit.cooldown() >= 5
+            && !target.isCombatBuilding()
+            && unit.distToMoreThan(target, 1.7);
     }
 
     //    private  double distBonus(AUnit target) {
@@ -115,9 +124,14 @@ public class ProcessAttackUnit extends Manager {
         ) {
             if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) return false;
 
-            if (unit.move(enemy, Actions.MOVE_ATTACK, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
+            if (unit.attackUnit(enemy)) {
+                unit.setTooltip("Soyuz" + A.dist(enemy, unit) + "/" + count);
                 return true;
             }
+
+//            if (unit.move(enemy, Actions.MOVE_ATTACK, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
+//                return true;
+//            }
         }
 
         return false;

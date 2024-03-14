@@ -1397,9 +1397,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return _lastTargetToAttack = AUnit.getById(u.getTarget());
         }
 
-        if (Actions.MOVE_ATTACK.equals(unitAction)) {
-            return _lastTargetToAttack = targetUnitToAttack();
-        }
+//        if (Actions.MOVE_ATTACK.equals(unitAction)) {
+//            return _lastTargetToAttack = targetUnitToAttack();
+//        }
 
         return _lastTargetToAttack = orderTarget();
     }

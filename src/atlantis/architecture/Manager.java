@@ -60,6 +60,10 @@ public abstract class Manager extends BaseManager {
         return invokeFromParent(parentToString(parent));
     }
 
+    public boolean invoked(Object parent) {
+        return invokeFromParent(parentToString(parent)) != null;
+    }
+
     private String parentToString(Object parent) {
         if (parent instanceof String) return (String) parent;
         if (parent instanceof Class) return ((Class) parent).getSimpleName();

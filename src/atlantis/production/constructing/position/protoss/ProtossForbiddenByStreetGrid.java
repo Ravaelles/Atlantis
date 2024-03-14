@@ -7,8 +7,8 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ProtossForbiddenByStreetGrid {
-    public static final int GRID_VALUE_X = 15;
-    public static final int GRID_VALUE_Y = 15;
+    public static final int GRID_SIZE_X = 13;
+    public static final int GRID_SIZE_Y = 11;
 //    public static final int GRID_VALUE_X = 14;
 //    public static final int GRID_VALUE_Y = 14;
 //    public static final int GRID_VALUE_X = 13;
@@ -26,20 +26,40 @@ public class ProtossForbiddenByStreetGrid {
         if (!We.protoss()) return false;
         if (building.isBase() || building.isGasBuilding()) return false;
 
-        int modulo;
-        if ((modulo = (position.tx() % 4)) != 0) return failed("TX modulo P_XG = " + modulo);
-        if ((modulo = (position.ty() % 3)) != 0) return failed("TY modulo P_YGs = " + modulo);
+//        if ((modulo = (position.tx() % 4)) != 0) return failed("TX modulo P_XG = " + modulo);
+//        if ((modulo = (position.ty() % 3)) != 0) return failed("TY modulo P_YGs = " + modulo);
 
-//        if (building.isPylon()) {
+        if (building.isPylon()) {
+            int moduloX = (position.tx() % GRID_SIZE_X);
+            int moduloY = (position.ty() % GRID_SIZE_Y);
+
 //            return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
-//        }
-//        else {
-//            if ((modulo = (position.tx() % 4)) != 0) return failed("TX modulo P_X1 = " + modulo);
-//            if ((modulo = (position.tx() % 13)) >= 11) return failed("TX modulo P_X2 = " + modulo);
-//
-//            if ((modulo = (position.ty() % 3)) != 0) return failed("TY modulo P_Y1 = " + modulo);
-//            if ((modulo = (position.ty() % 10)) >= 8) return failed("TY modulo P_Y2 = " + modulo);
-//        }
+
+//            if ((modulo = (position.tx()) % 2) != 0) return failed("TX modulo PP_X1 = " + modulo);
+//            if ((modulo = (position.ty()) % 2) != 0) return failed("TY modulo PP_Y1 = " + modulo);
+
+//            if (modulo <= 7 || modulo >= 12) return failed("TX modulo PP_X2 = " + modulo);
+            if (moduloX != 8 && moduloX != 10) return failed("TX modulo PP_X2 = " + moduloX);
+            if (moduloY != 5 && moduloY != 7) return failed("TY modulo PP_Y2 = " + moduloY);
+        }
+        else {
+            int moduloX = (position.tx() % GRID_SIZE_X);
+            int moduloY = (position.ty() % GRID_SIZE_Y);
+
+//            if (moduloX % 4 != 0) return failed("TX modulo PG_X1 = " + moduloX
+//                + " / tx:" + position.tx() + " / grid:" + GRID_SIZE_X);
+//            if (moduloY % 3 != 0) return failed("TY modulo PG_Y1 = " + moduloY
+//                + " / ty:" + position.ty() + " / grid:" + GRID_SIZE_Y);
+
+//            if ((modulo = (position.tx() % 4)) != 0) return failed("TX modulo PG_X1 = " + modulo);
+//            if ((modulo = (position.ty() % 3)) != 0) return failed("TY modulo PG_Y1 = " + modulo);
+
+            if (moduloX != 0 && moduloX != 4) return failed("TX modulo PG_X2 = " + moduloX
+                + " / tx:" + position.tx() + " / grid:" + GRID_SIZE_X);
+
+            if (moduloY != 0 && moduloY != 3) return failed("TY modulo PG_Y2 = " + moduloY
+                + " / ty:" + position.ty() + " / grid:" + GRID_SIZE_Y);
+        }
 
         if (true) return false;
 
@@ -62,8 +82,8 @@ public class ProtossForbiddenByStreetGrid {
 //        if (position.tx() % 2 == 0 || position.ty() % 2 == 0) return failed("TX modulo even");
 
 //        int modulo;
-        if ((modulo = (position.tx()) % GRID_VALUE_X) <= 1) return failed("TX modulo A = " + modulo);
-        if ((modulo = (position.ty()) % GRID_VALUE_Y) <= 1) return failed("TY modulo C = " + modulo);
+//        if ((modulo = (position.tx()) % GRID_SIZE_X) <= 1) return failed("TX modulo A = " + modulo);
+//        if ((modulo = (position.ty()) % GRID_SIZE_Y) <= 1) return failed("TY modulo C = " + modulo);
 
 //        if (((position.x() + building.dimensionRightPixels()) / 32) % GRID_VALUE_X == 1) return failed("TX modulo B");
 //        if (((position.y() + building.dimensionDownPixels()) / 32) % GRID_VALUE_Y == 1) return failed("TY modulo D");

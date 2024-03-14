@@ -50,7 +50,7 @@ public interface AUnitOrders {
         }
 
         if (target.u() == null) {
-            move(target, Actions.MOVE_ATTACK, null, false);
+            move(target, Actions.MOVE_ENGAGE, null, false);
             return true;
 
 //            // This likes to happen to sieged tanks. What matters is that we return false here.
@@ -92,9 +92,9 @@ public interface AUnitOrders {
             return false;
         }
 
-        if (!unit().hasWeaponRangeByGame(target)) {
-            return move(target, Actions.MOVE_ATTACK, null, false);
-        }
+//        if (!unit().hasWeaponRangeByGame(target)) {
+//            return move(target, Actions.MOVE_ATTACK, null, false);
+//        }
 
         // Do NOT issue double orders
 //        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {

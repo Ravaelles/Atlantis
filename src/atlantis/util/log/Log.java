@@ -73,6 +73,10 @@ public class Log {
         addMessage(replaceWith, unit);
     }
 
+    public boolean isEmpty() {
+        return messages.isEmpty();
+    }
+
     public boolean isNotEmpty() {
         return !messages.isEmpty();
     }

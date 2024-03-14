@@ -2,7 +2,6 @@ package atlantis.production.constructing.position.protoss;
 
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
-import atlantis.production.constructing.position.conditions.TooCloseToUnwalkable;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -20,7 +19,7 @@ public class ProtossForbiddenForProducerBuildings {
         if (!We.protoss()) return false;
 //        if (!isProducingBuilding(building)) return false;
 
-        int GRID_SIZE = ProtossForbiddenByStreetGrid.GRID_VALUE_X;
+        int GRID_SIZE = ProtossForbiddenByStreetGrid.GRID_SIZE_X;
 
         if (!gridMatches(position, GRID_SIZE)) return true;
 

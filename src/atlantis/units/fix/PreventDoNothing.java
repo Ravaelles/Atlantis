@@ -1,6 +1,7 @@
 package atlantis.units.fix;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -34,6 +35,11 @@ public class PreventDoNothing extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit.managerLogs().isEmpty()) {
+            AttackNearbyEnemies manager = new AttackNearbyEnemies(unit);
+            if (manager.invoked(this)) return usedManager(manager);
+        }
+
         if (DoPreventFreezesLogic.handle(unit)) return usedManager(this);
 
 //        System.err.println("OMFG STILL NOTHING! " + unit);

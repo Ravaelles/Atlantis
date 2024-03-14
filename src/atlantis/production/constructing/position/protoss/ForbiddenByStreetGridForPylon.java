@@ -1,12 +1,9 @@
 package atlantis.production.constructing.position.protoss;
 
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-
-import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
 public class ForbiddenByStreetGridForPylon {
     private static int X1 = 1;
@@ -31,8 +28,8 @@ public class ForbiddenByStreetGridForPylon {
     }
 
     private static boolean streetGridMatches(APosition position) {
-        int GRID_SIZE_X = ProtossForbiddenByStreetGrid.GRID_VALUE_X;
-        int GRID_SIZE_Y = ProtossForbiddenByStreetGrid.GRID_VALUE_Y;
+        int GRID_SIZE_X = ProtossForbiddenByStreetGrid.GRID_SIZE_X;
+        int GRID_SIZE_Y = ProtossForbiddenByStreetGrid.GRID_SIZE_Y;
 
         int moduloX = position.tx() % GRID_SIZE_X;
         if (moduloX != X1 && moduloX != X2) {

@@ -19,9 +19,9 @@ public class HandleFocusPointPositioning extends MissionManager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            OnWrongSideOfFocusPoint.class,
+//            OnWrongSideOfFocusPoint.class, // @Todo
             TooFarFromFocusPoint.class,
-            TooCloseToFocusPoint.class,
+//            TooCloseToFocusPoint.class, // @Todo
         };
     }
 }

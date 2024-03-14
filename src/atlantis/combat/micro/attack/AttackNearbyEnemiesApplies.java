@@ -1,6 +1,7 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.combat.micro.avoid.terran.fight.MarineCanAttackNearEnemy;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
@@ -14,6 +15,7 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
 //        if (unit.isAttacking() && unit.lastActionLessThanAgo(6, Actions.ATTACK_UNIT) && unit.hasTarget()) return false;
         if (unit.cooldown() >= 7) return false;
         if (unit.enemiesNear().empty()) return false;
+        if (ShouldRetreat.shouldRetreat(unit)) return false;
         if (dontAttackAlone()) return false;
         if (unit.isDragoon() && unit.cooldown() > 0) return false;
         if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;

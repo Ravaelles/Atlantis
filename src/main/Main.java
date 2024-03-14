@@ -81,7 +81,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-        if (true) return "ums/rav/7th_rav.scx";
+//        if (true) return "ums/rav/7th_rav.scx";
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_skilltest_asP.scx"; // Protoss v. AI Protoss player
@@ -98,43 +98,49 @@ public class Main {
 
         // === Maps for testing as PROTOSS =============================================================================
 
+        // vs Terran
 //        if (true) return "ums/rav/protoss/Drag_v_M&M.scx"; // Goons vs M&M + Bunker
-//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Bunker.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
 //        if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
-//        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
-//        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
-//        if (true) return "ums/rav/protoss/Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Zealots.scm";
-//        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
-//        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons v Zealots
-//        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
 
+        // vs Protoss
 //        if (true) return "ums/rav/protoss/2Drag_v_3Zeal.scm";
-
 //        if (true) return "ums/rav/1Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/2Drag_v_2Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/3Drag_v_3Drag.scm";
-
 //        if (true) return "ums/rav/4Drag_v_4Drag_withBase.scm";
 //        if (true) return "ums/rav/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_Zeal.scm";
+
+//        if (true) return "ums/rav/protoss/3Zeal_v_3Zeal.scm";
+//        if (true) return "ums/rav/protoss/4Zeal_v_4Zeal.scm";
+        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
+//        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
+
+//        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
 //@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
-//@        if (true) return "ums/rav/Dragoon_v_Zealot.scm";
+
 //        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";
 //        if (true) return "ums/rav/Dragoons_v_Marines.scm";
-//        if (true) return "ums/rav/Dragoons_v_Zealots.scm";
-//        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
+
+//        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
 //        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
-//        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
+
+        // vs Zerg
+//        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
-//        if (true) return "ums/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers
 
         // === Maps for testing as Terran ==============================================================================
 
@@ -157,16 +163,17 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/minimaps/2M_v_1Zealot.scm";
-        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
+//        if (true) return "ums/rav/minimaps/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/minimaps/4M_v_1Zealot.scm";
 //        if (true) return "ums/rav/M_v_Zealots.scx"; // Many Zealots v Many Marines in a Terran base
 //        if (true) return "ums/rav/Wraiths_v_Protoss.scm"; // Wraiths v Reavers & HT & Observer
+//        if (true) return "ums/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers
 //@        if (true) return "ums/rav/Ghosts_v_P.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_A.scx";
 //        if (true) return "ums/rav/M&M_v_Dragoons_B.scx";

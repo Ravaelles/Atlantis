@@ -24,9 +24,10 @@ public class ProduceZealot {
 
         if (freeGateways == 0) return false;
 
+        if (earlyGameZealots()) return produceZealot();
+        
         if (DragoonInsteadZealot.dragoonInsteadOfZealot()) return false;
 
-        if (earlyGameZealots()) return produceZealot();
         if (A.hasMinerals(550) && freeGateways >= 2) return produceZealot();
 
 //        System.err.println("@ " + A.now() + " - produceZealot?");

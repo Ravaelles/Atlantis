@@ -7,29 +7,31 @@ import atlantis.combat.retreating.zerg.ZergRetreating;
 import atlantis.decions.Decision;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.HasUnit;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
-public class ShouldRetreat extends Manager {
+//public class ShouldRetreat extends Manager {
+public class ShouldRetreat {
     private static Cache<Boolean> cache = new Cache<>();
 
-    public ShouldRetreat(AUnit unit) {
-        super(unit);
-    }
+//    public ShouldRetreat(AUnit unit) {
+//        super(unit);
+//    }
 
-    @Override
-    public boolean applies() {
-        return true;
-    }
-
-    @Override
-    protected Manager handle() {
-        if (shouldRetreat(unit)) {
-            return usedManager(this);
-        }
-
-        return null;
-    }
+//    @Override
+//    public boolean applies() {
+//        return true;
+//    }
+//
+//    @Override
+//    protected Manager handle() {
+//        if (shouldRetreat(unit)) {
+//            return usedManager(this);
+//        }
+//
+//        return null;
+//    }
 
     /**
      * If chances to win the skirmish with the Near enemy units aren't favorable, avoid fight and retreat.
@@ -37,14 +39,16 @@ public class ShouldRetreat extends Manager {
     public static boolean shouldRetreat(final AUnit unit) {
         if (unit.enemiesNear().empty()) return false;
 
+        if (unit.squadIsRetreating() && !unit.isLeader()) return true;
+
         return cache.get(
             "shouldRetreat:" + unit.id(),
-            19,
+            5,
             () -> {
                 if (unit.enemiesNear().empty()) return false;
                 if (A.isUms() && A.supplyUsed() <= 30) return false;
 
-                if (unit.combatEvalRelative() <= 0.8) return true;
+//                if (unit.combatEvalRelative() <= 0.8) return true;
 
                 if (unit.isRunning()) return false;
 

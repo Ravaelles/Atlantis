@@ -37,7 +37,10 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
-        if (ActiveMap.isMap("Drag_v_")) {
+        if (
+            ActiveMap.isMap("Drag_v_")
+                || ActiveMap.isMap("Zeal_v_")
+        ) {
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
                 GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);

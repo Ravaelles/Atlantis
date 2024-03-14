@@ -19,7 +19,6 @@ public class TooCloseToMineralsOrGeyser {
         if (nearestBase == null) return false;
 
         AUnit mineral = Select.minerals().nearestTo(position);
-
         double minDistToMineral = minDistToMineral(building);
 
         if (mineral != null && mineral.distTo(position) <= minDistToMineral) {

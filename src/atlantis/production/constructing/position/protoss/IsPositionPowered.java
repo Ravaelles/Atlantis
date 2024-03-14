@@ -9,6 +9,8 @@ import atlantis.util.We;
 
 public class IsPositionPowered {
     public static boolean isNotPowered(AUnitType building, APosition position) {
+        if (true) return false;
+
         if (!We.protoss()) return false;
         if (!building.needsPower()) return false;
 

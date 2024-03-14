@@ -22,13 +22,7 @@ public class RetreatManager extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isRunning()) return false;
-        if (unit.enemiesNear().empty()) return false;
-//        if (unit.meleeEnemiesNearCount(1.2) > 0) return false;
-
-        if (unit.squadIsRetreating()) return true;
-
-        return unit.enemiesNear().canAttack(unit, 10).notEmpty();
+        return ShouldRetreat.shouldRetreat(unit);
     }
 
     @Override
@@ -42,34 +36,26 @@ public class RetreatManager extends Manager {
 //        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFightCached()) {
 //        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFight()) {
 
-        return cache.get(
-            "handleRetreat",
-            5,
-            () -> {
-                if (ShouldRetreat.shouldRetreat(unit)) {
-                    Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
-                    HasPosition runAwayFrom = nearEnemies.center();
+        Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
+        HasPosition runAwayFrom = nearEnemies.center();
 
-                    if (runAwayFrom == null) {
-                        runAwayFrom = nearEnemies.first();
-                    }
+        if (runAwayFrom == null) {
+            runAwayFrom = nearEnemies.first();
+        }
 
-                    if (runAwayFrom == null && nearEnemies.notEmpty()) {
-                        A.errPrintln("Retreat runAwayFrom is NULL, despite:");
-                        nearEnemies.print("nearEnemies");
-                    }
+        if (runAwayFrom == null && nearEnemies.notEmpty()) {
+            A.errPrintln("Retreat runAwayFrom is NULL, despite:");
+            nearEnemies.print("nearEnemies");
+        }
 
 //                    System.err.println("@ " + A.now() + " - RETREAT " + unit.typeWithHash());
 
-                    if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
-                        unitStartedRetreating(runAwayFrom);
-                        return true;
-                    }
-                }
+        if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
+            unitStartedRetreating(runAwayFrom);
+            return true;
+        }
 
-                return false;
-            }
-        );
+        return false;
     }
 
     private boolean unitStartedRetreating(HasPosition runAwayFrom) {

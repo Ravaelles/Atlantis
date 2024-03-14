@@ -1,7 +1,6 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.terran.fight.MarineCanAttackNearEnemy;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -52,7 +51,12 @@ public class AttackNearbyEnemies extends Manager {
 //            return usedManager(dedicatedManager.invoke(this));
 //        }
 
-        if (continueLastAttack()) return usedManager(this);
+//        if (continueLastAttack()) return usedManager(this);
+
+        Manager continueLastAttack = new ContinueLastAttack(unit);
+        if (continueLastAttack.invoke(this) != null) {
+            return usedManager(continueLastAttack);
+        }
 
         if (handleAttackNearEnemyUnits()) {
             if (unit.isAttacking() && (unit.target() == null || unit.target().hp() <= 0)) {
@@ -63,24 +67,6 @@ public class AttackNearbyEnemies extends Manager {
         }
 
         return null;
-    }
-
-    private boolean continueLastAttack() {
-        AUnit target = unit.targetUnitToAttack();
-
-        if (
-            target != null
-                && target.hp() > 0
-//                && unit.distTo(target) <= unit.weaponRangeAgainst(target)
-                && (
-                unit.lastActionLessThanAgo(4, Actions.ATTACK_UNIT)
-                    || unit.lastActionLessThanAgo(4, Actions.MOVE_ATTACK)
-            )
-        ) {
-            return true;
-        }
-
-        return false;
     }
 
     private void why() {

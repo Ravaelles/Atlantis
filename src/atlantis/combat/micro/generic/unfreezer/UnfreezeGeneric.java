@@ -18,7 +18,7 @@ public class UnfreezeGeneric extends Manager {
         if (unit.lastPositionChangedLessThanAgo(52)) return false;
 //        if (unit.lastActionLessThanAgo(52)) return false;
 
-//        if (true) return false;
+        if (true) return false;
 //
 //        if (unit.hasCooldown()) return false;
 //        if (unit.isAccelerating()) return false;
