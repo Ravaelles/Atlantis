@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
@@ -50,23 +51,38 @@ public class RetreatManager extends Manager {
 
 //                    System.err.println("@ " + A.now() + " - RETREAT " + unit.typeWithHash());
 
-        if (runAwayFrom != null && unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true)) {
-            unitStartedRetreating(runAwayFrom);
-            return true;
+        if (runAwayFrom != null) {
+            if (retreatByRunningFromEnemy(runAwayFrom) || retreatByRunningTowardsBase()) {
+                unitStartedRetreating(runAwayFrom);
+                return true;
+            }
         }
 
         return false;
     }
 
+    private boolean retreatByRunningTowardsBase() {
+        AUnit main = Select.mainOrAnyBuilding();
+        if (main == null || unit.distTo(main) <= 20) return false;
+
+        return unit.moveToMain(Actions.RUN_RETREAT, "RetreatTowardsBase");
+    }
+
+    private boolean retreatByRunningFromEnemy(HasPosition runAwayFrom) {
+        return unit.runningManager().runFrom(runAwayFrom, 4, Actions.RUN_RETREAT, true);
+    }
+
     private boolean unitStartedRetreating(HasPosition runAwayFrom) {
         unit.addLog("RetreatedFrom" + runAwayFrom);
+        return true;
 
-        AUnit leader = unit.squadLeader();
-
-        if (leader == null || leader.isRetreating() || leader.equals(unit)) return false;
-        if (unit.distTo(leader) >= 8) return false;
-
-        return (new RetreatManager(leader)).forceHandle() != null;
+//        AUnit leader = unit.squadLeader();
+//
+//        if (leader == null || leader.isRetreating() || leader.equals(unit)) return false;
+//        if (unit.distTo(leader) >= 8) return false;
+//
+//        return true;
+//        return (new RetreatManager(leader)).forceHandle() != null;
     }
 
     // =========================================================

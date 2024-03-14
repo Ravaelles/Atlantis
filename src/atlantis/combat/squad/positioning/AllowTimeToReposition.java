@@ -10,6 +10,8 @@ public class AllowTimeToReposition extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false; // @ToDo
+
         return unit.isMoving()
             && unit.lastPositioningActionLessThanAgo(13)
             && unit.lastActionLessThanAgo(91)
@@ -18,6 +20,8 @@ public class AllowTimeToReposition extends Manager {
     }
 
     protected Manager handle() {
-        return usedManager(this);
+        if (unit.isMoving()) return usedManager(this);
+
+        return null;
     }
 }

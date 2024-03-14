@@ -20,10 +20,12 @@ public class Advance extends MissionManager {
         return new Class[]{
 //            AdvanceAsALeader.class,
             TooFarFromLeader.class,
+
+            RetreatManager.class,
             DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class,
+
             AdvanceAsTerran.class,
             AttackNearbyEnemies.class,
-            TooFarFromLeader.class,
             AdvanceStandard.class,
             AsAirAttackAnyone.class,
         };

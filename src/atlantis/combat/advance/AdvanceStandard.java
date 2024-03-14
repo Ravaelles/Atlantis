@@ -2,6 +2,7 @@ package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -16,9 +17,11 @@ public class AdvanceStandard extends MissionManager {
     @Override
     public boolean applies() {
         return unit.isCombatUnit()
+            && A.seconds() % 6 <= 3
             && unit.lastActionMoreThanAgo(10)
 //            && !unit.isLeader()
 //            && unit.combatEvalRelative() > 1.5
+            && !ShouldRetreat.shouldRetreat(unit)
             && unit.enemiesNear().canBeAttackedBy(unit, 3).empty()
             && (
             (unit.distToLeader() <= 7 + (A.supplyUsed() / 25.0))

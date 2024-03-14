@@ -33,8 +33,8 @@ public class ProduceGateway {
             if (minerals >= 167 && allGateways <= 5 * Count.bases()) return produceGateway();
         }
 
-        if (minerals < 205 && existingGateways >= 3) return false;
-        if (existingGateways >= 5 && freeGateways > 0 && !A.hasMinerals(600)) return false;
+//        if (minerals < 205 && existingGateways >= 3) return false;
+        if (existingGateways >= 4 && freeGateways > 0 && !A.hasMinerals(600)) return false;
 
 //        if (unfinishedGateways >= 3 || !Enemy.zerg()) {
 //            if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;

@@ -15,18 +15,24 @@ public class DanceTo extends Manager {
     @Override
     public boolean applies() {
         target = unit.target();
-
         if (target == null || !target.hasPosition()) return false;
 
         int cooldown = unit.cooldownRemaining();
 
         return (cooldown >= 6 && cooldown <= 20)
+            && !asDragoonDontDanceTo()
             && isATargetThatWeCanDanceTo()
             && unit.lastAttackFrameLessThanAgo(30)
             && (
             shouldDanceToDuringMissionAttack()
                 || (distanceConditionIsOk() && !target.hasBiggerWeaponRangeThan(unit))
         );
+    }
+
+    private boolean asDragoonDontDanceTo() {
+        if (!unit.isDragoon()) return false;
+
+        return unit.hp() <= 40;
     }
 
     private boolean shouldDanceToDuringMissionAttack() {

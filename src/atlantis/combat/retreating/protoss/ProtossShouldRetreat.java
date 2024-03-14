@@ -7,6 +7,8 @@ import atlantis.units.select.Selection;
 public class ProtossShouldRetreat {
     public static boolean shouldRetreat(AUnit unit) {
         Selection enemies = enemies(unit);
+        if (enemies.empty()) return false;
+
         Selection friends = friends(unit);
 
         if (ProtossSmallScaleRetreat.shouldSmallScaleRetreat(unit, friends, enemies)) {
@@ -37,6 +39,6 @@ public class ProtossShouldRetreat {
     }
 
     private static Selection enemies(AUnit unit) {
-        return unit.enemiesNear().canAttack(unit, 6);
+        return unit.enemiesNear().canAttack(unit, 5);
     }
 }

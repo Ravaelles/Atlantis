@@ -1,6 +1,7 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -36,6 +37,8 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     protected Manager handle() {
+        if (ShouldRetreat.shouldRetreat(unit)) return null;
+
         targetToAttack = defineBestEnemyToAttack(unit);
         if (targetToAttack == null || targetToAttack.hp() <= 0) return null;
 

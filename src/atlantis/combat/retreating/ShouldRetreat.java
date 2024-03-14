@@ -38,24 +38,12 @@ public class ShouldRetreat {
      */
     public static boolean shouldRetreat(final AUnit unit) {
         if (unit.enemiesNear().empty()) return false;
-
-        if (unit.squadIsRetreating() && !unit.isLeader()) return true;
+//        if (unit.squadIsRetreating() && !unit.isLeader()) return true;
 
         return cache.get(
             "shouldRetreat:" + unit.id(),
             5,
             () -> {
-                if (unit.enemiesNear().empty()) return false;
-                if (A.isUms() && A.supplyUsed() <= 30) return false;
-
-//                if (unit.combatEvalRelative() <= 0.8) return true;
-
-                if (unit.isRunning()) return false;
-
-//                if (TempDontRetreat.temporarilyDontRetreat()) {
-//                    return false;
-//                }
-
                 Decision decisionRetreat = decisionRetreat(unit);
 
                 return returnDecision(unit, decisionRetreat);

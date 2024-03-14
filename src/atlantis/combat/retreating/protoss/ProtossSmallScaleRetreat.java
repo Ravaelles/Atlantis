@@ -7,14 +7,21 @@ import atlantis.util.Enemy;
 public class ProtossSmallScaleRetreat {
     public static boolean shouldSmallScaleRetreat(AUnit unit, Selection friends, Selection enemies) {
         if (unit.isRanged()) return asRanged(unit, friends, enemies);
+
         return asMelee(unit, friends, enemies);
     }
 
     private static boolean asMelee(AUnit unit, Selection friends, Selection enemies) {
 //        if (unit.combatEvalRelative() >= 1.2) return false;
 
-        if (meleeOverpoweredInRadius(unit, friends, enemies, 2.2)) return true;
-        if (meleeOverpoweredInRadius(unit, friends, enemies, 3.2)) return true;
+        if (meleeOverpoweredInRadius(unit, friends, enemies, 2.2)) {
+            unit.setTooltip("PSC:A");
+            return true;
+        }
+        if (meleeOverpoweredInRadius(unit, friends, enemies, 3.2)) {
+            unit.setTooltip("PSC:B");
+            return true;
+        }
 
         return false;
     }
@@ -26,7 +33,8 @@ public class ProtossSmallScaleRetreat {
     }
 
     private static double ourMeleeStrength(AUnit unit, Selection friends, double radius) {
-        return friends.melee().inRadius(radius, unit).notRunning().count() + (unit.hp() >= 30 ? 1.1 : 1);
+        return friends.melee().inRadius(radius, unit).havingAtLeastHp(30).count()
+            + (unit.hp() >= 30 ? 1 : 0.3);
     }
 
     private static double meleeEnemiesStrength(AUnit unit, Selection enemies, double radius) {
@@ -42,7 +50,8 @@ public class ProtossSmallScaleRetreat {
     private static boolean asRanged(AUnit unit, Selection friends, Selection enemies) {
         if (enemies.onlyMelee() && unit.shieldDamageAtMost(30)) return false;
 
-        if (unit.combatEvalRelative() <= 1.06 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
+//        if (unit.combatEvalRelative() <= 1.06 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
+        if (unit.hp() <= 40 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
 
         return false;
     }

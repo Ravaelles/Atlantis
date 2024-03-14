@@ -39,6 +39,7 @@ public class TooCloseToMineralsOrGeyser {
     }
 
     private static double minDistToMineral(AUnitType building) {
+        if (building.isPylon()) return 5;
         if (building.isBunker()) return 5;
         if (building.isBarracks()) return 3.5;
 

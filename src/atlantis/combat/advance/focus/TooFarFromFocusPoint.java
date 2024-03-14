@@ -6,6 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class TooFarFromFocusPoint extends MoveToFocusPoint {
     public TooFarFromFocusPoint(AUnit unit) {
@@ -43,12 +44,11 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
         double distToFocus = unit.distTo(focusPoint);
         HasPosition goTo = distToFocus <= 4
-            ? goToWhenCloseToFocus()
+            ? goToWhenNotSoFarFromFocus()
             : goToWhenFarFromFocus();
 
         if (goTo != null && goTo.isWalkable()) {
-            unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
-            return true;
+            if (unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)) return true;
         }
 
         return false;
@@ -57,11 +57,23 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     private HasPosition goToWhenFarFromFocus() {
         if (!focusPoint.isAroundChoke()) return focusPoint;
 
-        return focusPoint.translateTilesTowards(-3, focusPoint.choke());
+        APosition goTo = focusPoint.translateTilesTowards(-3, focusPoint.choke());
+
+        if (goTo != null && goTo.isWalkable()) {
+            return goTo;
+        }
+
+        return null;
     }
 
-    private APosition goToWhenCloseToFocus() {
-        return unit.translateTilesTowards(0.15, focusPoint);
+    private HasPosition goToWhenNotSoFarFromFocus() {
+        APosition goTo = unit.translateTilesTowards(0.15, focusPoint);
+
+        if (goTo != null && goTo.isWalkable()) {
+            return goTo;
+        }
+
+        return Select.mainOrAnyBuilding();
     }
 }
 

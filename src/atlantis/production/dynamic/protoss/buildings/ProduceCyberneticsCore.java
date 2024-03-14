@@ -24,7 +24,7 @@ public class ProduceCyberneticsCore {
     }
 
     private static int buildAtSupply() {
-        if (A.hasMinerals(240) && A.supplyUsed(16)) return 0;
+        if (A.hasMinerals(250) && A.supplyUsed(16)) return 0;
 
         if (EnemyStrategy.get().isGoingHiddenUnits()) return 34;
 
