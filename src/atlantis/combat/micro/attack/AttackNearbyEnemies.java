@@ -9,9 +9,9 @@ import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
 public class AttackNearbyEnemies extends Manager {
-    public static String reasonNotToAttack;
     private static Cache<AUnit> cache = new Cache<>();
     private static Cache<Object> cacheObject = new Cache<>();
+    public static String reasonNotToAttack;
     private static ProcessAttackUnit processAttackUnit;
     private final AllowedToAttack allowedToAttack;
     private AUnit targetToAttack;

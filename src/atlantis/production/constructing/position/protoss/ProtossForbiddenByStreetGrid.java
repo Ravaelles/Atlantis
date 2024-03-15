@@ -9,10 +9,6 @@ import atlantis.util.We;
 public class ProtossForbiddenByStreetGrid {
     public static final int GRID_SIZE_X = 14;
     public static final int GRID_SIZE_Y = 12;
-//    public static final int GRID_VALUE_X = 14;
-//    public static final int GRID_VALUE_Y = 14;
-//    public static final int GRID_VALUE_X = 13;
-//    public static final int GRID_VALUE_Y = 13;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -21,19 +17,12 @@ public class ProtossForbiddenByStreetGrid {
      * So disallow building in e.g. 0,1, 6,7, 12,13, horizontally and vertically
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
-//        if (true) return false;
-
         if (!We.protoss()) return false;
         if (building.isBase() || building.isGasBuilding()) return false;
-
-//        if ((modulo = (position.tx() % 4)) != 0) return failed("TX modulo P_XG = " + modulo);
-//        if ((modulo = (position.ty() % 3)) != 0) return failed("TY modulo P_YGs = " + modulo);
 
         if (building.isPylon()) {
             int moduloX = (position.tx() % GRID_SIZE_X);
             int moduloY = (position.ty() % GRID_SIZE_Y);
-
-//            return ForbiddenByStreetGridForPylon.isForbidden(builder, building, position);
 
             if (moduloX != 5 && moduloX != 7) return failed("TX modulo PP_X2 = " + moduloX);
             if (moduloY != 4 && moduloY != 6) return failed("TY modulo PP_Y2 = " + moduloY);
@@ -51,16 +40,7 @@ public class ProtossForbiddenByStreetGrid {
                 + " / ty:" + position.ty() + " / grid:" + GRID_SIZE_Y);
         }
 
-//        if (isProducingBuilding(building)) {
-//            if (ProtossForbiddenForProducerBuildings.isForbidden(builder, building, position)) return true;
-//            return false;
-//        }
-
         return false;
-    }
-
-    private static boolean isProducingBuilding(AUnitType building) {
-        return building.isGateway() || building.isRoboticsFacility();
     }
 
     private static boolean failed(String reason) {

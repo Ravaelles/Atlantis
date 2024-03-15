@@ -2,12 +2,11 @@ package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
-import atlantis.combat.generic.UnitUnderAttackAndNotAttacking;
+import atlantis.combat.generic.UnitUnderAttack;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
-import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.running.ShouldStopRunning;
 import atlantis.combat.squad.squad_scout.SquadScout;
 import atlantis.terran.repair.DontMoveWhenBeingRepared;
@@ -27,7 +26,7 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            UnitUnderAttackAndNotAttacking.class,
+            UnitUnderAttack.class,
 
             ContinueRunning.class,
             ShouldStopRunning.class,
