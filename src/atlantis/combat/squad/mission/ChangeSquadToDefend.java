@@ -12,6 +12,8 @@ import atlantis.util.We;
 
 public class ChangeSquadToDefend extends SquadMissionChanger {
     public static boolean shouldChangeToDefend(Squad squad) {
+        if (true) return false;
+
         if (squad.leader().combatEvalRelative() >= 1.15) return false;
         if (ArmyStrength.ourArmyRelativeStrength() >= 170) return false;
 

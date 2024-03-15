@@ -1,7 +1,7 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.retreating.ShouldRetreat;
+
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -12,7 +12,7 @@ public class ContinueLastAttack extends Manager {
 
     @Override
     public boolean applies() {
-        if (ShouldRetreat.shouldRetreat(unit)) return false;
+//        if (ShouldRetreat.shouldRetreat(unit)) return false;
 
         if (continueRecentAttackNearbyEnemies()) return true;
 

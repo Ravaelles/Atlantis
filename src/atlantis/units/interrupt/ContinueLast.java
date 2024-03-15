@@ -1,7 +1,7 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.retreating.ShouldRetreat;
+
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
@@ -18,7 +18,7 @@ public class ContinueLast extends Manager {
         if (unit.isStopped()) return false;
         if (unit.isRunning()) return false;
         if (A.everyNthGameFrame(9)) return false;
-        if (ShouldRetreat.shouldRetreat(unit)) return false;
+//        if (ShouldRetreat.shouldRetreat(unit)) return false;
         if (unit.isRanged() && unit.meleeEnemiesNearCount(1.7) >= 1) return false;
 //        if (unit.lastActionMoreThanAgo(3)) return false;
 

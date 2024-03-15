@@ -21,7 +21,6 @@ public class Advance extends MissionManager {
 //            AdvanceAsALeader.class,
             TooFarFromLeader.class,
 
-            RetreatManager.class,
             DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class,
 
             AdvanceAsTerran.class,

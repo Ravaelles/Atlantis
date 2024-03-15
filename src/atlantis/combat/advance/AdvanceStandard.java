@@ -2,7 +2,7 @@ package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.retreating.ShouldRetreat;
+
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -21,7 +21,7 @@ public class AdvanceStandard extends MissionManager {
             && unit.lastActionMoreThanAgo(10)
 //            && !unit.isLeader()
 //            && unit.combatEvalRelative() > 1.5
-            && !ShouldRetreat.shouldRetreat(unit)
+//            && !ShouldRetreat.shouldRetreat(unit)
             && unit.enemiesNear().canBeAttackedBy(unit, 3).empty()
             && (
             (unit.distToLeader() <= 7 + (A.supplyUsed() / 25.0))
@@ -34,9 +34,9 @@ public class AdvanceStandard extends MissionManager {
 
 //        if (ToLastSquadTarget.goTo(unit)) return usedManager(this, "ToSquadTarget");
 
-        if (A.seconds() % 6 <= 3 && (!unit.isMoving() && !unit.isAttacking())) {
-            return usedManager(this, "AdvanceContinue");
-        }
+//        if (A.seconds() % 6 <= 3 && (!unit.isMoving() && !unit.isAttacking())) {
+//            return usedManager(this, "AdvanceContinue");
+//        }
 
         if (focusPoint != null) {
             unit.move(focusPoint, Actions.MOVE_FOCUS, "Advance");

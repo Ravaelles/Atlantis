@@ -1,10 +1,9 @@
 package tests.unit;
 
-import atlantis.combat.retreating.protoss.ProtossShouldRetreat;
-import atlantis.combat.retreating.protoss.ProtossSmallScaleRetreat;
+import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
+import atlantis.combat.retreating.protoss.small_scale.ProtossSmallScaleRetreat;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Selection;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
@@ -35,7 +34,7 @@ public class ProtossRetreatTest extends AbstractTestWithUnits {
 
 //            ProtossSmallScaleRetreat.shouldSmallScaleRetreat(our, friends, enemies);
 
-            assertEquals(true, ProtossShouldRetreat.shouldRetreat(our));
+            assertEquals(true, (new ProtossSmallScaleRetreat(our)).applies());
         });
     }
 
@@ -57,7 +56,7 @@ public class ProtossRetreatTest extends AbstractTestWithUnits {
         );
 
         usingFakeOursAndFakeEnemies(ours, enemies, () -> {
-            assertEquals(false, ProtossShouldRetreat.shouldRetreat(our));
+            assertEquals(false, (new ProtossSmallScaleRetreat(our)).applies());
 
 //            Selection friends = our.friendsNear();
 ////            Selection enemies = our.friendsNear();

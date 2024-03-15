@@ -1,7 +1,7 @@
 package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.special.ImprovePerformanceHavingBigSupply;
+import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.HoldToShoot;
@@ -28,14 +28,14 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ImprovePerformanceHavingBigSupply.class,
+            FixPerformanceForBigSupply.class,
             ManualOverrideManager.class,
+
+            RetreatManager.class,
 
             PreventDoNothing.class,
             PreventAttackNull.class,
             PreventAttackForTooLong.class,
-
-            RetreatManager.class,
 
             ContinueCurrentAction.class,
 

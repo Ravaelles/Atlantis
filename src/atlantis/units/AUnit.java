@@ -9,7 +9,6 @@ import atlantis.combat.micro.avoid.margin.UnitRange;
 import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.retreating.ShouldRetreat;
 import atlantis.combat.running.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
@@ -29,7 +28,6 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
 import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.builders.BuilderManager;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.terran.FlyingBuildingScoutCommander;
@@ -2856,9 +2854,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //            && lastActionLessThanAgo(minFramesAgo, Actions.MOVE_ENGAGE);
     }
 
-    public boolean shouldRetreat() {
-        return ShouldRetreat.shouldRetreat(this);
-    }
+//    public boolean shouldRetreat() {
+//        return ShouldRetreat.shouldRetreat(this);
+//    }
 
     public boolean isMechanical() {
         return type() != null && type().isMechanical();

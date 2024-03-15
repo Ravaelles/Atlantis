@@ -2,7 +2,7 @@ package atlantis.combat.micro.avoid.terran.fight;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.zerg.ShouldFightInsteadAvoidAsZerg;
-import atlantis.combat.retreating.ShouldRetreat;
+
 import atlantis.combat.targeting.ATargetingCrucial;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -73,7 +73,7 @@ public class ShouldAlwaysFightInsteadAvoid {
                 if ((m = new ShouldFightInsteadAvoidAsTerran(unit)).invoke(this) != null) return true;
                 if (ShouldFightInsteadAvoidAsZerg.shouldFight(unit)) return true;
 
-                if (unit.isMelee() && unit.shouldRetreat()) return false;
+//                if (unit.isMelee() && unit.shouldRetreat()) return false;
 
                 if (enemies.isEmpty()) {
 //                    System.err.println("NoEnemies? LooksBugged");
@@ -113,27 +113,25 @@ public class ShouldAlwaysFightInsteadAvoid {
             return true;
         }
 
-        if (ShouldRetreat.shouldRetreat(unit)) {
-            if (finishOffAlmostDeadTarget()) {
-                unit.addLog("FatalityTo" + unit.target().type());
-                return true;
-            }
-
-            if (
-                unit.isRanged()
-                    && ranged == null
-                    && unit.enemiesNear().ranged().isEmpty()
-                    && (unit.hp() >= 21 || unit.lastStartedAttackMoreThanAgo(30 * 7))
-            ) {
-                unit.addLog("FightAsRanged");
-                return true;
-            }
-            else {
-                unit.setTooltip("Retreat", true);
-                unit.addLog("Retreat");
-                return false;
-            }
+        if (finishOffAlmostDeadTarget()) {
+            unit.addLog("FatalityTo" + unit.target().type());
+            return true;
         }
+
+        if (
+            unit.isRanged()
+                && ranged == null
+                && unit.enemiesNear().ranged().isEmpty()
+                && (unit.hp() >= 21 || unit.lastStartedAttackMoreThanAgo(30 * 7))
+        ) {
+            unit.addLog("FightAsRanged");
+            return true;
+        }
+//        else {
+//            unit.setTooltip("Retreat", true);
+//            unit.addLog("Retreat");
+//            return false;
+//        }
 
         if (terranFightInsteadAvoid.fightForTerran()) return true;
 
@@ -329,7 +327,7 @@ public class ShouldAlwaysFightInsteadAvoid {
 //            }
         }
 
-        if (ranged != null && !ShouldRetreat.shouldRetreat(unit)) {
+        if (ranged != null) {
             unit.addLog("CanFight");
             return true;
         }
@@ -345,8 +343,7 @@ public class ShouldAlwaysFightInsteadAvoid {
             return false;
         }
 
-        return !ShouldRetreat.shouldRetreat(unit);
-//        return true;
+        return true;
     }
 
     // =========================================================

@@ -1,9 +1,6 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.retreating.RetreatManager;
-import atlantis.combat.retreating.ShouldRetreat;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 
 public class ContinueShooting extends Manager {
@@ -17,7 +14,7 @@ public class ContinueShooting extends Manager {
 
 //        if (unit.isStopped()) return false;
 //        if (!unit.isAttacking()) return false;
-        if (ShouldRetreat.shouldRetreat(unit)) return false;
+//        if (ShouldRetreat.shouldRetreat(unit)) return false;
 //
 //        if (unit.isDragoon() && doesNotApplyForDragoon()) return false;
 //        if (unit.isMarine() && doesNotApplyForMarine()) return false;

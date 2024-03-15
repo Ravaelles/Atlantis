@@ -8,7 +8,7 @@ import atlantis.debug.profiler.CodeProfiler;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.retreating.ShouldRetreat;
+
 import atlantis.combat.squad.AllSquads;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
@@ -970,7 +970,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintWhiteFlagWhenRunning(AUnit unit) {
-        Color flagColor = ShouldRetreat.shouldRetreat(unit) ? Color.Red : Color.White;
+        Color flagColor = unit.isRetreating() ? Color.Red : Color.White;
 
         paintFlag(unit, flagColor);
     }

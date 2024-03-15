@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid.margin;
 
 import atlantis.combat.micro.avoid.margin.terran.BonusForWraith;
-import atlantis.combat.retreating.ShouldRetreat;
+
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -65,9 +65,9 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     }
 
     private double shouldRetreatBonus(AUnit defender) {
-        if (ShouldRetreat.shouldRetreat(defender)) {
-            return 4.2;
-        }
+//        if (ShouldRetreat.shouldRetreat(defender)) {
+//            return 4.2;
+//        }
 
         return 0;
     }

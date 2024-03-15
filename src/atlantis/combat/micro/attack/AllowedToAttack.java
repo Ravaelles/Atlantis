@@ -37,13 +37,13 @@ public class AllowedToAttack {
                 && (unit.isMelee() || unit.hasCooldown() || unit.hp() <= 20)
         ) return false;
 
-        boolean shouldRetreat = unit.shouldRetreat();
-        if (unit.isMelee() && shouldRetreat) return false;
+//        boolean shouldRetreat = unit.shouldRetreat();
+//        if (unit.isMelee() && shouldRetreat) return false;
 
         if (
             unit.isZergling()
                 && (
-                (Enemy.protoss() && unit.hp() <= 19) || shouldRetreat
+                (Enemy.protoss() && unit.hp() <= 19)
             )
         ) return false;
 

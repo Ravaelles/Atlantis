@@ -7,8 +7,8 @@ import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
-public class ImprovePerformanceHavingBigSupply extends MissionManager {
-    public ImprovePerformanceHavingBigSupply(AUnit unit) {
+public class FixPerformanceForBigSupply extends MissionManager {
+    public FixPerformanceForBigSupply(AUnit unit) {
         super(unit);
     }
 

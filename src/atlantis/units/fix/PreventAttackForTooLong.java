@@ -11,6 +11,8 @@ public class PreventAttackForTooLong extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (!unit.isAttacking()) return false;
         if (unit.isMoving()) return false;
         if (unit.isRunning()) return false;
