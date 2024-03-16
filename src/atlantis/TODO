@@ -1,6 +1,9 @@
 ### Protoss ############################################################################################################
 
--- Zealots SC afriad of workers
+--- Reduce Retreat dist to 3
+-- Introduce PLargeScaleRetreat if any enemy building at least 18 tiles away and overwhelmed
+
+--- MissionForbidsProbe
 - MissioNForbidsPhotonC and attacks e.g. Forge, yet still in range of PC
 
 
