@@ -3,6 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.contain.DontAdvanceButHoldAndContainWhenEnemyBuildingsClose;
 import atlantis.combat.micro.attack.DontAttackAlone;
+import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
@@ -24,6 +25,7 @@ public class MissionAttackAllowsToAttack extends HasUnit {
 //        if (true) return true;
 
         if (DontAttackAlone.isAlone(unit)) return false;
+        if (DontAttackUnitScatteredOnMap.isEnemyScatteredOnMap(unit, enemy)) return false;
 
         if (forbiddenToAttackCombatBuilding(enemy)) return false;
         if (dontAttackAsSquadScout(enemy)) return false;

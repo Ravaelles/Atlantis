@@ -38,12 +38,10 @@ public abstract class Manager extends BaseManager {
     }
 
     private Manager invokeFromParent(Object parent) {
-        if (A.now() != parentsLastTimestamp) {
-            parents.clear();
-        }
-        this.parentsLastTimestamp = A.now();
-
         if (!applies()) return null;
+
+        if (A.now() > parentsLastTimestamp) parents.clear();
+        this.parentsLastTimestamp = A.now();
 
         if (parent != null) this.parents.add(parentToString(parent));
         else ErrorLog.printErrorOnce("Parent is null for " + this.getClass().getSimpleName() + "!");
@@ -88,9 +86,9 @@ public abstract class Manager extends BaseManager {
     protected Manager handle() {
         if (!applies()) return null;
 
-        Manager submanager = handleSubmanagers();
+//        System.err.println("@ " + A.now() + " - " + unit.type() + " = " + this.getClass().getSimpleName());
 
-        return submanager;
+        return handleSubmanagers();
     }
 
     // =========================================================
@@ -114,11 +112,11 @@ public abstract class Manager extends BaseManager {
         return usedManager(manager, null);
     }
 
-    public Manager fallbackToUseManager(Class<? extends Manager> classObject, Manager parent) {
-        Manager manager = instantiateManager(classObject);
-
-        return manager.invokeFromParent(parent);
-    }
+//    public Manager fallbackToUseManager(Class<? extends Manager> classObject, Manager parent) {
+//        Manager manager = instantiateManager(classObject);
+//
+//        return manager.invokeFromParent(parent);
+//    }
 
     /**
      * Indicates this Manager was just used by the unit.

@@ -3209,4 +3209,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean squadIsRetreating() {
         return squad != null && squad.isRetreating();
     }
+
+    private double _smallScaleEval = 0;
+
+    public void setLastSmallScaleEval(double dEval) {
+        this._smallScaleEval = dEval;
+    }
+
+    public double smallScaleEval() {
+        return _smallScaleEval;
+    }
 }

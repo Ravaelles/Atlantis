@@ -56,10 +56,10 @@ public class AttackNearbyEnemies extends Manager {
 
 //        if (continueLastAttack()) return usedManager(this);
 
-        Manager continueLastAttack = new ContinueLastAttack(unit);
-        if (continueLastAttack.invoke(this) != null) {
-            return usedManager(continueLastAttack);
-        }
+//        Manager continueLastAttack = new ContinueLastAttack(unit);
+//        if (continueLastAttack.invoke(this) != null) {
+//            return usedManager(continueLastAttack);
+//        }
 
         if (handleAttackNearEnemyUnits()) {
             if (unit.isAttacking() && (unit.target() == null || unit.target().hp() <= 0)) {

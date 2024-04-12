@@ -53,7 +53,7 @@ public class TerranUnitUnderAttack extends Manager {
 
     @Override
     public Manager handle() {
-        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+        if ((new AttackNearbyEnemies(unit)).invoked(this)) {
             return usedManager(this, "FightBack");
         }
 

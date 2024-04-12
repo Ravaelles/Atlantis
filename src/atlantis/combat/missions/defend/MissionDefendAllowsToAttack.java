@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.combat.micro.attack.DontAttackAlone;
+import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

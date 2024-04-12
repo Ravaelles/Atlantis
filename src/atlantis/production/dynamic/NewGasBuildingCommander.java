@@ -5,6 +5,7 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -17,6 +18,7 @@ public class NewGasBuildingCommander extends Commander {
     @Override
     public boolean applies() {
         return A.everyNthGameFrame(23)
+            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) == 0
             && !tooEarlyForAnotherGasBuilding();
     }
 

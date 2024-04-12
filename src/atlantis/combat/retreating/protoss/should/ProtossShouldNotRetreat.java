@@ -38,6 +38,11 @@ public class ProtossShouldNotRetreat extends Manager {
             return false;
         }
 
+        if (shouldNotRunInMissionAttack(unit)) {
+            unit.addLog("NoRunInAttack");
+            return false;
+        }
+
         return false;
     }
 
@@ -47,6 +52,28 @@ public class ProtossShouldNotRetreat extends Manager {
 
     private static boolean shouldNotRunInMissionDefend(AUnit unit) {
         return unit.isMissionDefend()
-            && unit.distToBase() <= 6;
+            && (
+                unit.distToBase() <= 6
+                ||
+                closeToCombatBuilding(unit)
+        );
+    }
+
+    private static boolean shouldNotRunInMissionAttack(AUnit unit) {
+        if (!unit.isMissionAttack()) return false;
+
+        if (unit.isZealot()) {
+            AUnit nearestGoon = unit.friendsNear().dragoons().inRadius(4, unit).nearestTo(unit);
+            if (nearestGoon == null) return false;
+
+            return !nearestGoon.isRetreating();
+        }
+
+        return false;
+    }
+
+    private static boolean closeToCombatBuilding(AUnit unit) {
+        return unit.hp() > 20
+            && unit.friendsNear().combatBuildings(false).inRadius(3, unit).notEmpty();
     }
 }

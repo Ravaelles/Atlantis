@@ -6,23 +6,21 @@ import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
 
 public class ProtossSmallScaleRetreat extends Manager {
-
     private Selection friends;
     private Selection enemies;
 
     public ProtossSmallScaleRetreat(AUnit unit) {
         super(unit);
+
+        friends = ProtossShouldRetreat.friends(unit);
+        enemies = ProtossShouldRetreat.enemies(unit);
     }
 
     @Override
     public boolean applies() {
-        friends = ProtossShouldRetreat.friends(unit);
-        enemies = ProtossShouldRetreat.enemies(unit);
-
-        return shouldSmallScaleRetreat(unit, friends, enemies);
+        return shouldSmallScaleRetreat();
     }
 
     @Override
@@ -39,7 +37,7 @@ public class ProtossSmallScaleRetreat extends Manager {
         return enemies.first();
     }
 
-    public boolean shouldSmallScaleRetreat(AUnit unit, Selection friends, Selection enemies) {
+    public boolean shouldSmallScaleRetreat() {
         if (unit.isRanged()) return asRanged(unit, friends, enemies);
 
         return asMelee(unit, friends, enemies);
@@ -54,7 +52,7 @@ public class ProtossSmallScaleRetreat extends Manager {
 
             String message = "@" + A.now() + " PSC" + A.digit(radius)
                 + ": " + A.digit(ProtossSmallScaleEvaluate.ourMeleeStrength(unit, friends, radius))
-                + "_vs_" + A.digit(ProtossSmallScaleEvaluate.meleeEnemiesStrength(unit, enemies, radius));
+                + "_vs_" + A.digit(ProtossSmallScaleEvaluate.enemyMeleeStrength(unit, enemies, radius));
 //            System.err.println(message);
             unit.addLog(message);
 

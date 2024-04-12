@@ -494,13 +494,25 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintCombatEval(AUnit unit) {
-        APosition unitPosition = unit.position();
-        double combatEval = unit.combatEvalRelative();
-//        double combatEval = unit.combatEvalAbsolute();
-        String combatStrength = ColorUtil.getColorString(Color.Red) +
-            (combatEval >= 9876 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
-//                (combatEval >= 0 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
-        paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
+
+        // === SmallScale retreat eval =============================
+        if (unit.isOur()) {
+            double smallScaleEval = unit.smallScaleEval();
+            unit.paintTextCentered(
+                unit.position().translateByPixels(0, -34),
+                "SS:" + A.digit(smallScaleEval),
+                smallScaleEval < 0 ? Color.Red : Color.Green
+            );
+        }
+        // =========================================================
+
+//        APosition unitPosition = unit.position();
+//        double combatEval = unit.combatEvalRelative();
+////        double combatEval = unit.combatEvalAbsolute();
+//        String combatStrength = ColorUtil.getColorString(Color.Red) +
+//            (combatEval >= 9876 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
+////                (combatEval >= 0 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
+//        paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
     }
 
     /**

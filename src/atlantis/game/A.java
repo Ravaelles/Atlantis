@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
  * Utility helper class A(tlantis). Makes it much easier to execute many commonly used methods.
  */
 public class A {
+    public static int s; // Seconds - real time
+    public static int fr; // Frames - game frames (~30 = 1s)
 
     /**
      * <b>Random</b> object that can be used in any part of code.
@@ -1111,7 +1113,7 @@ public class A {
     }
 
     public static String at() {
-        return now() + " ";
+        return "@" + now() + " ";
     }
 
     public static int now() {

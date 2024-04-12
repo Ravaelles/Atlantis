@@ -17,8 +17,8 @@ public class ProtossUnitUnderAttack extends Manager {
     public boolean applies() {
 //        if (true) return false; // @Check
 
-        if (!unit.lastUnderAttackLessThanAgo(70)) return false;
-        if (!unit.lastAttackFrameMoreThanAgo(30 * 6)) return false;
+        if (unit.lastUnderAttackMoreThanAgo(50)) return false;
+        if (unit.lastAttackFrameLessThanAgo(30 * 6)) return false;
 
         if (preventForDragoon()) return false;
 
@@ -58,7 +58,7 @@ public class ProtossUnitUnderAttack extends Manager {
 
     @Override
     public Manager handle() {
-        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+        if ((new AttackNearbyEnemies(unit)).invoked(this)) {
             return usedManager(this, "FightBack");
         }
 
