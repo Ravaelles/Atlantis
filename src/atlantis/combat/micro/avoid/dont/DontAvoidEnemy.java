@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.dont;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.dont.protoss.ProtossDontAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.terran.TerranDontAvoidEnemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -41,11 +42,12 @@ public class DontAvoidEnemy extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             TerranDontAvoidEnemy.class,
+            ProtossDontAvoidEnemy.class,
         };
     }
 
     @Override
     public Manager handle() {
-        return null;
+        return usedManager(this);
     }
 }

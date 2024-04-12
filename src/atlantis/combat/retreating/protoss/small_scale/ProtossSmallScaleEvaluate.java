@@ -24,7 +24,7 @@ public class ProtossSmallScaleEvaluate {
 
     protected static double ourMeleeStrength(AUnit unit, Selection friends, double radius) {
         return friends.melee().inRadius(radius, unit).havingAtLeastHp(23).count()
-            + (unit.hp() >= 30 ? 1 : 0.3);
+            + (unit.hp() >= 23 ? 1 : 0.7);
     }
 
     protected static double enemyMeleeStrength(AUnit unit, Selection enemies, double radius) {

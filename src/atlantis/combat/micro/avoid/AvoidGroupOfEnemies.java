@@ -59,7 +59,7 @@ public class AvoidGroupOfEnemies extends Manager {
         if (unit.effUndetected()) return true;
         if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
 
-        if ((new DontAvoidEnemy(unit)).invoke(this) != null) return true;
+        if ((new DontAvoidEnemy(unit)).invoked(this)) return true;
 
         return false;
     }

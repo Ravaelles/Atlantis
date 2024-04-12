@@ -1,6 +1,8 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
+import atlantis.combat.micro.avoid.dont.ShouldNotAvoid;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
@@ -34,7 +36,9 @@ public class AvoidEnemiesIfNeeded extends Manager {
         if (unit.isMissionSparta() && unit.isHealthy()) return false;
         if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
 
-        return !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid();
+        return
+            !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid()
+            && (new DontAvoidEnemy(unit)).invoke(this) == null;
     }
 
     @Override
@@ -56,13 +60,13 @@ public class AvoidEnemiesIfNeeded extends Manager {
         return enemyUnitsToAvoid.enemiesDangerouslyClose();
     }
 
-    public boolean shouldAvoidAnyUnit() {
-        return enemiesDangerouslyClose().isNotEmpty();
-    }
+//    public boolean shouldAvoidAnyUnit() {
+//        return enemiesDangerouslyClose().isNotEmpty();
+//    }
 
-    public boolean shouldNotAvoidAnyUnit() {
-        return !shouldAvoidAnyUnit();
-    }
+//    public boolean shouldNotAvoidAnyUnit() {
+//        return !shouldAvoidAnyUnit();
+//    }
 
     // =========================================================
 

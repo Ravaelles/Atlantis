@@ -1342,8 +1342,9 @@ public class A {
         (System.out).println("");
     }
 
-    public static void println(Object string) {
+    public static boolean println(Object string) {
         (System.out).println(string);
+        return true;
     }
 
     public static void errPrintln(Object string) {

@@ -12,11 +12,15 @@ public class ContinueLastAttack extends Manager {
 
     @Override
     public boolean applies() {
+//        if (unit.isMelee()) return false;
+
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
 
-        if (continueRecentAttackNearbyEnemies()) return true;
-
         if (!unit.isAttacking()) return false;
+
+        if (continueRecentAttackNearbyEnemies()) return true;
+        if (asDragoon()) return true;
+
 //        if (!unit.isAttackingOrMovingToAttack()) return false;
 
         if (
@@ -31,6 +35,13 @@ public class ContinueLastAttack extends Manager {
         }
 
         return false;
+    }
+
+    private boolean asDragoon() {
+        return unit.isDragoon()
+            && unit.isAttacking()
+            && unit.lastActionLessThanAgo(120, Actions.ATTACK_UNIT);
+//            && unit.lastAttackFrameMoreThanAgo(20);
     }
 
     private boolean continueRecentAttackNearbyEnemies() {

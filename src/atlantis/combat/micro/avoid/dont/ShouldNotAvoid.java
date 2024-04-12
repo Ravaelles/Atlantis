@@ -1,4 +1,4 @@
-package atlantis.combat.micro.avoid;
+package atlantis.combat.micro.avoid.dont;
 
 import atlantis.combat.micro.avoid.terran.fight.ShouldAlwaysFightInsteadAvoid;
 import atlantis.units.AUnit;

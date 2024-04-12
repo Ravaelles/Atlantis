@@ -1454,20 +1454,20 @@ public class AAdvancedPainter extends APainter {
         }
     }
 
-    private static void paintCooldown(AUnit unit) {
-        Color color;
-
-        if (unit.isOur()) {
-            boolean shouldAvoidAnyUnit = (new AvoidEnemiesIfNeeded(unit)).shouldAvoidAnyUnit();
-            color = shouldAvoidAnyUnit ? Red : Teal;
-        }
-        else {
-            color = Brown;
-        }
-
-//        paintUnitProgressBar(unit, 27, 100, Color.Grey);
-        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), color);
-    }
+//    private static void paintCooldown(AUnit unit) {
+//        Color color;
+//
+//        if (unit.isOur()) {
+//            boolean shouldAvoidAnyUnit = (new AvoidEnemiesIfNeeded(unit)).shouldAvoidAnyUnit();
+//            color = shouldAvoidAnyUnit ? Red : Teal;
+//        }
+//        else {
+//            color = Brown;
+//        }
+//
+////        paintUnitProgressBar(unit, 27, 100, Color.Grey);
+//        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), color);
+//    }
 
     private static void paintLifeBar(AUnit unit) {
         Color color = unit.isOur() ? Green : Yellow;
