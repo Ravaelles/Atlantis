@@ -19,6 +19,8 @@ public class TooFarFromLeader extends Manager {
 
     @Override
     public boolean applies() {
+        if (We.protoss()) return false;
+
         if (unit.isAir()) return false;
         if (unit.isDT()) return false;
 //        if (A.seconds() % 4 <= 1) return false;
