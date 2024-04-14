@@ -27,11 +27,15 @@ public class PreventAttackNull extends Manager {
     private boolean isAttackingNullTarget() {
         if (unit.isAttacking() || "Attack_Unit".equals(unit.action().toString())) {
             if (unit.target() == null || unit.target().hp() <= 0 || unit.orderTarget() == null) {
-//                A.errPrintln(
-//                    unit.typeWithUnitId() + " NULL ATTACK target:" + unit.target()
-//                        + " / orderTarget=" + unit.orderTarget() + " / isAttacking()=" + unit.isAttacking()
-//                );
-                unit.paintCircleFilled(22, Color.Black);
+                A.errPrintln(
+                    unit.typeWithUnitId() + " NULL ATTACK target:" + unit.target()
+                        + " / hp=" + unit.hp() + " / alive:" + unit.isAlive()
+                        + " / orderTarget=" + unit.orderTarget()
+                        + " / orderTargetHP=" + (unit.orderTarget() != null ? unit.orderTarget().hp() : null)
+                        + " / orderTargetAlive=" + (unit.orderTarget() != null ? unit.orderTarget().isAlive() : null)
+                        + " / isAttacking()=" + unit.isAttacking()
+                );
+//                unit.paintCircleFilled(32, Color.Black);
                 return true;
             }
         }

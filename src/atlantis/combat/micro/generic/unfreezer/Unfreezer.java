@@ -14,6 +14,9 @@ public class Unfreezer extends Manager {
     @Override
     public boolean applies() {
         if (unit.hasCooldown()) return false;
+
+//        if (unit.hasNotMovedInAWhile() && unit.lastActionMoreThanAgo(50)) return true;
+
         if (unit.lastActionLessThanAgo(33)) return false;
         if (unit.lastAttackFrameLessThanAgo(33)) return false;
 //        if (unit.isHoldingPosition() && unit.isSpecialMission()) return false;

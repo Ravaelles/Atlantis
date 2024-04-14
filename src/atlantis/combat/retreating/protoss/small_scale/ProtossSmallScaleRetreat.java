@@ -6,8 +6,11 @@ import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import bwapi.Color;
 
 public class ProtossSmallScaleRetreat extends Manager {
+    public static final double RADIUS_LG = 3.5;
+    public static final double RADIUS_SM = 1.6;
     private Selection friends;
     private Selection enemies;
 
@@ -28,7 +31,10 @@ public class ProtossSmallScaleRetreat extends Manager {
         AUnit enemy = enemy();
         if (enemy == null) return null;
 
-        if ((new ProtossStartRetreat(unit)).startRetreatingFrom(enemy)) return usedManager(this);
+        if ((new ProtossStartRetreat(unit)).startRetreatingFrom(enemy)) {
+            unit.paintCircleFilled(14, Color.Red);
+            return usedManager(this);
+        }
 
         return null;
     }
@@ -38,21 +44,22 @@ public class ProtossSmallScaleRetreat extends Manager {
     }
 
     public boolean shouldSmallScaleRetreat() {
-        if (unit.isRanged()) return asRanged(unit, friends, enemies);
+        if (unit.isMissionSparta()) return false;
 
+        if (unit.isRanged()) return asRanged(unit, friends, enemies);
         return asMelee(unit, friends, enemies);
     }
 
     protected boolean asMelee(AUnit unit, Selection friends, Selection enemies) {
 //        if (unit.combatEvalRelative() >= 1.2) return false;
+        if (enemies.inRadius(RADIUS_LG, unit).count() <= 0) return false;
 
-        double radius = 1.6;
-        if (ProtossSmallScaleEvaluate.meleeOverpoweredInRadius(unit, friends, enemies, radius)) {
+        if (isOverpoweredByEnemyMelee(unit, friends, enemies, RADIUS_SM, RADIUS_LG)) {
             unit.setTooltip("PSC:A");
 
-            String message = "@" + A.now() + " PSC" + A.digit(radius)
-                + ": " + A.digit(ProtossSmallScaleEvaluate.ourMeleeStrength(unit, friends, radius))
-                + "_vs_" + A.digit(ProtossSmallScaleEvaluate.enemyMeleeStrength(unit, enemies, radius));
+            String message = "@" + A.now() + " PSC" + A.digit(RADIUS_SM)
+                + ": " + A.digit(ProtossSmallScaleEvaluate.ourMeleeStrength(unit, friends, RADIUS_SM))
+                + "_vs_" + A.digit(ProtossSmallScaleEvaluate.enemyMeleeStrength(unit, enemies, RADIUS_SM));
 //            System.err.println(message);
             unit.addLog(message);
 
@@ -65,6 +72,11 @@ public class ProtossSmallScaleRetreat extends Manager {
 //        }
 
         return false;
+    }
+
+    private static boolean isOverpoweredByEnemyMelee(AUnit unit, Selection friends, Selection enemies, double radiusSm, double radiusLg) {
+        return ProtossSmallScaleEvaluate.meleeOverpoweredInRadius(unit, friends, enemies, radiusSm)
+            && ProtossSmallScaleEvaluate.meleeOverpoweredInRadius(unit, friends, enemies, radiusLg);
     }
 
     protected boolean asRanged(AUnit unit, Selection friends, Selection enemies) {

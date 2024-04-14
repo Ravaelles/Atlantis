@@ -4,6 +4,7 @@ import atlantis.combat.missions.attack.MissionChangerWhenAttack;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
 import atlantis.combat.missions.defend.sparta.Sparta;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
@@ -116,6 +117,9 @@ public abstract class MissionChanger {
         Missions.setGlobalMissionTo(newMission, reason);
         MissionHistory.missionHistory.add(newMission);
 
+        Alpha.get().setMission(newMission);
+
+        A.errPrintln("Change to " + newMission);
 //        A.printStackTrace("Change to " + newMission);
     }
 

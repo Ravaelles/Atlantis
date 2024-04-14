@@ -1,5 +1,7 @@
 package atlantis.game.events;
 
+import atlantis.combat.missions.Missions;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
@@ -72,6 +74,8 @@ public class OnStart {
             AGame.setUmsMode();
             A.printStackTrace();
         }
+
+        Alpha.get().setMission(Missions.globalMission());
 
         System.out.println("### Atlantis is working! ###\n");
 

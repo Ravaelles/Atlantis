@@ -1,25 +1,24 @@
-package atlantis.combat.squad.positioning;
+package atlantis.combat.squad.positioning.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-public class TooFarFromLeader extends Manager {
+public class TerranTooFarFromLeader extends Manager {
     private double distToLeader;
     private AUnit leader;
 
-    public TooFarFromLeader(AUnit unit) {
+    public TerranTooFarFromLeader(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        if (We.protoss()) return false;
+        if (!We.terran()) return false;
 
         if (unit.isAir()) return false;
         if (unit.isDT()) return false;

@@ -24,12 +24,16 @@ public class ProtossSmallScaleEvaluate {
 
     protected static double ourMeleeStrength(AUnit unit, Selection friends, double radius) {
         return friends.melee().inRadius(radius, unit).havingAtLeastHp(23).count()
-            + (unit.hp() >= 23 ? 1 : 0.7);
+            + (unit.hp() >= 23 ? 1.05 : 0.55);
     }
 
     protected static double enemyMeleeStrength(AUnit unit, Selection enemies, double radius) {
 //        enemies.melee().inRadius(radius, unit).print(A.now() + " Enemies in radius: " + radius);
-        return enemies.melee().inRadius(radius, unit).count() * enemyMeleeMultiplier();
+        double rawEval = enemies.melee().inRadius(radius, unit).count()
+            + (unit.hp() >= 23 ? 1 : 0.5);
+
+        return rawEval * enemyMeleeMultiplier();
+
     }
 
     protected static double enemyMeleeMultiplier() {

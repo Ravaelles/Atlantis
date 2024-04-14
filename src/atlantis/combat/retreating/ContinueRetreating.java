@@ -5,6 +5,7 @@ import atlantis.architecture.Manager;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import bwapi.Color;
 
 public class ContinueRetreating extends Manager {
     public ContinueRetreating(AUnit unit) {

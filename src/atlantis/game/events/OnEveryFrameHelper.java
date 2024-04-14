@@ -92,6 +92,15 @@ public class OnEveryFrameHelper {
 
 //        paintWalkableTiles();
 //        paintAllowedGatewayPositions();
+
+//        printUnitManagers();
+    }
+
+    private static void printUnitManagers() {
+        System.out.println("@ " + A.now());
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            System.out.println(unit.typeWithUnitId() + " - " + unit.manager());
+        }
     }
 
     private static void paintAllowedGatewayPositions() {

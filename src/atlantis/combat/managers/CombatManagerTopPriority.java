@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.fix.PreventAttackNull;
 import atlantis.units.fix.PreventAttackForTooLong;
 import atlantis.units.interrupt.ContinueCurrentAction;
+import atlantis.units.special.FixInvalidUnits;
 import atlantis.units.special.ManualOverrideManager;
 import atlantis.units.fix.PreventDoNothing;
 
@@ -28,9 +29,12 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            FixInvalidUnits.class,
             FixPerformanceForBigSupply.class,
             ManualOverrideManager.class,
 
+            Unfreezer.class,
+            
             RetreatManager.class,
 
             PreventDoNothing.class,
@@ -39,7 +43,6 @@ public class CombatManagerTopPriority extends Manager {
 
             ContinueCurrentAction.class,
 
-            Unfreezer.class,
             DanceAfterShoot.class,
 //            ContinueShooting.class,
             HoldToShoot.class,

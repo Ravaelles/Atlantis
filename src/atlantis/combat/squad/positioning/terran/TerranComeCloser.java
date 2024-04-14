@@ -1,11 +1,11 @@
-package atlantis.combat.squad.positioning;
+package atlantis.combat.squad.positioning.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 
-public class ComeCloser extends MissionManager {
-    public ComeCloser(AUnit unit) {
+public class TerranComeCloser extends MissionManager {
+    public TerranComeCloser(AUnit unit) {
         super(unit);
     }
 
@@ -28,8 +28,8 @@ public class ComeCloser extends MissionManager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            TooFarFromLeader.class,
-            TooFarFromSquadCenter.class,
+            TerranTooFarFromLeader.class,
+            TerranTooFarFromSquadCenter.class,
         };
     }
 }
