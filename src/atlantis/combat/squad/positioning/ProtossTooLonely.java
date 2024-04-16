@@ -2,15 +2,12 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.Enemy;
 import atlantis.util.We;
-import sun.security.jgss.krb5.Krb5NameElement;
 
 public class ProtossTooLonely extends Manager {
-    private AUnit leader;
+    private AUnit friend;
 
     public ProtossTooLonely(AUnit unit) {
         super(unit);
@@ -31,14 +28,21 @@ public class ProtossTooLonely extends Manager {
     }
 
     protected Manager handle() {
-        if (leader == null) leader = unit.squadLeader();
+        if (friend == null) friend = defineFriendToGoTo();
+        if (friend == null) return null;
 
         if (!unit.isMoving() || A.everyNthGameFrame(5)) {
-            if (unit.move(leader, Actions.MOVE_FORMATION, "Coordinate")) {
+            if (unit.move(friend, Actions.MOVE_FORMATION, "Coordinate")) {
                 return usedManager(this);
             }
         }
 
         return null;
+    }
+
+    private AUnit defineFriendToGoTo() {
+        if (unit.isLeader()) return unit.friendsNear().combatUnits().groundUnits().nearestTo(unit);
+
+        return unit.squadLeader();
     }
 }

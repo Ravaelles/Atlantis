@@ -70,7 +70,7 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
@@ -118,7 +118,7 @@ public class Main {
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_Zeal.scm";
 
-//        if (true) return "ums/rav/protoss/3Zeal_v_3Zeal.scm";
+        if (true) return "ums/rav/protoss/3Zeal_v_3Zeal.scm";
 //        if (true) return "ums/rav/protoss/4Zeal_v_4Zeal.scm";
 //        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";

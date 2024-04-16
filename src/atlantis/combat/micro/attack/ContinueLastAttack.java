@@ -12,6 +12,7 @@ public class ContinueLastAttack extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
 //        if (unit.isMelee()) return false;
 
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
