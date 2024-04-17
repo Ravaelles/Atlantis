@@ -57,7 +57,7 @@ public class AvoidSingleEnemy extends Manager {
             return true;
         }
 
-        if ((new DontAvoidEnemy(unit)).invoke(this) != null) return true;
+        if ((new DontAvoidEnemy(unit)).invoked(this)) return true;
 
         return false;
     }

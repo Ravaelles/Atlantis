@@ -11,16 +11,12 @@ public class DontAvoidEnemy extends Manager {
         super(unit);
     }
 
-    @Override
-    public boolean applies() {
-        return unit.isRanged()
-            && (
-            enemyAirUnitsAreNearAndWeShouldEngage()
-                || enemyCombatBuildingNearAndWeAreStacked()
-        );
-    }
+//    @Override
+//    public boolean applies() {
+//        return true;
+//    }
 
-    private boolean enemyCombatBuildingNearAndWeAreStacked() {
+    protected boolean enemyCombatBuildingNearAndWeAreStacked() {
         return unit.isGroundUnit()
             && unit.friendsNear().groundUnits().combatUnits().inRadius(5, unit).atLeast(14)
             && unit.enemiesNear()
@@ -30,7 +26,7 @@ public class DontAvoidEnemy extends Manager {
             && (unit.woundHp() <= 16 || unit.meleeEnemiesNearCount(2.5) == 0);
     }
 
-    private boolean enemyAirUnitsAreNearAndWeShouldEngage() {
+    protected boolean enemyAirUnitsAreNearAndWeShouldEngage() {
         return unit.enemiesNear()
             .ofType(AUnitType.Terran_Wraith, AUnitType.Protoss_Scout).inRadius(5, unit)
             .effVisible()
@@ -41,13 +37,13 @@ public class DontAvoidEnemy extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            TerranDontAvoidEnemy.class,
             ProtossDontAvoidEnemy.class,
+            TerranDontAvoidEnemy.class,
         };
     }
 
-    @Override
-    public Manager handle() {
-        return usedManager(this);
-    }
+//    @Override
+//    public Manager handle() {
+//        return handleSubmanagers();
+//    }
 }

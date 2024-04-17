@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
+import bwapi.Color;
 
 public class DanceAwayAsZealot extends Manager {
     public DanceAwayAsZealot(AUnit unit) {
@@ -13,11 +14,20 @@ public class DanceAwayAsZealot extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isZealot()) return false;
+        if (dontApplyWhenRangedEnemiesNear()) return false;
 
-        return unit.cooldown() >= 10
+        boolean fairlyWounded = unit.hp() <= 80;
+
+        // @ToDo Tweak these values
+        return unit.cooldown() >= (fairlyWounded ? 4 : 12)
             && unit.isWounded()
-            && unit.lastUnderAttackLessThanAgo(20)
+            && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60))
             && unit.meleeEnemiesNearCount(1.2) > minMeleeEnemiesNear();
+    }
+
+    private boolean dontApplyWhenRangedEnemiesNear() {
+        return unit.hp() >= 32
+            && unit.enemiesNear().ranged().inRadius(6, unit).notEmpty();
     }
 
     private int minMeleeEnemiesNear() {
@@ -30,6 +40,8 @@ public class DanceAwayAsZealot extends Manager {
     protected Manager handle() {
         AUnit enemy = nearestMeleeEnemy();
         if (enemy == null) return null;
+
+        unit.paintCircleFilled(26, Color.Yellow);
 
         return danceAwayFrom(enemy) ? usedManager(this) : null;
     }

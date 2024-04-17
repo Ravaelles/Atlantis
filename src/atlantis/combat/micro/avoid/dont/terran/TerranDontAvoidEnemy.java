@@ -26,8 +26,8 @@ public class TerranDontAvoidEnemy extends Manager {
         };
     }
 
-    @Override
-    public Manager handle() {
-        return null;
-    }
+//    @Override
+//    public Manager handle() {
+//        return handleSubmanagers();
+//    }
 }

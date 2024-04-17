@@ -35,7 +35,7 @@ public class CombatManagerMediumPriority extends Manager {
             AvoidEnemiesIfNeeded.class,
             DontMoveWhenBeingRepared.class,
             UnitBeingReparedManager.class,
-            AttackNearbyEnemies.class,
+//            AttackNearbyEnemies.class,
 
             SquadScout.class,
 

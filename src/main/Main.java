@@ -118,13 +118,13 @@ public class Main {
 //        if (true) return "ums/rav/4Drag_v_5Drag.scm";
 //        if (true) return "ums/rav/4Drag_v_Zeal.scm";
 
-        if (true) return "ums/rav/protoss/3Zeal_v_3Zeal.scm";
+//        if (true) return "ums/rav/protoss/3Zeal_v_3Zeal.scm";
 //        if (true) return "ums/rav/protoss/4Zeal_v_4Zeal.scm";
-//        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
+        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
-        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
 //@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 
 //        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";

@@ -3,6 +3,7 @@ package atlantis.units.select;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.position.APosition;
 import atlantis.production.constructing.builders.BuilderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -26,6 +27,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 
     //    protected static SelectUnitsCache cache = new SelectUnitsCache();
     protected static Cache<Selection> cache = new Cache<>();
+    protected static Cache<Object> cacheObject = new Cache<>();
     protected static Cache<Integer> cacheInt = new Cache<>();
     protected static Cache<AUnit> cacheUnit = new Cache<>();
 
@@ -761,6 +763,17 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 if (main != null) return main;
 
                 return Select.ourBuildings().first();
+            }
+        );
+    }
+
+    public static APosition mainOrAnyBuildingPosition() {
+        return (APosition) cacheObject.getIfValid(
+            "mainOrAnyBuildingPosition",
+            73,
+            () -> {
+                AUnit building = mainOrAnyBuilding();
+                return building != null ? building.position() : null;
             }
         );
     }

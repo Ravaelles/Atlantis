@@ -77,7 +77,7 @@ public class SquadCenter {
             return first.lastPosition();
         }
 
-        return Select.mainOrAnyBuilding().position();
+        return Select.mainOrAnyBuildingPosition();
     }
 
     private static Selection potentialLeaders(Selection units) {

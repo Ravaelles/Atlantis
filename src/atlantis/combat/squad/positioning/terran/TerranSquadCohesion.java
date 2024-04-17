@@ -5,8 +5,8 @@ import atlantis.combat.squad.positioning.*;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
-public class TerranSquadCohesionManager extends Manager {
-    public TerranSquadCohesionManager(AUnit unit) {
+public class TerranSquadCohesion extends Manager {
+    public TerranSquadCohesion(AUnit unit) {
         super(unit);
     }
 

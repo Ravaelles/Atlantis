@@ -10,13 +10,16 @@ public class DragoonDontAvoid {
 
         if (Enemy.protoss()) return vsProtoss(unit);
 
+        System.out.println("Huh????? " + unit.hp() + " / " + Enemy.protoss());
+
         return false;
     }
 
     private static boolean vsProtoss(AUnit unit) {
-        return unit.hp() >= 40
-            && (unit.lastAttackFrameAgo() > 30 * 2 || unit.combatEvalRelative() > 1.1)
-            && unit.meleeEnemiesNearCount(1.6) == 0
+        System.out.println("Well? " + unit);
+        return unit.hp() > 40
+//            && (unit.lastAttackFrameAgo() > 30 * 2 || unit.combatEvalRelative() > 1.3)
+//            && (unit.isHealthy() || unit.meleeEnemiesNearCount(1.6) == 0)
             && A.println("Don't avoid " + unit.typeWithUnitId());
     }
 }

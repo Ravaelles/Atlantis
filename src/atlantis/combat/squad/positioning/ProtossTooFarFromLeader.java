@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -18,15 +19,13 @@ public class ProtossTooFarFromLeader extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
         if (!We.protoss()) return false;
 
         if (unit.isAir()) return false;
         if (unit.isDT()) return false;
-//        if (A.seconds() % 4 <= 1) return false;
 
-        if (We.terran() && !Enemy.terran() && A.seconds() <= 220) return false;
 //        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
         if (unit.squad().isLeader(unit)) return false;
 
@@ -37,31 +36,41 @@ public class ProtossTooFarFromLeader extends Manager {
         leader = unit.squad().leader();
         if (leader == null) return false;
 
-        if (leaderIsOvercrowded()) return false;
-        if (unitIsOvercrowded()) return false;
-
         distToLeader = unit.distTo(leader);
         boolean wayTooFarFromLeader = wayTooFarFromLeader();
 
         if (wayTooFarFromLeader) return true;
 
         if (unit.distToNearestChokeLessThan(5)) return false;
+        if (leaderIsOvercrowded()) return false;
+        if (unitIsOvercrowded()) return false;
 
         return tooFarFromLeader();
     }
 
     private boolean wayTooFarFromLeader() {
-        int maxDistance = We.protoss() ? 9 : 8;
+        int maxDistance = A.inRange(
+            unit.isRanged() ? 5 : 2,
+            (Have.dragoon() ? 5 : 3) + unit.squadSize() / 5,
+            8
+        );
 
         return distToLeader >= maxDistance;
     }
 
     private boolean unitIsOvercrowded() {
-        return unit.friendsNear().groundUnits().countInRadius(1, unit) >= 2
-            || (
-            unit.friendsNear().groundUnits().countInRadius(1.5, unit) >= 5
-                && unit.friendsNear().groundUnits().countInRadius(3, unit) >= 8
-        );
+        return
+//            unit.friendsNear().groundUnits().countInRadius(1, unit) >= 2
+//            || (
+            unit.friendsNear().groundUnits().countInRadius(1.5, unit) >= 5;
+//                && unit.friendsNear().groundUnits().countInRadius(3, unit) >= 8
+//        );
+
+//        return unit.friendsNear().groundUnits().countInRadius(1, unit) >= 2
+//            || (
+//            unit.friendsNear().groundUnits().countInRadius(1.5, unit) >= 5
+//                && unit.friendsNear().groundUnits().countInRadius(3, unit) >= 8
+//        );
     }
 
     private boolean leaderIsOvercrowded() {
