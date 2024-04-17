@@ -1,30 +1,38 @@
 package atlantis.game.race;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import bwapi.Race;
 
 public class EnemyRace {
-
+    protected static Race enemyRace = null;
 
     /**
      * Returns true if enemy plays as Terran.
      */
     public static boolean isEnemyTerran() {
-        return AGame.enemy().getRace().equals(Race.Terran);
+        return Race.Terran.equals(enemyRace());
     }
 
     /**
      * Returns true if enemy plays as Protoss.
      */
     public static boolean isEnemyProtoss() {
-        System.err.println("AGame.enemy().getRace() = " + AGame.enemy().getRace());
-        return AGame.enemy().getRace().equals(Race.Protoss);
+        return Race.Protoss.equals(enemyRace());
     }
 
     /**
      * Returns true if enemy plays as Zerg.
      */
     public static boolean isEnemyZerg() {
-        return AGame.enemy().getRace().equals(Race.Zerg);
+        return Race.Zerg.equals(enemyRace());
+    }
+
+    public static Race enemyRace() {
+        if (enemyRace != null) return enemyRace;
+
+        if (!A.isUms()) return enemyRace = AGame.enemy().getRace();
+
+        return enemyRace = DefineEnemyRaceForCustomMaps.define();
     }
 }

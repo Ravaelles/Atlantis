@@ -12,7 +12,6 @@ public class ProtossDontAvoidEnemy extends Manager {
     public boolean applies() {
         if (!unit.isProtoss()) return false;
 
-        System.out.println(unit.typeWithUnitId() + "....");
         if (DragoonDontAvoid.dontAvoid(unit)) return true;
 
         return false;

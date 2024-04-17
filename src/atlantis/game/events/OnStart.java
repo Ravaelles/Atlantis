@@ -10,6 +10,7 @@ import atlantis.debug.tweaker.ParamTweakerFactory;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
+import atlantis.game.race.EnemyRace;
 import atlantis.information.strategy.ProtossStrategies;
 import atlantis.information.strategy.StrategyChooser;
 import atlantis.information.strategy.terran.TerranStrategies;
@@ -21,7 +22,6 @@ import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
-import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class OnStart {
@@ -56,6 +56,9 @@ public class OnStart {
 
         // One time map analysis for every map
         AMap.initMapAnalysis();
+
+        // Remember enemy race - could be broken for UMS maps
+        EnemyRace.enemyRace();
 
         // Create list of all strategies in memory
         initializeAllStrategies();
