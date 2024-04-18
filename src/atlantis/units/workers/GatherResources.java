@@ -1,6 +1,7 @@
 package atlantis.units.workers;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -15,6 +16,7 @@ public class GatherResources extends Manager {
         if (!unit.isWorker()) return false;
 
         return !unit.isGatheringGas()
+            && !unit.isGatheringMinerals()
             && !unit.isBuilder()
             && !unit.isRunning()
             && !unit.isConstructing()
@@ -27,6 +29,8 @@ public class GatherResources extends Manager {
     }
 
     protected Manager handle() {
+        if (unit.lastPositionChangedLessThanAgo(10)) return null;
+
         if (itIsNotSafeToGather()) return null;
 
         if (handleGatherMineralsOrGas()) return usedManager(this);

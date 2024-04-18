@@ -23,8 +23,7 @@ public class IdleWorker extends Manager {
 
     public Manager handle() {
         if (unit.lastActionMoreThanAgo(51)) {
-            (new GatherResources(unit)).forceHandle();
-            return usedManager(this);
+            if ((new GatherResources(unit)).forceHandle() != null) return usedManager(this);
         }
 
         return null;

@@ -10,7 +10,7 @@ import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class ProtossSmallScaleRetreat extends Manager {
-    public static final double RADIUS_LG = 3.5;
+    public static final double RADIUS_LG = 4;
     public static final double RADIUS_SM = 1.6;
     private Selection friends;
     private Selection enemies;
@@ -40,6 +40,11 @@ public class ProtossSmallScaleRetreat extends Manager {
         return null;
     }
 
+    private static boolean isOverpoweredByEnemyMelee(AUnit unit, Selection friends, Selection enemies) {
+        return ProtossSmallScaleEvaluate.meleeOverpoweredInRadius(unit, friends, enemies, RADIUS_SM)
+            && ProtossSmallScaleEvaluate.meleeOverpoweredInRadius(unit, friends, enemies, RADIUS_LG);
+    }
+
     private AUnit enemy() {
         return enemies.first();
     }
@@ -47,6 +52,7 @@ public class ProtossSmallScaleRetreat extends Manager {
     public boolean shouldSmallScaleRetreat() {
         if (unit.isMissionSparta()) return false;
         if (ProtossTooBigBattleToRetreat.doNotRetreat(unit)) return false;
+        if (unit.combatEvalRelative() >= 1.35 && unit.hp() >= 24) return false;
 
         if (unit.isRanged()) return asRanged(unit, friends, enemies);
         return asMelee(unit, friends, enemies);
@@ -57,7 +63,7 @@ public class ProtossSmallScaleRetreat extends Manager {
 //        if (unit.combatEvalRelative() >= 1.2) return false;
         if (enemies.inRadius(RADIUS_LG, unit).count() <= 0) return false;
 
-        if (isOverpoweredByEnemyMelee(unit, friends, enemies, RADIUS_SM, RADIUS_LG)) {
+        if (isOverpoweredByEnemyMelee(unit, friends, enemies)) {
             unit.setTooltip("PSC:A");
 
             String message = "@" + A.now() + " PSC" + A.digit(RADIUS_SM)
@@ -75,11 +81,6 @@ public class ProtossSmallScaleRetreat extends Manager {
 //        }
 
         return false;
-    }
-
-    private static boolean isOverpoweredByEnemyMelee(AUnit unit, Selection friends, Selection enemies, double radiusSm, double radiusLg) {
-        return ProtossSmallScaleEvaluate.meleeOverpoweredInRadius(unit, friends, enemies, radiusSm)
-            && ProtossSmallScaleEvaluate.meleeOverpoweredInRadius(unit, friends, enemies, radiusLg);
     }
 
     protected boolean asRanged(AUnit unit, Selection friends, Selection enemies) {

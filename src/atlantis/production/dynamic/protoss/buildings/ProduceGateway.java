@@ -58,7 +58,8 @@ public class ProduceGateway {
     }
 
     private static boolean tooManyGatewaysForNow() {
-        int enough = Enemy.zerg() ? 5 : 4;
+//        int enough = Enemy.zerg() ? 5 : 4;
+        int enough = Enemy.zerg() ? 5 : 6;
 
         return !A.hasMinerals(450)
             && Count.gatewaysWithUnfinished() >= enough

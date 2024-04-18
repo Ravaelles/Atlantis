@@ -106,6 +106,7 @@ public class ProtossShouldExpand {
         if (seconds >= 650) return yes("GettingLate");
 
         if (armyStrength <= 90) return no("TooWeak");
+        if (seconds <= 500 && OurStrategy.get().isRushOrCheese()) no("RushPlan");
         if (enemyHasNoCombatBuilding()) return no("NoEnemyCB");
 
 //        System.err.println(A.now() + " - armyStrength ok to expand = " + armyStrength);

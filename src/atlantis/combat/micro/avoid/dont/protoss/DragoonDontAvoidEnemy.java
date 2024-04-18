@@ -17,9 +17,13 @@ public class DragoonDontAvoidEnemy {
         if (unit.isHealthy() && unit.friendsInRadiusCount(3) > 0) return true;
         if (ProtossTooBigBattleToRetreat.doNotRetreat(unit)) return true;
 
+        int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(1.4);
+
+        if (meleeEnemiesNearCount > 0 && unit.cooldown() >= 3) return false;
+
         return unit.hp() > 40
             && (unit.lastAttackFrameAgo() > 30 * 2 || unit.combatEvalRelative() > 1.3)
-            && (unit.isHealthy() || unit.meleeEnemiesNearCount(1.6) == 0);
+            && (unit.isHealthy() || meleeEnemiesNearCount == 0);
 //            && A.println("Don't avoid " + unit.typeWithUnitId());
     }
 }

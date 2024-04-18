@@ -60,7 +60,8 @@ public class CanPhysicallyBuildHere {
     }
 
     private static boolean positionUnexplorerAndNotVisibleLetsDoit(APosition position, AUnitType building) {
-        return !position.isExplored()
+        return We.terran()
+            && !position.isExplored()
             && !position.isPositionVisible()
             && !building.isCombatBuilding();
     }
