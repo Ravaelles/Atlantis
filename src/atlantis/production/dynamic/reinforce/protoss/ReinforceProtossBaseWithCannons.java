@@ -63,7 +63,7 @@ public class ReinforceProtossBaseWithCannons {
                 Protoss_Pylon,
                 null,
                 finalPosition,
-                9
+                12
             );
 //            System.err.println("__positionForPylon = " + positionForPylon);
 

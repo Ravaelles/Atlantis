@@ -1,4 +1,4 @@
-package atlantis.combat.running;
+package atlantis.combat.running.stop_running;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.dancing.HoldToShoot;
@@ -31,11 +31,13 @@ public class ShouldStopRunning extends Manager {
     public boolean check() {
 //        if (unit.isActiveManager(HoldToShoot.class)) return false;
 
+        if (shouldStopRunningAsDragoon()) return true;
+
         if (dontStopRunningAsWorker()) return false;
 
-        if (!unit.isRunning()) {
-            return decisionStopRunning();
-        }
+//        if (!unit.isRunning()) {
+//            return decisionStopRunning();
+//        }
 
         return false;
 
@@ -79,6 +81,11 @@ public class ShouldStopRunning extends Manager {
 //        }
 //
 //        return false;
+    }
+
+    private boolean shouldStopRunningAsDragoon() {
+        return unit.lastUnderAttackMoreThanAgo(15)
+            && unit.enemiesNear().canAttack(unit, unit.hp() >= 42 ? 0.5 : 1.7).empty();
     }
 
     private boolean dontStopRunningAsWorker() {

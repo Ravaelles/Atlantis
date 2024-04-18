@@ -14,10 +14,12 @@ public class DanceTo extends Manager {
 
     @Override
     public boolean applies() {
+        int cooldown = unit.cooldownRemaining();
+
+        if (cooldown <= 0) return false;
+
         target = unit.target();
         if (target == null || !target.hasPosition()) return false;
-
-        int cooldown = unit.cooldownRemaining();
 
         return (cooldown >= 6 && cooldown <= 20)
             && !asDragoonDontDanceTo()

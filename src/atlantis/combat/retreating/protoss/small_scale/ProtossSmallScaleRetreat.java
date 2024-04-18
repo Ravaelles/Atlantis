@@ -2,6 +2,7 @@ package atlantis.combat.retreating.protoss.small_scale;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
+import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
 import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -45,10 +46,12 @@ public class ProtossSmallScaleRetreat extends Manager {
 
     public boolean shouldSmallScaleRetreat() {
         if (unit.isMissionSparta()) return false;
+        if (ProtossTooBigBattleToRetreat.doNotRetreat(unit)) return false;
 
         if (unit.isRanged()) return asRanged(unit, friends, enemies);
         return asMelee(unit, friends, enemies);
     }
+
 
     protected boolean asMelee(AUnit unit, Selection friends, Selection enemies) {
 //        if (unit.combatEvalRelative() >= 1.2) return false;

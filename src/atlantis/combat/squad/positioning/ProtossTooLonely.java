@@ -18,6 +18,8 @@ public class ProtossTooLonely extends Manager {
         if (!We.protoss()) return false;
         if (unit.isAir()) return false;
         if (unit.isDT()) return false;
+        if (unit.lastStartedAttackLessThanAgo(40)) return false;
+        if (unit.isLeader()) return false;
         if (unit.distToNearestChokeLessThan(5)) return false;
 
         return isTooLonely();

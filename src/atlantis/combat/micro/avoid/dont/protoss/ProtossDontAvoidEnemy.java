@@ -12,7 +12,7 @@ public class ProtossDontAvoidEnemy extends Manager {
     public boolean applies() {
         if (!unit.isProtoss()) return false;
 
-        if (DragoonDontAvoid.dontAvoid(unit)) return true;
+        if (DragoonDontAvoidEnemy.dontAvoid(unit)) return true;
 
         return false;
     }

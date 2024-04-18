@@ -6,7 +6,6 @@ import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.HoldToShoot;
 import atlantis.combat.micro.dancing.away.DanceAwayAsMelee;
-import atlantis.combat.micro.dancing.away.DanceAwayAsZealot;
 import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.retreating.RetreatManager;

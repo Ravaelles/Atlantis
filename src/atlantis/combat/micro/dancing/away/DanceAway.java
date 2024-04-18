@@ -1,6 +1,7 @@
 package atlantis.combat.micro.dancing.away;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.dancing.away.protoss.DanceAwayAsDragoon;
 import atlantis.decions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;

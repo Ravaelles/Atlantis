@@ -31,11 +31,11 @@ public class ProtossForbiddenByStreetGrid {
             int moduloX = (position.tx() % GRID_SIZE_X);
             int moduloY = (position.ty() % GRID_SIZE_Y);
 
-            // G:1  P:5 P:7 G:9
-            if (moduloX != 1 && moduloX != 9) return failed("TX modulo PG_X2 = " + moduloX
+            // G:1  P:5 P:7  G:9
+            if (moduloX != 1 && moduloX != 9 && moduloX != 10) return failed("TX modulo PG_X2 = " + moduloX
                 + " / tx:" + position.tx() + " / grid:" + GRID_SIZE_X);
 
-            // G:1  P:4 P:6 G:8
+            // G:1  P:4 P:6  G:8
             if (moduloY != 1 && moduloY != 4 && moduloY != 8) return failed("TY modulo PG_Y2 = " + moduloY
                 + " / ty:" + position.ty() + " / grid:" + GRID_SIZE_Y);
         }

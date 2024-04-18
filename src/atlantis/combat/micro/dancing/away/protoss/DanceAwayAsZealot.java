@@ -1,4 +1,4 @@
-package atlantis.combat.micro.dancing.away;
+package atlantis.combat.micro.dancing.away.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;

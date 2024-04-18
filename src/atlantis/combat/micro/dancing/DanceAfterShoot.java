@@ -2,7 +2,6 @@ package atlantis.combat.micro.dancing;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.dancing.away.DanceAway;
-import atlantis.combat.micro.dancing.away.DanceAwayAsZealot;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
 

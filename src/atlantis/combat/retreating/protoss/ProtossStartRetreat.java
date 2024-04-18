@@ -44,7 +44,10 @@ public class ProtossStartRetreat extends HasUnit {
 //        unit.addLog("@ " + A.now() + " - RETREAT");
 //        System.err.println("@ " + A.now() + " - RETREAT " + unit.idWithType());
 
-        if (retreatByRunningFromEnemy(runAwayFrom) || retreatByRunningTowardsBase()) {
+        if (
+            retreatByRunningTowardsBase()
+                || retreatByRunningFromEnemy(runAwayFrom)
+        ) {
             unitStartedRetreating(runAwayFrom);
             unit.paintLine(unit.runningManager().runTo(), Color.Orange);
             return true;
