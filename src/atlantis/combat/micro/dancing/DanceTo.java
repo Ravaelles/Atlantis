@@ -32,11 +32,10 @@ public class DanceTo extends Manager {
     }
 
     private boolean asDragoonDontDanceTo() {
-        if (true) return true;
-
         if (!unit.isDragoon()) return false;
 
-        return unit.hp() <= 40;
+        return unit.distToNearestChokeLessThan(4);
+//        return unit.hp() <= 40;
     }
 
     private boolean shouldDanceToDuringMissionAttack() {

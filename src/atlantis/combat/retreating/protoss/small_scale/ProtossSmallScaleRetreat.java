@@ -85,9 +85,11 @@ public class ProtossSmallScaleRetreat extends Manager {
     }
 
     protected boolean asRanged(AUnit unit, Selection friends, Selection enemies) {
+        if (unit.cooldown() <= 12) return false;
+
         if (enemies.onlyMelee()) {
             if (unit.shieldDamageAtMost(30)) return false;
-            if (unit.meleeEnemiesNearCount() <= 2.5) return false;
+            if (unit.meleeEnemiesNearCount(2) == 0) return false;
         }
 
 //        if (unit.combatEvalRelative() <= 1.06 && unit.friendsInRadiusCount(5) < enemies.count()) return true;

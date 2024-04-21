@@ -1,9 +1,11 @@
 package atlantis.game.events;
 
+import atlantis.Atlantis;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -29,10 +31,12 @@ import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.attacked_by.KnownBullets;
 import atlantis.units.interrupt.ContinueOldBroklenShootingOld;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.Vector;
+import bwapi.Bullet;
 import bwapi.Color;
 import jbweb.Block;
 import jbweb.Blocks;
@@ -94,6 +98,25 @@ public class OnEveryFrameHelper {
 //        paintAllowedGatewayPositions();
 
 //        printUnitManagers();
+
+//        printBullets();
+    }
+
+    private static void printBullets() {
+        KnownBullets.updateKnown();
+
+        List<Bullet> bullets = AGame.get().getBullets();
+        if (bullets.isEmpty()) return;
+
+        System.err.println("@ " + A.now() + " - BULLETS");
+        for (Bullet b : bullets) {
+            System.out.println(b.getType() + " from " + b.getSource()
+                    + " to " + b.getTarget()
+                    + ", pos:" + b.getPosition()
+                    + ", dist:" + b.getPosition().getApproxDistance(b.getTargetPosition())
+//                + ", :" + b.
+            );
+        }
     }
 
     private static void printUnitManagers() {

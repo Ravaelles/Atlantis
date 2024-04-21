@@ -26,6 +26,10 @@ public class AGame {
 
     // =========================================================
 
+    public static Game get() {
+        return Atlantis.game();
+    }
+
     /**
      * Quits the game gently, killing all processes and cleaning up.
      */

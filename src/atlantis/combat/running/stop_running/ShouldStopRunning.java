@@ -31,7 +31,7 @@ public class ShouldStopRunning extends Manager {
     public boolean check() {
 //        if (unit.isActiveManager(HoldToShoot.class)) return false;
 
-        if (shouldStopRunningAsDragoon()) return true;
+        if (ShouldStopRunningDragoon.shouldStopRunning(unit)) return true;
 
 //        if (dontStopRunningAsWorker()) return false;
 
@@ -42,7 +42,7 @@ public class ShouldStopRunning extends Manager {
         return false;
 
 //        if (checkAsMelee()) return false;
-//        if (StopRunningAsMarine.shouldNotStop(unit)) return false;
+//        if (ShouldStopRunningMarine.shouldNotStop(unit)) return false;
 //
 //        // @Replaced
 //        if (unit.avoidEnemiesManager().shouldAvoidAnyUnit()) {
@@ -81,12 +81,6 @@ public class ShouldStopRunning extends Manager {
 //        }
 //
 //        return false;
-    }
-
-    private boolean shouldStopRunningAsDragoon() {
-        return unit.isDragoon()
-            && unit.lastUnderAttackMoreThanAgo(15)
-            && unit.enemiesNear().canAttack(unit, unit.hp() >= 42 ? 0.5 : 1.7).empty();
     }
 
     private boolean dontStopRunningAsWorker() {

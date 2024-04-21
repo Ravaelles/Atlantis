@@ -1,6 +1,5 @@
 package atlantis.information.strategy;
 
-
 import atlantis.config.env.Env;
 import atlantis.production.orders.production.queue.QueueInitializer;
 

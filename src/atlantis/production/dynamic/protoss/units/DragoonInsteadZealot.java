@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnitType;
@@ -10,7 +11,9 @@ import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 
 public class DragoonInsteadZealot {
-    static boolean dragoonInsteadOfZealot() {
+    public static boolean dragoonInsteadOfZealot() {
+        if (manyZealotsAndEnemyTooStrong()) return true;
+
         if (!A.hasGas(50) || !Have.cyberneticsCore()) return false;
         if (notEnoughZealots()) return false;
 
@@ -19,6 +22,12 @@ public class DragoonInsteadZealot {
         if (A.hasGas(50) && !A.hasMinerals(225) && Count.dragoons() <= 2 && Count.zealots() >= 1) return true;
 
         return false;
+    }
+
+    private static boolean manyZealotsAndEnemyTooStrong() {
+        return Enemy.protoss()
+            && OurArmy.strength() <= 120
+            && Count.zealots() >= 11;
     }
 
     private static boolean notEnoughZealots() {

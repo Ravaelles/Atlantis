@@ -2,7 +2,6 @@ package atlantis.debug.painter;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
-import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.combat.advance.focus.AFocusPoint;
@@ -60,7 +59,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.WorkerRepository;
-import atlantis.util.ColorUtil;
 import atlantis.util.Counter;
 import atlantis.util.HasReason;
 import atlantis.util.We;
@@ -235,8 +233,23 @@ public class AAdvancedPainter extends APainter {
 
             paintSquad(unit);
             paintLastAction(unit);
-            paintLog(unit);
+//            paintManagerLogs(unit);
+            paintLastAttackedBy(unit);
         }
+    }
+
+    private static void paintLastAttackedBy(AUnit unit) {
+        if (!unit.isCombatUnit() || unit.isABuilding()) return;
+
+        AUnit attackedBy = unit.underAttack().lastBy();
+        String string = attackedBy != null ? attackedBy.typeWithUnitId() : null;
+        if (attackedBy != null) {
+            string += "(" + unit.lastActionFramesAgo() + ")";
+        }
+
+        Color color = Grey;
+
+        paintTextCentered(unit, string, color);
     }
 
     private static void paintUnitWithinChoke(AUnit unit) {
@@ -268,7 +281,7 @@ public class AAdvancedPainter extends APainter {
         );
     }
 
-    private static void paintLog(AUnit unit) {
+    private static void paintManagerLogs(AUnit unit) {
         int baseOffset = 13;
         int counter = 0;
 

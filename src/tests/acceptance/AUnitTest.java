@@ -3,6 +3,7 @@ package tests.acceptance;
 import atlantis.combat.targeting.ATargeting;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
+import atlantis.units.attacked_by.UnderAttack;
 import atlantis.util.Angle;
 import org.junit.Test;
 import tests.unit.FakeUnit;
@@ -244,6 +245,25 @@ public class AUnitTest extends AbstractTestFakingGame {
 
             assertFalse(hydra.isOtherUnitShowingBackToUs(marine));
             assertFalse(marine.isOtherUnitShowingBackToUs(hydra));
+        });
+    }
+
+    @Test
+    public void testLastAttackedBy() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit zergling, marine, enemyDragoon;
+
+        FakeUnit[] enemies = fakeEnemies(
+            zergling = fake(AUnitType.Zerg_Zergling, 13),
+            marine = fake(AUnitType.Terran_Marine, 14),
+            enemyDragoon = fake(AUnitType.Protoss_Dragoon, 15)
+        );
+
+        usingFakeOurAndFakeEnemies(dragoon, enemies, () -> {
+            UnderAttack underAttack = dragoon.underAttack();
+
+            assertTrue(null == underAttack.lastBy());
+            assertTrue(99999 == underAttack.lastAgo());
         });
     }
 

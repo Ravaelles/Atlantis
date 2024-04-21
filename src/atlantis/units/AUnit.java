@@ -34,6 +34,7 @@ import atlantis.terran.FlyingBuildingScoutCommander;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.units.attacked_by.UnderAttack;
 import atlantis.units.detected.IsOurUnitUndetected;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
@@ -99,6 +100,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     protected AUnitType _lastType = null;
     private Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
     private Log managerLogs = new Log(30 * 30, 5);
+    private UnderAttack underAttack = new UnderAttack(this);
     private Action unitAction = Actions.INIT;
     private Action _prevAction = null;
 
@@ -3218,5 +3220,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double smallScaleEval() {
         return _smallScaleEval;
+    }
+
+    public UnderAttack underAttack() {
+        return underAttack;
     }
 }

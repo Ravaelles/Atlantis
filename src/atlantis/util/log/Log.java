@@ -36,9 +36,8 @@ public class Log {
 
     public void addMessage(String message, AUnit unit) {
         messages.add(new LogMessage(message, expireAfterFrames));
-        if (SAVE_UNIT_LOGS_TO_FILES > 0) {
-            LogUnitsToFiles.saveUnitLogToFile(message, unit);
-        }
+
+        if (SAVE_UNIT_LOGS_TO_FILES > 0) LogUnitsToFiles.saveUnitLogToFile(message, unit);
 
         if (messages.size() > limit) messages.remove(0);
     }
