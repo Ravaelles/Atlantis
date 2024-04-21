@@ -39,8 +39,8 @@ public class AutoProduceWorkersCommander extends Commander {
     public static boolean shouldProduceWorkers() {
         if (AGame.supplyFree() == 0 || !A.hasMinerals(50)) return dont("CantAfford");
         if (
-            A.supplyUsed() <= 30 && Count.workers() >= 15 && (
-                (!A.hasMinerals(100) || A.minerals() < A.reservedMinerals() + 100))
+            A.supplyUsed() <= 30 && Count.workers() >= 25 && (
+                (!A.hasMinerals(150) && A.minerals() < A.reservedMinerals() + 50))
         ) return dont("FollowBO");
 
         // === Terran ===========================================
@@ -54,8 +54,7 @@ public class AutoProduceWorkersCommander extends Commander {
         // =========================================================
 
         int workers = Select.ourWorkers().count();
-
-        if (workers <= 20 && A.seconds() >= 500) return true;
+        if (workers <= 20 && A.seconds() >= 600) return true;
 
         // === Zerg ===========================================
 

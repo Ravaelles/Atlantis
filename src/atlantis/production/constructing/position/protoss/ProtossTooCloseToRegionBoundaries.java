@@ -9,6 +9,8 @@ import atlantis.units.AUnitType;
 
 public class ProtossTooCloseToRegionBoundaries {
     public static boolean isTooCloseToRegionBoundaries(AUnitType building, APosition position) {
+        if (true) return false;
+
         if (!building.isPylon()) return false;
 
         ARegion region = position.region();

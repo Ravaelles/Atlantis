@@ -1,7 +1,7 @@
 package atlantis.combat.retreating.protoss.should;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.retreating.protoss.big_scale.ProtossBigScaleRetreat;
+import atlantis.combat.retreating.protoss.big_scale.ProtossFullRetreat;
 import atlantis.combat.retreating.protoss.small_scale.ProtossSmallScaleRetreat;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
@@ -14,7 +14,7 @@ public class ProtossShouldRetreat extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossBigScaleRetreat.class,
+            ProtossFullRetreat.class,
             ProtossSmallScaleRetreat.class,
         };
     }

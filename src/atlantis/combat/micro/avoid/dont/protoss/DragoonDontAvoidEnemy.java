@@ -14,16 +14,15 @@ public class DragoonDontAvoidEnemy {
     }
 
     private static boolean vsProtoss(AUnit unit) {
-        if (unit.isHealthy() && unit.friendsInRadiusCount(3) > 0) return true;
+        if (unit.isHealthy()) return true;
+        if (ProtossTooBigBattleToRetreat.doNotRetreat(unit)) return true;
 
         int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(1.5);
         if (meleeEnemiesNearCount > 0) {
-            if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return true;
+            if (unit.lastAttackFrameMoreThanAgo(30 * (unit.shields() >= 16 ? 2 : 5))) return true;
 
-            return unit.cooldown() <= 7 && unit.shields() >= 6;
+            return (unit.woundHp() <= 40 || unit.cooldown() <= 7) && unit.shields() >= 6;
         }
-
-        if (ProtossTooBigBattleToRetreat.doNotRetreat(unit)) return true;
 
         return unit.woundHp() <= 30
             && (unit.lastAttackFrameAgo() > 30 * 2 || unit.combatEvalRelative() > 1.3)

@@ -24,6 +24,8 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     protected boolean handleRetreat() {
+        if (enemy == null) return false;
+
 //        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFightCached()) {
 //        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFight()) {
 

@@ -19,7 +19,7 @@ public class DefineNearTo {
             nearTo = Select.mainOrAnyBuilding();
         }
 
-        if (nearTo == null && A.supplyUsed() <= 26) {
+        if (nearTo == null && A.supplyUsed() <= 45) {
             nearTo = MainRegion.center();
         }
 
