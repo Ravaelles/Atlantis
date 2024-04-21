@@ -1,9 +1,14 @@
 package atlantis.combat.missions.defend.sparta;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.MissionDefendManager;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
+import atlantis.game.A;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
@@ -26,8 +31,20 @@ public class Sparta extends MissionDefend {
         if (We.terran()) return false;
         if (We.zerg() && Enemy.protoss()) return false;
 
-        return Count.basesWithUnfinished() <= 1;
+        return Count.basesWithUnfinished() <= 1 && focusPointIsValidForSparta();
 //        return MissionHistory.numOfChanges() <= 1 &&;
+    }
+
+    private static boolean focusPointIsValidForSparta() {
+        if (A.now() <= 30) return true;
+
+        AFocusPoint focusPoint = Missions.globalMission().focusPoint();
+        if (focusPoint == null) return false;
+
+        AChoke mainChoke = Chokes.mainChoke();
+        if (mainChoke == null) return false;
+
+        return focusPoint.distTo(mainChoke) <= 6;
     }
 
     // =========================================================

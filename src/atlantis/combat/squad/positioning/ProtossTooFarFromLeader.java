@@ -42,6 +42,9 @@ public class ProtossTooFarFromLeader extends Manager {
         if (wayTooFarFromLeader) return true;
 
         if (unit.distToNearestChokeLessThan(5)) return false;
+
+        if (distToLeader >= 5 && unit.lastPositionChangedMoreThanAgo(30)) return true;
+
         if (leaderIsOvercrowded()) return false;
         if (unitIsOvercrowded()) return false;
 

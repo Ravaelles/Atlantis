@@ -37,6 +37,7 @@ public class PositionFulfillsAllConditions {
             if (ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
             if (IsPositionPowered.isNotPowered(building, position)) return false;
 //            if (TooCloseToOtherPylons.isTooCloseToOtherPylons(builder, building, position)) return false;
+            if (ProtossTooCloseToRegionBoundaries.isTooCloseToRegionBoundaries(building, position)) return false;
         }
 
         if (We.terran()) {

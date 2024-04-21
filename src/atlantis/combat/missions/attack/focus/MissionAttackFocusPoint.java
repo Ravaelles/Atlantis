@@ -234,7 +234,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         AUnit nearestTo = Alpha.get().leader();
         if (nearestTo == null) nearestTo = main;
 
-        AUnit enemy = Select.enemy().combatUnits().nearestTo(nearestTo);
+        AUnit enemy = Select.enemy().combatUnits().effVisible().nearestTo(nearestTo);
         if (enemy == null) return null;
 
         return new AFocusPoint(

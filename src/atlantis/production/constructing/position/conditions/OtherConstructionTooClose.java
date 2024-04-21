@@ -30,7 +30,7 @@ public class OtherConstructionTooClose {
                 }
 
                 // Look for two positions that could overlap one another
-                if (distance <= (building.canHaveAddon() ? 4 : 3)) {
+                if (distance <= (building.canHaveAddon() ? 4 : building.isPylon() ? 2 : 2.8)) {
                     return failed("Planned building too close (" + building + ", dist: " + distance + ")");
                 }
             }

@@ -40,7 +40,7 @@ public class ProtossUnitUnderAttack extends Manager {
         if (!unit.isDragoon()) return false;
 
         return unit.hp() <= 40
-//            && unit.lastStartedAttackLessThanAgo(30 * 5)
+            && unit.lastStartedAttackLessThanAgo(30 * (unit.shields() >= 16 ? 1 : 3))
             && !ProtossFlags.dragoonBeBrave()
             && (
             unit.lastUnderAttackLessThanAgo(30 * 4)

@@ -24,7 +24,7 @@ public class MissionAttackAllowsToAttack extends HasUnit {
 
 //        if (true) return true;
 
-        if (!enemy.isAlive() || !enemy.hasPosition()) return false;
+        if (!enemy.isAlive() || enemy.isDead() || !enemy.hasPosition()) return false;
 
 //        if (DontAttackAlone.isAlone(unit)) return false;
         if (DontAttackUnitScatteredOnMap.isEnemyScatteredOnMap(unit, enemy)) return false;

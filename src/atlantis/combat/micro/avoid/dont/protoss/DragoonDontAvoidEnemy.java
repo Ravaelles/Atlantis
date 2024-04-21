@@ -15,13 +15,17 @@ public class DragoonDontAvoidEnemy {
 
     private static boolean vsProtoss(AUnit unit) {
         if (unit.isHealthy() && unit.friendsInRadiusCount(3) > 0) return true;
+
+        int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(1.5);
+        if (meleeEnemiesNearCount > 0) {
+            if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return true;
+
+            return unit.cooldown() <= 7 && unit.shields() >= 6;
+        }
+
         if (ProtossTooBigBattleToRetreat.doNotRetreat(unit)) return true;
 
-        int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(1.4);
-
-        if (meleeEnemiesNearCount > 0 && unit.cooldown() >= 3) return false;
-
-        return unit.hp() > 40
+        return unit.woundHp() <= 30
             && (unit.lastAttackFrameAgo() > 30 * 2 || unit.combatEvalRelative() > 1.3)
             && (unit.isHealthy() || meleeEnemiesNearCount == 0);
 //            && A.println("Don't avoid " + unit.typeWithUnitId());

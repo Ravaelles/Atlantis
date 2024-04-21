@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
+import atlantis.production.constructing.position.MaxBuildingDist;
 import atlantis.production.orders.production.Requirements;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
@@ -46,7 +47,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     /**
      * Maximum distance from a given position to build this building.
      */
-    private int maximumDistance = 27;
+    private int maximumDistance = MaxBuildingDist.MAX_DIST;
     /**
      * At this supply we should change global mission to this.
      */

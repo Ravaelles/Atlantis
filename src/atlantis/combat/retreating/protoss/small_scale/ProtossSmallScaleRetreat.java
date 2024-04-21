@@ -33,7 +33,7 @@ public class ProtossSmallScaleRetreat extends Manager {
         if (enemy == null) return null;
 
         if ((new ProtossStartRetreat(unit)).startRetreatingFrom(enemy)) {
-            unit.paintCircleFilled(14, Color.Red);
+//            unit.paintCircleFilled(14, Color.Red);
             return usedManager(this);
         }
 
@@ -51,6 +51,7 @@ public class ProtossSmallScaleRetreat extends Manager {
 
     public boolean shouldSmallScaleRetreat() {
         if (unit.isMissionSparta()) return false;
+        if (unit.enemiesNear().combatUnits().groundUnits().empty()) return false;
         if (ProtossTooBigBattleToRetreat.doNotRetreat(unit)) return false;
         if (unit.combatEvalRelative() >= 1.35 && unit.hp() >= 24) return false;
 

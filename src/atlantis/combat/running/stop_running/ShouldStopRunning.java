@@ -33,7 +33,7 @@ public class ShouldStopRunning extends Manager {
 
         if (shouldStopRunningAsDragoon()) return true;
 
-        if (dontStopRunningAsWorker()) return false;
+//        if (dontStopRunningAsWorker()) return false;
 
 //        if (!unit.isRunning()) {
 //            return decisionStopRunning();
@@ -84,7 +84,8 @@ public class ShouldStopRunning extends Manager {
     }
 
     private boolean shouldStopRunningAsDragoon() {
-        return unit.lastUnderAttackMoreThanAgo(15)
+        return unit.isDragoon()
+            && unit.lastUnderAttackMoreThanAgo(15)
             && unit.enemiesNear().canAttack(unit, unit.hp() >= 42 ? 0.5 : 1.7).empty();
     }
 

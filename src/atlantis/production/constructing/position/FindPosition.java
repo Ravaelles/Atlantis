@@ -1,8 +1,6 @@
 package atlantis.production.constructing.position;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
-import atlantis.game.A;
-import atlantis.game.race.MyRace;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
@@ -25,7 +23,7 @@ public class FindPosition {
     public static APosition findForBuilding(
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {
-        nearTo = defineNearTo(building, nearTo);
+        nearTo = DefineNearTo.defineNearTo(building, nearTo);
 
         if (builder == null) builder = FreeWorkers.get().first();
 
@@ -84,7 +82,7 @@ public class FindPosition {
         // STANDARD BUILDINGS
 
         // If we didn't specify location where to build, build somewhere near the main base
-        nearTo = defineNearTo(nearTo);
+        nearTo = DefineNearTo.defineNearTo(nearTo);
 
         // Hopeless case, all units have died, just quit.
         if (nearTo == null) {
@@ -111,51 +109,6 @@ public class FindPosition {
 //        System.err.println("position for " + building + " = " + standardPosition);
 
         return standardPosition;
-    }
-
-    private static HasPosition defineNearTo(AUnitType building, HasPosition nearTo) {
-        if (nearTo == null && A.supplyUsed() >= 16) {
-            nearTo = MainRegion.center();
-        }
-
-        if (nearTo == null && building.isSupplyDepot() && A.chance(50)) {
-            nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
-        }
-
-        if (A.chance(50)) {
-            if (nearTo == null) nearTo = Select.ourBuildings().last();
-        }
-
-        if (nearTo == null) nearTo = Select.mainOrAnyBuilding();
-        if (nearTo == null) {
-            ErrorLog.printMaxOncePerMinute("Apply dirty hack as nearTo is still null for " + building);
-            nearTo = APosition.create(50, 50);
-        }
-
-        return nearTo;
-    }
-
-    private static HasPosition defineNearTo(HasPosition nearTo) {
-        if (nearTo == null) {
-            if (MyRace.isPlayingAsZerg()) {
-                nearTo = Select.main().position();
-            }
-            else {
-                if (Count.bases() >= 3) {
-                    nearTo = Select.ourBases().random();
-                }
-                else {
-                    nearTo = Select.main().position();
-                }
-            }
-        }
-
-        if (nearTo == null) nearTo = Select.ourBuildings().first().position();
-
-        // If all of our bases have been destroyed, build somewhere near our first unit alive
-        if (nearTo == null) nearTo = Select.our().first().position();
-
-        return nearTo;
     }
 
     private static APosition forCombatBuilding(
