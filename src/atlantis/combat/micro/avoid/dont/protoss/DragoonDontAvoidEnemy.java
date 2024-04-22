@@ -9,6 +9,7 @@ import atlantis.util.Enemy;
 public class DragoonDontAvoidEnemy {
     public static boolean dontAvoid(AUnit unit) {
         if (!unit.isDragoon()) return false;
+        if (unit.isIdle()) return false;
 //        if (true) return false;
 
         if (dontAvoidCombatBuildings(unit)) return true;

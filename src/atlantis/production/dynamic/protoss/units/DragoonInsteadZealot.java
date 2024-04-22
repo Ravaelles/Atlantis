@@ -27,7 +27,7 @@ public class DragoonInsteadZealot {
     private static boolean manyZealotsAndEnemyTooStrong() {
         return Enemy.protoss()
             && OurArmy.strength() <= 120
-            && Count.zealots() >= 11;
+            && Count.zealots() >= 7;
     }
 
     private static boolean notEnoughZealots() {
