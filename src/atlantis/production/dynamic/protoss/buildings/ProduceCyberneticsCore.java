@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
+import atlantis.production.dynamic.protoss.units.DragoonInsteadZealot;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -15,12 +16,17 @@ public class ProduceCyberneticsCore {
         if (Have.cyberneticsCore()) return false;
 
 //        int buildAtSupply = buildAtSupply();
-        if (A.supplyUsed(buildAtSupply()) && Count.withPlanned(Protoss_Cybernetics_Core) == 0) {
+        if (needOne()) {
             return AddToQueue.withHighPriority(Protoss_Cybernetics_Core) != null;
         }
 //        return DynamicCommanderHelpers.buildToHaveOne(buildAtSupply, Protoss_Cybernetics_Core);
 
         return false;
+    }
+
+    private static boolean needOne() {
+        return (A.supplyUsed(buildAtSupply()) || DragoonInsteadZealot.dragoonInsteadOfZealot())
+            && Count.withPlanned(Protoss_Cybernetics_Core) == 0;
     }
 
     private static int buildAtSupply() {

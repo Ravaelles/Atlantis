@@ -18,8 +18,11 @@ public class ProtossShouldStopRunning extends Manager {
 
     @Override
     protected Manager handle() {
-        if (handleSubmanagers() != null) {
-            unit.runningManager().stopRunning();
+        if (
+            unit.combatEvalRelative() >= 2
+                || handleSubmanagers() != null
+        ) {
+            decisionStopRunning();
             return usedManager(this);
         }
 

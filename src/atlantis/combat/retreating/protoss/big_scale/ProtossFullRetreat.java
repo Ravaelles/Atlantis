@@ -15,7 +15,7 @@ public class ProtossFullRetreat extends Manager {
     public boolean applies() {
         if (!unit.isMissionAttack()) return false;
         if (OurArmy.strength() >= 500) return false;
-        if (unit.combatEvalRelative() >= 1) return false;
+        if (unit.combatEvalRelative() >= 1.6) return false;
         if (unit.enemiesNear().combatUnits().empty()) return false;
 
         AUnit base = Select.naturalOrMain();
