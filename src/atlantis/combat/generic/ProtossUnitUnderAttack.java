@@ -15,10 +15,10 @@ public class ProtossUnitUnderAttack extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false; // @Check
+//        if (true) return false;
 
-        if (unit.lastUnderAttackMoreThanAgo(50)) return false;
-        if (unit.lastAttackFrameLessThanAgo(30 * 6)) return false;
+        if (unit.lastUnderAttackMoreThanAgo(30 * 2)) return false;
+        if (unit.lastAttackFrameLessThanAgo(30 * 5)) return false;
 
         if (preventForDragoon()) return false;
 
@@ -39,8 +39,7 @@ public class ProtossUnitUnderAttack extends Manager {
     private boolean preventForDragoon() {
         if (!unit.isDragoon()) return false;
 
-        return unit.hp() <= 40
-            && unit.lastStartedAttackLessThanAgo(30 * (unit.shields() >= 16 ? 1 : 3))
+        return unit.lastStartedAttackLessThanAgo(30 * (unit.shields() >= 16 ? 1 : 3))
             && !ProtossFlags.dragoonBeBrave()
             && (
             unit.lastUnderAttackLessThanAgo(30 * 4)

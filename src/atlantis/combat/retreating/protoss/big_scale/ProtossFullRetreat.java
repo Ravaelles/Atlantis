@@ -13,6 +13,7 @@ public class ProtossFullRetreat extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isMissionAttack()) return false;
+        if (unit.combatEvalRelative() >= 1) return false;
 
         AUnit base = Select.naturalOrMain();
         if (base == null || base.distTo(unit) <= 8) return false;

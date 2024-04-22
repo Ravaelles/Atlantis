@@ -76,22 +76,15 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     }
 
     private boolean forbiddenToAttackCombatBuilding(AUnit enemy) {
-        if (enemy.isCombatBuilding() && notAllowedToAttackCombatBuilding(enemy)) {
-            return true;
-        }
+        if (!enemy.isCombatBuilding()) return false;
 
-//        if (enemy.isABuilding()) {
-//            Manager manager = (new DontAdvanceButHoldAndContainWhenEnemyBuildingsClose(unit)).invoke(this);
-//            if (manager != null) return true;
-//        }
-
-        return false;
+        return notAllowedToAttackCombatBuilding(enemy);
     }
 
     private boolean notAllowedToAttackCombatBuilding(AUnit enemy) {
         if (unit.distTo(enemy) <= 4) return false;
 
-        int minUnits = We.protoss() ? 5 : 9;
+        int minUnits = We.protoss() ? 4 : 9;
         return unit.friendsNear().inRadius(5, unit).count() >= minUnits;
     }
 }

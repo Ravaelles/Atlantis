@@ -7,7 +7,6 @@ import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import bwapi.Color;
 
 public class ProtossSmallScaleRetreat extends Manager {
     public static final double RADIUS_LG = 4;
@@ -50,12 +49,14 @@ public class ProtossSmallScaleRetreat extends Manager {
     }
 
     public boolean shouldSmallScaleRetreat() {
+        if (!unit.isMelee()) return false;
+
         if (unit.isMissionSparta()) return false;
         if (unit.enemiesNear().combatUnits().groundUnits().empty()) return false;
-        if (ProtossTooBigBattleToRetreat.doNotRetreat(unit)) return false;
+        if (ProtossTooBigBattleToRetreat.PvP_doNotRetreat(unit)) return false;
         if (unit.combatEvalRelative() >= 1.35 && unit.hp() >= 24) return false;
 
-        if (unit.isRanged()) return asRanged(unit, friends, enemies);
+//        if (unit.isRanged()) return asRanged(unit, friends, enemies);
         return asMelee(unit, friends, enemies);
     }
 
@@ -84,17 +85,17 @@ public class ProtossSmallScaleRetreat extends Manager {
         return false;
     }
 
-    protected boolean asRanged(AUnit unit, Selection friends, Selection enemies) {
-        if (unit.cooldown() <= 12) return false;
-
-        if (enemies.onlyMelee()) {
-            if (unit.shieldDamageAtMost(30)) return false;
-            if (unit.meleeEnemiesNearCount(2) == 0) return false;
-        }
-
-//        if (unit.combatEvalRelative() <= 1.06 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
-        if (unit.hp() <= 40 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
-
-        return false;
-    }
+//    protected boolean asRanged(AUnit unit, Selection friends, Selection enemies) {
+//        if (unit.cooldown() <= 12) return false;
+//
+//        if (enemies.onlyMelee()) {
+//            if (unit.shieldDamageAtMost(30)) return false;
+//            if (unit.meleeEnemiesNearCount(2) == 0) return false;
+//        }
+//
+////        if (unit.combatEvalRelative() <= 1.06 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
+//        if (unit.hp() <= 40 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
+//
+//        return false;
+//    }
 }

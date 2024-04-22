@@ -3,7 +3,7 @@ package atlantis.combat.retreating.protoss;
 import atlantis.units.AUnit;
 
 public class ProtossTooBigBattleToRetreat {
-    public static boolean doNotRetreat(AUnit unit) {
+    public static boolean PvP_doNotRetreat(AUnit unit) {
         if (unit.isDragoon()) {
             if (unit.isHealthy()) return true;
             if (unit.enemiesNear().inRadius(3.7, unit).empty()) return true;

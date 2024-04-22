@@ -70,7 +70,7 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
+        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
@@ -104,7 +104,6 @@ public class Main {
 //        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
 //        if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
 //        if (true) return "ums/rav/protoss/3Drag_v_Zealots.scm";
-//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
 
         // vs Protoss
 //        if (true) return "ums/rav/protoss/2Drag_v_3Zeal.scm";
@@ -124,7 +123,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
-        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
 //@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 
 //        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";
@@ -132,15 +131,18 @@ public class Main {
 
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
-//        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
+//@        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
 
         // vs Zerg
-//        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
+        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
+
+//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
+        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm"; // Dragoons v Zealots - more goons
 
         // === Maps for testing as Terran ==============================================================================
 

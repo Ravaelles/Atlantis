@@ -31,7 +31,7 @@ public class ShouldStopRunning extends Manager {
     public boolean check() {
 //        if (unit.isActiveManager(HoldToShoot.class)) return false;
 
-        if (ShouldStopRunningDragoon.shouldStopRunning(unit)) return true;
+        if (asProtoss()) return true;
 
 //        if (dontStopRunningAsWorker()) return false;
 
@@ -81,6 +81,14 @@ public class ShouldStopRunning extends Manager {
 //        }
 //
 //        return false;
+    }
+
+    private boolean asProtoss() {
+        if (!We.protoss()) return false;
+
+        if (unit.combatEvalRelative() >= 2) return true;
+
+        return ShouldStopRunningDragoon.shouldStopRunning(unit);
     }
 
     private boolean dontStopRunningAsWorker() {

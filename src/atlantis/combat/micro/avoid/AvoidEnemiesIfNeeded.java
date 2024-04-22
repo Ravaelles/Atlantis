@@ -37,8 +37,8 @@ public class AvoidEnemiesIfNeeded extends Manager {
         if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
 
         return
-            !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid()
-            && (new DontAvoidEnemy(unit)).invoke(this) == null;
+//            !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid()
+            (new DontAvoidEnemy(unit)).invoke(this) == null;
     }
 
     @Override

@@ -79,29 +79,31 @@ public class ATargetingImportant extends ATargeting {
         // =========================================================
         // Defensive buildings IN RANGE
 
-        target = Select.enemy()
+        Selection enemyBuildings = Select.enemyRealUnitsWithBuildings()
             .ofType(
                 AUnitType.Protoss_Photon_Cannon,
                 AUnitType.Terran_Bunker,
                 AUnitType.Zerg_Sunken_Colony
             )
-            .canBeAttackedBy(unit, 0)
-            .mostWounded();
-        if (target != null) {
-            return getThisCombatBuildingOrScvRepairingIt(target);
-        }
+//            .canBeAttackedBy(unit, 0)
+            .inRadius(15, unit);
 
-        target = enemyUnits
-            .ofType(
-                AUnitType.Protoss_Photon_Cannon,
-                AUnitType.Terran_Bunker,
-                AUnitType.Zerg_Sunken_Colony
-            )
-            .canBeAttackedBy(unit, 5)
-            .nearestTo(unit);
-        if (target != null) {
-            return getThisCombatBuildingOrScvRepairingIt(target);
-        }
+        target = enemyBuildings.mostWounded();
+
+        if (target != null && target.isHealthy()) target = enemyBuildings.nearestTo(unit.squadLeader());
+        if (target != null) return getThisCombatBuildingOrScvRepairingIt(target);
+
+//        target = enemyUnits
+//            .ofType(
+//                AUnitType.Protoss_Photon_Cannon,
+//                AUnitType.Terran_Bunker,
+//                AUnitType.Zerg_Sunken_Colony
+//            )
+//            .canBeAttackedBy(unit, 5)
+//            .nearestTo(unit);
+//        if (target != null) {
+//            return getThisCombatBuildingOrScvRepairingIt(target);
+//        }
 
         // =========================================================
 

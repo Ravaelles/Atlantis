@@ -38,8 +38,11 @@ public class AutoProduceWorkersCommander extends Commander {
 
     public static boolean shouldProduceWorkers() {
         if (AGame.supplyFree() == 0 || !A.hasMinerals(50)) return dont("CantAfford");
+
+        if (earlyGameOptimize()) return true;
+
         if (
-            A.supplyUsed() <= 30 && Count.workers() >= 25 && (
+            A.supplyUsed() <= 40 && Count.workers() >= 25 && (
                 (!A.hasMinerals(150) && A.minerals() < A.reservedMinerals() + 50))
         ) return dont("FollowBO");
 
@@ -86,6 +89,12 @@ public class AutoProduceWorkersCommander extends Commander {
         // Check if AUTO-PRODUCTION of WORKERS is active.
 
         return isAutoProduceWorkersActive(workers) || dont("Limit");
+    }
+
+    private static boolean earlyGameOptimize() {
+        if (We.zerg()) return false;
+
+        return Count.workers() <= 20;
     }
 
     private static boolean dont(String reason) {

@@ -19,7 +19,7 @@ public class ProtossTooCloseToRegionBoundaries {
         ARegionBoundary nearestBoundary = region.nearestBoundary(position);
         if (nearestBoundary == null) return false;
 
-        int threshold = A.supplyTotal() <= 19 ? 6 : 3;
+        int threshold = A.supplyTotal() <= 19 ? 6 : 4;
 //        System.err.println("nearestBoundary.distTo(position) = " + nearestBoundary.distTo(position) + " / " + threshold);
         return nearestBoundary.distTo(position) <= threshold && failed("Too close to region boundary");
     }
