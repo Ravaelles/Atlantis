@@ -380,8 +380,8 @@ public class ATargetingTest extends AbstractTestWithUnits {
             gate = fake(AUnitType.Protoss_Gateway, 13.1),
             fake(AUnitType.Protoss_Pylon, 13.2),
             fake(AUnitType.Protoss_Templar_Archives, 13.5),
-            expectedTarget = fake(AUnitType.Protoss_Photon_Cannon, 13.6),
-            fake(AUnitType.Protoss_Photon_Cannon, 13.7).setHp(11),
+            fake(AUnitType.Protoss_Photon_Cannon, 13.6),
+            expectedTarget = fake(AUnitType.Protoss_Photon_Cannon, 13.7).setHp(11),
             fake(AUnitType.Protoss_Nexus, 13.9)
         );
 

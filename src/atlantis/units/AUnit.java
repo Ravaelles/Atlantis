@@ -1529,7 +1529,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int remainingTrainTime() {
-        return u().getRemainingTrainTime();
+        return u() != null ? u().getRemainingTrainTime() : -1;
     }
 
     public int getTotalTrainTime() {

@@ -22,14 +22,14 @@ public class ProtossStreetGridTest extends AbstractTestWithUnits {
                     null, AUnitType.Protoss_Pylon, position
                 );
 
-                if (isOkForPylon) A.print("█");
-                else {
-                    boolean isOkForGateway = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
-                        null, AUnitType.Protoss_Gateway, position
-                    );
-                    if (isOkForGateway) A.print("░"); // ░ ▒
-                    else A.print("◦");
-                }
+//                if (isOkForPylon) A.print("█");
+//                else {
+//                    boolean isOkForGateway = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
+//                        null, AUnitType.Protoss_Gateway, position
+//                    );
+//                    if (isOkForGateway) A.print("░"); // ░ ▒
+//                    else A.print("◦");
+//                }
             }
             A.println();
         }
@@ -45,9 +45,9 @@ public class ProtossStreetGridTest extends AbstractTestWithUnits {
                 APosition position = APosition.create(tx, ty);
                 String string = gatewayPositionToString(position);
 
-                A.print(string);
+//                A.print(string);
             }
-            A.println();
+//            A.println();
         }
     }
 
@@ -61,9 +61,9 @@ public class ProtossStreetGridTest extends AbstractTestWithUnits {
                 APosition position = APosition.create(tx, ty);
                 String string = pylonPositionToString(position);
 
-                A.print(string);
+//                A.print(string);
             }
-            A.println();
+//            A.println();
         }
     }
 

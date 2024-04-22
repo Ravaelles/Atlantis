@@ -3,6 +3,7 @@ package atlantis.combat.running.stop_running;
 import atlantis.architecture.Manager;
 import atlantis.combat.running.stop_running.protoss.ProtossShouldStopRunning;
 import atlantis.combat.running.stop_running.protoss.TerranShouldStopRunning;
+import atlantis.combat.running.stop_running.zerg.ZergShouldStopRunning;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
@@ -21,6 +22,7 @@ public class ShouldStopRunning extends Manager {
         return new Class[]{
             ProtossShouldStopRunning.class,
             TerranShouldStopRunning.class,
+            ZergShouldStopRunning.class,
         };
     }
 

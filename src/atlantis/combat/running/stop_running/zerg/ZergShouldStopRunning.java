@@ -1,18 +1,20 @@
-package atlantis.combat.running.stop_running.protoss;
+package atlantis.combat.running.stop_running.zerg;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.running.stop_running.protoss.ShouldStopRunningDragoon;
+import atlantis.combat.running.stop_running.protoss.ShouldStopRunningProbe;
+import atlantis.combat.running.stop_running.protoss.ShouldStopRunningProtossAir;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
-public class ProtossShouldStopRunning extends Manager {
-
-    public ProtossShouldStopRunning(AUnit unit) {
+public class ZergShouldStopRunning extends Manager {
+    public ZergShouldStopRunning(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return We.protoss()
+        return We.zerg()
             && unit.isRunning();
     }
 
@@ -29,9 +31,7 @@ public class ProtossShouldStopRunning extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ShouldStopRunningDragoon.class,
-            ShouldStopRunningProtossAir.class,
-            ShouldStopRunningProbe.class,
+            ShouldStopRunningZergling.class,
         };
     }
 
