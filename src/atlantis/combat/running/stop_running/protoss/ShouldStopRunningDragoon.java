@@ -1,4 +1,4 @@
-package atlantis.combat.running.stop_running;
+package atlantis.combat.running.stop_running.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;

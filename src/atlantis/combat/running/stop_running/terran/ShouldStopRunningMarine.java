@@ -1,4 +1,4 @@
-package atlantis.combat.running.stop_running;
+package atlantis.combat.running.stop_running.terran;
 
 import atlantis.units.AUnit;
 

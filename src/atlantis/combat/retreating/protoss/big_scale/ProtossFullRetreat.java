@@ -19,8 +19,8 @@ public class ProtossFullRetreat extends Manager {
         if (base == null || base.distTo(unit) <= 8) return false;
 
         double evalRelative = unit.combatEvalRelative()
-            - (unit.distToNearestChokeLessThan(5) ? 0.3 : 0)
-            - (unit.lastRetreatedAgo() <= 30 * 8 ? 0.3 : 0)
+            - (unit.distToNearestChokeLessThan(5) ? 0.15 : 0)
+            - (unit.lastRetreatedAgo() <= 30 * 3 ? 0.2 : 0)
             - (unit.lastStartedRunningLessThanAgo(30 * 4) ? 0.15 : 0)
             - (unit.lastUnderAttackLessThanAgo(30 * 4) ? 0.05 : 0);
 

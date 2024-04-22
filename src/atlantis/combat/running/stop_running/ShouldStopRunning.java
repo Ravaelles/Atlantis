@@ -1,14 +1,12 @@
 package atlantis.combat.running.stop_running;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.dancing.HoldToShoot;
+import atlantis.combat.running.stop_running.protoss.ProtossShouldStopRunning;
+import atlantis.combat.running.stop_running.protoss.TerranShouldStopRunning;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.util.We;
 
 public class ShouldStopRunning extends Manager {
-
     public ShouldStopRunning(AUnit unit) {
         super(unit);
     }
@@ -19,95 +17,91 @@ public class ShouldStopRunning extends Manager {
     }
 
     @Override
-    protected Manager handle() {
-        if (check()) {
-            unit.runningManager().stopRunning();
-            return usedManager(this);
-        }
-
-        return null;
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            ProtossShouldStopRunning.class,
+            TerranShouldStopRunning.class,
+        };
     }
 
-    public boolean check() {
-//        if (unit.isActiveManager(HoldToShoot.class)) return false;
-
-        if (asProtoss()) return true;
-
-//        if (dontStopRunningAsWorker()) return false;
-
-//        if (!unit.isRunning()) {
-//            return decisionStopRunning();
-//        }
-
-        return false;
-
-//        if (checkAsMelee()) return false;
-//        if (ShouldStopRunningMarine.shouldNotStop(unit)) return false;
-//
-//        // @Replaced
-//        if (unit.avoidEnemiesManager().shouldAvoidAnyUnit()) {
-//            return false;
+//    @Override
+//    protected Manager handle() {
+//        if (check()) {
+//            unit.runningManager().stopRunning();
+//            return usedManager(this);
 //        }
 //
-//        if (unit.isFlying() && unit.enemiesNearInRadius(8.5) == 0) {
-//            unit.setTooltipTactical("SafeEnough");
-//            unit.addLog("SafeEnough");
-//            return decisionStopRunning();
-//        }
+//        return null;
+//    }
+
+//    public boolean check() {
+////        if (unit.isActiveManager(HoldToShoot.class)) return false;
 //
-//        if (
-//            unit.isAction(Actions.RUN_IN_ANY_DIRECTION)
-//                && unit.lastActionLessThanAgo(20)
-//        ) {
-//            unit.addLog("InAnyDir");
-//            unit.setTooltipTactical("InAnyDir");
-//            return false;
-//        }
+//        if (asProtoss()) return true;
 //
-//        if (
-//            unit.hp() > 30
-//                && unit.lastStartedRunningMoreThanAgo(150)
-//                && unit.nearestEnemyDist() >= 3.5
-//        ) {
-//            unit.setTooltipTactical("RanTooLong");
-//            unit.addLog("RanTooLong");
-//            return decisionStopRunning();
-//        }
+////        if (dontStopRunningAsWorker()) return false;
 //
-//        if (We.terran() && unit.isHealthy() && unit.lastUnderAttackLessThanAgo(30)) {
-//            unit.setTooltipTactical("HealthyNow");
-//            unit.addLog("HealthyNow");
-//            return decisionStopRunning();
-//        }
+////        if (!unit.isRunning()) {
+////            return decisionStopRunning();
+////        }
 //
 //        return false;
-    }
-
-    private boolean asProtoss() {
-        if (!We.protoss()) return false;
-
-        if (unit.combatEvalRelative() >= 2) return true;
-
-        return ShouldStopRunningDragoon.shouldStopRunning(unit);
-    }
+//
+////        if (checkAsMelee()) return false;
+////        if (ShouldStopRunningMarine.shouldNotStop(unit)) return false;
+////
+////        // @Replaced
+////        if (unit.avoidEnemiesManager().shouldAvoidAnyUnit()) {
+////            return false;
+////        }
+////
+////        if (unit.isFlying() && unit.enemiesNearInRadius(8.5) == 0) {
+////            unit.setTooltipTactical("SafeEnough");
+////            unit.addLog("SafeEnough");
+////            return decisionStopRunning();
+////        }
+////
+////        if (
+////            unit.isAction(Actions.RUN_IN_ANY_DIRECTION)
+////                && unit.lastActionLessThanAgo(20)
+////        ) {
+////            unit.addLog("InAnyDir");
+////            unit.setTooltipTactical("InAnyDir");
+////            return false;
+////        }
+////
+////        if (
+////            unit.hp() > 30
+////                && unit.lastStartedRunningMoreThanAgo(150)
+////                && unit.nearestEnemyDist() >= 3.5
+////        ) {
+////            unit.setTooltipTactical("RanTooLong");
+////            unit.addLog("RanTooLong");
+////            return decisionStopRunning();
+////        }
+////
+////        if (We.terran() && unit.isHealthy() && unit.lastUnderAttackLessThanAgo(30)) {
+////            unit.setTooltipTactical("HealthyNow");
+////            unit.addLog("HealthyNow");
+////            return decisionStopRunning();
+////        }
+////
+////        return false;
+//    }
 
     private boolean dontStopRunningAsWorker() {
         return unit.isWorker()
             && unit.enemiesNear().inRadius(4, unit).havingAntiGroundWeapon().notEmpty();
     }
 
-    private boolean checkAsMelee() {
-        return checkAsZergling() || checkAsZealot();
-    }
+//    private boolean checkAsMelee() {
+//        return checkAsZergling() || checkAsZealot();
+//    }
 
     private boolean checkAsZergling() {
         return unit.isZergling()
             && unit.enemiesNear().melee().canAttack(unit, 2).empty()
             && unit.combatEvalRelative() >= 1.2;
-    }
-
-    private boolean checkAsZealot() {
-        return unit.isZealot() && unit.combatEvalRelative() >= 1.2;
     }
 
     private boolean decisionStopRunning() {
