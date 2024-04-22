@@ -40,11 +40,27 @@ public class ATargeting extends HasUnit {
 //        if (true) return null;
 //        if (unit.hp() <= 18) return FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
 
+        AUnit enemy;
+
+        // === Last squad target ===================================
+
+        enemy = unit.squad().targeting().lastTargetIfAlive();
+        if (enemy != null && unit.hasWeaponRangeToAttack(enemy, unit.isRanged() ? 7 : 4)) {
+            if (DEBUG) A.println("SqL enemy = " + enemy.typeWithUnitId());
+            return enemy;
+        }
+
+//        System.err.println("Last=" + enemy + " / Can=" + (enemy != null ? unit.hasWeaponRangeToAttack(enemy, 4) : '-'));
+
+        // =========================================================
+
         if (unit.isMissionDefendOrSparta() || unit.lastAttackFrameMoreThanAgo(100)) {
             return FallbackTargeting.fallbackTarget(unit, maxDistFromEnemy);
         }
 
-        AUnit enemy = defineTarget(unit, maxDistFromEnemy);
+        enemy = defineTarget(unit, maxDistFromEnemy);
+
+//        if (enemy != null) System.err.println("@@@@ " + unit.typeWithUnitId() + " / " + unit.hp());
 
         if (DEBUG) A.println("A enemy = " + enemy);
 

@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.combat.micro.terran.tank.unsieging.ShouldUnsiegeToMove;
+import atlantis.combat.squad.Squad;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
@@ -91,6 +92,13 @@ public interface AUnitOrders {
             System.err.println("Dead target (" + target + ") for " + this.unit().typeWithHash());
             return false;
         }
+
+        // =========================================================
+
+        Squad squad = unit().squad();
+        if (squad != null) squad.targeting().setLastTarget(target);
+
+        // =========================================================
 
 //        if (!unit().hasWeaponRangeByGame(target)) {
 //            return move(target, Actions.MOVE_ATTACK, null, false);

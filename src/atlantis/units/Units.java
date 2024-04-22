@@ -51,7 +51,7 @@ public class Units {
         if (contains(unitToAdd)) {
             return this;
         }
-        
+
         units.add(unitToAdd);
         unitIds.add(unitToAdd.id());
         extraValues.put(unitToAdd, null);
@@ -360,9 +360,12 @@ public class Units {
     }
 
     public boolean onlyMelee() {
+        int initCount = this.units.size();
+
         ArrayList<AUnit> onlyRanged = new ArrayList<>(this.units);
         onlyRanged.removeIf(u -> !u.isMelee());
-        return onlyRanged.size() == this.units.size();
+
+        return onlyRanged.size() == initCount;
     }
 
     public boolean onlyAir() {

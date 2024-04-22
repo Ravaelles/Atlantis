@@ -1,12 +1,7 @@
-package atlantis.combat.generic;
+package atlantis.combat.generic.under_attack;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.game.A;
-import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.util.We;
 
 public class UnitUnderAttack extends Manager {
     public UnitUnderAttack(AUnit unit) {

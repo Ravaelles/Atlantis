@@ -14,12 +14,16 @@ public class DanceAwayAsDragoon extends HasUnit {
     }
 
     public Decision applies() {
+        Decision decision;
+
         if (tooHealthy()) return Decision.FALSE;
+        if (unit.lastAttackFrameMoreThanAgo(30 * 3)) return Decision.FALSE;
         if (provideSupportForMelee()) return Decision.FALSE;
+
 
         if (unit.enemiesNear().inRadius(8, unit).notEmpty()) {
             if (dragoonLowHpAndStillUnderAttack()) return Decision.TRUE;
-            if (dragoonEnemyClose()) return Decision.TRUE;
+            if ((decision = vsEnemyDragoons()).notIndifferent()) return decision;
         }
 
         if (quiteHealthyAndNotUnderAttack()) return Decision.FALSE;
@@ -38,13 +42,19 @@ public class DanceAwayAsDragoon extends HasUnit {
     }
 
     private boolean tooHealthy() {
-        return unit.shieldDamageAtMost(9);
+        if (unit.enemiesNear().inRadius(7, unit).onlyMelee()) return unit.shieldDamageAtMost(19);
+
+        return unit.shields() >= 40;
     }
 
-    private boolean dragoonEnemyClose() {
-        return unit.isDragoon()
-//            && unit.lastAttackFrameLessThanAgo(150)
-            && unit.enemiesNearInRadius(enemiesRadius()) > 0;
+    private Decision vsEnemyDragoons() {
+        if (unit.enemiesNear().dragoons().canAttack(unit, 0.1).notEmpty()) return Decision.INDIFFERENT;
+
+        if (unit.shields() >= 40) return Decision.FALSE;
+
+        if (unit.enemiesNearInRadius(enemiesRadius()) > 0) return Decision.TRUE;
+
+        return Decision.FALSE;
     }
 
     private double enemiesRadius() {

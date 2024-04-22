@@ -1,6 +1,7 @@
 package atlantis.combat.micro.dancing;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -21,20 +22,18 @@ public class HoldToShoot extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
+        if (true) return false;
 
         if (!unit.isDragoon()) return false;
-//        if (!unit.isDragoon() && !unit.isMarine()) return false;
-//        if (!unit.isRanged()) return false;
-//        if (unit.isMarine()) return false;
-//        if (unit.isTank()) return false;
-        if (unit.cooldown() >= 8) return false;
 
         target = unit.target();
 
         if (target == null) return false;
-        if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
-        if (unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK)) return false;
+        if (unit.cooldown() >= 8) return false;
+        if (unit.lastAttackFrameLessThanAgo(20)) return false;
+
+        if (unit.lastActionLessThanAgo(3, Actions.ATTACK_UNIT)) return false;
+        if (unit.lastActionLessThanAgo(3, Actions.MOVE_ATTACK)) return false;
 
         if (
             unit.enemiesNear().canBeAttackedBy(unit, 2).inRadius(1.2, unit).empty()
@@ -57,7 +56,7 @@ public class HoldToShoot extends Manager {
      */
     @Override
     protected Manager handle() {
-//        System.err.println("@ " + A.now() + " ........ (cooldown: " + unit.cooldown() + ")");
+        System.err.println("@ " + A.now() + " ........ (cooldown: " + unit.cooldown() + ")");
 
         distToTarget = unit.distTo(target);
         unitWeaponRange = unit.weaponRangeAgainst(target);

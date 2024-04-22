@@ -29,7 +29,7 @@ public class ToLastSquadTarget {
 
         if (!lastTarget.isVisibleUnitOnMap() && lastTarget.position().isPositionVisible()) {
             A.errPrintln("Looks like an outdated dead target");
-            squad.targeting().forceTarget(null);
+            squad.targeting().setLastTarget(null);
             return false;
         }
 

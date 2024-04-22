@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.dont.protoss;
 
 import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -11,11 +12,29 @@ public class DragoonDontAvoidEnemy {
 //        if (true) return false;
 
         if (dontAvoidCombatBuildings(unit)) return true;
+        if (haveNotShotInAWhile(unit)) return true;
+
         if (Enemy.protoss()) return vsProtoss(unit);
         if (Enemy.terran()) return vsTerran(unit);
         if (Enemy.zerg()) return vsZerg(unit);
 
         return false;
+    }
+
+    private static boolean haveNotShotInAWhile(AUnit unit) {
+        if (
+            unit.meleeEnemiesNearCount(1.5) > 0
+                && unit.lastAttackFrameLessThanAgo(70)
+        ) {
+            return false;
+        }
+
+        if (unit.hp() >= 60 && unit.lastAttackFrameLessThanAgo(30 * 2)) return true;
+
+//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.hp());
+
+        return unit.woundHp() <= 40
+            || unit.enemiesNear().effUndetected().groundUnits().canAttack(unit, 1.5).empty();
     }
 
     private static boolean dontAvoidCombatBuildings(AUnit unit) {

@@ -97,9 +97,6 @@ public class ProcessAttackUnit extends Manager {
 //    }
 
     private boolean confirmAttack(AUnit target) {
-        Squad squad = unit.squad();
-        if (squad != null) squad.targeting().justAttacked(target);
-
         return unit.attackUnit(target);
     }
 

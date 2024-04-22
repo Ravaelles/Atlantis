@@ -8,7 +8,8 @@ public class SquadTargeting {
      */
     private AUnit lastTarget = null;
 
-    public void justAttacked(AUnit target) {
+    public void setLastTarget(AUnit target) {
+//        if (!target.equals(lastTarget)) System.err.println("-- lastTarget = " + target.typeWithUnitId());
         lastTarget = target;
     }
 
@@ -22,7 +23,7 @@ public class SquadTargeting {
         return lastTarget;
     }
 
-    public void forceTarget(AUnit target) {
-        lastTarget = target;
-    }
+//    public void forceTarget(AUnit target) {
+//        lastTarget = target;
+//    }
 }

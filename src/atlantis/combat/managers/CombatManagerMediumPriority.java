@@ -2,7 +2,8 @@ package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
-import atlantis.combat.generic.UnitUnderAttack;
+import atlantis.combat.generic.enemy_in_range.UnitHasEnemyInRange;
+import atlantis.combat.generic.under_attack.UnitUnderAttack;
 import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
@@ -29,6 +30,8 @@ public class CombatManagerMediumPriority extends Manager {
 
             ContinueRunning.class,
             ShouldStopRunning.class,
+
+            UnitHasEnemyInRange.class,
 
             AvoidCombatBuilding.class,
             AvoidEnemiesIfNeeded.class,
