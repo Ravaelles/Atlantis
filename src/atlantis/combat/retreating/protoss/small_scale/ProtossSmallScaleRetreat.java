@@ -61,6 +61,7 @@ public class ProtossSmallScaleRetreat extends Manager {
     protected boolean asMelee(AUnit unit, Selection friends, Selection enemies) {
 //        if (unit.combatEvalRelative() >= 1.2) return false;
         if (enemies.inRadius(ProtossSmallScaleEvaluate.RADIUS_LG, unit).count() <= 0) return false;
+        if (unit.hasCooldown() && unit.hasTarget() && unit.target().hp() < unit.hp()) return false;
 
         if (ProtossSmallScaleEvaluate.isOverpoweredByEnemyMelee(unit, friends, enemies)) {
             unit.setTooltip("PSC:A");

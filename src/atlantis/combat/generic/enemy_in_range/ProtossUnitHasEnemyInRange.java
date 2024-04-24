@@ -47,6 +47,8 @@ public class ProtossUnitHasEnemyInRange extends Manager {
 
     private boolean asMelee(int lastAttackFrameAgo) {
         if (lastAttackFrameAgo > 30 * 10) return true;
+        if (lastAttackFrameAgo <= 30 && unit.cooldown() >= 8) return false;
+
         if (unit.isMissionDefendOrSparta()) return unit.hp() >= 18 && unit.friendsNear().inRadius(1.5, unit).atLeast(1);
         if (enemyInRange.hp() < unit.hp()) return true;
 

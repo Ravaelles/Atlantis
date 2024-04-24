@@ -22,8 +22,14 @@ public class ProtossTooLonely extends Manager {
         if (unit.lastStartedAttackLessThanAgo(40)) return false;
         if (unit.isLeader()) return false;
         if (unit.distToNearestChokeLessThan(5)) return false;
+        if (tooDangerousToGoToLeader()) return false;
 
         return isTooLonely();
+    }
+
+    private boolean tooDangerousToGoToLeader() {
+        return unit.lastStartedRunningLessThanAgo(60)
+            && unit.meleeEnemiesNearCount(3) > 0;
     }
 
     private boolean isTooLonely() {

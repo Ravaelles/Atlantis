@@ -23,7 +23,13 @@ public class DanceAwayAsZealot extends Manager {
         return unit.cooldown() >= (fairlyWounded ? 4 : 12)
             && unit.isWounded()
             && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60))
-            && unit.meleeEnemiesNearCount(1.2) > minMeleeEnemiesNear();
+            && (fairlyWounded || moreEnemiesThanOurUnits());
+    }
+
+    private boolean moreEnemiesThanOurUnits() {
+//        return unit.meleeEnemiesNearCount(1.2) > minMeleeEnemiesNear();
+        return unit.meleeEnemiesNearCount(1.2)
+            > unit.friendsNear().melee().countInRadius(1.6, unit);
     }
 
     private boolean dontApplyWhenRangedEnemiesNear() {

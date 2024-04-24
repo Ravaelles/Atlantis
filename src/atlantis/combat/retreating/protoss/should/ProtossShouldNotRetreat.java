@@ -28,7 +28,7 @@ public class ProtossShouldNotRetreat extends Manager {
     }
 
     public boolean shouldNotRetreat() {
-        if (unit.hp() >= 40 || unit.distToBase() <= 20) {
+        if (unit.hp() >= 40 || unit.distToBase() <= 8 || unit.distToMain() <= 20) {
             unit.addLog("NoRunNearBase");
             return true;
         }

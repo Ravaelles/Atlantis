@@ -27,6 +27,8 @@ public class ProtossStartRetreat extends HasUnit {
     protected boolean handleRetreat() {
         if (enemy == null) return false;
 
+//        A.printStackTrace("Start retreat " + unit);
+
 //        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFightCached()) {
 //        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFight()) {
 
@@ -106,7 +108,9 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     private boolean retreatByRunningFromEnemy(HasPosition runAwayFrom) {
-        return unit.runningManager().runFrom(runAwayFrom, 5, Actions.RUN_RETREAT, true);
+        double dist = unit.friendsNear().inRadius(2, unit).atLeast(1) ? 2.5 : 3.5;
+
+        return unit.runningManager().runFrom(runAwayFrom, dist, Actions.RUN_RETREAT, true);
     }
 
     private boolean unitStartedRetreating(HasPosition runAwayFrom) {

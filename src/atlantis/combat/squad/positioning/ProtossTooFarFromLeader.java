@@ -24,6 +24,7 @@ public class ProtossTooFarFromLeader extends Manager {
         if (!We.protoss()) return false;
         if (unit.isAir()) return false;
         if (unit.isDT()) return false;
+        if (unit.hasCooldown()) return false;
 
         if (tooDangerousBecauseOfCloseEnemies()) return false;
         if (unit.friendsNear().combatUnits().inRadius(4, unit).atLeast(10)) return false;

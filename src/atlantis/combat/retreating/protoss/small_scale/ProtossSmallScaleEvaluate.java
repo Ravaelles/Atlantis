@@ -9,6 +9,8 @@ public class ProtossSmallScaleEvaluate {
     public static final double RADIUS_SM = 1.6;
 
     public static boolean isOverpoweredByEnemyMelee(AUnit unit, Selection friends, Selection enemies) {
+        if (ProtossMeleeVsMelee.beBraveIn1v1(unit, enemies)) return false;
+
         return meleeOverpoweredInRadius(unit, friends, enemies, RADIUS_SM)
             && meleeOverpoweredInRadius(unit, friends, enemies, RADIUS_LG);
     }
