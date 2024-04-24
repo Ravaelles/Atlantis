@@ -3,8 +3,11 @@ package atlantis.combat.retreating.protoss.big_scale;
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
 import atlantis.information.generic.OurArmy;
+import atlantis.map.base.BaseLocations;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
@@ -23,7 +26,7 @@ public class ProtossFullRetreat extends Manager {
         if (unit.friendsNear().combatUnits().atLeast(15)) return false;
 
         AUnit base = Select.naturalOrMain();
-        if (base == null || base.distTo(unit) <= 6) return false;
+        if (base == null || base.distTo(unit) <= 20) return false;
 
         if (unit.isMissionDefendOrSparta()) {
             AChoke mainChoke = Chokes.mainChoke();
@@ -32,6 +35,16 @@ public class ProtossFullRetreat extends Manager {
                     && mainChoke.distTo(unit) >= 2.5
                     && mainChoke.distTo(unit) <= 8
                     && base.distTo(unit) <= 25
+            ) return false;
+
+            AChoke natural = Chokes.natural();
+            APosition naturalBase = DefineNaturalBase.natural();
+            if (
+                natural != null
+                    && naturalBase != null
+                    && natural.distTo(unit) >= 2.5
+                    && natural.distTo(unit) <= 8
+                    && naturalBase.distTo(unit) <= 10
             ) return false;
         }
 

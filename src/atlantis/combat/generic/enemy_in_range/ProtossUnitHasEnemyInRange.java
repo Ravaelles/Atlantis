@@ -20,7 +20,7 @@ public class ProtossUnitHasEnemyInRange extends Manager {
             && unit.enemiesNear().notEmpty()
 //            && unit.lastAttackFrameMoreThanAgo(45)
             && unit.cooldown() <= 8
-            && (unit.woundHp() <= 20 || unit.lastAttackFrameMoreThanAgo(90) || notTooManyEnemiesNear())
+            && (unit.woundHp() <= 50 || unit.lastAttackFrameMoreThanAgo(90) || notTooManyEnemiesNear())
 //            && unit.combatEvalRelative() > 1
 //            && !unit.hasTarget()
             && (enemyInRange = ProtossGetEnemyInRange.getEnemyInRange(unit)) != null

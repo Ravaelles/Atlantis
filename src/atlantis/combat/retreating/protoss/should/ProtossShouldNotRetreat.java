@@ -28,19 +28,24 @@ public class ProtossShouldNotRetreat extends Manager {
     }
 
     public boolean shouldNotRetreat() {
+        if (unit.hp() >= 40 || unit.distToBase() <= 20) {
+            unit.addLog("NoRunNearBase");
+            return true;
+        }
+
         if (shouldNotRunInMissionSparta(unit)) {
             unit.addLog("NoRunInSparta");
-            return false;
+            return true;
         }
 
         if (shouldNotRunInMissionDefend(unit)) {
             unit.addLog("NoRunInDefend");
-            return false;
+            return true;
         }
 
         if (shouldNotRunInMissionAttack(unit)) {
             unit.addLog("NoRunInAttack");
-            return false;
+            return true;
         }
 
         return false;

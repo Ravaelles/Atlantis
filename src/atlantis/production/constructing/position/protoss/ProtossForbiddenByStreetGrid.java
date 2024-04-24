@@ -37,6 +37,7 @@ public class ProtossForbiddenByStreetGrid {
 
             // G:1 G:5  P:9  G:11 G:14
             boolean moduloXIsInvalid = moduloX != 1 && moduloX != 5
+                && moduloX != 7
                 && moduloX != 11 && moduloX != 14;
 
             // G:1  G:4  P:1 P:3 P:5

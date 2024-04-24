@@ -30,7 +30,9 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         if (Enemy.protoss() && unit.hp() <= 25) return true;
         if (unit.isBuilder() || unit.isConstructing()) return true;
 
-        if (unit.enemiesNear().inRadius(12, unit).atMost(2)) return false;
+        Selection enemiesNear = unit.enemiesNear().inRadius(12, unit);
+        if (enemiesNear.atMost(2)) return false;
+        if (enemiesNear.atLeast(4) && unit.friendsNear().combatUnits().atMost(2)) return true;
 
         return false;
     }

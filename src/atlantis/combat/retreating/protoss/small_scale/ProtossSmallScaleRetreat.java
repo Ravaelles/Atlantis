@@ -45,10 +45,13 @@ public class ProtossSmallScaleRetreat extends Manager {
         if (!unit.isMelee()) return false;
 
         if (unit.isMissionSparta()) return false;
-        if (unit.isMissionDefend() && unit.hp() >= 21 && unit.cooldown() <= 2) return false;
+        if (unit.isMissionDefend()) {
+            if (unit.hp() >= 21) return false;
+            if (unit.allUnitsNear().inRadius(1.2, unit).atLeast(4)) return false;
+        }
         if (unit.enemiesNear().combatUnits().groundUnits().empty()) return false;
+        if (unit.combatEvalRelative() >= 1.1 && unit.hp() >= 24) return false;
         if (ProtossTooBigBattleToRetreat.PvP_doNotRetreat(unit)) return false;
-        if (unit.combatEvalRelative() >= 1.2 && unit.hp() >= 24) return false;
 
         if (unit.isRanged()) return asRanged(unit, friends, enemies);
         return asMelee(unit, friends, enemies);

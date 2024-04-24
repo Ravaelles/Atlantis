@@ -32,7 +32,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
-        if (ArmyStrength.weAreWeaker()) {
+        if (ArmyStrength.ourArmyRelativeStrength() <= 130) {
             if (DEBUG) reason = "Hmm, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
