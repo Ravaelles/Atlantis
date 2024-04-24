@@ -24,12 +24,13 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
     private boolean shouldNotFight() {
 //        if (A.supplyUsed() >= 40) return true;
-        if (unit.enemiesNear().empty() || unit.enemiesNear().inRadius(4, unit).empty()) return true;
-
-        if (Enemy.protoss() && unit.hp() <= 25) return true;
+//        if (unit.enemiesNear().empty() || unit.enemiesNear().inRadius(4, unit).empty()) return true;
+        if (unit.enemiesNear().empty()) return true;
         if (unit.hp() <= 18) return true;
-
+        if (Enemy.protoss() && unit.hp() <= 25) return true;
         if (unit.isBuilder() || unit.isConstructing()) return true;
+
+        if (unit.enemiesNear().inRadius(12, unit).atMost(2)) return false;
 
         return false;
     }
@@ -39,6 +40,14 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         return new Class[]{
             ProtectScvBusyConstructing.class,
         };
+    }
+
+    @Override
+    protected Manager handle() {
+        if (handleSubmanagers() != null) return usedManager(this);
+        if (handleFightEnemyCombatUnits(unit)) return usedManager(this);
+
+        return null;
     }
 
     private boolean handleFightEnemyCombatUnits(AUnit worker) {

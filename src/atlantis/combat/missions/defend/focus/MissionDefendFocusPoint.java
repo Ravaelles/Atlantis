@@ -225,7 +225,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
     private static AFocusPoint enemyWhoBreachedBase() {
         AUnit enemyInBase = EnemyWhoBreachedBase.get();
-        if (enemyInBase != null) {
+        if (enemyInBase != null && !enemyInBase.effUndetected()) {
             return new AFocusPoint(
                 enemyInBase,
                 "EnemyBreachedBase"

@@ -20,6 +20,6 @@ public class ProduceForge {
 
 //        if (EnemyStrategy.get().isRushOrCheese()) return 10;
 
-        return 42;
+        return 62;
     }
 }

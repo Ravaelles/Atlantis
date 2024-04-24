@@ -6,6 +6,7 @@ import atlantis.units.AUnit;
 public class DontAttackUnitScatteredOnMap {
     public static boolean isEnemyScatteredOnMap(AUnit unit, AUnit enemy) {
         if (A.s > 300) return false;
+        if (unit.lastUnderAttackLessThanAgo(60)) return false;
         if (A.isUms()) return false;
         if (enemy.isDragoon()) return false;
         if (preventChasingEarlyWorkerScout(unit, enemy)) return false;

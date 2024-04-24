@@ -22,12 +22,11 @@ public class ProtossTooFarFromLeader extends Manager {
 //        if (true) return false;
 
         if (!We.protoss()) return false;
-
         if (unit.isAir()) return false;
         if (unit.isDT()) return false;
 
-        if (unit.enemiesNear().inRadius(2.5, unit).combatUnits().notEmpty()) return false;
-        if (unit.friendsNear().combatUnits().inRadius(10, unit).atLeast(10)) return false;
+        if (tooDangerousBecauseOfCloseEnemies()) return false;
+        if (unit.friendsNear().combatUnits().inRadius(4, unit).atLeast(10)) return false;
 
 //        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
         if (unit.squad().isLeader(unit)) return false;
@@ -52,6 +51,13 @@ public class ProtossTooFarFromLeader extends Manager {
         if (unitIsOvercrowded()) return false;
 
         return tooFarFromLeader();
+    }
+
+    private boolean tooDangerousBecauseOfCloseEnemies() {
+        return unit.enemiesNear()
+            .inRadius(2.5 + unit.woundPercent() / 50.0, unit)
+            .combatUnits()
+            .notEmpty();
     }
 
     private boolean wayTooFarFromLeader() {

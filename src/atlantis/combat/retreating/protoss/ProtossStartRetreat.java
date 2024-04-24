@@ -1,13 +1,14 @@
 package atlantis.combat.retreating.protoss;
 
-import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class ProtossStartRetreat extends HasUnit {
@@ -46,8 +47,15 @@ public class ProtossStartRetreat extends HasUnit {
 //        unit.addLog("@ " + A.now() + " - RETREAT");
 //        System.err.println("@ " + A.now() + " - RETREAT " + unit.idWithType());
 
+        if (shouldForceRetreatDirectlyFromEnemy() && retreatByRunningFromEnemy(runAwayFrom)) {
+            unitStartedRetreating(runAwayFrom);
+            unit.paintLine(unit.runningManager().runTo(), Color.Orange);
+            return true;
+        }
+
         if (
-            retreatByRunningTowardsBase()
+            retreatTowardsMainChoke()
+                || retreatByRunningTowardsBase()
                 || retreatByRunningFromEnemy(runAwayFrom)
         ) {
             unitStartedRetreating(runAwayFrom);
@@ -58,9 +66,41 @@ public class ProtossStartRetreat extends HasUnit {
         return false;
     }
 
+    private boolean shouldForceRetreatDirectlyFromEnemy() {
+        if (unit.woundHp() <= 20) return false;
+        if (unit.meleeEnemiesNearCount(2.2) > 0) return true;
+        if (unit.lastUnderAttackLessThanAgo(30)) return true;
+
+        return false;
+    }
+
+    private boolean retreatTowardsMainChoke() {
+        HasPosition goTo = mainChokeDefencePoint();
+        if (goTo == null || unit.distTo(goTo) <= 5) return false;
+
+        return unit.move(goTo, Actions.RUN_RETREAT, "RetreatToMainChoke");
+    }
+
+    private HasPosition mainChokeDefencePoint() {
+        AChoke mainChoke = Chokes.mainChoke();
+        if (mainChoke == null) return null;
+
+        AUnit main = Select.main();
+        if (main == null) return mainChoke;
+
+        return mainChoke.translateTilesTowards(defencePointTowardsBase(), main);
+    }
+
+    private static double defencePointTowardsBase() {
+        int combatUnits = Count.ourCombatUnits();
+        if (combatUnits <= 4) return 2;
+        if (combatUnits <= 9) return 2.5;
+        return 3;
+    }
+
     private boolean retreatByRunningTowardsBase() {
-        AUnit main = Select.mainOrAnyBuilding();
-        if (main == null || unit.distTo(main) <= 20) return false;
+        AUnit goTo = Select.mainOrAnyBuilding();
+        if (goTo == null || unit.distTo(goTo) <= 20) return false;
 
         return unit.moveToMain(Actions.RUN_RETREAT, "RetreatTowardsBase");
     }

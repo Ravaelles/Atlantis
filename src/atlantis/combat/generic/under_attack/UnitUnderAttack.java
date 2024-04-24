@@ -1,6 +1,7 @@
 package atlantis.combat.generic.under_attack;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.generic.under_attack.protoss.ProtossUnitUnderAttack;
 import atlantis.units.AUnit;
 
 public class UnitUnderAttack extends Manager {

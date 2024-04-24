@@ -28,6 +28,7 @@ public class MakeSpaceForNearbyWorkers extends Manager {
         if (unit.enemiesNearInRadius(12) > 0) return false;
         if (Select.ourBases().inRadius(5, unit).notEmpty()) return false;
         if (A.seconds() % 6 <= 3) return false;
+        if (unit.friendsNear().buildings().empty()) return false;
 
         if (
             (choke = Chokes.nearestChoke(unit, "MAIN")) != null

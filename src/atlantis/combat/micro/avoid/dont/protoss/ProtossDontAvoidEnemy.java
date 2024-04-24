@@ -11,6 +11,7 @@ public class ProtossDontAvoidEnemy extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isProtoss()) return false;
+        if (unit.looksIdle() || unit.lastActionMoreThanAgo(40)) return false;
 
         if (DragoonDontAvoidEnemy.dontAvoid(unit)) return true;
 

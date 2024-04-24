@@ -1,7 +1,6 @@
 package atlantis.combat.micro.avoid.dont.protoss;
 
 import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -11,6 +10,8 @@ public class DragoonDontAvoidEnemy {
         if (!unit.isDragoon()) return false;
         if (unit.isIdle()) return false;
 //        if (true) return false;
+
+        if (preventInMissionDefend(unit)) return false;
 
         if (dontAvoidCombatBuildings(unit)) return true;
         if (haveNotShotInAWhile(unit)) return true;
@@ -22,15 +23,23 @@ public class DragoonDontAvoidEnemy {
         return false;
     }
 
-    private static boolean haveNotShotInAWhile(AUnit unit) {
+    private static boolean preventInMissionDefend(AUnit unit) {
+        if (!unit.isMissionDefend()) return false;
+
         if (
-            unit.meleeEnemiesNearCount(1.5) > 0
-                && unit.lastAttackFrameLessThanAgo(70)
+            unit.meleeEnemiesNearCount(1.5 + unit.woundPercent() / 43.0) > 0
+//                && unit.lastAttackFrameLessThanAgo(30 * 6)
         ) {
-            return false;
+            return true;
         }
 
-        if (unit.hp() >= 60 && unit.lastAttackFrameLessThanAgo(30 * 2)) return true;
+        return false;
+    }
+
+    private static boolean haveNotShotInAWhile(AUnit unit) {
+        if (unit.hp() <= 40) return false;
+
+        if (unit.hp() >= 60 && unit.lastAttackFrameLessThanAgo(30 * 5)) return true;
 
 //        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.hp());
 

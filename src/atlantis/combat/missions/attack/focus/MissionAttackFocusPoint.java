@@ -41,7 +41,11 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         // === Enemies that breached into base =====================
 
         AUnit enemyInBase = EnemyWhoBreachedBase.get();
-        if (enemyInBase != null && (enemyInBase.friendsInRadiusCount(5) >= 1 || enemyInBase.isCrucialUnit())) {
+        if (
+            enemyInBase != null
+                && (enemyInBase.friendsInRadiusCount(5) >= 1 || enemyInBase.isCrucialUnit())
+                && !enemyInBase.effUndetected()
+        ) {
             return new AFocusPoint(
                 enemyInBase,
                 "EnemyBreachedBase"

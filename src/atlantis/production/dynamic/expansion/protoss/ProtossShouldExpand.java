@@ -7,6 +7,8 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.base.BaseLocations;
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -103,6 +105,8 @@ public class ProtossShouldExpand {
         int seconds = A.seconds();
         int armyStrength = OurArmy.strength();
 
+        if (mainChokeOverwhelmed()) return no("MainChokeOverwhelm");
+
         if (seconds >= 650) return yes("GettingLate");
 
         if (armyStrength <= 90) return no("TooWeak");
@@ -138,6 +142,13 @@ public class ProtossShouldExpand {
         if (seconds <= 400 && armyStrength < 100) return no("Weak");
 
         return no("JustDont");
+    }
+
+    private static boolean mainChokeOverwhelmed() {
+        AChoke mainChoke = Chokes.mainChoke();
+        if (mainChoke == null) return false;
+        
+        return EnemyUnits.discovered().inRadius(15, mainChoke).atLeast(4);
     }
 
     private static boolean enemyHasNoCombatBuilding() {

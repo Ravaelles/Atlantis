@@ -9,6 +9,7 @@ import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.units.workers.GatherResources;
 import atlantis.units.workers.WorkerRepository;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 import java.util.Collection;
@@ -60,6 +61,12 @@ public class NumberOfGasWorkersCommander extends Commander {
 
         if (workers <= 7) {
             return 0;
+        }
+
+        if (We.protoss()) {
+            if (A.s <= 500 && A.gas() >= 80) return 1;
+            if (A.s <= 600 && A.gas() >= 120) return 2;
+            if (A.s <= 700 && A.gas() >= 180) return 1;
         }
 
         if (A.gas() >= 300) {

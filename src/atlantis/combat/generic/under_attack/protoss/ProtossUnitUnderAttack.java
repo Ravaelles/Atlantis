@@ -1,7 +1,9 @@
-package atlantis.combat.generic.under_attack;
+package atlantis.combat.generic.under_attack.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.generic.enemy_in_range.ProtossGetEnemyInRange;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
@@ -17,23 +19,29 @@ public class ProtossUnitUnderAttack extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
+        if (!unit.isCombatUnit()) return false;
+        if (unit.cooldown() <= 4) return false;
         if (unit.lastUnderAttackMoreThanAgo(30 * 2)) return false;
-        if (unit.lastAttackFrameLessThanAgo(30 * 5)) return false;
+        if (
+            unit.lastAttackFrameLessThanAgo(30 * 3)
+                && unit.isZealot()
+                && unit.combatEvalRelative() <= 0.7
+        ) return false;
 
         if (preventForDragoon()) return false;
 
-        return !unit.isAttacking()
+        return unit.isCombatUnit()
             && unit.isGroundUnit()
-            && unit.noCooldown()
-            && unit.lastActionMoreThanAgo(30, Actions.MOVE_DANCE_AWAY)
-            && (unit.hp() >= 61 || !unit.isTank())
+//            && unit.noCooldown()
+//            && unit.lastActionMoreThanAgo(30, Actions.MOVE_DANCE_AWAY)
+            && unit.hp() >= 61
             && unit.hasAnyWeapon()
             && (
             unit.hp() >= 18
-                || !unit.recentlyMoved(30)
+                || !unit.recentlyMoved(20)
                 || shouldAttackBackBecauseOverstackedAndCantRun()
         )
-            && unit.enemiesNear().canBeAttackedBy(unit, 1).notEmpty();
+            && unit.enemiesNear().canBeAttackedBy(unit, 0).notEmpty();
     }
 
     private boolean preventForDragoon() {
@@ -57,9 +65,15 @@ public class ProtossUnitUnderAttack extends Manager {
 
     @Override
     public Manager handle() {
-        if ((new AttackNearbyEnemies(unit)).invoked(this)) {
+        AUnit enemyInRange = ProtossGetEnemyInRange.getEnemyInRange(unit);
+
+        if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemyInRange)) {
             return usedManager(this, "FightBack");
         }
+
+//        if ((new AttackNearbyEnemies(unit)).invoked(this)) {
+//            return usedManager(this, "FightBack");
+//        }
 
         return null;
     }

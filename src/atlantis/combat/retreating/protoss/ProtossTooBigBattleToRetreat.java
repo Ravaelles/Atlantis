@@ -19,9 +19,15 @@ public class ProtossTooBigBattleToRetreat {
 
         if (unit.isZealot()) {
             if (zealotShouldSupportDragoons(unit)) return true;
+            if (zealotShouldKeepZealotLine(unit)) return true;
         }
 
         return unit.friendsNear().combatUnits().inRadius(6, unit).atLeast(6);
+    }
+
+    private static boolean zealotShouldKeepZealotLine(AUnit unit) {
+        return (unit.hp() >= 35 || unit.lastUnderAttackMoreThanAgo(60))
+            && unit.friendsNear().zealots().inRadius(2.5, unit).atLeast(3);
     }
 
     private static boolean zealotShouldSupportDragoons(AUnit unit) {

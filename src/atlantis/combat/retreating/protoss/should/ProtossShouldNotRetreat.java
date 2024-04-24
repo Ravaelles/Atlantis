@@ -52,8 +52,10 @@ public class ProtossShouldNotRetreat extends Manager {
 
     private static boolean shouldNotRunInMissionDefend(AUnit unit) {
         return unit.isMissionDefend()
+            && unit.hp() >= 41
+            && unit.combatEvalRelative() >= 0.7
             && (
-                unit.distToBase() <= 6
+            unit.distToBase() <= 6
                 ||
                 closeToCombatBuilding(unit)
         );

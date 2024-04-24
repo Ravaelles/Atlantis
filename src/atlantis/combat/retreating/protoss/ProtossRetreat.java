@@ -13,7 +13,8 @@ public class ProtossRetreat extends Manager {
 
     @Override
     public boolean applies() {
-        return We.protoss();
+        return We.protoss()
+            && (unit.hp() <= 40 || unit.distToBase() >= 6);
     }
 
     @Override

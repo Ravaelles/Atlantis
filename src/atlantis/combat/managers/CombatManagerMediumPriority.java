@@ -26,12 +26,11 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            UnitHasEnemyInRange.class,
             UnitUnderAttack.class,
 
             ContinueRunning.class,
             ShouldStopRunning.class,
-
-            UnitHasEnemyInRange.class,
 
             AvoidCombatBuilding.class,
             AvoidEnemiesIfNeeded.class,

@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.choke.AChoke;
 import atlantis.units.AUnitType;
@@ -29,10 +30,16 @@ public class NeedChokeBlockers {
     }
 
     private static boolean forProtoss() {
+        if (A.s >= 400) return false;
+
 //        if (A.supplyUsed() >= 45) return false;
         if (Missions.isGlobalMissionAttack()) return false;
         if (Count.basesWithUnfinished() >= 2) return false;
         if (EnemyWhoBreachedBase.notNull()) return false;
+
+        if (Enemy.protoss()) {
+            if (OurArmy.strength() >= 210) return false;
+        }
 
         if (Missions.isGlobalMissionDefendOrSparta()) {
             if (choke == null) {

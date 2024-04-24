@@ -1,11 +1,14 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
+import atlantis.production.dynamic.protoss.units.DragoonInsteadZealot;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 
+import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 import static atlantis.units.AUnitType.Protoss_Gateway;
 
 public class ProduceGateway {
@@ -19,18 +22,28 @@ public class ProduceGateway {
     public static boolean produce() {
         minerals = A.minerals();
 
-        if (minerals >= 550) return produceGateway();
+        if (minerals <= 100) return false;
 
-        existingGateways = Count.gateways();
         freeGateways = Count.freeGateways();
 
+        if (minerals >= 470 && freeGateways <= 1) return produceGateway();
+
+        // =========================================================
+
+        if (prioritizeCybernetics()) return false;
+
+        existingGateways = Count.gateways();
+
         if (freeGateways >= 2) return false;
+        if (ReservedResources.minerals() >= 200 && !A.hasMinerals(230)) return false;
 
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
         allGateways = existingGateways + unfinishedGateways;
 
-        if (freeGateways <= 2) {
-            if (minerals >= 167 && allGateways <= 5 * Count.bases()) return produceGateway();
+        if (freeGateways >= 2) {
+            if (tooManyGatewaysForNow()) return false;
+//            if (allGateways <= 5 * Count.bases()) return produceGateway();
+            return produceGateway();
         }
 
 //        if (minerals < 205 && existingGateways >= 3) return false;
@@ -41,11 +54,17 @@ public class ProduceGateway {
         if (unfinishedGateways >= 2 && !A.hasMinerals(550)) return false;
 //        }
 
-        if (tooManyGatewaysForNow()) return false;
 
         if (continuousGatewayProduction()) return produceGateway();
 
         return false;
+    }
+
+    private static boolean prioritizeCybernetics() {
+        return !Have.cyberneticsCore()
+            && !A.hasMinerals(300)
+            && Have.notEvenPlanned(Protoss_Cybernetics_Core)
+            && DragoonInsteadZealot.dragoonInsteadOfZealot();
     }
 
     private static boolean continuousGatewayProduction() {
@@ -54,6 +73,7 @@ public class ProduceGateway {
 
     private static boolean produceGateway() {
         AddToQueue.withStandardPriority(Protoss_Gateway);
+//        A.printStackTrace("Produce Gateway");
         return true;
     }
 

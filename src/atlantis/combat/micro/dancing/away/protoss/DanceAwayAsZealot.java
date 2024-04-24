@@ -14,9 +14,10 @@ public class DanceAwayAsZealot extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isZealot()) return false;
+        if (unit.isMissionDefendOrSparta()) return false;
         if (dontApplyWhenRangedEnemiesNear()) return false;
 
-        boolean fairlyWounded = unit.hp() <= 80;
+        boolean fairlyWounded = unit.hp() <= 38;
 
         // @ToDo Tweak these values
         return unit.cooldown() >= (fairlyWounded ? 4 : 12)

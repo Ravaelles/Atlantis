@@ -70,7 +70,7 @@ public class Main {
         // === Popular SSCAIT maps =================================
 
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
-        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
@@ -81,7 +81,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-//        if (true) return "ums/rav/7th_rav.scx";
+        if (true) return "ums/rav/7th_rav.scx";
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_skilltest_asP.scx"; // Protoss v. AI Protoss player
@@ -113,7 +113,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_3Drag.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_4Drag_withBase.scm";
-        if (true) return "ums/rav/protoss/4Drag_v_4Drag.scm";
+//        if (true) return "ums/rav/protoss/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_5Drag.scm";
 
 //        if (true) return "ums/rav/protoss/4Drag_v_Zeal.scm";
@@ -125,7 +125,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
-        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
 
 //        if (true) return "ums/rav/DragoonsRange_v_Marines.scm";
 //        if (true) return "ums/rav/Dragoons_v_Marines.scm";
@@ -135,10 +135,14 @@ public class Main {
 //@        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
 
         // vs Zerg
-        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/5Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/protoss/Zeal_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/5Zeal_v_Lings.scm";
+        if (true) return "ums/rav/protoss/10Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 

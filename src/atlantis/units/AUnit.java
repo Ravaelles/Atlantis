@@ -19,6 +19,7 @@ import atlantis.game.AGame;
 import atlantis.game.APlayer;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.tech.ATech;
 import atlantis.information.tech.SpellCoordinator;
 import atlantis.map.choke.AChoke;
@@ -924,7 +925,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isRetreating() {
-        return isRunning() && lastActionLessThanAgo(60, RUN_RETREAT);
+        return isRunning() && lastActionLessThanAgo(20, RUN_RETREAT);
     }
 
     public boolean lastOrderMinFramesAgo(int minFramesAgo) {
@@ -2383,10 +2384,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                         .exclude(this);
                 }
                 else {
-                    System.err.println("enemiesNear invoked for neutral?");
-                    System.err.println("ThisContext = " + this);
-                    System.err.println("alive = " + unit().isAlive());
-                    A.printStackTrace("This is weird, should not be here");
+                    if (OurArmy.strength() <= 900) {
+                        System.err.println("enemiesNear invoked for neutral?");
+                        System.err.println("ThisContext = " + this);
+                        System.err.println("alive=" + unit().isAlive());
+                        System.err.println("enemy=" + unit().isEnemy() + " / our=" + unit().isOur());
+                        A.printStackTrace("This is weird, should not be here");
+                    }
                     return Select.from(new Units());
                 }
             }

@@ -23,7 +23,7 @@ public class ProtossShouldStopRunning extends Manager {
                 || handleSubmanagers() != null
         ) {
             decisionStopRunning();
-            return usedManager(this);
+            if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
         }
 
         return null;

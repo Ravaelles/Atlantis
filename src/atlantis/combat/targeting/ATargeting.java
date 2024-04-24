@@ -44,7 +44,7 @@ public class ATargeting extends HasUnit {
 
         // === Last squad target ===================================
 
-        enemy = useSquadTargetIfPossible();
+        enemy = ASquadTargeting.useSquadTargetIfPossible(unit);
         if (enemy != null) return enemy;
 
 //        System.err.println("Last=" + enemy + " / Can=" + (enemy != null ? unit.hasWeaponRangeToAttack(enemy, 4) : '-'));
@@ -85,19 +85,6 @@ public class ATargeting extends HasUnit {
         return fallback;
     }
 
-    private AUnit useSquadTargetIfPossible() {
-        AUnit enemy = unit.squad().targeting().lastTargetIfAlive();
-
-        if (
-            enemy != null
-                && (!enemy.isABuilding() || enemy.isCombatBuilding())
-                && unit.hasWeaponRangeToAttack(enemy, unit.isRanged() ? 7 : 4)
-        ) {
-            if (DEBUG) A.println("SqL enemy = " + enemy.typeWithUnitId());
-            return enemy;
-        }
-        return null;
-    }
 
     // =========================================================
 

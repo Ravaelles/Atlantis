@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.conditions;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
@@ -17,6 +18,8 @@ public class OtherConstructionTooClose {
     public static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
         if (building.isBase()) return false;
 
+        boolean isPylon = building.isPylon();
+
         // Compare against planned construction places
         for (Construction order : ConstructionRequests.all()) {
             HasPosition constructionPosition = order.buildPosition();
@@ -32,6 +35,10 @@ public class OtherConstructionTooClose {
                 // Look for two positions that could overlap one another
                 if (distance <= (building.canHaveAddon() ? 4 : building.isPylon() ? 2 : 2.8)) {
                     return failed("Planned building too close (" + building + ", dist: " + distance + ")");
+                }
+
+                if (isPylon && distance <= 3 && A.supplyTotal() <= 40) {
+                    return failed("Spread early pylons");
                 }
             }
         }

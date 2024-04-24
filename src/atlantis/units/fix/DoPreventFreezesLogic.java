@@ -30,7 +30,7 @@ public class DoPreventFreezesLogic {
 //            return true;
 //        }
 
-        if (!unit.isMoving() && goToFocus(unit)) {
+        if ((!unit.isMoving() || unit.looksIdle()) && goToFocus(unit)) {
             unit.setTooltip("Prevent:Focus");
             return true;
         }
