@@ -11,7 +11,7 @@ public class UnitHasEnemyInRange extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossUnitHasEnemyInRange.class,
+            ProtossHasEnemyInRange.class,
         };
     }
 }

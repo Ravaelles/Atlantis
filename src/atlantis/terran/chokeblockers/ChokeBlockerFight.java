@@ -20,6 +20,7 @@ public class ChokeBlockerFight extends Manager {
         if (unit.hp() <= 24) return false;
 
         if (unit.isZealot()) {
+            if (unit.lastUnderAttackLessThanAgo(10)) return true;
             if (appliesAsWoundedZealot()) return false;
             if (anyOtherBlockerIsFighting()) return true;
 

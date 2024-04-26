@@ -6,6 +6,7 @@ import atlantis.information.decisions.Decisions;
 import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.build.BuildOrderSettings;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -19,6 +20,7 @@ import static atlantis.units.AUnitType.*;
 public class ProduceZealot {
     public static boolean zealot() {
         if (!A.hasMinerals(100)) return false;
+        if (!A.hasMinerals(300) && A.isInRange(50, ReservedResources.minerals(), 350)) return false;
 
         int freeGateways = Count.freeGateways();
 

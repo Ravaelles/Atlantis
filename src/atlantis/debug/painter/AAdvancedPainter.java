@@ -233,8 +233,8 @@ public class AAdvancedPainter extends APainter {
 
             paintSquad(unit);
             paintLastAction(unit);
-//            paintManagerLogs(unit);
-            paintLastAttackedBy(unit);
+            paintManagerLogs(unit);
+//            paintLastAttackedBy(unit);
         }
     }
 

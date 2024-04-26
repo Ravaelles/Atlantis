@@ -28,7 +28,7 @@ public class ProtossShouldNotRetreat extends Manager {
     }
 
     public boolean shouldNotRetreat() {
-        if (unit.hp() >= 40 || unit.distToBase() <= 8 || unit.distToMain() <= 20) {
+        if (unit.hp() >= 35 && unit.isMelee() && (unit.distToBase() <= 8 || unit.distToMain() <= 20)) {
             unit.addLog("NoRunNearBase");
             return true;
         }
@@ -52,12 +52,17 @@ public class ProtossShouldNotRetreat extends Manager {
     }
 
     private static boolean shouldNotRunInMissionSparta(AUnit unit) {
-        return unit.isMissionSparta();
+        return unit.isMissionSparta()
+            && unit.isMelee()
+            && unit.hp() >= 21
+            && unit.distToNearestChokeLessThan(3);
     }
 
     private static boolean shouldNotRunInMissionDefend(AUnit unit) {
         return unit.isMissionDefend()
-            && unit.hp() >= 41
+            && unit.isMelee()
+            && unit.hp() >= 35
+            && unit.cooldown() <= 10
             && unit.combatEvalRelative() >= 0.7
             && (
             unit.distToBase() <= 6

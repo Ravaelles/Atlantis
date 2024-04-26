@@ -11,10 +11,10 @@ public class DontAvoidEnemy extends Manager {
         super(unit);
     }
 
-//    @Override
-//    public boolean applies() {
-//        return true;
-//    }
+    @Override
+    public boolean applies() {
+        return anySubmanagersApply() != null;
+    }
 
     protected boolean enemyCombatBuildingNearAndWeAreStacked() {
         return unit.isGroundUnit()

@@ -20,6 +20,6 @@ public class ProtossDontAvoidEnemy extends Manager {
 
     @Override
     public Manager handle() {
-        return usedManager(this);
+        return null; // Avoid returning non-null here as units may get stuck thinking they got an order
     }
 }

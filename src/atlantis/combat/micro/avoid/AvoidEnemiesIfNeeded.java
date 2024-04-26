@@ -11,15 +11,12 @@ import atlantis.util.cache.Cache;
 public class AvoidEnemiesIfNeeded extends Manager {
     private static Cache<Units> cache = new Cache<>();
     private WantsToAvoid wantsToAvoid;
-    //    private Units enemiesDangerouslyClose;
     private EnemyUnitsToAvoid enemyUnitsToAvoid;
-    public boolean forceAvoid = false;
 
     public AvoidEnemiesIfNeeded(AUnit unit) {
         super(unit);
         wantsToAvoid = new WantsToAvoid(unit);
         enemyUnitsToAvoid = new EnemyUnitsToAvoid(unit);
-//        enemiesDangerouslyClose = new Units();
     }
 
     public static void clearCache() {
@@ -30,18 +27,18 @@ public class AvoidEnemiesIfNeeded extends Manager {
 
     @Override
     public boolean applies() {
-        if (forceAvoid) return true;
-
         if (unit.isMissionSparta() && unit.isHealthy()) return false;
         if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
 
         return
 //            !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid()
-            (new DontAvoidEnemy(unit)).invoke(this) == null;
+            !(new DontAvoidEnemy(unit)).applies();
     }
 
     @Override
     protected Manager handle() {
+//        if (unit.isDragoon()) System.err.println("@ " + A.now() + " - AVOID ENEMIES " + unit.typeWithUnitId() + " - ");
+
         return avoidEnemiesIfNeeded();
     }
 

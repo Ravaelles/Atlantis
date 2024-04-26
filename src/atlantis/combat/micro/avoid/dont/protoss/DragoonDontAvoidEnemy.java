@@ -14,7 +14,7 @@ public class DragoonDontAvoidEnemy {
         if (preventInMissionDefend(unit)) return false;
 
         if (dontAvoidCombatBuildings(unit)) return true;
-        if (haveNotShotInAWhile(unit)) return true;
+        if (hasNotShotInAWhile(unit)) return true;
 
         if (Enemy.protoss()) return vsProtoss(unit);
         if (Enemy.terran()) return vsTerran(unit);
@@ -24,22 +24,28 @@ public class DragoonDontAvoidEnemy {
     }
 
     private static boolean preventInMissionDefend(AUnit unit) {
-        if (!unit.isMissionDefend()) return false;
+        if (!unit.isMissionDefendOrSparta()) return false;
 
-        if (
-            unit.meleeEnemiesNearCount(1.5 + unit.woundPercent() / 43.0) > 0
-//                && unit.lastAttackFrameLessThanAgo(30 * 6)
-        ) {
-            return true;
+        if (unit.isRanged()) {
+            if (unit.cooldown() >= 15) return false;
+
+            if (
+                unit.lastUnderAttackMoreThanAgo(40)
+                    && unit.meleeEnemiesNearCount(1.5 + unit.woundPercent() / 38.0) == 0
+            ) return true;
         }
 
         return false;
     }
 
-    private static boolean haveNotShotInAWhile(AUnit unit) {
+    private static boolean hasNotShotInAWhile(AUnit unit) {
         if (unit.hp() <= 40) return false;
 
-        if (unit.hp() >= 60 && unit.lastAttackFrameLessThanAgo(30 * 5)) return true;
+        if (
+            unit.hp() >= 60
+                && unit.cooldown() <= 4
+                && unit.lastAttackFrameLessThanAgo(30 * 7)
+        ) return true;
 
 //        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.hp());
 

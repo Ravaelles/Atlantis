@@ -103,6 +103,16 @@ public abstract class Manager extends BaseManager {
         return null;
     }
 
+    protected Manager anySubmanagersApply() {
+        for (Manager submanager : submanagerObjects) {
+            if (submanager.applies()) {
+                return submanager;
+            }
+        }
+
+        return null;
+    }
+
     // =========================================================
 
     /**

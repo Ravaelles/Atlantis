@@ -32,7 +32,7 @@ public class MissionDefend extends Mission {
 
     @Override
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
-        return ((MissionDefendManager) managerClass(unit)).forcesUnitToFight(unit, enemies);
+        return MissionDefendForceToFight.forcesUnitToFight(unit, enemies);
     }
 
     @Override

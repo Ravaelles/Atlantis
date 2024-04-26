@@ -17,17 +17,13 @@ public class ProtossUnitUnderAttack extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
+        if (true) return false;
 
         if (!unit.isCombatUnit()) return false;
-        if (unit.cooldown() <= 4) return false;
+        if (unit.cooldown() <= 7) return false;
         if (unit.lastUnderAttackMoreThanAgo(30 * 2)) return false;
-        if (
-            unit.lastAttackFrameLessThanAgo(30 * 3)
-                && unit.isZealot()
-                && unit.combatEvalRelative() <= 0.7
-        ) return false;
 
+        if (preventForZealot()) return false;
         if (preventForDragoon()) return false;
 
         return unit.isCombatUnit()
@@ -44,8 +40,16 @@ public class ProtossUnitUnderAttack extends Manager {
             && unit.enemiesNear().canBeAttackedBy(unit, 0).notEmpty();
     }
 
+    private boolean preventForZealot() {
+        return unit.isZealot()
+            && unit.lastAttackFrameLessThanAgo(30 * 3)
+            && unit.combatEvalRelative() <= 0.7;
+    }
+
     private boolean preventForDragoon() {
         if (!unit.isDragoon()) return false;
+        if (unit.hp() <= 40) return false;
+        if (unit.meleeEnemiesNearCount(1.5 + unit.woundPercent() / 38.0) > 0) return false;
 
         return unit.lastStartedAttackLessThanAgo(30 * (unit.shields() >= 16 ? 1 : 3))
             && !ProtossFlags.dragoonBeBrave()
