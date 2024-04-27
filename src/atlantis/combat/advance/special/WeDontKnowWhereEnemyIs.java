@@ -15,13 +15,20 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
 
     @Override
     public boolean applies() {
-        return !EnemyInfo.hasDiscoveredAnyBuilding();
+        return !EnemyInfo.hasDiscoveredAnyBuilding()
+            && !unit.isMoving()
+            && !unit.lastActionMoreThanAgo(15)
+            && !unit.lastPositionChangedLessThanAgo(15);
     }
 
     protected Manager handle(AUnit unit) {
-        if (!unit.looksIdle() && unit.isActiveManager(this)) {
-            return continueUsingLastManager();
-        }
+//        if (
+//            unit.isMoving()
+//                && unit.lastPositionChangedLessThanAgo(30)
+//                && unit.isActiveManager(this)
+//        ) {
+//            return usedManager(this);
+//        }
 
         if (shouldGoToRandomUnexplored()) {
             return goToRandomUnexplored();

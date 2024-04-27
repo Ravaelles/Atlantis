@@ -1,14 +1,11 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
-import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
 
 public class ChokeBlockerFight extends Manager {
     public ChokeBlockerFight(AUnit unit) {
@@ -20,8 +17,13 @@ public class ChokeBlockerFight extends Manager {
         if (unit.hp() <= 24) return false;
 
         if (unit.isZealot()) {
-            if (unit.lastUnderAttackLessThanAgo(10)) return true;
-            if (appliesAsWoundedZealot()) return false;
+            if (
+                unit.lastUnderAttackLessThanAgo(10)
+                    && unit.distToNearestChoke() <= 2
+                    && unit.distToNearestChokeCenter() <= 4
+            ) return true;
+
+            if (dontFightAsWoundedZealot()) return false;
             if (anyOtherBlockerIsFighting()) return true;
 
             return false;
@@ -32,33 +34,32 @@ public class ChokeBlockerFight extends Manager {
 //            && unit.lastUnderAttackLessThanAgo(40);
     }
 
-    private boolean appliesAsWoundedZealot() {
-        if (unit.cooldown() >= 5) return false;
+    private boolean dontFightAsWoundedZealot() {
+//        if (unit.cooldown() >= 5) return false;
 
-        if (unit.hp() <= 46) {
-            if (
-                unit.hp() <= 36
-//                    && Count.dragoons() <= 2
-                    && unit.lastAttackFrameLessThanAgo(30 * 5)
-            ) return false;
+        if (unit.hp() <= 35) {
+            if (unit.lastUnderAttackLessThanAgo(120)) return true;
+            if (unit.friendsInRadiusCount(2) == 0) return true;
         }
-        return true;
+
+        return false;
     }
 
     @Override
     public Manager handle() {
-        AUnit enemyInRange = enemyInRange();
+        AUnit enemyInRange = possibleEnemies().canBeAttackedBy(unit, 0).mostWounded();
         if (enemyInRange != null) {
             if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemyInRange)) return usedManager(this);
         }
 
-        AUnit nearestEnemy = possibleEnemies().inRadius(2.5, unit).nearestTo(unit);
+        AUnit nearestEnemy = possibleEnemies().inRadius(1.5, unit).nearestTo(unit);
         if (nearestEnemy != null) {
             if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(nearestEnemy)) return usedManager(this);
         }
 
         AUnit breachedBase = EnemyWhoBreachedBase.get();
         if (breachedBase != null && breachedBase.isDetected() && unit.canAttackTarget(breachedBase)) {
+            System.err.println("breachedBase = " + breachedBase);
             if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(breachedBase)) return usedManager(this);
         }
 
@@ -66,7 +67,16 @@ public class ChokeBlockerFight extends Manager {
     }
 
     private Selection possibleEnemies() {
-        return unit.enemiesNear().groundUnits().effVisible();
+        APosition chokeCenter = ChokeToBlock.get().center();
+        if (chokeCenter == null) return unit.enemiesNear()
+            .groundUnits()
+            .effVisible();
+
+        return unit.enemiesNear()
+            .groundUnits()
+            .inRadius(3, chokeCenter)
+            .canBeAttackedBy(unit, 4)
+            .effVisible();
     }
 
     private boolean anyOtherBlockerIsFighting() {
@@ -74,7 +84,11 @@ public class ChokeBlockerFight extends Manager {
             if (unit.equals(blocker)) continue;
 
             if (blocker.isAttacking()) return true;
-            if (blocker.lastUnderAttackLessThanAgo(10)) return true;
+            if (
+                blocker.lastUnderAttackLessThanAgo(10)
+                    && blocker.enemiesNear().inRadius(2, unit).notEmpty()
+                    && blocker.distToNearestChokeCenter() <= 3
+            ) return true;
         }
 
         return false;
@@ -85,11 +99,11 @@ public class ChokeBlockerFight extends Manager {
     }
 
     private double maxDistToAttack() {
-        int maxEnemies = Enemy.protoss() ? 1 : 3;
+//        int maxEnemies = Enemy.protoss() ? 1 : 3;
 
-        if (
-            possibleEnemies().inRadius(7, unit).groundUnits().count() <= maxEnemies
-        ) return 2.5;
+//        if (
+//            possibleEnemies().inRadius(7, unit).groundUnits().count() <= maxEnemies
+//        ) return 1.5;
 
         return 1.4;
     }

@@ -1,12 +1,8 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.map.position.APosition;
 import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class UnfreezeGeneric extends Manager {
     public UnfreezeGeneric(AUnit unit) {
@@ -18,7 +14,7 @@ public class UnfreezeGeneric extends Manager {
         if (unit.lastPositionChangedLessThanAgo(52)) return false;
 //        if (unit.lastActionLessThanAgo(52)) return false;
 
-        if (true) return false;
+//        if (true) return false;
 //
 //        if (unit.hasCooldown()) return false;
 //        if (unit.isAccelerating()) return false;
@@ -30,13 +26,18 @@ public class UnfreezeGeneric extends Manager {
 //        if (unit.lastStartedAttackLessThanAgo(20)) return false;
 //        if (unit.lastActionLessThanAgo(20, Actions.MOVE_DANCE_AWAY)) return false;
 
+        if (unit.isDragoon()) {
+            if (unit.lastAttackFrameLessThanAgo(40)) return false;
+        }
+
         if (isDragoonDuringSpartaMission()) return false;
         else if (isDuringSpartaMission()) return false;
+        else if (isDuringMissionAttack()) return false;
 
         return true;
     }
 
-    private boolean duringMissionAttack() {
+    private boolean isDuringMissionAttack() {
         return unit.isMissionAttack()
             && unit.noCooldown()
             && unit.lastPositionChangedMoreThanAgo(52);
@@ -51,6 +52,7 @@ public class UnfreezeGeneric extends Manager {
         return unit.isDragoon()
             && unit.isMissionSparta()
             && unit.noCooldown()
+            && unit.lastPositionChangedMoreThanAgo(50)
             && unit.distToOr999(ChokeToBlock.get()) <= 3
             && unit.enemiesNear().zealots().inRadius(1, unit).notEmpty()
             && (

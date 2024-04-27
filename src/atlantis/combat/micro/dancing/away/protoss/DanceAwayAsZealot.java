@@ -3,6 +3,7 @@ package atlantis.combat.micro.dancing.away.protoss;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 import bwapi.Color;
 
@@ -33,8 +34,11 @@ public class DanceAwayAsZealot extends Manager {
     }
 
     private boolean dontApplyWhenRangedEnemiesNear() {
-        return unit.hp() >= 32
-            && unit.enemiesNear().ranged().inRadius(6, unit).notEmpty();
+        Selection rangedEnemies = unit.enemiesNear().ranged();
+
+        if (rangedEnemies.empty()) return false;
+
+        return unit.hp() >= 32 || rangedEnemies.inRadius(3, unit).notEmpty();
     }
 
     private int minMeleeEnemiesNear() {

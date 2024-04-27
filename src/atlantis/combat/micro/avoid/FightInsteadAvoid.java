@@ -25,6 +25,7 @@ public class FightInsteadAvoid extends Manager {
     @Override
     public boolean applies() {
         if (!unit.hasAnyWeapon()) return false;
+        if (unit.combatEvalRelative() <= 0.6) return false;
 
 //        System.err.println(
 //            "### " + unit.type() + "(" + unit.idWithHash() + ").combatEvalRelative() = " + unit.combatEvalRelative()
@@ -67,11 +68,9 @@ public class FightInsteadAvoid extends Manager {
 
     @Override
     protected Manager handle() {
-        if (unit.combatEvalRelative() <= 0.6) return null;
-
         AttackNearbyEnemies attackNearbyEnemies = new AttackNearbyEnemies(unit);
         if (attackNearbyEnemies.handleAttackNearEnemyUnits()) {
-            return usedManager(attackNearbyEnemies, "AvoidButAttack");
+            return usedManager(this, "AvoidButAttack");
         }
 
         return null;

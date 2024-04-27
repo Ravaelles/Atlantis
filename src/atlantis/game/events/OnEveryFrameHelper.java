@@ -100,6 +100,16 @@ public class OnEveryFrameHelper {
 //        printUnitManagers();
 
 //        printBullets();
+
+//        printLastActions();
+    }
+
+    private static void printLastActions() {
+        System.err.println("@ " + A.now());
+        for (AUnit unit : Select.ourCombatUnits().dragoons().list()) {
+            System.err.println(unit.typeWithUnitId() + " - " + unit.manager() + " / " + unit.orderTarget());
+//            System.err.println(unit.typeWithUnitId() + " - " + unit.distToNearestChoke());
+        }
     }
 
     private static void printBullets() {

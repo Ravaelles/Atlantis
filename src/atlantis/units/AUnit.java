@@ -2930,6 +2930,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public void setManagerUsed(Manager managerUsed) {
+//        if (A.now() >= 50 && isDragoon()) A.errPrintln(typeWithUnitId() + ": used " + managerUsed);
+
         setManagerUsed(managerUsed, null);
     }
 
@@ -3138,8 +3140,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private AChoke nearestChoke() {
         return (AChoke) cache.get(
             "nearestChoke",
-            167,
-            () -> Chokes.nearestChoke(this, "MAIN")
+            77,
+            () -> Chokes.nearestChoke(this, "ALL")
         );
     }
 
@@ -3228,5 +3230,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public UnderAttack underAttack() {
         return underAttack;
+    }
+
+    public boolean isSafeFromMelee() {
+        double base = hp() >= 60 ? 1.5 : 1.7;
+
+        return meleeEnemiesNearCount(base + (woundPercent() / 42.0)) == 0;
     }
 }

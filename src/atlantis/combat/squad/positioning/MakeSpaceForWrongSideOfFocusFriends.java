@@ -16,7 +16,7 @@ public class MakeSpaceForWrongSideOfFocusFriends extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.lastActionLessThanAgo(30, Actions.MOVE_SPACE)) return true;
+        if (unit.isMoving() && unit.lastActionLessThanAgo(30, Actions.MOVE_SPACE)) return true;
 
         return unit.isMissionSparta()
 //            && A.everyNthGameFrame(35)
@@ -41,6 +41,7 @@ public class MakeSpaceForWrongSideOfFocusFriends extends Manager {
 //                unit.moveAwayFrom(friendToLetGo, 3, Actions.MOVE_SPACE, "Space4Friend")
                 unit.moveToMain(Actions.MOVE_SPACE, "Space4Friend")
         ) {
+            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - helping...");
             return usedManager(this);
         }
 

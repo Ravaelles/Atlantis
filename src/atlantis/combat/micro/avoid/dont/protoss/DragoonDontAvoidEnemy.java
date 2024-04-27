@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.dont.protoss;
 
 import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
+import atlantis.decions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -8,13 +9,17 @@ import atlantis.util.Enemy;
 public class DragoonDontAvoidEnemy {
     public static boolean dontAvoid(AUnit unit) {
         if (!unit.isDragoon()) return false;
-        if (unit.isIdle()) return false;
+//        if (unit.isIdle()) return false;
 //        if (true) return false;
 
-        if (preventInMissionDefend(unit)) return false;
+        Decision decision;
+
+        if (healthyAndSafe(unit)) return true;
+        if (hasNotShotInAWhile(unit)) return true;
+        if ((decision = whenMissionSparta(unit)).notIndifferent()) return decision.toBoolean();
+        if ((decision = whenMissionDefend(unit)).notIndifferent()) return decision.toBoolean();
 
         if (dontAvoidCombatBuildings(unit)) return true;
-        if (hasNotShotInAWhile(unit)) return true;
 
         if (Enemy.protoss()) return vsProtoss(unit);
         if (Enemy.terran()) return vsTerran(unit);
@@ -23,34 +28,46 @@ public class DragoonDontAvoidEnemy {
         return false;
     }
 
-    private static boolean preventInMissionDefend(AUnit unit) {
-        if (!unit.isMissionDefendOrSparta()) return false;
+    private static Decision whenMissionSparta(AUnit unit) {
+        if (!unit.isMissionSparta()) return Decision.INDIFFERENT;
+
+        if (unit.woundHp() <= 9) return Decision.TRUE;
+        if (unit.isSafeFromMelee()) return Decision.TRUE;
+
+        return Decision.INDIFFERENT;
+    }
+
+    private static boolean healthyAndSafe(AUnit unit) {
+        return unit.woundHp() <= 10
+            && unit.enemiesNear().ranged().canAttack(unit, 1.5).empty();
+    }
+
+    private static Decision whenMissionDefend(AUnit unit) {
+        if (!unit.isMissionDefend()) return Decision.INDIFFERENT;
 
         if (unit.isRanged()) {
-            if (unit.cooldown() >= 15) return false;
+            if (unit.cooldown() >= 15) return Decision.FALSE;
 
             if (
                 unit.lastUnderAttackMoreThanAgo(40)
                     && unit.meleeEnemiesNearCount(1.5 + unit.woundPercent() / 38.0) == 0
-            ) return true;
+            ) return Decision.TRUE;
         }
 
-        return false;
+        return Decision.INDIFFERENT;
     }
 
     private static boolean hasNotShotInAWhile(AUnit unit) {
-        if (unit.hp() <= 40) return false;
+        if (unit.hp() <= 35) return false;
 
         if (
-            unit.hp() >= 60
-                && unit.cooldown() <= 4
+            unit.cooldown() <= 4
                 && unit.lastAttackFrameLessThanAgo(30 * 7)
         ) return true;
 
 //        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.hp());
 
-        return unit.woundHp() <= 40
-            || unit.enemiesNear().effUndetected().groundUnits().canAttack(unit, 1.5).empty();
+        return unit.enemiesNear().effUndetected().groundUnits().canAttack(unit, 1.5).empty();
     }
 
     private static boolean dontAvoidCombatBuildings(AUnit unit) {
@@ -72,10 +89,7 @@ public class DragoonDontAvoidEnemy {
             return meleeNearButQuiteHealthy(unit);
         }
 
-        return unit.woundHp() <= 30
-            && (unit.lastAttackFrameAgo() > 30 * 2 || unit.combatEvalRelative() > 1.3)
-            && (unit.isHealthy() || meleeEnemiesNearCount == 0);
-//            && A.println("Don't avoid " + unit.typeWithUnitId());
+        return (unit.woundHp() <= 30 || unit.combatEvalRelative() > 1.05);
     }
 
     private static boolean vsTerran(AUnit unit) {

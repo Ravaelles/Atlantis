@@ -13,11 +13,11 @@ public class ContinueCurrentAction extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             ContinueLastAttack.class,
-            ContinueLast.class,
+//            ContinueLast.class,
             ContinueShooting.class,
 //            ContinueDragoonAttackOrder.class, // Dont!!
 //            ContinueAttack.class, // Dont!
-            ContinueMoving.class,
+//            ContinueMoving.class,
         };
     }
 }

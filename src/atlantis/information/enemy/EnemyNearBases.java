@@ -76,7 +76,7 @@ public class EnemyNearBases {
 
         // === Regular enemies =====================================
 
-        nearestEnemy = enemies.nearestTo(base);
+        nearestEnemy = enemies.combatUnits().nearestTo(base);
 
         if (nearestEnemy != null) {
             if (nearestEnemy.distToLessThan(base, maxDist) && base.regionsMatch(nearestEnemy)) {

@@ -2,6 +2,7 @@ package atlantis.units.special;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.Squad;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 
 public class FixInvalidUnits extends Manager {

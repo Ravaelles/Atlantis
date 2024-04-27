@@ -19,7 +19,6 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 public class AChoke implements HasPosition {
-
     private static TreeMap<Integer, AChoke> all = new TreeMap<>();
 
     private ChokePoint choke;
@@ -99,7 +98,7 @@ public class AChoke implements HasPosition {
     @Override
     public String toString() {
         return "Choke{" +
-            "width=" + A.digit(width) +
+            "width=" + A.digit(width()) +
 //                ",center=" + center +
             '}';
     }

@@ -24,6 +24,8 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
     }
 
     protected Manager handle() {
+        System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " - WROOOOOOOOOOOOOOOOONG");
+
         if (handleWrongSideOfFocus()) {
             return usedManager(this);
         }

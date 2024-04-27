@@ -33,7 +33,8 @@ public class ChokeBlockerMoveAway extends Manager {
 
         return unit.enemiesNear().inRadius(9, unit).empty()
             && (choke = ChokeToBlock.get()) != null
-            && (needToMoveSpaceForWorkers() || needToMoveForCombatUnits());
+            && (needToMoveSpaceForWorkers() || needToMoveForCombatUnits())
+            && unit.distToNearestChokeLessThan(5);
     }
 
     private boolean randomly() {

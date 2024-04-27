@@ -22,7 +22,7 @@ public class DefineSquadScout {
         if (We.terran() && Select.ourCombatUnits().ranged().empty()) return null;
 
         // First try to define a ranged unit as a scout e.g. Dragoon, Marine
-        Selection groundUnits = squad.units().groundUnits();
+        Selection groundUnits = squad.units().groundUnits().notScout();
         AUnit ranged = groundUnits.ranged().nonTanks().healthy().notSpecialAction().mostDistantToBase();
         if (ranged != null) {
             return defineNewSquadScout(ranged);
@@ -34,7 +34,9 @@ public class DefineSquadScout {
         }
 
         // If no ranged unit is available, use melee (Zealot). Not perfect, but better than nothing.
-        return defineNewSquadScout(groundUnits.melee().havingAtLeastHp(30).mostDistantToBase());
+        return defineNewSquadScout(
+            groundUnits.melee().notScout().havingAtLeastHp(30).mostDistantToBase()
+        );
     }
 
     private static AUnit defineNewSquadScout(AUnit squadScout) {

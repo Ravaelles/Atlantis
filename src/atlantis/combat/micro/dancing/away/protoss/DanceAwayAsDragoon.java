@@ -17,9 +17,9 @@ public class DanceAwayAsDragoon extends HasUnit {
         Decision decision;
 
         if (tooHealthy()) return Decision.FALSE;
+        if (unit.cooldown() <= 8) return Decision.FALSE;
         if (unit.lastAttackFrameMoreThanAgo(30 * 3)) return Decision.FALSE;
         if (provideSupportForMelee()) return Decision.FALSE;
-
 
         if (unit.enemiesNear().inRadius(8, unit).notEmpty()) {
             if (dragoonLowHpAndStillUnderAttack()) return Decision.TRUE;

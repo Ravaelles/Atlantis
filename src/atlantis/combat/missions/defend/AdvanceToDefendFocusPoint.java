@@ -22,7 +22,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            EarlyGameTooClustered.class,
+//            EarlyGameTooClustered.class,
 //            TooClustered.class,
             HandleFocusPointPositioning.class,
         };
@@ -64,9 +64,9 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
     }
 
     private double baseForUnit() {
-        if (unit.isDragoon()) return 2.3;
+        if (unit.isDragoon()) return 0.3;
 
-        return unit.isRanged() ? 3.7 : 0;
+        return unit.isRanged() ? 1.7 : 0;
     }
 
     private double letWorkersComeThroughBonus() {

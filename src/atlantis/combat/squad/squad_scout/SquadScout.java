@@ -25,6 +25,8 @@ public class SquadScout extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         return unit.isSquadScout()
             && allowedToUseScout()
             && !unit.isSpecialMission()

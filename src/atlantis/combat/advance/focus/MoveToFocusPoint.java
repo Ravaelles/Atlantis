@@ -43,7 +43,7 @@ public abstract class MoveToFocusPoint extends MissionManager {
     // =========================================================
 
     protected DistFromFocus evaluateDistFromFocusPoint() {
-        if (unitToFocus < (optimalDist)) return DistFromFocus.TOO_CLOSE;
+        if (unitToFocus < (optimalDist) && unitToFocus <= 0.15) return DistFromFocus.TOO_CLOSE;
         if (unitToFocus > (optimalDist + MARGIN)) return DistFromFocus.TOO_FAR;
         return DistFromFocus.OPTIMAL;
     }

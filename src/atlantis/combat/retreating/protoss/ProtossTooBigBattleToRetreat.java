@@ -6,6 +6,9 @@ public class ProtossTooBigBattleToRetreat {
     public static boolean PvP_doNotRetreat(AUnit unit) {
         if (unit.isDragoon()) {
             if (unit.isHealthy()) return true;
+
+            if (dragoonInDangerOfRanged(unit)) return false;
+
             if (unit.enemiesNear().inRadius(3.7, unit).empty()) return true;
 
             if (unit.hp() <= 40) return false;
@@ -23,6 +26,12 @@ public class ProtossTooBigBattleToRetreat {
         }
 
         return unit.friendsNear().combatUnits().inRadius(6, unit).atLeast(6);
+    }
+
+    private static boolean dragoonInDangerOfRanged(AUnit unit) {
+        return unit.hp() <= 80
+            && (unit.hp() <= 59 || unit.cooldown() >= 15)
+            && unit.enemiesNear().ranged().inRadius(12.7, unit).empty();
     }
 
     private static boolean zealotShouldKeepZealotLine(AUnit unit) {

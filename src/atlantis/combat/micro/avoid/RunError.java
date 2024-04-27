@@ -18,7 +18,7 @@ public class RunError extends Manager {
             AttackNearbyEnemies attackNearbyEnemies = new AttackNearbyEnemies(unit);
             if (attackNearbyEnemies.handleAttackNearEnemyUnits()) {
                 unit.setTooltipTactical("Cant run, fight");
-                return usedManager(attackNearbyEnemies, "RunErrorAttack");
+                return usedManager(this, "RunErrorAttack");
             }
         }
 

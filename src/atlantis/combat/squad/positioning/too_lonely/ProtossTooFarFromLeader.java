@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning;
+package atlantis.combat.squad.positioning.too_lonely;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
@@ -6,6 +6,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
+import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
@@ -20,14 +21,6 @@ public class ProtossTooFarFromLeader extends Manager {
     @Override
     public boolean applies() {
 //        if (true) return false;
-
-        if (!We.protoss()) return false;
-        if (unit.isAir()) return false;
-        if (unit.isDT()) return false;
-        if (unit.hasCooldown()) return false;
-
-        if (tooDangerousBecauseOfCloseEnemies()) return false;
-        if (unit.friendsNear().combatUnits().inRadius(4, unit).atLeast(10)) return false;
 
 //        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
         if (unit.squad().isLeader(unit)) return false;
@@ -52,13 +45,6 @@ public class ProtossTooFarFromLeader extends Manager {
         if (unitIsOvercrowded()) return false;
 
         return tooFarFromLeader();
-    }
-
-    private boolean tooDangerousBecauseOfCloseEnemies() {
-        return unit.enemiesNear()
-            .inRadius(2.5 + unit.woundPercent() / 50.0, unit)
-            .combatUnits()
-            .notEmpty();
     }
 
     private boolean wayTooFarFromLeader() {

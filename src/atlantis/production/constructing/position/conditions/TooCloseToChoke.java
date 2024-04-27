@@ -32,6 +32,6 @@ public class TooCloseToChoke {
     }
 
     private static double minDistToChoke(APosition position, AChoke choke) {
-        return choke.center().distTo(position) - choke.width();
+        return choke.center().distTo(position);
     }
 }

@@ -12,6 +12,7 @@ import atlantis.units.select.Select;
 
 public class MakeSpaceForNearbyWorkers extends Manager {
     private AChoke choke;
+    private AUnit nearWorker;
 
     public MakeSpaceForNearbyWorkers(AUnit unit) {
         super(unit);
@@ -21,6 +22,7 @@ public class MakeSpaceForNearbyWorkers extends Manager {
     public boolean applies() {
         if (unit.isLoaded()) return false;
         if (unit.isMissionAttackOrGlobalAttack()) return false;
+        if ((nearWorker = Select.ourWorkers().notGathering().inRadius(1.9, unit).first()) == null) return false;
         if (unit.enemiesNear().inRadius(12, unit).havingWeapon().notEmpty()) return false;
         if (unit.isMissionDefend() && EnemyWhoBreachedBase.notNull()) return false;
         if (unit.friendsNear().groundUnits().nonBuildings().countInRadius(1, unit) <= 1) return false;
@@ -40,8 +42,6 @@ public class MakeSpaceForNearbyWorkers extends Manager {
     }
 
     protected Manager handle() {
-        AUnit nearWorker = Select.ourWorkers().notGathering().inRadius(1.7, unit).first();
-
         if (nearWorker != null) {
             unit.setTooltipAndLog("Space4Worker");
 

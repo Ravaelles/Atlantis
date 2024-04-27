@@ -85,6 +85,9 @@ public class Chokes {
             () -> {
                 if (mainChoke() == null) return null;
 
+                AChoke naturalFromJbweb = AChoke.from(JBWEB.getNaturalChoke());
+                if (naturalFromJbweb != null) return naturalFromJbweb;
+
                 if (!ActiveMap.isMap("7th")) {
                     AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
                     if (fullfillsConditionsForNatural(choke, "NATURAL")) {
@@ -149,22 +152,24 @@ public class Chokes {
 
     public static AChoke nearestChoke(HasPosition position, final String flag) {
         if (position == null) return null;
-        if (Env.isTesting()) return null;
+//        if (Env.isTesting()) return null;
 
         return (AChoke) cache.get(
-            "nearestChoke:" + position.toStringPixels(),
+//            "nearestChoke:" + position.toStringPixels(),
+            "nearestChoke:" + flag + ";ex" + (position.x() / 48) + ",ey:" + (position.y() / 48),
             -1,
             () -> {
-                AChoke naturalFromJbweb = AChoke.from(JBWEB.getNaturalChoke());
-
-                if (naturalFromJbweb != null) return naturalFromJbweb;
+//                AChoke naturalFromJbweb = AChoke.from(JBWEB.getNaturalChoke());
+//                if (naturalFromJbweb != null) return naturalFromJbweb;
 
                 double nearestDist = 99999;
                 AChoke nearest = null;
 
                 for (AChoke choke : chokes()) {
-                    if (choke.equals(mainChoke())) continue;
-                    if (!fullfillsConditionsForNatural(choke, flag)) continue;
+                    if (!"ALL".equals(flag)) {
+                        if (choke.equals(mainChoke())) continue;
+                        if (!fullfillsConditionsForNatural(choke, flag)) continue;
+                    }
 
 //                    double dist = position.position().groundDistanceTo(choke.center()) - (choke.width() / 64.0);
                     double dist = position.position().groundDistanceTo(choke.center());
@@ -255,5 +260,17 @@ public class Chokes {
         }
 
         return mainChoke.center();
+    }
+
+    public static void fakeChokes(AChoke fakeChoke) {
+        cache.set(
+            "chokes",
+            -1,
+            () -> {
+                List<AChoke> chokes = new ArrayList<>();
+                chokes.add(fakeChoke);
+                return chokes;
+            }
+        );
     }
 }

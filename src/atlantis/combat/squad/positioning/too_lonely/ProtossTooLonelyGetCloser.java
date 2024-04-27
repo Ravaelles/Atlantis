@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning;
+package atlantis.combat.squad.positioning.too_lonely;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
@@ -6,30 +6,23 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
-public class ProtossTooLonely extends Manager {
+public class ProtossTooLonelyGetCloser extends Manager {
     private AUnit friend;
 
-    public ProtossTooLonely(AUnit unit) {
+    public ProtossTooLonelyGetCloser(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        if (!We.protoss()) return false;
-        if (unit.isAir()) return false;
-        if (unit.isDT()) return false;
-        if (unit.lastActionLessThanAgo(2)) return false;
-        if (unit.lastStartedAttackLessThanAgo(40)) return false;
-        if (unit.isLeader()) return false;
-        if (unit.distToNearestChokeLessThan(5)) return false;
-        if (tooDangerousToGoToLeader()) return false;
+//        if (unit.lastStartedAttackLessThanAgo(40)) return false;
+//        if (unit.isLeader()) return false;
 
         return isTooLonely();
     }
 
     private boolean tooDangerousToGoToLeader() {
-        return unit.lastStartedRunningLessThanAgo(60)
-            && unit.meleeEnemiesNearCount(3) > 0;
+        return unit.meleeEnemiesNearCount(3) > 0;
     }
 
     private boolean isTooLonely() {
@@ -37,7 +30,7 @@ public class ProtossTooLonely extends Manager {
     }
 
     protected Manager handle() {
-        if (friend == null) friend = defineFriendToGoTo();
+        if (friend == null) friend = defineGoTo();
         if (friend == null) return null;
 
         if (!unit.isMoving() || A.everyNthGameFrame(5)) {
@@ -49,7 +42,7 @@ public class ProtossTooLonely extends Manager {
         return null;
     }
 
-    private AUnit defineFriendToGoTo() {
+    private AUnit defineGoTo() {
         if (unit.isLeader()) return unit.friendsNear().combatUnits().groundUnits().nearestTo(unit);
 
         return unit.squadLeader();

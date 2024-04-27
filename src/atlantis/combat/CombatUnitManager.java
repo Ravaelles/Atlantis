@@ -21,7 +21,6 @@ public class CombatUnitManager extends Manager {
         return new Class[]{
             AvoidSpellsAndMines.class,
             SpecialUnitsManager.class,
-            SkipCombatManager.class,
             CombatManagerTopPriority.class,
 //            ImproveCombatPerformance.class,
             CombatManagerMediumPriority.class,

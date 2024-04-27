@@ -17,7 +17,8 @@ public class ProcessAttackUnit extends Manager {
 
     public boolean processAttackOtherUnit(AUnit target) {
         if (target == null) {
-            ErrorLog.printMaxOncePerMinute(unit.type() + " AttackUnit got null target");
+//            ErrorLog.printMaxOncePerMinute(unit.type() + " AttackUnit got null target");
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(unit.type() + " AttackUnit got null target");
             return false;
         }
         if (target.hp() <= 0) {

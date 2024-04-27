@@ -20,10 +20,11 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     public boolean applies() {
         if (unit.isLoaded()) return false;
         if (unit.isMissionAttackOrGlobalAttack()) return false;
-        if (unit.isSpecialMission()) return false;
+        if (unit.isSpecialMission() && unit.isMelee()) return false;
         if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
         if (EnemyWhoBreachedBase.notNull()) return false;
-        if (unit.isSquadScout()) return false;
+
+//        System.err.println("           " + evaluateDistFromFocusPoint() + " / " + unit);
 
         distFromFocus = evaluateDistFromFocusPoint();
 
@@ -45,6 +46,11 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         return null;
     }
 
+    @Override
+    public double optimalDist(AFocusPoint focusPoint) {
+        return OptimalDistanceToFocusPoint.forUnit(unit);
+    }
+
     protected boolean act() {
         if (asDragoon()) return true;
 
@@ -63,12 +69,13 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     private boolean asDragoon() {
         if (!unit.isDragoon()) return false;
 
+//        System.err.println("TOO CLOSE = " + unit.distToFocusPoint() + " / " + unit);
 //        if (unit.distToFocusPoint() <= 2.6) {
-        if (A.everyNthGameFrame(15)) unit.holdPosition("DragoonTooCloseA");
+        if (A.everyNthGameFrame(10)) unit.holdPosition("DragoonTooCloseA");
         else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
 //        }
 
-        return true;
+        return false;
 
 //        if (unit.hp() >= 30) {
 //            unit.holdPosition("DragoonHold");
@@ -108,10 +115,5 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public double optimalDist(AFocusPoint focusPoint) {
-        return OptimalDistanceToFocusPoint.forUnit(unit);
     }
 }

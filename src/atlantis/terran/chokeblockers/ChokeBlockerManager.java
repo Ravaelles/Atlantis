@@ -11,6 +11,8 @@ public class ChokeBlockerManager extends Manager {
 
     @Override
     public boolean applies() {
+        if (!NeedChokeBlockers.check()) return false;
+
         return unit.enemiesNear().notEmpty()
             || unit.friendsNear().nonBuildings().inRadius(8, unit).atMost(14);
     }

@@ -40,6 +40,10 @@ public abstract class Manager extends BaseManager {
     private Manager invokeFromParent(Object parent) {
         if (!applies()) return null;
 
+//        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
+//            System.err.println("@ " + A.now() + " - " + this.getClass() + " - ");
+//        }
+
         if (A.now() > parentsLastTimestamp) parents.clear();
         this.parentsLastTimestamp = A.now();
 
@@ -86,7 +90,9 @@ public abstract class Manager extends BaseManager {
     protected Manager handle() {
         if (!applies()) return null;
 
-//        System.err.println("@ " + A.now() + " - " + unit.type() + " = " + this.getClass().getSimpleName());
+//        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
+//            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " HANDLED = " + this.getClass().getSimpleName());
+//        }
 
         return handleSubmanagers();
     }
@@ -122,17 +128,15 @@ public abstract class Manager extends BaseManager {
         return usedManager(manager, null);
     }
 
-//    public Manager fallbackToUseManager(Class<? extends Manager> classObject, Manager parent) {
-//        Manager manager = instantiateManager(classObject);
-//
-//        return manager.invokeFromParent(parent);
-//    }
-
     /**
      * Indicates this Manager was just used by the unit.
      */
     public Manager usedManager(Manager manager, String message) {
         if (manager == null) return null;
+
+//        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
+//            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " USED = " + this.getClass().getSimpleName());
+//        }
 
         if (message != null && !message.isEmpty()) {
             unit.setManagerUsed(manager, message);
@@ -142,13 +146,6 @@ public abstract class Manager extends BaseManager {
         }
 
         return manager;
-    }
-
-    /**
-     * Auxiliary method indicating that the same Manager should not interrupt the actions from previous frames.
-     */
-    public Manager continueUsingLastManager() {
-        return unit.manager();
     }
 
     public AUnit unit() {

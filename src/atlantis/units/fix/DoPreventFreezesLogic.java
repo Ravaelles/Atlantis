@@ -111,16 +111,16 @@ public class DoPreventFreezesLogic {
         return true;
     }
 
-    private static boolean shouldAvoidEnemies(AUnit unit) {
-        return unit.cooldown() >= 13
-            || unit.woundPercent() >= 30;
-    }
+//    private static boolean shouldAvoidEnemies(AUnit unit) {
+//        return unit.cooldown() >= 13
+//            || unit.woundPercent() >= 30;
+//    }
 
-    private static boolean avoidEnemies(AUnit unit) {
-        DoAvoidEnemies avoidEnemies = new DoAvoidEnemies(unit);
-
-        return avoidEnemies.handle() != null;
-    }
+//    private static boolean avoidEnemies(AUnit unit) {
+//        DoAvoidEnemies avoidEnemies = new DoAvoidEnemies(unit);
+//
+//        return avoidEnemies.handle() != null;
+//    }
 
     private static boolean goToNearestEnemy(AUnit unit) {
         AUnit nearestEnemy = EnemyUnits.discovered().groundUnits().havingPosition().nearestTo(unit);

@@ -8,14 +8,15 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.util.log.ErrorLog;
 
 public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (shouldNotDoAnythingButContinue(unit)) return true;
 
-        if (!unit.isStopped() && unit.lastActionMoreThanAgo(4, Actions.STOP)) {
-            unit.stop("UnfreezeByStop");
+        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30 * 2, Actions.HOLD_POSITION)) {
+            unit.holdPosition("UnfreezeByHold");
             return true;
         }
 
@@ -30,8 +31,16 @@ public class UnfreezerShakeUnit {
             }
         }
 
-        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30 * 2, Actions.HOLD_POSITION)) {
-            unit.holdPosition("UnfreezeByHold");
+        Selection enemiesNear = unit.enemiesNear().groundUnits().havingPosition();
+        if (enemiesNear.notEmpty()) {
+            AUnit enemy = enemiesNear.nearestTo(unit);
+            if (enemy != null && enemy.distTo(unit) > 5) {
+                if (unit.move(enemy, Actions.MOVE_UNFREEZE, "Unfreeze2Enemy")) return true;
+            }
+        }
+
+        if (!unit.isStopped() && unit.lastActionMoreThanAgo(2, Actions.STOP)) {
+            unit.stop("UnfreezeByStop");
             return true;
         }
 
@@ -120,6 +129,11 @@ public class UnfreezerShakeUnit {
     private static boolean goToFocus(AUnit unit) {
         AFocusPoint focus = unit.focusPoint();
         if (focus != null) {
+            HasPosition goTo = focus;
+            if (focus.fromSide() != null) {
+                goTo = focus.translateTilesTowards(2.5, focus.fromSide());
+            }
+
             double distToFocus = unit.distTo(focus);
 
             if (distToFocus <= 3) {
@@ -127,7 +141,7 @@ public class UnfreezerShakeUnit {
                 return true;
             }
             if (distToFocus >= 6) {
-                unit.move(focus, Actions.MOVE_UNFREEZE, "UnfreezeByMove");
+                unit.move(goTo, Actions.MOVE_UNFREEZE, "UnfreezeByMove");
                 return true;
             }
         }

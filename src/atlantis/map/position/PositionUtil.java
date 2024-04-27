@@ -39,6 +39,9 @@ public class PositionUtil {
 
         Position fromPosition = null;
         Unit fromUnit = null;
+        int bonus = 0;
+
+//        System.err.println("object2 = " + object2 + " / " + (object2 instanceof AChoke));
 
         if (object1 instanceof FakeUnit) {
             fromPosition = ((FakeUnit) object1).position().p();
@@ -61,6 +64,10 @@ public class PositionUtil {
         else if (object1 instanceof Unit) {
             fromUnit = (Unit) object1;
         }
+        else if (object1 instanceof AChoke) {
+            fromPosition = ((AChoke) object1).center().p();
+            bonus = -((AChoke) object1).width();
+        }
         else if (object1 instanceof APosition) {
             fromPosition = ((APosition) object1).p();
         }
@@ -69,9 +76,6 @@ public class PositionUtil {
 //        }
         else if (object1 instanceof Position) {
             fromPosition = (Position) object1;
-        }
-        else if (object1 instanceof AChoke) {
-            fromPosition = ((AChoke) object1).center().p();
         }
         else if (object1 instanceof ABaseLocation) {
             fromPosition = ((ABaseLocation) object1).position().p();
@@ -107,6 +111,10 @@ public class PositionUtil {
         else if (object2 instanceof Unit) {
             toUnit = (Unit) object2;
         }
+        else if (object2 instanceof AChoke) {
+            toPosition = ((AChoke) object2).center().p();
+            bonus = -((AChoke) object2).width();
+        }
         else if (object2 instanceof APosition) {
             toPosition = ((APosition) object2).p();
         }
@@ -116,15 +124,16 @@ public class PositionUtil {
         else if (object2 instanceof Position) {
             toPosition = (Position) object2;
         }
-        else if (object2 instanceof AChoke) {
-            toPosition = ((AChoke) object2).center().p();
-        }
         else if (object2 instanceof ABaseLocation) {
             toPosition = ((ABaseLocation) object2).position().p();
         }
         else if (object2 instanceof ARegionBoundary) {
             toPosition = ((ARegionBoundary) object2).position().p();
         }
+
+//        System.err.println("fromUnit = " + fromUnit);
+//        System.err.println("fromPosition = " + fromPosition);
+//        System.err.println("toPosition = " + toPosition);
 
         if (toPosition == null && toUnit == null) {
 //            System.err.println("Object: " + object2);
@@ -140,21 +149,21 @@ public class PositionUtil {
         // From is UNIT
         if (fromUnit != null) {
             if (toUnit != null) {
-                return fromUnit.getDistance(toUnit) / 32.0; // UNIT to UNIT distance
+                return bonus + fromUnit.getDistance(toUnit) / 32.0; // UNIT to UNIT distance
             }
 
             else {
-                return fromUnit.getDistance(toPosition) / 32.0;
+                return bonus + fromUnit.getDistance(toPosition) / 32.0;
             }
         }
 
         // From is POSITION
         else {
             if (toPosition != null) {
-                return fromPosition.getDistance(toPosition) / 32.0;
+                return bonus + fromPosition.getDistance(toPosition) / 32.0;
             }
             else {
-                return fromPosition.getDistance(toUnit.getPosition()) / 32.0;
+                return bonus + fromPosition.getDistance(toUnit.getPosition()) / 32.0;
             }
         }
 

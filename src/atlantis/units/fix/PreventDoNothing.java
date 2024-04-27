@@ -37,7 +37,7 @@ public class PreventDoNothing extends Manager {
     public Manager handle() {
         if (unit.managerLogs().isEmpty()) {
             AttackNearbyEnemies manager = new AttackNearbyEnemies(unit);
-            if (manager.invoked(this)) return usedManager(manager);
+            if (manager.invoked(this)) return usedManager(this);
         }
 
         if (DoPreventFreezesLogic.handle(unit)) return usedManager(this);

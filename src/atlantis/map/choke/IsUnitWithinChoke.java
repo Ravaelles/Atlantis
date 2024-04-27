@@ -21,7 +21,7 @@ public class IsUnitWithinChoke {
         return cache.get(
             CacheKey.create("check", choke, unit),
             19,
-            () -> (choke.distTo(unit) - choke.width()) <= 1
+            () -> choke.distTo(unit) <= 0
         );
     }
 }

@@ -22,7 +22,7 @@ public class ProtossShouldStopRunning extends Manager {
             unit.combatEvalRelative() >= 2
                 || handleSubmanagers() != null
         ) {
-            decisionStopRunning();
+            decisionStopRunning(unit);
             if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
         }
 
@@ -60,7 +60,7 @@ public class ProtossShouldStopRunning extends Manager {
         return unit.isZealot() && unit.combatEvalRelative() >= 1.2;
     }
 
-    private boolean decisionStopRunning() {
+    public static boolean decisionStopRunning(AUnit unit) {
 //        System.out.println("@ " + A.now() + " - stop running, near enemy =  " + unit.nearestEnemyDist() + " / " + unit.tooltip());
 
         unit.runningManager().stopRunning();

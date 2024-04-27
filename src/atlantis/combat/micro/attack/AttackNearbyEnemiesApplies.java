@@ -15,6 +15,7 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
 //        if (unit.isAttacking() && unit.lastActionLessThanAgo(6, Actions.ATTACK_UNIT) && unit.hasTarget()) return false;
         if (unit.cooldown() >= 7) return false;
         if (unit.enemiesNear().empty()) return false;
+        if (unit.isSpecialMission() && unit.isMelee()) return false;
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
         if (dontAttackAlone()) return false;
         if (unit.isDragoon() && unit.cooldown() > 0) return false;

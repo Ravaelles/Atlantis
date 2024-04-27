@@ -12,12 +12,13 @@ public class ContinueLastAttack extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 //        if (unit.isMelee()) return false;
 
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
 
         if (!unit.isAttacking()) return false;
+        if (unit.lastAttackFrameMoreThanAgo(15)) return false;
 
         if (continueRecentAttackNearbyEnemies()) return true;
         if (asDragoon()) return true;

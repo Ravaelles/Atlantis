@@ -27,7 +27,7 @@ public class TankDecisions {
         AChoke choke = Chokes.nearestChoke(unit.position(), "MAIN");
         if (choke == null) return true;
 
-        return (unit.distTo(choke.center()) - choke.width()) >= 2.6 || (choke.width() >= 3.8);
+        return (unit.distTo(choke.center()) >= 2.6) || (choke.width() >= 3.8);
     }
 
     private static boolean tooManyTanksInOnePlace(AUnit unit) {

@@ -4,11 +4,10 @@ import atlantis.architecture.Manager;
 import atlantis.combat.generic.enemy_in_range.ProtossGetEnemyInRange;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
-import atlantis.game.A;
+import atlantis.decions.Decision;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.util.We;
+import atlantis.util.Enemy;
 
 public class ProtossUnitUnderAttack extends Manager {
     public ProtossUnitUnderAttack(AUnit unit) {
@@ -20,11 +19,14 @@ public class ProtossUnitUnderAttack extends Manager {
         if (true) return false;
 
         if (!unit.isCombatUnit()) return false;
-        if (unit.cooldown() <= 7) return false;
+        if (unit.cooldown() >= 7) return false;
         if (unit.lastUnderAttackMoreThanAgo(30 * 2)) return false;
 
+        Decision decision;
+
+        if ((decision = appliesForDragoon()).notIndifferent()) return decision.toBoolean();
+
         if (preventForZealot()) return false;
-        if (preventForDragoon()) return false;
 
         return unit.isCombatUnit()
             && unit.isGroundUnit()
@@ -46,17 +48,19 @@ public class ProtossUnitUnderAttack extends Manager {
             && unit.combatEvalRelative() <= 0.7;
     }
 
-    private boolean preventForDragoon() {
-        if (!unit.isDragoon()) return false;
-        if (unit.hp() <= 40) return false;
-        if (unit.meleeEnemiesNearCount(1.5 + unit.woundPercent() / 38.0) > 0) return false;
+    private Decision appliesForDragoon() {
+        if (!unit.isDragoon()) return Decision.INDIFFERENT;
+
+        if (unit.woundHp() <= (Enemy.protoss() ? 13 : 6)) return Decision.TRUE;
+        if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return Decision.TRUE;
+        if (unit.meleeEnemiesNearCount(3.2) > 0) return Decision.FALSE;
+        if (unit.hp() >= 17 && ProtossFlags.dragoonBeBrave()) return Decision.TRUE;
 
         return unit.lastStartedAttackLessThanAgo(30 * (unit.shields() >= 16 ? 1 : 3))
-            && !ProtossFlags.dragoonBeBrave()
             && (
             unit.lastUnderAttackLessThanAgo(30 * 4)
                 || unit.enemiesNear(4.5).ranged().notEmpty()
-        );
+        ) ? Decision.TRUE : Decision.INDIFFERENT;
     }
 
     private boolean shouldAttackBackBecauseOverstackedAndCantRun() {
@@ -70,6 +74,7 @@ public class ProtossUnitUnderAttack extends Manager {
     @Override
     public Manager handle() {
         AUnit enemyInRange = ProtossGetEnemyInRange.getEnemyInRange(unit);
+        if (enemyInRange == null) return null;
 
         if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemyInRange)) {
             return usedManager(this, "FightBack");

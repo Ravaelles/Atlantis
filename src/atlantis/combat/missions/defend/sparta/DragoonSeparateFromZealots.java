@@ -1,15 +1,14 @@
 package atlantis.combat.missions.defend.sparta;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class DragoonSeparateFromZealots extends Manager {
+
+    private AUnit zealot;
+
     public DragoonSeparateFromZealots(AUnit unit) {
         super(unit);
     }
@@ -18,44 +17,27 @@ public class DragoonSeparateFromZealots extends Manager {
     public boolean applies() {
         return unit.isDragoon()
             && unit.noCooldown()
-            && unit.enemiesNear().inRadius(6, unit).empty();
+            && unit.enemiesNear().inRadius(7, unit).empty()
+            && needToSeparateFromZealots();
     }
 
     @Override
     public Manager handle() {
-        if (separateFromZealots()) {
-            return usedManager(this);
+        if (!unit.moveAwayFrom(zealot, 1, Actions.MOVE_SPACE, "SpaceForZealotA")) {
+            if (unit.moveAwayFrom(zealot, 3, Actions.MOVE_SPACE, "SpaceForZealotB")) {
+                if (unit.moveAwayFrom(zealot, 6, Actions.MOVE_SPACE, "SpaceForZealotC")) {
+                    return usedManager(this);
+                }
+            }
         }
 
         return null;
     }
 
-    private boolean separateFromZealots() {
-        AUnit zealot = unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(0.8, unit).first();
+    private boolean needToSeparateFromZealots() {
+        zealot = unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(0.7, unit).first();
         if (zealot == null) return false;
 
-        if (unit.distToNearestChokeCenter() <= 2.7) {
-//            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZeal!");
-            if (!unit.moveAwayFrom(zealot, 1, Actions.MOVE_SPACE, "SpaceForZealotA")) {
-                if (unit.moveAwayFrom(zealot, 3, Actions.MOVE_SPACE, "SpaceForZealotB")) {
-                    if (unit.moveAwayFrom(zealot, 6, Actions.MOVE_SPACE, "SpaceForZealotC")) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-//        if (unit.distTo(zealot) < 1.5) {
-//            System.out.println("@ " + A.now() + " - SEPARATE " + unit.id() + " / " + unit.distTo(zealot));
-//            unit.moveToMain(Actions.MOVE_SPACE, "SpaceForZealots");
-//        if (unit.move(
-//            Select.ourBuildings().nearestTo(Select.mainOrAnyBuilding()),
-//            Actions.MOVE_SPACE, "SpaceForZealots"
-//        )) return true;
-
-        return false;
-//        }
-//
-//        return false;
+        return unit.distToNearestChokeCenter() <= 2.7;
     }
 }

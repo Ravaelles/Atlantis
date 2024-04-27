@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 
@@ -28,6 +29,7 @@ public class DoAvoidEnemies extends Manager {
     @Override
     public Manager handle() {
 //        if (enemies.size() == 1) {
+
         if (
             enemies.size() == 1
                 ||

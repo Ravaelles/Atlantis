@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.terran.avoid.ShouldNeverAvoidAsTerran;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 

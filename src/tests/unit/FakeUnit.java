@@ -358,16 +358,16 @@ public class FakeUnit extends AUnit {
 //        return Math.sqrt(dx * dx + dy * dy) / 32.0;
 //    }
 
-    @Override
-    public double distTo(HasPosition otherPosition) {
-        int dx = otherPosition.x() - position.x();
-        int dy = otherPosition.y() - position.y();
-        double dist = Math.sqrt(dx * dx + dy * dy) / 32.0;
-
-//        System.err.println("FakeUnit::distTo (HasPosition), dx:" + dx + ", dy:" + dy + ", dist:" + dist);
-
-        return dist;
-    }
+//    @Override
+//    public double distTo(HasPosition otherPosition) {
+//        int dx = otherPosition.x() - position.x();
+//        int dy = otherPosition.y() - position.y();
+//        double dist = Math.sqrt(dx * dx + dy * dy) / 32.0;
+//
+////        System.err.println("FakeUnit::distTo (HasPosition), dx:" + dx + ", dy:" + dy + ", dist:" + dist);
+//
+//        return dist;
+//    }
 
     @Override
     public double groundDist(HasPosition other) {

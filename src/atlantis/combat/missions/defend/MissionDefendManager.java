@@ -18,10 +18,8 @@ public class MissionDefendManager extends MissionManager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             SpartaSpecific.class,
-            MakeSpaceForNearbyWorkers.class,
-            MakeSpaceForWrongSideOfFocusFriends.class,
             AllowTimeToReposition.class,
-            ProtossSquadCohesion.class,
+//            ProtossSquadCohesion.class,
             AdvanceToDefendFocusPoint.class,
         };
     }

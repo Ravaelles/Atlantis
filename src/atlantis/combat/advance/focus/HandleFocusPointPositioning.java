@@ -2,6 +2,8 @@ package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
+import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonelyGetCloser;
 import atlantis.units.AUnit;
 
 public class HandleFocusPointPositioning extends MissionManager {
@@ -11,17 +13,26 @@ public class HandleFocusPointPositioning extends MissionManager {
 
     @Override
     public boolean applies() {
-        if (unit.isSquadScout()) return false;
+//        if (Count.ourCombatUnits() >= 6 && unit.isSquadScout()) return false;
 
-        return unit.enemiesNear().inRadius(10, unit).empty();
+//        if (A.now() >= 50 && unit.isDragoon()) {
+//            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " - .........");
+//        }
+
+        return true;
+//        return unit.enemiesNear().inRadius(7, unit).empty();
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            OnWrongSideOfFocusPoint.class, // @Todo
+//            MakeSpaceForNearbyWorkers.class,
+//            MakeSpaceForWrongSideOfFocusFriends.class,
+//            OnWrongSideOfFocusPoint.class,
+
+            ProtossTooLonely.class,
+            TooCloseToFocusPoint.class,
             TooFarFromFocusPoint.class,
-            TooCloseToFocusPoint.class, // @Todo
         };
     }
 }
