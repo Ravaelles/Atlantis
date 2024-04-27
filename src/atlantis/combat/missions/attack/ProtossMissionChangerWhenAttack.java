@@ -56,6 +56,13 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     private boolean defendVsProtoss() {
         int strength = OurArmy.strength();
 
+        if (Enemy.zerg()) {
+            if (Count.ourCombatUnits() <= 4 && EnemyUnits.discovered().combatUnits().atLeast(8)) {
+                if (DEBUG) reason = "Wait for more army";
+                return true;
+            }
+        }
+
         if (EnemyUnits.discovered().dragoons().count() > Count.dragoons()) {
             if (Count.dragoons() <= 2) {
                 if (DEBUG) reason = "Enemy has more Dragoons";

@@ -3,6 +3,7 @@ package atlantis.combat.retreating.protoss.big_scale;
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.OurArmy;
 import atlantis.map.base.define.DefineNaturalBase;
@@ -22,11 +23,13 @@ public class ProtossFullRetreat extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isMissionAttack()) return false;
-        if (OurArmy.strength() >= 500) return false;
-        if (unit.combatEvalRelative() >= 1.6) return false;
         if (unit.enemiesNear().combatUnits().empty()) return false;
-        if (unit.enemiesNear().combatUnits().atMost(3)) return false;
-        if (unit.friendsNear().combatUnits().atLeast(15)) return false;
+        if (unit.enemiesNear().combatBuildingsAntiLand().empty()) {
+            if (OurArmy.strength() >= 700) return false;
+            if (unit.combatEvalRelative() >= 2.6) return false;
+            if (unit.enemiesNear().combatUnits().atMost(3)) return false;
+            if (unit.friendsNear().combatUnits().atLeast(15)) return false;
+        }
 
         AUnit base = Select.naturalOrMain();
         if (base == null || base.distTo(unit) <= 20) return false;
@@ -79,11 +82,14 @@ public class ProtossFullRetreat extends Manager {
         int basePenalty = Alpha.count() <= 25 ? 4 : 0;
         basePenalty += Alpha.get().leader().lastRetreatedAgo() <= 30 * 15 ? 2 : 0;
 
-        return basePenalty + combatBuildings.inRadius(17, unit).count() / 2.0;
+        return basePenalty + combatBuildings.inRadius(17, unit).count() / 1.5;
     }
 
     @Override
     protected Manager handle() {
+        ProtossTooLonely tooLonely = new ProtossTooLonely(unit);
+        if (tooLonely.applies() && tooLonely.forceHandle() != null) return usedManager(this);
+
         if ((new ProtossStartRetreat(unit)).startRetreatingFrom(enemy())) {
 //            unit.paintCircleFilled(14, Color.Red);
             unit.addLog("PFull");

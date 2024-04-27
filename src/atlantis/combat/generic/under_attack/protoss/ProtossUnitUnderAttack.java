@@ -2,7 +2,6 @@ package atlantis.combat.generic.under_attack.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.generic.enemy_in_range.ProtossGetEnemyInRange;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.decions.Decision;
 import atlantis.protoss.ProtossFlags;
@@ -75,7 +74,7 @@ public class ProtossUnitUnderAttack extends Manager {
 
     @Override
     public Manager handle() {
-        AUnit enemyInRange = ProtossGetEnemyInRange.getEnemyInRange(unit);
+        AUnit enemyInRange = ProtossGetEnemyInRange.enemyInRange(unit);
         if (enemyInRange == null) return null;
 
         if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemyInRange)) {

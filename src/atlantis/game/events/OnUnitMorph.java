@@ -6,6 +6,7 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitsUpdater;
+import atlantis.information.strategy.response.protoss.AsProtossUnitDiscoveredResponse;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
@@ -53,6 +54,8 @@ public class OnUnitMorph {
         // Enemy unit
         else if (unit.isEnemy()) {
             EnemyInfo.refreshEnemyUnit(unit);
+
+            if (unit.isLurkerEgg()) AsProtossUnitDiscoveredResponse.updateEnemyUnitDiscovered(unit);
         }
     }
 

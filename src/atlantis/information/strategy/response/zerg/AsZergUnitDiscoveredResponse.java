@@ -121,7 +121,7 @@ public class AsZergUnitDiscoveredResponse {
 //        }
 
 //        if (enemyUnit.is(AUnitType.Protoss_Dark_Templar)) {
-        if (enemyUnit.is(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
+        if (enemyUnit.is(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker, AUnitType.Zerg_Lurker_Egg)) {
             OurStrategicBuildings.setDetectorsNeeded(2);
 
             ProductionRequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());

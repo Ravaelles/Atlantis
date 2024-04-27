@@ -19,6 +19,9 @@ public class RequestProtossDetection {
     }
 
     private static boolean requestAtLeastOneObserver() {
+        if (Have.notEvenPlanned(AUnitType.Protoss_Cybernetics_Core)) {
+            AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Robotics_Facility, 1);
+        }
         AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Robotics_Facility, 1);
         AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observatory, 1);
         AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observer, 1);
@@ -51,7 +54,7 @@ public class RequestProtossDetection {
     private static boolean whenNoForge() {
         boolean result = AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Forge, 1);
 
-        return result || AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Photon_Cannon, minCannons());
+        return AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Photon_Cannon, minCannons());
     }
 
     private static int minCannons() {

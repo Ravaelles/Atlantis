@@ -6,7 +6,6 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 import atlantis.util.We;
-import net.bytebuddy.description.NamedElement;
 
 public class ProtossHasEnemyInRange extends Manager {
     private AUnit enemyInRange;
@@ -29,7 +28,7 @@ public class ProtossHasEnemyInRange extends Manager {
             && (unit.woundHp() <= 80 && notTooManyEnemiesNear())
 //            && unit.combatEvalRelative() > 1
 //            && !unit.hasTarget()
-            && (enemyInRange = ProtossGetEnemyInRange.getEnemyInRange(unit)) != null
+            && (enemyInRange = ProtossGetEnemyInRange.enemyInRange(unit)) != null
             && allowedToAttackThisEnemy();
     }
 
@@ -41,7 +40,8 @@ public class ProtossHasEnemyInRange extends Manager {
     }
 
     private boolean notTooManyEnemiesNear() {
-        int maxEnemies = unit.isRanged() ? 0 : (2 + (unit.woundPercent() < 30 ? 1 : 0));
+        int maxEnemies = unit.isRanged() ? 0 : (2 + (unit.woundPercent() < 30 ? 1 : 0))
+            + (unit.isMelee() && unit.friendsNear().inRadius(2, unit).atLeast(2) ? 1 : 0);
 
         return unit.enemiesNear().inRadius(1.1, unit).atMost(maxEnemies);
     }
@@ -92,9 +92,9 @@ public class ProtossHasEnemyInRange extends Manager {
 
     @Override
     protected Manager handle() {
-        if (unit.isRanged()) {
-            A.printStackTrace("lol " + unit);
-        }
+//        if (unit.isRanged()) {
+//            A.printStackTrace("lol " + unit);
+//        }
 
         if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemyInRange)) return usedManager(this);
 
