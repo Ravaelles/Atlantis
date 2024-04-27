@@ -246,7 +246,7 @@ public class ATargeting extends HasUnit {
 
     public static Selection possibleEnemyUnitsToAttack(AUnit unit, double maxDistFromEnemy) {
         return Select.enemyRealUnitsWithBuildings()
-            .nonBuildingsOrCombatBuildings()
+            .nonBuildingsButAllowCombatBuildings()
             .inRadius(maxDistFromEnemy, unit)
             .maxGroundDist(maxDistFromEnemy, unit)
             .effVisibleOrFoggedWithKnownPosition()

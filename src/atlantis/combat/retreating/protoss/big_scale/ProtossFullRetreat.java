@@ -5,12 +5,12 @@ import atlantis.combat.retreating.protoss.ProtossStartRetreat;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.OurArmy;
-import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -57,16 +57,26 @@ public class ProtossFullRetreat extends Manager {
             - (unit.lastStartedRunningLessThanAgo(30 * 4) ? 0.05 : 0)
             - (unit.distToMain() <= 20 ? -0.1 : 0)
             - (unit.lastUnderAttackLessThanAgo(30 * 4) ? 0.05 : 0)
-            - combaBuildingPenalty(unit);
+            - combatBuildingPenalty(unit)
+            + enemyZerglingBonus(unit);
 
         return evalRelative <= 0.95;
     }
 
-    private double combaBuildingPenalty(AUnit unit) {
+    /**
+     * Lower value of enemy zerglings.
+     */
+    private double enemyZerglingBonus(AUnit unit) {
+        if (unit.friendsNear().inRadius(3, unit).atMost(1)) return 0;
+
+        return unit.enemiesNear().inRadius(8, unit).ofType(AUnitType.Zerg_Zergling).count() * 0.3;
+    }
+
+    private double combatBuildingPenalty(AUnit unit) {
         Selection combatBuildings = EnemyUnits.discovered().buildings().combatBuildingsAnti(unit);
         if (combatBuildings.empty()) return 0;
 
-        int basePenalty = Alpha.count() <= 23 ? 3 : 0;
+        int basePenalty = Alpha.count() <= 25 ? 4 : 0;
         basePenalty += Alpha.get().leader().lastRetreatedAgo() <= 30 * 15 ? 2 : 0;
 
         return basePenalty + combatBuildings.inRadius(17, unit).count() / 2.0;

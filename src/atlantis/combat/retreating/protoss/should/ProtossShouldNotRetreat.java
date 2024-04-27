@@ -2,12 +2,7 @@ package atlantis.combat.retreating.protoss.should;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 
 public class ProtossShouldNotRetreat extends Manager {
     public ProtossShouldNotRetreat(AUnit unit) {
@@ -67,12 +62,15 @@ public class ProtossShouldNotRetreat extends Manager {
             && (
             unit.distToBase() <= 6
                 ||
-                closeToCombatBuilding(unit)
+                closeToFriendlyCombatBuilding(unit)
         );
     }
 
     private static boolean shouldNotRunInMissionAttack(AUnit unit) {
         if (!unit.isMissionAttack()) return false;
+
+        // Always consider retreating near enemy combat buildings
+        if (unit.enemiesNear().combatBuildingsAnti(unit).notEmpty()) return false;
 
         if (unit.isZealot()) {
             AUnit nearestGoon = unit.friendsNear().dragoons().inRadius(4, unit).nearestTo(unit);
@@ -84,7 +82,7 @@ public class ProtossShouldNotRetreat extends Manager {
         return false;
     }
 
-    private static boolean closeToCombatBuilding(AUnit unit) {
+    private static boolean closeToFriendlyCombatBuilding(AUnit unit) {
         return unit.hp() > 20
             && unit.friendsNear().combatBuildings(false).inRadius(3, unit).notEmpty();
     }

@@ -335,10 +335,10 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection nonBuildingsOrCombatBuildings() {
+    public Selection nonBuildingsButAllowCombatBuildings() {
         return cloneByRemovingIf(
             (unit -> unit.isABuilding() && !unit.isCombatBuilding()),
-            "nonBuildingsOrCombatBuildings"
+            "nonBuildingsButAllowCombatBuildings"
         );
     }
 

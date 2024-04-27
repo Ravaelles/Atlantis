@@ -8,7 +8,7 @@ public class RepairableUnits {
     public static Selection get() {
         return Select.our()
             .repairable(true)
-            .nonBuildingsOrCombatBuildings()
+            .nonBuildingsButAllowCombatBuildings()
             .wounded()
             .excludeTypes(AtlantisRaceConfig.WORKER)
             .notScout();

@@ -62,12 +62,21 @@ public class ProtossHasEnemyInRange extends Manager {
         if (lastAttackFrameAgo > 30 * 10) return true;
         if (lastAttackFrameAgo <= 30 && unit.cooldown() >= 8) return false;
 
-        if (Enemy.zerg() && unit.shieldDamageAtMost(30)) return true;
+        if (Enemy.zerg() && allowVsZerg()) return true;
         if (enemyInRange.hp() < unit.hp()) return true;
 
         if (unit.isMissionDefendOrSparta()) return unit.hp() >= 18 && unit.friendsNear().inRadius(1.5, unit).atLeast(1);
 
         return unit.hp() >= (unit.isMelee() ? 21 : 40);
+    }
+
+    private boolean allowVsZerg() {
+        if (unit.hp() <= 20) return false;
+
+        if (unit.shieldDamageAtMost(25)) return true;
+        if (unit.friendsNear().inRadius(1.6, unit).atLeast(2)) return true;
+
+        return false;
     }
 
     private boolean allowedToAttackAsRanged() {

@@ -6,11 +6,18 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 
 public class ShouldRunTowardsBase {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
         if (unit.isScout() && unit.enemiesNear().buildings().notEmpty()) return true;
+
+        if (Enemy.zerg()) {
+            if (A.s <= 320) return true;
+        }
+
         if (unit.meleeEnemiesNearCount(1.2) > 0) return false;
+
         if (unit.isSquadScout()) return true;
 
         if (A.seconds() >= 550) return false;
