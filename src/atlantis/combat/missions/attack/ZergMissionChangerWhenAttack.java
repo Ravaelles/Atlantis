@@ -5,6 +5,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
+import atlantis.util.Enemy;
 
 public class ZergMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
@@ -21,7 +22,7 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
-        if (ArmyStrength.weAreWeaker()) {
+        if (ArmyStrength.weAreWeaker() && !Enemy.zerg()) {
             if (DEBUG) reason = "Hmm, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }

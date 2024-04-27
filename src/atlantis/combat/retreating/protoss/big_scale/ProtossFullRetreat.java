@@ -2,6 +2,7 @@ package atlantis.combat.retreating.protoss.big_scale;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.OurArmy;
 import atlantis.map.base.BaseLocations;
@@ -65,7 +66,10 @@ public class ProtossFullRetreat extends Manager {
         Selection combatBuildings = EnemyUnits.discovered().buildings().combatBuildingsAnti(unit);
         if (combatBuildings.empty()) return 0;
 
-        return combatBuildings.inRadius(17, unit).count() / 2.0;
+        int basePenalty = Alpha.count() <= 23 ? 3 : 0;
+        basePenalty += Alpha.get().leader().lastRetreatedAgo() <= 30 * 15 ? 2 : 0;
+
+        return basePenalty + combatBuildings.inRadius(17, unit).count() / 2.0;
     }
 
     @Override

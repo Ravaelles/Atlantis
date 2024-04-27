@@ -57,8 +57,10 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
         int strength = OurArmy.strength();
 
         if (EnemyUnits.discovered().dragoons().count() > Count.dragoons()) {
-            if (DEBUG) reason = "Enemy has more Dragoons";
-            return true;
+            if (Count.dragoons() <= 2) {
+                if (DEBUG) reason = "Enemy has more Dragoons";
+                return true;
+            }
         }
 
         if (A.seconds() <= 400 && strength >= 150) {

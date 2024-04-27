@@ -21,11 +21,11 @@ public class ScoutManager extends Manager {
             AvoidEnemiesIfNeeded.class,
             ScoutAvoidCombatBuildings.class,
             ScoutSafetyFarFromEnemy.class,
+            ScoutFreeBases.class,
             ScoutRoaming.class,
             WorkerAvoidManager.class,
             ScoutTryFindingEnemy.class,
             RoamAroundEnemyBase.class,
-            ScoutFreeBases.class,
 //            TestRoamingAroundBase.class,
         };
     }

@@ -72,6 +72,9 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
+        AFocusPoint enemyExpansion = enemyExpansion(main);
+        if (enemyExpansion != null) return enemyExpansion;
+
         AFocusPoint enemyCombatBuilding = nearestEnemyCombatBuilding(main);
         if (enemyCombatBuilding != null) return enemyCombatBuilding;
 
@@ -194,6 +197,23 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         if (!A.isUms()) ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
+        return null;
+    }
+
+    private static AFocusPoint enemyExpansion(AUnit main) {
+        AUnit enemyBuilding = EnemyUnits.nearestEnemyCombatBuilding();
+        if (
+            enemyBuilding != null
+                && enemyBuilding.hasPosition()
+//                && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
+                && enemyBuilding.isAlive()
+        ) {
+            return new AFocusPoint(
+                enemyBuilding,
+                main,
+                "EnemyExpansion(" + enemyBuilding.name() + ")"
+            );
+        }
         return null;
     }
 

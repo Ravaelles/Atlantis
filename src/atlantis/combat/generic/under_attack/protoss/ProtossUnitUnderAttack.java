@@ -16,7 +16,9 @@ public class ProtossUnitUnderAttack extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
+
+        if (!Enemy.zerg() && !unit.isMelee()) return false;
 
         if (!unit.isCombatUnit()) return false;
         if (unit.cooldown() >= 7) return false;

@@ -7,6 +7,7 @@ import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class MissionAttackAllowsToAttack extends HasUnit {
@@ -27,6 +28,8 @@ public class MissionAttackAllowsToAttack extends HasUnit {
         if (!enemy.isAlive() || enemy.isDead() || !enemy.hasPosition()) return false;
 
         if (unit.canAttackTargetWithBonus(enemy, 0)) return true;
+
+        if (Enemy.zerg() && unit.isMelee() && enemy.isMelee() && unit.distToNearestChokeLessThan(1)) return true;
 
 //        if (DontAttackAlone.isAlone(unit)) return false;
         if (DontAttackUnitScatteredOnMap.isEnemyScatteredOnMap(unit, enemy)) return false;

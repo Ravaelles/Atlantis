@@ -16,7 +16,7 @@ public class ProtossTooLonely extends Manager {
     @Override
     public boolean applies() {
         return We.protoss()
-            && (A.supplyUsed() <= 100 && EnemyInfo.hasDiscoveredAnyBuilding())
+            && (A.supplyUsed() <= 100 || EnemyInfo.hasDiscoveredAnyBuilding())
             && unit.isCombatUnit()
             && !unit.hasCooldown()
             && unit.isGroundUnit()

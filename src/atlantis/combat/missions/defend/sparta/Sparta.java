@@ -30,7 +30,7 @@ public class Sparta extends MissionDefend {
     public static boolean canUseSpartaMission() {
         if (We.terran()) return false;
         if (We.zerg() && Enemy.protoss()) return false;
-        if (A.s >= 320) return false;
+        if (A.s >= 310) return false;
 
         return Count.basesWithUnfinished() <= 1 && focusPointIsValidForSparta();
 //        return MissionHistory.numOfChanges() <= 1 &&;

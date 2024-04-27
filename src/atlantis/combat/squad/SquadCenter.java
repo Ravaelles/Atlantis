@@ -60,8 +60,10 @@ public class SquadCenter {
         APosition nearestToPosition = nearestToPosition();
         AUnit unit;
 
-        if ((unit = candidates.ranged().nearestTo(nearestToPosition)) != null) {
-            return unit;
+        if (candidates.ranged().atLeast(2)) {
+            if ((unit = candidates.ranged().nearestTo(nearestToPosition)) != null) {
+                return unit;
+            }
         }
 
         return candidates.nearestTo(nearestToPosition);
