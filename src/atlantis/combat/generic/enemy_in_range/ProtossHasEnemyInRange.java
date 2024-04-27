@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 import net.bytebuddy.description.NamedElement;
 
@@ -18,14 +19,14 @@ public class ProtossHasEnemyInRange extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        return We.protoss()
-//            && unit.squad().targeting().lastTargetIfAlive() == null
-            && unit.isCombatUnit()
-            && unit.enemiesNear().notEmpty()
-            && unit.lastAttackFrameMoreThanAgo(30 * 5)
-            && fairlyHealthyOrSafeFromMelee()
+        if (!We.protoss()) return false;
+        if (!unit.isCombatUnit()) return false;
+        if (unit.enemiesNear().empty()) return false;
+
+        return unit.lastAttackFrameMoreThanAgo(30 * (unit.isMelee() ? 2 : 5))
+            && (!Enemy.protoss() || fairlyHealthyOrSafeFromMelee())
             && unit.cooldown() <= 8
-            && (unit.woundHp() <= 50 && notTooManyEnemiesNear())
+            && (unit.woundHp() <= 80 && notTooManyEnemiesNear())
 //            && unit.combatEvalRelative() > 1
 //            && !unit.hasTarget()
             && (enemyInRange = ProtossGetEnemyInRange.getEnemyInRange(unit)) != null

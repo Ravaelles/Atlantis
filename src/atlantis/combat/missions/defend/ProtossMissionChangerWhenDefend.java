@@ -75,6 +75,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     private boolean canPushEarlyVsProtoss() {
         if (A.seconds() >= 400) return false;
         if (EnemyUnits.dragoons() >= 1) return false;
+        if (Count.dragoons() >= 3) return true;
 
         return (relativeStrength >= 190 && MissionHistory.numOfChanges() <= 2 && Count.zealots() >= 3);
 //            || (MissionHistory.numOfChanges() <= 3 && Count.dragoons() >= 6);

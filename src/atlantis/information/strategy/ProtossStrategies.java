@@ -8,8 +8,8 @@ import atlantis.util.Enemy;
 public class ProtossStrategies extends AStrategy {
     public static AStrategy protossChooseStrategy() {
         if (Enemy.protoss()) {
-//            return ProtossStrategies.PROTOSS_5_Gate_Zealot_vP;
-            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
+            return ProtossStrategies.PROTOSS_5_Gate_Zealot_vP;
+//            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
 //            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP;
 //            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP;
 //            return ProtossStrategies.PROTOSS_ZZZ_Core;

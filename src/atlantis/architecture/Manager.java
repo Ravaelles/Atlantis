@@ -109,9 +109,13 @@ public abstract class Manager extends BaseManager {
         return null;
     }
 
-    protected Manager anySubmanagersApply() {
+    protected Manager anySubmanagerApplies() {
         for (Manager submanager : submanagerObjects) {
             if (submanager.applies()) {
+                if (submanager.hasSubmanagers()) {
+                    return submanager.anySubmanagerApplies();
+                }
+//                System.err.println("Dragoon B = " + submanager);
                 return submanager;
             }
         }

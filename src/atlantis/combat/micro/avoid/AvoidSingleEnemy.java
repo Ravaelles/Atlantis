@@ -47,10 +47,10 @@ public class AvoidSingleEnemy extends Manager {
     private boolean doNotAvoid() {
         if (this.enemy == null) return true;
         if (unit.effUndetected()) return true;
-        if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
-        if (isEnemyFacingOtherWayAndWeLookSafe()) return true;
-
-        APainter.paintCircle(enemy, 16, Color.Orange);
+//        if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
+//        if (isEnemyFacingOtherWayAndWeLookSafe()) return true;
+//
+//        APainter.paintCircle(enemy, 16, Color.Orange);
 
         if (enemy.position() == null) {
             System.err.println("enemy.position() is NULL for " + enemy);

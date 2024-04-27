@@ -30,6 +30,8 @@ public class DoAvoidEnemies extends Manager {
     public Manager handle() {
 //        if (enemies.size() == 1) {
 
+//        A.printStackTrace("Avoiding... " + unit.idWithHash());
+
         if (
             enemies.size() == 1
                 ||

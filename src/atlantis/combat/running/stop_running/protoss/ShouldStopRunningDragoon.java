@@ -15,6 +15,8 @@ public class ShouldStopRunningDragoon extends Manager {
     public boolean applies() {
         if (!unit.isDragoon()) return false;
 
+        if (unit.lastStartedRunningLessThanAgo(3)) return false;
+
 //        if (unit.woundHp() <= 11) return true;
 
         Selection meleeEnemies = unit.enemiesNear().melee();
@@ -35,8 +37,6 @@ public class ShouldStopRunningDragoon extends Manager {
     }
 
     private static double safetyMargin(AUnit unit) {
-        return unit.hp() >= 42
-            ? 0.2
-            : (unit.woundPercent() / 39.0);
+        return 1.4 + (unit.woundPercent() / 39.0);
     }
 }

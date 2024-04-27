@@ -19,7 +19,7 @@ public class ProtossShouldStopRunning extends Manager {
     @Override
     protected Manager handle() {
         if (
-            unit.combatEvalRelative() >= 2
+            (unit.isMelee() && unit.combatEvalRelative() >= 2)
                 || handleSubmanagers() != null
         ) {
             decisionStopRunning(unit);

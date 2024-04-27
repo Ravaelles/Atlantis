@@ -41,7 +41,8 @@ public class ProtossForbiddenByStreetGrid {
                 && moduloX != 11 && moduloX != 14;
 
             // G:1  G:4  P:1 P:3 P:5
-            boolean moduloYIsInvalid = moduloY != 1 && moduloY != 4;
+//            boolean moduloYIsInvalid = moduloY != 1 && moduloY != 4;
+            boolean moduloYIsInvalid = moduloY != 0 && moduloY != 3 && moduloY != 6;
 
             if (moduloXIsInvalid) {
                 return failed("TX modulo PG_X2 = " + moduloX + " / tx:" + position.tx() + " / grid:" + GRID_SIZE_X);

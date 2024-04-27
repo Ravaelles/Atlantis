@@ -9,8 +9,8 @@ public class ASquadTargeting {
         if (
             isValidTarget(enemy)
                 && unit.distTo(enemy) <= 9
-                && unit.hasWeaponRangeToAttack(enemy, unit.isRanged() ? 7 : 4)
-                && unit.enemiesNear().canBeAttackedBy(unit, 0).atMost(1)
+                && unit.hasWeaponRangeToAttack(enemy, unit.isRanged() ? 3 : 5)
+//                && unit.enemiesNear().canBeAttackedBy(unit, 0).empty()
         ) {
 //            if (DEBUG) A.println("SqL enemy = " + enemy.typeWithUnitId());
             return enemy;

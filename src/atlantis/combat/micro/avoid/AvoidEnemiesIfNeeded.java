@@ -27,8 +27,8 @@ public class AvoidEnemiesIfNeeded extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isMissionSparta() && unit.isHealthy()) return false;
-        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
+//        if (unit.isMissionSparta() && unit.isHealthy()) return false;
+//        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
 
         return
 //            !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid()
@@ -43,6 +43,8 @@ public class AvoidEnemiesIfNeeded extends Manager {
     }
 
     public Manager avoidEnemiesIfNeeded() {
+        if (!applies()) return null;
+
         if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose()) != null) {
             return usedManager(unit.manager());
         }

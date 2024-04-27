@@ -656,7 +656,7 @@ public class Selection extends BaseSelection {
     }
 
     public boolean onlyOfType(AUnitType type) {
-        return count() == countOfType(type);
+        return count() > 0 && count() == countOfType(type);
     }
 
     public Selection burrowed() {

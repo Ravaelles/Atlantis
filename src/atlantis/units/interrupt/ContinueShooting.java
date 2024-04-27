@@ -10,19 +10,20 @@ public class ContinueShooting extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
+
+        if (!unit.isAttacking()) return false;
+        if (unit.lastStartedAttackMoreThanAgo(30 * 6)) return true;
 
 //        if (unit.isStopped()) return false;
-//        if (!unit.isAttacking()) return false;
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
 //
 //        if (unit.isDragoon() && doesNotApplyForDragoon()) return false;
 //        if (unit.isMarine() && doesNotApplyForMarine()) return false;
 
+        if (unit.isStartingAttack()) return true;
+        if (unit.isAttackFrame()) return true;
         if (UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)) return true;
-
-//        if (unit.isStartingAttack()) return true;
-//        if (unit.isAttackFrame()) return true;
 
         if (true) return false;
 

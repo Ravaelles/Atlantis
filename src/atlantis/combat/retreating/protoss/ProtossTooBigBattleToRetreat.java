@@ -7,17 +7,16 @@ public class ProtossTooBigBattleToRetreat {
         if (unit.isDragoon()) {
             if (unit.isHealthy()) return true;
 
+            if (unit.hp() <= 40) return false;
+            if (unit.cooldown() >= 10 && unit.meleeEnemiesNearCount(1.6) > 0) return false;
             if (dragoonInDangerOfRanged(unit)) return false;
 
             if (unit.enemiesNear().inRadius(3.7, unit).empty()) return true;
 
-            if (unit.hp() <= 40) return false;
             if (unit.friendsNear().combatUnits().inRadius(8, unit).atMost(2)) return false;
 
-            if (unit.lastAttackFrameMoreThanAgo(30 * 3)) return true;
+//            if (unit.lastAttackFrameMoreThanAgo(30 * 3)) return true;
             if (unit.shields() >= 40 && unit.enemiesNear().inRadius(3.2, unit).empty()) return true;
-
-            if (unit.cooldown() >= 12 && unit.meleeEnemiesNearCount(1.6) > 0) return false;
         }
 
         if (unit.isZealot()) {

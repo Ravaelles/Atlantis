@@ -18,7 +18,10 @@ public class UnitAttackWaitFrames {
 //    }
 
     public static boolean waitedLongEnoughForAttackFrameToFinish(AUnit unit) {
-        return unit.lastAttackFrameAgo() > attackAnimationFrames(unit.type());
+//        return unit.lastAttackFrameAgo() > attackAnimationFrames(unit.type());
+        return unit.lastAttackFrameAgo()
+            >
+            (attackAnimationFrames(unit.type()) + effectiveStopFrames(unit.type()));
     }
 
     public static boolean waitedLongEnoughForStartedAttack(AUnit unit) {

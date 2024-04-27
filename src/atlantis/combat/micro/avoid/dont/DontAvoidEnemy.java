@@ -5,6 +5,7 @@ import atlantis.combat.micro.avoid.dont.protoss.ProtossDontAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.terran.TerranDontAvoidEnemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.We;
 
 public class DontAvoidEnemy extends Manager {
     public DontAvoidEnemy(AUnit unit) {
@@ -13,7 +14,11 @@ public class DontAvoidEnemy extends Manager {
 
     @Override
     public boolean applies() {
-        return anySubmanagersApply() != null;
+        if (We.protoss()) return (new ProtossDontAvoidEnemy(unit)).applies();
+        if (We.terran()) return (new TerranDontAvoidEnemy(unit)).applies();
+
+        return false;
+//        return anySubmanagerApplies() != null;
     }
 
     protected boolean enemyCombatBuildingNearAndWeAreStacked() {
@@ -34,13 +39,13 @@ public class DontAvoidEnemy extends Manager {
             && unit.meleeEnemiesNearCount(2.5) == 0;
     }
 
-    @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossDontAvoidEnemy.class,
-            TerranDontAvoidEnemy.class,
-        };
-    }
+//    @Override
+//    protected Class<? extends Manager>[] managers() {
+//        return new Class[]{
+//            ProtossDontAvoidEnemy.class,
+//            TerranDontAvoidEnemy.class,
+//        };
+//    }
 
 //    @Override
 //    public Manager handle() {

@@ -29,7 +29,6 @@ public class CombatManagerMediumPriority extends Manager {
             UnitHasEnemyInRange.class,
             UnitUnderAttack.class,
 
-            ContinueRunning.class,
             ShouldStopRunning.class,
 
             AvoidCombatBuilding.class,

@@ -4,6 +4,7 @@ import atlantis.decions.Decision;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
+import atlantis.units.actions.Actions;
 
 public class DanceAwayAsDragoon extends HasUnit {
     private final AUnit enemy;
@@ -16,14 +17,22 @@ public class DanceAwayAsDragoon extends HasUnit {
     public Decision applies() {
         Decision decision;
 
+//        if (unit.lastActionLessThanAgo(2, Actions.ATTACK_UNIT)) return Decision.FALSE;
+
+//        if (true) return Decision.FALSE;
+
+        if (unit.lastAttackFrameMoreThanAgo(30 * 8)) return Decision.FALSE;
+        if (unit.woundHp() <= 14 && unit.lastAttackFrameMoreThanAgo(30 * 5)) return Decision.FALSE;
+        if ((unit.cooldown() >= 12 || unit.hp() <= 100) && !unit.isSafeFromMelee()) return Decision.TRUE;
         if (tooHealthy()) return Decision.FALSE;
-        if (unit.cooldown() <= 8) return Decision.FALSE;
-        if (unit.lastAttackFrameMoreThanAgo(30 * 3)) return Decision.FALSE;
+
+        if ((decision = vsEnemyDragoons()).notIndifferent()) return decision;
+
+        if (unit.cooldown() <= 12) return Decision.FALSE;
         if (provideSupportForMelee()) return Decision.FALSE;
 
         if (unit.enemiesNear().inRadius(8, unit).notEmpty()) {
             if (dragoonLowHpAndStillUnderAttack()) return Decision.TRUE;
-            if ((decision = vsEnemyDragoons()).notIndifferent()) return decision;
         }
 
         if (quiteHealthyAndNotUnderAttack()) return Decision.FALSE;
@@ -48,17 +57,24 @@ public class DanceAwayAsDragoon extends HasUnit {
     }
 
     private Decision vsEnemyDragoons() {
-        if (unit.enemiesNear().dragoons().canAttack(unit, 0.1).notEmpty()) return Decision.INDIFFERENT;
+        if (unit.hp() >= 62 && unit.lastAttackFrameMoreThanAgo(100)) return Decision.FALSE;
 
-        if (unit.shields() >= 40) return Decision.FALSE;
+        if (unit.enemiesNear().dragoons().canAttack(unit, 0).empty()) return Decision.INDIFFERENT;
 
-        if (unit.enemiesNearInRadius(enemiesRadius()) > 0) return Decision.TRUE;
+        if (unit.hp() <= 82 && unit.cooldown() >= 10) return Decision.TRUE;
 
-        return Decision.FALSE;
+        return (unit.meleeEnemiesNearCount(meleeEnemiesRadius()) > 0)
+            ? Decision.TRUE : Decision.FALSE;
+
+//        if (unit.shields() >= 40) return Decision.FALSE;
+//
+//        if (unit.enemiesNearInRadius(enemiesRadius()) > 0) return Decision.TRUE;
+//
+//        return Decision.FALSE;
     }
 
-    private double enemiesRadius() {
-        return 4.1
+    private double meleeEnemiesRadius() {
+        return 1.4
             + (enemy.isFacing(unit) ? 0.4 : -1.6)
             + (unit.hp() <= 60 ? 0.7 : 0);
     }
@@ -69,7 +85,7 @@ public class DanceAwayAsDragoon extends HasUnit {
             && unit.hp() <= 60
             && (
             unit.lastUnderAttackLessThanAgo(90)
-                || unit.enemiesNearInRadius(enemiesRadius()) > 0
+                || unit.enemiesNearInRadius(meleeEnemiesRadius()) > 0
         );
     }
 }

@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyFlags;
+import atlantis.information.generic.OurArmy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
@@ -13,10 +14,16 @@ import static atlantis.production.AbstractDynamicUnits.buildToHave;
 public class ProduceObserver {
     public static boolean needObservers() {
         if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) return true;
-        if (A.supplyUsed() >= 47 && !Have.cannon()) return true;
+        if (shouldPrepareForObsver()) return true;
         if (A.supplyUsed() >= 64) return true;
 
         return false;
+    }
+
+    private static boolean shouldPrepareForObsver() {
+        return A.supplyUsed() >= 47
+            && !Have.cannon()
+            && OurArmy.strength() >= 120;
     }
 
     public static void observers() {

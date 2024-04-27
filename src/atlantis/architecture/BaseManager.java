@@ -96,4 +96,8 @@ public abstract class BaseManager {
         }
         return sb.toString();
     }
+
+    protected boolean hasSubmanagers() {
+        return submanagerObjects.length > 0;
+    }
 }

@@ -932,6 +932,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return AGame.now() - _lastActionReceived >= minFramesAgo;
     }
 
+    public boolean lastOrderMaxFramesAgo(int maxFramesAgo) {
+        return AGame.now() - _lastActionReceived <= maxFramesAgo;
+    }
+
     /**
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */

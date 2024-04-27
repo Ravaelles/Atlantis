@@ -61,6 +61,11 @@ public class SupplyCommander extends Commander {
             return;
         }
 
+        if (tooFewSupplyLeftAsForGateways()) {
+            requestAdditionalSupply();
+            return;
+        }
+
         // Fix for UMS maps
         if (A.isUms() && AGame.supplyFree() <= 1) {
             requestAdditionalSupply();
@@ -108,6 +113,12 @@ public class SupplyCommander extends Commander {
                 }
             }
         }
+    }
+
+    private boolean tooFewSupplyLeftAsForGateways() {
+        return We.protoss()
+            && A.supplyTotal() >= 30
+            && !A.hasFreeSupply(2 + Count.gateways());
     }
 
     private boolean isSupplyVeryLow() {

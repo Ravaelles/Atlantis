@@ -24,6 +24,8 @@ public class ProduceGateway {
 
         if (minerals <= 100) return false;
 
+        if (!A.hasMinerals(184) && A.isInRange(50, ReservedResources.minerals(), 350)) return false;
+
         freeGateways = Count.freeGateways();
 
         if (minerals >= 470 && freeGateways <= 1) return produceGateway();

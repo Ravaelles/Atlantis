@@ -13,7 +13,7 @@ import bwapi.Color;
 
 public class RunShowBackToEnemy {
     public static final double SHOW_BACK_DIST_DEFAULT = 6;
-    public static final double SHOW_BACK_DIST_DRAGOON = 3;
+    public static final double SHOW_BACK_DIST_DRAGOON = 4;
     public static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 3;
     public static final double SHOW_BACK_DIST_VULTURE = 5;
 

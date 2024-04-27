@@ -12,7 +12,7 @@ public class ContinueCurrentAction extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ContinueLastAttack.class,
+//            ContinueLastAttack.class,
 //            ContinueLast.class,
             ContinueShooting.class,
 //            ContinueDragoonAttackOrder.class, // Dont!!

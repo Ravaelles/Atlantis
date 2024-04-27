@@ -112,9 +112,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_3Drag.scm";
-//        if (true) return "ums/rav/protoss/4Drag_v_4Drag_withBase.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_4Drag.scm";
-//        if (true) return "ums/rav/protoss/4Drag_v_5Drag.scm";
 
 //        if (true) return "ums/rav/protoss/4Drag_v_Zeal.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Zealots.scm";

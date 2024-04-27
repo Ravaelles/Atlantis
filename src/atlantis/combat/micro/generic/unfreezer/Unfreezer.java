@@ -17,11 +17,13 @@ public class Unfreezer extends Manager {
 
 //        if (unit.hasNotMovedInAWhile() && unit.lastActionMoreThanAgo(50)) return true;
 
+        if (unit.isSpecialMission()) return false;
+        if (unit.lastPositionChangedMoreThanAgo(30) && unit.isStopped() && unit.noCooldown()) return true;
+
         if (unit.lastActionLessThanAgo(10, Actions.MOVE_UNFREEZE) && !unit.isStopped()) return false;
         if (unit.lastActionLessThanAgo(33)) return false;
         if (unit.lastAttackFrameLessThanAgo(33)) return false;
 //        if (unit.isHoldingPosition() && unit.isSpecialMission()) return false;
-        if (unit.isSpecialMission()) return false;
 //        if (unit.isMissionDefendOrSparta() && unit.lastActionLessThanAgo(30 * 5)) return false;
         if (unit.lastPositionChangedLessThanAgo(30)) return false;
         if (unit.isActiveManager(PreventDoNothing.class)) return false;
