@@ -3,8 +3,7 @@ package atlantis.combat.missions;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
-import atlantis.decions.Decision;
-import atlantis.map.position.APosition;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 

@@ -68,6 +68,11 @@ public class ProtossSmallScaleRetreat extends Manager {
         if (enemies.inRadius(ProtossSmallScaleEvaluate.RADIUS_LG, unit).count() <= 0) return false;
         if (unit.hasCooldown() && unit.hasTarget() && unit.target().hp() < unit.hp()) return false;
 
+        if (Enemy.protoss()) {
+            // We're not outnumbered
+            if ((1 + friends.count()) > enemies.count()) return false;
+        }
+
         if (ProtossSmallScaleEvaluate.isOverpoweredByEnemyMelee(unit, friends, enemies)) {
             unit.setTooltip("PSC:A");
 

@@ -1,7 +1,7 @@
 package atlantis.combat.retreating.zerg;
 
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;

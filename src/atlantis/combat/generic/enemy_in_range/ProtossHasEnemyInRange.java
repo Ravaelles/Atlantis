@@ -22,14 +22,18 @@ public class ProtossHasEnemyInRange extends Manager {
         if (!unit.isCombatUnit()) return false;
         if (unit.enemiesNear().empty()) return false;
 
+//        if (
+//            unit.isMelee()
+//                && unit.hp() >= 38
+//                && unit.lastAttackFrameMoreThanAgo(35)
+//        ) return true;
+
         return unit.lastAttackFrameMoreThanAgo(30 * (unit.isMelee() ? 0 : 5))
             && (!Enemy.protoss() || fairlyHealthyOrSafeFromMelee())
             && unit.cooldown() <= 8
-            && (unit.woundHp() <= 80 && notTooManyEnemiesNear())
+            && (unit.woundHp() <= 80 && notTooManyEnemiesNear());
 //            && unit.combatEvalRelative() > 1
 //            && !unit.hasTarget()
-            && (enemyInRange = ProtossGetEnemyInRange.enemyInRange(unit)) != null
-            && allowedToAttackThisEnemy();
     }
 
     private boolean fairlyHealthyOrSafeFromMelee() {
@@ -92,6 +96,11 @@ public class ProtossHasEnemyInRange extends Manager {
 
     @Override
     protected Manager handle() {
+        if (
+            (enemyInRange = ProtossGetEnemyInRange.enemyInRange(unit)) == null
+                || !allowedToAttackThisEnemy()
+        ) return null;
+
 //        if (unit.isRanged()) {
 //            A.printStackTrace("lol " + unit);
 //        }

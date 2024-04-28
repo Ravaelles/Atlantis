@@ -1,6 +1,6 @@
 package atlantis.information.decisions.terran;
 
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.FocusOnProducingUnits;
 import atlantis.information.enemy.EnemyInfo;

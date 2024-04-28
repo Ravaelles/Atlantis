@@ -15,7 +15,7 @@ import bwapi.Color;
 import java.util.ArrayList;
 
 public class RunInAnyDirection {
-    public static int ANY_DIRECTION_RADIUS_DEFAULT = 3;
+    public static int ANY_DIRECTION_RADIUS_DEFAULT = 4;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 4;
     public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 5;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;

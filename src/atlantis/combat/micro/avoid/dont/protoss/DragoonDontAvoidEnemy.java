@@ -1,8 +1,7 @@
 package atlantis.combat.micro.avoid.dont.protoss;
 
 import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
-import atlantis.decions.Decision;
-import atlantis.game.A;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;

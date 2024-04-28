@@ -1,7 +1,7 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.protoss.ContinueDragoonAttackOrder;

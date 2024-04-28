@@ -14,17 +14,21 @@ public class DanceAwayAsZealot extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
         if (!unit.isZealot()) return false;
-        if (unit.isMissionDefendOrSparta()) return false;
+        if (unit.cooldown() <= 2) return false;
+        if (unit.isMissionSparta()) return false;
+        if (unit.shieldDamageAtMost(19)) return false;
         if (dontApplyWhenRangedEnemiesNear()) return false;
+
+        if (moreEnemiesThanOurUnits()) return true;
 
         boolean fairlyWounded = unit.hp() <= 38;
 
         // @ToDo Tweak these values
-        return unit.cooldown() >= (fairlyWounded ? 4 : 12)
-            && unit.isWounded()
-            && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60))
-            && (fairlyWounded || moreEnemiesThanOurUnits());
+        return unit.cooldown() >= (fairlyWounded ? 4 : 16)
+            && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60) || moreEnemiesThanOurUnits());
     }
 
     private boolean moreEnemiesThanOurUnits() {

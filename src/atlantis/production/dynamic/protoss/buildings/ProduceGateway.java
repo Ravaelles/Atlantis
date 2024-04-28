@@ -23,7 +23,14 @@ public class ProduceGateway {
         minerals = A.minerals();
 
         if (minerals <= 100) return false;
-        if (!A.hasMinerals(184) && A.isInRange(50, ReservedResources.minerals(), 350)) return false;
+
+        existingGateways = Count.gateways();
+
+        if (
+            !A.hasMinerals(176)
+                && existingGateways >= 3
+                && A.isInRange(50, ReservedResources.minerals(), 350)
+        ) return false;
 
         freeGateways = Count.freeGateways();
 
@@ -32,8 +39,6 @@ public class ProduceGateway {
         // =========================================================
 
         if (!A.hasMinerals(260) && prioritizeCybernetics()) return false;
-
-        existingGateways = Count.gateways();
 
         if (freeGateways >= 2) return false;
         if (ReservedResources.minerals() >= 250 && !A.hasMinerals(230)) return false;

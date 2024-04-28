@@ -1,7 +1,7 @@
 package atlantis.units.interrupt.protoss;
 
 import atlantis.architecture.Manager;
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.range.OurDragoonWeaponRange;
 import bwapi.Color;

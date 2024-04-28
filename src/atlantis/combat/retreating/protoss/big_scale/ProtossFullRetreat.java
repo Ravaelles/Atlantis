@@ -2,6 +2,7 @@ package atlantis.combat.retreating.protoss.big_scale;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
+import atlantis.combat.retreating.protoss.small_scale.ProtossSmallScaleRetreat;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
 import atlantis.information.enemy.EnemyUnits;
@@ -24,23 +25,33 @@ public class ProtossFullRetreat extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isMissionAttack()) return false;
-        if (unit.enemiesNear().combatUnits().empty()) return false;
+        Selection enemies = unit.enemiesNear().combatUnits();
+        if (enemies.empty()) return false;
         if (unit.enemiesNear().combatBuildingsAntiLand().empty()) {
             if (OurArmy.strength() >= 700) return false;
             if (unit.combatEvalRelative() >= 2.6) return false;
-            if (unit.enemiesNear().combatUnits().atMost(3)) return false;
+            if (enemies.atMost(3)) return false;
             if (unit.friendsNear().combatUnits().atLeast(15)) return false;
         }
 
+//        if (
+//            enemies.onlyMelee()
+//                && unit.combatEvalRelative() >= 0.8
+//                && !(new ProtossSmallScaleRetreat(unit).applies())
+//        ) {
+//            unit.addLog("StillFightSS");
+//            return false;
+//        }
+
         AUnit base = Select.naturalOrMain();
-        if (base == null || (unit.hp() >= 21 && unit.cooldown() <= 5 && base.distTo(unit) <= 20)) return false;
+        if (base == null || (unit.hp() >= 35 && unit.cooldown() <= 5 && base.distTo(unit) <= 5)) return false;
 
         if (unit.isMissionDefendOrSparta()) {
             AChoke mainChoke = Chokes.mainChoke();
             if (
                 mainChoke != null
-                    && unit.distTo(mainChoke) <= 0
-                    && unit.distToNearestChokeCenter() <= 3
+                    && unit.distTo(mainChoke) >= 2
+                    && unit.distToNearestChokeCenter() <= 5
                     && base.distTo(unit) <= 25
             ) return false;
 

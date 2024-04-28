@@ -2,7 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.missions.MissionHistory;
 import atlantis.combat.missions.Missions;
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;

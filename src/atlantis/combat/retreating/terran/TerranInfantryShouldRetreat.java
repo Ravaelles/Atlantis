@@ -1,7 +1,7 @@
 package atlantis.combat.retreating.terran;
 
 import atlantis.architecture.Manager;
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.generic.OurArmy;
 import atlantis.units.AUnit;

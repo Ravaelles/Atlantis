@@ -1,7 +1,6 @@
 package atlantis.combat.micro.attack;
 
-import atlantis.decions.Decision;
-import atlantis.game.A;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;

@@ -19,9 +19,13 @@ public class ScoutFreeBases extends Manager {
     @Override
     public boolean applies() {
 //        if (!unit.isScout()) return false;
-        if (unit.enemiesNear().combatUnits().inRadius(6, unit).notEmpty()) return false;
+        if (
+            unit.enemiesNear()
+                .combatUnits()
+                .canAttack(unit, 1.5 + unit.woundPercent() / 40.0).notEmpty()
+        ) return false;
 
-        if (A.s >= 300) return true;
+//        if (A.s >= 300) return true;
 
         return unit.hasNotMovedInAWhile() || (unit.hasNotMovedInAWhile() && unit.looksIdle());
     }

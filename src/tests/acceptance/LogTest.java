@@ -1,10 +1,8 @@
 package tests.acceptance;
 
-import atlantis.decions.Decision;
 import atlantis.units.AUnitType;
 import atlantis.util.log.Log;
 import org.junit.Test;
-import tests.unit.AbstractTestWithUnits;
 import tests.unit.FakeUnit;
 
 import static org.junit.Assert.*;

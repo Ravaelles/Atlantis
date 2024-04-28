@@ -3,7 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.attack.focus.MissionAttackFocusPoint;
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 
 /**

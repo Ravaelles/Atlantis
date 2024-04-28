@@ -26,15 +26,27 @@ public class ASquadTargeting {
         if (enemy.isZergling()) return false;
         if (enemy.isWorker()) return false;
         if (enemy.hp() <= 15) return false;
-        if (preventZealotsTargetingRanged(unit, enemy)) return false;
+        if (preventForZealots(unit, enemy)) return false;
         if (!unit.hasWeaponToAttackThisUnit(enemy)) return false;
 
         return true;
     }
 
+    private static boolean preventForZealots(AUnit unit, AUnit enemy) {
+        if (!We.protoss() || !unit.isZealot()) return false;
+
+        if (unit.distTo(enemy) > 1.5) return false;
+//        if (preventOvercrowdedZealots(unit, enemy)) return true;
+        if (preventZealotsTargetingRanged(unit, enemy)) return true;
+
+        return false;
+    }
+
+    private static boolean preventOvercrowdedZealots(AUnit unit, AUnit enemy) {
+        return unit.allUnitsNear().inRadius(0.5, unit).atLeast(2);
+    }
+
     private static boolean preventZealotsTargetingRanged(AUnit unit, AUnit enemy) {
-        return We.protoss()
-            && enemy.isRanged()
-            && unit.isZealot();
+        return enemy.isRanged();
     }
 }

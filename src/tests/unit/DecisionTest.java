@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,10 +1,9 @@
 package atlantis.combat.micro.dancing.away.protoss;
 
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
-import atlantis.units.actions.Actions;
 
 public class DanceAwayAsDragoon extends HasUnit {
     private final AUnit enemy;

@@ -1,9 +1,7 @@
 package atlantis.combat.retreating.terran;
 
-import atlantis.combat.retreating.RetreatManager;
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
-import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
 import static atlantis.combat.retreating.terran.TerranShouldNotRetreat.shouldNotConsiderRetreatingNow;

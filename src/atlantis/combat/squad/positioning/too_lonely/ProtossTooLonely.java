@@ -18,10 +18,10 @@ public class ProtossTooLonely extends Manager {
         return We.protoss()
             && (A.supplyUsed() <= 100 || EnemyInfo.hasDiscoveredAnyBuilding())
             && unit.isCombatUnit()
-            && !unit.hasCooldown()
+//            && !unit.hasCooldown()
             && unit.isGroundUnit()
             && !unit.isDT()
-            && unit.lastStoppedRunningMoreThanAgo(30)
+            && unit.lastStoppedRunningMoreThanAgo(10)
             && !tooDangerousBecauseOfCloseEnemies()
             && unit.friendsNear().combatUnits().inRadius(4, unit).atMost(10)
             && !unit.distToNearestChokeLessThan(5);
