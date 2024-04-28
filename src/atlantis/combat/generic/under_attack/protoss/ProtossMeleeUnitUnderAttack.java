@@ -8,8 +8,8 @@ import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 
-public class ProtossUnitUnderAttack extends Manager {
-    public ProtossUnitUnderAttack(AUnit unit) {
+public class ProtossMeleeUnitUnderAttack extends Manager {
+    public ProtossMeleeUnitUnderAttack(AUnit unit) {
         super(unit);
     }
 
@@ -17,7 +17,7 @@ public class ProtossUnitUnderAttack extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-//        if (!Enemy.zerg() && !unit.isMelee()) return false;
+        if (!Enemy.zerg() || !unit.isMelee()) return false;
 
         if (!unit.isCombatUnit()) return false;
         if (unit.cooldown() >= 7) return false;

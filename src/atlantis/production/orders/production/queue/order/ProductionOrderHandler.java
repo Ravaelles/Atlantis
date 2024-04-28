@@ -83,14 +83,15 @@ public class ProductionOrderHandler extends Commander {
         // Mission CHANGE
 
         else if (order.mission() != null) {
-            if (TIMES_MISSION_ENFORCED <= 2) {
-                Missions.setGlobalMissionTo(order.mission(), "Build Order enforced: " + order.mission());
-                TIMES_MISSION_ENFORCED++;
-
-                order.setStatus(OrderStatus.COMPLETED);
-                order.consume();
-                order.cancel();
-            }
+            // @ToDo - disabled due to local issues
+//            if (TIMES_MISSION_ENFORCED <= 2) {
+//                Missions.setGlobalMissionTo(order.mission(), "Build Order enforced: " + order.mission());
+//                TIMES_MISSION_ENFORCED++;
+//
+//                order.setStatus(OrderStatus.COMPLETED);
+//                order.consume();
+//                order.cancel();
+//            }
         }
 
         // === Nothing! ============================================

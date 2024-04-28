@@ -15,7 +15,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     // === DEFEND ==============================================
     public boolean shouldChangeMissionToDefend() {
-        if (Missions.counter() <= 1 || Missions.lastMissionChangedSecondsAgo() <= 20) return false;
+        if (Missions.lastMissionChangedSecondsAgo() <= 8) return false;
 
         if (Enemy.protoss()) {
             if (defendVsProtoss()) return true;
@@ -62,7 +62,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     // =========================================================
 
     private boolean dontDefendVsProtoss() {
-        if (Count.dragoons() >= 1 && EnemyUnits.discovered().dragoons().empty()) return true;
+//        if (Count.dragoons() >= 2 && EnemyUnits.discovered().dragoons().empty()) return true;
 
         return false;
     }
@@ -70,26 +70,29 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     private boolean defendVsProtoss() {
         int strength = OurArmy.strength();
 
-        if (Count.dragoons() == 0) {
-            int zealots = Count.zealots();
-            if (zealots <= 7 && EnemyUnits.discovered().zealots().count() > zealots) {
-                if (DEBUG) reason = "Enemy has more Zealots";
+        if (Count.dragoons() == 0 && strength <= 700) {
+            int enemyZealots = EnemyUnits.discovered().zealots().count();
+            if (enemyZealots > Math.min(10, Count.zealots())) {
+                if (DEBUG) reason = "Enemy has too many Zealots: " + enemyZealots;
                 return true;
             }
         }
 
         if (EnemyUnits.discovered().dragoons().count() > Count.dragoons()) {
-            if (Count.dragoons() <= 2) {
+            if (Count.dragoons() <= 2 && OurArmy.strength() <= 300) {
                 if (DEBUG) reason = "Enemy has more Dragoons";
                 return true;
             }
         }
 
-        if (A.seconds() <= 400 && strength >= 150) {
+        if (strength >= 170) {
             return false;
         }
+//        if (A.seconds() <= 400 && strength >= 150) {
+//            return false;
+//        }
 
-        if (A.seconds() <= 700 && strength <= 300) {
+        if (A.seconds() <= 700 && strength <= 200 && A.resourcesBalance() < 0) {
             if (DEBUG) reason = "Too much risk, withdraw";
             return true;
         }

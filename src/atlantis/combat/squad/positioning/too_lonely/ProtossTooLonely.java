@@ -18,9 +18,11 @@ public class ProtossTooLonely extends Manager {
         return We.protoss()
             && (A.supplyUsed() <= 100 || EnemyInfo.hasDiscoveredAnyBuilding())
             && unit.isCombatUnit()
+            && (!unit.isMissionDefendOrSparta() || unit.distToBase() <= 30)
 //            && !unit.hasCooldown()
             && unit.isGroundUnit()
             && !unit.isDT()
+            && (!unit.isDragoon() || unit.enemiesNearInRadius(5) == 0)
             && unit.lastStoppedRunningMoreThanAgo(10)
             && !tooDangerousBecauseOfCloseEnemies()
             && unit.friendsNear().combatUnits().inRadius(4, unit).atMost(10)
@@ -42,6 +44,6 @@ public class ProtossTooLonely extends Manager {
             .inRadius(2.8 + unit.woundPercent() / 50.0, unit)
             .combatUnits();
 
-        return enemies.atLeast(unit.hp() >= 80 ? 2 : 1);
+        return enemies.atLeast(unit.shieldDamageAtMost(30) ? 2 : 1);
     }
 }

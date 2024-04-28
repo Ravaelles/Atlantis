@@ -50,6 +50,12 @@ public class Have {
         return Select.ourWithUnfinished(building).inRadius(inRadius, position).atLeast(1);
     }
 
+    public static boolean existingOrUnfinished(AUnitType building) {
+        assert building.isABuilding();
+
+        return Select.ourWithUnfinished(building).atLeast(1);
+    }
+
     public static boolean existingOrPlannedOrInQueue(AUnitType building, HasPosition position, double inRadius) {
         assert building.isABuilding();
 

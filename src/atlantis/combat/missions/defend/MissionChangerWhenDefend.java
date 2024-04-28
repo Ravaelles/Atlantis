@@ -15,6 +15,8 @@ public abstract class MissionChangerWhenDefend extends MissionChanger {
 //        if (shouldChangeMissionToContain()) {
 //            changeMissionTo(Missions.CONTAIN);
 //        }
+//        if (shouldChangeMissionToAttack() && !MissionChangerWhenAttack.get().shouldChangeMissionToDefend()) {
+        
         if (shouldChangeMissionToAttack() && !MissionChangerWhenAttack.get().shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.ATTACK);
         }

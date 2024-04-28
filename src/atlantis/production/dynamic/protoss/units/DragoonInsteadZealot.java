@@ -17,9 +17,9 @@ public class DragoonInsteadZealot {
 //        if (Have.cyberneticsCore()) return false;
 //        if (!A.hasGas(50) || !Have.cyberneticsCore()) return false;
         if (notEnoughZealots()) return false;
-        if (Enemy.protoss() && Count.ourCombatUnits() >= 9 && OurArmy.strength() >= 105) return true;
 
-        if (A.minerals() >= 150 && Count.freeGateways() >= 2 && Count.basesWithUnfinished() >= 2) return false;
+        if (Enemy.protoss() && Count.ourCombatUnits() >= 9 && OurArmy.strength() >= 70) return true;
+        if (A.minerals() >= 170 && Count.gateways() >= 3) return true;
         if (Enemy.zerg() && againstZerg()) return true;
         if (A.hasGas(50) && !A.hasMinerals(225) && Count.dragoons() <= 2 && Count.zealots() >= 1) return true;
 
@@ -37,7 +37,7 @@ public class DragoonInsteadZealot {
             Enemy.protoss()
                 && OurArmy.strength() <= 85
                 && A.seconds() <= 400
-                && Count.zealots() <= 1
+                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.6)
                 && EnemyUnits.discovered().dragoons().atMost(1)
         ) {
             return true;

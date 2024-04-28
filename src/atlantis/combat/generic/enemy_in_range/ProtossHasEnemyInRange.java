@@ -21,12 +21,22 @@ public class ProtossHasEnemyInRange extends Manager {
         if (!We.protoss()) return false;
         if (!unit.isCombatUnit()) return false;
         if (unit.enemiesNear().empty()) return false;
+        if (unit.isMissionDefendOrSparta() && unit.isMelee()) return false;
 
         if (Enemy.zerg()) {
             if (unit.shieldDamageAtMost(19) && unit.lastAttackFrameMoreThanAgo(50)) return true;
         }
 
+        if (
+            unit.isDragoon()
+                && unit.hp() >= 33
+                && unit.lastAttackFrameMoreThanAgo(30 * 6)
+        ) return true;
+
         if (A.supplyUsed() <= 130 && unit.distToLeader() >= 10) return false;
+        if (unit.cooldown() > 0 && unit.moreMeleeEnemiesThanOurUnits()) return false;
+
+        if (unit.isMelee() && unit.lastAttackFrameMoreThanAgo(30 * 4)) return true;
 
 //        if (
 //            unit.isMelee()

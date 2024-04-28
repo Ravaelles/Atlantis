@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 import bwapi.Color;
 
 public class DanceAwayAsZealot extends Manager {
@@ -17,24 +16,20 @@ public class DanceAwayAsZealot extends Manager {
 //        if (true) return false;
 
         if (!unit.isZealot()) return false;
-        if (unit.cooldown() <= 2) return false;
+        if (unit.cooldown() <= 10) return false;
         if (unit.isMissionSparta()) return false;
         if (unit.shieldDamageAtMost(19)) return false;
-        if (dontApplyWhenRangedEnemiesNear()) return false;
 
-        if (moreEnemiesThanOurUnits()) return true;
+        if (unit.moreMeleeEnemiesThanOurUnits()) return true;
+
+        if (unit.hp() >= 35) return false;
+        if (dontApplyWhenRangedEnemiesNear()) return false;
 
         boolean fairlyWounded = unit.hp() <= 38;
 
         // @ToDo Tweak these values
         return unit.cooldown() >= (fairlyWounded ? 4 : 16)
-            && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60) || moreEnemiesThanOurUnits());
-    }
-
-    private boolean moreEnemiesThanOurUnits() {
-//        return unit.meleeEnemiesNearCount(1.2) > minMeleeEnemiesNear();
-        return unit.meleeEnemiesNearCount(1.2)
-            > unit.friendsNear().melee().countInRadius(1.6, unit);
+            && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60));
     }
 
     private boolean dontApplyWhenRangedEnemiesNear() {

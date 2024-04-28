@@ -11,6 +11,8 @@ public class PreventTooManyActions extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         return unit.isCombatUnit()
             && A.now() % 2 == 0
             && !unit.isRetreating();

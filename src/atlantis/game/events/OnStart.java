@@ -81,6 +81,10 @@ public class OnStart {
         Alpha.get().setMission(Missions.globalMission());
 
         System.out.println("### Atlantis is working! ###\n");
+        if (Env.isTournament()) {
+            String opponent = AGame.enemy().toString();
+            System.out.println("### Playing against: " + opponent + " ###\n");
+        }
 
 //        AUnitTypesHelper.printUnitsAndRequirements();
 

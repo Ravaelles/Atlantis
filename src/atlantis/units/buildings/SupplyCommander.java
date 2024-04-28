@@ -177,7 +177,6 @@ public class SupplyCommander extends Commander {
         ProductionOrder order = AddToQueue.withTopPriority(AtlantisRaceConfig.SUPPLY);
         if (order != null) order.setStatus(OrderStatus.READY_TO_PRODUCE);
         if (order != null) order.setMinSupply(A.supplyUsed() - 1);
-//        System.err.println("order = " + order);
     }
 
     private static int maxAtOnce() {

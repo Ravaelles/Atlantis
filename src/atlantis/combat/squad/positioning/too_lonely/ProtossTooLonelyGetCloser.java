@@ -26,7 +26,9 @@ public class ProtossTooLonelyGetCloser extends Manager {
     }
 
     private boolean isTooLonely() {
-        return unit.friendsNear().inRadius(0.9, unit).empty();
+        double maxDist = unit.isMelee() ? 0.9 : 2;
+        
+        return unit.friendsNear().inRadius(maxDist, unit).empty();
     }
 
     protected Manager handle() {

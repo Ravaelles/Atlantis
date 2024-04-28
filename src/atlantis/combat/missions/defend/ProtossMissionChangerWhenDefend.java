@@ -126,7 +126,22 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     }
 
     private Decision shouldAttackVsProtoss() {
-        if (postEarlyGameDontAttackProtoss()) return Decision.FALSE;
+//        if (postEarlyGameDontAttackProtoss()) return Decision.FALSE;
+
+        int strength = OurArmy.strength();
+
+        if (
+            Count.dragoons() >= 2
+                && EnemyUnits.discovered().dragoons().empty()
+        ) {
+            if (DEBUG) reason = "Engage with Goons! (" + strength + "%)";
+            return Decision.TRUE;
+        }
+
+        if (strength >= 170) {
+            if (DEBUG) reason = "Stronger Protoss! (" + strength + "%)";
+            return Decision.TRUE;
+        }
 
         if (
             Count.basesWithUnfinished() <= 2
@@ -134,7 +149,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         ) return Decision.FALSE;
 
         if (beBraveProtoss()) {
-            if (DEBUG) reason = "Brave Protoss! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+            if (DEBUG) reason = "Brave Protoss! (" + strength + "%)";
             return Decision.TRUE;
         }
 
@@ -154,15 +169,17 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     }
 
     private static boolean beBraveProtoss() {
-        return Count.ourCombatUnits() >= 3
+        return Count.ourCombatUnits() >= 5
             && ArmyStrength.ourArmyRelativeStrength() >= 300
             && EnemyWhoBreachedBase.noone();
 //            && Select.enemyCombatUnits().atMost(3);
     }
 
     private boolean whenSparta() {
-        if (ArmyStrength.ourArmyRelativeStrength() >= 400 && (
-            AGame.killsLossesResourceBalance() >= 800 || Count.dragoons() >= 8
+        if (ArmyStrength.ourArmyRelativeStrength() >= 200 && (
+            AGame.killsLossesResourceBalance() >= 100
+                || Count.dragoons() >= 3
+                || Count.zealots() >= 7
         )) {
             if (DEBUG) reason = "Spartans strong! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;

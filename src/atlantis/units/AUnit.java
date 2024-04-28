@@ -3241,4 +3241,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         return meleeEnemiesNearCount(base + (woundPercent() / 42.0)) == 0;
     }
+
+    public boolean moreMeleeEnemiesThanOurUnits() {
+        return meleeEnemiesNearCount(1.2)
+            > friendsNear().melee().countInRadius(1.4, this);
+    }
 }

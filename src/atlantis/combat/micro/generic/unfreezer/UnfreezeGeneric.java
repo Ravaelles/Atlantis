@@ -1,6 +1,7 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
+import atlantis.terran.chokeblockers.ChokeBlockersAssignments;
 import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 
@@ -15,6 +16,8 @@ public class UnfreezeGeneric extends Manager {
 //        if (unit.lastActionLessThanAgo(52)) return false;
 
 //        if (true) return false;
+
+        if (ChokeBlockersAssignments.get().isChokeBlocker(unit)) return false;
 //
 //        if (unit.hasCooldown()) return false;
 //        if (unit.isAccelerating()) return false;

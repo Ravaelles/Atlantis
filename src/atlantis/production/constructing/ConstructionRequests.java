@@ -153,7 +153,7 @@ public class ConstructionRequests {
 
     /**
      * If we requested to build building A and even assigned worker who's travelling to the building site,
-     * it's still doesn't count as unitCreated. We need to manually count number of constructions and only
+     * it still doesn't count as unitCreated. We need to manually count number of constructions and only
      * then, we can e.g. "get not started Terran Barracks constructions".
      */
     public static ArrayList<Construction> notStartedOfType(AUnitType type) {
@@ -227,6 +227,10 @@ public class ConstructionRequests {
                 construction.cancel();
             }
         }
+    }
+
+    public static boolean hasNotStarted(AUnitType building) {
+        return !notStartedOfType(building).isEmpty();
     }
 
     public static boolean hasNotStartedNear(AUnitType building, HasPosition position, double inRadius) {

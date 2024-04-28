@@ -13,6 +13,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
@@ -107,6 +108,10 @@ public class ProtossShouldExpand {
 
         if (mainChokeOverwhelmed()) return no("MainChokeOverwhelm");
 
+        if (
+            !A.hasMinerals(500) && !Have.existingOrUnfinished(AUnitType.Protoss_Cybernetics_Core)
+        ) return no("CoreFirst");
+
         if (seconds >= 650) return yes("GettingLate");
 
         if (armyStrength <= 90) return no("TooWeak");
@@ -147,7 +152,7 @@ public class ProtossShouldExpand {
     private static boolean mainChokeOverwhelmed() {
         AChoke mainChoke = Chokes.mainChoke();
         if (mainChoke == null) return false;
-        
+
         return EnemyUnits.discovered().inRadius(15, mainChoke).atLeast(4);
     }
 

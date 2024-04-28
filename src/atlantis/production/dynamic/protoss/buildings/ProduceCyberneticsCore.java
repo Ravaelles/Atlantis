@@ -29,10 +29,10 @@ public class ProduceCyberneticsCore {
     private static boolean addCyberneticsToQueue() {
         ProductionOrder order = AddToQueue.withTopPriority(Protoss_Cybernetics_Core);
         if (order != null) {
-            order.setMinSupply(A.supplyUsed() - 1);
+            order.setMinSupply(A.supplyUsed() - 3);
 
             ProductionOrder gasOrder = AddToQueue.withHighPriority(Protoss_Assimilator);
-            if (gasOrder != null) gasOrder.setMinSupply(A.supplyUsed() + 2);
+            if (gasOrder != null) gasOrder.setMinSupply(A.supplyUsed() + 1);
             return true;
         }
 

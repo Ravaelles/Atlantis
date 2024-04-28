@@ -15,7 +15,9 @@ public class ShouldStopRunningDragoon extends Manager {
     public boolean applies() {
         if (!unit.isDragoon()) return false;
 
+        if (unit.lastActionMoreThanAgo(1)) return false;
         if (unit.lastStartedRunningLessThanAgo(3)) return false;
+        if (!unit.isMoving()) return true;
 
 //        if (unit.woundHp() <= 11) return true;
 

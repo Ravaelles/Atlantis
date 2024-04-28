@@ -42,6 +42,8 @@ public class ARunningManager {
 
     //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
+        if (unit.lastStartedRunningLessThanAgo(1)) return true;
+
         if (runFrom instanceof AUnit) {
             unit.setRunningFrom((AUnit) runFrom);
         }

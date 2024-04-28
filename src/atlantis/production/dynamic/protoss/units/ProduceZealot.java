@@ -27,7 +27,7 @@ public class ProduceZealot {
 
         if (earlyGameZealots()) return produceZealot();
 
-        if (!A.hasMinerals(225) && freeGateways <= 1 && DragoonInsteadZealot.dragoonInsteadOfZealot()) return false;
+        if (!A.hasMinerals(300) && DragoonInsteadZealot.dragoonInsteadOfZealot()) return false;
 
         if (A.hasMinerals(550) && freeGateways >= 2) return produceZealot();
 

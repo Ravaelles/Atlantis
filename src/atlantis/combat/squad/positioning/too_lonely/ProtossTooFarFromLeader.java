@@ -32,6 +32,9 @@ public class ProtossTooFarFromLeader extends Manager {
         leader = unit.squad().leader();
         if (leader == null) return false;
 
+        if (unit.isMissionSparta()) return false;
+        if (unit.isDragoon() && unit.hp() <= 40) return false;
+
         distToLeader = unit.distTo(leader);
         boolean wayTooFarFromLeader = wayTooFarFromLeader();
 
@@ -91,9 +94,12 @@ public class ProtossTooFarFromLeader extends Manager {
     protected Manager handle() {
         if (leader == null) leader = unit.squadLeader();
 
+        if (unit.distTo(leader) < 2) return null;
+
         if (!unit.isMoving() || A.everyNthGameFrame(5)) {
-            unit.move(leader, Actions.MOVE_FORMATION, "Coordinate");
+            if (unit.move(leader, Actions.MOVE_FORMATION, "Coordinate")) return usedManager(this);
         }
-        return usedManager(this);
+
+        return null;
     }
 }

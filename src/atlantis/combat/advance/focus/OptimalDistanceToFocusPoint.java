@@ -8,7 +8,7 @@ import atlantis.units.AUnitType;
 public class OptimalDistanceToFocusPoint {
     public static double forUnit(AUnit unit) {
         if (unit.isDragoon()) {
-            return ChokeToBlock.DIST_FROM_CHOKE_CENTER
+            return ChokeToBlock.BASE_DIST_FROM_CHOKE_CENTER
                 + 0.3
                 + (unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(0.5, unit).notEmpty() ? 1.0 : 0);
         }

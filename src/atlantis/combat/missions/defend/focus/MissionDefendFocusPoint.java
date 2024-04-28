@@ -47,8 +47,9 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 if ((focus = PathToEnemyFocus.getIfApplies()) != null) return focus;
 
-                // =========================================================
+                // === At 3rd base =============================================
 
+                if ((focus = atThirdBase()) != null) return focus;
 //                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
 
                 // =========================================================
@@ -182,6 +183,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
         if (bases.count() >= 3) {
             AUnit base = bases.list().get(2);
+            if (base.distTo(Select.mainOrAnyBuilding()) >= 35) return null;
+
             AChoke choke = Chokes.nearestChoke(base);
 
             if (choke != null) {

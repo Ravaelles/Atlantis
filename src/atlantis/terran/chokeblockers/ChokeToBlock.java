@@ -1,5 +1,6 @@
 package atlantis.terran.chokeblockers;
 
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -9,7 +10,7 @@ import atlantis.util.Vector;
 import atlantis.util.Vectors;
 
 public class ChokeToBlock {
-    public static final double DIST_FROM_CHOKE_CENTER = 1.2;
+    public static final double BASE_DIST_FROM_CHOKE_CENTER = 1.2;
 
     public static AChoke get() {
         return Count.basesWithUnfinished() <= 1 ? forMainChoke() : forNaturalChoke();
@@ -36,6 +37,10 @@ public class ChokeToBlock {
 //        System.err.println("closerPoint = " + closerPoint.toStringPixels());
 //        System.err.println("vector = " + Vectors.fromPositionsBetween(choke.center(), closerPoint).normalizeTo(2.0).toString());
 
-        return Vectors.fromPositionsBetween(choke.center(), closerPoint).multiplyVector(DIST_FROM_CHOKE_CENTER);
+        return Vectors.fromPositionsBetween(choke.center(), closerPoint).multiplyVector(vectorLength());
+    }
+
+    private static double vectorLength() {
+        return BASE_DIST_FROM_CHOKE_CENTER + Alpha.count() / 4.0;
     }
 }

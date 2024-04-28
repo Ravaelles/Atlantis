@@ -13,7 +13,10 @@ public class ContinueShooting extends Manager {
 //        if (true) return false;
 
         if (!unit.isAttacking()) return false;
-        if (unit.lastStartedAttackMoreThanAgo(30 * 6)) return true;
+
+        if (unit.isMelee() && unit.lastActionMoreThanAgo(50)) return false;
+        
+        if (unit.lastAttackFrameMoreThanAgo(30 * 6)) return true;
 
 //        if (unit.isStopped()) return false;
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;

@@ -17,7 +17,6 @@
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-4 - MISSION=DEFEND
 8 - Pylon
 10 - Gateway
 12 - Gateway
@@ -25,4 +24,3 @@
 14 - Zealot
 15 - Pylon
 18 - Gateway
-18 - MISSION=ATTACK

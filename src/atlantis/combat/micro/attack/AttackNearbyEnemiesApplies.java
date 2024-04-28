@@ -23,6 +23,7 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
         if (unit.lastStartedRunningLessThanAgo(8)) return false;
         if (!unit.hasAnyWeapon()) return false;
         if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
+        if (unit.isDragoon() && unit.lastActionLessThanAgo(1)) return false;
 
         if (unit.isMarine()) return MarineCanAttackNearEnemy.allowedForThisUnit(unit);
 

@@ -39,6 +39,8 @@ public class AttackNearbyEnemies extends Manager {
     protected Manager handle() {
 //        if (ShouldRetreat.shouldRetreat(unit)) return null;
 
+        if (unit.isAttacking() && unit.lastActionLessThanAgo(1)) return usedManager(this);
+
         targetToAttack = defineBestEnemyToAttack(unit);
         if (targetToAttack == null || targetToAttack.hp() <= 0) return null;
 

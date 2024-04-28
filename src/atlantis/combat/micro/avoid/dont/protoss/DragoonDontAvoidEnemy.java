@@ -97,7 +97,8 @@ public class DragoonDontAvoidEnemy {
         Decision decision;
         if ((decision = oneOnOneDragoon(unit)).notIndifferent()) return decision.toBoolean();
 
-        if (unit.hp() <= 41 && !unit.isSafeFromMelee()) return false;
+//        if (unit.hp() <= 41 && !unit.isSafeFromMelee()) return false;
+        if (!unit.isSafeFromMelee()) return false;
 
         if (ProtossTooBigBattleToRetreat.PvP_doNotRetreat(unit)) return true;
 

@@ -35,7 +35,7 @@ public class ASquadTargeting {
     private static boolean preventForZealots(AUnit unit, AUnit enemy) {
         if (!We.protoss() || !unit.isZealot()) return false;
 
-        if (unit.distTo(enemy) > 1.5) return false;
+        if (unit.distTo(enemy) > 1.3) return false;
 //        if (preventOvercrowdedZealots(unit, enemy)) return true;
         if (preventZealotsTargetingRanged(unit, enemy)) return true;
 

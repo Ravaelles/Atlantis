@@ -1,5 +1,6 @@
 package atlantis.combat.missions.defend;
 
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.DontAttackAlone;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
@@ -20,6 +21,10 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
         }
 
         if (!unit.isMissionSparta() && DontAttackAlone.isAlone(unit)) return false;
+        if (unit.isMissionSparta() && unit.isMelee() && !enemy.hasCooldown()) {
+            AFocusPoint focusPoint = unit.mission().focusPoint();
+            if (focusPoint != null && unit.distTo(focusPoint) >= 2) return false;
+        }
 
         AUnit leader = unit.squadLeader();
         if (leader != null) {
