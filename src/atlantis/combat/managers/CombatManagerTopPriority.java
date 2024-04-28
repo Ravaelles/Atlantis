@@ -3,6 +3,7 @@ package atlantis.combat.managers;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.micro.avoid.ContinueRunning;
+import atlantis.combat.micro.avoid.buildings.DontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.HoldToShoot;
@@ -37,6 +38,8 @@ public class CombatManagerTopPriority extends Manager {
             FixPerformanceForBigSupply.class,
             ManualOverrideManager.class,
 
+            ContinueCurrentAction.class,
+
             Unfreezer.class,
             PreventTooManyActions.class,
             ContinueRunning.class,
@@ -47,14 +50,14 @@ public class CombatManagerTopPriority extends Manager {
             PreventAttackNull.class,
             PreventAttackForTooLong.class,
 
-            ContinueCurrentAction.class,
-
             DanceAwayAsMelee.class,
             DanceAfterShoot.class,
 //            ContinueShooting.class,
             HoldToShoot.class,
             AvoidCriticalUnits.class,
             TransportUnits.class,
+
+            DontEngageWhenCombatBuildings.class,
         };
     }
 }

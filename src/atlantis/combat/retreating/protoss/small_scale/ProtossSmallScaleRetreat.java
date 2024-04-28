@@ -7,6 +7,7 @@ import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class ProtossSmallScaleRetreat extends Manager {
     private Selection friends;
@@ -45,10 +46,14 @@ public class ProtossSmallScaleRetreat extends Manager {
         if (!unit.isMelee()) return false;
 
         if (unit.isMissionSparta()) return false;
+
         if (unit.isMissionDefend()) {
-            if (unit.hp() >= 21) return false;
-            if (unit.allUnitsNear().inRadius(1.2, unit).atLeast(4)) return false;
+            if (Enemy.zerg()) {
+                if (unit.hp() >= 21) return false;
+                if (unit.allUnitsNear().inRadius(1.2, unit).atLeast(4)) return false;
+            }
         }
+
         if (unit.enemiesNear().combatUnits().groundUnits().empty()) return false;
         if (unit.combatEvalRelative() >= 1.1 && unit.hp() >= 24) return false;
         if (ProtossTooBigBattleToRetreat.PvP_doNotRetreat(unit)) return false;

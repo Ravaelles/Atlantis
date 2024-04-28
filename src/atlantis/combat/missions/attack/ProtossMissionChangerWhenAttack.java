@@ -22,9 +22,8 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             if (dontDefendVsProtoss()) return false;
         }
 
-        if (defendAgainstMassZerglings()) {
-            if (DEBUG) reason = "Mass zerglings";
-            return true;
+        if (Enemy.zerg()) {
+            if (defendVsZerg()) return true;
         }
 
         if (EnemyInfo.isEnemyNearAnyOurBase() && A.supplyUsed() <= 70) {
@@ -45,6 +44,21 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
         return false;
     }
 
+    private boolean defendVsZerg() {
+        int combatUnits = Count.ourCombatUnits();
+        if (combatUnits <= 3 || (combatUnits <= 4 && EnemyUnits.discovered().combatUnits().atLeast(8))) {
+            if (DEBUG) reason = "Wait for more army";
+            return true;
+        }
+
+        if (defendAgainstMassZerglings()) {
+            if (DEBUG) reason = "Mass zerglings";
+            return true;
+        }
+
+        return false;
+    }
+
     // =========================================================
 
     private boolean dontDefendVsProtoss() {
@@ -55,13 +69,6 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     private boolean defendVsProtoss() {
         int strength = OurArmy.strength();
-
-        if (Enemy.zerg()) {
-            if (Count.ourCombatUnits() <= 4 && EnemyUnits.discovered().combatUnits().atLeast(8)) {
-                if (DEBUG) reason = "Wait for more army";
-                return true;
-            }
-        }
 
         if (EnemyUnits.discovered().dragoons().count() > Count.dragoons()) {
             if (Count.dragoons() <= 2) {

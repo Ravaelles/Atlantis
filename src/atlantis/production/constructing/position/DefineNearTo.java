@@ -24,6 +24,8 @@ public class DefineNearTo {
         }
 
         if (We.protoss()) {
+            if (nearTo == null && building.isGateway()) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
+
             if (nearTo == null) {
                 if (A.chance(70)) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).random();
             }

@@ -14,6 +14,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class ProtossFullRetreat extends Manager {
     public ProtossFullRetreat(AUnit unit) {
@@ -32,35 +33,37 @@ public class ProtossFullRetreat extends Manager {
         }
 
         AUnit base = Select.naturalOrMain();
-        if (base == null || base.distTo(unit) <= 20) return false;
+        if (base == null || (unit.hp() >= 21 && unit.cooldown() <= 5 && base.distTo(unit) <= 20)) return false;
 
         if (unit.isMissionDefendOrSparta()) {
             AChoke mainChoke = Chokes.mainChoke();
             if (
                 mainChoke != null
-                    && mainChoke.distTo(unit) >= 2.5
-                    && mainChoke.distTo(unit) <= 8
+                    && unit.distTo(mainChoke) <= 0
+                    && unit.distToNearestChokeCenter() <= 3
                     && base.distTo(unit) <= 25
             ) return false;
 
-            AChoke natural = Chokes.natural();
-            APosition naturalBase = DefineNaturalBase.natural();
-            if (
-                natural != null
-                    && naturalBase != null
-                    && natural.distTo(unit) >= 2.5
-                    && natural.distTo(unit) <= 8
-                    && naturalBase.distTo(unit) <= 10
-            ) return false;
+            if (!Enemy.protoss()) {
+                AChoke natural = Chokes.natural();
+                APosition naturalBase = DefineNaturalBase.natural();
+                if (
+                    natural != null
+                        && naturalBase != null
+                        && natural.distTo(unit) >= 2.5
+                        && natural.distTo(unit) <= 8
+                        && naturalBase.distTo(unit) <= 10
+                ) return false;
+            }
         }
 
         double evalRelative = unit.combatEvalRelative()
             - (unit.isMissionDefendOrSparta() ? 0 : (unit.distToNearestChokeLessThan(4) ? 0.35 : 0))
-            - (unit.lastRetreatedAgo() <= 100 ? 0.2 : 0)
-            - (unit.lastStartedRunningLessThanAgo(30 * 4) ? 0.05 : 0)
+            - (unit.lastRetreatedAgo() <= 30 * 5 ? 0.2 : 0)
+//            - (unit.lastStartedRunningLessThanAgo(30 * 4) ? 0.1 : 0)
             - (unit.distToMain() <= 20 ? -0.1 : 0)
             - (unit.lastUnderAttackLessThanAgo(30 * 4) ? 0.05 : 0)
-            - combatBuildingPenalty(unit)
+//            - combatBuildingPenalty(unit)
             + enemyZerglingBonus(unit);
 
         return evalRelative <= 0.95;
@@ -74,16 +77,16 @@ public class ProtossFullRetreat extends Manager {
 
         return unit.enemiesNear().inRadius(8, unit).ofType(AUnitType.Zerg_Zergling).count() * 0.3;
     }
-
-    private double combatBuildingPenalty(AUnit unit) {
-        Selection combatBuildings = EnemyUnits.discovered().buildings().combatBuildingsAnti(unit);
-        if (combatBuildings.empty()) return 0;
-
-        int basePenalty = Alpha.count() <= 25 ? 4 : 0;
-        basePenalty += Alpha.get().leader().lastRetreatedAgo() <= 30 * 15 ? 2 : 0;
-
-        return basePenalty + combatBuildings.inRadius(17, unit).count() / 1.5;
-    }
+//
+//    private double combatBuildingPenalty(AUnit unit) {
+//        Selection combatBuildings = EnemyUnits.discovered().buildings().combatBuildingsAnti(unit);
+//        if (combatBuildings.empty()) return 0;
+//
+//        int basePenalty = Alpha.count() <= 25 ? 4 : 0;
+//        basePenalty += Alpha.get().leader().lastRetreatedAgo() <= 30 * 15 ? 2 : 0;
+//
+//        return basePenalty + combatBuildings.inRadius(17, unit).count() / 1.5;
+//    }
 
     @Override
     protected Manager handle() {
