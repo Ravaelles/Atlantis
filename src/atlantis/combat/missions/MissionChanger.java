@@ -146,11 +146,20 @@ public abstract class MissionChanger {
     protected static boolean defendAgainstMassZerglings() {
         if (
             Enemy.zerg()
-                && A.seconds() <= 260
+                && Count.ourCombatUnits() <= 6
+                && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(7)
+        ) {
+            if (DEBUG) reason = "Mass zerglings A";
+            return true;
+        }
+
+        if (
+            Enemy.zerg()
+                && A.seconds() <= 340
                 && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(9)
                 && (!We.zerg() || !ArmyStrength.weAreStronger())
         ) {
-            if (DEBUG) reason = "Mass zerglings";
+            if (DEBUG) reason = "Mass zerglings B";
             return true;
         }
 

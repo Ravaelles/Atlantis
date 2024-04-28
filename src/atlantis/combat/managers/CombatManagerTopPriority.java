@@ -3,7 +3,8 @@ package atlantis.combat.managers;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.micro.avoid.ContinueRunning;
-import atlantis.combat.micro.avoid.buildings.DontEngageWhenCombatBuildings;
+import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
+import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.HoldToShoot;
@@ -11,7 +12,6 @@ import atlantis.combat.micro.dancing.away.DanceAwayAsMelee;
 import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.production.orders.production.queue.add.PreventDuplicateOrders;
 import atlantis.units.AUnit;
 import atlantis.units.fix.PreventAttackNull;
 import atlantis.units.fix.PreventAttackForTooLong;
@@ -57,7 +57,8 @@ public class CombatManagerTopPriority extends Manager {
             AvoidCriticalUnits.class,
             TransportUnits.class,
 
-            DontEngageWhenCombatBuildings.class,
+            ProtossDontEngageWhenCombatBuildings.class,
+            TerranDontEngageWhenCombatBuildings.class,
         };
     }
 }

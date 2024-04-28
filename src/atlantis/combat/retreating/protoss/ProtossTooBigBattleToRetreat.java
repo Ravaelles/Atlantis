@@ -34,7 +34,7 @@ public class ProtossTooBigBattleToRetreat {
     }
 
     private static boolean zealotShouldKeepZealotLine(AUnit unit) {
-        return (unit.hp() >= 35 || unit.lastUnderAttackMoreThanAgo(60))
+        return (unit.hp() >= 35 || unit.cooldown() <= 15)
             && unit.friendsNear().zealots().inRadius(2.5, unit).atLeast(3);
     }
 

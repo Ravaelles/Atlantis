@@ -17,7 +17,7 @@ public class ProtossUnitUnderAttack extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        if (!Enemy.zerg() && !unit.isMelee()) return false;
+//        if (!Enemy.zerg() && !unit.isMelee()) return false;
 
         if (!unit.isCombatUnit()) return false;
         if (unit.cooldown() >= 7) return false;
@@ -46,7 +46,7 @@ public class ProtossUnitUnderAttack extends Manager {
     private boolean preventForZealot() {
         return unit.isZealot()
             && unit.lastAttackFrameLessThanAgo(30 * 3)
-            && unit.combatEvalRelative() <= 0.7;
+            && (unit.lastAttackFrameLessThanAgo(30 * 20) && unit.combatEvalRelative() <= 0.7);
     }
 
     private Decision appliesForDragoon() {

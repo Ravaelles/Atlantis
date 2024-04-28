@@ -30,7 +30,7 @@ public class ProtossFullRetreat extends Manager {
         if (unit.enemiesNear().combatBuildingsAntiLand().empty()) {
             if (OurArmy.strength() >= 700) return false;
             if (unit.combatEvalRelative() >= 2.6) return false;
-            if (enemies.atMost(3)) return false;
+            if (enemies.atMost(2)) return false;
             if (unit.friendsNear().combatUnits().atLeast(15)) return false;
         }
 
@@ -70,7 +70,7 @@ public class ProtossFullRetreat extends Manager {
 
         double evalRelative = unit.combatEvalRelative()
             - (unit.isMissionDefendOrSparta() ? 0 : (unit.distToNearestChokeLessThan(4) ? 0.35 : 0))
-            - (unit.lastRetreatedAgo() <= 30 * 5 ? 0.2 : 0)
+            - (unit.lastRetreatedAgo() <= 30 * 8 ? 0.25 : 0)
 //            - (unit.lastStartedRunningLessThanAgo(30 * 4) ? 0.1 : 0)
             - (unit.distToMain() <= 20 ? -0.1 : 0)
             - (unit.lastUnderAttackLessThanAgo(30 * 4) ? 0.05 : 0)

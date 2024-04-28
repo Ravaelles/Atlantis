@@ -71,7 +71,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-//        if (true) return "sscai/(3)TauCross.scx";
+        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -119,7 +119,7 @@ public class Main {
 
 //        if (true) return "ums/rav/protoss/3Zeal_v_3Zeal.scm";
 //        if (true) return "ums/rav/protoss/4Zeal_v_4Zeal.scm";
-//        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
+        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots

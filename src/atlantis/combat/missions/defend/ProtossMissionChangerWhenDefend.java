@@ -110,7 +110,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         if (Enemy.zerg()) {
-            if (Count.ourCombatUnits() <= 3) return false;
+            if (Count.ourCombatUnits() <= 7) return false;
         }
 
         if (Missions.isGlobalMissionSparta()) {

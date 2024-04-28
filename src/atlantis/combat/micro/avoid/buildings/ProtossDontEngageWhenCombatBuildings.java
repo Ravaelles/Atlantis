@@ -3,16 +3,23 @@ package atlantis.combat.micro.avoid.buildings;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.We;
 
-public class DontEngageWhenCombatBuildings extends Manager {
-    public DontEngageWhenCombatBuildings(AUnit unit) {
+public class ProtossDontEngageWhenCombatBuildings extends Manager {
+    public ProtossDontEngageWhenCombatBuildings(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
+        if (!We.protoss()) return false;
         if (unit.distToBase() <= 30) return false;
         if (!unit.isMissionAttack()) return false;
+
+        if (unit.lastRetreatedAgo() <= 30 * 12) return true;
+        
+        if (unit.squadSize() >= 20) return false;
+        if (unit.combatEvalRelative() >= 5) return false;
 
         return EnemyCombatBuildingsTooStrong.tooStrong(unit);
     }

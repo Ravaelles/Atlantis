@@ -47,9 +47,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 if ((focus = PathToEnemyFocus.getIfApplies()) != null) return focus;
 
-                // === At third base ============================================
+                // =========================================================
 
-                if ((focus = atThirdBase()) != null) return focus;
 //                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
 
                 // =========================================================

@@ -78,7 +78,7 @@ public class ProtossStartRetreat extends HasUnit {
 
     private boolean retreatTowardsMainChoke() {
         HasPosition goTo = mainChokeDefencePoint();
-        if (goTo == null || unit.distTo(goTo) <= 5) return false;
+        if (goTo == null || unit.distTo(goTo) <= 3) return false;
 
         return unit.move(goTo, Actions.RUN_RETREAT, "RetreatToMainChoke");
     }
@@ -102,7 +102,7 @@ public class ProtossStartRetreat extends HasUnit {
 
     private boolean retreatByRunningTowardsBase() {
         AUnit goTo = Select.mainOrAnyBuilding();
-        if (goTo == null || unit.distTo(goTo) <= 20) return false;
+        if (goTo == null || unit.distTo(goTo) <= 10) return false;
 
         return unit.moveToMain(Actions.RUN_RETREAT, "RetreatTowardsBase");
     }
