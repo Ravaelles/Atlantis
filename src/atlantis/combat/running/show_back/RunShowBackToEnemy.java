@@ -2,13 +2,11 @@ package atlantis.combat.running.show_back;
 
 import atlantis.combat.running.ARunningManager;
 import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.Vector;
-import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
 public class RunShowBackToEnemy {
@@ -124,7 +122,7 @@ public class RunShowBackToEnemy {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-        if (running.isPossibleAndReasonablePosition(
+        if (running.isReasonablePositionToRun(
 //            running.unit(), runTo, true, "O", "X"
             running.unit(), runTo, true, null, null
         )) {

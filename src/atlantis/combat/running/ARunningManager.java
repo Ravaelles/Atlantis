@@ -102,13 +102,13 @@ public class ARunningManager {
     /**
      * Returns true if given run position is traversable, land-connected and not very, very far
      */
-    public boolean isPossibleAndReasonablePosition(
+    public boolean isReasonablePositionToRun(
         AUnit unit, APosition position
     ) {
         return reasonableRunToPosition.isPossibleAndReasonablePosition(unit, position);
     }
 
-    public boolean isPossibleAndReasonablePosition(
+    public boolean isReasonablePositionToRun(
         AUnit unit, APosition position, boolean includeNearWalkability, String charForIsOk, String charForNotOk
     ) {
         return reasonableRunToPosition.isPossibleAndReasonablePosition(unit, position, includeNearWalkability, charForIsOk, charForNotOk);

@@ -37,7 +37,7 @@ public class DragoonInsteadZealot {
             Enemy.protoss()
                 && OurArmy.strength() <= 85
                 && A.seconds() <= 400
-                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.6)
+                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
                 && EnemyUnits.discovered().dragoons().atMost(1)
         ) {
             return true;

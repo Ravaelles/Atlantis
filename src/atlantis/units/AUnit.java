@@ -355,7 +355,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         }
 
         if (
-            runningManager().isPossibleAndReasonablePosition(this, newPosition)
+            runningManager().isReasonablePositionToRun(this, newPosition)
                 && move(newPosition, action, "Move away", false)
 //                && (unit().isAir() || Select.all().groundUnits().inRadius(0.05, newPosition).empty())
         ) {

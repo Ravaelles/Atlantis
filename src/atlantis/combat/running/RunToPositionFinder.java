@@ -131,7 +131,7 @@ public class RunToPositionFinder {
 //                && distToNearestRegionBoundaryIsOkay(position)
             && unit.hasPathTo(position)
             && unit.position().groundDistanceTo(position) <= 12
-//                && Select.neutral().inRadius(1.2, position).count() == 0
+            && (!unit.isDragoon() || isNotTooCloseToMinerals(position))
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0
             ;
@@ -141,6 +141,10 @@ public class RunToPositionFinder {
         }
 
         return isOkay;
+    }
+
+    private boolean isNotTooCloseToMinerals(APosition position) {
+        return Select.neutral().inRadius(4, position).isEmpty();
     }
 
     // =========================================================
