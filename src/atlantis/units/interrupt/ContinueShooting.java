@@ -1,6 +1,7 @@
 package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
@@ -17,7 +18,12 @@ public class ContinueShooting extends Manager {
         if (!unit.isAttacking()) return false;
         if (We.terran()) return false;
 
-        if (unit.isDragoon() && allowForDragoon()) return true;
+        if (unit.isStartingAttack()) return true;
+        if (unit.isAttackFrame()) return true;
+
+        Decision decision;
+
+        if (unit.isDragoon() && (decision = decisionForDragoon()).notIndifferent()) return decision.toBoolean();
 
         if (unit.lastActionMoreThanAgo(10, Actions.ATTACK_UNIT)) return false;
         if (unit.isMelee() && unit.lastActionMoreThanAgo(50)) return false;
@@ -30,8 +36,6 @@ public class ContinueShooting extends Manager {
 //        if (unit.isDragoon() && doesNotApplyForDragoon()) return false;
 //        if (unit.isMarine() && doesNotApplyForMarine()) return false;
 
-        if (unit.isStartingAttack()) return true;
-        if (unit.isAttackFrame()) return true;
         if (UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)) return true;
 
         if (true) return false;
@@ -59,12 +63,14 @@ public class ContinueShooting extends Manager {
 //        return unit.hasWeaponRangeByGame(unit.targetUnitToAttack());
     }
 
-    private boolean allowForDragoon() {
+    private Decision decisionForDragoon() {
+        if (unit.lastAttackFrameLessThanAgo(8)) return Decision.FORBIDDEN;
+
         return (
             (unit.hp() >= 21 && unit.lastAttackFrameMoreThanAgo(30 * 3))
                 ||
                 unit.lastActionLessThanAgo(50, Actions.ATTACK_UNIT)
-        );
+        ) ? Decision.ALLOWED : Decision.INDIFFERENT;
     }
 
     private boolean doesNotApplyForDragoon() {

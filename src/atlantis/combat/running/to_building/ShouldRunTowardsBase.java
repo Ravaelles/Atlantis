@@ -11,6 +11,9 @@ import atlantis.util.Enemy;
 
 public class ShouldRunTowardsBase {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
+        AUnit main = Select.main();
+        if (main == null) return false;
+
         if (unit.isScout() && unit.enemiesNear().buildings().notEmpty()) return true;
 
         if (Enemy.zerg()) {
@@ -30,9 +33,6 @@ public class ShouldRunTowardsBase {
         if (unit.isFlying()) return false;
         if (unit.hp() <= 20) return false;
         if (unit.isDragoon() || unit.isTank()) return false;
-
-        AUnit main = Select.main();
-        if (main == null) return false;
 
         if (unit.distTo(runAwayFrom) < 2.1) return false;
         if (unit.meleeEnemiesNearCount(1.8) > 0) return false;

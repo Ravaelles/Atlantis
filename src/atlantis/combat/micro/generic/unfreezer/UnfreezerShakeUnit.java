@@ -2,7 +2,9 @@ package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.squad.positioning.too_lonely.ProtossTooFarFromLeader;
 import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
+import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonelyGetCloser;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -20,16 +22,12 @@ public class UnfreezerShakeUnit {
 //        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(6, Actions.HOLD_POSITION)) {
 //        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(6, Actions.HOLD_POSITION)) {
 
-        if (unit.lastActionMoreThanAgo(3, Actions.HOLD_POSITION)) {
-            unit.holdPosition("UnfreezeByHold");
-            return true;
-        }
+//        if (unit.lastActionMoreThanAgo(3, Actions.HOLD_POSITION)) {
+//            unit.holdPosition("UnfreezeByHold");
+//            return true;
+//        }
 
-        if (We.protoss()) {
-            if ((new ProtossTooLonely(unit)).forceHandle() != null) return true;
-        }
-
-        if (unit.lastActionMoreThanAgo(3, Actions.STOP)) {
+        if (unit.lastActionMoreThanAgo(90, Actions.STOP)) {
             unit.stop("UnfreezeByStop");
             return true;
         }
@@ -45,6 +43,11 @@ public class UnfreezerShakeUnit {
                     return true;
                 }
             }
+        }
+
+        if (We.protoss()) {
+            if ((new ProtossTooFarFromLeader(unit)).forceHandle() != null) return true;
+            if ((new ProtossTooLonelyGetCloser(unit)).forceHandle() != null) return true;
         }
 
 //        if (!unit.isMoving()) {

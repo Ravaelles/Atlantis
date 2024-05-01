@@ -81,7 +81,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-        if (true) return "ums/rav/7th_rav.scx";
+//        if (true) return "ums/rav/7th_rav.scx";
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_skilltest_asP.scx"; // Protoss v. AI Protoss player
@@ -122,9 +122,10 @@ public class Main {
 //        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
-//        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
+        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal_easy.scm";
-        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+        if (true) return "ums/rav/protoss/Drag_v_Zeal_inBase.scm";
 
 //@        if (true) return "ums/rav/protoss/DragoonsRange_v_Marines.scm";
 //@        if (true) return "ums/rav/protoss/Dragoons_v_Marines.scm";
