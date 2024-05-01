@@ -15,7 +15,9 @@ public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (shouldNotDoAnythingButContinue(unit)) return true;
 
-        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(6, Actions.HOLD_POSITION)) {
+//        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(6, Actions.HOLD_POSITION)) {
+//        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(6, Actions.HOLD_POSITION)) {
+        if (unit.lastActionMoreThanAgo(3, Actions.HOLD_POSITION)) {
             unit.holdPosition("UnfreezeByHold");
             return true;
         }
@@ -31,9 +33,9 @@ public class UnfreezerShakeUnit {
             }
         }
 
-        if (!unit.isMoving()) {
-            if (goToFocus(unit)) return true;
-        }
+//        if (!unit.isMoving()) {
+//            if (goToFocus(unit)) return true;
+//        }
 
 //        if (!unit.isStopped() && unit.lastActionMoreThanAgo(20, Actions.STOP)) {
 //            unit.stop("UnfreezeByStop");
