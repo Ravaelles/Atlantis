@@ -56,9 +56,6 @@ public class CombatManagerTopPriority extends Manager {
             HoldToShoot.class,
             AvoidCriticalUnits.class,
             TransportUnits.class,
-
-            ProtossDontEngageWhenCombatBuildings.class,
-            TerranDontEngageWhenCombatBuildings.class,
         };
     }
 }

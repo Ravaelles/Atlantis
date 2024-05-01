@@ -5,17 +5,18 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.util.We;
 
-public class TerranDontAvoidEnemy extends HasUnit {
+//public class TerranDontAvoidEnemy extends HasUnit {
+public class TerranDontAvoidEnemy extends Manager {
     public TerranDontAvoidEnemy(AUnit unit) {
         super(unit);
     }
 
-    //    @Override
+    @Override
     public boolean applies() {
         return We.terran();
     }
 
-    //    @Override
+    @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             DontAvoidEnemyWhenCloseToTank.class,

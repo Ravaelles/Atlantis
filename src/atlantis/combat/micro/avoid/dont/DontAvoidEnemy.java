@@ -15,7 +15,7 @@ public class DontAvoidEnemy extends Manager {
     @Override
     public boolean applies() {
         if (We.protoss()) return (new ProtossDontAvoidEnemy(unit)).applies();
-        if (We.terran()) return (new TerranDontAvoidEnemy(unit)).applies();
+        if (We.terran()) return (new TerranDontAvoidEnemy(unit)).anySubmanagerApplies() != null;
 
         return false;
 //        return anySubmanagerApplies() != null;

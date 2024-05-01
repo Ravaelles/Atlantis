@@ -1,5 +1,6 @@
 package atlantis.combat.running.to_building;
 
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.position.HasPosition;
@@ -17,7 +18,7 @@ public class ShouldRunTowardsBase {
         }
 
         if (unit.meleeEnemiesNearCount(1.4) > 0) return false;
-        if (unit.isDragoon() && unit.shields() <= 40) return false;
+        if (unit.isDragoon() && (Alpha.count() <= 25 || unit.shields() <= 40)) return false;
 
         if (unit.isSquadScout()) return true;
 

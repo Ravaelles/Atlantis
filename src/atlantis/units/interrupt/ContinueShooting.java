@@ -2,6 +2,8 @@ package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
+import atlantis.util.We;
 
 public class ContinueShooting extends Manager {
     public ContinueShooting(AUnit unit) {
@@ -13,9 +15,11 @@ public class ContinueShooting extends Manager {
 //        if (true) return false;
 
         if (!unit.isAttacking()) return false;
+        if (We.terran()) return false;
 
+        if (unit.lastActionMoreThanAgo(10, Actions.ATTACK_UNIT)) return false;
         if (unit.isMelee() && unit.lastActionMoreThanAgo(50)) return false;
-        
+
         if (unit.lastAttackFrameMoreThanAgo(30 * 6)) return true;
 
 //        if (unit.isStopped()) return false;

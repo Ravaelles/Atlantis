@@ -34,6 +34,8 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     @Override
     public boolean shouldChangeMissionToDefend() {
+        if (A.isUms()) return false;
+
         if (Enemy.protoss()) {
             if (defendVsProtoss()) return true;
         }

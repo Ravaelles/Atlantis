@@ -1,4 +1,4 @@
-package atlantis.combat.generic.enemy_in_range;
+package atlantis.combat.generic.enemy_in_range.protoss;
 
 import atlantis.units.AUnit;
 

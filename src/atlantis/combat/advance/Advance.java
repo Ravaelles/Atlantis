@@ -17,12 +17,12 @@ public class Advance extends MissionManager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
 //            AdvanceAsALeader.class,
-            TerranTooFarFromLeader.class,
 
             DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class,
 
-            AdvanceAsTerran.class,
             AttackNearbyEnemies.class,
+
+            AdvanceAsTerran.class,
             AdvanceStandard.class,
             AsAirAttackAnyone.class,
         };

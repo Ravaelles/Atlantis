@@ -12,6 +12,7 @@ public class TerranGroundDontAvoidEnemy extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isGroundUnit()) return false;
+        if (unit.isMarine()) return false;
         if (!unit.isRunning()) return false;
 
         if (

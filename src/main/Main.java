@@ -15,8 +15,8 @@ import starengine.StarEngineLauncher;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
-    public static String OUR_RACE = "Protoss";
-//    public static String OUR_RACE = "Terran";
+    //    public static String OUR_RACE = "Protoss";
+    public static String OUR_RACE = "Terran";
 //    public static String OUR_RACE = "Zerg";
 
     public static String ENEMY_RACE = "Protoss";
@@ -81,8 +81,8 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-//        if (true) return "ums/rav/7th_rav.scx";
-        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
+        if (true) return "ums/rav/7th_rav.scx";
+//        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_skilltest_asP.scx"; // Protoss v. AI Protoss player
 
@@ -123,7 +123,8 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
-        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_Zeal_easy.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
 
 //@        if (true) return "ums/rav/protoss/DragoonsRange_v_Marines.scm";
 //@        if (true) return "ums/rav/protoss/Dragoons_v_Marines.scm";
@@ -145,7 +146,7 @@ public class Main {
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 
 //        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
-        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm"; // Dragoons v Zealots - more goons
+//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm"; // Dragoons v Zealots - more goons
 
         // === Maps for testing as Terran ==============================================================================
 
@@ -168,7 +169,7 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots

@@ -7,7 +7,10 @@ import atlantis.combat.generic.under_attack.UnitUnderAttack;
 import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
 import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
+import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
+import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.running.stop_running.ShouldStopRunning;
+import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
 import atlantis.combat.squad.squad_scout.SquadScout;
 import atlantis.terran.repair.DontMoveWhenBeingRepared;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
@@ -26,6 +29,11 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ProtossTooLonely.class,
+
+            ProtossDontEngageWhenCombatBuildings.class,
+            TerranDontEngageWhenCombatBuildings.class,
+
             UnitHasEnemyInRange.class,
             UnitUnderAttack.class,
 

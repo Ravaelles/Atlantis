@@ -27,6 +27,12 @@ public class TerranForbiddenByStreetGrid {
 //            if (ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position)) return true;
         }
 
+        if (
+            building.isBase()
+                || building.isGasBuilding()
+                || building.isCombatBuilding() // @Check
+        ) return false;
+
         int modulo;
         if ((modulo = (position.tx()) % 3) != 0) return failed("TX modulo K = " + modulo);
         if ((modulo = (position.ty()) % 3) != 0) return failed("TY modulo L = " + modulo);
@@ -34,15 +40,6 @@ public class TerranForbiddenByStreetGrid {
         if (true) return false;
 
 //        if (ForbiddenByStreetGridForBarracks.isForbidden(builder, building, position)) return true;
-
-        if (
-            building.isBase()
-                || building.isGasBuilding()
-                || building.isSupplyDepot()
-                || building.isCombatBuilding() // @Check
-        ) return false;
-
-        if (We.protoss() && A.supplyTotal() <= 10) return false;
 
 //        if (
 //            building.isMissileTurret() && Select.ourBuildingsWithUnfinished().inRadius(3, position).empty()

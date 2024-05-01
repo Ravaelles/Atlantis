@@ -11,6 +11,8 @@ public class TerranMarineDontAvoidEnemy extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (!unit.isMarine()) return false;
 
         if (longDidntShootHydra()) return true;

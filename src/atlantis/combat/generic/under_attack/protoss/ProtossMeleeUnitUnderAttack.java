@@ -1,7 +1,7 @@
 package atlantis.combat.generic.under_attack.protoss;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.generic.enemy_in_range.ProtossGetEnemyInRange;
+import atlantis.combat.generic.enemy_in_range.protoss.ProtossGetEnemyInRange;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.decisions.Decision;
 import atlantis.protoss.ProtossFlags;

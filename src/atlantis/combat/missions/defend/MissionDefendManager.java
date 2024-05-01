@@ -6,7 +6,7 @@ import atlantis.combat.missions.defend.sparta.SpartaSpecific;
 import atlantis.combat.squad.positioning.AllowTimeToReposition;
 import atlantis.combat.squad.positioning.MakeSpaceForNearbyWorkers;
 import atlantis.combat.squad.positioning.MakeSpaceForWrongSideOfFocusFriends;
-import atlantis.combat.squad.positioning.protoss.ProtossSquadCohesion;
+//import atlantis.combat.squad.positioning.protoss.ProtossSquadCohesion;
 import atlantis.units.AUnit;
 
 public class MissionDefendManager extends MissionManager {

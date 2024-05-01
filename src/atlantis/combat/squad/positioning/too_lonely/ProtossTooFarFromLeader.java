@@ -33,6 +33,11 @@ public class ProtossTooFarFromLeader extends Manager {
         if (leader == null) return false;
 
         if (unit.isMissionSparta()) return false;
+        if (
+            unit.enemiesNear().atLeast(9)
+                || unit.enemiesNear().inRadius(5, unit).atLeast(2)
+        ) return false;
+
         if (unit.isDragoon() && unit.hp() <= 40) return false;
 
         distToLeader = unit.distTo(leader);

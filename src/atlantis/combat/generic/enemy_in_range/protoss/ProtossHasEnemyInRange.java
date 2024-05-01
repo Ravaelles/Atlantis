@@ -1,4 +1,4 @@
-package atlantis.combat.generic.enemy_in_range;
+package atlantis.combat.generic.enemy_in_range.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
@@ -21,7 +21,7 @@ public class ProtossHasEnemyInRange extends Manager {
         if (!We.protoss()) return false;
         if (!unit.isCombatUnit()) return false;
         if (unit.enemiesNear().empty()) return false;
-        if (unit.isMissionDefendOrSparta() && unit.isMelee()) return false;
+        if (unit.isMissionSparta() && unit.isMelee()) return false;
 
         if (Enemy.zerg()) {
             if (unit.shieldDamageAtMost(19) && unit.lastAttackFrameMoreThanAgo(50)) return true;
@@ -29,8 +29,8 @@ public class ProtossHasEnemyInRange extends Manager {
 
         if (
             unit.isDragoon()
-                && unit.hp() >= 33
-                && unit.lastAttackFrameMoreThanAgo(30 * 6)
+                && unit.hp() >= 43
+                && (unit.lastAttackFrameMoreThanAgo(30 * 6) || unit.combatEvalRelative() >= 1.6)
         ) return true;
 
         if (A.supplyUsed() <= 130 && unit.distToLeader() >= 10) return false;

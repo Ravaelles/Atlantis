@@ -5,6 +5,8 @@ import atlantis.util.We;
 
 public class ASquadTargeting {
     public static AUnit useSquadTargetIfPossible(AUnit unit) {
+        if (unit == null || unit.squad() == null) return null;
+
         AUnit enemy = unit.squad().targeting().lastTargetIfAlive();
 
         if (
