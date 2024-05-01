@@ -22,12 +22,12 @@ public class WorkerAvoidManager extends Manager {
     private boolean enemiesNear() {
         return unit.enemiesNear()
             .combatUnits()
-            .canAttack(unit, getSafetyMargin())
+            .canAttack(unit, safetyMargin())
             .notEmpty();
     }
 
-    private double getSafetyMargin() {
-        return 2.6 + unit.woundPercent() / 35.0 + (wasAttackedRecenty ? 1.5 : 0);
+    private double safetyMargin() {
+        return 2.6 + unit.woundPercent() / 50.0;
     }
 
     @Override

@@ -17,6 +17,8 @@ public class ContinueShooting extends Manager {
         if (!unit.isAttacking()) return false;
         if (We.terran()) return false;
 
+        if (unit.isDragoon() && allowForDragoon()) return true;
+
         if (unit.lastActionMoreThanAgo(10, Actions.ATTACK_UNIT)) return false;
         if (unit.isMelee() && unit.lastActionMoreThanAgo(50)) return false;
 
@@ -55,6 +57,14 @@ public class ContinueShooting extends Manager {
 //        System.out.println("@ " + A.now() + " - NOPE - ContinueShooting " + unit.id());
         return unit.isTargetInWeaponRangeAccordingToGame(unit.target());
 //        return unit.hasWeaponRangeByGame(unit.targetUnitToAttack());
+    }
+
+    private boolean allowForDragoon() {
+        return (
+            (unit.hp() >= 21 && unit.lastAttackFrameMoreThanAgo(30 * 3))
+                ||
+                unit.lastActionLessThanAgo(50, Actions.ATTACK_UNIT)
+        );
     }
 
     private boolean doesNotApplyForDragoon() {

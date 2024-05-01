@@ -8,7 +8,7 @@ import atlantis.util.We;
 
 public class ProtossForbiddenByStreetGrid {
     public static final int GRID_SIZE_X = 18;
-    public static final int GRID_SIZE_Y = 9;
+    public static final int GRID_SIZE_Y = 10;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -42,7 +42,9 @@ public class ProtossForbiddenByStreetGrid {
 
             // G:1  G:4  P:1 P:3 P:5
 //            boolean moduloYIsInvalid = moduloY != 1 && moduloY != 4;
-            boolean moduloYIsInvalid = moduloY != 0 && moduloY != 3 && moduloY != 6;
+            boolean moduloYIsInvalid = moduloY != 0
+                && moduloY != 3
+                && moduloY != 6;
 
             if (moduloXIsInvalid) {
                 return failed("TX modulo PG_X2 = " + moduloX + " / tx:" + position.tx() + " / grid:" + GRID_SIZE_X);

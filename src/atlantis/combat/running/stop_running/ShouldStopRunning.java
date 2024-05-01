@@ -20,6 +20,7 @@ public class ShouldStopRunning extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            RemoveStoppedRunning.class,
             ProtossShouldStopRunning.class,
             TerranShouldStopRunning.class,
             ZergShouldStopRunning.class,

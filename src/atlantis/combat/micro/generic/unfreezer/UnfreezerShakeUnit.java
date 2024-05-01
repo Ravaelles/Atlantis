@@ -2,6 +2,7 @@ package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -9,6 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class UnfreezerShakeUnit {
@@ -17,19 +19,31 @@ public class UnfreezerShakeUnit {
 
 //        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(6, Actions.HOLD_POSITION)) {
 //        if (!unit.isHoldingPosition() && unit.lastActionMoreThanAgo(6, Actions.HOLD_POSITION)) {
+
         if (unit.lastActionMoreThanAgo(3, Actions.HOLD_POSITION)) {
             unit.holdPosition("UnfreezeByHold");
             return true;
         }
 
-        if (
-            !unit.isAttacking()
-                && unit.lastAttackFrameMoreThanAgo(30 * 2)
-                && unit.lastActionMoreThanAgo(30, Actions.ATTACK_UNIT)
-        ) {
-            if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
-                unit.setTooltip("UnfreezeByAttack");
-                return true;
+        if (We.protoss()) {
+            if ((new ProtossTooLonely(unit)).forceHandle() != null) return true;
+        }
+
+        if (unit.lastActionMoreThanAgo(3, Actions.STOP)) {
+            unit.stop("UnfreezeByStop");
+            return true;
+        }
+
+        if (unit.enemiesNear().inRadius(2, unit).notEmpty()) {
+            if (
+                !unit.isAttacking()
+                    && unit.lastAttackFrameMoreThanAgo(30 * 2)
+                    && unit.lastActionMoreThanAgo(30, Actions.ATTACK_UNIT)
+            ) {
+                if ((new AttackNearbyEnemies(unit)).handleAttackNearEnemyUnits()) {
+                    unit.setTooltip("UnfreezeByAttack");
+                    return true;
+                }
             }
         }
 

@@ -36,7 +36,8 @@ public class Missions {
      */
     public static Mission globalMission() {
         if (A.isUms()) {
-            return ATTACK;
+            return DEFEND;
+//            return ATTACK;
         }
 
         if (currentGlobalMission == null) {

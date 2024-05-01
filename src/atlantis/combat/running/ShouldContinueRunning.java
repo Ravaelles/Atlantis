@@ -22,6 +22,9 @@ public class ShouldContinueRunning {
 //        if (unit.isDragoon()) return false;
 
         if (unit.isRunning()) {
+            APosition targetPosition = unit.targetPosition();
+            if (targetPosition == null || targetPosition.distTo(unit) <= 0.75) return false;
+
             if (justStartedRunning(unit)) return truth(unit);
 
             if (
@@ -31,9 +34,6 @@ public class ShouldContinueRunning {
 //                System.err.println("@ " + A.now() + " - " + unit);
                 return truth(unit);
             }
-
-            APosition targetPosition = unit.targetPosition();
-            if (targetPosition == null || targetPosition.distTo(unit) <= 0.75) return false;
 
             if (unit.cooldown() <= 2) {
 //                double rangeBonus = unit.isHealthy() ? 0.5 : 1.2;
