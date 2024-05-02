@@ -29,8 +29,6 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            AttackEnemiesInRange.class,
-
             ProtossTooLonely.class,
 
             ProtossDontEngageWhenCombatBuildings.class,

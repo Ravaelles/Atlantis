@@ -18,19 +18,19 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
     public boolean applies() {
         return We.protoss()
             && unit.isRanged()
-            && unit.cooldown() >= 3
-            && unit.enemiesNear().inRadius(8, unit).notEmpty()
-            && unit.enemiesNear().ranged().inRadius(13, unit).empty()
+            && unit.cooldown() <= 5
+            && unit.enemiesNear().notEmpty()
+            && unit.enemiesNear().ranged().canAttack(unit, 5).empty()
 //            && unit.combatEvalRelative() >= 1
+            && (unit.shieldDamageAtMost(30) || unit.lastUnderAttackMoreThanAgo(30 * 5))
             && unit.meleeEnemiesNearCount(2.2 + unit.woundPercent() / 80.0) == 0
 //            && unit.lastAttackFrameMoreThanAgo(30 * 2)
-            && (unit.shieldDamageAtMost(30) || unit.lastUnderAttackMoreThanAgo(30 * 6))
             && (enemy = enemyInRangeToAttack()) != null;
     }
 
     private AUnit enemyInRangeToAttack() {
         Selection enemies = unit.enemiesNear();
-        
+
         AUnit nearest = enemies.inShootRangeOf(unit).mostWounded();
         if (nearest != null) return nearest;
 

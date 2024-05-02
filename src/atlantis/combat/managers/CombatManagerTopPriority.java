@@ -2,6 +2,7 @@ package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
+import atlantis.combat.generic.enemy_in_range.AttackEnemiesInRange;
 import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.combat.micro.avoid.DetectUnitsNotRunning;
 import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
@@ -45,6 +46,8 @@ public class CombatManagerTopPriority extends Manager {
             ContinueCurrentAction.class,
 
             Unfreezer.class,
+            AttackEnemiesInRange.class,
+
             PreventTooManyActions.class,
 
             RetreatManager.class,

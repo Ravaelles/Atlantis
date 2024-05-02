@@ -13,8 +13,8 @@ public class UnfreezeDragoon extends Manager {
     @Override
     public boolean applies() {
         return unit.isDragoon()
-            && unit.u().getOrder().equals(Order.Stop)
-            && unit.lastActionMoreThanAgo(50, Actions.STOP);
+            && (unit.isStopped() || unit.u().getOrder().equals(Order.Stop))
+            && unit.lastActionMoreThanAgo(20, Actions.STOP);
     }
 
     @Override

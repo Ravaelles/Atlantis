@@ -64,12 +64,14 @@ public class ContinueShooting extends Manager {
     }
 
     private Decision decisionForDragoon() {
-        if (unit.lastAttackFrameLessThanAgo(8)) return Decision.FORBIDDEN;
+        if (
+            unit.lastAttackFrameLessThanAgo(8)
+                && !unit.lastAttackFrameLessThanAgo(2)
+        ) return Decision.FORBIDDEN;
 
         return (
-            (unit.hp() >= 21 && unit.lastAttackFrameMoreThanAgo(30 * 3))
-                ||
-                unit.lastActionLessThanAgo(50, Actions.ATTACK_UNIT)
+            unit.lastActionLessThanAgo(50 + (unit.woundHp() <= 30 ? 50 : 0), Actions.ATTACK_UNIT)
+                || (unit.hp() >= 21 && unit.lastAttackFrameMoreThanAgo(30 * 3))
         ) ? Decision.ALLOWED : Decision.INDIFFERENT;
     }
 
