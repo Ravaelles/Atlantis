@@ -30,7 +30,7 @@ public class ProtossShouldExpand {
             "shouldExpand",
             91,
             () -> {
-                if (A.minerals() <= 140) return false;
+                if (A.minerals() <= 180) return false;
 
                 Count.clearCache();
 
@@ -106,7 +106,9 @@ public class ProtossShouldExpand {
         int seconds = A.seconds();
         int armyStrength = OurArmy.strength();
 
+        if (tooFewArmy()) return no("TooFewUnits");
         if (mainChokeOverwhelmed()) return no("MainChokeOverwhelm");
+        if (cautionAgainstZealotRush()) return no("CautiosZealots");
 
         if (
             !A.hasMinerals(500) && !Have.existingOrUnfinished(AUnitType.Protoss_Cybernetics_Core)
@@ -147,6 +149,20 @@ public class ProtossShouldExpand {
         if (seconds <= 400 && armyStrength < 100) return no("Weak");
 
         return no("JustDont");
+    }
+
+    private static boolean tooFewArmy() {
+        if (A.hasMinerals(550)) return false;
+
+        return Count.zealots() <= 9 && Count.dragoons() <= 6;
+    }
+
+    private static boolean cautionAgainstZealotRush() {
+        if (!Enemy.protoss()) return false;
+        if (EnemyUnits.discovered().dragoons().notEmpty()) return false;
+        if (A.hasMinerals(400)) return false;
+
+        return Count.dragoons() <= 5;
     }
 
     private static boolean mainChokeOverwhelmed() {

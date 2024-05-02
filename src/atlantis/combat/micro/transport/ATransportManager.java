@@ -48,7 +48,7 @@ public class ATransportManager extends Manager {
 //            return false;
 //        }
 //
-//        return AvoidEnemiesIfNeeded.avoidEnemiesIfNeeded();
+//        return AvoidEnemies.avoidEnemiesIfNeeded();
 //    }
 
     private AUnit babyToCarry() {

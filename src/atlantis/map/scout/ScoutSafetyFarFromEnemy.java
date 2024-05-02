@@ -1,12 +1,9 @@
 package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
-import atlantis.combat.micro.avoid.AvoidSingleEnemy;
-import atlantis.combat.micro.avoid.DoAvoidEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.WantsToAvoid;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 
 public class ScoutSafetyFarFromEnemy extends Manager {
     private AUnit enemy;
@@ -26,7 +23,7 @@ public class ScoutSafetyFarFromEnemy extends Manager {
     }
 
     private AUnit defineEnemyToRunFrom() {
-        AUnit enemy = (new AvoidEnemiesIfNeeded(unit)).enemiesDangerouslyClose().first();
+        AUnit enemy = (new AvoidEnemies(unit)).enemiesDangerouslyClose().first();
         if (enemy != null) return enemy;
 
         return unit.enemiesNear().combatUnits().inRadius(7, unit).nearestTo(unit);

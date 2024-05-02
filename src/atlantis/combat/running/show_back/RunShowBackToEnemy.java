@@ -45,7 +45,7 @@ public class RunShowBackToEnemy {
 
     // =========================================================
 
-    public boolean positionForShowingBackToEnemy(HasPosition runAwayFrom) {
+    public boolean findPositionForShowingBackToEnemy(HasPosition runAwayFrom) {
         this.unit = running.unit();
 
         if (runAwayFrom instanceof AUnit) {
@@ -53,13 +53,24 @@ public class RunShowBackToEnemy {
             if (enemyPosition != null) runAwayFrom = enemyPosition;
         }
 
-        if (running.runTo() == null || running.unit().lastActionMoreThanAgo(8)) {
+        HasPosition runTo = running.runTo();
+        
+        if (
+            runTo != null
+                && unit.distTo(runTo) > 1
+                && running.unit().lastStartedRunningLessThanAgo(8)
+        ) {
+            running.setRunTo(runTo);
+            return true;
+        }
+
+        if (runTo == null || running.unit().lastStartedRunningLessThanAgo(8)) {
             running.setRunTo(findRunPositionShowYourBackToEnemy(runAwayFrom));
         }
 
-        if (running.runTo() != null) {
-            APainter.paintCircleFilled(running.runTo(), 3, Color.Brown);
-            APainter.paintLine(running.unit(), running.runTo(), Color.Brown);
+        if (runTo != null) {
+            APainter.paintCircleFilled(runTo, 3, Color.Brown);
+            APainter.paintLine(running.unit(), runTo, Color.Brown);
             running.unit().setTooltip("ShowBack");
         }
 

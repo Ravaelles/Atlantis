@@ -3,6 +3,7 @@ package atlantis.combat.managers;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.micro.avoid.ContinueRunning;
+import atlantis.combat.micro.avoid.DetectUnitsNotRunning;
 import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
@@ -16,6 +17,7 @@ import atlantis.units.AUnit;
 import atlantis.units.fix.PreventAttackNull;
 import atlantis.units.fix.PreventAttackForTooLong;
 import atlantis.units.interrupt.ContinueCurrentAction;
+import atlantis.units.interrupt.ContinueLast;
 import atlantis.units.special.FixInvalidUnits;
 import atlantis.units.special.ManualOverrideManager;
 import atlantis.units.fix.PreventDoNothing;
@@ -35,6 +37,8 @@ public class CombatManagerTopPriority extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             FixInvalidUnits.class,
+            ContinueLast.class,
+            DetectUnitsNotRunning.class,
             FixPerformanceForBigSupply.class,
             ManualOverrideManager.class,
 
@@ -42,7 +46,6 @@ public class CombatManagerTopPriority extends Manager {
 
             Unfreezer.class,
             PreventTooManyActions.class,
-            ContinueRunning.class,
 
             RetreatManager.class,
 

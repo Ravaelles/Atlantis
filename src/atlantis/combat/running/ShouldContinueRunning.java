@@ -56,7 +56,8 @@ public class ShouldContinueRunning {
     private static boolean continueRunningInAnyDirection(AUnit unit) {
         int maxFramesAgo = unit.isDragoon() ? 20 : 10;
 
-        return unit.lastActionLessThanAgo(maxFramesAgo, Actions.RUN_IN_ANY_DIRECTION);
+        return unit.lastActionLessThanAgo(maxFramesAgo, Actions.RUN_IN_ANY_DIRECTION)
+            || unit.lastStartedRunningLessThanAgo(maxFramesAgo);
     }
 
     private static boolean unitInDifficultSituation(AUnit unit) {

@@ -27,7 +27,7 @@ public class ProduceGateway {
 
         existingGateways = Count.gateways();
 
-        if (!A.hasMinerals(350) && ConstructionRequests.hasNotStarted(Protoss_Cybernetics_Core)) return false;
+        if (!A.hasMinerals(330) && ConstructionRequests.hasNotStarted(Protoss_Cybernetics_Core)) return false;
 
         if (
             !A.hasMinerals(176)

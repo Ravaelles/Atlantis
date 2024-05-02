@@ -15,9 +15,11 @@ public class ShouldStopRunningDragoon extends Manager {
     public boolean applies() {
         if (!unit.isDragoon()) return false;
 
-        if (unit.lastActionMoreThanAgo(1)) return false;
-        if (unit.lastStartedRunningLessThanAgo(3)) return false;
+        if (unitBecameIdleAfterRunning()) return true;
         if (!unit.isMoving()) return true;
+
+        if (unit.lastActionMoreThanAgo(2)) return false;
+        if (unit.lastStartedRunningLessThanAgo(7)) return false;
 
 //        if (unit.woundHp() <= 11) return true;
 
@@ -26,6 +28,12 @@ public class ShouldStopRunningDragoon extends Manager {
 //        return meleeEnemies.inRadius(2.9, unit).empty()
 //            || meleeEnemies.canAttack(unit, safetyMargin(unit)).empty();
         return meleeEnemies.canAttack(unit, safetyMargin(unit)).empty();
+    }
+
+    private boolean unitBecameIdleAfterRunning() {
+        return (unit.isStopped() || unit.isIdle())
+            && unit.noCooldown()
+            && unit.lastStartedRunningLessThanAgo(70);
     }
 
     @Override

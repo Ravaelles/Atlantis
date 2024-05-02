@@ -5,8 +5,7 @@ import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
 import atlantis.combat.generic.enemy_in_range.AttackEnemiesInRange;
 import atlantis.combat.generic.enemy_in_range.UnitHasEnemyInRange;
 import atlantis.combat.generic.under_attack.UnitUnderAttack;
-import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
-import atlantis.combat.micro.avoid.ContinueRunning;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
 import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
@@ -43,7 +42,7 @@ public class CombatManagerMediumPriority extends Manager {
             ShouldStopRunning.class,
 
             AvoidCombatBuilding.class,
-            AvoidEnemiesIfNeeded.class,
+            AvoidEnemies.class,
             DontMoveWhenBeingRepared.class,
             UnitBeingReparedManager.class,
 //            AttackNearbyEnemies.class,

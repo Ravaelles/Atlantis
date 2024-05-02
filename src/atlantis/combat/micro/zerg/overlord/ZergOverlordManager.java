@@ -1,7 +1,7 @@
 package atlantis.combat.micro.zerg.overlord;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.stack.StackedUnitsManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -19,7 +19,7 @@ public class ZergOverlordManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            AvoidEnemiesIfNeeded.class,
+            AvoidEnemies.class,
             StackedUnitsManager.class,
             WeDontKnowEnemyLocation.class,
             WeKnowEnemyLocation.class,

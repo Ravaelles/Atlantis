@@ -20,16 +20,20 @@ public class OnEnemyNewUnitDiscovered {
     }
 
     private static void actIfWeAreMuchWeaker() {
-        if (A.minerals() >= 360) return;
+        if (A.minerals() >= 460) return;
         if (!weAreMuchWeaker()) return;
 
-        if (A.seconds() <= 600) {
+        if (A.seconds() <= 700) {
             CancelNotStartedBases.cancelNotStartedOrEarlyBases(null);
         }
     }
 
     private static boolean weAreMuchWeaker() {
-        if (OurArmy.strength() >= 0.7) return false;
+        if (OurArmy.strength() >= 0.9) return false;
+
+        if (Enemy.protoss()) {
+            if (Count.ourCombatUnits() <= 15 && EnemyUnits.discovered().combatUnits().atLeast(20)) return true;
+        }
 
         int n = (Enemy.protoss() ? 4 : 7) - Count.ourCombatUnits();
         if (EnemyUnits.discovered().combatUnits().atMost(n)) return false;

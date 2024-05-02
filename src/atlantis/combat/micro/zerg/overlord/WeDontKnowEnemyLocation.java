@@ -12,11 +12,14 @@ public class WeDontKnowEnemyLocation extends Manager {
 
     @Override
     public boolean applies() {
-        return !EnemyInfo.hasDiscoveredAnyBuilding();
+        return unit.isStopped()
+            && !EnemyInfo.weKnowAboutAnyRealUnit()
+            && !EnemyInfo.hasDiscoveredAnyBuilding();
     }
 
     protected Manager handle() {
         unit.setTooltipTactical("Find enemy");
+//        if (true) throw new RuntimeException("wut / " + this.parentsStack());
 
         return (new ScoutManager(unit)).invoke(this);
     }

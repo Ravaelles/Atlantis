@@ -59,7 +59,7 @@ public class RunToPositionFinder {
         // === Run directly away from the enemy ========================
 
         if (running.showBackToEnemy.shouldRunByShowingBackToEnemy()) {
-            if (runShowBackToEnemy.positionForShowingBackToEnemy(runAwayFrom)) {
+            if (runShowBackToEnemy.findPositionForShowingBackToEnemy(runAwayFrom)) {
                 Color color = Color.Blue;
                 HasPosition runTo = unit.runningManager().runTo;
                 APainter.paintLine(unit, runTo, color);

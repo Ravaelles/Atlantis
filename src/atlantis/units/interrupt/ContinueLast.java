@@ -14,7 +14,7 @@ public class ContinueLast extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        if (unit.lastActionLessThanAgo(1) && !unit.looksIdle()) return true;
+        if (unit.isDragoon() && (!unit.isStopped() && unit.lastOrderWasFramesAgo() <= 3)) return true;
 
         return false;
 
@@ -33,9 +33,9 @@ public class ContinueLast extends Manager {
 //        return unit.isAttacking() && unit.hasValidTarget();
 //    }
 
-    private boolean continueWhenMoving() {
-        return unit.isMoving() && unit.distToTargetMoreThan(2);
-    }
+//    private boolean continueWhenMoving() {
+//        return unit.isMoving() && unit.distToTargetMoreThan(2);
+//    }
 
     public Manager handle() {
         return usedManager(this);

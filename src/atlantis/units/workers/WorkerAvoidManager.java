@@ -1,7 +1,7 @@
 package atlantis.units.workers;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -32,7 +32,7 @@ public class WorkerAvoidManager extends Manager {
 
     @Override
     public Manager handle() {
-        if ((new AvoidEnemiesIfNeeded(unit)).forceHandle() != null) {
+        if ((new AvoidEnemies(unit)).forceHandle() != null) {
             return usedManager(this);
         }
 

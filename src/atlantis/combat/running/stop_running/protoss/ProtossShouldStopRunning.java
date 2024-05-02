@@ -17,21 +17,9 @@ public class ProtossShouldStopRunning extends Manager {
     }
 
     @Override
-    protected Manager handle() {
-        if (
-            (unit.isMelee() && unit.combatEvalRelative() >= 2)
-                || handleSubmanagers() != null
-        ) {
-            decisionStopRunning(unit);
-            if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
-        }
-
-        return null;
-    }
-
-    @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ProtossShouldStopRunningMelee.class,
             ShouldStopRunningDragoon.class,
             ShouldStopRunningProtossAir.class,
             ShouldStopRunningProbe.class,

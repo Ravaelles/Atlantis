@@ -24,7 +24,6 @@ public class MissionDefendManager extends MissionManager {
             AllowTimeToReposition.class,
 //            ProtossSquadCohesion.class,
             AdvanceToDefendFocusPoint.class,
-            WeDontKnowEnemyLocation.class,
             Advance.class,
         };
     }

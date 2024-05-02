@@ -2,6 +2,7 @@ package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.ContinueLastAttack;
+import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.units.AUnit;
 
 public class ContinueCurrentAction extends Manager {
@@ -12,9 +13,10 @@ public class ContinueCurrentAction extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-//            ContinueLastAttack.class,
-//            ContinueLast.class,
             ContinueShooting.class,
+            ContinueRunning.class,
+//            ContinueLastAttack.class,
+//            composer.json
 //            ContinueDragoonAttackOrder.class, // Dont!!
 //            ContinueAttack.class, // Dont!
 //            ContinueMoving.class,

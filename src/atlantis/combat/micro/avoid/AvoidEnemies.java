@@ -5,15 +5,14 @@ import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
-public class AvoidEnemiesIfNeeded extends Manager {
+public class AvoidEnemies extends Manager {
     private static Cache<Units> cache = new Cache<>();
     private WantsToAvoid wantsToAvoid;
     private EnemyUnitsToAvoid enemyUnitsToAvoid;
 
-    public AvoidEnemiesIfNeeded(AUnit unit) {
+    public AvoidEnemies(AUnit unit) {
         super(unit);
         wantsToAvoid = new WantsToAvoid(unit);
         enemyUnitsToAvoid = new EnemyUnitsToAvoid(unit);
@@ -77,6 +76,6 @@ public class AvoidEnemiesIfNeeded extends Manager {
             enemyString = A.substring(enemy.type().name(), 0, 10);
         }
 
-        return "AvoidEnemiesIfNeeded(" + enemyString + ')';
+        return "AvoidEnemies(" + enemyString + ')';
     }
 }

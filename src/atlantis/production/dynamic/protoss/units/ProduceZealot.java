@@ -7,6 +7,7 @@ import atlantis.information.decisions.protoss.dragoon.DragoonInsteadZealot;
 import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.production.orders.build.BuildOrderSettings;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -25,7 +26,7 @@ public class ProduceZealot {
 
         if (freeGateways == 0) return false;
 
-        if (earlyGameZealots()) return produceZealot();
+        if (earlyGameZealots(freeGateways)) return produceZealot();
 
         if (!A.hasMinerals(300) && DragoonInsteadZealot.dragoonInsteadOfZealot()) return false;
 
@@ -47,9 +48,14 @@ public class ProduceZealot {
         return false;
     }
 
-    private static boolean earlyGameZealots() {
+    private static boolean earlyGameZealots(int freeGateways) {
         if (earlyGameDefenceVsProtoss()) return produceZealot();
         if (earlyGameRushZealots()) return produceZealot();
+
+        if (!A.hasGas(25) || !Have.cyberneticsCore()) {
+            int minMinerals = ReservedResources.minerals() <= 200 ? 175 : 240;
+            if (freeGateways >= 2 && A.hasMinerals(minMinerals)) return produceZealot();
+        }
 
         return false;
     }

@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.Atlantis;
-import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
@@ -79,7 +79,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         AbstractFoggedUnit.clearCache();
         EnemyInfo.clearCache();
         EnemyUnits.clearCache();
-        AvoidEnemiesIfNeeded.clearCache();
+        AvoidEnemies.clearCache();
         ReservedResources.reset();
     }
 

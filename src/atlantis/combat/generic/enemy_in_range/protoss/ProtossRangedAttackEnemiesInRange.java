@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class ProtossRangedAttackEnemiesInRange extends Manager {
@@ -17,16 +18,23 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
     public boolean applies() {
         return We.protoss()
             && unit.isRanged()
-            && unit.enemiesNear().notEmpty()
-            && unit.combatEvalRelative() >= 1
-            && unit.meleeEnemiesNearCount(2.8) == 0
-            && unit.lastAttackFrameMoreThanAgo(30 * 6)
+            && unit.cooldown() >= 3
+            && unit.enemiesNear().inRadius(8, unit).notEmpty()
+            && unit.enemiesNear().ranged().inRadius(13, unit).empty()
+//            && unit.combatEvalRelative() >= 1
+            && unit.meleeEnemiesNearCount(2.2 + unit.woundPercent() / 80.0) == 0
+//            && unit.lastAttackFrameMoreThanAgo(30 * 2)
             && (unit.shieldDamageAtMost(30) || unit.lastUnderAttackMoreThanAgo(30 * 6))
             && (enemy = enemyInRangeToAttack()) != null;
     }
 
     private AUnit enemyInRangeToAttack() {
-        return unit.enemiesNear().inShootRangeOf(unit).mostWounded();
+        Selection enemies = unit.enemiesNear();
+        
+        AUnit nearest = enemies.inShootRangeOf(unit).mostWounded();
+        if (nearest != null) return nearest;
+
+        return enemies.nearestTo(unit);
     }
 
     @Override

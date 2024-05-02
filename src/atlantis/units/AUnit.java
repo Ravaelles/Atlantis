@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.architecture.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
-import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.margin.UnitRange;
 import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
 import atlantis.combat.missions.Mission;
@@ -228,7 +228,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         manager = new DoNothing(this);
 
         runningManager = new ARunningManager(this);
-        avoidEnemiesManager = new AvoidEnemiesIfNeeded(this);
+        avoidEnemiesManager = new AvoidEnemies(this);
     }
 
     /**
@@ -317,7 +317,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     private Squad squad;
     private ARunningManager runningManager;
-    private AvoidEnemiesIfNeeded avoidEnemiesManager;
+    private AvoidEnemies avoidEnemiesManager;
 
     private boolean _repairableMechanically = false;
     private boolean _healable = false;
@@ -934,6 +934,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean lastOrderMaxFramesAgo(int maxFramesAgo) {
         return AGame.now() - _lastActionReceived <= maxFramesAgo;
+    }
+
+    public int lastOrderWasFramesAgo() {
+        return AGame.now() - _lastActionReceived;
     }
 
     /**
@@ -2929,7 +2933,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return squad != null ? squad.leader() : null;
     }
 
-    public AvoidEnemiesIfNeeded avoidEnemiesManager() {
+    public AvoidEnemies avoidEnemiesManager() {
         return avoidEnemiesManager;
     }
 

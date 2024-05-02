@@ -56,8 +56,7 @@ public class ProtossStartRetreat extends HasUnit {
         }
 
         if (
-            retreatTowardsMainChoke()
-                || retreatByRunningTowardsBase()
+            runTowardsBaseOrMainChoke()
                 || retreatByRunningFromEnemy(runAwayFrom)
         ) {
             unitStartedRetreating(runAwayFrom);
@@ -66,6 +65,13 @@ public class ProtossStartRetreat extends HasUnit {
         }
 
         return false;
+    }
+
+    private boolean runTowardsBaseOrMainChoke() {
+        if (unit.isDragoon()) return false;
+
+        return retreatTowardsMainChoke()
+            || retreatByRunningTowardsBase();
     }
 
     private boolean shouldForceRetreatDirectlyFromEnemy() {

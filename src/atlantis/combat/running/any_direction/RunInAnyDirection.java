@@ -94,8 +94,14 @@ public class RunInAnyDirection {
      * to given runAwayFrom position.
      */
     public APosition findRunPositionInAnyDirection(HasPosition runAwayFrom) {
-        if (runningManager.runTo() != null && unit.lastActionLessThanAgo(10, Actions.RUN_IN_ANY_DIRECTION)) {
-            return runningManager.runTo().position();
+        HasPosition runTo = runningManager.runTo();
+
+        if (
+            runTo != null
+                && unit.distTo(runTo) > 1
+                && unit.lastStartedRunningLessThanAgo(14)
+        ) {
+            return runTo.position();
         }
 
         int radius = runAnyDirectionInitialRadius(unit, runAwayFrom);

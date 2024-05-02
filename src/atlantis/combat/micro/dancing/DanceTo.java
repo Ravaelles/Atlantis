@@ -33,8 +33,9 @@ public class DanceTo extends Manager {
 
     private boolean asDragoonDontDanceTo() {
         if (!unit.isDragoon()) return false;
+        if (unit.hp() <= 21) return false;
 
-        return unit.enemiesNear().combatBuildingsAntiLand().inRadius(8, unit).empty();
+        return unit.enemiesNear().combatBuildingsAntiLand().inRadius(8, unit).notEmpty();
 //        return unit.distToNearestChokeLessThan(4);
 //        return unit.hp() <= 40;
     }

@@ -88,7 +88,7 @@ public abstract class Manager extends BaseManager {
      * FALSE if the manager was not applied. Further execution down the stack should be proceeded.
      */
     protected Manager handle() {
-        if (!applies()) return null;
+//        if (!applies()) return null;
 
 //        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
 //            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " HANDLED = " + this.getClass().getSimpleName());
@@ -101,6 +101,9 @@ public abstract class Manager extends BaseManager {
 
     protected Manager handleSubmanagers() {
         for (Manager submanager : submanagerObjects) {
+//            if (this.getClass().getSimpleName().contains("Advance"))
+//                System.out.println("Adv - " + submanager.getClass().getSimpleName());
+
             if (submanager.invokeFromParent(this) != null) {
                 return submanager;
             }
