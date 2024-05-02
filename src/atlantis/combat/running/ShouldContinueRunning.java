@@ -23,14 +23,11 @@ public class ShouldContinueRunning {
 
         if (unit.isRunning()) {
             APosition targetPosition = unit.targetPosition();
-            if (targetPosition == null || targetPosition.distTo(unit) <= 0.75) return false;
+            if (targetPosition == null || targetPosition.distTo(unit) <= 0.9) return false;
 
             if (justStartedRunning(unit)) return truth(unit);
 
-            if (
-//                unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
-                unit.lastActionLessThanAgo(8, Actions.RUN_IN_ANY_DIRECTION)
-            ) {
+            if (continueRunningInAnyDirection(unit)) {
 //                System.err.println("@ " + A.now() + " - " + unit);
                 return truth(unit);
             }
@@ -54,6 +51,12 @@ public class ShouldContinueRunning {
         }
 
         return false;
+    }
+
+    private static boolean continueRunningInAnyDirection(AUnit unit) {
+        int maxFramesAgo = unit.isDragoon() ? 20 : 10;
+
+        return unit.lastActionLessThanAgo(maxFramesAgo, Actions.RUN_IN_ANY_DIRECTION);
     }
 
     private static boolean unitInDifficultSituation(AUnit unit) {

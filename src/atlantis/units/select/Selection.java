@@ -306,6 +306,13 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection zerglings() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Zerg_Zergling)),
+            "zerglings"
+        );
+    }
+
     public Selection sunkens() {
         return cloneByRemovingIf(
             (unit -> !unit.is(AUnitType.Zerg_Sunken_Colony)),

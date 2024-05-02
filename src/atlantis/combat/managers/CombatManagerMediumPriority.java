@@ -2,6 +2,7 @@ package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
+import atlantis.combat.generic.enemy_in_range.AttackEnemiesInRange;
 import atlantis.combat.generic.enemy_in_range.UnitHasEnemyInRange;
 import atlantis.combat.generic.under_attack.UnitUnderAttack;
 import atlantis.combat.micro.avoid.AvoidEnemiesIfNeeded;
@@ -29,6 +30,8 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            AttackEnemiesInRange.class,
+
             ProtossTooLonely.class,
 
             ProtossDontEngageWhenCombatBuildings.class,

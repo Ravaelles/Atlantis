@@ -117,11 +117,10 @@ public class ProtossHasEnemyInRange extends Manager {
                 || !allowedToAttackThisEnemy()
         ) return null;
 
-//        if (unit.isRanged()) {
-//            A.printStackTrace("lol " + unit);
-//        }
-
-        if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemyInRange)) return usedManager(this);
+        if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemyInRange)) {
+//            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - _inRange");
+            return usedManager(this);
+        }
 
         return null;
     }

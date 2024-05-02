@@ -2,9 +2,7 @@ package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.dynamic.protoss.units.DragoonInsteadZealot;
-import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.orders.production.queue.Queue;
+import atlantis.information.decisions.protoss.dragoon.DragoonInsteadZealot;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;

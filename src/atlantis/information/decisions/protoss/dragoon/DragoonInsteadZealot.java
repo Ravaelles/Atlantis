@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.protoss.units;
+package atlantis.information.decisions.protoss.dragoon;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
@@ -12,6 +12,8 @@ import atlantis.util.Enemy;
 
 public class DragoonInsteadZealot {
     public static boolean dragoonInsteadOfZealot() {
+        if (Enemy.zerg()) return DragoonInsteadZealotVsZerg.dragoonInsteadOfZealot();
+
         if (manyZealotsAndEnemyTooStrong()) return true;
 
 //        if (Have.cyberneticsCore()) return false;
