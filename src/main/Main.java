@@ -106,7 +106,7 @@ public class Main {
 //@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 
         // vs Protoss
-        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm";
 
 //        if (true) return "ums/rav/protoss/2Drag_v_3Zeal.scm";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Drag.scm";

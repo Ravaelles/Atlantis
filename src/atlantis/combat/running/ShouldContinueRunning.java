@@ -1,11 +1,8 @@
 package atlantis.combat.running;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.PauseAndCenter;
-import bwapi.Color;
 
 public class ShouldContinueRunning {
     public static boolean handleContinueRunning(AUnit unit) {
@@ -21,9 +18,13 @@ public class ShouldContinueRunning {
 
 //        if (unit.isDragoon()) return false;
 
+        if (true) return false;
+
         if (unit.isRunning()) {
             APosition targetPosition = unit.targetPosition();
-            if (targetPosition == null || targetPosition.distTo(unit) <= 0.9) return false;
+            if (targetPosition == null || targetPosition.distTo(unit) <= 1.1 || unit.isBraking()) return false;
+
+//            if (unit.isRunning()) System.err.println(unit.idWithHash() + " - " + unit.lastStartedRunningAgo());
 
             if (justStartedRunning(unit)) return truth(unit);
 
@@ -36,8 +37,8 @@ public class ShouldContinueRunning {
 //                double rangeBonus = unit.isHealthy() ? 0.5 : 1.2;
                 double rangeBonus = unitInDifficultSituation(unit) ? 2.9 : 1.1;
                 if (
-                    unit.runningFrom() != null
-                        && unit.runningFrom().canAttackTargetWithBonus(unit, rangeBonus)
+                    unit.runningFromUnit() != null
+                        && unit.runningFromUnit().canAttackTargetWithBonus(unit, rangeBonus)
                 ) {
 //                    System.err.println("@ " + A.now() + " - stahp");
                     return false;
@@ -54,7 +55,7 @@ public class ShouldContinueRunning {
     }
 
     private static boolean continueRunningInAnyDirection(AUnit unit) {
-        int maxFramesAgo = unit.isDragoon() ? 20 : 10;
+        int maxFramesAgo = unit.isDragoon() ? 15 : 10;
 
         return unit.lastActionLessThanAgo(maxFramesAgo, Actions.RUN_IN_ANY_DIRECTION)
             || unit.lastStartedRunningLessThanAgo(maxFramesAgo);
@@ -64,8 +65,8 @@ public class ShouldContinueRunning {
         if (unit.hp() <= 17) return true;
 
         return !unit.hasMedicInHealRange()
-            && unit.runningFrom() != null
-            && unit.runningFrom().isFacing(unit);
+            && unit.runningFromUnit() != null
+            && unit.runningFromUnit().isFacing(unit);
     }
 
     private static boolean justStartedRunning(AUnit unit) {
@@ -80,9 +81,9 @@ public class ShouldContinueRunning {
     }
 
     private static int justStartedRunningFramesThreshold(AUnit unit) {
-        if (unit.isDragoon()) return 25;
+//        if (unit.isDragoon()) return 25;
 
-        return 15;
+        return 7;
     }
 
     private static boolean truth(AUnit unit) {

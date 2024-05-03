@@ -16,7 +16,8 @@ public class ARunningManager {
 
     protected final AUnit unit;
     protected HasPosition runTo = null;
-    protected HasPosition runFrom = null;
+    protected AUnit runningFromUnit = null;
+    protected HasPosition runningFromPosition = null;
     protected boolean allowedToNotifyNearUnitsToMakeSpace;
 
     protected final RunShowBackToEnemy showBackToEnemy = new RunShowBackToEnemy(this);
@@ -45,16 +46,20 @@ public class ARunningManager {
         if (unit.lastStartedRunningLessThanAgo(1)) return true;
 
         if (runFrom instanceof AUnit) {
-            unit.setRunningFrom((AUnit) runFrom);
+            runningFromUnit = (AUnit) runFrom;
+            runningFromPosition = runFrom;
+        }
+        else {
+            runningFromUnit = null;
+            runningFromPosition = runFrom;
         }
 
-        this.runFrom = runFrom;
         this.allowedToNotifyNearUnitsToMakeSpace = allowedToNotifyNearUnitsToMakeSpace;
         verifyRunFromPosition(runFrom);
 
         // === Define run to position ==============================
 
-        runTo = adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(runFrom);
+        runFrom = adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(runFrom);
         runTo = runPositionFinder.findBestPositionToRun(runFrom, dist, action);
 
         // === Actual run order ====================================
@@ -89,9 +94,9 @@ public class ARunningManager {
     }
 
     private HasPosition adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(HasPosition runAwayFrom) {
-        Selection friendsVeryNear = unit.friendsNear().inRadius(1.2, unit);
+        Selection friendsVeryNear = unit.friendsNear().inRadius(1.4, unit);
         if (friendsVeryNear.size() == 1) {
-            return runAwayFrom.translatePercentTowards(35, friendsVeryNear.first());
+            return runAwayFrom.translatePercentTowards(20, friendsVeryNear.first());
         }
 
         return runAwayFrom;
@@ -177,7 +182,8 @@ public class ARunningManager {
         else {
             if (unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false)) {
                 // Update last time run order was issued
-                if (!unit.isRunning()) unit._lastStartedRunning = A.now();
+//                if (!unit.isRunning()) unit._lastStartedRunning = A.now();
+                if (unit._lastStartedRunning <= unit._lastStoppedRunning) unit._lastStartedRunning = A.now();
 
                 // Make all other units very close to it run as well
                 if (allowedToNotifyNearUnitsToMakeSpace) {
@@ -198,7 +204,7 @@ public class ARunningManager {
     }
 
     public boolean isRunning() {
-        if (runTo != null && unit.distTo(runTo) >= 0.08) {
+        if (runTo != null && unit.distTo(runTo) >= 0.2) {
             return true;
 //            if (unit.lastStartedRunningAgo(3)) {
 //                return true;
@@ -214,7 +220,8 @@ public class ARunningManager {
 
     public void stopRunning() {
         runTo = null;
-        runFrom = null;
+        runningFromPosition = null;
+        runningFromUnit = null;
         unit._lastStoppedRunning = A.now();
     }
 
@@ -225,6 +232,24 @@ public class ARunningManager {
     public HasPosition runTo() {
         return runTo;
     }
+
+    public AUnit runningFromUnit() {
+        return runningFromUnit;
+    }
+
+    public HasPosition runningFromPosition() {
+        return runningFromPosition;
+    }
+
+//    public HasPosition setRunFromUnit(HasPosition runFrom) {
+//        this.runFrom = runFrom;
+//        return runFrom;
+//    }
+//
+//    public HasPosition setRunFrom(HasPosition runFrom) {
+//        this.runFrom = runFrom;
+//        return runFrom;
+//    }
 
     public HasPosition setRunTo(HasPosition runTo) {
         this.runTo = runTo;

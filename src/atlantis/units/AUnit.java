@@ -116,7 +116,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Construction construction = null;
 
     public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
-    private AUnit runningFrom = null;
+//    private AUnit runningFrom = null;
 
     /**
      * Can be used for special missions to remember position assigned for this unit.
@@ -2997,13 +2997,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             || isLurker();
     }
 
-    public void setRunningFrom(AUnit enemy) {
-        this.runningFrom = enemy;
+//    public void setRunningFrom(HasPosition enemy) {
+//        this.runningManager.setRunFrom(enemy);
+//    }
+
+    public AUnit runningFromUnit() {
+        return this.runningManager.runningFromUnit();
     }
 
-    public AUnit runningFrom() {
-        return this.runningFrom;
-    }
+//    public HasPosition runningFrom() {
+//        return this.runningManager.runFrom();
+//    }
 
     public boolean hasSiegedRecently() {
         return lastActionLessThanAgo(30 * 6 + unit().id() % 3, Actions.SIEGE);

@@ -27,19 +27,19 @@ public class DetectUnitsNotRunning extends Manager {
             ProtossShouldStopRunning.decisionStopRunning(unit);
         }
 
-        if (unit.isCombatUnit() && unit.lastOrderWasFramesAgo() >= 2 && unit.hp() >= 23) {
-//            if (new AttackNearbyEnemies(unit).invoked(this)) {
-            if (new ForceAttackNearestEnemy(unit).forceHandle() != null) {
-//                System.err.println("ATTTT @ " + A.now() + " - " + unit.typeWithUnitId()
-//                    + " - \nAAAAAAAAAAAAAAAAAAA"
-//                    + " - \n" + unit.target()
-//                );
-                return usedManager(this);
-            }
-//            else {
-//                System.err.println("Ehmmm why? " + unit + " / " + unit.enemiesNearInRadius(4));
+//        if (unit.isCombatUnit() && unit.lastOrderWasFramesAgo() >= 2 && unit.hp() >= 23) {
+////            if (new AttackNearbyEnemies(unit).invoked(this)) {
+//            if (new ForceAttackNearestEnemy(unit).forceHandle() != null) {
+////                System.err.println("ATTTT @ " + A.now() + " - " + unit.typeWithUnitId()
+////                    + " - \nAAAAAAAAAAAAAAAAAAA"
+////                    + " - \n" + unit.target()
+////                );
+//                return usedManager(this);
 //            }
-        }
+////            else {
+////                System.err.println("Ehmmm why? " + unit + " / " + unit.enemiesNearInRadius(4));
+////            }
+//        }
 
         return null;
     }

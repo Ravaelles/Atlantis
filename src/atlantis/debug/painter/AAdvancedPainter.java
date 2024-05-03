@@ -310,6 +310,8 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintLastAction(AUnit unit) {
+        if (true) return;
+
         if (!unit.isRealUnit() || unit.isABuilding()) {
             return;
         }

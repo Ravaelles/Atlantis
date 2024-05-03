@@ -98,8 +98,8 @@ public class RunInAnyDirection {
 
         if (
             runTo != null
-                && unit.distTo(runTo) > 1
-                && unit.lastStartedRunningLessThanAgo(14)
+                && unit.distTo(runTo) > 1.5
+                && unit.lastStartedRunningLessThanAgo(6)
         ) {
             return runTo.position();
         }

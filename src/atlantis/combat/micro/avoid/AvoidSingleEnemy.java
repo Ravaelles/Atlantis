@@ -2,12 +2,8 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
-import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
-import bwapi.Color;
 
 public class AvoidSingleEnemy extends Manager {
     protected final RunError runError;
@@ -87,7 +83,7 @@ public class AvoidSingleEnemy extends Manager {
 
     @Override
     public String toString() {
-        String target = unit.runningFrom() == null ? "NULL_FROM" : unit.runningFrom().type().name();
+        String target = unit.runningFromUnit() == null ? "NULL_FROM" : unit.runningFromUnit().type().name();
         return super.toString() + "(" + target + ")";
     }
 }

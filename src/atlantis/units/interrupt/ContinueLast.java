@@ -14,7 +14,7 @@ public class ContinueLast extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        if (unit.isDragoon() && (!unit.isStopped() && unit.lastOrderWasFramesAgo() <= 3)) return true;
+//        if (unit.isDragoon() && (!unit.isStopped() && unit.lastOrderWasFramesAgo() <= 1)) return true;
 
         return false;
 

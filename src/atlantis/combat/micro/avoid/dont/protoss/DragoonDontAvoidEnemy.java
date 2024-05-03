@@ -42,7 +42,7 @@ public class DragoonDontAvoidEnemy {
     }
 
     private static boolean healthyAndSafe(AUnit unit) {
-        return unit.woundHp() <= 10;
+        return unit.woundHp() <= 6 && unit.lastAttackFrameMoreThanAgo(30 * 5);
 //            && unit.enemiesNear().ranged().canAttack(unit, 1.5).empty();
     }
 

@@ -24,6 +24,8 @@ public class FightInsteadAvoid extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false; // @Remove
+
         if (!unit.hasAnyWeapon()) return false;
         if (unit.combatEvalRelative() <= 0.6) return false;
 

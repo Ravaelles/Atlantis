@@ -71,9 +71,9 @@ public class AvoidEnemies extends Manager {
     public String toString() {
         String enemyString = "NULL";
 
-        if (unit.runningFrom() != null) {
-            AUnit enemy = unit.runningFrom();
-            enemyString = A.substring(enemy.type().name(), 0, 10);
+        if (unit.runningFromUnit() != null) {
+            AUnit enemy = unit.runningFromUnit();
+            enemyString = enemy == null ? "-" : A.substring(enemy.type().name(), 0, 10);
         }
 
         return "AvoidEnemies(" + enemyString + ')';

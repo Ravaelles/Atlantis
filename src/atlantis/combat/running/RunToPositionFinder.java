@@ -106,12 +106,14 @@ public class RunToPositionFinder {
         if (unit.isFlying()) return true;
 
         position = position.makeWalkable(1);
-
         if (position == null) return false;
 
+        if (running.runningFromPosition != null && running.runningFromPosition.distTo(position) <= 1.6) {
+//            System.err.println("er wut, why running towards enemy");
+            return false;
+        }
 
         int walkRadius = 32;
-
         boolean nearbyWalkable = unit.isFlying() || position.isCloseToMapBounds() || (
             position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
                 && position.translateByPixels(walkRadius, walkRadius).isWalkable()

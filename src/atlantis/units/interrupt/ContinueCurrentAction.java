@@ -13,8 +13,8 @@ public class ContinueCurrentAction extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ContinueShooting.class,
-            ContinueRunning.class,
+//            ContinueShooting.class,
+//            ContinueRunning.class,
 //            ContinueLastAttack.class,
 //            composer.json
 //            ContinueDragoonAttackOrder.class, // Dont!!

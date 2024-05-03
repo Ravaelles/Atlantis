@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class ProtossRangedAttackEnemiesInRange extends Manager {
     private AUnit enemy;
@@ -29,7 +30,7 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
     }
 
     private AUnit enemyInRangeToAttack() {
-        Selection enemies = unit.enemiesNear();
+        Selection enemies = unit.enemiesNear().canBeAttackedBy(unit, 2);
 
         AUnit nearest = enemies.inShootRangeOf(unit).mostWounded();
         if (nearest != null) return nearest;
@@ -39,6 +40,11 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit.isDead()) {
+            ErrorLog.printMaxOncePerMinute("Dead target inRange (" + enemy + ") for " + unit);
+            return null;
+        }
+
         if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemy)) {
 //            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - OK - RangedAttackEnemy");
 

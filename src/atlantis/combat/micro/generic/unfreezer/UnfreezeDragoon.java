@@ -13,13 +13,17 @@ public class UnfreezeDragoon extends Manager {
     @Override
     public boolean applies() {
         return unit.isDragoon()
+//            && (unit.isStopped() || unit.u().getOrder().equals(Order.Stop))
+            && unit.noCooldown()
+            && !unit.isHoldingPosition()
             && (unit.isStopped() || unit.u().getOrder().equals(Order.Stop))
-            && unit.lastActionMoreThanAgo(20, Actions.STOP);
+//            && unit.lastActionMoreThanAgo(20, Actions.STOP);
+            && unit.lastActionMoreThanAgo(20, Actions.HOLD_POSITION);
     }
 
     @Override
     public Manager handle() {
-        unit.stop("UnfreezeStop");
+        unit.holdPosition("UnfreezeHold");
         return usedManager(this);
     }
 }

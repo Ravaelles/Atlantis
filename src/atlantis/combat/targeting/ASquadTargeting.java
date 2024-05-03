@@ -1,6 +1,7 @@
 package atlantis.combat.targeting;
 
 import atlantis.units.AUnit;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class ASquadTargeting {
@@ -13,7 +14,7 @@ public class ASquadTargeting {
         if (
             isValidTarget(unit, enemy)
                 && unit.distTo(enemy) <= 9
-                && unit.hasWeaponRangeToAttack(enemy, unit.isRanged() ? 3 : 5)
+                && unit.hasWeaponRangeToAttack(enemy, allowThisManyTilesOutsideRange(unit))
 //                && unit.enemiesNear().canBeAttackedBy(unit, 0).empty()
         ) {
 //            if (DEBUG) A.println("SqL enemy = " + enemy.typeWithUnitId());
@@ -21,6 +22,12 @@ public class ASquadTargeting {
             return enemy;
         }
         return null;
+    }
+
+    private static int allowThisManyTilesOutsideRange(AUnit unit) {
+        if (unit.hp() <= 35 && Enemy.protoss()) return 0;
+
+        return unit.isRanged() ? 3 : 5;
     }
 
     private static boolean isValidTarget(AUnit unit, AUnit enemy) {

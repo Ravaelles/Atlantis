@@ -13,12 +13,15 @@ public class Unfreezer extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (!unit.isCombatUnit()) return false;
         if (unit.hasCooldown()) return false;
+        if (unit.lastPositionChangedLessThanAgo(50)) return false;
 
 //        if (unit.hasNotMovedInAWhile() && unit.lastActionMoreThanAgo(50)) return true;
 
-        return A.now() % 3 == 1;
+        return A.now() % 2 == 1;
 
 //        if (unit.isSpecialAction()) return false;
 //        if (unit.lastPositionChangedMoreThanAgo(50) && unit.isStopped() && unit.noCooldown()) return true;

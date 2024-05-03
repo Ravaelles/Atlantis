@@ -15,17 +15,21 @@ public class ContinueShooting extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        if (!unit.isAttacking()) return false;
         if (We.terran()) return false;
+        if (!unit.isAction(Actions.ATTACK_UNIT)) return false;
 
         if (unit.isStartingAttack()) return true;
         if (unit.isAttackFrame()) return true;
+
+        if (unit.lastAttackFrameLessThanAgo(5)) return false;
+        if (!unit.hasValidTarget()) return false;
 
         Decision decision;
 
         if (unit.isDragoon() && (decision = decisionForDragoon()).notIndifferent()) return decision.toBoolean();
 
-        if (unit.lastActionMoreThanAgo(10, Actions.ATTACK_UNIT)) return false;
+//        if (unit.lastActionMoreThanAgo(8, Actions.ATTACK_UNIT)) return false;
+//        if (unit.lastActionMoreThanAgo(10, Actions.ATTACK_UNIT)) return false;
         if (unit.isMelee() && unit.lastActionMoreThanAgo(50)) return false;
 
         if (unit.lastAttackFrameMoreThanAgo(30 * 6)) return true;
@@ -38,36 +42,37 @@ public class ContinueShooting extends Manager {
 
         if (UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)) return true;
 
-        if (true) return false;
+        return false;
 
-//        if (
-//            unit.isDragoon()
-//                && unit.isMissionDefendOrSparta()
-//                && unit.meleeEnemiesNearCount(1.2) >= 1
-//        ) return false;
-
-        if (unit.lastActionMoreThanAgo(15)) return false;
-
-//        if (unit.isMissionSparta() && unit.isDragoon() && unit.distToTarget() > 4) return false;
-
-//        if (unit.isStartingAttack()) return true;
-//        if (unit.isAttackFrame()) return true;
-
-        if (!unit.hasValidTarget()) return false;
-//        if (unit.lastActionMoreThanAgo()) return false;
-
-        if (UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)) return true;
-
-//        System.out.println("@ " + A.now() + " - NOPE - ContinueShooting " + unit.id());
-        return unit.isTargetInWeaponRangeAccordingToGame(unit.target());
-//        return unit.hasWeaponRangeByGame(unit.targetUnitToAttack());
+//        if (true) return false;
+//
+////        if (
+////            unit.isDragoon()
+////                && unit.isMissionDefendOrSparta()
+////                && unit.meleeEnemiesNearCount(1.2) >= 1
+////        ) return false;
+//
+//        if (unit.lastActionMoreThanAgo(15)) return false;
+//
+////        if (unit.isMissionSparta() && unit.isDragoon() && unit.distToTarget() > 4) return false;
+//
+////        if (unit.isStartingAttack()) return true;
+////        if (unit.isAttackFrame()) return true;
+//
+//        if (!unit.hasValidTarget()) return false;
+////        if (unit.lastActionMoreThanAgo()) return false;
+//
+//        if (UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)) return true;
+//
+////        System.out.println("@ " + A.now() + " - NOPE - ContinueShooting " + unit.id());
+//        return unit.isTargetInWeaponRangeAccordingToGame(unit.target());
+////        return unit.hasWeaponRangeByGame(unit.targetUnitToAttack());
     }
 
     private Decision decisionForDragoon() {
-        if (
-            unit.lastAttackFrameLessThanAgo(8)
-                && !unit.lastAttackFrameLessThanAgo(2)
-        ) return Decision.FORBIDDEN;
+        if (unit.isAttacking() && unit.lastActionLessThanAgo(10, Actions.ATTACK_UNIT)) return Decision.ALLOWED;
+
+        if (unit.lastAttackFrameLessThanAgo(1)) return Decision.FORBIDDEN;
 
         return (
             unit.lastActionLessThanAgo(50 + (unit.woundHp() <= 30 ? 50 : 0), Actions.ATTACK_UNIT)

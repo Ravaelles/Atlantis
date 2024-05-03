@@ -90,6 +90,7 @@ public interface AUnitOrders {
 
         if (!target.isAlive()) {
             System.err.println("Dead target (" + target + ") for " + this.unit().typeWithHash());
+//            A.printStackTrace("Dead...");
             return false;
         }
 
@@ -220,7 +221,6 @@ public interface AUnitOrders {
     }
 
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
-
         if (target == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit().typeWithHash());
             return false;
@@ -251,6 +251,17 @@ public interface AUnitOrders {
 //                return false;
 //            }
 //        }
+
+        // =========================================================
+
+//        String actionName = unit().action().name();
+        if (
+            unit().lastOrderWasFramesAgo() <= 1
+//                && (actionName.startsWith("MOVE") || actionName.startsWith("RUN"))
+        ) {
+//            System.err.println("Ignore excessive move order");
+            return true;
+        }
 
         // =========================================================
 
@@ -285,6 +296,7 @@ public interface AUnitOrders {
 //            if (unit().isFirstCombatUnit()) {
 
 //            }
+
             u().move(target.position().p());
 
             if (target instanceof AUnit) {

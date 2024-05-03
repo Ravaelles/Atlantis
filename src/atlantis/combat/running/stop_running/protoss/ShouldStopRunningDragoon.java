@@ -13,6 +13,8 @@ public class ShouldStopRunningDragoon extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (!unit.isDragoon()) return false;
 
         if (unitBecameIdleAfterRunning()) return true;

@@ -21,8 +21,7 @@ public class MapSpecificCommander extends Commander {
 
     @Override
     protected void handle() {
-        if (Env.isParamTweaker() || !Env.isLocal()) return;
-//        if (!A.isUms()) return;
+        if (!Env.isLocal() || Env.isParamTweaker()) return;
 
         // =========================================================
         // Marines & Medics v. Zealots
@@ -37,7 +36,17 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
-        if (
+        if (ActiveMap.isMap("1Drag_v_1Zeal")) {
+            if (A.now() <= 1) {
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
+            }
+            CameraCommander.centerCameraNowOnSquadCenter();
+        }
+
+        // =========================================================
+
+        else if (
             ActiveMap.isMap("Drag_v_")
                 || ActiveMap.isMap("Zeal_v_")
         ) {
@@ -45,9 +54,7 @@ public class MapSpecificCommander extends Commander {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
                 GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
             }
-            if (A.now() <= 1) {
-                CameraCommander.centerCameraNowOnSquadCenter();
-            }
+            if (A.now() <= 1) CameraCommander.centerCameraNowOnSquadCenter();
         }
 
         // =========================================================

@@ -16,6 +16,7 @@ public class DontAvoidEnemy extends Manager {
     @Override
     public boolean applies() {
 //        if (unit.lastOrderMinFramesAgo(1)) return true;
+//        System.out.println("-------------- " + unit.lastActionAgo(Actions.ATTACK_UNIT));
         if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
 
         if (We.protoss()) return (new ProtossDontAvoidEnemy(unit)).applies();

@@ -14,9 +14,11 @@ public class DanceTo extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
         int cooldown = unit.cooldownRemaining();
 
-        if (cooldown <= 0) return false;
+        if (cooldown <= 6) return false;
 
         target = unit.target();
         if (target == null || !target.hasPosition()) return false;
