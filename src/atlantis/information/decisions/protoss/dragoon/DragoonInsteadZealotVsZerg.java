@@ -25,13 +25,21 @@ public class DragoonInsteadZealotVsZerg {
         if (
             OurArmy.strength() <= 85
                 && A.seconds() <= 400
-                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zerglings().count() * 0.3)
+                && Count.zealots() <= minZealots()
                 && EnemyUnits.discovered().dragoons().atMost(1)
         ) {
             return true;
         }
 
         return false;
+    }
+
+    private static double minZealots() {
+        double fromLings = EnemyUnits.discovered().zerglings().count() * 0.19;
+
+        if (A.hasGas(100)) fromLings = A.inRange(0, fromLings, 2);
+
+        return Math.max(1, fromLings);
     }
 
     private static boolean transitionToDragoonsDueToMutas() {

@@ -25,7 +25,13 @@ public class ASquadTargeting {
     }
 
     private static int allowThisManyTilesOutsideRange(AUnit unit) {
-        if (unit.hp() <= 35 && Enemy.protoss()) return 0;
+        if (We.protoss()) {
+            if (unit.hp() <= 35) {
+                if (Enemy.protoss()) return 0;
+    
+                return 0;
+            }
+        }
 
         return unit.isRanged() ? 3 : 5;
     }

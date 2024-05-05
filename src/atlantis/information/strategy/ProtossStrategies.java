@@ -20,8 +20,8 @@ public class ProtossStrategies extends AStrategy {
         }
 
         else if (Enemy.zerg()) {
-            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP;
-//            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
+//            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP;
+            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
         }
 
 //        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;

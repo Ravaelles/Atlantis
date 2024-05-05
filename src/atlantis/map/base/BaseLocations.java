@@ -276,6 +276,43 @@ public class BaseLocations {
         );
     }
 
+    public static APosition enemyThird() {
+        return (APosition) cache.getIfValid(
+            "enemyThird",
+            60 * 90,
+            () -> {
+                AUnit enemyBase = EnemyUnits.enemyBase();
+                if (enemyBase == null) return null;
+
+                APosition enemyNatural = BaseLocations.enemyNatural();
+                if (enemyNatural == null) return null;
+
+                double bestDist = 9999;
+                ABaseLocation bestBase = null;
+
+                for (ABaseLocation baseLocation : BaseLocations.baseLocations()) {
+                    double distToMain = enemyBase.distTo(baseLocation);
+                    double distToNatural = enemyNatural.distTo(baseLocation);
+                    if (
+                        distToMain < bestDist
+                            && distToMain >= 12
+                            && distToNatural >= 12
+                    ) {
+                        bestDist = distToMain;
+                        bestBase = baseLocation;
+                    }
+                }
+
+//                ABaseLocation baseLocation = DefineNaturalBase.naturalIfMainIsAt(enemyBase.position());
+//                if (baseLocation != null) {
+//                    return baseLocation.position().translateByTiles(2, 0);
+//                }
+
+                return bestBase;
+            }
+        );
+    }
+
     public static boolean hasBaseAtNatural() {
         return (boolean) cache.get(
             "hasBaseAtNatural",

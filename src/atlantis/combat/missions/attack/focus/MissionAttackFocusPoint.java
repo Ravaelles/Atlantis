@@ -7,9 +7,9 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.strategy.GamePhase;
-import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.base.BaseLocations;
+import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -71,6 +71,23 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 "FirstEnemy(" + enemy.name() + ")"
             );
         }
+
+        // =========================================================
+
+
+        if (A.s >= 300) {
+            AFocusPoint enemyThird = enemyThird(main);
+
+            if (
+                enemyThird != null
+                    && (
+                    A.s % 30 <= 10
+                        || EnemyUnits.discovered().buildings().inRadius(10, enemyThird).notEmpty()
+                )
+            ) return enemyThird;
+        }
+
+        // =========================================================
 
         AFocusPoint enemyExpansion = enemyExpansion(main);
         if (enemyExpansion != null) return enemyExpansion;
@@ -198,6 +215,16 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         if (!A.isUms()) ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
         return null;
+    }
+
+    private AFocusPoint enemyThird(AUnit main) {
+        APosition enemyThird = BaseLocations.enemyThird();
+
+        return new AFocusPoint(
+            enemyThird,
+            Select.mainOrAnyBuilding(),
+            "EnemyThird"
+        );
     }
 
     private static AFocusPoint enemyExpansion(AUnit main) {
