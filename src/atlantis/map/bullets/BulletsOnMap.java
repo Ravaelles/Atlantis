@@ -23,7 +23,7 @@ public class BulletsOnMap {
     public static ArrayList<Bullet> ofType(BulletType type) {
         return cache.get(
             "ofType:" + type.name(),
-            2,
+            0,
             () -> {
                 ArrayList<Bullet> bullets = new ArrayList<>();
 

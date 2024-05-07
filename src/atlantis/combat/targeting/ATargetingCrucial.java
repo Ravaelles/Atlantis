@@ -62,7 +62,7 @@ public class ATargetingCrucial extends ATargeting {
             .ofType(AUnitType.Protoss_Observer)
             .effVisible()
             .inRadius(unit.isAir() ? 30 : 13, unit)
-            .mostWounded();
+            .nearestTo(unit);
         if (target != null && Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, target).atLeast(1)) {
             debug("CR2 = " + target);
             return target;
@@ -84,7 +84,7 @@ public class ATargetingCrucial extends ATargeting {
         target = enemyUnits
             .ofType(AUnitType.Zerg_Lurker, AUnitType.Terran_Ghost)
             .inShootRangeOf(unit)
-            .nearestTo(unit);
+            .mostWounded();
         if (target != null) {
             debug("CR3 = " + target);
             return target;
@@ -92,7 +92,7 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits
             .ofType(AUnitType.Zerg_Lurker)
-            .inRadius(10, unit)
+            .canBeAttackedBy(unit, 0.2)
             .nearestTo(unit);
         if (target != null) {
             debug("CR4 = " + target);
@@ -104,8 +104,8 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits
             .ofType(AUnitType.Protoss_High_Templar)
-            .canBeAttackedBy(unit, 1)
-            .nearestTo(unit);
+            .canBeAttackedBy(unit, 0.2)
+            .mostWounded();
 
         if (target != null) {
             debug("CR5 = " + target);

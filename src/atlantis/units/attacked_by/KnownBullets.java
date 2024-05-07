@@ -1,7 +1,6 @@
 package atlantis.units.attacked_by;
 
 import atlantis.game.AGame;
-import atlantis.map.base.ABaseLocation;
 import bwapi.Bullet;
 
 import java.util.*;
@@ -16,6 +15,7 @@ public class KnownBullets {
 
         rememberNew(visibleBullets);
         detectHits();
+//        System.err.println("visibleBullets = " + visibleBullets.size() + " / " + AGame.get().getBullets().size());
     }
 
     private static void detectHits() {
@@ -39,5 +39,9 @@ public class KnownBullets {
         for (Bullet bullet : visibleBullets) {
             knownBullets.put(bullet.getID(), bullet);
         }
+    }
+
+    public static List<Bullet> knownBullets() {
+        return visibleBullets;
     }
 }

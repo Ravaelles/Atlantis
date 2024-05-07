@@ -27,7 +27,7 @@ public class UnfreezerShakeUnit {
 //            return true;
 //        }
 
-        if (unit.lastActionMoreThanAgo(90, Actions.STOP)) {
+        if (unit.lastActionMoreThanAgo(11, Actions.STOP)) {
             unit.stop("UnfreezeByStop");
             return true;
         }
@@ -202,6 +202,6 @@ public class UnfreezerShakeUnit {
 
     private static boolean shouldNotDoAnythingButContinue(AUnit unit) {
         return unit.isAccelerating()
-            || unit.lastActionLessThanAgo(2, Actions.HOLD_POSITION, Actions.STOP, Actions.MOVE_UNFREEZE);
+            || unit.lastActionLessThanAgo(10, Actions.HOLD_POSITION, Actions.STOP, Actions.MOVE_UNFREEZE);
     }
 }

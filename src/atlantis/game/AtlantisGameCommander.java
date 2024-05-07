@@ -11,14 +11,10 @@ import atlantis.map.scout.ScoutCommander;
 import atlantis.production.BuildingsCommander;
 import atlantis.production.ProductionCommander;
 import atlantis.production.constructing.ConstructionsCommander;
-import atlantis.terran.chokeblockers.ChokeBlockersCommander;
-import atlantis.terran.repair.TerranRepairsCommander;
 import atlantis.units.special.SpecialCommander;
-import atlantis.units.special.SpecialUnitsCommander;
 import atlantis.units.special.SpecialActionsCommander;
-import atlantis.units.UnitStateCommander;
+import atlantis.units.StateCommander;
 import atlantis.units.workers.WorkerCommander;
-import atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander;
 
 /**
  * Top abstraction level entity that issues orders to all other modules (managers).
@@ -38,7 +34,7 @@ public class AtlantisGameCommander extends Commander {
             ConstructionsCommander.class,
 
             SpecialCommander.class,
-            UnitStateCommander.class,
+            StateCommander.class,
 
             StrategyCommander.class,
             EnemyUnitsCommander.class,

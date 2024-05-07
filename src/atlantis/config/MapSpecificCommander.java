@@ -36,7 +36,21 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
-        if (ActiveMap.isMap("1Drag_v_1Zeal")) {
+        if (ActiveMap.isMap("Bullet")) {
+            CameraCommander.centerCameraNowOnSquadCenter();
+            
+            if (A.now() <= 1) {
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+            }
+
+            if (Select.ourCombatUnits().first().lastUnderAttackLessThanAgo(2)) {
+                GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
+            }
+        }
+
+        // =========================================================
+
+        else if (ActiveMap.isMap("1Drag_v_1Zeal")) {
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
                 GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);

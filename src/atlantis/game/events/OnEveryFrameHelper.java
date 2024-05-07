@@ -7,6 +7,7 @@ import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
+import atlantis.map.bullets.SaveUnitsAndBulletsInfoToFile;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
@@ -50,6 +51,8 @@ import java.util.Set;
  */
 public class OnEveryFrameHelper {
     public static void handle() {
+        SaveUnitsAndBulletsInfoToFile.save();
+
 //        paintMissionAttackFocusPoint();
 //        pathToEnemyBase();
 
@@ -113,7 +116,7 @@ public class OnEveryFrameHelper {
     }
 
     private static void printBullets() {
-        KnownBullets.updateKnown();
+//        KnownBullets.updateKnown();
 
         List<Bullet> bullets = AGame.get().getBullets();
         if (bullets.isEmpty()) return;
