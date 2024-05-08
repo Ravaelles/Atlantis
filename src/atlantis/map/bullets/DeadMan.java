@@ -26,7 +26,12 @@ public class DeadMan {
         bulletsAgainst = KnownBullets.against(unit);
         if (bulletsAgainst.isEmpty()) return false;
 
-        return damageWithAllPendingBullets(unit) > unit.hp();
+        return damageWithAllPendingBullets(unit) >= (unit.hp() + healthBonus(unit));
+    }
+
+    private static int healthBonus(AUnit unit) {
+        if (unit.isTerran()) return 0;
+        return 1;
     }
 
     private static int damageWithAllPendingBullets(AUnit unit) {

@@ -24,20 +24,24 @@ public class DeadManTest extends AbstractTestFakingGame {
     private FakeUnit zergling;
 
     @Test
-    public void isDeadMan() {
+    public void isDeadMan_dragoon() {
         createWorld(5, () -> {
                 (new StateCommander()).invokeCommander();
 
                 createBullet(dragoon, zergling);
+                createBullet(dragoon, marine);
+                createBullet(dragoon, vulture);
 
 //                System.out.println("@" + A.now());
+//                System.out.println(KnownBullets.against(marine).size());
+//                System.out.println(DeadMan.isDeadMan(marine));
 //                System.out.println(KnownBullets.knownBullets().size());
 //                System.err.println("DeadMan.isDeadMan(zergling) = " + DeadMan.isDeadMan(zergling));
 //                System.out.println(KnownBullets.against(zergling).size());
-//                System.out.println(KnownBullets.against(dragoon).size());
 
-                boolean expect = A.now() <= 3 ? false : true;
-                assertEquals(expect, DeadMan.isDeadMan(zergling));
+                assertEquals(A.now() <= 3 ? false : true, DeadMan.isDeadMan(zergling));
+                assertEquals(A.now() <= 3 ? false : true, DeadMan.isDeadMan(marine));
+                assertEquals(A.now() <= 7 ? false : true, DeadMan.isDeadMan(vulture));
             },
             () -> fakeOurs(
                 dragoon = fake(Protoss_Dragoon, 10),
