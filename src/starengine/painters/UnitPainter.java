@@ -3,9 +3,8 @@ package starengine.painters;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import starengine.units.Unit;
 import starengine.units.Units;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

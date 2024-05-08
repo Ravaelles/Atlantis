@@ -13,7 +13,7 @@ import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;
-import tests.unit.FakeUnitData;
+import tests.fakes.FakeUnitData;
 
 /**
  * Class using default methods which are extracted from AUnit class to separate this functionality.

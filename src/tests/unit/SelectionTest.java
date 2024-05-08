@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
@@ -9,6 +8,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import org.junit.Test;
 import tests.acceptance.NonAbstractTestFakingGame;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertEquals;
 

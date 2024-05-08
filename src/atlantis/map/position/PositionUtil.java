@@ -10,7 +10,7 @@ import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwapi.Unit;
 import jbweb.JBWEB;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class PositionUtil {
 

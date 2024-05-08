@@ -1,12 +1,11 @@
 package tests.unit;
 
-import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
-import atlantis.combat.retreating.protoss.small_scale.ProtossSmallScaleEvaluate;
 import atlantis.combat.retreating.protoss.small_scale.ProtossSmallScaleRetreat;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertEquals;
 

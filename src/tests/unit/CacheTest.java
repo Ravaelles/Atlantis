@@ -1,18 +1,13 @@
 package tests.unit;
 
 import atlantis.units.AUnitType;
-import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
-import atlantis.util.Angle;
 import atlantis.util.Callback;
 import atlantis.util.cache.Cache;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import tests.acceptance.NonAbstractTestFakingGame;
+import tests.fakes.FakeUnit;
 
-import static atlantis.units.AUnitType.Protoss_Zealot;
 import static org.junit.Assert.assertEquals;
 
 public class CacheTest extends NonAbstractTestFakingGame {

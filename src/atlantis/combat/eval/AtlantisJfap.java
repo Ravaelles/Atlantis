@@ -3,7 +3,7 @@ package atlantis.combat.eval;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import jfap.JfapCombatEvaluator;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 /**
  * Fap fap fap.
@@ -21,7 +21,7 @@ public class AtlantisJfap {
 
     private double[] jfapEval() {
         if (noEnemiesNear()) {
-            return new double[] { 9874, -9874 };
+            return new double[]{9874, -9874};
         }
 
         return JfapCombatEvaluator.eval(unit);
@@ -106,7 +106,6 @@ public class AtlantisJfap {
 
     private double calculateToRelativeScoreIfNeeded(double ourScore, double enemyScore, boolean relativeToEnemy) {
         if (relativeToEnemy) {
-
 
 
             if (enemyScore < -9000) {

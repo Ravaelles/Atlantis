@@ -1,7 +1,8 @@
 package starengine.units;
 
 import atlantis.units.AUnit;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -3,7 +3,7 @@ package tests.acceptance;
 import atlantis.production.BuildingsCommander;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class BuildingsCommanderTest extends AbstractTestFakingGame {
     @Test

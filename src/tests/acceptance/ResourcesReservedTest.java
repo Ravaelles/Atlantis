@@ -2,7 +2,6 @@ package tests.acceptance;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.events.OnUnitCreated;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
@@ -10,8 +9,8 @@ import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.util.Options;
 import org.junit.Test;
-import tests.unit.FakeUnit;
-import tests.unit.FakeUnitHelper;
+import tests.fakes.FakeUnit;
+import tests.fakes.FakeUnitHelper;
 
 import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.assertEquals;

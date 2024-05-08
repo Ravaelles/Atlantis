@@ -1,9 +1,8 @@
 package tests.acceptance;
 
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertTrue;
 

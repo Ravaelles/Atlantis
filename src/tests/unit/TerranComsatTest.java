@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.units.AUnitType;
 import org.junit.Test;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertEquals;
 

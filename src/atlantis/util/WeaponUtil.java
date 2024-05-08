@@ -12,15 +12,19 @@ public class WeaponUtil {
 
     public static int damageNormalized(WeaponType weapon) {
         return cacheInt.get(
-                "damageNormalized:" + weapon.name(),
-                1,
-                () -> {
-                    if (weapon.equals(WeaponType.Psi_Blades)) {
-                        return 16;
-                    } else {
-                        return weapon.damageAmount() * weapon.damageFactor();
-                    }
+            "damageNormalized:" + weapon.name(),
+            1,
+            () -> {
+                if (weapon.equals(WeaponType.Psi_Blades)) {
+                    return 16;
                 }
+                else {
+//                    System.err.println("weapon = " + weapon);
+//                    System.err.println("weapon.damageAmount() = " + weapon.damageAmount());
+//                    System.err.println("weapon.damageFactor() = " + weapon.damageFactor());
+                    return weapon.damageAmount() * weapon.damageFactor();
+                }
+            }
         );
     }
 

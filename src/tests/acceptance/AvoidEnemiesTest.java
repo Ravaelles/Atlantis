@@ -9,7 +9,7 @@ import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.util.Angle;
 import org.junit.Test;
 import org.mockito.MockedStatic;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
     public MockedStatic<AGame> aGame;

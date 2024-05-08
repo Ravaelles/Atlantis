@@ -1,4 +1,4 @@
-package tests.unit;
+package tests.fakes;
 
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
@@ -15,7 +15,6 @@ import bwapi.UpgradeType;
 import starengine.Images;
 import starengine.sc_logic.AttackState;
 import starengine.units.state.EngineUnitState;
-import tests.fakes.FakePlayer;
 
 import java.awt.image.BufferedImage;
 

@@ -9,8 +9,8 @@ import atlantis.util.Options;
 import bwapi.TechType;
 import org.junit.Test;
 import tests.unit.DynamicMockOurUnits;
-import tests.unit.FakeUnit;
-import tests.unit.FakeUnitHelper;
+import tests.fakes.FakeUnit;
+import tests.fakes.FakeUnitHelper;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package tests.unit;
+package tests.fakes;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

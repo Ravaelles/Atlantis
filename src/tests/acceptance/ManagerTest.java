@@ -8,7 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.special.SpecialUnitsManager;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

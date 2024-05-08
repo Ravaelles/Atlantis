@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.combat.eval.AtlantisJfap;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 /**
  * Uses JFAP (with modifications to make it comptabile with JBWAPI).

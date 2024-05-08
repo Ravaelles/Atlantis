@@ -4,6 +4,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Game;
 import org.mockito.Mockito;
+import tests.fakes.FakeUnit;
 
 import java.util.Arrays;
 import java.util.List;

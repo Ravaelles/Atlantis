@@ -4,7 +4,7 @@ import atlantis.debug.profiler.CodeProfiler;
 import atlantis.game.AtlantisGameCommander;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertTrue;
 

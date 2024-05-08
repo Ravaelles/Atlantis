@@ -8,7 +8,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.AUnitType;
 import starengine.StarEngine;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class NonAbstractTestFakingGame extends AbstractTestFakingGame {
     protected Queue queue = null;

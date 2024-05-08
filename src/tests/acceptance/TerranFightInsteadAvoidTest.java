@@ -4,7 +4,7 @@ import atlantis.combat.micro.avoid.terran.fight.ShouldFightInsteadAvoidAsTerran;
 import atlantis.combat.micro.avoid.terran.fight.TerranFightInsteadAvoidAsWraith;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

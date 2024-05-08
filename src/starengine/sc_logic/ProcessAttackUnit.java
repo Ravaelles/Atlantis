@@ -4,7 +4,7 @@ import atlantis.game.A;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
 import atlantis.util.log.ErrorLog;
 import starengine.units.state.EngineUnitState;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class ProcessAttackUnit {
     public static boolean update(FakeUnit unit) {

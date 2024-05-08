@@ -51,7 +51,7 @@ import java.util.Set;
  */
 public class OnEveryFrameHelper {
     public static void handle() {
-        SaveUnitsAndBulletsInfoToFile.save();
+//        SaveUnitsAndBulletsInfoToFile.save();
 
 //        paintMissionAttackFocusPoint();
 //        pathToEnemyBase();

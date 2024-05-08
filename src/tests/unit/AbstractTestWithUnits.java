@@ -34,6 +34,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
 import tests.acceptance.AbstractTestFakingGame;
+import tests.fakes.FakeBullets;
+import tests.fakes.FakeUnit;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -72,15 +74,16 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
         APainter.disablePainting();
 
-        Select.clearCache();
+        AbstractFoggedUnit.clearCache();
+        AvoidEnemies.clearCache();
         BaseSelect.clearCache();
         Count.clearCache();
-//        HeuristicCombatEvaluator.clearCache();
-        AbstractFoggedUnit.clearCache();
         EnemyInfo.clearCache();
         EnemyUnits.clearCache();
-        AvoidEnemies.clearCache();
+        FakeBullets.allBullets.clear();
         ReservedResources.reset();
+        Select.clearCache();
+//        HeuristicCombatEvaluator.clearCache();
     }
 
     protected void beforeTestLogic() {

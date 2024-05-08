@@ -1,7 +1,7 @@
 package tests.acceptance;
 
 import atlantis.game.A;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class FakeOnFrameEnd {
     public static double UNIT_SPEED_MODIFIER_PER_FRAME = 1;
@@ -25,8 +25,8 @@ public class FakeOnFrameEnd {
         if (unit.targetPosition != null && (unit.isMoving() || unit.isAttacking())) {
 //            System.err.println("PRE " + unit.position);
             unit.position = unit.position.translateByPixels(
-                    A.inRange(-speedInPixels, unit.targetPosition.x - unit.position.x, speedInPixels),
-                    A.inRange(-speedInPixels, unit.targetPosition.y - unit.position.y, speedInPixels)
+                A.inRange(-speedInPixels, unit.targetPosition.x - unit.position.x, speedInPixels),
+                A.inRange(-speedInPixels, unit.targetPosition.y - unit.position.y, speedInPixels)
             );
 //            System.err.println("Post " + unit.position);
         }

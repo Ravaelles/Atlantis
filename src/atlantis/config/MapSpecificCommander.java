@@ -37,11 +37,15 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
 
         if (ActiveMap.isMap("Bullet")) {
-            CameraCommander.centerCameraNowOnSquadCenter();
-            
+//            CameraCommander.centerCameraNowOnSquadCenter();
+
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
             }
+
+//            if (Select.ourCombatUnits().first().lastUnderAttackLessThanAgo(2)) {
+//                GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
+//            }
 
             if (Select.ourCombatUnits().first().lastUnderAttackLessThanAgo(2)) {
                 GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);

@@ -57,7 +57,7 @@ public class SaveUnitsAndBulletsInfoToFile {
 
     private static String bulletsString() {
 //        List<Bullet> bullets = AGame.get().getBullets();
-        List<Bullet> bullets = KnownBullets.knownBullets();
+        List<ABullet> bullets = KnownBullets.knownBullets();
 
         if (bullets.isEmpty()) return "";
 
@@ -68,11 +68,11 @@ public class SaveUnitsAndBulletsInfoToFile {
 //            + "Visible;"
             + "\n";
 
-        for (Bullet bullet : bullets) {
-            AUnit shooter = AUnit.getById(bullet.getSource());
-            AUnit target = bullet.getTarget() == null ? null : AUnit.getById(bullet.getTarget());
+        for (ABullet bullet : bullets) {
+            AUnit shooter = bullet.attacker();
+            AUnit target = bullet.target();
 
-            content += "_" + bullet.getID() + ";"
+            content += "_" + bullet.id() + ";"
                 + shooter + ";"
                 + target + ";"
 //                + bullet.exists() + ";"

@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.*;
 

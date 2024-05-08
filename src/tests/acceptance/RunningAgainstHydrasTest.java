@@ -4,7 +4,7 @@ import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
 
@@ -41,7 +41,7 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Marine, 10)
+            fake(AUnitType.Terran_Marine, 10)
 //                fake(AUnitType.Terran_Marine, 11),
 //                fake(AUnitType.Terran_Marine, 11),
 //                fake(AUnitType.Terran_Marine, 11),
@@ -55,8 +55,8 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 16;
         return fakeEnemies(
-                fake(AUnitType.Zerg_Hydralisk, enemyTy),
-                fake(AUnitType.Zerg_Hydralisk, enemyTy + 1)
+            fake(AUnitType.Zerg_Hydralisk, enemyTy),
+            fake(AUnitType.Zerg_Hydralisk, enemyTy + 1)
         );
     }
 

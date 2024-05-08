@@ -3,7 +3,7 @@ package tests.acceptance;
 import atlantis.combat.micro.terran.infantry.TerranGhost;
 import atlantis.game.A;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.assertEquals;

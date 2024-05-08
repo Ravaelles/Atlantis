@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.attacked_by.UnderAttack;
 import atlantis.util.Angle;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 import static org.junit.Assert.*;

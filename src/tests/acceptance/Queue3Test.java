@@ -1,17 +1,15 @@
 package tests.acceptance;
 
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.util.Options;
 import bwapi.TechType;
 import org.junit.Test;
 import tests.unit.DynamicMockOurUnits;
-import tests.unit.FakeUnit;
-import tests.unit.FakeUnitHelper;
+import tests.fakes.FakeUnit;
+import tests.fakes.FakeUnitHelper;
 
 import java.util.ArrayList;
 

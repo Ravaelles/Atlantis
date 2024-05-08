@@ -2,13 +2,6 @@ package starengine.units;
 
 import starengine.Map;
 import starengine.StarEngine;
-import tests.unit.FakeUnit;
-
-import java.awt.*;
-import java.util.List;
-
-import static starengine.Map.SPACE_HEIGHT;
-import static starengine.Map.SPACE_WIDTH;
 
 public abstract class Units {
     public static final int UNIT_WIDTH = 36;

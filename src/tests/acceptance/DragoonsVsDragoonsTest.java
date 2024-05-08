@@ -1,6 +1,5 @@
 package tests.acceptance;
 
-import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
@@ -8,7 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertTrue;
 

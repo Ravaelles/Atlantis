@@ -4,7 +4,7 @@ import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.assertEquals;

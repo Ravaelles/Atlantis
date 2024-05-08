@@ -3,9 +3,9 @@ package tests.unit;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
-import atlantis.map.position.Positions;
 import atlantis.units.AUnitType;
 import org.junit.Test;
+import tests.fakes.FakeUnit;
 
 import static junit.framework.TestCase.assertEquals;
 

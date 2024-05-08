@@ -1,13 +1,12 @@
 package tests.acceptance;
 
-import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
 import atlantis.combat.running.RunToPositionFinder;
 import atlantis.combat.running.any_direction.RunInAnyDirection;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import org.mockito.MockedStatic;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class RunInAnyDirectionTest extends NonAbstractTestFakingGame {
     public MockedStatic<AGame> aGame;

@@ -1,10 +1,8 @@
 package starengine.units;
 
-import starengine.Images;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class Unit {
     private int x, y, dx, dy;
@@ -24,9 +22,11 @@ public class Unit {
     private Color defineColor() {
         if (isOur()) {
             return Color.BLUE;
-        } else if (isEnemy()) {
+        }
+        else if (isEnemy()) {
             return Color.RED;
-        } else {
+        }
+        else {
             return Color.GRAY;
         }
 //        return new Color(new Random().nextFloat(), new Random().nextFloat(), new Random().nextFloat());

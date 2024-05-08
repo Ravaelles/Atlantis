@@ -7,8 +7,8 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.Options;
 import org.junit.Test;
-import tests.unit.FakeUnit;
-import tests.unit.FakeUnitData;
+import tests.fakes.FakeUnit;
+import tests.fakes.FakeUnitData;
 
 import java.util.ArrayList;
 

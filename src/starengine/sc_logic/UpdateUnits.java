@@ -3,7 +3,7 @@ package starengine.sc_logic;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class UpdateUnits {
     public static void update() {

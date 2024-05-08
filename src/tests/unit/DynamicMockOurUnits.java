@@ -4,6 +4,7 @@ import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import tests.acceptance.AbstractTestFakingGame;
+import tests.fakes.FakeUnit;
 
 import java.util.Collection;
 

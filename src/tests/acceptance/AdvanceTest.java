@@ -6,11 +6,9 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import net.bytebuddy.description.annotation.AnnotationValue;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
-import static atlantis.units.AUnitType.Terran_Marine;
 import static org.junit.Assert.assertTrue;
 
 public class AdvanceTest extends NonAbstractTestFakingGame {

@@ -52,7 +52,7 @@ import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
 import atlantis.util.log.LogUnitsToFiles;
 import bwapi.*;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package starengine.sc_logic;
 
 import atlantis.game.A;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class CreateEnemyHit {
     public static void createHit(FakeUnit attacker, FakeUnit target) {

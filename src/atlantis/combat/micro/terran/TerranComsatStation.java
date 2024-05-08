@@ -9,7 +9,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.TechType;
-import tests.unit.FakeUnit;
 
 public class TerranComsatStation extends Manager {
     public TerranComsatStation(AUnit unit) {

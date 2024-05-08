@@ -1,15 +1,10 @@
 package tests.acceptance;
 
-import atlantis.combat.eval.AtlantisJfap;
-import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import org.mockito.MockedStatic;
-import tests.unit.AbstractTestWithUnits;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Terran_Marine;
-import static atlantis.units.AUnitType.Terran_Siege_Tank_Tank_Mode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

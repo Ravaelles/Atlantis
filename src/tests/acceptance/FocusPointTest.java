@@ -6,7 +6,7 @@ import atlantis.game.AtlantisGameCommander;
 import atlantis.game.events.OnUnitMorph;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class FocusPointTest extends AbstractTestFakingGame {
     private AtlantisGameCommander gameCommander;

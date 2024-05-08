@@ -1,12 +1,12 @@
 package tests.unit;
 
-import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import org.junit.Test;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertEquals;
 

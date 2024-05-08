@@ -3,7 +3,7 @@ package tests.acceptance;
 import atlantis.units.AUnitType;
 import atlantis.util.log.Log;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.*;
 

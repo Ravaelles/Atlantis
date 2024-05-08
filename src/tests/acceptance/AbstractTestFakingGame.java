@@ -15,7 +15,7 @@ import starengine.StarEngine;
 import starengine.StarEngineLauncher;
 import starengine.events.OnStarEngineFrameEnd;
 import tests.unit.AbstractTestWithUnits;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -2,9 +2,8 @@ package starengine.sc_logic;
 
 import atlantis.map.position.APosition;
 import atlantis.util.Vector;
-import atlantis.util.log.ErrorLog;
 import starengine.units.state.EngineUnitState;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class ProcessMoveUnit {
     private static final double UNIT_SPEED_MODIFIER_PER_FRAME = 1;

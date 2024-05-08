@@ -4,8 +4,8 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.util.Options;
 import org.junit.Test;
-import tests.unit.FakeUnit;
-import tests.unit.FakeUnitHelper;
+import tests.fakes.FakeUnit;
+import tests.fakes.FakeUnitHelper;
 
 import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.*;
