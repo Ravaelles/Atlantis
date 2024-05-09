@@ -19,7 +19,7 @@ public class ProtossTooLonely extends Manager {
         return We.protoss()
             && unit.isCombatUnit()
             && (A.supplyUsed() <= 100 || EnemyInfo.hasDiscoveredAnyBuilding())
-            && EnemyWhoBreachedBase.noone()
+            && (A.isUms() || EnemyWhoBreachedBase.noone())
             && (!unit.isMissionDefendOrSparta() || unit.distToBase() <= 30)
             && (unit.noCooldown() || unit.looksIdle() || unit.distToBase() >= 30)
 //            && !unit.hasCooldown()

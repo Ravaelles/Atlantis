@@ -15,11 +15,16 @@ public class AsProtossUnitDiscoveredResponse {
     private static boolean handleBuildingLeadingToHiddenUnits(AUnit enemyUnit) {
         if (!enemyUnit.isABuilding()) return false;
 
-        return enemyUnit.is(AUnitType.Protoss_Citadel_of_Adun, AUnitType.Protoss_Templar_Archives);
+        return enemyUnit.is(
+            AUnitType.Protoss_Citadel_of_Adun, AUnitType.Protoss_Templar_Archives,
+            AUnitType.Zerg_Hydralisk_Den
+        );
     }
 
     private static boolean handleHiddenUnitDetected(AUnit enemyUnit) {
-        if (!enemyUnit.isLurker() && !enemyUnit.isLurkerEgg() && !enemyUnit.isDT()) return false;
+        if (
+            !enemyUnit.isLurker() && !enemyUnit.isLurkerEgg() && !enemyUnit.isDT()
+        ) return false;
 
         EnemyFlags.HAS_HIDDEN_COMBAT_UNIT = true;
 

@@ -22,7 +22,7 @@ public class ShouldRunTowardsBase {
 
         if (unit.meleeEnemiesNearCount(1.4) > 0) return false;
         if (unit.meleeEnemiesNearCount(1.5) >= 2) return false;
-        
+
         if (unit.isDragoon() && (Alpha.count() <= 25 || unit.shields() <= 40)) return false;
 
         if (unit.isSquadScout()) return true;
@@ -47,7 +47,7 @@ public class ShouldRunTowardsBase {
         double distToMain = unit.distTo(main);
 
         int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(4);
-        if (distToMain >= 40 || (distToMain > 15 && meleeEnemiesNearCount == 0 && unit.isMissionDefend()))
+        if (distToMain >= 40 || (distToMain > 4 && meleeEnemiesNearCount == 0 && unit.isMissionDefend()))
             return true;
 
         if (A.seconds() >= 380) return false;

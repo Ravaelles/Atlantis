@@ -1,7 +1,6 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 
 public class ChokeBlockerManager extends Manager {
@@ -20,6 +19,7 @@ public class ChokeBlockerManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ChokeBlockerRunAsProtoss.class,
             ChokeBlockerRepairOther.class,
             ChokeBlockerMoveAway.class,
             ChokeBlockerFight.class,

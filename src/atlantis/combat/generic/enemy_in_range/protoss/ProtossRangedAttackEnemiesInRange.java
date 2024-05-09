@@ -22,6 +22,7 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
             && unit.hpMoreThan(60)
             && unit.cooldown() <= 5
             && unit.enemiesNear().notEmpty()
+            && !unit.squadIsRetreating()
             && unit.enemiesNear().ranged().canAttack(unit, 5).empty()
 //            && unit.combatEvalRelative() >= 1
             && (unit.shieldDamageAtMost(30) || unit.lastUnderAttackMoreThanAgo(30 * 5))

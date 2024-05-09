@@ -17,6 +17,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -82,6 +83,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 enemyThird != null
                     && (
                     A.s % 30 <= 10
+                        || shouldGoToThirdBaseAgainstZerg(enemyThird)
                         || EnemyUnits.discovered().buildings().inRadius(10, enemyThird).notEmpty()
                 )
             ) return enemyThird;
@@ -215,6 +217,14 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         if (!A.isUms()) ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
         return null;
+    }
+
+    private static boolean shouldGoToThirdBaseAgainstZerg(AFocusPoint enemyThird) {
+        return Enemy.zerg()
+            && (
+            !enemyThird.isPositionVisible()
+                || EnemyUnits.discovered().buildings().countInRadius(10, enemyThird) > 0
+        );
     }
 
     private AFocusPoint enemyThird(AUnit main) {

@@ -15,7 +15,7 @@ public class RequestProtossDetection {
 
 //        return requestAtLeastOneObserver();
 
-        return requestAtLeastOneCannon() || requestAtLeastOneObserver();
+        return requestAtLeastOneCannon() && requestAtLeastOneObserver();
     }
 
     private static boolean requestAtLeastOneObserver() {

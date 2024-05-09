@@ -32,7 +32,7 @@ public class NeedChokeBlockers {
 
     private static boolean forProtoss() {
         if (A.s >= 400) return false;
-        if (Alpha.count() >= 10) return false;
+        if (Alpha.count() >= 5) return false;
         if (We.protoss() && !Missions.isGlobalMissionSparta()) return false;
 
 //        if (A.supplyUsed() >= 45) return false;

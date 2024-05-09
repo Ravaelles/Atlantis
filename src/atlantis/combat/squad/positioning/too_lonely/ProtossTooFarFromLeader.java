@@ -3,6 +3,7 @@ package atlantis.combat.squad.positioning.too_lonely;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
@@ -23,6 +24,7 @@ public class ProtossTooFarFromLeader extends Manager {
 //        if (true) return false;
 
 //        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
+        if (EnemyWhoBreachedBase.notNull()) return false;
         if (unit.squad().isLeader(unit)) return false;
 
         if (A.supplyUsed() >= 170 && (
