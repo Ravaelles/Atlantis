@@ -20,6 +20,9 @@ public class AvoidLurkers extends Manager {
         AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(radius(), unit).nearestTo(unit);
         if (lurker == null) return null;
 
+        // Defend buildings from lurkers
+        if (lurker.enemiesNear().combatBuildingsAntiLand().inRadius(6.1, lurker).notEmpty()) return null;
+
         unit.runningManager().runFromAndNotifyOthersToMove(lurker, "LURKER!");
         return usedManager(this);
     }
