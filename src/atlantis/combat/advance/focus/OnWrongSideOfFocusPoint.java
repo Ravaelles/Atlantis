@@ -10,8 +10,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import bwapi.Color;
 
-import static bwapi.Text.Red;
-
 public class OnWrongSideOfFocusPoint extends MissionManager {
     public OnWrongSideOfFocusPoint(AUnit unit) {
         super(unit);
@@ -45,7 +43,10 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
 
         boolean onValidSideOfChoke = IsOnValidSideOfChoke.check(unit, focusPoint);
 
-        if (!onValidSideOfChoke && distToFocusPoint <= 6) {
+        if (
+            distToFocusPoint <= 6
+                && ((distToFocusPoint <= 2 && unit.isDragoon()) || !onValidSideOfChoke)
+        ) {
             unit.paintCircleFilled(6, Color.Red);
             makeFriendsHelpWithdraw(unit, focusPoint);
 

@@ -19,7 +19,8 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
     public boolean applies() {
         return We.protoss()
             && unit.isRanged()
-            && unit.hpMoreThan(60)
+            && unit.shieldDamageAtMost(30)
+            && unit.distToLeader() <= (15 + unit.woundPercent() / 10.0)
             && unit.cooldown() <= 5
             && unit.enemiesNear().notEmpty()
             && !unit.squadIsRetreating()

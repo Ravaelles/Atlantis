@@ -6,9 +6,7 @@ import atlantis.combat.missions.defend.focus.terran.TerranMissionDefendFocus;
 import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyCloserToBaseThanAlpha;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.*;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -46,11 +44,17 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === Path to enemy =============================================
 
                 if ((focus = PathToEnemyFocus.getIfApplies()) != null) return focus;
+//                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
+
+                // =========================================================
+
+                if (EnemyInfo.hasHiddenUnits() && !OurInfo.hasMobileDetection()) {
+                    if ((focus = aroundCombatBuilding()) != null) return focus;
+                }
 
                 // === At 3rd base =============================================
 
                 if ((focus = atThirdBase()) != null) return focus;
-//                if ((focus = somewhereAtNaturalBaseOrNaturalChoke()) != null) return focus;
 
                 // =========================================================
 

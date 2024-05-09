@@ -26,8 +26,8 @@ public class ProtossGroundWeapons extends Commander {
         if (CountInQueue.count(tech(), 10) > 0) return false;
         if (TooWeakToTech.check()) return false;
 
-        if (A.hasGas(200 + (Enemy.zerg() ? 80 : 0)) && A.hasMinerals(550)) {
-            if (Count.ourCombatUnits() <= 15) return false;
+        if (A.hasGas(150 + (Enemy.zerg() ? 80 : 0)) && A.hasMinerals(290)) {
+            if (Count.ourCombatUnits() <= 17) return false;
 
             return true;
         }
