@@ -31,7 +31,7 @@ public class DeadMan {
 
     private static int healthBonus(AUnit unit) {
         if (unit.isTerran()) return 0;
-        return 1;
+        return 2;
     }
 
     private static int damageWithAllPendingBullets(AUnit unit) {

@@ -71,7 +71,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-//        if (true) return "sscai/(3)TauCross.scx";
+        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====

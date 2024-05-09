@@ -219,6 +219,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
     private AFocusPoint enemyThird(AUnit main) {
         APosition enemyThird = BaseLocations.enemyThird();
+        if (enemyThird == null) return null;
 
         return new AFocusPoint(
             enemyThird,
