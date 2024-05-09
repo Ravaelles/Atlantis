@@ -16,7 +16,9 @@ public class ShouldContinueRunning {
 //            unit.paintCircle(12, Color.Grey);
 //        }
 
-//        if (unit.isDragoon()) return false;
+        if (unit.isRunning() && unit.isMoving() && unit.distToTargetMoreThan(1)) {
+            if (unit.isDragoon() && unit.lastStartedRunningLessThanAgo(13)) return true;
+        }
 
         if (true) return false;
 

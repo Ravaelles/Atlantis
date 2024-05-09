@@ -3254,9 +3254,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isSafeFromMelee() {
-        double base = hp() >= 60 ? 1.5 : 1.7;
+        double base = baseIsSafeFromMelee();
 
         return meleeEnemiesNearCount(base + (woundPercent() / 42.0)) == 0;
+    }
+
+    private double baseIsSafeFromMelee() {
+        if (isDragoon()) return 2.3;
+
+        return hp() >= 60 ? 1.6 : 1.8;
     }
 
     public boolean moreMeleeEnemiesThanOurUnits() {

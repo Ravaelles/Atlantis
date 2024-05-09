@@ -36,7 +36,8 @@ public class ProtossForbiddenByStreetGrid {
 //            System.err.println(moduloX + " / " + moduloY);
 
             // G:1 G:5  P:9  G:11 G:14
-            boolean moduloXIsInvalid = moduloX != 1 && moduloX != 5
+            boolean moduloXIsInvalid = moduloX != 0
+                && moduloX != 4
                 && moduloX != 7
                 && moduloX != 11;
 

@@ -2,12 +2,10 @@ package atlantis.information.decisions.protoss.dragoon;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 
 public class DragoonInsteadZealot {
@@ -22,7 +20,7 @@ public class DragoonInsteadZealot {
 
         if (Enemy.protoss() && Count.ourCombatUnits() >= 9 && OurArmy.strength() >= 70) return true;
         if (A.minerals() >= 170 && Count.gateways() >= 3) return true;
-        if (Enemy.zerg() && againstZerg()) return true;
+        if (Enemy.zerg() && dragoonAgainstZerg()) return true;
         if (A.hasGas(50) && !A.hasMinerals(225) && Count.dragoons() <= 2 && Count.zealots() >= 1) return true;
 
         return false;
@@ -39,7 +37,9 @@ public class DragoonInsteadZealot {
             Enemy.protoss()
                 && OurArmy.strength() <= 85
                 && A.seconds() <= 400
-                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
+//                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
+//                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
+                && Count.zealots() <= 2
                 && EnemyUnits.discovered().dragoons().atMost(1)
         ) {
             return true;
@@ -48,7 +48,7 @@ public class DragoonInsteadZealot {
         return false;
     }
 
-    private static boolean againstZerg() {
+    private static boolean dragoonAgainstZerg() {
         int mutas = EnemyUnits.count(AUnitType.Zerg_Mutalisk);
         if (mutas >= 3) {
             if (GamePhase.isEarlyGame()) return true;
