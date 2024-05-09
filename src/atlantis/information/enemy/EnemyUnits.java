@@ -24,6 +24,7 @@ public class EnemyUnits {
     public static Selection discovered() {
 //        return Select.from(Select.enemy(), "")
         return Select.enemy()
+            .notDeadMan()
 //            .print("visibleAndFogged")
             .add(rawUnitsDiscovered())
 //            .print("now with enemy")

@@ -39,7 +39,7 @@ public class EnemyUnitsToAvoid extends HasUnit {
 //                    enemy.paintLine(unit, Color.Yellow);
                     enemies.addUnitWithValue(enemy, safetyMargin);
                 }
-//                enemies.print("Enemies to avoid");
+//                enemies.print("AliveEnemies to avoid");
 
 
                 if (enemies.isEmpty()) {

@@ -7,6 +7,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnit;
+import atlantis.units.AliveEnemies;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -245,7 +246,9 @@ public class ATargeting extends HasUnit {
     }
 
     public static Selection possibleEnemyUnitsToAttack(AUnit unit, double maxDistFromEnemy) {
-        return Select.enemyRealUnitsWithBuildings()
+//        return Select.enemyRealUnitsWithBuildings()
+        return AliveEnemies.get()
+            .realUnitsAndBuildings()
             .nonBuildingsButAllowCombatBuildings()
             .inRadius(maxDistFromEnemy, unit)
             .maxGroundDist(maxDistFromEnemy, unit)

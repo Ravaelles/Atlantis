@@ -299,8 +299,8 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //            System.err.println("wraith = " + wraith);
 //            System.err.println("cannon = " + cannon);
 //
-//            wraith.enemiesNear().print("Enemies of " + wraith);
-//            cannon.enemiesNear().print("Enemies of " + cannon);
+//            wraith.enemiesNear().print("AliveEnemies of " + wraith);
+//            cannon.enemiesNear().print("AliveEnemies of " + cannon);
 
             assertEquals(2, wraith.enemiesNear().size());
             assertEquals(1, cannon.enemiesNear().size());
@@ -343,7 +343,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
 //
 //            Select.our().print("Our");
 //            System.err.println("wraith = " + wraith);
-//            wraith.enemiesNear().print("Enemies near");
+//            wraith.enemiesNear().print("AliveEnemies near");
 
             assertEquals(2, wraith.enemiesNear().size());
             assertEquals(1, dragoon1.enemiesNear().size());
@@ -381,7 +381,7 @@ public class CombatEvaluatorTest extends AbstractTestFakingGame {
                 FakeUnit enemy = cannon1;
 
 //                Select.our().print("Our");
-//                wraith.enemiesNear().print("Enemies near " + wraith);
+//                wraith.enemiesNear().print("AliveEnemies near " + wraith);
 //                System.err.println("cannon1 = " + cannon1);
 //                cannon1.enemiesNear().print("Cannon enemies nearby");
 

@@ -38,7 +38,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         AUnit main = Select.main();
         AUnit our = Select.our().first();
 
-        // === Enemies that breached into base =====================
+        // === AliveEnemies that breached into base =====================
 
         AUnit enemyInBase = EnemyWhoBreachedBase.get();
         if (

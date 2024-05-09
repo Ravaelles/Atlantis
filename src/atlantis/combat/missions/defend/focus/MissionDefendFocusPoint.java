@@ -38,7 +38,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 if (Select.main() == null) return fallbackToNearestEnemy();
 
-                // === Enemies that breached into base ===========================
+                // === AliveEnemies that breached into base ===========================
 
                 if ((focus = enemyWhoBreachedBase()) != null) return focus;
                 if ((focus = enemyCloserToBaseThanAlpha()) != null) return focus;

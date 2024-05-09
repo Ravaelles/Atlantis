@@ -37,7 +37,7 @@ public class ProtossSmallScaleEvaluate {
     }
 
     protected static double enemyMeleeStrength(AUnit unit, Selection enemies, double radius) {
-//        enemies.melee().inRadius(radius, unit).print(A.now() + " Enemies in radius: " + radius);
+//        enemies.melee().inRadius(radius, unit).print(A.now() + " AliveEnemies in radius: " + radius);
         double rawEval = enemies.melee().inRadius(radius, unit).count()
             + (unit.hp() >= 23 ? 1 : 0.5);
 

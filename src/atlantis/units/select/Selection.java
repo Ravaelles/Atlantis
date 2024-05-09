@@ -2,6 +2,7 @@ package atlantis.units.select;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.bullets.DeadMan;
 import atlantis.map.path.ClosestToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -566,6 +567,10 @@ public class Selection extends BaseSelection {
             AUnitType.Protoss_Dark_Templar,
             AUnitType.Zerg_Lurker
         ), "cloakable");
+    }
+
+    public Selection notDeadMan() {
+        return cloneByRemovingIf(u -> DeadMan.isDeadMan(u), "notDeadMan");
     }
 
     public Selection havingWeapon() {

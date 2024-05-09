@@ -22,6 +22,7 @@ import atlantis.information.enemy.UnitsArchive;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.tech.ATech;
 import atlantis.information.tech.SpellCoordinator;
+import atlantis.map.bullets.DeadMan;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.choke.IsUnitWithinChoke;
@@ -148,6 +149,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // =========================================================
 
+    public static AUnit createFrom(Unit u) {
+        return createFrom(u, true);
+    }
+
     /**
      * Atlantis uses wrapper for BWAPI classes.
      *
@@ -157,8 +162,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * The idea why we don't use inner Unit class is because if you change game bridge (JBWAPI, JNIBWAPI, JBWAPI etc)
      * you need to change half of your codebase. I've done it 3 times already ;__:
      */
-    public static AUnit createFrom(Unit u) {
+    public static AUnit createFrom(Unit u, boolean throwErrorOnNull) {
         if (u == null) {
+            if (!throwErrorOnNull) return null;
             throw new RuntimeException("AUnit constructor: unit is null");
         }
 
@@ -1495,7 +1501,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean hasValidTarget() {
-        return target() != null && target().isAlive();
+        return target() != null
+            && target().isAlive()
+            && !target().isDeadMan();
     }
 
     /**
@@ -2381,7 +2389,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             7,
             () -> {
                 if (unit().isOur()) {
-                    return EnemyUnits.discovered()
+//                    return EnemyUnits.discovered()
+                    return AliveEnemies.get()
                         .realUnitsAndBuildings()
                         .inRadius(15, this)
                         .exclude(this);
@@ -3253,5 +3262,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean moreMeleeEnemiesThanOurUnits() {
         return meleeEnemiesNearCount(1.2)
             > friendsNear().melee().countInRadius(1.4, this);
+    }
+
+    public boolean isDeadMan() {
+        return DeadMan.isDeadMan(this);
     }
 }

@@ -129,7 +129,7 @@ public class RunToPositionFinder {
 //                )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
 //                && Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
-            && Select.all().inRadius(unit.size() * 1.7, position).exclude(unit).isEmpty()
+            && Select.mineralsAndGeysers().inRadius(unit.size() * 1.8, position).exclude(unit).isEmpty()
 //                && distToNearestRegionBoundaryIsOkay(position)
             && unit.hasPathTo(position)
             && unit.position().groundDistanceTo(position) <= 12

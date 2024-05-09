@@ -1,7 +1,8 @@
 package atlantis.combat.targeting;
 
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
+import atlantis.units.AliveEnemies;
+import atlantis.units.select.Selection;
 
 public class FallbackTargeting {
     public static AUnit fallbackTarget(AUnit unit, double maxDistFromEnemy) {
@@ -51,14 +52,19 @@ public class FallbackTargeting {
 //        return null;
     }
 
+    private static Selection enemies(AUnit unit) {
+        return unit.enemiesNear();
+    }
+
     private static AUnit forRanged(AUnit unit) {
         AUnit inRange;
+        Selection enemies = enemies(unit);
 
-        inRange = unit.enemiesNear().canBeAttackedBy(unit, 0).wounded().mostWounded();
+        inRange = enemies.canBeAttackedBy(unit, 0).wounded().mostWounded();
 
         if (inRange != null) return inRange;
 
-        inRange = unit.enemiesNear().canBeAttackedBy(unit, 0).nearestTo(unit);
+        inRange = enemies.canBeAttackedBy(unit, 0).nearestTo(unit);
 
         if (inRange != null) return inRange;
 
@@ -66,10 +72,11 @@ public class FallbackTargeting {
     }
 
     private static AUnit forMelee(AUnit unit) {
-        AUnit inRange = unit.enemiesNear().canBeAttackedBy(unit, 0).mostWounded();
+        Selection enemies = enemies(unit);
+        AUnit inRange = enemies.canBeAttackedBy(unit, 0).mostWounded();
 
         if (inRange != null) return inRange;
 
-        return unit.enemiesNear().canBeAttackedBy(unit, 10).nearestTo(unit);
+        return enemies.canBeAttackedBy(unit, 10).nearestTo(unit);
     }
 }

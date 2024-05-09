@@ -7,6 +7,8 @@ import atlantis.combat.micro.terran.wraith.AsAirAttackAnyone;
 import atlantis.combat.micro.zerg.overlord.WeDontKnowEnemyLocation;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.squad.positioning.terran.TerranTooFarFromLeader;
+import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
+import atlantis.combat.squad.positioning.too_lonely.TooLonely;
 import atlantis.units.AUnit;
 
 public class Advance extends MissionManager {
@@ -24,7 +26,10 @@ public class Advance extends MissionManager {
             AttackNearbyEnemies.class,
 
             AdvanceAsTerran.class,
+
+            TooLonely.class,
             AdvanceStandard.class,
+
             AsAirAttackAnyone.class,
 
             WeDontKnowEnemyLocation.class,

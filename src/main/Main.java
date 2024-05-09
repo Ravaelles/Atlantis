@@ -107,7 +107,7 @@ public class Main {
 
         // vs Protoss
 //        if (true) return "ums/rav/protoss/BulletTest.scm";
-        if (true) return "ums/rav/protoss/BulletTest2.scm";
+//        if (true) return "ums/rav/protoss/BulletTest2.scm";
 
 //        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm";
 
@@ -127,9 +127,9 @@ public class Main {
 //        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
-        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal_easy.scm";
-        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal_inBase.scm";
 
 //@        if (true) return "ums/rav/protoss/DragoonsRange_v_Marines.scm";
@@ -143,12 +143,11 @@ public class Main {
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/5Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
-//        if (true) return "ums/rav/protoss/Drag_v_Lings.scm";
+        if (true) return "ums/rav/protoss/Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/protoss/Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/5Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/10Zeal_v_Lings.scm";
-//        if (true) return "ums/rav/Dragoons_v_Zerglings.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 
 //        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots

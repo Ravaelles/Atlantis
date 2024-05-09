@@ -84,6 +84,9 @@ public class SelectionTest extends NonAbstractTestFakingGame {
             assertEquals(1, Select.countOurOfType(AUnitType.Terran_Siege_Tank_Tank_Mode));
             assertEquals(1, Select.countOurOfType(AUnitType.Terran_Siege_Tank_Siege_Mode));
             assertEquals(1, Select.our().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode).count());
+            assertEquals(2, Select.ourTanks().count());
+            assertEquals(2, Select.ourTanks().notDeadMan().count());
+            assertEquals(2, Select.ourTanks().count());
             assertEquals(2, Select.our().ofType(
                 AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
             ).count());

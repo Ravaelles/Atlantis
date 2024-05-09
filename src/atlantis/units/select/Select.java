@@ -683,6 +683,23 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     /**
+     * Selects all (accessible) minerals on the map.
+     */
+    public static Selection mineralsAndGeysers() {
+        String cachePath;
+        return cache.get(
+            cachePath = "mineralsAndGeysers",
+            30,
+            () -> neutral().ofType(
+                AUnitType.Resource_Vespene_Geyser,
+                AUnitType.Resource_Mineral_Field,
+                AUnitType.Resource_Mineral_Field_Type_2,
+                AUnitType.Resource_Mineral_Field_Type_3
+            )
+        );
+    }
+
+    /**
      * Selects all geysers on the map.
      */
     public static Selection geysers() {

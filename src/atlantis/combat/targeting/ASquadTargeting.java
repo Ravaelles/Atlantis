@@ -28,7 +28,7 @@ public class ASquadTargeting {
         if (We.protoss()) {
             if (unit.hp() <= 35) {
                 if (Enemy.protoss()) return 0;
-    
+
                 return 0;
             }
         }
@@ -42,6 +42,7 @@ public class ASquadTargeting {
         if (enemy.isZergling()) return false;
         if (enemy.isWorker()) return false;
         if (enemy.hp() <= 15) return false;
+        if (enemy.isDeadMan()) return false;
         if (preventForZealots(unit, enemy)) return false;
         if (!unit.hasWeaponToAttackThisUnit(enemy)) return false;
 

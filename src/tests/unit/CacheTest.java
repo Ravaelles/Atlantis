@@ -25,7 +25,7 @@ public class CacheTest extends NonAbstractTestFakingGame {
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
             counter = 0;
 
-            Select.enemy().print("Enemies");
+            Select.enemy().print("AliveEnemies");
 
             FakeUnit hydra = enemies[0];
             FakeUnit sunken = enemies[1];

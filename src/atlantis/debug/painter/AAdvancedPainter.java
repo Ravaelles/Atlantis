@@ -358,6 +358,12 @@ public class AAdvancedPainter extends APainter {
      * Paint extra information about visible enemy combat units.
      */
     static void paintEnemyCombatUnits() {
+        for (AUnit enemy : Select.enemy().list()) {
+            if (!enemy.isDeadMan()) continue;
+
+            paintDeadMan(enemy);
+        }
+
         for (AUnit enemy : Select.enemy().combatUnits().list()) {
             if (!enemy.isAlive()) continue;
 
@@ -382,6 +388,11 @@ public class AAdvancedPainter extends APainter {
                 paintTextCentered(enemy, "CloakedVisible,HP=" + enemy.hp(), Color.White);
             }
         }
+    }
+
+    private static void paintDeadMan(AUnit unit) {
+        paintUnitProgressBar(unit, 14, 100, Red);
+        paintUnitProgressBar(unit, 7, 100, Grey);
     }
 
     /**

@@ -18,9 +18,10 @@ public class KnownBullets {
 //        System.out.println("UPDATE KNOWN BULLETS @" + A.now());
         visibleBullets = bulletsToABullets();
 
+//        System.err.println("A visibleBullets = " + visibleBullets.size() + " / " + AGame.get().getBullets().size());
         rememberNew(visibleBullets);
         detectHits();
-//        System.err.println("visibleBullets = " + visibleBullets.size() + " / " + AGame.get().getBullets().size());
+//        System.err.println("B visibleBullets = " + visibleBullets.size() + " / " + AGame.get().getBullets().size());
     }
 
     private static List<ABullet> bulletsToABullets() {
@@ -29,6 +30,7 @@ public class KnownBullets {
         return AGame.get().getBullets()
             .stream()
             .map(b -> ABullet.fromBullet(b))
+            .filter(b -> b != null)
             .collect(Collectors.toList());
     }
 

@@ -308,7 +308,7 @@ public class BaseLocations {
 //                    return baseLocation.position().translateByTiles(2, 0);
 //                }
 
-                return bestBase;
+                return bestBase.position();
             }
         );
     }
