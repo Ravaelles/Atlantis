@@ -21,6 +21,8 @@ public class ShouldRunTowardsBase {
         }
 
         if (unit.meleeEnemiesNearCount(1.4) > 0) return false;
+        if (unit.meleeEnemiesNearCount(1.5) >= 2) return false;
+        
         if (unit.isDragoon() && (Alpha.count() <= 25 || unit.shields() <= 40)) return false;
 
         if (unit.isSquadScout()) return true;

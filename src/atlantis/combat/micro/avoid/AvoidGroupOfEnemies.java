@@ -7,6 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
 import static atlantis.units.actions.Actions.RUN_ENEMY;
@@ -37,8 +38,9 @@ public class AvoidGroupOfEnemies extends Manager {
 
         if (
             unit.hp() >= 40
-                && A.seconds() <= 600
+                && A.seconds() <= 400
                 && Have.main()
+                && Count.workers() >= 10
                 && unit.distToBase() >= 50
                 && unit.moveToMain(RUN_ENEMY, "AvoidGroupToBase")
         ) {
