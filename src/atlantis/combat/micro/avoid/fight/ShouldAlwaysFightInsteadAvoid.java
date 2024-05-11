@@ -1,6 +1,8 @@
-package atlantis.combat.micro.avoid.terran.fight;
+package atlantis.combat.micro.avoid.fight;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.terran.fight.ShouldFightInsteadAvoidAsTerran;
+import atlantis.combat.micro.avoid.terran.fight.TerranFightInsteadAvoid;
 import atlantis.combat.micro.avoid.zerg.ShouldFightInsteadAvoidAsZerg;
 
 import atlantis.combat.targeting.ATargetingCrucial;
@@ -10,6 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
@@ -252,11 +255,15 @@ public class ShouldAlwaysFightInsteadAvoid {
     private boolean forDragoon() {
         if (!unit.isDragoon()) return false;
 
+        if (true) return false;
+
+//        if (Enemy.protoss() && !unit.isSafeFromMelee()) return false;
+
         if (unit.cooldownRemaining() <= 3) {
-            int secondsWithoutAttack = (int) (2 + unit.woundPercent() / 13);
+            int secondsWithoutAttack = (int) (2 + unit.woundPercent() / 13.0);
             boolean haveNotAttackedInAWhile = unit.lastStartedAttackMoreThanAgo(30 * secondsWithoutAttack);
-            if (unit.shieldDamageAtMost(10) || haveNotAttackedInAWhile) {
-                if (unit.meleeEnemiesNearCount(2) <= 1 || haveNotAttackedInAWhile) {
+            if (unit.shieldDamageAtMost(8) || haveNotAttackedInAWhile) {
+                if (unit.meleeEnemiesNearCount(2.8) <= 1 || haveNotAttackedInAWhile) {
                     unit.addLog("Aiur");
                     return true;
                 }

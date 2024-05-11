@@ -255,8 +255,10 @@ public interface AUnitOrders {
         // =========================================================
 
 //        String actionName = unit().action().name();
+        int lastOrderWasFramesAgo = unit().lastOrderWasFramesAgo();
         if (
-            unit().lastOrderWasFramesAgo() <= 1
+            lastOrderWasFramesAgo <= 1
+                || (lastOrderWasFramesAgo < 4 && unit().isMoving())
 //                && (actionName.startsWith("MOVE") || actionName.startsWith("RUN"))
         ) {
 //            System.err.println("Ignore excessive move order");

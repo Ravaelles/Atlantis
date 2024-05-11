@@ -1120,6 +1120,10 @@ public class A {
         return AGame.now();
     }
 
+    public static String nowString() {
+        return "@" + AGame.now();
+    }
+
     public static int seconds() {
         return AGame.timeSeconds();
     }
@@ -1408,5 +1412,17 @@ public class A {
 
     public static boolean canAffordWithReserved(UpgradeType type) {
         return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
+    }
+
+    public static String keysToString(Set<? extends Object> keys) {
+        Object[] strings = keys.toArray(new Object[keys.size()]);
+
+        StringBuilder toString = new StringBuilder();
+        toString.append("[");
+        for (Object object : strings) {
+            toString.append(object).append(",");
+        }
+        toString.append("]");
+        return toString.toString();
     }
 }

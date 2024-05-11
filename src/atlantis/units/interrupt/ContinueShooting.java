@@ -2,6 +2,7 @@ package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
@@ -18,15 +19,15 @@ public class ContinueShooting extends Manager {
         if (We.terran()) return false;
         if (!unit.isAction(Actions.ATTACK_UNIT)) return false;
 
-        if (unit.isStartingAttack()) return true;
-        if (unit.isAttackFrame()) return true;
-
-        if (unit.lastAttackFrameLessThanAgo(5)) return false;
-        if (!unit.hasValidTarget()) return false;
+//        if (unit.isStartingAttack()) return true;
+//        if (unit.isAttackFrame()) return true;
 
         Decision decision;
 
         if (unit.isDragoon() && (decision = decisionForDragoon()).notIndifferent()) return decision.toBoolean();
+
+        if (unit.lastAttackFrameLessThanAgo(5)) return false;
+        if (!unit.hasValidTarget()) return false;
 
 //        if (unit.lastActionMoreThanAgo(8, Actions.ATTACK_UNIT)) return false;
 //        if (unit.lastActionMoreThanAgo(10, Actions.ATTACK_UNIT)) return false;
@@ -70,14 +71,23 @@ public class ContinueShooting extends Manager {
     }
 
     private Decision decisionForDragoon() {
-        if (unit.isAttacking() && unit.lastActionLessThanAgo(10, Actions.ATTACK_UNIT)) return Decision.ALLOWED;
+        int maxFramesAgo = unit.isTargetInWeaponRangeAccordingToGame()
+//            ? (unit.lastAttackFrameMoreThanAgo(30) ? 90 : 13)
+            ? (unit.noCooldown() ? 90 : 13)
+            : 6;
+        if (unit.lastActionLessThanAgo(maxFramesAgo, Actions.ATTACK_UNIT)) {
+//            System.out.println("@" + A.fr + " ----> continue shooting");
+            return Decision.ALLOWED;
+        }
 
-        if (unit.lastAttackFrameLessThanAgo(1)) return Decision.FORBIDDEN;
+        return Decision.FORBIDDEN;
 
-        return (
-            unit.lastActionLessThanAgo(50 + (unit.woundHp() <= 30 ? 50 : 0), Actions.ATTACK_UNIT)
-                || (unit.hp() >= 21 && unit.lastAttackFrameMoreThanAgo(30 * 3))
-        ) ? Decision.ALLOWED : Decision.INDIFFERENT;
+//        if (unit.lastAttackFrameLessThanAgo(1)) return Decision.FORBIDDEN;
+//
+//        return (
+//            unit.lastActionLessThanAgo(50 + (unit.woundHp() <= 30 ? 50 : 0), Actions.ATTACK_UNIT)
+//                || (unit.hp() >= 21 && unit.lastAttackFrameMoreThanAgo(30 * 3))
+//        ) ? Decision.ALLOWED : Decision.INDIFFERENT;
     }
 
     private boolean doesNotApplyForDragoon() {

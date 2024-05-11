@@ -1,13 +1,11 @@
 package atlantis.game.events;
 
-import atlantis.Atlantis;
-import atlantis.config.AtlantisConfig;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
-import atlantis.map.bullets.SaveUnitsAndBulletsInfoToFile;
+import atlantis.map.bullets.ABullet;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
@@ -32,7 +30,7 @@ import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
-import atlantis.units.attacked_by.KnownBullets;
+import atlantis.units.attacked_by.Bullets;
 import atlantis.units.interrupt.ContinueOldBroklenShootingOld;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
@@ -105,6 +103,16 @@ public class OnEveryFrameHelper {
 //        printBullets();
 
 //        printLastActions();
+
+        paintBullets();
+    }
+
+    private static void paintBullets() {
+        for (ABullet bullet : Bullets.knownBullets()) {
+            AAdvancedPainter.paintLine(
+                bullet.position(), bullet.position().translateByTiles(0, -2), Color.Orange
+            );
+        }
     }
 
     private static void printLastActions() {
@@ -116,7 +124,7 @@ public class OnEveryFrameHelper {
     }
 
     private static void printBullets() {
-//        KnownBullets.updateKnown();
+//        Bullets.updateKnown();
 
         List<Bullet> bullets = AGame.get().getBullets();
         if (bullets.isEmpty()) return;

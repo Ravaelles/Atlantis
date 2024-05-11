@@ -1,7 +1,7 @@
 package atlantis.units;
 
 import atlantis.architecture.Commander;
-import atlantis.units.attacked_by.KnownBullets;
+import atlantis.units.attacked_by.Bullets;
 import atlantis.units.select.Select;
 
 public class StateCommander extends Commander {
@@ -12,6 +12,6 @@ public class StateCommander extends Commander {
             (new UnitStateManager(unit)).invoke(this);
         }
 
-        KnownBullets.updateKnown();
+        Bullets.updateKnown();
     }
 }

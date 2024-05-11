@@ -2,9 +2,9 @@ package tests.fakes;
 
 import atlantis.map.bullets.ABullet;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class FakeBullets {
-    public static List<ABullet> allBullets = new ArrayList<>();
+    public static Set<ABullet> allBullets = new TreeSet<>();
+//    public static Map<Integer, ABullet> allBullets = new HashMap<>();
 }

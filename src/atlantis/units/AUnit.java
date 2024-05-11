@@ -560,6 +560,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return target == null || hasWeaponRangeByGame(target);
     }
 
+    public boolean isTargetInWeaponRangeAccordingToGame() {
+        AUnit target = target();
+        if (target == null) return false;
+
+        return hasWeaponRangeByGame(target);
+    }
+
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
@@ -3010,6 +3017,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        this.runningManager.setRunFrom(enemy);
 //    }
 
+    public HasPosition runningFromPosition() {
+        return this.runningManager.runningFromPosition();
+    }
+
     public AUnit runningFromUnit() {
         return this.runningManager.runningFromUnit();
     }
@@ -3255,13 +3266,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isSafeFromMelee() {
         double base = baseIsSafeFromMelee();
-        double distToMelee = Math.min(3.6, base + (woundPercent() / 42.0));
+        double distToMelee = Math.min(3.2, base + (woundPercent() / 42.0));
 
         return meleeEnemiesNearCount(distToMelee) == 0;
     }
 
     private double baseIsSafeFromMelee() {
-        if (isDragoon()) return 2.2;
+        if (isDragoon()) return 3.2;
 
         return hp() >= 60 ? 1.6 : 1.8;
     }

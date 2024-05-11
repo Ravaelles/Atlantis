@@ -2,7 +2,7 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.terran.fight.ShouldAlwaysFightInsteadAvoid;
+import atlantis.combat.micro.avoid.fight.ShouldAlwaysFightInsteadAvoid;
 import atlantis.combat.micro.avoid.terran.avoid.TerranAlwaysAvoidAsTerran;
 import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
@@ -24,7 +24,7 @@ public class FightInsteadAvoid extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false; // @Remove
+        if (unit.isDragoon()) return false; // @Remove
 
         if (!unit.hasAnyWeapon()) return false;
         if (unit.combatEvalRelative() <= 0.6) return false;

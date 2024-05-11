@@ -391,6 +391,7 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintDeadMan(AUnit unit) {
+        unit.paintCircleFilled(10, Black);
         paintUnitProgressBar(unit, 14, 100, Red);
         paintUnitProgressBar(unit, 7, 100, Grey);
     }

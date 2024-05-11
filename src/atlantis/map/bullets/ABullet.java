@@ -15,6 +15,7 @@ public class ABullet implements HasPosition {
     protected Bullet b;
     protected AUnit _initTarget;
     protected int _initTargetHp;
+    private boolean consumed = false;
 
     // =========================================================
 
@@ -40,6 +41,8 @@ public class ABullet implements HasPosition {
             return null;
         }
 
+//        System.err.println("            [ BULLET with ID:" + b.getID() + " ]");
+
         bullet.b = b;
         return bullet;
     }
@@ -51,6 +54,12 @@ public class ABullet implements HasPosition {
 //        bullet.b = b;
 //        return bullet;
 //    }
+
+    // =========================================================
+
+    public double distToTargetPosition() {
+        return position().distTo(target.position());
+    }
 
     // =========================================================
 
@@ -93,5 +102,17 @@ public class ABullet implements HasPosition {
 
     public int id() {
         return b.getID();
+    }
+
+    public Bullet b() {
+        return b;
+    }
+
+    public void markAsConsumed() {
+        consumed = true;
+    }
+
+    public boolean isConsumed() {
+        return consumed;
     }
 }

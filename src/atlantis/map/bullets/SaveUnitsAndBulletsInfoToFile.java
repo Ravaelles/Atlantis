@@ -2,10 +2,10 @@ package atlantis.map.bullets;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.attacked_by.KnownBullets;
+import atlantis.units.attacked_by.Bullets;
 import atlantis.units.select.Select;
-import bwapi.Bullet;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class SaveUnitsAndBulletsInfoToFile {
 
     private static String bulletsString() {
 //        List<Bullet> bullets = AGame.get().getBullets();
-        List<ABullet> bullets = KnownBullets.knownBullets();
+        Collection<ABullet> bullets = Bullets.knownBullets();
 
         if (bullets.isEmpty()) return "";
 

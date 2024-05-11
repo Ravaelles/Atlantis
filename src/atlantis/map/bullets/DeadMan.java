@@ -2,7 +2,7 @@ package atlantis.map.bullets;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.attacked_by.KnownBullets;
+import atlantis.units.attacked_by.Bullets;
 import atlantis.util.cache.Cache;
 import atlantis.util.cache.CacheKey;
 
@@ -21,12 +21,24 @@ public class DeadMan {
     }
 
     private static boolean willBeDeadMan(AUnit unit) {
-//        if (KnownBullets.knownBullets().size() <= 1) return false;
+//        if (Bullets.knownBullets().size() <= 1) return false;
 
-        bulletsAgainst = KnownBullets.against(unit);
+        bulletsAgainst = Bullets.against(unit);
         if (bulletsAgainst.isEmpty()) return false;
 
-        return damageWithAllPendingBullets(unit) >= (unit.hp() + healthBonus(unit));
+        int willGetDamage = damageWithAllPendingBullets(unit);
+        int hasHp = unit.hp() + healthBonus(unit);
+        boolean isDeadManWalking = willGetDamage >= hasHp;
+
+//        if (isDeadManWalking) {
+//            System.err.println(
+//                "@ " + A.now() + " - " + unit.typeWithUnitId()
+//                    + " - HP: " + hasHp
+//                    + " / Damage:" + willGetDamage
+//            );
+//        }
+
+        return isDeadManWalking;
     }
 
     private static int healthBonus(AUnit unit) {

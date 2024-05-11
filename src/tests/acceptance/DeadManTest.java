@@ -1,12 +1,9 @@
 package tests.acceptance;
 
 import atlantis.game.A;
-import atlantis.map.bullets.BulletDamageAgainst;
 import atlantis.map.bullets.DeadMan;
 import atlantis.units.AUnitType;
 import atlantis.units.StateCommander;
-import atlantis.units.UnitStateManager;
-import atlantis.units.attacked_by.KnownBullets;
 import org.junit.Test;
 import tests.fakes.FakeBullet;
 import tests.fakes.FakeBullets;
@@ -33,11 +30,11 @@ public class DeadManTest extends AbstractTestFakingGame {
                 createBullet(dragoon, vulture);
 
 //                System.out.println("@" + A.now());
-//                System.out.println(KnownBullets.against(marine).size());
+//                System.out.println(Bullets.against(marine).size());
 //                System.out.println(DeadMan.isDeadMan(marine));
-//                System.out.println(KnownBullets.knownBullets().size());
+//                System.out.println(Bullets.knownBullets().size());
 //                System.err.println("DeadMan.isDeadMan(zergling) = " + DeadMan.isDeadMan(zergling));
-//                System.out.println(KnownBullets.against(zergling).size());
+//                System.out.println(Bullets.against(zergling).size());
 
                 assertEquals(A.now() <= 3 ? false : true, DeadMan.isDeadMan(zergling));
                 assertEquals(A.now() <= 3 ? false : true, DeadMan.isDeadMan(marine));
@@ -61,6 +58,7 @@ public class DeadManTest extends AbstractTestFakingGame {
     private FakeBullet createBullet(FakeUnit attacker, FakeUnit target) {
         FakeBullet bullet = FakeBullet.fromPosition(attacker.position, attacker, target);
         FakeBullets.allBullets.add(bullet);
+//        FakeBullets.allBullets.put(bullet.id(), bullet);
         return bullet;
     }
 

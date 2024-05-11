@@ -83,7 +83,9 @@ public class AvoidSingleEnemy extends Manager {
 
     @Override
     public String toString() {
-        String target = unit.runningFromUnit() == null ? "NULL_FROM" : unit.runningFromUnit().type().name();
+        String target = unit.runningFromUnit() == null
+            ? (unit.runningFromPosition() != null ? unit.runningFromPosition().toString() : "NoNe")
+            : unit.runningFromUnit().type().name();
         return super.toString() + "(" + target + ")";
     }
 }
