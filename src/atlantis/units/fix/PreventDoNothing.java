@@ -16,7 +16,7 @@ public class PreventDoNothing extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
+        if (A.s <= 10) return false;
 
 //        if (A.now() <= 20) return false;
         if (unit.managerLogs().isNotEmpty()) return false;
@@ -35,10 +35,10 @@ public class PreventDoNothing extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.managerLogs().isEmpty()) {
-            AttackNearbyEnemies manager = new AttackNearbyEnemies(unit);
-            if (manager.invoked(this)) return usedManager(this);
-        }
+//        if (unit.managerLogs().isEmpty()) {
+//            AttackNearbyEnemies manager = new AttackNearbyEnemies(unit);
+//            if (manager.invoked(this)) return usedManager(this);
+//        }
 
         if (DoPreventFreezesLogic.handle(unit)) return usedManager(this);
 

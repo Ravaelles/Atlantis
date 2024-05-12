@@ -76,7 +76,12 @@ public class ContinueShooting extends Manager {
     }
 
     private Decision decisionForDragoon() {
-        if (unit.lastStartedAttackAgo() >= UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)) {
+        int startedAttackAgo = unit.lastStartedAttackAgo();
+        if (
+            startedAttackAgo <= 20
+                && startedAttackAgo >= UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)
+        ) {
+//            System.err.println("Dragoon " + unit.id() + " - waited long enough for attack frame to finish (" + startedAttackAgo);
             return Decision.FORBIDDEN;
         }
 
@@ -85,6 +90,8 @@ public class ContinueShooting extends Manager {
 //            System.out.println("@" + A.fr + " ----> continue shooting");
             return Decision.ALLOWED;
         }
+
+//        System.err.println("Dragoon " + unit.id() + " - NO (" + unit.lastAttackFrameAgo() + ")");
 
 //        if (unit.isAttackFrame()) {
 ////            unit.paintCircleFilled(10, Color.Green);
@@ -112,7 +119,7 @@ public class ContinueShooting extends Manager {
     }
 
     private int maxFramesAgoForDragoon() {
-        boolean longNoAttackFrame = unit.lastAttackFrameMoreThanAgo(40);
+        boolean longNoAttackFrame = unit.lastAttackFrameMoreThanAgo(60);
 
 //        if (
 //            longNoAttackFrame
@@ -121,8 +128,8 @@ public class ContinueShooting extends Manager {
 //        ) return 150;
 
         if (longNoAttackFrame) {
-            if (unit.isTargetInWeaponRangeAccordingToGame()) return 150;
-            return 50;
+            if (unit.isTargetInWeaponRangeAccordingToGame()) return 30 * 6;
+            return 30 * 4;
         }
 
 //        if (unit.isAttackFrame()) return 50;
@@ -150,6 +157,7 @@ public class ContinueShooting extends Manager {
     }
 
     public Manager handle() {
-        return usedManager(this);
+        return this;
+//        return usedManager(this);
     }
 }

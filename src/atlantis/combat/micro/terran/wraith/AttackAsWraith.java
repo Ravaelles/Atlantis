@@ -46,7 +46,7 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     }
 
     @Override
-    protected Manager handle() {
+    public Manager handle() {
         Manager submanager = handleSubmanagers();
         if (submanager != null) return usedManager(submanager);
 

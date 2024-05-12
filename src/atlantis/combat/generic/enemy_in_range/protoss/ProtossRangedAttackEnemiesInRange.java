@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -21,23 +22,26 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
 //        if (true) return false;
 
         if (!We.protoss()) return false;
+        if (!unit.isRanged()) return false;
+        if (unit.cooldown() >= 9) return false;
+        if (unit.lastAttackFrameLessThanAgo(45)) return false;
 
-        boolean noRanged = EnemyInfo.noRanged();
-        if (!noRanged && unit.shieldDamageAtLeast(6)) return false;
+        boolean noRangedEnemies = EnemyInfo.noRanged();
+        if (!noRangedEnemies && unit.shieldDamageAtLeast(13)) return false;
 
-        return unit.isRanged()
-            && unit.shieldDamageAtMost(30)
+        return unit.shieldDamageAtMost(unit.combatEvalRelative() > 1.2 ? (Enemy.zerg() ? 18 : 68) : 8)
 //            && unit.lastAttackFrameMoreThanAgo(50)
+            && unit.lastUnderAttackMoreThanAgo(30 * 6)
             && (unit.isHealthy() || unit.isSafeFromMelee())
-            && (noRanged || unit.distToLeader() <= (5 + unit.woundPercent() / 10.0))
-            && unit.cooldown() <= 5
+            && (noRangedEnemies || unit.distToLeader() <= (5 + unit.woundPercent() / 8.0))
             && unit.enemiesNear().notEmpty()
-            && (noRanged || !unit.squadIsRetreating())
+            && (noRangedEnemies || !unit.squadIsRetreating())
 //            && unit.enemiesNear().ranged().canAttack(unit, 5).empty()
 //            && unit.combatEvalRelative() >= 1
-            && (unit.shieldDamageAtMost(30) || unit.lastUnderAttackMoreThanAgo(30 * 5))
+//            && (unit.shieldDamageAtMost(30) || unit.lastUnderAttackMoreThanAgo(30 * 5))
 //            && unit.meleeEnemiesNearCount(2.2 + unit.woundPercent() / 80.0) == 0
 //            && unit.lastAttackFrameMoreThanAgo(30 * 2)
+            && unit.meleeEnemiesNearCount(2.5) <= 1
             && (enemy = enemyInRangeToAttack()) != null;
     }
 

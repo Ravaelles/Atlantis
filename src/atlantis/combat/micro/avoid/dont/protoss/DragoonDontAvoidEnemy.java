@@ -9,8 +9,6 @@ import atlantis.util.Enemy;
 
 public class DragoonDontAvoidEnemy {
     public static boolean dontAvoid(AUnit unit) {
-//        if (true) return true;
-
         if (!unit.isDragoon()) return false;
 //        if (unit.isIdle()) return false;
 //        if (true) return false;
@@ -20,7 +18,7 @@ public class DragoonDontAvoidEnemy {
         if (healthyAndSafe(unit)) return true;
         if (hasNotShotInAWhile(unit)) return true;
         if ((decision = whenMissionSparta(unit)).notIndifferent()) return decision.toBoolean();
-        if ((decision = whenMissionDefend(unit)).notIndifferent()) return decision.toBoolean();
+//        if ((decision = whenMissionDefend(unit)).notIndifferent()) return decision.toBoolean();
 //
         if (dontAvoidCombatBuildings(unit)) return true;
 
@@ -51,7 +49,7 @@ public class DragoonDontAvoidEnemy {
 
         if (unit.isRanged()) {
             if (unit.cooldown() >= 10) return Decision.FALSE;
-            if (unit.hp() > 40 && unit.lastAttackFrameMoreThanAgo(30 * 6)) return Decision.TRUE;
+            if (unit.shieldDamageAtMost(39) && unit.lastAttackFrameMoreThanAgo(30 * 6)) return Decision.TRUE;
             return unit.isSafeFromMelee() ? Decision.TRUE : Decision.FALSE;
         }
 
@@ -85,7 +83,7 @@ public class DragoonDontAvoidEnemy {
     }
 
     private static boolean vsProtoss(AUnit unit) {
-        if (unit.isHealthy()) return true;
+//        if (unit.isHealthy()) return true;
 
         int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(1.5);
         if (meleeEnemiesNearCount > 0) {
