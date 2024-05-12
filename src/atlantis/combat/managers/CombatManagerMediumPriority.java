@@ -7,6 +7,7 @@ import atlantis.combat.generic.enemy_in_range.UnitHasEnemyInRange;
 import atlantis.combat.generic.under_attack.UnitUnderAttack;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingCriticallyClose;
 import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.running.stop_running.ShouldStopRunning;
@@ -29,6 +30,8 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            AvoidCombatBuildingCriticallyClose.class,
+
             ProtossTooLonely.class,
 
             ProtossDontEngageWhenCombatBuildings.class,

@@ -6,16 +6,17 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
 public class AvoidCombatBuildingCriticallyClose extends Manager {
-    private final AUnit combatBuilding;
+    private AUnit combatBuilding;
 
-    public AvoidCombatBuildingCriticallyClose(AUnit unit, AUnit combatBuilding) {
+    public AvoidCombatBuildingCriticallyClose(AUnit unit) {
         super(unit);
-        this.combatBuilding = combatBuilding;
     }
 
     @Override
     public boolean applies() {
-        return true;
+        return (
+            combatBuilding = unit.enemiesNear().buildings().combatBuildingsAnti(unit).inRadius(9, unit).nearestTo(unit)
+        ) != null;
     }
 
     @Override

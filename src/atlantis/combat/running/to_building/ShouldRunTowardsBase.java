@@ -14,6 +14,7 @@ public class ShouldRunTowardsBase {
         AUnit main = Select.main();
         if (main == null) return false;
 
+        if (unit.isMissionAttack() && unit.isGroundUnit() && unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.isScout() && !unit.isDragoon() && unit.enemiesNear().buildings().notEmpty()) return true;
 
         if (Enemy.zerg()) {

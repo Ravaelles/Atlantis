@@ -140,14 +140,14 @@ public class AvoidCombatBuilding extends Manager {
 //        return null;
 //    }
 
-    private Manager thereIsNoSafetyMarginAtAll(AUnit combatBuilding) {
-        AvoidCombatBuildingCriticallyClose avoidCombatBuildingCriticallyClose = new AvoidCombatBuildingCriticallyClose(unit, combatBuilding);
-        if (avoidCombatBuildingCriticallyClose.invoke(this) != null) {
-            return avoidCombatBuildingCriticallyClose;
-        }
-
-        return null;
-    }
+//    private Manager thereIsNoSafetyMarginAtAll(AUnit combatBuilding) {
+//        AvoidCombatBuildingCriticallyClose avoidCombatBuildingCriticallyClose = new AvoidCombatBuildingCriticallyClose(unit, combatBuilding);
+//        if (avoidCombatBuildingCriticallyClose.invoke(this) != null) {
+//            return avoidCombatBuildingCriticallyClose;
+//        }
+//
+//        return null;
+//    }
 
     private Manager barelyAnySafetyLeft(AUnit combatBuilding) {
         if (unit.isAir()) {

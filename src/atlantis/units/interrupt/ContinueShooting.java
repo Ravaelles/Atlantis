@@ -23,7 +23,6 @@ public class ContinueShooting extends Manager {
         if (We.terran()) return false;
         if (!unit.isAction(Actions.ATTACK_UNIT)) return false;
 
-
         Decision decision;
 
         if (unit.isDragoon() && (decision = decisionForDragoon()).notIndifferent()) return decision.toBoolean();
@@ -119,6 +118,8 @@ public class ContinueShooting extends Manager {
     }
 
     private int maxFramesAgoForDragoon() {
+        if (unit.lastAttackFrameMoreThanAgo(30 * 9)) return 30 * 7;
+
         boolean longNoAttackFrame = unit.lastAttackFrameMoreThanAgo(60);
 
 //        if (

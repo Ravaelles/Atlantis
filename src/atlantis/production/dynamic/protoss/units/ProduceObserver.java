@@ -5,9 +5,11 @@ import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.generic.OurArmy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
 
@@ -46,9 +48,11 @@ public class ProduceObserver {
         }
 
         else if (Have.notEvenPlanned(AUnitType.Protoss_Observer)) {
-            if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
-                AddToQueue.toHave(AUnitType.Protoss_Observer, 1, ProductionOrderPriority.TOP);
-            }
+            AddToQueue.toHave(AUnitType.Protoss_Observer, A.supplyUsed() >= 70 ? 2 : 1, ProductionOrderPriority.TOP);
+//            AUnit building = Select.ourFree(AUnitType.Protoss_Robotics_Facility).first();
+//            if (building != null) {
+//                building.pro
+//            }
             return;
         }
 

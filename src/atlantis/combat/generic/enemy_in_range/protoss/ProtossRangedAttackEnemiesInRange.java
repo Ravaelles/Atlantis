@@ -2,9 +2,7 @@ package atlantis.combat.generic.enemy_in_range.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
-import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -24,18 +22,22 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
 
         if (!We.protoss()) return false;
         if (!unit.isRanged()) return false;
+        if (unit.enemiesNear().empty()) return false;
         if (unit.cooldown() >= 9) return false;
         if (unit.lastAttackFrameLessThanAgo(45)) return false;
+        if (unit.hp() <= 60 && unit.meleeEnemiesNearCount(3) > 0) return false;
 
         boolean noRangedEnemies = EnemyInfo.noRanged() || unit.enemiesNear().ranged().empty();
         if (!noRangedEnemies && unit.shieldDamageAtLeast(13)) return false;
 
-        return unit.shieldDamageAtMost(unit.combatEvalRelative() > 1.2 ? (Enemy.zerg() ? 18 : 68) : 8)
+        return (
+            unit.lastAttackFrameMoreThanAgo(30 * 9)
+                || (unit.shieldDamageAtMost(unit.combatEvalRelative() > 1.2 ? (Enemy.zerg() ? 18 : 68) : 8))
+        )
 //            && unit.lastAttackFrameMoreThanAgo(50)
 //            && unit.lastUnderAttackMoreThanAgo(30 * 6)
             && (unit.shieldDamageAtMost(9) || unit.isSafeFromMelee())
             && (noRangedEnemies || unit.distToLeader() <= (5 + unit.woundPercent() / 8.0))
-            && unit.enemiesNear().notEmpty()
             && (noRangedEnemies || !unit.squadIsRetreating())
 //            && unit.enemiesNear().ranged().canAttack(unit, 5).empty()
 //            && unit.combatEvalRelative() >= 1
