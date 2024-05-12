@@ -253,14 +253,14 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintUnitWithinChoke(AUnit unit) {
-        if (unit.isWithinChoke()) {
-            paintCircle(unit, 15, Orange);
-            paintCircle(unit, 14, Orange);
-            paintCircle(unit, 13, Yellow);
-            paintCircle(unit, 12, Yellow);
-            paintCircle(unit, 11, Orange);
-            paintCircle(unit, 10, Orange);
-        }
+//        if (unit.isWithinChoke()) {
+//            paintCircle(unit, 15, Orange);
+//            paintCircle(unit, 14, Orange);
+//            paintCircle(unit, 13, Yellow);
+//            paintCircle(unit, 12, Yellow);
+//            paintCircle(unit, 11, Orange);
+//            paintCircle(unit, 10, Orange);
+//        }
     }
 
     private static void paintUnitInRangeInfo(AUnit unit) {

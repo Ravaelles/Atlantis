@@ -18,7 +18,8 @@ public class FixIdleUnits extends Manager {
             && A.fr % 4 == 0
             && unit.noCooldown()
             && unit.lastOrderWasFramesAgo() >= 12
-            && unit.lastActionMoreThanAgo(12);
+            && unit.lastActionMoreThanAgo(12)
+            && (!unit.isRanged() || unit.enemiesNear().inRadius(4, unit).empty());
     }
 
     @Override

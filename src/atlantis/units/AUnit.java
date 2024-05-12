@@ -3270,7 +3270,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isSafeFromMelee() {
         double base = baseIsSafeFromMelee();
-        double distToMelee = Math.min(3.2, base + (woundPercent() / 42.0));
+        double distToMelee = Math.min(3.2, base + (woundPercent() / 52.0));
+//        double distToMelee = 3.2;
 
         return meleeEnemiesNearCount(distToMelee) == 0;
     }

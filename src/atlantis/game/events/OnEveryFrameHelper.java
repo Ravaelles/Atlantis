@@ -355,8 +355,8 @@ public class OnEveryFrameHelper {
         APosition point1 = choke.firstPoint();
         APosition point2 = choke.lastPoint();
 
-        AAdvancedPainter.paintCircleFilled(point1, 4, Color.Yellow);
-        AAdvancedPainter.paintCircleFilled(point2, 4, Color.Orange);
+//        AAdvancedPainter.paintCircleFilled(point1, 4, Color.Yellow);
+//        AAdvancedPainter.paintCircleFilled(point2, 4, Color.Orange);
 
         ARegion regionA = choke.firstRegion();
         ARegion regionB = choke.secondRegion();
