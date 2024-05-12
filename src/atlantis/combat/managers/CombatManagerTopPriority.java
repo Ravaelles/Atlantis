@@ -20,6 +20,7 @@ import atlantis.units.fix.PreventAttackForTooLong;
 import atlantis.units.interrupt.ContinueCurrentAction;
 import atlantis.units.interrupt.ContinueLast;
 import atlantis.units.interrupt.ContinueShooting;
+import atlantis.units.special.FixIdleUnits;
 import atlantis.units.special.FixInvalidUnits;
 import atlantis.units.special.ManualOverrideManager;
 import atlantis.units.fix.PreventDoNothing;
@@ -47,9 +48,11 @@ public class CombatManagerTopPriority extends Manager {
             FixPerformanceForBigSupply.class,
             ManualOverrideManager.class,
 
-            ContinueCurrentAction.class,
+//            ContinueCurrentAction.class,
 
             Unfreezer.class,
+            FixIdleUnits.class,
+
             AttackEnemiesInRange.class,
 
             PreventTooManyActions.class,

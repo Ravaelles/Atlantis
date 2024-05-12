@@ -29,7 +29,7 @@ public class UnfreezeDragoon extends Manager {
     public Manager handle() {
 //        unit.holdPosition("UnfreezeHold");
 //        System.err.println(A.nowString() + " UnfreezeDragoon#" + unit.id());
-        if (unit.lastActionMoreThanAgo(51, Actions.STOP)) {
+        if (unit.lastActionMoreThanAgo(21, Actions.STOP)) {
             if (unit.lastActionMoreThanAgo(11, Actions.STOP)) {
                 unit.stop("UnfreezeDragoon");
             }

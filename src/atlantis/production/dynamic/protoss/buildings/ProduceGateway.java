@@ -37,7 +37,7 @@ public class ProduceGateway {
 
         freeGateways = Count.freeGateways();
 
-        if (minerals >= 470 && freeGateways <= 1) return produceGateway();
+        if (minerals >= 290 && freeGateways <= 1) return produceGateway();
 
         // =========================================================
 

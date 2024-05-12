@@ -1,6 +1,7 @@
 package atlantis.util.cache;
 
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
@@ -9,6 +10,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
 import atlantis.util.log.ErrorLog;
+import bwapi.TechType;
+import bwapi.UpgradeType;
 import bwta.BaseLocation;
 
 import java.util.Arrays;
@@ -43,6 +46,10 @@ public class CacheKey {
         if (object instanceof BaseLocation) return ((BaseLocation) object).toString();
         if (object instanceof ABaseLocation) return ((ABaseLocation) object).toString();
         if (object instanceof AChoke) return ((AChoke) object).toString();
+        if (object instanceof TechType) return ((TechType) object).toString();
+        if (object instanceof UpgradeType) return ((UpgradeType) object).name();
+//        if (object instanceof UpgradeType) return ((UpgradeType) object).name()
+//            + "(" + AGame.getPlayerUs().getUpgradeLevel((UpgradeType) object) + ")";
         if (object instanceof Class) return ((Class) object).getSimpleName();
         if (object instanceof Class[]) {
             return Arrays.stream((Class[]) object).map(Class::getSimpleName).reduce(

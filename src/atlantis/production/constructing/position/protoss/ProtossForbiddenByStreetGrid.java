@@ -23,7 +23,7 @@ public class ProtossForbiddenByStreetGrid {
             int moduloX = (position.tx() % GRID_SIZE_X);
             int moduloY = (position.ty() % GRID_SIZE_Y);
 
-            if (moduloX != 9 && moduloX != 15) return failed("TX modulo PP_X2 = " + moduloX);
+            if (moduloX != 9 && moduloX != 14 && moduloX != 15) return failed("TX modulo PP_X2 = " + moduloX);
             if (
                 moduloY != 0 && moduloY != 2 && moduloY != 4 && moduloY != 6
             ) return failed("TY modulo PP_Y2 = " + moduloY);

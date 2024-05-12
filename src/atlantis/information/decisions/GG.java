@@ -14,10 +14,10 @@ public class GG extends Commander {
         return A.s >= 300
             && A.now() % 128 == 0
             && OurArmy.strength() <= 8
-            && Count.ourCombatUnits() <= 1
+            && Count.ourCombatUnits() <= 2
             && Count.workers() <= 30
-            && Count.dragoons() == 0
-            && Select.enemyCombatUnits().atLeast(10);
+            && Count.dragoons() <= 1
+            && Select.enemyCombatUnits().atLeast(25);
     }
 
     @Override

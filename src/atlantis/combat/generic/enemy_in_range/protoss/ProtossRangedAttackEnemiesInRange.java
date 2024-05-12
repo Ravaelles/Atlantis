@@ -41,8 +41,7 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
 //            && (unit.shieldDamageAtMost(30) || unit.lastUnderAttackMoreThanAgo(30 * 5))
 //            && unit.meleeEnemiesNearCount(2.2 + unit.woundPercent() / 80.0) == 0
 //            && unit.lastAttackFrameMoreThanAgo(30 * 2)
-            && unit.meleeEnemiesNearCount(2.5) <= 1
-            && (enemy = enemyInRangeToAttack()) != null;
+            && unit.meleeEnemiesNearCount(2.5) <= 1;
     }
 
     private AUnit enemyInRangeToAttack() {
@@ -56,7 +55,9 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.isDead()) {
+        if ((enemy = enemyInRangeToAttack()) == null) return null;
+
+        if (enemy.isDead()) {
             ErrorLog.printMaxOncePerMinute("Dead target inRange (" + enemy + ") for " + unit);
             return null;
         }

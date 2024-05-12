@@ -128,8 +128,9 @@ public class ContinueShooting extends Manager {
 //        ) return 150;
 
         if (longNoAttackFrame) {
-            if (unit.isTargetInWeaponRangeAccordingToGame()) return 30 * 6;
-            return 30 * 4;
+            if (unit.isHealthy()) return 30 * 6;
+            if (unit.isTargetInWeaponRangeAccordingToGame()) return 30 * 3;
+            return 30 * 2;
         }
 
 //        if (unit.isAttackFrame()) return 50;

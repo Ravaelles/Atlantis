@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
+import atlantis.util.cache.CacheKey;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -20,7 +21,7 @@ public class ATech {
 
     public static boolean isResearched(Object techOrUpgrade) {
         return cacheBoolean.get(
-            "isResearched:" + techOrUpgrade,
+            CacheKey.toKey(techOrUpgrade),
             31,
             () -> {
                 if (techOrUpgrade instanceof TechType) {

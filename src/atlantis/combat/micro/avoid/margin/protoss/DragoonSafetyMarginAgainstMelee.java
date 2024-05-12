@@ -15,8 +15,8 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 //            + defender.woundPercent() / 300.0;
 
         if (!attacker.isDT()) {
-            if (!attacker.isFacing(defender)) {
-                return 1.7;
+            if (attacker.isOtherUnitShowingBackToUs(defender)) {
+                return defender.hp() >= 40 ? 0 : 1.7;
             }
 
             if (quiteHealthyAndLongNotUnderAttack(attacker)) return 2.1;

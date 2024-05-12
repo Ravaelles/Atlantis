@@ -41,8 +41,8 @@ public class AttackNearbyEnemies extends Manager {
 
 //        if (unit.isAttacking() && unit.lastActionLessThanAgo(2)) return usedManager(this);
 
-//        targetToAttack = defineBestEnemyToAttack(unit);
-//        if (targetToAttack == null || targetToAttack.hp() <= 0) return null;
+        targetToAttack = defineBestEnemyToAttack(unit);
+        if (targetToAttack == null || targetToAttack.hp() <= 0) return null;
 
 //        PreventFreeze preventFreeze = new PreventFreeze(unit);
 //        if (preventFreeze.invoke(this) != null) {
