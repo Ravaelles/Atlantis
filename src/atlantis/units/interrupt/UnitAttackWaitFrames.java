@@ -42,7 +42,7 @@ public class UnitAttackWaitFrames {
         // @Check Interesting - this works for Dragoons (when it's disabled)
 //        if (unit.lastFrameOfStartingAttackAgo() <= effectiveStopFrames(unit.type())) return true;
 
-        if (waitedLongEnoughForAttackFrameToFinish(unit)) return true;
+//        if (waitedLongEnoughForAttackFrameToFinish(unit)) return true;
 
         // @Check
 //        return unit.cooldownRemaining() > 0 && unit.isAttackingOrMovingToAttack();

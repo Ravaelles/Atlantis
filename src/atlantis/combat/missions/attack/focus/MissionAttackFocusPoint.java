@@ -4,6 +4,7 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.strategy.GamePhase;
@@ -76,7 +77,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         // =========================================================
 
 
-        if (A.s >= 300) {
+        if (A.s >= 300 && EnemyInfo.hasDefensiveLandBuilding(true)) {
             AFocusPoint enemyThird = enemyThird(main);
 
             if (

@@ -8,5 +8,6 @@ public class AtlantisConfig {
      */
     public static boolean DISABLE_GUI = false;
 
-    public static boolean USE_CODE_PROFILER = true;
+    //    public static boolean USE_CODE_PROFILER = true;
+    public static boolean USE_CODE_PROFILER = false;
 }

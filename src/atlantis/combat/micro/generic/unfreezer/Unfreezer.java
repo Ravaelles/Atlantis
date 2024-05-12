@@ -13,7 +13,7 @@ public class Unfreezer extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
         if (!unit.isCombatUnit()) return false;
         if (unit.hasCooldown()) return false;

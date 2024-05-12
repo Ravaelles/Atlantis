@@ -22,17 +22,23 @@ public class EnemyUnits {
      * Both visible units and those behind fog of war.
      */
     public static Selection discovered() {
-//        return Select.from(Select.enemy(), "")
-        return Select.enemy()
-            .notDeadMan()
+        return (Selection) cache.get(
+            "discovered",
+            0,
+            () -> {
+                //        return Select.from(Select.enemy(), "")
+                return Select.enemy()
+                    .notDeadMan()
 //            .print("visibleAndFogged")
-            .add(rawUnitsDiscovered())
+                    .add(rawUnitsDiscovered())
 //            .print("now with enemy")
-            .removeDuplicates()
+                    .removeDuplicates()
 //            .print("after removing duplicates")
-            .havingPosition();
+                    .havingPosition();
 //            .beingVisibleUnitOrNotVisibleFoggedUnit();
 //            .print("and having position");
+            }
+        );
     }
 
     // =========================================================

@@ -16,11 +16,13 @@ public class CodeProfiler {
 
     private static final HashMap<String, Long> aspectsStart = new HashMap<>();
     private static final HashMap<String, Long> aspectsLength = new HashMap<>();
+    private static final HashMap<String, Long> aspectsTotal = new HashMap<>();
     private static final int divideMeasurementBy = 1; // Needed if using nano instead of millis
     private static long currentFrameStart = -1;
     private static long currentFrameLength = 0;
 
     // =========================================================
+    
     public static void startMeasuring(Commander commander) {
         if (!commander.shouldProfile()) return;
         if (!AtlantisConfig.USE_CODE_PROFILER) return;
@@ -40,6 +42,7 @@ public class CodeProfiler {
         if (aspectsStart.containsKey(title)) {
             long measuredLengthInMs = realNowInMs() - aspectsStart.get(title);
             aspectsLength.put(title, measuredLengthInMs);
+            aspectsTotal.put(title, aspectsTotal.getOrDefault(title, 0L) + measuredLengthInMs);
 
             LongFrames.checkPotentialLongMeasurement(measuredLengthInMs, title);
         }
@@ -73,15 +76,21 @@ public class CodeProfiler {
         for (String aspectTitle : aspectsLength.keySet()) {
             int value = aspectsLength.get(aspectTitle);
             if (value >= MIN_MS_TO_INCLUDE) {
-                System.out.println(String.format("%25s:  ", aspectTitle) + value + "ms");
+                A.println(String.format("%25s:  ", aspectTitle) + value + "ms");
             }
         }
 
-        if (aspectLengthSorted().isEmpty()) {
-            System.out.println("No aspects measured, looks like a bug.");
+        Map<String, Integer> aspectTotalSorted = aspectLengthSorted();
+        for (String aspectTitle : aspectTotalSorted.keySet()) {
+            int value = aspectsLength.get(aspectTitle);
+            A.println(String.format("%25s:  ", aspectTitle) + A.digit(value) + "s");
         }
 
-        System.out.println("### END OF Commanders time consumption ###");
+        if (aspectLengthSorted().isEmpty()) {
+            A.println("No aspects measured, looks like a bug.");
+        }
+
+        A.println("### END OF Commanders time consumption ###");
     }
 
     public static void startMeasuringTotalFrame() {
@@ -94,6 +103,29 @@ public class CodeProfiler {
 
     public static Map<String, Integer> aspectLengthSorted() {
         List<Map.Entry<String, Long>> entryList = new ArrayList<>(aspectsLength.entrySet());
+
+        // Custom comparator for sorting by values in descending order
+        Comparator<Map.Entry<String, Long>> valueComparator =
+            (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue());
+
+        // Sort the list using the custom comparator
+        entryList.sort(valueComparator);
+
+        // Iterate through the sorted list and print the entries
+//        for (Map.Entry<String, Double> entry : entryList) {
+
+//        }
+
+        Map<String, Integer> results = new LinkedHashMap<>();
+        for (Map.Entry<String, Long> entry : entryList) {
+            results.put(entry.getKey(), entry.getValue().intValue() / divideMeasurementBy);
+        }
+
+        return results;
+    }
+
+    public static Map<String, Integer> aspectTotalSorted() {
+        List<Map.Entry<String, Long>> entryList = new ArrayList<>(aspectsTotal.entrySet());
 
         // Custom comparator for sorting by values in descending order
         Comparator<Map.Entry<String, Long>> valueComparator =

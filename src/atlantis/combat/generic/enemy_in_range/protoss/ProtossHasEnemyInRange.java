@@ -20,6 +20,7 @@ public class ProtossHasEnemyInRange extends Manager {
 
         if (!We.protoss()) return false;
         if (!unit.isCombatUnit()) return false;
+        if (unit.isRanged()) return false;
         if (unit.enemiesNear().empty()) return false;
         if (unit.isMissionSparta() && unit.isMelee()) return false;
 
@@ -55,8 +56,7 @@ public class ProtossHasEnemyInRange extends Manager {
     private boolean fairlyHealthyOrSafeFromMelee() {
         if (unit.isMelee()) return true;
 
-        return unit.woundHp() <= 14
-            || unit.meleeEnemiesNearCount(1.5 + unit.woundPercent() / 38.0) == 0;
+        return unit.woundHp() <= 14 || unit.isSafeFromMelee();
     }
 
     private boolean notTooManyEnemiesNear() {

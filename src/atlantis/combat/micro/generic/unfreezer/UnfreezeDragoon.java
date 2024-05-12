@@ -19,17 +19,24 @@ public class UnfreezeDragoon extends Manager {
 //            && !unit.isHoldingPosition()
 //            && (unit.isStopped() || unit.u().getOrder().equals(Order.Stop))
 //            && unit.lastActionMoreThanAgo(20, Actions.STOP);
-            && unit.isMoving()
-            && unit.lastPositionChangedMoreThanAgo(10)
-            && unit.lastActionMoreThanAgo(10, Actions.STOP);
+            && (unit.isMoving() || unit.isStopped())
+            && unit.lastPositionChangedMoreThanAgo(70);
+//            && unit.noCooldown();
 //            && unit.lastActionMoreThanAgo(20, Actions.HOLD_POSITION);
     }
 
     @Override
     public Manager handle() {
 //        unit.holdPosition("UnfreezeHold");
-        System.err.println(A.nowString() + " UnfreezeDragoon ");
-        unit.stop("UnfreezeDragoon");
-        return usedManager(this);
+//        System.err.println(A.nowString() + " UnfreezeDragoon#" + unit.id());
+        if (unit.lastActionMoreThanAgo(51, Actions.STOP)) {
+            if (unit.lastActionMoreThanAgo(11, Actions.STOP)) {
+                unit.stop("UnfreezeDragoon");
+            }
+
+            return usedManager(this);
+        }
+
+        return null;
     }
 }

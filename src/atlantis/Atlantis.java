@@ -222,7 +222,7 @@ public class Atlantis implements BWEventListener {
 
         A.println(result);
 
-        OnEnd.execute(winner);
+        OnGameEnd.execute(winner);
 
         if (Env.isLocal()) exitGame();
         else game.leaveGame();

@@ -224,4 +224,8 @@ public class EnemyInfo {
     public static AStrategy strategy() {
         return EnemyStrategy.get();
     }
+
+    public static boolean noRanged() {
+        return EnemyUnits.discovered().ranged().empty();
+    }
 }

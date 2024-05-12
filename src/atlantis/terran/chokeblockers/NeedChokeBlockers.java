@@ -31,6 +31,7 @@ public class NeedChokeBlockers {
     }
 
     private static boolean forProtoss() {
+        if (Enemy.zerg()) return false;
         if (A.s >= 400) return false;
         if (Alpha.count() >= 5) return false;
         if (We.protoss() && !Missions.isGlobalMissionSparta()) return false;

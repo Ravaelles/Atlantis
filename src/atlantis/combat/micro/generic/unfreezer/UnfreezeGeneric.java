@@ -31,10 +31,6 @@ public class UnfreezeGeneric extends Manager {
 //        if (unit.lastStartedAttackLessThanAgo(20)) return false;
 //        if (unit.lastActionLessThanAgo(20, Actions.MOVE_DANCE_AWAY)) return false;
 
-        if (unit.isDragoon()) {
-            if (unit.lastAttackFrameLessThanAgo(40)) return false;
-        }
-
         if (isDragoonDuringSpartaMission()) return false;
         else if (isDuringSpartaMission()) return false;
         else if (isDuringMissionAttack()) return false;

@@ -10,9 +10,9 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
     @Override
     public double marginAgainst(AUnit attacker) {
-        double base = 1.3
+        double base = 2.3
             + cooldownBonus(attacker)
-            + defender.woundPercent() / 38.0;
+            + defender.woundPercent() / 100.0;
 
         if (!attacker.isDT()) {
             if (quiteHealthyAndLongNotUnderAttack(attacker)) return 2.1;

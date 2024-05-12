@@ -124,23 +124,23 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     private APosition specialPosition = null;
     private int _lastActionReceived = 0;
-    public int _lastAttackOrder;
-    public int _lastAttackFrame;
+    public int _lastAttackOrder = -999;
+    public int _lastAttackFrame = -999;
     public int _lastCooldown;
-    public int _lastFrameOfStartingAttack;
+    public int _lastFrameOfStartingAttack = -999;
     public int _lastRetreat = -99;
-    public int _lastStartedRunning;
-    public int _lastStoppedRunning;
-    public int _lastStartedAttack;
+    public int _lastStartedRunning = -999;
+    public int _lastStoppedRunning = -999;
+    public int _lastStartedAttack = -999;
     public AUnit _lastTargetToAttack;
-    public int _lastTargetToAttackAcquired;
+    public int _lastTargetToAttackAcquired = -999;
     public TechType _lastTech;
     public APosition _lastTechPosition;
     public AUnit _lastTechUnit;
-    public int _lastUnderAttack;
+    public int _lastUnderAttack = -999;
     public int _lastX = -1;
     public int _lastY = -1;
-    public int _lastPositionChanged;
+    public int _lastPositionChanged = -999;
     public HasPosition _lastPositionRunInAnyDir = null;
     private AUnit _targetUnitToAttack;
 
@@ -1867,6 +1867,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int lastAttackFrameAgo() {
         return A.ago(_lastAttackFrame);
+    }
+
+    public int lastAttackOrderAgo() {
+        return A.ago(_lastAttackOrder);
     }
 
     public boolean lastFrameOfStartingAttackMoreThanAgo(int framesAgo) {

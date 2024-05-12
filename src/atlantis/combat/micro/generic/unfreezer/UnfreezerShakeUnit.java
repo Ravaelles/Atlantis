@@ -201,7 +201,6 @@ public class UnfreezerShakeUnit {
     }
 
     private static boolean shouldNotDoAnythingButContinue(AUnit unit) {
-        return unit.isAccelerating()
-            || unit.lastActionLessThanAgo(10, Actions.HOLD_POSITION, Actions.STOP, Actions.MOVE_UNFREEZE);
+        return unit.lastActionLessThanAgo(10, Actions.HOLD_POSITION, Actions.STOP, Actions.MOVE_UNFREEZE);
     }
 }
