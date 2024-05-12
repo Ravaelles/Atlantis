@@ -42,7 +42,7 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
 //            && (unit.shieldDamageAtMost(30) || unit.lastUnderAttackMoreThanAgo(30 * 5))
 //            && unit.meleeEnemiesNearCount(2.2 + unit.woundPercent() / 80.0) == 0
 //            && unit.lastAttackFrameMoreThanAgo(30 * 2)
-            && unit.meleeEnemiesNearCount(2 + unit.woundPercent() / 60.0) <= 1;
+            && unit.meleeEnemiesNearCount(2.6 + unit.woundPercent() / 60.0) <= 1;
     }
 
     private AUnit enemyInRangeToAttack() {
