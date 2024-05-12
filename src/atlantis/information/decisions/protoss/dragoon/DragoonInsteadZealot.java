@@ -39,8 +39,8 @@ public class DragoonInsteadZealot {
                 && A.seconds() <= 400
 //                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
 //                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
-                && (!A.hasGas(150) && Count.zealots() <= 2)
-                && (Count.freeGateways() >= 2 || EnemyUnits.discovered().dragoons().atMost(1))
+                && (!A.hasGas(100) && Count.zealots() <= 2)
+                && (Count.freeGateways() <= 1 || EnemyUnits.discovered().dragoons().atMost(1))
         ) {
             return true;
         }

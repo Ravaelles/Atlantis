@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
 import bwapi.Color;
@@ -75,18 +76,21 @@ public class ContinueShooting extends Manager {
     }
 
     private Decision decisionForDragoon() {
-        int maxFramesAgo = maxFramesAgoForDragoon();
+        if (unit.lastStartedAttackAgo() >= UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)) {
+            return Decision.FORBIDDEN;
+        }
 
+        int maxFramesAgo = maxFramesAgoForDragoon();
         if (unit.lastActionLessThanAgo(maxFramesAgo, Actions.ATTACK_UNIT)) {
 //            System.out.println("@" + A.fr + " ----> continue shooting");
             return Decision.ALLOWED;
         }
 
-        if (unit.isAttackFrame()) {
-//            unit.paintCircleFilled(10, Color.Green);
-//            System.out.println("A / " + unit.lastAttackFrameAgo() + " / " + unit.lastAttackOrderAgo());
-            if (unit.lastAttackFrameAgo() <= 1) return Decision.ALLOWED;
-        }
+//        if (unit.isAttackFrame()) {
+////            unit.paintCircleFilled(10, Color.Green);
+////            System.out.println("A / " + unit.lastAttackFrameAgo() + " / " + unit.lastAttackOrderAgo());
+//            if (unit.lastAttackFrameAgo() <= 1) return Decision.ALLOWED;
+//        }
 
 //        else if (unit.isStartingAttack()) {
 //            unit.paintCircleFilled(10, Color.Teal);

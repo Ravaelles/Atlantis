@@ -11,7 +11,7 @@ import bwapi.Color;
 
 public class RunShowBackToEnemy {
     public static final double SHOW_BACK_DIST_DEFAULT = 4;
-    public static final double SHOW_BACK_DIST_DRAGOON = 4;
+    public static final double SHOW_BACK_DIST_DRAGOON = 6;
     public static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 3;
     public static final double SHOW_BACK_DIST_VULTURE = 5;
 
@@ -54,7 +54,7 @@ public class RunShowBackToEnemy {
         }
 
         HasPosition runTo = running.runTo();
-        
+
         if (
             runTo != null
                 && unit.distTo(runTo) > 1

@@ -104,7 +104,20 @@ public class OnEveryFrameHelper {
 
 //        printLastActions();
 
-        paintBullets();
+//        paintBullets();
+
+//        paintUnitSpeeding();
+    }
+
+    private static void paintUnitSpeeding() {
+        AUnit unit = Select.ourCombatUnits().first();
+
+        System.err.println("@ " + A.now() + " --------------------------------- ");
+        System.err.println("AttackFrame() = " + unit.lastAttackFrameAgo());
+        System.err.println("StartedAttack() = " + unit.lastStartedAttackAgo());
+
+        if (unit.isAttackFrame()) unit.paintCircleFilled(10, Color.Red);
+        if (unit.isAccelerating()) unit.paintCircle(11, 3, Color.Green);
     }
 
     private static void paintBullets() {

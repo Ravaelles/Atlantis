@@ -347,6 +347,12 @@ public interface HasPosition {
         AAdvancedPainter.paintCircle(this, radius, color);
     }
 
+    default void paintCircle(int radius, int width, Color color) {
+        for (int i = radius; i <= radius + width; i++) {
+            AAdvancedPainter.paintCircle(this, i, color);
+        }
+    }
+
     default void paintLine(HasPosition to, Color color) {
         AAdvancedPainter.paintLine(this, to, color);
     }

@@ -20,12 +20,16 @@ public class ShouldStopRunningDragoon extends Manager {
         if (unitBecameIdleAfterRunning()) return true;
         if (!unit.isMoving()) return true;
 
-        if (unit.lastActionMoreThanAgo(2)) return false;
+//        if (unit.lastActionMoreThanAgo(2)) return false;
         if (unit.lastStartedRunningLessThanAgo(7)) return false;
 
-//        if (unit.woundHp() <= 11) return true;
-
         Selection meleeEnemies = unit.enemiesNear().melee();
+        if (meleeEnemies.inRadius(3.6, unit).empty()) {
+            System.err.println("ShouldStopRunningDragoon - no melee enemies in radius 3.6");
+            return true;
+        }
+
+//        if (unit.woundHp() <= 11) return true;
 
 //        return meleeEnemies.inRadius(2.9, unit).empty()
 //            || meleeEnemies.canAttack(unit, safetyMargin(unit)).empty();
