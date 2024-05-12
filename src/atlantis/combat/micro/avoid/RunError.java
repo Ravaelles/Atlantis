@@ -22,6 +22,7 @@ public class RunError extends Manager {
             }
         }
 
+        unit.runningManager().stopRunning();
         return null;
     }
 }

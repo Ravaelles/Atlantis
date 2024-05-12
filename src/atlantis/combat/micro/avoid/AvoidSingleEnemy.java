@@ -16,9 +16,9 @@ public class AvoidSingleEnemy extends Manager {
     }
 
     public Manager avoid() {
-        if (this.enemy == null) return null;
+        if (this.enemy == null) return processDontAvoid();
 
-        if (doNotAvoid()) return null;
+        if (doNotAvoid()) return processDontAvoid();
 
 //        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
 //        if (true) return null;
@@ -38,6 +38,11 @@ public class AvoidSingleEnemy extends Manager {
 //        System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
 
         return runError.handleErrorRun(unit);
+    }
+
+    private Manager processDontAvoid() {
+        unit.runningManager().stopRunning();
+        return null;
     }
 
     private boolean doNotAvoid() {

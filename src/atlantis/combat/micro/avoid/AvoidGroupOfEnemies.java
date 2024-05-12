@@ -25,7 +25,7 @@ public class AvoidGroupOfEnemies extends Manager {
     }
 
     public Manager avoid() {
-        if (doNotAvoid()) return null;
+        if (doNotAvoid()) return processDontAvoid();
 
 //        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
 //        if (true) return null;
@@ -36,16 +36,16 @@ public class AvoidGroupOfEnemies extends Manager {
 
 //        A.printStackTrace("AvoidSingleEnemy");
 
-        if (
-            unit.hp() >= 40
-                && A.seconds() <= 400
-                && Have.main()
-                && Count.workers() >= 10
-                && unit.distToBase() >= 50
-                && unit.moveToMain(RUN_ENEMY, "AvoidGroupToBase")
-        ) {
-            return usedManager(this);
-        }
+//        if (
+//            unit.hp() >= 40
+//                && A.seconds() <= 400
+//                && Have.main()
+//                && Count.workers() >= 10
+//                && unit.distToBase() >= 50
+//                && unit.moveToMain(RUN_ENEMY, "AvoidGroupToBase")
+//        ) {
+//            return usedManager(this);
+//        }
 
         if (unit.runningManager().runFrom(
             centerOfEnemies, calculateRunDistance(), RUN_ENEMY, false
@@ -56,6 +56,11 @@ public class AvoidGroupOfEnemies extends Manager {
 //        System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
 
         return runError.handleErrorRun(unit);
+    }
+
+    private Manager processDontAvoid() {
+        unit.runningManager().stopRunning();
+        return null;
     }
 
     private boolean doNotAvoid() {

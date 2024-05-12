@@ -45,6 +45,7 @@ public class AvoidEnemies extends Manager {
         if (!applies()) return null;
 
         if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose()) != null) {
+//            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - AVOID ENEMIES " + unit.runningManager().runningFromUnit());
             return usedManager(unit.manager());
         }
 
