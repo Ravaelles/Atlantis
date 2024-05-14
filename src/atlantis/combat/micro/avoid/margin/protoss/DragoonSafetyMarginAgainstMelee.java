@@ -10,8 +10,10 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
     @Override
     public double marginAgainst(AUnit attacker) {
-        double base = 2.3
-            + cooldownBonus(attacker);
+//        double base = 2.3
+        double base = (defender.isWounded() ? 3.0 : 1.1)
+            + cooldownBonus(attacker)
+            + (attacker.isFacing(defender) ? 0.7 : -0.2);
 //            + defender.woundPercent() / 300.0;
 
         if (!attacker.isDT()) {
@@ -19,7 +21,7 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
                 return defender.hp() >= 40 ? 0 : 1.7;
             }
 
-            if (quiteHealthyAndLongNotUnderAttack(attacker)) return 2.1;
+//            if (quiteHealthyAndLongNotUnderAttack(attacker)) return 2.1;
 
             if (defender.shieldDamageAtMost(23)) {
                 if (defender.friendsInRadiusCount(1.5) >= 3) {
@@ -45,6 +47,7 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     private double cooldownBonus(AUnit attacker) {
-        return defender.cooldownRemaining() <= 9 ? (defender.cooldownRemaining() / 10.0) : 0;
+//        return defender.cooldownRemaining() >= 10 ? (defender.cooldownRemaining() / 10.0) : 0;
+        return defender.cooldownRemaining() >= 8 ? (defender.cooldownRemaining() / 10.0) : 0;
     }
 }

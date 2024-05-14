@@ -17,7 +17,15 @@ public class ShouldContinueRunning {
 //        }
 
         if (unit.isRunning() && unit.isMoving() && unit.distToTargetMoreThan(1)) {
-            if (unit.isDragoon() && unit.lastStartedRunningLessThanAgo(13)) return true;
+//            if (unit.lastRunningPositionChangeAgo() <= 8) return true;
+
+            if (
+                unit.isDragoon()
+                    && (
+                    unit.lastStartedRunningLessThanAgo(16)
+                        || unit.lastRunningPositionChangeAgo() <= 12
+                )
+            ) return true;
         }
 
         if (true) return false;

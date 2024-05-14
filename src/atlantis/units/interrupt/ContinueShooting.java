@@ -21,6 +21,8 @@ public class ContinueShooting extends Manager {
 //        if (true) return false;
 
         if (We.terran()) return false;
+
+        if (unit.isAttacking() && unit.lastActionLessThanAgo(2)) return true;
         if (!unit.isAction(Actions.ATTACK_UNIT)) return false;
 
         Decision decision;
@@ -75,12 +77,19 @@ public class ContinueShooting extends Manager {
     }
 
     private Decision decisionForDragoon() {
-        int startedAttackAgo = unit.lastStartedAttackAgo();
+//        System.err.println(A.now() + " // " + unit.lastAttackFrameMoreThanAgo(30 * 6));
         if (
-            startedAttackAgo <= 20
-                && startedAttackAgo >= UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)
+            unit.lastAttackFrameMoreThanAgo(30 * 3)
+                && unit.lastActionLessThanAgo(30 * 3, Actions.ATTACK_UNIT)
+        ) return Decision.ALLOWED;
+
+        int sa = unit.lastStartedAttackAgo();
+//        System.err.println("sa:" + sa + ", la:" + unit.lastAttackFrameAgo());
+        if (
+            sa <= 20
+                && sa >= UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)
         ) {
-//            System.err.println("Dragoon " + unit.id() + " - waited long enough for attack frame to finish (" + startedAttackAgo);
+//            System.err.println("Dragoon " + unit.id() + " - FORBIDDEN sa: (" + sa);
             return Decision.FORBIDDEN;
         }
 
@@ -90,7 +99,7 @@ public class ContinueShooting extends Manager {
             return Decision.ALLOWED;
         }
 
-//        System.err.println("Dragoon " + unit.id() + " - NO (" + unit.lastAttackFrameAgo() + ")");
+//        System.err.println("Dragoon " + unit.id() + " - NO ");
 
 //        if (unit.isAttackFrame()) {
 ////            unit.paintCircleFilled(10, Color.Green);

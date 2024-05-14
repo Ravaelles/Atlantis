@@ -131,6 +131,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public int _lastRetreat = -99;
     public int _lastStartedRunning = -999;
     public int _lastStoppedRunning = -999;
+    public int _lastRunningPositionChange = -999;
     public int _lastStartedAttack = -999;
     public AUnit _lastTargetToAttack;
     public int _lastTargetToAttackAcquired = -999;
@@ -1901,6 +1902,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return A.ago(_lastRetreat);
     }
 
+    public int lastRunningPositionChangeAgo() {
+        return A.ago(_lastRunningPositionChange);
+    }
+
     public int lastStartedRunningAgo() {
         return A.ago(_lastStartedRunning);
     }
@@ -2820,6 +2825,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             "distToLeader",
             5,
             () -> squad.leader().distTo(this)
+        );
+    }
+
+    public double distToDragoon() {
+        return (double) cache.get(
+            "distToDragoon",
+            5,
+            () -> friendsNear().dragoons().distToNearest(this)
         );
     }
 

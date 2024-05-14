@@ -54,6 +54,7 @@ public class NumberOfGasWorkersCommander extends Commander {
 
     public static int defineGasWorkersPerBuilding() {
         int workers = Count.workers();
+        int gas = A.gas();
 
 //        if (workers <= 8) {
 //            return 0;
@@ -63,18 +64,26 @@ public class NumberOfGasWorkersCommander extends Commander {
             return 0;
         }
 
-        if (We.protoss()) {
-            if (A.s <= 500 && A.gas() >= 80) return 1;
-            if (A.s <= 600 && A.gas() >= 120) return 2;
-            if (A.s <= 700 && A.gas() >= 180) return 1;
+        if (workers >= 25 && gas <= 350) {
+            return 3;
         }
 
-        if (A.gas() >= 300) {
-            if (A.seconds() >= 400) {
-                if (A.minerals() <= 600) return 0;
+        if (We.protoss()) {
+            if (A.s <= 500 && gas >= 80) return 1;
+            if (A.s <= 600 && gas >= 120) return 2;
+            if (A.s <= 700 && gas >= 180) return 1;
+        }
+
+        if (gas >= 410) {
+            return 1;
+        }
+        else if (gas >= 300) {
+            if (A.seconds() <= 400) {
+                if (A.minerals() <= 400) return 0;
+                return 1;
             }
             else {
-                if (A.minerals() <= 300) return 0;
+                if (A.minerals() <= 600) return 2;
             }
         }
 
@@ -94,7 +103,7 @@ public class NumberOfGasWorkersCommander extends Commander {
             }
         }
 
-        if (A.gas() >= 380 && A.minerals() <= 280) {
+        if (gas >= 380 && A.minerals() <= 280) {
             return A.inRange(1, Count.workers() / 12, 3);
         }
 

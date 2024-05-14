@@ -16,7 +16,7 @@ public class ProcessAttackUnit extends Manager {
     }
 
     public boolean processAttackOtherUnit(AUnit target) {
-//        A.printStackTrace("ProcessAttackUnit.processAttackOtherUnit()");
+//        A.printStackTrace("ProcessAttackUnit.processAttackOtherUnit() " + unit.idWithHash());
 
         if (target == null) {
 //            ErrorLog.printMaxOncePerMinute(unit.type() + " AttackUnit got null target");

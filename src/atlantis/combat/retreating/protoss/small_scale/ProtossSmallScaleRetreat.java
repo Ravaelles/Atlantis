@@ -54,9 +54,12 @@ public class ProtossSmallScaleRetreat extends Manager {
             }
         }
 
+        Selection enemiesCombat = unit.enemiesNear().combatUnits();
+
+        if (enemiesCombat.onlyMelee() && enemiesCombat.inRadius(4, unit).empty()) return false;
         if (enemies.inRadius(ProtossSmallScaleEvaluate.RADIUS_LG, unit).count() <= 0) return false;
 
-        if (unit.enemiesNear().combatUnits().groundUnits().empty()) return false;
+        if (enemiesCombat.groundUnits().empty()) return false;
         if (unit.combatEvalRelative() >= 1.1 && unit.hp() >= 24) return false;
         if (ProtossTooBigBattleToRetreat.PvP_doNotRetreat(unit)) return false;
 

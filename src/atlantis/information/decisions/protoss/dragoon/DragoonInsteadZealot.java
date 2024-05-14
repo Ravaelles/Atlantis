@@ -10,7 +10,7 @@ import atlantis.util.Enemy;
 
 public class DragoonInsteadZealot {
     public static boolean dragoonInsteadOfZealot() {
-        if (Enemy.zerg()) return DragoonInsteadZealotVsZerg.dragoonInsteadOfZealot();
+        if (Enemy.zerg()) return DragoonInsteadZealotVsZerg.dragoonInsteadOfZealot_vZ();
 
         if (manyZealotsAndEnemyTooStrong()) return true;
 

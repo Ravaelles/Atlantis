@@ -27,7 +27,11 @@ public class FixIdleUnits extends Manager {
         AFocusPoint focusPoint = unit.focusPoint();
         if (focusPoint == null) return null;
 
-        if (unit.distToFocusPoint() > 5 && unit.move(focusPoint, Actions.MOVE_UNFREEZE, "FixIdleUnits")) {
+        if (
+            !unit.isMoving()
+                && unit.distToFocusPoint() > 5
+                && unit.move(focusPoint, Actions.MOVE_UNFREEZE, "FixIdleUnits")
+        ) {
 //            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - FixIdleUnits");
             return usedManager(this);
         }

@@ -109,7 +109,8 @@ public class Main {
 //        if (true) return "ums/rav/protoss/BulletTest.scm";
 //        if (true) return "ums/rav/protoss/BulletTest2.scm";
 
-        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm";
+//        if (true) return "ums/rav/protoss/1DragWounded_v_1Zeal.scm";
 //        if (true) return "ums/rav/protoss/1Drag_v_1ZealDead.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_3Zeal.scm";
 
@@ -130,8 +131,10 @@ public class Main {
 
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal_easy.scm";
+//        if (true) return "ums/rav/protoss/DragWounded_v_Zeal.scm";
+        if (true) return "ums/rav/protoss/ZealDrag_v_Zeal.scm";
 //        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
-        if (true) return "ums/rav/protoss/Drag_v_Zeal_inBase.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_Zeal_inBase.scm";
 
 //        if (true) return "ums/rav/protoss/DragZeal_v_Zeal.scm";
 

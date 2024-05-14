@@ -1,9 +1,11 @@
 package atlantis.combat.micro.avoid.margin;
 
 import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstSpecial;
+import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import bwapi.Color;
 
 public class SafetyMargin {
 
@@ -47,7 +49,7 @@ public class SafetyMargin {
         double safetyMargin = base + defender.distTo(attacker) - calculated;
 
 //        Color color = safetyMargin < 0 ? Color.Red : Color.Green;
-//        APainter.paintLine(attacker, color);
+//        defender.paintLine(attacker, color);
 //        APainter.paintTextCentered(A.formatDecimalPlaces(calculated, 1), color, 0.6, 0);
 
         return safetyMargin;
@@ -56,8 +58,6 @@ public class SafetyMargin {
     // =========================================================
 
     protected double enemyWeaponRange(AUnit attacker) {
-
-
         return defender.enemyWeaponRangeAgainstThisUnit(attacker) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 

@@ -54,7 +54,27 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
-        else if (ActiveMap.isMap("1Drag_v_1Zeal")) {
+        else if (ActiveMap.isMap("1DragWounded_v_1Zeal")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedToNormal();
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+            }
+            CameraCommander.centerCameraNowOnSquadCenter();
+        }
+
+        // =========================================================
+
+        else if (ActiveMap.isMap("DragWounded_v_Zeal")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedToNormal();
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                CameraCommander.centerCameraNowOnSquadCenter();
+            }
+        }
+
+        // =========================================================
+
+        else if (ActiveMap.isMap("1Drag_v_1Zeal.")) {
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
                 GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
@@ -65,8 +85,8 @@ public class MapSpecificCommander extends Commander {
         // =========================================================
 
         else if (
-            ActiveMap.isMap("Drag_v_")
-                || ActiveMap.isMap("Zeal_v_")
+            ActiveMap.isMap("/Drag_v_")
+                || ActiveMap.isMap("/Zeal_v_")
         ) {
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;

@@ -5,6 +5,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.Enemy;
 
 public class OptimalDistanceToFocusPoint {
     public static double forUnit(AUnit unit) {
@@ -17,6 +18,8 @@ public class OptimalDistanceToFocusPoint {
     }
 
     private static double asProtoss(AUnit unit) {
+        if (Enemy.zerg()) return 5;
+
         if (unit.isDragoon()) {
             return ChokeToBlock.BASE_DIST_FROM_CHOKE_CENTER
                 + 0.3

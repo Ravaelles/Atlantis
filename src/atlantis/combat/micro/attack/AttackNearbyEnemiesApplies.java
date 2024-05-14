@@ -16,16 +16,28 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
         if (unit.cooldown() >= 7) return false;
         if (unit.enemiesNear().empty()) return false;
         if (unit.isSpecialMission() && unit.isMelee()) return false;
+        if (!unit.hasAnyWeapon()) return false;
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
+
         if (dontAttackAlone()) return false;
 
-        if (unit.isDragoon() && unit.lastActionLessThanAgo(1)) return false;
+        if (unit.isDragoon()) {
+            if (unit.shieldDamageAtLeast(9)) {
+//                if (unit.meleeEnemiesNearCount(2.7) >= 1) return false;
+//                if (unit.isHealthy() || unit.lastAttackFrameMoreThanAgo(30 * 4)) return true;
+                return unit.cooldown() <= 10;
+            }
+            if (unit.meleeEnemiesNearCount(2.5) >= 2) return false;
+            return true;
+        }
 
-        if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
-        if (unit.lastStartedRunningLessThanAgo(8)) return false;
-        if (!unit.hasAnyWeapon()) return false;
         if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
-        if (unit.isDragoon() && unit.lastActionLessThanAgo(1)) return false;
+
+//        if (unit.isDragoon() && !unit.isAttacking() && unit.lastActionLessThanAgo(1)) return false;
+
+//        if (unit.manager().equals(this) && unit.looksIdle() && unit.enemiesNear().empty()) return false;
+//        if (unit.lastStartedRunningLessThanAgo(8)) return false;
+//        if (unit.isDragoon() && unit.lastActionLessThanAgo(1)) return false;
 
         if (unit.isMarine()) return MarineCanAttackNearEnemy.allowedForThisUnit(unit);
 
@@ -37,7 +49,7 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
 
         if (
             unit.isRanged()
-                && unit.woundPercent() <= 10
+//                && unit.woundPercent() <= 70
                 && unit.enemiesNear().onlyMelee()
         ) return false;
 

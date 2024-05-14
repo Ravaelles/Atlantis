@@ -222,7 +222,8 @@ public class GameSpeed {
         while (GameSpeed.isPaused()) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+            }
         }
     }
 

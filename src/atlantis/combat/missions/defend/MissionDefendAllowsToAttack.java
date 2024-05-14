@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 
 public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit {
     public MissionDefendAllowsToAttack(AUnit unit) {
@@ -19,6 +20,13 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
             throw new RuntimeException("aaa");
 //            if (true) return true;
         }
+
+        if (We.protoss()) {
+            if (unit.isRanged()) return unit.friendsInRadiusCount(2) >= 4 || unit.distToLeader() <= 6;
+            if (unit.isMelee()) return unit.friendsInRadiusCount(2) >= 4 || unit.distToDragoon() <= 6;
+        }
+
+//        if (unit.isRanged()) return true;
 
         if (!unit.isMissionSparta() && DontAttackAlone.isAlone(unit)) return false;
         if (unit.isMissionSparta() && unit.isMelee() && !enemy.hasCooldown()) {

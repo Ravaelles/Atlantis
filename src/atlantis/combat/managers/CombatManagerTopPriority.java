@@ -5,6 +5,8 @@ import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.generic.enemy_in_range.AttackEnemiesInRange;
 import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.combat.micro.avoid.DetectUnitsNotRunning;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingCriticallyClose;
 import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
@@ -43,6 +45,7 @@ public class CombatManagerTopPriority extends Manager {
 
             ContinueShooting.class,
             ContinueRunning.class,
+//            PreventTooManyActions.class,
 
             DetectUnitsNotRunning.class,
             FixPerformanceForBigSupply.class,
@@ -53,21 +56,20 @@ public class CombatManagerTopPriority extends Manager {
             Unfreezer.class,
             FixIdleUnits.class,
 
-            AttackEnemiesInRange.class,
-
-            PreventTooManyActions.class,
+            AvoidCriticalUnits.class,
+            AvoidCombatBuildingCriticallyClose.class,
+            AvoidCombatBuilding.class,
 
             RetreatManager.class,
 
-            PreventDoNothing.class,
-            PreventAttackNull.class,
-            PreventAttackForTooLong.class,
+//            PreventDoNothing.class,
+//            PreventAttackNull.class,
+//            PreventAttackForTooLong.class,
 
             DanceAwayAsMelee.class,
             DanceAfterShoot.class,
 //            ContinueShooting.class,
 //            HoldToShoot.class,
-            AvoidCriticalUnits.class,
             TransportUnits.class,
         };
     }

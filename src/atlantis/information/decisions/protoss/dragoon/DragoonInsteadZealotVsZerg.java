@@ -9,7 +9,7 @@ import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 
 public class DragoonInsteadZealotVsZerg {
-    public static boolean dragoonInsteadOfZealot() {
+    public static boolean dragoonInsteadOfZealot_vZ() {
         if (!Enemy.zerg()) return false;
 
         if (transitionToDragoonsDueToMutas()) return true;
@@ -22,24 +22,26 @@ public class DragoonInsteadZealotVsZerg {
     }
 
     private static boolean notEnoughZealots() {
-        if (
-            OurArmy.strength() <= 85
-                && A.seconds() <= 400
-                && Count.zealots() <= minZealots()
-                && EnemyUnits.discovered().dragoons().atMost(1)
-        ) {
-            return true;
-        }
+        if (Count.zealots() <= minZealots()) return true;
+
+//        if (
+//            A.seconds() <= 400
+//                && Count.zealots() <= minZealots()
+////                && A.seconds() <= 400
+////                && Count.zealots() <= minZealots()
+//        ) {
+//            return true;
+//        }
 
         return false;
     }
 
     private static double minZealots() {
-        double fromLings = EnemyUnits.discovered().zerglings().count() * 0.19;
+        double fromLings = EnemyUnits.discovered().zerglings().count() * 0.24;
 
-        if (A.hasGas(100)) fromLings = A.inRange(0, fromLings, 2);
+        if (A.hasGas(130)) fromLings = A.inRange(2, fromLings, 6);
 
-        return Math.max(1, fromLings);
+        return Math.max(5, fromLings);
     }
 
     private static boolean transitionToDragoonsDueToMutas() {

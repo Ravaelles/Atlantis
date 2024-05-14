@@ -253,6 +253,7 @@ public class ARunningManager {
 
     public HasPosition setRunTo(HasPosition runTo) {
         this.runTo = runTo;
+        unit._lastRunningPositionChange = A.fr;
         return runTo;
     }
 }
