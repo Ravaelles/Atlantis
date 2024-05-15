@@ -7,6 +7,7 @@ import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
@@ -42,9 +43,16 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
                     || unit.distToLeader() <= 6;
             }
 
-            if (unit.isMelee()) return unit.friendsInRadiusCount(2) >= 4
-                || unit.distToLeader() <= 3
-                || unit.distToDragoon() <= 6;
+            if (unit.isMelee()) {
+                if (
+                    unit.meleeEnemiesNearCount(1.2) >= 3
+                        && unit.lastAttackFrameLessThanAgo(30 * 4)
+                ) return false;
+
+                return unit.friendsInRadiusCount(2) >= 4
+                    || (unit.distToLeader() <= 3 && Count.ourCombatUnits() >= 3)
+                    || unit.distToDragoon() <= 6;
+            }
         }
 
 //        if (unit.isRanged()) return true;

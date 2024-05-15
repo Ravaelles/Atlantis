@@ -67,10 +67,14 @@ public class SingularityCharge extends Commander {
         if (ResearchNow.research(what())) {
             enqueued = true;
         }
-        
+
 //        if (AddToQueue.upgrade(tech())) {
 //            enqueued = true;
 //            Queue.get().history().addNow(tech().name());
 //        }
+    }
+
+    public static boolean isResearched() {
+        return isResearched;
     }
 }

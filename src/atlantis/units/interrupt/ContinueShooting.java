@@ -86,12 +86,17 @@ public class ContinueShooting extends Manager {
 //        ) return Decision.ALLOWED;
 
         int sa = unit.lastStartedAttackAgo();
+        int af = unit.lastAttackFrameAgo();
+
 //        System.err.println("sa:" + sa + ", la:" + unit.lastAttackFrameAgo());
-        if (sa <= 30) {
+        if (sa <= 40) {
             if (sa < UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)) {
                 return Decision.ALLOWED;
                 //            System.err.println("Dragoon " + unit.id() + " - FORBIDDEN sa: (" + sa);
             }
+
+            if (af >= 30 * 3 && unit.hasTarget() && unit.target().isHydralisk()) return Decision.ALLOWED;
+            
             return Decision.FORBIDDEN;
 //            return Decision.FORBIDDEN;
         }

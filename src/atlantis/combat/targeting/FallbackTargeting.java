@@ -60,7 +60,7 @@ public class FallbackTargeting {
         AUnit inRange;
         Selection enemies = enemies(unit);
 
-        inRange = enemies.canBeAttackedBy(unit, 0).wounded().mostWounded();
+        inRange = enemies.wounded().canBeAttackedBy(unit, 0).mostWounded();
 
         if (inRange != null) return inRange;
 

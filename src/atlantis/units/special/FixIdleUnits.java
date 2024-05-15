@@ -19,6 +19,7 @@ public class FixIdleUnits extends Manager {
             && unit.noCooldown()
             && unit.lastOrderWasFramesAgo() >= 12
             && unit.lastActionMoreThanAgo(12)
+            && unit.enemiesNear().ranged().countInRadius(6, unit) == 0
             && (!unit.isRanged() || unit.enemiesNear().inRadius(4, unit).empty());
     }
 

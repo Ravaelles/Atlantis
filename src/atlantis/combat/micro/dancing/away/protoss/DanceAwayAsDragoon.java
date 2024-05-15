@@ -1,6 +1,7 @@
 package atlantis.combat.micro.dancing.away.protoss;
 
 import atlantis.decisions.Decision;
+import atlantis.production.dynamic.protoss.tech.SingularityCharge;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
@@ -18,12 +19,13 @@ public class DanceAwayAsDragoon extends HasUnit {
 
 //        if (unit.lastActionLessThanAgo(2, Actions.ATTACK_UNIT)) return Decision.FALSE;
 
-        if (true) return Decision.FALSE;
-
         if (unit.lastAttackFrameMoreThanAgo(30 * 8)) return Decision.FALSE;
         if (unit.cooldown() <= 12) return Decision.FALSE;
 
         if ((decision = vsEnemyDragoons()).notIndifferent()) return decision;
+        if ((decision = vsEnemyHydra()).notIndifferent()) return decision;
+
+        if (true) return Decision.FALSE;
 
 //        if (unit.woundHp() <= 14 && unit.lastAttackFrameMoreThanAgo(30 * 5)) return Decision.FALSE;
         if ((unit.cooldown() >= 12 || unit.hp() <= 100) && !unit.isSafeFromMelee()) return Decision.TRUE;
@@ -39,6 +41,14 @@ public class DanceAwayAsDragoon extends HasUnit {
         if (quiteHealthyAndNotUnderAttack()) return Decision.FALSE;
 
         return Decision.INDIFFERENT;
+    }
+
+    private Decision vsEnemyHydra() {
+        double range = 3.85 + (SingularityCharge.isResearched() ? 2 : 0);
+
+        return unit.enemiesNear().hydralisks().countInRadius(range, unit) > 0
+            ? Decision.TRUE
+            : Decision.INDIFFERENT;
     }
 
     private boolean provideSupportForMelee() {
