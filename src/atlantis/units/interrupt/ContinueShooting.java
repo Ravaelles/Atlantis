@@ -78,19 +78,22 @@ public class ContinueShooting extends Manager {
 
     private Decision decisionForDragoon() {
 //        System.err.println(A.now() + " // " + unit.lastAttackFrameMoreThanAgo(30 * 6));
-        if (
-            unit.lastAttackFrameMoreThanAgo(30 * 3)
-                && unit.lastActionLessThanAgo(30 * 3, Actions.ATTACK_UNIT)
-        ) return Decision.ALLOWED;
+
+//        if (
+////            unit.cooldown() <= 5
+////            unit.lastAttackFrameMoreThanAgo(30)
+//            unit.lastActionLessThanAgo(30 * 5, Actions.ATTACK_UNIT)
+//        ) return Decision.ALLOWED;
 
         int sa = unit.lastStartedAttackAgo();
 //        System.err.println("sa:" + sa + ", la:" + unit.lastAttackFrameAgo());
-        if (
-            sa <= 20
-                && sa >= UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)
-        ) {
-//            System.err.println("Dragoon " + unit.id() + " - FORBIDDEN sa: (" + sa);
+        if (sa <= 30) {
+            if (sa < UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)) {
+                return Decision.ALLOWED;
+                //            System.err.println("Dragoon " + unit.id() + " - FORBIDDEN sa: (" + sa);
+            }
             return Decision.FORBIDDEN;
+//            return Decision.FORBIDDEN;
         }
 
         int maxFramesAgo = maxFramesAgoForDragoon();

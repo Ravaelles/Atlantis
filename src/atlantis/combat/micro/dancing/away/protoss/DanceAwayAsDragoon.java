@@ -18,14 +18,16 @@ public class DanceAwayAsDragoon extends HasUnit {
 
 //        if (unit.lastActionLessThanAgo(2, Actions.ATTACK_UNIT)) return Decision.FALSE;
 
-//        if (true) return Decision.FALSE;
+        if (true) return Decision.FALSE;
 
         if (unit.lastAttackFrameMoreThanAgo(30 * 8)) return Decision.FALSE;
-//        if (unit.woundHp() <= 14 && unit.lastAttackFrameMoreThanAgo(30 * 5)) return Decision.FALSE;
-        if ((unit.cooldown() >= 12 || unit.hp() <= 100) && !unit.isSafeFromMelee()) return Decision.TRUE;
         if (unit.cooldown() <= 12) return Decision.FALSE;
 
         if ((decision = vsEnemyDragoons()).notIndifferent()) return decision;
+
+//        if (unit.woundHp() <= 14 && unit.lastAttackFrameMoreThanAgo(30 * 5)) return Decision.FALSE;
+        if ((unit.cooldown() >= 12 || unit.hp() <= 100) && !unit.isSafeFromMelee()) return Decision.TRUE;
+
 
         if (tooHealthy()) return Decision.FALSE;
         if (provideSupportForMelee()) return Decision.FALSE;

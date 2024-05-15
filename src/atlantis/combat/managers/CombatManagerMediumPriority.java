@@ -42,7 +42,7 @@ public class CombatManagerMediumPriority extends Manager {
             AttackNearbyEnemies.class,
             AttackEnemiesInRange.class,
 
-            ShouldStopRunning.class,
+//            ShouldStopRunning.class,
             AvoidEnemies.class,
 
             DontMoveWhenBeingRepared.class,

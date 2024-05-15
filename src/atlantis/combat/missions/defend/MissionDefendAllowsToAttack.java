@@ -4,6 +4,7 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.DontAttackAlone;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -22,8 +23,20 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
         }
 
         if (We.protoss()) {
-            if (unit.isRanged()) return unit.friendsInRadiusCount(2) >= 4 || unit.distToLeader() <= 6;
-            if (unit.isMelee()) return unit.friendsInRadiusCount(2) >= 4 || unit.distToDragoon() <= 6;
+            if (unit.isRanged()) {
+                if (unit.shieldDamageAtMost(9)) return true;
+                if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return true;
+                if (unit.lastAttackFrameMoreThanAgo(unit.lastUnderAttackAgo() + 30)) return true;
+
+                if (EnemyInfo.noRanged() && unit.isSafeFromMelee()) return true;
+
+                return unit.friendsInRadiusCount(3) >= 3
+                    || unit.distToLeader() <= 6;
+            }
+
+            if (unit.isMelee()) return unit.friendsInRadiusCount(2) >= 4
+                || unit.distToLeader() <= 3
+                || unit.distToDragoon() <= 6;
         }
 
 //        if (unit.isRanged()) return true;
