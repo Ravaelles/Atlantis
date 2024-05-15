@@ -1918,6 +1918,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return A.ago(_lastStartedRunning) <= framesAgo;
     }
 
+    public int lastStoppedRunningAgo() {
+        return A.ago(_lastStoppedRunning);
+    }
+
     public boolean lastStoppedRunningLessThanAgo(int framesAgo) {
         return A.ago(_lastStoppedRunning) <= framesAgo;
     }

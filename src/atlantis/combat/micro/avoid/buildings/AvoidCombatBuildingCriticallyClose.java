@@ -15,7 +15,7 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
     @Override
     public boolean applies() {
         return (
-            combatBuilding = unit.enemiesNear().buildings().combatBuildingsAnti(unit).inRadius(9, unit).nearestTo(unit)
+            combatBuilding = unit.enemiesNear().buildings().combatBuildingsAnti(unit).inRadius(10, unit).nearestTo(unit)
         ) != null;
     }
 
@@ -35,11 +35,11 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
     private boolean shouldHoldGround(AUnit combatBuilding) {
         return unit.isMoving()
             && unit.targetPosition() != null
-            && unit.targetPosition().distTo(combatBuilding) < 7.65
+            && unit.targetPosition().distTo(combatBuilding) < 8.8
             && unit.targetPosition().distTo(combatBuilding) >= 7.1;
     }
 
-    private boolean isHoldingTooLong(AUnit combatBuilding) {
-        return unit.isHoldingPosition() && unit.noCooldown() && unit.lastActionMoreThanAgo(5);
-    }
+//    private boolean isHoldingTooLong(AUnit combatBuilding) {
+//        return unit.isHoldingPosition() && unit.noCooldown() && unit.lastActionMoreThanAgo(5);
+//    }
 }

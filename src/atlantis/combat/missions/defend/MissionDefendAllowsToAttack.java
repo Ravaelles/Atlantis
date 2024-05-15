@@ -24,9 +24,17 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 
         if (We.protoss()) {
             if (unit.isRanged()) {
-                if (unit.shieldDamageAtMost(9)) return true;
-                if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return true;
-                if (unit.lastAttackFrameMoreThanAgo(unit.lastUnderAttackAgo() + 30)) return true;
+                if (EnemyInfo.noRanged()) {
+                    if (unit.shieldDamageAtMost(9)) return true;
+                    if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return true;
+                }
+
+                if (unit.distToLeader() >= 13 && unit.friendsInRadiusCount(4) <= 4) return false;
+
+                if (
+                    unit.shieldDamageAtLeast(20)
+                        && unit.lastAttackFrameMoreThanAgo(unit.lastUnderAttackAgo() + 30)
+                ) return true;
 
                 if (EnemyInfo.noRanged() && unit.isSafeFromMelee()) return true;
 

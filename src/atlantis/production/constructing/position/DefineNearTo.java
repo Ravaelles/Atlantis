@@ -2,6 +2,7 @@ package atlantis.production.constructing.position;
 
 import atlantis.game.A;
 import atlantis.game.race.MyRace;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
@@ -24,6 +25,13 @@ public class DefineNearTo {
         }
 
         if (We.protoss()) {
+            if (nearTo == null == building.isCannon()) {
+                int bases = Count.bases();
+                if (bases >= 3) return Select.ourBases().last();
+                if (bases == 2) return Chokes.natural();
+                if (bases <= 1) return Chokes.mainChoke();
+            }
+
             if (nearTo == null && building.isGateway()) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
 
             if (nearTo == null) {

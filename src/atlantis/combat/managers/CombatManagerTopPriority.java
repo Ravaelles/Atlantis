@@ -43,6 +43,9 @@ public class CombatManagerTopPriority extends Manager {
         return new Class[]{
             FixInvalidUnits.class,
 
+            AvoidCombatBuildingCriticallyClose.class,
+            AvoidCombatBuilding.class,
+            
             ContinueShooting.class,
             ContinueRunning.class,
 //            PreventTooManyActions.class,
@@ -57,8 +60,6 @@ public class CombatManagerTopPriority extends Manager {
             FixIdleUnits.class,
 
             AvoidCriticalUnits.class,
-            AvoidCombatBuildingCriticallyClose.class,
-            AvoidCombatBuilding.class,
 
             RetreatManager.class,
 

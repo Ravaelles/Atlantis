@@ -5,6 +5,7 @@ import atlantis.combat.running.show_back.RunShowBackToEnemy;
 import atlantis.combat.running.to_building.ShouldRunTowardsBase;
 import atlantis.combat.running.to_building.ShouldRunTowardsBunker;
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -30,6 +31,12 @@ public class RunToPositionFinder {
      */
     protected HasPosition findBestPositionToRun(HasPosition runAwayFrom, double dist, Action action) {
         AUnit unit = running.unit;
+
+        HasPosition currentRunTo = unit.runningManager().runTo();
+        if (currentRunTo != null && unit.lastRunningPositionChangeAgo() <= 12) {
+//            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - CONT RUN TO");
+            return currentRunTo;
+        }
 
         if (
             !unit.isFlying()

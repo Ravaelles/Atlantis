@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.margin.protoss;
 
 import atlantis.combat.micro.avoid.margin.SafetyMarginAgainstMelee;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 
 public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
@@ -11,24 +12,29 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     @Override
     public double marginAgainst(AUnit attacker) {
 //        double base = 2.3
-        double base = (defender.isWounded() ? 3.0 : 1.1)
-//            + cooldownBonus(attacker)
-            + (defender.isMoving() ? -0.3 : 0)
+        double base = (defender.woundHp() >= 10 ? 3.0 : 1.1)
+
+            + (defender.hp() <= 40 ? +0.5 : 0)
+            + (defender.isMoving() ? -0.2 : 0)
             + (defender.isAccelerating() ? -0.1 : 0)
+            + (defender.lastAttackFrameMoreThanAgo(30 * 4) ? -1 : 0)
+            + (defender.lastAttackFrameMoreThanAgo(30 * 6) ? -1 : 0)
+
             + (attacker.isMoving() ? +0.5 : 0)
-            + (attacker.isFacing(defender) ? 0.7 : -0.2);
+            + ((attacker.hasTargetted(defender) || attacker.isFacing(defender)) ? 0.8 : -0.2);
 //            + defender.woundPercent() / 300.0;
 
         if (!attacker.isDT()) {
-            if (attacker.isOtherUnitShowingBackToUs(defender)) {
-                return defender.hp() >= 40 ? 0 : 1.7;
+            if (defender.isOtherUnitShowingBackToUs(attacker)) {
+//                System.err.println("defender.isOtherUnitShowingBackToUs = ");
+                base += defender.hp() >= 40 ? -2.0 : -0.7;
             }
 
 //            if (quiteHealthyAndLongNotUnderAttack(attacker)) return 2.1;
 
             if (defender.shieldDamageAtMost(23)) {
                 if (defender.friendsInRadiusCount(1.5) >= 3) {
-                    return base + 1.1;
+                    base -= 0.5;
                 }
 
                 //            if (defender.lastUnderAttackMoreThanAgo(150) && defender.shieldDamageAtMost(16)) {
@@ -41,7 +47,13 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
             return base + (0.2);
         }
 
-        return -1;
+        if (defender.shieldDamageAtLeast(19)) {
+            double minStillWhenCooldown = 2.6;
+            if (base <= minStillWhenCooldown && defender.cooldown() >= 10) base = minStillWhenCooldown;
+        }
+
+//        System.err.println("@ " + A.now() + " - " + base);
+        return Math.min(3.8, base);
     }
 
     private boolean quiteHealthyAndLongNotUnderAttack(AUnit attacker) {

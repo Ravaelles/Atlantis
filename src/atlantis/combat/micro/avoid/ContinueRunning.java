@@ -12,6 +12,7 @@ public class ContinueRunning extends Manager {
     @Override
     public boolean applies() {
 //        if (true) return false;
+        
         return ShouldContinueRunning.handleContinueRunning(unit);
     }
 

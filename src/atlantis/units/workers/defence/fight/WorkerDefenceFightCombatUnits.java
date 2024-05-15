@@ -25,6 +25,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
     private boolean shouldNotFight() {
 //        if (A.supplyUsed() >= 40) return true;
 //        if (unit.enemiesNear().empty() || unit.enemiesNear().inRadius(4, unit).empty()) return true;
+        if (unit.id() % 7 >= 2) return true;
         if (unit.enemiesNear().empty()) return true;
         if (unit.hp() <= 18) return true;
         if (Enemy.protoss() && unit.hp() <= 25) return true;
