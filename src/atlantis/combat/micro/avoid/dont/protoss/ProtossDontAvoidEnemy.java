@@ -15,6 +15,7 @@ public class ProtossDontAvoidEnemy extends HasUnit {
 
 //        if (unit.looksIdle() || unit.lastActionMoreThanAgo(40)) return true;
         if (DragoonDontAvoidEnemy.dontAvoid(unit)) return true;
+        if (ObserverDontAvoidEnemy.dontAvoid(unit)) return true;
 
         return false;
     }

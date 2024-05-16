@@ -45,18 +45,6 @@ public class DragoonInsteadZealot {
             return true;
         }
 
-        if (
-            Enemy.zerg()
-                && OurArmy.strength() <= 85
-                && A.seconds() <= 400
-//                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
-//                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
-                && Count.zealots() <= 3
-                && EnemyUnits.discovered().zerglings().atLeast(9)
-        ) {
-            return true;
-        }
-
         return false;
     }
 

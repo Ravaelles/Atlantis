@@ -62,7 +62,15 @@ public class ProtossShouldExpand {
     }
 
     private static boolean forThirdAndLaterBases() {
-        if (Count.workers() <= 17 * bases || (!A.hasMinerals(550) && Count.workers() <= 35)) return no("TooFewWorkers");
+        int workers = Count.workers();
+
+        if (
+            A.supplyUsed() >= 120
+                && OurArmy.strength() >= A.supplyUsed()
+                && Count.basesWithPlanned() <= 2
+        ) return yes("Get3rd");
+
+        if (workers <= 17 * bases || (!A.hasMinerals(550) && workers <= 35)) return no("TooFewWorkers");
         if (Enemy.protoss() && Have.observatory()) return no("NoObservatory");
 
 //        boolean hasPlentyOfMinerals = AGame.hasMinerals(580);

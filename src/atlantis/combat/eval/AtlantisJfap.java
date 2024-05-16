@@ -95,7 +95,7 @@ public class AtlantisJfap {
     }
 
     public static boolean isValidUnit(AUnit unit) {
-        return unit.notImmobilized() && unit.hasPosition() && (
+        return unit.notImmobilized() && unit.hasPosition() && unit.isCompleted() && (
             unit.u() != null || unit instanceof FakeUnit || unit instanceof AbstractFoggedUnit
         );
     }

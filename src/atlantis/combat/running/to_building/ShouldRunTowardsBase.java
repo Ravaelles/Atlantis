@@ -2,6 +2,7 @@ package atlantis.combat.running.to_building;
 
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -15,8 +16,11 @@ public class ShouldRunTowardsBase {
         if (main == null) return false;
 
         double distToMain = unit.distTo(main);
+        if (distToMain <= 3) return false;
 
-        if (distToMain <= 4) return false;
+        if (Enemy.protoss()) {
+            if (unit.isDragoon() && EnemyInfo.noRanged()) return false;
+        }
 
         if (unit.isMissionAttack() && unit.isGroundUnit() && unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.isScout() && !unit.isDragoon() && unit.enemiesNear().buildings().notEmpty()) return true;

@@ -2,6 +2,7 @@ package atlantis.combat.micro.attack;
 
 import atlantis.combat.micro.avoid.terran.fight.MarineCanAttackNearEnemy;
 
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
@@ -17,6 +18,16 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
         if (unit.enemiesNear().empty()) return false;
         if (unit.isSpecialMission() && unit.isMelee()) return false;
         if (!unit.hasAnyWeapon()) return false;
+
+        if (Alpha.count() <= 5) {
+            if (unit.isMelee() && unit.shieldDamageAtLeast(11)) {
+                if (
+                    unit.meleeEnemiesNearCount(1.3) >= 3
+                        && unit.friendsNear().melee().countInRadius(1.2, unit) == 0
+                ) return false;
+            }
+        }
+
         if (unit.lastStoppedRunningLessThanAgo(1)) {
 //            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - SRun:" + unit.lastStoppedRunningAgo());
             return true;

@@ -24,6 +24,18 @@ public class DragoonInsteadZealotVsZerg {
     private static boolean notEnoughZealots() {
         if (Count.zealots() <= minZealots()) return true;
 
+        if (
+            Enemy.zerg()
+                && OurArmy.strength() <= 85
+                && A.seconds() <= 400
+//                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
+//                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
+                && Count.zealots() <= 3
+                && EnemyUnits.discovered().zerglings().atLeast(9)
+        ) {
+            return true;
+        }
+
 //        if (
 //            A.seconds() <= 400
 //                && Count.zealots() <= minZealots()
@@ -41,7 +53,7 @@ public class DragoonInsteadZealotVsZerg {
 
         if (A.hasGas(130)) fromLings = A.inRange(2, fromLings, 6);
 
-        return Math.max(5, fromLings);
+        return A.inRange(5, fromLings, 9);
     }
 
     private static boolean transitionToDragoonsDueToMutas() {

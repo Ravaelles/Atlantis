@@ -16,6 +16,8 @@ import atlantis.util.Enemy;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     private int relativeStrength;
+    private int strength;
+    private int dragoons;
 
     // === CONTAIN =============================================
 
@@ -89,8 +91,10 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     public boolean shouldChangeMissionToAttack() {
         if (!canChange()) return false;
 
+        Decision decision;
+
         if (Enemy.protoss()) {
-            Decision decision = shouldAttackVsProtoss();
+            decision = shouldAttackVsProtoss();
 
             if (decision.notIndifferent()) return decision.toBoolean();
 
@@ -109,14 +113,13 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            }
         }
 
-        int strength = ArmyStrength.ourArmyRelativeStrength();
-        int dragoons = Count.dragoons();
+        strength = ArmyStrength.ourArmyRelativeStrength();
+        dragoons = Count.dragoons();
 
         if (Enemy.zerg()) {
-            if (strength <= 360 && Count.ourCombatUnits() <= 7) return false;
-            if (dragoons <= 6 && Count.ourCombatUnits() <= 8) {
-                if (EnemyUnits.zerglings() * 3 >= dragoons) return false;
-            }
+            decision = shouldAttackVsZerg();
+
+            if (decision.notIndifferent()) return decision.toBoolean();
         }
 
         if (Missions.isGlobalMissionSparta()) {
@@ -129,6 +132,19 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         return false;
+    }
+
+    private Decision shouldAttackVsZerg() {
+        int combatUnits = Count.ourCombatUnits();
+
+        if (strength <= 360 && combatUnits <= 7) return Decision.FALSE;
+        if (dragoons <= 6 && combatUnits <= 8) {
+            if (EnemyUnits.zerglings() * 3 >= dragoons) return Decision.FALSE;
+        }
+
+        if (combatUnits <= 5 && A.resourcesBalance() <= 100) return Decision.FALSE;
+
+        return Decision.INDIFFERENT;
     }
 
     private Decision shouldAttackVsProtoss() {

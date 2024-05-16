@@ -25,6 +25,8 @@ public class AvoidCombatBuilding extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+        
         if (unit.isAir()) return true;
         if (unit.isGroundUnit() && unit.isMissionDefendOrSparta()) return false;
         if (

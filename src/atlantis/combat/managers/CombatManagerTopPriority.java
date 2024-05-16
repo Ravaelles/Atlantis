@@ -5,7 +5,7 @@ import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.generic.enemy_in_range.AttackEnemiesInRange;
 import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.combat.micro.avoid.DetectUnitsNotRunning;
-import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
+//import atlantis.combat.micro.avoid.buildings.AvoidCombatBuilding;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingCriticallyClose;
 import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
@@ -44,8 +44,8 @@ public class CombatManagerTopPriority extends Manager {
             FixInvalidUnits.class,
 
             AvoidCombatBuildingCriticallyClose.class,
-            AvoidCombatBuilding.class,
-            
+//            AvoidCombatBuilding.class,
+
             ContinueShooting.class,
             ContinueRunning.class,
 //            PreventTooManyActions.class,

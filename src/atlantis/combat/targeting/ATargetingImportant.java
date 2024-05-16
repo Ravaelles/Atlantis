@@ -268,6 +268,21 @@ public class ATargetingImportant extends ATargeting {
             return target;
         }
 
+        // =========================================================
+        // Including unfinished defensive buildings
+
+        target = unit.enemiesNear()
+            .ofType(
+                AUnitType.Zerg_Creep_Colony
+            )
+            .inRadius(7, unit)
+            .mostWounded();
+
+        if (target != null) {
+            debug("C5d = " + target);
+            return target;
+        }
+
         // === Damaged bases ======================================================
 
         target = enemyBuildings
