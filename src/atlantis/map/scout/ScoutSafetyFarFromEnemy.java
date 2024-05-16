@@ -26,11 +26,13 @@ public class ScoutSafetyFarFromEnemy extends Manager {
         AUnit enemy = (new AvoidEnemies(unit)).enemiesDangerouslyClose().first();
         if (enemy != null) return enemy;
 
-        return unit.enemiesNear().combatUnits().inRadius(7, unit).nearestTo(unit);
+        return unit.enemiesNear().combatUnits().inRadius(9, unit).nearestTo(unit);
     }
 
     private double safetyMargin() {
-        return 3.1 + unit.woundPercent() / 30.0;
+        return 3.1
+            + (unit.lastUnderAttackLessThanAgo(30 * 5) ? 1.5 : 0)
+            + unit.woundPercent() / 25.0;
     }
 
     @Override

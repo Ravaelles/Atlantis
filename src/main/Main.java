@@ -147,7 +147,7 @@ public class Main {
 
         // vs Zerg
 //        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
-        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm"; // Dragoons v Zealots - more goons
+//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm"; // Dragoons v Zealots - more goons
 
         if (true) return "ums/rav/protoss/Drag_v_Hydra.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";

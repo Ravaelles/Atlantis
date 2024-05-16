@@ -76,14 +76,15 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // =========================================================
 
+        boolean focusThirdAnyway = A.s % 36 <= 10;
 
-        if (A.s >= 300 && EnemyInfo.hasDefensiveLandBuilding(true)) {
+        if (A.s >= 300 && (focusThirdAnyway || EnemyInfo.hasDefensiveLandBuilding(true))) {
             AFocusPoint enemyThird = enemyThird(main);
 
             if (
                 enemyThird != null
                     && (
-                    A.s % 36 <= 18
+                    focusThirdAnyway
                         || EnemyUnits.discovered().buildings().inRadius(10, enemyThird).notEmpty()
                 )
             ) return enemyThird;
@@ -229,6 +230,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
     private AFocusPoint enemyThird(AUnit main) {
         APosition enemyThird = BaseLocations.enemyThird();
+//        System.err.println("enemyThird = " + enemyThird);
         if (enemyThird == null) return null;
 
         return new AFocusPoint(

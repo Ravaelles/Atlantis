@@ -109,16 +109,22 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            }
         }
 
+        int strength = ArmyStrength.ourArmyRelativeStrength();
+        int dragoons = Count.dragoons();
+
         if (Enemy.zerg()) {
-            if (Count.ourCombatUnits() <= 7) return false;
+            if (strength <= 360 && Count.ourCombatUnits() <= 7) return false;
+            if (dragoons <= 6 && Count.ourCombatUnits() <= 8) {
+                if (EnemyUnits.zerglings() * 3 >= dragoons) return false;
+            }
         }
 
         if (Missions.isGlobalMissionSparta()) {
             return whenSparta();
         }
 
-        if (ArmyStrength.ourArmyRelativeStrength() >= 240 && Count.dragoons() >= 2) {
-            if (DEBUG) reason = "Ah, much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+        if (strength >= 240 && dragoons >= 2) {
+            if (DEBUG) reason = "Ah, much stronger (" + strength + "%)";
             return true;
         }
 

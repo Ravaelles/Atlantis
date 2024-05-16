@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning.too_lonely;
+package atlantis.combat.squad.positioning.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
@@ -22,7 +22,7 @@ public class ProtossTooLonelyGetCloser extends Manager {
         return unit.noCooldown()
             && unit.enemiesNear().notEmpty()
             && unit.squadSize() >= 2
-            && unit.lastUnderAttackMoreThanAgo(30 * 3)
+            && (unit.shieldDamageAtLeast(20) || unit.lastUnderAttackMoreThanAgo(30 * 3))
             && isTooLonely();
     }
 

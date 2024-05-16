@@ -2,18 +2,13 @@ package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.squad.positioning.too_lonely.ProtossTooFarFromLeader;
-import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
-import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonelyGetCloser;
-import atlantis.game.A;
+import atlantis.combat.squad.positioning.protoss.ProtossTooFarFromLeader;
+import atlantis.combat.squad.positioning.protoss.ProtossTooLonelyGetCloser;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
 
 public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {

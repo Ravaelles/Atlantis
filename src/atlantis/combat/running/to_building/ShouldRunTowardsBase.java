@@ -14,6 +14,10 @@ public class ShouldRunTowardsBase {
         AUnit main = Select.main();
         if (main == null) return false;
 
+        double distToMain = unit.distTo(main);
+
+        if (distToMain <= 4) return false;
+
         if (unit.isMissionAttack() && unit.isGroundUnit() && unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.isScout() && !unit.isDragoon() && unit.enemiesNear().buildings().notEmpty()) return true;
 
@@ -44,8 +48,6 @@ public class ShouldRunTowardsBase {
 
         if (OurStrategy.get().isRushOrCheese() && A.seconds() <= 300) return false;
         if (!unit.hasPathTo(main)) return false;
-
-        double distToMain = unit.distTo(main);
 
         int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(4);
         if (distToMain >= 40 || (distToMain > 7 && meleeEnemiesNearCount == 0 && unit.isMissionDefend()))

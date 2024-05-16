@@ -2,10 +2,7 @@ package atlantis.combat.retreating.protoss.big_scale;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
-import atlantis.combat.retreating.protoss.small_scale.ProtossSmallScaleRetreat;
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
-import atlantis.information.enemy.EnemyUnits;
+import atlantis.combat.squad.positioning.protoss.ProtossTooLonely;
 import atlantis.information.generic.OurArmy;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;

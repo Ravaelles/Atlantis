@@ -111,4 +111,12 @@ public class EnemyUnits {
     public static int dragoons() {
         return discovered().dragoons().count();
     }
+
+    public static int zerglings() {
+        return discovered().zerglings().count();
+    }
+
+    public static int combatUnits() {
+        return discovered().combatUnits().count();
+    }
 }

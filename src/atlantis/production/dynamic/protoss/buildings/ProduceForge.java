@@ -18,6 +18,8 @@ public class ProduceForge {
     private static int buildAtSupply() {
         if (EnemyStrategy.get().isGoingHiddenUnits()) return 24;
 
+        if (Enemy.zerg()) return 42;
+
 //        if (EnemyStrategy.get().isRushOrCheese()) return 10;
 
         return 62;

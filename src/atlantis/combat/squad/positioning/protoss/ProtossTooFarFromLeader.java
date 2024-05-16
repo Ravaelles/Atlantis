@@ -1,7 +1,8 @@
-package atlantis.combat.squad.positioning.too_lonely;
+package atlantis.combat.squad.positioning.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
@@ -22,6 +23,8 @@ public class ProtossTooFarFromLeader extends Manager {
     @Override
     public boolean applies() {
 //        if (true) return false;
+
+        if (!previousApplies()) return false;
 
 //        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
         if (EnemyWhoBreachedBase.notNull()) return false;
@@ -55,6 +58,31 @@ public class ProtossTooFarFromLeader extends Manager {
         if (unitIsOvercrowded()) return false;
 
         return tooFarFromLeader();
+    }
+
+    private boolean previousApplies() {
+        return (A.supplyUsed() <= 100 || EnemyInfo.hasDiscoveredAnyBuilding())
+            && (A.isUms() || EnemyWhoBreachedBase.noone())
+            && (!unit.isMissionDefendOrSparta() || unit.distToBase() <= 30)
+            && (unit.noCooldown() || unit.looksIdle() || unit.distToBase() >= 30)
+//            && !unit.hasCooldown()
+            && unit.isGroundUnit()
+            && !unit.isDT()
+            && (!unit.isDragoon() || unit.enemiesNearInRadius(5) == 0)
+            && unit.lastStoppedRunningMoreThanAgo(10)
+            && !tooDangerousBecauseOfCloseEnemies()
+            && unit.friendsNear().combatUnits().inRadius(4, unit).atMost(10)
+            && !unit.distToNearestChokeLessThan(5);
+    }
+
+    private boolean tooDangerousBecauseOfCloseEnemies() {
+        if (unit.woundHp() <= 15 && unit.lastAttackFrameMoreThanAgo(30 * 6)) return false;
+
+        Selection enemies = unit.enemiesNear()
+            .inRadius(2.8 + unit.woundPercent() / 50.0, unit)
+            .combatUnits();
+
+        return enemies.atLeast(unit.shieldDamageAtMost(30) ? 2 : 1);
     }
 
     private boolean wayTooFarFromLeader() {

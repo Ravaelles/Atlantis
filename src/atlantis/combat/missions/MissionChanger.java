@@ -148,9 +148,10 @@ public abstract class MissionChanger {
     }
 
     protected static boolean defendAgainstMassZerglings() {
+        if (!Enemy.zerg()) return false;
+
         if (
-            Enemy.zerg()
-                && Count.ourCombatUnits() <= 6
+            Count.ourCombatUnits() <= 6
                 && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(7)
         ) {
             if (DEBUG) reason = "Mass zerglings A";
@@ -158,12 +159,19 @@ public abstract class MissionChanger {
         }
 
         if (
-            Enemy.zerg()
-                && A.seconds() <= 340
+            A.seconds() <= 340
                 && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(9)
                 && (!We.zerg() || !ArmyStrength.weAreStronger())
         ) {
             if (DEBUG) reason = "Mass zerglings B";
+            return true;
+        }
+
+        if (
+            Count.dragoons() <= 3
+                && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(11)
+        ) {
+            if (DEBUG) reason = "Mass zerglings C";
             return true;
         }
 

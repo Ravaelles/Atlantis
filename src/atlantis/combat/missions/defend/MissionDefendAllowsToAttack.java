@@ -4,7 +4,9 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.DontAttackAlone;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -23,11 +25,20 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 //            if (true) return true;
         }
 
+
         if (We.protoss()) {
+            if (Alpha.count() <= 4) {
+                if (EnemyWhoBreachedBase.notNull()) return true;
+
+                int rangeBonus = unit.isRanged() ? 2 : 1;
+                if (!unit.canAttackTargetWithBonus(enemy, rangeBonus)) return true;
+                return false;
+            }
+
             if (unit.isRanged()) {
                 if (EnemyInfo.noRanged()) {
                     if (unit.shieldDamageAtMost(9)) return true;
-                    if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return true;
+                    if (unit.hp() >= 40 && unit.lastAttackFrameLessThanAgo(30 * 4)) return true;
                 }
 
                 if (unit.distToLeader() >= 13 && unit.friendsInRadiusCount(4) <= 4) return false;
@@ -44,10 +55,8 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
             }
 
             if (unit.isMelee()) {
-                if (
-                    unit.meleeEnemiesNearCount(1.2) >= 3
-                        && unit.lastAttackFrameLessThanAgo(30 * 4)
-                ) return false;
+                if (unit.hp() >= 40 && unit.lastAttackFrameLessThanAgo(30 * 4)) return true;
+                if (unit.meleeEnemiesNearCount(1.2) >= 3) return false;
 
                 return unit.friendsInRadiusCount(2) >= 4
                     || (unit.distToLeader() <= 3 && Count.ourCombatUnits() >= 3)

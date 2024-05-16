@@ -1,8 +1,7 @@
 package atlantis.combat.missions.defend.sparta;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
-import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonelyGetCloser;
+import atlantis.combat.squad.positioning.protoss.ProtossTooLonely;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
 

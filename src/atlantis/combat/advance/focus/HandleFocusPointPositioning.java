@@ -2,8 +2,7 @@ package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
-import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonelyGetCloser;
+import atlantis.combat.squad.positioning.protoss.ProtossTooLonely;
 import atlantis.units.AUnit;
 
 public class HandleFocusPointPositioning extends MissionManager {

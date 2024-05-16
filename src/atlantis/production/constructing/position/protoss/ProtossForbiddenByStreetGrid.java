@@ -26,7 +26,7 @@ public class ProtossForbiddenByStreetGrid {
             if (moduloX != 9 && moduloX != 11 && moduloX != 13 && moduloX != 15)
                 return failed("TX modulo PP_X2 = " + moduloX);
             if (
-                moduloY != 0 && moduloY != 2 && moduloY != 4 && moduloY != 6
+                moduloY != 0 && moduloY != 2 && moduloY != 6
             ) return failed("TY modulo PP_Y2 = " + moduloY);
 
 //            System.err.println("Pylon: " + moduloX + " / " + moduloY);

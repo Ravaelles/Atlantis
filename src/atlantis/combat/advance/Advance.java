@@ -6,8 +6,6 @@ import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.wraith.AsAirAttackAnyone;
 import atlantis.combat.micro.zerg.overlord.WeDontKnowEnemyLocation;
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.squad.positioning.terran.TerranTooFarFromLeader;
-import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
 import atlantis.combat.squad.positioning.too_lonely.TooLonely;
 import atlantis.units.AUnit;
 
