@@ -83,8 +83,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (
                 enemyThird != null
                     && (
-                    A.s % 30 <= 10
-                        || shouldGoToThirdBaseAgainstZerg(enemyThird)
+                    A.s % 36 <= 18
                         || EnemyUnits.discovered().buildings().inRadius(10, enemyThird).notEmpty()
                 )
             ) return enemyThird;

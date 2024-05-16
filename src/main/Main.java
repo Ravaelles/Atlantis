@@ -146,6 +146,9 @@ public class Main {
 //@        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
 
         // vs Zerg
+//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
+        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm"; // Dragoons v Zealots - more goons
+
         if (true) return "ums/rav/protoss/Drag_v_Hydra.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/5Drag_v_Lings.scm";
@@ -157,9 +160,6 @@ public class Main {
 //        if (true) return "ums/rav/protoss/5Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/10Zeal_v_Lings.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
-
-//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
-//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm"; // Dragoons v Zealots - more goons
 
         // === Maps for testing as Terran ==============================================================================
 

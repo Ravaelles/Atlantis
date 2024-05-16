@@ -68,6 +68,7 @@ public class ShouldNotAvoid extends HasUnit {
 
     private boolean isUnitCloakedAndRelativelySafe() {
         if (!unit.effUndetected()) return false;
+        if (unit.enemiesNear().detectors().inRadius(12, unit).notEmpty()) return false;
 
         return unit.hp() >= 23
             && (

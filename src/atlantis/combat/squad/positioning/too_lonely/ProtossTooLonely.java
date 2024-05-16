@@ -36,7 +36,6 @@ public class ProtossTooLonely extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             ProtossTooFarFromLeader.class,
-            ProtossTooLonelyGetCloser.class,
         };
     }
 

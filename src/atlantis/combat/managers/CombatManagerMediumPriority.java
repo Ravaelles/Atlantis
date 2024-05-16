@@ -13,6 +13,7 @@ import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuilding
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.running.stop_running.ShouldStopRunning;
 import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonely;
+import atlantis.combat.squad.positioning.too_lonely.ProtossTooLonelyGetCloser;
 import atlantis.combat.squad.squad_scout.SquadScout;
 import atlantis.terran.repair.DontMoveWhenBeingRepared;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
@@ -34,6 +35,7 @@ public class CombatManagerMediumPriority extends Manager {
             ProtossDontEngageWhenCombatBuildings.class,
             TerranDontEngageWhenCombatBuildings.class,
 
+            ProtossTooLonelyGetCloser.class,
             ProtossTooLonely.class,
 
 //            UnitHasEnemyInRange.class,

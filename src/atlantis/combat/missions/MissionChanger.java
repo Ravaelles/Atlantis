@@ -115,10 +115,14 @@ public abstract class MissionChanger {
     // =========================================================
 
     protected static void changeMissionTo(Mission newMission) {
+        Alpha.get().setMission(newMission);
+
+        if (Missions.globalMission().equals(newMission)) {
+            return;
+        }
+
         Missions.setGlobalMissionTo(newMission, reason);
         MissionHistory.missionHistory.add(newMission);
-
-        Alpha.get().setMission(newMission);
 
         A.errPrintln("Change to " + newMission);
 //        A.printStackTrace("Change to " + newMission);

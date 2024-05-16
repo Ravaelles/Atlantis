@@ -21,6 +21,11 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
 //            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - SRun:" + unit.lastStoppedRunningAgo());
             return true;
         }
+        if (unit.distToLeader() >= 15) return false;
+        if (
+            unit.squadSize() >= 4
+                && (unit.friendsInRadiusCount(2) == 0 && unit.friendsInRadiusCount(4) <= 1)
+        ) return false;
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
 
         if (dontAttackAlone()) return false;

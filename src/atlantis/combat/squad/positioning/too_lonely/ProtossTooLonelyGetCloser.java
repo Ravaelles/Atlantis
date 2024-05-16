@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class ProtossTooLonelyGetCloser extends Manager {
@@ -18,7 +19,11 @@ public class ProtossTooLonelyGetCloser extends Manager {
 //        if (unit.lastStartedAttackLessThanAgo(40)) return false;
 //        if (unit.isLeader()) return false;
 
-        return isTooLonely();
+        return unit.noCooldown()
+            && unit.enemiesNear().notEmpty()
+            && unit.squadSize() >= 2
+            && unit.lastUnderAttackMoreThanAgo(30 * 3)
+            && isTooLonely();
     }
 
     private boolean tooDangerousToGoToLeader() {
@@ -26,9 +31,11 @@ public class ProtossTooLonelyGetCloser extends Manager {
     }
 
     private boolean isTooLonely() {
-        double maxDist = unit.isMelee() ? 0.9 : 2;
-        
-        return unit.friendsNear().inRadius(maxDist, unit).empty();
+        double closeRadius = unit.isMelee() ? 0.9 : 2;
+        Selection friendsInRadius4 = unit.friendsNear().inRadius(4, unit);
+
+        return friendsInRadius4.atMost(2)
+            && friendsInRadius4.inRadius(closeRadius, unit).empty();
     }
 
     protected Manager handle() {

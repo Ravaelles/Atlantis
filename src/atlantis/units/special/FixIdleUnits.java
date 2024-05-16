@@ -13,9 +13,11 @@ public class FixIdleUnits extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
         return unit.isCombatUnit()
             && (unit.isStopped() || unit.isIdle())
-            && A.fr % 4 == 0
+//            && A.fr % 4 == 0
             && unit.noCooldown()
             && unit.lastOrderWasFramesAgo() >= 12
             && unit.lastActionMoreThanAgo(12)

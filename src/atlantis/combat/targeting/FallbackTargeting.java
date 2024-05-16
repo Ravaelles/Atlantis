@@ -68,6 +68,10 @@ public class FallbackTargeting {
 
         if (inRange != null) return inRange;
 
+        inRange = enemies.wounded().canBeAttackedBy(unit, 1).mostWounded();
+
+        if (inRange != null) return inRange;
+
         return unit.squadCenterEnemiesNear().canBeAttackedBy(unit, 10).nearestTo(unit);
     }
 

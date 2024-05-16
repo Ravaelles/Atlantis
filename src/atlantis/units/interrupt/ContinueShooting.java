@@ -24,6 +24,8 @@ public class ContinueShooting extends Manager {
 
         if (unit.isAttacking() && unit.lastActionLessThanAgo(2)) return true;
         if (!unit.isAction(Actions.ATTACK_UNIT)) return false;
+        if (unit.lastActionMoreThanAgo(30 * 3, Actions.ATTACK_UNIT)) return false;
+        if (unit.hasTarget() && !unit.isTargetInWeaponRangeAccordingToGame()) return false;
 
         Decision decision;
 
@@ -79,11 +81,14 @@ public class ContinueShooting extends Manager {
     private Decision decisionForDragoon() {
 //        System.err.println(A.now() + " // " + unit.lastAttackFrameMoreThanAgo(30 * 6));
 
-//        if (
-////            unit.cooldown() <= 5
-////            unit.lastAttackFrameMoreThanAgo(30)
-//            unit.lastActionLessThanAgo(30 * 5, Actions.ATTACK_UNIT)
-//        ) return Decision.ALLOWED;
+        if (
+//            unit.lastAttackFrameMoreThanAgo(30)
+            unit.cooldown() <= 5
+                && unit.hasTarget()
+                && unit.target().isHydralisk()
+                && unit.lastActionLessThanAgo(30 * 5, Actions.ATTACK_UNIT)
+                && unit.isTargetInWeaponRangeAccordingToGame()
+        ) return Decision.ALLOWED;
 
         int sa = unit.lastStartedAttackAgo();
         int af = unit.lastAttackFrameAgo();
@@ -96,7 +101,7 @@ public class ContinueShooting extends Manager {
             }
 
             if (af >= 30 * 3 && unit.hasTarget() && unit.target().isHydralisk()) return Decision.ALLOWED;
-            
+
             return Decision.FORBIDDEN;
 //            return Decision.FORBIDDEN;
         }

@@ -28,6 +28,8 @@ public class AvoidLurkers extends Manager {
     }
 
     private double radius() {
-        return 8.1 + unit.woundPercent() / 80.0;
+        return 8.1
+            + (unit.isMelee() ? 1.5 : 0)
+            + unit.woundPercent() / 80.0;
     }
 }

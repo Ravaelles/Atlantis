@@ -48,7 +48,7 @@ public class ShouldRunTowardsBase {
         double distToMain = unit.distTo(main);
 
         int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(4);
-        if (distToMain >= 40 || (distToMain > 4 && meleeEnemiesNearCount == 0 && unit.isMissionDefend()))
+        if (distToMain >= 40 || (distToMain > 7 && meleeEnemiesNearCount == 0 && unit.isMissionDefend()))
             return true;
 
         if (A.seconds() >= 380) return false;
