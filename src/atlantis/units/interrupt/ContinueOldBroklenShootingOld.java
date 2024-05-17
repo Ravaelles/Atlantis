@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.interrupt.protoss.ContinueDragoonAttackOrder;
+import atlantis.units.interrupt.protoss.ContinueShootingAsDragoon;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
@@ -24,7 +24,7 @@ public class ContinueOldBroklenShootingOld extends Manager {
 
         Decision decision;
 
-        if ((decision = ContinueDragoonAttackOrder.asDragoon(unit)).notIndifferent()) {
+        if ((decision = ContinueShootingAsDragoon.check(unit)).notIndifferent()) {
 //            System.out.println("@ " + A.now() + " - DECISION ContinueShooting " + decision);
             return decision.toBoolean();
         }

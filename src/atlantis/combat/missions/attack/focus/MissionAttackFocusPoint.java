@@ -78,7 +78,11 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         boolean focusThirdAnyway = A.s % 36 <= 10;
 
-        if (A.s >= 300 && (focusThirdAnyway || EnemyInfo.hasDefensiveLandBuilding(true))) {
+        if (
+            A.s >= 300
+                && EnemyInfo.hasNaturalBase()
+                && (focusThirdAnyway || EnemyInfo.hasDefensiveLandBuilding(true))
+        ) {
             AFocusPoint enemyThird = enemyThird(main);
 
             if (

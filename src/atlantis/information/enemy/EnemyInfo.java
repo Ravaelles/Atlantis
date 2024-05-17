@@ -228,4 +228,11 @@ public class EnemyInfo {
     public static boolean noRanged() {
         return EnemyUnits.discovered().ranged().empty();
     }
+
+    public static boolean hasNaturalBase() {
+        APosition enemyNatural = BaseLocations.enemyNatural();
+        if (enemyNatural == null) return false;
+
+        return EnemyUnits.buildings().inRadius(5, enemyNatural).atLeast(1);
+    }
 }

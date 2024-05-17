@@ -7,6 +7,7 @@ import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
+import atlantis.combat.micro.avoid.special.AvoidAsUndetected;
 import atlantis.combat.squad.positioning.protoss.ProtossTooLonely;
 import atlantis.combat.squad.positioning.protoss.ProtossTooLonelyGetCloser;
 import atlantis.combat.squad.squad_scout.SquadScout;
@@ -40,6 +41,7 @@ public class CombatManagerMediumPriority extends Manager {
             AttackEnemiesInRange.class,
 
 //            ShouldStopRunning.class,
+            AvoidAsUndetected.class,
             AvoidEnemies.class,
 
             DontMoveWhenBeingRepared.class,

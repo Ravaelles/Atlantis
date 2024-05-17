@@ -119,4 +119,8 @@ public class EnemyUnits {
     public static int combatUnits() {
         return discovered().combatUnits().count();
     }
+
+    public static Selection buildings() {
+        return discovered().buildings();
+    }
 }

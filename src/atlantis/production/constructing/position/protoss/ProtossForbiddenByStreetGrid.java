@@ -23,7 +23,10 @@ public class ProtossForbiddenByStreetGrid {
             int moduloX = (position.tx() % GRID_SIZE_X);
             int moduloY = (position.ty() % GRID_SIZE_Y);
 
-            if (moduloX != 9 && moduloX != 11 && moduloX != 13 && moduloX != 15)
+            if (
+                moduloX != 9 && moduloX != 11
+                    && moduloX != 13 && moduloX != 14 && moduloX != 15
+            )
                 return failed("TX modulo PP_X2 = " + moduloX);
             if (
                 moduloY != 0 && moduloY != 2 && moduloY != 6
@@ -42,11 +45,19 @@ public class ProtossForbiddenByStreetGrid {
                 && moduloX != 7
                 && moduloX != 11;
 
+            if (moduloXIsInvalid && building.getTileWidth() <= 3) {
+                moduloXIsInvalid = moduloX != 6;
+            }
+
             // G:1  G:4  P:1 P:3 P:5
 //            boolean moduloYIsInvalid = moduloY != 1 && moduloY != 4;
             boolean moduloYIsInvalid = moduloY != 0
                 && moduloY != 3
                 && moduloY != 6;
+
+            if (moduloYIsInvalid && building.getTileHeight() <= 2) {
+                moduloYIsInvalid = moduloY != 1 && moduloY != 4;
+            }
 
             if (moduloXIsInvalid) {
                 return failed("TX modulo PG_X2 = " + moduloX + " / tx:" + position.tx() + " / grid:" + GRID_SIZE_X);

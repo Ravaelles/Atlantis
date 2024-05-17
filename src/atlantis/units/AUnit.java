@@ -3309,4 +3309,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean isDeadMan() {
         return DeadMan.isDeadMan(this);
     }
+
+    public boolean hasRangedEnemies(double safetyMargin) {
+        return enemiesNear().ranged().inShootRangeOf(safetyMargin, this).notEmpty();
+    }
 }

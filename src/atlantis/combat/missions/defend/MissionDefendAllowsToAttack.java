@@ -5,6 +5,7 @@ import atlantis.combat.micro.attack.DontAttackAlone;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
@@ -27,9 +28,15 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 
 
         if (We.protoss()) {
-            if (Alpha.count() <= 4) {
-                if (EnemyWhoBreachedBase.notNull()) return true;
+            if (unit.hp() >= 50 && unit.isTargetInWeaponRangeAccordingToGame(enemy)) return true;
+            if (EnemyWhoBreachedBase.notNull()) return true;
 
+            if (!A.isUms()) {
+                AFocusPoint focusPoint = unit.focusPoint();
+                if (focusPoint != null && focusPoint.distTo(enemy) >= 10) return false;
+            }
+
+            if (Alpha.count() <= 4) {
                 int rangeBonus = unit.isRanged() ? 2 : 1;
                 if (!unit.canAttackTargetWithBonus(enemy, rangeBonus)) return true;
                 return false;

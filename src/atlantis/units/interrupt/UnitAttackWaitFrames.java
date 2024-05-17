@@ -93,7 +93,7 @@ public class UnitAttackWaitFrames {
 //        else return 0;
 //    }
 
-    protected static int attackAnimationFrames(AUnitType type) {
+    public static int attackAnimationFrames(AUnitType type) {
         if (type.equals(AUnitType.Protoss_Arbiter)) return 5;
         else if (type.equals(AUnitType.Protoss_Corsair)) return 8;
         else if (type.equals(AUnitType.Protoss_Dark_Templar)) return 9;

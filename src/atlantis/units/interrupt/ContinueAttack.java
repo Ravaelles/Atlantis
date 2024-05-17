@@ -3,7 +3,7 @@ package atlantis.units.interrupt;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.interrupt.protoss.ContinueDragoonAttackOrder;
+import atlantis.units.interrupt.protoss.ContinueShootingAsDragoon;
 
 public class ContinueAttack extends Manager {
     public ContinueAttack(AUnit unit) {
@@ -26,8 +26,8 @@ public class ContinueAttack extends Manager {
             && target.hasPosition()
             && target.isAlive()
             && unit.lastActionLessThanAgo(unit.attackWaitFrames(), Actions.ATTACK_UNIT)
-            && unit.canAttackTargetWithBonus(target, 1)
-            && ContinueDragoonAttackOrder.asDragoon(unit).notForbidden();
+            && unit.canAttackTargetWithBonus(target, 1);
+//            && ContinueShootingAsDragoon.asDragoon(unit).notForbidden();
     }
 
     public Manager handle() {

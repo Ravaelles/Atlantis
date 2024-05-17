@@ -17,8 +17,8 @@ public class DragoonDontAvoidEnemy {
 
         if (healthyAndSafe(unit)) return true;
         if (hasNotShotInAWhile(unit)) return true;
-        if ((decision = whenMissionSparta(unit)).notIndifferent()) return decision.toBoolean();
-//        if ((decision = whenMissionDefend(unit)).notIndifferent()) return decision.toBoolean();
+//        if ((decision = whenMissionSparta(unit)).notIndifferent()) return decision.toBoolean();
+        if ((decision = whenMissionDefend(unit)).notIndifferent()) return decision.toBoolean();
 //
         if (dontAvoidCombatBuildings(unit)) return true;
 
@@ -47,11 +47,14 @@ public class DragoonDontAvoidEnemy {
     private static Decision whenMissionDefend(AUnit unit) {
         if (!unit.isMissionDefend()) return Decision.INDIFFERENT;
 
-        if (unit.isRanged()) {
-            if (unit.cooldown() >= 10) return Decision.FALSE;
-            if (unit.shieldDamageAtMost(39) && unit.lastAttackFrameMoreThanAgo(30 * 6)) return Decision.TRUE;
-            return unit.isSafeFromMelee() ? Decision.TRUE : Decision.FALSE;
-        }
+        if (unit.enemiesNear().countInRadius(3.1, unit) >= 2) return Decision.FALSE;
+        if (unit.shieldDamageAtMost(9)) return Decision.TRUE;
+
+//        if (unit.isRanged()) {
+//            if (unit.cooldown() >= 10) return Decision.FALSE;
+//            if (unit.shieldDamageAtMost(39) && unit.lastAttackFrameMoreThanAgo(30 * 6)) return Decision.TRUE;
+//            return unit.isSafeFromMelee() ? Decision.TRUE : Decision.FALSE;
+//        }
 
         return Decision.INDIFFERENT;
     }
