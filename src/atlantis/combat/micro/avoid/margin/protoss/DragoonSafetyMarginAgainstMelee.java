@@ -20,6 +20,7 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
             + (defender.lastAttackFrameMoreThanAgo(30 * 4) ? -1 : 0)
             + (defender.lastAttackFrameMoreThanAgo(30 * 6) ? -1 : 0)
 
+            + (attacker.isProtoss() ? +0.5 : 0)
             + (attacker.isMoving() ? +0.5 : 0)
             + ((attacker.hasTargetted(defender) || attacker.isFacing(defender)) ? 0.8 : -0.2);
 //            + defender.woundPercent() / 300.0;

@@ -3,6 +3,7 @@ package atlantis.config.env;
 import atlantis.config.AtlantisIgniter;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.terran.GGForEnemy;
 
 import java.io.File;
 
@@ -49,6 +50,8 @@ public class Env {
                     AtlantisIgniter.setBwapiDataPath(value);
                 case "CHAOS_LAUNCHER_PATH":
                     AtlantisIgniter.setChaosLauncherPath(value);
+                case "FORCE_GG_FOR_ENEMY":
+                    GGForEnemy.allowed = "true".equals(value);
             }
         }
 
