@@ -80,12 +80,12 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
     }
 
     private boolean dontEngageBecauseTooManyEnemyCombatUnitsNearby() {
-        if (A.supplyUsed() >= 190 || A.hasMinerals(3000)) return false;
+        if (A.supplyUsed() >= 170 || A.hasMinerals(3000)) return false;
 
         if (unit.friendsNear().combatUnits().atLeast(25)) return false;
 
         return combatBuilding.enemiesNear()
             .combatUnits()
-            .inRadius(6, combatBuilding).atLeast((int) (ourCombatUnitsNearby.count() / 8));
+            .inRadius(6, combatBuilding).atMost((int) (ourCombatUnitsNearby.count() / 8));
     }
 }
