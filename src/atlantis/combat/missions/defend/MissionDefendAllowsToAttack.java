@@ -29,15 +29,14 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 //            if (true) return true;
         }
 
-
         if (We.protoss()) {
+            if (unit.hp() >= 20 && unit.isTargetInWeaponRangeAccordingToGame(enemy)) return true;
+
             if (!A.isUms() && (OurArmy.strength() <= 85 || Enemy.zerg())) {
                 AFocusPoint focusPoint = unit.focusPoint();
                 int maxDist = unit.isRanged() ? 11 : 7;
                 if (focusPoint != null && focusPoint.distTo(enemy) >= maxDist) return false;
             }
-
-            if (unit.hp() >= 50 && unit.isTargetInWeaponRangeAccordingToGame(enemy)) return true;
             if (EnemyWhoBreachedBase.notNull()) return true;
 
             if (Alpha.count() <= 4 || Count.dragoons() <= 1) {

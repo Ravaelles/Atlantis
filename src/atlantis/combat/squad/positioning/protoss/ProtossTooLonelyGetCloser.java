@@ -21,6 +21,7 @@ public class ProtossTooLonelyGetCloser extends Manager {
         return unit.noCooldown()
             && unit.enemiesNear().notEmpty()
             && unit.squadSize() >= 2
+            && unit.lastStoppedRunningMoreThanAgo(20)
             && (unit.shieldDamageAtLeast(20) || unit.lastUnderAttackMoreThanAgo(30 * 3))
             && (isTooLonely() && unit.enemiesNear().atLeast(3))
             && tooCloseEnemiesNearToProceed()
@@ -30,7 +31,7 @@ public class ProtossTooLonelyGetCloser extends Manager {
     private boolean tooCloseEnemiesNearToProceed() {
         if (unit.isMelee()) return false;
 
-        return unit.enemiesNear().inRadius(3.8, unit).notEmpty();
+        return unit.enemiesNear().inRadius(5.8, unit).notEmpty();
     }
 
     private boolean tooDangerousToGetCloser() {

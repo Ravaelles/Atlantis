@@ -15,12 +15,14 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         double base = (defender.woundHp() >= 10 ? 3.0 : 1.1)
 
             + (defender.hp() <= 40 ? +0.5 : 0)
+            + (defender.hp() <= 17 ? +0.5 : 0)
+            + (defender.woundPercent() / 150.0)
             + (defender.isMoving() ? -0.2 : 0)
             + (defender.isAccelerating() ? -0.1 : 0)
             + (defender.lastAttackFrameMoreThanAgo(30 * 4) ? -1 : 0)
             + (defender.lastAttackFrameMoreThanAgo(30 * 6) ? -1 : 0)
 
-            + (attacker.isProtoss() ? +0.5 : 0)
+//            + (attacker.isProtoss() ? +0.5 : 0)
             + (attacker.isMoving() ? +0.5 : 0)
             + ((attacker.hasTargetted(defender) || attacker.isFacing(defender)) ? 0.8 : -0.2);
 //            + defender.woundPercent() / 300.0;

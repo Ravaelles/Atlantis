@@ -225,6 +225,10 @@ public class EnemyInfo {
         return EnemyStrategy.get();
     }
 
+    public static boolean hasRanged() {
+        return EnemyUnits.discovered().ranged().notEmpty();
+    }
+
     public static boolean noRanged() {
         return EnemyUnits.discovered().ranged().empty();
     }

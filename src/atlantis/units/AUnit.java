@@ -3313,4 +3313,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean hasRangedEnemies(double safetyMargin) {
         return enemiesNear().ranged().inShootRangeOf(safetyMargin, this).notEmpty();
     }
+
+    public double shotSecondsAgo() {
+        return lastAttackFrameAgo() / 30.0;
+    }
 }

@@ -3,9 +3,11 @@ package atlantis.combat.micro.attack;
 import atlantis.combat.micro.avoid.terran.fight.MarineCanAttackNearEnemy;
 
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
+import atlantis.util.We;
 
 public class AttackNearbyEnemiesApplies extends HasUnit {
     public AttackNearbyEnemiesApplies(AUnit unit) {
@@ -19,40 +21,16 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
         if (unit.isSpecialMission() && unit.isMelee()) return false;
         if (!unit.hasAnyWeapon()) return false;
 
-        if (Alpha.count() <= 5) {
-            if (unit.isMelee() && unit.shieldDamageAtLeast(11)) {
-                if (
-                    unit.meleeEnemiesNearCount(1.3) >= 3
-                        && unit.friendsNear().melee().countInRadius(1.2, unit) == 0
-                ) return false;
-            }
+        if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
+
+        if (We.protoss()) {
+            Decision decision = AttackNearbyEnemiesAppliesAsProtoss.decision(unit);
+            if (decision.notIndifferent()) return decision.toBoolean();
         }
 
-        if (unit.lastStoppedRunningLessThanAgo(1)) {
-//            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - SRun:" + unit.lastStoppedRunningAgo());
-            return true;
-        }
-        if (unit.distToLeader() >= 15) return false;
-        if (
-            unit.squadSize() >= 4
-                && (unit.friendsInRadiusCount(2) == 0 && unit.friendsInRadiusCount(4) <= 1)
-        ) return false;
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
 
         if (dontAttackAlone()) return false;
-
-        if (unit.isDragoon()) {
-            if (unit.shieldDamageAtLeast(14)) {
-//                if (unit.meleeEnemiesNearCount(2.7) >= 1) return false;
-//                if (unit.isHealthy() || unit.lastAttackFrameMoreThanAgo(30 * 4)) return true;
-                return unit.cooldown() <= 10;
-            }
-            if (unit.meleeEnemiesNearCount(2.5) >= 2) return false;
-            if (unit.meleeEnemiesNearCount(2.6 + unit.woundPercent() / 140.0) >= 1) return false;
-            return true;
-        }
-
-        if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
 
 //        if (unit.isDragoon() && !unit.isAttacking() && unit.lastActionLessThanAgo(1)) return false;
 
