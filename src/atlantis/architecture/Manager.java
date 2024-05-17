@@ -58,11 +58,11 @@ public abstract class Manager extends BaseManager {
         return handleSubmanagers();
     }
 
-    public Manager invoke(Object parent) {
+    public Manager invokeFrom(Object parent) {
         return invokeFromParent(parentToString(parent));
     }
 
-    public boolean invoked(Object parent) {
+    public boolean invokedFrom(Object parent) {
         return invokeFromParent(parentToString(parent)) != null;
     }
 

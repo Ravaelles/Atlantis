@@ -15,7 +15,7 @@ public class UmsSpecialBehaviorCommander extends Commander {
     @Override
     protected void handle() {
         for (AUnit unit : Select.ourRealUnits().list()) {
-            (new UmsSpecialBehaviorManager(unit)).invoke(this);
+            (new UmsSpecialBehaviorManager(unit)).invokeFrom(this);
         }
     }
 }

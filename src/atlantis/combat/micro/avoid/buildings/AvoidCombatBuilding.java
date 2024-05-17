@@ -26,7 +26,7 @@ public class AvoidCombatBuilding extends Manager {
     @Override
     public boolean applies() {
         if (true) return false;
-        
+
         if (unit.isAir()) return true;
         if (unit.isGroundUnit() && unit.isMissionDefendOrSparta()) return false;
         if (
@@ -170,7 +170,7 @@ public class AvoidCombatBuilding extends Manager {
     }
 
     private Manager stillSomePlaceLeft(AUnit combatBuilding) {
-        return (new CircumnavigateCombatBuilding(unit, combatBuilding)).invoke(this);
+        return (new CircumnavigateCombatBuilding(unit, combatBuilding)).invokeFrom(this);
 //        APosition runFrom = combatBuilding.position();
 //
 ////        if (A.chance(70)) {

@@ -5,7 +5,6 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 
 public class ProtossTooLonelyGetCloser extends Manager {
     private AUnit friend;
@@ -23,11 +22,13 @@ public class ProtossTooLonelyGetCloser extends Manager {
             && unit.enemiesNear().notEmpty()
             && unit.squadSize() >= 2
             && (unit.shieldDamageAtLeast(20) || unit.lastUnderAttackMoreThanAgo(30 * 3))
-            && isTooLonely();
+            && isTooLonely()
+            && !tooDangerousToGetCloser();
     }
 
-    private boolean tooDangerousToGoToLeader() {
-        return unit.meleeEnemiesNearCount(3) > 0;
+    private boolean tooDangerousToGetCloser() {
+        return unit.meleeEnemiesNearCount(3) > 0
+            || unit.enemiesNear().ranged().inRadius(5, unit).count() > 0;
     }
 
     private boolean isTooLonely() {

@@ -2,10 +2,8 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.Manager;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.strategy.OurStrategy;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
@@ -46,7 +44,7 @@ public class ScoutCommander extends Commander {
 
                 if (unit != null && unit.isAlive()) {
                     Manager scoutManager = new ScoutManager(unit);
-                    scoutManager.invoke(this);
+                    scoutManager.invokeFrom(this);
                 }
             }
         } catch (ConcurrentModificationException ignore) {

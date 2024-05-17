@@ -31,16 +31,16 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
 
     private Manager sendDefenderToFight() {
         if (ourDefender.hp() <= 18) {
-            (new GatherResources(ourDefender)).invoke(TrackEnemyEarlyScoutCommander.class);
+            (new GatherResources(ourDefender)).invokeFrom(TrackEnemyEarlyScoutCommander.class);
             ourDefender = FreeWorkers.get().exclude(ourDefender).nearestTo(enemyScout);
         }
 
-        return (new TrackEnemyEarlyScout(ourDefender, enemyScout)).invoke(this);
+        return (new TrackEnemyEarlyScout(ourDefender, enemyScout)).invokeFrom(this);
     }
 
     private static void noDefenderNeeded() {
         if (ourDefender != null) {
-            (new GatherResources(ourDefender)).invoke(TrackEnemyEarlyScoutCommander.class);
+            (new GatherResources(ourDefender)).invokeFrom(TrackEnemyEarlyScoutCommander.class);
         }
 
         ourDefender = null;

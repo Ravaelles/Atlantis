@@ -10,7 +10,6 @@ import atlantis.units.workers.FreeWorkers;
 import atlantis.units.workers.GatherResources;
 import atlantis.units.workers.WorkerRepository;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
 
 import java.util.Collection;
 
@@ -43,7 +42,7 @@ public class NumberOfGasWorkersCommander extends Commander {
                 if (worker != null && worker.isGatheringGas()) {
 //                    System.out.println("FIRE GAS WORKER = " + worker + " / " + worker.getLastCommand());
                     worker.stop("Fired!");
-                    (new GatherResources(worker)).invoke(this);
+                    (new GatherResources(worker)).invokeFrom(this);
                 }
                 break; // Only one worker per execution - prevent weird runs
             }

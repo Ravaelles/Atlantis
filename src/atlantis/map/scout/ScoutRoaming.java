@@ -23,7 +23,7 @@ public class ScoutRoaming extends Manager {
         scoutingAroundBaseWasInterrupted = true;
 
         if (A.seconds() >= 300) {
-            return (new ScoutFreeBases(unit)).invoke(this);
+            return (new ScoutFreeBases(unit)).invokeFrom(this);
         }
 
         return null;

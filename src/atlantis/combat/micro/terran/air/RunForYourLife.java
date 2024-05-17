@@ -29,7 +29,7 @@ public class RunForYourLife extends Manager {
     protected Manager handle() {
         if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(16)) return usedManager(this);
 
-        if ((new AvoidEnemies(unit)).invoke(this) != null) return usedManager(this);
+        if ((new AvoidEnemies(unit)).invokeFrom(this) != null) return usedManager(this);
 
         return null;
     }

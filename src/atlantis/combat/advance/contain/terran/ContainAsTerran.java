@@ -47,7 +47,7 @@ public class ContainAsTerran extends Manager {
     protected Manager asTank() {
         if (unit.isSieged() && unit.lastSiegedAgo() <= 30 * (24 + unit.id() % 6)) {
             if (unit.noCooldown() && unit.enemiesNear().groundUnits().inShootRangeOf(unit).notEmpty()) {
-                (new AttackNearbyEnemies(unit)).invoke(this);
+                (new AttackNearbyEnemies(unit)).invokeFrom(this);
             }
 
             return usedManager(this, "StayHere");

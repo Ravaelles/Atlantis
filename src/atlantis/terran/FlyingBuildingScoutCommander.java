@@ -30,7 +30,7 @@ public class FlyingBuildingScoutCommander extends Commander {
                 continue;
             }
 
-            (new FlyingBuildingScoutManager(unit)).invoke(this);
+            (new FlyingBuildingScoutManager(unit)).invokeFrom(this);
         }
     }
 

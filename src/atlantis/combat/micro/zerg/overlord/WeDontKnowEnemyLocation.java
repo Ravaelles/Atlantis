@@ -21,6 +21,6 @@ public class WeDontKnowEnemyLocation extends Manager {
         unit.setTooltipTactical("Find enemy");
 //        if (true) throw new RuntimeException("wut / " + this.parentsStack());
 
-        return (new ScoutManager(unit)).invoke(this);
+        return (new ScoutManager(unit)).invokeFrom(this);
     }
 }

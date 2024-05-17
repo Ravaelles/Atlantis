@@ -9,7 +9,7 @@ public class StateCommander extends Commander {
     @Override
     protected void handle() {
         for (AUnit unit : Select.ourUnitsWithUnfinishedList()) {
-            (new UnitStateManager(unit)).invoke(this);
+            (new UnitStateManager(unit)).invokeFrom(this);
         }
 
         Bullets.updateKnown();

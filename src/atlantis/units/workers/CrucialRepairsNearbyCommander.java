@@ -5,7 +5,6 @@ import atlantis.game.A;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class CrucialRepairsNearbyCommander extends Commander {
@@ -20,7 +19,7 @@ public class CrucialRepairsNearbyCommander extends Commander {
         if (tooManyRepairers()) return;
 
         for (AUnit worker : FreeWorkers.get().list()) {
-            (new DoRepairsNearby(worker)).invoke(this);
+            (new DoRepairsNearby(worker)).invokeFrom(this);
         }
     }
 

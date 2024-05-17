@@ -5,7 +5,7 @@ import atlantis.util.Enemy;
 
 public class WantsToSiege {
     public static boolean wantsToSiegeNow(AUnit unit, Object parent, String tooltip) {
-        if ((new WouldBlockChokeBySieging(unit)).invoke(parent) != null) return false;
+        if ((new WouldBlockChokeBySieging(unit)).invokeFrom(parent) != null) return false;
         if (unit.lastStartedRunningLessThanAgo(30 * (3 + unit.id() % 4))) return false;
         if (unit.lastSiegedOrUnsiegedAgo() <= 30 * (5 + unit.id() % 4)) return false;
 

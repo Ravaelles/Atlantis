@@ -2,7 +2,7 @@ package atlantis.units.special;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.game.A;
+import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -27,8 +27,23 @@ public class FixIdleUnits extends Manager {
 
     @Override
     public Manager handle() {
+        if (attackEnemies()) return usedManager(this);
+        if (movedToFocusPoint()) return usedManager(this);
+
+        return null;
+    }
+
+    private boolean attackEnemies() {
+        if (unit.isDragoon() && unit.enemiesNear().notEmpty()) {
+            if ((new AttackNearbyEnemies(unit)).invokedFrom(this)) return true;
+        }
+
+        return false;
+    }
+
+    private boolean movedToFocusPoint() {
         AFocusPoint focusPoint = unit.focusPoint();
-        if (focusPoint == null) return null;
+        if (focusPoint == null) return false;
 
         if (
             !unit.isMoving()
@@ -36,9 +51,9 @@ public class FixIdleUnits extends Manager {
                 && unit.move(focusPoint, Actions.MOVE_UNFREEZE, "FixIdleUnits")
         ) {
 //            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - FixIdleUnits");
-            return usedManager(this);
+            return true;
         }
 
-        return null;
+        return false;
     }
 }

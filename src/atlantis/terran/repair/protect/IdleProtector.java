@@ -23,7 +23,7 @@ public class IdleProtector extends Manager {
 
         if (dontLeaveBunkerYouAreProtecting()) return null;
 
-        return (new IdleProtectorRepairs(unit)).invoke(this);
+        return (new IdleProtectorRepairs(unit)).invokeFrom(this);
     }
 
     private boolean dontLeaveBunkerYouAreProtecting() {

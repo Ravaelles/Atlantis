@@ -32,7 +32,7 @@ public class TerranComsatTest extends AbstractTestWithUnits {
     private void updateComsat(FakeUnit comsat, int energy) {
         comsat.target = null;
         comsat.setEnergy(energy);
-        (new TerranComsatStation(comsat)).invoke(this);
+        (new TerranComsatStation(comsat)).invokeFrom(this);
     }
 
     // =========================================================

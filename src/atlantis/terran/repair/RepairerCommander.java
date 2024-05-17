@@ -4,7 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.terran.repair.repairer.RepairerManager;
 import atlantis.units.AUnit;
-import atlantis.util.We;
 
 import java.util.Iterator;
 
@@ -26,7 +25,7 @@ public class RepairerCommander extends Commander {
                 continue;
             }
 
-            (new RepairerManager(repairer)).invoke(this);
+            (new RepairerManager(repairer)).invokeFrom(this);
         }
     }
 }

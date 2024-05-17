@@ -2,7 +2,6 @@ package atlantis.combat.micro.avoid.fight;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 
 public class ShouldFightInsteadAvoidAsRanged extends Manager {
@@ -25,7 +24,7 @@ public class ShouldFightInsteadAvoidAsRanged extends Manager {
 //            "dist: " + unit.nearestEnemyDist() + " / " +
 //            "cooldown: " + unit.cooldown());
 
-        if ((new AttackNearbyEnemies(unit)).invoke(this) != null) {
+        if ((new AttackNearbyEnemies(unit)).invokeFrom(this) != null) {
             return usedManager(this);
         }
 

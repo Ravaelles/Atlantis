@@ -24,7 +24,7 @@ public class ChokeBlockersCommander extends Commander {
 
     private void actWithWorker(AUnit unit) {
         if (unit != null && unit.isAlive()) {
-            (new ChokeBlockerManager(unit)).invoke(this);
+            (new ChokeBlockerManager(unit)).invokeFrom(this);
         }
     }
 }

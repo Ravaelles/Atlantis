@@ -17,7 +17,7 @@ public class ProtossShouldNotRetreat extends Manager {
 
     @Override
     protected Manager handle() {
-        if ((new AttackNearbyEnemies(unit)).invoke(this) != null) return usedManager(this);
+        if ((new AttackNearbyEnemies(unit)).invokeFrom(this) != null) return usedManager(this);
 
         return null;
     }

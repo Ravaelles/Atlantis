@@ -2,7 +2,6 @@ package atlantis.combat.running.stop_running.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
@@ -43,7 +42,7 @@ public class ShouldStopRunningDragoon extends Manager {
     protected Manager handle() {
         ProtossShouldStopRunning.decisionStopRunning(unit);
 
-        if ((new AttackNearbyEnemies(unit)).invoked(this)) return usedManager(this);
+        if ((new AttackNearbyEnemies(unit)).invokedFrom(this)) return usedManager(this);
         if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
 
         return null;

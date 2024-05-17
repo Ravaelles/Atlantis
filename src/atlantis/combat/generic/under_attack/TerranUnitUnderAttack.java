@@ -3,10 +3,8 @@ package atlantis.combat.generic.under_attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.game.A;
-import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.We;
 
 public class TerranUnitUnderAttack extends Manager {
     public TerranUnitUnderAttack(AUnit unit) {
@@ -53,7 +51,7 @@ public class TerranUnitUnderAttack extends Manager {
 
     @Override
     public Manager handle() {
-        if ((new AttackNearbyEnemies(unit)).invoked(this)) {
+        if ((new AttackNearbyEnemies(unit)).invokedFrom(this)) {
             return usedManager(this, "FightBack");
         }
 

@@ -8,8 +8,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class TerranShouldNotRetreat extends Manager {
@@ -28,7 +26,7 @@ public class TerranShouldNotRetreat extends Manager {
     @Override
     protected Manager handle() {
         if (shouldNotRetreat()) {
-            if ((new AttackNearbyEnemies(unit)).invoke(this) != null) {
+            if ((new AttackNearbyEnemies(unit)).invokeFrom(this) != null) {
                 return this;
             }
         }

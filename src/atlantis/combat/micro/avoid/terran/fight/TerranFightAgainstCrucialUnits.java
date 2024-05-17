@@ -25,6 +25,6 @@ public class TerranFightAgainstCrucialUnits extends Manager {
 
     @Override
     public Manager handle() {
-        return (new AttackNearbyEnemies(unit)).invoke(this);
+        return (new AttackNearbyEnemies(unit)).invokeFrom(this);
     }
 }
