@@ -318,7 +318,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
         APosition natural = DefineNaturalBase.natural();
         return new AFocusPoint(
-            natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
+            naturalChoke,
+//            natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
             natural,
             "NaturalChoke"
         ).forceAroundChoke(naturalChoke);

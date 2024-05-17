@@ -63,6 +63,10 @@ public class NumberOfGasWorkersCommander extends Commander {
             return 0;
         }
 
+        if (workers >= 30 && gas <= 450) {
+            return 3;
+        }
+
         if (workers >= 25 && gas <= 350) {
             return 3;
         }

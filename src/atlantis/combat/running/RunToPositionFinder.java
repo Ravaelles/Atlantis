@@ -136,7 +136,7 @@ public class RunToPositionFinder {
 //                )
 //                && (!includeUnitCheck || Select.our().exclude(this.unit).inRadius(0.6, position).count() <= 0)
 //                && Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
-            && Select.mineralsAndGeysers().inRadius(unit.size() * 1.8, position).exclude(unit).isEmpty()
+            && notTooCloseToGeysersOrMinerals(unit, position)
 //                && distToNearestRegionBoundaryIsOkay(position)
             && unit.hasPathTo(position)
             && unit.position().groundDistanceTo(position) <= 12
@@ -150,6 +150,12 @@ public class RunToPositionFinder {
         }
 
         return isOkay;
+    }
+
+    private static boolean notTooCloseToGeysersOrMinerals(AUnit unit, APosition position) {
+        return Select.mineralsAndGeysers()
+            .inRadius(unit.size() * 2.8, position)
+            .exclude(unit).isEmpty();
     }
 
     private boolean isNotTooCloseToMinerals(APosition position) {

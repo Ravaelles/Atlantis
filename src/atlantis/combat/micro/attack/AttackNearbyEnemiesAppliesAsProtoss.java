@@ -11,11 +11,16 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
             if (unit.shieldDamageAtLeast(14)) {
                 return unit.cooldown() <= 12 ? Decision.ALLOWED : Decision.FORBIDDEN;
             }
+
+            if (unit.hp() <= 21) return Decision.FORBIDDEN;
+
+            if (unit.hp() >= 61 && unit.shotSecondsAgo() >= 7) return Decision.ALLOWED;
+
             if (unit.meleeEnemiesNearCount(2.5) >= 2) return Decision.FORBIDDEN;
             if (unit.shotSecondsAgo() >= 4) return Decision.ALLOWED;
             if (unit.meleeEnemiesNearCount(2.6 + unit.woundPercent() / 140.0) >= 1) return Decision.FORBIDDEN;
 
-            if (unit.hp() >= 41) return Decision.ALLOWED;
+            return Decision.ALLOWED;
         }
 
         if (Alpha.count() <= 5) {

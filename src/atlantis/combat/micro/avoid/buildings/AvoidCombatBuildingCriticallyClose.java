@@ -33,21 +33,22 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
     }
 
     private boolean shouldHoldGround(AUnit combatBuilding) {
+        if (unit.lastUnderAttackLessThanAgo(30 * 2)) return false;
+
         double dist = unit.targetPosition().distTo(combatBuilding);
+        if (dist <= 7.5) return false;
 
-        if (dist <= 7.2) return false;
-
-        double minDist = (unit.isRanged() ? 8.0 : 9.2) + unit.woundPercent() / 80.0;
+        double minDistAllowed = (unit.isRanged() ? 8.5 : 9.9) + unit.woundPercent() / 60.0;
 
         if (
-            dist <= 7.9 && (
+            dist <= minDistAllowed && (
                 !unit.isAttacking() || !unit.isTargetInWeaponRangeAccordingToGame()
             )
         ) return true;
 
         return unit.isMoving()
             && unit.targetPosition() != null
-            && dist < minDist;
+            && dist < minDistAllowed;
     }
 
     // =========================================================
@@ -80,6 +81,8 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
 
     private boolean dontEngageBecauseTooManyEnemyCombatUnitsNearby() {
         if (A.supplyUsed() >= 190 || A.hasMinerals(3000)) return false;
+
+        if (unit.friendsNear().combatUnits().atLeast(25)) return false;
 
         return combatBuilding.enemiesNear()
             .combatUnits()

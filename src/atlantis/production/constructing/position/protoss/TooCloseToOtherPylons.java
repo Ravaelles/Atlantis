@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.protoss;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
@@ -11,8 +12,9 @@ public class TooCloseToOtherPylons {
     public static boolean isTooCloseToOtherPylons(AUnit builder, AUnitType building, APosition position) {
         if (!building.isPylon()) return false;
 
-        int pylonsNear;
+        if (A.supplyUsed() % 3 != 0) return false;
 
+        int pylonsNear;
         if (AGame.supplyUsed() < 25) {
             pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(8, position).count();
         }

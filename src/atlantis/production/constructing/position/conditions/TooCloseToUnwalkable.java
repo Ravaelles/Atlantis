@@ -12,7 +12,7 @@ public class TooCloseToUnwalkable {
 
 //        if (!building.isPylon())
 
-        if (!building.producesLandUnits()) return false;
+//        if (!building.producesLandUnits()) return false;
         if (building.isBase()) return false;
 
 //        if (building.isSupplyDepot()) return false;

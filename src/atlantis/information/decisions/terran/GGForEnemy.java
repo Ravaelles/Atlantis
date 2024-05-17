@@ -14,11 +14,13 @@ public class GGForEnemy extends Commander {
     @Override
     public boolean applies() {
         return allowed
+            && A.resourcesBalance() >= 2000
             && A.s >= 300
             && A.now() % 128 == 0
             && OurArmy.strength() >= 800
-            && Count.workers() >= 35
+            && Count.ourCombatUnits() >= 30
             && EnemyUnits.combatUnits() <= 3
+            && Count.workers() >= 35
             && (Count.ourCombatUnits() * 13) >= EnemyUnits.combatUnits();
     }
 
