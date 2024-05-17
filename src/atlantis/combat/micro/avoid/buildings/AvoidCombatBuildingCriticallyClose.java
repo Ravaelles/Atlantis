@@ -38,7 +38,7 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
         double dist = unit.targetPosition().distTo(combatBuilding);
         if (dist <= 7.5) return false;
 
-        double minDistAllowed = (unit.isRanged() ? 8.5 : 9.9) + unit.woundPercent() / 60.0;
+        double minDistAllowed = (unit.isRanged() ? 8.5 : 9.9) + unit.woundPercent() / 35.0;
 
         if (
             dist <= minDistAllowed && (
@@ -59,7 +59,6 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
             .buildings()
             .onlyCompleted()
             .combatBuildingsAnti(unit)
-            .inRadius(10, unit)
             .nearestTo(unit);
     }
 
@@ -72,7 +71,7 @@ public class AvoidCombatBuildingCriticallyClose extends Manager {
 //        System.err.println("ourUnit.combatEvalRelative() = " + ourUnit.combatEvalRelative());
 //        System.err.println("ourUnit.combatEvalAbs() = " + ourUnit.combatEvalAbsolute());
         return ourUnit != null
-            && ourCombatUnitsNearby.count() <= 4
+//            && ourCombatUnitsNearby.count() <= 4
             && (
             ourUnit.combatEvalRelative() <= 2.5
                 && ourUnit.combatEvalAbsolute() <= -200

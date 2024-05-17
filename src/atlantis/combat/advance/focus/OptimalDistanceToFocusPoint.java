@@ -18,13 +18,13 @@ public class OptimalDistanceToFocusPoint {
     }
 
     private static double asProtoss(AUnit unit) {
-        if (Alpha.count() <= 4) return 1;
+        if (Alpha.count() <= 3) return 2;
 
         AFocusPoint focusPoint = unit.focusPoint();
-        int base = focusPoint != null && focusPoint.chokeWidthOr(99) <= 5
-            ? 6 : 3;
+        int base = (focusPoint != null && focusPoint.chokeWidthOr(99) <= 5)
+            ? 6 : 4;
 
-        return base + (unit.isMelee() ? -1.2 : 0);
+        return base + (unit.isMelee() ? 0.6 : 0);
 
 //        if (Enemy.zerg()) return 5;
 //

@@ -2,9 +2,12 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
+import atlantis.combat.micro.avoid.dont.protoss.ObserverDontAvoidEnemy;
+import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class AvoidEnemies extends Manager {
@@ -28,6 +31,11 @@ public class AvoidEnemies extends Manager {
     public boolean applies() {
 //        if (unit.isMissionSparta() && unit.isHealthy()) return false;
 //        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
+
+        if (We.protoss()) {
+            Decision decision;
+            if ((decision = ObserverDontAvoidEnemy.shouldAvoid(unit)).notIndifferent()) return decision.toBoolean();
+        }
 
         return
 //            !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid()

@@ -13,7 +13,6 @@ public class ProtossDontAvoidEnemy extends HasUnit {
 
         if (ZealotDontAvoidEnemy.dontAvoid(unit)) return true;
         if (DragoonDontAvoidEnemy.dontAvoid(unit)) return true;
-        if (ObserverDontAvoidEnemy.dontAvoid(unit)) return true;
 
         return false;
     }

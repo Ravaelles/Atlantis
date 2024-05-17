@@ -23,6 +23,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
 //            EarlyGameTooClustered.class,
 //            TooClustered.class,
             ProtossTooFarFromLeader.class,
+
             HandleFocusPointPositioning.class,
         };
     }

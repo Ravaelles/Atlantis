@@ -28,6 +28,8 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //    }
 
     public boolean canChange() {
+        if (true) return false;
+
         if (Missions.lastMissionChangedSecondsAgo() <= 10) return false;
         if (EnemyInfo.isEnemyNearAnyOurBase()) return false;
 

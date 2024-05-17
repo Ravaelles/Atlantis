@@ -29,7 +29,8 @@ public class HandleFocusPointPositioning extends MissionManager {
 //            MakeSpaceForWrongSideOfFocusFriends.class,
 //            OnWrongSideOfFocusPoint.class,
 
-            ProtossTooLonely.class,
+//            ProtossTooLonely.class,
+            
             TooCloseToFocusPoint.class,
             TooFarFromFocusPoint.class,
         };

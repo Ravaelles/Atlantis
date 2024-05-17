@@ -49,11 +49,11 @@ public class DragoonInsteadZealotVsZerg {
     }
 
     private static double minZealots() {
-        double fromLings = EnemyUnits.discovered().zerglings().count() * 0.24;
+        double fromLings = EnemyUnits.discovered().zerglings().count() * 0.29;
 
         if (A.hasGas(130)) fromLings = A.inRange(2, fromLings, 6);
 
-        return A.inRange(5, fromLings, 9);
+        return A.inRange(4, fromLings, 9);
     }
 
     private static boolean transitionToDragoonsDueToMutas() {

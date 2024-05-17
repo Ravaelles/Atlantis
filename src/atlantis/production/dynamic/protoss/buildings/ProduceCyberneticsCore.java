@@ -8,6 +8,7 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.Protoss_Assimilator;
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
@@ -39,6 +40,8 @@ public class ProduceCyberneticsCore {
     }
 
     private static boolean needOne() {
+        if (Enemy.zerg() && A.s <= 300 && Count.zealots() <= 3 && !A.hasMinerals(192)) return false;
+
         return (
             (A.supplyUsed() >= 50 && Count.ourCombatUnits() >= 9)
                 || A.hasMinerals(180)

@@ -919,7 +919,6 @@ public class Selection extends BaseSelection {
      */
     public AUnit nearestTo(HasPosition position) {
         if (data.isEmpty() || position == null) return null;
-
         if (data.size() == 1) return data.get(0);
 
         sortDataByDistanceTo(position, true);
