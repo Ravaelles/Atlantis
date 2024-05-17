@@ -21,6 +21,7 @@ import static atlantis.units.AUnitType.*;
 public class ProduceZealot {
     public static boolean zealot() {
         if (!A.hasMinerals(100)) return false;
+        if (Count.zealots() >= 15) return false;
 
         int freeGateways = Count.freeGateways();
 

@@ -32,15 +32,15 @@ public class TooCloseToUnwalkable {
     protected static boolean isTooClose(AUnitType building, APosition position) {
 //        APosturn true;
 
-        APosition left = BuildingTileHelper.tiles2LeftFrom(building, position);
-        APosition down = BuildingTileHelper.tiles2DownFrom(building, position);
+        APosition left = BuildingTileHelper.tiles3LeftFrom(building, position);
+        APosition down = BuildingTileHelper.tiles3DownFrom(building, position);
 
         if (!left.isWalkable() && !down.isWalkable()) {
             return failed("Left and down from unwalkable");
         }
 
-        APosition up = BuildingTileHelper.tiles2UpFrom(building, position);
-        APosition right = BuildingTileHelper.tiles2RightFrom(building, position);
+        APosition up = BuildingTileHelper.tiles3UpFrom(building, position);
+        APosition right = BuildingTileHelper.tiles3RightFrom(building, position);
 
         if (!up.isWalkable() && !right.isWalkable()) {
             return failed("Up and right from unwalkable");

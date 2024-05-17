@@ -5,7 +5,7 @@ import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
 import atlantis.combat.generic.enemy_in_range.AttackEnemiesInRange;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
+//import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.special.AvoidAsUndetected;
 import atlantis.combat.squad.positioning.protoss.ProtossTooLonely;
@@ -28,7 +28,7 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossDontEngageWhenCombatBuildings.class,
+//            ProtossDontEngageWhenCombatBuildings.class,
             TerranDontEngageWhenCombatBuildings.class,
 
             ProtossTooLonelyGetCloser.class,
