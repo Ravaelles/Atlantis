@@ -12,8 +12,8 @@ public class ZealotDontAvoidEnemy {
 
         Decision decision;
 
-        if (healthyOrNotAttackedLong(unit)) return true;
         if ((decision = whenMissionDefend(unit)).notIndifferent()) return decision.toBoolean();
+        if (healthyOrNotAttackedLong(unit)) return true;
 
         return false;
     }
@@ -23,10 +23,10 @@ public class ZealotDontAvoidEnemy {
     }
 
     private static Decision whenMissionDefend(AUnit unit) {
-        if (!unit.isMissionDefend()) return Decision.INDIFFERENT;
+        if (!unit.isMissionDefendOrSparta()) return Decision.INDIFFERENT;
 
         int tooManyEnemies = unit.shields() >= 40 ? 3 : 2;
-        if (unit.enemiesNear().countInRadius(1.3, unit) >= tooManyEnemies) return Decision.FALSE;
+        if (unit.enemiesNear().countInRadius(1.4, unit) >= tooManyEnemies) return Decision.FALSE;
 
         return Decision.INDIFFERENT;
     }

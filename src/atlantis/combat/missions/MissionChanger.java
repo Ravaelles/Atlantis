@@ -124,7 +124,7 @@ public abstract class MissionChanger {
         Missions.setGlobalMissionTo(newMission, reason);
         MissionHistory.missionHistory.add(newMission);
 
-        A.errPrintln("Change to " + newMission);
+//        A.errPrintln("Change to " + newMission);
 //        A.printStackTrace("Change to " + newMission);
     }
 

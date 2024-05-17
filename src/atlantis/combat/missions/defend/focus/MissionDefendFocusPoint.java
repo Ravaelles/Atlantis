@@ -298,9 +298,9 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint atNaturalChoke() {
-        int minUnits = We.protoss() ? 4 : 8;
-        if (Count.ourCombatUnits() < minUnits) return null;
-        if (Count.basesWithUnfinished() <= 1) return null;
+        int minUnitsToHave = We.protoss() ? 6 : 8;
+        if (Count.ourCombatUnits() < minUnitsToHave) return null;
+//        if (Count.basesWithUnfinished() <= 1) return null;
 
 //        AChoke choke = Chokes.nearestChoke(lastBase);
 //        if (choke != null) {

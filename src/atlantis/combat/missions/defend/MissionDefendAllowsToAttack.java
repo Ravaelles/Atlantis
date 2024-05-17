@@ -31,15 +31,16 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 
 
         if (We.protoss()) {
+            if (!A.isUms() && (OurArmy.strength() <= 85 || Enemy.zerg())) {
+                AFocusPoint focusPoint = unit.focusPoint();
+                int maxDist = unit.isRanged() ? 11 : 7;
+                if (focusPoint != null && focusPoint.distTo(enemy) >= maxDist) return false;
+            }
+
             if (unit.hp() >= 50 && unit.isTargetInWeaponRangeAccordingToGame(enemy)) return true;
             if (EnemyWhoBreachedBase.notNull()) return true;
 
-            if (!A.isUms() && (OurArmy.strength() <= 85 || Enemy.zerg())) {
-                AFocusPoint focusPoint = unit.focusPoint();
-                if (focusPoint != null && focusPoint.distTo(enemy) >= 8) return false;
-            }
-
-            if (Alpha.count() <= 4) {
+            if (Alpha.count() <= 4 || Count.dragoons() <= 1) {
                 int rangeBonus = unit.isRanged() ? 2 : 1;
                 if (!unit.canAttackTargetWithBonus(enemy, rangeBonus)) return true;
                 return false;

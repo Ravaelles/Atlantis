@@ -121,6 +121,10 @@ public class AFocusPoint extends APosition {
         return this;
     }
 
+    public int chokeWidthOr(int fallback) {
+        return choke != null ? choke.width() : fallback;
+    }
+
 //    @Override
 //    public APosition position() {
 //        if (unit != null) {

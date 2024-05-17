@@ -1,6 +1,7 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.choke.AChoke;
@@ -63,7 +64,9 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     private boolean goAway() {
-        return unit.moveAwayFrom(focusPoint, 0.5, Actions.MOVE_FOCUS, "TooCloseA");
+        if (A.fr % 50 <= 25) return unit.moveToMain(Actions.MOVE_FOCUS);
+
+        return unit.moveAwayFrom(focusPoint, 0.2, Actions.MOVE_FOCUS, "TooCloseA");
     }
 
     private boolean asDragoon() {
@@ -71,8 +74,11 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
 
 //        System.err.println("TOO CLOSE = " + unit.distToFocusPoint() + " / " + unit);
 //        if (unit.distToFocusPoint() <= 2.6) {
-        if (A.everyNthGameFrame(10)) unit.holdPosition("DragoonTooCloseA");
-        else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
+
+        if (Missions.isGlobalMissionSparta()) {
+            if (A.everyNthGameFrame(10)) unit.holdPosition("DragoonTooCloseA");
+            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
+        }
 //        }
 
         return false;
