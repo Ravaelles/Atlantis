@@ -76,22 +76,9 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // =========================================================
 
-        boolean focusThirdAnyway = A.s % 36 <= 10;
-
-        if (
-            A.s >= 300
-                && EnemyInfo.hasNaturalBase()
-                && (focusThirdAnyway || EnemyInfo.hasDefensiveLandBuilding(true))
-        ) {
-            AFocusPoint enemyThird = enemyThird(main);
-
-            if (
-                enemyThird != null
-                    && (
-                    focusThirdAnyway
-                        || EnemyUnits.discovered().buildings().inRadius(10, enemyThird).notEmpty()
-                )
-            ) return enemyThird;
+        AFocusPoint enemyThird = enemyThird(main);
+        if (shouldFocusEnemyThird(enemyThird)) {
+            return enemyThird;
         }
 
         // =========================================================
@@ -224,13 +211,25 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         return null;
     }
 
-    private static boolean shouldGoToThirdBaseAgainstZerg(AFocusPoint enemyThird) {
-        return Enemy.zerg()
-            && (
-            !enemyThird.isPositionVisible()
-                || EnemyUnits.discovered().buildings().countInRadius(10, enemyThird) > 0
-        );
+    private boolean shouldFocusEnemyThird(AFocusPoint enemyThird) {
+        if (enemyThird == null) return false;
+        if (A.s <= 300) return false;
+
+        if (
+            enemyThird.isPositionVisible()
+                && EnemyUnits.discovered().inRadius(10, enemyThird).empty()
+        ) return false;
+
+        if (Enemy.zerg() && A.s % 36 <= 10) return true;
+
+        if (
+            EnemyInfo.hasNaturalBase()
+                && EnemyInfo.hasDefensiveLandBuilding(true)
+        ) return true;
+
+        return false;
     }
+
 
     private AFocusPoint enemyThird(AUnit main) {
         APosition enemyThird = BaseLocations.enemyThird();

@@ -8,11 +8,14 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit {
@@ -31,9 +34,9 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
             if (unit.hp() >= 50 && unit.isTargetInWeaponRangeAccordingToGame(enemy)) return true;
             if (EnemyWhoBreachedBase.notNull()) return true;
 
-            if (!A.isUms()) {
+            if (!A.isUms() && (OurArmy.strength() <= 85 || Enemy.zerg())) {
                 AFocusPoint focusPoint = unit.focusPoint();
-                if (focusPoint != null && focusPoint.distTo(enemy) >= 10) return false;
+                if (focusPoint != null && focusPoint.distTo(enemy) >= 8) return false;
             }
 
             if (Alpha.count() <= 4) {

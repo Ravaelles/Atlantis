@@ -14,8 +14,24 @@ public class ContinueShootingAsDragoon {
 
         int sa = unit.lastStartedAttackAgo();
         int af = unit.lastAttackFrameAgo();
-        targetInWeaponRange = unit.isTargetInWeaponRangeAccordingToGame();
 
+        // =========================================================
+
+//        System.err.println("sa:" + sa + ", la:" + unit.lastAttackFrameAgo());
+        if (sa <= 40) {
+            if (sa < UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)) {
+                return Decision.ALLOWED;
+                //            System.err.println("Dragoon " + unit.id() + " - FORBIDDEN sa: (" + sa);
+            }
+
+            if (af >= 30 * 3 && unit.hasTarget() && unit.target().isHydralisk()) return Decision.ALLOWED;
+
+            return Decision.FORBIDDEN;
+        }
+
+        // =========================================================
+
+        targetInWeaponRange = unit.isTargetInWeaponRangeAccordingToGame();
         if (af >= 30 * 5 && targetInWeaponRange) return Decision.ALLOWED;
 
         // =========================================================
@@ -33,20 +49,6 @@ public class ContinueShootingAsDragoon {
                 && unit.lastActionLessThanAgo(30 * 5, Actions.ATTACK_UNIT)
                 && targetInWeaponRange
         ) return Decision.ALLOWED;
-
-        // =========================================================
-
-//        System.err.println("sa:" + sa + ", la:" + unit.lastAttackFrameAgo());
-        if (sa <= 40) {
-            if (sa < UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)) {
-                return Decision.ALLOWED;
-                //            System.err.println("Dragoon " + unit.id() + " - FORBIDDEN sa: (" + sa);
-            }
-
-            if (af >= 30 * 3 && unit.hasTarget() && unit.target().isHydralisk()) return Decision.ALLOWED;
-
-            return Decision.FORBIDDEN;
-        }
 
         // =========================================================
 

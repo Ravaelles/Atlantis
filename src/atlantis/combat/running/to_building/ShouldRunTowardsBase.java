@@ -16,10 +16,14 @@ public class ShouldRunTowardsBase {
         if (main == null) return false;
 
         double distToMain = unit.distTo(main);
-        if (distToMain <= 3) return false;
+        if (distToMain <= 4) return false;
 
         if (Enemy.protoss()) {
-            if (unit.isDragoon() && EnemyInfo.noRanged()) return false;
+            if (
+                unit.isDragoon()
+                    && EnemyInfo.noRanged()
+                    && unit.enemiesNear().countInRadius(5, unit) >= 3
+            ) return false;
         }
 
         if (unit.isMissionAttack() && unit.isGroundUnit() && unit.enemiesNear().buildings().notEmpty()) return true;

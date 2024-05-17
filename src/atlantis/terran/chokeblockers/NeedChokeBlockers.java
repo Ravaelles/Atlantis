@@ -21,6 +21,7 @@ public class NeedChokeBlockers {
     public static Vector translationVectorInRelationToChoke = null;
 
     public static boolean check() {
+        if (We.protoss() && Enemy.zerg()) return false;
         if (We.zerg()) return false;
         if (Enemy.terran()) return false;
 
