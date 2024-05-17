@@ -7,6 +7,8 @@ import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.*;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -52,6 +54,13 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     if ((focus = aroundCombatBuilding()) != null) return focus;
                 }
 
+                // === Natural choke if weak ================================================
+
+                int combatUnits = Count.ourCombatUnits();
+                if (combatUnits >= 4 && combatUnits <= 8) {
+                    if ((focus = atNaturalChoke()) != null) return focus;
+                }
+
                 // === At 3rd base =============================================
 
                 if ((focus = atThirdBase()) != null) return focus;
@@ -70,7 +79,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Main choke ================================================
 
-                if (!Enemy.terran() && (Count.ourCombatUnits() <= 4 || ActiveMap.isGosu())) {
+                if (!Enemy.terran() && (combatUnits <= 4 || ActiveMap.isGosu())) {
                     if ((focus = atMainChoke()) != null) return focus;
                 }
 
