@@ -4,16 +4,17 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.response.AStrategyResponseFactory;
-import atlantis.util.CodeProfiler;
+
+import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.util.Enemy;
 
 public class StrategyCommander extends Commander {
-    
+
     /**
      * Detect enemy strategy and use our strategy accordingly.
      */
-    public void handle() {
-        CodeProfiler.startMeasuring(this);
+    protected void handle() {
+        // CodeProfiler.startMeasuring(this);
 
         // If we don't know enemy strategy, try to guess it based on enemy buildings/units we know
         if (GamePhase.isEarlyGame() && A.everyNthGameFrame(13)) {
@@ -30,9 +31,9 @@ public class StrategyCommander extends Commander {
 
         AStrategyResponseFactory.forOurRace().update();
 
-        CodeProfiler.endMeasuring(this);
+        // CodeProfiler.endMeasuring(this);
     }
-    
+
     // =========================================================
 
     private void guessEnemyStrategyWhenEnemyIsProtoss() {
@@ -55,7 +56,7 @@ public class StrategyCommander extends Commander {
             changeEnemyStrategyTo(detectedStrategy);
         }
     }
-    
+
     // =========================================================
 
     private void changeEnemyStrategyTo(AStrategy strategy) {
@@ -65,5 +66,5 @@ public class StrategyCommander extends Commander {
         EnemyStrategy.setEnemyStrategy(strategy);
         AStrategyResponseFactory.forOurRace().updateEnemyStrategyChanged();
     }
-    
+
 }

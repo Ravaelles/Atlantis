@@ -3,7 +3,7 @@ package atlantis.combat.eval;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import jfap.JfapCombatEvaluator;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 /**
  * Fap fap fap.
@@ -21,7 +21,7 @@ public class AtlantisJfap {
 
     private double[] jfapEval() {
         if (noEnemiesNear()) {
-            return new double[] { 9874, -9874 };
+            return new double[]{9874, -9874};
         }
 
         return JfapCombatEvaluator.eval(unit);
@@ -40,8 +40,8 @@ public class AtlantisJfap {
 //        if (relativeToEnemy) {
 //                double myEval = Math.abs((double) myScoreDiff / enemyScoreDiff);
 //                double enemyEval = Math.abs((double) enemyScoreDiff / myScoreDiff);
-//                System.out.println("myEval = " + myEval);
-//                System.out.println("enemyEval = " + enemyEval);
+
+
 //                return new double[] { myEval, enemyEval };
 //            }
 //        }
@@ -66,10 +66,10 @@ public class AtlantisJfap {
         double deltaForThem = 0;
         if (enemy != null) {
             double oldForThem = scores[forThem];
-//            System.out.println("BEFORE enemyScore = " + scores[1]);
+
             scores[forThem] = AtlantisJfapTweaks.forHydralisks(scores[forThem], enemy);
             deltaForThem = scores[forThem] - oldForThem;
-//            System.out.println("AFTER  enemyScore = " + scores[1]);
+
         }
 
         // === Apply bi-directional tweaks relative to enemy =======
@@ -95,7 +95,7 @@ public class AtlantisJfap {
     }
 
     public static boolean isValidUnit(AUnit unit) {
-        return unit.notImmobilized() && unit.hasPosition() && (
+        return unit.notImmobilized() && unit.hasPosition() && unit.isCompleted() && (
             unit.u() != null || unit instanceof FakeUnit || unit instanceof AbstractFoggedUnit
         );
     }
@@ -106,9 +106,8 @@ public class AtlantisJfap {
 
     private double calculateToRelativeScoreIfNeeded(double ourScore, double enemyScore, boolean relativeToEnemy) {
         if (relativeToEnemy) {
-//            System.out.println("\n===== " + unit);
-//            System.out.println("ourScore = " + ourScore);
-//            System.out.println("enemyScore = " + enemyScore);
+
+
             if (enemyScore < -9000) {
                 return Math.abs(enemyScore);
             }

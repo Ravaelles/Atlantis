@@ -1,6 +1,6 @@
 package atlantis.production.dynamic;
 
-import atlantis.game.AGame;
+import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -9,34 +9,26 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public class DynamicTech {
-    protected static boolean handleResearch(TechType tech) {
-        if (ATech.isResearched(tech)) {
-            return false;
-        }
+    public static boolean handleResearch(TechType tech) {
+        if (ATech.isResearched(tech)) return false;
 
 //        if (!canAffordWithMargin(tech)) {
-        if (!AGame.canAfford(tech)) {
-            return false;
-        }
+        if (!A.canAfford(tech)) return false;
 
         AUnit building = Select.ourOfType(AUnitType.from(tech.whatResearches())).free().first();
         if (building != null) {
-//            System.out.println("### Research now " + tech.name());
+
             return building.research(tech);
         }
 
         return false;
     }
 
-    protected static boolean handleUpgrade(UpgradeType upgrade) {
-        if (ATech.isResearched(upgrade)) {
-            return false;
-        }
+    public static boolean handleUpgrade(UpgradeType upgrade) {
+        if (ATech.isResearched(upgrade)) return false;
 
 //        if (!canAffordWithMargin(upgrade)) {
-        if (!canAfford(upgrade)) {
-            return false;
-        }
+        if (!canAfford(upgrade)) return false;
 
         AUnit building = Select.ourOfType(AUnitType.from(upgrade.whatUpgrades())).free().first();
         if (building != null) {
@@ -46,22 +38,22 @@ public class DynamicTech {
         return false;
     }
 
-    protected static boolean canAfford(TechType tech) {
-        return AGame.canAffordWithReserved(tech.mineralPrice(), tech.gasPrice());
+    public static boolean canAfford(TechType tech) {
+        return A.canAffordWithReserved(tech.mineralPrice(), tech.gasPrice());
     }
 
-    protected static boolean canAffordWithMargin(TechType tech) {
+    public static boolean canAffordWithMargin(TechType tech) {
         int margin = 100;
-        return AGame.canAffordWithReserved(tech.mineralPrice() + margin, tech.gasPrice() + margin);
+        return A.canAffordWithReserved(tech.mineralPrice() + margin, tech.gasPrice() + margin);
     }
 
-    protected static boolean canAfford(UpgradeType upgrade) {
-        return AGame.canAffordWithReserved(upgrade.mineralPrice(), upgrade.gasPrice());
+    public static boolean canAfford(UpgradeType upgrade) {
+        return A.canAffordWithReserved(upgrade.mineralPrice(), upgrade.gasPrice());
     }
 
-    protected static boolean canAffordWithMargin(UpgradeType upgrade) {
+    public static boolean canAffordWithMargin(UpgradeType upgrade) {
         int margin = 150;
-        return AGame.canAffordWithReserved(upgrade.mineralPrice() + margin, upgrade.gasPrice() + margin);
+        return A.canAffordWithReserved(upgrade.mineralPrice() + margin, upgrade.gasPrice() + margin);
     }
 
 }

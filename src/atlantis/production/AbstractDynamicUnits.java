@@ -1,36 +1,37 @@
 package atlantis.production;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.build.AddToQueue;
-import atlantis.production.orders.production.ProductionQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
+
 import atlantis.production.orders.production.Requirements;
+import atlantis.production.orders.production.queue.SoonInQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.Helpers;
 
 public class AbstractDynamicUnits extends Helpers {
-
-    public static void buildToHave(AUnitType type, int haveN) {
-        if (haveN <= 0) {
-            return;
-        }
+    public static boolean buildToHave(AUnitType type, int haveN) {
+        if (haveN <= 0) return false;
 
         if (Count.withPlanned(type) < haveN) {
-            trainIfPossible(type);
+//            System.err.println(Count.withPlanned(type) + " A/E " + haveN);
+            if (type.isABuilding()) return AddToQueue.toHave(type, haveN);
+            else return trainIfPossible(type);
         }
+
+        return false;
     }
 
     public static boolean trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {
-        if (noSupply(minSupply)) {
-            return false;
-        }
+//        if (supplyUsedAtMost(minSupply)) return false;
 
-        return trainIfPossible(type, onlyOneAtTime, type.getMineralPrice(), type.getGasPrice());
+        return trainIfPossible(type, onlyOneAtTime, type.mineralPrice(), type.gasPrice());
     }
 
     public static boolean trainIfPossible(AUnitType type) {
-        return trainIfPossible(type, false, type.getMineralPrice(), type.getGasPrice());
+        return trainIfPossible(type, false, type.mineralPrice(), type.gasPrice());
     }
 
     public static boolean trainIfPossible(AUnitType type, boolean onlyOneAtTime) {
@@ -38,14 +39,10 @@ public class AbstractDynamicUnits extends Helpers {
     }
 
     public static boolean trainIfPossible(AUnitType type, boolean onlyOneAtTime, int hasMinerals, int hasGas) {
-        if (!AGame.canAffordWithReserved(hasMinerals, hasGas)) {
-            return false;
-        }
+        if (!A.canAffordWithReserved(hasMinerals, hasGas)) return false;
 
         if (onlyOneAtTime) {
-            if (type.isBuilding() && ConstructionRequests.hasRequestedConstructionOf(type)) {
-                return false;
-            }
+            if (type.isABuilding() && ConstructionRequests.hasRequestedConstructionOf(type)) return false;
         }
 
         return AddToQueue.addToQueueIfHaveFreeBuilding(type);
@@ -56,13 +53,8 @@ public class AbstractDynamicUnits extends Helpers {
             AGame.exit("Unhandled yet");
         }
 
-        if (!Requirements.hasRequirements(type)) {
-            return;
-        }
-
-        if (ProductionQueue.isAtTheTopOfQueue(type, 8)) {
-            return;
-        }
+        if (!Requirements.hasRequirements(type)) return;
+        if (SoonInQueue.have(type)) return;
 
         AddToQueue.addToQueueIfHaveFreeBuilding(type);
     }

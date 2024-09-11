@@ -2,6 +2,8 @@ package atlantis.terran.repair;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.workers.GatherResources;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,13 +32,13 @@ public class RepairAssignments {
         return repairersToUnit.get(repairer);
     }
 
-    public static AUnit getUnitToRepairFor(AUnit repairer) {
+    public static AUnit unitToRepairForSCV(AUnit repairer) {
         return repairersToUnit.get(repairer);
     }
 
     public static AUnit getClosestRepairerAssignedTo(AUnit wounded) {
         if (
-                unitsToRepairers.size() > OptimalNumOfRepairers.MAX_REPAIRERS_AT_ONCE
+            unitsToRepairers.size() > OptimalNumOfRepairers.MAX_REPAIRERS_AT_ONCE
                 || unitsToRepairers.size() >= (0.5 * Select.ourWorkers().count())
         ) {
             return null;
@@ -67,17 +69,28 @@ public class RepairAssignments {
             if (CanAbandonUnitAssignedToRepair.check(repairer)) {
 //                System.err.println("Remove PROTECTOR for " + unitsToRepairers);
                 unitsToRepairers.get(unitToRepair).remove(repairer);
-                repairer.stop("No longer repairer", true);
-                if (addLogs) { repairer.addLog("No longer repairer of " + unitToRepair); }
+                repairer.stop("No longer repairer");
+                if (addLogs) {
+                    repairer.addLog("No longer repairer of " + unitToRepair);
+                }
                 repairersToUnit.remove(repairer);
                 repairersToModes.remove(repairer);
+
+                if (!unitToRepair.isProtector()) (new GatherResources(repairer)).invokeFrom("RepairAssignments");
             }
         }
     }
 
     public static void addProtector(AUnit protector, AUnit unit) {
-        if (addLogs) { protector.addLog("Added PROTECTOR of " + unit); }
-//        System.out.println("Added PROTECTOR of " + unit);
+        if (protector.isBuilder()) {
+            ErrorLog.printMaxOncePerMinute("Protector is builder: " + protector + ", dont assign!");
+            return;
+        }
+
+        if (addLogs) {
+            protector.addLog("Added PROTECTOR of " + unit);
+        }
+        protector.addLog("Added PROTECTOR of " + unit);
 
         addRepairer(protector, unit);
         repairersToModes.put(protector, MODE_PROTECT);
@@ -88,7 +101,9 @@ public class RepairAssignments {
             throw new RuntimeException(repairer + "is not SCV in addRepairer!");
         }
 
-        if (addLogs) { unitToRepair.addLog("Added Repairer (" + repairer.idWithHash() + ") of " + unitToRepair); }
+        if (addLogs) {
+            unitToRepair.addLog("Added Repairer (" + repairer.idWithHash() + ") of " + unitToRepair);
+        }
 
         repairersToUnit.put(repairer, unitToRepair);
         repairersToModes.put(repairer, MODE_REPAIR_ONLY);
@@ -96,6 +111,8 @@ public class RepairAssignments {
             unitsToRepairers.put(unitToRepair, new ArrayList<>());
         }
         unitsToRepairers.get(unitToRepair).add(repairer);
+
+        repairer.repair(unitToRepair, null);
     }
 
     public static int countProtectorsFor(AUnit unit) {

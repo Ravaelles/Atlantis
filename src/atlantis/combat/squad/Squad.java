@@ -6,6 +6,9 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.delta.Delta;
 import atlantis.combat.squad.positioning.SquadCohesion;
+import atlantis.combat.squad.squad_scout.DefineSquadScout;
+import atlantis.combat.squad.squad_scout.SquadScout;
+import atlantis.combat.squad.transfers.SquadReinforcements;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -13,6 +16,7 @@ import atlantis.units.Units;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 /**
@@ -25,6 +29,7 @@ public abstract class Squad extends Units {
     private static Cache<Boolean> cacheBoolean = new Cache<>();
     private static Cache<Double> cacheDouble = new Cache<>();
     private static Cache<Integer> cacheInteger = new Cache<>();
+    private static Cache<AUnit> cacheUnit = new Cache<>();
 
     /**
      * Auxilary name for the squad e.g. "Alpha", "Bravo", "Delta".
@@ -40,6 +45,8 @@ public abstract class Squad extends Units {
      * Unit that is considered to be "center" of this squad.
      */
     protected AUnit _leader = null;
+
+    private SquadTargeting targeting = new SquadTargeting();
 
     private SquadCenter squadCenter = new SquadCenter(this);
     private SquadCohesion squadCohesion = new SquadCohesion(this);
@@ -88,13 +95,9 @@ public abstract class Squad extends Units {
      * Center of this squad.
      */
     public APosition center() {
-        if (size() <= 0) {
-            return null;
-        }
+        if (size() <= 0) return null;
 
-        if (squadCenter.isInvalid(_leader)) {
-            _leader = squadCenter.leader();
-        }
+        if (squadCenter.isInvalid(_leader)) _leader = squadCenter.leader();
 
         return _leader != null ? _leader.position() : null;
     }
@@ -203,23 +206,20 @@ public abstract class Squad extends Units {
     }
 
     public AUnit squadScout() {
-        if (!isMainSquad() || Count.ourCombatUnits() < 3) {
-            return null;
-        }
-
-        Selection groundUnits = Select.from(this).groundUnits();
-        AUnit ranged = groundUnits.ranged().first();
-        if (ranged != null) {
-//            System.out.println("ranged = " + ranged);
-            return ranged;
-        }
-
-        return groundUnits.melee().first();
+        return cacheUnit.getIfValid(
+            "squadScout",
+            -1,
+            () -> (new DefineSquadScout(this)).define()
+        );
     }
 
     public AUnit leader() {
         return squadCenter.leader();
     }
+
+//    public HasPosition tankMedian() {
+//
+//    }
 
     public boolean lessThanUnits(int units) {
         return size() < units;
@@ -231,56 +231,56 @@ public abstract class Squad extends Units {
 
     public double distToCenter(AUnit unit) {
         return cacheDouble.get(
-                "distToCenter",
-                5,
-                () -> {
-                    APosition center = center();
-                    if (center == null) {
-                        return 0.0;
-                    }
-
-                    return unit.distTo(center());
+            "distToCenter",
+            5,
+            () -> {
+                APosition center = center();
+                if (center == null) {
+                    return 0.0;
                 }
+
+                return unit.distTo(center());
+            }
         );
     }
 
     public double distToFocusPoint() {
         return cacheDouble.get(
-                "distToFocusPoint",
-                5,
-                () -> {
-                    Mission mission = mission();
-                    if (mission == null) {
-                        return 0;
-                    }
-
-                    AFocusPoint focusPoint = mission.focusPoint();
-                    if (focusPoint == null) {
-                        return 0;
-                    }
-
-                    return (double) focusPoint.distTo(center());
+            "distToFocusPoint",
+            5,
+            () -> {
+                Mission mission = mission();
+                if (mission == null) {
+                    return 0;
                 }
+
+                AFocusPoint focusPoint = mission.focusPoint();
+                if (focusPoint == null) {
+                    return 0;
+                }
+
+                return (double) focusPoint.distTo(center());
+            }
         );
     }
 
     public double groundDistToFocusPoint() {
         return cacheDouble.get(
-                "groundDistToFocusPoint",
-                8,
-                () -> {
-                    Mission mission = mission();
-                    if (mission == null) {
-                        return 0;
-                    }
-
-                    AFocusPoint focusPoint = mission.focusPoint();
-                    if (focusPoint == null) {
-                        return 0;
-                    }
-
-                    return focusPoint.groundDist(center());
+            "groundDistToFocusPoint",
+            8,
+            () -> {
+                Mission mission = mission();
+                if (mission == null) {
+                    return 0;
                 }
+
+                AFocusPoint focusPoint = mission.focusPoint();
+                if (focusPoint == null) {
+                    return 0;
+                }
+
+                return focusPoint.groundDist(center());
+            }
         );
     }
 
@@ -329,5 +329,18 @@ public abstract class Squad extends Units {
 
     public boolean isCohesionPercentOkay() {
         return squadCohesion.isSquadCohesionOkay();
+    }
+
+    public void handleReinforcements() {
+        (new SquadReinforcements(this)).handleReinforcements();
+    }
+
+    public SquadTargeting targeting() {
+        return targeting;
+    }
+
+    public boolean isRetreating() {
+        AUnit leader = leader();
+        return leader != null && leader.isRetreating();
     }
 }

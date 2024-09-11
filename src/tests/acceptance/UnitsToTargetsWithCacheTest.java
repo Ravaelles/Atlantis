@@ -3,12 +3,12 @@ package tests.acceptance;
 import atlantis.combat.micro.terran.infantry.TerranGhost;
 import atlantis.game.A;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.*;
 import static org.junit.Assert.assertEquals;
 
-public class UnitsToTargetsWithCacheTest  extends AbstractTestFakingGame {
+public class UnitsToTargetsWithCacheTest extends AbstractTestFakingGame {
 
     private FakeUnit ghost1;
     private FakeUnit ghost2;
@@ -22,7 +22,7 @@ public class UnitsToTargetsWithCacheTest  extends AbstractTestFakingGame {
     @Test
     public void tetsItReturnsTargetsAcquiredInLastNFrames() {
         createWorld(2, () -> {
-//            System.out.println("\n### now = " + A.now());
+//            System.err.println("\n### now = " + A.now());
 
             // === 1 ===========================================
 

@@ -7,15 +7,14 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
-public class ZergSunkenColony extends AntiLandBuildingManager {
-
+public class ZergSunkenColony extends AntiLandBuildingCommander {
     @Override
     public AUnitType type() {
         return AUnitType.Zerg_Sunken_Colony;
@@ -47,7 +46,7 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
         if (GamePhase.isEarlyGame()) {
             if (ourArmyRelativeStrength < 100) {
                 int missingStrengthToEquillibrium = 100 - ourArmyRelativeStrength;
-                int moreNeeded = Math.min(2, (int) Math.ceil(missingStrengthToEquillibrium / 10.0));
+                int moreNeeded = Math.min(3, (int) Math.ceil(missingStrengthToEquillibrium / 10.0));
 
                 return existing + moreNeeded;
             }
@@ -61,25 +60,22 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
 
     @Override
     public boolean shouldBuildNew() {
+        if (A.seconds() <= (EnemyStrategy.get().isRushOrCheese() ? 0 : 200)) return false;
+
         int creepColonies = Count.existingOrInProductionOrInQueue(AUnitType.Zerg_Creep_Colony);
 
+        int maxInProduction = 3;
         if (
-            Count.inProductionOrInQueue(AUnitType.Zerg_Creep_Colony) >= 2
-                || Count.inProductionOrInQueue(AUnitType.Zerg_Sunken_Colony) >= 2
-        ) {
-            return false;
-        }
+            Count.inProductionOrInQueue(AUnitType.Zerg_Creep_Colony) >= maxInProduction
+                || Count.inProductionOrInQueue(AUnitType.Zerg_Sunken_Colony) >= maxInProduction
+        ) return false;
 
         if (creepColonies >= 1) {
-            if (!A.hasMinerals(150)) {
-                return false;
-            }
+            if (!A.hasMinerals(150)) return false;
 
             int mineralsNeeded = 50 + creepColonies * 75;
 
-            if (!A.hasMinerals(mineralsNeeded)) {
-                return false;
-            }
+            if (!A.hasMinerals(mineralsNeeded)) return false;
         }
 
         return super.shouldBuildNew();
@@ -91,17 +87,16 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
      */
     public boolean handleExistingCreepColonyIfNeeded() {
         int creepColonies = Count.creepColonies();
-        if (creepColonies <= 0) {
-            return false;
-        }
+        if (creepColonies <= 0) return false;
 
         for (AUnit colony : Select.ourOfType(AUnitType.Zerg_Creep_Colony).list()) {
 //            if (existingWithUnfinished() < expected()) {
             if (A.hasMinerals(75)) {
-                colony.morph(type());
+                colony.morph(type(), null);
                 String tooltip = "Into" + type();
                 colony.addLog(tooltip);
                 colony.setTooltip(tooltip);
+                return true;
 //                    System.err.println("---- Morph " + colony + " into >>> " + type());
             }
         }
@@ -110,8 +105,13 @@ public class ZergSunkenColony extends AntiLandBuildingManager {
     }
 
     @Override
-    public HasPosition nextBuildingPosition() {
-        HasPosition standard = super.nextBuildingPosition();
+    public HasPosition nextPosition() {
+        return nextPosition(Select.mainOrAnyBuilding());
+    }
+
+    @Override
+    public HasPosition nextPosition(HasPosition nearTo) {
+        HasPosition standard = super.nextPosition(nearTo);
 
         if (standard == null) {
             return null;

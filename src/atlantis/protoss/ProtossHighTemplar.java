@@ -27,7 +27,7 @@ public class ProtossHighTemplar extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (dontDisturb()) return usedManager(this);
         if (tryMeldingIntoArchon()) return usedManager(this);
 
@@ -180,9 +180,7 @@ public class ProtossHighTemplar extends Manager {
     }
 
     private boolean followArmy() {
-        if (unit.hp() <= 16) {
-            return false;
-        }
+        if (unit.hp() <= 16) return false;
 
         APosition center = Alpha.get().center();
         if (center != null) {
@@ -190,8 +188,7 @@ public class ProtossHighTemplar extends Manager {
                 return unit.moveAwayFrom(
                     Select.our().exclude(unit).nearestTo(unit),
                     1,
-                    "Stacked",
-                    Actions.MOVE_FORMATION
+                    Actions.MOVE_FORMATION, "Stacked"
                 );
             }
 
@@ -207,9 +204,7 @@ public class ProtossHighTemplar extends Manager {
     }
 
     private boolean tryMeldingIntoArchon() {
-        if (unit.energy() > 65 && unit.woundPercent() < 60) {
-            return false;
-        }
+        if (unit.energy() > 65 && unit.woundPercent() < 60) return false;
 
         Units lowEnergyHTs = new Units();
         for (AUnit other : Select.ourOfType(AUnitType.Protoss_High_Templar).inRadius(8, unit).list()) {
@@ -222,7 +217,7 @@ public class ProtossHighTemplar extends Manager {
         if (closestOtherHT != null) {
 //            if (closestOtherHT.distTo(unit) <= 0.9) {
             unit.useTech(TechType.Archon_Warp, closestOtherHT);
-//                System.out.println("Warp Archon");
+
             unit.setTooltipTactical("WarpArchon");
             closestOtherHT.setTooltipTactical("OhArchon");
 //                GameSpeed.changeSpeedTo(10);

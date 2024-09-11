@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 public class ProtossShieldBattery extends Manager {
-    private  final double MAX_DIST = 7.98;
+    private final double MAX_DIST = 7.98;
 
     public ProtossShieldBattery(AUnit unit) {
         super(unit);
@@ -18,7 +18,7 @@ public class ProtossShieldBattery extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit shieldBattery = unit;
 
         if (shieldBattery.energy() >= 40 && shieldBattery.isPowered()) {

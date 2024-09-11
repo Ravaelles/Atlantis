@@ -3,9 +3,9 @@ package atlantis.information.strategy;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnitType;
+import atlantis.util.Enemy;
 
 public class ZergStrategies extends AStrategy {
-    
     // Rush
     public static final AStrategy ZERG_9_Pool_vP = new AStrategy();
     public static final AStrategy ZERG_9_Pool_vT = new AStrategy();
@@ -32,9 +32,9 @@ public class ZergStrategies extends AStrategy {
     // =========================================================
 
     public static void initialize() {
-        
+
         // === Rushes ========================================
-        
+
         ZERG_9_Pool_vP.setZerg().setName("9 Pool vP").setGoingRush();
 
         ZERG_9_Pool_vT.setZerg().setName("9 Pool vT").setGoingRush();
@@ -42,7 +42,7 @@ public class ZergStrategies extends AStrategy {
         ZERG_9_Pool_vZ.setZerg().setName("9 Pool vZ").setGoingRush();
 
         // === Cheese ========================================
-        
+
         ZERG_4_Pool.setZerg().setName("4 Pool").setGoingRush().setGoingCheese();
 
         ZERG_5_Pool.setZerg().setName("5 Pool").setGoingRush().setGoingCheese();
@@ -50,7 +50,7 @@ public class ZergStrategies extends AStrategy {
         ZERG_6_Pool.setZerg().setName("6 Pool").setGoingRush().setGoingCheese();
 
         // === Expansion =====================================
-        
+
         ZERG_3_Hatch_Before_Pool.setZerg().setName("3 Hatch Before Pool").setGoingExpansion();
 
         ZERG_9_Hatch_Fast_Expo.setZerg().setName("9 Hatch Fast Expo").setGoingExpansion();
@@ -58,7 +58,7 @@ public class ZergStrategies extends AStrategy {
         ZERG_12_Hatch_vZ.setZerg().setName("12 Hatch vZ").setGoingExpansion();
 
         // === Tech ==========================================
-        
+
         ZERG_1_Hatch_Lurker.setZerg().setName("1 Hatch Lurker").setGoingTech().setGoingHiddenUnits();
 
         ZERG_2_Hatch_Lurker.setZerg().setName("2 Hatch Lurker").setGoingTech().setGoingHiddenUnits();
@@ -69,7 +69,28 @@ public class ZergStrategies extends AStrategy {
 
         ZERG_2_Hatch_Hydra_vP.setZerg().setName("2 Hatch Hydra").setGoingTech();
     }
-    
+
+    public static AStrategy zergChooseStrategy() {
+        if (Enemy.protoss()) {
+//            return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
+            return ZERG_9_Hatch_Fast_Expo;
+//            return ZergStrategies.ZERG_9_Pool_vP;
+//            return ZergStrategies.ZERG_3_Hatch_Lurker;
+        }
+        else if (Enemy.terran()) {
+            return ZERG_9_Pool_vT;
+        }
+        else {
+            return ZERG_2_Hatch_Hydra_vP;
+//            return ZergStrategies.ZERG_9_Hatch_Fast_Expo;
+//            return ZergStrategies.ZERG_9_Pool_vZ;
+        }
+
+//        return ZergStrategies.ZERG_2_Hatch_Hydra_vP;
+//        return ZergStrategies.ZERG_13_Pool_Muta;
+//        return ZergStrategies.ZERG_12_Hatch_vZ;
+    }
+
     public static AStrategy detectStrategy() {
         int seconds = AGame.timeSeconds();
         int bases = EnemyUnits.discovered().bases().count();
@@ -81,15 +102,15 @@ public class ZergStrategies extends AStrategy {
         int hydraliskDen = count(AUnitType.Zerg_Hydralisk_Den);
         int drones = count(AUnitType.Zerg_Drone);
         int lings = count(AUnitType.Zerg_Zergling);
-        
+
         // === Expansion ===========================================
-        
+
         if (pool == 0 && bases >= 3 && seconds <= 350) {
             return ZERG_3_Hatch_Before_Pool;
         }
-        
+
         // === Tech ================================================
-        
+
         if (extractor >= 1 && hydraliskDen == 0 && bases >= 2 && drones >= 12 || spires >= 1 || mutalisks >= 1) {
             return ZERG_13_Pool_Muta;
         }
@@ -97,34 +118,33 @@ public class ZergStrategies extends AStrategy {
         if (extractor >= 1 && pool >= 1 && lair >= 1 && bases < 2) {
             return ZERG_1_Hatch_Lurker;
         }
-        
+
         if (extractor >= 1 && pool >= 1 && lair >= 1 && bases >= 2) {
             return ZERG_2_Hatch_Lurker;
         }
-        
+
         // === Cheese ==============================================
-        
+
         if (pool == 1 && drones <= 4 && seconds < 120) {
             return ZergStrategies.ZERG_4_Pool;
         }
-        
+
         if (pool == 1 && drones <= 5 && seconds < 140) {
             return ZergStrategies.ZERG_5_Pool;
         }
-        
+
         if (pool == 1 && drones <= 6 && seconds < 160) {
             return ZergStrategies.ZERG_6_Pool;
         }
-        
+
         // === Rushes ==============================================
-        
+
         if (pool == 1 && drones <= 10 && seconds < 220) {
             return ZergStrategies.ZERG_9_Pool_vP;
         }
-        
+
         // =========================================================
-        
+
         return null;
     }
-    
 }

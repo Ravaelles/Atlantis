@@ -48,6 +48,10 @@ public class Units {
     // === Base functionality ==============================================
 
     public Units addUnit(AUnit unitToAdd) {
+        if (contains(unitToAdd)) {
+            return this;
+        }
+
         units.add(unitToAdd);
         unitIds.add(unitToAdd.id());
         extraValues.put(unitToAdd, null);
@@ -105,7 +109,7 @@ public class Units {
     public AUnit random() {
         return (AUnit) A.getRandomElement(units);
     }
-    
+
     /**
      * Returns unit with <b>N</b>-th index.
      */
@@ -144,12 +148,12 @@ public class Units {
      */
     public Units shuffle() {
         Collections.shuffle(units);
-        
+
         return this;
     }
 
     // === Value mapping methods ===============================
-    
+
     public void incrementValue(AUnit unit) {
         changeValueBy(unit, 1);
     }
@@ -157,7 +161,8 @@ public class Units {
     public void changeValueBy(AUnit unit, double deltaValue) {
         if (has(unit)) {
             extraValues.put(unit, extraValues.get(unit) + deltaValue);
-        } else {
+        }
+        else {
             extraValues.put(unit, deltaValue);
         }
     }
@@ -219,15 +224,15 @@ public class Units {
     private AUnit unitWithExtremeValue(boolean returnLowest) {
         assert !units.isEmpty();
         AUnit bestUnit = null;
-        
+
         double bestValue = returnLowest ? Integer.MAX_VALUE : Integer.MIN_VALUE;
         for (AUnit unit : units) {
-//                System.out.println("######################");
-//                System.out.println(extraValues);
+
+
 //                for (AUnit u : extraValues.keySet()) {
-//                    System.out.println(u + " // " + (extraValues.containsKey(u) ? extraValues.get(u) : "NO"));
+
 //                }
-//                System.out.println("######################");
+
             if (bestUnit == null || (returnLowest ? (valueFor(unit) < bestValue) : (valueFor(unit) > bestValue))) {
                 bestValue = valueFor(unit);
                 bestUnit = unit;
@@ -246,7 +251,7 @@ public class Units {
     }
 
     // === Location-related ====================================
-    
+
     /**
      * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first unit will be the one closest to given position.
@@ -269,7 +274,8 @@ public class Units {
                 double distance2 = p2.distTo(position);
                 if (distance1 == distance2) {
                     return 0;
-                } else {
+                }
+                else {
                     return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
                 }
             }
@@ -277,7 +283,7 @@ public class Units {
 
         return this;
     }
-    
+
     /**
      * Sorts all units according to the distance to <b>position</b>. If <b>nearestFirst</b> is true, then
      * after sorting first unit will be the one closest to given position.
@@ -297,14 +303,15 @@ public class Units {
                     return 1;
                 }
                 double distance1 = PositionUtil.groundDistanceTo(
-                        p1.position(), position.position()
+                    p1.position(), position.position()
                 );
                 double distance2 = PositionUtil.groundDistanceTo(
-                        p2.position(), position.position()
+                    p2.position(), position.position()
                 );
                 if (distance1 == distance2) {
                     return 0;
-                } else {
+                }
+                else {
                     return distance1 < distance2 ? (nearestFirst ? -1 : 1) : (nearestFirst ? 1 : -1);
                 }
             }
@@ -320,10 +327,10 @@ public class Units {
         if (isEmpty()) {
             return null;
         }
-        
+
         return PositionHelper.getPositionMedian(this);
     }
-    
+
     /**
      * Returns average PX and average PY for all units.
      */
@@ -331,10 +338,10 @@ public class Units {
         if (isEmpty()) {
             return null;
         }
-        
+
         return PositionHelper.getPositionAverage(units);
     }
-    
+
     /**
      * Returns average PX and average PY for all units.
      */
@@ -342,7 +349,7 @@ public class Units {
         if (isEmpty()) {
             return null;
         }
-        
+
         return PositionHelper.getPositionAverageDistanceWeightedTo(unit, this, power);
     }
 
@@ -353,9 +360,12 @@ public class Units {
     }
 
     public boolean onlyMelee() {
+        int initCount = this.units.size();
+
         ArrayList<AUnit> onlyRanged = new ArrayList<>(this.units);
         onlyRanged.removeIf(u -> !u.isMelee());
-        return onlyRanged.size() == this.units.size();
+
+        return onlyRanged.size() == initCount;
     }
 
     public boolean onlyAir() {
@@ -363,7 +373,7 @@ public class Units {
         list.removeIf(u -> !u.isAir());
         return list.isEmpty();
     }
-    
+
     // =========================================================
     // Override methods
 
@@ -373,8 +383,8 @@ public class Units {
 
         for (AUnit unit : units) {
             string.append("   - ").append(unit.type()).append(" (ID:").append(unit.id()).append(") ")
-                    .append(hasValueFor(unit) ? valueForOrNull(unit) : "")
-                    .append("\n");
+                .append(hasValueFor(unit) ? valueForOrNull(unit) : "")
+                .append("\n");
         }
 
         return string.toString();
@@ -388,13 +398,14 @@ public class Units {
     }
 
     public void print(String message) {
-//        System.out.println("Units in list:");
+
         System.out.println("===" + (message == null ? "" : " " + message + " (" + size() + ") ") + "==========");
         for (AUnit unit : list()) {
             System.out.print(unit);
             if (hasValueFor(unit)) {
                 System.out.println(", extra value: " + (hasValueFor(unit) ? valueFor(unit) : ""));
-            } else {
+            }
+            else {
                 System.out.println();
             }
         }
@@ -421,7 +432,6 @@ public class Units {
 
     /**
      * @return iterator object for inner collection with the units.
-     *
      */
     public Iterator<AUnit> iterator() {
         return units.iterator();

@@ -6,8 +6,8 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ATargetingStandard extends ATargeting {
-    public ATargetingStandard(AUnit unit) {
-        super(unit);
+    public ATargetingStandard(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
+        super(unit, enemyUnits, enemyBuildings);
     }
 
     public AUnit target() {
@@ -33,7 +33,7 @@ public class ATargetingStandard extends ATargeting {
         }
 
         if (target != null) {
-            if (ATargeting.DEBUG) System.out.println("D1 = " + target);
+            debug("D1 = " + target);
             return target;
         }
 
@@ -46,7 +46,7 @@ public class ATargetingStandard extends ATargeting {
                 .inRadius(3, unit)
                 .nearestTo(unit);
             if (target != null) {
-                if (ATargeting.DEBUG) System.out.println("D1b = " + target);
+                debug("D1b = " + target);
                 return target;
             }
         }
@@ -60,7 +60,7 @@ public class ATargetingStandard extends ATargeting {
             .nearestTo(unit);
 
         if (target != null) {
-            if (ATargeting.DEBUG) System.out.println("D2 = " + target);
+            debug("D2 = " + target);
             return target;
         }
 
@@ -73,7 +73,7 @@ public class ATargetingStandard extends ATargeting {
             .mostWounded();
 
         if (target != null && (!target.isAir() || unit.isOtherUnitFacingThisUnit(target))) {
-            if (ATargeting.DEBUG) System.out.println("D3 = " + target);
+            debug("D3 = " + target);
             return target;
         }
 
@@ -85,7 +85,7 @@ public class ATargetingStandard extends ATargeting {
             .inRadius(10, unit)
             .mostWounded();
         if (target != null) {
-            if (ATargeting.DEBUG) System.out.println("D4 = " + target);
+            debug("D4 = " + target);
             return target;
         }
 
@@ -98,7 +98,7 @@ public class ATargetingStandard extends ATargeting {
             .nearestTo(unit);
         if (target != null && Select.enemies(target.type()).inRadius(3, unit).atLeast(3)) {
             if (target.friendsNear().buildings().inRadius(6, target).notEmpty()) {
-                if (ATargeting.DEBUG) System.out.println("D5 = " + target);
+                debug("D5 = " + target);
                 return target;
             }
         }
@@ -111,10 +111,9 @@ public class ATargetingStandard extends ATargeting {
             .inRadius(6, unit)
             .nearestTo(unit);
         if (target != null) {
-            if (ATargeting.DEBUG) System.out.println("D6a = " + target);
+            debug("D6a = " + target);
             return target;
         }
-
 
         // =========================================================
         // Okay, try targeting any-fuckin-thing
@@ -126,7 +125,7 @@ public class ATargetingStandard extends ATargeting {
             .canBeAttackedBy(unit, 15)
             .nearestTo(unit);
         if (target != null) {
-            if (ATargeting.DEBUG) System.out.println("D7 = " + target);
+            debug("D7 = " + target);
             return target;
         }
 

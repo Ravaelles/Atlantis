@@ -6,7 +6,6 @@ import atlantis.units.AUnit;
 import java.util.ArrayList;
 
 public class Log {
-
     /**
      * Write every tooltip to logs/units/unit_file.txt, so it's possible to debug things.
      */
@@ -37,15 +36,10 @@ public class Log {
 
     public void addMessage(String message, AUnit unit) {
         messages.add(new LogMessage(message, expireAfterFrames));
-        if (SAVE_UNIT_LOGS_TO_FILES > 0) {
-            LogUnitsToFiles.saveUnitLogToFile(message, unit);
-        }
 
-//        System.out.println("LOG: " + message);
+        if (SAVE_UNIT_LOGS_TO_FILES > 0) LogUnitsToFiles.saveUnitLogToFile(message, unit);
 
-        if (messages.size() > limit) {
-            messages.remove(0);
-        }
+        if (messages.size() > limit) messages.remove(0);
     }
 
     public ArrayList<LogMessage> messages() {
@@ -60,7 +54,7 @@ public class Log {
         return messages.size() > 0 && lastMessage().message().equals(message);
     }
 
-    private LogMessage lastMessage() {
+    public LogMessage lastMessage() {
         if (messages.isEmpty()) {
             return null;
         }
@@ -68,8 +62,35 @@ public class Log {
         return messages.get(messages.size() - 1);
     }
 
+    public void replaceLastWith(String replaceWith, AUnit unit) {
+        if (messages.isEmpty()) {
+            addMessage(replaceWith, unit);
+            return;
+        }
+
+        messages.remove(messages.size() - 1);
+        addMessage(replaceWith, unit);
+    }
+
+    public boolean isEmpty() {
+        return messages.isEmpty();
+    }
+
     public boolean isNotEmpty() {
         return !messages.isEmpty();
+    }
+
+    // =========================================================
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("Log{\n");
+
+        for (LogMessage logMessage : messages) {
+            result.append("    ").append(logMessage.messageWithTime()).append(",\n");
+        }
+
+        return result + "}";
     }
 
     // =========================================================

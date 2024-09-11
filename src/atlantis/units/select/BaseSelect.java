@@ -12,12 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BaseSelect<T extends AUnit> {
-
     protected static final Cache<List<AUnit>> cacheList = new Cache<>();
 
-    public static List<AUnit> ourUnits() {
+    public static List<AUnit> ourUnitsWithUnfinishedList() {
         return cacheList.get(
-            "ourUnits",
+            "ourUnitsWithUnfinishedList",
             0,
             () -> {
                 List<AUnit> data = new ArrayList<>();
@@ -25,25 +24,6 @@ public class BaseSelect<T extends AUnit> {
                 for (Unit u : AGame.getPlayerUs().getUnits()) {
                     AUnit unit = AUnit.getById(u);
                     data.add(unit);
-                }
-
-                return data;
-            }
-        );
-    }
-
-    public static List<AUnit> ourWithUnfinishedUnits() {
-        return cacheList.get(
-            "ourWithUnfinishedUnits",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (Unit u : AGame.getPlayerUs().getUnits()) {
-                    AUnit unit = AUnit.getById(u);
-                    if (unit.isAlive()) {
-                        data.add(unit);
-                    }
                 }
 
                 return data;
@@ -72,35 +52,35 @@ public class BaseSelect<T extends AUnit> {
 
     public static List<AUnit> neutralUnits() {
         return cacheList.get(
-                "neutralUnits",
-                0,
-                () -> {
-                    List<AUnit> data = new ArrayList<>();
+            "neutralUnits",
+            0,
+            () -> {
+                List<AUnit> data = new ArrayList<>();
 
-                    for (Unit u : Atlantis.game().neutral().getUnits()) {
-                        AUnit unit = AUnit.getById(u);
-                        data.add(unit);
-                    }
-
-                    return data;
+                for (Unit u : Atlantis.game().neutral().getUnits()) {
+                    AUnit unit = AUnit.getById(u);
+                    data.add(unit);
                 }
+
+                return data;
+            }
         );
     }
 
     public static List<AUnit> allUnits() {
         return cacheList.get(
-                "allUnits",
-                0,
-                () -> {
-                    List<AUnit> data = new ArrayList<>();
+            "allUnits",
+            0,
+            () -> {
+                List<AUnit> data = new ArrayList<>();
 
-                    for (Unit u : Atlantis.game().getAllUnits()) {
-                        AUnit unit = AUnit.getById(u);
-                        data.add(unit);
-                    }
-
-                    return data;
+                for (Unit u : Atlantis.game().getAllUnits()) {
+                    AUnit unit = AUnit.getById(u);
+                    data.add(unit);
                 }
+
+                return data;
+            }
         );
     }
 

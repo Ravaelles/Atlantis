@@ -22,16 +22,23 @@ public class EnemyUnits {
      * Both visible units and those behind fog of war.
      */
     public static Selection discovered() {
-//        return Select.from(Select.enemy(), "")
-        return Select.enemy()
+        return (Selection) cache.get(
+            "discovered",
+            0,
+            () -> {
+                //        return Select.from(Select.enemy(), "")
+                return Select.enemy()
+                    .notDeadMan()
 //            .print("visibleAndFogged")
-            .add(rawUnitsDiscovered())
+                    .add(rawUnitsDiscovered())
 //            .print("now with enemy")
-            .removeDuplicates()
+                    .removeDuplicates()
 //            .print("after removing duplicates")
-            .havingPosition();
+                    .havingPosition();
 //            .beingVisibleUnitOrNotVisibleFoggedUnit();
 //            .print("and having position");
+            }
+        );
     }
 
     // =========================================================
@@ -68,25 +75,52 @@ public class EnemyUnits {
     }
 
     public static AUnit enemyBase() {
-        return (AUnit) cache.get(
-                "enemyBase",
-                70,
-                () -> discovered().bases().first()
+        return (AUnit) cache.getIfValid(
+            "enemyBase",
+            71,
+            () -> discovered().bases().first()
         );
     }
 
     public static AUnit nearestEnemyBuilding() {
-        return (AUnit) cache.get(
-                "nearestEnemyBuilding",
-                50,
-                () -> {
-                    AUnit ourUnit = Select.main();
-                    if (ourUnit == null) {
-                        ourUnit = Select.ourBuildings().first();
-                    }
-                    return discovered().buildings().nearestTo(ourUnit);
-                }
+        return (AUnit) cache.getIfValid(
+            "nearestEnemyBuilding",
+            111,
+            () -> {
+                AUnit ourUnit = Select.mainOrAnyBuilding();
+                return discovered().buildings().groundNearestTo(ourUnit);
+            }
         );
     }
 
+    public static AUnit nearestEnemyCombatBuilding() {
+        return (AUnit) cache.getIfValid(
+            "nearestEnemyCombatBuilding",
+            51,
+            () -> {
+                AUnit ourUnit = Select.mainOrAnyBuilding();
+                return discovered().combatBuildingsAntiLand().groundNearestTo(ourUnit);
+            }
+        );
+    }
+
+    public static AUnit enemyWhoBreachedBase() {
+        return EnemyWhoBreachedBase.get();
+    }
+
+    public static int dragoons() {
+        return discovered().dragoons().count();
+    }
+
+    public static int zerglings() {
+        return discovered().zerglings().count();
+    }
+
+    public static int combatUnits() {
+        return discovered().combatUnits().count();
+    }
+
+    public static Selection buildings() {
+        return discovered().buildings();
+    }
 }

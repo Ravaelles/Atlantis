@@ -2,6 +2,7 @@ package atlantis.game;
 
 import atlantis.Atlantis;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.config.MapSpecificCommander;
 import atlantis.config.env.Env;
 import atlantis.information.enemy.EnemyInfo;
 import bwapi.Game;
@@ -9,6 +10,9 @@ import bwapi.Game;
 import static atlantis.Atlantis.game;
 
 public class GameSpeed {
+    public static final int NORMAL_SPEED = 20;
+    public static final int FASTER_SPEED = 1;
+    private static final int FASTEST_SPEED = 0;
 
     private static boolean isPaused = false; // On PauseBreak a pause mode can be enabled
 
@@ -25,13 +29,12 @@ public class GameSpeed {
     public static int frameSkip;
 
     // 0 speed - fastest, use positive frame skip to skip rendering and make it even quicker
-    private static final int NORMAL_GAME_SPEED = 0;
     private static final int NORMAL_FRAME_SKIP = 0;
 
     private static final int DYNAMIC_SLOWDOWN_FRAME_SKIP = 0;
     private static final int DYNAMIC_SLOWDOWN_GAME_SPEED = 5;
 
-    // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisConfig
+    // DYNAMIC SLOWDOWN - game speed adjustment, fast initially, slow down when there's fighting - see AtlantisRaceConfig
     private static boolean dynamicSlowdownIsAllowed = false;
     private static boolean dynamicSlowdownIsActive = false;
 
@@ -50,7 +53,7 @@ public class GameSpeed {
         }
 
         GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
-        Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
+        Atlantis.game().setLocalSpeed(FASTEST_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
     }
 
@@ -62,17 +65,17 @@ public class GameSpeed {
         }
 
         if (
-                !oneTimeSlowdownUsed
-                        && AGame.now() > 60
-                        && gameSpeed == 0
-                        && frameSkip >= 30
+            !oneTimeSlowdownUsed
+                && AGame.now() > 60
+                && gameSpeed == 0
+                && frameSkip >= 30
 //                        && Count.ourCombatUnits() >= 5
 //                        && Select.ourOfType(AUnitType.Terran_Science_Vessel).atLeast(1)
 //                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Select.enemyCombatUnits().atLeast(2)
-                        && EnemyInfo.hasDiscoveredEnemyBase()
-                        && Alpha.get().squadScout() != null
-                        && Alpha.get().squadScout().isWounded()
+                && EnemyInfo.hasDiscoveredEnemyBase()
+                && Alpha.get().squadScout() != null
+                && Alpha.get().squadScout().isWounded()
 //                        && Missions.isGlobalMissionContain()
         ) {
             oneTimeSlowdownUsed = true;
@@ -86,13 +89,13 @@ public class GameSpeed {
     }
 
     /**
-     * Decreases game speed to the value specified in AtlantisConfig when action happens.
+     * Decreases game speed to the value specified in AtlantisRaceConfig when action happens.
      */
     public static void allowToDynamicallySlowdownGameOnFirstFighting() {
         dynamicSlowdownIsAllowed = true;
         dynamicSlowdownIsActive = false;
 
-        Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
+        Atlantis.game().setLocalSpeed(FASTEST_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
         System.out.println("SLOWDOWN is allowed. Frame skip = " + DYNAMIC_SLOWDOWN_FRAME_SKIP);
@@ -114,7 +117,7 @@ public class GameSpeed {
     public static void deactivateDynamicSlowdown() {
         dynamicSlowdownIsActive = false;
 
-        Atlantis.game().setLocalSpeed(NORMAL_GAME_SPEED);
+        Atlantis.game().setLocalSpeed(FASTEST_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
 
         System.out.println("Disabled SLOWDOWN");
@@ -134,6 +137,7 @@ public class GameSpeed {
      * Changes game speed. 0 - fastest 1 - very quick 20 - around default
      */
     public static void changeSpeedTo(int speed) {
+        if (A.now() > 5) MapSpecificCommander.initialSpeed = false;
         dynamicSlowdownIsActive = false;
 
         if (speed <= 0) {
@@ -159,21 +163,23 @@ public class GameSpeed {
      * Changes game speed by given ammount of units. Total game speed: 0 - fastest 1 - very quick 20 - around
      * default
      */
-    public static void changeSpeedBy(int deltaSpeed) {
+    public static void changeSpeed(int deltaSpeed) {
 //        int speed = gameSpeed + deltaSpeed;
         int speed;
 
         if (deltaSpeed < 0) {
             if (gameSpeed > 1) {
                 speed = 1;
-            } else {
+            }
+            else {
                 speed = 0;
             }
         }
         else {
             if (gameSpeed == 0) {
                 speed = 1;
-            } else {
+            }
+            else {
                 speed = gameSpeed + deltaSpeed;
             }
         }
@@ -212,6 +218,15 @@ public class GameSpeed {
         }
     }
 
+    public static void keepGamePaused() {
+        while (GameSpeed.isPaused()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+            }
+        }
+    }
+
     public static void pauseGame() {
         isPaused = true;
     }
@@ -237,4 +252,13 @@ public class GameSpeed {
     private static String currentSpeedAndFrameSkip() {
         return "speed = " + gameSpeed + ", frame skip = " + frameSkip;
     }
+
+    public static void changeSpeedToNormal() {
+        changeSpeedTo(20);
+    }
+
+    public static int speed() {
+        return gameSpeed;
+    }
+
 }

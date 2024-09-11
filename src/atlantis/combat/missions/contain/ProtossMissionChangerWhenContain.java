@@ -56,9 +56,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
         }
 
         Alpha alpha = Alpha.get();
-        if (alpha.cohesionPercent() <= 70 || alpha.size() <= 15) {
-            return false;
-        }
+        if (alpha.cohesionPercent() <= 70 || alpha.size() <= 15) return false;
 
         if (ArmyStrength.weAreMuchStronger() && !EnemyInfo.hasDefensiveLandBuilding(true)) {
             if (DEBUG) reason = "Much stronger";

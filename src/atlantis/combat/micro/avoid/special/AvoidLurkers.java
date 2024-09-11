@@ -14,17 +14,22 @@ public class AvoidLurkers extends Manager {
     }
 
     @Override
-    public Manager handle() {
-        if (unit.isAir() || unit.isABuilding()) {
-            return null;
-        }
+    protected Manager handle() {
+        if (unit.isAir() || unit.isABuilding()) return null;
 
-        AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(7.7, unit).nearestTo(unit);
-        if (lurker == null) {
-            return null;
-        }
+        AUnit lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(radius(), unit).nearestTo(unit);
+        if (lurker == null) return null;
+
+        // Defend buildings from lurkers
+        if (lurker.enemiesNear().combatBuildingsAntiLand().inRadius(6.1, lurker).notEmpty()) return null;
 
         unit.runningManager().runFromAndNotifyOthersToMove(lurker, "LURKER!");
         return usedManager(this);
+    }
+
+    private double radius() {
+        return 8.1
+            + (unit.isMelee() ? 1.5 : 0)
+            + unit.woundPercent() / 80.0;
     }
 }

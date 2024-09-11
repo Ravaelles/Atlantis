@@ -2,22 +2,25 @@ package atlantis.map.position;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
+import atlantis.util.log.ErrorLog;
 import bwapi.Point;
 import bwapi.Position;
 import bwapi.TilePosition;
 import bwapi.WalkPosition;
+import bwem.ChokePoint;
 
 /**
  * Atlantis uses wrapper for BWAPI  classes which can't extended due to private constructors.
  * <br /><br />
- * I've decided to implement a solution which allows to use the .jar of BWMirror library, because from
+ * I've decided to implement a solution which allows to use the .jar of JBWAPI library, because from
  * my experience it turns out, that it's extremely tedious to upgrade Atlantis to use newer version of
- * BWMirror if you work with the source code rather than the .jar library release.
+ * JBWAPI if you work with the source code rather than the .jar library release.
  * <br /><br />
  * <b>APosition</b> class contains numerous helper methods, but if you think some methods are missing
  * you can create them here or reference original Position class via p() method.
@@ -73,19 +76,26 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 //        else {
         APosition position = null;
 
-        if (p instanceof APosition) {
+        if (p instanceof Position) {
+            position = new APosition((Position) p);
+        }
+        else if (p instanceof APosition) {
             position = new APosition((APosition) p);
         }
         else if (p instanceof HasPosition) {
             position = new APosition(((HasPosition) p).position());
         }
-        else if (p instanceof Position) {
-            position = new APosition((Position) p);
-        }
         else if (p instanceof WalkPosition) {
             position = new APosition(((WalkPosition) p).toPosition());
         }
+        else if (p instanceof TilePosition) {
+            position = new APosition(((TilePosition) p).toPosition());
+        }
+        else if (p instanceof ChokePoint) {
+            position = new APosition(((ChokePoint) p).getCenter().toPosition());
+        }
         else {
+            ErrorLog.printMaxOncePerMinute("Got: " + position);
             throw new RuntimeException("APosition::create invalid param " + p);
         }
 
@@ -315,12 +325,8 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null) return false;
 
         int otherX = ((HasPosition) obj).x();
         int otherY = ((HasPosition) obj).y();
@@ -342,17 +348,29 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         int px = p.getX();
         int py = p.getY();
 
-        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
-            return true;
-        }
-        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) {
-            return true;
-        }
+        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) return true;
+        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) return true;
 
-        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) {
-            return true;
-        }
+        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) return true;
         else return py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
+    }
+
+    public boolean isCloseToMapBounds(int txAwayFromEdge) {
+        int px = p.getX();
+        int py = p.getY();
+
+        if (px < txAwayFromEdge * 32) return true;
+        else if (px >= (32 * AMap.getMapWidthInTiles() - txAwayFromEdge * 32)) return true;
+
+        if (py < txAwayFromEdge * 32) return true;
+        else return py >= (32 * AMap.getMapHeightInTiles() - txAwayFromEdge * 32);
+    }
+
+    public double distToMapBorders() {
+        return Math.min(
+            Math.min(tx(), ty()),
+            Math.min((AMap.getMapWidthInTiles() - tx()), (AMap.getMapHeightInTiles() - ty()))
+        );
     }
 
     public APosition randomizePosition(int maxTiles) {
@@ -369,4 +387,27 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         return Regions.getRegion(this);
     }
 
+    public boolean isHighGround() {
+        return Atlantis.game().getGroundHeight(tx(), ty()) == 2;
+    }
+
+    public APosition left() {
+        return APosition.create(tx() - 1, ty());
+    }
+
+    public APosition right() {
+        return APosition.create(tx() + 1, ty());
+    }
+
+    public APosition top() {
+        return APosition.create(tx(), ty() - 1);
+    }
+
+    public APosition bottom() {
+        return APosition.create(tx(), ty() + 1);
+    }
+
+    public boolean isOutOfBounds() {
+        return tx() < 0 || tx() >= AMap.getMapWidthInTiles() || ty() < 0 || ty() >= AMap.getMapHeightInTiles();
+    }
 }

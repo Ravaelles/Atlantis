@@ -3,6 +3,7 @@ package atlantis.units.workers;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
+import atlantis.util.log.ErrorLog;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,8 +26,8 @@ public class AMineralGathering {
 
         // Get minerals near to our main base and sort them from closest to most distant one
         List<AUnit> minerals = (List<AUnit>) Select.minerals()
-                .inRadius(10, mainBase)
-                .sortDataByDistanceTo(mainBase, true);
+            .inRadius(10, mainBase)
+            .sortDataByDistanceTo(mainBase, true);
 
         if (minerals.isEmpty()) {
             return;
@@ -46,32 +47,30 @@ public class AMineralGathering {
 
     /**
      * Use this method to assign idle workers to gather minerals from optimal mineral field or to gather gas.
-     *
-     * @return
      */
     public static boolean gatherResources(AUnit unit) {
         AUnit mineralField = getMineralFieldToGather(unit);
-        if (mineralField != null) {
+
+        if (mineralField != null && !unit.isGatheringMinerals()) {
             unit.setTooltipTactical("Gatherer!");
-            return unit.gather(mineralField);
+            unit.gather(mineralField);
+            return true;
         }
 
         return false;
     }
 
     // =========================================================
-    
+
     private static AUnit getMineralFieldToGather(AUnit worker) {
 
         // Get nearest base for this unit
         AUnit base = Select.ourBases().nearestTo(worker);
-        if (base == null) {
-            return null;
-        }
+
+        if (base == null) return null;
 
         // Get minerals near to our main base and sort them from closest to most distant one
-        List<AUnit> minerals = Select.minerals().inRadius(12, base).list();
-
+        List<AUnit> minerals = Select.minerals().inRadius(15, base).sortDataByDistanceTo(base, true);
         if (!minerals.isEmpty()) {
 
             // Count how many other workers gather this mineral
@@ -87,7 +86,7 @@ public class AMineralGathering {
                 }
             }
 
-            // Get least gathered mineral
+            // Get the least gathered mineral
             AUnit leastGatheredMineral = mineralsToWorkerCount.unitWithLowestValue();
 
 //            if (leastGatheredMineral != null && leastGatheredMineral.distTo(worker) >= 40) {
@@ -95,13 +94,11 @@ public class AMineralGathering {
 //            }
 
             // This is our optimal mineral to gather near given unit
-            return leastGatheredMineral;
+            if (leastGatheredMineral != null) return leastGatheredMineral;
         }
 
         // If no minerals found, return nearest mineral
-        else {
-            return Select.minerals().nearestTo(base);
-        }
+        return Select.minerals().nearestTo(worker);
     }
 
 }

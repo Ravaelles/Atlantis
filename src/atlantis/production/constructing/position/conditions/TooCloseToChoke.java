@@ -8,22 +8,30 @@ import atlantis.units.AUnitType;
 
 public class TooCloseToChoke {
     public static boolean isTooCloseToChoke(AUnitType building, APosition position) {
-        if (building.isBase() || building.isCombatBuilding()) {
-            return false;
-        }
+        if (building.isBase()) return false;
+
+        double minDist = building.isBunker() ? 1.3 : 3.8;
 
         for (AChoke choke : Chokes.chokes()) {
-            if (choke.width() >= 7) {
+            if (choke.width() >= 5) {
                 continue;
             }
 
-            double distToChoke = choke.center().distTo(position) - choke.width();
-            if (distToChoke <= 3.3) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "Overlaps choke (" + distToChoke + ")";
-                return true;
+            double distToChoke = minDistToChoke(position, choke);
+            if (distToChoke <= minDist) {
+                return failed("Overlaps choke (" + distToChoke + ")");
             }
         }
 
         return false;
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
+    }
+
+    private static double minDistToChoke(APosition position, AChoke choke) {
+        return choke.center().distTo(position);
     }
 }

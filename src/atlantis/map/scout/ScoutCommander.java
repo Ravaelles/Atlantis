@@ -4,34 +4,29 @@ import atlantis.architecture.Commander;
 import atlantis.architecture.Manager;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.strategy.OurStrategy;
-import atlantis.map.base.Bases;
+import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.util.CodeProfiler;
+
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.List;
 
 public class ScoutCommander extends Commander {
-
-    public static boolean anyScoutBeenKilled = false;
-
-    /**
-     * Current scout unit.
-     */
-    private static final ArrayList<AUnit> scouts = new ArrayList<>();
-
     /**
      * If we don't have unit scout assigns one of workers to become one and then, <b>scouts and harasses</b>
      * the enemy base or tries to find it if we still don't know where the enemy is.
      */
+    @Override
     public void handle() {
-        CodeProfiler.startMeasuring(this);
+        // CodeProfiler.startMeasuring(this);
 
         // === Handle UMS ==========================================
 
@@ -44,18 +39,18 @@ public class ScoutCommander extends Commander {
         manageScoutAssigned();
 
         try {
-            for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+            for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
                 AUnit unit = iterator.next();
 
                 if (unit != null && unit.isAlive()) {
                     Manager scoutManager = new ScoutManager(unit);
-                    scoutManager.handle();
+                    scoutManager.invokeFrom(this);
                 }
             }
+        } catch (ConcurrentModificationException ignore) {
         }
-        catch (ConcurrentModificationException ignore) { }
 
-        CodeProfiler.endMeasuring(this);
+        // CodeProfiler.endMeasuring(this);
     }
 
     // =========================================================
@@ -63,9 +58,17 @@ public class ScoutCommander extends Commander {
     private void removeOverlordsAsScouts() {
         if (We.zerg()) {
             if (EnemyInfo.hasDiscoveredAnyBuilding()) {
-                scouts.clear();
+                removeAllScouts();
             }
         }
+    }
+
+    private void removeAllScouts() {
+        for (AUnit scout : ScoutState.scouts) {
+            scout.setScout(false);
+        }
+
+        ScoutState.scouts.clear();
     }
 
 
@@ -78,68 +81,65 @@ public class ScoutCommander extends Commander {
         removeExcessiveScouts();
 
         // Build order defines which worker should be a scout
-        if (Count.workers() < BuildOrderSettings.scoutIsNthWorker()) {
-            return;
-        }
+        if (Count.workers() >= BuildOrderSettings.scoutIsNthWorker())
 
-        // === Zerg =================================================
-
-        if (We.zerg()) {
-
-//            // We know enemy building
-//            if (EnemyUnits.hasDiscoveredAnyEnemyBuilding()) {
-//                if (AGame.timeSeconds() < 350) {
-//                    if (scouts.isEmpty()) {
-//                        for (AUnit worker : Select.ourWorkers().notCarrying().list()) {
-//                            if (!worker.isBuilder()) {
-//                                scouts.add(worker);
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-//            } // Haven't discovered any enemy building
-//            else {
-//                scouts.clear();
-//                scouts.addAll(Select.ourCombatUnits().listUnits());
-//            }
-        }
-
-        // =========================================================
-        // TERRAN + PROTOSS
-
-        else if (scouts.isEmpty()) {
-            if (anyScoutBeenKilled && OurStrategy.get().isRushOrCheese()) {
-                return;
+            if (We.zerg()) {
             }
 
-            for (AUnit scout : Select.ourWorkers().notCarrying().sortDataByDistanceTo(Bases.natural(), true)) {
-                if (!scout.isBuilder() && !scout.isRepairerOfAnyKind()) {
-                    if (scouts.isEmpty()) {
-//                        System.out.println("Add scout " + scout);
-                        scouts.add(scout);
+            // =========================================================
+            // TERRAN + PROTOSS
+
+            else if (ScoutState.scouts.isEmpty()) {
+//                if (ScoutState.scoutsKilledCount >= 2) return;
+//
+//                if (ScoutState.scoutsKilledCount <= 1 && OurStrategy.get().isRushOrCheese()) {
+//                    return;
+//                }
+
+                for (AUnit scout : candidates()) {
+                    if (
+                        scout.isBuilder()
+                            || scout.isRepairerOfAnyKind()
+                            || scout.isBuilder()
+                            || scout.lastActionLessThanAgo(50, Actions.SPECIAL)
+                    ) {
+                        ErrorLog.printMaxOncePerMinute("Scout got mission: " + scout.manager());
+                        continue;
+                    }
+
+                    if (ScoutState.scouts.isEmpty()) {
+                        addScout(scout);
                         return;
                     }
                 }
             }
-        }
+    }
+
+    private static void addScout(AUnit newScout) {
+        ScoutState.scouts.add(newScout);
+        newScout.setScout(true);
+    }
+
+    private static List<AUnit> candidates() {
+        return FreeWorkers.get().sortDataByDistanceTo(DefineNaturalBase.natural(), true);
     }
 
     private void removeExcessiveScouts() {
-        if (scouts.size() > 1) {
-            AUnit leaveThisScout = scouts.get(scouts.size() - 1);
-            scouts.clear();
-            scouts.add(leaveThisScout);
+        if (ScoutState.scouts.size() > 1) {
+            AUnit leaveThisScout = ScoutState.scouts.get(ScoutState.scouts.size() - 1);
+            removeAllScouts();
+
+            addScout(leaveThisScout);
         }
     }
 
     private void removeDeadScouts() {
-        for (Iterator<AUnit> iterator = scouts.iterator(); iterator.hasNext();) {
+        for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
             AUnit scout = iterator.next();
             if (!scout.isAlive()) {
-//                System.out.println("Remove dead scout " + scout);
+                scout.setScout(false);
                 iterator.remove();
-                anyScoutBeenKilled = true;
+                ScoutState.scoutsKilledCount++;
             }
         }
     }
@@ -147,11 +147,11 @@ public class ScoutCommander extends Commander {
     // =========================================================
 
     public static boolean hasAnyScoutBeenKilled() {
-        return anyScoutBeenKilled;
+        return ScoutState.scoutsKilledCount > 0;
     }
 
     public static ArrayList<AUnit> allScouts() {
-        return scouts;
+        return ScoutState.scouts;
     }
 
     /**

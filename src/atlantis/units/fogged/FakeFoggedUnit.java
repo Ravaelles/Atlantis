@@ -3,7 +3,7 @@ package atlantis.units.fogged;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import tests.fakes.FakePlayer;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 /**
  * Used only in tests.
@@ -30,7 +30,8 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
     public void updateType(AUnit unit) {
         if (unit instanceof FakeUnit) {
             _lastType = ((FakeUnit) unit).rawType;
-        } else if (unit instanceof AbstractFoggedUnit) {
+        }
+        else if (unit instanceof AbstractFoggedUnit) {
             _lastType = ((AbstractFoggedUnit) unit)._lastType;
         }
     }

@@ -1,5 +1,6 @@
 package atlantis.production.orders.build;
 
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -13,14 +14,15 @@ public class TerranBuildOrder extends ABuildOrder {
     // =========================================================
 
     @Override
-    public boolean produceUnit(AUnitType type) {
+    public boolean produceUnit(AUnitType type, ProductionOrder order) {
         AUnitType whatBuildsIt = type.whatBuildsIt();
-        AUnit unitThatWillProduce = Select.ourOfType(whatBuildsIt).free().first();
-        if (unitThatWillProduce != null) {
-            return unitThatWillProduce.train(type);
+        AUnit parentUnit = Select.ourFree(whatBuildsIt).first();
+
+        if (parentUnit != null && parentUnit.isFree()) {
+            return parentUnit.train(type, order);
         }
 //        else {
-//            System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
+//            A.errPrintln("Can't find " + whatBuildsIt + " to produce " + type);
 //        }
 
         return false;

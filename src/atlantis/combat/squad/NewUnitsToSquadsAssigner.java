@@ -12,18 +12,18 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
     }
 
     public void possibleCombatUnitCreated() {
-        if (shouldSkipUnit()) {
-            return;
-        }
+        if (shouldSkipUnit()) return;
 
         Squad squad = chooseSquadFor();
-//        System.out.println("squad = " + squad);
-//        System.out.println("squad.contains() = " + squad.contains() + " // " + unit.name());
+
         if (!squad.contains(unit)) {
             squad.addUnit(unit);
             unit.setSquad(squad);
 //            System.err.println(unit + " assigned, now unit.squad = " + unit.squad());
         }
+//        else {
+//            System.err.println(unit + " ALREADY assigned to = " + unit.squad());
+//        }
     }
 
     // =========================================================
@@ -31,14 +31,14 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
     private Squad chooseSquadFor() {
         Alpha alpha = Alpha.get();
 
-        if (assignToDelta()) {
+        if (shouldAssignToDelta()) {
             return Delta.get();
         }
 
         return alpha;
     }
 
-    private boolean assignToDelta() {
+    private boolean shouldAssignToDelta() {
         return (unit.isAir() && !unit.type().isTransport())
             || unit.type().isDetectorNonBuilding();
     }
@@ -47,7 +47,7 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
      * Skips buildings, workers and Zerg Larva
      */
     private boolean shouldSkipUnit() {
-        return !unit.isRealUnit() || unit.isWorker() || unit.type().isMine() || unit.isABuilding();
+        return !unit.isRealUnit() || unit.isWorker() || unit.isABuilding();
     }
 
 }

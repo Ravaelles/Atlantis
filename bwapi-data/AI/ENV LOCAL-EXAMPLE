@@ -1,0 +1,4 @@
+LOCAL=true
+BWAPI_DATA_PATH=C:\\Program Files (x86)\\Starcraft\\
+CHAOS_LAUNCHER_PATH=C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe
+FORCE_GG_FOR_ENEMY=true

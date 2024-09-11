@@ -34,9 +34,9 @@ public class ArmyStrength {
 
     public static int ourArmyRelativeStrength() {
         return cacheInteger.get(
-                "ourArmyRelativeStrength",
-                23,
-                () -> (int) Math.min(999, (OurArmyStrength.calculate() * 100 / EnemyArmyStrength.calculate()))
+            "ourArmyRelativeStrength",
+            23,
+            () -> (int) Math.min(999, (OurArmy.calculate() * 100 / EnemyArmyStrength.calculate()))
         );
     }
 

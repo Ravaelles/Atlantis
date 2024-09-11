@@ -4,6 +4,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Game;
 import org.mockito.Mockito;
+import tests.fakes.FakeUnit;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,35 +40,35 @@ public class UnitTestHelper {
         return new FakeUnit[]{
             // Ground
             new FakeUnit(AUnitType.Protoss_Zealot, 10, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Protoss_Dragoon, 20, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Terran_SCV, 20, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Terran_Siege_Tank_Tank_Mode, 20, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Terran_Siege_Tank_Siege_Mode, 20, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Protoss_Dragoon, 20.1, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Terran_SCV, 20.2, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Terran_Siege_Tank_Tank_Mode, 20.3, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Terran_Siege_Tank_Siege_Mode, 20.4, y).setOur(trueIfOurFalseIfEnemy),
 
             // Buildings
-            new FakeUnit(AUnitType.Protoss_Photon_Cannon, 26, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Terran_Comsat_Station, 28, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Terran_Command_Center, 26, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Zerg_Creep_Colony, 26, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Zerg_Sunken_Colony, 26, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Protoss_Photon_Cannon, 26.1, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Terran_Comsat_Station, 28.1, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Terran_Command_Center, 26.2, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Zerg_Creep_Colony, 26.3, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Zerg_Sunken_Colony, 26.4, y).setOur(trueIfOurFalseIfEnemy),
 
             // Non-real
-            new FakeUnit(AUnitType.Protoss_Scarab, 25, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Terran_Vulture_Spider_Mine, 25, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Zerg_Larva, 26, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Zerg_Egg, 27, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Zerg_Lurker_Egg, 28, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Protoss_Scarab, 25.1, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Terran_Vulture_Spider_Mine, 25.2, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Zerg_Larva, 26.5, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Zerg_Egg, 27.1, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Zerg_Lurker_Egg, 28.2, y).setOur(trueIfOurFalseIfEnemy),
 
             // Air
-            new FakeUnit(AUnitType.Protoss_Carrier, 18, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Terran_Dropship, 18, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Zerg_Scourge, 15, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Zerg_Mutalisk, 15, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Zerg_Overlord, 15, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Protoss_Carrier, 18.1, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Terran_Dropship, 18.2, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Zerg_Scourge, 15.1, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Zerg_Mutalisk, 15.2, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Zerg_Overlord, 15.3, y).setOur(trueIfOurFalseIfEnemy),
 
             // Special
-            new FakeUnit(AUnitType.Spell_Scanner_Sweep, 26, y).setOur(trueIfOurFalseIfEnemy),
-            new FakeUnit(AUnitType.Spell_Dark_Swarm, 26, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Spell_Scanner_Sweep, 26.6, y).setOur(trueIfOurFalseIfEnemy),
+            new FakeUnit(AUnitType.Spell_Dark_Swarm, 26.7, y).setOur(trueIfOurFalseIfEnemy),
         };
     }
 
@@ -121,11 +122,9 @@ public class UnitTestHelper {
     }
 
     protected boolean valueAround(double expectedValue, double actualValue, double margin) {
-        if (expectedValue / actualValue < 0) {
-            return false;
-        }
+        if (expectedValue / actualValue < 0) return false;
 
-//        System.out.println("actualValue / expectedValue = " + (actualValue / expectedValue));
+//        System.err.println("actualValue / expectedValue = " + (actualValue / expectedValue));
         return Math.abs(actualValue / expectedValue - 1) <= margin;
     }
 

@@ -1,19 +1,13 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
+import atlantis.combat.micro.avoid.terran.avoid.ShouldNeverAvoidAsTerran;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.util.Enemy;
 
 public class WantsToAvoid extends Manager {
-    private Avoid avoid;
-
     public WantsToAvoid(AUnit unit) {
         super(unit);
-        avoid = new Avoid(unit);
     }
 
     @Override
@@ -22,19 +16,14 @@ public class WantsToAvoid extends Manager {
     }
 
     public Manager unitOrUnits(Units enemies) {
-        if (enemies.isEmpty()) {
-            return null;
-        }
-
-        if (shouldNeverAvoidIf(enemies)) {
-            return null;
-        }
+        if (enemies.isEmpty()) return null;
+        if (shouldNeverAvoidIf(enemies)) return null;
 
         // =========================================================
 
-        AttackInsteadAvoid attackInsteadAvoid = new AttackInsteadAvoid(unit, enemies);
-        if (attackInsteadAvoid.applies() && attackInsteadAvoid.handle() != null) {
-            return usedManager(attackInsteadAvoid);
+        FightInsteadAvoid fightInsteadAvoid = new FightInsteadAvoid(unit, enemies);
+        if (fightInsteadAvoid.invokeFrom(this) != null) {
+            return usedManager(fightInsteadAvoid);
         }
 
         // =========================================================
@@ -43,30 +32,33 @@ public class WantsToAvoid extends Manager {
 //            A.printStackTrace();
 //        }
 
-        return avoid.singleUnit(enemies.first());
+//        return avoid.singleUnit(enemies.first());
 
-//        if (enemies.size() == 1) {
-//            return Avoid.singleUnit(enemies.first());
+//        if (enemies.size() == 1 || unit.isDragoon()) {
+//            return avoid.singleUnit(enemies.first());
 //        }
 //        else {
-//            return Avoid.groupOfUnits(enemies);
+//            return avoid.groupOfUnits(enemies);
 //        }
+
+        return (new DoAvoidEnemies(unit)).handle();
     }
 
     // =========================================================
 
     private boolean shouldNeverAvoidIf(Units enemies) {
+        if (unit.isMelee() && !unit.isTerran()) return true;
+
         if (unit.isWorker() && enemies.onlyMelee()) {
+            unit.addLog("BraveWorker");
             return unit.hp() >= 40;
         }
 
-        if (unit.isTank() && unit.cooldownRemaining() <= 0) {
-            return true;
-        }
+        if ((new ShouldNeverAvoidAsTerran(unit)).shouldNeverAvoid()) return true;
 
-        if (unit.isWorker() || unit.isAir()) {
-            return false;
-        }
+        if (unit.isTank() && unit.cooldownRemaining() <= 0) return true;
+
+//        if (unit.isWorker() || unit.isAir()) return false;
 
         return false;
     }

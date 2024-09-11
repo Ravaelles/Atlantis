@@ -19,7 +19,7 @@ public class AvoidMines extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (handleMines()) return usedManager(this);
 
         return null;
@@ -28,13 +28,9 @@ public class AvoidMines extends Manager {
     protected boolean handleMines() {
         boolean canShootAtMines = unit.isRanged() && unit.canAttackGroundUnits();
 
-        if (!canShootAtMines) {
-            return false;
-        }
+        if (!canShootAtMines) return false;
 
-        if (unit.enemiesNear().combatUnits().inRadius(6, unit).atLeast(3)) {
-            return false;
-        }
+        if (unit.enemiesNear().combatUnits().inRadius(6, unit).atLeast(3)) return false;
 
         int radius = Math.min(6, canShootAtMines ? unit.groundWeapon().maxRange() + 3 : 0);
         List<AUnit> mines = Select.enemies(AUnitType.Terran_Vulture_Spider_Mine).inRadius(radius, unit).list();
@@ -46,7 +42,7 @@ public class AvoidMines extends Manager {
             // Our mine
             if (mine.isOur()) {
                 if (mine.isMoving() && mine.distTo(unit) <= 3.5) {
-                    unit.moveAwayFrom(mine.position(), 2, "Avoid mine!", Actions.MOVE_AVOID);
+                    unit.moveAwayFrom(mine.position(), 2, Actions.MOVE_AVOID, "Avoid mine!");
                     return true;
                 }
             }
@@ -74,7 +70,7 @@ public class AvoidMines extends Manager {
     // =========================================================
 
     private boolean handleEnemyMineAsMeleeUnit(AUnit mine) {
-        unit.moveAwayFrom(mine.position(), 1, "Avoid mine!", Actions.MOVE_AVOID);
+        unit.moveAwayFrom(mine.position(), 1, Actions.MOVE_AVOID, "Avoid mine!");
 //        APainter.paintLine(mine, Color.Yellow);
         return true;
     }

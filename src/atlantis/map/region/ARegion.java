@@ -81,8 +81,8 @@ public class ARegion implements HasPosition {
     @Override
     public String toString() {
         return "ARegion{" +
-                "center=" + center() +
-                '}';
+            "center=" + center() +
+            '}';
     }
 
     // =========================================================
@@ -94,9 +94,9 @@ public class ARegion implements HasPosition {
 
     public ArrayList<ARegionBoundary> boundaries() {
         return cachePolygons.get(
-                "bounds",
-                -1,
-                () -> ARegionBoundaryCalculator.forRegion(this)
+            "bounds",
+            -1,
+            () -> ARegionBoundaryCalculator.forRegion(this)
         );
     }
 
@@ -116,7 +116,7 @@ public class ARegion implements HasPosition {
     }
 
     public List<AChoke> chokes() {
-        return area.getChokePoints().stream().map(AChoke::create).collect(Collectors.toList());
+        return area.getChokePoints().stream().map(AChoke::from).collect(Collectors.toList());
     }
 
     public List<ABaseLocation> getBaseLocations() {

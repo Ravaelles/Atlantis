@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.units.AUnitType;
 import org.junit.Test;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,7 +32,7 @@ public class TerranComsatTest extends AbstractTestWithUnits {
     private void updateComsat(FakeUnit comsat, int energy) {
         comsat.target = null;
         comsat.setEnergy(energy);
-        (new TerranComsatStation(comsat)).handle();
+        (new TerranComsatStation(comsat)).invokeFrom(this);
     }
 
     // =========================================================
@@ -48,13 +49,13 @@ public class TerranComsatTest extends AbstractTestWithUnits {
         );
 
         setupEnemyLurkers(ours, () -> {
-            updateComsat(comsat, 200);
-
-            assertEquals(lurker2, comsat.target);
-
             updateComsat(comsat, 140);
 
             assertEquals(null, comsat.target);
+
+            updateComsat(comsat, 200);
+
+            assertEquals(lurker2, comsat.target);
 
             updateComsat(comsat, 90);
 

@@ -23,13 +23,14 @@ public class TerranTank extends Manager {
     }
 
     public static boolean wantsToUnsiege(AUnit unit) {
-        if (unit.lastActionLessThanAgo(30 * (6 + unit.id() % 3), Actions.SIEGE) || unit.hasCooldown()) {
-            return false;
-        }
-        if (unit.lastActionLessThanAgo(30 * (12 + unit.id() % 4), Actions.UNSIEGE)) {
-            return false;
-        }
+        if (unit.lastActionLessThanAgo(30 * (6 + unit.id() % 3), Actions.SIEGE) || unit.hasCooldown()) return false;
+        if (unit.lastActionLessThanAgo(30 * (12 + unit.id() % 4), Actions.UNSIEGE)) return false;
 
+        unit.unsiege();
+        return true;
+    }
+
+    public static boolean forceUnsiege(AUnit unit) {
         unit.unsiege();
         return true;
     }

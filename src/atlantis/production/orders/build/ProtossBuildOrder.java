@@ -1,5 +1,6 @@
 package atlantis.production.orders.build;
 
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -22,16 +23,16 @@ public class ProtossBuildOrder extends ABuildOrder {
     // =========================================================
 
     @Override
-    public boolean produceUnit(AUnitType unitType) {
+    public boolean produceUnit(AUnitType unitType, ProductionOrder order) {
         AUnitType whatBuildsIt = unitType.whatBuildsIt();
         if (whatBuildsIt == null) {
             System.err.println("Can't find " + whatBuildsIt + " to produce " + unitType);
         }
 
         AUnit unitThatWillProduce = Select.ourOneNotTrainingUnits(whatBuildsIt);
-//        System.out.println("producer = " + unitThatWillProduce);
+
         if (unitThatWillProduce != null) {
-            return unitThatWillProduce.train(unitType);
+            return unitThatWillProduce.train(unitType, order);
         }
 
         return false;

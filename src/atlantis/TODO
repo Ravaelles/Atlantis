@@ -1,0 +1,34 @@
+### Protoss ############################################################################################################
+
+--- Reduce Retreat dist to 3
+-- Introduce PLargeScaleRetreat if any enemy building at least 18 tiles away and overwhelmed
+
+--- MissionForbidsProbe
+- MissioNForbidsPhotonC and attacks e.g. Forge, yet still in range of PC
+
+
+### Terran #############################################################################################################
+
+---- Have bunker at natural when <= 110%
+
+------- High ground for tank as (any high ground | in radius 7 | having ground path) + force eager siege during defend
+
+- Still no Turrets against Scouts
+- No bunker no turret at natural
+- Distinct SecureBunker logic from SecureTurret
+
+.------ RunFrom1.0 goes like 30, psionic broken! :O
+
+### FEATURES ###
+
++++++++++++++++++ Detect close chokes and wether or not to engage there or retreat
+
+.+++ Road to enemy base
+
+.+ Consider high ground for tanks
+
++ Wall-in
+
+###############
+
++ Wiki with recommended features (P - Paints extensive debug info)

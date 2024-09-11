@@ -3,6 +3,7 @@ package atlantis.config.env;
 import atlantis.config.AtlantisIgniter;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.decisions.terran.GGForEnemy;
 
 import java.io.File;
 
@@ -11,8 +12,9 @@ import java.io.File;
  * We don't want to print out too much data in production.
  */
 public class Env {
-
     private static boolean isLocal = false;
+    private static boolean isTesting = false;
+    private static boolean isStarEngine = false;
     private static boolean firstRun = true;
     private static boolean paramTweaker = false;
 
@@ -22,7 +24,7 @@ public class Env {
         if (!A.fileExists(envFilePath())) {
             AGame.exit(
                 "ENV file doesn't exist (" + (new File(envFilePath())).getAbsolutePath()
-                + ")\nPlease create it by copying ENV-EXAMPLE file and renaming it."
+                    + ")\nPlease create it by copying ENV-EXAMPLE file and renaming it."
             );
         }
 
@@ -36,12 +38,20 @@ public class Env {
             if (key.trim().length() == 0) {
                 continue;
             }
+            if (line.length < 2) {
+                continue;
+            }
             String value = line[1];
 
             switch (key) {
-                case "LOCAL": isLocal = trueFalse(value);
-                case "BWAPI_DATA_PATH": AtlantisIgniter.setBwapiDataPath(value);
-                case "CHAOS_LAUNCHER_PATH": AtlantisIgniter.setChaosLauncherPath(value);
+                case "LOCAL":
+                    isLocal = trueFalse(value);
+                case "BWAPI_DATA_PATH":
+                    AtlantisIgniter.setBwapiDataPath(value);
+                case "CHAOS_LAUNCHER_PATH":
+                    AtlantisIgniter.setChaosLauncherPath(value);
+                case "FORCE_GG_FOR_ENEMY":
+                    GGForEnemy.allowed = "true".equals(value);
             }
         }
 
@@ -54,9 +64,9 @@ public class Env {
     }
 
     private static String envFilePath() {
-        if (A.currentPath().contains("src")) {
-            return "../ENV";
-        }
+//        if (A.currentPath().contains("D:\\")) {
+        if (A.fileExists("bwapi-data/AI/ENV")) return "bwapi-data/AI/ENV";
+        if (A.fileExists("../bwapi-data/AI/ENV")) return "../bwapi-data/AI/ENV";
 
         return "ENV";
     }
@@ -92,6 +102,10 @@ public class Env {
         return isLocal;
     }
 
+    public static boolean isTournament() {
+        return !isLocal;
+    }
+
     /**
      * Special "Param tweaker" mode, game should be run as quickly as possible.
      */
@@ -104,6 +118,18 @@ public class Env {
     }
 
     public static boolean isTesting() {
-        return false;
+        return isTesting;
+    }
+
+    public static boolean isStarEngine() {
+        return isStarEngine;
+    }
+
+    public static void markIsTesting(boolean enabled) {
+        isTesting = enabled;
+    }
+
+    public static void markUsingStarEngine(boolean enabled) {
+        isStarEngine = enabled;
     }
 }

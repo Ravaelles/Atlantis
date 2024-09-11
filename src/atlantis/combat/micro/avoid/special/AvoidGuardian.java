@@ -14,7 +14,7 @@ public class AvoidGuardian extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         return null;
 
 //        if (unit.isAir() || unit.isBuilding() || unit.canAttackAirUnits()) {

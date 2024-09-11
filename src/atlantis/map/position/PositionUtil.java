@@ -6,10 +6,11 @@ import atlantis.map.region.ARegionBoundary;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
+import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwapi.Unit;
 import jbweb.JBWEB;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class PositionUtil {
 
@@ -24,13 +25,13 @@ public class PositionUtil {
 //        if (true) throw new RuntimeException("PositionUtil.distanceTo was used");
 
         if (object1 == null || object2 == null) {
-            System.err.println("object1");
-            System.err.println(object1);
-            System.err.println("object2");
-            System.err.println(object2);
-//            throw new RuntimeException("distanceTo got null");
-            System.err.println("distanceTo got null");
-//            A.printStackTrace("distanceTo got null");
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                "object1\n" +
+                    object1 + "\n" +
+                    "object2\n" +
+                    object2 + "\n" +
+                    "distanceTo got null"
+            );
             return 999;
         }
 
@@ -38,6 +39,9 @@ public class PositionUtil {
 
         Position fromPosition = null;
         Unit fromUnit = null;
+        int bonus = 0;
+
+//        System.err.println("object2 = " + object2 + " / " + (object2 instanceof AChoke));
 
         if (object1 instanceof FakeUnit) {
             fromPosition = ((FakeUnit) object1).position().p();
@@ -60,14 +64,18 @@ public class PositionUtil {
         else if (object1 instanceof Unit) {
             fromUnit = (Unit) object1;
         }
+        else if (object1 instanceof AChoke) {
+            fromPosition = ((AChoke) object1).center().p();
+            bonus = -((AChoke) object1).width();
+        }
         else if (object1 instanceof APosition) {
             fromPosition = ((APosition) object1).p();
         }
+//        else if (object1 instanceof HasPosition) {
+//            fromPosition = ((HasPosition) object1).position().p();
+//        }
         else if (object1 instanceof Position) {
             fromPosition = (Position) object1;
-        }
-        else if (object1 instanceof AChoke) {
-            fromPosition = ((AChoke) object1).center().p();
         }
         else if (object1 instanceof ABaseLocation) {
             fromPosition = ((ABaseLocation) object1).position().p();
@@ -103,14 +111,18 @@ public class PositionUtil {
         else if (object2 instanceof Unit) {
             toUnit = (Unit) object2;
         }
+        else if (object2 instanceof AChoke) {
+            toPosition = ((AChoke) object2).center().p();
+            bonus = -((AChoke) object2).width();
+        }
         else if (object2 instanceof APosition) {
             toPosition = ((APosition) object2).p();
         }
+//        else if (object1 instanceof HasPosition) {
+//            toPosition = ((HasPosition) object2).position().p();
+//        }
         else if (object2 instanceof Position) {
             toPosition = (Position) object2;
-        }
-        else if (object2 instanceof AChoke) {
-            toPosition = ((AChoke) object2).center().p();
         }
         else if (object2 instanceof ABaseLocation) {
             toPosition = ((ABaseLocation) object2).position().p();
@@ -118,6 +130,10 @@ public class PositionUtil {
         else if (object2 instanceof ARegionBoundary) {
             toPosition = ((ARegionBoundary) object2).position().p();
         }
+
+//        System.err.println("fromUnit = " + fromUnit);
+//        System.err.println("fromPosition = " + fromPosition);
+//        System.err.println("toPosition = " + toPosition);
 
         if (toPosition == null && toUnit == null) {
 //            System.err.println("Object: " + object2);
@@ -133,21 +149,21 @@ public class PositionUtil {
         // From is UNIT
         if (fromUnit != null) {
             if (toUnit != null) {
-                return fromUnit.getDistance(toUnit) / 32.0; // UNIT to UNIT distance
+                return bonus + fromUnit.getDistance(toUnit) / 32.0; // UNIT to UNIT distance
             }
 
             else {
-                return fromUnit.getDistance(toPosition) / 32.0;
+                return bonus + fromUnit.getDistance(toPosition) / 32.0;
             }
         }
 
         // From is POSITION
         else {
             if (toPosition != null) {
-                return fromPosition.getDistance(toPosition) / 32.0;
+                return bonus + fromPosition.getDistance(toPosition) / 32.0;
             }
             else {
-                return fromPosition.getDistance(toUnit.getPosition()) / 32.0;
+                return bonus + fromPosition.getDistance(toUnit.getPosition()) / 32.0;
             }
         }
 

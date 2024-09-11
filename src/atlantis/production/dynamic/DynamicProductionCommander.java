@@ -9,12 +9,13 @@ public class DynamicProductionCommander extends Commander {
         return !AGame.isUms();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected Class<? extends Commander>[] subcommanders() {
-        return new Class[] {
-            DynamicProductionOfUnitsCommander.class,
+        return new Class[]{
+            DynamicUnitAndTechProducerCommander.class,
             DynamicBuildingsCommander.class,
         };
     }
-    
+
 }

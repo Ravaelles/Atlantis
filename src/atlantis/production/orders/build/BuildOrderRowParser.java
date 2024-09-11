@@ -5,7 +5,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.orders.production.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.NameUtil;
 import bwapi.TechType;
@@ -76,7 +76,7 @@ public class BuildOrderRowParser {
         else {
             throw new RuntimeException("Unhandled parse build order line: " + row[0]);
         }
-//        System.out.println(minSupplyForThisOrder + " // " + nameString + " // " +modifier);
+
 
         // =========================================================
         // Parse entire row of strings
@@ -108,36 +108,30 @@ public class BuildOrderRowParser {
         // =========================================================
 
         // Unit
-        if (isUnit) {
-            order = new ProductionOrder(unitType, minSupplyForThisOrder);
-        }
+        if (isUnit) order = new ProductionOrder(unitType, minSupplyForThisOrder);
 
-        // Upgrade
-        else if (isUpgrade) {
-            order = new ProductionOrder(upgrade, minSupplyForThisOrder);
-        }
+            // Upgrade
+        else if (isUpgrade) order = new ProductionOrder(upgrade, minSupplyForThisOrder);
 
-        // Tech
-        else if (isTech) {
-            order = new ProductionOrder(tech, minSupplyForThisOrder);
-        }
+            // Tech
+        else if (isTech) order = new ProductionOrder(tech, minSupplyForThisOrder);
 
-        // Mission
-        else if (isMission) {
-            order = new ProductionOrder(mission, minSupplyForThisOrder);
-        }
+            // Mission
+        else if (isMission) order = new ProductionOrder(mission, minSupplyForThisOrder);
 
-        // Invalid entry type
+            // Invalid entry type
         else {
             System.err.println("Invalid build order: " + nameString);
             System.err.println("Please correct it.");
             AGame.exit();
         }
 
+        order.markAsNotDynamic();
+
         // =========================================================
         // Save first column from row as it may contain build order modifiers
-        order.setRawFirstColumnInFile(row[0]);
-        order.setNumberOfColumnsInRow(row.length);
+//        order.setRawFirstColumnInFile(row[0]);
+//        order.setNumberOfColumnsInRow(row.length);
 
         // =========================================================
         // Save order modifier
@@ -194,9 +188,7 @@ public class BuildOrderRowParser {
         if (row.length >= 1) {
             return row[0].charAt(0) == '#';
         }
-        else {
-            return false;
-        }
+        else return false;
     }
 
     /**
@@ -230,7 +222,7 @@ public class BuildOrderRowParser {
         }
 
         return row.length == 0 || row[0].isEmpty() || row[0].equals("")
-                || row[0].equals("Number") || row[0].equals("@") || row[0].equals("Order") || row[0].equals(";");
+            || row[0].equals("Number") || row[0].equals("@") || row[0].equals("Order") || row[0].equals(";");
     }
 
     /**
@@ -246,11 +238,14 @@ public class BuildOrderRowParser {
         String settingKey;
         if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MIN_SUPPLY")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
-        } else if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
+        }
+        else if (commandLine.startsWith(settingKey = "#AUTO_PRODUCE_WORKERS_MAX_WORKERS")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
-        } else if (commandLine.startsWith(settingKey = "#SCOUT_IS_NTH_WORKER")) {
+        }
+        else if (commandLine.startsWith(settingKey = "#SCOUT_IS_NTH_WORKER")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
-        } else if (commandLine.startsWith(settingKey = "#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
+        }
+        else if (commandLine.startsWith(settingKey = "#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
         }
 //        else if (commandLine.contains("MISSION - ")) {

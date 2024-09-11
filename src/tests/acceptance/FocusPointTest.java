@@ -1,15 +1,14 @@
 package tests.acceptance;
 
-import atlantis.OnUnitDiscover;
+import atlantis.game.events.OnEnemyNewUnitDiscovered;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
-import atlantis.game.OnUnitMorph;
+import atlantis.game.events.OnUnitMorph;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class FocusPointTest extends AbstractTestFakingGame {
-
     private AtlantisGameCommander gameCommander;
     private FakeUnit assimilator;
     private FakeUnit drone2;
@@ -22,11 +21,11 @@ public class FocusPointTest extends AbstractTestFakingGame {
     private FakeUnit larva;
 
     @Test
-    public void neverRunsIntoCombatBuildings() {
+    public void uhm() {
         gameCommander = new AtlantisGameCommander();
 
         createWorld(5, () -> {
-//            System.out.println("\n===================== FRAME = " + A.now() + " ===========================");
+//            System.err.println("\n===================== FRAME = " + A.now() + " ===========================");
 
             if (A.now() == 1) {
                 firstFrame();
@@ -44,12 +43,12 @@ public class FocusPointTest extends AbstractTestFakingGame {
                 fifthFrame();
             }
 
-            gameCommander.handle();
+            gameCommander.invokeCommander();
         });
     }
 
     private void firstFrame() {
-        OnUnitDiscover.update(assimilator);
+        OnEnemyNewUnitDiscovered.update(assimilator);
 //        EnemyInfo.weDiscoveredEnemyUnit(assimilator);
     }
 
@@ -130,19 +129,19 @@ public class FocusPointTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Marine, 10)
+            fake(AUnitType.Terran_Marine, 10)
         );
     }
 
     protected FakeUnit[] generateEnemies() {
         return fakeEnemies(
-                assimilator = fakeEnemy(AUnitType.Protoss_Assimilator, 11)
+            assimilator = fakeEnemy(AUnitType.Protoss_Assimilator, 11)
         );
     }
 
     protected FakeUnit[] generateNeutral() {
-        return new FakeUnit[] {
-                geyser = fake(AUnitType.Resource_Vespene_Geyser, 9)
+        return new FakeUnit[]{
+            geyser = fake(AUnitType.Resource_Vespene_Geyser, 9)
         };
     }
 

@@ -1,10 +1,10 @@
 // === CUSTOMIZABLE VARIABLES =========================================
 
 // Which worker (1st, 8th etc) should scout and try to find enemy base
-#SCOUT_IS_NTH_WORKER=9
+#SCOUT_IS_NTH_WORKER=14
 
 // When supply is bigger than N, then start auto-producing supply units
-#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=14
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=29
 
 // If have empty slot for a worker, force to build new workers
 #AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
@@ -23,19 +23,20 @@ Zealot Core Zealot
 13 - Zealot
 16 - Pylon
 17 - Cybernetics Core
-18 - Zealot
+//18 - Zealot
 @100% Cybernetics Core - Dragoon
 */
 
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-4 - MISSION=DEFEND
 8 - Pylon
 10 - Gateway
-12 - Assimilator
 13 - Zealot
+//15 - Cybernetics Core
 16 - Pylon
 17 - Cybernetics Core
 18 - Zealot
-20 - Dragoon
+18 - Assimilator
+23 - Gateway
+25 - Pylon

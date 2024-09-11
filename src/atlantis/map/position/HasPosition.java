@@ -1,12 +1,15 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
+import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Vector;
+import bwapi.Color;
 
 /**
  * This interface helps ease problems of overriding native bridge classes like e.g. BaseLocation which doesn't
@@ -213,18 +216,26 @@ public interface HasPosition {
         return PositionUtil.distanceTo(this, position);
     }
 
+    default double distToOr999(HasPosition position) {
+        if (position == null) return 999;
+
+        return PositionUtil.distanceTo(this, position);
+    }
+
+    default double distToOrMinus1(HasPosition position) {
+        if (position == null) return -1;
+
+        return PositionUtil.distanceTo(this, position);
+    }
+
     default boolean distToLessThan(HasPosition otherPosition, double maxDist) {
-        if (otherPosition == null) {
-            return false;
-        }
+        if (otherPosition == null) return false;
 
         return distTo(otherPosition) <= maxDist;
     }
 
     default boolean distToMoreThan(HasPosition otherPosition, double minDist) {
-        if (otherPosition == null) {
-            return false;
-        }
+        if (otherPosition == null) return false;
 
         return distTo(otherPosition) >= minDist;
     }
@@ -306,17 +317,52 @@ public interface HasPosition {
         return false;
     }
 
+    default boolean regionsMatch(HasPosition other) {
+        if (other == null || other.position() == null || !other.hasPosition()) return false;
+
+        if (!hasPosition()) return false;
+
+        ARegion region = position().region();
+
+        if (region == null) return false;
+
+        return region.equals(other.position().region());
+    }
+
     static HasPosition nearestPositionFreeFromUnits(Positions<HasPosition> points, AUnit nearestTo) {
         for (HasPosition position : points.sortByDistanceTo(nearestTo, true).list()) {
-//            System.out.println(
-//                "Checking pos = " + position
-//                    + ": " + Select.our().exclude(nearestTo).inRadius(0.3, position).count()
-//            );
             if (Select.our().exclude(nearestTo).inRadius(0.3, position).empty()) {
                 return position;
             }
         }
 
         return null;
+    }
+
+    default void paintCircleFilled(int radius, Color color) {
+        AAdvancedPainter.paintCircleFilled(this, radius, color);
+    }
+
+    default void paintCircle(int radius, Color color) {
+        AAdvancedPainter.paintCircle(this, radius, color);
+    }
+
+    default void paintCircle(int radius, int width, Color color) {
+        for (int i = radius; i <= radius + width; i++) {
+            AAdvancedPainter.paintCircle(this, i, color);
+        }
+    }
+
+    default void paintLine(HasPosition to, Color color) {
+        AAdvancedPainter.paintLine(this, to, color);
+    }
+
+    default void paintLineDouble(HasPosition to, Color color) {
+        AAdvancedPainter.paintLine(this, to, color);
+        AAdvancedPainter.paintLine(this.translateByPixels(1, 1), to.translateByPixels(1, 1), color);
+    }
+
+    default void paintTextCentered(HasPosition position, String text, Color color) {
+        AAdvancedPainter.paintTextCentered(position, text, color, false);
     }
 }

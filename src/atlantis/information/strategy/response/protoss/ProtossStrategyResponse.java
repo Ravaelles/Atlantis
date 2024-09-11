@@ -18,9 +18,7 @@ public class ProtossStrategyResponse extends AStrategyResponse {
             return true;
         }
 
-        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
-            return false;
-        }
+        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
 
         OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;

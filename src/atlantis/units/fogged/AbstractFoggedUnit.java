@@ -7,7 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.cache.Cache;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import java.util.TreeMap;
 
@@ -43,8 +43,8 @@ public class AbstractFoggedUnit extends AUnit {
 
     public static AbstractFoggedUnit from(AUnit enemyUnit) {
         return enemyUnit instanceof FakeUnit
-                ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
-                : FoggedUnit.from(enemyUnit);
+            ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
+            : FoggedUnit.from(enemyUnit);
     }
 
     // =========================================================
@@ -84,7 +84,7 @@ public class AbstractFoggedUnit extends AUnit {
 
 //            _lastPosition = APosition.createFromPixels(unit.x(), unit.y());
         updateLastPosition(unit);
-//            System.out.println("UPDATED _lastPosition = " + _lastPosition);
+
 //            if (unit.type().isBase()) {
 //                System.err.println("--AFTER-- " + unit + " / x:" + unit.x() + " , y:" + unit.y());
 //            }
@@ -117,7 +117,7 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     /**
-     * Returns unit type from BWMirror OR if type is Unknown (behind fog of war) it will return last cached
+     * Returns unit type from JBWAPI OR if type is Unknown (behind fog of war) it will return last cached
      * type.
      */
     @Override
@@ -141,9 +141,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !(other instanceof AUnit)) {
-            return false;
-        }
+        if (other == null || !(other instanceof AUnit)) return false;
 
         return id() == ((AUnit) other).id();
 
@@ -180,8 +178,8 @@ public class AbstractFoggedUnit extends AUnit {
 
 //    public void removeKnownPositionIfNeeded() {
 //        if (_lastPosition != null && _lastPosition.isPositionVisible()) {
-////                System.out.println("unit() = " + unit() + " / is_building:" + unit().isBuilding());
-////                    System.out.println("REMOVE LAST POSITION FOR " + _lastType);
+
+
 //                if (_lastType != null && (!_lastType.isBuilding() || _lastPosition.isPositionVisible())) {
 //                    _lastPosition = null;
 //                }
@@ -194,8 +192,8 @@ public class AbstractFoggedUnit extends AUnit {
 //        _lastPosition = _lastAUnit == null ? null : APosition.create(_lastAUnit.position());
 
 //        if (_lastAUnit != null && _lastAUnit.isBuilding()) {
-//            System.out.println("\n_lastAUnit = " + _lastAUnit + " / x:" + _lastAUnit.x() + "," + _lastAUnit.y());
-//            System.out.println("_thisFogged = " + this + " / x:" + this.x() + "," + this.y());
+
+
 //        }
 
         updateLastPosition(_lastAUnit);
@@ -230,8 +228,8 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " "
-                + nameWithId() + " at " + _lastPosition
-                + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
+            + nameWithId() + " at " + _lastPosition
+            + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
     }
 
     // =========================================================

@@ -3,7 +3,7 @@ package atlantis.combat.missions;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;
-import atlantis.combat.missions.defend.Sparta;
+import atlantis.combat.missions.defend.sparta.Sparta;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.GamePhase;
@@ -36,7 +36,8 @@ public class Missions {
      */
     public static Mission globalMission() {
         if (A.isUms()) {
-            return ATTACK;
+            return DEFEND;
+//            return ATTACK;
         }
 
         if (currentGlobalMission == null) {
@@ -63,9 +64,7 @@ public class Missions {
     }
 
     public static boolean isGlobalMissionAttack() {
-        if (AGame.isUms()) {
-            return true;
-        }
+        if (AGame.isUms()) return true;
 
         return globalMission().isMissionAttack();
     }
@@ -119,11 +118,15 @@ public class Missions {
         mission = mission.toUpperCase().replace("MISSION=", "");
         mission = mission.toUpperCase().replace("MISSION:", "");
         switch (mission) {
-            case "ATTACK" : return ATTACK;
-            case "CONTAIN" : return CONTAIN;
-            case "DEFEND" : return DEFEND;
+            case "ATTACK":
+                return ATTACK;
+            case "CONTAIN":
+                return CONTAIN;
+            case "DEFEND":
+                return DEFEND;
 //            default : AGame.exit("Invalid mission: " + mission); return null;
-            default : return null;
+            default:
+                return null;
         }
     }
 
@@ -148,14 +151,13 @@ public class Missions {
 //            }
 
             if (MissionChanger.DEBUG) {
-                System.out.println(
-                    "CHANGED MISSION AT " + A.seconds() + " TO: " + mission.name()
-                    + ", reason: " + reason
+                A.println(
+                    "CHANGED MISSION @" + A.seconds() + "s TO " + mission.name() + ": " + reason
                 );
 
 //                A.printStackTrace("Changing mission to " + mission);
             }
-            MissionChanger.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
+            MissionHistory.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         }
     }
 
@@ -163,24 +165,29 @@ public class Missions {
         return A.ago(lastMissionChanged);
     }
 
+    public static double lastMissionChangedSecondsAgo() {
+        return A.secondsAgo(lastMissionChanged);
+    }
+
     public static boolean recentlyChangedMission() {
         return lastMissionChangedAgo() <= 30 * 6;
     }
 
     public static int counter() {
-        return MissionChanger.missionHistory.size();
+        return MissionHistory.missionHistory.size();
     }
 
     public static Mission prevMission() {
-        if (MissionChanger.missionHistory.size() >= 2) {
-            return MissionChanger.missionHistory.get(MissionChanger.missionHistory.size() - 2);
-        } else {
+        if (MissionHistory.missionHistory.size() >= 2) {
+            return MissionHistory.missionHistory.get(MissionHistory.missionHistory.size() - 2);
+        }
+        else {
             return null;
         }
     }
 
     public static boolean isFirstMission() {
-        return MissionChanger.missionHistory.size() == 1;
+        return MissionHistory.missionHistory.size() == 1;
     }
 
     public static int lastMissionEnforcedAgo() {

@@ -10,7 +10,7 @@ public class MissionManager extends Manager {
 
     public MissionManager(AUnit unit) {
         super(unit);
-        mission = unit.mission();
-        focusPoint = mission.focusPoint();
+        mission = unit != null ? unit.mission() : null;
+        focusPoint = mission != null ? mission.focusPoint() : null;
     }
 }

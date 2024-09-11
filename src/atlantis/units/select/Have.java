@@ -2,7 +2,8 @@ package atlantis.units.select;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.production.ProductionQueue;
+
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 
 public class Have {
@@ -14,6 +15,11 @@ public class Have {
     public static boolean a(AUnitType type) {
 //        return Count.withPlanned(type) > 0;
         return Count.ofType(type) > 0;
+    }
+
+    public static boolean no(AUnitType type) {
+//        return Count.withPlanned(type) > 0;
+        return Count.ofType(type) == 0;
     }
 
     public static boolean unfinishedOrPlanned(AUnitType type) {
@@ -28,30 +34,33 @@ public class Have {
         return Select.ourOfType(building).free().notEmpty();
     }
 
-    public static boolean notEvenInPlans(AUnitType type) {
+    public static boolean dontHaveEvenInPlans(AUnitType type) {
+        return Count.withPlanned(type) == 0;
+    }
+
+    public static boolean haveExistingOrInPlans(AUnitType type) {
         return Count.withPlanned(type) == 0;
     }
 
     public static boolean existingOrPlanned(AUnitType building, HasPosition position, double inRadius) {
-        assert building.isBuilding();
+        assert building.isABuilding();
 
-        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) {
-            return true;
-        }
+        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) return true;
 
         return Select.ourWithUnfinished(building).inRadius(inRadius, position).atLeast(1);
     }
 
+    public static boolean existingOrUnfinished(AUnitType building) {
+        assert building.isABuilding();
+
+        return Select.ourWithUnfinished(building).atLeast(1);
+    }
+
     public static boolean existingOrPlannedOrInQueue(AUnitType building, HasPosition position, double inRadius) {
-        assert building.isBuilding();
+        assert building.isABuilding();
 
-        if (ProductionQueue.isAtTheTopOfQueue(building, 2)) {
-            return true;
-        }
-
-        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) {
-            return true;
-        }
+        if (Queue.get().haveAmongNextOrders(building, 2)) return true;
+        if (ConstructionRequests.hasNotStartedNear(building, position, inRadius)) return true;
 
         return Select.ourWithUnfinished(building).inRadius(inRadius, position).atLeast(1);
     }
@@ -60,6 +69,18 @@ public class Have {
 
     public static boolean armory() {
         return Count.ofType(AUnitType.Terran_Armory) > 0;
+    }
+
+    public static boolean assimilator() {
+        return Count.withPlanned(AUnitType.Protoss_Assimilator) > 0;
+    }
+
+    public static boolean observer() {
+        return Count.ofType(AUnitType.Protoss_Observer) > 0;
+    }
+
+    public static boolean observatory() {
+        return Count.ofType(AUnitType.Protoss_Observatory) > 0;
     }
 
     public static boolean hydraliskDen() {
@@ -74,6 +95,18 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Engineering_Bay) > 0;
     }
 
+    public static boolean starport() {
+        return Count.ofType(AUnitType.Terran_Starport) > 0;
+    }
+
+    public static boolean spawningPool() {
+        return Count.ofType(AUnitType.Zerg_Spawning_Pool) > 0;
+    }
+
+    public static boolean controlTower() {
+        return Count.ofType(AUnitType.Terran_Control_Tower) > 0;
+    }
+
     public static boolean dragoon() {
         return Count.ofType(AUnitType.Protoss_Dragoon) > 0;
     }
@@ -86,8 +119,16 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Barracks) > 0;
     }
 
+    public static boolean gateway() {
+        return Count.ofType(AUnitType.Protoss_Gateway) > 0;
+    }
+
     public static boolean academy() {
         return Count.ofType(AUnitType.Terran_Academy) > 0;
+    }
+
+    public static boolean citadel() {
+        return Count.ofType(AUnitType.Protoss_Citadel_of_Adun) > 0;
     }
 
     public static boolean cyberneticsCore() {
@@ -102,6 +143,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Factory) > 0;
     }
 
+    public static boolean scienceFacility() {
+        return Count.ofType(AUnitType.Terran_Science_Facility) > 0;
+    }
+
     public static boolean machineShop() {
         return have(AUnitType.Terran_Machine_Shop);
     }
@@ -110,4 +155,15 @@ public class Have {
         return have(AUnitType.Protoss_Robotics_Facility);
     }
 
+    public static boolean forge() {
+        return have(AUnitType.Protoss_Forge);
+    }
+
+    public static boolean larvas(int minLarvas) {
+        return Count.larvas() >= minLarvas;
+    }
+
+    public static boolean scienceVessel() {
+        return Count.ofType(AUnitType.Terran_Science_Vessel) > 0;
+    }
 }

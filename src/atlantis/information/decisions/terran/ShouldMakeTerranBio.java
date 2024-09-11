@@ -1,8 +1,6 @@
 package atlantis.information.decisions.terran;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.information.decisions.Decisions;
 import atlantis.information.decisions.FocusOnProducingUnits;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
@@ -24,9 +22,7 @@ public class ShouldMakeTerranBio {
 
         // === True ===========================================
 
-        if (A.hasMinerals(680)) {
-            return true;
-        }
+        if (A.hasMinerals(680)) return true;
 
         if (EnemyInfo.isDoingEarlyGamePush()) {
             reason = "EnemyInfo.isDoingEarlyGamePush";
@@ -59,7 +55,7 @@ public class ShouldMakeTerranBio {
             return false;
         }
 
-        if (!Decisions.maxFocusOnTanks()) {
+        if (!TerranDecisions.maxFocusOnTanks()) {
             reason = "maxFocusOnTanks";
             return false;
         }
@@ -78,15 +74,13 @@ public class ShouldMakeTerranBio {
     private static boolean wantsToReturnTrue() {
         int minInfantry = Enemy.terran() ? 6 : 18;
 
-        if (infantry <= minInfantry || Count.medics() <= 2 || ArmyStrength.weAreMuchWeaker()) {
-            return true;
-        }
+        if (infantry <= minInfantry || Count.medics() <= 2 || ArmyStrength.weAreMuchWeaker()) return true;
 
 //        if (infantry <= 12) {
 //            return true;
 //        }
 
-        return AGame.canAffordWithReserved(50, 0);
+        return A.canAffordWithReserved(50, 0);
     }
 
 }

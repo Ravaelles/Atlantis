@@ -1,15 +1,10 @@
 package tests.acceptance;
 
-import atlantis.combat.eval.AtlantisJfap;
-import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import org.mockito.MockedStatic;
-import tests.unit.AbstractTestWithUnits;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Terran_Marine;
-import static atlantis.units.AUnitType.Terran_Siege_Tank_Tank_Mode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -34,10 +29,6 @@ public class AtlantisJfapTest extends NonAbstractTestFakingGame {
         createWorld(1, () -> {
                 double ourScore = dragoon1.combatEvalAbsolute();
                 double enemyScore = sunkenColony.combatEvalAbsolute();
-
-//                System.out.println();
-//                System.out.println("## our   SCORE = " + ourScore);
-//                System.out.println("## enemy SCORE = " + enemyScore);
 
                 assertTrue(ourScore < -10);
                 assertTrue(enemyScore < -10);
@@ -86,9 +77,9 @@ public class AtlantisJfapTest extends NonAbstractTestFakingGame {
                 double ourScore = marine.combatEvalAbsolute();
                 double enemyScore = hydra.combatEvalAbsolute();
 
-//                System.out.println();
-//                System.out.println("## our   SCORE = " + ourScore);
-//                System.out.println("## enemy SCORE = " + enemyScore);
+//                System.err.println();
+//                System.err.println("## our   SCORE = " + ourScore);
+//                System.err.println("## enemy SCORE = " + enemyScore);
 
                 assertTrue(ourScore < 0);
                 assertTrue(ourScore < enemyScore);

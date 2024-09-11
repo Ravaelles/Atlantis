@@ -9,15 +9,15 @@ import atlantis.units.select.Select;
 
 /**
  * POSITION - where units should concentrate around. Can be offensive or defensive. Usually around a choke.
- *
+ * <p>
  * LOOKING FROM - Units can position themselves from the wrong side of focus point.
  * This point should tell units from which side they should stand.
  */
 public class AFocusPoint extends APosition {
-
-    private APosition fromSide = null;
+    private HasPosition fromSide = null;
     private AChoke choke = null;
     private AUnit unit = null;
+    private HasPosition position = null;
     private String name = null;
 
     // =========================================================
@@ -32,22 +32,28 @@ public class AFocusPoint extends APosition {
 //    }
 
     public AFocusPoint(AUnit unit, String name) {
-        this(unit.position(), null, name);
+//        this(unit.position(), null, name);
+        this(unit, null, name);
         this.unit = unit;
+//        this.position = unit.position();
     }
 
     public AFocusPoint(AUnit unit, HasPosition fromSide, String name) {
         this(unit.position(), fromSide, name);
+//        this(unit, fromSide, name);
         this.unit = unit;
+        this.fromSide = fromSide;
+        this.name = name;
+//        this.position = unit.position();
     }
 
 //    public AFocusPoint(HasPosition position, String name) {
 //        this(position, null, name);
 //    }
 
-    public AFocusPoint(AChoke choke, HasPosition fromSide) {
-        this(choke, fromSide, null);
-    }
+//    public AFocusPoint(AChoke choke, HasPosition fromSide) {
+//        this(choke, fromSide, null);
+//    }
 
     public AFocusPoint(AChoke choke, HasPosition fromSide, String name) {
         super(choke.center());
@@ -70,7 +76,9 @@ public class AFocusPoint extends APosition {
                 || (unit.hp() > 0 && unit.isVisibleUnitOnMap());
         }
         else {
-            return !this.isPositionVisible() || Select.our().inRadius(3, this).empty();
+            APosition pos = this.position();
+            if (pos == null) return false;
+            return !pos.isPositionVisible() || Select.our().inRadius(3, pos).empty();
         }
     }
 
@@ -88,7 +96,7 @@ public class AFocusPoint extends APosition {
 
     // =========================================================
 
-    public APosition fromSide() {
+    public HasPosition fromSide() {
         return fromSide;
     }
 
@@ -104,7 +112,37 @@ public class AFocusPoint extends APosition {
         return choke != null;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
+
+    public AFocusPoint forceAroundChoke(AChoke choke) {
+        this.choke = choke;
+        return this;
+    }
+
+    public int chokeWidthOr(int fallback) {
+        return choke != null ? choke.width() : fallback;
+    }
+
+//    @Override
+//    public APosition position() {
+//        if (unit != null) {
+//            return unit.position();
+////            if (unit.isVisibleUnitOnMap()) return unit.position();
+////            return unit.lastPosition();
+//        }
+//        if (choke != null) return choke.position();
+//        return position != null ? position.position() : null;
+//    }
+//
+//    @Override
+//    public int x() {
+//        return position().x();
+//    }
+//
+//    @Override
+//    public int y() {
+//        return position().y();
+//    }
 }

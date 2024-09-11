@@ -3,10 +3,8 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
-import atlantis.config.MapAndRace;
 import atlantis.config.MapSpecificCommander;
-import atlantis.production.orders.production.CurrentProductionQueue;
-import atlantis.units.AUnitType;
+
 import bwapi.*;
 
 import java.util.ArrayList;
@@ -20,14 +18,18 @@ import static atlantis.Atlantis.game;
  * <br /><b>It's worth to study this class carefully as it contains some really useful methods.</b>
  */
 public class AGame {
-
     private static boolean umsMode = false; // Should be set to `true` on UMS (custom) maps
     private static APlayer _enemy = null; // Cached enemy APlayer
-    private static APlayer _neutral = null; // Cached neutral APlayer
     private static APlayer _our = null; // Cached our APlayer
+    private static int _framesNow = 0; // Cached current frames count
+    private static int _secondsNow = 0; // Cached current frames count
 
     // =========================================================
-    
+
+    public static Game get() {
+        return Atlantis.game();
+    }
+
     /**
      * Quits the game gently, killing all processes and cleaning up.
      */
@@ -43,7 +45,7 @@ public class AGame {
      * Quits the game gently, killing all processes and cleaning up.
      */
     public static void exit(String message) {
-        System.err.println(message);
+        A.println(message);
         Atlantis.getInstance().exitGame();
     }
 
@@ -66,14 +68,18 @@ public class AGame {
      * Returns approximate number of in-game seconds elapsed.
      */
     public static int timeSeconds() {
-        return Atlantis.game().getFrameCount() / 30;
+        return _secondsNow;
     }
 
     /**
      * Returns number of game frames elapsed.
      */
     public static int now() {
-        return Atlantis.game().getFrameCount();
+        return _framesNow;
+    }
+
+    public static void cacheFrameNow() {
+        _framesNow = Atlantis.game().getFrameCount();
     }
 
     /**
@@ -125,10 +131,6 @@ public class AGame {
         return Atlantis.game().self().supplyUsed() / 2;
     }
 
-    public static boolean hasSupply(int minSupply) {
-        return supplyUsed() >= minSupply;
-    }
-
     /**
      * Number of supply totally available.
      */
@@ -152,7 +154,7 @@ public class AGame {
      */
     public static List<APlayer> getPlayers() {
         List<APlayer> players = new ArrayList<>();
-        for (Player p : game().getPlayers()){
+        for (Player p : game().getPlayers()) {
             players.add(APlayer.create(p));
         }
         return players;
@@ -192,130 +194,20 @@ public class AGame {
 
         if (!AGame.umsMode) {
             AGame.umsMode = true;
-            System.out.println("### UMS mode enabled! ###");
+            A.println("### UMS mode enabled! ###");
 
             MissionChanger.forceMissionAttack("UmsAlwaysAttack");
         }
     }
-    
+
     // =========================================================
     // Auxiliary
+
     /**
      * Returns random int number from range [min, max], both inclusive.
      */
     public static int rand(int min, int max) {
         return A.rand(min, max);
-    }
-
-    /**
-     * Returns true if user plays as Terran.
-     */
-    public static boolean isPlayingAsTerran() {
-        if (AtlantisConfig.MY_RACE == null) return "Terran".equals(MapAndRace.OUR_RACE);
-
-        return AtlantisConfig.MY_RACE.equals(Race.Terran);
-    }
-
-    /**
-     * Returns true if user plays as Protoss.
-     */
-    public static boolean isPlayingAsProtoss() {
-        return AtlantisConfig.MY_RACE.equals(Race.Protoss);
-    }
-
-    /**
-     * Returns true if user plays as Zerg.
-     */
-    public static boolean isPlayingAsZerg() {
-        return AGame.getPlayerUs().getRace().equals(Race.Zerg);
-//        return AtlantisConfig.MY_RACE.equals(Race.Zerg);
-    }
-
-    /**
-     * Returns true if enemy plays as Terran.
-     */
-    public static boolean isEnemyTerran() {
-        return AGame.enemy().getRace().equals(Race.Terran);
-    }
-
-    /**
-     * Returns true if enemy plays as Protoss.
-     */
-    public static boolean isEnemyProtoss() {
-        return AGame.enemy().getRace().equals(Race.Protoss);
-    }
-
-    /**
-     * Returns true if enemy plays as Zerg.
-     */
-    public static boolean isEnemyZerg() {
-        return AGame.enemy().getRace().equals(Race.Zerg);
-    }
-
-    /**
-     * Returns true if we can afford given amount of minerals.
-     */
-    public static boolean hasMinerals(int mineralsToAfford) {
-        return minerals() >= mineralsToAfford;
-    }
-
-    /**
-     * Returns true if we can afford given amount of gas.
-     */
-    public static boolean hasGas(int gasToAfford) {
-        return gas() >= gasToAfford;
-    }
-
-    /**
-     * Returns true if we can afford minerals and gas for given unit type.
-     */
-    public static boolean canAfford(AUnitType unitType) {
-        return hasMinerals(unitType.getMineralPrice()) && hasGas(unitType.getGasPrice());
-    }
-
-    /**
-     * Returns true if we can afford minerals and gas for given upgrade.
-     */
-    public static boolean canAfford(UpgradeType upgrade) {
-        //TODO: check whether we need to pass level 0 to match getMineral/GasPriceBase()
-        return hasMinerals(upgrade.mineralPrice()) && hasGas(upgrade.gasPrice());
-    }
-
-    public static boolean canAfford(TechType tech) {
-        return hasMinerals(tech.mineralPrice()) && hasGas(tech.gasPrice());
-    }
-
-    /**
-     * Returns true if we can afford both so many minerals and gas at the same time.
-     */
-    public static boolean canAfford(int minerals, int gas) {
-        return hasMinerals(minerals) && hasGas(gas);
-    }
-
-    /**
-     * Returns true if we can afford both so many minerals and gas at the same time.
-     * Takes into account planned constructions and orders.
-     */
-    public static boolean canAffordWithReserved(int minerals, int gas) {
-//        int[] reservedConstructions = ConstructionRequests.resourcesNeededForNotStartedConstructions();
-        int[] reservedInQueue = CurrentProductionQueue.resourcesReserved();
-
-        return canAfford(
-                minerals + reservedInQueue[0],
-                gas + reservedInQueue[1]
-        );
-    }
-
-    public static boolean canAffordWithReserved(AUnitType type) {
-        return canAffordWithReserved(type.getMineralPrice(), type.getGasPrice());
-    }
-
-    public static boolean canAffordWithReserved(TechType type) {
-        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
-    }
-
-    public static boolean canAffordWithReserved(UpgradeType type) {
-        return canAffordWithReserved(type.mineralPrice(), type.gasPrice());
     }
 
     public static int killsLossesResourceBalance() {
@@ -326,8 +218,15 @@ public class AGame {
         return Atlantis.game().mapName();
     }
 
+    public static void calcSeconds() {
+        _secondsNow = Atlantis.game().getFrameCount() / 30;
+        A.s = _secondsNow;
+        A.fr = _framesNow;
+    }
+
     // =========================================================
     // Utility
+
     /**
      * Sends in-game message that will be visible by other APlayers.
      */

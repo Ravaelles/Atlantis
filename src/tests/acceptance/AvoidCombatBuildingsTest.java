@@ -5,7 +5,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertTrue;
 
@@ -19,10 +19,13 @@ public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
      */
     @Test
     public void neverRunsIntoCombatBuildings() {
-        createWorld(100, () -> {
+        createWorld(50, () -> {
+//            Select.our().print();
+//            Select.enemy().print();
+
             FakeUnit unit = ourFirst;
             unit.setSquad(Alpha.get());
-            (new CombatUnitManager(unit)).handle();
+            (new CombatUnitManager(unit)).invokeFrom(this);
 
             double distToSunken = distToNearestEnemy(unit);
             boolean isSafe = distToSunken > 7.05;
@@ -30,16 +33,19 @@ public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
 //            boolean alwaysShow = true;
 
             if (!isSafe || alwaysShow) {
-                System.out.println(A.now() + " -       " + unit.tooltip()
-                    + "\n   " + unit.lastCommand()
-                    + ",\n   tx:" + unit.tx()
+                System.err.println(A.now()
+                    + " -       " + unit.tooltip()
+                    + "\n   Manager : " + unit.manager()
+                    + "\n   Managers: " + unit.managerLogs().toString()
+                    + "\n   Command : " + unit.lastCommand()
+                    + ",\n   tx     :" + unit.txWithPrecision()
                     + ",\n   dist_to_sunken:" + A.dist(distToSunken)
                     + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
                     + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
                     + "\n   marine eval = " + unit.combatEvalRelative()
                     + "\n   sunken eval = " + sunken.combatEvalRelative()
                 );
-                System.out.println("_______________________________________");
+                System.err.println("_______________________________________");
             }
 
             assertTrue(isSafe);

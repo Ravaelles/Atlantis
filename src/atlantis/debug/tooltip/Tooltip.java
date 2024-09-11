@@ -49,9 +49,7 @@ public class Tooltip {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !(other instanceof Tooltip)) {
-            return false;
-        }
+        if (other == null || !(other instanceof Tooltip)) return false;
 
         return unit.id() == ((Tooltip) other).getUnit().id();
 
@@ -60,12 +58,12 @@ public class Tooltip {
     @Override
     public String toString() {
         return String.format(
-                "Tooltip for (%d) %s %s: %s. Start @ frame %d",
-                unit.id(),
-                unit.type().name(),
-                unit.position().toTilePosition(),
-                hasTooltip() ? String.format("'%s'", tooltip) : "null",
-                tooltipStartInFrames
+            "Tooltip for (%d) %s %s: %s. Start @ frame %d",
+            unit.id(),
+            unit.type().name(),
+            unit.position().toTilePosition(),
+            hasTooltip() ? String.format("'%s'", tooltip) : "null",
+            tooltipStartInFrames
         );
     }
 }

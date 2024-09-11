@@ -1,12 +1,13 @@
 package atlantis.information.enemy;
 
 import atlantis.game.A;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -32,7 +33,7 @@ public class EnemyInfo {
     }
 
     public static boolean isEnemyNearAnyOurBase() {
-        return EnemyWhoBreachedBase.enemyNearAnyOurBase(-1) != null;
+        return EnemyNearBases.enemyNearAnyOurBase(-1) != null;
     }
 
     /**
@@ -40,16 +41,24 @@ public class EnemyInfo {
      */
     public static boolean hasDiscoveredAnyBuilding() {
         return cacheBoolean.get(
-                "hasDiscoveredAnyBuilding",
-                50,
-                () -> {
-                    for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
-                        if (enemyUnit.isABuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
-                            return true;
-                        }
+            "hasDiscoveredAnyBuilding",
+            50,
+            () -> {
+                for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
+                    if (enemyUnit.isABuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                        return true;
                     }
-                    return false;
                 }
+                return false;
+            }
+        );
+    }
+
+    public static int combatBuildingsAntiLand() {
+        return (int) cache.get(
+            "hasDiscoveredAnyBuilding",
+            53,
+            () -> EnemyUnits.discovered().combatBuildingsAntiLand().size()
         );
     }
 
@@ -58,16 +67,16 @@ public class EnemyInfo {
      */
     public static boolean weKnowAboutAnyCombatUnit() {
         return cacheBoolean.get(
-                "weKnowAboutAnyCombatUnit",
-                33,
-                () -> {
-                    for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
-                        if (enemyUnit.isCombatUnit() && !UnitsArchive.isDestroyed(enemyUnit)) {
-                            return true;
-                        }
+            "weKnowAboutAnyCombatUnit",
+            33,
+            () -> {
+                for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
+                    if (enemyUnit.isCombatUnit() && !UnitsArchive.isDestroyed(enemyUnit)) {
+                        return true;
                     }
-                    return false;
                 }
+                return false;
+            }
         );
     }
 
@@ -76,24 +85,24 @@ public class EnemyInfo {
      */
     public static boolean weKnowAboutAnyRealUnit() {
         return cacheBoolean.get(
-                "weKnowAboutAnyRealUnit",
-                32,
-                () -> {
-                    for (AUnit enemyUnit : EnemyUnits.discovered().realUnits().list()) {
-                        if (!UnitsArchive.isDestroyed(enemyUnit)) {
-                            return true;
-                        }
+            "weKnowAboutAnyRealUnit",
+            32,
+            () -> {
+                for (AUnit enemyUnit : EnemyUnits.discovered().realUnits().list()) {
+                    if (!UnitsArchive.isDestroyed(enemyUnit)) {
+                        return true;
                     }
-                    return false;
                 }
+                return false;
+            }
         );
     }
 
     public static boolean hasDiscoveredEnemyBase() {
         return cacheBoolean.get(
-                "hasDiscoveredEnemyBase",
-                60,
-                () -> EnemyUnits.enemyBase() != null
+            "hasDiscoveredEnemyBase",
+            60,
+            () -> EnemyUnits.enemyBase() != null
         );
     }
 
@@ -114,49 +123,49 @@ public class EnemyInfo {
 
     public static APosition enemyLocationOrGuess() {
         return (APosition) cache.get(
-                "enemyLocationOrGuess",
-                50,
-                () -> {
-                    AUnit enemyBase = EnemyUnits.enemyBase();
-                    if (enemyBase != null) {
-                        return enemyBase.position();
-                    }
-
-                    AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
-                    if (enemyBuilding != null) {
-                        return enemyBuilding.position();
-                    }
-
-                    AChoke enemyChoke = Chokes.enemyMainChoke();
-                    if (enemyChoke != null) {
-                        return enemyChoke.position();
-                    }
-
-                    APosition position = Bases.nearestUnexploredStartingLocation(Select.our().first());
-                    if (position != null) {
-                        return position;
-                    }
-
-                    return AMap.randomInvisiblePosition(Select.our().first());
+            "enemyLocationOrGuess",
+            50,
+            () -> {
+                AUnit enemyBase = EnemyUnits.enemyBase();
+                if (enemyBase != null) {
+                    return enemyBase.position();
                 }
+
+                AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+                if (enemyBuilding != null) {
+                    return enemyBuilding.position();
+                }
+
+                AChoke enemyChoke = Chokes.enemyMainChoke();
+                if (enemyChoke != null) {
+                    return enemyChoke.position();
+                }
+
+                APosition position = BaseLocations.nearestUnexploredStartingLocation(Select.our().first());
+                if (position != null) {
+                    return position;
+                }
+
+                return AMap.randomInvisiblePosition(Select.our().first());
+            }
         );
     }
 
     public static boolean hasDefensiveLandBuilding(boolean onlyCompleted) {
         return cacheBoolean.get(
-                "hasDefensiveLandBuilding:" + onlyCompleted,
-                30,
-                () -> {
-                    Selection selection = EnemyUnits.foggedUnits()
-                            .combatBuildings(false)
-                            .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony);
+            "hasDefensiveLandBuilding:" + onlyCompleted,
+            30,
+            () -> {
+                Selection selection = EnemyUnits.foggedUnits()
+                    .combatBuildings(false)
+                    .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony);
 
-                    if (onlyCompleted) {
-                        selection = selection.onlyCompleted();
-                    }
-
-                    return selection.atLeast(1);
+                if (onlyCompleted) {
+                    selection = selection.onlyCompleted();
                 }
+
+                return selection.atLeast(1);
+            }
         );
     }
 
@@ -170,9 +179,7 @@ public class EnemyInfo {
     }
 
     public static boolean isProxyBuilding(AUnit enemyBuilding) {
-        if (A.seconds() >= 400 || !We.haveBase()) {
-            return false;
-        }
+        if (A.seconds() >= 400 || !We.haveBase()) return false;
 
         return Select.main().distToLessThan(enemyBuilding, 20);
     }
@@ -183,6 +190,11 @@ public class EnemyInfo {
             30,
             () -> {
                 if (!GamePhase.isEarlyGame()) return false;
+
+                if (
+                    (A.supplyUsed() >= 14 && EnemyStrategy.get().isUnknown())
+                        || (A.supplyUsed() <= 30 && ArmyStrength.weAreMuchWeaker())
+                ) return true;
 
                 if (Enemy.protoss()) {
                     return EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(6);
@@ -211,5 +223,20 @@ public class EnemyInfo {
 
     public static AStrategy strategy() {
         return EnemyStrategy.get();
+    }
+
+    public static boolean hasRanged() {
+        return EnemyUnits.discovered().ranged().notEmpty();
+    }
+
+    public static boolean noRanged() {
+        return EnemyUnits.discovered().ranged().empty();
+    }
+
+    public static boolean hasNaturalBase() {
+        APosition enemyNatural = BaseLocations.enemyNatural();
+        if (enemyNatural == null) return false;
+
+        return EnemyUnits.buildings().inRadius(5, enemyNatural).atLeast(1);
     }
 }

@@ -1,7 +1,7 @@
 package atlantis.information.strategy.response;
 
-import atlantis.combat.micro.terran.TerranBunker;
-import atlantis.combat.micro.terran.TerranMissileTurret;
+import atlantis.combat.micro.terran.bunker.TerranBunker;
+import atlantis.production.dynamic.reinforce.terran.turrets.TerranMissileTurret;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.game.AGame;
@@ -11,8 +11,8 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.scout.ScoutCommander;
-import atlantis.production.requests.AntiAirBuildingManager;
-import atlantis.production.requests.AntiLandBuildingManager;
+import atlantis.production.requests.AntiAirBuildingCommander;
+import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.production.requests.zerg.ZergSporeColony;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.util.We;
@@ -20,19 +20,13 @@ import atlantis.util.We;
 public abstract class AStrategyResponse {
 
     public boolean update() {
-        if (AGame.notNthGameFrame(17)) {
-            return false;
-        }
+        if (AGame.notNthGameFrame(17)) return false;
 
         // Anti-LAND
-        if (antiLandManager().handleBuildNew()) {
-            return true;
-        }
+//        if (antiLandManager().requestToBuildNewAntiLandCombatBuilding()) return true;
 
         // Anti-AIR
-        if (antiAirManager().handleBuildNew()) {
-            return true;
-        }
+        if (antiAirManager().requestToBuildNewAntiAirCombatBuilding()) return true;
 
         return false;
     }
@@ -40,7 +34,7 @@ public abstract class AStrategyResponse {
     public static AStrategyResponse get() {
         return AStrategyResponseFactory.forOurRace();
     }
-    
+
     // =========================================================
 
     public void updateEnemyStrategyChanged() {
@@ -59,7 +53,8 @@ public abstract class AStrategyResponse {
         // === Expansion ===================================
 
         if (enemyStrategy.isExpansion() && GamePhase.isEarlyGame() && Mission.get().isMissionDefendOrSparta()) {
-            Missions.forceGlobalMissionContain("Enemy is expanding, engage him");
+//            Missions.forceGlobalMissionContain("Enemy is expanding, engage him");
+            Missions.forceGlobalMissionAttack("Enemy is expanding, engage him");
         }
 
         // === Tech ========================================
@@ -86,13 +81,11 @@ public abstract class AStrategyResponse {
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
         System.out.println("GENERIC RUSH - shouldn't be called, use race-specific");
-        
+
         Missions.forceGlobalMissionDefend("Rush defence");
 
-        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) {
-            return false;
-        }
-        
+        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
+
         OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;
     }
@@ -109,22 +102,15 @@ public abstract class AStrategyResponse {
     // =========================================================
 
     protected boolean shouldSkipAntiRushCombatBuilding(AStrategy enemyStrategy) {
-        if (enemyStrategy == null) {
-            return false;
-        }
-        
-        if (ScoutCommander.hasAnyScoutBeenKilled()) {
-            return false;
-        }
-        
-        // =========================================================
+        if (enemyStrategy == null) return false;
+        if (ScoutCommander.hasAnyScoutBeenKilled()) return false;
 
         return !enemyStrategy.isRush() && !enemyStrategy.isGoingCheese();
     }
 
     // =========================================================
 
-    private AntiLandBuildingManager antiLandManager() {
+    private AntiLandBuildingCommander antiLandManager() {
         if (We.zerg()) {
             return ZergSunkenColony.get();
         }
@@ -132,10 +118,10 @@ public abstract class AStrategyResponse {
             return TerranBunker.get();
         }
 
-        return AntiLandBuildingManager.get();
+        return AntiLandBuildingCommander.get();
     }
 
-    private AntiAirBuildingManager antiAirManager() {
+    private AntiAirBuildingCommander antiAirManager() {
         if (We.zerg()) {
             return ZergSporeColony.get();
         }
@@ -143,7 +129,7 @@ public abstract class AStrategyResponse {
             return TerranMissileTurret.get();
         }
 
-        return AntiAirBuildingManager.get();
+        return AntiAirBuildingCommander.get();
     }
 
 }

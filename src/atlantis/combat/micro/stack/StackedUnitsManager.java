@@ -9,10 +9,12 @@ public class StackedUnitsManager extends Manager {
     private double minDist;
     private boolean onlyOfTheSameType;
 
-    public StackedUnitsManager(AUnit unit, double minDist, boolean onlyOfTheSameType) {
+    public StackedUnitsManager(AUnit unit) {
         super(unit);
-        this.minDist = minDist;
-        this.onlyOfTheSameType = onlyOfTheSameType;
+
+        boolean overlord = unit.isOverlord();
+        this.minDist = overlord ? 1.5 : 0.5;
+        this.onlyOfTheSameType = overlord;
     }
 
     @Override
@@ -21,12 +23,12 @@ public class StackedUnitsManager extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit nearest = (onlyOfTheSameType ? Select.ourOfType(unit.type()) : Select.ourRealUnits())
-                .exclude(unit).inRadius(minDist, unit).nearestTo(unit);
+            .exclude(unit).inRadius(minDist, unit).nearestTo(unit);
 
         if (nearest != null) {
-            if (unit.moveAwayFrom(nearest, minDist / 2, "Stacked", Actions.MOVE_FORMATION)) {
+            if (unit.moveAwayFrom(nearest, minDist / 2, Actions.MOVE_FORMATION, "Stacked")) {
                 return usedManager(this);
             }
         }

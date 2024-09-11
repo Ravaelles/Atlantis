@@ -5,11 +5,9 @@ import atlantis.units.select.Selection;
 
 public class CanAbandonUnitAssignedToRepair {
     public static boolean check(AUnit unit) {
-        if (!unit.isAlive()) {
-            return true;
-        }
+        if (!unit.isAlive()) return true;
 
-        AUnit target = RepairAssignments.getUnitToRepairFor(unit);
+        AUnit target = RepairAssignments.unitToRepairForSCV(unit);
         if (target == null) {
             target = RepairAssignments.getUnitToProtectFor(unit);
         }
@@ -20,13 +18,9 @@ public class CanAbandonUnitAssignedToRepair {
             return true;
         }
 
-        if (target.isWounded()) {
-            return false;
-        }
+        if (target.isWounded()) return false;
 
-        if (unit.isProtector() && target.isBunker() && target.enemiesNear().count() <= 1) {
-            return true;
-        }
+        if (unit.isProtector() && target.isBunker() && target.enemiesNear().count() <= 1) return true;
 
         Selection enemies = target.enemiesNear().canAttack(target, 14);
         int workersNearby = target.friendsNear().workers().inRadius(1.5, target).count();

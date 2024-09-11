@@ -1,8 +1,10 @@
 package atlantis.units.select;
 
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.production.ProductionQueue;
+
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
@@ -14,14 +16,18 @@ import bwapi.UpgradeType;
  * Quick auxiliary class for counting our units.
  */
 public class Count {
-
     private static Cache<Integer> cache = new Cache<>();
+
+    public static boolean clearCache() {
+        cache.clear();
+        return true;
+    }
 
     public static int ourCombatUnits() {
         return cache.get(
-                "ourCombatUnits",
-                0,
-                () -> Select.ourCombatUnits().count()
+            "ourCombatUnits",
+            1,
+            () -> Select.ourCombatUnits().count()
         );
     }
 
@@ -50,38 +56,40 @@ public class Count {
     }
 
     public static int inProductionOrInQueue(AUnitType type) {
-        return inProduction(type) + inQueue(type, 5);
+        return inProduction(type) + inQueue(type);
+    }
+
+    public static int inQueue(AUnitType type) {
+        return CountInQueue.count(type);
     }
 
     public static int inQueue(AUnitType type, int amongNTop) {
-        return ProductionQueue.countInQueue(type, amongNTop);
+        return CountInQueue.count(type, amongNTop);
     }
 
-    public static int inQueue(TechType type, int amongNTop) {
-        return ProductionQueue.countInQueue(type, amongNTop);
+    public static int inQueue(TechType tech, int amongNTop) {
+        return CountInQueue.count(tech, amongNTop);
     }
 
-    public static int inQueue(UpgradeType type, int amongNTop) {
-        return ProductionQueue.countInQueue(type, amongNTop);
+    public static int inQueue(UpgradeType upgrade, int amongNTop) {
+        return CountInQueue.count(upgrade, amongNTop);
     }
 
     public static int inQueueOrUnfinished(AUnitType type, int amongNTop) {
         return inQueue(type, amongNTop) + inProduction(type);
     }
 
-    public static int inQueueOrUnfinished(TechType type, int amongNTop) {
-        return inQueue(type, amongNTop) + inProduction(type);
+    public static int inQueueOrUnfinished(TechType tech, int amongNTop) {
+        return inQueue(tech, amongNTop) + inProduction(tech);
     }
 
-    public static int inQueueOrUnfinished(UpgradeType type, int amongNTop) {
-        return inQueue(type, amongNTop) + inProduction(type);
+    public static int inQueueOrUnfinished(UpgradeType upgrade, int amongNTop) {
+        return inQueue(upgrade, amongNTop) + inProduction(upgrade);
     }
 
-    private static int inProduction(TechType type) {
-        for (AUnit building : Select.ourOfType(AUnitType.from(type.whatResearches())).list()) {
-            if (type.equals(building.whatIsResearching())) {
-                return 1;
-            }
+    private static int inProduction(TechType tech) {
+        for (AUnit building : Select.ourOfType(AUnitType.from(tech.whatResearches())).list()) {
+            if (tech.equals(building.whatIsResearching())) return 1;
         }
         return 0;
     }
@@ -98,42 +106,42 @@ public class Count {
     public static int inProduction(AUnitType type) {
         if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
             return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
-                    + Select.ourUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count()
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Sunken_Colony);
+                + Select.ourUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count()
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Sunken_Colony);
         }
         else if (type.equals(AUnitType.Zerg_Spore_Colony)) {
             return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
-                    + Select.ourUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Spore_Colony);
+                + Select.ourUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Spore_Colony);
         }
         else if (type.equals(AUnitType.Zerg_Creep_Colony)) {
             return Select.ourWithUnfinished().ofType(type).count()
-                    + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
-                    + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
+                + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+                + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
         }
         else if (type.isPrimaryBase()) {
             return Select.ourUnfinished().bases().count()
-                    + ConstructionRequests.countNotStartedOfType(type)
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Lair)
-                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Hive);
+                + ConstructionRequests.countNotStartedOfType(type)
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Lair)
+                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Hive);
         }
         else if (type.isBase() && !type.isPrimaryBase()) {
             return Select.ourUnfinished().ofType(type).count()
-                    + ConstructionRequests.countNotStartedOfType(type);
+                + ConstructionRequests.countNotStartedOfType(type);
         }
         else {
             return Select.ourUnfinished().ofType(type).count()
-                    + ConstructionRequests.countNotStartedOfType(type);
+                + ConstructionRequests.countNotStartedOfType(type);
         }
     }
 
     public static int existing(AUnitType type) {
         if (type.equals(AUnitType.Zerg_Creep_Colony)) {
             return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony)
-                    + Select.countOurOfType(AUnitType.Zerg_Creep_Colony)
-                    + Select.countOurOfType(AUnitType.Zerg_Spore_Colony);
+                + Select.countOurOfType(AUnitType.Zerg_Creep_Colony)
+                + Select.countOurOfType(AUnitType.Zerg_Spore_Colony);
         }
         else if (type.isPrimaryBase()) {
             return Select.ourOfType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive).count();
@@ -147,13 +155,19 @@ public class Count {
     }
 
     public static int existingOrPlannedBuildingsNear(AUnitType type, double radius, HasPosition position) {
-        assert type.isBuilding();
+        assert type.isABuilding();
 
-        return ourOfTypeWithUnfinished(type, position, radius) + plannedBuildingsNear(type, radius, position);
+        return ourWithUnfinished(type, radius, position) + plannedBuildingsNear(type, radius, position);
+    }
+
+    public static int existingOrUnfinishedBuildingsNear(AUnitType type, double radius, HasPosition position) {
+        assert type.isABuilding();
+
+        return ourWithUnfinished(type, radius, position);
     }
 
     public static int plannedBuildingsNear(AUnitType type, double radius, HasPosition position) {
-        assert type.isBuilding();
+        assert type.isABuilding();
 
         return ConstructionRequests.countNotStartedOfTypeInRadius(type, radius, position);
     }
@@ -162,12 +176,16 @@ public class Count {
 //        return Select.ourOfType(type).count() + ProductionQueue.countInQueue(type, 6);
 //    }
 
-    public static int ourOfTypeWithUnfinished(AUnitType type, HasPosition near, double radius) {
+    public static int ourWithUnfinished(AUnitType type, double radius, HasPosition near) {
         return Select.ourWithUnfinishedOfType(type).inRadius(radius, near).count();
     }
 
-    public static int ourOfTypeWithUnfinished(AUnitType type) {
+    public static int ourWithUnfinished(AUnitType type) {
         return Select.countOurOfTypeWithUnfinished(type);
+    }
+
+    public static int ourUnfinishedOfType(AUnitType type) {
+        return Select.countOurUnfinishedOfType(type);
     }
 
     public static int ourOfTypeUnfinished(AUnitType type) {
@@ -176,9 +194,9 @@ public class Count {
 
     public static int workers() {
         return cache.get(
-                "workers",
-                5,
-                () -> Select.ourWorkers().count()
+            "workers",
+            5,
+            () -> Select.ourWorkers().count()
         );
     }
 
@@ -208,22 +226,30 @@ public class Count {
 
     public static int bases() {
         return cache.get(
-                "bases",
-                0,
-                () -> Select.ourBases().count()
+            "bases",
+            0,
+            () -> Select.ourBases().count()
         );
+    }
+
+    public static int bunkersWithUnfinished() {
+        return Select.ourWithUnfinished().bunkers().count();
     }
 
     public static int basesWithUnfinished() {
         return Select.ourWithUnfinished().bases().count();
     }
 
+    public static int basesWithPlanned() {
+        return basesWithUnfinished() + withPlanned(AtlantisRaceConfig.BASE);
+    }
+
     public static int tanks() {
         return cache.get(
             "tanks",
-            1,
-            () -> ofType(AUnitType.Terran_Siege_Tank_Siege_Mode)
-                + ofType(AUnitType.Terran_Siege_Tank_Tank_Mode)
+            7,
+//            () -> ofType(AUnitType.Terran_Siege_Tank_Siege_Mode) + ofType(AUnitType.Terran_Siege_Tank_Tank_Mode)
+            () -> Select.ourTanks().size()
         );
     }
 
@@ -251,8 +277,16 @@ public class Count {
         return ofType(AUnitType.Zerg_Larva);
     }
 
+    public static boolean larvas(int minLarvas) {
+        return larvas() >= minLarvas;
+    }
+
     public static int turrets() {
         return ofType(AUnitType.Terran_Missile_Turret);
+    }
+
+    public static int wraiths() {
+        return ofType(AUnitType.Terran_Wraith);
     }
 
     public static int ourStrictlyAntiAir() {
@@ -291,6 +325,10 @@ public class Count {
         return Select.countOurOfType(AUnitType.Protoss_Photon_Cannon);
     }
 
+    public static int cannonsWithUnfinished() {
+        return Select.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon).count();
+    }
+
     public static int sunkens() {
         return Select.countOurOfType(AUnitType.Zerg_Sunken_Colony);
     }
@@ -315,7 +353,39 @@ public class Count {
         return Count.ofType(AUnitType.Protoss_Observer);
     }
 
-//    public static int () {
-//        return ofType(AUnitType.);
-//    }
+    public static boolean notBeingProduced(AUnitType type) {
+        return inProductionOrInQueue(type) == 0;
+    }
+
+    public static boolean beingProduced(AUnitType type) {
+        return inProductionOrInQueue(type) > 0;
+    }
+
+    public static int freeFactories() {
+        return ofTypeFree(AUnitType.Terran_Factory);
+    }
+
+    public static int freeStarports() {
+        return ofTypeFree(AUnitType.Terran_Starport);
+    }
+
+    public static int freeBarracks() {
+        return ofTypeFree(AUnitType.Terran_Barracks);
+    }
+
+    public static int freeGateways() {
+        return ofTypeFree(AUnitType.Protoss_Gateway);
+    }
+
+    public static int gateways() {
+        return ofType(AUnitType.Protoss_Gateway);
+    }
+
+    public static int gatewaysWithUnfinished() {
+        return ourWithUnfinished(AUnitType.Protoss_Gateway);
+    }
+
+    public static int zealotsWithUnfinished() {
+        return ourWithUnfinished(AUnitType.Protoss_Zealot);
+    }
 }

@@ -1,11 +1,12 @@
 package atlantis.production.requests;
 
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
@@ -18,10 +19,10 @@ public class ADetectorRequest {
     public static void requestDetectorImmediately(APosition where) {
         AUnitType detectorBuilding = null;
         if (We.terran()) {
-            detectorBuilding = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_AIR;
+            detectorBuilding = AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_AIR;
         }
         else if (We.protoss()) {
-            detectorBuilding = AtlantisConfig.DEFENSIVE_BUILDING_ANTI_LAND;
+            detectorBuilding = AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND;
         }
         else {
             // Zerg has Overlords, they should be handling this situation
@@ -57,14 +58,15 @@ public class ADetectorRequest {
     }
 
     private static void requestDetectorConstruction(AUnitType detectorBuilding) {
-        int detectors = ConstructionRequests.countExistingAndNotFinished(detectorBuilding);
-//        System.out.println("detectors = " + detectors);
+        int existing = Count.existingOrInProductionOrInQueue(detectorBuilding);
+        if (existing >= 2) {
+            return;
+        }
 
         // === Ensure parent exists ========================================
 
         int requiredParents = ConstructionRequests.countExistingAndNotFinished(detectorBuilding.whatIsRequired());
         if (requiredParents == 0) {
-//            System.out.println("Detector dependency requested: " + detectorBuilding.getWhatIsRequired().name());
             AddToQueue.withTopPriority(detectorBuilding.whatIsRequired());
             return;
         }
@@ -73,11 +75,10 @@ public class ADetectorRequest {
 //
         for (AUnit base : Select.ourBases().list()) {
             int numberOfDetectorsNearBase = ConstructionRequests.countExistingAndPlannedInRadius(
-                    detectorBuilding, 15, base.position()
+                detectorBuilding, 15, base.position()
             );
 
             for (int i = 0; i <= 2 - numberOfDetectorsNearBase; i++) {
-//                System.out.println("Detector construction (" + detectorBuilding.name() + ") requested!");
                 AddToQueue.withTopPriority(detectorBuilding, base.position());
             }
         }

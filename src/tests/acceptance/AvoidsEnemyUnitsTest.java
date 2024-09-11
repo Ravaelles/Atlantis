@@ -5,7 +5,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertTrue;
 
@@ -19,26 +19,33 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
      */
     @Test
     public void marinesAreAvoidingZealots() {
-        createWorld(100, () -> {
+        createWorld(70, () -> {
+//            Select.our().print();
+//            Select.enemy().print();
+
             FakeUnit unit = ourFirst;
             unit.setSquad(Alpha.get());
-            (new CombatUnitManager(unit)).handle();
+            (new CombatUnitManager(unit)).invokeFrom(this);
 
             double distToZealot = distToNearestEnemy(unit);
-            boolean isSafe = distToZealot > 1.7;
-            boolean alwaysShow = false;
-//            boolean alwaysShow = true;
+            boolean isSafe = distToZealot > 1.1;
+//            boolean alwaysShow = false;
+            boolean alwaysShow = true;
 
             if (!isSafe || alwaysShow) {
-                System.out.println(A.now() + " -       " + unit.tooltip()
-                    + "\n   " + unit.manager() + " / " + unit.lastCommand()
+                System.err.println(A.now()
+                    + " -       " + unit.tooltip()
+                    + "\n   Manager : " + unit.manager()
+                    + "\n   Managers: " + unit.managerLogs().toString()
+                    + "\n   Command : " + unit.lastCommand()
+                    + "\n   tooltip: " + unit.tooltip() + " / " + unit.lastCommand()
                     + ",\n   tx:" + unit.txWithPrecision() + ", dist_to_zealot:" + A.dist(distToZealot)
                     + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
                     + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
                     + "\n   marine eval = " + unit.combatEvalRelative()
                     + "\n   zealot eval = " + zealot.combatEvalRelative()
                 );
-                System.out.println("_______________________________________");
+                System.err.println("_______________________________________");
             }
 
             assertTrue(isSafe);
@@ -55,7 +62,7 @@ public class AvoidsEnemyUnitsTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateEnemies() {
         return fakeEnemies(
-            zealot = fake(AUnitType.Protoss_Zealot, 15),
+            zealot = fake(AUnitType.Protoss_Zealot, 14),
             fake(AUnitType.Protoss_Zealot, 18)
         );
     }

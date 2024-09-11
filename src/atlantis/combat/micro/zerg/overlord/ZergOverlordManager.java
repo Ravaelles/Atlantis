@@ -7,7 +7,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
 public class ZergOverlordManager extends Manager {
-
     public ZergOverlordManager(AUnit unit) {
         super(unit);
     }
@@ -19,7 +18,7 @@ public class ZergOverlordManager extends Manager {
 
     @Override
     protected Class<? extends Manager>[] managers() {
-        return new Class[] {
+        return new Class[]{
             AvoidEnemies.class,
             StackedUnitsManager.class,
             WeDontKnowEnemyLocation.class,

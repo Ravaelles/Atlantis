@@ -43,23 +43,3 @@ Probe x2
 20 - Zealot
 24 - Zealot
 26 - MISSION=ATTACK
-Cybernetics Core
-Assimilator
-Zealot
-Dragoon
-Gateway
-Dragoon
-Dragoon
-Dragoon
-Dragoon Range
-43 - Observatory
-44 - Reaver
-47 - Observer
-48 - Robotics Facility
-50 - MISSION=ATTACK
-52 - Robotics Support Bay
-55 - Shuttle
-58 - Reaver
-60 - Nexus
-Observer
-Zealot

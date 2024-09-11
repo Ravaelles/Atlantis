@@ -13,9 +13,7 @@ public class MissionAttackVsCombatBuildings extends HasUnit {
 
     public boolean allowsToAttackCombatBuildings(AUnit combatBuilding) {
         if (unit.isTerran()) {
-            if (forbiddenForTerranInfantry(combatBuilding)) {
-                return false;
-            }
+            if (forbiddenForTerranInfantry(combatBuilding)) return false;
 
             // Tanks always allowed
             if (unit.isTank() && unit.distToMoreThan(combatBuilding, 7.9)) {
@@ -24,13 +22,9 @@ public class MissionAttackVsCombatBuildings extends HasUnit {
         }
 
         // Air units
-        if (unit.isAir() && combatBuilding.isSunken()) {
-            return true;
-        }
+        if (unit.isAir() && combatBuilding.isSunken()) return true;
 
-        if (unit.friendsInRadiusCount(5) <= 8) {
-            return false;
-        }
+        if (unit.friendsInRadiusCount(5) <= 8) return false;
 
         // Standard infantry attack
 //        boolean notStrongEnough = Select.ourCombatUnits().inRadius(6, unit).atMost(8);
@@ -48,26 +42,16 @@ public class MissionAttackVsCombatBuildings extends HasUnit {
     }
 
     public boolean forbiddenForTerranInfantry(AUnit combatBuilding) {
-        if (!unit.isTerranInfantry()) {
-            return false;
-        }
+        if (!unit.isTerranInfantry()) return false;
 
-        if (unit.hp() <= 35) {
-            return true;
-        }
+        if (unit.hp() <= 35) return true;
 
         double distTo = unit.distTo(combatBuilding);
-        if (distTo > 8.2) {
-            return false;
-        }
+        if (distTo > 8.2) return false;
 
-        if (unit.friendsInRadiusCount(1.5) <= 0 || unit.friendsInRadiusCount(4) <= 6) {
-            return true;
-        }
+        if (unit.friendsInRadiusCount(1.5) <= 0 || unit.friendsInRadiusCount(4) <= 6) return true;
 
-        if (distTo >= 5 && unit.combatEvalRelative() <= 1.2) {
-            return true;
-        }
+        if (distTo >= 5 && unit.combatEvalRelative() <= 1.2) return true;
 
         return false;
     }

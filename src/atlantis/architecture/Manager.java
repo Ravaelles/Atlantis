@@ -1,6 +1,8 @@
 package atlantis.architecture;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.util.log.ErrorLog;
 
 /**
  * Unit manager. Can contain submanagers (see managers() method).
@@ -8,7 +10,7 @@ import atlantis.units.AUnit;
  * If a manager return non-null value in handle(), it will prevent execution of
  * other managers in this frame.
  */
-public abstract class Manager extends BaseAbstractManager {
+public abstract class Manager extends BaseManager {
     public Manager(AUnit unit) {
         super(unit);
     }
@@ -18,6 +20,7 @@ public abstract class Manager extends BaseAbstractManager {
     /**
      * All sub-managers. Order matters.
      */
+    @SuppressWarnings("unchecked")
     protected Class<? extends Manager>[] managers() {
         return new Class[]{};
     }
@@ -34,30 +37,102 @@ public abstract class Manager extends BaseAbstractManager {
         return true;
     }
 
+    private Manager invokeFromParent(Object parent) {
+        if (!applies()) return null;
+
+//        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
+//            System.err.println("@ " + A.now() + " - " + this.getClass() + " - ");
+//        }
+
+        if (A.now() > parentsLastTimestamp) parents.clear();
+        this.parentsLastTimestamp = A.now();
+
+        if (parent != null) this.parents.add(parentToString(parent));
+        else ErrorLog.printErrorOnce("Parent is null for " + this.getClass().getSimpleName() + "!");
+
+        Manager manager = handle();
+        if (manager != null) {
+            return manager;
+        }
+
+        return handleSubmanagers();
+    }
+
+    public Manager invokeFrom(Object parent) {
+        return invokeFromParent(parentToString(parent));
+    }
+
+    public boolean invokedFrom(Object parent) {
+        return invokeFromParent(parentToString(parent)) != null;
+    }
+
+    private String parentToString(Object parent) {
+        if (parent instanceof String) return (String) parent;
+        if (parent instanceof Class) return ((Class) parent).getSimpleName();
+
+        return parent != null
+            ? parent.getClass().getSimpleName()
+            : null;
+    }
+
+//    public Manager invoke(Commander parent) {
+//        return invokeFromParent(parent != null ? parent.getClass() : null);
+//    }
+
+    public Manager forceHandle() {
+        return handle();
+    }
+
     /**
      * @return TRUE if the manager was applied, an action was taken, meaning further execution should be stopped.
      * FALSE if the manager was not applied. Further execution down the stack should be proceeded.
      */
-    public Manager handle() {
-        if (!applies()) {
-            return null;
-        }
+    protected Manager handle() {
+//        if (!applies()) return null;
 
-        Manager submanager = handleSubmanagers();
+//        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
+//            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " HANDLED = " + this.getClass().getSimpleName());
+//        }
 
-        return submanager;
+        return handleSubmanagers();
     }
 
     // =========================================================
 
-    public Manager handleSubmanagers() {
+    protected Manager handleSubmanagers() {
         for (Manager submanager : submanagerObjects) {
-            if (submanager.applies() && submanager.handle() != null) {
+//            if (this.getClass().getSimpleName().contains("Advance"))
+//                System.out.println("Adv - " + submanager.getClass().getSimpleName());
+
+            if (submanager.invokeFromParent(this) != null) {
                 return submanager;
             }
         }
 
         return null;
+    }
+
+    public Manager anySubmanagerApplies() {
+
+        // Has submanagers
+        if (submanagerObjects.length > 0) {
+            for (Manager submanager : submanagerObjects) {
+                if (submanager.applies()) {
+                    if (submanager.hasSubmanagers()) {
+                        return submanager.anySubmanagerApplies();
+                    }
+                    //                System.err.println("Dragoon B = " + submanager);
+                    return submanager;
+                }
+            }
+
+            return null;
+        }
+
+        // No submanagers
+        else {
+            return applies() ? this : null;
+        }
     }
 
     // =========================================================
@@ -69,29 +144,27 @@ public abstract class Manager extends BaseAbstractManager {
         return usedManager(manager, null);
     }
 
-    public Manager fallbackToUseManager(Class<? extends Manager> classObject) {
-        Manager manager = instantiateManager(classObject);
-
-        return manager.handle();
-    }
-
     /**
      * Indicates this Manager was just used by the unit.
      */
     public Manager usedManager(Manager manager, String message) {
+        if (manager == null) return null;
+
+//        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
+//            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " USED = " + this.getClass().getSimpleName());
+//        }
+
         if (message != null && !message.isEmpty()) {
             unit.setManagerUsed(manager, message);
         }
         else {
             unit.setManagerUsed(manager);
         }
+
         return manager;
     }
 
-    /**
-     * Auxiliary method indicating that the same Manager should not interrupt the actions from previous frames.
-     */
-    public Manager continueUsingLastManager() {
-        return unit.manager();
+    public AUnit unit() {
+        return unit;
     }
 }

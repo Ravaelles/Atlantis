@@ -8,7 +8,6 @@ import atlantis.units.select.Count;
  * Beta is battle squad that ALWAYS DEFENDS the main base and natural.
  */
 public class Beta extends Squad {
-
     protected static Beta beta = null;
 
     private Beta() {
@@ -17,9 +16,7 @@ public class Beta extends Squad {
     }
 
     public static Beta get() {
-        if (beta == null) {
-            beta = new Beta();
-        }
+        if (beta == null) beta = new Beta();
 
         return beta;
     }
@@ -29,8 +26,8 @@ public class Beta extends Squad {
     @Override
     public int expectedUnits() {
         return Math.max(
-                1,
-                Math.min(4, Count.ourCombatUnits() / 13)
+            1,
+            Math.min(3, (int) (Count.ourCombatUnits() / 9.5))
         );
     }
 
@@ -38,4 +35,8 @@ public class Beta extends Squad {
         return get().size();
     }
 
+    @Override
+    public void handleReinforcements() {
+        (new BetaReinforcements(this)).handleReinforcements();
+    }
 }

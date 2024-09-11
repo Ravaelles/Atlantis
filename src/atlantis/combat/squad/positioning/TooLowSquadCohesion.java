@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -13,11 +14,15 @@ public class TooLowSquadCohesion extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
+        if (A.seconds() % 8 <= 3) return false;
+
         return unit.isGroundUnit() || (unit.isAir() && unit.isMutalisk());
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (isCohesionTooLow()) {
             improveCohesion();
             return usedManager(this);
@@ -31,7 +36,7 @@ public class TooLowSquadCohesion extends Manager {
      * We want to make sure that at least N percent of units are inside X radius of squad center.
      */
     public boolean isCohesionTooLow() {
-//        System.out.println(
+
 //            A.now() + " " + unit
 //                + " // okay="
 //                + isSquadCohesionOkay()
@@ -40,45 +45,34 @@ public class TooLowSquadCohesion extends Manager {
 //                + " // outs="
 //                + unit.outsideSquadRadius()
 //        );
-        if (unit.isVulture() || unit.isAir()) {
-            return false;
-        }
+        if (unit.isVulture() || unit.isAir()) return false;
 
 //        unit.setTooltipTactical(unit.squad().cohesionPercent() + "%/" + A.trueFalse(unit.outsideSquadRadius()) + "/" + A.trueFalse(isSquadCohesionOkay()));
-        if (squad.isCohesionPercentOkay()) {
-            return false;
-        }
+        if (squad.isCohesionPercentOkay()) return false;
 
         // Too stacked for cohesion
         if (
-            (unit.friendsInRadius(2).count() >= 3 && unit.friendsInRadius(4).count() >= 8)
+            (unit.friendsInRadius(2).count() >= 3 && unit.friendsInRadius(4).count() >= 9)
                 || unit.friendsInRadius(7).count() >= 20
-        ) {
-            return false;
-        }
+        ) return false;
 
-        if (!We.terran() && unit.enemiesNear().units().onlyMelee()) {
-            return false;
-        }
+        if (!We.terran() && unit.enemiesNear().units().onlyMelee()) return false;
 
 //        double maxDist = preferredDistToSquadCenter(unit.squad());
 //        unit.setTooltipTactical(A.digit(unit.distToSquadCenter()) + " / " + A.digit(unit.squadRadius()));
-        if (unit.outsideSquadRadius() && unit.meleeEnemiesNearCount(4) == 0) {
-            return true;
-        }
+        if (unit.outsideSquadRadius() && unit.meleeEnemiesNearCount(4) == 0) return true;
 
         return false;
     }
 
     private boolean improveCohesion() {
         String t = "Cohesion";
-        APosition goTo = unit.squadLeader()
-            .translateTilesTowards(2, unit.position());
+//        APosition goTo = unit.squadLeader().position();
+        APosition goTo = squad.center();
+//            .translateTilesTowards(2, unit.position());
 //                .makeFreeOfAnyGroundUnits(5, unit.type().dimensionLeft() * 2, unit);
 
-        if (goTo == null) {
-            return false;
-        }
+        if (goTo == null) return false;
 
         unit.addLog(t);
 

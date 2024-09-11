@@ -15,7 +15,7 @@ public class StayAtHome extends Manager {
         return unit.isOverlord();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
         AUnit main = Select.main();
         if (main != null && unit.distToMoreThan(main, 8)) {
             unit.move(main, Actions.MOVE_FOCUS, "Home", true);

@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid.special;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 
 public class AvoidReavers extends Manager {
     public AvoidReavers(AUnit unit) {
@@ -11,28 +12,48 @@ public class AvoidReavers extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isGroundUnit();
+        return unit.isGroundUnit()
+            && !unit.isABuilding()
+            && !unit.isTank()
+            && !unit.isZealot()
+            && !unit.isDragoon()
+            && !unit.isMissionDefend();
     }
 
     @Override
-    public Manager handle() {
-        if (unit.isAir() || unit.isABuilding()) {
-            return null;
-        }
-
-        AUnit reaver = unit.enemiesNear().reavers().effUndetected().inRadius(9.4, unit).nearestTo(unit);
+    protected Manager handle() {
+        AUnit reaver = unit.enemiesNear().reavers().inRadius(10.2 + distBonus(), unit).nearestTo(unit);
         if (reaver == null) {
             return null;
         }
 
-        Selection friendsNear = unit.friendsNear().combatUnits();
-        if (
-            friendsNear.inRadius(4, unit).atLeast(5) && friendsNear.inRadius(6, unit).atLeast(8)
-        ) {
-            return null;
+        if (enoughForcesNotToRunFromReaver(reaver)) return null;
+
+        if (unit.isCombatUnit()) {
+            Selection friendsNear = unit.friendsNear().combatUnits();
+            if (
+                friendsNear.inRadius(4, unit).atLeast(5) && friendsNear.inRadius(6, unit).atLeast(8)
+            ) {
+                return null;
+            }
         }
 
         unit.runningManager().runFromAndNotifyOthersToMove(reaver, "REAVER!");
         return usedManager(this);
+    }
+
+    private double distBonus() {
+        return unit.isWorker() ? 1.5 : 0;
+    }
+
+    private boolean enoughForcesNotToRunFromReaver(AUnit reaver) {
+        int MIN_FORCES_TO_FIGHT = We.terran() ? 11 : (We.protoss() ? 6 : 9);
+
+        return reaver
+            .enemiesNear()
+            .combatUnits()
+            .havingAntiGroundWeapon()
+            .inRadius(16, unit)
+            .atLeast(MIN_FORCES_TO_FIGHT);
     }
 }

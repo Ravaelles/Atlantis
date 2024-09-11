@@ -23,7 +23,7 @@ public class WeKnowEnemyLocation extends Manager {
         };
     }
 
-//    public Manager handle() {
+//    protected Manager handle() {
 //        if (applies()) {
 //            update();
 //            return usingManager(this);

@@ -32,7 +32,7 @@ https://liquipedia.net/starcraft/9_Pool_(vs._Zerg)
 
 @ - Name - Modifier
 9 - Spawning Pool
-9 - Extractor
+//9 - Extractor
 8 - Overlord
 9 - Zergling
 9 - Zergling

@@ -2,22 +2,22 @@ package atlantis.units.select;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.bullets.DeadMan;
+import atlantis.map.path.ClosestToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
+import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
-import atlantis.util.Callback;
-import atlantis.util.cache.CachePathKey;
+import atlantis.util.cache.CacheKey;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Selection extends BaseSelection {
-
     protected Selection(Collection<? extends AUnit> unitsData, String initCachePath) {
         super(unitsData, initCachePath);
     }
@@ -30,7 +30,7 @@ public class Selection extends BaseSelection {
     public Selection ofType(AUnitType... types) {
         return cloneByRemovingIf(
             (unit -> !typeMatches(unit, types)),
-            CachePathKey.get(types)
+            CacheKey.create(types)
         );
     }
 
@@ -77,11 +77,25 @@ public class Selection extends BaseSelection {
      */
     public Selection inRadius(double maxDist, AUnit unit) {
         return Select.cache.get(
-            addToCachePath("inRadius:" + maxDist + ":" + unit.idWithHash()),
+            addToCachePath("inRadiusA:" + maxDist + ":" + unit.idWithHash()),
             0,
             () -> cloneByRemovingIf(
                 (u -> !u.hasPosition() || u.distTo(unit) > maxDist),
-                maxDist + ":" + unit.idWithHash()
+                "inRadiusA:" + maxDist + ":" + unit.idWithHash()
+            )
+        );
+    }
+
+    /**
+     * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
+     */
+    public Selection inRadius(double maxDist, HasPosition position) {
+        return Select.cache.get(
+            addToCachePath("inRadiusB:" + maxDist + ":" + position),
+            0,
+            () -> cloneByRemovingIf(
+                (u -> u.distTo(position) > maxDist),
+                "inRadiusB:" + maxDist + ":" + position
             )
         );
     }
@@ -97,16 +111,24 @@ public class Selection extends BaseSelection {
         );
     }
 
-    /**
-     * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
-     */
-    public Selection inRadius(double maxDist, HasPosition unitOrPosition) {
+    public Selection notInRadius(double minDist, HasPosition position) {
         return Select.cache.get(
-            addToCachePath("inRadius:" + maxDist + ":" + unitOrPosition),
+            addToCachePath("notInRadius:" + minDist + ":" + position),
             0,
             () -> cloneByRemovingIf(
-                (u -> u.distTo(unitOrPosition) > maxDist),
-                maxDist + ":" + unitOrPosition
+                (u -> u.distTo(position) < minDist),
+                "notInRadius:" + minDist + ":" + position
+            )
+        );
+    }
+
+    public Selection inRadius(double maxDist, Selection selectionOfUnits) {
+        return Select.cache.get(
+            addToCachePath(CacheKey.create("inRadiusSelection", maxDist, selectionOfUnits)),
+            1,
+            () -> cloneByRemovingIf(
+                (u -> selectionOfUnits.nearestTo(u).distTo(u) > maxDist),
+                "selection:" + maxDist + ":" + CacheKey.create(selectionOfUnits)
             )
         );
     }
@@ -177,9 +199,7 @@ public class Selection extends BaseSelection {
     }
 
     public Selection limit(int limit) {
-        if (data.isEmpty()) {
-            return this;
-        }
+        if (data.isEmpty()) return this;
 
         List<AUnit> newData = new ArrayList<>();
         int max = Math.min(limit, data.size());
@@ -195,7 +215,7 @@ public class Selection extends BaseSelection {
      */
     public Selection visibleOnMap() {
         return cloneByRemovingIf(
-            (unit -> !unit.isVisibleUnitOnMap()),
+            (unit -> !unit.isVisibleUnitOnMap() || unit instanceof AbstractFoggedUnit),
             "visibleOnMap"
         );
     }
@@ -254,8 +274,15 @@ public class Selection extends BaseSelection {
 
     public Selection mutalisks() {
         return cloneByRemovingIf(
-            (unit -> !unit.is(AUnitType.Zerg_Mutalisk)),
+            (unit -> !unit.isMutalisk()),
             "mutalisks"
+        );
+    }
+
+    public Selection marines() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isMarine()),
+            "marines"
         );
     }
 
@@ -263,6 +290,27 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(
             (unit -> !unit.is(AUnitType.Zerg_Hydralisk)),
             "hydralisks"
+        );
+    }
+
+    public Selection dragoons() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Protoss_Dragoon)),
+            "dragoons"
+        );
+    }
+
+    public Selection zealots() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Protoss_Zealot)),
+            "zealots"
+        );
+    }
+
+    public Selection zerglings() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Zerg_Zergling)),
+            "zerglings"
         );
     }
 
@@ -274,10 +322,11 @@ public class Selection extends BaseSelection {
     }
 
     public Selection tanks() {
-        return cloneByRemovingIf(unit -> !unit.is(
-            AUnitType.Terran_Siege_Tank_Siege_Mode,
-            AUnitType.Terran_Siege_Tank_Tank_Mode
-        ), "tanks");
+        return cloneByRemovingIf(unit -> !unit.isTank(), "tanks");
+    }
+
+    public Selection nonTanks() {
+        return cloneByRemovingIf(unit -> unit.isTank(), "nonTanks");
     }
 
     public Selection groundUnits() {
@@ -294,10 +343,10 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection nonBuildingsOrCombatBuildings() {
+    public Selection nonBuildingsButAllowCombatBuildings() {
         return cloneByRemovingIf(
             (unit -> unit.isABuilding() && !unit.isCombatBuilding()),
-            "nonBuildingsOrCombatBuildings"
+            "nonBuildingsButAllowCombatBuildings"
         );
     }
 
@@ -327,6 +376,25 @@ public class Selection extends BaseSelection {
     public Selection notGatheringGas() {
         return cloneByRemovingIf(
             (unit -> unit.isGatheringGas()), "notGatheringGas"
+        );
+    }
+
+    public Selection notSpecialAction() {
+        return cloneByRemovingIf(
+            (unit -> unit.lastActionLessThanAgo(100, Actions.SPECIAL)), "notSpecialAction"
+        );
+    }
+
+    public Selection havingActiveManager(Class... activeManagers) {
+        return cloneByRemovingIf(
+            (unit -> !unit.isActiveManager(activeManagers)),
+            "havingActiveManager:" + CacheKey.toKey(activeManagers)
+        );
+    }
+
+    public Selection specialAction() {
+        return cloneByRemovingIf(
+            (unit -> unit.lastActionMoreThanAgo(100, Actions.SPECIAL)), "specialAction"
         );
     }
 
@@ -379,6 +447,18 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection notLifted() {
+        return cloneByRemovingIf(
+            (unit -> unit.isLifted()), "notLifted"
+        );
+    }
+
+    public Selection lifted() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isLifted()), "notLifted"
+        );
+    }
+
     /**
      * Selects melee units that is units which have attack range at most 1 tile.
      */
@@ -401,6 +481,11 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection crucialUnits() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isCrucialUnit()), "crucialUnits");
+    }
+
     public Selection criticallyWounded() {
         return cloneByRemovingIf(
             (unit -> unit.hp() >= 20), "criticallyWounded");
@@ -409,6 +494,13 @@ public class Selection extends BaseSelection {
     public Selection terranInfantryWithoutMedics() {
         return cloneByRemovingIf(
             (unit -> !unit.isTerranInfantryWithoutMedics()), "terranInfantryWithoutMedics"
+        );
+    }
+
+    public Selection tankSupport() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isTerranInfantryWithoutMedics() && !unit.isVulture() && !unit.isGoliath()),
+            "tankSupport"
         );
     }
 
@@ -438,7 +530,7 @@ public class Selection extends BaseSelection {
      */
     public Selection buildings() {
         return cloneByRemovingIf(
-            (unit -> !unit.type().isBuilding() && !unit.type().isAddon()), "buildings"
+            (unit -> !unit.type().isABuilding() && !unit.type().isAddon()), "buildings"
         );
     }
 
@@ -470,12 +562,35 @@ public class Selection extends BaseSelection {
         ).count();
     }
 
+    public Selection cloakable() {
+        return cloneByRemovingIf(u -> !u.type().is(
+            AUnitType.Protoss_Dark_Templar,
+            AUnitType.Zerg_Lurker
+        ), "cloakable");
+    }
+
+    public Selection notDeadMan() {
+        return cloneByRemovingIf(u -> DeadMan.isDeadMan(u), "notDeadMan");
+    }
+
     public Selection havingWeapon() {
         return cloneByRemovingIf(u -> !u.hasAnyWeapon(), "havingWeapon");
     }
 
+    public Selection havingAntiGroundWeapon() {
+        return cloneByRemovingIf(u -> !u.canAttackGroundUnits(), "havingAntiGroundWeapon");
+    }
+
     public Selection notHavingAntiAirWeapon() {
-        return cloneByRemovingIf(u -> !u.canAttackAirUnits(), "notHavingAntiAirWeapon");
+        return cloneByRemovingIf(u -> u.canAttackAirUnits(), "notHavingAntiAirWeapon");
+    }
+
+    public Selection havingAntiAirWeapon() {
+        return cloneByRemovingIf(u -> !u.canAttackAirUnits(), "havingAntiAirWeapon");
+    }
+
+    public Selection notPurelyAntiAir() {
+        return cloneByRemovingIf(u -> !u.isPurelyAntiAir(), "notPurelyAntiAir");
     }
 
     public int totalHp() {
@@ -502,14 +617,14 @@ public class Selection extends BaseSelection {
 
     public Selection combatBuildingsAntiLand() {
         return cloneByRemovingIf(
-            (unit -> unit.is(AUnitType.Protoss_Photon_Cannon, AUnitType.Terran_Bunker, AUnitType.Zerg_Sunken_Colony)),
+            (unit -> !unit.is(AUnitType.Protoss_Photon_Cannon, AUnitType.Terran_Bunker, AUnitType.Zerg_Sunken_Colony)),
             "combatBuildingsAntiLand"
         );
     }
 
     public Selection combatBuildingsAntiAir() {
         return cloneByRemovingIf(
-            (unit -> unit.is(
+            (unit -> !unit.is(
                 AUnitType.Protoss_Photon_Cannon,
                 AUnitType.Terran_Bunker,
                 AUnitType.Terran_Missile_Turret,
@@ -517,6 +632,10 @@ public class Selection extends BaseSelection {
             )),
             "combatBuildingsAntiAir"
         );
+    }
+
+    public Selection combatBuildingsAnti(AUnit unit) {
+        return unit.isGroundUnit() ? combatBuildingsAntiLand() : combatBuildingsAntiAir();
     }
 
     public Selection onlyCompleted() {
@@ -548,6 +667,10 @@ public class Selection extends BaseSelection {
         return units().onlyAir();
     }
 
+    public boolean onlyOfType(AUnitType type) {
+        return count() > 0 && count() == countOfType(type);
+    }
+
     public Selection burrowed() {
         return cloneByRemovingIf(
             (unit -> !unit.isBurrowed()), "burrowed"
@@ -571,6 +694,30 @@ public class Selection extends BaseSelection {
     public Selection notRepairing() {
         return cloneByRemovingIf(
             (unit -> unit.isRepairing() || RepairAssignments.isRepairerOfAnyKind(unit)), "notRepairing"
+        );
+    }
+
+    public Selection builders() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isBuilder()), "builders"
+        );
+    }
+
+    public Selection notProtectors() {
+        return cloneByRemovingIf(
+            (AUnit::isProtector), "notProtectors"
+        );
+    }
+
+    public Selection protectors() {
+        return cloneByRemovingIf(
+            (u -> !u.isProtector()), "protectors"
+        );
+    }
+
+    public Selection healthy() {
+        return cloneByRemovingIf(
+            (AUnit::isWounded), "healthy"
         );
     }
 
@@ -657,12 +804,24 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection withAddon() {
+        return cloneByRemovingIf(
+            (u -> !u.hasAddon()), "withAddon"
+        );
+    }
+
+    public Selection withoutAddon() {
+        return cloneByRemovingIf(
+            (u -> u.hasAddon()), "withoutAddon"
+        );
+    }
+
     /**
      * Selects these units which are not scouts.
      */
     public Selection notScout() {
         return cloneByRemovingIf(
-            (AUnit::isScout), "notScout");
+            (u -> u.isScout() || u.isFlyingScout()), "notScout");
     }
 
     /**
@@ -682,7 +841,7 @@ public class Selection extends BaseSelection {
 
     public Selection excludeTypes(AUnitType... types) {
         return cloneByRemovingIf(
-            (unit -> unit.is(types)), "excludeTypes:" + CachePathKey.get(types)
+            (unit -> unit.is(types)), "excludeTypes:" + CacheKey.create(types)
         );
     }
 
@@ -690,8 +849,23 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(AUnit::isMedic, "excludeMedics");
     }
 
-    public Selection excludeRunning() {
-        return cloneByRemovingIf(AUnit::isRunning, "excludeRunning");
+    public Selection excludeOverlords() {
+        return cloneByRemovingIf(AUnit::isOverlord, "excludeOverlords");
+    }
+
+    public Selection excludeMarines() {
+        return cloneByRemovingIf(AUnit::isMarine, "excludeMarines");
+    }
+
+    public Selection notRunning() {
+        return cloneByRemovingIf(AUnit::isRunning, "notRunning");
+    }
+
+    public Selection farFromAntiAirBuildings(double minDistToBuilding) {
+        return cloneByRemovingIf((unit -> {
+            AUnit nearestAntiAirBuilding = EnemyUnits.discovered().combatBuildingsAntiAir().nearestTo(unit);
+            return nearestAntiAirBuilding != null && nearestAntiAirBuilding.distTo(unit) < minDistToBuilding;
+        }), "farFromAntiAirBuildings:" + minDistToBuilding);
     }
 
     public Selection hasPathFrom(HasPosition fromPosition) {
@@ -744,17 +918,39 @@ public class Selection extends BaseSelection {
      * Returns closest unit to given <b>position</b> from all units in the current selection.
      */
     public AUnit nearestTo(HasPosition position) {
-        if (data.isEmpty() || position == null) {
-            return null;
-        }
-
-        if (data.size() == 1) {
-            return data.get(0);
-        }
+        if (data.isEmpty() || position == null) return null;
+        if (data.size() == 1) return data.get(0);
 
         sortDataByDistanceTo(position, true);
 
         return data.isEmpty() ? null : data.get(0);
+    }
+
+    public double distToNearest(HasPosition position) {
+        AUnit nearest = nearestTo(position);
+        if (nearest == null) return 9999;
+
+        return nearest.distTo(position);
+    }
+
+    public AUnit groundNearestTo(HasPosition position) {
+        if (data.isEmpty() || position == null) return null;
+
+        if (data.size() == 1) return data.get(0);
+
+        sortDataByGroundDistanceTo(position, true);
+
+        return data.isEmpty() ? null : data.get(0);
+    }
+
+    public boolean nearestToDistLess(HasPosition position, double maxDist) {
+        AUnit nearest = nearestTo(position);
+        return nearest != null && nearest.distTo(position) <= maxDist;
+    }
+
+    public boolean nearestToDistMore(HasPosition position, double maxDist) {
+        AUnit nearest = nearestTo(position);
+        return nearest != null && nearest.distTo(position) >= maxDist;
     }
 
     public AUnit mostDistantTo(HasPosition position) {
@@ -765,6 +961,18 @@ public class Selection extends BaseSelection {
         sortDataByDistanceTo(position, false);
 
         return data.isEmpty() ? null : (AUnit) data.get(0);
+    }
+
+    public AUnit mostDistantToBase() {
+        return mostDistantTo(Select.mainOrAnyBuilding());
+    }
+
+    public AUnit nearestToBase() {
+        return nearestTo(Select.mainOrAnyBuilding());
+    }
+
+    public AUnit closestToEnemyBase() {
+        return ClosestToEnemyBase.from(this);
     }
 
     /**
@@ -865,9 +1073,7 @@ public class Selection extends BaseSelection {
     public boolean areAllBusy() {
         for (Iterator<AUnit> it = (Iterator) data.iterator(); it.hasNext(); ) {
             AUnit unit = it.next();
-            if (!unit.isBusy()) {
-                return false;
-            }
+            if (!unit.isBusy()) return false;
         }
 
         return true;
@@ -879,18 +1085,21 @@ public class Selection extends BaseSelection {
      * @return all units except for the given one
      */
     public Selection exclude(AUnit unitToExclude) {
-//        if (unitToExclude != null) {
-//            data.remove(unitToExclude);
-//        }
+        if (unitToExclude == null) return new Selection(new ArrayList<>(data), null);
+
         List<AUnit> newData = new ArrayList<>(data);
         newData.remove(unitToExclude);
-        return new Selection(newData, null);
+        return new Selection(newData, "exclude:" + unitToExclude.id());
     }
 
     public Selection exclude(Collection unitsToExclude) {
         List<AUnit> newData = new ArrayList<>(data);
         newData.removeAll(unitsToExclude);
         return new Selection(newData, null);
+    }
+
+    public Selection exclude(Selection otherSelection) {
+        return exclude(otherSelection.list());
     }
 
     /**
@@ -937,16 +1146,16 @@ public class Selection extends BaseSelection {
         return data.size();
     }
 
-    public boolean atLeast(int min) {
+    public boolean atLeast(double min) {
         return data.size() >= min;
     }
 
-    public boolean atMost(int max) {
+    public boolean atMost(double max) {
         return data.size() <= max;
     }
 
     /**
-     * Returns true if there're no units that fullfilled all previous conditions.
+     * Returns true if there are no units that fullfilled all previous conditions.
      */
     public boolean isEmpty() {
         return data.size() == 0;
@@ -971,48 +1180,79 @@ public class Selection extends BaseSelection {
         return data.size();
     }
 
+    public List<AUnit> sortDataByGroundDistanceTo(final HasPosition position, final boolean nearestFirst) {
+//        if (position == null) {
+//            return null;
+//        }
+
+        if (data.size() != 1) {
+            Collections.sort(data, new Comparator<HasPosition>() {
+                @Override
+                public int compare(HasPosition p1, HasPosition p2) {
+                    if (!(p1 instanceof HasPosition)) {
+                        throw new RuntimeException("Invalid comparison: " + p1);
+                    }
+                    if (!(p2 instanceof HasPosition)) {
+                        throw new RuntimeException("Invalid comparison: " + p2);
+                    }
+
+                    double distance1 = p1.groundDist(position);
+                    double distance2 = p2.groundDist(position);
+
+                    return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
+                }
+            });
+        }
+
+        return data;
+    }
+
     public List<AUnit> sortDataByDistanceTo(final HasPosition position, final boolean nearestFirst) {
 //        if (position == null) {
 //            return null;
 //        }
 
-        Collections.sort(data, new Comparator<HasPosition>() {
-            @Override
-            public int compare(HasPosition p1, HasPosition p2) {
-                if (!(p1 instanceof HasPosition)) {
-                    throw new RuntimeException("Invalid comparison: " + p1);
-                }
-                if (!(p2 instanceof HasPosition)) {
-                    throw new RuntimeException("Invalid comparison: " + p2);
-                }
+        if (data.size() != 1) {
+            Collections.sort(data, new Comparator<HasPosition>() {
+                @Override
+                public int compare(HasPosition p1, HasPosition p2) {
+                    if (!(p1 instanceof HasPosition)) {
+                        throw new RuntimeException("Invalid comparison: " + p1);
+                    }
+                    if (!(p2 instanceof HasPosition)) {
+                        throw new RuntimeException("Invalid comparison: " + p2);
+                    }
 
-                double distance1 = p1.distTo(position);
-                double distance2 = p2.distTo(position);
+                    double distance1 = p1.distTo(position);
+                    double distance2 = p2.distTo(position);
 
-                return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
-            }
-        });
+                    return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
+                }
+            });
+        }
 
         return data;
     }
 
     public List<AUnit> sortDataByDistanceTo(final AUnit unit, final boolean nearestFirst) {
-        Collections.sort(data, new Comparator<AUnit>() {
-            @Override
-            public int compare(AUnit p1, AUnit p2) {
-                if (!(p1 instanceof HasPosition)) {
-                    throw new RuntimeException("Invalid comparison: " + p1);
-                }
-                if (!(p2 instanceof HasPosition)) {
-                    throw new RuntimeException("Invalid comparison: " + p2);
-                }
+        if (data.size() != 1) {
+            Collections.sort(data, new Comparator<AUnit>() {
+                @Override
+                public int compare(AUnit p1, AUnit p2) {
+                    if (!(p1 instanceof HasPosition)) {
+                        throw new RuntimeException("Invalid comparison: " + p1);
+                    }
+                    if (!(p2 instanceof HasPosition)) {
+                        throw new RuntimeException("Invalid comparison: " + p2);
+                    }
 
-                double distance1 = unit.distTo(p1);
-                double distance2 = unit.distTo(p2);
+                    double distance1 = unit.distTo(p1);
+                    double distance2 = unit.distTo(p2);
 
-                return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
-            }
-        });
+                    return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
+                }
+            });
+        }
 
         return data;
     }
@@ -1022,20 +1262,22 @@ public class Selection extends BaseSelection {
             return new Selection(new ArrayList<>(), "");
         }
 
-        data.sort(Comparator.comparingDouble(AUnit::hpPercent));
-
-        return this;
-    }
-
-    public Selection sortByIdAsc() {
-        if (data.isEmpty()) {
-            return new Selection(new ArrayList<>(), "");
+        if (data.size() != 1) {
+            data.sort(Comparator.comparingDouble(AUnit::hpPercent));
         }
 
-        data.sort(Comparator.comparingInt(AUnit::id));
-
         return this;
     }
+
+//    public Selection sortByIdAsc() {
+//        if (data.isEmpty()) {
+//            return new Selection(new ArrayList<>(), "");
+//        }
+//
+//        data.sort(Comparator.comparingInt(AUnit::id));
+//
+//        return this;
+//    }
 
     public APosition center() {
         return units().average();
@@ -1054,9 +1296,19 @@ public class Selection extends BaseSelection {
         System.out.println("=== " + (message != null ? message : currentCachePath) + " (" + size() + ") ===");
         for (AUnit unit : data) {
             System.out.println(unit.toString());
-//            System.out.println(unit.toString() + " / " + unit.getClass());
+
         }
         System.out.println();
         return this;
+    }
+
+    public String unitIds() {
+        StringBuilder result = new StringBuilder("ids(");
+
+        for (AUnit unit : list()) {
+            result.append(unit.id()).append(",");
+        }
+
+        return result.append(")").toString();
     }
 }

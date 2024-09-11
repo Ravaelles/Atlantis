@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class ATransportManager extends Manager {
 
-    private  Map<AUnit, AUnit> passengersToTransports = new HashMap<>();
-    private  Map<AUnit, AUnit> transportsToPassengers = new HashMap<>();
+    private Map<AUnit, AUnit> passengersToTransports = new HashMap<>();
+    private Map<AUnit, AUnit> transportsToPassengers = new HashMap<>();
 
     public ATransportManager(AUnit unit) {
         super(unit);
@@ -24,13 +24,13 @@ public class ATransportManager extends Manager {
 
     @Override
     protected Class<? extends Manager>[] managers() {
-        return new Class[] {
+        return new Class[]{
             TransportUnits.class,
         };
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         AUnit baby = babyToCarry();
         if (baby != null) {
             TransportUnits transportUnits = new TransportUnits(unit);
@@ -51,7 +51,7 @@ public class ATransportManager extends Manager {
 //        return AvoidEnemies.avoidEnemiesIfNeeded();
 //    }
 
-    private  AUnit babyToCarry() {
+    private AUnit babyToCarry() {
         if (hasTransportUnitAnyAssignment()) {
             return getUnitAssignedToTransport();
         }
@@ -60,9 +60,9 @@ public class ATransportManager extends Manager {
 //        }
 
         AUnit crucialBaby = Select.ourOfType(
-                AUnitType.Protoss_Reaver,
-                AUnitType.Terran_Siege_Tank_Tank_Mode,
-                AUnitType.Terran_Siege_Tank_Siege_Mode
+            AUnitType.Protoss_Reaver,
+            AUnitType.Terran_Siege_Tank_Tank_Mode,
+            AUnitType.Terran_Siege_Tank_Siege_Mode
         ).unloaded().inRadius(35, unit).randomWithSeed(unit.id());
 
         if (crucialBaby != null && !hasTransportAssigned(crucialBaby)) {
@@ -71,9 +71,9 @@ public class ATransportManager extends Manager {
         }
 
         crucialBaby = Select.ourOfType(
-                AUnitType.Protoss_Reaver,
-                AUnitType.Terran_Siege_Tank_Tank_Mode,
-                AUnitType.Terran_Siege_Tank_Siege_Mode
+            AUnitType.Protoss_Reaver,
+            AUnitType.Terran_Siege_Tank_Tank_Mode,
+            AUnitType.Terran_Siege_Tank_Siege_Mode
         ).unloaded().nearestTo(unit);
 
         if (crucialBaby != null && !hasTransportAssigned(crucialBaby)) {
@@ -84,12 +84,12 @@ public class ATransportManager extends Manager {
         return null;
     }
 
-    private  void makeAssignment(AUnit passenger) {
+    private void makeAssignment(AUnit passenger) {
         passengersToTransports.put(passenger, unit);
         transportsToPassengers.put(unit, passenger);
     }
 
-    public  boolean hasNearTransportAssigned(AUnit passenger) {
+    public boolean hasNearTransportAssigned(AUnit passenger) {
         if (hasTransportAssigned(passenger)) {
             return passenger.distToLessThan(getTransportAssignedToUnit(passenger), 3);
         }
@@ -97,24 +97,24 @@ public class ATransportManager extends Manager {
         return false;
     }
 
-    public  AUnit getTransportAssignedToUnit(AUnit passenger) {
+    public AUnit getTransportAssignedToUnit(AUnit passenger) {
         return passengersToTransports.get(passenger);
     }
 
-    private  boolean hasTransportAssigned(AUnit passenger) {
-//        System.out.println("A: " + passengersToTransports.containsKey(passenger));
+    private boolean hasTransportAssigned(AUnit passenger) {
+
         if (passengersToTransports.containsKey(passenger)) {
-//            System.out.println("B: " + passengersToTransports.get(passenger));
-//            System.out.println("C: " + passengersToTransports.get(passenger).isAlive());
+
+
         }
         return passengersToTransports.containsKey(passenger) && passengersToTransports.get(passenger).isAlive();
     }
 
-    private  AUnit getUnitAssignedToTransport() {
+    private AUnit getUnitAssignedToTransport() {
         return transportsToPassengers.get(unit);
     }
 
-    private  boolean hasTransportUnitAnyAssignment() {
+    private boolean hasTransportUnitAnyAssignment() {
         return transportsToPassengers.containsKey(unit) && transportsToPassengers.get(unit).isAlive();
     }
 

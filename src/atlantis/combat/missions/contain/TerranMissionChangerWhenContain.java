@@ -80,9 +80,7 @@ public class TerranMissionChangerWhenContain extends MissionChangerWhenContain {
     }
 
     protected static boolean killsBalanceSaysSo() {
-        if (AGame.timeSeconds() <= 400 && AGame.killsLossesResourceBalance() >= 900) {
-            return true;
-        }
+        if (AGame.timeSeconds() <= 400 && AGame.killsLossesResourceBalance() >= 900) return true;
 
         return AGame.timeSeconds() <= 700 && AGame.killsLossesResourceBalance() >= 1600;
     }

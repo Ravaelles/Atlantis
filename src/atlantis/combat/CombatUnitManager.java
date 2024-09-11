@@ -2,9 +2,9 @@ package atlantis.combat;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.managers.*;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.units.AUnit;
-import atlantis.units.SpecialUnitsManager;
+import atlantis.units.special.SpecialUnitsManager;
 
 public class CombatUnitManager extends Manager {
     public CombatUnitManager(AUnit unit) {
@@ -13,19 +13,18 @@ public class CombatUnitManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isCombatUnit();
+        return unit.isCombatUnit() && !unit.isABuilding();
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            SkipCombatManager.class,
+            AvoidSpellsAndMines.class,
             SpecialUnitsManager.class,
             CombatManagerTopPriority.class,
-//            ImproveCombatManagerPerformance.class,
+//            ImproveCombatPerformance.class,
             CombatManagerMediumPriority.class,
             CombatManagerLowPriority.class,
-//            AttackNearbyEnemies.class,
         };
     }
 

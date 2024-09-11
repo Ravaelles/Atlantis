@@ -1,29 +1,23 @@
 package atlantis.combat.running;
 
-import atlantis.debug.painter.APainter;
+import atlantis.combat.running.show_back.RunShowBackToEnemy;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
-import bwapi.Color;
 
 public class ARunningManager {
-
-    //    public static double MIN_DIST_TO_REGION_BOUNDARY = 1;
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
-    public static double NOTIFY_UNITS_MAKE_SPACE = 0.75;
-    public static double NOTIFY_UNITS_IN_RADIUS = 0.2;
 
 
     protected final AUnit unit;
     protected HasPosition runTo = null;
-    protected HasPosition runFrom = null;
+    protected AUnit runningFromUnit = null;
+    protected HasPosition runningFromPosition = null;
     protected boolean allowedToNotifyNearUnitsToMakeSpace;
 
     protected final RunShowBackToEnemy showBackToEnemy = new RunShowBackToEnemy(this);
@@ -40,7 +34,7 @@ public class ARunningManager {
     // =========================================================
 
     public boolean runFromAndNotifyOthersToMove(HasPosition runFrom, String tooltip) {
-        if (runFrom(runFrom, 1.0, Actions.RUN_ENEMY, true)) {
+        if (runFrom(runFrom, 1, Actions.RUN_ENEMY, true)) {
             unit.setTooltip(tooltip);
             return true;
         }
@@ -49,58 +43,49 @@ public class ARunningManager {
 
     //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
-        this.runFrom = runFrom;
+        if (unit.lastStartedRunningLessThanAgo(1)) return true;
+
+        if (runFrom instanceof AUnit) {
+            runningFromUnit = (AUnit) runFrom;
+            runningFromPosition = runFrom;
+        }
+        else {
+            runningFromUnit = null;
+            runningFromPosition = runFrom;
+        }
+
         this.allowedToNotifyNearUnitsToMakeSpace = allowedToNotifyNearUnitsToMakeSpace;
-
-        handleInvalidRunFromPosition(runFrom);
-
-//        if (handleOnlyCombatBuildingsAreDangerouslyClose()) return true;
-
-        if (handleContinueRunning()) return true;
+        verifyRunFromPosition(runFrom);
 
         // === Define run to position ==============================
 
-        runTo = adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(runFrom);
-        runTo = runPositionFinder.findBestPositionToRun(runFrom, dist);
+        runFrom = adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(runFrom);
+        runTo = runPositionFinder.findBestPositionToRun(runFrom, dist, action);
 
         // === Actual run order ====================================
 
-        if (runTo != null && unit.distTo(runTo) >= 0.001) {
+        if (runTo != null && unit.distTo(runTo.position()) >= 0.05) {
             dist = unit.distTo(runTo);
             unit.setTooltip("RunToDist(" + String.format("%.1f", dist) + ")", false);
             return makeUnitRun(action);
         }
 
-//        System.err.println("=== RUN ERROR =================");
+//        System.err.println(
+//            "=== RUN ERROR ================= run:"
+//                + (runTo != null ? runTo.toStringPixels() : "-")
+//                + " / unit:" + unit.position().toStringPixels()
+//        );
+
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
 //        System.err.println("Our count = " + Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
 //        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
 
-        unit.setTooltip("Cant run", false);
+        unit.addLog("CantRun");
         return false;
     }
 
-    private boolean handleContinueRunning() {
-        if (unit.isRunning()) {
-            if (unit.lastStartedRunningLessThanAgo(5)) {
-//                System.out.println("@ " + A.now() + " - StartedRunning " + unit.idWithHash() + " / " + unit.lastStartedRunningAgo());
-                return true;
-            }
-
-            if (
-                unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_IN_ANY_DIRECTION)
-                    || unit.lastActionLessThanAgo(8, Actions.RUN_IN_ANY_DIRECTION)
-            ) {
-//                System.err.println("@ " + A.now() + " - " + unit);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void handleInvalidRunFromPosition(HasPosition runAwayFrom) {
+    private void verifyRunFromPosition(HasPosition runAwayFrom) {
         if (runAwayFrom == null || runAwayFrom.position() == null) {
             System.err.println("Null unit to run from");
             stopRunning();
@@ -109,11 +94,9 @@ public class ARunningManager {
     }
 
     private HasPosition adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(HasPosition runAwayFrom) {
-        Selection friendsVeryNear = unit.friendsNear().inRadius(1.2, unit);
+        Selection friendsVeryNear = unit.friendsNear().inRadius(1.4, unit);
         if (friendsVeryNear.size() == 1) {
-//            System.out.println("runAwayFrom = " + runAwayFrom);
-//            System.out.println("and now = " + runAwayFrom.translatePercentTowards(20, friendsVeryNear.first()));
-            return runAwayFrom.translatePercentTowards(35, friendsVeryNear.first());
+            return runAwayFrom.translatePercentTowards(20, friendsVeryNear.first());
         }
 
         return runAwayFrom;
@@ -122,68 +105,15 @@ public class ARunningManager {
     // =========================================================
 
     /**
-     * Tell other units that might be blocking our escape route to move.
-     */
-    private boolean notifyNearUnitsToMakeSpace() {
-        if (!allowedToNotifyNearUnitsToMakeSpace) {
-            return false;
-        }
-
-        if (We.protoss() && unit.friendsNear().inRadius(0.3, unit).atMost(1)) {
-            return false;
-        }
-
-        if (unit.isFlying() || unit.isLoaded()) {
-            return false;
-        }
-
-//        if (unit.enemiesNear().melee().inRadius(4, unit).empty()) {
-//            return false;
-//        }
-
-        Selection friendsTooClose = Select.ourRealUnits()
-            .exclude(unit)
-            .groundUnits()
-            .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
-
-        if (friendsTooClose.count() <= 1) {
-            return false;
-        }
-
-        for (AUnit otherUnit : friendsTooClose.list()) {
-            if (canBeNotifiedToMakeSpace(otherUnit)) {
-                AUnit runFrom = otherUnit.enemiesNear().nearestTo(otherUnit);
-                if (runFrom == null || !runFrom.hasPosition()) {
-                    continue;
-                }
-
-//                System.err.println(otherUnit + " // notified by " + unit + " (" + unit.hp() + ")");
-
-                otherUnit.runningManager().runFrom(runFrom, NOTIFY_UNITS_MAKE_SPACE, Actions.MOVE_SPACE, true);
-                APainter.paintCircleFilled(unit, 10, Color.Yellow);
-                APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
-                otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit), false);
-            }
-        }
-        return true;
-    }
-
-    private boolean canBeNotifiedToMakeSpace(AUnit unit) {
-        return !unit.isRunning() && !unit.type().isReaver() && unit.lastStartedRunningMoreThanAgo(3);
-    }
-
-    // =========================================================
-
-    /**
      * Returns true if given run position is traversable, land-connected and not very, very far
      */
-    public boolean isPossibleAndReasonablePosition(
+    public boolean isReasonablePositionToRun(
         AUnit unit, APosition position
     ) {
         return reasonableRunToPosition.isPossibleAndReasonablePosition(unit, position);
     }
 
-    public boolean isPossibleAndReasonablePosition(
+    public boolean isReasonablePositionToRun(
         AUnit unit, APosition position, boolean includeNearWalkability, String charForIsOk, String charForNotOk
     ) {
         return reasonableRunToPosition.isPossibleAndReasonablePosition(unit, position, includeNearWalkability, charForIsOk, charForNotOk);
@@ -238,9 +168,7 @@ public class ARunningManager {
 //    }
 
     private boolean makeUnitRun(Action action) {
-        if (unit == null) {
-            return false;
-        }
+        if (unit == null) return false;
 
         if (runTo == null) {
             stopRunning();
@@ -252,12 +180,15 @@ public class ARunningManager {
         // === Valid run position ==============================
 
         else {
-            // Update last time run order was issued
-            unit._lastStartedRunning = A.now();
-
             if (unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false)) {
+                // Update last time run order was issued
+//                if (!unit.isRunning()) unit._lastStartedRunning = A.now();
+                if (unit._lastStartedRunning <= unit._lastStoppedRunning) unit._lastStartedRunning = A.now();
+
                 // Make all other units very close to it run as well
-                notifyNearUnitsToMakeSpace();
+                if (allowedToNotifyNearUnitsToMakeSpace) {
+                    (new NotifyNearUnitsToMakeSpaceToRun(unit)).notifyNearUnits();
+                }
 
                 return true;
             }
@@ -273,7 +204,7 @@ public class ARunningManager {
     }
 
     public boolean isRunning() {
-        if (runTo != null && unit.distTo(runTo) >= 0.08) {
+        if (runTo != null && unit.distTo(runTo) >= 0.2) {
             return true;
 //            if (unit.lastStartedRunningAgo(3)) {
 //                return true;
@@ -289,6 +220,8 @@ public class ARunningManager {
 
     public void stopRunning() {
         runTo = null;
+        runningFromPosition = null;
+        runningFromUnit = null;
         unit._lastStoppedRunning = A.now();
     }
 
@@ -300,8 +233,27 @@ public class ARunningManager {
         return runTo;
     }
 
-    protected HasPosition setRunTo(HasPosition runTo) {
+    public AUnit runningFromUnit() {
+        return runningFromUnit;
+    }
+
+    public HasPosition runningFromPosition() {
+        return runningFromPosition;
+    }
+
+//    public HasPosition setRunFromUnit(HasPosition runFrom) {
+//        this.runFrom = runFrom;
+//        return runFrom;
+//    }
+//
+//    public HasPosition setRunFrom(HasPosition runFrom) {
+//        this.runFrom = runFrom;
+//        return runFrom;
+//    }
+
+    public HasPosition setRunTo(HasPosition runTo) {
         this.runTo = runTo;
+        unit._lastRunningPositionChange = A.fr;
         return runTo;
     }
 }

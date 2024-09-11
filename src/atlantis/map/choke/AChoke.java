@@ -4,6 +4,9 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
+import atlantis.util.Angle;
+import atlantis.util.Vector;
+import atlantis.util.Vectors;
 import bwapi.Pair;
 import bwapi.Position;
 import bwapi.WalkPosition;
@@ -16,18 +19,27 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 public class AChoke implements HasPosition {
-
     private static TreeMap<Integer, AChoke> all = new TreeMap<>();
 
     private ChokePoint choke;
     private Position[] sides;
     private APosition center;
+    private APosition pointA;
+    private APosition pointB;
     private double width;
     private List<APosition> perpendicular;
     private APosition firstPoint;
     private APosition lastPoint;
 
-    public static AChoke create(ChokePoint chokepoint) {
+    /**
+     * Index of this choke in path to enemy base, counting from our first building (which is main).
+     * -1 means that this choke is not in path to enemy base.
+     * 0 means that this choke is the first one in path to enemy base.
+     * 1 means that this choke is the second one in path to enemy base and so on.
+     */
+    private int pathToEnemyBaseIndex = -1;
+
+    public static AChoke from(ChokePoint chokepoint) {
         if (chokepoint == null) {
             return null;
         }
@@ -46,6 +58,7 @@ public class AChoke implements HasPosition {
         wrapper.perpendicular = wrapper.createPerpendicular();
         wrapper.firstPoint = APosition.create(chokepoint.getGeometry().get(0));
         wrapper.lastPoint = APosition.create(chokepoint.getGeometry().get(chokepoint.getGeometry().size() - 1));
+        wrapper.calculatePointsAB();
 
         all.put(chokepoint.hashCode(), wrapper);
 
@@ -74,7 +87,7 @@ public class AChoke implements HasPosition {
         if (this == o) return true;
         if (!(o instanceof AChoke)) return false;
         AChoke that = (AChoke) o;
-        return choke.equals(that.choke);
+        return x() == that.x() && y() == that.y();
     }
 
     @Override
@@ -85,9 +98,9 @@ public class AChoke implements HasPosition {
     @Override
     public String toString() {
         return "Choke{" +
-                "width=" + A.digit(width) +
+            "width=" + A.digit(width()) +
 //                ",center=" + center +
-                '}';
+            '}';
     }
 
     // =========================================================
@@ -99,8 +112,8 @@ public class AChoke implements HasPosition {
 
     private APosition calculateCenter() {
         return new APosition(
-                (sides[0].x + sides[1].x) / 2,
-                (sides[0].y + sides[1].y) / 2
+            (sides[0].x + sides[1].x) / 2,
+            (sides[0].y + sides[1].y) / 2
         );
     }
 
@@ -113,8 +126,8 @@ public class AChoke implements HasPosition {
         WalkPosition p2 = wp.get(0);
         double d_max = -1.0D;
 
-        for(int i = 0; i < wp.size(); ++i) {
-            for(int j = i + 1; j < wp.size(); ++j) {
+        for (int i = 0; i < wp.size(); ++i) {
+            for (int j = i + 1; j < wp.size(); ++j) {
                 double d = (wp.get(i)).getDistance(wp.get(j));
                 if (d > d_max) {
                     d_max = d;
@@ -124,7 +137,7 @@ public class AChoke implements HasPosition {
             }
         }
 
-        return new Position[] { p1.toPosition(), p2.toPosition() };
+        return new Position[]{p1.toPosition(), p2.toPosition()};
     }
 
     private List<APosition> createPerpendicular() {
@@ -133,6 +146,13 @@ public class AChoke implements HasPosition {
             perpendicular.add(APosition.create(walkPosition));
         }
         return perpendicular;
+    }
+
+    private void calculatePointsAB() {
+        Vector vector = Vectors.fromPositionsBetween(center(), firstPoint);
+
+        pointA = center().translateByVector(vector.rotate(Angle.degreesToRadians(90)));
+        pointB = center().translateByVector(vector.rotate(Angle.degreesToRadians(270)));
     }
 
     // =========================================================
@@ -148,8 +168,8 @@ public class AChoke implements HasPosition {
     public Pair<ARegion, ARegion> regions() {
         Pair<Area, Area> regions = choke.getAreas();
         Pair<ARegion, ARegion> aRegions = new Pair<>(
-                ARegion.create(regions.getLeft()),
-                ARegion.create(regions.getRight())
+            ARegion.create(regions.getLeft()),
+            ARegion.create(regions.getRight())
         );
 
         return aRegions;
@@ -179,4 +199,30 @@ public class AChoke implements HasPosition {
         return choke;
     }
 
+    public void setPathToEnemyBaseIndex(int index) {
+        this.pathToEnemyBaseIndex = index;
+    }
+
+    public int pathToEnemyBaseIndex() {
+        return pathToEnemyBaseIndex;
+    }
+
+    public APosition getClosestPointABTo(HasPosition closerToPosition) {
+        if (closerToPosition == null) return center();
+
+        double groundDistA = pointA.groundDist(closerToPosition);
+        double groundDistB = pointB.groundDist(closerToPosition);
+//        System.err.println("groundDistA = " + groundDistA + " / " + pointA.getApproxDistance(closerToPosition.position().p()));
+//        System.err.println("groundDistB = " + groundDistB + " / " + pointB.getApproxDistance(closerToPosition.position().p()));
+
+        return groundDistA < groundDistB ? pointA : pointB;
+    }
+
+    public APosition pointA() {
+        return pointA;
+    }
+
+    public APosition pointB() {
+        return pointB;
+    }
 }

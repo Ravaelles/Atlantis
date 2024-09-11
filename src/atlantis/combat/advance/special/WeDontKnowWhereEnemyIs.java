@@ -9,15 +9,26 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class WeDontKnowWhereEnemyIs extends MissionManager {
-
     public WeDontKnowWhereEnemyIs(AUnit unit) {
         super(unit);
     }
 
-    public Manager handle(AUnit unit) {
-        if (!unit.looksIdle() && unit.isActiveManager(this)) {
-            return continueUsingLastManager();
-        }
+    @Override
+    public boolean applies() {
+        return !EnemyInfo.hasDiscoveredAnyBuilding()
+            && !unit.isMoving()
+            && !unit.lastActionMoreThanAgo(15)
+            && !unit.lastPositionChangedLessThanAgo(15);
+    }
+
+    protected Manager handle(AUnit unit) {
+//        if (
+//            unit.isMoving()
+//                && unit.lastPositionChangedLessThanAgo(30)
+//                && unit.isActiveManager(this)
+//        ) {
+//            return usedManager(this);
+//        }
 
         if (shouldGoToRandomUnexplored()) {
             return goToRandomUnexplored();
@@ -29,7 +40,6 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
     private Manager goToRandomUnexplored() {
         APosition unexploredPosition = AMap.randomUnexploredPosition(unit);
         if (unexploredPosition != null) {
-//            System.out.println("Go to unexplored " + invisiblePosition);
             unit.move(unexploredPosition, Actions.MOVE_EXPLORE, "GoToUnexpl", true);
             return usedManager(this);
         }
@@ -40,7 +50,6 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
     private Manager goToRandomInvisible() {
         APosition invisiblePosition = AMap.randomInvisiblePosition(unit);
         if (invisiblePosition != null) {
-//            System.out.println("Go to invisiblePosition " + invisiblePosition);
             unit.move(invisiblePosition, Actions.MOVE_EXPLORE, "GoToRand", true);
             return usedManager(this);
         }

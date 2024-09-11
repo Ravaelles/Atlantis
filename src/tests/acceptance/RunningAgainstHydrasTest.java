@@ -4,7 +4,7 @@ import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.units.AUnitType;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
 
@@ -13,11 +13,11 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
         createWorld(10, () -> {
             FakeUnit unit = ourFirst;
             unit.setSquad(Alpha.get());
-            (new CombatUnitManager(unit)).handle();
+            (new CombatUnitManager(unit)).invokeFrom(this);
 
             FakeUnit enemy = nearestEnemy(unit);
 
-//            System.out.println(A.now() + " -       " + unit.tooltip()
+//            System.err.println(A.now() + " -       " + unit.tooltip()
 //                    + "\n " + unit.lastCommand()
 //                    + ",\n tx:" + unit.tx() + ", x:" + unit.x()
 //                    + ",\n combat_eval:" + unit.combatEvalRelative()
@@ -29,7 +29,7 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
 //                    + (unit.target == null ? "" : ",\n dist_to_target:" + A.dist(unit, unit.target) + " (" + unit.target.hp() + "hp)")
 //                    + (unit.targetPosition == null ? "" : ",\n target_position:" + unit.targetPosition)
 //            );
-//            System.out.println("_______________________________________");
+//            System.err.println("_______________________________________");
         });
     }
 
@@ -41,7 +41,7 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Marine, 10)
+            fake(AUnitType.Terran_Marine, 10)
 //                fake(AUnitType.Terran_Marine, 11),
 //                fake(AUnitType.Terran_Marine, 11),
 //                fake(AUnitType.Terran_Marine, 11),
@@ -55,8 +55,8 @@ public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 16;
         return fakeEnemies(
-                fake(AUnitType.Zerg_Hydralisk, enemyTy),
-                fake(AUnitType.Zerg_Hydralisk, enemyTy + 1)
+            fake(AUnitType.Zerg_Hydralisk, enemyTy),
+            fake(AUnitType.Zerg_Hydralisk, enemyTy + 1)
         );
     }
 

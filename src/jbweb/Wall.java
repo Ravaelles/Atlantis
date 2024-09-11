@@ -112,7 +112,7 @@ public class Wall {
             largeTiles.add(here);
         else if (building.tileWidth() >= 3)
             mediumTiles.add(here);
-        else if (building != rawDefenses.get(rawDefenses.size()-1))
+        else if (building != rawDefenses.get(rawDefenses.size() - 1))
             defenses.add(here);
         else if (building.tileWidth() >= 2)
             smallTiles.add(here);
@@ -125,9 +125,10 @@ public class Wall {
         for (TilePosition tile : bestLayout.keySet()) {
             UnitType type = bestLayout.get(tile);
             if (type != UnitType.Protoss_Pylon) {
-                currentCentroid = new Position(currentCentroid.x + tile.toPosition().x + type.tileSize().toPosition().x/2,
-                        currentCentroid.y + tile.toPosition().y + type.tileSize().toPosition().y/2);
-            } else {
+                currentCentroid = new Position(currentCentroid.x + tile.toPosition().x + type.tileSize().toPosition().x / 2,
+                    currentCentroid.y + tile.toPosition().y + type.tileSize().toPosition().y / 2);
+            }
+            else {
                 sizeWall--;
             }
         }
@@ -137,12 +138,12 @@ public class Wall {
             sizeWall = bestLayout.size();
             for (TilePosition tile : bestLayout.keySet()) {
                 UnitType type = bestLayout.get(tile);
-                currentCentroid = new Position(currentCentroid.x + tile.toPosition().x + type.tileSize().toPosition().x/2,
-                        currentCentroid.y + tile.toPosition().y + type.tileSize().toPosition().y/2);
+                currentCentroid = new Position(currentCentroid.x + tile.toPosition().x + type.tileSize().toPosition().x / 2,
+                    currentCentroid.y + tile.toPosition().y + type.tileSize().toPosition().y / 2);
             }
         }
 
-        return new Position(currentCentroid.x/sizeWall, currentCentroid.y/sizeWall);
+        return new Position(currentCentroid.x / sizeWall, currentCentroid.y / sizeWall);
     }
 
     private TilePosition findOpening() {
@@ -156,8 +157,8 @@ public class Wall {
 
         // Check which tile is closest to each part on the path, set as opening
         double distBest = Double.MAX_VALUE;
-        for (TilePosition pathTile : currentPath.getTiles()){
-            Position closestChokeGeo = JBWEB.getClosestChokeTile (choke, new Position(pathTile));
+        for (TilePosition pathTile : currentPath.getTiles()) {
+            Position closestChokeGeo = JBWEB.getClosestChokeTile(choke, new Position(pathTile));
             double dist = closestChokeGeo.getDistance(new Position(pathTile));
             Position centerPath = new Position(pathTile.x + 16, pathTile.y + 16);
 
@@ -172,7 +173,7 @@ public class Wall {
                 }
 
                 Position centerPiece = new Position(tileLayout.toPosition().x + typeLayout.tileWidth() * 16,
-                        tileLayout.toPosition().y + typeLayout.tileHeight() * 16);
+                    tileLayout.toPosition().y + typeLayout.tileHeight() * 16);
                 double openingAngle = JBWEB.getAngle(new Pair<>(centerPiece, centerPath));
                 double openingDist = centerPiece.getDistance(centerPath);
 
@@ -251,7 +252,8 @@ public class Wall {
                 if (!powersThis) {
                     return false;
                 }
-            } else {
+            }
+            else {
                 boolean powersThis = false;
                 if (tileLayout.y - here.y == 4) {
                     if (tileLayout.x - here.x >= -3 && tileLayout.x - here.x <= 2) {
@@ -277,13 +279,11 @@ public class Wall {
     }
 
     private boolean angleCheck(UnitType type, TilePosition here) {
-        Position centerHere = new Position(here.toPosition().x + type.tileWidth()*16,
-                here.toPosition().y + type.tileHeight()*16);
+        Position centerHere = new Position(here.toPosition().x + type.tileWidth() * 16,
+            here.toPosition().y + type.tileHeight() * 16);
 
         // If we want a closed wall, we don't care the angle of the buildings
-        if (!openWall || (type == UnitType.Protoss_Pylon && !pylonWall && !pylonWallPiece)) {
-            return true;
-        }
+        if (!openWall || (type == UnitType.Protoss_Pylon && !pylonWall && !pylonWallPiece)) return true;
 
         // Check if the angle is okay between all pieces in the current layout
         for (TilePosition tileLayout : currentLayout.keySet()) {
@@ -291,13 +291,11 @@ public class Wall {
             if (typeLayout == UnitType.Protoss_Pylon)
                 continue;
 
-            Position centerPiece = new Position(tileLayout.toPosition().x + typeLayout.tileWidth()*16,
-                    tileLayout.toPosition().y + typeLayout.tileHeight()*16);
+            Position centerPiece = new Position(tileLayout.toPosition().x + typeLayout.tileWidth() * 16,
+                tileLayout.toPosition().y + typeLayout.tileHeight() * 16);
             double wallAngle = JBWEB.getAngle(new Pair<>(centerPiece, centerHere));
 
-            if (Math.abs(chokeAngle - wallAngle) > 20.0) {
-                return false;
-            }
+            if (Math.abs(chokeAngle - wallAngle) > 20.0) return false;
         }
         return true;
     }
@@ -305,7 +303,7 @@ public class Wall {
     private boolean placeCheck(UnitType type, TilePosition here) {
         // Allow Pylon to overlap station defenses
         if (type == UnitType.Protoss_Pylon) {
-            if (closestStation != null && here != closestStation.getDefenseLocations().get(closestStation.getDefenseLocations().size()-1)) {
+            if (closestStation != null && here != closestStation.getDefenseLocations().get(closestStation.getDefenseLocations().size() - 1)) {
                 return true;
             }
         }
@@ -315,11 +313,9 @@ public class Wall {
             || !JBWEB.isPlaceable(type, here)
             || (!openWall && JBWEB.tilesWithinArea(area, here, type.tileWidth(), type.tileHeight()) == 0)
             || (openWall && JBWEB.tilesWithinArea(area, here, type.tileWidth(), type.tileHeight()) == 0 &&
-                (type == UnitType.Protoss_Pylon || (JBWEB.mapBWEM.getMap().getArea(here) != null &&
-                        choke.getAreas().getFirst() != JBWEB.mapBWEM.getMap().getArea(here) &&
-                        choke.getAreas().getSecond() != JBWEB.mapBWEM.getMap().getArea(here))))) {
-            return false;
-        }
+            (type == UnitType.Protoss_Pylon || (JBWEB.mapBWEM.getMap().getArea(here) != null &&
+                choke.getAreas().getFirst() != JBWEB.mapBWEM.getMap().getArea(here) &&
+                choke.getAreas().getSecond() != JBWEB.mapBWEM.getMap().getArea(here))))) return false;
         return true;
     }
 
@@ -346,27 +342,23 @@ public class Wall {
         TilePosition t = new TilePosition(w);
 
         // If the walk position is invalid or un-walkable
-        if (tightType != UnitType.None && check && (!w.isValid(JBWEB.game) || !JBWEB.game.isWalkable(w))) {
-            return true;
-        }
+        if (tightType != UnitType.None && check && (!w.isValid(JBWEB.game) || !JBWEB.game.isWalkable(w))) return true;
 
         // If we don't care about walling tight and the tile isn't walkable
-        if (!requireTight && !JBWEB.isWalkable(t)) {
-            return true;
-        }
+        if (!requireTight && !JBWEB.isWalkable(t)) return true;
 
         // If there's a mineral field or geyser here
-        if (JBWEB.isUsed(t, 1, 1).isResourceContainer()) {
-            return true;
-        }
+        if (JBWEB.isUsed(t, 1, 1).isResourceContainer()) return true;
         return false;
-    };
+    }
+
+    ;
 
 
     // Iterate vertical tiles adjacent of this placement
     private List<Pair<Boolean, Integer>> checkVerticalSide(WalkPosition start, boolean check, String gap, int dim, int walkWidth,
-                                                   boolean terrainTight, boolean parentTight, int p1Tight, int p2Tight,
-                                                   boolean checkL, boolean checkR, int vertTight, int horizTight) {
+                                                           boolean terrainTight, boolean parentTight, int p1Tight, int p2Tight,
+                                                           boolean checkL, boolean checkR, int vertTight, int horizTight) {
         for (int x = start.x - 1; x < start.x + walkWidth + 1; x++) {
             WalkPosition w = new WalkPosition(x, start.y);
             TilePosition t = new TilePosition(w);
@@ -377,11 +369,14 @@ public class Wall {
             int gapValue = 0;
             if (gap.equals("Right")) {
                 gapValue = gapRight(parent, dim);
-            } else if (gap.equals("Left")) {
+            }
+            else if (gap.equals("Left")) {
                 gapValue = gapLeft(parent, dim);
-            } else if (gap.equals("Up")) {
+            }
+            else if (gap.equals("Up")) {
                 gapValue = gapUp(parent, dim);
-            } else if (gap.equals("Down")) {
+            }
+            else if (gap.equals("Down")) {
                 gapValue = gapDown(parent, dim);
             }
 
@@ -392,16 +387,17 @@ public class Wall {
                     terrainTight = true;
                 }
                 // Check if it's tight with a parent
-                if (!parentTight && parent != rawBuildings.get(rawBuildings.size()-1) && (!requireTight || (gapValue < vertTight && (leftCorner ? gapValue < horizTight : gapValue < horizTight)))) {
+                if (!parentTight && parent != rawBuildings.get(rawBuildings.size() - 1) && (!requireTight || (gapValue < vertTight && (leftCorner ? gapValue < horizTight : gapValue < horizTight)))) {
                     parentTight = true;
                 }
-            } else {
+            }
+            else {
                 // Check if it's tight with the terrain
                 if (!terrainTight && terrainTightCheck(w, check)) {
                     terrainTight = true;
                 }
                 // Check if it's tight with a parent
-                if (!parentTight && parent != rawBuildings.get(rawBuildings.size()-1) && (!requireTight || gapValue < vertTight)) {
+                if (!parentTight && parent != rawBuildings.get(rawBuildings.size() - 1) && (!requireTight || gapValue < vertTight)) {
                     parentTight = true;
                 }
             }
@@ -415,7 +411,8 @@ public class Wall {
                     if (terrainTight) {
                         p1Tight = 2;
                     }
-                } else if (p2Tight == 0) {
+                }
+                else if (p2Tight == 0) {
                     if (p2Tight == 0) {
                         p2Tight = 1;
                     }
@@ -434,8 +431,8 @@ public class Wall {
 
     // Iterate horizontal tiles adjacent of this placement
     private List<Pair<Boolean, Integer>> checkHorizontalSide(WalkPosition start, boolean check, String gap, int dim, int walkHeight,
-                                                     boolean terrainTight, boolean parentTight, int p1Tight, int p2Tight,
-                                                     boolean checkU, boolean checkD, int vertTight, int horizTight) {
+                                                             boolean terrainTight, boolean parentTight, int p1Tight, int p2Tight,
+                                                             boolean checkU, boolean checkD, int vertTight, int horizTight) {
         for (int y = start.y - 1; y < start.y + walkHeight + 1; y++) {
             WalkPosition w = new WalkPosition(start.x, y);
             TilePosition t = new TilePosition(w);
@@ -446,11 +443,14 @@ public class Wall {
             int gapValue = 0;
             if (gap.equals("Right")) {
                 gapValue = gapRight(parent, dim);
-            } else if (gap.equals("Left")) {
+            }
+            else if (gap.equals("Left")) {
                 gapValue = gapLeft(parent, dim);
-            } else if (gap.equals("Up")) {
+            }
+            else if (gap.equals("Up")) {
                 gapValue = gapUp(parent, dim);
-            } else if (gap.equals("Down")) {
+            }
+            else if (gap.equals("Down")) {
                 gapValue = gapDown(parent, dim);
             }
 
@@ -461,16 +461,17 @@ public class Wall {
                     terrainTight = true;
                 }
                 // Check if it's tight with a parent
-                if (!parentTight && parent != rawBuildings.get(rawBuildings.size()-1) && (!requireTight || (gapValue < horizTight && (topCorner ? gapValue < vertTight : gapValue < vertTight)))) {
+                if (!parentTight && parent != rawBuildings.get(rawBuildings.size() - 1) && (!requireTight || (gapValue < horizTight && (topCorner ? gapValue < vertTight : gapValue < vertTight)))) {
                     parentTight = true;
                 }
-            } else {
+            }
+            else {
                 // Check if it's tight with the terrain
                 if (!terrainTight && terrainTightCheck(w, check)) {
                     terrainTight = true;
                 }
                 // Check if it's tight with a parent
-                if (!parentTight && parent != rawBuildings.get(rawBuildings.size()-1) && (!requireTight || gapValue < horizTight)) {
+                if (!parentTight && parent != rawBuildings.get(rawBuildings.size() - 1) && (!requireTight || gapValue < horizTight)) {
                     parentTight = true;
                 }
             }
@@ -484,7 +485,8 @@ public class Wall {
                     if (terrainTight) {
                         p1Tight = 2;
                     }
-                } else if (p2Tight == 0) {
+                }
+                else if (p2Tight == 0) {
                     if (p2Tight == 0) {
                         p2Tight = 1;
                     }
@@ -504,9 +506,7 @@ public class Wall {
 
     private boolean tightCheck(UnitType type, TilePosition here) {
         // If this is a powering pylon and we are not making a pylon wall, we don't care if it's tight
-        if (type == UnitType.Protoss_Pylon && !pylonWall && !pylonWallPiece) {
-            return true;
-        }
+        if (type == UnitType.Protoss_Pylon && !pylonWall && !pylonWallPiece) return true;
 
         // Dimensions of current buildings UnitType
         int dimL = (type.tileWidth() * 16) - type.dimensionLeft();
@@ -533,10 +533,10 @@ public class Wall {
         int extraD = pylonWall || !requireTight ? 0 : Math.max(0, (vertTight - dimD) / 8);
 
         // Setup boundary WalkPositions to check for tightness
-        WalkPosition left =  new WalkPosition(here.x - (1 + extraL), here.y);
+        WalkPosition left = new WalkPosition(here.x - (1 + extraL), here.y);
         WalkPosition right = new WalkPosition(here.x + walkWidth + extraR, here.y);
-        WalkPosition up =  new WalkPosition(here.x, here.y - (1 + extraU));
-        WalkPosition down =  new WalkPosition(here.x, here.y + walkHeight + extraD);
+        WalkPosition up = new WalkPosition(here.x, here.y - (1 + extraU));
+        WalkPosition down = new WalkPosition(here.x, here.y + walkHeight + extraD);
 
         // Used for determining if the tightness we found is suitable
         boolean firstBuilding = currentLayout.size() == 0;
@@ -590,14 +590,12 @@ public class Wall {
     boolean wallWalkable(TilePosition tile) {
         // Checks for any collision and inverts the return value
         if (!tile.isValid(JBWEB.game)
-                || (JBWEB.mapBWEM.getMap().getArea(tile) != null && JBWEB.mapBWEM.getMap().getArea(tile) != area
-                && JBWEB.mapBWEM.getMap().getArea(tile) == accessibleNeighbors.get(accessibleNeighbors.size()-1))
+            || (JBWEB.mapBWEM.getMap().getArea(tile) != null && JBWEB.mapBWEM.getMap().getArea(tile) != area
+            && JBWEB.mapBWEM.getMap().getArea(tile) == accessibleNeighbors.get(accessibleNeighbors.size() - 1))
             || JBWEB.isReserved(tile, 1, 1) || !JBWEB.isWalkable(tile)
             || (allowLifted && JBWEB.isUsed(tile, 1, 1) != UnitType.Terran_Barracks && JBWEB.isUsed(tile, 1, 1) != UnitType.None)
             || (!allowLifted && JBWEB.isUsed(tile, 1, 1) != UnitType.None && JBWEB.isUsed(tile, 1, 1) != UnitType.Zerg_Larva)
-            || (openWall && (tile).getDistance(pathEnd) - 64.0 > jpsDist / 32)){
-            return false;
-        }
+            || (openWall && (tile).getDistance(pathEnd) - 64.0 > jpsDist / 32)) return false;
         return true;
     }
 
@@ -622,7 +620,7 @@ public class Wall {
         bestWallScore = 0;
         accessibleNeighbors = area.getAccessibleNeighbors();
         chokeAngle = JBWEB.getAngle(new Pair<>(new Position(choke.getNodePosition(ChokePoint.Node.END1).toPosition().x + 4, choke.getNodePosition(ChokePoint.Node.END1).toPosition().y + 4),
-                new Position(choke.getNodePosition(ChokePoint.Node.END2).toPosition().x + 4, choke.getNodePosition(ChokePoint.Node.END2).toPosition().y + 4)));
+            new Position(choke.getNodePosition(ChokePoint.Node.END2).toPosition().x + 4, choke.getNodePosition(ChokePoint.Node.END2).toPosition().y + 4)));
 
         int count = 0;
         for (UnitType rawBuilding : rawBuildings) {
@@ -657,14 +655,15 @@ public class Wall {
         if (base != null) {
             notableLocations.add(base.getCenter());
             notableLocations.add(new Position(initialPathStart.toPosition().x + 16, initialPathStart.toPosition().y + 16));
-            notableLocations.add(new Position((base.getCenter().x + initialPathStart.toPosition().x)/2, (base.getCenter().y + initialPathStart.toPosition().y)/2));
-        } else {
+            notableLocations.add(new Position((base.getCenter().x + initialPathStart.toPosition().x) / 2, (base.getCenter().y + initialPathStart.toPosition().y) / 2));
+        }
+        else {
             notableLocations.add(new Position(initialPathStart.toPosition().x + 16, initialPathStart.toPosition().y + 16));
             notableLocations.add(new Position(initialPathEnd.toPosition().x + 16, initialPathEnd.toPosition().y + 16));
         }
 
         // Sort all the pieces and iterate over them to find the best wall - by Hannes
-        if (UnitType.Protoss_Pylon != rawBuildings.get(rawBuildings.size()-1)) {
+        if (UnitType.Protoss_Pylon != rawBuildings.get(rawBuildings.size() - 1)) {
             List<UnitType> tmpList = new ArrayList<>();
             List<Integer> indexes = new ArrayList<>();
             for (UnitType rawBuilding : rawBuildings) {
@@ -678,7 +677,8 @@ public class Wall {
             }
             Collections.sort(rawBuildings);
             rawBuildings.addAll(tmpList);
-        } else if (UnitType.Zerg_Hatchery != rawBuildings.get(rawBuildings.size()-1)) {
+        }
+        else if (UnitType.Zerg_Hatchery != rawBuildings.get(rawBuildings.size() - 1)) {
             List<UnitType> tmpList = new ArrayList<>();
             List<Integer> indexes = new ArrayList<>();
             for (UnitType rawBuilding : rawBuildings) {
@@ -693,7 +693,8 @@ public class Wall {
             Collections.sort(rawBuildings);
             tmpList.addAll(rawBuildings);
             rawBuildings = tmpList;
-        } else {
+        }
+        else {
             Collections.sort(rawBuildings);
         }
 
@@ -701,7 +702,7 @@ public class Wall {
         if (openWall && base != null) {
             Position startCenter = new Position(creationStart.toPosition().x + 16, creationStart.toPosition().y + 16);
             double distBest = Double.MAX_VALUE;
-            Position moveTowards = new Position((initialPathStart.toPosition().x + base.getCenter().x)/2, (initialPathStart.toPosition().y + base.getCenter().x)/2);
+            Position moveTowards = new Position((initialPathStart.toPosition().x + base.getCenter().x) / 2, (initialPathStart.toPosition().y + base.getCenter().x) / 2);
 
             // Iterate 3x3 around the current TilePosition and try to get within 5 tiles
             while (startCenter.getDistance(moveTowards) > 320.0) {
@@ -754,7 +755,7 @@ public class Wall {
 
     private void initializePathPoints() {
         Pair<Position, Position> line = new Pair<>(new Position(choke.getNodePosition(ChokePoint.Node.END1).toPosition().x + 4, choke.getNodePosition(ChokePoint.Node.END1).toPosition().y + 4),
-                new Position(choke.getNodePosition(ChokePoint.Node.END2).toPosition().y + 4, choke.getNodePosition(ChokePoint.Node.END2).toPosition().y + 4));
+            new Position(choke.getNodePosition(ChokePoint.Node.END2).toPosition().y + 4, choke.getNodePosition(ChokePoint.Node.END2).toPosition().y + 4));
         Pair<Position, Position> perpLine = openWall ? JBWEB.perpendicularLine(line, 160.0) : JBWEB.perpendicularLine(line, 96.0);
         Position lineStart = perpLine.getFirst().getDistance(new Position(area.getTop())) > perpLine.getSecond().getDistance(new Position(area.getTop())) ? perpLine.getSecond() : perpLine.getFirst();
         Position lineEnd = perpLine.getFirst().getDistance(new Position(area.getTop())) > perpLine.getSecond().getDistance(new Position(area.getTop())) ? perpLine.getFirst() : perpLine.getSecond();
@@ -770,8 +771,8 @@ public class Wall {
 
         // If it's a main wall, path between a point between the roughly the choke and the area top
         else if (isMain) {
-            initialPathEnd = new TilePosition((choke.getCenter().toPosition().x + lineEnd.x)/2, (choke.getCenter().toPosition().y + lineEnd.y)/2);
-            initialPathStart = new TilePosition((area.getTop().toPosition().x + lineStart.x)/2, (area.getTop().toPosition().y + lineStart.y)/2);
+            initialPathEnd = new TilePosition((choke.getCenter().toPosition().x + lineEnd.x) / 2, (choke.getCenter().toPosition().y + lineEnd.y) / 2);
+            initialPathStart = new TilePosition((area.getTop().toPosition().x + lineStart.x) / 2, (area.getTop().toPosition().y + lineStart.y) / 2);
         }
 
         // Other walls
@@ -795,9 +796,9 @@ public class Wall {
 
     private boolean notValidPathPoint(TilePosition testTile) {
         return !testTile.isValid(JBWEB.game)
-                || !JBWEB.isWalkable(testTile)
-                || JBWEB.isReserved(testTile, 1, 1)
-                || JBWEB.isUsed(testTile, 1, 1) != UnitType.None;
+            || !JBWEB.isWalkable(testTile)
+            || JBWEB.isReserved(testTile, 1, 1)
+            || JBWEB.isUsed(testTile, 1, 1) != UnitType.None;
     }
 
     private void checkPathPoints() {
@@ -841,9 +842,7 @@ public class Wall {
     private boolean nextPermutationRawBuildings(int start, int end) {
         int length = end - start + 1;
 
-        if (length <= 1) {
-            return false;
-        }
+        if (length <= 1) return false;
 
         // Find the longest non-increasing suffix and find the pivot
         int last = length - 2;
@@ -856,9 +855,7 @@ public class Wall {
         }
 
         // If there is no increasing pair there is no higher order permutation
-        if (last < 0) {
-            return false;
-        }
+        if (last < 0) return false;
 
         int nextGreater = length - 1;
 
@@ -897,7 +894,7 @@ public class Wall {
             currentLayout.clear();
             typeIterator = rawBuildings.listIterator();
             addNextPiece(creationStart);
-        } while (JBWEB.game.self().getRace() == Race.Zerg ? nextPermutationRawBuildings(rawBuildings.indexOf(UnitType.Zerg_Hatchery), rawBuildings.size()-1)
+        } while (JBWEB.game.self().getRace() == Race.Zerg ? nextPermutationRawBuildings(rawBuildings.indexOf(UnitType.Zerg_Hatchery), rawBuildings.size() - 1)
             : nextPermutationRawBuildings(0, rawBuildings.indexOf(UnitType.Protoss_Pylon)));
 
         for (TilePosition tile : bestLayout.keySet()) {
@@ -922,7 +919,7 @@ public class Wall {
                     continue;
                 }
 
-                Position center = new Position(tile.toPosition().x + type.tileWidth()*16, tile.toPosition().y + type.tileHeight()*16);
+                Position center = new Position(tile.toPosition().x + type.tileWidth() * 16, tile.toPosition().y + type.tileHeight() * 16);
                 Position closestGeo = JBWEB.getClosestChokeTile(choke, center);
 
                 // Open walls need to be placed within proximity of notable features
@@ -945,9 +942,9 @@ public class Wall {
                 // Try not to seal the wall poorly
                 if (!openWall && flatRamp) {
                     double m1 = Math.min(new Position(tile).getDistance(new Position(choke.getCenter())),
-                            new Position(new TilePosition(tile.toPosition().x + type.tileWidth(), tile.toPosition().y)).getDistance(new Position(choke.getCenter())));
+                        new Position(new TilePosition(tile.toPosition().x + type.tileWidth(), tile.toPosition().y)).getDistance(new Position(choke.getCenter())));
                     double m2 = Math.min(new Position(new TilePosition(tile.toPosition().x, tile.toPosition().y + type.tileHeight())).getDistance(new Position(choke.getCenter())),
-                            new Position(new TilePosition(tile.toPosition().x + type.tileWidth(), tile.toPosition().y + type.tileHeight())).getDistance(new Position(choke.getCenter())));
+                        new Position(new TilePosition(tile.toPosition().x + type.tileWidth(), tile.toPosition().y + type.tileHeight())).getDistance(new Position(choke.getCenter())));
                     double dist = Math.min(m1, m2);
                     if (dist < 64.0) {
                         continue;
@@ -984,10 +981,12 @@ public class Wall {
                 // 2) If at the end, score wall
                 if (!typeIterator.hasNext()) {
                     scoreWall();
-                } else {
+                }
+                else {
                     if (openWall) {
                         addNextPiece(start);
-                    } else {
+                    }
+                    else {
                         addNextPiece(tile);
                     }
                 }
@@ -1055,9 +1054,9 @@ public class Wall {
             for (int x = start.x - 12; x <= start.x + 12; x++) {
                 for (int y = start.y - 12; y <= start.y + 12; y++) {
                     TilePosition t = new TilePosition(x, y);
-                    Position center = new Position(t.toPosition().x + width/2, t.toPosition().y + height/2);
+                    Position center = new Position(t.toPosition().x + width / 2, t.toPosition().y + height / 2);
                     Position closestGeo = JBWEB.getClosestChokeTile(choke, center);
-                    boolean overlapsDefense = closestStation != null && t != closestStation.getDefenseLocations().get(closestStation.getDefenseLocations().size()-1) && t.equals(defenses.get(defenses.size()-1));
+                    boolean overlapsDefense = closestStation != null && t != closestStation.getDefenseLocations().get(closestStation.getDefenseLocations().size() - 1) && t.equals(defenses.get(defenses.size() - 1));
 
                     double dist = center.getDistance(closestGeo);
                     boolean tooClose = dist < furthest || center.getDistance(openingCenter) < arbitraryCloseMetric;
@@ -1069,7 +1068,7 @@ public class Wall {
                             || !JBWEB.isPlaceable(building, t)
                             || JBWEB.tilesWithinArea(area, t, building.tileWidth(), building.tileHeight()) == 0
                             || tooClose
-                            || tooFar){
+                            || tooFar) {
                             continue;
                         }
                     }
@@ -1114,15 +1113,16 @@ public class Wall {
         // Find distance for each piece to the closest choke tile to the path start point
         double dist = 1.0;
         Position optimalChokeTile = pathStart.getDistance(new TilePosition(choke.getNodePosition(ChokePoint.Node.END1))) <
-                pathStart.getDistance(new TilePosition(choke.getNodePosition(ChokePoint.Node.END2))) ?
-                new Position(choke.getNodePosition(ChokePoint.Node.END1)) : new Position(choke.getNodePosition(ChokePoint.Node.END2));
+            pathStart.getDistance(new TilePosition(choke.getNodePosition(ChokePoint.Node.END2))) ?
+            new Position(choke.getNodePosition(ChokePoint.Node.END1)) : new Position(choke.getNodePosition(ChokePoint.Node.END2));
         for (TilePosition tile : currentLayout.keySet()) {
             UnitType type = currentLayout.get(tile);
-            Position center = new Position(tile.toPosition().x + type.tileWidth()*16, tile.toPosition().y + type.tileHeight()*16);
+            Position center = new Position(tile.toPosition().x + type.tileWidth() * 16, tile.toPosition().y + type.tileHeight() * 16);
             double chokeDist = optimalChokeTile.getDistance(center);
             if (type == UnitType.Protoss_Pylon && !pylonWall && !pylonWallPiece) {
                 dist += -chokeDist;
-            } else {
+            }
+            else {
                 dist += chokeDist;
             }
         }
@@ -1144,22 +1144,22 @@ public class Wall {
         if (openWall && !bestLayout.isEmpty()) {
             Path currentPath = findPathOut();
             for (TilePosition tile : currentPath.getTiles()) {
-                JBWEB.addReserve (tile, 1, 1);
+                JBWEB.addReserve(tile, 1, 1);
             }
         }
 
         // Remove used from tiles
-        for (TilePosition tile : smallTiles){
-            JBWEB.removeUsed (tile, 2, 2);
+        for (TilePosition tile : smallTiles) {
+            JBWEB.removeUsed(tile, 2, 2);
         }
-        for (TilePosition tile : mediumTiles){
-            JBWEB.removeUsed (tile, 3, 2);
+        for (TilePosition tile : mediumTiles) {
+            JBWEB.removeUsed(tile, 3, 2);
         }
-        for (TilePosition tile : largeTiles){
-            JBWEB.removeUsed (tile, 4, 3);
+        for (TilePosition tile : largeTiles) {
+            JBWEB.removeUsed(tile, 4, 3);
         }
-        for (TilePosition tile : defenses){
-            JBWEB.removeUsed (tile, 2, 2);
+        for (TilePosition tile : defenses) {
+            JBWEB.removeUsed(tile, 2, 2);
         }
     }
 
@@ -1170,8 +1170,8 @@ public class Wall {
         for (TilePosition defense : defenses) {
             UnitType type = JBWEB.isUsed(defense, 1, 1);
             if (type == UnitType.Protoss_Photon_Cannon
-                    || type == UnitType.Zerg_Sunken_Colony
-                    || type == UnitType.Terran_Bunker) {
+                || type == UnitType.Zerg_Sunken_Colony
+                || type == UnitType.Terran_Bunker) {
                 count++;
             }
         }
@@ -1185,8 +1185,8 @@ public class Wall {
         for (TilePosition defense : defenses) {
             UnitType type = JBWEB.isUsed(defense, 1, 1);
             if (type == UnitType.Protoss_Photon_Cannon
-                    || type == UnitType.Zerg_Spore_Colony
-                    || type == UnitType.Terran_Missile_Turret) {
+                || type == UnitType.Zerg_Spore_Colony
+                || type == UnitType.Terran_Missile_Turret) {
                 count++;
             }
         }
@@ -1233,7 +1233,7 @@ public class Wall {
                     }
 
                     JBWEB.game.drawLineMap(pos1, pos2, color);
-                    JBWEB.game.drawTextMap(new Position((pos1.x + pos2.x)/ 2, (pos1.y + pos2.y)/ 2), "%c%.2f", textColor);
+                    JBWEB.game.drawTextMap(new Position((pos1.x + pos2.x) / 2, (pos1.y + pos2.y) / 2), "%c%.2f", textColor);
                 }
             }
         }

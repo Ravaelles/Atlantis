@@ -1,14 +1,18 @@
 package atlantis.units;
 
-import atlantis.util.MappingCounter;
+import atlantis.units.range.EnemyDragoonWeaponRange;
+import atlantis.units.range.OurDragoonWeaponRange;
+import atlantis.units.select.Count;
+import atlantis.util.Counter;
 import atlantis.util.cache.Cache;
 import bwapi.*;
+import net.bytebuddy.dynamic.Nexus;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * Wrapper for BWMirror UnitType class that makes it much easier to use.<br /><br />
+ * Wrapper for JBWAPI UnitType class that makes it much easier to use.<br /><br />
  * Atlantis uses wrappers for BWAPI  classes which aren't extended.<br /><br />
  * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you can
  * create missing method here and you can reference original UnitType class via ut() method.
@@ -71,7 +75,7 @@ public class AUnitType implements Comparable<Object> {
             return unitType;
         }
 //        AUnitType unitType;
-//        if ((unitType = getBWMirrorUnitType(ut)) != null) {
+//        if ((unitType = getJBWAPIUnitType(ut)) != null) {
 //            return unitType;
 //        }
 //        else {
@@ -91,7 +95,7 @@ public class AUnitType implements Comparable<Object> {
         return ut;
     }
 
-//    private static AUnitType getBWMirrorUnitType(UnitType ut) {
+//    private static AUnitType getJBWAPIUnitType(UnitType ut) {
 //        for (AUnitType unitType : instances.values()) {
 //            if (unitType.ut.equals(ut)) {
 //                return unitType;
@@ -453,12 +457,8 @@ public class AUnitType implements Comparable<Object> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null) return false;
 
         if (obj instanceof AUnitType) {
             AUnitType other = (AUnitType) obj;
@@ -505,7 +505,7 @@ public class AUnitType implements Comparable<Object> {
     protected static Object convertToAUnitTypesCollection(Object collection) {
         if (collection instanceof Map) {
 //            Map<AUnitType, Integer> result = new HashMap<>();
-            MappingCounter<AUnitType> units = new MappingCounter<>();
+            Counter<AUnitType> units = new Counter<>();
             for (Object key : ((Map) collection).keySet()) {
                 UnitType ut = (UnitType) key;
                 AUnitType unitType = from(ut);
@@ -581,6 +581,38 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isBarracks() {
+        return (boolean) cache.get(
+            "isBarracks",
+            -1,
+            () -> is(Terran_Barracks)
+        );
+    }
+
+    public boolean isGateway() {
+        return (boolean) cache.get(
+            "isGateway",
+            -1,
+            () -> is(Protoss_Gateway)
+        );
+    }
+
+    public boolean isStargate() {
+        return (boolean) cache.get(
+            "isStargate",
+            -1,
+            () -> is(Protoss_Stargate)
+        );
+    }
+
+    public boolean isRoboticsFacility() {
+        return (boolean) cache.get(
+            "isRoboticsFacility",
+            -1,
+            () -> is(Protoss_Robotics_Facility)
+        );
+    }
+
     public boolean isPylon() {
         return (boolean) cache.get(
             "isPylon",
@@ -593,8 +625,24 @@ public class AUnitType implements Comparable<Object> {
         return is(Protoss_Reaver);
     }
 
+    public boolean isHighTemplar() {
+        return is(Protoss_High_Templar);
+    }
+
+    public boolean isDarkTemplar() {
+        return is(Protoss_Dark_Templar);
+    }
+
     public boolean isCannon() {
         return is(Protoss_Photon_Cannon);
+    }
+
+    public boolean isSupplyDepot() {
+        return is(Terran_Supply_Depot);
+    }
+
+    public boolean isAcademy() {
+        return is(Terran_Academy);
     }
 
     public boolean isCarrier() {
@@ -698,15 +746,15 @@ public class AUnitType implements Comparable<Object> {
         return ut.airWeapon();
     }
 
-    public boolean isBuilding() {
+    public boolean isABuilding() {
         return ut.isBuilding();
     }
 
-    public int getGasPrice() {
+    public int gasPrice() {
         return ut.gasPrice();
     }
 
-    public int getMineralPrice() {
+    public int mineralPrice() {
         return ut.mineralPrice();
     }
 
@@ -808,7 +856,7 @@ public class AUnitType implements Comparable<Object> {
             "isMilitaryBuilding",
             -1,
             () -> {
-                if (!isBuilding()) return false;
+                if (!isABuilding()) return false;
                 if (canShootGround && isMilitaryBuildingAntiGround()) return true;
                 else return canShootAir && isMilitaryBuildingAntiAir();
             }
@@ -847,8 +895,8 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
-    public MappingCounter<AUnitType> requiredUnits() {
-        return (MappingCounter<AUnitType>) cache.get(
+    public Counter<AUnitType> requiredUnits() {
+        return (Counter<AUnitType>) cache.get(
             "requiredUnits",
             -1,
             () -> convertToAUnitTypesCollection(ut.requiredUnits())
@@ -872,29 +920,45 @@ public class AUnitType implements Comparable<Object> {
     /**
      * In pixels (1 tile = 32px)
      */
-    public int dimensionLeftPx() {
+    public int dimensionLeftPixels() {
         return ut.dimensionLeft();
     }
 
+    public int dimensionLeftTiles() {
+        return ut.dimensionLeft() / 32;
+    }
+
     /**
      * In pixels (1 tile = 32px)
      */
-    public int dimensionRightPx() {
+    public int dimensionRightPixels() {
         return ut.dimensionRight();
     }
 
-    /**
-     * In pixels (1 tile = 32px)
-     */
-    public int dimensionUpPx() {
-        return ut.dimensionUp();
+    public int dimensionRightTiles() {
+        return ut.dimensionRight() / 32;
     }
 
     /**
      * In pixels (1 tile = 32px)
      */
-    public int dimensionDownPx() {
+    public int dimensionUpPixels() {
+        return ut.dimensionUp();
+    }
+
+    public int dimensionUpTiles() {
+        return ut.dimensionUp() / 32;
+    }
+
+    /**
+     * In pixels (1 tile = 32px)
+     */
+    public int dimensionDownPixels() {
         return ut.dimensionDown();
+    }
+
+    public int dimensionDownTiles() {
+        return ut.dimensionDown() / 32;
     }
 
     /**
@@ -909,34 +973,52 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
-    /**
-     * Returns most default addon for Terran building like Machine Shop for Factory, Comsat Station for
-     * Command Center or null if building can't have addon.
-     */
-    public AUnitType getRelatedAddon() {
-        return (AUnitType) cache.get(
-            "getRelatedAddon",
+    public int addonWidthInPx() {
+        return (int) cache.get(
+            "addonWidthInPx",
             -1,
             () -> {
-                if (this.equals(Terran_Factory)) {
-                    return Terran_Machine_Shop;
-                }
-                else if (this.equals(Terran_Command_Center)) {
-                    return Terran_Comsat_Station;
-                }
-                else if (this.equals(Terran_Starport)) {
-                    return Terran_Control_Tower;
-                }
-                else if (this.equals(Terran_Science_Facility)) {
-                    return Terran_Physics_Lab;
-                }
-                else {
-                    return null;
-                }
+                if (is(AUnitType.Terran_Factory)) return calculateAddonWidthInPx(Terran_Machine_Shop);
+                if (is(AUnitType.Terran_Command_Center)) return calculateAddonWidthInPx(Terran_Comsat_Station);
+                if (is(AUnitType.Terran_Starport)) return calculateAddonWidthInPx(Terran_Control_Tower);
+                if (is(AUnitType.Terran_Science_Facility)) return calculateAddonWidthInPx(Terran_Physics_Lab);
+
+                return 0;
             }
         );
     }
 
+    private int calculateAddonWidthInPx(AUnitType addon) {
+        return addon.dimensionLeftPixels() + addon.dimensionRightPixels();
+    }
+
+    /**
+     * Returns most default addon for Terran building like Machine Shop for Factory, Comsat Station for
+     * Command Center or null if building can't have addon.
+     */
+//    public AUnitType getRelatedAddon() {
+//        return (AUnitType) cache.get(
+//            "getRelatedAddon",
+//            -1,
+//            () -> {
+//                if (this.equals(Terran_Factory)) {
+//                    return Terran_Machine_Shop;
+//                }
+//                else if (this.equals(Terran_Command_Center)) {
+//                    return Terran_Comsat_Station;
+//                }
+//                else if (this.equals(Terran_Starport)) {
+//                    return Terran_Control_Tower;
+//                }
+//                else if (this.equals(Terran_Science_Facility)) {
+//                    return Terran_Physics_Lab;
+//                }
+//                else {
+//                    return null;
+//                }
+//            }
+//        );
+//    }
     public boolean isDangerousGroundUnit() {
         return (boolean) cache.get(
             "isDangerousGroundUnit",
@@ -1024,9 +1106,9 @@ public class AUnitType implements Comparable<Object> {
             "whatIsRequired",
             -1,
             () -> {
-                if (isBuilding()) {
+                if (isABuilding()) {
                     for (AUnitType requiredUnit : requiredUnits().map().keySet()) {
-                        if (requiredUnit.isBuilding() && !requiredUnit.isInitialBase() && !requiredUnit.isLarva()) {
+                        if (requiredUnit.isABuilding() && !requiredUnit.isInitialBase() && !requiredUnit.isLarva()) {
                             return requiredUnit;
                         }
                     }
@@ -1044,15 +1126,24 @@ public class AUnitType implements Comparable<Object> {
     }
 
     public int weaponRangeAgainst(AUnit anotherUnit) {
+        int cacheForFrames = -1;
+        if (isDragoon()) cacheForFrames = 113;
+
         return (int) cache.get(
             "weaponRangeAgainst:" + anotherUnit.type().name(),
-            -1,
+            cacheForFrames,
             () -> {
                 if (isCannon() || isSunken() || isSporeColony()) {
                     return 7;
                 }
                 if (isBunker()) {
                     return 6;
+                }
+                if (isDragoon()) {
+                    if (anotherUnit.isEnemy()) {
+                        return OurDragoonWeaponRange.range();
+                    }
+                    return EnemyDragoonWeaponRange.range();
                 }
 
                 if (isGroundUnit()) {
@@ -1196,7 +1287,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "isRealUnitOrBuilding",
             -1,
-            () -> !isNeutral() && (isBuilding() || !isNotRealUnit())
+            () -> !isNeutral() && (isABuilding() || !isNotRealUnit())
         );
     }
 
@@ -1249,8 +1340,13 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "isCombatUnit",
             -1,
-            () -> !isWorker() && !isInvincible() && !isMine() && !isObserver() && isRealUnit()
-                && (!isBuilding() || isCombatBuilding()) && !isOverlord()
+            () -> !isWorker()
+                && isRealUnit()
+                && !isInvincible()
+                && !isMine()
+                && !isObserver()
+                && (!isABuilding() || isCombatBuilding() || isSunkenOrCreep())
+                && !isOverlord()
         );
     }
 
@@ -1283,7 +1379,10 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "hasRequiredUnit",
             -1,
-            () -> whatIsRequired() != null
+            () -> {
+                AUnitType whatIsRequired = whatIsRequired();
+                return whatIsRequired == null || Count.ofType(whatIsRequired) > 0;
+            }
         );
     }
 
@@ -1351,6 +1450,22 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isLurkerEgg() {
+        return (boolean) cache.get(
+            "isLurkerEgg",
+            -1,
+            () -> is(Zerg_Lurker_Egg)
+        );
+    }
+
+    public boolean isDefiler() {
+        return (boolean) cache.get(
+            "isDefiler",
+            -1,
+            () -> is(Zerg_Defiler)
+        );
+    }
+
     public boolean isMarine() {
         return (boolean) cache.get(
             "isMarine",
@@ -1393,27 +1508,19 @@ public class AUnitType implements Comparable<Object> {
                     baseCost += requiredUnits().size() * requiredUnits().first().totalCost();
                 }
 
-                return baseCost + getMineralPrice() + getGasPrice();
+                return baseCost + mineralPrice() + gasPrice();
             }
         );
     }
 
     private boolean isValidUnitRequirement(AUnitType requirement, AUnitType unit) {
-        if (requirement.isPylon()) {
-            return false;
-        }
+        if (requirement.isPylon()) return false;
 
-        if (!unit.isBuilding() && requirement.isBuilding()) {
-            return false;
-        }
+        if (!unit.isABuilding() && requirement.isABuilding()) return false;
 
-        if (isBuilding() && (requirement.isBuilding() && requirement.isBase())) {
-            return false;
-        }
+        if (isABuilding() && (requirement.isABuilding() && requirement.isBase())) return false;
 
-        if (isBuilding() && requirement.isWorker()) {
-            return false;
-        }
+        if (isABuilding() && requirement.isWorker()) return false;
 
         return true;
     }
@@ -1478,7 +1585,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "canAttackGround",
             -1,
-            () -> groundWeapon().damageAmount() > 0 || isReaver() || isBunker()
+            () -> groundWeapon().damageAmount() > 0 || isReaver() || isBunker() || isCarrier()
         );
     }
 
@@ -1486,7 +1593,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "canAttackAir",
             -1,
-            () -> airWeapon().damageAmount() > 0 || isBunker()
+            () -> airWeapon().damageAmount() > 0 || isBunker() || isCarrier()
         );
     }
 
@@ -1503,6 +1610,33 @@ public class AUnitType implements Comparable<Object> {
             "isScienceVessel",
             -1,
             () -> is(Terran_Science_Vessel)
+        );
+    }
+
+    public boolean isResource() {
+        return (boolean) cache.get(
+            "isResource",
+            -1,
+            () -> isGasBuilding() || is(Terran_Supply_Depot, Protoss_Pylon, Zerg_Overlord)
+        );
+    }
+
+    public boolean needsPower() {
+        return (boolean) cache.get(
+            "needsPower",
+            -1,
+            () -> isABuilding() && isProtoss() && !is(Protoss_Pylon, Protoss_Assimilator, Protoss_Nexus)
+        );
+    }
+
+    public boolean producesLandUnits() {
+        return (boolean) cache.get(
+            "producesLandUnits",
+            -1,
+            () -> isABuilding() && is(
+                Protoss_Gateway, Protoss_Robotics_Facility, Protoss_Nexus,
+                Terran_Barracks, Terran_Factory, Terran_Command_Center
+            )
         );
     }
 }

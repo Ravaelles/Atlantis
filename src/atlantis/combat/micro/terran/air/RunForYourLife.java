@@ -11,12 +11,25 @@ public class RunForYourLife extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isAir() && unit.hp() <= 40;
+        if (!unit.isAir()) return false;
+
+        if (
+            unit.lastUnderAttackLessThanAgo(30 * 3)
+                && unit.enemiesNear().combatBuildingsAntiAir().inRadius(11, unit).notEmpty()
+        ) return true;
+
+        if (unit.hasCloseRepairer()) return false;
+        if (unit.effUndetected()) return false;
+
+        return unit.hp() <= 65
+            && unit.enemiesNear().canAttack(unit, 8.1).notEmpty();
     }
 
     @Override
-    public Manager handle() {
-        if ((new AvoidEnemies(unit)).handle() != null) return usedManager(this);
+    protected Manager handle() {
+        if (unit.isRunning() && unit.lastStartedRunningLessThanAgo(16)) return usedManager(this);
+
+        if ((new AvoidEnemies(unit)).invokeFrom(this) != null) return usedManager(this);
 
         return null;
     }

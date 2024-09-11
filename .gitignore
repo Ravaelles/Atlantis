@@ -1,31 +1,23 @@
-bin/
-
-desktop.ini
 *.class
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-
-*.war
 *.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+*.war
+.idea/
 /build/
-/dist/
 /bwapi-data/BWTA2/*
-nbproject/
+/dist/
+Atlantis.iml
+Atlantis.jar
+bin/
 build.xml
+Chaos launcher.lnk
+desktop.ini
+ENV
+hs_err_pid*
+IntelliJ IDEA Community Edition 2020.3.3.lnk
+logs/units/
 manifest.mf
 nbbuild.xml
-.idea/
-Atlantis.iml
+nbproject/
 out/
-Chaos launcher.lnk
-IntelliJ IDEA Community Edition 2020.3.3.lnk
-Atlantis.jar
 param_tweaker/
-logs/units/
-ENV
+replay_pid*

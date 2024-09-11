@@ -1,5 +1,7 @@
 package atlantis.debug.tweaker;
 
+import atlantis.game.A;
+
 import java.util.ArrayList;
 
 public class ParamTweaker {
@@ -17,7 +19,7 @@ public class ParamTweaker {
         try {
             for (Param param : params) {
                 param.setterCallable().call();
-                System.out.println("Randomized `" + param.name() + "` with " + param.getterCallable().call());
+                A.println("Randomized `" + param.name() + "` with " + param.getterCallable().call());
             }
         } catch (Exception e) {
             e.printStackTrace();

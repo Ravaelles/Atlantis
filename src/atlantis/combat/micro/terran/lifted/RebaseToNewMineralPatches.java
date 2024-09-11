@@ -4,7 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.map.base.ABaseLocation;
-import atlantis.map.base.Bases;
+import atlantis.map.base.BaseLocations;
+import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -18,15 +19,13 @@ public class RebaseToNewMineralPatches extends Manager {
 
     @Override
     public boolean applies() {
-        if (AGame.notNthGameFrame(37)) {
-            return false;
-        }
+        if (AGame.notNthGameFrame(37)) return false;
 
-        return unit.isCommandCenter() && (unit.isLifted() || isBaseMinedOut());
+        return unit.isCommandCenter() && (unit.isLifted() || isBaseMinedOut(unit));
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (flyToNewMineralPatches()) {
             return usedManager(this);
         }
@@ -35,9 +34,7 @@ public class RebaseToNewMineralPatches extends Manager {
     }
 
     private boolean flyToNewMineralPatches() {
-        if (Env.isTesting()) {
-            return false;
-        }
+        if (Env.isTesting()) return false;
 
         ABaseLocation newBase = defineNewBaseLocation();
 
@@ -52,7 +49,7 @@ public class RebaseToNewMineralPatches extends Manager {
     }
 
     private ABaseLocation defineNewBaseLocation() {
-        ABaseLocation baseLocation = Bases.expansionFreeBaseLocationNearestTo(unit);
+        ABaseLocation baseLocation = BaseLocations.expansionFreeBaseLocationNearestTo(unit);
 
         if (baseLocation == null && !Env.isTesting()) {
             ErrorLog.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
@@ -66,7 +63,7 @@ public class RebaseToNewMineralPatches extends Manager {
         if (liftToFlyFirst(baseLocation)) return true;
 
         double dist = baseLocation.distTo(unit);
-//        System.out.println("Rebase" + A.dist(dist));
+
 
         if (dist >= 7) {
             return moveToRebase(baseLocation);
@@ -79,7 +76,7 @@ public class RebaseToNewMineralPatches extends Manager {
 
     private boolean moveToRebase(ABaseLocation rebaseTo) {
         unit.setTooltipAndLog("MoveToRebase");
-        unit.move(rebaseTo, Actions.MOVE_SPECIAL, "FlyToRebase", true);
+        unit.move(rebaseTo, Actions.SPECIAL, "FlyToRebase", true);
         return true;
     }
 
@@ -88,6 +85,7 @@ public class RebaseToNewMineralPatches extends Manager {
         if (rebaseExactLocation != null) {
             unit.setTooltipAndLog("LandInNewHome");
             unit.land(rebaseExactLocation.toTilePosition());
+            OurClosestBaseToEnemy.clearCache();
             return true;
         }
         return false;
@@ -97,12 +95,13 @@ public class RebaseToNewMineralPatches extends Manager {
         if (!unit.isLifted() && rebaseTo.distToMoreThan(unit, 5)) {
             unit.setTooltipAndLog("LiftAndRebase");
             unit.lift();
+            OurClosestBaseToEnemy.clearCache();
             return true;
         }
         return false;
     }
 
-    protected boolean isBaseMinedOut() {
+    public static boolean isBaseMinedOut(AUnit unit) {
         return Select.minerals().inRadius(10, unit).isEmpty();
     }
 }

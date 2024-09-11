@@ -1,53 +1,32 @@
 package atlantis.information.enemy;
 
+import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Have;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import atlantis.util.cache.Cache;
 
 public class EnemyWhoBreachedBase {
-    private static Cache<Object> cache = new Cache<>();
+    private static AUnit _lastEnemy = null;
+    private static int _numOfBaseAttacks = 0;
 
-    public static AUnit enemyNearAnyOurBase(int maxDistToBase) {
-        if (maxDistToBase < 0) {
-            maxDistToBase = 12;
+    public static AUnit get() {
+        AUnit enemy = EnemyNearBases.enemyNearAnyOurBase(-1);
+
+        if (enemy != null && _lastEnemy == null && Missions.isGlobalMissionAttack()) {
+            _numOfBaseAttacks++;
         }
-        int finalMaxDistToBase = maxDistToBase;
 
-        return (AUnit) cache.getIfValid(
-            "enemyNearAnyOurBuilding:" + maxDistToBase,
-            47,
-            () -> {
-                if (!Have.base()) {
-                    return null;
-                }
+        _lastEnemy = enemy;
+        return enemy;
+    }
 
-                Selection enemies = Select.enemyCombatUnits().excludeTypes(
-                    AUnitType.Terran_Valkyrie,
-                    AUnitType.Protoss_Observer,
-                    AUnitType.Protoss_Corsair,
-                    AUnitType.Zerg_Overlord,
-                    AUnitType.Zerg_Scourge
-                );
-                Selection ourBuildings = Select.ourBuildings();
+    public static int numberOfAttacksOnBase() {
+        return _numOfBaseAttacks;
+    }
 
-                for (AUnit base : Select.ourBases().list()){
-                    AUnit nearestEnemy = enemies.nearestTo(base);
-                    if (nearestEnemy != null) {
-                        if (nearestEnemy.distToLessThan(base, finalMaxDistToBase)) {
-                            return nearestEnemy;
-                        }
+    public static boolean notNull() {
+        return get() != null;
+    }
 
-                        if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 6) {
-                            return nearestEnemy;
-                        }
-                    }
-                }
-
-                return null;
-            }
-        );
+    public static boolean noone() {
+        return get() == null;
     }
 }

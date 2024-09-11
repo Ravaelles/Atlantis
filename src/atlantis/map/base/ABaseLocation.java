@@ -60,7 +60,9 @@ public class ABaseLocation implements HasPosition {
 
     @Override
     public String toString() {
-        return "BaseLocation at " + position + " (start_loc:" + isStartLocation() + ")";
+        return "BaseLocation at " + position + " ("
+            + (isStartLocation() ? "start_loc" : "non_start_loc")
+            + ")";
     }
 
     // =========================================================

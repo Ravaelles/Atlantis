@@ -2,85 +2,78 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyFlags;
-import atlantis.production.dynamic.terran.units.ProduceGhosts;
-import atlantis.production.dynamic.terran.units.ProduceMarines;
-import atlantis.production.dynamic.terran.units.ProduceMedicsAndFirebats;
-import atlantis.production.orders.build.AddToQueue;
-import atlantis.units.AUnitType;
+import atlantis.information.generic.ArmyStrength;
+import atlantis.information.strategy.OurStrategy;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
+import atlantis.production.dynamic.terran.abundance.TerranAbundance;
+import atlantis.production.dynamic.terran.units.*;
+import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.util.Enemy;
+import atlantis.util.HasReason;
+import atlantis.util.We;
 
-import static atlantis.production.AbstractDynamicUnits.buildToHave;
-import static atlantis.units.AUnitType.Terran_Science_Vessel;
+public class TerranDynamicUnitsCommander extends Commander implements HasReason {
+    public static String reason = "-";
 
-public class TerranDynamicUnitsCommander extends Commander {
+    private int dynamicOrders;
 
     @Override
-    public void handle() {
-        scienceVessels();
+    public boolean applies() {
+        if (!We.terran()) return false;
+        if (OurStrategy.get().isRushOrCheese()) return true;
+        if (Count.basesWithUnfinished() >= 2) return true;
 
-        TerranDynamicFactoryUnits.handleFactoryProduction();
+        if (shouldProduceUnitsBeforeSecondBase()) return true;
 
-        wraiths();
+//        System.err.println("ReservedResources.minerals() = " + ReservedResources.minerals());
+//        System.err.println("(150 + A.minerals()) = " + (150 + A.minerals()));
+//        System.err.println("CountInQueue.countDynamicUnitsOrders() = " + CountInQueue.countDynamicUnitsOrders());
+//        System.err.println("Queue.get().forCurrentSupply().size() = " + Queue.get().forCurrentSupply().size());
 
-        if (Count.infantry() <= 14 || (Enemy.protoss() && Count.tanks() >= 4) || A.hasMinerals(500)) {
-            ProduceGhosts.ghosts();
-            ProduceMedicsAndFirebats.medics();
-            ProduceMarines.marines();
+        return !saveForBase()
+            && ReservedResources.minerals() <= (150 + A.minerals())
+            && (dynamicOrders = CountInQueue.countDynamicUnitsOrders()) <= 10;
+//            && (ReservedResources.minerals() <= 500 || A.hasMinerals(650));
+//            && Queue.get().forCurrentSupply().nonCompleted().size() <= 10;
+    }
+
+    private boolean shouldProduceUnitsBeforeSecondBase() {
+        return Count.marines() <= 3 || Count.medics() <= 3 || ArmyStrength.weAreWeaker();
+    }
+
+    private static boolean saveForBase() {
+        return !A.hasMinerals(520) && ShouldExpand.shouldExpand();
+    }
+
+    @Override
+    protected void handle() {
+        ProduceScienceVessels.scienceVessels();
+
+        if (dynamicOrders <= 3 || (dynamicOrders <= 10 && A.hasMinerals(700))) {
+            if (
+                ProduceWraiths.wraiths()
+//                    || TerranDynamicFactoryUnits.handleFactoryProduction()
+            ) return;
         }
+
+        if (dynamicOrders <= 8 || (dynamicOrders <= 10 && A.hasMinerals(700))) {
+            if (Count.infantry() <= 14 || (Enemy.protoss() && Count.tanks() >= 4) || A.hasMinerals(500)) {
+                ProduceGhosts.ghosts();
+                ProduceMedicsAndFirebats.medics();
+                ProduceMarines.marines();
+            }
+        }
+
+        (new TerranAbundance()).invokeCommander();
+    }
+
+    @Override
+    public String reason() {
+        return reason;
     }
 
     // =========================================================
 
-    private static void scienceVessels() {
-        if (Have.notEvenPlanned(Terran_Science_Vessel)) {
-            if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
-                AddToQueue.withTopPriority(Terran_Science_Vessel);
-            }
-            return;
-        }
-
-        int limit = Math.max(
-            1 + (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT ? 2 : 0),
-            A.supplyTotal() / 35
-        );
-        buildToHave(Terran_Science_Vessel, limit);
-    }
-
-    protected static boolean wraiths() {
-        int startProducingWraithsSinceSupply = 90;
-
-//        if (Enemy.zerg()) {
-//            return false;
-//        }
-
-        if (
-            Count.ofType(AUnitType.Terran_Starport) == 0
-        ) {
-            return false;
-        }
-
-        int wraiths = Count.ofType(AUnitType.Terran_Wraith);
-
-        if (wraiths >= 5 && !AGame.canAffordWithReserved(200, 200)) {
-            return false;
-        }
-
-        if (A.supplyUsed() >= startProducingWraithsSinceSupply && wraiths <= 1) {
-            return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
-        }
-
-        if (A.supplyUsed() <= 160 && wraiths >= startProducingWraithsSinceSupply + wraiths * 15) {
-            return false;
-        }
-
-        if (wraiths >= 6 && !AGame.canAffordWithReserved(150, 150)) {
-            return false;
-        }
-
-        return AddToQueue.addToQueueIfNotAlreadyThere(AUnitType.Terran_Wraith);
-    }
 }

@@ -1,5 +1,6 @@
 package atlantis.util;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -20,23 +21,18 @@ public class Helpers {
     }
 
     public static boolean canAfford(Integer[] mineralsAndGas) {
-        return AGame.canAfford(mineralsAndGas[0], mineralsAndGas[1]);
+        return A.canAfford(mineralsAndGas[0], mineralsAndGas[1]);
     }
 
     public static boolean canAfford(int mineralPrice, int gasPrice) {
-        return AGame.canAfford(mineralPrice, gasPrice);
+        return A.canAfford(mineralPrice, gasPrice);
     }
 
-    public static boolean supply(int minSupply) {
+    public static boolean supplyUsedAtLeast(int minSupply) {
         return AGame.supplyUsed() >= minSupply;
     }
 
-    public static boolean noSupply(int minSupply) {
-        return AGame.supplyUsed() < minSupply;
+    public static boolean supplyUsedAtMost(int maxSupply) {
+        return AGame.supplyUsed() <= maxSupply;
     }
-
-    public static boolean hasRequiredUnitFor(AUnitType type) {
-        return type.whatIsRequired() == null || Count.ofType(type.whatIsRequired()) > 0;
-    }
-
 }

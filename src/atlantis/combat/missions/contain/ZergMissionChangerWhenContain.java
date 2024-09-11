@@ -14,7 +14,8 @@ public class ZergMissionChangerWhenContain extends MissionChanger {
     protected void changeMissionIfNeeded() {
         if (shouldChangeMissionToDefend()) {
             MissionChanger.changeMissionTo(MissionChanger.defendOrSpartaMission());
-        } else if (shouldChangeMissionToAttack()) {
+        }
+        else if (shouldChangeMissionToAttack()) {
             MissionChanger.changeMissionTo(Missions.ATTACK);
         }
     }
@@ -58,9 +59,7 @@ public class ZergMissionChangerWhenContain extends MissionChanger {
             return true;
         }
 
-        if (Atlantis.LOST >= 5 && A.supplyUsed() <= 50) {
-            return false;
-        }
+        if (Atlantis.LOST >= 5 && A.supplyUsed() <= 50) return false;
 
         if (ArmyStrength.ourArmyRelativeStrength() >= 400) {
             if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";

@@ -5,7 +5,6 @@ import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
 
 public class ShouldFightInsteadAvoidAsZerg {
-
     private static Cache<Boolean> cache = new Cache<>();
 
     public static boolean shouldFight(AUnit unit) {
@@ -14,11 +13,11 @@ public class ShouldFightInsteadAvoidAsZerg {
             1,
             () -> {
                 if (!unit.isZerg()) return false;
+                if (unit.combatEvalRelative() <= 0.7) return false;
+                if (unit.isWounded() && unit.lastStartedRunningLessThanAgo(40)) return false;
 
                 if (asHydra(unit)) return true;
-
                 if (asZergling(unit)) return true;
-
                 if (protectOurSunken(unit)) return true;
 
                 return false;
@@ -27,9 +26,7 @@ public class ShouldFightInsteadAvoidAsZerg {
     }
 
     private static boolean protectOurSunken(AUnit unit) {
-        if (unit.hasCooldown()) {
-            return false;
-        }
+        if (unit.hasCooldown()) return false;
 
         AUnit ourSunken = unit.friendsNear().sunkens().nearestTo(unit);
         if (ourSunken != null && ourSunken.meleeEnemiesNearCount() >= 2) {
@@ -41,9 +38,7 @@ public class ShouldFightInsteadAvoidAsZerg {
     }
 
     private static boolean asHydra(AUnit unit) {
-        if (!unit.isHydralisk() || unit.hasCooldown()) {
-            return false;
-        }
+        if (!unit.isHydralisk() || unit.hasCooldown()) return false;
 
         if (unit.isHealthy()) {
             unit.setTooltip("Keke");
@@ -59,9 +54,8 @@ public class ShouldFightInsteadAvoidAsZerg {
     }
 
     private static boolean asZergling(AUnit unit) {
-        if (!unit.isZergling()) {
-            return false;
-        }
+        if (!unit.isZergling()) return false;
+        if (unit.hp() <= 18 && unit.enemiesNear().ranged().inRadius(7, unit).empty()) return false;
 
         int meleeEnemiesVeryNear = unit.meleeEnemiesNearCount(1.2);
 

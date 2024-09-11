@@ -13,25 +13,17 @@ import atlantis.units.select.Count;
 public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     private boolean canChange() {
-        if (EnemyInfo.isEnemyNearAnyOurBase()) {
-            return false;
-        }
+        if (EnemyInfo.isEnemyNearAnyOurBase()) return false;
 
         if (GamePhase.isEarlyGame()) {
             if (
                 EnemyStrategy.get().isRushOrCheese()
                     && (A.resourcesBalance() < 350 || !ArmyStrength.weAreMuchStronger())
-            ) {
-                return false;
-            }
+            ) return false;
 
-            if (Count.cannons() >= 1 && Count.ourCombatUnits() <= 8) {
-                return false;
-            }
+            if (Count.cannons() >= 1 && Count.ourCombatUnits() <= 8) return false;
 
-            if (EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(4)) {
-                return false;
-            }
+            if (EnemyUnits.discovered().ofType(AUnitType.Protoss_Zealot).atLeast(4)) return false;
         }
 
         return true;
@@ -40,18 +32,14 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
     // === CONTAIN =============================================
 
     public boolean shouldChangeMissionToAttack() {
-        if (!canChange()) {
-            return false;
-        }
+        if (!canChange()) return false;
 
         if (A.supplyUsed() >= 195) {
             if (DEBUG) reason = "Maxed out";
             return true;
         }
 
-        if (Atlantis.LOST >= 5 && A.supplyUsed() <= 50) {
-            return false;
-        }
+        if (Atlantis.LOST >= 5 && A.supplyUsed() <= 50) return false;
 
         if (ArmyStrength.ourArmyRelativeStrength() >= 300) {
             if (DEBUG) reason = "So much stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
@@ -61,10 +49,8 @@ public class ZergMissionChangerWhenDefend extends MissionChangerWhenDefend {
         return false;
     }
 
-    public  boolean shouldChangeMissionToContain() {
-        if (!canChange()) {
-            return false;
-        }
+    public boolean shouldChangeMissionToContain() {
+        if (!canChange()) return false;
 
         if (ArmyStrength.ourArmyRelativeStrength() >= 170) {
             if (DEBUG) reason = "We are stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";

@@ -1,13 +1,14 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.config.env.Env;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.TechType;
-import tests.unit.FakeUnit;
 
 public class TerranComsatStation extends Manager {
     public TerranComsatStation(AUnit unit) {
@@ -16,11 +17,11 @@ public class TerranComsatStation extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.is(AUnitType.Terran_Comsat_Station) && AGame.everyNthGameFrame(13);
+        return unit.is(AUnitType.Terran_Comsat_Station) && (AGame.everyNthGameFrame(13) || Env.isTesting());
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (unit.energy() >= 50) {
             if (
                 scanLurkers()
@@ -47,16 +48,17 @@ public class TerranComsatStation extends Manager {
     }
 
     private boolean shouldScanThisLurker(AUnit lurker) {
-        if (unit.energy(190)) {
+        if (unit.energy(190)) return true;
+
+        if (
+            unit.energy(50)
+                && Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker).isNotEmpty()
+                && lurker.friendsNear().canAttack(lurker, 7).atLeast(2)
+        ) {
             return true;
         }
 
         int minUnitsNear = (unit.energy(160) ? 3 : (unit.energy(60) ? 4 : 6));
-
-        if (unit.energy(100) && Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker).isNotEmpty()) {
-//            System.err.println("Scan " + lurker + " because buildings are close");
-            return true;
-        }
 
         return Select.ourCombatUnits()
             .excludeTypes(AUnitType.Terran_Medic)
@@ -70,8 +72,11 @@ public class TerranComsatStation extends Manager {
     private boolean scanDarkTemplars() {
         for (AUnit dt : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Dark_Templar).list()) {
             Selection ourCombatUnits = Select.ourCombatUnits();
-            if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt)
-                .atLeast(unit.energy(150) ? (unit.energy(190) ? 2 : 4) : 7)) {
+
+            int minOurUnitsNear = unit.energy(150) ? (unit.energy(190) ? 2 : 4) : 7;
+            if (A.seconds() <= 320) minOurUnitsNear = 2;
+
+            if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt).atLeast(minOurUnitsNear)) {
                 if (
                     ourCombatUnits.nearestTo(dt).distToLessThan(dt, 6)
                         || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()
@@ -85,9 +90,7 @@ public class TerranComsatStation extends Manager {
     }
 
     private boolean scanObservers() {
-        if (unit.energy() <= 200) {
-            return false;
-        }
+        if (unit.energy() <= 150) return false;
 
         for (AUnit observer : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Observer).list()) {
             if (shouldScanThisObserver(observer)) {
@@ -99,16 +102,12 @@ public class TerranComsatStation extends Manager {
     }
 
     private boolean shouldScanThisObserver(AUnit observer) {
-        if (unit.energy() >= 100 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)) {
-            return true;
-        }
+        if (Select.ourRealUnits().inRadius(9, observer).havingAntiAirWeapon().atLeast(6)) return true;
 
         if (
             Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, observer).isNotEmpty()
                 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)
-        ) {
-            return true;
-        }
+        ) return true;
 
         return false;
     }
@@ -129,9 +128,8 @@ public class TerranComsatStation extends Manager {
     private boolean genericScanUnit(AUnitType type) {
         for (AUnit enemy : Select.enemies(type).effUndetected().list()) {
             boolean shouldScan = enemy.enemiesNear()
-                .inRadius(6, enemy)
-                .canAttack(enemy, 1)
-                .atLeast(2);
+                .inRadius(7, enemy)
+                .atLeast(3);
             if (shouldScan) {
                 return scan(enemy);
             }
@@ -151,9 +149,6 @@ public class TerranComsatStation extends Manager {
 //            return false;
 //        }
 
-        if (!(unitToScan instanceof FakeUnit)) {
-//            System.err.println("=== COMSAT SCAN on " + unitToScan + ", energy = " + comsat.energy() + " ===");
-        }
         unit.setTooltipTactical("Scanning " + unitToScan.name());
         return unit.useTech(TechType.Scanner_Sweep, unitToScan);
     }

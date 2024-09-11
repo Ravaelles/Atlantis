@@ -17,26 +17,27 @@ public class ShouldAlwaysAvoidAsZerg extends Manager {
     }
 
     public boolean shouldAlwaysAvoid() {
-        if (shouldSkip()) {
-            return false;
-        }
+        if (shouldSkip()) return false;
 
         friendsVeryNear = unit.friendsInRadiusCount(2);
-        meleeEnemiesVeryNear = unit.meleeEnemiesNearCount(3);
+        meleeEnemiesVeryNear = unit.meleeEnemiesNearCount(2.8);
 
-        if (asZergling()) {
-            return true;
-        }
+        if (asZergling()) return true;
+        if (asHydra()) return true;
 
         return false;
     }
 
-    private boolean asZergling() {
-        if (!unit.isZergling()) {
-            return false;
-        }
+    private boolean asHydra() {
+        if (!unit.isHydralisk()) return false;
 
-        return unit.hp() <= 22 && friendsVeryNear <= 65 && meleeEnemiesVeryNear > 0;
+        return meleeEnemiesVeryNear > 0 && friendsVeryNear <= 4;
+    }
+
+    private boolean asZergling() {
+        if (!unit.isZergling()) return false;
+
+        return unit.hp() <= 22 && friendsVeryNear <= 4 && meleeEnemiesVeryNear > 0;
     }
 
     private boolean shouldSkip() {

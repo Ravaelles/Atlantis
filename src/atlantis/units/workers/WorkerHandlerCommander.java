@@ -6,9 +6,9 @@ import atlantis.units.select.Select;
 
 public class WorkerHandlerCommander extends Commander {
     @Override
-    public void handle() {
+    protected void handle() {
         for (AUnit worker : Select.ourWorkers().list()) {
-            (new WorkerManager(worker)).handle();
+            (new WorkerManager(worker)).invokeFrom(this);
         }
     }
 }

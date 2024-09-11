@@ -4,12 +4,14 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.builders.GetOptimalBuilder;
 import atlantis.production.constructing.position.APositionFinder;
-import atlantis.production.orders.production.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 /**
  * Represents construction of a building, including ones not yet started.
@@ -22,7 +24,7 @@ public class Construction implements Comparable<Construction> {
     private final int timeOrdered;
     private int timeBecameInProgress;
     private AUnitType buildingType;
-    private AUnit construction;
+    private AUnit build;
     private AUnit builder;
     private APosition positionToBuild;
     private HasPosition near;
@@ -35,7 +37,7 @@ public class Construction implements Comparable<Construction> {
     public Construction(AUnitType buildingType) {
         this.buildingType = buildingType;
 
-        status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
+        status = ConstructionOrderStatus.NOT_STARTED;
         timeOrdered = AGame.now();
     }
 
@@ -46,11 +48,20 @@ public class Construction implements Comparable<Construction> {
      */
     public APosition findPositionForNewBuilding() {
         return (APosition) cache.get(
-            "buildingType,builder:" + builder.id(),
+            "findPositionForNewBuilding:" + genericCacheKey(),
             57,
             () -> APositionFinder.findPositionForNew(builder, buildingType, this)
         );
-//        return APositionFinder.findPositionForNew(builder, buildingType, this);
+    }
+
+    private String genericCacheKey() {
+        String cacheKey = "";
+
+        if (buildingType != null) cacheKey += buildingType.id() + ",";
+        if (builder != null) cacheKey += builder.id() + ",";
+        if (build != null) cacheKey += build.position();
+
+        return cacheKey;
     }
 
     /**
@@ -58,7 +69,12 @@ public class Construction implements Comparable<Construction> {
      * and we're cool, bro.
      */
     protected void assignRandomBuilderForNow() {
-        builder = Select.ourWorkers().first();
+        if (near != null) {
+            builder = FreeWorkers.get().nearestTo(near);
+        }
+        else {
+            builder = FreeWorkers.get().first();
+        }
     }
 
     /**
@@ -66,8 +82,11 @@ public class Construction implements Comparable<Construction> {
      *
      * @return AUnit for convenience it returns
      */
-    protected AUnit assignOptimalBuilder() {
-        builder = Select.ourWorkersFreeToBuildOrRepair().nearestTo(positionToBuild);
+    public AUnit assignOptimalBuilder() {
+        AUnit optimalBuilder = GetOptimalBuilder.forPosition(this, productionOrder);
+
+        if (optimalBuilder != null) builder = optimalBuilder;
+        else ErrorLog.printMaxOncePerMinute("No optimal builder for " + buildingType);
 
         return builder;
     }
@@ -76,8 +95,10 @@ public class Construction implements Comparable<Construction> {
      * Fully delete this construction, remove the building if needed by cancelling it.
      */
     public void cancel() {
-        if (construction != null) {
-            construction.cancelConstruction();
+//        A.printStackTrace("Construction.cancel() - " + this);
+
+        if (build != null) {
+            build.cancelConstruction();
         }
 
         if (builder != null) {
@@ -99,17 +120,19 @@ public class Construction implements Comparable<Construction> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         final Construction other = (Construction) obj;
+
+        if (buildingType == null || positionToBuild == null) return false;
+
         return this.ID == other.ID;
+    }
+
+    public boolean sameAs(Construction other) {
+        return this.buildingType.equals(other.buildingType)
+            && (positionToBuild == other.positionToBuild || positionToBuild.equals(other.positionToBuild));
     }
 
     @Override
@@ -119,7 +142,7 @@ public class Construction implements Comparable<Construction> {
 
     @Override
     public String toString() {
-        return "ConstructionOrder{" + "ID=" + ID + ", buildingType=" + buildingType + ", construction=" + construction + ", builder=" + builder + ", positionToBuild=" + positionToBuild + ", productionOrder=" + productionOrder + ", status=" + status + '}';
+        return "Construction{" + "#" + ID + ", " + buildingType + ", build=" + build + ", builder=" + builder + ", positionToBuild=" + positionToBuild + ", status=" + status + '}';
     }
 
     // =========================================================
@@ -128,7 +151,7 @@ public class Construction implements Comparable<Construction> {
         APosition positionToBuild = buildPosition();
         if (positionToBuild != null) {
             return positionToBuild.translateByPixels(
-                buildingType().dimensionLeftPx(), buildingType().dimensionUpPx()
+                buildingType().dimensionLeftPixels(), buildingType().dimensionUpPixels()
             );
         }
         else {
@@ -159,7 +182,7 @@ public class Construction implements Comparable<Construction> {
     public void setStatus(ConstructionOrderStatus status) {
         this.status = status;
 
-        if (status.equals(ConstructionOrderStatus.CONSTRUCTION_IN_PROGRESS)) {
+        if (status.equals(ConstructionOrderStatus.IN_PROGRESS)) {
             timeBecameInProgress = A.now();
         }
     }
@@ -172,12 +195,12 @@ public class Construction implements Comparable<Construction> {
         this.positionToBuild = positionToBuild;
     }
 
-    public AUnit construction() {
-        return construction;
+    public AUnit buildingUnit() {
+        return build;
     }
 
-    public void setConstruction(AUnit construction) {
-        this.construction = construction;
+    public void setBuild(AUnit build) {
+        this.build = build;
     }
 
     public int id() {
@@ -190,6 +213,7 @@ public class Construction implements Comparable<Construction> {
 
     public void setProductionOrder(ProductionOrder productionOrder) {
         this.productionOrder = productionOrder;
+        if (productionOrder != null) this.productionOrder.setConstruction(this);
     }
 
     public HasPosition nearTo() {
@@ -217,14 +241,32 @@ public class Construction implements Comparable<Construction> {
     }
 
     public boolean hasStarted() {
-        return !status().equals(ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED);
+        return !status().equals(ConstructionOrderStatus.NOT_STARTED);
     }
 
     public boolean notStarted() {
-        return ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED.equals(status);
+        return ConstructionOrderStatus.NOT_STARTED.equals(status);
     }
 
     public static void clearCache() {
         cache.clear();
+    }
+
+    public boolean isOverdue() {
+        if (hasStarted()) return false;
+        if (buildingType != null && buildingType.isBase()) return false;
+        if (!A.canAfford(buildingType)) return false;
+
+        return A.ago(timeOrdered) > 30 * 22;
+    }
+
+    public int progressPercent() {
+        if (build == null) return 0;
+        return (int) build.hpPercent();
+    }
+
+    public void releaseReservedResources() {
+        ProductionOrder order = productionOrder();
+        if (order != null) order.releasedReservedResources();
     }
 }

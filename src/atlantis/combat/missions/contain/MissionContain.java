@@ -52,46 +52,28 @@ public class MissionContain extends Mission {
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
         if (
             unit.isTerranInfantry()
-            && (new MissionAttackVsCombatBuildings(unit)).forbiddenForTerranInfantry(enemy)
-        ) {
-            return false;
-        }
+                && (new MissionAttackVsCombatBuildings(unit)).forbiddenForTerranInfantry(enemy)
+        ) return false;
 
-        if (unit.isStimmed()) {
-            return true;
-        }
+        if (unit.isStimmed()) return true;
 
         // @Temp
-        if (unit.distToLessThan(enemy, 8)) {
-            return true;
-        }
-        if (unit.hasWeaponRangeToAttack(enemy, enemy.isMelee() ? 4 : 2.1)) {
-            return true;
-        }
+        if (unit.distToLessThan(enemy, 8)) return true;
+        if (unit.hasWeaponRangeToAttack(enemy, enemy.isMelee() ? 4 : 2.1)) return true;
 
         AFocusPoint focusPoint = focusPoint();
 
-        if (enemy.hasWeaponRangeToAttack(unit, unit.isMelee() ? 0.3 : 2.1)) {
-            return true;
-        }
+        if (enemy.hasWeaponRangeToAttack(unit, unit.isMelee() ? 0.3 : 2.1)) return true;
 
-        if (unit.lastUnderAttackMoreThanAgo(30 * 5) && unit.combatEvalRelative() >= 3) {
-            return true;
-        }
+        if (unit.lastUnderAttackMoreThanAgo(30 * 5) && unit.combatEvalRelative() >= 3) return true;
 
         if (enemy.friendsNear().combatBuildingsAntiLand().inRadius(7.6, unit).atLeast(1)) {
-            if (enemy.combatEvalRelative() >= 0.5) {
-                return false;
-            }
+            if (enemy.combatEvalRelative() >= 0.5) return false;
         }
 
-        if (!enemy.distToNearestChokeLessThan(5)) {
-            return true;
-        }
+        if (!enemy.distToNearestChokeLessThan(5)) return true;
 
-        if (wouldCrossChokeToAttack(unit, enemy, focusPoint)) {
-            return false;
-        }
+        if (wouldCrossChokeToAttack(unit, enemy, focusPoint)) return false;
 
         // Allow to defend bases
 //        if (EnemyInfo.isEnemyNearAnyOurBase(enemy)) {
@@ -102,9 +84,7 @@ public class MissionContain extends Mission {
         if (
             unit.friendsNear().inRadius(3, unit).atLeast(4)
                 || enemy.distTo(unit.squad().center()) <= 12
-        ) {
-            return true;
-        }
+        ) return true;
 
         return false;
     }
@@ -117,9 +97,7 @@ public class MissionContain extends Mission {
             double squadToEnemy = squad.distTo(enemy);
             double squadToFocus = squad.distTo(focusPoint);
 
-            if (squadToEnemy > 0.8 + squadToFocus) {
-                return false;
-            }
+            if (squadToEnemy > 0.8 + squadToFocus) return false;
         }
 
         return false;

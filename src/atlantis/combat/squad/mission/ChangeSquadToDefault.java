@@ -16,16 +16,14 @@ public class ChangeSquadToDefault extends SquadMissionChanger {
             return changeMissionToMainMission(squad, "Offensive role");
         }
 
-        if (A.supplyUsed() <= 193) {
-            if (
-                defaultMission.isMissionAttackOrContain()
-                    && GamePhase.isEarlyGame()
-                    && EnemyStrategy.get().isRushOrCheese()
-                    && squad.size() <= 13
-            ) {
-                return false;
-            }
-        }
+//        if (A.supplyUsed() <= 193) {
+//            if (
+//                defaultMission.isMissionAttackOrContain()
+//                    && GamePhase.isEarlyGame()
+//                    && EnemyStrategy.get().isRushOrCheese()
+//                    && squad.size() <= 13
+//            ) return false;
+//        }
 
         return changeMissionToMainMission(squad, "Be good soldier");
     }

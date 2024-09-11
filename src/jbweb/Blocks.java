@@ -16,8 +16,8 @@ public class Blocks {
     private static int countPieces(List<Piece> pieces, Piece type) {
         int count = 0;
         for (Piece piece : pieces) {
-        if (piece == type)
-            count++;
+            if (piece == type)
+                count++;
         }
         return count;
     }
@@ -38,11 +38,13 @@ public class Blocks {
                     pieces.add(Piece.Small);
                     pieces.add(Piece.Medium);
                 }
-            } else if (height == 3) {
+            }
+            else if (height == 3) {
                 if (width == 4) {
                     pieces.add(Piece.Large);
                 }
-            } else if (height == 4) {
+            }
+            else if (height == 4) {
                 if (width == 3) {
                     pieces.add(Piece.Medium);
                     pieces.add(Piece.Row);
@@ -55,7 +57,8 @@ public class Blocks {
                     pieces.add(Piece.Small);
                     pieces.add(Piece.Medium);
                 }
-            } else if (height == 6) {
+            }
+            else if (height == 6) {
                 if (width == 5) {
                     pieces.add(Piece.Small);
                     pieces.add(Piece.Medium);
@@ -76,7 +79,8 @@ public class Blocks {
                     pieces.add(Piece.Small);
                     pieces.add(Piece.Medium);
                 }
-            } else if (height == 4) {
+            }
+            else if (height == 4) {
                 if (width == 5) {
                     pieces.add(Piece.Small);
                     pieces.add(Piece.Medium);
@@ -84,7 +88,8 @@ public class Blocks {
                     pieces.add(Piece.Small);
                     pieces.add(Piece.Medium);
                 }
-            } else if (height == 5) {
+            }
+            else if (height == 5) {
                 if (width == 4) {
                     pieces.add(Piece.Large);
                     pieces.add(Piece.Row);
@@ -100,7 +105,8 @@ public class Blocks {
                             pieces.add(Piece.Medium);
                             pieces.add(Piece.Medium);
                             pieces.add(Piece.Small);
-                        } else {
+                        }
+                        else {
                             pieces.add(Piece.Medium);
                             pieces.add(Piece.Medium);
                             pieces.add(Piece.Small);
@@ -108,7 +114,8 @@ public class Blocks {
                             pieces.add(Piece.Large);
                             pieces.add(Piece.Large);
                         }
-                    } else {
+                    }
+                    else {
                         if (faceUp) {
                             pieces.add(Piece.Large);
                             pieces.add(Piece.Large);
@@ -116,7 +123,8 @@ public class Blocks {
                             pieces.add(Piece.Small);
                             pieces.add(Piece.Medium);
                             pieces.add(Piece.Medium);
-                        } else {
+                        }
+                        else {
                             pieces.add(Piece.Small);
                             pieces.add(Piece.Medium);
                             pieces.add(Piece.Medium);
@@ -126,7 +134,8 @@ public class Blocks {
                         }
                     }
                 }
-            } else if (height == 6) {
+            }
+            else if (height == 6) {
                 if (width == 10) {
                     pieces.add(Piece.Large);
                     pieces.add(Piece.Addon);
@@ -149,7 +158,8 @@ public class Blocks {
                     pieces.add(Piece.Large);
                     pieces.add(Piece.Large);
                 }
-            } else if (height == 8) {
+            }
+            else if (height == 8) {
                 if (width == 8) {
                     pieces.add(Piece.Large);
                     pieces.add(Piece.Large);
@@ -183,13 +193,15 @@ public class Blocks {
                     pieces.add(Piece.Medium);
                     pieces.add(Piece.Medium);
                 }
-            } else if (height == 4) {
+            }
+            else if (height == 4) {
                 if (width == 3) {
                     pieces.add(Piece.Medium);
                     pieces.add(Piece.Row);
                     pieces.add(Piece.Medium);
                 }
-            } else if (height == 6) {
+            }
+            else if (height == 6) {
                 if (width == 3) {
                     pieces.add(Piece.Medium);
                     pieces.add(Piece.Row);
@@ -197,12 +209,14 @@ public class Blocks {
                     pieces.add(Piece.Row);
                     pieces.add(Piece.Medium);
                 }
-            } else if (height == 3) {
+            }
+            else if (height == 3) {
                 if (width == 6) {
                     pieces.add(Piece.Large);
                     pieces.add(Piece.Addon);
                 }
-            } else if (height == 4) {
+            }
+            else if (height == 4) {
                 if (width == 6) {
                     pieces.add(Piece.Medium);
                     pieces.add(Piece.Medium);
@@ -219,7 +233,8 @@ public class Blocks {
                     pieces.add(Piece.Medium);
                     pieces.add(Piece.Medium);
                 }
-            } else if (height == 5) {
+            }
+            else if (height == 5) {
                 if (width == 6) {
                     pieces.add(Piece.Large);
                     pieces.add(Piece.Addon);
@@ -227,7 +242,8 @@ public class Blocks {
                     pieces.add(Piece.Medium);
                     pieces.add(Piece.Medium);
                 }
-            } else if (height == 6) {
+            }
+            else if (height == 6) {
                 if (width == 6) {
                     pieces.add(Piece.Large);
                     pieces.add(Piece.Addon);
@@ -244,7 +260,7 @@ public class Blocks {
         // Check if a block of specified size would overlap any bases, resources or other blocks
         for (int x = here.x - 1; x < here.x + width + 1; x++) {
             for (int y = here.y - 1; y < here.y + height + 1; y++) {
-                    TilePosition t = new TilePosition(x, y);
+                TilePosition t = new TilePosition(x, y);
                 if (!t.isValid(JBWEB.game) || !JBWEB.mapBWEM.getMap().getTile(t).isBuildable() || JBWEB.isReserved(t, 1, 1)) {
                     return false;
                 }
@@ -257,7 +273,7 @@ public class Blocks {
         // Check if a proxy block of specified size is not buildable here
         for (int x = here.x - 1; x < here.x + width + 1; x++) {
             for (int y = here.y - 1; y < here.y + height + 1; y++) {
-                    TilePosition t = new TilePosition(x, y);
+                TilePosition t = new TilePosition(x, y);
                 if (!t.isValid(JBWEB.game) || !JBWEB.mapBWEM.getMap().getTile(t).isBuildable() || !JBWEB.game.isWalkable(new WalkPosition(t))) {
                     return false;
                 }
@@ -304,7 +320,7 @@ public class Blocks {
                 for (int x = tileStart.x - 15; x <= tileStart.x + 15; x++) {
                     for (int y = tileStart.y - 15; y <= tileStart.y + 15; y++) {
                         TilePosition tile = new TilePosition(x, y);
-                        Position blockCenter = new Position(tile.x + i*16, tile.y + j*16);
+                        Position blockCenter = new Position(tile.x + i * 16, tile.y + j * 16);
                         double dist = blockCenter.getDistance(start);
                         boolean blockFacesLeft = (blockCenter.x < JBWEB.getMainPosition().x);
                         boolean blockFacesUp = (blockCenter.y < JBWEB.getMainPosition().y);
@@ -326,10 +342,10 @@ public class Blocks {
                         int largeCount = countPieces(pieces, Piece.Large);
 
                         if (!tile.isValid(JBWEB.game)
-                                || mediumCount < 1
-                                || (race == Race.Zerg && smallCount == 0 && mediumCount == 0)
-                                || (race == Race.Protoss && largeCount < 2)
-                                || (race == Race.Terran && largeCount < 1)) {
+                            || mediumCount < 1
+                            || (race == Race.Zerg && smallCount == 0 && mediumCount == 0)
+                            || (race == Race.Protoss && largeCount < 2)
+                            || (race == Race.Terran && largeCount < 1)) {
                             continue;
                         }
 
@@ -346,7 +362,8 @@ public class Blocks {
                         for (Piece piece : piecesBest) {
                             if (mainPieces.get(piece) == null) {
                                 mainPieces.put(piece, 1);
-                            } else {
+                            }
+                            else {
                                 int tmp = mainPieces.get(piece) + 1;
                                 mainPieces.put(piece, tmp);
                             }
@@ -361,8 +378,8 @@ public class Blocks {
     private static void findMainStartBlocks() {
         Race race = JBWEB.game.self().getRace();
         Position firstStart = JBWEB.getMainPosition();
-        Position secondStart = race != Race.Zerg ? (new Position(JBWEB.getMainChoke().getCenter().x + JBWEB.getMainPosition().x/2,
-                JBWEB.getMainChoke().getCenter().y + JBWEB.getMainPosition().y/2)) : JBWEB.getMainPosition();
+        Position secondStart = race != Race.Zerg ? (new Position(JBWEB.getMainChoke().getCenter().x + JBWEB.getMainPosition().x / 2,
+            JBWEB.getMainChoke().getCenter().y + JBWEB.getMainPosition().y / 2)) : JBWEB.getMainPosition();
 
         searchStart(firstStart);
         searchStart(secondStart);
@@ -384,8 +401,8 @@ public class Blocks {
                 double dist = (blockCenter.getDistance(JBWEB.getMainChoke().getCenter().toPosition()));
 
                 if (!tile.isValid(JBWEB.game)
-                        || JBWEB.mapBWEM.getMap().getArea(tile) != JBWEB.getMainArea()
-                        || dist < 96.0){
+                    || JBWEB.mapBWEM.getMap().getArea(tile) != JBWEB.getMainArea()
+                    || dist < 96.0) {
                     continue;
                 }
 
@@ -416,7 +433,7 @@ public class Blocks {
                 if (t.isValid(JBWEB.game) && JBWEB.game.isBuildable(t)) {
                     Position p = new Position(x * 32, y * 32);
                     double dist = (JBWEB.getNaturalChoke() != null && JBWEB.game.self().getRace() != Race.Zerg) ?
-                            p.getDistance(new Position(JBWEB.getNaturalChoke().getCenter())) : p.getDistance(JBWEB.getMainPosition());
+                        p.getDistance(new Position(JBWEB.getNaturalChoke().getCenter())) : p.getDistance(JBWEB.getMainPosition());
                     tilesByPathDist.put(dist, t);
                 }
             }
@@ -448,7 +465,7 @@ public class Blocks {
                     // Zerg only need 4 medium pieces and 2 small piece
                     if (JBWEB.game.self().getRace() == Race.Zerg) {
                         if ((mediumCount > 0 && mainPieces.get(Piece.Medium) >= 4)
-                                || (smallCount > 0 && mainPieces.get(Piece.Small) >= 2)) {
+                            || (smallCount > 0 && mainPieces.get(Piece.Small) >= 2)) {
                             continue;
                         }
                     }
@@ -469,7 +486,8 @@ public class Blocks {
                             for (Piece piece : pieces) {
                                 if (mainPieces.get(piece) == null) {
                                     mainPieces.put(piece, 1);
-                                } else {
+                                }
+                                else {
                                     int tmp = mainPieces.get(piece) + 1;
                                     mainPieces.put(piece, tmp);
                                 }
@@ -484,14 +502,10 @@ public class Blocks {
     // Check if this block is in a good area
     private static boolean goodArea(TilePosition t, List<TilePosition> enemyStartLocations, HashSet<Area> areasToAvoid) {
         for (TilePosition start : enemyStartLocations) {
-            if (JBWEB.mapBWEM.getMap().getArea(t) == JBWEB.mapBWEM.getMap().getArea(start)) {
-                return false;
-            }
+            if (JBWEB.mapBWEM.getMap().getArea(t) == JBWEB.mapBWEM.getMap().getArea(start)) return false;
         }
         for (Area area : areasToAvoid) {
-            if (JBWEB.mapBWEM.getMap().getArea(t) == area) {
-                return false;
-            }
+            if (JBWEB.mapBWEM.getMap().getArea(t) == area) return false;
         }
         return true;
     }
@@ -499,7 +513,7 @@ public class Blocks {
     // Check if there's a blocking neutral between the positions to prevent bad pathing
     private static boolean blockedPath(Position source, Position target) {
         for (ChokePoint choke : JBWEB.mapBWEM.getMap().getPath(source, target)) {
-            if (JBWEB.isUsed(new TilePosition(choke.getCenter()), 1, 1) != UnitType.None){
+            if (JBWEB.isUsed(new TilePosition(choke.getCenter()), 1, 1) != UnitType.None) {
                 return true;
             }
         }
@@ -529,7 +543,7 @@ public class Blocks {
         // Gather the possible enemy start locations
         List<TilePosition> enemyStartLocations = new ArrayList<>();
         for (TilePosition start : JBWEB.mapBWEM.getMap().getStartingLocations()) {
-            if (JBWEB.mapBWEM.getMap().getArea(start) != JBWEB.getMainArea()){
+            if (JBWEB.mapBWEM.getMap().getArea(start) != JBWEB.getMainArea()) {
                 enemyStartLocations.add(start);
             }
         }
@@ -543,8 +557,8 @@ public class Blocks {
                 TilePosition botRight = new TilePosition(x + 8, y + 5);
 
                 if (!topLeft.isValid(JBWEB.game)
-                        || !botRight.isValid(JBWEB.game)
-                        || !canAddProxyBlock(topLeft, 8, 5)) {
+                    || !botRight.isValid(JBWEB.game)
+                    || !canAddProxyBlock(topLeft, 8, 5)) {
                     continue;
                 }
 
@@ -563,7 +577,7 @@ public class Blocks {
 
                 // Bonus for placing in a good area
                 if (goodArea(topLeft, enemyStartLocations, areasToAvoid) &&
-                        goodArea(botRight, enemyStartLocations, areasToAvoid)) {
+                    goodArea(botRight, enemyStartLocations, areasToAvoid)) {
                     dist = Math.log(dist);
                 }
 
@@ -594,7 +608,7 @@ public class Blocks {
         List<Block> blocksToRemove = new ArrayList<>();
         for (Block block : allBlocks) {
             if (here.x >= block.getTilePosition().x && here.x < block.getTilePosition().x + block.width() &&
-                    here.y >= block.getTilePosition().y && here.y < block.getTilePosition().y + block.height()) {
+                here.y >= block.getTilePosition().y && here.y < block.getTilePosition().y + block.height()) {
                 blocksToRemove.add(block);
             }
         }
@@ -628,7 +642,7 @@ public class Blocks {
         double distBest = Double.MAX_VALUE;
         Block bestBlock = null;
         for (Block block : allBlocks) {
-            TilePosition tile = new TilePosition(block.getTilePosition().x + block.width()/2, block.getTilePosition().y + block.height()/2);
+            TilePosition tile = new TilePosition(block.getTilePosition().x + block.width() / 2, block.getTilePosition().y + block.height() / 2);
             double dist = here.getDistance(tile);
 
             if (dist < distBest) {
@@ -637,5 +651,11 @@ public class Blocks {
             }
         }
         return bestBlock;
+    }
+
+    // =========================================================
+
+    public static List<Block> getAllBlocks() {
+        return allBlocks;
     }
 }

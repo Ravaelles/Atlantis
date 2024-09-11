@@ -2,9 +2,13 @@ package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
+import bwapi.Color;
 
 public class OnWrongSideOfFocusPoint extends MissionManager {
     public OnWrongSideOfFocusPoint(AUnit unit) {
@@ -13,10 +17,13 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
 
     @Override
     public boolean applies() {
-        return focusPoint.isAroundChoke();
+        return focusPoint.isAroundChoke()
+            && unit.isGroundUnit();
     }
 
-    public Manager handle() {
+    protected Manager handle() {
+        System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " - WROOOOOOOOOOOOOOOOONG");
+
         if (handleWrongSideOfFocus()) {
             return usedManager(this);
         }
@@ -28,29 +35,22 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     private boolean handleWrongSideOfFocus() {
-        if (unit.isAir()) {
-            return false;
-        }
-
-        APosition withdrawTo = focusPoint.fromSide();
-
-        if (!focusPoint.isAroundChoke() || withdrawTo == null) {
-//            System.out.println("fromSide = " + fromSide);
-//            System.out.println("FOCUS POINT = " + focusPoint.toString());
-//            System.out.println("isAroundChoke = " + focusPoint.isAroundChoke());
-//            System.out.println("focusPoint.fromSide() = " + focusPoint.fromSide());
-            return false;
-        }
+        APosition withdrawTo = focusPoint.fromSide().position();
+        if (!focusPoint.isAroundChoke() || withdrawTo == null) return false;
 
         double distToFocusPoint = unit.distToFocusPoint();
 //        double optimalDist = unit.mission().optimalDist();
 
         boolean onValidSideOfChoke = IsOnValidSideOfChoke.check(unit, focusPoint);
-//        APainter.paintCircleFilled(unit, 6, onValidSideOfChoke ? Color.Green : Color.Red);
 
-        if (!onValidSideOfChoke && distToFocusPoint <= 7) {
+        if (
+            distToFocusPoint <= 6
+                && ((distToFocusPoint <= 2 && unit.isDragoon()) || !onValidSideOfChoke)
+        ) {
+            unit.paintCircleFilled(6, Color.Red);
             makeFriendsHelpWithdraw(unit, focusPoint);
 
+            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " WRONG: " + distToFocusPoint);
             unit.move(withdrawTo, Actions.MOVE_FOCUS, "Withdraw", true);
             return true;
         }
@@ -70,9 +70,12 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
     }
 
     private boolean makeFriendsHelpWithdraw(AUnit unit, AFocusPoint focus) {
-        if (unit.enemiesNear().combatUnits().empty()) {
-            for (AUnit friend : unit.friendsNear().inRadius(0.3, unit).combatUnits().list()) {
-                APosition withdrawFriendTo = friend.translateTilesTowards(1, focusPoint.fromSide());
+        HasPosition withdrawFriendTo = Select.main();
+        if (withdrawFriendTo == null) return false;
+
+        if (unit.enemiesNear().combatUnits().inRadius(6, unit).empty()) {
+            for (AUnit friend : unit.friendsNear().inRadius(5, unit).combatUnits().list()) {
+//                APosition withdrawFriendTo = friend.translateTilesTowards(2, focusPoint.fromSide());
                 if (friend.move(withdrawFriendTo, Actions.MOVE_FOCUS, "HelpWithdraw", true)) {
                     friend.setTooltip("HelpWithdraw", true);
                 }

@@ -40,13 +40,9 @@ public abstract class MoveToFocusPoint {
             return false;
         }
 
-        if (joinSquad()) {
-            return true;
-        }
+        if (joinSquad()) return true;
 
-        if (unit.lastActionLessThanAgo(6, Actions.MOVE_FORMATION)) {
-            return true;
-        }
+        if (unit.lastActionLessThanAgo(6, Actions.MOVE_FORMATION)) return true;
 
         unitToFocus = unit.distTo(focus);
         optimalDist = optimalDist();
@@ -78,9 +74,7 @@ public abstract class MoveToFocusPoint {
     // =========================================================
 
     protected boolean spreadOut() {
-        if (unit.lastActionLessThanAgo(11, Actions.MOVE_FORMATION)) {
-            return true;
-        }
+        if (unit.lastActionLessThanAgo(11, Actions.MOVE_FORMATION)) return true;
 
         Selection friends = unit.friendsNear().groundUnits().inRadius(1, unit);
         if (friends.notEmpty()) {
@@ -116,17 +110,13 @@ public abstract class MoveToFocusPoint {
     }
 
     public boolean isOnValidSideOfChoke(AUnit unit, AFocusPoint focus) {
-        if (focus == null || !focus.isAroundChoke()) {
-            return true;
-        }
+        if (focus == null || !focus.isAroundChoke()) return true;
 
         APosition choke = focus.choke().center();
         double unitToChoke = unit.distTo(choke);
         double focusToChoke = focus.distTo(choke);
 
-        if (unitToChoke < focusToChoke) {
-            return false;
-        }
+        if (unitToChoke < focusToChoke) return false;
 
         double unitToFromSide = unit.distTo(focus.fromSide());
         double focusToFromSide = focus.distTo(focus.fromSide());
@@ -138,17 +128,15 @@ public abstract class MoveToFocusPoint {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     public boolean handleWrongSideOfFocus(AUnit unit, AFocusPoint focus) {
-        if (unit.isAir()) {
-            return false;
-        }
+        if (unit.isAir()) return false;
 
         APosition withdrawTo = focus.fromSide();
 
         if (!focus.isAroundChoke() || withdrawTo == null) {
-//            System.out.println("fromSide = " + fromSide);
-//            System.out.println("FOCUS POINT = " + focus.toString());
-//            System.out.println("isAroundChoke = " + focus.isAroundChoke());
-//            System.out.println("focus.fromSide() = " + focus.fromSide());
+
+
+
+
             return false;
         }
 
@@ -206,9 +194,7 @@ public abstract class MoveToFocusPoint {
      * Unit is too close to its focus point.
      */
     protected boolean tooCloseToFocusPoint() {
-        if (!isAroundChoke()) {
-            return false;
-        }
+        if (!isAroundChoke()) return false;
 
         if (unit.isMelee() && unit.hp() <= 18 && unitToFocus <= 3.5) {
             if (unit.moveAwayFrom(focus, 2, "InjuredSafety", Actions.MOVE_FOCUS)) {
@@ -216,13 +202,9 @@ public abstract class MoveToFocusPoint {
             }
         }
 
-        if (unit.enemiesNear().inRadius(2, unit).isNotEmpty()) {
-            return false;
-        }
+        if (unit.enemiesNear().inRadius(2, unit).isNotEmpty()) return false;
 
-        if (unit.isZealot() && unit.enemiesNear().inRadius(6, unit).notEmpty()) {
-            return false;
-        }
+        if (unit.isZealot() && unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
 
         if (isTooClose()) {
             String dist = A.dist(unitToFocus);

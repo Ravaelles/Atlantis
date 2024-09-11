@@ -1,12 +1,14 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.terran.tank.TerranTank;
+import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class ProcessAttackUnit extends Manager {
     public ProcessAttackUnit(AUnit unit) {
@@ -14,23 +16,46 @@ public class ProcessAttackUnit extends Manager {
     }
 
     public boolean processAttackOtherUnit(AUnit target) {
-        if (unit.isTankSieged() && unit.distToMoreThan(target, 12)) {
-            unit.setTooltip("UnsiegeToAttack");
-            return TerranTank.wantsToUnsiege(unit);
+//        A.printStackTrace("ProcessAttackUnit.processAttackOtherUnit() " + unit.idWithHash());
+
+        if (target == null) {
+//            ErrorLog.printMaxOncePerMinute(unit.type() + " AttackUnit got null target");
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(unit.type() + " AttackUnit got null target");
+            return false;
         }
+        if (target.hp() <= 0) {
+//            ErrorLog.printMaxOncePerMinute(
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                unit.type() + " AttackUnit got target.hp = " + target.hp() + " - " + target.type()
+            );
+            return false;
+        }
+        if (!target.hasPosition()) {
+            ErrorLog.printMaxOncePerMinute(
+                unit.type() + " AttackUnit got target with no position" + target.position() + " " + target.type()
+            );
+            return false;
+        }
+
+        // =========================================================
+
+        if (ProcessAttackUnitAsTank.forTank(this, unit, target)) return true;
 
         if (target.isFoggedUnitWithKnownPosition()) {
-            unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false);
-            return true;
+            if (unit.distTo(target) > unit.weaponRangeAgainst(target)) {
+//                unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false);
+                if (unit.move(target, Actions.MOVE_ATTACK, "ToFogged", false)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        if (handleMoveNextToTanksWhenAttackingThem(target)) {
-            return true;
-        }
+        if (handleMoveNextToTanksWhenAttackingThem(target)) return true;
 
         // Come closer when attacking enemy bases
-        if (target.isBase() && unit.hasCooldown() && unit.distToMoreThan(target, 2.8)) {
-            if (unit.move(target, Actions.MOVE_ATTACK, "BaseAttack", false)) {
+        if (comeCloserToBuildingsWhenAttackingThem(target)) {
+            if (unit.move(target, Actions.MOVE_ENGAGE, "GetClosa", false)) {
                 return true;
             }
         }
@@ -56,11 +81,17 @@ public class ProcessAttackUnit extends Manager {
 //        }
 
         // Melee
-        confirmAttack(target);
-        return true;
+        return confirmAttack(target);
     }
 
-//    private  double distBonus(AUnit target) {
+    private boolean comeCloserToBuildingsWhenAttackingThem(AUnit target) {
+        return target.isABuilding()
+            && unit.cooldown() >= 5
+            && !target.isCombatBuilding()
+            && unit.distToMoreThan(target, 1.7);
+    }
+
+    //    private  double distBonus(AUnit target) {
 //        if (unit.isOtherUnitFacingThisUnit(target) && (target.isMoving() || target.isAttacking())) {
 //            return -1.6;
 //        }
@@ -75,9 +106,8 @@ public class ProcessAttackUnit extends Manager {
     // =========================================================
 
     private boolean handleMoveNextToTanksWhenAttackingThem(AUnit enemy) {
-        if (!enemy.isTank()) {
-            return false;
-        }
+        if (!enemy.isTank()) return false;
+        if (We.terran()) return false;
 
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (
@@ -92,13 +122,16 @@ public class ProcessAttackUnit extends Manager {
                 && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
                 && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
         ) {
-            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) {
-                return false;
-            }
+            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) return false;
 
-            if (unit.move(enemy, Actions.MOVE_ATTACK, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
+            if (unit.attackUnit(enemy)) {
+                unit.setTooltip("Soyuz" + A.dist(enemy, unit) + "/" + count);
                 return true;
             }
+
+//            if (unit.move(enemy, Actions.MOVE_ATTACK, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
+//                return true;
+//            }
         }
 
         return false;

@@ -6,7 +6,7 @@ import atlantis.game.A;
 public class ParamTweakerFactory extends ParamTweaker {
 
     public static void init() {
-        System.out.println("###### INIT ParamTweaker ######");
+        A.println("###### INIT ParamTweaker ######");
         tweaker = new ParamTweaker();
 
 //        tweaker.addParam(new Param(

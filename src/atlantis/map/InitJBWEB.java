@@ -1,8 +1,8 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
-import jbweb.JBWEB;
-import jbweb.Stations;
+import atlantis.game.A;
+import jbweb.*;
 
 public class InitJBWEB {
 
@@ -11,28 +11,36 @@ public class InitJBWEB {
      * Still JBWEB is used for ground dist calculation.
      */
     public static void init() {
-        try {
-            JBWEB.onStart(Atlantis.game(), AMap.bwem);
-//            Blocks.findBlocks();
-            Stations.findStations();
-//            Wall wall = Walls.createTWall();
+//        try {
+        JBWEB.onStart(Atlantis.game(), AMap.bwem);
+        Blocks.findBlocks();
+        Stations.findStations();
+
+//        Wall wall = Walls.createTWall();
+//        System.out.println("-------------------");
+//        System.out.println("wall = " + wall);
+//        System.err.println("wall = " + wall.getRawBuildings());
+//        System.err.println("wall = " + wall.getDefenses().size());
+
 
 //            if (!wall.getDefenses().isEmpty()) {
-//                System.out.println("Walls.getWalls() = " + Walls.getWalls());
-//                System.out.println("Wall = " + wall);
-//
 //                wall = Walls.getWall(Chokes.mainChoke().rawChoke());
-//                System.out.println("Walls.getWalls() = " + Walls.getWalls());
-//                System.out.println("Wall = " + wall);
+
 //            }
 //            else {
 //                System.err.println("Not able to init wall");
 //            }
-        } catch (Exception e) {
-            System.err.println("JBWEB exception: " + e.getMessage());
-            e.printStackTrace();
-            Atlantis.getInstance().exitGame();
-        }
-    }
+//        } catch (Exception e) {
+//            if (!A.isUms()) {
+//                System.err.println("JBWEB exception: " + e.getMessage());
+//                e.printStackTrace();
+//                Atlantis.getInstance().exitGame();
+//            }
+//            else {
+//                A.errPrintln("InitJBWEB failed, but continuing to play.");
+//            }
+//        }
 
+//        Atlantis.getInstance().exitGame();
+    }
 }

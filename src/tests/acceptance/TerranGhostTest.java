@@ -2,7 +2,7 @@ package tests.acceptance;
 
 import atlantis.combat.micro.terran.infantry.TerranGhost;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.*;
 import static junit.framework.TestCase.assertEquals;
@@ -28,17 +28,17 @@ public class TerranGhostTest extends AbstractTestFakingGame {
                 TerranGhost manager3 = new TerranGhost(ghost3);
                 TerranGhost manager4 = new TerranGhost(ghost4);
                 TerranGhost manager5 = new TerranGhost(ghost5);
-                manager1.handle();
-                manager2.handle();
-                manager3.handle();
-                manager4.handle();
-                manager5.handle();
+                manager1.invokeFrom(this);
+                manager2.invokeFrom(this);
+                manager3.invokeFrom(this);
+                manager4.invokeFrom(this);
+                manager5.invokeFrom(this);
 
-//                System.out.println("Lockdown targetFor(ghost1) = " + TerranGhost.lockdownTargets.targetFor(ghost1));
-//                System.out.println("Lockdown targetFor(ghost2) = " + TerranGhost.lockdownTargets.targetFor(ghost2));
-//                System.out.println("Lockdown targetFor(ghost3) = " + TerranGhost.lockdownTargets.targetFor(ghost3));
-//                System.out.println("Lockdown targetFor(ghost4) = " + TerranGhost.lockdownTargets.targetFor(ghost4));
-//                System.out.println("Lockdown targetFor(ghost5) = " + TerranGhost.lockdownTargets.targetFor(ghost5));
+//                System.err.println("Lockdown targetFor(ghost1) = " + TerranGhost.lockdownTargets.targetFor(ghost1));
+//                System.err.println("Lockdown targetFor(ghost2) = " + TerranGhost.lockdownTargets.targetFor(ghost2));
+//                System.err.println("Lockdown targetFor(ghost3) = " + TerranGhost.lockdownTargets.targetFor(ghost3));
+//                System.err.println("Lockdown targetFor(ghost4) = " + TerranGhost.lockdownTargets.targetFor(ghost4));
+//                System.err.println("Lockdown targetFor(ghost5) = " + TerranGhost.lockdownTargets.targetFor(ghost5));
 
                 assertEquals(reaver, TerranGhost.lockdownTargets.targetFor(ghost1)); // Reaver
                 assertEquals(dragoon, TerranGhost.lockdownTargets.targetFor(ghost2)); // Dragoon

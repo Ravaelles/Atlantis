@@ -8,6 +8,8 @@ import atlantis.units.select.Select;
 import bwapi.TechType;
 
 public class TerranCloakableManager extends Manager {
+    private boolean enemiesThatCanAttackThisUnit;
+    private boolean enemyDetectorsNear;
 
     public TerranCloakableManager(AUnit unit) {
         super(unit);
@@ -19,7 +21,7 @@ public class TerranCloakableManager extends Manager {
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (update()) {
             return usedManager(this);
         }
@@ -28,37 +30,50 @@ public class TerranCloakableManager extends Manager {
     }
 
     public boolean update() {
-        if (AGame.notNthGameFrame(7)) {
-            return false;
-        }
+        if (AGame.notNthGameFrame(7)) return false;
 
         if (unit.canCloak() && ATech.isResearched(TechType.Cloaking_Field)) {
-            boolean enemiesNear = unit.enemiesNear()
-                .canAttack(unit, true, true, 3)
+            enemiesThatCanAttackThisUnit = unit.enemiesNear()
+                .canAttack(unit, true, true, 10)
                 .isNotEmpty();
-            boolean detectorsNear = Select.enemy()
+            enemyDetectorsNear = Select.enemy()
                 .detectors()
-                .inRadius(9.1, unit)
+                .inRadius(13.1, unit)
                 .isNotEmpty();
-
-            // Not cloaked
-            if (!unit.isCloaked()) {
-                if (unit.energy() > 10 && enemiesNear && !detectorsNear) {
-                    unit.cloak();
-                    unit.setTooltipTactical("CLOAK!");
-                    return true;
-                }
-            }
 
             // Cloaked
-            else {
-                System.out.println("CLOAKED");
-                if (!enemiesNear || detectorsNear || unit.lastUnderAttackLessThanAgo(25)) {
-                    unit.decloak();
-                    unit.setTooltipTactical("DECLOAK");
+            if (unit.isCloaked()) {
+                if (whenCloaked()) {
                     return true;
                 }
             }
+
+            // Not cloaked
+            else {
+                if (whenNotCloaked()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean whenNotCloaked() {
+        if (unit.energy() > 50 && enemiesThatCanAttackThisUnit && !enemyDetectorsNear) {
+            unit.cloak();
+            unit.setTooltipTactical("CLOAK!");
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean whenCloaked() {
+        if (!enemiesThatCanAttackThisUnit || enemyDetectorsNear || unit.lastUnderAttackLessThanAgo(25)) {
+            unit.decloak();
+            unit.setTooltipTactical("DECLOAK");
+            return true;
         }
 
         return false;

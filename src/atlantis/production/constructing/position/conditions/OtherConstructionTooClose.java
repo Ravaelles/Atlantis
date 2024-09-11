@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.conditions;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
@@ -15,43 +16,39 @@ public class OtherConstructionTooClose {
      * could be stacked.
      */
     public static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
-//        System.out.println("============================");
-//        System.out.println("position = " + position + ", not started = " + ConstructionRequests.notStarted().size()
-//                + " // all = " + ConstructionRequests.all().size());
+        if (building.isBase()) return false;
+
+        boolean isPylon = building.isPylon();
 
         // Compare against planned construction places
         for (Construction order : ConstructionRequests.all()) {
             HasPosition constructionPosition = order.buildPosition();
-//            System.out.println("another = " + constructionPosition + " // " + order.buildingType());
-            if (
-                position != null && constructionPosition != null
-            ) {
-//                System.out.println("OK constructionPosition = " + constructionPosition);
+
+            if (position != null && constructionPosition != null) {
                 double distance = position.distTo(constructionPosition);
-//                System.out.println("distance = " + distance + " // " + position);
-//                System.out.println("------------");
-//                boolean areBasesTooCloseOneToAnother = building.isBase() && order.buildingType().isBase()
-//                        && (distance <= 5 && !We.zerg());
 
                 if (distance >= 2) {
-                    if (building.isSunkenOrCreep() && order.buildingType().isSunkenOrCreep()) {
-                        return false;
-                    }
-
-                    if (building.isCannon() && order.buildingType().isCannon()) {
-                        return false;
-                    }
+                    if (building.isCannon() && order.buildingType().isCannon()) return false;
+                    if (building.isSunkenOrCreep() && order.buildingType().isSunkenOrCreep()) return false;
                 }
 
-                // Look for two bases that would be built too close one to another
-                if (distance <= (building.canHaveAddon() ? 4 : 2.5)) {
-                    AbstractPositionFinder._CONDITION_THAT_FAILED = "PLANNED BUILDING TOO CLOSE (" + building + ", DIST: " + distance + ")";
-                    return true;
+                // Look for two positions that could overlap one another
+                if (distance <= (building.canHaveAddon() ? 4 : building.isPylon() ? 2 : 2.8)) {
+                    return failed("Planned building too close (" + building + ", dist: " + distance + ")");
+                }
+
+                if (isPylon && distance <= 3 && A.supplyTotal() <= 40) {
+                    return failed("Spread early pylons");
                 }
             }
         }
 
         // No collisions detected
         return false;
+    }
+
+    private static boolean failed(String reason) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        return true;
     }
 }

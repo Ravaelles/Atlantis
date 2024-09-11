@@ -3,8 +3,7 @@ package atlantis.combat.missions;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
-import atlantis.decions.Decision;
-import atlantis.map.position.APosition;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 
@@ -25,12 +24,8 @@ public abstract class Mission extends MissionHelper {
 
     // =========================================================
 
-//    public abstract Manager handle(AUnit unit);
-
-    public Manager handle(AUnit unit) {
-        unit.setTooltipTactical("#MA");
-
-        return managerClass(unit).handle();
+    public Manager handleManagerClass(AUnit unit) {
+        return managerClass(unit).invokeFrom(this);
     }
 
     // =========================================================
@@ -66,9 +61,7 @@ public abstract class Mission extends MissionHelper {
 
     // Template method
     public boolean allowsToAttackCombatBuildings(AUnit unit, AUnit combatBuilding) {
-        if (unit.isInfantry() && unit.hp() <= 39) {
-            return false;
-        }
+        if (unit.isInfantry() && unit.hp() <= 39) return false;
 
         return unit.friendsNearCount() >= 7;
     }
@@ -77,8 +70,6 @@ public abstract class Mission extends MissionHelper {
     public boolean forcesUnitToFight(AUnit unit, Units enemies) {
         return false;
     }
-
-    // =========================================================
 
     // =========================================================
 

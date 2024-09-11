@@ -10,14 +10,11 @@ public class DontInterruptStartedAttacks {
     public static boolean shouldNotInterrupt(AUnit unit) {
 //        if (true) return false;
 
-        if (unit.lastActionMoreThanAgo(15)) {
-            return false;
-        }
+//        if (unit.lastActionMoreThanAgo(15)) return false; // Changed
+        if (unit.lastActionMoreThanAgo(30)) return false;
 
         AUnit target = unit.target();
-        if (target != null && target.isCombatBuilding() && unit.friendsInRadiusCount(4) <= 7) {
-            return false;
-        }
+        if (target != null && target.isCombatBuilding() && unit.friendsInRadiusCount(4) <= 7) return false;
 
         if (unit.isVulture()) {
             if (unit.hp() >= 22 && unit.isBraking() && unit.isAttackingOrMovingToAttack() && unit.lastAttackFrameAgo() >= 40) {
@@ -36,9 +33,7 @@ public class DontInterruptStartedAttacks {
 //        }
 
 //        if (unit.hp() <= 20 || !unit.isAttackingOrMovingToAttack()) {
-        if (!unit.isAttackingOrMovingToAttack()) {
-            return false;
-        }
+        if (!unit.isAttackingOrMovingToAttack()) return false;
 
 //        if (unit.hp() <= 40 && unit.enemiesNear().ofType(AUnitType.Protoss_Zealot).inRadius(2.8, unit).atLeast(2)) {
 //            return false;
@@ -74,15 +69,7 @@ public class DontInterruptStartedAttacks {
 
         if (
             UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)
-//                        && NearestEnemy.rangedHasSmallerRangeThan(unit)
         ) {
-//            if (unit.isFirstCombatUnit()) {
-//                System.out.println(A.now() + "  " + unit.idWithHash() + " STARTED ATTACK ANIMATION");
-//            }
-//            APainter.paintCircle(unit, 15, Color.Green);
-//            APainter.paintCircle(unit, 13, Color.Green);
-//            APainter.paintCircle(unit, 11, Color.Green);
-//            unit.setTooltip("Shoot(" + unit.lastFrameOfStartingAttackAgo() + ")");
             return true;
         }
 

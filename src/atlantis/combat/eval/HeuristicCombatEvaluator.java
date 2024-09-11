@@ -90,9 +90,9 @@
 //                }
 //
 ////                if (unit.isOur() && againstUnits.isNotEmpty()) {
-////                    System.out.println(" // " + againstUnits.size());
+
 ////                    for (AUnit against : againstUnits.list()) {
-////                        System.out.println("   " + against);
+
 ////                    }
 ////                }
 //
@@ -185,10 +185,10 @@
 //                .canAttack(unit, 6);
 //
 ////        unit.enemiesNear().print("againstUnits");
-////        System.out.println("againstUnits A1 = " + unit.enemiesNear().size());
-////        System.out.println("againstUnits A2 = " + unit.enemiesNear().ranged().size());
-////        System.out.println("againstUnits A3 = " + unit.enemiesNear().ranged().canAttack(unit, 4).size());
-////        System.out.println("againstUnits A = " + againstUnits.size());
+
+
+
+
 //
 //        // Melee
 //        againstUnits = againstUnits.add(
@@ -197,20 +197,20 @@
 //                        .canAttack(unit, false, true, 5)
 //        );
 //
-////        System.out.println("againstUnits B1 = " + unit.enemiesNear().size());
-////        System.out.println("againstUnits B2 = " + unit.enemiesNear().melee().size());
-////        System.out.println("againstUnits B3 = " + unit.enemiesNear().melee().inRadius(5, unit).size());
-////        System.out.println("againstUnits B4 = " + unit.enemiesNear().melee().inRadius(5, unit).canAttack(unit, false, true, 5).count());
-////        System.out.println("againstUnits B = " + againstUnits.size());
+
+
+
+
+
 //
 ////        if (unit.isOur()) {
 ////            againstUnits = againstUnits.add(EnemyUnits.combatUnitsToBetterAvoid()).removeDuplicates();
 ////        }
-////        System.out.println("againstUnits C1 = " + againstUnits.size());
+
 //
 //        againstUnits = againstUnits.removeDuplicates();
 //
-////        System.out.println("againstUnits C2 = " + againstUnits.size());
+
 //
 //        return againstUnits;
 //    }

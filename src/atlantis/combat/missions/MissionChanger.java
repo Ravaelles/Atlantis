@@ -3,7 +3,8 @@ package atlantis.combat.missions;
 import atlantis.combat.missions.attack.MissionChangerWhenAttack;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
-import atlantis.combat.missions.defend.Sparta;
+import atlantis.combat.missions.defend.sparta.Sparta;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
@@ -13,20 +14,16 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 import atlantis.util.We;
 
-import java.util.ArrayList;
-
 public abstract class MissionChanger {
-
     public static final int MISSIONS_ENFORCED_FOR_SECONDS = 20;
 
     public static final boolean DEBUG = true;
-//    public static final boolean DEBUG = false;
+    //    public static final boolean DEBUG = false;
     public static String reason = "";
-
-    protected static ArrayList<Mission> missionHistory = new ArrayList<>();
 
     // =========================================================
 
@@ -34,14 +31,12 @@ public abstract class MissionChanger {
      * Takes care of current strategy.
      */
     public static void evaluateGlobalMission() {
-        if (A.notNthGameFrame(26)) {
-            return;
-        }
+        if (A.everyFrameExceptNthFrame(26)) return;
 
         // === Handle UMS ==========================================
 
         if (AGame.isUms()) {
-            forceMissionAttack("UmsAlwaysAttack");
+            if (!Missions.isGlobalMissionAttack()) forceMissionAttack("UmsAlwaysAttack");
             return;
         }
 
@@ -51,16 +46,21 @@ public abstract class MissionChanger {
             return;
         }
 
-//        if (
-//            !Have.main()
-//                || (Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS * 30 && !ArmyStrength.weAreMuchStronger()
-//        )) {
-//            return;
-//        }
+        if (!Have.main() || lastMissionChangedJustSomeTimeAgo()) {
+            return;
+        }
 
         reason = "";
 
         MissionChanger.changeCurrentMissionIfNeeded();
+    }
+
+    private static boolean lastMissionChangedJustSomeTimeAgo() {
+        return Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS * 30;
+    }
+
+    public static void forceEvaluateGlobalMission() {
+        changeCurrentMissionIfNeeded();
     }
 
     protected abstract void changeMissionIfNeeded();
@@ -72,9 +72,11 @@ public abstract class MissionChanger {
 
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.get().changeMissionIfNeeded();
-        } else if (Missions.isGlobalMissionContain()) {
+        }
+        else if (Missions.isGlobalMissionContain()) {
             MissionChangerWhenContain.get().changeMissionIfNeeded();
-        } else if (Missions.isGlobalMissionDefend() || Missions.isGlobalMissionSparta()) {
+        }
+        else if (Missions.isGlobalMissionDefendOrSparta()) {
             MissionChangerWhenDefend.get().changeMissionIfNeeded();
         }
     }
@@ -83,9 +85,9 @@ public abstract class MissionChanger {
 
     public static Mission defendOrSpartaMission() {
 //        if (We.protoss() || We.terran()) {
+
         if (A.seconds() <= 60 * 7 && Count.basesWithUnfinished() <= 1) {
             if (Sparta.canUseSpartaMission()) {
-//                System.out.println("Using SPARTA mission instead of Defend");
                 return Missions.SPARTA;
             }
         }
@@ -113,14 +115,23 @@ public abstract class MissionChanger {
     // =========================================================
 
     protected static void changeMissionTo(Mission newMission) {
-        Missions.setGlobalMissionTo(newMission, reason);
-        missionHistory.add(newMission);
+        Alpha.get().setMission(newMission);
 
+        if (Missions.globalMission().equals(newMission)) {
+            return;
+        }
+
+        Missions.setGlobalMissionTo(newMission, reason);
+        MissionHistory.missionHistory.add(newMission);
+
+//        A.errPrintln("Change to " + newMission);
 //        A.printStackTrace("Change to " + newMission);
     }
 
     public static void forceMissionAttack(String reason) {
-        Missions.forceGlobalMissionAttack(reason);
+        if (ArmyStrength.ourArmyRelativeStrength() >= 90 || Count.ourCombatUnits() <= 4) {
+            Missions.forceGlobalMissionAttack(reason);
+        }
     }
 
     public static void forceMissionContain(String reason) {
@@ -130,19 +141,37 @@ public abstract class MissionChanger {
     public static void forceMissionSpartaOrDefend(String reason) {
         if (Sparta.canUseSpartaMission()) {
             Missions.forceGlobalMissionSparta(reason);
-        } else {
+        }
+        else {
             Missions.forceGlobalMissionDefend(reason);
         }
     }
 
     protected static boolean defendAgainstMassZerglings() {
+        if (!Enemy.zerg()) return false;
+
         if (
-            Enemy.zerg()
-                && A.seconds() <= 260
+            Count.ourCombatUnits() <= 6
+                && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(7)
+        ) {
+            if (DEBUG) reason = "Mass zerglings A";
+            return true;
+        }
+
+        if (
+            A.seconds() <= 340
                 && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(9)
                 && (!We.zerg() || !ArmyStrength.weAreStronger())
         ) {
-            if (DEBUG) reason = "Mass zerglings";
+            if (DEBUG) reason = "Mass zerglings B";
+            return true;
+        }
+
+        if (
+            Count.dragoons() <= 3
+                && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(11)
+        ) {
+            if (DEBUG) reason = "Mass zerglings C";
             return true;
         }
 

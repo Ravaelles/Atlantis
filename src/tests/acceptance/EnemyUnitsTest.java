@@ -1,17 +1,15 @@
 package tests.acceptance;
 
-import atlantis.config.AtlantisConfig;
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
-import atlantis.game.OnUnitMorph;
-import atlantis.game.OnUnitRenegade;
+import atlantis.game.events.OnUnitMorph;
+import atlantis.game.events.OnUnitRenegade;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
-import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import org.junit.Test;
-import tests.unit.FakeUnit;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -32,10 +30,10 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
     public void neverRunsIntoCombatBuildings() {
         gameCommander = new AtlantisGameCommander();
 
-        AtlantisConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
+        AtlantisRaceConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
 
         createWorld(5, () -> {
-//            System.out.println("\n===================== FRAME = " + A.now() + " ===========================");
+//            System.err.println("\n===================== FRAME = " + A.now() + " ===========================");
 
             if (A.now() == 1) {
                 firstFrame();
@@ -53,7 +51,7 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
                 fifthFrame();
             }
 
-            gameCommander.handle();
+            gameCommander.invokeCommander();
         });
     }
 
@@ -118,8 +116,8 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
 //        EnemyUnits.discovered().print("Fogged");
 //        Select.enemy().print("Visible enemies");
 
-//        System.out.println(EnemyUnits.getFoggedUnit(drone3).type());
-//        System.out.println(EnemyUnits.getFoggedUnit(lurkerEgg).type());
+//        System.err.println(EnemyUnits.getFoggedUnit(drone3).type());
+//        System.err.println(EnemyUnits.getFoggedUnit(lurkerEgg).type());
 
         assertEquals(AUnitType.Zerg_Creep_Colony, EnemyUnits.getFoggedUnit(drone1).type());
         assertEquals(AUnitType.Zerg_Sunken_Colony, EnemyUnits.getFoggedUnit(drone2).type());
@@ -135,26 +133,26 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-                fake(AUnitType.Terran_Marine, 10)
+            fake(AUnitType.Terran_Marine, 10)
         );
     }
 
     protected FakeUnit[] generateEnemies() {
         return fakeEnemies(
-                drone1 = fake(AUnitType.Zerg_Drone),
-                drone2 = fake(AUnitType.Zerg_Drone),
-                drone3 = fake(AUnitType.Zerg_Drone),
-                drone4 = fake(AUnitType.Zerg_Drone),
-                drone5 = fake(AUnitType.Zerg_Drone),
-                drone6 = fake(AUnitType.Zerg_Drone),
-                lurkerEgg = fake(AUnitType.Zerg_Lurker_Egg),
-                larva = fake(AUnitType.Zerg_Larva)
+            drone1 = fake(AUnitType.Zerg_Drone),
+            drone2 = fake(AUnitType.Zerg_Drone),
+            drone3 = fake(AUnitType.Zerg_Drone),
+            drone4 = fake(AUnitType.Zerg_Drone),
+            drone5 = fake(AUnitType.Zerg_Drone),
+            drone6 = fake(AUnitType.Zerg_Drone),
+            lurkerEgg = fake(AUnitType.Zerg_Lurker_Egg),
+            larva = fake(AUnitType.Zerg_Larva)
         );
     }
 
     protected FakeUnit[] generateNeutral() {
-        return new FakeUnit[] {
-                geyser = fake(AUnitType.Resource_Vespene_Geyser)
+        return new FakeUnit[]{
+            geyser = fake(AUnitType.Resource_Vespene_Geyser)
         };
     }
 

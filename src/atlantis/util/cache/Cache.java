@@ -3,6 +3,7 @@ package atlantis.util.cache;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Callback;
 
@@ -29,6 +30,7 @@ public class Cache<V> {
 
         return null;
     }
+
     /**
      * Get cached value or return null.
      */
@@ -40,18 +42,23 @@ public class Cache<V> {
      * Get cached value or initialize it with given callback, cached for cacheForFrames.
      */
     public V get(String cacheKey, int cacheForFrames, Callback callback) {
+//        if (cacheKey == "completedOrders")
+//            System.err.println("cacheKey = " + cacheKey + " / data_size = " + data.size());
+
         if (cacheKey == null) {
             return (V) callback.run();
         }
 
         if (!data.containsKey(cacheKey) || !isCacheStillValid(cacheKey)) {
+//            if (cacheKey == "completedOrders") System.err.println("SET cacheKey = " + cacheKey);
             set(cacheKey, cacheForFrames, callback);
         }
 
         V result = data.get(cacheKey);
         if (result instanceof Selection) {
             return (V) ((Selection) result).clone();
-        } else {
+        }
+        else {
             return result;
         }
     }
@@ -61,7 +68,7 @@ public class Cache<V> {
         if (value != null) {
             if (value instanceof AFocusPoint) {
                 if (((AFocusPoint) value).isValid()) {
-//                    System.out.println("Valid focus: " + value);
+
                     return value;
                 }
             }
@@ -72,12 +79,37 @@ public class Cache<V> {
             }
         }
 
-        set(cacheKey, cacheForFrames, callback);
-        return get(cacheKey, cacheForFrames, callback);
+        @SuppressWarnings("unchecked") V newValue = (V) callback.run();
+        set(cacheKey, cacheForFrames, newValue);
+
+//        if (newValue != null) {
+//            if (newValue instanceof AFocusPoint) {
+//                if (((AFocusPoint) value).isValid()) {
+//                    return value;
+//                }
+//            }
+//            if (newValue instanceof FoggedUnit) {
+//                if (((FoggedUnit) value).isValid()) {
+//                    return value;
+//                }
+//            }
+//            if (newValue instanceof AUnit) {
+//                if (((AUnit) value).isValid()) {
+//                    return value;
+//                }
+//            }
+//        }
+
+        return newValue;
+
+//        set(cacheKey, cacheForFrames, callback);
+//        return get(cacheKey, cacheForFrames, callback);
+
+//        return (V) callback.run();
     }
 
     public V set(String cacheKey, int cacheForFrames, Callback callback) {
-        if (cacheKey == null || cacheKey.length() <= 2) {
+        if (cacheKey == null || cacheKey.length() <= 1) {
             throw new RuntimeException("Invalid cacheKey = /" + cacheKey + "/");
         }
 
@@ -126,7 +158,8 @@ public class Cache<V> {
     protected void addCachedUntilEntry(String cacheKey, int cacheForFrames) {
         if (cacheForFrames > -1) {
             cachedUntil.put(cacheKey, A.now() + cacheForFrames);
-        } else {
+        }
+        else {
             cachedUntil.remove(cacheKey);
         }
     }

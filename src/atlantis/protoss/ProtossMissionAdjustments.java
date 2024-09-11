@@ -20,9 +20,7 @@ public class ProtossMissionAdjustments {
 
 //            int ourZealots = unit.friendlyZealotsNearCount(1.3);
             int ourZealots = enemy.enemyZealotsNearCount(1.1);
-            if (ourZealots < unit.enemiesNear().inRadius(1.2, unit).count()) {
-                return false;
-            }
+            if (ourZealots < unit.enemiesNear().inRadius(1.2, unit).count()) return false;
         }
 
         return false;

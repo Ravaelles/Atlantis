@@ -1,11 +1,12 @@
 package atlantis.combat.micro.attack;
 
-import atlantis.decions.Decision;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
+import atlantis.util.log.ErrorLog;
 
 public class AllowedToAttack {
     private final AttackNearbyEnemies attackNearbyEnemies;
@@ -17,75 +18,49 @@ public class AllowedToAttack {
     }
 
     protected boolean canAttackNow() {
-        if ((new AsTerranForbiddenToAttack(unit)).isForbidden()) {
-            return false;
-        }
-
-        if (!allowedToAttack()) {
-            return false;
-        }
-
         if (
             unit.isMelee()
                 && unit.noCooldown()
                 && unit.enemiesNear().inRadius(2, unit).canBeAttackedBy(unit, 0).notEmpty()
-        ) {
-            return true;
-        }
+        ) return true;
 
-        // === Mission =============================================
-
-        Decision decision = unit.mission().permissionToAttack(unit);
-        if (decision.notIndifferent()) {
-            return decision.toTrueOrFalse();
-        }
+        if ((new AsTerranForbiddenToAttack(unit)).isForbidden()) return false;
+        if (!allowedToAttack()) return false;
 
         // =========================================================
 
-        if (unit.looksIdle() && unit.noCooldown()) {
-            return true;
-        }
+        if (unit.looksIdle() && unit.noCooldown()) return true;
 
         if (
             unit.lastActionLessThanAgo(70, Actions.RUN_RETREAT)
                 && (unit.isMelee() || unit.hasCooldown() || unit.hp() <= 20)
-        ) {
-            return false;
-        }
+        ) return false;
 
-        boolean shouldRetreat = unit.shouldRetreat();
-        if (unit.isMelee() && shouldRetreat) {
-            return false;
-        }
+//        boolean shouldRetreat = unit.shouldRetreat();
+//        if (unit.isMelee() && shouldRetreat) return false;
 
         if (
             unit.isZergling()
                 && (
-                (Enemy.protoss() && unit.hp() <= 19) || shouldRetreat
+                (Enemy.protoss() && unit.hp() <= 19)
             )
-        ) {
-            return false;
-        }
+        ) return false;
 
         if (unit.isMelee()) {
             Selection combatBuildings = Select.ourCombatUnits().buildings();
             if (
                 combatBuildings.inRadius(12, unit).notEmpty()
                     && combatBuildings.inRadius(6.8, unit).isEmpty()
-            ) {
-                return false;
-            }
+            ) return false;
         }
 
         return true;
     }
 
     public boolean canAttackEnemiesNow() {
-        if (AttackNearbyEnemies.reasonNotToAttack == null) {
-            return true;
-        }
+        if (AttackNearbyEnemies.reasonNotToAttack == null) return true;
 
-        return attackNearbyEnemies.defineEnemyToAttackFor() != null;
+        return attackNearbyEnemies.defineBestEnemyToAttack(unit) != null;
     }
 
     public String canAttackEnemiesNowString() {
@@ -116,20 +91,34 @@ public class AllowedToAttack {
 //            return false;
 //        }
 
-        if (unit.hasSquad() && unit.squad().cohesionPercent() <= 80 && unit.isAttackingOrMovingToAttack()) {
+        if (
+            unit.hasSquad()
+                && unit.squad().cohesionPercent() <= 80
+                && unit.isAttackingOrMovingToAttack()
+        ) {
             if (unit.enemiesNear().ranged().notEmpty() && unit.lastStartedAttackMoreThanAgo(90)) {
                 AttackNearbyEnemies.reasonNotToAttack = "Cautious";
                 return false;
             }
         }
 
+        Decision decision = unit.mission().permissionToAttack(unit);
+        if (decision.notIndifferent()) {
+            return decision.toBoolean();
+        }
+
+//        Decision decision = unit.mission().allowsToAttackEnemyUnit(unit);
+//        if (decision.notIndifferent()) {
+//            return decision.toTrueOrFalse();
+//        }
+
         return true;
     }
 
     protected boolean isValidTargetAndAllowedToAttackUnit(AUnit target) {
-        if (target == null || target.position() == null) {
-            return false;
-        }
+        if (target == null || target.position() == null) return false;
+        if (!CanAttackCombatBuilding.isAllowed(unit, target)) return false;
+        if (unit.isZergling() && target.combatEvalRelative() > 1.7) return false;
 
         if (!missionAllowsToAttackEnemyUnit(target)) {
             AttackNearbyEnemies.reasonNotToAttack = "MissionForbids" + target.name();
@@ -139,10 +128,16 @@ public class AllowedToAttack {
         }
 
         if (!unit.canAttackTarget(target, false, true)) {
+//            if (target.isOverlord()) ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Overlord for " + unit);
+
             AttackNearbyEnemies.reasonNotToAttack = "InvalidTarget";
             unit.setTooltipTactical(AttackNearbyEnemies.reasonNotToAttack);
             unit.addLog(AttackNearbyEnemies.reasonNotToAttack);
-            System.err.println(AttackNearbyEnemies.reasonNotToAttack + " for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
+
+            if (!target.isOverlord()) {
+                System.err.println(AttackNearbyEnemies.reasonNotToAttack + " for " + unit + ": " + target + " (" + unit.distTo(target) + ")");
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Invalid target");
+            }
             return false;
         }
 

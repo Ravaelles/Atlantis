@@ -9,17 +9,17 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
 public class CameraCommander extends Commander {
-    
+
     protected static int SCREEN_WIDTH = 640;
     protected static int SCREEN_HEIGHT = 480;
-//    protected static boolean focusCameraOnFirstCombatUnit = true;
+    //    protected static boolean focusCameraOnFirstCombatUnit = true;
     protected static boolean focusCameraOnFirstCombatUnit = false;
 
     // =========================================================
 
 
     @Override
-    public void handle() {
+    protected void handle() {
         AUnit cameraUnit = centerCameraOnUnit();
         if (A.now() <= 1 || CameraCommander.isFocusCameraOnUnit()) {
             CameraCommander.centerCameraOn(cameraUnit);
@@ -62,19 +62,17 @@ public class CameraCommander extends Commander {
 //    }
 
     public static void centerCameraOn(HasPosition position) {
-        if (position == null) {
-            return;
-        }
+        if (position == null) return;
 
         Atlantis.game().setScreenPosition(
-                position.translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7).p()
+            position.translateByPixels(-SCREEN_WIDTH / 2, -SCREEN_HEIGHT * 3 / 7).p()
         );
     }
 
-    public static void toggleFocusCameraOnFirstCombatUnit() {
+    public static void toggleFocusCameraOnInterestingCombatUnit() {
         focusCameraOnFirstCombatUnit = !focusCameraOnFirstCombatUnit;
 
-//        System.out.println("Toggle camera on units: " + focusCameraOnFirstCombatUnit);
+
     }
 
     public static boolean isFocusCameraOnUnit() {

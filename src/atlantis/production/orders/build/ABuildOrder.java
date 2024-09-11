@@ -1,6 +1,6 @@
 package atlantis.production.orders.build;
 
-import atlantis.production.orders.production.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
@@ -38,10 +38,10 @@ public abstract class ABuildOrder {
     /**
      * Request to produce non-building and non-worker unit. Should be handled according to the race played.
      */
-    public abstract boolean produceUnit(AUnitType unitType);
+    public abstract boolean produceUnit(AUnitType unitType, ProductionOrder order);
 
     /**
-     * Returns human readable name of the file.
+     * Returns human-readable name of the file.
      */
     @Override
     public String toString() {

@@ -6,25 +6,21 @@ import atlantis.map.scout.ScoutManager;
 import atlantis.units.AUnit;
 
 public class WeDontKnowEnemyLocation extends Manager {
-
     public WeDontKnowEnemyLocation(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return !EnemyInfo.hasDiscoveredAnyBuilding();
+        return unit.isStopped()
+            && !EnemyInfo.weKnowAboutAnyRealUnit()
+            && !EnemyInfo.hasDiscoveredAnyBuilding();
     }
 
-    public Manager handle() {
-        if (applies()) {
-            unit.setTooltipTactical("Find enemy");
+    protected Manager handle() {
+        unit.setTooltipTactical("Find enemy");
+//        if (true) throw new RuntimeException("wut / " + this.parentsStack());
 
-            if ((new ScoutManager(unit)).tryFindingEnemy()) {
-                return usedManager(this);
-            }
-        }
-
-        return null;
+        return (new ScoutManager(unit)).invokeFrom(this);
     }
 }

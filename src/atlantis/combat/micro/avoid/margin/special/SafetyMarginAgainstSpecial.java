@@ -11,10 +11,9 @@ public class SafetyMarginAgainstSpecial extends SafetyMargin {
 
     public double handle(AUnit attacker) {
         if (attacker.isLurker()) {
-            return AgainstLurker.vsLurker(defender, attacker);
+            return VsLurker.vsLurker(defender, attacker);
         }
 
         return -1;
     }
-
 }

@@ -2,10 +2,10 @@ package atlantis.information.tech;
 
 import atlantis.config.env.Env;
 import atlantis.game.AGame;
-import atlantis.production.orders.production.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLog;
+import atlantis.util.cache.CacheKey;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -21,42 +21,51 @@ public class ATech {
 
     public static boolean isResearched(Object techOrUpgrade) {
         return cacheBoolean.get(
-                "isResearched:" + techOrUpgrade,
-                31,
-                () -> {
-                    if (techOrUpgrade instanceof TechType) {
-                        TechType tech = (TechType) techOrUpgrade;
-                        return isResearchedTech(tech);
-                    } else if (techOrUpgrade instanceof UpgradeType) {
-                        return isResearchedUpgrade((UpgradeType) techOrUpgrade, 1);
-                    } else {
-                        System.out.println("techOrUpgrade = " + techOrUpgrade);
-                        throw new RuntimeException("Neither a tech, nor an upgrade.");
+            CacheKey.toKey(techOrUpgrade),
+            31,
+            () -> {
+                if (techOrUpgrade instanceof TechType) {
+                    TechType tech = (TechType) techOrUpgrade;
+                    return isResearchedTech(tech);
+                }
+                else if (techOrUpgrade instanceof UpgradeType) {
+                    UpgradeType upgrade = (UpgradeType) techOrUpgrade;
+                    return isResearchedUpgrade(upgrade, upgrade.maxRepeats());
+                }
+                else {
+                    System.out.println("techOrUpgrade = " + techOrUpgrade);
+                    throw new RuntimeException("Neither a tech, nor an upgrade.");
 //                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
 //                        return false;
-                    }
                 }
+            }
         );
     }
 
     public static boolean isNotResearchedOrPlanned(Object techOrUpgrade) {
         return cacheBoolean.get(
-                "isNotResearchedOrPlanned:" + techOrUpgrade,
-                11,
-                () -> {
-                    if (isResearched(techOrUpgrade)) return false;
+            "isNotResearchedOrPlanned:" + techOrUpgrade,
+            11,
+            () -> {
+                if (isResearched(techOrUpgrade)) return false;
 
-                    if (techOrUpgrade instanceof TechType) {
-                        return Count.inQueueOrUnfinished((TechType) techOrUpgrade, 4) == 0;
-                    } else if (techOrUpgrade instanceof UpgradeType) {
-                        return Count.inQueueOrUnfinished((UpgradeType) techOrUpgrade, 4) == 0;
-                    } else {
-                        throw new RuntimeException("Neither a tech, nor an upgrade.");
+                if (techOrUpgrade instanceof TechType) {
+                    return Count.inQueueOrUnfinished((TechType) techOrUpgrade, 5) == 0;
+                }
+                else if (techOrUpgrade instanceof UpgradeType) {
+                    return Count.inQueueOrUnfinished((UpgradeType) techOrUpgrade, 5) == 0;
+                }
+                else {
+                    throw new RuntimeException("Neither a tech, nor an upgrade.");
 //                        ErrorLog.printMaxOncePerMinute("Neither a tech, nor an upgrade: " + techOrUpgrade);
 //                        return false;
-                    }
                 }
+            }
         );
+    }
+
+    public static boolean isResearchedOrPlanned(Object techOrUpgrade) {
+        return !isNotResearchedOrPlanned(techOrUpgrade);
     }
 
     public static boolean isResearchedWithOrder(Object techOrUpgrade, ProductionOrder order) {
@@ -94,12 +103,13 @@ public class ATech {
 
     public static Integer[] costOf(Object techOrUpgrade) {
         if (techOrUpgrade instanceof TechType) {
-            return new Integer[] {
-                    ((TechType) techOrUpgrade).mineralPrice(), ((TechType) techOrUpgrade).gasPrice()
+            return new Integer[]{
+                ((TechType) techOrUpgrade).mineralPrice(), ((TechType) techOrUpgrade).gasPrice()
             };
-        } else {
-            return new Integer[] {
-                    ((UpgradeType) techOrUpgrade).mineralPrice(), ((UpgradeType) techOrUpgrade).gasPrice()
+        }
+        else {
+            return new Integer[]{
+                ((UpgradeType) techOrUpgrade).mineralPrice(), ((UpgradeType) techOrUpgrade).gasPrice()
             };
         }
     }

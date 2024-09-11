@@ -7,21 +7,9 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.units.AUnit;
 
 public class DoNotThinkOfImprovingCohesion {
-
-//    public DoNotThinkOfImprovingCohesion(AUnit unit) {
-//        super(unit);
-//    }
-//
-//    public Manager handle() {
-//        if (dontThink(unit)) {
-//            return usedManager(this);
-//        }
-//
-//        return null;
-//    }
-
     public static boolean dontThink(AUnit unit) {
-        return (A.supplyUsed() >= 150 && ArmyStrength.ourArmyRelativeStrength() >= 250)
+        return (A.supplyUsed() >= 185 && ArmyStrength.ourArmyRelativeStrength() >= 250)
+            || unit.enemiesNear().inRadius(7, unit).notEmpty()
             || unit.friendsInRadius(4).groundUnits().count() >= 13
             || Missions.isGlobalMissionDefendOrSparta();
     }

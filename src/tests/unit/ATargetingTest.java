@@ -5,14 +5,12 @@ import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import tests.fakes.FakeUnit;
 
 import static org.junit.Assert.*;
 
 public class ATargetingTest extends AbstractTestWithUnits {
-
     public MockedStatic<AGame> aGame;
-//    public MockedStatic<EnemyInfo> enemyInformation;
-//    public MockedStatic<EnemyUnits> enemyUnitsMock;
 
     @Test
     public void targetsWorkers() {
@@ -37,7 +35,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(drone, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(drone, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -72,7 +70,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(sunken, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -97,8 +95,64 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-//            System.out.println("defineBestEnemyToAttackFor = " + ATargeting.defineBestEnemyToAttackFor(our));
-            assertEquals(templar, ATargeting.defineBestEnemyToAttackFor(our));
+//            System.err.println("defineBestEnemyToAttackFor = " + ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(templar, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsScoutsOverCannons() {
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit scout;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Protoss_Photon_Cannon, 13.8),
+            scout = fake(AUnitType.Protoss_Scout, 14),
+            fake(AUnitType.Protoss_Dragoon, 21),
+            fake(AUnitType.Protoss_Zealot, 22)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(scout, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsCannonOverScoutsIfCannonIsNear() {
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit scout;
+
+        FakeUnit[] enemies = fakeEnemies(
+            scout = fake(AUnitType.Protoss_Scout, 14),
+            fake(AUnitType.Protoss_Photon_Cannon, 15),
+            fake(AUnitType.Protoss_Dragoon, 21),
+            fake(AUnitType.Protoss_Zealot, 22)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(scout, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsCannonOverOtherBuildingsAndWorkers() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit cannon;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Protoss_Pylon, 11),
+            fake(AUnitType.Protoss_Gateway, 12),
+            fake(AUnitType.Protoss_Fleet_Beacon, 13),
+            fake(AUnitType.Protoss_Nexus, 14),
+            cannon = fake(AUnitType.Protoss_Photon_Cannon, 15),
+            fake(AUnitType.Protoss_Pylon, 16),
+            fake(AUnitType.Protoss_Pylon, 17),
+            fake(AUnitType.Protoss_Dragoon, 21),
+            fake(AUnitType.Protoss_Zealot, 22)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(cannon, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -109,14 +163,14 @@ public class ATargetingTest extends AbstractTestWithUnits {
 
         FakeUnit[] enemies = fakeEnemies(
             fake(AUnitType.Zerg_Larva, 11),
-            fake(AUnitType.Zerg_Egg, 11),
-            fake(AUnitType.Zerg_Lurker_Egg, 11),
-            fake(AUnitType.Zerg_Cocoon, 11),
+            fake(AUnitType.Zerg_Egg, 11.2),
+            fake(AUnitType.Zerg_Lurker_Egg, 11.4),
+            fake(AUnitType.Zerg_Cocoon, 12),
             building = fake(AUnitType.Zerg_Hydralisk_Den, 17)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(building, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(building, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -139,7 +193,45 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(spore, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(spore, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsZerglingsOverSunkensWhenSiegingZerg() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit target;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Larva, 10.8),
+            fake(AUnitType.Zerg_Egg, 10.9),
+            fake(AUnitType.Zerg_Lurker_Egg, 10.95),
+            target = fake(AUnitType.Zerg_Zergling, 11.5),
+            fake(AUnitType.Zerg_Sunken_Colony, 13.8),
+            fake(AUnitType.Zerg_Sunken_Colony, 29)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(target, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsSunkensOverZerglingsWhenSiegingZerg() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit target;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Larva, 10.8),
+            fake(AUnitType.Zerg_Egg, 10.9),
+            fake(AUnitType.Zerg_Lurker_Egg, 10.95),
+            fake(AUnitType.Zerg_Zergling, 14.9),
+            target = fake(AUnitType.Zerg_Sunken_Colony, 13.8),
+            fake(AUnitType.Zerg_Sunken_Colony, 29)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(target, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -155,7 +247,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -172,7 +264,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -189,7 +281,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -205,7 +297,7 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 
@@ -222,7 +314,82 @@ public class ATargetingTest extends AbstractTestWithUnits {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttackFor(our));
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsMarinesOverBunker() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            expectedTarget = fake(AUnitType.Terran_Marine, 11.1),
+            fake(AUnitType.Terran_Marine, 12.1),
+            fake(AUnitType.Terran_Bunker, 13.1),
+            fake(AUnitType.Terran_Marine, 13.2)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsMarinesOverBunkerYup() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+//            fake(AUnitType.Terran_Marine, 12.9),
+            fake(AUnitType.Terran_Bunker, 13.1),
+            expectedTarget = fake(AUnitType.Terran_Marine, 13.2)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsMostWoundedMarineOverBunker() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Terran_Marine, 11.1),
+            expectedTarget = fake(AUnitType.Terran_Marine, 12.1).setHp(11),
+            fake(AUnitType.Terran_Bunker, 13.1),
+            fake(AUnitType.Terran_Marine, 13.2)
+        );
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
+    }
+
+    @Test
+    public void targetsCannonOverOtherUnits() {
+        FakeUnit our = fake(AUnitType.Protoss_Zealot, 10);
+        FakeUnit expectedTarget;
+        FakeUnit gate;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Protoss_Gateway, 10.1),
+            fake(AUnitType.Protoss_Pylon, 10.2),
+            fake(AUnitType.Protoss_Cybernetics_Core, 10.3),
+            gate = fake(AUnitType.Protoss_Gateway, 13.1),
+            fake(AUnitType.Protoss_Pylon, 13.2),
+            fake(AUnitType.Protoss_Templar_Archives, 13.5),
+            fake(AUnitType.Protoss_Photon_Cannon, 13.6),
+            expectedTarget = fake(AUnitType.Protoss_Photon_Cannon, 13.7).setHp(11),
+            fake(AUnitType.Protoss_Nexus, 13.9)
+        );
+
+//        our.attackUnit(gate);
+
+        usingFakeOurAndFakeEnemies(our, enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
 }

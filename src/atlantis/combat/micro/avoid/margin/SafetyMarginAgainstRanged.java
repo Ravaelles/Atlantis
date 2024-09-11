@@ -1,7 +1,9 @@
 package atlantis.combat.micro.avoid.margin;
 
-import atlantis.combat.retreating.ShouldRetreat;
+import atlantis.combat.micro.avoid.margin.terran.BonusForWraith;
+
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Color;
@@ -12,8 +14,13 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         super(defender);
     }
 
-    public double calculateAgainst(AUnit attacker) {
+    public double marginAgainst(AUnit attacker) {
         double criticalDist;
+
+        if (A.hasMinerals(2000) && defender.isGroundUnit()) {
+            if (defender.hp() >= 20 && defender.maxHp() <= 60) return 0;
+            if (defender.hp() >= 90 && defender.maxHp() > 60) return 0;
+        }
 
         // GROUND unit
         if (defender.isGroundUnit()) {
@@ -23,7 +30,10 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 criticalDist += bonusForGhost(attacker);
             }
             else if (defender.isWraith()) {
-                criticalDist += bonusForWraith(attacker);
+                criticalDist += BonusForWraith.bonusForWraith(attacker, defender);
+            }
+            else if (defender.isScienceVessel()) {
+                criticalDist += 1 + defender.woundPercent() / 25.0;
             }
         }
 
@@ -38,20 +48,12 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         criticalDist += shouldRetreatBonus(defender);
 //            addBuildingBonus(attacker, criticalDist)
 //        if (attacker.isCombatBuilding()) {
-//            System.out.println(defender + ", CRIT_DIST = " + criticalDist + " // " + addBuildingBonus(attacker, criticalDist));
+
 //        }
 
         // ==============================================
 
         return criticalDist;
-    }
-
-    private double bonusForWraith(AUnit attacker) {
-        if (attacker.isDragoon()) {
-            return 2.3;
-        }
-
-        return 1.3;
     }
 
     private double bonusForGhost(AUnit attacker) {
@@ -63,33 +65,33 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     }
 
     private double shouldRetreatBonus(AUnit defender) {
-        if (ShouldRetreat.shouldRetreat(defender)) {
-            return 4.2;
-        }
+//        if (ShouldRetreat.shouldRetreat(defender)) {
+//            return 4.2;
+//        }
 
         return 0;
     }
 
     private double forGroundUnit(AUnit attacker) {
         return enemyWeaponRange(attacker)
-                + quicknessBonus(attacker)
-                + lurkerBonus(attacker)
-                + woundedBonus(attacker)
-                + ourUnitsNearBonus(defender)
-                + ourMovementBonus(defender)
-                + enemyMovementBonus(attacker)
-                + scoutBonus(attacker)
-                + combatEvalBonus(attacker)
-                + workerBonus(attacker);
+            + quicknessBonus(attacker)
+            + lurkerBonus(attacker)
+            + woundedBonus(attacker)
+            + ourUnitsNearBonus(defender)
+            + ourMovementBonus(defender)
+            + enemyMovementBonus(attacker)
+            + scoutBonus(attacker)
+            + combatEvalBonus(attacker)
+            + workerBonus(attacker);
     }
 
     private double forAirUnit(AUnit attacker) {
         return 3
-                + enemyWeaponRange(attacker)
-                + woundedBonus(attacker)
-                + specialAirUnitBonus(defender)
-                + ourMovementBonus(defender)
-                + enemyMovementBonus(attacker);
+            + enemyWeaponRange(attacker)
+            + woundedBonus(attacker)
+            + specialAirUnitBonus(defender)
+            + ourMovementBonus(defender)
+            + enemyMovementBonus(attacker);
 //        return applyAirUnitTweaks(attacker);
     }
 
@@ -114,7 +116,13 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         }
 
         APainter.paintTextCentered(attacker, "DefBuilding", Color.Orange);
-        return 1.6 + defender.woundPercent() / 100.0 + (defender.isMoving() ? 0.5 : 0) + (defender.isAir() ? 1.5 : 0);
+        APainter.paintCircle(attacker, 7 * 32, Color.Orange);
+
+        return 2.2
+            + defender.woundPercent() / 70.0
+            + (defender.isMoving() ? 0.5 : 0)
+            + (defender.isAir() ? -0.9 : 0)
+            + (defender.lastUnderAttackMoreThanAgo(30 * 100) ? -1.5 : 0);
     }
 
 //    private double extraMarginAgainstCombatBuilding(AUnit attacker) {

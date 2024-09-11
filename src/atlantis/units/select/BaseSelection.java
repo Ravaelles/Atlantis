@@ -31,7 +31,7 @@ public class BaseSelection {
         if (currentCachePath != null) {
             currentCachePath += (currentCachePath.length() > 0 ? "." : "") + method;
         }
-//        System.out.println("path = " + currentCachePath);
+
         return currentCachePath;
     }
 
@@ -51,7 +51,6 @@ public class BaseSelection {
         Select.cache().set(newCacheKey, 1, newSelection);
 
         return newSelection;
-//        return new Selection(newData, currentCachePath + ":" + cachePathSuffix);
     }
 
     public Selection cloneByAdding(Collection<? extends AUnit> addThese, String cachePathSuffix) {

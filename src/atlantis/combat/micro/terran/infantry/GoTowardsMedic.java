@@ -13,11 +13,32 @@ public class GoTowardsMedic extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isTerranInfantryWithoutMedics();
+        if (!unit.isTerranInfantryWithoutMedics()) return false;
+        if (unit.isHealthy()) return false;
+//        if (unit.cooldownRemaining() <= 3 || unit.hp() >= 33) return false;
+        if (
+            unit.cooldownRemaining() <= 3 && unit.hp() >= 33 && unit.enemiesNear().inRadius(5, unit).notEmpty()
+        ) return false;
+        if (unit.meleeEnemiesNear().inRadius(3.1, unit).notEmpty()) return false;
+
+        if (
+            unit.isWounded()
+                && unit.didntShootRecently(2)
+//                && unit.ranRecently(1)
+//                && unit.nearestMedicDist() <= 8.3
+        ) return true;
+
+//        if (unit.enemiesNear().canAttack(unit, 7).isNotEmpty()) {
+//            return false;
+//        }
+
+        if (unit.friendsInRadius(10).bunkers().notEmpty() && unit.enemiesNearInRadius(2.7) > 0) return false;
+
+        return true;
     }
 
     @Override
-    public Manager handle() {
+    protected Manager handle() {
         if (check()) {
             return usedManager(this);
         }
@@ -26,28 +47,13 @@ public class GoTowardsMedic extends Manager {
     }
 
     public boolean check() {
-        if (unit.isHealthy() && unit.distToLeader() <= 6) {
-            return false;
-        }
-
-        if (unit.cooldownRemaining() <= 3 || unit.hp() >= 26) {
-            return false;
-        }
-
-//        if (unit.enemiesNear().canAttack(unit, 7).isNotEmpty()) {
-//            return false;
-//        }
-
-        if (unit.friendsInRadius(10).bunkers().notEmpty() && unit.enemiesNearInRadius(2.7) > 0) {
-            return false;
-        }
-
         AUnit medic = Select.ourOfType(AUnitType.Terran_Medic)
             .inRadius(8, unit)
             .havingEnergy(25)
             .nearestTo(unit);
+
         if (medic != null && medic.distToMoreThan(unit, 2)) {
-            return unit.move(medic, Actions.MOVE_SPECIAL, "BeHealed", false);
+            return unit.move(medic, Actions.SPECIAL, "BeHealed", false);
         }
 
         return false;

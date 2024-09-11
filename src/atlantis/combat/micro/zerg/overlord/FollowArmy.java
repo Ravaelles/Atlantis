@@ -17,19 +17,15 @@ public class FollowArmy extends Manager {
         return unit.id() % 3 == 0;
     }
 
-    public Manager handle() {
-        if (applies()) {
-            APosition medianUnitPosition = Alpha.get().center();
-            if (medianUnitPosition != null) {
-                if (
-                    unit.distTo(medianUnitPosition) > 2.5
-                        && unit.move(medianUnitPosition, Actions.MOVE_FOLLOW, "Follow army", true)
-                ) {
-                    return usedManager(this);
-                }
+    protected Manager handle() {
+        APosition medianUnitPosition = Alpha.get().center();
+        if (medianUnitPosition != null) {
+            if (
+                unit.distTo(medianUnitPosition) > 2.5
+                    && unit.move(medianUnitPosition, Actions.MOVE_FOLLOW, "Follow army", true)
+            ) {
+                return usedManager(this);
             }
-
-            return null;
         }
 
         return null;

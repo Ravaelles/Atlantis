@@ -1,10 +1,11 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.ContainFocusPoint;
+import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
-import atlantis.combat.squad.positioning.EarlyGameTooClustered;
-import atlantis.combat.squad.positioning.TooClustered;
+import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
+import atlantis.combat.squad.positioning.protoss.ProtossTooFarFromLeader;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -19,19 +20,24 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            EarlyGameTooClustered.class,
-            TooClustered.class,
-            ContainFocusPoint.class,
+//            EarlyGameTooClustered.class,
+//            TooClustered.class,
+            ProtossTooFarFromLeader.class,
+
+            HandleFocusPointPositioning.class,
         };
     }
 
     // =========================================================
 
-    public double optimalDist() {
+    public double optimalDist(AFocusPoint focusPoint) {
 //        if (unit.isZealot()) {
 //            private final double SPARTA_MODE_DIST_FROM_FOCUS = 0.55;
 //            return SPARTA_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
 //        }
+
+        double focus = OptimalDistanceToFocusPoint.toFocus(unit, focusPoint);
+        if (focus >= 0) return focus;
 
         double base = 0.0;
 
@@ -46,17 +52,21 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
                 + (unit.isRanged() ? 1 : 0)
                 + Math.min(4, (Select.our().combatUnits().inRadius(8, unit).count() / 6));
 
-            if (We.zerg() && focusPoint.isAroundChoke()) {
-                base += (focusPoint.choke().width() <= 3) ? 3.5 : 0;
+            if (We.zerg() && this.focusPoint.isAroundChoke()) {
+                base += (this.focusPoint.choke().width() <= 3) ? 3.5 : 0;
             }
         }
 
         return Math.max(
-            (unit.isRanged() ? 3.7 : 0),
-            base
-                + letWorkersComeThroughBonus()
-                + (unit.isDragoon() ? 1.7 : 0)
+            baseForUnit(),
+            base + letWorkersComeThroughBonus()
         );
+    }
+
+    private double baseForUnit() {
+        if (unit.isDragoon()) return 0.3;
+
+        return unit.isRanged() ? 1.7 : 0;
     }
 
     private double letWorkersComeThroughBonus() {

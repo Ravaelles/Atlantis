@@ -1,9 +1,12 @@
 package jfap;
 
+import atlantis.game.A;
 import atlantis.game.APlayer;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.Vector;
 import bwapi.*;
+import jfap.tweaks.MoveCombatBuildingsCloserToOurUnits;
 
 import java.util.Objects;
 
@@ -44,6 +47,18 @@ public class JFAPUnit implements Comparable<JFAPUnit> {
         unit = u;
         x = u.x();
         y = u.y();
+
+        if (u.isEnemy() && u.isCombatBuilding()) {
+            Vector vector = (new MoveCombatBuildingsCloserToOurUnits(u)).vectorTowardsOurUnits();
+            if (vector != null) {
+//                vector.print("vector");
+                x += (int) (vector.x * 32);
+                y += (int) (vector.y * 32);
+
+//                System.err.println("X now = " + A.digit(x / 32.0));
+            }
+        }
+
         id = u.id();
         AUnitType auxType = u.type();
         APlayer auxPlayer = pU.player();
@@ -58,13 +73,13 @@ public class JFAPUnit implements Comparable<JFAPUnit> {
         flying = auxType.ut().isFlyer();
         groundDamage = auxType.groundWeapon().damageAmount();
         groundCooldown = auxType.groundWeapon().damageFactor() > 0 && auxType.ut().maxGroundHits() > 0 ? auxType.groundWeapon().damageCooldown() /
-                (auxType.groundWeapon().damageFactor() * auxType.ut().maxGroundHits()) : 0;
+            (auxType.groundWeapon().damageFactor() * auxType.ut().maxGroundHits()) : 0;
         groundMaxRange = auxType.groundWeapon().maxRange();
         groundMinRange = auxType.groundWeapon().minRange();
         groundDamageType = auxType.groundWeapon().damageType();
         airDamage = auxType.airWeapon().damageAmount();
         airCooldown = auxType.airWeapon().damageFactor() > 0 && auxType.ut().maxAirHits() > 0 ? auxType.airWeapon().damageCooldown() /
-                auxType.airWeapon().damageFactor() * auxType.ut().maxAirHits() : 0;
+            auxType.airWeapon().damageFactor() * auxType.ut().maxAirHits() : 0;
         airMaxRange = auxType.airWeapon().maxRange();
         airMinRange = auxType.airWeapon().minRange();
         airDamageType = auxType.airWeapon().damageType();
@@ -94,30 +109,35 @@ public class JFAPUnit implements Comparable<JFAPUnit> {
                     groundDamage = 0;
                     groundCooldown = 5;
                 }
-            } else if (player != null) {
+            }
+            else if (player != null) {
                 groundCooldown = Math.round(37.0f / (player.getUpgradeLevel(UpgradeType.Carrier_Capacity) == 1 ? 8 : 4));
-            } else groundCooldown = Math.round(37.0f / 8);
+            }
+            else groundCooldown = Math.round(37.0f / 8);
             groundDamageType = UnitType.Protoss_Interceptor.groundWeapon().damageType();
             groundMaxRange = 32 * 8;
             airDamage = groundDamage;
             airDamageType = groundDamageType;
             airCooldown = groundCooldown;
             airMaxRange = groundMaxRange;
-        } else if (unitType == AUnitType.Terran_Bunker) {
+        }
+        else if (unitType == AUnitType.Terran_Bunker) {
             groundDamage = WeaponType.Gauss_Rifle.damageAmount();
             groundCooldown = UnitType.Terran_Marine.groundWeapon().damageCooldown() / 4;
             groundMaxRange = UnitType.Terran_Marine.groundWeapon().maxRange() + 32;
             airDamage = groundDamage;
             airCooldown = groundCooldown;
             airMaxRange = groundMaxRange;
-        } else if (unitType == AUnitType.Protoss_Reaver) groundDamage = WeaponType.Scarab.damageAmount();
+        }
+        else if (unitType == AUnitType.Protoss_Reaver) groundDamage = WeaponType.Scarab.damageAmount();
         if (u != null) {
             if (AUnitType.Terran_Marine.equals(u.type())) {
                 if (u.isStimmed()) {
                     groundCooldown /= 2;
                     airCooldown /= 2;
                 }
-            } else if (AUnitType.Terran_Firebat.equals(u.type())) {
+            }
+            else if (AUnitType.Terran_Firebat.equals(u.type())) {
                 if (u.isStimmed()) {
                     groundCooldown /= 2;
                     airCooldown /= 2;

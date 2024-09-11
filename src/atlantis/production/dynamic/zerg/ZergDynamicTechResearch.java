@@ -2,27 +2,28 @@ package atlantis.production.dynamic.zerg;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
-import atlantis.production.orders.build.AddToQueue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
+import atlantis.util.We;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
 
 public class ZergDynamicTechResearch extends Commander {
     @Override
-    public void handle() {
-        if (A.notNthGameFrame(35)) {
-            return;
-        }
+    public boolean applies() {
+        return We.zerg() && A.everyNthGameFrame(39);
+    }
 
+    @Override
+    protected void handle() {
         if (Count.ghosts() >= 2) {
             AddToQueue.tech(TechType.Lockdown);
         }
 
         int hydras = Count.hydralisks();
-        if (hydras >= 8 && AGame.canAffordWithReserved(70, 50)) {
+        if (hydras >= 8 && A.canAffordWithReserved(70, 50)) {
             if (
                 !ATech.isResearched(UpgradeType.Muscular_Augments)
             ) {

@@ -1,18 +1,17 @@
 package atlantis;
 
-import atlantis.combat.squad.NewUnitsToSquadsAssigner;
+import atlantis.config.AtlantisConfig;
+import atlantis.config.env.Env;
+import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
-import atlantis.information.enemy.EnemyUnitsUpdater;
+import atlantis.game.events.*;
 import atlantis.information.enemy.UnitsArchive;
-import atlantis.production.constructing.ProtossConstructionManager;
-import atlantis.production.orders.build.CurrentBuildOrder;
-import atlantis.production.orders.production.ProductionQueueRebuilder;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
 
 /**
- * Main bridge between the game and your code, ported to BWMirror.
+ * Main bridge between the game and your code, ported to JBWAPI.
  */
 public class Atlantis implements BWEventListener {
 
@@ -92,11 +91,11 @@ public class Atlantis implements BWEventListener {
     }
 
     private void setBwapiFlags() {
-//        game.setLocalSpeed(AtlantisConfig.GAME_SPEED);  // Change in-game speed (0 - fastest, 20 - normal)
-//        game.setFrameSkip(AtlantisConfig.FRAME_SKIP);   // Number of GUI frames to skip
-        game.setGUI(false);                             // Turn off GUI - will speed up game considerably
-        game.enableFlag(Flag.UserInput);                // Without this flag you can't control units with mouse
-//        game.enableFlag(Flag.CompleteMapInformation);   // See entire map - must be disabled for real games
+//        game.setLocalSpeed(AtlantisRaceConfig.GAME_SPEED);  // Change in-game speed (0 - fastest, 20 - normal)
+//        game.setFrameSkip(AtlantisRaceConfig.FRAME_SKIP);   // Number of GUI frames to skip
+        game.setGUI(!AtlantisConfig.DISABLE_GUI);             // Turn off GUI - speeds up game considerably
+        game.enableFlag(Flag.UserInput);                      // Without this flag you can't control units with mouse
+//        game.enableFlag(Flag.CompleteMapInformation);       // See entire map - must be disabled for real games
     }
 
     /**
@@ -104,34 +103,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
-
-        // === Handle PAUSE ================================================
-        // If game is paused wait 100ms - pause is handled by PauseBreak button
-        while (GameSpeed.isPaused()) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-            }
-        }
-
-        // === All game actions that take place every frame ==================================================
-
-        try {
-            Atlantis.getInstance().getGameCommander().handle();
-        }
-
-        // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
-        catch (Exception e) {
-            System.err.println("### AN ERROR HAS OCCURRED ###");
-//            throw e;
-            e.printStackTrace();
-        }
-
-        if (A.notUms() && A.now() == 1) {
-            CurrentBuildOrder.get().print();
-        }
-
-        OnEveryFrame.handle();
+        OnEveryFrame.update();
     }
 
     /**
@@ -142,26 +114,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitCreate(Unit u) {
-        if (u == null) {
-            System.err.println("onUnitCreate got null");
-            return;
-        }
-
-        AUnit unit = AUnit.createFrom(u);
-
-        // Our unit
-        if (unit.isOur() && A.now() >= 2) {
-            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-
-            // Apply construction fix: detect new Protoss buildings and remove them from queue.
-            if (AGame.isPlayingAsProtoss() && unit.type().isBuilding()) {
-                ProtossConstructionManager.handleWarpingNewBuilding(unit);
-            }
-
-            if (unit.isABuilding()) {
-
-            }
-        }
+        OnUnitCreated.onUnitCreated(u);
     }
 
     /**
@@ -170,16 +123,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-        AUnit unit = AUnit.getById(u);
-        if (unit != null) {
-            unit.refreshType();
-            if (unit.isOur()) {
-                ourNewUnit(unit);
-            }
-        }
-        else {
-            System.err.println("onUnitComplete null for " + u);
-        }
+        OnUnitCompleted.onUnitCompleted(u);
     }
 
     /**
@@ -187,13 +131,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitDestroy(Unit u) {
-
-        // Some ums maps have funky stuff happening at the start, exclude first 20 frames
-        if (A.now() <= 20) {
-            return;
-        }
-
-        OnUnitDestroyed.update(AUnit.createFrom(u));
+        OnUnitDestroyed.onUnitDestroyed(AUnit.createFrom(u));
     }
 
     /**
@@ -204,7 +142,8 @@ public class Atlantis implements BWEventListener {
     public void onUnitDiscover(Unit u) {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
-            OnUnitDiscover.update(unit);
+            if (unit.isEnemy()) OnEnemyNewUnitDiscovered.update(unit);
+//            if (!unit.isRealUnit() && !unit.type().isInvincible()) {
         }
     }
 
@@ -263,57 +202,45 @@ public class Atlantis implements BWEventListener {
         OnUnitRenegade.update(newUnit);
     }
 
-    public static void enemyNewUnit(AUnit unit) {
-        EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
-    }
-
-    public static void ourNewUnit(AUnit unit) {
-        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
-        (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
-
-//        System.out.println("NEW UNIT @ " + A.now() + " - " + unit);
-//        System.out.println(unit.mission());
-//        System.out.println(unit.squad());
-//        System.out.println(unit.action());
-//        System.out.println(unit.lastActionFramesAgo());
-    }
-
     /**
      * Match has ended. Shortly after that the game will go to the menu.
      */
     @Override
     public void onEnd(boolean winner) {
-        System.out.println();
-        System.out.println("#####################################");
-        if (winner) {
-            System.out.println("############ VICTORY! ###############");
+        if (Env.isTesting()) {
+            exitGame();
+            return;
         }
-        else {
-            System.out.println("############ Defeat... ##############");
-        }
-        System.out.println("############ Lost: " + Atlantis.LOST + " ################");
-        System.out.println("########## Killed: " + Atlantis.KILLED + " ################");
-        System.out.println("#####################################");
 
-        OnEnd.execute(winner);
+        String result = "#####################################\n";
+        result += "############ " + (winner ? "VICTORY!" : "Defeat...") + " ###############\n";
+        result += "############ Lost: " + Atlantis.LOST + " ################\n";
+        result += "########## Killed: " + Atlantis.KILLED + " ################\n";
+        result += "#####################################\n";
 
-        exitGame();
+        LongFrames.printSummary();
+
+        A.println(result);
+
+        OnGameEnd.execute(winner);
+
+        if (Env.isLocal()) exitGame();
+        else game.leaveGame();
     }
 
     public void exitGame() {
-        gameSummary();
+        if (!Env.isTesting()) gameSummary();
         killProcesses();
     }
 
     private void killProcesses() {
-        System.out.println();
-        System.out.println("Killing StarCraft process... ");
+        A.println("\nKilling StarCraft process... ");
         ProcessHelper.killStarcraftProcess();
 
-        System.out.print("Killing Chaoslauncher process... ");
+        A.println("Killing Chaoslauncher process... ");
         ProcessHelper.killChaosLauncherProcess();
 
-        System.out.println("Exit...");
+        A.println("Exit...");
         System.exit(0);
     }
 
@@ -323,15 +250,13 @@ public class Atlantis implements BWEventListener {
         }
 
         int resourcesBalance = AGame.killsLossesResourceBalance();
-        System.out.println();
-        System.out.println(
-            "### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
+        A.println(
+            "\n### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
                 "### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\r\n" +
                 "### Resource killed/lost: " + (resourcesBalance > 0 ? "+" + resourcesBalance : resourcesBalance) + " ###"
         );
 
         if (A.isUms()) {
-            System.out.println();
             UnitsArchive.paintLostUnits();
             UnitsArchive.paintKilledUnits();
         }
@@ -391,7 +316,7 @@ public class Atlantis implements BWEventListener {
     // Constructors
 
     /**
-     * You have to pass AtlantisConfig object to initialize Atlantis.
+     * You have to pass AtlantisRaceConfig object to initialize Atlantis.
      */
     public Atlantis() {
         instance = this; // Save static reference to this instance, act like a singleton.
@@ -435,8 +360,8 @@ public class Atlantis implements BWEventListener {
     // =========================================================
 
     /**
-     * This method returns bridge connector between Atlantis and Starcraft, which is a BWMirror object. It
-     * provides low-level functionality for functions like canBuildHere etc. For more details, see BWMirror
+     * This method returns bridge connector between Atlantis and Starcraft, which is a JBWAPI object. It
+     * provides low-level functionality for functions like canBuildHere etc. For more details, see JBWAPI
      * project documentation.
      */
     public static Game game() {
@@ -459,9 +384,9 @@ public class Atlantis implements BWEventListener {
      */
     public static void debug(Object... args) {
         for (int i = 0; i < args.length - 1; i++) {
-            System.out.print(args[i] + " / ");
+            (System.out).print(args[i] + " / ");
         }
-        System.out.println(args[args.length - 1]);
+        (System.out).println(args[args.length - 1]);
     }
 
 }
