@@ -279,7 +279,7 @@ public class BaseLocations {
     public static APosition enemyThird() {
         return (APosition) cache.getIfValid(
             "enemyThird",
-            60 * 90,
+            30 * 11,
             () -> {
                 AUnit enemyBase = EnemyUnits.enemyBase();
                 if (enemyBase == null) return null;
@@ -291,8 +291,8 @@ public class BaseLocations {
                 ABaseLocation bestBase = null;
 
                 for (ABaseLocation baseLocation : BaseLocations.baseLocations()) {
-                    double distToMain = enemyBase.distTo(baseLocation);
-                    double distToNatural = enemyNatural.distTo(baseLocation);
+                    double distToMain = enemyBase.groundDist(baseLocation);
+                    double distToNatural = enemyNatural.groundDist(baseLocation);
                     if (
                         distToMain < bestDist
                             && distToMain >= 12

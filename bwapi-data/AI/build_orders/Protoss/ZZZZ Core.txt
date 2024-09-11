@@ -17,14 +17,13 @@
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
-4 - MISSION=DEFEND
 8 - Pylon
 10 - Gateway
+12 - Gateway
 13 - Zealot
-13 - Gateway
+14 - Zealot
 16 - Pylon
-16 - Zealot
 20 - Zealot
-21 - Cybernetics Core
-22 - Cybernetics Core
-23 - Assimilator
+23 - Zealot
+25 - Cybernetics Core
+26 - Assimilator
