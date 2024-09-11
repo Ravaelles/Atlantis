@@ -1,7 +1,7 @@
 # Atlantis
-...is an extensive Java framework based on [JBWAPI 2.1.0](https://github.com/JavaBWAPI/JBWAPI).
+...is an extensive Java framework based on [JBWAPI 2.1.0](https://github.com/JavaBWAPI/JBWAPI). Last updated **2024/09**.
 
-![image](https://camo.githubusercontent.com/482ac1f85226bd7c4a801e4f2e8533efbf69a463086a37ff5aac3bbbaa663e22/68747470733a2f2f692e6962622e636f2f4c7a3571544d782f41746c616e7469732e706e67)
+![image](https://github.com/user-attachments/assets/14be34c7-5b0f-4dd8-a9a8-132904fc5f16)
 
 Atlantis wraps everything heavily, so you don't need to write yourself countless lines of tedious code that every bot unfortunately needs to have to do the simplest stuff. It has quite clean and re-usable code (at least it has high priority on my list). 
 
