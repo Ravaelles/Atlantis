@@ -61,6 +61,10 @@ public abstract class Squad extends Units {
 
     // =========================================================
 
+    public abstract boolean shouldHaveThisSquad();
+
+    // =========================================================
+
     /**
      * Returns median <b>position</b> of all units. It's better than the average, because the outliners
      * don't affect the end result so badly.

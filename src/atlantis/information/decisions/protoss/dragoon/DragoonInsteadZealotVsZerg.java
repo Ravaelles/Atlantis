@@ -14,11 +14,17 @@ public class DragoonInsteadZealotVsZerg {
 
         if (transitionToDragoonsDueToMutas()) return true;
         if (notEnoughZealots()) return false;
+        if (enoughZealots()) return false;
 
 //        if (A.minerals() >= 170 && Count.gateways() >= 3) return true;
 //        if (A.hasGas(50) && !A.hasMinerals(225) && Count.dragoons() <= 2 && Count.zealots() >= 1) return true;
 
         return false;
+    }
+
+    private static boolean enoughZealots() {
+        return (OurArmy.strength() >= 115 || Count.zealots() >= 8)
+            && Count.zealots() >= minZealots();
     }
 
     private static boolean notEnoughZealots() {
@@ -57,9 +63,11 @@ public class DragoonInsteadZealotVsZerg {
     }
 
     private static boolean transitionToDragoonsDueToMutas() {
+        if (!Enemy.zerg()) return false;
+
         int mutas = EnemyUnits.count(AUnitType.Zerg_Mutalisk);
 
-        if (mutas >= 3) {
+        if (mutas >= 2) {
             if (GamePhase.isEarlyGame()) return true;
             if (mutas >= 8) return true;
         }

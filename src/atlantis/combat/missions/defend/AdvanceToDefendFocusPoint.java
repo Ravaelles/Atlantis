@@ -5,6 +5,7 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
 import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
+import atlantis.combat.squad.positioning.protoss.ProtossAsLeaderTooFarFromOthers;
 import atlantis.combat.squad.positioning.protoss.ProtossTooFarFromLeader;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -23,6 +24,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
 //            EarlyGameTooClustered.class,
 //            TooClustered.class,
             ProtossTooFarFromLeader.class,
+            ProtossAsLeaderTooFarFromOthers.class,
 
             HandleFocusPointPositioning.class,
         };

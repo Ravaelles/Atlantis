@@ -8,6 +8,7 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 //import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.special.AvoidAsUndetected;
+import atlantis.combat.squad.positioning.protoss.ProtossDragoonSeparateFromMeleeEnemies;
 import atlantis.combat.squad.positioning.protoss.ProtossTooLonely;
 import atlantis.combat.squad.positioning.protoss.ProtossTooLonelyGetCloser;
 import atlantis.combat.squad.squad_scout.SquadScout;
@@ -31,6 +32,7 @@ public class CombatManagerMediumPriority extends Manager {
 //            ProtossDontEngageWhenCombatBuildings.class,
             TerranDontEngageWhenCombatBuildings.class,
 
+            ProtossDragoonSeparateFromMeleeEnemies.class,
             ProtossTooLonelyGetCloser.class,
             ProtossTooLonely.class,
 

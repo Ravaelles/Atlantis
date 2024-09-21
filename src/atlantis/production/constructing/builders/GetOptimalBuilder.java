@@ -25,6 +25,9 @@ public class GetOptimalBuilder {
 
         if (nearest != null) return nearest;
 
-        return Select.ourWorkers().notSpecialAction().nearestTo(positionToBuild);
+        return Select.ourWorkers()
+            .notSpecialAction()
+            .notStuck()
+            .nearestTo(positionToBuild);
     }
 }

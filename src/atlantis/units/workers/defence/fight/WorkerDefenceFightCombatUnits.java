@@ -26,15 +26,15 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 //        if (A.supplyUsed() >= 40) return true;
 //        if (unit.enemiesNear().empty() || unit.enemiesNear().inRadius(4, unit).empty()) return true;
         if (unit.enemiesNear().empty()) return true;
-        if (Enemy.zerg()) return unit.hp() <= 10;
+        if (Enemy.zerg()) return unit.hp() <= 14;
         if (unit.hp() <= 18) return true;
         if (Enemy.protoss() && unit.hp() <= 25) return true;
         if (unit.isBuilder() || unit.isConstructing()) return true;
 
-        Selection enemiesNear = unit.enemiesNear().inRadius(12, unit);
+        Selection enemiesNear = unit.enemiesNear().groundUnits().inRadius(12, unit);
         if (!Enemy.protoss()) {
-            if (enemiesNear.atMost(1)) return false;
-            if (enemiesNear.atLeast(4) && unit.friendsNear().combatUnits().atMost(1)) return true;
+            if (enemiesNear.atMost(1) && (unit.id() % 2 != 1 || unit.shieldWounded())) return false;
+            if (enemiesNear.atMost(2) && unit.friendsNear().combatUnits().atLeast(5)) return true;
         }
 
         return false;
@@ -56,18 +56,18 @@ public class WorkerDefenceFightCombatUnits extends Manager {
     }
 
     private boolean handleFightEnemyCombatUnits(AUnit worker) {
-        if (Enemy.protoss() && worker.hp() <= 38) return false;
-        if (Enemy.protoss() && worker.enemiesNear().combatUnits().inRadius(2.6, unit).atLeast(2)) return false;
-        if (worker.hp() <= 20) return false;
+//        if (Enemy.protoss() && worker.hp() <= 38) return false;
+//        if (Enemy.protoss() && worker.enemiesNear().combatUnits().inRadius(2.6, unit).atLeast(2)) return false;
+//        if (worker.hp() <= 20) return false;
 
         if (worker.friendsNear().ofType(AUnitType.Protoss_Photon_Cannon).isNotEmpty()) {
             return attackNearestEnemy(worker);
         }
 
-        if (worker.distToMoreThan(Select.main(), 9)) return false;
+        if (worker.distToMoreThan(Select.main(), 12)) return false;
 
 //        if (Count.workers() <= 8 || Select.our().inRadius(4, worker).atMost(2)) {
-        if (Count.workers() <= 8) return false;
+        if (Count.workers() <= 9 && unit.idIsEven()) return false;
 
         if (Select.enemyCombatUnits().ofType(
             AUnitType.Terran_Siege_Tank_Siege_Mode,
@@ -106,8 +106,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
     private static boolean fightGroundEnemies(AUnit worker) {
         // FIGHT against ZERGLINGS
         for (AUnit enemy : worker.enemiesNear().groundUnits().inRadius(3.2, worker).list()) {
-            if (worker.hp() <= 37) continue;
-            if (worker.noCooldown() && worker.distToBase() >= 8) continue;
+            if (worker.hp() <= 27) continue;
 
 //            if ((worker.hp() <= 20 || Count.workers() <= 9) && runToFarthestMineral(worker, enemy)) {
             if (

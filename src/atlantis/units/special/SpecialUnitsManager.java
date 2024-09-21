@@ -10,6 +10,7 @@ import atlantis.combat.micro.terran.infantry.TerranInfantry;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.overlord.ZergOverlordManager;
+import atlantis.protoss.ProtossCorsair;
 import atlantis.protoss.ProtossHighTemplar;
 import atlantis.protoss.ProtossObserver;
 import atlantis.protoss.reaver.ProtossReaver;
@@ -35,6 +36,7 @@ public class SpecialUnitsManager extends Manager {
         }
         else if (unit.isProtoss()) {
             raceSpecific = new Class[]{
+                ProtossCorsair.class,
                 ProtossHighTemplar.class,
                 ProtossObserver.class,
                 ProtossReaver.class,

@@ -7,6 +7,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.AMap;
 import atlantis.map.base.BaseLocations;
@@ -27,6 +28,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     private Cache<AFocusPoint> cache = new Cache<>();
 
     private APosition _temporaryTarget = null;
+    private AUnit main;
+    private AUnit our;
 
     public AFocusPoint focusPoint() {
         return cache.getIfValid(
@@ -37,8 +40,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint defineFocusPoint() {
-        AUnit main = Select.main();
-        AUnit our = Select.our().first();
+        main = Select.main();
+        our = Select.our().first();
 
         // === AliveEnemies that breached into base =====================
 
@@ -83,14 +86,14 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // =========================================================
 
-        AFocusPoint enemyExpansion = enemyExpansion(main);
-        if (enemyExpansion != null) return enemyExpansion;
-
-        AFocusPoint enemyCombatBuilding = nearestEnemyCombatBuilding(main);
-        if (enemyCombatBuilding != null) return enemyCombatBuilding;
+//        AFocusPoint enemyExpansion = enemyExpansion(main);
+//        if (enemyExpansion != null) return enemyExpansion;
 
         AFocusPoint enemyUnit = nearestCombatUnit(main);
         if (enemyUnit != null) return enemyUnit;
+
+        AFocusPoint enemyCombatBuilding = nearestEnemyCombatBuilding(main);
+        if (enemyCombatBuilding != null) return enemyCombatBuilding;
 
         AFocusPoint enemyBuilding = nearestEnemyBuilding(main);
         if (enemyBuilding != null) return enemyBuilding;
@@ -214,6 +217,14 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     private boolean shouldFocusEnemyThird(AFocusPoint enemyThird) {
         if (enemyThird == null) return false;
         if (A.s <= 300) return false;
+        if (OurArmy.strength() >= 600 && A.seconds() % 30 <= 20) return false;
+//        if (EnemyUnits.discovered().combatBuildingsAntiLand().empty() && A.seconds() % 20 <= 9) return null;
+        if (!EnemyInfo.hasDefensiveLandBuilding(true)) return false;
+
+        if (EnemyInfo.hasDefensiveLandBuilding(true) || (A.s % 40 <= 10)) {
+            if (A.supplyUsed() >= 130 && A.supplyUsed() <= 192) return true;
+            if (Count.ourCombatUnits() >= 20 && !enemyThird.isExplored()) return true;
+        }
 
         if (
             enemyThird.isPositionVisible()
@@ -222,19 +233,29 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         if (Enemy.zerg() && A.s % 36 <= 10) return true;
 
+        HasPosition alphaCenter = Alpha.alphaCenter();
+        if (alphaCenter != null && alphaCenter.distTo(enemyThird) >= 20) return true;
+
         if (
             EnemyInfo.hasNaturalBase()
                 && EnemyInfo.hasDefensiveLandBuilding(true)
         ) return true;
 
-        return false;
+        return OurArmy.strength() <= 400 && EnemyInfo.hasDefensiveLandBuilding(true);
     }
 
 
     private AFocusPoint enemyThird(AUnit main) {
         APosition enemyThird = BaseLocations.enemyThird();
-//        System.err.println("enemyThird = " + enemyThird);
         if (enemyThird == null) return null;
+        if (
+            enemyThird.isPositionVisible()
+                && (
+                Select.enemy().buildings().inRadius(8, enemyThird).empty()
+            )
+        ) return null;
+
+        if (A.seconds() % 30 <= 12 && EnemyUnits.discovered().combatBuildingsAntiLand().empty()) return null;
 
         return new AFocusPoint(
             enemyThird,

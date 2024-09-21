@@ -43,7 +43,10 @@ public class BaseSelection {
 
     public Selection cloneByRemovingIf(Predicate<AUnit> newDataPredicate, String cachePathSuffix) {
         List<AUnit> newData = new ArrayList<>(data);
-        newData.removeIf(newDataPredicate);
+
+        if (!data.isEmpty()) {
+            newData.removeIf(newDataPredicate);
+        }
 
         String newCacheKey = currentCachePath + ":" + cachePathSuffix;
         Selection newSelection = new Selection(newData, newCacheKey);

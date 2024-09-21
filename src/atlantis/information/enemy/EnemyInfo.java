@@ -154,9 +154,9 @@ public class EnemyInfo {
     public static boolean hasDefensiveLandBuilding(boolean onlyCompleted) {
         return cacheBoolean.get(
             "hasDefensiveLandBuilding:" + onlyCompleted,
-            30,
+            33,
             () -> {
-                Selection selection = EnemyUnits.foggedUnits()
+                Selection selection = EnemyUnits.discovered()
                     .combatBuildings(false)
                     .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony);
 

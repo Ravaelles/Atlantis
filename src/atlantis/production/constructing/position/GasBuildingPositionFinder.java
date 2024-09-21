@@ -24,7 +24,7 @@ public class GasBuildingPositionFinder {
     protected static APosition findPositionForGasBuilding(AUnitType building, HasPosition nearTo) {
         return cache.get(
             CacheKey.create("findPositionForGasBuilding", building, nearTo),
-            177,
+            157,
             () -> {
                 for (AUnit base : Select.ourBases().list()) {
                     Selection geysers = Select.geysers();

@@ -7,7 +7,6 @@ import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.*;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmy;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
@@ -41,6 +40,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === AliveEnemies that breached into base ===========================
 
                 if ((focus = enemyWhoBreachedBase()) != null) return focus;
+                if ((focus = buildingUnderAttack()) != null) return focus;
+                if ((focus = earlyGameRemainNearMainBase()) != null) return focus;
                 if ((focus = enemyCloserToBaseThanAlpha()) != null) return focus;
 
                 // === Path to enemy =============================================
@@ -113,6 +114,46 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 return fallbackToNearestEnemy();
             }
         );
+    }
+
+    private AFocusPoint buildingUnderAttack() {
+        if (A.s >= 400) return null;
+
+        AUnit ourBuildingUnderAttack = OurBuildingUnderAttack.get();
+        if (ourBuildingUnderAttack != null) {
+            return new AFocusPoint(
+                ourBuildingUnderAttack,
+                Select.mainOrAnyBuilding(),
+                "BuildingUnderAttack"
+            );
+        }
+
+        return null;
+    }
+
+    private AFocusPoint earlyGameRemainNearMainBase() {
+        if (!We.protoss()) return null;
+
+        if (
+            Enemy.zerg()
+                && (Count.ourCombatUnits() <= 7 || OurArmy.strength() <= 75)
+                && Count.basesWithUnfinished() <= 1
+        ) {
+            AUnit main = Select.main();
+            if (main == null) return null;
+
+            AChoke mainChoke = Chokes.mainChoke();
+            if (mainChoke == null) return null;
+
+            return new AFocusPoint(
+//                main.translateTilesTowards(-2, mainChoke),
+                main.translateTilesTowards(1, Select.minerals().nearestTo(main)),
+                main,
+                "NearMain"
+            );
+        }
+
+        return null;
     }
 
     private AFocusPoint atLastBase() {
@@ -298,9 +339,15 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             return null;
         }
 
+        HasPosition point = mainChoke;
+
+        if (We.protoss() && Count.dragoons() <= 2) {
+            point = point.translateTilesTowards(1.3, Select.main());
+        }
+
         return new AFocusPoint(
 //            mainChoke.translateTilesTowards(0.5, Select.main()),
-            mainChoke,
+            point,
             Select.main(),
             "MainChoke"
         ).forceAroundChoke(mainChoke);

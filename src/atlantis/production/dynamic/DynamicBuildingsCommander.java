@@ -1,21 +1,30 @@
 package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
 import atlantis.production.dynamic.expansion.ReinforceBasesCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
+import atlantis.production.dynamic.protoss.ProtossNewGasBuildingCommander;
 import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicBuildingsCommander;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.util.We;
 
 public class DynamicBuildingsCommander extends Commander {
+    @Override
+    public boolean applies() {
+        return A.hasMinerals(450) || Queue.get().nonCompletedNext30().buildings().size() <= 1;
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         Class[] generic = new Class[]{
             ReinforceBasesCommander.class,
-            ExpansionCommander.class,
             NewGasBuildingCommander.class,
+            ProtossNewGasBuildingCommander.class,
+            ExpansionCommander.class,
         };
 
         Class[] raceSpecific = new Class[0];

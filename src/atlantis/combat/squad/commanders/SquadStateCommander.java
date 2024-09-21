@@ -18,7 +18,7 @@ public class SquadStateCommander extends Commander {
     private void makeSureSquadObjectsAreInitialized() {
 //        if (A.seconds() <= 1) {
 //            Alpha.get();
-//            Beta.get();
+//            Omega.get();
 //            Delta.get();
 //        }
     }

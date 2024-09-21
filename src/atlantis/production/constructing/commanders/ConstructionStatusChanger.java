@@ -33,10 +33,18 @@ public class ConstructionStatusChanger extends Commander {
         if (A.everyNthGameFrame(31) && construction.isOverdue()) {
             AUnitType building = construction.buildingType();
 
+//            System.err.println("Construction is overdue: " + building + " / started s ago: " + construction.startedSecondsAgo());
+
             construction.setBuilder(null);
 
-            TravelToConstruct.refreshConstructionPositionIfNeeded(construction, building);
-            construction.assignOptimalBuilder();
+            if (building.isPylon() || building.isBase() || building.isGasBuilding()) {
+                A.errPrintln("Pylon construction is overdue, cancel it");
+                construction.cancel();
+            }
+            else {
+                TravelToConstruct.refreshConstructionPositionIfNeeded(construction, building);
+                construction.assignOptimalBuilder();
+            }
         }
     }
 

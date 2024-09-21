@@ -20,7 +20,8 @@ public class ProtossGroundWeapons extends Commander {
     @Override
     public boolean applies() {
         if (!Have.forge()) return false;
-        if (ATech.isResearched(what())) return false;
+        if (!A.hasMinerals(600) && Count.basesWithUnfinished() <= 1) return false;
+        if (isResearched()) return false;
         if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
         if (CountInQueue.count(what(), 10) > 0) return false;
         if (TooWeakToTech.check()) return false;
@@ -32,6 +33,20 @@ public class ProtossGroundWeapons extends Commander {
         }
 
         return false;
+    }
+
+    private static boolean isResearched() {
+        boolean isResearched = ATech.isResearched(what());
+        if (!isResearched) return false;
+
+        int upgradeLevel = getCurrentUpgradeLevel();
+        if (upgradeLevel >= 3) return true;
+
+        return A.canAfford(600, 400);
+    }
+
+    private static int getCurrentUpgradeLevel() {
+        return ATech.getUpgradeLevel(what());
     }
 
     @Override

@@ -8,6 +8,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmy;
 import atlantis.units.AUnit;
@@ -32,10 +33,32 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
         if (We.protoss()) {
             AFocusPoint focusPoint = unit.focusPoint();
 
+            if (earlyGameVsStrongZergDontLeaveMainBase()) return false;
+
+            if (unit.lastRetreatedAgo() <= 30 * 2
+                && unit.friendsNear().inRadius(5, unit).atMost(3)
+                && unit.distToBase() >= 10
+            ) {
+                return false;
+            }
+
             if (unit.isMelee() && Count.dragoons() <= 1) {
                 double maxDist = enemy.isMelee() ? 2.5 : 5.5;
                 if (focusPoint != null && focusPoint.distTo(enemy) >= maxDist) return false;
             }
+
+            if (dontAttackOnYourOwn()) {
+                return false;
+            }
+
+//            if (
+//                unit.shieldPercent() <= 50
+//                    && unit.lastAttackFrameLessThanAgo(75)
+//                    && unit.combatEvalRelative() <= 1.1
+////                    && unit.distToFocusPoint() >= 15
+//                    && unit.distToBase() >= 30
+//                    && unit.enemiesNear().canAttack(unit, 3).atLeast(2)
+//            ) return false;
 
             if (unit.hp() >= 20 && unit.isTargetInWeaponRangeAccordingToGame(enemy)) return true;
             if (EnemyWhoBreachedBase.notNull()) return true;
@@ -117,6 +140,22 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 //        else {
 //            return whenTargetInDifferentRegions(unit, enemy);
 //        }
+    }
+
+    private boolean dontAttackOnYourOwn() {
+        return unit.squadSize() >= 3
+            && unit.friendsNear().inRadius(2.8, unit).empty()
+            && unit.enemiesNear().ranged().canAttack(unit, 5).empty()
+            && unit.enemiesThatCanAttackMe(2.5 + unit.woundPercent() / 50.0).empty()
+            && unit.distToBase() >= 10;
+    }
+
+    private boolean earlyGameVsStrongZergDontLeaveMainBase() {
+        return A.s <= 600
+            && ProtossMissionChangerWhenDefend.shouldPunishZergEarly()
+            && unit.distToFocusPoint() >= 5.5
+            && unit.combatEvalRelative() <= 1.8
+            && OurBuildingUnderAttack.get() == null;
     }
 
     private boolean forbidAsTooFarFromFocusPoint(AUnit enemy) {

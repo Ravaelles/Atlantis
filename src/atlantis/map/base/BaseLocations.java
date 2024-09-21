@@ -291,6 +291,8 @@ public class BaseLocations {
                 ABaseLocation bestBase = null;
 
                 for (ABaseLocation baseLocation : BaseLocations.baseLocations()) {
+                    if (baseLocation.isStartLocation()) continue;
+                    
                     double distToMain = enemyBase.groundDist(baseLocation);
                     double distToNatural = enemyNatural.groundDist(baseLocation);
                     if (

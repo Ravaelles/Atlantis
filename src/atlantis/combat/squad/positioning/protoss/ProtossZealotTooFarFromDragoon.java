@@ -17,8 +17,20 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
     @Override
     public boolean applies() {
         return unit.isZealot()
+            && unit.enemiesNear().ranged().notEmpty()
+            && unit.enemiesNear().havingWeapon().notEmpty()
             && (dragoon = nearestDragoon()) != null
-            && dragoon.distTo(unit) > 2;
+            && dragoon.distTo(unit) > 3
+            && noEnemiesVeryNearToAttack();
+    }
+
+    private boolean noEnemiesVeryNearToAttack() {
+        int maxAllowedDist = 3 + (unit.lastUnderAttackLessThanAgo(70) ? 3 : 0);
+        Selection enemiesNear = unit.enemiesNear().groundUnits().effVisible().inRadius(maxAllowedDist, unit);
+
+        return enemiesNear.ranged().canBeAttackedBy(unit, maxAllowedDist).empty()
+            && enemiesNear.workers().canBeAttackedBy(unit, maxAllowedDist).empty()
+            && enemiesNear.buildings().canBeAttackedBy(unit, maxAllowedDist).empty();
     }
 
     private AUnit nearestDragoon() {

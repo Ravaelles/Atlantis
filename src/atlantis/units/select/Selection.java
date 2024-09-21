@@ -68,9 +68,9 @@ public class Selection extends BaseSelection {
         return cloneByAdding(list, null);
     }
 
-    public Selection withEnemyFoggedUnits() {
-        return cloneByAdding(EnemyUnits.foggedUnits().data, null);
-    }
+//    public Selection withEnemyFoggedUnits() {
+//        return cloneByAdding(EnemyUnits.foggedUnits().data, null);
+//    }
 
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>otherUnit</b>.
@@ -382,6 +382,12 @@ public class Selection extends BaseSelection {
     public Selection notSpecialAction() {
         return cloneByRemovingIf(
             (unit -> unit.lastActionLessThanAgo(100, Actions.SPECIAL)), "notSpecialAction"
+        );
+    }
+
+    public Selection notStuck() {
+        return cloneByRemovingIf(
+            (unit -> unit.isStuck()), "notStuck"
         );
     }
 

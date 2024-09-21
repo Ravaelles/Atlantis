@@ -15,21 +15,39 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class NewGasBuildingCommander extends Commander {
+
+    private static int numberOfGasBuildings;
+
     @Override
     public boolean applies() {
         return A.everyNthGameFrame(23)
-            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) == 0
+            && (A.gas() <= 600 || A.minerals() >= 500)
+            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10)
+            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals()
             && !tooEarlyForAnotherGasBuilding();
     }
 
     @Override
     protected void handle() {
-        requestGasBuildingIfNeeded();
+        if (numberOfGasBuildings <= 0) {
+            requestFirstBuildingIfNeeded();
+        }
+        else {
+            requestAdditionalBuildingIfNeeded();
+        }
+    }
+
+    private void requestFirstBuildingIfNeeded() {
+        if (A.minerals() >= 435 || Count.ourWithUnfinished(AUnitType.Protoss_Cybernetics_Core) > 0) {
+//            System.err.println("@ " + A.now() + " - requested first gas building @" + A.supplyUsed() + ", min:" +
+//                A.minerals() + " / res: " + A.reservedMinerals());
+            AddToQueue.withStandardPriority(AtlantisRaceConfig.GAS_BUILDING);
+        }
     }
 
     private static boolean tooEarlyForAnotherGasBuilding() {
         if (Count.existingOrInProduction(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
-            if (!A.hasMinerals(200) || A.supplyTotal() <= 30) {
+            if (!A.hasMinerals(160) || A.supplyTotal() <= 30) {
                 return true;
             }
         }
@@ -45,23 +63,23 @@ public class NewGasBuildingCommander extends Commander {
     /**
      * Build Refineries/Assimilators/Extractors when it makes sense.
      */
-    private static void requestGasBuildingIfNeeded() {
+    private static void requestAdditionalBuildingIfNeeded() {
         if (AGame.supplyUsed() <= 18) {
             return;
         }
 
-        if (AGame.everyNthGameFrame(37)) {
-            return;
-        }
+//        if (AGame.everyNthGameFrame(37)) {
+//            return;
+//        }
 
         // =========================================================
 
         int numberOfBases = Select.ourBases().count();
 //        int numberOfGasBuildings = Select.ourWithUnfinished().ofType(AtlantisRaceConfig.GAS_BUILDING).count();
-        int numberOfGasBuildings = Count.withPlanned(AtlantisRaceConfig.GAS_BUILDING);
+        numberOfGasBuildings = Count.withPlanned(AtlantisRaceConfig.GAS_BUILDING);
         if (
             numberOfBases >= 2
-                && numberOfBases > numberOfGasBuildings && !A.canAfford(0, 350)
+                && numberOfBases > numberOfGasBuildings
                 && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.GAS_BUILDING) == 0
                 && hasABaseWithFreeGeyser()
         ) {

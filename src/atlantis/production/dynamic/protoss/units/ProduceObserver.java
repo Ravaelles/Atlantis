@@ -20,6 +20,7 @@ import static atlantis.units.AUnitType.*;
 public class ProduceObserver {
     public static boolean needObservers() {
         if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) return true;
+        if (Count.observers() >= 5) return false;
         if (shouldPrepareForObserver()) return true;
         if (A.supplyUsed() >= 64) return true;
 

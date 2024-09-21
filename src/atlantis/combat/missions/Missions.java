@@ -4,6 +4,7 @@ import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.sparta.Sparta;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.GamePhase;
@@ -25,6 +26,7 @@ public class Missions {
      * PREPARE (go near enemy) and then ATTACK.
      */
     private static Mission currentGlobalMission = null;
+
     private static int lastMissionChanged = 0;
     private static int lastMissionEnforcedAt = -1;
 
@@ -138,6 +140,8 @@ public class Missions {
         if (mission.equals(currentGlobalMission)) {
             return;
         }
+
+        Alpha.get().setMission(mission);
 
         lastMissionChanged = A.now();
         currentGlobalMission = mission;

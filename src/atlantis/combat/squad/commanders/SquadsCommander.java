@@ -8,7 +8,7 @@ public class SquadsCommander extends Commander {
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[]{
             SquadTransfersCommander.class,
-            SquadStateCommander.class,
+//            SquadStateCommander.class,
             ActWithSquadsCommander.class,
         };
     }

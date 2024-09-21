@@ -4,11 +4,12 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.WantsToAvoid;
 import atlantis.units.AUnit;
+import atlantis.util.Enemy;
 
-public class ScoutSafetyFarFromEnemy extends Manager {
+public class ScoutSafetyAvoidTooCloseEnemies extends Manager {
     private AUnit enemy;
 
-    public ScoutSafetyFarFromEnemy(AUnit unit) {
+    public ScoutSafetyAvoidTooCloseEnemies(AUnit unit) {
         super(unit);
     }
 
@@ -31,8 +32,9 @@ public class ScoutSafetyFarFromEnemy extends Manager {
 
     private double safetyMargin() {
         return 3.1
-            + (unit.lastUnderAttackLessThanAgo(30 * 5) ? 1.5 : 0)
-            + unit.woundPercent() / 25.0;
+            + (Enemy.zerg() ? 2.3 : 0)
+            + (unit.lastUnderAttackLessThanAgo(30 * 8) ? 1.5 : 0)
+            + unit.woundPercent() / 22.0;
     }
 
     @Override

@@ -24,7 +24,7 @@ public class OptimalDistanceToFocusPoint {
         int base = (focusPoint != null && focusPoint.chokeWidthOr(99) <= 5)
             ? 6 : 4;
 
-        return base + (unit.isMelee() ? 0.6 : 0);
+        return base + (unit.isRanged() ? 1.3 : 0);
 
 //        if (Enemy.zerg()) return 5;
 //

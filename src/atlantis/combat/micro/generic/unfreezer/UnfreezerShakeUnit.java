@@ -2,6 +2,7 @@ package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.squad.positioning.protoss.ProtossAsLeaderTooFarFromOthers;
 import atlantis.combat.squad.positioning.protoss.ProtossTooFarFromLeader;
 import atlantis.combat.squad.positioning.protoss.ProtossTooLonelyGetCloser;
 import atlantis.map.position.APosition;
@@ -42,6 +43,7 @@ public class UnfreezerShakeUnit {
 
         if (We.protoss()) {
             if ((new ProtossTooFarFromLeader(unit)).forceHandle() != null) return true;
+            if ((new ProtossAsLeaderTooFarFromOthers(unit)).forceHandle() != null) return true;
             if ((new ProtossTooLonelyGetCloser(unit)).forceHandle() != null) return true;
         }
 

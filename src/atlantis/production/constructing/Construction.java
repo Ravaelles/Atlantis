@@ -260,6 +260,10 @@ public class Construction implements Comparable<Construction> {
         return A.ago(timeOrdered) > 30 * 22;
     }
 
+    public int startedSecondsAgo() {
+        return A.ago(timeOrdered) / 30;
+    }
+
     public int progressPercent() {
         if (build == null) return 0;
         return (int) build.hpPercent();

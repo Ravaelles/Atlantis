@@ -12,6 +12,7 @@ public class DragoonInsteadZealot {
     public static boolean dragoonInsteadOfZealot() {
         if (Enemy.zerg()) return DragoonInsteadZealotVsZerg.dragoonInsteadOfZealot_vZ();
 
+        if (notEnoughGasAndManyMinerals()) return false;
         if (manyZealotsAndEnemyTooStrong()) return true;
 
 //        if (Have.cyberneticsCore()) return false;
@@ -24,6 +25,10 @@ public class DragoonInsteadZealot {
         if (A.hasGas(50) && !A.hasMinerals(225) && Count.dragoons() <= 2 && Count.zealots() >= 1) return true;
 
         return false;
+    }
+
+    private static boolean notEnoughGasAndManyMinerals() {
+        return !A.hasGas(125) && A.minerals() >= 650 && Count.ourCombatUnits() >= 10;
     }
 
     private static boolean manyZealotsAndEnemyTooStrong() {

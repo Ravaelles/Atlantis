@@ -7,8 +7,8 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class ProtossForbiddenByStreetGrid {
-    public static final int GRID_SIZE_X = 18;
-    public static final int GRID_SIZE_Y = 10;
+    public static final int GRID_SIZE_X = 11;
+    public static final int GRID_SIZE_Y = 7;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -17,47 +17,49 @@ public class ProtossForbiddenByStreetGrid {
      * So disallow building in e.g. 0,1, 6,7, 12,13, horizontally and vertically
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
-        if (building.isBase() || building.isGasBuilding()) return false;
+        if (building.isBase() || building.isAssimilator()) return false;
+
+        int moduloX = (position.tx() % GRID_SIZE_X);
+        int moduloY = (position.ty() % GRID_SIZE_Y);
+
+        // === Pylon ===========================================
 
         if (building.isPylon()) {
-            int moduloX = (position.tx() % GRID_SIZE_X);
-            int moduloY = (position.ty() % GRID_SIZE_Y);
+            if (
+//                moduloX != 2
+                moduloX != 1
+            ) return failed("TX modulo PP_X2 = " + moduloX);
 
             if (
-                moduloX != 9 && moduloX != 11
-                    && moduloX != 13 && moduloX != 14 && moduloX != 15
-            )
-                return failed("TX modulo PP_X2 = " + moduloX);
-            if (
-                moduloY != 0 && moduloY != 2 && moduloY != 6
+                moduloY != 2 && moduloY != 4 && moduloY != 6
             ) return failed("TY modulo PP_Y2 = " + moduloY);
 
 //            System.err.println("Pylon: " + moduloX + " / " + moduloY);
         }
+
+        // === Non-pylon ======================================
+
         else {
-            int moduloX = (position.tx() % GRID_SIZE_X);
-            int moduloY = (position.ty() % GRID_SIZE_Y);
 //            System.err.println(moduloX + " / " + moduloY);
 
-            // G:1 G:5  P:9  G:11 G:14
-            boolean moduloXIsInvalid = moduloX != 0
-                && moduloX != 4
-                && moduloX != 7
-                && moduloX != 11;
+            //                              old: G:1 G:5  P:9  G:11 G:14
+            // P:2  G:4  G:8
+            // P:1  G:3  G:7
+//            boolean moduloXIsInvalid = moduloX != 4 && moduloX != 8;
+            boolean moduloXIsInvalid = moduloX != 3 && moduloX != 7;
 
-            if (moduloXIsInvalid && building.getTileWidth() <= 3) {
-                moduloXIsInvalid = moduloX != 6;
-            }
+//            if (moduloXIsInvalid && building.getTileWidth() <= 3) {
+//                moduloXIsInvalid = moduloX != 6;
+//            }
 
-            // G:1  G:4  P:1 P:3 P:5
+            //                              old: G:1  G:4  P:1 P:3 P:5
+            // P:2  G:4  G:7
 //            boolean moduloYIsInvalid = moduloY != 1 && moduloY != 4;
-            boolean moduloYIsInvalid = moduloY != 0
-                && moduloY != 3
-                && moduloY != 6;
+            boolean moduloYIsInvalid = moduloY != 3 && moduloY != 6;
 
-            if (moduloYIsInvalid && building.getTileHeight() <= 2) {
-                moduloYIsInvalid = moduloY != 1 && moduloY != 4;
-            }
+//            if (moduloYIsInvalid && building.getTileHeight() <= 2) {
+//                moduloYIsInvalid = moduloY != 5 && moduloY != 8;
+//            }
 
             if (moduloXIsInvalid) {
                 return failed("TX modulo PG_X2 = " + moduloX + " / tx:" + position.tx() + " / grid:" + GRID_SIZE_X);

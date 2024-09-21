@@ -129,9 +129,10 @@ public abstract class MissionChanger {
     }
 
     public static void forceMissionAttack(String reason) {
-        if (ArmyStrength.ourArmyRelativeStrength() >= 90 || Count.ourCombatUnits() <= 4) {
-            Missions.forceGlobalMissionAttack(reason);
-        }
+        Missions.forceGlobalMissionAttack(reason);
+        
+//        if (ArmyStrength.ourArmyRelativeStrength() >= 80 || Count.ourCombatUnits() <= 5) {
+//        }
     }
 
     public static void forceMissionContain(String reason) {

@@ -41,7 +41,7 @@ public class SquadReinforcements {
     }
 
     protected int validateNumberOfRecruits(int numberOfRecruits, Alpha alpha) {
-        return Math.min(numberOfRecruits, alpha.size());
+        return Math.min(numberOfRecruits, alpha.size() - 1);
     }
 
     private Alpha prepareAlfaForTransfer(Squad toSquad) {
@@ -56,9 +56,7 @@ public class SquadReinforcements {
         for (int i = 0; i < numberOfRecruits; i++) {
             AUnit recruit = alpha.get(i);
 
-            if (isGoodRecruit(recruit)) {
-                continue;
-            }
+            if (!isGoodRecruit(recruit)) continue;
 
             recruits.add(recruit);
         }

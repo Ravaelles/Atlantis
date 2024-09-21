@@ -16,7 +16,7 @@ public class ShouldContinueRunning {
 //            unit.paintCircle(12, Color.Grey);
 //        }
 
-        if (unit.isRunning() && unit.isMoving() && unit.distToTargetMoreThan(1)) {
+        if (unit.isRunning() && unit.isMoving() && unit.distToTargetMoreThan(0.7)) {
 //            if (unit.lastRunningPositionChangeAgo() <= 8) return true;
 
             if (

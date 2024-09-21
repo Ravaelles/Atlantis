@@ -23,9 +23,12 @@ public class FindPosition {
     public static APosition findForBuilding(
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {
+        AbstractPositionFinder._CONDITION_THAT_FAILED = null;
+
         nearTo = DefineNearTo.defineNearTo(building, nearTo);
 
         if (builder == null) builder = FreeWorkers.get().first();
+        if (builder == null) builder = Select.ourWorkers().first();
 
         if (maxDistance <= 5 && building.isBunker()) maxDistance = 10;
         if (maxDistance < 0) maxDistance = 29;

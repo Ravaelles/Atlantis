@@ -38,7 +38,7 @@ public class ShouldRunTowardsBase {
 
         if (unit.isDragoon() && (Alpha.count() <= 25 || unit.shields() <= 40)) return false;
 
-        if (unit.isSquadScout()) return true;
+        if (unit.isSquadScout() && A.seconds() <= 500) return true;
 
         if (A.seconds() >= 550) return false;
 

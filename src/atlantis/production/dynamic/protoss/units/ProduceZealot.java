@@ -21,11 +21,15 @@ import static atlantis.units.AUnitType.*;
 public class ProduceZealot {
     public static boolean zealot() {
         if (!A.hasMinerals(100)) return false;
-        if (Count.zealots() >= 15) return false;
 
         int freeGateways = Count.freeGateways();
-
         if (freeGateways == 0) return false;
+
+        if (freeGateways >= 2 && A.hasMinerals(700) && A.supplyUsed() <= 190) return produceZealot();
+
+        if (Count.zealots() >= 2 && !A.hasMinerals(ReservedResources.minerals() + 100)) return false;
+
+        if (freeGateways >= 2 && A.hasMinerals(700) && A.hasFreeSupply(4)) return produceZealot();
 
         if (earlyGameZealots(freeGateways)) return produceZealot();
 
@@ -83,7 +87,7 @@ public class ProduceZealot {
     }
 
     private static boolean produceZealot() {
-        AUnit gateway = Select.ourFree(Protoss_Gateway).random();
+        AUnit gateway = GatewayClosestToEnemy.get();
         if (gateway == null) return false;
 
 //        System.err.println("YES< zealot");

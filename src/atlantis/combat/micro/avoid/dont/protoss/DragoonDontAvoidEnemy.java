@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid.dont.protoss;
 
 import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
 import atlantis.decisions.Decision;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
@@ -17,6 +18,9 @@ public class DragoonDontAvoidEnemy {
 
         if (healthyAndSafe(unit)) return true;
         if (hasNotShotInAWhile(unit)) return true;
+//        if (dontAvoidWhenOnlyEnemyZealotsNearby(unit)) return true;
+        if (dontAvoidWhenOnlyEnemyZerglingsNearby(unit)) return true;
+
 //        if ((decision = whenMissionSparta(unit)).notIndifferent()) return decision.toBoolean();
         if ((decision = whenMissionDefend(unit)).notIndifferent()) return decision.toBoolean();
 //
@@ -29,26 +33,27 @@ public class DragoonDontAvoidEnemy {
         return false;
     }
 
-    private static Decision whenMissionSparta(AUnit unit) {
-        if (!unit.isMissionSparta()) return Decision.INDIFFERENT;
-
-        if (unit.woundHp() <= 9) return Decision.TRUE;
-//        if (unit.isSafeFromMelee()) return Decision.TRUE;
-
-        return unit.isSafeFromMelee() ? Decision.TRUE : Decision.FALSE;
-//        return Decision.INDIFFERENT;
-    }
+//    private static Decision whenMissionSparta(AUnit unit) {
+//        if (!unit.isMissionSparta()) return Decision.INDIFFERENT;
+//
+//        if (unit.woundHp() <= 9) return Decision.TRUE;
+////        if (unit.isSafeFromMelee()) return Decision.TRUE;
+//
+//        return unit.isSafeFromMelee() ? Decision.TRUE : Decision.FALSE;
+////        return Decision.INDIFFERENT;
+//    }
 
     private static boolean healthyAndSafe(AUnit unit) {
-        return unit.woundHp() <= 6 && unit.lastAttackFrameMoreThanAgo(30 * 5);
+        return unit.woundHp() <= 9 && unit.lastAttackFrameMoreThanAgo(30 * 5);
 //            && unit.enemiesNear().ranged().canAttack(unit, 1.5).empty();
     }
 
     private static Decision whenMissionDefend(AUnit unit) {
         if (!unit.isMissionDefend()) return Decision.INDIFFERENT;
 
-        if (unit.enemiesNear().countInRadius(3.1, unit) >= 2) return Decision.FALSE;
         if (unit.shieldDamageAtMost(9)) return Decision.TRUE;
+        if (unit.enemiesNear().countInRadius(3.1, unit) >= 2) return Decision.FALSE;
+        if (unit.hp() <= 40 && unit.enemiesNear().countInRadius(2.7, unit) >= 1) return Decision.FALSE;
 
 //        if (unit.isRanged()) {
 //            if (unit.cooldown() >= 10) return Decision.FALSE;
@@ -95,15 +100,39 @@ public class DragoonDontAvoidEnemy {
 //            return whenMeleeNear(unit);
         }
 
+        if (ProtossTooBigBattleToRetreat.PvP_doNotRetreat(unit)) return true;
+
         Decision decision;
         if ((decision = oneOnOneDragoon(unit)).notIndifferent()) return decision.toBoolean();
 
 //        if (unit.hp() <= 41 && !unit.isSafeFromMelee()) return false;
         if (!unit.isSafeFromMelee()) return false;
 
-        if (ProtossTooBigBattleToRetreat.PvP_doNotRetreat(unit)) return true;
-
         return (unit.woundHp() <= 30 || unit.combatEvalRelative() > 1.05);
+    }
+
+    private static boolean dontAvoidWhenOnlyEnemyZealotsNearby(AUnit unit) {
+        if (!Enemy.protoss()) return false;
+        if (unit.hp() <= 33) return false;
+
+        Selection enemiesNear = unit.enemiesNear().havingAntiGroundWeapon();
+
+        if (unit.shieldWounded() && enemiesNear.inRadius(2.5, unit).notEmpty()) return false;
+        if (enemiesNear.ranged().canAttack(unit, 0.5).notEmpty()) return false;
+
+        return unit.shieldDamageAtMost(29) && unit.meleeEnemiesNearCount(2.5) <= 0;
+    }
+
+    private static boolean dontAvoidWhenOnlyEnemyZerglingsNearby(AUnit unit) {
+        if (!Enemy.zerg()) return false;
+        if (unit.hp() <= 25) return false;
+
+        Selection enemiesNear = unit.enemiesNear().havingAntiGroundWeapon();
+
+        if (!unit.isHealthy() && enemiesNear.inRadius(2.5, unit).atLeast(2)) return false;
+        if (unit.enemiesNear().ranged().inRadius(9, unit).empty()) return true;
+
+        return unit.shieldDamageAtMost(19);
     }
 
     private static Decision oneOnOneDragoon(AUnit unit) {

@@ -1,7 +1,9 @@
 package atlantis.combat.missions.defend;
 
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.MissionHistory;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.retreating.RetreatManager;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -30,6 +32,9 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     public boolean canChange() {
         if (Missions.lastMissionChangedSecondsAgo() <= 10) return false;
         if (EnemyInfo.isEnemyNearAnyOurBase()) return false;
+
+//        @Here
+//        if (true) return false;
 
         relativeStrength = ArmyStrength.ourArmyRelativeStrength();
 
@@ -137,7 +142,21 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     private Decision shouldAttackVsZerg() {
         int combatUnits = Count.ourCombatUnits();
 
-        if (strength <= 360 && combatUnits <= 7) return Decision.FALSE;
+        if (shouldPunishZergEarly()) {
+            MissionChanger.forceMissionAttack("PunishZergEarly");
+            return Decision.TRUE;
+        }
+
+//        if (strength <= 360 && combatUnits <= 7) return Decision.FALSE;
+
+        // Successfully defended early ling push, make pressure
+        if (A.s <= 650 && combatUnits >= 8 && strength >= 130 + (A.resourcesBalance() >= -100 ? 0 : 30)) {
+            if (EnemyUnits.zerglings() * 3 <= combatUnits) {
+                MissionChanger.forceMissionAttack("DefendedPvZSoPress");
+                return Decision.TRUE;
+            }
+        }
+
         if (dragoons <= 6 && combatUnits <= 8) {
             if (EnemyUnits.zerglings() * 3 >= dragoons) return Decision.FALSE;
         }
@@ -145,6 +164,26 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (combatUnits <= 5 && A.resourcesBalance() <= 100) return Decision.FALSE;
 
         return Decision.INDIFFERENT;
+    }
+
+    public static boolean shouldPunishZergEarly() {
+        int zealotsAndGoons;
+
+        if (A.s <= 600 && (zealotsAndGoons = Count.zealotsAndDragoons()) >= 8) {
+            if (RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 && Count.dragoons() <= 5) return false;
+
+            if (
+                OurArmy.strength() >= 180 && (
+                    (zealotsAndGoons * 2.5 >= EnemyUnits.discovered().combatUnits().count())
+                        || (Count.dragoons() >= 2 && EnemyUnits.discovered().combatUnits().atMost(18))
+                )
+            ) {
+                if (DEBUG) reason = "PunishZergEarly(" + OurArmy.strength() + ")";
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Decision shouldAttackVsProtoss() {

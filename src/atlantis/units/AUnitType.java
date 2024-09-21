@@ -645,6 +645,10 @@ public class AUnitType implements Comparable<Object> {
         return is(Terran_Academy);
     }
 
+    public boolean isAssimilator() {
+        return is(Protoss_Assimilator);
+    }
+
     public boolean isCarrier() {
         return is(Protoss_Carrier);
     }

@@ -9,6 +9,8 @@ import static atlantis.production.AbstractDynamicUnits.buildToHave;
 
 public class ProduceShuttles {
     public static boolean shuttles() {
+        if (true) return false;
+
         if (!Have.roboticsFacility()) return false;
         if (!Have.observer()) return false;
 
@@ -21,6 +23,7 @@ public class ProduceShuttles {
             }
         }
 
-        return buildToHave(AUnitType.Protoss_Shuttle, 1);
+        return false;
+//        return buildToHave(AUnitType.Protoss_Shuttle, 1);
     }
 }

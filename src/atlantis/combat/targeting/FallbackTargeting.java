@@ -1,5 +1,6 @@
 package atlantis.combat.targeting;
 
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AliveEnemies;
 import atlantis.units.select.Selection;
@@ -53,7 +54,7 @@ public class FallbackTargeting {
     }
 
     private static Selection enemies(AUnit unit) {
-        return unit.enemiesNear();
+        return unit.enemiesNear().havingPosition().effVisible();
     }
 
     private static AUnit forRanged(AUnit unit) {
@@ -72,7 +73,13 @@ public class FallbackTargeting {
 
         if (inRange != null) return inRange;
 
-        return unit.squadCenterEnemiesNear().canBeAttackedBy(unit, 10).nearestTo(unit);
+        HasPosition squadCenter = unit.squadCenter();
+        if (squadCenter == null) return null;
+
+        Selection squadCenterEnemiesNear = unit.squadCenterEnemiesNear();
+        if (squadCenterEnemiesNear == null) return null;
+
+        return squadCenterEnemiesNear.canBeAttackedBy(unit, 10).nearestTo(unit);
     }
 
     private static AUnit forMelee(AUnit unit) {

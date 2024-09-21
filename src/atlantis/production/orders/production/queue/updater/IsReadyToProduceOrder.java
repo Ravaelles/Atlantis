@@ -1,13 +1,13 @@
 package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.We;
 
 public class IsReadyToProduceOrder {
     protected static boolean isReadyToProduce(ProductionOrder order) {
@@ -62,12 +62,28 @@ public class IsReadyToProduceOrder {
 //        System.err.println("      mineralBonusToHave(unitType) = " + mineralBonusToHave(unitType));
 //        System.err.println("      ReservedResources.minerals() = " + ReservedResources.minerals());
 
+//        return A.supplyUsed() + 3 >= order.minSupply()
         return A.supplyUsed() + 3 >= order.minSupply()
 //            && (order.isUnit() && unitType.isResource())
-            && A.canAffordWithReserved(
+            && (applySpecialPriority(unitType) || canAffordWithReserved(unitType));
+//            && A.canAfford(unitType.mineralPrice() + 100, unitType.gasPrice() > 0 ? unitType.gasPrice() + 50 : 0);
+    }
+
+    private static boolean applySpecialPriority(AUnitType unitType) {
+        if (We.protoss()) {
+            return unitType.is(
+                AUnitType.Protoss_Cybernetics_Core,
+                AUnitType.Protoss_Assimilator
+            );
+        }
+
+        return false;
+    }
+
+    private static boolean canAffordWithReserved(AUnitType unitType) {
+        return A.canAffordWithReserved(
             unitType.mineralPrice() + mineralBonusToHave(unitType), unitType.gasPrice()
         );
-//            && A.canAfford(unitType.mineralPrice() + 100, unitType.gasPrice() > 0 ? unitType.gasPrice() + 50 : 0);
     }
 
     private static int mineralBonusToHave(AUnitType type) {

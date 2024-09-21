@@ -5,6 +5,7 @@ import atlantis.information.decisions.Decisions;
 import atlantis.information.generic.OurArmy;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
+import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -56,7 +57,7 @@ public class ProduceDragoon {
     }
 
     private static boolean produceDragoon() {
-        boolean result = Select.ourFree(Protoss_Gateway).random().train(
+        boolean result = GatewayClosestToEnemy.get().train(
             Protoss_Dragoon, ForcedDirectProductionOrder.create(Protoss_Dragoon)
         );
 //        System.err.println("ProduceDragoon = " + result);

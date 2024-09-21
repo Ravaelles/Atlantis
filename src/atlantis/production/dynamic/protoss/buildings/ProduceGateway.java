@@ -13,8 +13,6 @@ import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 import static atlantis.units.AUnitType.Protoss_Gateway;
 
 public class ProduceGateway {
-
-    private static int allGateways;
     private static int unfinishedGateways;
     private static int freeGateways;
     private static int existingGateways;
@@ -25,19 +23,23 @@ public class ProduceGateway {
 
         if (minerals <= 100) return false;
 
-        existingGateways = Count.gateways();
+        existingGateways = Count.gatewaysWithUnfinished();
+        freeGateways = Count.freeGateways();
 
-        if (!A.hasMinerals(330) && ConstructionRequests.hasNotStarted(Protoss_Cybernetics_Core)) return false;
+        if (minerals >= 560 && existingGateways <= 6 && freeGateways <= 2) return produceGateway();
+        if (minerals >= 660 && existingGateways <= 9 && freeGateways <= 3) return produceGateway();
+        if (minerals >= 300 && existingGateways <= 5 && Count.bases() >= 2) return produceGateway();
 
         if (
             !A.hasMinerals(176)
-                && existingGateways >= 4
+                && existingGateways >= (2 + 2.5 * Count.basesWithUnfinished())
                 && A.isInRange(50, ReservedResources.minerals(), 350)
         ) return false;
 
-        freeGateways = Count.freeGateways();
+        if (!A.hasMinerals(330) && ConstructionRequests.hasNotStarted(Protoss_Cybernetics_Core)) return false;
 
         if (minerals >= 290 && freeGateways <= 1) return produceGateway();
+        if (minerals >= 790 && freeGateways == 2) return produceGateway();
 
         // =========================================================
 
@@ -47,7 +49,7 @@ public class ProduceGateway {
         if (ReservedResources.minerals() >= 250 && !A.hasMinerals(230)) return false;
 
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
-        allGateways = existingGateways + unfinishedGateways;
+//        allGateways = existingGateways + unfinishedGateways;
 
         if (freeGateways >= 2) {
             if (tooManyGatewaysForNow()) return false;

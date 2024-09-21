@@ -24,21 +24,10 @@ public class DefineNearTo {
             nearTo = MainRegion.center();
         }
 
-        if (We.protoss()) {
-            if (nearTo == null && building.isCannon()) {
-                int bases = Count.bases();
-                if (bases >= 3) return Select.ourBases().last();
-                if (bases == 2) return Chokes.natural();
-                if (bases <= 1) return Chokes.mainChoke();
+        if (nearTo == null) {
+            if (We.protoss()) {
+                nearTo = forProtoss(building, nearTo);
             }
-
-            if (nearTo == null && building.isGateway()) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
-
-            if (nearTo == null) {
-                if (A.chance(70)) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).random();
-            }
-
-            if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
         }
 
         if (We.terran()) {
@@ -53,6 +42,32 @@ public class DefineNearTo {
         if (nearTo == null) {
             ErrorLog.printMaxOncePerMinute("Apply dirty hack as nearTo is still null for " + building);
             nearTo = APosition.create(50, 50);
+        }
+
+        return nearTo;
+    }
+
+    private static HasPosition forProtoss(AUnitType building, HasPosition nearTo) {
+        if (nearTo == null && building.isCannon()) {
+            int bases = Count.bases();
+            if (bases >= 3) return Select.ourBases().last();
+            if (bases == 2) return Chokes.natural();
+            return Chokes.mainChoke();
+        }
+
+        if (building.isPylon()) {
+            if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
+            if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).random();
+        }
+
+        if (building.isGateway()) {
+            if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
+
+            if (nearTo == null) {
+                if (A.chance(80)) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).random();
+            }
+
+            if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
         }
 
         return nearTo;

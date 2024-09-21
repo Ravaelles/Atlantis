@@ -19,9 +19,9 @@ public class Main {
 //    public static String OUR_RACE = "Terran";
 //    public static String OUR_RACE = "Zerg";
 
-    public static String ENEMY_RACE = "Protoss";
+    //    public static String ENEMY_RACE = "Protoss";
 //    public static String ENEMY_RACE = "Terran";
-//    public static String ENEMY_RACE = "Zerg";
+    public static String ENEMY_RACE = "Zerg";
 
     /**
      * Will modify bwapi.ini to use this map.
@@ -71,7 +71,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)Heartbreak Ridge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-//        if (true) return "sscai/(3)TauCross.scx";
+        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -82,7 +82,7 @@ public class Main {
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
 //        if (true) return "ums/rav/7th_rav.scx";
-        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
+//        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_skilltest_asP.scx"; // Protoss v. AI Protoss player
 
@@ -129,11 +129,11 @@ public class Main {
 //        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
-        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal_easy.scm";
 //        if (true) return "ums/rav/protoss/DragWounded_v_Zeal.scm";
-//        if (true) return "ums/rav/protoss/ZealDrag_v_Zeal.scm";
-//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_Zeal.scm";     // <<<<
+        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm"; // <<<<
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal_inBase.scm";
 
 //        if (true) return "ums/rav/protoss/DragZeal_v_Zeal.scm";
@@ -150,13 +150,13 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm"; // Dragoons v Zealots - more goons
 
 //        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
-        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/5Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Lings.scm"; // Lots of space
-        if (true) return "ums/rav/protoss/Drag_v_Lings2.scm"; // Much less space
-//        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/protoss/Drag_v_Lings2.scm"; // Much less space
+        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons attacking sunkens with lings
 //        if (true) return "ums/rav/protoss/Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/5Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/10Zeal_v_Lings.scm";

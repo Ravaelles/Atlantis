@@ -38,17 +38,18 @@ public class ProtossTooFarFromLeader extends Manager {
         if (leader == null) return false;
 
         if (unit.isMissionSparta()) return false;
+
+        distToLeader = unit.distTo(leader);
+        boolean wayTooFarFromLeader = wayTooFarFromLeader();
+
+        if (wayTooFarFromLeader) return true;
+
         if (
             unit.enemiesNear().atLeast(9)
                 || unit.enemiesNear().inRadius(5, unit).atLeast(2)
         ) return false;
 
         if (unit.isDragoon() && unit.hp() <= 40) return false;
-
-        distToLeader = unit.distTo(leader);
-        boolean wayTooFarFromLeader = wayTooFarFromLeader();
-
-        if (wayTooFarFromLeader) return true;
 
         if (unit.distToNearestChokeLessThan(5)) return false;
 
@@ -63,7 +64,8 @@ public class ProtossTooFarFromLeader extends Manager {
     private boolean previousApplies() {
         return (A.supplyUsed() <= 100 || EnemyInfo.hasDiscoveredAnyBuilding())
             && (A.isUms() || EnemyWhoBreachedBase.noone())
-            && (!unit.isMissionDefendOrSparta() || unit.distToBase() <= 30)
+//            && (!unit.isMissionDefendOrSparta() || unit.distToBase() <= 30)
+            && unit.distToBase() <= 25
             && (unit.noCooldown() || unit.looksIdle() || unit.distToBase() >= 30)
 //            && !unit.hasCooldown()
             && unit.isGroundUnit()

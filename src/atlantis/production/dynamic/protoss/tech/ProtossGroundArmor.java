@@ -20,6 +20,7 @@ public class ProtossGroundArmor extends Commander {
     @Override
     public boolean applies() {
         if (!Have.forge()) return false;
+        if (!A.hasMinerals(650) && Count.basesWithUnfinished() <= 1) return false;
         if (ATech.isResearched(what())) return false;
         if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
         if (CountInQueue.count(what(), 10) > 0) return false;

@@ -12,6 +12,9 @@ import atlantis.util.cache.Cache;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
+import static atlantis.units.AUnitType.Terran_Refinery;
+import static atlantis.units.AUnitType.Zerg_Extractor;
+
 /**
  * Quick auxiliary class for counting our units.
  */
@@ -208,6 +211,10 @@ public class Count {
         return ofType(AUnitType.Protoss_Zealot);
     }
 
+    public static int zealotsAndDragoons() {
+        return ofType(AUnitType.Protoss_Zealot) + ofType(AUnitType.Protoss_Dragoon);
+    }
+
     public static int zerglings() {
         return ofType(AUnitType.Zerg_Zergling);
     }
@@ -387,5 +394,17 @@ public class Count {
 
     public static int zealotsWithUnfinished() {
         return ourWithUnfinished(AUnitType.Protoss_Zealot);
+    }
+
+    public static int gasBuildings() {
+        return ofType(AUnitType.Protoss_Assimilator)
+            + ofType(Zerg_Extractor)
+            + ofType(Terran_Refinery);
+    }
+
+    public static int gasBuildingsWithUnfinished() {
+        return ourWithUnfinished(AUnitType.Protoss_Assimilator)
+            + ourWithUnfinished(Zerg_Extractor)
+            + ourWithUnfinished(Terran_Refinery);
     }
 }

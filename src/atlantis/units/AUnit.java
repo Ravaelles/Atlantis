@@ -2021,6 +2021,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public Selection squadCenterEnemiesNear() {
+        if (squadCenter() == null) return Select.from(new ArrayList<>(), "squadCenterEnemiesNear_0");
+
         return (Selection) cache.get(
             "squadCenterEnemiesNear",
             1,
@@ -2612,6 +2614,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public boolean isCorsair() {
+        return cacheBoolean.get(
+            "isCorsair",
+            -1,
+            () -> is(AUnitType.Protoss_Corsair)
+        );
+    }
+
     public boolean isObserver() {
         return cacheBoolean.get(
             "isObserver",
@@ -3115,8 +3125,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return groundWeaponRange() > 0;
     }
 
-    public Selection enemiesThatCanAttackMe(double radius) {
-        return enemiesNear().canAttack(this, radius);
+    public Selection enemiesThatCanAttackMe(double safetyMargin) {
+        return enemiesNear().canAttack(this, safetyMargin);
     }
 
     public boolean isPurelyAntiAir() {
@@ -3316,5 +3326,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public double shotSecondsAgo() {
         return lastAttackFrameAgo() / 30.0;
+    }
+
+    public boolean shieldHealthy() {
+        return shields() >= maxShields();
+    }
+
+    public double shieldPercent() {
+        return (double) (100 * shields()) / maxShields();
+    }
+
+    public double shieldWound() {
+        return 100 - ((double) (100 * shields()) / maxShields());
+    }
+
+    public boolean shieldWounded() {
+        return shields() < maxShields();
     }
 }

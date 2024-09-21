@@ -1,20 +1,21 @@
-package atlantis.combat.squad.beta;
+package atlantis.combat.squad.omega;
 
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.transfers.SquadReinforcements;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.util.We;
 
-public class BetaReinforcements extends SquadReinforcements {
-    public BetaReinforcements(Squad toSquad) {
+public class OmegaReinforcements extends SquadReinforcements {
+    public OmegaReinforcements(Squad toSquad) {
         super(toSquad);
     }
 
     @Override
     protected boolean isGoodRecruit(AUnit recruit) {
-        Beta beta = Beta.get();
+        Omega omega = Omega.get();
 
-        if (beta.units().tanks().empty() && Count.tanks() >= 6) {
+        if (We.terran() && omega.units().tanks().empty() && Count.tanks() >= 6) {
             return recruit.isTank();
         }
 

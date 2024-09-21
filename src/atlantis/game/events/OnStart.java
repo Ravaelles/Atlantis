@@ -2,10 +2,12 @@ package atlantis.game.events;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.omega.Omega;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
+import atlantis.debug.profiler.RealTime;
 import atlantis.debug.tweaker.ParamTweakerFactory;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -79,6 +81,7 @@ public class OnStart {
         }
 
         Alpha.get().setMission(Missions.globalMission());
+        Omega.get().setMission(Missions.DEFEND);
 
         System.out.println("### Atlantis is working! ###\n");
         if (Env.isTournament()) {
@@ -92,6 +95,8 @@ public class OnStart {
         if (Env.isParamTweaker()) {
             ParamTweakerFactory.init();
         }
+
+        RealTime.gameStarted = RealTime.currentTimestamp();
     }
 
     private static void handleCheckIfUmsMap() {

@@ -19,7 +19,7 @@ public class WorkerTransferCommander extends Commander {
 //        if (true) return;
 
         // Don't run every frame
-        if (!AGame.everyNthGameFrame(41)) {
+        if (!AGame.everyNthGameFrame(onceEveryFrames())) {
             return;
         }
 
@@ -36,6 +36,10 @@ public class WorkerTransferCommander extends Commander {
         }
 
         if (result) maxAtOnceBonus = 1;
+    }
+
+    private static int onceEveryFrames() {
+        return AGame.supplyUsed() >= 90 ? 23 : 41;
     }
 
     private boolean doTheTransferIfNeeded(Collection<AUnit> ourBases) {

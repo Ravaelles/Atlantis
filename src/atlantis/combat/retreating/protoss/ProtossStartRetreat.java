@@ -68,7 +68,10 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     private boolean runTowardsBaseOrMainChoke() {
-        if (unit.isDragoon()) return false;
+        if (unit.isDragoon() && unit.shieldPercent() >= 70 && (
+            unit.friendsNear().countInRadius(2, unit) >= 2
+                || unit.enemiesNear().countInRadius(2, unit) >= 2
+        )) return false;
 
         return retreatTowardsMainChoke()
             || retreatByRunningTowardsBase();
@@ -76,8 +79,16 @@ public class ProtossStartRetreat extends HasUnit {
 
     private boolean shouldForceRetreatDirectlyFromEnemy() {
         if (unit.woundHp() <= 20) return false;
-        if (unit.meleeEnemiesNearCount(2.2) > 0) return true;
-        if (unit.lastUnderAttackLessThanAgo(30)) return true;
+
+        if (unit.meleeEnemiesNearCount(6) >= 4) return false;
+
+        if (A.s <= 400) {
+            if (unit.meleeEnemiesNearCount(2.2) > 0) return true;
+            if (unit.lastUnderAttackLessThanAgo(30)) return true;
+        }
+        else {
+            if (unit.meleeEnemiesNearCount(2.8) >= 2) return true;
+        }
 
         return false;
     }

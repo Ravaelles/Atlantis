@@ -77,6 +77,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     private OrderReservations orderReservations = new OrderReservations(this);
     private Construction construction = null;
 
+    private int requestedAt = A.now();
+
     // =========================================================
 
     public ProductionOrder(AUnitType unitOrBuilding, int minSupply) {
@@ -264,6 +266,10 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public boolean supplyRequirementFulfilled() {
         int bonus = unitOrBuilding != null && A.supplyUsed() >= 10 && unitOrBuilding.isABuilding() ? 1 : 0;
+
+        if (unitOrBuilding != null && unitOrBuilding.equals(AUnitType.Protoss_Cybernetics_Core)) {
+            bonus = 2;
+        }
 
         return A.supplyUsed() + bonus >= minSupply;
     }
@@ -514,5 +520,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     public void consume() {
 //        System.out.println("@ " + A.now() + " - consuming order " + this);
         consumed = true;
+    }
+
+    public int requestedAgo() {
+        return A.ago(requestedAt);
     }
 }

@@ -22,6 +22,12 @@ public class NearestFreeBase {
             builder, building, nearTo, maxDistance
         );
 
+        if (nearestBase == null) {
+            HasPosition nearestFree = nearToNearestFree();
+
+            if (nearestFree != null) nearestBase = nearestFree.position();
+        }
+
         if (nearestBase == null && Select.ourBases().notEmpty()) {
             ErrorLog.printMaxOncePerMinute(
                 "Could not find nearest base."
