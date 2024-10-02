@@ -6,6 +6,7 @@ import atlantis.config.env.Env;
 import atlantis.debug.profiler.RealTime;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.OurArmy;
 import atlantis.units.select.Count;
@@ -17,15 +18,30 @@ public class GGForEnemy extends Commander {
 
     @Override
     public boolean applies() {
-        return allowed
-            && A.s >= 600
+        if (!allowed) return false;
+
+        if (EnemyInfo.combatBuildingsAntiLand() > 0) return false;
+
+        if (
+            A.resourcesBalance() >= 3500
+                && OurArmy.strength() >= 910
+                && Count.ourCombatUnits() >= 30
+                && EnemyUnits.combatUnits() <= 0
+                && EnemyUnits.discovered().combatBuildingsAntiLand().empty()
+        ) {
+            return true;
+        }
+
+        return A.s >= 600
             && A.now() % 128 == 0
             && (OurArmy.strength() >= 900 || A.resourcesBalance() >= 2000)
             && Count.ourCombatUnits() >= 25
             && EnemyUnits.combatUnits() <= 3
             && Select.enemy().count() >= 5 // Make sure any enemy units are visible
             && Count.workers() >= 30
-            && (Count.ourCombatUnits() * 13) >= EnemyUnits.combatUnits();
+            && Select.enemy().workers().count() <= 5 // Make sure any enemy units are visible
+//            && (Count.ourCombatUnits() * 13) >= EnemyUnits.combatUnits()
+            && EnemyUnits.combatUnits() <= 0;
     }
 
     @Override

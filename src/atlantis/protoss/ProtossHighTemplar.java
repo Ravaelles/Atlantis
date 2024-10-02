@@ -6,6 +6,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.AGame;
 import atlantis.information.tech.SpellCoordinator;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -182,7 +183,7 @@ public class ProtossHighTemplar extends Manager {
     private boolean followArmy() {
         if (unit.hp() <= 16) return false;
 
-        APosition center = Alpha.get().center();
+        HasPosition center = Alpha.get().center();
         if (center != null) {
             if (Select.our().inRadius(0.3, unit).atLeast(3)) {
                 return unit.moveAwayFrom(

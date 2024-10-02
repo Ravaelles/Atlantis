@@ -27,7 +27,7 @@ public class ProtossForbiddenByStreetGrid {
         if (building.isPylon()) {
             if (
 //                moduloX != 2
-                moduloX != 1
+                moduloX != 2
             ) return failed("TX modulo PP_X2 = " + moduloX);
 
             if (
@@ -42,20 +42,15 @@ public class ProtossForbiddenByStreetGrid {
         else {
 //            System.err.println(moduloX + " / " + moduloY);
 
-            //                              old: G:1 G:5  P:9  G:11 G:14
-            // P:2  G:4  G:8
-            // P:1  G:3  G:7
-//            boolean moduloXIsInvalid = moduloX != 4 && moduloX != 8;
-            boolean moduloXIsInvalid = moduloX != 3 && moduloX != 7;
+            // P:2-3  G:4-7  G:8-11
+            boolean moduloXIsInvalid = moduloX != 4 && moduloX != 8;
 
 //            if (moduloXIsInvalid && building.getTileWidth() <= 3) {
 //                moduloXIsInvalid = moduloX != 6;
 //            }
 
-            //                              old: G:1  G:4  P:1 P:3 P:5
-            // P:2  G:4  G:7
-//            boolean moduloYIsInvalid = moduloY != 1 && moduloY != 4;
-            boolean moduloYIsInvalid = moduloY != 3 && moduloY != 6;
+            // G:2-4  G:5-7
+            boolean moduloYIsInvalid = moduloY != 2 && moduloY != 5;
 
 //            if (moduloYIsInvalid && building.getTileHeight() <= 2) {
 //                moduloYIsInvalid = moduloY != 5 && moduloY != 8;

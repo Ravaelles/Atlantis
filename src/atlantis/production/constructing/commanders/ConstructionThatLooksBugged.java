@@ -30,17 +30,23 @@ public class ConstructionThatLooksBugged extends Commander {
         if (constr.buildingUnit() != null) return;
 
         AUnitType type = constr.buildingType();
-        if (constr.builder() == null) {
+        if (constr.builder() == null || constr.builder().isDead()) {
             if (constr.status() != ConstructionOrderStatus.NOT_STARTED) {
-                constr.setBuilder(FreeWorkers.getOne());
+                constr.assignOptimalBuilder();
             }
-            else {
-                if (Count.workers() >= 3) {
-                    ErrorLog.printMaxOncePerMinute("Weird case, " + type + " has no builder. Cancel.");
-                }
+
+            if (constr.builder() == null || constr.buildPosition() == null) {
+                ErrorLog.printMaxOncePerMinute("Weird case, " + type + " has no builder. Cancel.");
                 constr.productionOrder().cancel();
-                return;
             }
+
+//            else {
+//                if (Count.workers() >= 3) {
+//                    ErrorLog.printMaxOncePerMinute("Weird case, " + type + " has no builder. Cancel.");
+//                }
+//                constr.productionOrder().cancel();
+//                return;
+//            }
         }
 
         AUnit main = Select.main();

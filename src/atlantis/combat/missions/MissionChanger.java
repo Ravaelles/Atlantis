@@ -3,7 +3,7 @@ package atlantis.combat.missions;
 import atlantis.combat.missions.attack.MissionChangerWhenAttack;
 import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
-import atlantis.combat.missions.defend.sparta.Sparta;
+import atlantis.combat.missions.defend.protoss.sparta.Sparta;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -130,7 +130,7 @@ public abstract class MissionChanger {
 
     public static void forceMissionAttack(String reason) {
         Missions.forceGlobalMissionAttack(reason);
-        
+
 //        if (ArmyStrength.ourArmyRelativeStrength() >= 80 || Count.ourCombatUnits() <= 5) {
 //        }
     }

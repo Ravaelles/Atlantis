@@ -24,7 +24,7 @@ public class FixPerformanceForBigSupply extends MissionManager {
             && unit.isMoving()
             && !unit.isRunning()
             && unit.lastActionLessThanAgo(20)
-            && unit.enemiesNear().atMost(1);
+            && unit.enemiesNear().empty();
     }
 
     protected Manager handle(AUnit unit) {

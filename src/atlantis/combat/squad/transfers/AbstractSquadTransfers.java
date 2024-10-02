@@ -10,6 +10,7 @@ public abstract class AbstractSquadTransfers {
     public void handleTransfers() {
         if (!squad().shouldHaveThisSquad()) {
             removeUnitsFromSquad(squad());
+            return;
         }
 
         squad().handleReinforcements();

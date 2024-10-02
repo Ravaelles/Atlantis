@@ -56,8 +56,8 @@ public class DoPreventFreezesLogic {
         }
 
 //        Manager masnager;
-//        if ((manager = new TooFarFromFocusPoint(unit)).invoke(unit) != null) return true;
-//        if ((manager = new TooCloseToFocusPoint(unit)).invoke(unit) != null) return true;
+//        if ((manager = new Old_____TooFarFromFocusPoint(unit)).invoke(unit) != null) return true;
+//        if ((manager = new Old_____TooCloseToFocusPoint(unit)).invoke(unit) != null) return true;
 //
 //        unit.paintCircleFilled(22, Color.Yellow);
 ////        if (goToNearestEnemy(unit)) return true;

@@ -2,10 +2,10 @@ package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
 
-import atlantis.combat.targeting.ATargeting;
+import atlantis.combat.squad.Squad;
+import atlantis.combat.targeting.basic.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
 public class AttackNearbyEnemies extends Manager {
@@ -172,7 +172,13 @@ public class AttackNearbyEnemies extends Manager {
         AUnit leader = unit.squadLeader();
         if (leader == null || unit.equals(leader)) return null;
 
-        return (new AttackNearbyEnemies(leader)).defineBestEnemyToAttack(leader);
+        Squad squad = unit.squad();
+        if (squad != null) {
+            return squad.targeting().lastTargetIfAlive();
+        }
+
+        return null;
+//        return (new AttackNearbyEnemies(leader)).defineBestEnemyToAttack(leader);
     }
 
     protected AUnit bestTargetToAttack() {

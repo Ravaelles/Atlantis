@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue.updater;
 
+import atlantis.game.A;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -17,7 +18,7 @@ public class QueueRefresher {
     }
 
     public void refresh() {
-        for (ProductionOrder order : queue.allOrders().list()) {
+        for (ProductionOrder order : queue.nonCompleted().list()) {
             if (order.shouldIgnore()) continue;
 
             updateOrderStatus(order);
@@ -61,6 +62,10 @@ public class QueueRefresher {
     }
 
     private OrderStatus markAsComplete(ProductionOrder order) {
+//        if (order.unitType() != null && order.unitType().isGasBuilding()) {
+//            A.errPrintln("########################### Gas building completed: " + order.construction());
+//        }
+
         order.setStatus(OrderStatus.COMPLETED);
 //        order.setUnitType(null);
 //        order.setModifier(null);

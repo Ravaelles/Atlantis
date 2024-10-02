@@ -17,7 +17,7 @@ import static atlantis.units.AUnitType.Terran_Missile_Turret;
 public class TurretsToContainEnemy extends Commander {
 
     private static AChoke enemyMainChoke;
-    private static APosition alphaCenter;
+    private static HasPosition alphaCenter;
 
     @Override
     public boolean applies() {

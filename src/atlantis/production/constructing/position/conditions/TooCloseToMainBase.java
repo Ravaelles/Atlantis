@@ -17,13 +17,19 @@ public class TooCloseToMainBase {
 
 //        APainter.paintCircle(position, 10, Color.Green);
         if (base != null) {
-            int minDistFromBase = We.terran() ? 3 : (We.zerg() ? 3 : 0);
-            if (base.translateByTiles(minDistFromBase, 0).distTo(position) <= 3.5) {
+            double minDistFromBase = getMinDistFromBase();
+            if (base.translateByTiles(2, 0).distTo(position) <= minDistFromBase) {
                 return failed("Too close to main base");
             }
         }
 
         return false;
+    }
+
+    private static double getMinDistFromBase() {
+        if (We.protoss()) return 1;
+
+        return 3;
     }
 
     private static boolean failed(String reason) {

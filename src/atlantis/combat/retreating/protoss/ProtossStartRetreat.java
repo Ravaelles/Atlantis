@@ -1,6 +1,7 @@
 package atlantis.combat.retreating.protoss;
 
 import atlantis.game.A;
+import atlantis.information.generic.OurArmy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
@@ -68,17 +69,21 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     private boolean runTowardsBaseOrMainChoke() {
-        if (unit.isDragoon() && unit.shieldPercent() >= 70 && (
-            unit.friendsNear().countInRadius(2, unit) >= 2
-                || unit.enemiesNear().countInRadius(2, unit) >= 2
-        )) return false;
+        if (
+            unit.isDragoon()
+                && unit.shieldPercent() >= 70
+                && unit.distToBase() <= 30
+                && (
+                unit.friendsNear().countInRadius(2, unit) >= 2
+                    || unit.enemiesNear().countInRadius(4, unit) >= 2
+            )) return false;
 
         return retreatTowardsMainChoke()
             || retreatByRunningTowardsBase();
     }
 
     private boolean shouldForceRetreatDirectlyFromEnemy() {
-        if (unit.woundHp() <= 20) return false;
+//        if (unit.woundHp() <= 20) return false;
 
         if (unit.meleeEnemiesNearCount(6) >= 4) return false;
 
@@ -93,11 +98,28 @@ public class ProtossStartRetreat extends HasUnit {
         return false;
     }
 
+    private boolean retreatByRunningTowardsBase() {
+        AUnit goTo = Select.mainOrAnyBuilding();
+        if (goTo == null || unit.distTo(goTo) <= 10) return false;
+
+        if (OurArmy.strength() >= 400) return false;
+        if (notSafeToRunTowardsMainOrMainChoke()) return false;
+
+        return unit.moveToMain(Actions.RUN_RETREAT, "RetreatTowardsBase");
+    }
+
     private boolean retreatTowardsMainChoke() {
         HasPosition goTo = mainChokeDefencePoint();
         if (goTo == null || unit.distTo(goTo) <= 3) return false;
 
+        if (OurArmy.strength() >= 400) return false;
+        if (notSafeToRunTowardsMainOrMainChoke()) return false;
+
         return unit.move(goTo, Actions.RUN_RETREAT, "RetreatToMainChoke");
+    }
+
+    private boolean notSafeToRunTowardsMainOrMainChoke() {
+        return unit.meleeEnemiesNearCount(2.9) >= (unit.woundPercent() >= 30 ? 3 : 2);
     }
 
     private HasPosition mainChokeDefencePoint() {
@@ -115,13 +137,6 @@ public class ProtossStartRetreat extends HasUnit {
         if (combatUnits <= 4) return 2;
         if (combatUnits <= 9) return 2.5;
         return 3;
-    }
-
-    private boolean retreatByRunningTowardsBase() {
-        AUnit goTo = Select.mainOrAnyBuilding();
-        if (goTo == null || unit.distTo(goTo) <= 10) return false;
-
-        return unit.moveToMain(Actions.RUN_RETREAT, "RetreatTowardsBase");
     }
 
     private boolean retreatByRunningFromEnemy(HasPosition runAwayFrom) {

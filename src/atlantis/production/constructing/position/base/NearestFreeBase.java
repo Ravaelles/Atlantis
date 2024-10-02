@@ -51,7 +51,7 @@ public class NearestFreeBase {
         HasPosition nearTo = null;
         int ourBasesCount = Count.basesWithUnfinished();
 
-        if (A.seconds() <= 1000 && ourBasesCount <= 1) {
+        if (A.seconds() <= 1500 && ourBasesCount <= 1) {
             nearTo = nearToNatural();
         }
 
@@ -79,7 +79,7 @@ public class NearestFreeBase {
     }
 
     private static HasPosition nearToMostDistantToEnemy() {
-        AUnit mainBase = Select.mainOrAnyBuilding();
+//        AUnit mainBase = Select.mainOrAnyBuilding();
 
         return BaseLocations.expansionBaseLocationMostDistantToEnemy();
     }

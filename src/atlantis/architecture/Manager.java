@@ -101,7 +101,7 @@ public abstract class Manager extends BaseManager {
 
     protected Manager handleSubmanagers() {
         for (Manager submanager : submanagerObjects) {
-//            if (this.getClass().getSimpleName().contains("Advance"))
+//            if (this.getClass().getSimpleName().contains("OldAdvance"))
 //                System.out.println("Adv - " + submanager.getClass().getSimpleName());
 
             if (submanager.invokeFromParent(this) != null) {

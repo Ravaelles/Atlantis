@@ -22,6 +22,7 @@ public class Actions {
     public static final Action LIFT = new Action().setName("LIFT");
     public static final Action LOAD = new Action().setName("LOAD");
     public static final Action MORPH = new Action().setName("MORPH");
+    public static final Action MOVE_ADVANCE = new Action().setName("MOVE_ADVANCE");
     public static final Action MOVE_ATTACK = new Action().setName("MOVE_ATTACK");
     public static final Action MOVE_AVOID = new Action().setName("MOVE_AVOID");
     public static final Action MOVE_BUILD = new Action().setName("MOVE_BUILD");

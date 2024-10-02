@@ -5,7 +5,7 @@ import atlantis.combat.micro.avoid.terran.fight.ShouldFightInsteadAvoidAsTerran;
 import atlantis.combat.micro.avoid.terran.fight.TerranFightInsteadAvoid;
 import atlantis.combat.micro.avoid.zerg.ShouldFightInsteadAvoidAsZerg;
 
-import atlantis.combat.targeting.ATargetingCrucial;
+import atlantis.combat.targeting.basic.ATargetingCrucial;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

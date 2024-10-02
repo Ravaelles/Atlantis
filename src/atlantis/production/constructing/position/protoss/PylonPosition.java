@@ -5,7 +5,6 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.constructing.position.FindPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -33,7 +32,7 @@ public class PylonPosition {
         return Select.mainOrAnyBuilding();
     }
 
-    public static APosition positionForFirstPylon() {
+    public static APosition nearToPositionForFirstPylon() {
         AUnit base = Select.main();
         if (base == null) {
             return fallback();
@@ -43,6 +42,10 @@ public class PylonPosition {
         HasPosition geyser = Select.geysers().inRadius(10, base).first();
         HasPosition mineralsCenter = ABaseLocation.mineralsCenter(base);
 
+        if (geyser == null || mineralsCenter == null) return fallback();
+
+        APosition centerOfResources = geyser.translateTilesTowards(mineralsCenter, 50);
+
 //        AAdvancedPainter.paintPosition(position, "geyser");
 //        AAdvancedPainter.paintPosition(mineralsCenter, "mineralsCenter");
 
@@ -51,36 +54,38 @@ public class PylonPosition {
             return fallback();
         }
 
-        if (mineralsCenter != null) {
-            position = position.translateTilesTowards(mineralsCenter, -2);
-//            AAdvancedPainter.paintPosition(position, "AwayFromMinerals");
-        }
-        if (geyser != null) {
-            position = position.translateTilesTowards(geyser, -1);
-//            AAdvancedPainter.paintPosition(position, "AwayFromGeyserAndMinerals");
-        }
-        if (position != null) position = position.translatePercentTowards(base, 90);
-        if (position != null) position = position.translateTilesTowards(base, -1);
+//        if (mineralsCenter != null) {
+//            position = position.translateTilesTowards(mineralsCenter, -4);
+////            AAdvancedPainter.paintPosition(position, "AwayFromMinerals");
+//        }
+//        if (geyser != null) {
+//            position = position.translateTilesTowards(geyser, -1);
+////            AAdvancedPainter.paintPosition(position, "AwayFromGeyserAndMinerals");
+//        }
+//        if (position != null) position = position.translatePercentTowards(base, 90);
+//        if (position != null) position = position.translateTilesTowards(base, -1);
 
-        return position;
+//        System.err.println("base = " + base);
+//        System.err.println("position = " + position.translateTilesTowards(-2, mineralsCenter));
+//        System.err.println("position = " + position.translateTilesTowards(-2, mineralsCenter).distTo(base));
+
+        return base.translateTilesTowards(-1, centerOfResources);
     }
 
-    public static APosition positionForSecondPylon(APosition initialNearTo) {
+    public static APosition nearToPositionForSecondPylon(APosition initialNearTo) {
 //        return initialNearTo;
 
         AUnit base = Select.main();
         AChoke mainChoke = Chokes.mainChoke();
-        if (base == null || mainChoke == null) {
-            return fallback();
-        }
+        if (base == null || mainChoke == null) return fallback();
 
-        return mainChoke.translateTilesTowards(base, 8);
+        return base.translateTilesTowards(mainChoke, 8);
     }
 
     // =========================================================
 
     private static APosition fallback() {
-        AUnit first = Select.our().first();
+        AUnit first = Select.ourBuildings().first();
         return first != null ? first.position() : null;
     }
 

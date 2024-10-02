@@ -34,6 +34,6 @@ public class SpreadOutDetectors extends Manager {
     }
 
     private int minDistanceBetweenUnits() {
-        return We.protoss() ? 15 : 5;
+        return We.protoss() ? 11 : 5;
     }
 }

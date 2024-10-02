@@ -28,6 +28,18 @@ public class Alpha extends Squad {
 
     // =========================================================
 
+    @Override
+    public boolean shouldHaveThisSquad() {
+        return true;
+    }
+
+    @Override
+    public boolean allowsSideQuests() {
+        return count() >= 14;
+    }
+
+    // =========================================================
+
     public int expectedUnits() {
         return 0;
     }

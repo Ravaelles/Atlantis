@@ -19,11 +19,11 @@ public class DanceAwayAsZealot extends Manager {
         if (unit.cooldown() <= 10) return false;
         if (unit.isMissionSparta()) return false;
         if (unit.shieldDamageAtMost(19)) return false;
+        if (dontApplyWhenRangedEnemiesNear()) return false;
 
         if (unit.moreMeleeEnemiesThanOurUnits()) return true;
 
         if (unit.hp() >= 35) return false;
-        if (dontApplyWhenRangedEnemiesNear()) return false;
 
         boolean fairlyWounded = unit.hp() <= 38;
 
@@ -58,7 +58,7 @@ public class DanceAwayAsZealot extends Manager {
 
     private boolean danceAwayFrom(AUnit enemy) {
         return unit.runningManager().runFrom(
-            enemy.position(), 1, Actions.MOVE_DANCE_AWAY, false
+            enemy.position(), 1.5, Actions.MOVE_DANCE_AWAY, false
         );
     }
 

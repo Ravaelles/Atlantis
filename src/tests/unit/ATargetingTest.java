@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.combat.targeting.ATargeting;
+import atlantis.combat.targeting.basic.ATargeting;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import org.junit.Test;

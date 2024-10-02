@@ -38,7 +38,7 @@ public class ConstructionStatusChanger extends Commander {
             construction.setBuilder(null);
 
             if (building.isPylon() || building.isBase() || building.isGasBuilding()) {
-                A.errPrintln("Pylon construction is overdue, cancel it");
+                A.errPrintln(building + " construction is overdue, cancel it");
                 construction.cancel();
             }
             else {
@@ -96,7 +96,7 @@ public class ConstructionStatusChanger extends Commander {
         }
 
         // If building exists
-        if (building != null) {
+        if (building != null && !building.isNeutral()) {
 
             // Finished: building is completed, remove the construction object
             if (building.isCompleted()) {

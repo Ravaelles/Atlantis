@@ -24,24 +24,29 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     protected void handle() {
         if (ProduceCyberneticsCore.produce()) return;
 
-        ProduceFirstAssimilator.produce();
-        ProduceCannon.produce();
-        ProduceForge.produce();
+        if (
+            ProduceFirstAssimilator.produce()
+//                || ProduceCannon.produce()
+                || ProduceForge.produce()
+        ) return;
 
-        if (A.supplyUsed() <= 30 || A.hasMinerals(700)) {
+        if (A.supplyUsed() <= 30 || A.hasMinerals(600)) {
             ProduceGateway.produce();
         }
 
         if (A.minerals() <= 500 && Queue.get().readyToProduceOrders().size() <= 1) return;
 
         if (isItSafeToAddTechBuildings()) {
-            ProduceObservatory.produce();
-            ProduceRoboticsFacility.produce();
-            ProduceCitadelOfAdun.produce();
-            ProduceStargate.produce();
-            ProduceRoboticsSupportBay.produce();
-            ProduceArbiterTribunal.produce();
-            ProduceShieldBattery.produce();
+            if (
+                ProduceCitadelOfAdun.produce()
+                    || ProduceObservatory.produce()
+                    || ProduceTemplarArchives.produce()
+                    || ProduceRoboticsFacility.produce()
+                    || ProduceStargate.produce()
+                    || ProduceRoboticsSupportBay.produce()
+                    || ProduceArbiterTribunal.produce()
+                    || ProduceShieldBattery.produce()
+            ) return;
         }
 
         ProduceGateway.produce();

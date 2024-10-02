@@ -9,8 +9,6 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
-import atlantis.util.We;
 
 public class ProtossTooFarFromLeader extends Manager {
     private double distToLeader;
@@ -22,36 +20,48 @@ public class ProtossTooFarFromLeader extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
+        if (true) return false;
 
-        if (!previousApplies()) return false;
+//        if (!previousApplies()) return false;
+
 
 //        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
         if (EnemyWhoBreachedBase.notNull()) return false;
         if (unit.squad().isLeader(unit)) return false;
+        if (unit.isRunning()) return false;
+        if (unit.lastStartedRunningLessThanAgo(20)) return false;
+        if (unit.enemiesNear().combatBuildingsAntiLand().notEmpty()) return false;
+
+        this.leader = unit.squadLeader();
+        if (this.leader == null) return false;
 
         if (A.supplyUsed() >= 170 && (
             unit.enemiesNear().empty() || EnemyUnits.discovered().buildings().atMost(1)
         )) return false;
 
-        leader = unit.squad().leader();
-        if (leader == null) return false;
-
         if (unit.isMissionSparta()) return false;
 
-        distToLeader = unit.distTo(leader);
+        if (
+            unit.lastAttackFrameMoreThanAgo(30 * 10)
+                && unit.enemiesThatCanAttackMe(4).empty()
+        ) return false;
+
+        distToLeader = unit.distTo(this.leader);
         boolean wayTooFarFromLeader = wayTooFarFromLeader();
 
+//        if (distToLeader >= 30 && unit.isMissionDefend()) return false;
         if (wayTooFarFromLeader) return true;
+
+        if (isDangerousToGoToLeaderAndWeArentRetreating()) return false;
 
         if (
             unit.enemiesNear().atLeast(9)
                 || unit.enemiesNear().inRadius(5, unit).atLeast(2)
         ) return false;
 
-        if (unit.isDragoon() && unit.hp() <= 40) return false;
+//        if (unit.isDragoon() && unit.hp() <= 40) return false;
 
-        if (unit.distToNearestChokeLessThan(5)) return false;
+        if (unit.distToNearestChokeLessThan(4)) return false;
 
         if (distToLeader >= 5 && unit.lastPositionChangedMoreThanAgo(30)) return true;
 
@@ -59,6 +69,15 @@ public class ProtossTooFarFromLeader extends Manager {
         if (unitIsOvercrowded()) return false;
 
         return tooFarFromLeader();
+    }
+
+    private boolean isDangerousToGoToLeaderAndWeArentRetreating() {
+        return leader != null
+            && (leader.isRunning() || leader.isRetreating())
+            && (
+            unit.enemiesThatCanAttackMe(5).count() >= 3
+                || leader.enemiesThatCanAttackMe(5).count() >= 3
+        );
     }
 
     private boolean previousApplies() {
@@ -123,9 +142,9 @@ public class ProtossTooFarFromLeader extends Manager {
     }
 
     private double maxDistFromLeader() {
-        if (unit.squadSize() >= 30) return 20;
+        if (unit.squadSize() >= 30) return 15;
 
-        return Math.min(7, 4 + unit.squadSize() / 4);
+        return Math.min(7, 3 + unit.squadSize() / 4);
     }
 
     protected Manager handle() {

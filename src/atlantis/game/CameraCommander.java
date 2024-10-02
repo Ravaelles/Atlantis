@@ -3,6 +3,7 @@ package atlantis.game;
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
 import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -49,6 +50,9 @@ public class CameraCommander extends Commander {
 //        if (cameraUnit != null) {
 //            return cameraUnit;
 //        }
+
+        cameraUnit = Alpha.get().leader();
+        if (cameraUnit != null) return cameraUnit;
 
 //        return null;
         return Select.ourCombatUnits().nonBuildings().excludeTypes(AUnitType.Terran_Medic).groundUnits().first();

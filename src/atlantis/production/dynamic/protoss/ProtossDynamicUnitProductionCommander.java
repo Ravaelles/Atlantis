@@ -5,6 +5,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.OurArmy;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.protoss.units.*;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
@@ -22,6 +23,8 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
     }
 
     private static boolean freeToSpendResources() {
+        if (!A.hasMinerals(530) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
+
         if (A.hasMinerals(550)) return decision(true, "Minerals++");
         if (hasTooFewUnits()) return decision(true, "TooFewUnits");
         if (manyBasesAndHasMinerals()) return decision(true, "ConstStream");
@@ -85,9 +88,10 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ProduceScarabs.scarabs();
         ProduceObserver.observers();
         ProduceArbiters.arbiters();
-        ProduceCorsairs.corsairs();
         ProduceShuttles.shuttles();
         ProduceReavers.reavers();
+        ProduceHighTemplar.ht();
+        ProduceCorsairs.corsairs();
 
         ProduceDragoon.dragoon();
         ProduceZealot.zealot();

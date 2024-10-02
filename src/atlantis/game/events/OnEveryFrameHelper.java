@@ -1,5 +1,6 @@
 package atlantis.game.events;
 
+import atlantis.combat.advance.leader.CurrentFocusChoke;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
@@ -52,7 +53,7 @@ public class OnEveryFrameHelper {
 //        SaveUnitsAndBulletsInfoToFile.save();
 
 //        paintMissionAttackFocusPoint();
-//        pathToEnemyBase();
+        pathToEnemyBase();
 
 //        paintJbwebBlocks();
 
@@ -448,6 +449,18 @@ public class OnEveryFrameHelper {
 
     private static void pathToEnemyBase() {
         paintPathToEnemyBase(PathToEnemyBase.chokesLeadingToEnemyBase());
+
+        AChoke focusChoke = CurrentFocusChoke.get();
+        if (focusChoke != null) {
+            AAdvancedPainter.paintCircleFilled(focusChoke.center(), 13, Color.Cyan);
+
+//            System.out.println("Main = " + Select.main());
+//            System.out.println("TargetChoke = " + focusChoke);
+//            System.out.println("Dist = " + Select.main().distTo(focusChoke));
+        }
+//        else {
+//            System.out.println("--------- No focus choke at " + A.s);
+//        }
     }
 
     private static void paintPathToEnemyBase(ArrayList<AChoke> chokes) {

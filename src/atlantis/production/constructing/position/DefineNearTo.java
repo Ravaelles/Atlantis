@@ -6,6 +6,8 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
+import atlantis.production.constructing.position.protoss.DefineCannonNearTo;
+import atlantis.production.constructing.position.protoss.NewCannonPositionFinder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -16,7 +18,11 @@ public class DefineNearTo {
     public static HasPosition defineNearTo(AUnitType building, HasPosition nearTo) {
         if (nearTo != null) return nearTo;
 
-        if (A.supplyUsed() <= 19) {
+        if (nearTo == null && building.isCannon()) {
+            nearTo = DefineCannonNearTo.define();
+        }
+
+        if (nearTo == null && A.supplyUsed() <= 19) {
             nearTo = Select.mainOrAnyBuilding();
         }
 

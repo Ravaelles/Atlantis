@@ -11,19 +11,22 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
         super(unit);
     }
 
-    public void possibleCombatUnitCreated() {
-        if (shouldSkipUnit()) return;
+    public boolean possibleCombatUnitCreated() {
+        if (shouldSkipUnit()) return false;
 
         Squad squad = chooseSquadFor();
 
         if (!squad.contains(unit)) {
             squad.addUnit(unit);
             unit.setSquad(squad);
+            return true;
 //            System.err.println(unit + " assigned, now unit.squad = " + unit.squad());
         }
 //        else {
 //            System.err.println(unit + " ALREADY assigned to = " + unit.squad());
 //        }
+
+        return false;
     }
 
     // =========================================================

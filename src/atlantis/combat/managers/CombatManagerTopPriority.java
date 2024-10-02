@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.combat.micro.avoid.DetectUnitsNotRunning;
-import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingCriticallyClose;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.away.DanceAwayAsMelee;
@@ -12,6 +12,7 @@ import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.units.AUnit;
+import atlantis.units.interrupt.ContinueCurrentAction;
 import atlantis.units.interrupt.ContinueShooting;
 import atlantis.units.special.FixIdleUnits;
 import atlantis.units.special.FixInvalidUnits;
@@ -32,7 +33,7 @@ public class CombatManagerTopPriority extends Manager {
         return new Class[]{
             FixInvalidUnits.class,
 
-            AvoidCombatBuildingCriticallyClose.class,
+            AvoidCombatBuildingClose.class,
 //            AvoidCombatBuilding.class,
 
             ContinueShooting.class,
@@ -43,7 +44,7 @@ public class CombatManagerTopPriority extends Manager {
             FixPerformanceForBigSupply.class,
             ManualOverrideManager.class,
 
-//            ContinueCurrentAction.class,
+            ContinueCurrentAction.class,
 
             Unfreezer.class,
             FixIdleUnits.class,

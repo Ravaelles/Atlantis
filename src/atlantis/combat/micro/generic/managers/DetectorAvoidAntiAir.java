@@ -1,10 +1,12 @@
 package atlantis.combat.micro.generic.managers;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -36,7 +38,7 @@ public class DetectorAvoidAntiAir extends Manager {
     private HasPosition enemyAntiAirInRange(AUnit unit) {
 //        return Select.enemy().havingAntiAirWeapon().inRadius(6.0 + unit.shieldWound() / 20, unit).center();
         Selection enemies = unit.enemiesNear().havingAntiAirWeapon();
-        HasPosition enemy = enemies.canAttack(unit, 3.5 + unit.shieldWound() / 15).center();
+        HasPosition enemy = enemies.canAttack(unit, baseDist() + unit.shieldWound() / 15).center();
 
         if (enemy != null) return enemy;
 
@@ -51,6 +53,12 @@ public class DetectorAvoidAntiAir extends Manager {
         if (nearestEnemy != null) return nearestEnemy;
 
         return null;
+    }
+
+    private static double baseDist() {
+        if (A.supplyUsed() >= 140 && Count.observers() >= 2) return 1.0;
+
+        return 3.5;
     }
 
     private static AUnit getDangerouslyNearScourge(AUnit unit) {

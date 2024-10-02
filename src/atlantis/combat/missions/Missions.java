@@ -1,9 +1,10 @@
 package atlantis.combat.missions;
 
+import atlantis.combat.advance.leader.CurrentFocusChoke;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;
-import atlantis.combat.missions.defend.sparta.Sparta;
+import atlantis.combat.missions.defend.protoss.sparta.Sparta;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -137,8 +138,10 @@ public class Missions {
             mission = MissionChanger.defendOrSpartaMission();
         }
 
-        if (mission.equals(currentGlobalMission)) {
-            return;
+        if (mission.equals(currentGlobalMission)) return;
+
+        if (mission.isMissionDefend()) {
+            CurrentFocusChoke.resetChoke();
         }
 
         Alpha.get().setMission(mission);

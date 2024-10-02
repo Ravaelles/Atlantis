@@ -6,6 +6,8 @@ import atlantis.units.actions.Actions;
 
 public class ShouldContinueRunning {
     public static boolean handleContinueRunning(AUnit unit) {
+//        if (true) return false;
+
 //        if (unit.isRunning()) {
 //            unit.paintCircleFilled(18, Color.Blue);
 //        }
@@ -16,16 +18,25 @@ public class ShouldContinueRunning {
 //            unit.paintCircle(12, Color.Grey);
 //        }
 
-        if (unit.isRunning() && unit.isMoving() && unit.distToTargetMoreThan(0.7)) {
-//            if (unit.lastRunningPositionChangeAgo() <= 8) return true;
+        if (unit.isRunning() && unit.isMoving() && unit.distToTargetMoreThan(0.4)) {
 
+//            if (unit.isRetreating() && unit.enemiesThatCanAttackMe(5).empty()) return false;
+            if (unit.isRetreating()) return false;
+            if (unit.action().equals(Actions.MOVE_DANCE_AWAY)) return false;
+
+//            if (unit.lastRunningPositionChangeAgo() <= 8) return true;
+//
+//            if (unit.isDragoon()) {
             if (
-                unit.isDragoon()
-                    && (
-                    unit.lastStartedRunningLessThanAgo(16)
-                        || unit.lastRunningPositionChangeAgo() <= 12
-                )
-            ) return true;
+                unit.lastStartedRunningLessThanAgo(16)
+//                    && unit.lastRunningPositionChangeAgo() <= 12
+            ) {
+                return true;
+            }
+//            }
+//            else {
+//                return true;
+//            }
         }
 
         if (true) return false;

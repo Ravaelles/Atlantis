@@ -20,10 +20,10 @@ public class ProtossDragoonSeparateFromMeleeEnemies extends Manager {
 
         return We.protoss()
             && unit.isDragoon()
-            && unit.cooldown() >= 15
-            && unit.hp() <= 35
+            && unit.cooldown() >= 13
+//            && unit.hp() <= 35
 //            && unit.shieldWounded()
-            && unit.friendsNear().inRadius(5, unit).atMost(1)
+//            && unit.friendsNear().inRadius(5, unit).atMost(1)
             && (enemiesNear = defineEnemies()).notEmpty();
     }
 
@@ -42,7 +42,7 @@ public class ProtossDragoonSeparateFromMeleeEnemies extends Manager {
         HasPosition centerOfEnemies = unit.enemiesNear().inRadius(4, unit).nearestTo(unit);
         if (centerOfEnemies == null) centerOfEnemies = unit.enemiesNear().nearestTo(unit);
 
-        double moveDist = unit.distTo(centerOfEnemies) >= 2.5 ? 0.3 : 1.45;
+        double moveDist = unit.distTo(centerOfEnemies) >= 2.5 ? 0.18 : 0.3;
 
         return unit.moveAwayFrom(centerOfEnemies, moveDist, Actions.MOVE_DANCE_AWAY, "GoonSeparate");
     }
@@ -52,6 +52,6 @@ public class ProtossDragoonSeparateFromMeleeEnemies extends Manager {
             .melee()
             .havingPosition()
             .havingAntiGroundWeapon()
-            .canAttack(unit, 2.8);
+            .canAttack(unit, 2.5);
     }
 }

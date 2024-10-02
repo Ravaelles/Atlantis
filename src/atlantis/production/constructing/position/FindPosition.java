@@ -1,11 +1,13 @@
 package atlantis.production.constructing.position;
 
 import atlantis.combat.micro.zerg.ZergCreepColony;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.base.FindPositionForBase;
+import atlantis.production.constructing.position.protoss.NewCannonPositionFinder;
 import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
 import atlantis.units.AUnit;
@@ -13,6 +15,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class FindPosition {
@@ -31,7 +34,7 @@ public class FindPosition {
         if (builder == null) builder = Select.ourWorkers().first();
 
         if (maxDistance <= 5 && building.isBunker()) maxDistance = 10;
-        if (maxDistance < 0) maxDistance = 29;
+        if (maxDistance < 0) maxDistance = MaxBuildingDist.MAX_DIST;
         if (construction != null) construction.setMaxDistance(maxDistance);
 
         // === GAS extracting buildings ============================
@@ -98,9 +101,13 @@ public class FindPosition {
 
         APosition standardPosition = APositionFinder.findStandardPosition(builder, building, nearTo, maxDistance);
 
-        if (standardPosition == null && Count.workers() >= 4) {
+        if (
+            standardPosition == null
+                && Count.workers() >= 4
+                && (!We.protoss() || Count.pylons() >= 1)
+        ) {
             ErrorLog.printMaxOncePerMinute(
-                "findStandardPosition returned null"
+                "findStandardPosition returned null at " + A.s + "s"
                     + "\n    / reason:" + AbstractPositionFinder._CONDITION_THAT_FAILED
                     + "\n    / building:" + building
                     + "\n    / near:" + nearTo
@@ -117,7 +124,13 @@ public class FindPosition {
     private static APosition forCombatBuilding(
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {
-        if (building.isBunker()) {
+        if (building.isCannon()) {
+            return NewCannonPositionFinder.find(nearTo, builder, construction);
+        }
+
+        // =========================================================
+
+        else if (building.isBunker()) {
 //            return TerranBunkerPositionFinder.findPosition(builder, construction, nearTo);
 //            return (new NewBunkerPositionFinder(nearTo, builder, construction)).find();
             APosition thePosition = (new NewBunkerPositionFinder(nearTo, builder)).find();

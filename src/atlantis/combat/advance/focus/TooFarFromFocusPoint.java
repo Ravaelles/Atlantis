@@ -1,14 +1,11 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.retreating.zerg.ZergRetreating;
-import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class TooFarFromFocusPoint extends MoveToFocusPoint {
     public TooFarFromFocusPoint(AUnit unit) {
@@ -19,9 +16,11 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     public boolean applies() {
         if (unit.lastActionLessThanAgo(40, Actions.LOAD)) return false;
         if (EnemyWhoBreachedBase.get() != null) return false;
-        if (unit.isMissionAttackOrGlobalAttack()) return false;
+//        if (unit.isMissionAttackOrGlobalAttack()) return false;
 
-        if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_FAR) {
+        evaluateDistToFocusPointComparingToLeader();
+
+        if (distFromFocus == DistFromFocus.TOO_FAR) {
             if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;
 
             return true;
@@ -38,7 +37,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     @Override
     public double optimalDist(AFocusPoint focusPoint) {
-        return OptimalDistanceToFocusPoint.forUnit(unit);
+        return OptimalDistanceToFocusPoint.forUnit(unit, focusPoint);
     }
 
     protected boolean act() {

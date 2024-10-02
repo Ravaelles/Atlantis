@@ -19,14 +19,14 @@ public class AdvanceAsTankCoordinate extends MissionManager {
             goTo = unit.squadCenter();
             if (goTo != null && unit.distTo(goTo) >= 5) return true;
         }
-        
+
         return false;
     }
 
     @Override
     protected Manager handle() {
         if (goTo != null) {
-            unit.move(goTo, Actions.MOVE_FORMATION, "AdvanceAsTank");
+            unit.move(goTo, Actions.MOVE_FORMATION, "TerranAdvanceAsTank");
             return usedManager(this);
         }
 

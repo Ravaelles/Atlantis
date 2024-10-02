@@ -1,11 +1,14 @@
 package atlantis.game.events;
 
+import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.config.env.Env;
 import atlantis.game.CameraCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import bwapi.Unit;
@@ -32,7 +35,15 @@ public class OnUnitCompleted {
 
         cleanUpProductionOrderAndConstruction(unit);
 
-        (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
+        boolean assigned = (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
+
+        if (assigned) {
+//            System.out.println("Unit " + unit + " assigned to squad");
+            AUnit leader = Alpha.get().leader();
+            if (leader != null) {
+                unit.move(leader, Actions.MOVE_FOLLOW, "NewUnitToSquad");
+            }
+        }
 
         if (Env.isLocal() && unit.isBunker() && Count.bunkers() == 1) CameraCommander.centerCameraOn(unit);
     }

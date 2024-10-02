@@ -88,6 +88,7 @@ public class PreventDuplicateOrders {
         int max = type.isABuilding() ? (type.isCombatBuilding() ? 5 : 2) : 4;
         if (type.isSupplyDepot() && A.supplyTotal() <= 32) max = 1;
         if (type.isPylon() && A.supplyTotal() <= 32) max = 1;
+        if (type.isGateway()) max = 1 + A.minerals() / 200;
 
         if (existingInQueue >= max) {
             if (type.isSupplyDepot()) ErrorLog.printMaxOncePerMinute("Exceeded DEPOTS allowed: " + existingInQueue);

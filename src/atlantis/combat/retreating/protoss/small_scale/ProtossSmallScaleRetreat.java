@@ -56,7 +56,7 @@ public class ProtossSmallScaleRetreat extends Manager {
 
         Selection enemiesCombat = unit.enemiesNear().combatUnits();
 
-        if (enemiesCombat.onlyMelee() && enemiesCombat.inRadius(4, unit).empty()) return false;
+        if (enemiesCombat.onlyMelee() && enemiesCombat.inRadius(radius(), unit).empty()) return false;
         if (enemies.inRadius(ProtossSmallScaleEvaluate.RADIUS_LG, unit).count() <= 0) return false;
 
         if (enemiesCombat.groundUnits().empty()) return false;
@@ -65,6 +65,10 @@ public class ProtossSmallScaleRetreat extends Manager {
 
         if (unit.isRanged()) return asRanged(unit, friends, enemies);
         return asMelee(unit, friends, enemies);
+    }
+
+    private static double radius() {
+        return Enemy.zerg() ? 5.5 : 4;
     }
 
 

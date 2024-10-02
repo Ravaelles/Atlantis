@@ -20,7 +20,8 @@ public class GG extends Commander {
             && Count.workers() <= 35
             && Select.enemyCombatUnits().atLeast(15)
 //            && Count.dragoons() <= 2
-            && (Count.ourCombatUnits() * 8) <= EnemyUnits.combatUnits();
+            && (Count.ourCombatUnits() * 8) <= EnemyUnits.combatUnits()
+            && (Count.ourCombatUnits() + Count.workers() <= 30);
     }
 
     @Override

@@ -21,6 +21,7 @@ public class ASquadTargeting {
 
             return enemy;
         }
+        
         return null;
     }
 

@@ -24,7 +24,11 @@ public class RequestProtossDetection {
         }
         AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Robotics_Facility, 1);
         AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observatory, 1);
-        AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observer, 1);
+
+        if (Count.observers() <= 1) {
+            AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Observer, 1);
+        }
+        
         return true;
 
 //        return AddToQueueToHave.haveAtLeastOneWithTopPriority(AUnitType.Protoss_Robotics_Facility, 1)

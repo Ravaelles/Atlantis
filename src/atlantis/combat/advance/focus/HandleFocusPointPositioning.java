@@ -1,8 +1,8 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.leader.AdvanceAsAlphaLeader;
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.squad.positioning.protoss.ProtossTooLonely;
 import atlantis.units.AUnit;
 
 public class HandleFocusPointPositioning extends MissionManager {
@@ -18,7 +18,17 @@ public class HandleFocusPointPositioning extends MissionManager {
 //            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " - .........");
 //        }
 
-        return true;
+        if (focusPoint == null || !focusPoint.isValid()) {
+//            System.out.println("invalid focusPoint = " + focusPoint);
+            return false;
+        }
+
+        if (unit.enemiesThatCanAttackMe(1.5).size() >= 2) return false;
+
+        if (unit.distToFocusPoint() <= 10) return true;
+        if (unit.isLeader()) return true;
+
+        return false;
 //        return unit.enemiesNear().inRadius(7, unit).empty();
     }
 
@@ -29,8 +39,12 @@ public class HandleFocusPointPositioning extends MissionManager {
 //            MakeSpaceForWrongSideOfFocusFriends.class,
 //            OnWrongSideOfFocusPoint.class,
 
-//            ProtossTooLonely.class,
-            
+//            ProtossCohesion.class,
+
+//            TooLonely.class,
+
+            AdvanceAsAlphaLeader.class,
+
             TooCloseToFocusPoint.class,
             TooFarFromFocusPoint.class,
         };

@@ -250,7 +250,7 @@ public class Chokes {
         return (AChoke) cache.get(
             "enemyNaturalChoke",
             -1,
-            () -> natural(enemyNatural, "ENEMY_NATURAL")
+            () -> nearestChoke(enemyNatural, "ENEMY_NATURAL")
         );
     }
 

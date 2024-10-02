@@ -1,14 +1,14 @@
 package atlantis.combat.micro.avoid.dont.protoss;
 
-import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
 import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Selection;
+import atlantis.units.select.Count;
 
 public class ZealotDontAvoidEnemy {
     public static boolean dontAvoid(AUnit unit) {
         if (!unit.isZealot()) return false;
+
+        if (earlyZealotAvoidBecauseAlmostDeadOrOverpowered(unit)) return false;
 
         Decision decision;
 
@@ -16,6 +16,14 @@ public class ZealotDontAvoidEnemy {
         if (healthyOrNotAttackedLong(unit)) return true;
 
         return false;
+    }
+
+    private static boolean earlyZealotAvoidBecauseAlmostDeadOrOverpowered(AUnit unit) {
+        if (!unit.isZealot()) return false;
+        if (!unit.isMissionDefend()) return false;
+
+        return Count.ourCombatUnits() <= 10
+            && (unit.hp() <= 33 || unit.combatEvalRelative() < 0.8);
     }
 
     private static boolean healthyOrNotAttackedLong(AUnit unit) {

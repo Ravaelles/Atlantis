@@ -20,7 +20,8 @@ public class NewGasBuildingCommander extends Commander {
 
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(23)
+        return !We.protoss()
+            && A.everyNthGameFrame(23)
             && (A.gas() <= 600 || A.minerals() >= 500)
             && (A.gas() <= 100 || Count.ourCombatUnits() >= 10)
             && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals()

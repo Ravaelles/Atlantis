@@ -22,9 +22,9 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
 //            EarlyGameTooClustered.class,
-//            TooClustered.class,
-            ProtossTooFarFromLeader.class,
-            ProtossAsLeaderTooFarFromOthers.class,
+//            TerranTooClustered.class,
+//            ProtossTooFarFromLeader.class,
+//            ProtossAsLeaderTooFarFromOthers.class,
 
             HandleFocusPointPositioning.class,
         };
@@ -38,30 +38,12 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
 //            return SPARTA_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
 //        }
 
-        double focus = OptimalDistanceToFocusPoint.toFocus(unit, focusPoint);
-        if (focus >= 0) return focus;
-
-        double base = 0.0;
-
-        if (We.zerg() && Enemy.protoss()) {
-            base = 0.6;
-        }
-
-        if (unit.isTerran()) {
-            base += (unit.isTank() ? 2.5 : 0)
-                + (unit.isMedic() ? -2.5 : 0)
-                + (unit.isFirebat() ? -1.5 : 0)
-                + (unit.isRanged() ? 1 : 0)
-                + Math.min(4, (Select.our().combatUnits().inRadius(8, unit).count() / 6));
-
-            if (We.zerg() && this.focusPoint.isAroundChoke()) {
-                base += (this.focusPoint.choke().width() <= 3) ? 3.5 : 0;
-            }
-        }
+        double optimalDist = OptimalDistanceToFocusPoint.forUnit(unit, focusPoint);
+        if (optimalDist > 0.05) return optimalDist;
 
         return Math.max(
             baseForUnit(),
-            base + letWorkersComeThroughBonus()
+            letWorkersComeThroughBonus()
         );
     }
 

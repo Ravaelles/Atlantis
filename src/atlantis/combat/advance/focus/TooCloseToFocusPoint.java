@@ -1,6 +1,7 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.leader.AdvanceAsAlphaLeader;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
@@ -20,14 +21,17 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     @Override
     public boolean applies() {
         if (unit.isLoaded()) return false;
-        if (unit.isMissionAttackOrGlobalAttack()) return false;
+//        if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.isSpecialMission() && unit.isMelee()) return false;
         if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
         if (EnemyWhoBreachedBase.notNull()) return false;
 
 //        System.err.println("           " + evaluateDistFromFocusPoint() + " / " + unit);
 
-        distFromFocus = evaluateDistFromFocusPoint();
+
+        evaluateDistToFocusPointComparingToLeader();
+
+//        System.err.println("unitToFocus = " + unitToFocus + " / " + distFromFocus);
 
         if (distFromFocus == DistFromFocus.TOO_CLOSE) {
             // Be brave with ChokeBlockersAssignments
@@ -49,35 +53,43 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
 
     @Override
     public double optimalDist(AFocusPoint focusPoint) {
-        return OptimalDistanceToFocusPoint.forUnit(unit);
+        return OptimalDistanceToFocusPoint.forUnit(unit, focusPoint);
     }
 
     protected boolean act() {
-        if (asDragoon()) return true;
+//        if (asDragoon()) return true;
+//
+////        APosition goTo = isTooFar ? focusPoint : unit.translateTilesTowards(0.1, focusPoint);
+//        if (goAway()) return true;
+//        if (goAwayFromCenter()) return true;
+//        if (goToMain()) return true;
 
-//        APosition goTo = isTooFar ? focusPoint : unit.translateTilesTowards(0.1, focusPoint);
+        if (A.s % 4 <= 1) {
+            if (goToMain()) return true;
+        }
+        
         if (goAway()) return true;
         if (goAwayFromCenter()) return true;
-//        if (goToMain()) return true;
 
         return false;
     }
 
     private boolean goAway() {
-        if (A.fr % 50 <= 25) return unit.moveToMain(Actions.MOVE_FOCUS);
+//        if (A.fr % 50 <= 15) return unit.moveToMain(Actions.MOVE_FOCUS);
 
-        return unit.moveAwayFrom(focusPoint, 0.2, Actions.MOVE_FOCUS, "TooCloseA");
+        return unit.moveAwayFrom(focusPoint, 0.1, Actions.MOVE_FOCUS, "TooCloseF");
     }
 
     private boolean asDragoon() {
         if (!unit.isDragoon()) return false;
 
-        System.err.println("TOO CLOSE = " + unit.distToFocusPoint() + " / " + unit);
+//        System.err.println("TOO CLOSE = " + unit.distToFocusPoint() + " / " + unit);
 //        if (unit.distToFocusPoint() <= 2.6) {
 
         if (Missions.isGlobalMissionDefendOrSparta()) {
             if (A.everyNthGameFrame(10)) unit.holdPosition("DragoonTooCloseA");
-            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
+//            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
+            else goAway();
         }
 //        }
 
@@ -100,26 +112,26 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         goTo = goTo.translateTilesTowards(-0.2, choke);
 
         if (goTo.isWalkable()) {
-            unit.move(goTo, Actions.MOVE_FOCUS, "TooClose", true);
-            return true;
+            if (unit.move(goTo, Actions.MOVE_FOCUS, "TooClose", true)) return true;
         }
+
         return false;
     }
 
     private boolean goToMain() {
-        if (unit.isDragoon()) {
-            if (A.everyNthGameFrame(3)) {
-                unit.holdPosition("SlowlyTooClose");
-            }
-            return false;
-        }
+//        if (unit.isDragoon()) {
+//            if (A.everyNthGameFrame(3)) {
+//                unit.holdPosition("SlowlyTooClose");
+//            }
+//            return false;
+//        }
 
         HasPosition goTo = fromSide != null ? fromSide : Select.main();
 
         if (goTo != null && goTo.isWalkable()) {
-            unit.move(goTo, Actions.MOVE_FOCUS, "TooCloseM", true);
-            return true;
+            if (unit.move(goTo, Actions.MOVE_FOCUS, "TooCloseM", true)) return true;
         }
+
         return false;
     }
 }

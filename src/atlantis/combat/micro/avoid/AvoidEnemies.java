@@ -1,8 +1,10 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.always.ProtossAlwaysAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.protoss.ObserverDontAvoidEnemy;
+import atlantis.combat.micro.avoid.dont.protoss.ProtossDontAvoidEnemy;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -33,13 +35,14 @@ public class AvoidEnemies extends Manager {
 //        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
 
         if (We.protoss()) {
+            if ((new ProtossAlwaysAvoidEnemy(unit)).applies()) return true;
+
             Decision decision;
             if ((decision = ObserverDontAvoidEnemy.shouldAvoid(unit)).notIndifferent()) return decision.toBoolean();
         }
 
-        return
-//            !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid()
-            !(new DontAvoidEnemy(unit)).applies();
+
+        return !(new DontAvoidEnemy(unit)).applies();
     }
 
     @Override

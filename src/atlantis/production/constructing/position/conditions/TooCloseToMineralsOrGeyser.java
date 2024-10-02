@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.conditions;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
@@ -36,7 +37,7 @@ public class TooCloseToMineralsOrGeyser {
 
     private static double minDistToGeyser() {
         if (We.protoss()) {
-            return 1.4;
+            return A.supplyTotal() >= 15 ? 1.1 : 4;
         }
 
         else if (We.terran()) {
@@ -55,7 +56,7 @@ public class TooCloseToMineralsOrGeyser {
 //        if (building.isPylon()) return 3;
 
         if (We.protoss()) {
-            return 2.1;
+            return 2.6;
         }
 
         else if (We.terran()) {

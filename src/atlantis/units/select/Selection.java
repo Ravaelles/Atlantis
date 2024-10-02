@@ -286,7 +286,7 @@ public class Selection extends BaseSelection {
         );
     }
 
-    public Selection hydralisks() {
+    public Selection hydras() {
         return cloneByRemovingIf(
             (unit -> !unit.is(AUnitType.Zerg_Hydralisk)),
             "hydralisks"

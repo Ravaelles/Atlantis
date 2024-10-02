@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
+import bwapi.Color;
 
 public class DragoonDontAvoidEnemy {
     public static boolean dontAvoid(AUnit unit) {
@@ -18,7 +19,7 @@ public class DragoonDontAvoidEnemy {
 
         if (healthyAndSafe(unit)) return true;
         if (hasNotShotInAWhile(unit)) return true;
-//        if (dontAvoidWhenOnlyEnemyZealotsNearby(unit)) return true;
+        if (dontAvoidWhenOnlyEnemyZealotsNearby(unit)) return true;
         if (dontAvoidWhenOnlyEnemyZerglingsNearby(unit)) return true;
 
 //        if ((decision = whenMissionSparta(unit)).notIndifferent()) return decision.toBoolean();
@@ -117,8 +118,16 @@ public class DragoonDontAvoidEnemy {
 
         Selection enemiesNear = unit.enemiesNear().havingAntiGroundWeapon();
 
-        if (unit.shieldWounded() && enemiesNear.inRadius(2.5, unit).notEmpty()) return false;
-        if (enemiesNear.ranged().canAttack(unit, 0.5).notEmpty()) return false;
+//        if (unit.shieldWounded() && enemiesNear.inRadius(2.5, unit).notEmpty()) return false;
+//        if (enemiesNear.ranged().canAttack(unit, 0.5).notEmpty()) return false;
+
+        if (unit.shieldWound() >= 23 && enemiesNear.inRadius(2.5, unit).atLeast(2)) return false;
+
+        if (enemiesNear.melee().inRadius(2.9, unit).atMost(0)) {
+//            unit.paintCircleFilled(14, Color.Green);
+            return true;
+        }
+        if (unit.enemiesNear().ranged().canAttack(unit, 0.2 + unit.woundPercent() / 60.0).empty()) return true;
 
         return unit.shieldDamageAtMost(29) && unit.meleeEnemiesNearCount(2.5) <= 0;
     }

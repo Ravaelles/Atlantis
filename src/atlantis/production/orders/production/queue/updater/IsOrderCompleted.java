@@ -11,6 +11,8 @@ public class IsOrderCompleted {
         // === Unit
 
         if (order.unitType() != null) {
+            if (order.construction() == null) return false;
+            
             return !checkIfWeHaveLessUnitsThanExpected(order, existingCounter);
         }
 

@@ -3,6 +3,7 @@ package atlantis.production.dynamic.expansion.protoss;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.race.MyRace;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
@@ -118,6 +119,8 @@ public class ProtossShouldExpand {
         if (mainChokeOverwhelmed()) return no("MainChokeOverwhelm");
         if (cautionAgainstZealotRush()) return no("CautiosZealots");
 
+        if (enemyGoesCombatBuildingsEarly()) return no("EnemyManyEarlyCB");
+
         if (
             !A.hasMinerals(500) && !Have.existingOrUnfinished(AUnitType.Protoss_Cybernetics_Core)
         ) return no("CoreFirst");
@@ -157,6 +160,24 @@ public class ProtossShouldExpand {
         if (seconds <= 400 && armyStrength < 100) return no("Weak");
 
         return no("JustDont");
+    }
+
+    private static boolean enemyGoesCombatBuildingsEarly() {
+        int secondLimit = 420;
+
+        if (Enemy.terran()) {
+            return A.s <= secondLimit && EnemyInfo.combatBuildingsAntiLand() >= 2;
+        }
+
+        else if (Enemy.protoss()) {
+            return A.s <= secondLimit && EnemyInfo.combatBuildingsAntiLand() >= 1;
+        }
+
+        else if (Enemy.zerg()) {
+            return A.s <= secondLimit && EnemyInfo.combatBuildingsAntiLand() >= 1;
+        }
+
+        return false;
     }
 
     private static boolean tooFewArmy() {

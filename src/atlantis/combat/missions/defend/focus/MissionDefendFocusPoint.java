@@ -137,6 +137,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         if (
             Enemy.zerg()
                 && (Count.ourCombatUnits() <= 7 || OurArmy.strength() <= 75)
+                && Count.dragoons() <= 1
+                && OurArmy.strength() <= 160
                 && Count.basesWithUnfinished() <= 1
         ) {
             AUnit main = Select.main();

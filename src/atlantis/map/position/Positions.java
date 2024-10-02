@@ -233,6 +233,18 @@ public class Positions<T extends HasPosition> {
 
     private static int _lastIndex = 0;
 
+    public Positions<T> unexplored() {
+        positions.removeIf(HasPosition::isExplored);
+
+        return this;
+    }
+
+    public Positions<T> notVisible() {
+        positions.removeIf(HasPosition::isPositionVisible);
+
+        return this;
+    }
+
     public T nearestTo(HasPosition position) {
         double closestDist = 9999999;
         T closest = null;
@@ -242,6 +254,23 @@ public class Positions<T extends HasPosition> {
             if (t.distTo(position) < closestDist) {
                 closestDist = t.distTo(position);
 //                closest = APosition.create(otherPosition.x() / 32, otherPosition.y() / 32);
+                closest = t;
+                _lastIndex = index;
+            }
+            index++;
+        }
+
+        return closest;
+    }
+
+    public T groundNearestTo(HasPosition position) {
+        double closestDist = 9999999;
+        T closest = null;
+
+        int index = 0;
+        for (T t : positions) {
+            if (t.distTo(position) < closestDist) {
+                closestDist = t.groundDist(position);
                 closest = t;
                 _lastIndex = index;
             }

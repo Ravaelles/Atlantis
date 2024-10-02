@@ -20,6 +20,7 @@ public class ProtossReaver extends Manager {
         return new Class[]{
             ReaverAlwaysAttack.class,
             ReaverControlEnemyDistance.class,
+            ReaverAlwaysFollowAlphaLeader.class,
         };
     }
 }

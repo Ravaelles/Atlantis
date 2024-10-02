@@ -116,7 +116,7 @@ public class AllowedToAttack {
     }
 
     protected boolean isValidTargetAndAllowedToAttackUnit(AUnit target) {
-        if (target == null || target.position() == null) return false;
+        if (target == null || target.position() == null || target.hp() <= 0) return false;
         if (!CanAttackCombatBuilding.isAllowed(unit, target)) return false;
         if (unit.isZergling() && target.combatEvalRelative() > 1.7) return false;
 

@@ -1,6 +1,7 @@
 package atlantis.information.decisions.protoss.dragoon;
 
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.GamePhase;
@@ -11,6 +12,8 @@ import atlantis.util.Enemy;
 public class DragoonInsteadZealotVsZerg {
     public static boolean dragoonInsteadOfZealot_vZ() {
         if (!Enemy.zerg()) return false;
+
+        if (A.gas() >= 100) return true;
 
         if (transitionToDragoonsDueToMutas()) return true;
         if (notEnoughZealots()) return false;
@@ -28,6 +31,8 @@ public class DragoonInsteadZealotVsZerg {
     }
 
     private static boolean notEnoughZealots() {
+        if (A.s >= 350 && OurArmy.strength() >= 90 && EnemyInfo.enemyUnitInMainBase() == null) return false;
+
         if (Count.zealots() <= minZealots()) return true;
 
         if (

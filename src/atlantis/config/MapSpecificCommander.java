@@ -2,7 +2,6 @@ package atlantis.config;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
-import atlantis.combat.advance.Advance;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
@@ -50,6 +49,26 @@ public class MapSpecificCommander extends Commander {
             if (Select.ourCombatUnits().first().lastUnderAttackLessThanAgo(2)) {
                 GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
             }
+        }
+
+        // =========================================================
+
+        else if (ActiveMap.isMap("ZealDrag_v_")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedToNormal();
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                CameraCommander.centerCameraNowOnSquadCenter();
+            }
+        }
+
+        // =========================================================
+
+        else if (ActiveMap.isMap("v_Sunkens")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedToNormal();
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+            }
+            CameraCommander.centerCameraNowOnSquadCenter();
         }
 
         // =========================================================

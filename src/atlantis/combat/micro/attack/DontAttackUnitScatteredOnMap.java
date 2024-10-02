@@ -1,6 +1,7 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.game.A;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 
 public class DontAttackUnitScatteredOnMap {
@@ -9,6 +10,10 @@ public class DontAttackUnitScatteredOnMap {
         if (unit.distTo(enemy) <= 0.1) return false;
         if (unit.lastUnderAttackLessThanAgo(60)) return false;
         if (A.isUms()) return false;
+
+        HasPosition squadCenter = unit.squadCenter();
+        if (squadCenter != null && squadCenter.distTo(enemy) >= 20) return true;
+
         if (enemy.isDragoon()) return false;
         if (preventChasingEarlyWorkerScout(unit, enemy)) return false;
         if (unit.hasWeaponRangeToAttack(enemy, 0.05)) return false;

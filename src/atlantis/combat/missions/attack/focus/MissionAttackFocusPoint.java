@@ -77,7 +77,17 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
+        // === Against early combat buildings ======================
+
+        AFocusPoint focus = containEnemyCombatBuildingsInNaturalChoke(main);
+        if (focus != null) return focus;
+
         // =========================================================
+
+//        AFocusPoint enemyExpansion = enemyExpansion();
+//        if (shouldFocusEnemyExpansion(enemyExpansion)) {
+//            return enemyExpansion;
+//        }
 
         AFocusPoint enemyThird = enemyThird(main);
         if (shouldFocusEnemyThird(enemyThird)) {
@@ -85,9 +95,6 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         }
 
         // =========================================================
-
-//        AFocusPoint enemyExpansion = enemyExpansion(main);
-//        if (enemyExpansion != null) return enemyExpansion;
 
         AFocusPoint enemyUnit = nearestCombatUnit(main);
         if (enemyUnit != null) return enemyUnit;
@@ -210,26 +217,56 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             }
         }
 
-        if (!A.isUms()) ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
+        if (!A.isUms() && EnemyUnits.discovered().count() >= 1) {
+            ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
+        }
+
         return null;
+    }
+
+    private AFocusPoint containEnemyCombatBuildingsInNaturalChoke(AUnit main) {
+        int enemyCB = EnemyInfo.combatBuildingsAntiLand();
+        if (enemyCB <= 0) return null;
+
+        if (A.supplyUsed() >= 140 || A.minerals() >= 1000) return null;
+        if (OurArmy.strength() >= 500 && Count.ourCombatUnits() >= 30) return null;
+
+        int ourStrength = Alpha.count();
+        if (enemyCB * 8 <= ourStrength) return null;
+
+        AChoke choke = Chokes.enemyNaturalChoke();
+        if (choke == null) return null;
+
+//        choke = Chokes.enemyMainChoke();
+//        if (choke == null) return null;
+
+        HasPosition chokeMoved = choke.groundTranslateTowardsMain(4);
+
+        return new AFocusPoint(
+            (chokeMoved != null ? chokeMoved : choke),
+            main,
+            "ContainCB(" + enemyCB + ")"
+        );
     }
 
     private boolean shouldFocusEnemyThird(AFocusPoint enemyThird) {
         if (enemyThird == null) return false;
         if (A.s <= 300) return false;
-        if (OurArmy.strength() >= 600 && A.seconds() % 30 <= 20) return false;
+        if (OurArmy.strength() >= 600 && A.seconds() % 30 <= 10) return false;
 //        if (EnemyUnits.discovered().combatBuildingsAntiLand().empty() && A.seconds() % 20 <= 9) return null;
         if (!EnemyInfo.hasDefensiveLandBuilding(true)) return false;
 
-        if (EnemyInfo.hasDefensiveLandBuilding(true) || (A.s % 40 <= 10)) {
-            if (A.supplyUsed() >= 130 && A.supplyUsed() <= 192) return true;
-            if (Count.ourCombatUnits() >= 20 && !enemyThird.isExplored()) return true;
-        }
-
         if (
             enemyThird.isPositionVisible()
-                && EnemyUnits.discovered().inRadius(10, enemyThird).empty()
+                && Select.enemy().groundUnits().inRadius(10, enemyThird).empty()
         ) return false;
+
+        boolean periodicallyCheckThird = A.s % 40 <= 10;
+
+        if (EnemyInfo.hasDefensiveLandBuilding(true) || periodicallyCheckThird) {
+            if (periodicallyCheckThird && A.supplyUsed() >= 130 && A.supplyUsed() <= 192) return true;
+            if (Count.ourCombatUnits() >= 15 && !enemyThird.isExplored()) return true;
+        }
 
         if (Enemy.zerg() && A.s % 36 <= 10) return true;
 
@@ -262,23 +299,6 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             Select.mainOrAnyBuilding(),
             "EnemyThird"
         );
-    }
-
-    private static AFocusPoint enemyExpansion(AUnit main) {
-        AUnit enemyBuilding = EnemyUnits.nearestEnemyCombatBuilding();
-        if (
-            enemyBuilding != null
-                && enemyBuilding.hasPosition()
-//                && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
-                && enemyBuilding.isAlive()
-        ) {
-            return new AFocusPoint(
-                enemyBuilding,
-                main,
-                "EnemyExpansion(" + enemyBuilding.name() + ")"
-            );
-        }
-        return null;
     }
 
     private static AFocusPoint nearestEnemyCombatBuilding(AUnit main) {

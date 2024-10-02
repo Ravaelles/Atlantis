@@ -22,6 +22,6 @@ public class ScoutState {
     protected static HasPosition unitingAroundBaseLastPolygonPoint = null;
     protected static boolean scoutingAroundBaseWasInterrupted = false;
     protected static boolean unitingAroundBaseDirectionClockwise = true;
-    protected static APosition nextPositionToUnit = null;
+    protected static HasPosition nextPositionToScout = null;
     protected static ARegion enemyBaseRegion = null;
 }

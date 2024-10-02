@@ -1,12 +1,11 @@
 package atlantis.units;
 
 import atlantis.units.range.EnemyDragoonWeaponRange;
-import atlantis.units.range.OurDragoonWeaponRange;
+import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Count;
 import atlantis.util.Counter;
 import atlantis.util.cache.Cache;
 import bwapi.*;
-import net.bytebuddy.dynamic.Nexus;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -1145,7 +1144,7 @@ public class AUnitType implements Comparable<Object> {
                 }
                 if (isDragoon()) {
                     if (anotherUnit.isEnemy()) {
-                        return OurDragoonWeaponRange.range();
+                        return OurDragoonRange.range();
                     }
                     return EnemyDragoonWeaponRange.range();
                 }

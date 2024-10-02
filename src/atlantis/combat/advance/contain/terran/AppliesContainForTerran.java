@@ -1,16 +1,16 @@
 package atlantis.combat.advance.contain.terran;
 
-import atlantis.combat.advance.contain.DontAdvanceButHoldAndContainWhenEnemyBuildingsClose;
+import atlantis.combat.advance.contain.ContainEnemy;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class AppliesContainForTerran {
-    private final DontAdvanceButHoldAndContainWhenEnemyBuildingsClose manager;
+    private final ContainEnemy manager;
     private final AUnit unit;
 
-    public AppliesContainForTerran(DontAdvanceButHoldAndContainWhenEnemyBuildingsClose manager) {
+    public AppliesContainForTerran(ContainEnemy manager) {
         this.manager = manager;
         this.unit = manager.unit();
     }

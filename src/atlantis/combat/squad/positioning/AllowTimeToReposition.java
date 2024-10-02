@@ -13,15 +13,18 @@ public class AllowTimeToReposition extends Manager {
         if (true) return false; // @ToDo
 
         return unit.isMoving()
-            && unit.lastPositioningActionLessThanAgo(13)
-            && unit.lastActionLessThanAgo(91)
-            && unit.enemiesNear().empty()
-            && !unit.isLeader();
+            && unit.lastPositioningActionLessThanAgo(allowedTime())
+            && unit.enemiesNear().empty();
+//            && unit.enemiesThatCanAttackMe(4).empty();
+//            && unit.lastActionLessThanAgo(91)
+//            && !unit.isLeader();
+    }
+
+    private int allowedTime() {
+        return unit.enemiesNear().count() == 0 ? 50 : 10;
     }
 
     protected Manager handle() {
-        if (unit.isMoving()) return usedManager(this);
-
-        return null;
+        return usedManager(this);
     }
 }

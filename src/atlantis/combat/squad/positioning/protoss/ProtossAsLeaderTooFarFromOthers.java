@@ -16,6 +16,8 @@ public class ProtossAsLeaderTooFarFromOthers extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (!unit.isLeader()) return false;
         if (unit.isMissionSparta()) return false;
 
@@ -23,7 +25,7 @@ public class ProtossAsLeaderTooFarFromOthers extends Manager {
         nearestFriend = unit.squadCenter();
         if (nearestFriend == null) nearestFriend = unit.squad().selection().exclude(unit).nearestTo(unit);
 
-        return nearestFriend != null && unit.distTo(nearestFriend) > 1.7;
+        return nearestFriend != null && unit.distTo(nearestFriend) > 1.1;
     }
 
     @Override

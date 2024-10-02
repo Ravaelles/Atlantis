@@ -1,7 +1,5 @@
 package atlantis.production.constructing.position.protoss;
 
-import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -9,6 +7,7 @@ import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.PositionFulfillsAllConditions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {
 
@@ -23,7 +22,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
 
-        if (nearTo == null && building.isPylon()) nearTo = defineNearToForPylon(nearTo);
+        if (building.isPylon()) nearTo = defineNearToForPylon(nearTo);
 
 //        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
         int searchRadius = 0;
@@ -69,19 +68,22 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     }
 
     private static HasPosition defineNearToForPylon(HasPosition nearTo) {
-        int supply = A.supplyTotal();
+//        int supply = A.supplyTotal();
+        int pylons = Count.pylons();
 
-        if (supply > 17) return nearTo;
+//        System.err.println("pylons = " + pylons);
+
+        if (pylons >= 3) return nearTo;
 
         // First pylon should be close to Nexus for shorter travel dist
-        if (AGame.supplyTotal() <= 10) {
-            nearTo = PylonPosition.positionForFirstPylon();
+        if (pylons <= 0) {
+            nearTo = PylonPosition.nearToPositionForFirstPylon();
 //                AAdvancedPainter.paintPosition(nearTo, "PylonPosition");
         }
 
         // First pylon should be orientated towards the nearest choke
-        else if (supply <= 17) {
-            nearTo = PylonPosition.positionForSecondPylon(nearTo.position());
+        else if (pylons <= 1) {
+            nearTo = PylonPosition.nearToPositionForSecondPylon(nearTo.position());
         }
 
         return nearTo;

@@ -3,6 +3,7 @@ package atlantis.combat.squad.positioning;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
@@ -68,7 +69,7 @@ public class TooLowSquadCohesion extends Manager {
     private boolean improveCohesion() {
         String t = "Cohesion";
 //        APosition goTo = unit.squadLeader().position();
-        APosition goTo = squad.center();
+        HasPosition goTo = squad.center();
 //            .translateTilesTowards(2, unit.position());
 //                .makeFreeOfAnyGroundUnits(5, unit.type().dimensionLeft() * 2, unit);
 

@@ -1,8 +1,11 @@
 package atlantis.units.special;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -15,20 +18,48 @@ public class FixIdleUnits extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        return unit.isCombatUnit()
-            && (unit.isStopped() || unit.isIdle())
-//            && A.fr % 4 == 0
-            && unit.noCooldown()
-            && unit.lastOrderWasFramesAgo() >= 12
-            && unit.lastActionMoreThanAgo(12)
-            && unit.enemiesNear().ranged().countInRadius(6, unit) == 0
-            && (!unit.isRanged() || unit.enemiesNear().inRadius(4, unit).empty());
+        if (!unit.isCombatUnit()) return false;
+        if (unit.isMoving()) return false;
+
+        if (unit.isActiveManager(DoNothing.class)) return true;
+
+        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
+//        if (unit.lastPositionChangedLessThanAgo(30 * 4)) return false;
+
+        if (unit.isStopped() && unit.noCooldown() && unit.lastAttackFrameMoreThanAgo(20)) return true;
+        if (A.fr <= 2 && unit.isStopped()) return true;
+
+//        return false;
+
+        return
+//            && (unit.isStopped() || unit.isIdle())
+//            && unit.noCooldown()
+//            && unit.lastStoppedRunningMoreThanAgo(12)
+//            unit.lastOrderWasFramesAgo() >= 30 * 4
+            unit.lastActionMoreThanAgo(30 * 4)
+                && A.fr % 19 == 0;
+//            && unit.isActiveManager(DoNothing.class)
+//            && unit.enemiesNear().ranged().countInRadius(6, unit) == 0
+//            && (!unit.isRanged() || unit.enemiesNear().inRadius(4, unit).empty());
     }
 
     @Override
     public Manager handle() {
-        if (attackEnemies()) return usedManager(this);
-        if (movedToFocusPoint()) return usedManager(this);
+        AUnit leader = unit.squadLeader();
+        if (leader == null) return null;
+
+        if ((new HandleFocusPointPositioning(unit)).invokeFrom(this) != null) return usedManager(this);
+
+        if (unit.distTo(leader) >= 2.5) {
+            if (unit.move(leader, Actions.MOVE_UNFREEZE, "FixIdleUnits")) {
+//                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.targetPosition() +
+//                    " / " + unit.action());
+                return usedManager(this);
+            }
+        }
+
+//        if (attackEnemies()) return usedManager(this);
+//        if (movedToFocusPoint()) return usedManager(this);
 
         return null;
     }

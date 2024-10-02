@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
-import static atlantis.map.scout.ScoutState.nextPositionToUnit;
+import static atlantis.map.scout.ScoutState.nextPositionToScout;
 import static atlantis.map.scout.ScoutState.scoutingAroundBaseWasInterrupted;
 
 public class ScoutRoaming extends Manager {
@@ -19,7 +19,7 @@ public class ScoutRoaming extends Manager {
 
     @Override
     public Manager handle() {
-        nextPositionToUnit = null;
+        nextPositionToScout = null;
         scoutingAroundBaseWasInterrupted = true;
 
         if (A.seconds() >= 300) {

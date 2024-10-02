@@ -5,11 +5,16 @@ import atlantis.units.AUnit;
 public class ProtossTooBigBattleToRetreat {
     public static boolean PvP_doNotRetreat(AUnit unit) {
         if (unit.isDragoon()) {
-            if (unit.isHealthy()) return true;
+            if (
+                unit.hpPercent() >= 25
+//                    && unit.cooldown() <= 9
+                    && unit.meleeEnemiesNearCount(1.8 + unit.woundPercent() / 50.0) == 0
+            ) return true;
 
             if (unit.hp() <= 40 && unit.enemiesNear().ranged().inRadius(7, unit).notEmpty()) return false;
 
-            if (true) return true;
+            return false;
+//            if (true) return true;
 
 //            if (unit.enemiesNear().inRadius(3.5, unit).empty()) return true;
 //

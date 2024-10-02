@@ -2,14 +2,15 @@ package atlantis.combat.missions.defend;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.DontAttackAlone;
-import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
+import atlantis.combat.missions.defend.protoss.ProtossShouldPunishZergEarly;
 import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.information.enemy.OurBuildingUnderAttack;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -33,7 +34,18 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
         if (We.protoss()) {
             AFocusPoint focusPoint = unit.focusPoint();
 
-            if (earlyGameVsStrongZergDontLeaveMainBase()) return false;
+            if (protossDontAttackWhenAlmostDead()) return false;
+            if (unit.distToSquadCenter() >= 15 && unit.distToBase() >= 20) return false;
+            if (earlyGameVsStrongZergDontLeaveMainBaseStickToIt()) return false;
+
+            if (unit.isRanged()) {
+                Decision decision = asRanged(enemy);
+
+                if (decision.notIndifferent()) return decision.toBoolean();
+            }
+            else {
+                return true;
+            }
 
             if (unit.lastRetreatedAgo() <= 30 * 2
                 && unit.friendsNear().inRadius(5, unit).atMost(3)
@@ -142,6 +154,34 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 //        }
     }
 
+    private Decision asRanged(AUnit enemy) {
+        if (!unit.isRanged()) return Decision.INDIFFERENT;
+
+        if (unit.isMissionDefend()) {
+            if (!EnemyInfo.hasRanged()) {
+                return unit.hp() >= 25
+                    && unit.distTo(enemy) >= 3
+                    && unit.isTargetInWeaponRangeAccordingToGame(enemy)
+                    ? Decision.TRUE : Decision.INDIFFERENT;
+            }
+        }
+
+        return Decision.INDIFFERENT;
+    }
+
+    private boolean protossDontAttackWhenAlmostDead() {
+        if (unit.isMelee()) {
+//            if (unit.hp() <= 25) return true; // Dont, avoid instead
+        }
+        else {
+            if (unit.hp() <= 25 && unit.enemiesThatCanAttackMe(3.3).count() > 0) return true;
+        }
+
+        return unit.hp() <= 34
+            && unit.shotRecently(5)
+            && unit.enemiesThatCanAttackMe(3 + unit.woundPercent() / 100.0).notEmpty();
+    }
+
     private boolean dontAttackOnYourOwn() {
         return unit.squadSize() >= 3
             && unit.friendsNear().inRadius(2.8, unit).empty()
@@ -150,12 +190,15 @@ public class MissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
             && unit.distToBase() >= 10;
     }
 
-    private boolean earlyGameVsStrongZergDontLeaveMainBase() {
-        return A.s <= 600
-            && ProtossMissionChangerWhenDefend.shouldPunishZergEarly()
-            && unit.distToFocusPoint() >= 5.5
-            && unit.combatEvalRelative() <= 1.8
-            && OurBuildingUnderAttack.get() == null;
+    private boolean earlyGameVsStrongZergDontLeaveMainBaseStickToIt() {
+        int enemyCombatUnits = EnemyUnits.combatUnits();
+
+        return A.s <= 60 * 7
+//            && ProtossShouldPunishZergEarly.shouldPunishZergEarly().isTrue()
+            && unit.distToBase() >= 8
+            && unit.combatEvalRelative() <= 1.7
+            && OurBuildingUnderAttack.get() == null
+            && (Count.dragoons() <= 1 && (enemyCombatUnits >= 12 && enemyCombatUnits >= 3.2 * Count.ourCombatUnits()));
     }
 
     private boolean forbidAsTooFarFromFocusPoint(AUnit enemy) {

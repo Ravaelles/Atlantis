@@ -13,6 +13,8 @@ public class UnfreezeDragoon extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         return unit.isDragoon()
 //            && (unit.isStopped() || unit.u().getOrder().equals(Order.Stop))
 //            && unit.noCooldown()

@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid.special;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.util.We;
 
 public class AvoidLurkers extends Manager {
 
@@ -18,11 +19,18 @@ public class AvoidLurkers extends Manager {
         lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(radius(), unit).nearestTo(unit);
         if (lurker == null) return false;
 
-//        if (beBraveWithDetectorsNearby()) return null;
+        if (unit.combatEvalRelative() < 1.5) return true;
 
-        if (unit.combatEvalRelative() < 1.7) return true;
+//        if (beBraveWithDetectorsNearby()) return false;
 
-        return (unit.woundPercent() >= 10 && unit.friendsNear().inRadius(4, unit).atMost(3));
+        return unit.woundPercent() >= 30
+            && unit.friendsNear().inRadius(4, unit).atMost(dontEngageWhenAtMostFriendsNearby());
+    }
+
+    private static int dontEngageWhenAtMostFriendsNearby() {
+        if (We.protoss()) return 3;
+
+        return 4;
     }
 
     @Override
@@ -35,16 +43,16 @@ public class AvoidLurkers extends Manager {
         return usedManager(this);
     }
 
-    private boolean beBraveWithDetectorsNearby() {
-//        if (unit.combatEvalRelative() < 1.7) return false;
-        if (unit.friendsNear().detectors().inRadius(5, unit).empty()) return false;
-
-        return true;
-    }
+//    private boolean beBraveWithDetectorsNearby() {
+////        if (unit.combatEvalRelative() < 1.7) return false;
+//        if (lurker.enemiesNear().detectors().inRadius(8, unit).empty()) return false;
+//
+//        return true;
+//    }
 
     private double radius() {
         return 8.1
-            + (unit.isMelee() ? 1.5 : 0)
+            + (unit.isMelee() ? 1.8 : 0)
             + unit.woundPercent() / 80.0;
     }
 }

@@ -3,6 +3,9 @@ package atlantis.combat.missions.defend;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.MissionChangerWhenAttack;
+import atlantis.combat.missions.defend.protoss.ProtossMissionChangerWhenDefend;
+import atlantis.combat.missions.defend.terran.TerranMissionChangerWhenDefend;
+import atlantis.combat.missions.defend.zerg.ZergMissionChangerWhenDefend;
 import atlantis.util.We;
 
 public abstract class MissionChangerWhenDefend extends MissionChanger {
@@ -16,7 +19,7 @@ public abstract class MissionChangerWhenDefend extends MissionChanger {
 //            changeMissionTo(Missions.CONTAIN);
 //        }
 //        if (shouldChangeMissionToAttack() && !MissionChangerWhenAttack.get().shouldChangeMissionToDefend()) {
-        
+
         if (shouldChangeMissionToAttack() && !MissionChangerWhenAttack.get().shouldChangeMissionToDefend()) {
             changeMissionTo(Missions.ATTACK);
         }

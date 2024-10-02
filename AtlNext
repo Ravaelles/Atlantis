@@ -1,0 +1,3 @@
+- If detected 3+ CB early, FORCE second base
+
+- Avoid sieged tanks (consider flying building?), but don't avoid if closer than <=14 to building

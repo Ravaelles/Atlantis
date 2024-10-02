@@ -6,6 +6,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.select.Count;
+import atlantis.util.Enemy;
 
 /**
  * Omega is battle squad that ALWAYS DEFENDS the main base and natural.
@@ -28,10 +29,14 @@ public class Omega extends Squad {
 
     @Override
     public boolean shouldHaveThisSquad() {
+        if (Count.ourCombatUnits() <= 14) return false;
+
         if (EnemyWhoBreachedBase.numberOfAttacksOnBase() > 0) return true;
 
 //        return false;
-        return (A.supplyUsed(60) || (Missions.isGlobalMissionAttack() && Count.ourCombatUnits() >= 18));
+        int minUnits = Enemy.zerg() ? 18 : (Enemy.protoss() ? 25 : 21);
+
+        return (A.supplyUsed(70) || (Missions.isGlobalMissionAttack() && Count.ourCombatUnits() >= minUnits));
     }
 
     // =========================================================
@@ -40,7 +45,7 @@ public class Omega extends Squad {
     public int expectedUnits() {
         return Math.max(
             1,
-            Math.min(3, (int) (Count.ourCombatUnits() / 9))
+            Math.min(3, Count.ourCombatUnits() / 15)
         );
     }
 

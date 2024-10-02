@@ -41,10 +41,7 @@ public class AddToQueue {
     }
 
     public static ProductionOrder withHighPriority(AUnitType type) {
-        return withHighPriority(
-            type,
-            null
-        );
+        return withHighPriority(type, null);
     }
 
     public static ProductionOrder withHighPriority(AUnitType type, HasPosition position) {
@@ -117,10 +114,10 @@ public class AddToQueue {
         if (A.supplyTotal() >= 30 && type.isPylon()) {
             int inQueue = CountInQueue.count(AUnitType.Protoss_Pylon);
 
-            if (inQueue >= 2) {
-                A.println(A.now() + ": @@@@@@@@@@@@@ Add PYLON @@@@ " + position + " / " +
-                    inQueue);
-            }
+//            if (inQueue >= 2) {
+//                A.println(A.now() + ": @@@@@@@@@@@@@ Add PYLON @@@@ " + position + " / " +
+//                    inQueue);
+//            }
 
             if (inQueue >= 4) {
 //                A.printStackTrace("Too many pylons in queue (" + inQueue + ")");
@@ -142,6 +139,10 @@ public class AddToQueue {
 
 //            if (type.isBunker()) {
 //                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position);
+//            }
+
+//            if (type.isGasBuilding()) {
+//                A.printStackTrace(A.now() + ": Adding GAS to queue at " + position);
 //            }
 
 //            if (type.is(AUnitType.Protoss_Robotics_Facility)) {
@@ -212,6 +213,10 @@ public class AddToQueue {
         if (nextOrders.isEmpty()) {
             return currentMin1;
 //            return 0;
+        }
+
+        if (type.isGasBuilding()) {
+            return Count.gasBuildingsWithUnfinished() + 1;
         }
 
 //        System.err.println("A = " + (nextOrders.list().get(0).minSupply() + 1));

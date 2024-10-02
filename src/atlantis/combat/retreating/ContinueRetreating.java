@@ -16,9 +16,11 @@ public class ContinueRetreating extends Manager {
     public boolean applies() {
         return unit.isRetreating()
             && unit.isMoving()
-//            && unit.enemiesNear().combatUnits().notEmpty()
             && unit.lastActionLessThanAgo(15, Actions.RUN_RETREAT)
-            && unit.distToTargetMoreThan(1.3);
+            && !unit.lastStartedRunningMoreThanAgo(30 * 3)
+            && unit.enemiesNear().havingWeapon().notEmpty()
+//            && unit.combatEvalRelative() < 4.0
+            && unit.distToTargetMoreThan(5);
     }
 
     public Manager handle() {

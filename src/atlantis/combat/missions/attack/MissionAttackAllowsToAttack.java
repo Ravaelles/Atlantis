@@ -1,10 +1,9 @@
 package atlantis.combat.missions.attack;
 
-import atlantis.architecture.Manager;
-import atlantis.combat.advance.contain.DontAdvanceButHoldAndContainWhenEnemyBuildingsClose;
-import atlantis.combat.micro.attack.DontAttackAlone;
+import atlantis.combat.advance.contain.ContainEnemy;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.game.A;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.util.Enemy;
@@ -28,8 +27,10 @@ public class MissionAttackAllowsToAttack extends HasUnit {
         if (!enemy.isAlive() || enemy.isDead() || !enemy.hasPosition()) return false;
 
         if (unit.canAttackTargetWithBonus(enemy, 0)) return true;
-
         if (Enemy.zerg() && unit.isMelee() && enemy.isMelee() && unit.distToNearestChokeLessThan(1)) return true;
+
+        HasPosition squadCenter = unit.squadCenter();
+        if (squadCenter != null && enemy.distToSquadCenter() >= 20) return false;
 
 //        if (DontAttackAlone.isAlone(unit)) return false;
         if (DontAttackUnitScatteredOnMap.isEnemyScatteredOnMap(unit, enemy)) return false;
@@ -53,14 +54,14 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     }
 
     private boolean dontAttackDuringContain(AUnit enemy) {
-        if (!unit.isActiveManager(DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class)) return false;
+        if (!unit.isActiveManager(ContainEnemy.class)) return false;
 
         if (enemy.isABuilding() && unit.groundWeaponRange() <= 7 && enemy.distToNearestChoke() <= 9) return true;
 
         AUnit squadLeader = unit.squadLeader();
         if (squadLeader == null) return false;
 
-        return squadLeader.isActiveManager(DontAdvanceButHoldAndContainWhenEnemyBuildingsClose.class);
+        return squadLeader.isActiveManager(ContainEnemy.class);
     }
 
     private boolean dontAttackAsSquadScout(AUnit enemy) {
@@ -81,9 +82,14 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     }
 
     private boolean forbiddenToAttackCombatBuilding(AUnit enemy) {
-        if (!enemy.isCombatBuilding()) return false;
+        return false;
 
-        return notAllowedToAttackCombatBuilding(enemy);
+//        if (!enemy.isCombatBuilding()) return false;
+//
+//        if (unit.distTo(enemy) <= 4) return false;
+//
+//        int minUnits = We.protoss() ? 4 : 9;
+//        return unit.friendsNear().inRadius(5, unit).count() <= minUnits;
     }
 
     private boolean notAllowedToAttackCombatBuilding(AUnit enemy) {

@@ -11,11 +11,13 @@ import atlantis.units.select.Have;
 import static atlantis.units.AUnitType.Protoss_Robotics_Facility;
 
 public class ProduceRoboticsFacility {
-    public static void produce() {
-        if (!shouldBuild()) return;
+    public static boolean produce() {
+        if (true) return false;
+
+        if (!shouldBuild()) return false;
 
 //            System.err.println("@ " + A.now() + " - REQUESTED Protoss_Robotics_Facility");
-        DynamicCommanderHelpers.buildNow(Protoss_Robotics_Facility, true);
+        return DynamicCommanderHelpers.buildNow(Protoss_Robotics_Facility, true);
     }
 
     public static boolean shouldBuild() {

@@ -3,12 +3,12 @@ package atlantis.production.dynamic.protoss;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.game.AGame;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class ProtossNewGasBuildingCommander extends Commander {
@@ -17,39 +17,47 @@ public class ProtossNewGasBuildingCommander extends Commander {
     public boolean applies() {
         return We.protoss()
             && A.everyNthGameFrame(85)
-            && (A.gas() < A.minerals() && A.minerals() >= 270)
+            && (A.gas() < A.minerals() && A.minerals() >= 105)
+            && (A.gas() <= 150 || Count.ourCombatUnits() >= 12)
             && Count.bases() >= 2
             && Count.bases() > Count.gasBuildingsWithUnfinished()
-            && (A.gas() <= 600 || A.minerals() >= 500)
-            && (A.gas() <= 100 || Count.ourCombatUnits() >= 6)
-            && Count.inProductionOrInQueue(AtlantisRaceConfig.GAS_BUILDING) <= (A.hasMinerals(300) ? 1 : 0);
+            && (CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals() || A.minerals() >= 300);
 //            && !tooEarlyForAnotherGasBuilding()
     }
 
     @Override
     protected void handle() {
-        requestAdditionalBuildingIfNeeded();
+        requestAdditionalBuilding();
     }
 
     /**
      * Build Refineries/Assimilators/Extractors when it makes sense.
      */
-    private static void requestAdditionalBuildingIfNeeded() {
+    private static void requestAdditionalBuilding() {
         AUnit freeGeyser = baseWithFreeGeyser();
 
         if (freeGeyser != null) {
-//            A.errPrintln("Request GAS BUILDING at supply: " + A.supplyUsed() + " at " + freeGeyser);
-            AddToQueue.withHighPriority(AtlantisRaceConfig.GAS_BUILDING);
+            ProductionOrder order = AddToQueue.withHighPriority(AtlantisRaceConfig.GAS_BUILDING);
+
+//            if (order == null) return;
+//            A.errPrintln("Request PROTOSS GAS, sup:" + A.supplyUsed() + " at " + freeGeyser
+//                + " / " + order
+//                + " / pos: " + order.atPosition()
+//                + " (" + (order.atPosition() == null ? "-" : Select.main().distTo(order.atPosition())) + ")"
+//            );
         }
     }
 
     private static AUnit baseWithFreeGeyser() {
-        for (AUnit base : Select.ourBases().list()) {
-            if (Select.ourOfType(AtlantisRaceConfig.GAS_BUILDING).inRadius(10, base).isNotEmpty()) {
-                continue;
-            }
+        int maxDistBaseToGeyser = 10;
 
-            AUnit geyser = Select.geysers().inRadius(10, base).nearestTo(base);
+        for (AUnit base : Select.ourBases().list()) {
+            if (Select.ourOfTypeWithUnfinished(AtlantisRaceConfig.GAS_BUILDING)
+                .inRadius(maxDistBaseToGeyser, base)
+                .notEmpty()
+            ) continue;
+
+            AUnit geyser = Select.geysers().inRadius(maxDistBaseToGeyser, base).nearestTo(base);
             if (geyser != null) {
                 return geyser;
             }

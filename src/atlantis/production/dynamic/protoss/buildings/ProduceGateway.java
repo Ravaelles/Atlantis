@@ -5,6 +5,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.information.decisions.protoss.dragoon.DragoonInsteadZealot;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
@@ -83,7 +84,9 @@ public class ProduceGateway {
     }
 
     private static boolean produceGateway() {
-        AddToQueue.withStandardPriority(Protoss_Gateway);
+        ProductionOrder order = AddToQueue.withStandardPriority(Protoss_Gateway);
+//        A.println("******** At " + A.supplyUsed() + "supply produce Gateway (" + Count.gatewaysWithUnfinished() + "):"
+//            + " " + order);
 //        A.printStackTrace("Produce Gateway");
         return true;
     }

@@ -54,7 +54,7 @@ public class FallbackTargeting {
     }
 
     private static Selection enemies(AUnit unit) {
-        return unit.enemiesNear().havingPosition().effVisible();
+        return unit.enemiesNear().realUnits().havingPosition().effVisible();
     }
 
     private static AUnit forRanged(AUnit unit) {

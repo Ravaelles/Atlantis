@@ -146,17 +146,23 @@ public class NewConstructionRequest {
             ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
         }
 
+        boolean cancelled = false;
+
         if (building.isSupplyDepot()) {
             if (A.supplyTotal() > 10
                 && order != null
                 && (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2 || AGame.supplyFree() >= 3)
             ) {
+                cancelled = true;
                 order.cancel();
             }
         }
         else if (!building.isPylon()) {
-            order.cancel();
-            A.errPrintln(A.s + "s: Cancelled order: " + order);
+            if (A.s >= 70 && A.supplyUsed() >= 11) {
+                cancelled = true;
+                order.cancel();
+                A.errPrintln(A.s + "s: Cancelled order: " + order);
+            }
         }
 
         // =========================================================
@@ -174,7 +180,10 @@ public class NewConstructionRequest {
 
 //        if (order != null) order.cancel();
         AbstractPositionFinder.clearCache();
-//        newConstruction.findPositionForNewBuilding();
+
+        if (!cancelled) {
+            newConstruction.findPositionForNewBuilding();
+        }
 
         // =========================================================
 

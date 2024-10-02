@@ -52,7 +52,7 @@ public class RemoveExcessiveOrders {
 //                }
 
                 orders.get(i).cancel();
-                A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE UNIT " + type);
+//                A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE UNIT " + type);
 
             }
             return true;

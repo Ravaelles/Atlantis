@@ -13,6 +13,7 @@ import bwem.CPPath;
 import bwem.ChokePoint;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class PathToEnemyBase {
@@ -22,7 +23,7 @@ public class PathToEnemyBase {
     public static ArrayList<AChoke> chokesLeadingToEnemyBase() {
         AUnit enemy = enemy();
 
-        if (enemy == null) return null;
+        if (enemy == null) return new ArrayList<>();
 
         return cacheChokes.get(
             "chokesLeadingToEnemyBase:" + CacheKey.toKey(enemy),
@@ -66,5 +67,31 @@ public class PathToEnemyBase {
             chokeIndex++;
         }
         return chokes;
+    }
+
+    public static AChoke oneChokeCloserToMain(HasPosition closerThanPosition) {
+        ArrayList<AChoke> chokes = chokesLeadingToEnemyBase();
+        if (chokes == null || chokes.isEmpty()) {
+            return null;
+        }
+
+        APosition main = Select.mainOrAnyBuildingPosition();
+        if (main == null) return null;
+
+        double givenDistToMain = main.distTo(closerThanPosition);
+
+        Collections.reverse(chokes);
+
+        for (AChoke choke : chokes) {
+            if (choke.distTo(closerThanPosition) >= 8 && main.distTo(choke) <= givenDistToMain) {
+                return choke;
+            }
+        }
+
+        return null;
+    }
+
+    public static boolean isKnown() {
+        return chokesLeadingToEnemyBase().size() >= 2;
     }
 }

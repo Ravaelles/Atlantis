@@ -1,6 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 
@@ -406,5 +407,13 @@ public class Count {
         return ourWithUnfinished(AUnitType.Protoss_Assimilator)
             + ourWithUnfinished(Zerg_Extractor)
             + ourWithUnfinished(Terran_Refinery);
+    }
+
+    public static int enemyCombatUnits() {
+        return EnemyUnits.discovered().combatUnits().count();
+    }
+
+    public static int ht() {
+        return ofType(AUnitType.Protoss_High_Templar);
     }
 }

@@ -275,6 +275,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     }
 
     public void cancel() {
+//        A.errPrintln("At " + A.s + "s cancelling order " + this);
+
         if (construction() != null) construction().cancel();
 
         releasedReservedResources();

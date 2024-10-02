@@ -1,9 +1,11 @@
 package atlantis.combat.squad.positioning.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -17,14 +19,17 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
     @Override
     public boolean applies() {
         return unit.isZealot()
-            && unit.enemiesNear().ranged().notEmpty()
+            && (Count.dragoons() >= 1 || unit.enemiesNear().ranged().notEmpty())
             && unit.enemiesNear().havingWeapon().notEmpty()
             && (dragoon = nearestDragoon()) != null
-            && dragoon.distTo(unit) > 3
+            && dragoon.distTo(unit) > 2.7
             && noEnemiesVeryNearToAttack();
+//        );
     }
 
     private boolean noEnemiesVeryNearToAttack() {
+        if (unit.combatEvalRelative() <= 1.8) return true;
+
         int maxAllowedDist = 3 + (unit.lastUnderAttackLessThanAgo(70) ? 3 : 0);
         Selection enemiesNear = unit.enemiesNear().groundUnits().effVisible().inRadius(maxAllowedDist, unit);
 

@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.combat.targeting.ATargeting;
+import atlantis.combat.targeting.basic.ATargeting;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
 import atlantis.units.attacked_by.UnderAttack;
@@ -118,6 +118,7 @@ public class AUnitTest extends AbstractTestFakingGame {
 
     @Test
     public void canAttackDetectedBurrowedLurkers() {
+
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
         final FakeUnit expectedTarget;
 
@@ -126,6 +127,7 @@ public class AUnitTest extends AbstractTestFakingGame {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
+//            System.out.println("@Fix A = " + EnemyUnits.discovered().print());
             assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }

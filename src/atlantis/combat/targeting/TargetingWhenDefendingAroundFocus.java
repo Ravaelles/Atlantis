@@ -1,6 +1,7 @@
 package atlantis.combat.targeting;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.targeting.basic.ATargeting;
 import atlantis.units.AUnit;
 import bwapi.Color;
 

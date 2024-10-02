@@ -1,10 +1,14 @@
 package atlantis.combat.micro.dancing.away.protoss;
 
 import atlantis.decisions.Decision;
-import atlantis.production.dynamic.protoss.tech.SingularityCharge;
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
+import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class DanceAwayAsDragoon extends HasUnit {
     private final AUnit enemy;
@@ -15,21 +19,30 @@ public class DanceAwayAsDragoon extends HasUnit {
     }
 
     public Decision applies() {
+        if (A.supplyUsed() >= 160) return Decision.FALSE;
+
         Decision decision;
 
 //        if (unit.lastActionLessThanAgo(2, Actions.ATTACK_UNIT)) return Decision.FALSE;
 
         if (unit.lastAttackFrameMoreThanAgo(30 * 8)) return Decision.FALSE;
-        if (unit.cooldown() <= 12) return Decision.FALSE;
+        if (unit.cooldown() <= (unit.hp() <= 40 ? 3 : 12)) return Decision.FALSE;
 
-        if ((decision = vsEnemyDragoons()).notIndifferent()) return decision;
-        if ((decision = vsEnemyHydra()).notIndifferent()) return decision;
+        if (Enemy.protoss()) {
+            if ((decision = vsEnemyDragoons()).notIndifferent()) return decision;
+        }
 
-        if (true) return Decision.FALSE;
+        else if (Enemy.zerg()) {
+            if ((decision = vsEnemyHydra()).notIndifferent()) return decision;
+//            if ((decision = vsEnemyZergling()).notIndifferent()) return decision;
+        }
+
+        if (!Enemy.zerg() && EnemyInfo.hasRanged()) {
+            if (true) return Decision.FALSE;
+        }
 
 //        if (unit.woundHp() <= 14 && unit.lastAttackFrameMoreThanAgo(30 * 5)) return Decision.FALSE;
         if ((unit.cooldown() >= 12 || unit.hp() <= 100) && !unit.isSafeFromMelee()) return Decision.TRUE;
-
 
         if (tooHealthy()) return Decision.FALSE;
         if (provideSupportForMelee()) return Decision.FALSE;
@@ -44,9 +57,12 @@ public class DanceAwayAsDragoon extends HasUnit {
     }
 
     private Decision vsEnemyHydra() {
-        double range = 3.85 + (SingularityCharge.isResearched() ? 2 : 0);
+        Selection hydras = unit.enemiesNear().hydras();
+        if (hydras.empty()) return Decision.INDIFFERENT;
 
-        return unit.enemiesNear().hydralisks().countInRadius(range, unit) > 0
+        double range = 3.85 + (ResearchSingularityCharge.isResearched() ? 2 : 0);
+
+        return hydras.countInRadius(range, unit) > 0
             ? Decision.TRUE
             : Decision.INDIFFERENT;
     }

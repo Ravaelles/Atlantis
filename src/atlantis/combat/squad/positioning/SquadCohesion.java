@@ -41,7 +41,8 @@ public class SquadCohesion extends HasSquad {
 //            base = 0;
 //        }
         if (We.protoss()) {
-            base = (squad.size() >= 8 ? 3 : 0);
+//            base = (squad.size() >= 8 ? 3 : 0);
+            return Math.max(2.7, base + Math.sqrt(squad.size()));
         }
         else if (We.zerg()) {
             base = Math.min(8, 2 + (squad.size() / 3));

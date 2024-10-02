@@ -19,11 +19,12 @@ public class TerranSquadCohesion extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             TerranTooFarFromLeader.class,
-            EnsureCoordinationWithTanks.class,
-            TooClustered.class,
+            TerranEnsureCoordinationWithTanks.class,
+            TerranTooClustered.class,
             TerranEnsureBall.class,
             TerranComeCloser.class,
             TooLowSquadCohesion.class,
+            TerranTooFarFromLeader.class,
         };
     }
 }

@@ -45,9 +45,9 @@ public class ProtossStreetGridTest extends AbstractTestWithUnits {
                 APosition position = APosition.create(tx, ty);
                 String string = gatewayPositionToString(position);
 
-//                A.print(string);
+                A.print(string);
             }
-//            A.println();
+            A.println();
         }
     }
 
@@ -61,10 +61,52 @@ public class ProtossStreetGridTest extends AbstractTestWithUnits {
                 APosition position = APosition.create(tx, ty);
                 String string = pylonPositionToString(position);
 
-//                A.print(string);
+                A.print(string);
             }
-//            A.println();
+            A.println();
         }
+    }
+
+    @Test
+    public void testBothPylonAndGatewayPlacement() {
+        int xRadius = 20;
+        int yRadius = 20;
+
+        for (int ty = 1; ty < yRadius * 2; ty++) {
+            for (int tx = 1; tx < xRadius * 2; tx++) {
+                APosition position = APosition.create(tx, ty);
+                String string = pylonAndGatewayPositionToString(position);
+
+                A.print(string);
+            }
+            A.println();
+        }
+    }
+
+    private String pylonAndGatewayPositionToString(APosition position) {
+        boolean isGatewayOk = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
+            null, AUnitType.Protoss_Gateway, position
+        );
+        boolean isPylonOk = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
+            null, AUnitType.Protoss_Pylon, position
+        );
+
+        String string = "_";
+
+        if (!isGatewayOk && !isPylonOk) {
+            string = "◦";
+        }
+        else if (isGatewayOk && !isPylonOk) {
+            string = "▒";
+        }
+        else if (!isGatewayOk && isPylonOk) {
+            string = "█";
+        }
+        else if (isGatewayOk && isPylonOk) {
+            string = "X";
+        }
+
+        return string;
     }
 
     private static String gatewayPositionToString(APosition position) {

@@ -106,8 +106,6 @@ public class AtlantisJfap {
 
     private double calculateToRelativeScoreIfNeeded(double ourScore, double enemyScore, boolean relativeToEnemy) {
         if (relativeToEnemy) {
-
-
             if (enemyScore < -9000) {
                 return Math.abs(enemyScore);
             }

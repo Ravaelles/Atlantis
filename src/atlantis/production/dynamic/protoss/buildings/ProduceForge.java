@@ -8,11 +8,11 @@ import atlantis.util.Enemy;
 import static atlantis.units.AUnitType.Protoss_Forge;
 
 public class ProduceForge {
-    public static void produce() {
-        if (Have.forge()) return;
+    public static boolean produce() {
+        if (Have.forge()) return false;
 
         int buildAtSupply = buildAtSupply();
-        DynamicCommanderHelpers.buildToHaveOne(buildAtSupply, Protoss_Forge);
+        return DynamicCommanderHelpers.buildToHaveOne(buildAtSupply, Protoss_Forge);
     }
 
     private static int buildAtSupply() {

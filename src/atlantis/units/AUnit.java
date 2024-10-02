@@ -9,6 +9,7 @@ import atlantis.combat.micro.avoid.margin.UnitRange;
 import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.eval.protoss.ProtossCombatEvalTweaks;
 import atlantis.combat.running.ARunningManager;
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
@@ -876,7 +877,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean hasWeaponRangeToAttack(AUnit targetUnit, double extraMargin) {
         if (!targetUnit.isDetected() || targetUnit.position() == null) return false;
 //
-//        if (isDragoon()) return distToLessThan(targetUnit, OurDragoonWeaponRange.range());
+//        if (isDragoon()) return distToLessThan(targetUnit, OurDragoonRange.range());
 //        if (isBunker()) return distToLessThan(targetUnit, 7);
 //
 //        WeaponType weaponAgainstThisUnit = weaponAgainst(targetUnit);
@@ -2020,6 +2021,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return squad().center();
     }
 
+    public AUnit squadCenterUnit() {
+        if (!hasSquad()) {
+            if (Env.isTesting()) return Select.our().nonBuildings().first();
+            return (AUnit) Alpha.alphaCenter();
+        }
+
+        return (AUnit) squad().center();
+    }
+
     public Selection squadCenterEnemiesNear() {
         if (squadCenter() == null) return Select.from(new ArrayList<>(), "squadCenterEnemiesNear_0");
 
@@ -2250,7 +2260,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public double combatEvalRelative() {
-        return (double) cache.get(
+        double eval = (double) cache.get(
             "combatEvalRelative",
             1,
             () -> {
@@ -2261,6 +2271,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                return ACombatEvaluator.relativeAdvantage(this);
             }
         );
+
+        if (We.protoss()) return ProtossCombatEvalTweaks.apply(this, eval);
+
+        return eval;
     }
 
     public String combatEvalRelativeDigit() {
@@ -2888,6 +2902,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             return 0;
         }
 
+        if (focusPoint.isAroundChoke()) {
+            return (focusPoint.choke().center()).distTo(this);
+        }
+
         return focusPoint.distTo(this);
     }
 
@@ -3096,6 +3114,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean didntShootRecently(int minSeconds) {
         return lastAttackFrameMoreThanAgo(30 * minSeconds);
+    }
+
+    public boolean shotRecently(int minSeconds) {
+        return lastAttackFrameLessThanAgo(30 * minSeconds);
     }
 
     public boolean ranRecently(int minSeconds) {
@@ -3342,5 +3364,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean shieldWounded() {
         return shields() < maxShields();
+    }
+
+    public boolean almostDead() {
+        if (isDragoon()) return hp() <= 25;
+
+        return hp() <= 20;
+    }
+
+    public boolean isAlphaSquad() {
+        return squad != null && squad.isAlpha();
     }
 }

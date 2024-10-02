@@ -5,11 +5,13 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
+import atlantis.map.base.ABaseLocation;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
+import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -42,7 +44,7 @@ public class EnemyInfo {
     public static boolean hasDiscoveredAnyBuilding() {
         return cacheBoolean.get(
             "hasDiscoveredAnyBuilding",
-            50,
+            53,
             () -> {
                 for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
                     if (enemyUnit.isABuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
@@ -238,5 +240,26 @@ public class EnemyInfo {
         if (enemyNatural == null) return false;
 
         return EnemyUnits.buildings().inRadius(5, enemyNatural).atLeast(1);
+    }
+
+    public static APosition enemyMain() {
+        return (APosition) cache.getIfValid(
+            "enemyMain",
+            271,
+            () -> {
+                Positions<ABaseLocation> startingLocations = new Positions<>(BaseLocations.startingLocations(true));
+
+                for (AUnit enemyBase : EnemyUnits.discovered().bases().list()) {
+                    ABaseLocation location = startingLocations.nearestTo(enemyBase);
+                    if (location != null && location.distTo(enemyBase) <= 10) return location.position();
+                }
+
+                return null;
+            }
+        );
+    }
+
+    public static APosition enemyNatural() {
+        return BaseLocations.enemyNatural();
     }
 }

@@ -8,17 +8,19 @@ import atlantis.units.select.Have;
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
 
 public class ProduceReavers {
-    public static void reavers() {
-        if (A.supplyUsed() <= 70) return;
+    public static boolean reavers() {
+        if (true) return false;
+
+        if (A.supplyUsed() <= 70) return false;
 
         if (
             Have.no(AUnitType.Protoss_Robotics_Facility)
                 || Have.no(AUnitType.Protoss_Robotics_Support_Bay)
-        ) return;
+        ) return false;
 
         int maxReavers = haveThisManyReavers();
 
-        buildToHave(AUnitType.Protoss_Reaver, maxReavers);
+        return buildToHave(AUnitType.Protoss_Reaver, maxReavers);
     }
 
     private static int haveThisManyReavers() {

@@ -78,7 +78,9 @@ public class AFocusPoint extends APosition {
         else {
             APosition pos = this.position();
             if (pos == null) return false;
-            return !pos.isPositionVisible() || Select.our().inRadius(3, pos).empty();
+//            return !pos.isPositionVisible() || Select.our().inRadius(5, pos).empty();
+//            return !pos.isPositionVisible() || Select.our().inRadius(5, pos).empty();
+            return true; // @Temp
         }
     }
 
@@ -110,6 +112,10 @@ public class AFocusPoint extends APosition {
 
     public boolean isAroundChoke() {
         return choke != null;
+    }
+
+    public boolean isUnit() {
+        return unit != null;
     }
 
     public String name() {
