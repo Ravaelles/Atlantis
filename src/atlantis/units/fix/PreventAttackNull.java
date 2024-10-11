@@ -21,7 +21,7 @@ public class PreventAttackNull extends Manager {
 
     @Override
     public Manager handle() {
-        return DoPreventFreezesLogic.handle(unit) ? usedManager(this) : null;
+        return DoPreventFreezesLogic.handle(this, unit) ? usedManager(this) : null;
     }
 
     private boolean isAttackingNullTarget() {

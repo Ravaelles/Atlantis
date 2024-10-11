@@ -2,7 +2,7 @@ package atlantis.units.workers;
 
 import atlantis.architecture.Commander;
 import atlantis.game.AGame;
-import atlantis.information.strategy.GamePhase;
+import atlantis.information.generic.OurArmy;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
@@ -54,11 +54,13 @@ public class WorkerTransferCommander extends Commander {
                 continue;
             }
 
-            int numOfWorkersNearBase = WorkerRepository.countWorkersHarvestingNear(base, false);
+            int numOfWorkersNearBase = WorkerRepository.countWorkersHarvestingMineralsNear(base, false);
             int numOfMineralsNearBase = Select.minerals().inRadius(10, base).count();
             double workersToMineralsRatio = (double) numOfWorkersNearBase / (numOfMineralsNearBase + 0.1);
             baseWorkersRatios.addUnitWithValue(base, workersToMineralsRatio);
         }
+
+        if (baseWorkersRatios.size() <= 1) return false;
 
         // Take the base with lowest and highest worker ratio
         AUnit baseWithFewestWorkers = baseWorkersRatios.unitWithLowestValue();
@@ -101,8 +103,8 @@ public class WorkerTransferCommander extends Commander {
         int n = workerRatioDiff > 2.0 ? 6 : 2;
 
         for (int i = 0; i < n; i++) {
-            AUnit worker = Select.ourWorkersThatGather(true)
-                .inRadius(7, baseWithMostWorkers)
+            AUnit worker = Select.ourWorkersMiningMinerals(true)
+                .inRadius(15, baseWithMostWorkers)
                 .groundNearestTo(baseWithFewestWorkers);
 
 //        System.err.println(

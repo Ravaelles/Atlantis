@@ -27,7 +27,7 @@ public class WorkerAvoidManager extends Manager {
     }
 
     private double safetyMargin() {
-        return 2.6 + unit.woundPercent() / 50.0;
+        return 2.6 + unit.woundPercent() / 35.0;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class WorkerAvoidManager extends Manager {
     private Manager moveAwayFromEnemy() {
         AUnit enemy = unit.enemiesNear().combatUnits().nearestTo(unit);
 //        if (unit.moveAwayFrom(enemy, 3, Actions.RUN_ENEMY, "AvoidHarass")) return usedManager(this);
-        if (unit.runningManager().runFrom(enemy, 3, Actions.RUN_ENEMY, false)) {
+        if (unit.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, false)) {
             unit.setTooltip("AvoidHarass");
             return usedManager(this);
         }

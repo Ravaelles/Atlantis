@@ -65,6 +65,7 @@ public class SquadReinforcements {
     }
 
     protected boolean isGoodRecruit(AUnit recruit) {
-        return recruit.isAir() || !recruit.hasAnyWeapon() || recruit.isScienceVessel();
+        return recruit.hasAnyWeapon()
+            && !recruit.type().isDetectorNonBuilding();
     }
 }

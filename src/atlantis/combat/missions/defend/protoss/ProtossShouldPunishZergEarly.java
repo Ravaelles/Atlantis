@@ -15,16 +15,25 @@ public class ProtossShouldPunishZergEarly {
     public static Decision shouldPunishZergEarly() {
         int zealotsAndGoons;
 
+        if (Count.dragoons() <= 2 && OurArmy.strength() <= 140) {
+            if (MissionChanger.DEBUG) MissionChanger.reason = "WeakDespiteGoons(" + OurArmy.strength() + "%)";
+            return Decision.FALSE;
+        }
+
         if (enemyLooksVeryStrongEarlyGame()) return Decision.FALSE;
 
-        if (A.s <= 600 && (zealotsAndGoons = Count.zealotsAndDragoons()) >= 8) {
+        if (
+            A.s <= 600
+                && (zealotsAndGoons = Count.zealotsAndDragoons()) >= 8
+                && (Count.dragoons() >= EnemyUnits.hydras() * 2)
+        ) {
             if (
                 OurArmy.strength() >= 180 && (
                     (zealotsAndGoons * 2.5 >= EnemyUnits.discovered().combatUnits().count())
                         || (Count.dragoons() >= 1 && EnemyUnits.discovered().combatUnits().atMost(18))
                 )
             ) {
-                if (MissionChanger.DEBUG) MissionChanger.reason = "PunishZergEarly(" + OurArmy.strength() + ")";
+                if (MissionChanger.DEBUG) MissionChanger.reason = "PunishZergEarly(" + OurArmy.strength() + "%)";
                 return Decision.TRUE;
             }
         }

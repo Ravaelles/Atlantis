@@ -11,7 +11,7 @@ import atlantis.game.AGame;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -34,9 +34,9 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (Alpha.count() <= 7) return false;
 
-        if (EnemyWhoBreachedBase.get() != null) return false;
+        if (EnemyUnitBreachedBase.get() != null) return false;
         if (Missions.lastMissionChangedSecondsAgo() <= 15) return false;
-        if (Missions.counter() >= 2 && Alpha.count() <= 25) return false;
+        if (Missions.historyCount() >= 2 && Alpha.count() <= 25) return false;
 
         if (A.minerals() >= 2000 && A.supplyUsed() >= 90) {
             if (DEBUG) reason = "Abundance of minerals";
@@ -125,7 +125,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (ourRelativeStrength < 300 && EnemyStrategy.get().isRushOrCheese() && A.supplyUsed() <= 110) return false;
 
         if (We.terran() && Enemy.protoss()) {
-            if (Missions.counter() >= 2 && A.supplyUsed() <= 90 && A.seconds() <= 60 * 7) return false;
+            if (Missions.historyCount() >= 2 && A.supplyUsed() <= 90 && A.seconds() <= 60 * 7) return false;
         }
 
         if (Enemy.zerg()) {

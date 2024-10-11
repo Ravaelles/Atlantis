@@ -20,14 +20,20 @@ public class FixIdleUnits extends Manager {
 
         if (!unit.isCombatUnit()) return false;
         if (unit.isMoving()) return false;
+        if (unit.hasCooldown()) return false;
+        if (unit.enemiesNear().combatBuildingsAntiLand().notEmpty()) return false;
 
         if (unit.isActiveManager(DoNothing.class)) return true;
 
-        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
+        if (unit.distToLeader() <= 6) return false;
+
+        if (A.s > 2 && unit.isStopped() && moveToLeader()) return true;
+
+//        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
 //        if (unit.lastPositionChangedLessThanAgo(30 * 4)) return false;
 
-        if (unit.isStopped() && unit.noCooldown() && unit.lastAttackFrameMoreThanAgo(20)) return true;
-        if (A.fr <= 2 && unit.isStopped()) return true;
+        if (unit.isStopped() && unit.noCooldown() && unit.lastAttackFrameMoreThanAgo(60)) return true;
+//        if (A.fr <= 2 && unit.isStopped()) return true;
 
 //        return false;
 
@@ -36,7 +42,7 @@ public class FixIdleUnits extends Manager {
 //            && unit.noCooldown()
 //            && unit.lastStoppedRunningMoreThanAgo(12)
 //            unit.lastOrderWasFramesAgo() >= 30 * 4
-            unit.lastActionMoreThanAgo(30 * 4)
+            unit.lastActionMoreThanAgo(60)
                 && A.fr % 19 == 0;
 //            && unit.isActiveManager(DoNothing.class)
 //            && unit.enemiesNear().ranged().countInRadius(6, unit) == 0
@@ -45,27 +51,37 @@ public class FixIdleUnits extends Manager {
 
     @Override
     public Manager handle() {
-        AUnit leader = unit.squadLeader();
-        if (leader == null) return null;
+//        if (!unit.isAttacking() && unit.woundPercent() <= 70 && unit.combatEvalRelative() >= 1.3) {
+//            if (attackEnemies()) return usedManager(this, "FixIdleByAttack");
+//        }
 
-        if ((new HandleFocusPointPositioning(unit)).invokeFrom(this) != null) return usedManager(this);
+//        if ((new HandleFocusPointPositioning(unit)).invokeFrom(this) != null) return usedManager(this);
 
-        if (unit.distTo(leader) >= 2.5) {
-            if (unit.move(leader, Actions.MOVE_UNFREEZE, "FixIdleUnits")) {
-//                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.targetPosition() +
-//                    " / " + unit.action());
-                return usedManager(this);
-            }
-        }
+        moveToLeader(); // Move, but don't return that we used this manager.
 
-//        if (attackEnemies()) return usedManager(this);
+//        if (moveToLeader()) return usedManager(this);
+//        if ((new HandleFocusPointPositioning(unit)).invokeFrom(this) != null) return usedManager(this);
 //        if (movedToFocusPoint()) return usedManager(this);
 
         return null;
     }
 
+    private boolean moveToLeader() {
+        AUnit leader = unit.squadLeader();
+        if (leader == null) return false;
+
+        if (unit.distTo(leader) >= 2.5) {
+            if (unit.move(leader, Actions.MOVE_UNFREEZE, "FixIdleByLeader")) {
+//                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.targetPosition() +
+//                    " / " + unit.action());
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean attackEnemies() {
-        if (unit.isDragoon() && unit.enemiesNear().notEmpty()) {
+        if (unit.enemiesNear().notEmpty()) {
             if ((new AttackNearbyEnemies(unit)).invokedFrom(this)) return true;
         }
 
@@ -79,7 +95,7 @@ public class FixIdleUnits extends Manager {
         if (
             !unit.isMoving()
                 && unit.distToFocusPoint() > 5
-                && unit.move(focusPoint, Actions.MOVE_UNFREEZE, "FixIdleUnits")
+                && unit.move(focusPoint, Actions.MOVE_UNFREEZE, "FixIdleByFocus")
         ) {
 //            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - FixIdleUnits");
             return true;

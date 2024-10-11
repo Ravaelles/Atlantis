@@ -9,7 +9,6 @@ import atlantis.units.AUnitType;
 import bwapi.Color;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
-
     public SafetyMarginAgainstRanged(AUnit defender) {
         super(defender);
     }
@@ -17,7 +16,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     public double marginAgainst(AUnit attacker) {
         double criticalDist;
 
-        if (A.hasMinerals(2000) && defender.isGroundUnit()) {
+        if (A.hasMinerals(1500) && defender.isGroundUnit()) {
             if (defender.hp() >= 20 && defender.maxHp() <= 60) return 0;
             if (defender.hp() >= 90 && defender.maxHp() > 60) return 0;
         }
@@ -81,7 +80,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             + ourMovementBonus(defender)
             + enemyMovementBonus(attacker)
             + scoutBonus(attacker)
-            + combatEvalBonus(attacker)
+//            + combatEvalBonus(attacker)
             + workerBonus(attacker);
     }
 
@@ -98,9 +97,9 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     // =========================================================
 
     protected double woundedBonus(AUnit attacker) {
-        if (defender.isDragoon() && defender.hpLessThan(25)) {
-            return 3.4;
-        }
+//        if (defender.isDragoon() && defender.hpLessThan(25)) {
+//            return 3.4;
+//        }
 
         // Don't apply wound bonus against units with bigger or equal range
         if (attacker.groundWeaponRange() >= defender.groundWeaponRange()) {
@@ -144,7 +143,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
     }
 
     private double scoutBonus(AUnit attacker) {
-        return defender.isScout() ? (5 + defender.woundPercent() / 33) : 0;
+        return defender.isScout() ? (5 + defender.woundPercent() / 31.0) : 0;
     }
 
     private double combatEvalBonus(AUnit attacker) {

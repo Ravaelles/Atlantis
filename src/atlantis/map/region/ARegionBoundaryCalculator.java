@@ -41,14 +41,14 @@ public class ARegionBoundaryCalculator {
         APosition lastBuildable = null;
 
         do {
-            position = center.translateByVector(vector).makeValidFarFromBounds();
+            position = center.translateByVector(vector).makeBuildableGroundPositionFarFromBounds();
 
-            if (position.isBuildable()) {
+            if (position != null && position.isBuildable()) {
                 lastBuildable = position;
             }
 
             vector = vector.addLength(48);
-        } while (position.isWalkable() && vector.length() <= 30 * 32);
+        } while (position != null && position.isWalkable() && vector.length() <= 30 * 32);
 
         if (lastBuildable != null) {
             if (lastAdded == null || lastAdded.distToMoreThan(lastBuildable, MIN_DIST_BETWEEN_POINTS)) {

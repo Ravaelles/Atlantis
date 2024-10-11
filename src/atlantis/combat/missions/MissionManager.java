@@ -24,16 +24,16 @@ public class MissionManager extends Manager {
             if (focus != null) return focus;
         }
 
-        if (unit.isAlphaSquad()) {
-            AChoke focusChoke = CurrentFocusChoke.get();
-            if (focusChoke != null) {
-                return new AFocusPoint(
-                    focusChoke,
-                    Select.mainOrAnyBuilding(),
-                    "CurrentFocusChoke"
-                );
-            }
-        }
+//        if (unit.isAlphaSquad()) {
+//            AChoke focusChoke = CurrentFocusChoke.get();
+//            if (focusChoke != null) {
+//                return new AFocusPoint(
+//                    focusChoke,
+//                    Select.mainOrAnyBuilding(),
+//                    "CurrentFocusChoke"
+//                );
+//            }
+//        }
 
         return mission != null ? mission.focusPoint() : null;
     }

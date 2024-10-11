@@ -1,0 +1,35 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=11
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=24
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=55
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+8 - Pylon - @NATURAL_CHOKE
+11 - Forge - @NATURAL_CHOKE
+12 - Cannon - @NATURAL_CHOKE
+14 - Cannon - @NATURAL_CHOKE
+15 - Nexus
+15 - Gateway - @NATURAL_CHOKE
+16 - Pylon - @MAIN
+//17 - Cybernetics Core
+//18 - Assimilator
+//20 - Zealot
+//22 - Zealot
+22 - Pylon
+//55 - Robotics Facility
+//62 - Robotics Support Bay
+//68 - Reaver
+//74 - Shuttle

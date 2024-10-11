@@ -2,8 +2,10 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.game.CameraCommander;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.base.define.EnemyMainBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
@@ -15,55 +17,60 @@ import atlantis.units.select.Select;
 import bwapi.Color;
 
 public class RoamAroundEnemyBase extends Manager {
+
+    private HasPosition enemyMain;
+    private APosition position = null;
+
     public RoamAroundEnemyBase(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        return ScoutState.scoutsKilledCount == 0;
+        if (ScoutState.scoutsKilledCount > 0) return false;
+
+        if (A.s >= 320) return false;
+
+        enemyMain = EnemyMainBase.get();
+        if (enemyMain != null) {
+            position = enemyMain.position();
+        }
+
+        // === Remain at the position base if it's known ==============
+
+//        if (position == null) {
+//            AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+//            if (enemyBuilding != null) {
+//                position = enemyBuilding.position();
+//            }
+//        }
+
+        return position != null;
     }
+
 
     @Override
     public Manager handle() {
         ScoutState.scoutingAroundBaseWasInterrupted = false;
-
-        // === Remain at the enemy base if it's known ==============
-
-        AUnit enemyBase = EnemyUnits.enemyBase();
-        APosition enemy = null;
-
-        if (enemyBase != null) {
-            enemy = enemyBase.position();
-        }
-
-        if (enemy == null) {
-            AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
-            if (enemyBuilding != null) {
-                enemy = enemyBuilding.position();
-            }
-        }
 //        APosition enemyBase = Select.main().position();
 
-        if (enemy != null) {
-            if (enemy.position().x >= 3200) return null;
+        if (position.position().x >= 3200) return null;
 
-            ScoutState.enemyBaseRegion = enemy.region();
+        ScoutState.enemyBaseRegion = position.region();
 
-            if (ScoutState.scoutingAroundBasePoints.isEmpty()) {
-                initializeEnemyRegionPolygonPoints();
-            }
+        if (ScoutState.scoutingAroundBasePoints.empty()) {
+            initializeEnemyRegionPolygonPoints();
+        }
 
-            defineNextPolygonPointForEnemyBaseRoamingUnit();
-            if (
-                ScoutState.unitingAroundBaseLastPolygonPoint != null
-                    && unit.move(ScoutState.unitingAroundBaseLastPolygonPoint, Actions.MOVE_EXPLORE, "RoamAround", true)
-            ) {
-                return usedManager(this);
-            }
-            else {
-                unit.setTooltipTactical("Can't find polygon point");
-            }
+        defineNextPolygonPointForEnemyBaseRoamingUnit();
+        if (
+            ScoutState.unitingAroundBaseLastPolygonPoint != null
+                && unit.move(ScoutState.unitingAroundBaseLastPolygonPoint, Actions.MOVE_EXPLORE, "RoamAround", true)
+        ) {
+            return usedManager(this);
+        }
+        else {
+            unit.setTooltipTactical("Can't find polygon point");
         }
 
         return null;

@@ -10,8 +10,12 @@ public class ProtossShouldStopRetreat extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isRetreating()
-            && (unit.lastStartedRunningMoreThanAgo(30 * 4) || unit.combatEvalRelative() >= 1.7);
+        if (!unit.isRetreating()) return false;
+        if (unit.lastStartedRunningLessThanAgo(20)) return false;
+
+        return unit.lastStartedRunningMoreThanAgo(30 * 4)
+            || unit.combatEvalRelative() >= 1.4
+            || (unit.cooldown() <= 7 && (unit.distToCannon() <= 1.8 || unit.distToBase() <= 5));
     }
 
     @Override

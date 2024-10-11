@@ -56,7 +56,7 @@ public class ChangeLocationIfRanTooLong extends Manager {
         int delta = 12 + unit.id() % 7;
         int dx = -delta + A.rand(0, 2 * delta);
         int dy = -delta + A.rand(0, 2 * delta);
-        APosition goTo = unit.position().translateByTiles(dx, dy).makeValid();
+        APosition goTo = unit.position().translateByTiles(dx, dy).makeValidGroundPosition();
 
         AAdvancedPainter.paintCircleFilled(unit, 6, Color.Orange);
 

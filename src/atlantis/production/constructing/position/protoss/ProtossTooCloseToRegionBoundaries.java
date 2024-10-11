@@ -12,6 +12,7 @@ public class ProtossTooCloseToRegionBoundaries {
 //        if (true) return false;
 
         if (!building.isPylon()) return false;
+        if (!building.isCannon()) return false;
         if (A.supplyTotal() <= 12) return false;
 
         ARegion region = position.region();

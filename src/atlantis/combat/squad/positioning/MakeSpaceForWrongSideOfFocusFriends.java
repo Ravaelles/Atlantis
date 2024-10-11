@@ -39,7 +39,7 @@ public class MakeSpaceForWrongSideOfFocusFriends extends Manager {
         if (
             friendToLetGo != null &&
 //                unit.moveAwayFrom(friendToLetGo, 3, Actions.MOVE_SPACE, "Space4Friend")
-                unit.moveToMain(Actions.MOVE_SPACE, "Space4Friend")
+                unit.moveToSafety(Actions.MOVE_SPACE, "Space4Friend")
         ) {
             System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - helping...");
             return usedManager(this);

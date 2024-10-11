@@ -24,3 +24,6 @@
 14 - Zealot
 15 - Pylon
 18 - Gateway
+21 - Pylon
+34 - Cybernetics Core
+37 - Assimilator

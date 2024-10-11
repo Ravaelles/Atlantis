@@ -2,10 +2,9 @@ package atlantis.combat.advance.focus.old;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.advance.focus.DistFromFocus;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
 import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -19,7 +18,7 @@ public class Old_____TooFarFromFocusPoint extends MoveToFocusPoint {
     @Override
     public boolean applies() {
         if (unit.lastActionLessThanAgo(40, Actions.LOAD)) return false;
-        if (EnemyWhoBreachedBase.get() != null) return false;
+        if (EnemyUnitBreachedBase.get() != null) return false;
 //        if (unit.isMissionAttackOrGlobalAttack()) return false;
 
 //        if (evaluateDistFromFocusPoint() == DistFromFocus.TOO_FAR) {

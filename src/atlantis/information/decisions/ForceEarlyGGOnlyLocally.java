@@ -17,9 +17,9 @@ public class ForceEarlyGGOnlyLocally extends Commander {
         return A.s >= 8 * 60
 //            && (OurArmy.strength() <= 15 || A.resourcesBalance() <= -1100)
             && !A.isUms()
-            && OurArmy.strength() <= 15
-            && Count.ourCombatUnits() <= 2
-            && Count.workers() <= 30;
+            && OurArmy.strength() <= 10
+            && Count.ourCombatUnits() <= 1
+            && Count.workers() <= 25;
     }
 
     @Override

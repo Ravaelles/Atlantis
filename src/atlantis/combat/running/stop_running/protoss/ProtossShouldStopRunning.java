@@ -22,6 +22,7 @@ public class ProtossShouldStopRunning extends Manager {
             ProtossShouldStopRetreat.class,
             ProtossShouldStopRunningMelee.class,
             ShouldStopRunningDragoon.class,
+            ShouldStopRunningZealot.class,
             ShouldStopRunningProtossAir.class,
             ShouldStopRunningProbe.class,
         };

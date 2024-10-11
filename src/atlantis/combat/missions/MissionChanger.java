@@ -9,6 +9,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
@@ -19,11 +20,11 @@ import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public abstract class MissionChanger {
-    public static final int MISSIONS_ENFORCED_FOR_SECONDS = 20;
+    public static final int MISSIONS_ENFORCED_FOR_SECONDS = 12;
 
     public static final boolean DEBUG = true;
     //    public static final boolean DEBUG = false;
-    public static String reason = "";
+    public static String reason = "---";
 
     // =========================================================
 
@@ -56,7 +57,7 @@ public abstract class MissionChanger {
     }
 
     private static boolean lastMissionChangedJustSomeTimeAgo() {
-        return Missions.lastMissionEnforcedAgo() <= MISSIONS_ENFORCED_FOR_SECONDS * 30;
+        return Missions.lastMissionEnforcedSecondsAgo() <= MISSIONS_ENFORCED_FOR_SECONDS;
     }
 
     public static void forceEvaluateGlobalMission() {
@@ -128,24 +129,23 @@ public abstract class MissionChanger {
 //        A.printStackTrace("Change to " + newMission);
     }
 
-    public static void forceMissionAttack(String reason) {
-        Missions.forceGlobalMissionAttack(reason);
-
-//        if (ArmyStrength.ourArmyRelativeStrength() >= 80 || Count.ourCombatUnits() <= 5) {
-//        }
+    public static boolean forceMissionAttack(String reason) {
+        return Missions.forceGlobalMissionAttack(reason);
     }
 
     public static void forceMissionContain(String reason) {
         Missions.forceGlobalMissionContain(reason);
     }
 
-    public static void forceMissionSpartaOrDefend(String reason) {
+    public static boolean forceMissionSpartaOrDefend(String reason) {
         if (Sparta.canUseSpartaMission()) {
             Missions.forceGlobalMissionSparta(reason);
         }
         else {
             Missions.forceGlobalMissionDefend(reason);
         }
+
+        return true;
     }
 
     protected static boolean defendAgainstMassZerglings() {
@@ -154,6 +154,7 @@ public abstract class MissionChanger {
         if (
             Count.ourCombatUnits() <= 6
                 && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(7)
+                && OurArmy.strength() <= 125
         ) {
             if (DEBUG) reason = "Mass zerglings A";
             return true;
@@ -169,7 +170,7 @@ public abstract class MissionChanger {
         }
 
         if (
-            Count.dragoons() <= 3
+            Count.dragoons() <= 3 && Count.zealots() <= 5
                 && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(11)
         ) {
             if (DEBUG) reason = "Mass zerglings C";

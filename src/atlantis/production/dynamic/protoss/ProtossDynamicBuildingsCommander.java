@@ -10,6 +10,7 @@ import atlantis.production.dynamic.protoss.buildings.*;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
@@ -17,30 +18,44 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     public boolean applies() {
         return We.protoss()
             && AGame.everyNthGameFrame(17)
-            && (A.supplyUsed() <= 30 || A.hasMinerals(410) || A.canAffordWithReserved(100, 0));
+            && (
+//            A.supplyUsed() <= 30
+//                || A.supplyUsed(31)
+//                || A.hasMinerals(410)
+//                || A.canAffordWithReserved(100, 0)
+            A.canAffordWithReserved(92, 0)
+        );
     }
 
     @Override
     protected void handle() {
+        if (A.hasMinerals(600)) ProduceGateway.produce();
+
         if (ProduceCyberneticsCore.produce()) return;
+
+        boolean gatewaysEarly = A.supplyUsed() <= 30 || Count.gatewaysWithUnfinished() <= 1;
+//        if (gatewaysEarly) {
+//            ProduceGateway.produce();
+//        }
 
         if (
             ProduceFirstAssimilator.produce()
 //                || ProduceCannon.produce()
+                || ProduceCannonAtNatural.produce()
                 || ProduceForge.produce()
+                || (gatewaysEarly && ProduceGateway.produce())
+                || ProducePylonNearEveryBase.produce()
+                || ProduceTemplarArchives.produce()
+                || ProduceCitadelOfAdun.produce()
         ) return;
-
-        if (A.supplyUsed() <= 30 || A.hasMinerals(600)) {
-            ProduceGateway.produce();
-        }
 
         if (A.minerals() <= 500 && Queue.get().readyToProduceOrders().size() <= 1) return;
 
         if (isItSafeToAddTechBuildings()) {
             if (
-                ProduceCitadelOfAdun.produce()
-                    || ProduceObservatory.produce()
-                    || ProduceTemplarArchives.produce()
+//                ProduceCitadelOfAdun.produce()
+                ProduceObservatory.produce()
+//                    || ProduceTemplarArchives.produce()
                     || ProduceRoboticsFacility.produce()
                     || ProduceStargate.produce()
                     || ProduceRoboticsSupportBay.produce()

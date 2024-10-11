@@ -27,13 +27,17 @@ public class ContinueVeryRecentAttack extends Manager {
         return target != null
             && target.hasPosition()
             && target.isAlive()
-            && unit.lastActionLessThanAgo(5)
-            && unit.lastActionLessThanAgo(unit.attackWaitFrames(), Actions.ATTACK_UNIT)
-            && unit.canAttackTargetWithBonus(target, 1);
+            &&
+            (
+                unit.lastActionLessThanAgo(8)
+                    || unit.lastActionLessThanAgo(unit.attackWaitFrames(), Actions.ATTACK_UNIT)
+            )
+            && unit.canAttackTargetWithBonus(target, 0.2);
 //            && ContinueShootingAsDragoon.asDragoon(unit).notForbidden();
     }
 
     public Manager handle() {
+//        System.out.println("ContinueVeryRecentAttack");
         return usedManager(this);
     }
 }

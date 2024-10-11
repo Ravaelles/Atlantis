@@ -27,7 +27,7 @@ public class TerranDontEngageWhenCombatBuildings extends Manager {
 
         double dist = unit.distTo(enemyCB);
         if (dist <= 9) {
-            if (unit.moveToMain(Actions.MOVE_AVOID) && unit.addLog("CarefulCB")) return usedManager(this);
+            if (unit.moveToSafety(Actions.MOVE_AVOID) && unit.addLog("CarefulCB")) return usedManager(this);
         }
         else if (dist <= 11 && !unit.isAttacking()) {
             if (unit.holdPosition("HoldCB") && unit.addLog("HoldCB")) return usedManager(this);

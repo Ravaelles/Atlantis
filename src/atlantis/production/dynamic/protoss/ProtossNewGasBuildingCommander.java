@@ -8,20 +8,25 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+
+import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 
 public class ProtossNewGasBuildingCommander extends Commander {
 
     @Override
     public boolean applies() {
         return We.protoss()
+            && Count.bases() >= 2
+            && A.supplyUsed() >= 55
             && A.everyNthGameFrame(85)
             && (A.gas() < A.minerals() && A.minerals() >= 105)
             && (A.gas() <= 150 || Count.ourCombatUnits() >= 12)
-            && Count.bases() >= 2
             && Count.bases() > Count.gasBuildingsWithUnfinished()
-            && (CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals() || A.minerals() >= 300);
+            && (CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals() || A.minerals() >= 300)
+            && Have.existingOrUnfinished(Protoss_Cybernetics_Core);
 //            && !tooEarlyForAnotherGasBuilding()
     }
 

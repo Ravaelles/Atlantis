@@ -51,6 +51,10 @@ public class ScoutFreeBases extends Manager {
             if (nextPositionToScout == null) {
                 nextPositionToScout = BaseLocations.randomInvisibleStartingLocation();
             }
+
+            if (nextPositionToScout == null) {
+                nextPositionToScout = BaseLocations.randomFree();
+            }
         }
 
         return isNextPositionTooClose() ? null : nextPositionToScout;

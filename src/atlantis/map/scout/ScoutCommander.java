@@ -28,11 +28,7 @@ public class ScoutCommander extends Commander {
     public void handle() {
         // CodeProfiler.startMeasuring(this);
 
-        // === Handle UMS ==========================================
-
-        if (AGame.isUms()) {
-            return;
-        }
+        if (AGame.isUms() && Count.bases() == 0) return;
 
         // === Act with every scout ================================
 
@@ -96,23 +92,29 @@ public class ScoutCommander extends Commander {
 //                    return;
 //                }
 
-                for (AUnit scout : candidates()) {
-                    if (
-                        scout.isBuilder()
-                            || scout.isRepairerOfAnyKind()
-                            || scout.isBuilder()
-                            || scout.lastActionLessThanAgo(50, Actions.SPECIAL)
-                    ) {
-                        ErrorLog.printMaxOncePerMinute("Scout got mission: " + scout.manager());
-                        continue;
-                    }
-
-                    if (ScoutState.scouts.isEmpty()) {
-                        addScout(scout);
-                        return;
-                    }
-                }
+                assignScout();
             }
+    }
+
+    private static boolean assignScout() {
+        for (AUnit scout : candidates()) {
+            if (
+                scout.isBuilder()
+                    || scout.isRepairerOfAnyKind()
+                    || scout.isBuilder()
+                    || scout.lastActionLessThanAgo(90, Actions.SPECIAL)
+            ) {
+                ErrorLog.printMaxOncePerMinute("Scout got mission: " + scout.manager());
+                continue;
+            }
+
+            if (ScoutState.scouts.isEmpty()) {
+                addScout(scout);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static void addScout(AUnit newScout) {
@@ -125,7 +127,7 @@ public class ScoutCommander extends Commander {
     }
 
     private void removeExcessiveScouts() {
-        if (ScoutState.scouts.size() > 1) {
+        if (ScoutState.scouts.size() >= 2) {
             AUnit leaveThisScout = ScoutState.scouts.get(ScoutState.scouts.size() - 1);
             removeAllScouts();
 

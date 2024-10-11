@@ -3,14 +3,10 @@ package atlantis.units.workers.defence.fight;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
-import atlantis.util.We;
-
-import java.util.List;
 
 public class WorkerDefenceFightCombatUnits extends Manager {
     public WorkerDefenceFightCombatUnits(AUnit unit) {
@@ -23,16 +19,13 @@ public class WorkerDefenceFightCombatUnits extends Manager {
     }
 
     private boolean shouldNotFight() {
-//        if (A.supplyUsed() >= 40) return true;
-//        if (unit.enemiesNear().empty() || unit.enemiesNear().inRadius(4, unit).empty()) return true;
-        if (unit.enemiesNear().empty()) return true;
+        if (WorkerDoNotFight.doNotFight(unit)) return true;
 
-        if (Enemy.zerg()) return unit.hp() <= 20;
-        else if (Enemy.protoss() && unit.hp() <= 33) return true;
-        else if (unit.hp() <= 19) return true;
+        if (Count.ourCombatUnits() >= 2) {
+            if (unit.hp() <= 29 || unit.friendsNear().combatUnits().inRadius(4.5, unit).empty()) return true;
+        }
 
         if (unit.isBuilder() || unit.isConstructing()) return true;
-        if (unit.distToBase() >= 12) return true;
 
         Selection enemiesNear = unit.enemiesNear().groundUnits().inRadius(15, unit);
         if (!Enemy.protoss()) {
@@ -87,14 +80,13 @@ public class WorkerDefenceFightCombatUnits extends Manager {
             AUnitType.Protoss_Archon,
             AUnitType.Protoss_Dark_Templar,
             AUnitType.Protoss_Reaver
-//                AUnitType.Protoss_Zealot
         ).inRadius(8, worker).count() >= 1) {
             return false;
         }
 
         // FIGHT against COMBAT UNITS
         AUnit enemy = worker.enemiesNear()
-            .canBeAttackedBy(worker, 2)
+            .canBeAttackedBy(worker, 5)
             .nearestTo(unit);
 
         if (enemy != null) {
@@ -119,15 +111,15 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 //        return false;
 //    }
 
-    private static boolean runIfTheresBunkerNearby(AUnit worker) {
-        return We.terran()
-            && worker.isScv()
-            && worker.hp() <= 48
-            && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty();
-    }
+//    private static boolean runIfTheresBunkerNearby(AUnit worker) {
+//        return We.terran()
+//            && worker.isScv()
+//            && worker.hp() <= 48
+//            && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty();
+//    }
 
     private static boolean attackNearestEnemy(AUnit worker) {
-        AUnit enemy = worker.enemiesNear().canBeAttackedBy(worker, 2).nearestTo(worker);
+        AUnit enemy = worker.enemiesNear().canBeAttackedBy(worker, 5).nearestTo(worker);
         if (enemy == null) return false;
 
         worker.setTooltip("WDM:Attack", true);

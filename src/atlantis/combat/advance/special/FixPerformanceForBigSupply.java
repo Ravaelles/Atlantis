@@ -17,14 +17,15 @@ public class FixPerformanceForBigSupply extends MissionManager {
     public boolean applies() {
         return Missions.isGlobalMissionAttack()
             && (
-            A.supplyUsed(110)
-                || (A.supplyUsed(80) && EnemyUnits.combatUnits() <= 0)
-                || LongFrames.framesOver85() >= 30
+            A.supplyUsed(150)
+//                || (A.supplyUsed(80) && EnemyUnits.combatUnits() <= 0)
+//                || LongFrames.framesOver85() >= 30
         )
             && unit.isMoving()
-            && !unit.isRunning()
-            && unit.lastActionLessThanAgo(20)
-            && unit.enemiesNear().empty();
+//            && !unit.isRunning()
+//            && unit.lastActionLessThanAgo(20)
+            && unit.enemiesNear().empty()
+            && A.everyFrameExceptNthFrame(17);
     }
 
     protected Manager handle(AUnit unit) {

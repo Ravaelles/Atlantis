@@ -2,8 +2,8 @@ package atlantis.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.generic.MobileDetector;
-import atlantis.combat.squad.positioning.protoss.ProtossDragoonSeparateFromMeleeEnemies;
-import atlantis.combat.squad.positioning.protoss.ProtossDragoonSeparateFromRangedEnemies;
+import atlantis.combat.squad.positioning.protoss.dragoon.ProtossDragoonSeparateFromMeleeEnemies;
+import atlantis.combat.squad.positioning.protoss.dragoon.ProtossDragoonSeparateFromRangedEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -14,9 +14,10 @@ public class ProtossDragoonCombatManager extends MobileDetector {
 
     @Override
     public boolean applies() {
-        return unit.isDragoon()
-            && unit.hasCooldown()
-            && unit.lastAttackFrameLessThanAgo(30);
+        return unit.isDragoon();
+//            && unit.hasCooldown()
+//            && unit.lastAttackFrameLessThanAgo(30)
+//            && unit.meleeEnemiesNearCount(1.8) == 0;
     }
 
     @Override

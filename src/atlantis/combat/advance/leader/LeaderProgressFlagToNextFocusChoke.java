@@ -21,6 +21,7 @@ public class LeaderProgressFlagToNextFocusChoke extends MissionManager {
 //        System.err.println("A focusChoke = " + focusChoke + " / squadIsHere()=" + squadIsHere());
         if (focusChoke == null) return false;
         if (focusChoke.distTo(unit) >= 8) return false;
+        if (unit.squad() != null && unit.squad().cohesionPercent() <= 65) return false;
 
 //        System.err.println("unit.combatEvalRelative() = " + unit.combatEvalRelative());
 

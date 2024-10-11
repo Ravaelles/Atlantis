@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import bwapi.TechType;
 
@@ -32,7 +33,16 @@ public class ResearchPsionicStorm extends Commander {
             return false;
         }
 
-        return Count.ht() >= 1 && A.canAfford(what());
+        int ht = Count.ht();
+
+        if (ht >= 1 && A.canAfford(what())) {
+            return true;
+        }
+        if (ht >= 2) {
+            return AddToQueue.tech(what());
+        }
+
+        return false;
     }
 
     @Override

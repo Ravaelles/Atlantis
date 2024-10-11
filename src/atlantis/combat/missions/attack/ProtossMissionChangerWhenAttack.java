@@ -4,9 +4,12 @@ import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.GamePhase;
+import atlantis.information.strategy.OurStrategy;
+import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
@@ -15,24 +18,34 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     // === DEFEND ==============================================
     public boolean shouldChangeMissionToDefend() {
-        if (Missions.lastMissionChangedSecondsAgo() <= 8) return false;
+        if (Missions.lastMissionChangedSecondsAgo() <= 2) return false;
 
-        if (Enemy.protoss()) {
-            if (defendVsProtoss()) return true;
-            if (dontDefendVsProtoss()) return false;
+        if (ourBuildingUnderAttack()) {
+            if (DEBUG) reason = "Enemy is near our building";
+            return forceMissionSpartaOrDefend(reason);
+        }
+
+        if (A.s >= 60 * 10) {
+            if (DEBUG) reason = "LateGame-attack";
+            return false;
+        }
+
+        if (A.minerals() >= 2000) {
+            if (DEBUG) reason = "2K_minerals";
+            return false;
         }
 
         if (Enemy.zerg()) {
             if (defendVsZerg()) return true;
         }
 
-        if (EnemyInfo.isEnemyNearAnyOurBase() && A.supplyUsed() <= 70) {
-            if (DEBUG) reason = "Enemy is near our building";
-            return true;
+        if (Enemy.protoss()) {
+            if (defendVsProtoss()) return true;
+            if (dontDefendVsProtoss()) return false;
         }
 
-        if (ArmyStrength.ourArmyRelativeStrength() <= 120) {
-            if (DEBUG) reason = "Hmm, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
+        if (ArmyStrength.ourArmyRelativeStrength() <= 120 && EnemyUnits.combatUnits() >= 2) {
+            if (DEBUG) reason = "Hm, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
 
@@ -44,15 +57,39 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
         return false;
     }
 
+    private static boolean ourBuildingUnderAttack() {
+        return OurBuildingUnderAttack.notNull()
+            && (A.supplyUsed() <= 140 || OurArmy.strength() <= 160)
+            && A.minerals() <= 800
+            && A.s <= 60 * 12;
+    }
+
     private boolean defendVsZerg() {
         int combatUnits = Count.ourCombatUnits();
-        if (combatUnits <= 3 || (combatUnits <= 4 && EnemyUnits.discovered().combatUnits().atLeast(8))) {
+
+        if (OurStrategy.get().isRushOrCheese() && OurArmy.strength() >= 95) {
+            if (DEBUG) reason = "Rush-or-cheese attack";
+            return false;
+        }
+
+        if (!OurStrategy.get().isRushOrCheese() && Count.dragoons() <= 3 && OurArmy.strength() <= 120 && (
+            combatUnits <= 7 || (combatUnits <= 8 && EnemyUnits.discovered().combatUnits().atLeast(11))
+        )) {
             if (DEBUG) reason = "Wait for more army";
             return true;
         }
 
-        if (defendAgainstMassZerglings()) {
-            if (DEBUG) reason = "Mass zerglings";
+//        if (OurArmy.strength() <= 170 && !ResearchSingularityCharge.isResearched()) {
+//            if (DEBUG) reason = "Wait for goon range(" + OurArmy.strength() + "%)";
+//            return true;
+//        }
+
+        if (Count.dragoons() <= 1 && defendAgainstMassZerglings()) {
+            return forceMissionSpartaOrDefend(reason = "Mass zerglings E");
+        }
+
+        if (EnemyUnits.hydras() >= 4 && OurArmy.strength() <= 136 && !ResearchSingularityCharge.isResearched()) {
+            if (DEBUG) reason = "Hydras and no goon range(" + OurArmy.strength() + "%)";
             return true;
         }
 

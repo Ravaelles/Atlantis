@@ -58,16 +58,28 @@ public class Positions<T extends HasPosition> {
         return positions.size();
     }
 
-    public boolean isEmpty() {
+    public boolean empty() {
         return positions.isEmpty();
     }
 
+    public boolean notEmpty() {
+        return !positions.isEmpty();
+    }
+
     public T first() {
-        return isEmpty() ? null : positions.get(0);
+        return empty() ? null : positions.get(0);
     }
 
     public T get(int index) {
         return positions.get(index);
+    }
+
+    public Positions<T> limit(int n) {
+        if (positions.size() > n) {
+            return new Positions<>(positions.subList(n, positions.size()));
+        }
+
+        return this;
     }
 
     // =========================================================
@@ -245,6 +257,18 @@ public class Positions<T extends HasPosition> {
         return this;
     }
 
+    public Positions<T> inRadius(double maxDist, T position) {
+        positions.removeIf(p -> p.distTo(position) > maxDist);
+
+        return this;
+    }
+
+    public Positions<T> inGroundRadius(double maxDist, T position) {
+        positions.removeIf(p -> p.groundDist(position) > maxDist);
+
+        return this;
+    }
+
     public T nearestTo(HasPosition position) {
         double closestDist = 9999999;
         T closest = null;
@@ -291,4 +315,5 @@ public class Positions<T extends HasPosition> {
     public APosition center() {
         return average();
     }
+
 }

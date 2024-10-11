@@ -7,7 +7,7 @@ import atlantis.combat.advance.focus.MoveToFocusPoint;
 import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -27,7 +27,7 @@ public class Old_____TooCloseToFocusPoint extends MoveToFocusPoint {
 //        if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.isSpecialMission() && unit.isMelee()) return false;
         if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
-        if (EnemyWhoBreachedBase.notNull()) return false;
+        if (EnemyUnitBreachedBase.notNull()) return false;
 
 //        System.err.println("           " + evaluateDistFromFocusPoint() + " / " + unit);
 

@@ -12,6 +12,7 @@ import atlantis.units.AliveEnemies;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 
 public class ATargeting extends HasUnit {
     //    protected static final boolean DEBUG = true;
@@ -40,21 +41,31 @@ public class ATargeting extends HasUnit {
      */
     protected AUnit defineBestEnemyToAttack(double maxDistFromEnemy) {
 //        if (true) return null;
-//        if (unit.hp() <= 18) return FallbackTargeting.closestUnitFallback(unit, maxDistFromEnemy);
+//        if (unit.hp() <= 18) return ClosestEnemyTargeting.closestUnitFallback(unit, maxDistFromEnemy);
+//        if (true) return ClosestEnemyTargeting.fallbackTarget(unit, maxDistFromEnemy);
 
         AUnit enemy;
 
         // === Last squad target ===================================
 
         enemy = ASquadTargeting.useSquadTargetIfPossible(unit);
-        if (enemy != null && enemy.effVisible() && enemy.isTargetInWeaponRangeAccordingToGame()) return enemy;
+//        if (enemy != null && enemy.effVisible()) return enemy;
+        if (
+            enemy != null
+                && enemy.effVisible()
+                && enemy.isTargetInWeaponRangeAccordingToGame()
+                && !enemy.isDeadMan()
+        ) return enemy;
 
 //        System.err.println("Last=" + enemy + " / Can=" + (enemy != null ? unit.hasWeaponRangeToAttack(enemy, 4) : '-'));
 
         // =========================================================
 
-        if (unit.isMissionDefendOrSparta() || unit.lastAttackFrameMoreThanAgo(100)) {
-            return FallbackTargeting.fallbackTarget(unit, maxDistFromEnemy);
+//        if (true) return ClosestEnemyTargeting.nearestTarget(unit, maxDistFromEnemy);
+
+        if (unit.isMissionDefendOrSparta() || unit.lastAttackFrameMoreThanAgo(30 * 3)) {
+//        if (true) {
+            return ClosestEnemyTargeting.nearestTarget(unit, maxDistFromEnemy);
         }
 
         enemy = defineTarget(unit, maxDistFromEnemy);
@@ -81,12 +92,11 @@ public class ATargeting extends HasUnit {
 
         // Used when something went wrong there ^
         AttackNearbyEnemies.reasonNotToAttack = null;
-//        AUnit fallback = FallbackTargeting.fallbackTarget(unit, maxDistFromEnemy);
+//        AUnit fallback = ClosestEnemyTargeting.fallbackTarget(unit, maxDistFromEnemy);
         AUnit fallback = null;
         if (DEBUG) A.println("C fallback = " + fallback);
         return fallback;
     }
-
 
     // =========================================================
 
@@ -247,14 +257,19 @@ public class ATargeting extends HasUnit {
     }
 
     public static Selection possibleEnemyUnitsToAttack(AUnit unit, double maxDistFromEnemy) {
-//        return Select.enemyRealUnitsWithBuildings()
-        return AliveEnemies.get()
+        Selection enemies = AliveEnemies.get()
             .realUnitsAndBuildings()
             .nonBuildingsButAllowCombatBuildings()
             .inRadius(maxDistFromEnemy, unit)
             .maxGroundDist(maxDistFromEnemy, unit)
             .effVisibleOrFoggedWithKnownPosition()
             .canBeAttackedBy(unit, maxDistFromEnemy);
+
+        if (We.zerg() && unit.enemiesNear().combatUnits().notEmpty() && unit.shotSecondsAgo() <= 6) {
+            enemies = enemies.excludeOverlords();
+        }
+
+        return enemies;
     }
 
     private static boolean shouldOnlyAttackBases(AUnit unit) {

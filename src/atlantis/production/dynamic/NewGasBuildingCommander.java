@@ -22,10 +22,10 @@ public class NewGasBuildingCommander extends Commander {
     public boolean applies() {
         return !We.protoss()
             && A.everyNthGameFrame(23)
+            && !tooEarlyForAnotherGasBuilding()
             && (A.gas() <= 600 || A.minerals() >= 500)
-            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10)
-            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals()
-            && !tooEarlyForAnotherGasBuilding();
+            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10);
+//            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals();
     }
 
     @Override
@@ -47,57 +47,65 @@ public class NewGasBuildingCommander extends Commander {
     }
 
     private static boolean tooEarlyForAnotherGasBuilding() {
-        if (Count.existingOrInProduction(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
-            if (!A.hasMinerals(160) || A.supplyTotal() <= 30) {
-                return true;
-            }
-        }
+        return A.supplyTotal() <= 30;
 
-        if (We.zerg()) {
-            if (!A.hasMinerals(300)) return false;
-            if (!Have.unfinishedOrPlanned(AUnitType.Zerg_Spawning_Pool)) return false;
-        }
-
-        return false;
+//        if (Count.existingOrInProduction(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
+//            if (!A.hasMinerals(160) || A.supplyTotal() <= 30) {
+//                return true;
+//            }
+//        }
+//
+//        if (We.zerg()) {
+//            if (!A.hasMinerals(300)) return false;
+//            if (!Have.unfinishedOrPlanned(AUnitType.Zerg_Spawning_Pool)) return false;
+//        }
+//
+//        return false;
     }
 
     /**
      * Build Refineries/Assimilators/Extractors when it makes sense.
      */
     private static void requestAdditionalBuildingIfNeeded() {
-        if (AGame.supplyUsed() <= 18) {
-            return;
-        }
-
 //        if (AGame.everyNthGameFrame(37)) {
 //            return;
 //        }
 
         // =========================================================
 
-        int numberOfBases = Select.ourBases().count();
-//        int numberOfGasBuildings = Select.ourWithUnfinished().ofType(AtlantisRaceConfig.GAS_BUILDING).count();
-        numberOfGasBuildings = Count.withPlanned(AtlantisRaceConfig.GAS_BUILDING);
-        if (
-            numberOfBases >= 2
-                && numberOfBases > numberOfGasBuildings
-                && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.GAS_BUILDING) == 0
-                && hasABaseWithFreeGeyser()
-        ) {
-//            A.errPrintln("Request GAS BUILDING at supply: " + A.supplyUsed());
+        if (hasABaseWithFreeGeyser()) {
             AddToQueue.withTopPriority(AtlantisRaceConfig.GAS_BUILDING);
+            A.errPrintln("@@@@@@@@@@@@ DYNAMIC GAS BUILDING at supply: " + A.supplyUsed());
         }
+        else {
+            A.errPrintln(A.s + " NO FREE GEYSER");
+        }
+
+        // =========================================================
+
+//        int numberOfBases = Select.ourBases().count();
+////        int numberOfGasBuildings = Select.ourWithUnfinished().ofType(AtlantisRaceConfig.GAS_BUILDING).count();
+//        numberOfGasBuildings = Count.withPlanned(AtlantisRaceConfig.GAS_BUILDING);
+//        if (
+//            numberOfBases >= 2
+//                && numberOfBases > numberOfGasBuildings
+//                && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.GAS_BUILDING) == 0
+//                && hasABaseWithFreeGeyser()
+//        ) {
+////            A.errPrintln("Request GAS BUILDING at supply: " + A.supplyUsed());
+//            AddToQueue.withTopPriority(AtlantisRaceConfig.GAS_BUILDING);
+//        }
     }
 
     private static boolean hasABaseWithFreeGeyser() {
         for (AUnit base : Select.ourBases().list()) {
 //            for (AUnit geyser : Select.geysers().inRadius(10, base).list()) {
 //            }
-            if (Select.ourOfType(AtlantisRaceConfig.GAS_BUILDING).inRadius(10, base).isNotEmpty()) {
+            if (Select.ourOfType(AtlantisRaceConfig.GAS_BUILDING).inRadius(12, base).isNotEmpty()) {
                 return false;
             }
 
-            if (Select.geysers().inRadius(10, base).isNotEmpty()) {
+            if (Select.geysers().inRadius(12, base).isNotEmpty()) {
                 return true;
             }
         }

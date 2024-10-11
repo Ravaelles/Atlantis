@@ -12,7 +12,7 @@ import static atlantis.units.AUnitType.Protoss_Robotics_Facility;
 
 public class ProduceRoboticsFacility {
     public static boolean produce() {
-        if (true) return false;
+//        if (true) return false;
 
         if (!shouldBuild()) return false;
 

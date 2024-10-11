@@ -3,6 +3,7 @@ package atlantis.units.workers.defence;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.workers.defence.fight.WorkerDefenceFight;
+import atlantis.units.workers.defence.fight.WorkerDefenceStopFighting;
 import atlantis.units.workers.defence.run.WorkerDefenceRun;
 import atlantis.units.workers.defence.special.BuddyRepair;
 
@@ -14,7 +15,6 @@ public class WorkerDefenceManager extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isWorker()) return false;
-        if (unit.enemiesNear().isEmpty()) return false;
 
         return !unit.isRepairing()
             && !unit.isSpecialMission()
@@ -25,6 +25,7 @@ public class WorkerDefenceManager extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             WorkerDefenceRun.class,
+            WorkerDefenceStopFighting.class,
             BuddyRepair.class,
             WorkerDefenceFight.class,
         };

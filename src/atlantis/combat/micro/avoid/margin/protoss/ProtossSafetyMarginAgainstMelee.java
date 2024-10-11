@@ -11,13 +11,13 @@ public class ProtossSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     public double handle(AUnit attacker) {
 //        if (defender.isDragoon()) return forDragoon(attacker);
 
-        if (defender.isZealot()) return forZealot(attacker);
+        if (defender.isZealot()) return asZealot(attacker);
         if (defender.isDragoon()) return (new DragoonSafetyMarginAgainstMelee(defender)).marginAgainst(attacker);
 
         return -1;
     }
 
-    private double forZealot(AUnit attacker) {
+    private double asZealot(AUnit attacker) {
         if (defender.hp() <= 20 && defender.isMissionDefend() && attacker.isZealot()) return 3.5;
 
         return -1;

@@ -19,7 +19,7 @@ public class Main {
 //    public static String OUR_RACE = "Terran";
 //    public static String OUR_RACE = "Zerg";
 
-    //        public static String ENEMY_RACE = "Protoss";
+    //    public static String ENEMY_RACE = "Protoss";
 //    public static String ENEMY_RACE = "Terran";
     public static String ENEMY_RACE = "Zerg";
 
@@ -69,7 +69,7 @@ public class Main {
 
         // === Popular SSCAIT maps =================================
 
-//        if (true) return "sscai/(2)Heartbreak Ridge.scx";
+//        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
 //        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
@@ -93,6 +93,7 @@ public class Main {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
+//        if (true) return "ums/vsGosuRav.scx"; // v. AI Zerg Player - cheating as fuck - standard natural
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
@@ -103,9 +104,12 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Drag_v_Bunker.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
 //        if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
-//@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 
-        // vs Protoss
+//@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
+//@        if (true) return "ums/rav/protoss/DragoonsRange_v_Marines.scm";
+//@        if (true) return "ums/rav/protoss/Dragoons_v_Marines.scm";
+
+        // -------------------- vs Protoss --------------------
 //        if (true) return "ums/rav/protoss/BulletTest.scm";
 //        if (true) return "ums/rav/protoss/BulletTest2.scm";
 
@@ -120,6 +124,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_3Drag.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_4Drag.scm";
+//        if (true) return "ums/rav/protoss/8Drag_v_8Drag.scm";
 
 //        if (true) return "ums/rav/protoss/4Drag_v_Zeal.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Zealots.scm";
@@ -138,29 +143,34 @@ public class Main {
 
 //        if (true) return "ums/rav/protoss/DragZeal_v_Zeal.scm";
 
-//@        if (true) return "ums/rav/protoss/DragoonsRange_v_Marines.scm";
-//@        if (true) return "ums/rav/protoss/Dragoons_v_Marines.scm";
-
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/rav/P2_v_Buildings.scx";  // Dragoons vs Units+Buildings
 //@        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
 
-        // vs Zerg
-//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm"; // Dragoons v Zealots
-//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm"; // Dragoons v Zealots - more goons
+        // -------------------- vs Zerg --------------------
+//        if (true) return "ums/rav/protoss/P_v_Z.scx";
+//        if (true) return "ums/rav/protoss/P_v_Lurkers.scx";
+//        if (true) return "ums/rav/protoss/P_v_Z2.scm"; // D+Z v Lings+Hydra
+//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm";
+//        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm";
+
+//        if (true) return "ums/rav/protoss/Reav&Shut_v_Sunkens.scm"; // Reaver & Shuttle  vs  Zerg
+//        if (true) return "ums/rav/protoss/Reav&Shut_v_Sunkens2.scm"; // Reaver & Shuttle  vs  Sunkens
+//        if (true) return "ums/rav/protoss/Reav&Shut_v_Sunkens3.scx";
 
 //        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
-//        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
+        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
+//        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";
+//        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/5Drag_v_Lings.scm";
-//        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Lings.scm"; // Lots of space
 //        if (true) return "ums/rav/protoss/Drag_v_Lings2.scm"; // Much less space
 //        if (true) return "ums/rav/protoss/DragFew_v_Sunkens.scm"; // Few Dragoons attacking sunkens
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons attacking sunkens with lings
 //        if (true) return "ums/rav/protoss/HT_v_Sunkens.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Lings.scm"; // Many Zealots v Many lings
-        if (true) return "ums/rav/protoss/5Zeal_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/5Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/10Zeal_v_Lings.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
 
@@ -185,7 +195,7 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/minimaps/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/minimaps/M_v_Zealots.scx"; // Marines v Zealots

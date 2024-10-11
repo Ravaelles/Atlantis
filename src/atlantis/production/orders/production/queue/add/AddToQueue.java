@@ -79,9 +79,10 @@ public class AddToQueue {
             return false;
         }
 
-        ProductionOrder productionOrder = new ProductionOrder(tech, A.supplyUsed());
+        ProductionOrder productionOrder = new ProductionOrder(tech, A.supplyUsed() - 10);
 
         if (tech.equals(TechType.Tank_Siege_Mode)) productionOrder.setPriority(ProductionOrderPriority.TOP);
+        if (tech.equals(TechType.Psionic_Storm)) productionOrder.setPriority(ProductionOrderPriority.TOP);
 
         Queue.get().addNew(0, productionOrder);
         return true;
@@ -189,7 +190,7 @@ public class AddToQueue {
 //            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }
         else {
-//            ErrorLog.printMaxOncePerMinute("Could not add " + type + " to queue");
+            ErrorLog.printMaxOncePerMinute("Could not add " + type + " to queue");
         }
 
         return productionOrder;

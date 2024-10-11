@@ -17,7 +17,7 @@ public class ContinueLastAttack extends Manager {
 
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
 
-        if (!unit.isAttacking()) return false;
+        if (!unit.isAttackingRecently()) return false;
         if (unit.lastActionMoreThanAgo(5)) return false;
 
         if (unit.isDragoon()) return asDragoon();

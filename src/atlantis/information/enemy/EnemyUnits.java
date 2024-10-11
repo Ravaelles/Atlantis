@@ -1,5 +1,8 @@
 package atlantis.information.enemy;
 
+import atlantis.map.base.BaseLocations;
+import atlantis.map.base.define.EnemyMainBase;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.fogged.AbstractFoggedUnit;
@@ -82,6 +85,10 @@ public class EnemyUnits {
         );
     }
 
+    public static HasPosition enemyMainBase() {
+        return EnemyMainBase.get();
+    }
+
     public static AUnit nearestEnemyBuilding() {
         return (AUnit) cache.getIfValid(
             "nearestEnemyBuilding",
@@ -105,11 +112,23 @@ public class EnemyUnits {
     }
 
     public static AUnit enemyWhoBreachedBase() {
-        return EnemyWhoBreachedBase.get();
+        return EnemyUnitBreachedBase.get();
     }
 
     public static int dragoons() {
         return discovered().dragoons().count();
+    }
+
+    public static int hydras() {
+        return discovered().hydras().count();
+    }
+
+    public static int mutas() {
+        return discovered().mutalisks().count();
+    }
+
+    public static int zealots() {
+        return discovered().zealots().count();
     }
 
     public static int zerglings() {
@@ -117,7 +136,7 @@ public class EnemyUnits {
     }
 
     public static int combatUnits() {
-        return discovered().combatUnits().count();
+        return discovered().combatUnits().excludeOverlords().count();
     }
 
     public static Selection buildings() {

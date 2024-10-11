@@ -2,6 +2,7 @@ package atlantis.combat.eval.protoss;
 
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
 public class ProtossEvaluateAgainstCombatBuildings {
@@ -9,6 +10,7 @@ public class ProtossEvaluateAgainstCombatBuildings {
 //        System.out.println("OUR / ENEMY (" + (ourUnitsStrength(unit) - enemyStrength(unit, position)) + ") // " +
 //            "OUR: " + ourUnitsStrength(unit) + " / ENEMY: " + enemyStrength(unit, position));
         return unit.combatEvalRelative() >= 1.7
+            || ourCombatUnits(unit).count() >= 13
             || ourUnitsStrength(unit) >= enemyStrength(unit, position);
     }
 
@@ -21,7 +23,11 @@ public class ProtossEvaluateAgainstCombatBuildings {
 
     private static int ourUnitsStrength(AUnit unit) {
 //        return unit.friendsNear().combatUnits().notRunning().havingAtLeastHp(23).count();
-        return unit.friendsNear().combatUnits().notRunning().havingAtLeastHp(23).totalHp();
+        return ourCombatUnits(unit).totalHp();
+    }
+
+    private static Selection ourCombatUnits(AUnit unit) {
+        return unit.friendsNear().combatUnits().notRunning().havingAtLeastHp(23);
     }
 
     // =========================================================

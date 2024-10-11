@@ -72,35 +72,41 @@ public class Missions {
         return globalMission().isMissionAttack();
     }
 
-    public static void forceGlobalMissionAttack(String reason) {
+    public static boolean forceGlobalMissionAttack(String reason) {
         lastMissionEnforcedAt = A.now();
         setGlobalMissionTo(ATTACK, reason);
+        return true;
     }
 
-    public static void forceGlobalMissionDefend(String reason) {
+    public static boolean forceGlobalMissionDefend(String reason) {
         lastMissionEnforcedAt = A.now();
         setGlobalMissionTo(DEFEND, reason);
+        return true;
     }
 
-    public static void forceGlobalMissionContain(String reason) {
+    public static boolean forceGlobalMissionContain(String reason) {
         lastMissionEnforcedAt = A.now();
         setGlobalMissionTo(CONTAIN, reason);
+        return true;
     }
 
-    public static void forceGlobalMissionSparta(String reason) {
+    public static boolean forceGlobalMissionSparta(String reason) {
         lastMissionEnforcedAt = A.now();
         setGlobalMissionTo(SPARTA, reason);
+        return true;
     }
 
     public static Mission initialMission() {
-        if (true) return Missions.DEFEND;
 
         // === Handle UMS ==========================================
 
         if (AGame.isUms() || Select.main() == null) {
-//            return Missions.UMS;
             return Missions.ATTACK;
         }
+
+        // =========================================================
+
+//        if (true) return Missions.DEFEND;
 
         // =========================================================
 
@@ -134,6 +140,8 @@ public class Missions {
     }
 
     public static void setGlobalMissionTo(Mission mission, String reason) {
+        if (A.isUms()) mission = ATTACK;
+
         if (mission.isMissionDefend()) {
             mission = MissionChanger.defendOrSpartaMission();
         }
@@ -146,6 +154,7 @@ public class Missions {
 
         Alpha.get().setMission(mission);
 
+//        System.err.println("NEW MISSION " + mission.name() + " AT " + A.minSec() + ": " + reason);
         lastMissionChanged = A.now();
         currentGlobalMission = mission;
 
@@ -157,13 +166,10 @@ public class Missions {
 //                throw new RuntimeException("CHange to contain?!?");
 //            }
 
-            if (MissionChanger.DEBUG) {
-                A.println(
-                    "CHANGED MISSION @" + A.seconds() + "s TO " + mission.name() + ": " + reason
-                );
-
+//            if (MissionChanger.DEBUG) {
+            A.println("MISSION @" + A.minSec() + " TO " + mission.name() + ": " + reason + " - " + mission.focusPoint());
 //                A.printStackTrace("Changing mission to " + mission);
-            }
+//            }
             MissionHistory.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         }
     }
@@ -176,29 +182,29 @@ public class Missions {
         return A.secondsAgo(lastMissionChanged);
     }
 
-    public static boolean recentlyChangedMission() {
-        return lastMissionChangedAgo() <= 30 * 6;
-    }
+//    public static boolean recentlyChangedMission() {
+//        return lastMissionChangedAgo() <= 30 * 6;
+//    }
 
-    public static int counter() {
+    public static int historyCount() {
         return MissionHistory.missionHistory.size();
     }
 
-    public static Mission prevMission() {
-        if (MissionHistory.missionHistory.size() >= 2) {
-            return MissionHistory.missionHistory.get(MissionHistory.missionHistory.size() - 2);
-        }
-        else {
-            return null;
-        }
-    }
+//    public static Mission prevMission() {
+//        if (MissionHistory.missionHistory.size() >= 2) {
+//            return MissionHistory.missionHistory.get(MissionHistory.missionHistory.size() - 2);
+//        }
+//        else {
+//            return null;
+//        }
+//    }
 
     public static boolean isFirstMission() {
         return MissionHistory.missionHistory.size() == 1;
     }
 
-    public static int lastMissionEnforcedAgo() {
-        return A.ago(lastMissionEnforcedAt);
+    public static double lastMissionEnforcedSecondsAgo() {
+        return A.secondsAgo(lastMissionEnforcedAt);
     }
 
 }

@@ -15,6 +15,7 @@ import atlantis.production.requests.AntiAirBuildingCommander;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.production.requests.zerg.ZergSporeColony;
 import atlantis.production.requests.zerg.ZergSunkenColony;
+import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public abstract class AStrategyResponse {
@@ -102,6 +103,8 @@ public abstract class AStrategyResponse {
     // =========================================================
 
     protected boolean shouldSkipAntiRushCombatBuilding(AStrategy enemyStrategy) {
+        if (Count.cannonsWithUnfinished() >= 2) return true;
+
         if (enemyStrategy == null) return false;
         if (ScoutCommander.hasAnyScoutBeenKilled()) return false;
 

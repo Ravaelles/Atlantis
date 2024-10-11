@@ -23,12 +23,22 @@ public class PreventDuplicateOrders {
 
         assert type != null;
 
+        if (onlyOneAllowed(type, position)) return true;
         if (excessivePylon(type, position)) return true;
         if (justRequestedThisType(type)) return true;
         if (tooManyOrdersOfThisType(type, position)) return true;
         if (tooManyOrdersInGeneral(type)) return true;
 
         if (forProtossEnforceHavingAPylonFirst(type)) return true;
+
+        return false;
+    }
+
+    private static boolean onlyOneAllowed(AUnitType type, HasPosition position) {
+        if (type.equals(AUnitType.Protoss_Citadel_of_Adun)) return Count.withPlanned(type) > 0;
+        if (type.equals(AUnitType.Protoss_Cybernetics_Core)) return Count.withPlanned(type) > 0;
+        if (type.equals(AUnitType.Protoss_Observatory)) return Count.withPlanned(type) > 0;
+        if (type.equals(AUnitType.Protoss_Robotics_Support_Bay)) return Count.withPlanned(type) > 0;
 
         return false;
     }
@@ -88,7 +98,7 @@ public class PreventDuplicateOrders {
         int max = type.isABuilding() ? (type.isCombatBuilding() ? 5 : 2) : 4;
         if (type.isSupplyDepot() && A.supplyTotal() <= 32) max = 1;
         if (type.isPylon() && A.supplyTotal() <= 32) max = 1;
-        if (type.isGateway()) max = 1 + A.minerals() / 200;
+        if (type.isGateway()) max = 1 + A.minerals() / 170;
 
         if (existingInQueue >= max) {
             if (type.isSupplyDepot()) ErrorLog.printMaxOncePerMinute("Exceeded DEPOTS allowed: " + existingInQueue);

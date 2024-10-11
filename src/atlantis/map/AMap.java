@@ -54,7 +54,7 @@ public class AMap {
             InitJBWEB.init();
         } catch (Exception e) {
             A.errPrintln("JBWEB exception, but dont worry. We can continue.");
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -95,9 +95,10 @@ public class AMap {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
             int dx = -maxRadius + A.randWithSeed(0, 2 * maxRadius, unit.id());
             int dy = -maxRadius + A.randWithSeed(0, 2 * maxRadius, unit.id());
-            position = unit.translateByPixels(dx, dy).makeValidFarFromBounds();
+            position = unit.translateByPixels(dx, dy).makeBuildableGroundPositionFarFromBounds();
             if (
-                position.isWalkable()
+                position != null
+                    && position.isWalkable()
                     && position.isBuildable()
                     && !position.isPositionVisible()
                     && unit.hasPathTo(position)
@@ -116,9 +117,10 @@ public class AMap {
             int maxRadius = mapDimension * TilePosition.SIZE_IN_PIXELS;
             int dx = -maxRadius + A.rand(0, 2 * maxRadius);
             int dy = -maxRadius + A.rand(0, 2 * maxRadius);
-            position = startPoint.translateByPixels(dx, dy).makeValidFarFromBounds();
+            position = startPoint.translateByPixels(dx, dy).makeBuildableGroundPositionFarFromBounds();
             if (
-                position.isWalkable()
+                position != null
+                    && position.isWalkable()
                     && position.isBuildable()
                     && !position.isExplored()
 //                            && position.translateByTiles(-1, 0).isWalkable()
@@ -146,7 +148,10 @@ public class AMap {
         for (int dtx = -tileSearchRadius; dtx <= 2 * tileSearchRadius; dtx += 2) {
             for (int dty = -tileSearchRadius; dty <= 2 * tileSearchRadius; dty += 2) {
                 if (dtx != 0 && dty != 0) {
-                    APosition tile = position.translateByTiles(dtx, dty).makeValidFarFromBounds();
+                    APosition tile = position.translateByTiles(dtx, dty).makeBuildableGroundPositionFarFromBounds();
+
+                    if (tile == null) continue;
+
                     int score = tileWalkabilityScore(tile);
                     if (score > bestScore) {
                         bestScore = score;
@@ -166,7 +171,11 @@ public class AMap {
         for (int dtx = -tileSearchRadius; dtx <= 2 * tileSearchRadius; dtx += 3) {
             for (int dty = -tileSearchRadius; dty <= 2 * tileSearchRadius; dty += 3) {
                 if (tileSearchRadius <= dtx + dty && dtx + dty <= tileSearchRadius + 1) {
-                    score += position.translateByTiles(dtx, dty).makeValid().isWalkable() ? 1 : 0;
+                    APosition tile = position.translateByTiles(dtx, dty).makeValidGroundPosition();
+
+                    if (tile == null) continue;
+
+                    score += tile.isWalkable() ? 1 : 0;
                 }
             }
         }

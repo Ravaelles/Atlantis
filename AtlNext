@@ -1,3 +1,18 @@
-- If detected 3+ CB early, FORCE second base
+- Disable Atransport for Protoss
+- Send Shuttle to nearest Reaver if no cargo
+- Dont unload Reaver when enemies near
 
-- Avoid sieged tanks (consider flying building?), but don't avoid if closer than <=14 to building
+
+
+- Extra Probe should be scouting bases after 90 Supply to find enemy new bases and these should be prioritized, most ground distant from enemy main
+
+
+- Enemy Natural wrongly identified as expansion: MISSION @3:57 TO Attack: Enemy is expanding, engage him
+- Focus{name='EnemyUnit(SunkenC)', unit=#17 SunkenC @(53, 110), pos=null}
+This has terrible consequences
+
+- When AvCB, go to nearest non-start location
+
+- Army (Zealots, Goons?) being produced, no room for even 3rd nexus, all the time <100res
+
+- Units retreatng to safety like retards, even with 123v50 advantage

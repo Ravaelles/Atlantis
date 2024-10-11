@@ -37,6 +37,7 @@ import atlantis.terran.FlyingBuildingScoutCommander;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.units.actions.move.MoveAway;
 import atlantis.units.attacked_by.UnderAttack;
 import atlantis.units.detected.IsOurUnitUndetected;
 import atlantis.units.fogged.AbstractFoggedUnit;
@@ -339,55 +340,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Unit will move by given distance (in build tiles) from given *from*.
      */
     public boolean moveAwayFrom(HasPosition from, double moveDistance, Action action, String tooltip) {
-        if (from == null || moveDistance < 0.01) return false;
-
-        int dx = from.x() - x();
-        int dy = from.y() - y();
-        double vectorLength = Math.sqrt(dx * dx + dy * dy);
-        double modifier = (moveDistance * 32) / vectorLength;
-        dx = (int) (dx * modifier);
-        dy = (int) (dy * modifier);
-
-        APosition newPosition = new APosition(x() - dx, y() - dy).makeValid();
-
-        if (!this.isFlying()) {
-            APosition freeFromUnits = newPosition.makeFreeOfAnyGroundUnits(3, 0.15, this);
-            if (freeFromUnits != null) {
-                newPosition = freeFromUnits;
-            }
-        }
-
-        if (newPosition == null) {
-            ErrorLog.printErrorOnce("Cannot moveAwayFrom " + from + " for " + name());
-            return false;
-        }
-
-        if (
-            runningManager().isReasonablePositionToRun(this, newPosition)
-                && move(newPosition, action, "Move away", false)
-//                && (unit().isAir() || Select.all().groundUnits().inRadius(0.05, newPosition).empty())
-        ) {
-            double distTo = this.distTo(newPosition);
-            if (distTo >= 1.9 && distTo > 3 * moveDistance) {
-                if (moveDistance != 2.5) return moveAwayFrom(from, 2.5, action, tooltip);
-
-                ErrorLog.printMaxOncePerMinute(
-                    typeWithUnitId() + "::moveAwayFrom: distTo: " + distTo
-                        + " / " + "moveDistance: " + moveDistance
-                );
-                return false;
-            }
-        }
-        this.setTooltip(tooltip, false);
-        return true;
-
-//        this.setTooltip("CantMoveAway", false);
-//        APainter.paintCircle(this, 3, Color.Red);
-//        APainter.paintCircle(this, 5, Color.Red);
-//        APainter.paintCircle(this, 7, Color.Red);
-//        APainter.paintCircle(this, 9, Color.Red);
-//        return false;
-//        return move(newPosition, Actions.MOVE_ERROR, "Force move", false);
+        return MoveAway.from(this, from, moveDistance, action, tooltip);
     }
 
     // =========================================================
@@ -449,6 +402,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isBunker() {
         return type().equals(AUnitType.Terran_Bunker);
+    }
+
+    public boolean isCannon() {
+        return type().equals(AUnitType.Protoss_Photon_Cannon);
     }
 
     public boolean isBase() {
@@ -680,9 +637,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return this;
     }
 
-    public AUnit setTooltip(String tooltip) {
+    public boolean setTooltip(String tooltip) {
         this.tooltip = tooltip;
-        return this;
+        return true;
     }
 
     public String tooltip() {
@@ -834,7 +791,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         boolean includeCooldown,
         double extraMargin
     ) {
-        if (!target.hasPosition()) return false;
+        if (target == null || !target.hasPosition()) return false;
 
         // Target is GROUND unit
         if (target.isGroundUnit() && (!canAttackGroundUnits() || (includeCooldown && cooldownRemaining() >= 4)))
@@ -1503,6 +1460,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isAttacking();
     }
 
+    public boolean isAttackingRecently() {
+        return u.isAttacking() && lastActionLessThanAgo(30);
+    }
+
     public boolean isAttackingOrMovingToAttack() {
         return hasValidTarget() && (
             isAttacking() || (action() != null && action().isAttacking())
@@ -1657,9 +1618,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         this._lastTech = tech;
         this._lastTechUnit = usedOn;
 
-        if (ATech.isOffensiveSpell(tech)) {
-            SpellCoordinator.newSpellAt(usedOn.position(), tech);
-        }
+//        if (ATech.isOffensiveSpell(tech)) {
+        SpellCoordinator.newSpellAt(usedOn.position(), tech);
+//        }
 
         return setAction(unitAction);
     }
@@ -1857,6 +1818,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int lastUnderAttackAgo() {
         return A.ago(_lastUnderAttack);
+    }
+
+    public boolean underAttackSecondsAgo(double seconds) {
+        return (A.ago(_lastUnderAttack) / 30.0) <= seconds;
     }
 
     public boolean lastAttackOrderLessThanAgo(int framesAgo) {
@@ -2151,6 +2116,31 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return loaded;
     }
 
+//    public boolean loadedUnitsHas(AUnitType type) {
+//        System.err.println("u.getLoadedUnits() = " + u.getLoadedUnits().size());
+//        for (Unit unit : u.getLoadedUnits()) {
+//            System.err.println("unit.getType() = " + unit.getType());
+//            if (unit.getType().equals(type.ut())) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
+    public AUnit loadedUnitsGet(AUnitType type) {
+        for (Unit loaded : u.getLoadedUnits()) {
+            AUnit au = AUnit.getById(loaded);
+//            System.err.println("au = " + au);
+//            System.err.println("type = " + type);
+//            System.err.println("au.is(type) = " + au.is(type));
+//            System.err.println("au.is(SHUT) = " + au.is(AUnitType.Protoss_Shuttle));
+            if (au.is(type)) {
+                return au;
+            }
+        }
+        return null;
+    }
+
     public int lastTechUsedAgo() {
         return lastActionAgo(Actions.USING_TECH);
     }
@@ -2437,7 +2427,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                         .exclude(this);
                 }
                 else {
-                    if (OurArmy.strength() <= 900) {
+                    if (OurArmy.strength() <= 900 && !unit().type().isGeyser()) {
                         System.err.println("enemiesNear invoked for neutral?");
                         System.err.println("ThisContext = " + this);
                         System.err.println("alive=" + unit().isAlive());
@@ -2773,6 +2763,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isReaver();
     }
 
+    public boolean isShuttle() {
+        return type().isShuttle();
+    }
+
     public boolean isHighTemplar() {
         return type().isHighTemplar();
     }
@@ -2792,6 +2786,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean idIsOdd() {
         return id() % 2 > 0;
+    }
+
+    public AUnit nearestGroundCombatEnemy() {
+        return (AUnit) cache.getIfValid(
+            "nearestGroundCombatEnemy",
+            2,
+            () -> enemiesNear().combatUnits().havingPosition().groundUnits().nearestTo(this)
+        );
     }
 
     public AUnit nearestEnemy() {
@@ -2910,10 +2912,31 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public double distToBase() {
-        AUnit base = Select.ourBases().nearestTo(this);
+        AUnit base = Select.ourBasesWithUnfinished().exclude(this).nearestTo(this);
         if (base == null) return 999;
 
         return base.distTo(this);
+    }
+
+    public double distToCannon() {
+        AUnit cannon = Select.ourOfType(AUnitType.Protoss_Photon_Cannon).nearestTo(this);
+        if (cannon == null) return 999;
+
+        return cannon.distTo(this);
+    }
+
+    public double ourNearestBuildingDist() {
+        AUnit building = Select.ourBuildings().nearestTo(this);
+        if (building == null) return 999;
+
+        return building.distTo(this);
+    }
+
+    public double ourNearestBuildingWithUnfinishedDist() {
+        AUnit building = Select.ourBuildingsWithUnfinished().nearestTo(this);
+        if (building == null) return 999;
+
+        return building.distTo(this);
     }
 
     public double distToMain() {
@@ -2921,6 +2944,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (base == null) return 999;
 
         return base.distTo(this);
+    }
+
+    public double groundDistToMain() {
+        AUnit base = Select.main();
+        if (base == null) return 999;
+
+        return base.groundDist(this);
     }
 
     public boolean lastPositioningActionMoreThanAgo(int minFramesAgo) {
@@ -3124,19 +3154,35 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return lastStartedRunningLessThanAgo(30 * minSeconds);
     }
 
-    public boolean moveToMain(Action action) {
-        return moveToMain(action, null);
+    public boolean moveToLeader(Action action, String tooltip) {
+        AUnit leader = squadLeader();
+        if (leader == null) return false;
+
+        if (distTo(leader) <= 1.5) return false;
+
+        return move(leader, action, tooltip);
     }
 
-    public boolean moveToMain(Action action, String tooltip) {
-        AUnit main = Select.main();
+    public boolean moveToSafety(Action action) {
+        return moveToSafety(action, null);
+    }
 
-        if (main != null && distTo(main) >= 7) {
-            move(main, action, tooltip);
+    public boolean moveToSafety(Action action, String tooltip) {
+        HasPosition safety = safetyPosition();
+
+        if (safety != null && distTo(safety) >= 4) {
+            move(safety, action, tooltip);
             return true;
         }
 
         return false;
+    }
+
+    public HasPosition safetyPosition() {
+        AUnit nearestCannon = Select.ourOfTypeWithUnfinished(AUnitType.Protoss_Photon_Cannon).nearestTo(this);
+        if (nearestCannon != null) return nearestCannon;
+
+        return Select.naturalOrMain();
     }
 
     public boolean hasAirWeapon() {
@@ -3222,7 +3268,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
-    private AChoke nearestChoke() {
+    public AChoke nearestChoke() {
         return (AChoke) cache.get(
             "nearestChoke",
             77,
@@ -3346,6 +3392,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return enemiesNear().ranged().inShootRangeOf(safetyMargin, this).notEmpty();
     }
 
+    public int rangedEnemiesCount(double safetyMargin) {
+        return enemiesNear().ranged().inShootRangeOf(safetyMargin, this).count();
+    }
+
     public double shotSecondsAgo() {
         return lastAttackFrameAgo() / 30.0;
     }
@@ -3374,5 +3424,36 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isAlphaSquad() {
         return squad != null && squad.isAlpha();
+    }
+
+    public boolean isDancing() {
+        return action().equals(Actions.MOVE_DANCE_AWAY) || action().equals(Actions.MOVE_DANCE_TO);
+    }
+
+    public boolean isHt() {
+        return type().isHighTemplar();
+    }
+
+    public boolean isOvercrowded() {
+        return isGroundUnit()
+            && (
+            friendsNear().combatUnits().inRadius(0.6, this).atLeast(4)
+                || friendsNear().combatUnits().inRadius(1.5, this).atLeast(6)
+        );
+    }
+
+    public boolean leaderIsRetreating() {
+        return squad != null && squad.leader() != null && squad.leader().isRetreating();
+    }
+
+    public AUnit nearestBase() {
+        return Select.ourBases().nearestTo(this);
+    }
+
+    public boolean isTraining(AUnitType producingThisUnit) {
+        List<AUnitType> queue = trainingQueue();
+        if (queue.isEmpty()) return false;
+
+        return producingThisUnit.equals(queue.get(0));
     }
 }

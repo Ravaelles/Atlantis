@@ -21,6 +21,22 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
     }
 
     private boolean vsZerg() {
+        if (unit.hp() <= 40 && unit.isMissionAttack() && unit.enemiesNear().inRadius(5.8, unit).notEmpty())
+            return unit.setTooltip("AvoidVeryLowHP");
+
+        if (
+            unit.hp() <= 60
+                && unit.shotSecondsAgo() <= 3.5
+                && unit.enemiesThatCanAttackMe(1.85).ranged().atLeast(2)
+        ) return true;
+
+        if (
+            unit.friendsNear().atMost(20)
+                && unit.enemiesNearInRadius(OurDragoonRange.range() - 0.6) >= 1
+        ) {
+            return unit.lastAttackFrameLessThanAgo(30 * (unit.hp() >= 60 ? 4 : 7));
+        }
+
         if (
             unit.cooldown() >= 15
                 && unit.shieldDamageAtLeast(41)

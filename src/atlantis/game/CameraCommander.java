@@ -75,8 +75,10 @@ public class CameraCommander extends Commander {
 
     public static void toggleFocusCameraOnInterestingCombatUnit() {
         focusCameraOnFirstCombatUnit = !focusCameraOnFirstCombatUnit;
+    }
 
-
+    public static void focusCameraOnInterestingCombatUnit() {
+        focusCameraOnFirstCombatUnit = true;
     }
 
     public static boolean isFocusCameraOnUnit() {

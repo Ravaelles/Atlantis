@@ -48,7 +48,7 @@ public class AvoidGroupOfEnemies extends Manager {
 //        }
 
         if (unit.runningManager().runFrom(
-            centerOfEnemies, calculateRunDistance(), RUN_ENEMY, false
+            centerOfEnemies, calculateRunDistance(), RUN_ENEMY, allowedToNotifyNearUnitsToMakeSpace()
         )) {
             return usedManager(this);
         }
@@ -56,6 +56,10 @@ public class AvoidGroupOfEnemies extends Manager {
 //        System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
 
         return runError.handleErrorRun(unit);
+    }
+
+    private boolean allowedToNotifyNearUnitsToMakeSpace() {
+        return unit.distToNearestChokeCenter() <= 4;
     }
 
     private Manager processDontAvoid() {

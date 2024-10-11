@@ -18,10 +18,15 @@ public class ContinueShooting extends Manager {
 
         if (We.terran()) return false;
 
-        if (unit.isAttacking() && unit.lastActionLessThanAgo(2)) return true;
+        if (unit.isStartingAttack()) return true;
+        if (unit.isAttackFrame()) return true;
+
+        if (!unit.hasValidTarget()) return false;
         if (!unit.isAction(Actions.ATTACK_UNIT)) return false;
-        if (unit.lastActionMoreThanAgo(30 * 3, Actions.ATTACK_UNIT)) return false;
-        if (unit.hasTarget() && !unit.isTargetInWeaponRangeAccordingToGame()) return false;
+
+        if (unit.isAttacking() && unit.lastActionLessThanAgo(unit.isRanged() ? 7 : 9)) return true;
+
+        if (!unit.canAttackTargetWithBonus(unit.target(), 0.6)) return false;
 
         Decision decision;
 
@@ -29,11 +34,10 @@ public class ContinueShooting extends Manager {
             (decision = ContinueShootingAsDragoon.check(unit)).notIndifferent()
         ) return decision.toBoolean();
 
-        if (unit.isStartingAttack()) return true;
-        if (unit.isAttackFrame()) return true;
+        if (unit.lastActionMoreThanAgo(30 * 3, Actions.ATTACK_UNIT)) return false;
+        if (unit.hasTarget() && !unit.isTargetInWeaponRangeAccordingToGame()) return false;
 
         if (unit.lastAttackFrameLessThanAgo(5)) return false;
-        if (!unit.hasValidTarget()) return false;
 
 //        if (unit.lastActionMoreThanAgo(8, Actions.ATTACK_UNIT)) return false;
 //        if (unit.lastActionMoreThanAgo(10, Actions.ATTACK_UNIT)) return false;

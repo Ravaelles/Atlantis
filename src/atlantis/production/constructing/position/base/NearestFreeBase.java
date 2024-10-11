@@ -56,8 +56,12 @@ public class NearestFreeBase {
         }
 
         if (nearTo == null) {
-//            nearTo = nearToNearestFree();
-            nearTo = nearToMostDistantToEnemy();
+            nearTo = nearToNearestFree();
+
+            if (nearTo == null) {
+                A.errPrintln("@@@@@@@@@@@ findPositionForBase_nearestFreeBase is null, FALLBACK to most distant");
+                nearTo = nearToMostDistantToEnemy();
+            }
         }
 
         // =========================================================

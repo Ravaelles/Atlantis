@@ -5,10 +5,16 @@ import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.Orders;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.TilePosition;
@@ -22,6 +28,7 @@ public class TravelToConstruct extends HasUnit {
         APosition buildPosition = construction.buildPosition();
         APosition buildPositionCenter = construction.positionToBuildCenter();
         AUnitType buildingType = construction.buildingType();
+        AUnit builder = construction.builder();
 
         if (unit == null) {
             throw new RuntimeException("unit empty");
@@ -36,28 +43,45 @@ public class TravelToConstruct extends HasUnit {
 
         double minDistanceToIssueBuildOrder = minDistanceToIssueBuildOrder(buildingType);
 
-        double distance = unit.distTo(buildPositionCenter);
-        String distString = "(" + A.digit(distance) + ")";
+//        AUnit base = unit.nearestBase();
+        double distanceToConstruction = unit.distTo(buildPositionCenter);
+        String distString = "(" + A.digit(distanceToConstruction) + ")";
 
-//        System.err.println(A.now() + " distance = " + distString + " / minerals=" + A.minerals());
+//        System.err.println(A.now() + " distanceToConstruction = " + distString + " / minerals=" + A.minerals());
 
-        if (notEnoughMineralsYet(distance, buildingType)) return false;
+        if (waitForMoreMineralsBeforeTravelling(
+            distanceToConstruction, buildingType, construction.productionOrder()
+        )) return false;
 
 //        CameraCommander.centerCameraOn(unit.getPosition());
 
-        if (distance > minDistanceToIssueBuildOrder) {
-//            if (buildingType.isBase()) System.err.println("MoveToConstruct " + distance);
+        if (distanceToConstruction > minDistanceToIssueBuildOrder) {
+//            if (buildingType.isBase()) System.err.println("MoveToConstruct " + distanceToConstruction);
 //            System.err.println(A.now() + " MOVE TO CONS = " + distString + " / minerals=" + A.minerals());
-            return moveToConstruct(construction, buildingType, distance, distString);
+            return moveToConstruct(construction, buildingType, distanceToConstruction, distString);
         }
         else {
 //            if (
-//                ((A.everyNthGameFrame(77) || unit.hasNotMovedInAWhile()) && distance <= 2.1)
+//                ((A.everyNthGameFrame(77) || unit.hasNotMovedInAWhile()) && distanceToConstruction <= 2.1)
 //                    || !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition)
 //            ) {
-            if (shouldRefreshConstructionPosition(buildingType, buildPosition)) {
-//                System.err.println(A.now() + " Refresh " + buildingType + " position");
-                refreshConstructionPositionIfNeeded(construction, buildingType);
+            if (shouldRefreshConstructionPosition(construction)) {
+                System.err.println(A.now() + " Refresh " + buildingType + " position");
+                buildPosition = refreshConstructionPositionIfNeeded(construction);
+            }
+
+            if (
+                A.everyNthGameFrame(97)
+                    && !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition)
+                    && (builder == null || builder.lastPositionChangedMoreThanAgo(30 * 8))
+            ) {
+                construction.cancel();
+
+                A.errPrintln("Can't build here " + buildingType + ", so cancel + re-request");
+                AddToQueue.withTopPriority(
+                    buildingType,
+                    construction.positionToBuildCenter()
+                );
                 return false;
             }
 
@@ -65,19 +89,79 @@ public class TravelToConstruct extends HasUnit {
         }
     }
 
-    private boolean shouldRefreshConstructionPosition(AUnitType buildingType, APosition buildPosition) {
+    private static boolean shouldRefreshConstructionPosition(Construction construction) {
+        AUnit builder = construction.builder();
+        AUnitType buildingType = construction.buildingType();
+        APosition buildPosition = construction.buildPosition();
+
+        if (buildPosition == null) {
+            System.err.println("buildPosition IS NULL - refresh " + buildingType);
+            return true;
+        }
+        if (!buildPosition.isBuildable()) {
+            System.err.println("buildPosition NOT BUILDABLE - refresh " + buildingType);
+            return true;
+        }
+
         return A.everyNthGameFrame(47)
             && buildPosition.isPositionVisible()
-            && !CanPhysicallyBuildHere.check(unit, buildingType, buildPosition);
+            && !CanPhysicallyBuildHere.check(builder, buildingType, buildPosition);
     }
 
-    private boolean notEnoughMineralsYet(double distance, AUnitType buildingType) {
-        if (
-            distance <= 12
-                && !A.canAfford(buildingType.mineralPrice() - 35, buildingType.gasPrice() - 20)
-        ) return true;
+    private boolean waitForMoreMineralsBeforeTravelling(double distance, AUnitType type, ProductionOrder order) {
+        if (!unit.isGatheringMinerals()) return false;
+
+        if (distance <= 15) {
+            if (
+                !A.canAfford(
+//                    ReservedResources.minerals() - 32,
+//                    ReservedResources.gas() - 16
+                    ReservedResources.minerals() - type.mineralPrice() - 32,
+                    ReservedResources.gas() - type.gasPrice() - 16
+//                                    type.mineralPrice() + ReservedResources.minerals() - 32,
+//                                    type.gasPrice() + ReservedResources.gas() - 16
+                )
+            ) {
+//                System.out.println(A.minSec() + " wait for more MINERALS - " + type);
+                return true;
+            }
+        }
+
+        // Farther than 15 tiles from base
+        else {
+            if (!A.hasMinerals(needThisMineralsForLongDistanceConstructionTravel(distance, type, order))) {
+//                System.out.println(A.minSec() + " !!!! WAIT FOR MORE MINERALS - " + type);
+                return true;
+            }
+        }
 
         return false;
+    }
+
+    public int needThisMineralsForLongDistanceConstructionTravel(double distance, AUnitType type, ProductionOrder order) {
+//        return (!type.isGateway() ? 0 : ReservedResources.minerals())
+
+        Orders notStartedEarlierOrders = Queue.get()
+            .nonCompletedNext30()
+            .notInProgress()
+            .supplyAtMost(order.minSupply() - 1);
+
+        int penaltyIfManyOtherOrders = 0;
+        if (notStartedEarlierOrders.size() > 0) {
+//            notStartedEarlierOrders.print("Not started earlier orders that " + type);
+
+            if (notStartedEarlierOrders.size() >= 2) penaltyIfManyOtherOrders = 180;
+            else if (notStartedEarlierOrders.size() >= 1) penaltyIfManyOtherOrders = 70;
+        }
+
+        int needMinerals = (!type.isGateway() ? 0 : 130)
+            + type.mineralPrice()
+            + penaltyIfManyOtherOrders
+            + (A.supplyUsed(9) ? -150 : -72); // Quicker-bonus when have more workers
+//        System.err.println("needMinerals = " + needMinerals + " / " + type);
+
+        return needMinerals;
+//        return Math.max(0, needMinerals);
     }
 
     private static double minDistanceToIssueBuildOrder(AUnitType buildingType) {
@@ -89,31 +173,35 @@ public class TravelToConstruct extends HasUnit {
         return minDistanceToIssueBuildOrder;
     }
 
-    public static APosition refreshConstructionPositionIfNeeded(Construction construction, AUnitType buildingType) {
+    public static APosition refreshConstructionPositionIfNeeded(Construction construction) {
+        AUnitType buildingType = construction.buildingType();
+
         if (
-            buildingType.isGasBuilding() || buildingType.isBase()
+            buildingType.isGasBuilding() || (buildingType.isBase() && !Enemy.terran() && !Enemy.zerg())
         ) return construction.buildPosition();
 
-        if (shouldRefreshConstructionPosition(construction, buildingType)) {
-            APosition positionForNewBuilding = construction.findPositionForNewBuilding();
+        if (shouldRefreshConstructionPosition(construction)) {
+            refreshPosition(construction);
+        }
 
-            if (positionForNewBuilding != null) {
-                construction.setPositionToBuild(positionForNewBuilding);
-                Construction.clearCache();
-            }
+        return construction.positionToBuildCenter();
+    }
+
+    private static APosition refreshPosition(Construction construction) {
+        if (doNotRefreshPosition(construction)) return construction.buildPosition();
+
+        APosition positionForNewBuilding = construction.findPositionForNewBuilding();
+
+        if (positionForNewBuilding != null) {
+            construction.setPositionToBuild(positionForNewBuilding);
+            Construction.clearCache();
         }
 
         return construction.buildPosition();
     }
 
-    private static boolean shouldRefreshConstructionPosition(Construction construction, AUnitType buildingType) {
-        if (!A.canAfford(buildingType)) return false;
-
-        return cantBuildHere(construction, buildingType)
-            ||
-            builderHasNotMovedInAWhile(construction);
-//                ||
-//                (construction.builder().looksIdle() && AGame.everyNthGameFrame(151));
+    private static boolean doNotRefreshPosition(Construction construction) {
+        return construction.buildingType().isGasBuilding();
     }
 
     private static boolean cantBuildHere(Construction construction, AUnitType buildingType) {
@@ -134,13 +222,21 @@ public class TravelToConstruct extends HasUnit {
         }
 
         if (!unit.isMoving()) {
-//                if (A.everyNthGameFrame(20)) {
-//                    construction.setPositionToBuild(newPosition);
-//                }
+            APosition buildCenter = construction.positionToBuildCenter();
+            if (!buildCenter.isWalkable()) {
+                refreshPosition(construction);
 
-//                    GameSpeed.changeSpeedTo(60);
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                    "Can't walk to " + buildCenter + " (" + buildingType + ", buildable: " + buildCenter.isBuildable() + "),"
+                        + "\n    refresh position to: "
+                        + construction.positionToBuildCenter() + " (buildable: " + buildCenter.isBuildable() + ")"
+                );
+
+                buildCenter = construction.positionToBuildCenter();
+            }
+
             if (unit.move(
-                construction.positionToBuildCenter(),
+                buildCenter,
                 Actions.MOVE_BUILD,
                 "Build " + buildingType.name() + distString,
                 true
@@ -179,7 +275,10 @@ public class TravelToConstruct extends HasUnit {
 //            APosition buildPosition = refreshConstructionPositionIfNeeded(construction, buildingType);
             APosition buildPosition = construction.buildPosition();
 
-            if (buildPosition == null) return false;
+            if (buildPosition == null) {
+                ErrorLog.printMaxOncePerMinute("Cancel constr of " + buildingType + " because position null");
+                return false;
+            }
 
 //            System.err.println("buildPosition POST = " + buildPosition);
 //            System.err.println("buildPosition.translateByTiles(1, 1) = " + buildPosition.translateByTiles(1, 1));
@@ -204,13 +303,18 @@ public class TravelToConstruct extends HasUnit {
 //                return false;
 //            }
 
-            if (!unit.isConstructing() || unit.isIdle() || AGame.now() % 5 == 0) {
-//                A.println("Building " + buildingType + " at " + buildTilePosition + ", construction: " + construction);
-                unit.build(buildingType, buildTilePosition);
+            if (!unit.isConstructing() || AGame.now() % 7 == 0) {
+//                A.println("_CONSTRUCT_ " + buildingType + " at " + buildTilePosition + ", construction: " + construction);
+                if (unit.lastActionMoreThanAgo(2)) {
+                    unit.build(buildingType, buildTilePosition);
+                }
+//                System.err.println("unit.A = " + unit.action().name());
+//                System.err.println("unit.B = " + unit.getLastCommandRaw().getType().name());
                 return true;
             }
         }
 
+        unit.setTooltip("CantAffordToBuildYet");
         return true;
     }
 

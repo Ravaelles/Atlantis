@@ -116,7 +116,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
-        if (Missions.counter() >= 1 && Count.ourCombatUnits() <= 30) {
+        if (Missions.historyCount() >= 1 && Count.ourCombatUnits() <= 30) {
             if (DEBUG) reason = "Not enough terran units";
             return true;
         }

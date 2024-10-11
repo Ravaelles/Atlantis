@@ -2,7 +2,7 @@ package atlantis.combat.micro.terran.infantry.bunker;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -25,7 +25,7 @@ public class PreventMaginotLine extends Manager {
 //        if (unit.enemiesNear().inRadius(2.2 + (unit.id() % 6) / 2.5, unit).empty()) return true;
         if (shouldEngage()) return true;
 
-        if (EnemyWhoBreachedBase.get() == null) return false;
+        if (EnemyUnitBreachedBase.get() == null) return false;
         if (unit.enemiesNear().inRadius(5.99, unit).notEmpty()) return false;
 
         return true;

@@ -3,7 +3,7 @@ package atlantis.production.dynamic;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
-import atlantis.production.dynamic.expansion.ReinforceBasesCommander;
+import atlantis.production.dynamic.reinforce.ReinforceBasesCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
 import atlantis.production.dynamic.protoss.ProtossNewGasBuildingCommander;
 import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;

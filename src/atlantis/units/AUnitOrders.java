@@ -11,6 +11,7 @@ import atlantis.production.orders.production.queue.order.ForcedDirectProductionO
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
+import atlantis.units.fogged.FoggedUnit;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;
 import tests.fakes.FakeUnitData;
@@ -109,11 +110,15 @@ public interface AUnitOrders {
 //        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
         if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
             unit().setTooltipTactical("Attacking...");
-            return true;
+            if (A.everyFrameExceptNthFrame(16)) return true;
         }
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
             System.out.println("@" + A.now() + "  " + unit().typeWithUnitId() + "  ATTACK_UNIT " + target);
+
+//            if (unit().lastActionLessThanAgo(15, Actions.HOLD_POSITION)) {
+//                A.printStackTrace("AttackUnit " + unit() + " / " + target);
+//            }
         }
 
 //        if (unit().outsideSquadRadius()) {
@@ -183,7 +188,13 @@ public interface AUnitOrders {
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition) {
         unit().setAction(Actions.BUILD);
         boolean result = u().build(buildingType.ut(), buildTilePosition);
-        unit().setTooltipTactical("Construct " + buildingType.name());
+
+        String resultString = "";
+        if (!result) {
+            resultString = " ErRoR:" + (APosition.create(buildTilePosition).isBuildable() ? "b" : "NB");
+        }
+
+        unit().setTooltipTactical("Construct " + buildingType.name() + resultString);
         return result;
     }
 
@@ -208,13 +219,13 @@ public interface AUnitOrders {
 //        return move(target.position(), unitAction, tooltip, strategicLevel);
 //    }
 
-    default boolean moveStrategic(HasPosition target, Action unitAction, String tooltip) {
-        return move(target, unitAction, tooltip, true);
-    }
+//    default boolean moveStrategic(HasPosition target, Action unitAction, String tooltip) {
+//        return move(target, unitAction, tooltip, true);
+//    }
 
-    default boolean moveTactical(HasPosition target, Action unitAction, String tooltip) {
-        return move(target, unitAction, tooltip, false);
-    }
+//    default boolean moveTactical(HasPosition target, Action unitAction, String tooltip) {
+//        return move(target, unitAction, tooltip, false);
+//    }
 
     default boolean move(HasPosition target, Action unitAction, String tooltip) {
         return move(target, unitAction, tooltip, false);
@@ -223,6 +234,13 @@ public interface AUnitOrders {
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         if (target == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit().typeWithHash());
+            return false;
+        }
+
+        if (unit().isGroundUnit() && target.getClass() != FoggedUnit.class && !target.isWalkable()) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                "Trying to move to unwalkable position for " + unit() + " / " + unitAction
+            );
             return false;
         }
 
@@ -255,15 +273,21 @@ public interface AUnitOrders {
         // =========================================================
 
 //        String actionName = unit().action().name();
-        int lastOrderWasFramesAgo = unit().lastOrderWasFramesAgo();
+//        int lastActionFramesAgo = unit().lastActionFramesAgo();
+        int lastActionFramesAgo = unit().lastActionFramesAgo();
         if (
-            lastOrderWasFramesAgo <= 1
-                || (lastOrderWasFramesAgo < 4 && unit().isMoving())
+            lastActionFramesAgo <= 1
+                || (lastActionFramesAgo <= 3 && unit().isMoving())
 //                && (actionName.startsWith("MOVE") || actionName.startsWith("RUN"))
         ) {
 //            System.err.println("Ignore excessive move order");
-            return true;
+            if (A.fr % 16 != 0) return true;
         }
+
+        // =========================================================
+
+//        unit().setLastActionReceivedNow()
+//            .setAction(unitAction);
 
         // =========================================================
 
@@ -277,7 +301,8 @@ public interface AUnitOrders {
 //        if (!unit().isMoving() || A.now() % 4 != 0) {
 //        if (!unit().isUnitActionMove() || A.now() % 5 == 0) {
 
-        APosition currentTarget = unit().targetPosition();
+//        APosition currentTarget = unit().targetPosition();
+        APosition currentTarget = target.position();
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
             if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
@@ -301,12 +326,13 @@ public interface AUnitOrders {
 
             u().move(target.position().p());
 
+            unit().setLastActionReceivedNow()
+                .setAction(unitAction);
+
             if (target instanceof AUnit) {
                 unit().setTargetUnitToAttack((AUnit) target);
             }
 
-            unit().setLastActionReceivedNow()
-                .setAction(unitAction);
             return true;
         }
 
@@ -348,7 +374,7 @@ public interface AUnitOrders {
 //        System.err.println(unit().managerLogs().toString());
 //        System.err.println("-------------------------");
 
-        unit().setTooltip(tooltip).setAction(Actions.HOLD_POSITION);
+        unit().setAction(Actions.HOLD_POSITION).setTooltip(tooltip);
         return u().holdPosition();
     }
 
@@ -365,8 +391,7 @@ public interface AUnitOrders {
 //            A.printStackTrace(unit().idWithHash() + " Stopped @" + A.now());
         }
 
-        unit().setTooltip(tooltip)
-            .setAction(Actions.STOP);
+        unit().setAction(Actions.STOP).setTooltip(tooltip);
 
         if (Env.isTesting()) return true;
 

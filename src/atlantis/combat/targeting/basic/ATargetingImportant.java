@@ -67,9 +67,11 @@ public class ATargetingImportant extends ATargeting {
         target = enemyUnits
             .ofType(
                 AUnitType.Protoss_Zealot,
+                AUnitType.Protoss_Dragoon,
                 AUnitType.Terran_Firebat,
                 AUnitType.Terran_Marine,
-                AUnitType.Zerg_Zergling
+                AUnitType.Zerg_Zergling,
+                AUnitType.Zerg_Hydralisk
             )
             .inRadius(6.5, unit)
             .canBeAttackedBy(unit, 0)
@@ -77,7 +79,7 @@ public class ATargetingImportant extends ATargeting {
         if (target != null) return target;
 
         // =========================================================
-        // Defensive buildings IN RANGE
+        // Defensive buildings ALMOST IN RANGE
 
         Selection importantBuildings = enemyBuildings
             .ofType(
@@ -85,8 +87,8 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Terran_Bunker,
                 AUnitType.Zerg_Sunken_Colony
             )
-//            .canBeAttackedBy(unit, 0)
-            .inRadius(15, unit);
+            .canBeAttackedBy(unit, unit.isMelee() ? 3.6 : 2.2);
+//            .inRadius(15, unit);
 
         target = importantBuildings.mostWounded();
 
@@ -152,6 +154,24 @@ public class ATargetingImportant extends ATargeting {
             debug("C1c = " + target);
             return target;
         }
+
+        // === Any CB ===========================================
+
+        target = enemyBuildings
+            .ofType(
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Terran_Bunker,
+                AUnitType.Zerg_Sunken_Colony,
+                AUnitType.Zerg_Creep_Colony,
+                AUnitType.Zerg_Spore_Colony
+            )
+            .inRadius(15, unit)
+            .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
 
         return null;
     }
@@ -235,6 +255,17 @@ public class ATargetingImportant extends ATargeting {
             return target;
         }
 
+        // === BASES NEARBY ======================================================
+
+        target = enemyBuildings.bases()
+            .inRadius(unit.isMelee() ? 3 : 8, unit)
+            .nearestTo(unit);
+
+        if (target != null) {
+            debug("C5b0 = " + target);
+            return target;
+        }
+
         // === WORKERS ======================================================
 
         target = enemyUnits
@@ -244,17 +275,6 @@ public class ATargetingImportant extends ATargeting {
 
         if (target != null) {
             debug("C5b1 = " + target);
-            return target;
-        }
-
-        // === BASES NEARBY ======================================================
-
-        target = enemyBuildings.bases()
-            .inRadius(unit.isMelee() ? 3 : 6, unit)
-            .nearestTo(unit);
-
-        if (target != null) {
-            debug("C5b2 = " + target);
             return target;
         }
 

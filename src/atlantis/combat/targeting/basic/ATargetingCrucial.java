@@ -212,6 +212,7 @@ public class ATargetingCrucial extends ATargeting {
         target = enemyUnits
             .ofType(
                 AUnitType.Protoss_Dark_Templar,
+                AUnitType.Terran_Wraith,
                 AUnitType.Zerg_Scourge,
                 AUnitType.Zerg_Defiler,
                 AUnitType.Zerg_Guardian
@@ -246,6 +247,53 @@ public class ATargetingCrucial extends ATargeting {
             debug("CR13 = " + target);
             return target;
         }
+
+        // === Hydra in range ===========================================
+
+        target = enemyUnits
+            .ofType(AUnitType.Zerg_Hydralisk)
+            .canBeAttackedBy(unit, -1.2)
+            .mostWounded();
+        if (target != null) {
+            debug("CR_Hyd1 = " + target);
+            return target;
+        }
+
+        target = enemyUnits
+            .ofType(AUnitType.Zerg_Hydralisk)
+            .canBeAttackedBy(unit, -0.1)
+            .nearestTo(unit);
+        if (target != null) {
+            debug("CR_Hyd2 = " + target);
+            return target;
+        }
+
+        // === CB in range ===========================================
+
+        target = enemyBuildings
+            .ofType(
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Terran_Bunker,
+                AUnitType.Zerg_Sunken_Colony,
+                AUnitType.Zerg_Spore_Colony
+            )
+            .canBeAttackedBy(unit, 0.2)
+            .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // === Creep in range ===========================================
+
+        target = enemyBuildings
+            .ofType(AUnitType.Zerg_Creep_Colony)
+            .canBeAttackedBy(unit, 0.2)
+            .nearestTo(unit);
+        if (target != null) {
+            return target;
+        }
+
+        // =========================================================
 
         return target;
     }

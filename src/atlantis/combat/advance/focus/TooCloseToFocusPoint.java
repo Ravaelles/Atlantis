@@ -1,10 +1,9 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.leader.AdvanceAsAlphaLeader;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -24,7 +23,8 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
 //        if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.isSpecialMission() && unit.isMelee()) return false;
         if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
-        if (EnemyWhoBreachedBase.notNull()) return false;
+//        if (EnemyUnitBreachedBase.notNull()) return false;
+        if (focusPoint == null || !focusPoint.isValid()) return false;
 
 //        System.err.println("           " + evaluateDistFromFocusPoint() + " / " + unit);
 
@@ -67,7 +67,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         if (A.s % 4 <= 1) {
             if (goToMain()) return true;
         }
-        
+
         if (goAway()) return true;
         if (goAwayFromCenter()) return true;
 

@@ -4,7 +4,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
 
@@ -29,9 +29,10 @@ public class Omega extends Squad {
 
     @Override
     public boolean shouldHaveThisSquad() {
-        if (Count.ourCombatUnits() <= 14) return false;
+        if (Count.cannons() > 0) return false;
+        if (Count.ourCombatUnits() <= 18) return false;
 
-        if (EnemyWhoBreachedBase.numberOfAttacksOnBase() > 0) return true;
+        if (EnemyUnitBreachedBase.numberOfAttacksOnBase() > 0) return true;
 
 //        return false;
         int minUnits = Enemy.zerg() ? 18 : (Enemy.protoss() ? 25 : 21);
@@ -43,10 +44,14 @@ public class Omega extends Squad {
 
     @Override
     public int expectedUnits() {
-        return Math.max(
-            1,
-            Math.min(3, Count.ourCombatUnits() / 15)
-        );
+        return 1;
+
+//        if (Count.ourCombatUnits() <= 35) return 1;
+//
+//        return Math.max(
+//            1,
+//            Math.min(2, Count.ourCombatUnits() / 15)
+//        );
     }
 
     @Override

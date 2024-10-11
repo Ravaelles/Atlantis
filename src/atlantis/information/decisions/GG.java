@@ -16,8 +16,8 @@ public class GG extends Commander {
     public boolean applies() {
         return A.s >= 400
             && A.now() % 128 == 0
-            && OurArmy.strength() <= 8
-            && Count.workers() <= 35
+            && (OurArmy.strength() <= 8 || Count.workers() <= 10)
+//            && Count.workers() <= 35
             && Select.enemyCombatUnits().atLeast(15)
 //            && Count.dragoons() <= 2
             && (Count.ourCombatUnits() * 8) <= EnemyUnits.combatUnits()

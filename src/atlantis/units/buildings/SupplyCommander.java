@@ -102,8 +102,13 @@ public class SupplyCommander extends Commander {
                     requestAdditionalSupply();
                 }
             }
+            else if (supplyTotal <= 120) {
+                if (supplyFree <= 14 && suppliesBeingBuilt <= 3) {
+                    requestAdditionalSupply();
+                }
+            }
             else if (supplyTotal <= 170) {
-                if (supplyFree <= 14 && suppliesBeingBuilt <= 2) {
+                if (supplyFree <= 14 && suppliesBeingBuilt <= 4) {
                     requestAdditionalSupply();
                 }
             }

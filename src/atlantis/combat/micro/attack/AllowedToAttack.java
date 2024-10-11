@@ -93,7 +93,7 @@ public class AllowedToAttack {
 
         if (
             unit.hasSquad()
-                && unit.squad().cohesionPercent() <= 80
+                && unit.squad().cohesionPercent() <= 75
                 && unit.isAttackingOrMovingToAttack()
         ) {
             if (unit.enemiesNear().ranged().notEmpty() && unit.lastStartedAttackMoreThanAgo(90)) {

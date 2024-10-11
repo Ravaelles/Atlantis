@@ -40,7 +40,7 @@ public class PreventDoNothing extends Manager {
 //            if (manager.invoked(this)) return usedManager(this);
 //        }
 
-        if (DoPreventFreezesLogic.handle(unit)) return usedManager(this);
+        if (DoPreventFreezesLogic.handle(this, unit)) return usedManager(this);
 
 //        System.err.println("OMFG STILL NOTHING! " + unit);
 

@@ -2,9 +2,11 @@ package atlantis.combat.micro.avoid.margin;
 
 import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstSpecial;
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 import bwapi.Color;
 
 public class SafetyMargin {
@@ -50,7 +52,7 @@ public class SafetyMargin {
 
 //        Color color = safetyMargin < 0 ? Color.Red : Color.Green;
 //        defender.paintLine(attacker, color);
-//        APainter.paintTextCentered(A.formatDecimalPlaces(calculated, 1), color, 0.6, 0);
+//        APainter.paintTextCentered(defender, A.digit(calculated), color, 0, 0.6);
 
         return safetyMargin;
     }
@@ -58,39 +60,45 @@ public class SafetyMargin {
     // =========================================================
 
     protected double enemyWeaponRange(AUnit attacker) {
-        return defender.enemyWeaponRangeAgainstThisUnit(attacker) + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
+        return defender.enemyWeaponRangeAgainstThisUnit(attacker)
+            + (attacker.isMelee() && attacker.groundWeaponRange() < 1.5 ? 1 : 0);
     }
 
     protected double enemyMovementBonus(AUnit attacker) {
 //         || defender.isOtherUnitFacingThisUnit(attacker)
 
+//        System.err.println("TargetedBy= " + defender.isTargetedBy(attacker) + " / AttMoving= " + attacker.isMoving());
         if (attacker.isMoving()) {
-            boolean doingWell = defender.woundPercent() < 33 && defender.lastUnderAttackMoreThanAgo((int) (30 * (5 + defender.woundPercent())));
-            return defender.isTargetedBy(attacker)
-                ? (doingWell
-                ? 0.8
-                : 1.7
-            )
-                : (doingWell
-                ? -1.4
-                : 0.5
-            );
+            return 1.6;
+//            boolean doingWell = defender.woundPercent() < 33 && defender.lastUnderAttackMoreThanAgo((int) (30 * (5 + defender.woundPercent())));
+//            return defender.isTargetedBy(attacker) ? 1.3 : -0.2;
+//            return defender.isTargetedBy(attacker)
+//                ? (doingWell
+//                ? 0.8
+//                : 1.7
+//            )
+//                : (doingWell
+//                ? -1.4
+//                : 0.5
+//            );
         }
         else {
+            return 0;
+
 //            return defender.isTargetedBy(attacker) ? 1.2 : -1.0;
 
-            // TARGETED by enemy
-            if (defender.isTargetedBy(attacker)) {
-                return 1.2;
-            }
-
-            // NOT targeted by enemy
-            else {
-//                if (defender.isDragoon() && defender.hp() >= 40) {
-//                    return -2.0;
-//                }
-                return -1.0;
-            }
+//            // TARGETED by enemy
+//            if (defender.isTargetedBy(attacker)) {
+//                return 0.5;
+//            }
+//
+//            // NOT targeted by enemy
+//            else {
+////                if (defender.isDragoon() && defender.hp() >= 40) {
+////                    return -2.0;
+////                }
+//                return -0.2;
+//            }
         }
 
 //        if (attacker.isMoving()) {
@@ -102,7 +110,7 @@ public class SafetyMargin {
     }
 
     protected double ourMovementBonus(AUnit defender) {
-        return defender.isMoving() ? (defender.isRunning() ? -1.8 : 0) : 0.8;
+        return defender.isMoving() ? (defender.isRunning() ? -0.1 : 0) : 1.2;
     }
 
     protected double ourUnitsNearBonus(AUnit defender) {
@@ -143,7 +151,9 @@ public class SafetyMargin {
 
     protected double workerBonus(AUnit attacker) {
         if (defender.isWorker()) {
-            return 1.5 + (defender.isBuilder() ? 2.2 : 0);
+            double base = 2.9 + defender.woundPercent() / 44.0;
+
+            return base + (defender.isBuilder() ? 2.2 : 0) + (Enemy.zerg() ? 1.4 : 0);
         }
 
         return 0;

@@ -26,6 +26,8 @@ public class ShouldRunTowardsBase {
             ) return false;
         }
 
+        if (Enemy.zerg() && unit.isDragoon() && unit.combatEvalRelative() <= 0.6) return false;
+
         if (unit.isMissionAttack() && unit.isGroundUnit() && unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.isScout() && !unit.isDragoon() && unit.enemiesNear().buildings().notEmpty()) return true;
 

@@ -75,7 +75,7 @@ public interface OrdersFilters {
     default Orders forCurrentSupply() {
         return new Orders(
             list().stream()
-                .filter(order -> order.supplyRequirementFulfilled())
+                .filter(order -> order.supplyRequirementFulfilled(0))
                 .collect(Collectors.toList())
         );
     }

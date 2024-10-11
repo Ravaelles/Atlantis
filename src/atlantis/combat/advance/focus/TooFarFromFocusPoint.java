@@ -1,7 +1,8 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -14,8 +15,17 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     @Override
     public boolean applies() {
+        if (!unit.isLeader()) return false;
+        if (focusPoint == null || !focusPoint.isValid()) return false;
+
+        if (
+            focusPoint.distTo(unit) >= 11
+                && focusPoint.nameContains("Third", "Expansion")
+//                && unit.enemiesNear().canBeAttackedBy(unit, 2.6).notEmpty()
+        ) return true;
+
         if (unit.lastActionLessThanAgo(40, Actions.LOAD)) return false;
-        if (EnemyWhoBreachedBase.get() != null) return false;
+//        if (EnemyUnitBreachedBase.get() != null) return false;
 //        if (unit.isMissionAttackOrGlobalAttack()) return false;
 
         evaluateDistToFocusPointComparingToLeader();
@@ -42,7 +52,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     protected boolean act() {
         if (focusPoint == null) return false;
-        if (!unit.looksIdle()) return false;
+//        if (!unit.looksIdle()) return false;
 
         double distToFocus = unit.distTo(focusPoint);
         HasPosition goTo = distToFocus <= 2.5
@@ -57,9 +67,9 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
             if (goTo.isWalkable()) {
                 if (unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)) return true;
             }
-//            else {
-//                A.errPrintln("Unwalkable focus goTo for " + unit);
-//            }
+            else {
+                A.errPrintln("Unwalkable focus " + focusPoint + " for " + unit);
+            }
         }
 
         return false;
@@ -67,6 +77,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     private HasPosition goToWhenFarFromFocus() {
         if (!focusPoint.isAroundChoke()) return focusPoint;
+        if (unit.distToFocusPoint() >= 10) return focusPoint;
 
         APosition goTo = focusPoint.translateTilesTowards(-3, focusPoint.choke().center());
         if (goTo != null && goTo.isWalkable()) {

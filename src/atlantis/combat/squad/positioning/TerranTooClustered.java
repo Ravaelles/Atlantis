@@ -2,7 +2,7 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -26,7 +26,7 @@ public class TerranTooClustered extends Manager {
         if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.enemiesNear().inRadius(14, unit).notEmpty()) return false;
         if (unit.friendsNear().buildings().inRadius(3, unit).notEmpty()) return false;
-        if (unit.isMissionDefend() && EnemyWhoBreachedBase.notNull()) return false;
+        if (unit.isMissionDefend() && EnemyUnitBreachedBase.notNull()) return false;
 
         if (seconds <= 300 && unit.isMissionDefend() && unit.friendsNear().inRadius(2, unit).notEmpty())
             return true;
@@ -67,7 +67,7 @@ public class TerranTooClustered extends Manager {
             return true;
         }
 
-        return unit.moveToMain(Actions.MOVE_FORMATION, "SpreadOut");
+        return unit.moveToSafety(Actions.MOVE_FORMATION, "SpreadOut");
     }
 
     private boolean tooClustered(

@@ -26,11 +26,20 @@ public class MissionAttackAllowsToAttack extends HasUnit {
 
         if (!enemy.isAlive() || enemy.isDead() || !enemy.hasPosition()) return false;
 
+        if (
+            unit.isRanged()
+                && unit.hp() >= 25
+                && unit.combatEvalRelative() >= 1.2
+                && unit.isTargetInWeaponRangeAccordingToGame(enemy)
+        ) return true;
+
+        if (A.minerals() < 1000 && A.supplyUsed() <= 110) {
+            HasPosition squadCenter = unit.squadCenter();
+            if (squadCenter != null && enemy.distToSquadCenter() >= 20 && unit.combatEvalRelative() < 2.0) return false;
+        }
+
         if (unit.canAttackTargetWithBonus(enemy, 0)) return true;
         if (Enemy.zerg() && unit.isMelee() && enemy.isMelee() && unit.distToNearestChokeLessThan(1)) return true;
-
-        HasPosition squadCenter = unit.squadCenter();
-        if (squadCenter != null && enemy.distToSquadCenter() >= 20) return false;
 
 //        if (DontAttackAlone.isAlone(unit)) return false;
         if (DontAttackUnitScatteredOnMap.isEnemyScatteredOnMap(unit, enemy)) return false;

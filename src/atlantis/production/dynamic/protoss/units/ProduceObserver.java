@@ -20,20 +20,27 @@ import static atlantis.units.AUnitType.*;
 public class ProduceObserver {
     public static boolean needObservers() {
         if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) return true;
-        if (Count.observers() >= 6) return false;
-        if (shouldPrepareForObserver()) return true;
-        if (A.supplyUsed() >= 64) return true;
 
-        return false;
+        if (A.supplyUsed() <= 45) return false;
+
+        if (shouldPrepareForObserver()) return true;
+        if (A.supplyUsed() >= 78 && Count.observers() == 0) return true;
+
+        return Count.observers() < (4 + EnemyUnits.discovered().lurkers().count() >= 2 ? 4 : 0);
     }
 
     private static boolean shouldPrepareForObserver() {
-        int minSupply = (Have.cannon() ? 52 : 47)
+        int minSupply = (Have.cannon() ? 65 : 47)
+            + (Count.cannons() >= 2 ? 20 : 0)
+            + (Count.ourCombatUnits() <= 7 ? 10 : 0)
+            + (OurArmy.strength() <= 160 ? 10 : 0)
+            + (OurArmy.strength() <= 150 ? 10 : 0)
+            + (OurArmy.strength() <= 130 ? 10 : 0)
             + Math.min(6, (A.resourcesBalance() / 100))
             + (EnemyInfo.noRanged() ? 8 : 0);
 
         return A.supplyUsed() >= minSupply
-            && OurArmy.strength() >= 120;
+            && OurArmy.strength() >= 130;
     }
 
     public static void observers() {

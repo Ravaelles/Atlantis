@@ -1,9 +1,7 @@
 package atlantis.combat.squad.positioning.too_lonely;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.positioning.protoss.ProtossCohesion;
-import atlantis.combat.squad.positioning.terran.TerranSquadCohesion;
-import atlantis.combat.squad.positioning.terran.TerranTooFarFromLeader;
+import atlantis.combat.squad.positioning.terran.TerranCohesion;
 import atlantis.units.AUnit;
 
 public class TooLonely extends Manager {
@@ -14,9 +12,9 @@ public class TooLonely extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossCohesion.class,
+//            ProtossCohesion.class,
 
-            TerranSquadCohesion.class,
+            TerranCohesion.class,
         };
     }
 }

@@ -132,7 +132,11 @@ public class Construction implements Comparable<Construction> {
 
     public boolean sameAs(Construction other) {
         return this.buildingType.equals(other.buildingType)
-            && (positionToBuild == other.positionToBuild || positionToBuild.equals(other.positionToBuild));
+            && (positionToBuild == other.positionToBuild || positionToBuild.equals(other.positionToBuild))
+            && (
+            this.productionOrder().minSupply() == other.productionOrder().minSupply()
+                || (!this.buildingType.isCannon() && !other.buildingType.isCannon())
+        );
     }
 
     @Override

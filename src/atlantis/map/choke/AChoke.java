@@ -101,7 +101,7 @@ public class AChoke implements HasPosition {
     public String toString() {
         return "Choke{" +
             "width=" + A.digit(width()) +
-//                ",center=" + center +
+            ",center=" + center.toString() +
             '}';
     }
 

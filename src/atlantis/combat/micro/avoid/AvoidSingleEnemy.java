@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -18,6 +19,11 @@ public class AvoidSingleEnemy extends Manager {
     public Manager avoid() {
         if (this.enemy == null) return processDontAvoid();
 
+        if (!enemy.hasBiggerWeaponRangeThan(unit)) {
+            unit.addLog("NoAvoidEnemyLilRange");
+            return null;
+        }
+
         if (doNotAvoid()) return processDontAvoid();
 
 //        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
@@ -27,7 +33,7 @@ public class AvoidSingleEnemy extends Manager {
 //            return (new AvoidCombatBuilding(unit, enemy)).invoke(this);
 //        }
 
-//        A.printStackTrace("AvoidSingleEnemy");
+//        if (unit.isDragoon()) A.printStackTrace("AvoidSingleEnemy");
 
         if (unit.runningManager().runFrom(
             enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, false
@@ -42,6 +48,8 @@ public class AvoidSingleEnemy extends Manager {
 
     private Manager processDontAvoid() {
         unit.runningManager().stopRunning();
+        if (unit.isMoving()) unit.holdPosition("AvoidHold");
+
         return null;
     }
 

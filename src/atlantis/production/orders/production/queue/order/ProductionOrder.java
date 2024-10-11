@@ -264,14 +264,14 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 //        return clone;
 //    }
 
-    public boolean supplyRequirementFulfilled() {
-        int bonus = unitOrBuilding != null && A.supplyUsed() >= 10 && unitOrBuilding.isABuilding() ? 1 : 0;
+    public boolean supplyRequirementFulfilled(int extraEarlyBonus) {
+        int bonus = unitOrBuilding != null && A.supplyUsed() >= 9 && unitOrBuilding.isABuilding() ? 2 : 0;
 
-        if (unitOrBuilding != null && unitOrBuilding.equals(AUnitType.Protoss_Cybernetics_Core)) {
-            bonus = 2;
-        }
+//        if (unitOrBuilding != null && unitOrBuilding.equals(AUnitType.Protoss_Cybernetics_Core)) {
+//            bonus = 2;
+//        }
 
-        return A.supplyUsed() + bonus >= minSupply;
+        return A.supplyUsed() + bonus + extraEarlyBonus >= minSupply;
     }
 
     public void cancel() {

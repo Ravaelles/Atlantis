@@ -16,7 +16,7 @@ public class ContinueCurrentAction extends Manager {
 //            ContinueLastAttack.class,
 //            composer.json
 //            ContinueShootingAsDragoon.class, // Dont!!
-            ContinueVeryRecentAttack.class, // Dont!
+            ContinueVeryRecentAttack.class,
 //            ContinueMoving.class,
         };
     }

@@ -1,7 +1,10 @@
 package atlantis.combat.micro.avoid.special;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class AvoidLurkers extends Manager {
@@ -19,28 +22,35 @@ public class AvoidLurkers extends Manager {
         lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(radius(), unit).nearestTo(unit);
         if (lurker == null) return false;
 
-        if (unit.combatEvalRelative() < 1.5) return true;
+        if (Count.cannons() >= 1 && lurker.enemiesNear().buildings().cannons().countInRadius(6.4, lurker) > 0) {
+            return false;
+        }
 
 //        if (beBraveWithDetectorsNearby()) return false;
 
-        return unit.woundPercent() >= 30
-            && unit.friendsNear().inRadius(4, unit).atMost(dontEngageWhenAtMostFriendsNearby());
+        return lurker.distTo(unit) <= (8.2 + unit.woundPercent() / 40.0)
+            || lurker.enemiesNear().combatUnits().inRadius(12, unit).atMost(dontEngageWhenAtMostFriendsNearby());
+//        return unit.woundPercent() >= 10
+//            || lurker.enemiesNear().combatUnits().inRadius(12, unit).atMost(dontEngageWhenAtMostFriendsNearby());
     }
 
-    private static int dontEngageWhenAtMostFriendsNearby() {
-        if (We.protoss()) return 3;
+    private int dontEngageWhenAtMostFriendsNearby() {
+        if (We.protoss()) return A.supplyUsed() >= 80 ? 8 : 6;
 
-        return 4;
+        return 5;
     }
 
     @Override
     protected Manager handle() {
+        if (lurker == null || !lurker.hasPosition()) return null;
 
-        // Defend buildings from lurkers
-        if (lurker.enemiesNear().combatBuildingsAntiLand().inRadius(6.1, lurker).notEmpty()) return null;
+        if (unit.distTo(lurker) >= 5) {
+            if (unit.moveAwayFrom(lurker, 2.5, Actions.MOVE_AVOID, "LURKER-A!")) return usedManager(this);
+        }
 
-        unit.runningManager().runFromAndNotifyOthersToMove(lurker, "LURKER!");
-        return usedManager(this);
+        if (unit.runningManager().runFromAndNotifyOthersToMove(lurker, "LURKER-B!")) return usedManager(this);
+
+        return null;
     }
 
 //    private boolean beBraveWithDetectorsNearby() {
@@ -52,7 +62,16 @@ public class AvoidLurkers extends Manager {
 
     private double radius() {
         return 8.1
-            + (unit.isMelee() ? 1.8 : 0)
-            + unit.woundPercent() / 80.0;
+            + meleeDistBonus()
+            + noDetectorsBonus()
+            + unit.woundPercent() / 65.0;
+    }
+
+    private double noDetectorsBonus() {
+        return unit.friendsNear().observers().empty() ? 1.8 : 0;
+    }
+
+    private double meleeDistBonus() {
+        return unit.isMelee() ? 2.5 : 0;
     }
 }

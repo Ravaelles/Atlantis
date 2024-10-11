@@ -27,5 +27,4 @@ public class CombatUnitManager extends Manager {
             CombatManagerLowPriority.class,
         };
     }
-
 }

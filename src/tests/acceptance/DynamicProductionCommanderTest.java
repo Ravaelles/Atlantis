@@ -26,8 +26,14 @@ public class DynamicProductionCommanderTest extends NonAbstractTestFakingGame {
     private int nextX = 20;
     private ArrayList<FakeUnit> newUnits = new ArrayList<>();
 
+    //    protected int currentMinerals = 567;
+//    protected int currentGas = 678;
+
     @Test
     public void testBuildingsProducedMakeSense() {
+        currentMinerals = 567;
+        currentGas = 678;
+
         createWorld(200,
             () -> {
                 onFrame();
@@ -74,8 +80,8 @@ public class DynamicProductionCommanderTest extends NonAbstractTestFakingGame {
 
     private void initFrame() {
         initSupply(4, 10);
-        aGame.when(AGame::minerals).thenReturn(579);
-        aGame.when(AGame::gas).thenReturn(680);
+//        aGame.when(AGame::minerals).thenReturn(579);
+//        aGame.when(AGame::gas).thenReturn(680);
     }
 
     // =========================================================

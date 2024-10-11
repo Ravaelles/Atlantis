@@ -1,6 +1,7 @@
 package atlantis.map.region;
 
 import atlantis.map.position.HasPosition;
+import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
 public class MainRegion {
@@ -12,7 +13,10 @@ public class MainRegion {
 
     public static ARegion mainRegion() {
         if (mainRegion == null) {
-            mainRegion = Select.mainOrAnyBuilding().position().region();
+            AUnit any = Select.mainOrAnyBuilding();
+            if (any == null) return null;
+
+            mainRegion = any.position().region();
         }
 
         return mainRegion;

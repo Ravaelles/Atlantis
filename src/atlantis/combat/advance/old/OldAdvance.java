@@ -9,7 +9,7 @@ import atlantis.combat.micro.terran.wraith.AsAirAttackAnyone;
 import atlantis.combat.micro.zerg.overlord.WeDontKnowEnemyLocation;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.squad.positioning.AllowTimeToReposition;
-import atlantis.combat.squad.positioning.terran.TerranSquadCohesion;
+import atlantis.combat.squad.positioning.terran.TerranCohesion;
 import atlantis.combat.squad.positioning.too_lonely.TooLonely;
 import atlantis.units.AUnit;
 
@@ -25,7 +25,7 @@ public class OldAdvance extends MissionManager {
 
             AllowTimeToReposition.class,
 //            ProtossSquadCohesion.class,
-            TerranSquadCohesion.class,
+            TerranCohesion.class,
 
             ContainEnemy.class,
 

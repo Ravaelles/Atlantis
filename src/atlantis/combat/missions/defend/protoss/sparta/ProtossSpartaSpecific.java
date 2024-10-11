@@ -1,8 +1,7 @@
 package atlantis.combat.missions.defend.protoss.sparta;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.positioning.protoss.ProtossCohesion;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.units.AUnit;
 
 public class ProtossSpartaSpecific extends Manager {
@@ -13,13 +12,13 @@ public class ProtossSpartaSpecific extends Manager {
     @Override
     public boolean applies() {
         return unit.isMissionSparta()
-            && EnemyWhoBreachedBase.noone();
+            && EnemyUnitBreachedBase.noone();
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossCohesion.class,
+//            ProtossCohesion.class,
             DragoonSeparateFromZealots.class,
         };
     }

@@ -1,6 +1,7 @@
 package atlantis.combat.advance.leader;
 
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 
@@ -14,6 +15,7 @@ public class CurrentFocusChoke {
 //        System.out.println("PathToEnemyBase.chokesLeadingToEnemyBase() = " + PathToEnemyBase.chokesLeadingToEnemyBase().size());
 
         if (!Missions.isGlobalMissionAttack()) return null;
+        if (A.minerals() >= 1500 || A.supplyUsed() >= 185) return null;
 
         if (currentChoke != null) {
             return currentChoke;

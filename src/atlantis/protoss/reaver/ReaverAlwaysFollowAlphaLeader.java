@@ -13,6 +13,8 @@ public class ReaverAlwaysFollowAlphaLeader extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         return !unit.isRunning() && !unit.isAttacking();
     }
 
@@ -21,10 +23,11 @@ public class ReaverAlwaysFollowAlphaLeader extends Manager {
         AUnit leader = Alpha.get().leader();
         if (leader == null) return null;
 
-        if (unit.distTo(leader) >= 5) {
-            unit.move(leader, Actions.MOVE_FORMATION, "ReaverToLeader");
+        double distToLeader = unit.distTo(leader);
+        if (distToLeader >= 5) {
+            if (unit.move(leader, Actions.MOVE_FORMATION, "ReaverToLeader")) return usedManager(this);
         }
 
-        return usedManager(this);
+        return null;
     }
 }

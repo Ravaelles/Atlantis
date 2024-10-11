@@ -1,6 +1,5 @@
 package atlantis.production.orders.production.queue.updater;
 
-import atlantis.game.A;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -37,7 +36,7 @@ public class QueueRefresher {
 //        if (noMoreNewReadyOrdersFromNowOn) return markAsNotReady(order);
 
         // Ready to produce
-        if (IsReadyToProduceOrder.isReadyToProduce(order)) return markAsReadyToProduce(order);
+        if (IsReadyToProduceOrder.check(order)) return markAsReadyToProduce(order);
 
 //        if (
 //            !A.hasMinerals(550) && !IsReadyToProduceOrder.canAffordWithReserved(order)

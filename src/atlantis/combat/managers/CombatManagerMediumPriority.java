@@ -6,12 +6,10 @@ import atlantis.combat.generic.enemy_in_range.AttackEnemiesInRange;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 //import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
-import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.avoid.special.AvoidAsUndetected;
-import atlantis.combat.squad.positioning.protoss.ProtossCohesion;
-import atlantis.combat.squad.positioning.protoss.ProtossTooLonelyGetCloser;
+import atlantis.combat.running.stop_running.ShouldStopRunning;
+import atlantis.combat.squad.positioning.Cohesion;
 import atlantis.combat.squad.squad_scout.SquadScout;
-import atlantis.protoss.ProtossDragoonCombatManager;
 import atlantis.terran.repair.DontMoveWhenBeingRepared;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
@@ -29,12 +27,12 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-//            ProtossDontEngageWhenCombatBuildings.class,
-            TerranDontEngageWhenCombatBuildings.class,
+            ShouldStopRunning.class,
 
-            ProtossDragoonCombatManager.class,
-            ProtossTooLonelyGetCloser.class,
-            ProtossCohesion.class,
+//            TerranCombatManager.class,
+//            ProtossCombatManager.class,
+
+//            Cohesion.class,
 
 //            UnitHasEnemyInRange.class,
 //            UnitUnderAttack.class,
@@ -42,7 +40,6 @@ public class CombatManagerMediumPriority extends Manager {
             AttackNearbyEnemies.class,
             AttackEnemiesInRange.class,
 
-//            ShouldStopRunning.class,
             AvoidAsUndetected.class,
             AvoidEnemies.class,
 

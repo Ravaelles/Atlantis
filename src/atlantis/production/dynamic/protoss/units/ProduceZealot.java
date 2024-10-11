@@ -3,37 +3,48 @@ package atlantis.production.dynamic.protoss.units;
 import atlantis.game.A;
 import atlantis.game.race.EnemyRace;
 import atlantis.information.decisions.Decisions;
-import atlantis.information.decisions.protoss.dragoon.DragoonInsteadZealot;
+import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealot;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.OurArmy;
-import atlantis.information.generic.ProtossArmyComposition;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.units.select.Select;
 import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.*;
 
 public class ProduceZealot {
+    public static int producedCount = 0;
+    private static int zealots;
+    private static int freeGateways;
+
     public static boolean zealot() {
         if (!A.hasMinerals(100)) return false;
 
-        int freeGateways = Count.freeGateways();
+        freeGateways = Count.freeGateways();
         if (freeGateways == 0) return false;
+
+        if (produceLateGameWithLotsOfMinerals()) return produceZealot();
+
+        zealots = Count.zealotsWithUnfinished();
+
+        if (zealots <= 1 && !A.hasGas(17) && A.hasMinerals(300)) return produceZealot();
+//        if (Enemy.zerg() && zealots < minZealotsToHave()) return produceZealot();
+
+        if (notEnoughZealots()) return produceZealot();
+        if (A.minerals() <= 700 && enoughZealots()) return false;
 
         if (A.s >= 60 * 6 && !A.hasMinerals(550) && Enemy.zerg()) return false;
 
-        if (Enemy.zerg() && Count.zealotsWithUnfinished() <= minZealotsToHave()) return produceZealot();
-
         if (freeGateways >= 2 && A.hasMinerals(700) && A.supplyUsed() <= 180) return produceZealot();
-        if (DragoonInsteadZealot.dragoonInsteadOfZealot()) return false;
+        if (ProduceDragoonInsteadZealot.dragoonInsteadOfZealot()) return false;
 
-        if (Count.zealots() >= 2 && !A.hasMinerals(ReservedResources.minerals() + 100)) return false;
+        if (zealots >= 2 && !A.hasMinerals(ReservedResources.minerals() + 100)) return false;
 
         if (freeGateways >= 2 && A.hasMinerals(700) && A.hasFreeSupply(4)) return produceZealot();
 
@@ -53,6 +64,10 @@ public class ProduceZealot {
         if (EnemyRace.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) return produceZealot();
 
         return false;
+    }
+
+    private static boolean produceLateGameWithLotsOfMinerals() {
+        return freeGateways >= 2 && A.minerals() >= 1100 && A.supplyUsed() <= 196;
     }
 
     private static boolean earlyGameZealots(int freeGateways) {
@@ -75,11 +90,11 @@ public class ProduceZealot {
         return Enemy.protoss()
             && A.seconds() <= 410
 //            && (AGame.killsLossesResourceBalance() < 0 || OurArmy.relative() <= 90)
-            && Count.zealotsWithUnfinished() < minZealotsToHave();
+            && zealots < minZealotsToHave();
     }
 
     private static int minZealotsToHave() {
-        if (Enemy.zerg()) return 1 + (OurArmy.strength() <= 60 ? Count.zealotsWithUnfinished() : 0);
+        if (Enemy.zerg()) return 4 + (OurArmy.strength() <= 60 ? zealots : 0);
 
         return 1;
     }
@@ -98,6 +113,51 @@ public class ProduceZealot {
 //        System.err.println("YES< zealot");
         return gateway.train(
             Protoss_Zealot, ForcedDirectProductionOrder.create(Protoss_Zealot)
-        );
+        ) && increaseProduced();
+    }
+
+    private static boolean increaseProduced() {
+        producedCount++;
+        return true;
+    }
+
+    public static boolean enoughZealots() {
+        return (OurArmy.strength() >= 118 || zealots >= 2)
+            && zealots >= minZealots();
+    }
+
+    public static boolean notEnoughZealots() {
+        if (A.s >= 350 && OurArmy.strength() >= 126 && EnemyInfo.enemyUnitInMainBase() == null) return false;
+
+        if (Count.zealots() < minZealots()) return true;
+
+        if (
+            Enemy.zerg()
+                && OurArmy.strength() <= 95
+                && A.seconds() <= 420
+//                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
+//                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
+                && Count.zealots() <= (Count.cannons() == 0 ? 3 : 2)
+                && EnemyUnits.discovered().zerglings().atLeast(8)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static double minZealots() {
+        if (A.hasGas(1) && Count.cannons() >= 2) return 2;
+
+        boolean core = Have.cyberneticsCore();
+
+        if (core && A.hasGas(100)) return 0;
+        if (!core && A.hasMinerals(300)) return 5;
+
+        double fromLings = EnemyUnits.discovered().zerglings().count() * 0.32;
+
+        if (A.hasGas(130)) fromLings = A.inRange(2, fromLings, 6);
+
+        return A.inRange(4, fromLings, 9);
     }
 }

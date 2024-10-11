@@ -1,6 +1,8 @@
 package atlantis.combat.eval.protoss;
 
+import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -14,7 +16,7 @@ public class ProtossCombatEvalTweaks {
      */
     public static double apply(AUnit unit, double eval) {
         return eval
-            + (unit.isMissionDefendOrSparta() ? 0 : (unit.distToNearestChokeLessThan(6) ? -0.5 : 0))
+            + (unit.distToNearestChokeCenter() <= 7 ? nearChokePenalty(unit) : 0)
             + (unit.lastRetreatedAgo() <= 100 ? -0.25 : 0)
 //            + (unit.lastStartedRunningLessThanAgo(30 * 4) ? 0.1 : 0)
             + (unit.distToMain() <= 20 ? +0.15 : 0)
@@ -22,6 +24,11 @@ public class ProtossCombatEvalTweaks {
             + cohesionPenalty(unit)
 //            + combatBuildingPenalty(unit)
             + enemyZerglingBonus(unit);
+    }
+
+    private static double nearChokePenalty(AUnit unit) {
+//        return multiplier * (A.supplyTotal() <= 99 ? -0.5 : -0.2);
+        return unit.isMissionDefendOrSparta() ? -1.2 : -0.6;
     }
 
     // =========================================================

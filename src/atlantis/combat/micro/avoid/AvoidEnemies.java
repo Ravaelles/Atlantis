@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.always.ProtossAlwaysAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.protoss.ObserverDontAvoidEnemy;
-import atlantis.combat.micro.avoid.dont.protoss.ProtossDontAvoidEnemy;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -31,6 +30,8 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.effUndetected()) return false;
+
 //        if (unit.isMissionSparta() && unit.isHealthy()) return false;
 //        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
 
@@ -49,10 +50,10 @@ public class AvoidEnemies extends Manager {
     protected Manager handle() {
 //        if (unit.isDragoon()) System.err.println("@ " + A.now() + " - AVOID ENEMIES " + unit.typeWithUnitId() + " - ");
 
-        return avoidEnemiesIfNeeded();
+        return avoidEnemies();
     }
 
-    public Manager avoidEnemiesIfNeeded() {
+    public Manager avoidEnemies() {
         if (!applies()) return null;
 
         if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose()) != null) {

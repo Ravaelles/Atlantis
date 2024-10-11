@@ -20,8 +20,9 @@ public class ResearchProtossGroundWeapons extends Commander {
     @Override
     public boolean applies() {
         if (!Have.forge()) return false;
-        if (!A.hasMinerals(700) && Count.basesWithUnfinished() <= 2) return false;
         if (isResearched()) return false;
+        if (Count.ourCombatUnits() <= 10) return false;
+        if (!A.hasMinerals(700) && Count.basesWithUnfinished() <= 2) return false;
         if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
         if (CountInQueue.count(what(), 10) > 0) return false;
         if (TooWeakToTech.check()) return false;

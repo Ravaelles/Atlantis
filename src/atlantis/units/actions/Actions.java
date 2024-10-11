@@ -39,6 +39,7 @@ public class Actions {
     public static final Action MOVE_REPAIR = new Action().setName("MOVE_REPAIR");
     public static final Action MOVE_SAFETY = new Action().setName("MOVE_SAFETY");
     public static final Action MOVE_SCOUT = new Action().setName("MOVE_SCOUT");
+    public static final Action MOVE_TRANSFER = new Action().setName("MOVE_TRANSFER");
     public static final Action MOVE_SPACE = new Action().setName("MOVE_SPACE");
     public static final Action SPECIAL = new Action().setName("MOVE_SPECIAL");
     public static final Action MOVE_UNFREEZE = new Action().setName("MOVE_UNFREEZE");

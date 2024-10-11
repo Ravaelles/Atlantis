@@ -13,7 +13,7 @@ public class ZergMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     public boolean shouldChangeMissionToDefend() {
         if (defendAgainstMassZerglings()) {
-            if (DEBUG) reason = "Mass zerglings";
+            if (DEBUG) reason = "Mass zerglings G";
             return true;
         }
 

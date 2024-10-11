@@ -44,10 +44,12 @@ public class ProtossSmallScaleRetreat extends Manager {
 
     public boolean shouldSmallScaleRetreat() {
         if (!unit.isMelee()) return false;
-
         if (unit.isMissionSparta()) return false;
 
         if (unit.isMissionDefend()) {
+            if (unit.isZealot()) {
+                if ((new SmallScaleAsZealot(unit)).shouldSmallScaleRetreat()) return true;
+            }
             if (Enemy.zerg()) {
                 if (unit.hp() >= 21) return false;
                 if (unit.allUnitsNear().inRadius(1.2, unit).atLeast(4)) return false;

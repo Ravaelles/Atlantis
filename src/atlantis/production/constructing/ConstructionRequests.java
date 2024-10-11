@@ -1,13 +1,11 @@
 package atlantis.production.constructing;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -167,6 +165,17 @@ public class ConstructionRequests {
         return notStarted;
     }
 
+    public static ArrayList<Construction> notCompletedOfType(AUnitType type) {
+        ArrayList<Construction> notStarted = new ArrayList<>();
+        for (Construction construction : constructions) {
+            if (construction.status() != ConstructionOrderStatus.COMPLETED
+                && (type == null || construction.buildingType().equals(type))) {
+                notStarted.add(construction);
+            }
+        }
+        return notStarted;
+    }
+
     public static ArrayList<Construction> notStarted() {
         ArrayList<Construction> notStarted = new ArrayList<>();
         for (Construction construction : constructions) {
@@ -175,6 +184,16 @@ public class ConstructionRequests {
             }
         }
         return notStarted;
+    }
+
+    public static ArrayList<Construction> notCompleted() {
+        ArrayList<Construction> notCompleted = new ArrayList<>();
+        for (Construction construction : constructions) {
+            if (construction.status() != ConstructionOrderStatus.COMPLETED) {
+                notCompleted.add(construction);
+            }
+        }
+        return notCompleted;
     }
 
     /**
@@ -240,6 +259,21 @@ public class ConstructionRequests {
             }
         }
         return false;
+    }
+
+    public static APosition nearestOfTypeTo(AUnitType building, HasPosition position, double max) {
+        assert position != null;
+
+        for (Construction order : notCompletedOfType(building)) {
+            if (
+                order != null
+                    && order.buildPosition() != null
+                    && position.distToLessThan(order.buildPosition(), max)
+            ) {
+                return order.buildPosition();
+            }
+        }
+        return null;
     }
 
     public static boolean alreadyExists(Construction newConstructionOrder, boolean allowPrint) {

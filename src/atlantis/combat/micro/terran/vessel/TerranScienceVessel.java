@@ -5,7 +5,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.combat.micro.generic.managers.DetectHiddenEnemyClosestToBase;
-import atlantis.combat.micro.generic.managers.FollowAlphaScout;
+import atlantis.combat.micro.generic.managers.FollowAlphaLeader;
 import atlantis.combat.micro.generic.managers.FollowArmy;
 import atlantis.combat.micro.generic.managers.SpreadOutDetectors;
 import atlantis.terran.repair.managers.GoToRepairAsAirUnit;
@@ -32,7 +32,7 @@ public class TerranScienceVessel extends MobileDetector {
             GoToRepairAsAirUnit.class,
             SpreadOutDetectors.class,
             DetectHiddenEnemyClosestToBase.class,
-            FollowAlphaScout.class,
+            FollowAlphaLeader.class,
             FollowArmy.class,
         };
     }

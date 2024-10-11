@@ -1,16 +1,18 @@
 package atlantis.combat.squad.beta;
 
+import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.FoundEnemyExposedExpansion;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
+import atlantis.game.A;
 
 /**
  * Bravo is additional battle squad created when there are too many units in Alpha.
  * Its mission is the same as Alpha's. The goal is to split units into two groups.
  */
 public class Bravo extends Squad {
-    public static final int ALPHA_COUNT_THRESHOLD = 16;
+    public static final int ALPHA_COUNT_THRESHOLD = 21;
 
     protected static Bravo bravo = null;
 
@@ -35,8 +37,10 @@ public class Bravo extends Squad {
 
     @Override
     public boolean shouldHaveThisSquad() {
-        return Alpha.count() > ALPHA_COUNT_THRESHOLD
-            || FoundEnemyExposedExpansion.getItFound() != null;
+        if (true) return false;
+
+        return Alpha.count() >= ALPHA_COUNT_THRESHOLD
+            || (FoundEnemyExposedExpansion.getItFound() != null && Alpha.count() >= 17);
     }
 
     @Override
@@ -44,10 +48,15 @@ public class Bravo extends Squad {
         return true;
     }
 
+    @Override
+    public Mission mission() {
+        return Missions.ATTACK;
+    }
+
     // =========================================================
 
     public int expectedUnits() {
-        return Math.max(3, Alpha.count() - ALPHA_COUNT_THRESHOLD);
+        return A.inRange(6, Alpha.count() / 3, 14);
     }
 
     public static int count() {

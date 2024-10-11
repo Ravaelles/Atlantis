@@ -624,6 +624,10 @@ public class AUnitType implements Comparable<Object> {
         return is(Protoss_Reaver);
     }
 
+    public boolean isShuttle() {
+        return is(Protoss_Shuttle);
+    }
+
     public boolean isHighTemplar() {
         return is(Protoss_High_Templar);
     }
@@ -634,6 +638,10 @@ public class AUnitType implements Comparable<Object> {
 
     public boolean isCannon() {
         return is(Protoss_Photon_Cannon);
+    }
+
+    public boolean isForge() {
+        return is(Protoss_Forge);
     }
 
     public boolean isSupplyDepot() {
@@ -1353,12 +1361,16 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
-    private boolean isObserver() {
+    public boolean isObserver() {
         return (boolean) cache.get(
             "isObserver",
             -1,
             () -> is(Protoss_Observer)
         );
+    }
+
+    public boolean isObservatory() {
+        return is(Protoss_Observatory);
     }
 
     public boolean isUnknown() {

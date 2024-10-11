@@ -12,7 +12,10 @@ public class ProtossAlwaysAvoidEnemy extends HasUnit {
     }
 
     public boolean applies() {
+        if (unit.combatEvalRelative() < 0.7) return true;
+
         if ((new DragoonAlwaysAvoidEnemy(unit).applies())) return true;
+        if ((new ZealotAlwaysAvoidEnemy(unit).applies())) return true;
 
         return false;
     }

@@ -85,21 +85,27 @@ public class Chokes {
             () -> {
                 if (mainChoke() == null) return null;
 
-                if (!ActiveMap.isMap("7th")) {
-                    AChoke naturalFromJbweb = AChoke.from(JBWEB.getNaturalChoke());
-                    if (naturalFromJbweb != null) return naturalFromJbweb;
-                }
+//                if (!ActiveMap.isMap("7th")) {
+//                    AChoke naturalFromJbweb = AChoke.from(JBWEB.getNaturalChoke());
+//                    System.err.println("@@@@ naturalFromJbweb = " + naturalFromJbweb);
+//                    if (naturalFromJbweb != null) return naturalFromJbweb;
+//                }
+//
+//                if (!ActiveMap.isMap("7th")) {
+//                    AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
+//                    System.err.println("@@@@ CHOKE B = " + choke);
+//                    if (fullfillsConditionsForNatural(choke, "NATURAL")) {
+//                        //                        System.err.println("choke.position() = " + choke.position());
+//                        //                        System.err.println("AMap.getMapHeightInTiles() = " + AMap.getMapHeightInTiles());
+//                        return choke;
+//                    }
+//                }
+//
+                APosition naturalBase = DefineNaturalBase.natural();
+//                System.err.println("@@@@ naturalBase = " + naturalBase);
+//                System.err.println("@@@@ CHOKE C = " + nearestChoke(naturalBase, "MAIN"));
 
-                if (!ActiveMap.isMap("7th")) {
-                    AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
-                    if (fullfillsConditionsForNatural(choke, "NATURAL")) {
-                        //                        System.err.println("choke.position() = " + choke.position());
-                        //                        System.err.println("AMap.getMapHeightInTiles() = " + AMap.getMapHeightInTiles());
-                        return choke;
-                    }
-                }
-
-                return nearestChoke(DefineNaturalBase.natural(), "MAIN");
+                return nearestChoke(naturalBase, "MAIN");
             }
         );
     }

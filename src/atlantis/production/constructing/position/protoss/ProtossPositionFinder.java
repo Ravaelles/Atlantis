@@ -22,7 +22,12 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // =========================================================
 
-        if (building.isPylon()) nearTo = defineNearToForPylon(nearTo);
+        if (builder == null) {
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
+            return null;
+        }
+
+        // =========================================================
 
 //        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
         int searchRadius = 0;
@@ -45,6 +50,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 //                        if (logToFile) LogToFile.info("tx,ty: [" + tileX + "," + tileY + "]\n");
 
                         APosition constructionPosition = APosition.create(tileX, tileY);
+//                        System.err.println("constructionPosition = " + constructionPosition + " / " + _CONDITION_THAT_FAILED);
                         if (PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
                             builder, building, constructionPosition, nearTo
                         )) {
@@ -65,27 +71,5 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         }
 
         return null;
-    }
-
-    private static HasPosition defineNearToForPylon(HasPosition nearTo) {
-//        int supply = A.supplyTotal();
-        int pylons = Count.pylons();
-
-//        System.err.println("pylons = " + pylons);
-
-        if (pylons >= 3) return nearTo;
-
-        // First pylon should be close to Nexus for shorter travel dist
-        if (pylons <= 0) {
-            nearTo = PylonPosition.nearToPositionForFirstPylon();
-//                AAdvancedPainter.paintPosition(nearTo, "PylonPosition");
-        }
-
-        // First pylon should be orientated towards the nearest choke
-        else if (pylons <= 1) {
-            nearTo = PylonPosition.nearToPositionForSecondPylon(nearTo.position());
-        }
-
-        return nearTo;
     }
 }

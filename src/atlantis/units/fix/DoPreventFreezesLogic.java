@@ -1,19 +1,15 @@
 package atlantis.units.fix;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.ToLastSquadTarget;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.advance.focus.TooCloseToFocusPoint;
-import atlantis.combat.advance.focus.TooFarFromFocusPoint;
-import atlantis.combat.micro.avoid.DoAvoidEnemies;
+import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import bwapi.Color;
 
 public class DoPreventFreezesLogic {
-    public static boolean handle(AUnit unit) {
+    public static boolean handle(Manager parent, AUnit unit) {
 //        if (unit.lastUnderAttackLessThanAgo(30 * 3)) {
 //            unit.paintCircleFilled(22, Color.Orange);
 //        }
@@ -30,26 +26,30 @@ public class DoPreventFreezesLogic {
 //            return true;
 //        }
 
-        if ((!unit.isMoving() || unit.looksIdle()) && goToFocus(unit)) {
-            unit.setTooltip("Prevent:Focus");
-            return true;
-        }
+//        if ((new HandleFocusPointPositioning(unit)).invokeFrom(parent) != null) {
+//            return true;
+//        }
 
-        if (goToLeader(unit)) {
-            unit.setTooltip("Prevent:2Leader");
-            return true;
-        }
-
-        if (goToNearestEnemy(unit)) {
-            unit.setTooltip("Prevent:2Enemy");
-            return true;
-        }
+//        if ((!unit.isMoving() || unit.looksIdle()) && goToFocus(unit)) {
+//            unit.setTooltip("Prevent:Focus");
+//            return true;
+//        }
+//
+//        if (goToLeader(unit)) {
+//            unit.setTooltip("Prevent:2Leader");
+//            return true;
+//        }
+//
+//        if (goToNearestEnemy(unit)) {
+//            unit.setTooltip("Prevent:2Enemy");
+//            return true;
+//        }
 
 //        if (goToNearestCombatFriend(unit)) {
 //            return true;
 //        }
 
-        if (!unit.isStopped() && unit.lastActionMoreThanAgo(44, Actions.STOP)) {
+        if (!unit.isStopped() && unit.lastActionMoreThanAgo(12, Actions.STOP)) {
             unit.stop("Prevent:Stop");
 //            unit.setTooltip("Prevent:Stop");
             return true;

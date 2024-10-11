@@ -46,6 +46,7 @@ public abstract class BaseManager {
         } catch (InvocationTargetException e) {
             System.err.println("There was an error in constructor of:\n");
             System.err.println(classObject);
+            System.err.println(e.getMessage());
             e.printStackTrace();
             return null;
         } catch (Exception e) {

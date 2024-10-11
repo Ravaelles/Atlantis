@@ -2,8 +2,8 @@ package atlantis.combat.micro.avoid.margin;
 
 import atlantis.combat.micro.avoid.margin.protoss.ProtossSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstMelee_Special;
-import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstSpecial;
 import atlantis.combat.micro.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 import bwapi.Color;
@@ -31,16 +31,16 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         double specialMargin = special.handleSpecially(attacker);
         if (specialMargin >= 0) return specialMargin;
 
-        // === Terran ===============================================
-
-        if (defender.isTerranInfantry()) {
-            criticalDist = (new TerranSafetyMarginAgainstMelee(defender)).handleTerranInfantry(attacker);
-        }
-
         // === Protoss ===============================================
 
-        else if (defender.isProtoss()) {
+        if (defender.isProtoss()) {
             criticalDist = (new ProtossSafetyMarginAgainstMelee(defender)).handle(attacker);
+        }
+
+        // === Terran ===============================================
+
+        else if (defender.isTerranInfantry()) {
+            criticalDist = (new TerranSafetyMarginAgainstMelee(defender)).handleTerranInfantry(attacker);
         }
 
         // === Zerg ===============================================
@@ -52,7 +52,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         // === Standard unit =========================================
 
         if (criticalDist == -1) {
-            criticalDist = baseForMelee(attacker)
+            criticalDist = baseAgainstMelee(attacker)
                 + enemyWeaponRange(attacker)
                 + woundedAgainstMeleeBonus(attacker)
                 + beastBonus(attacker)
@@ -63,7 +63,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 + enemyMovementBonus(attacker);
 
             // This should be enough as a minimum versus melee units
-            criticalDist = Math.min(criticalDist, defender.isDragoon() ? 2.95 : 3.4);
+//            criticalDist = Math.min(criticalDist, defender.isDragoon() ? 2.95 : 3.4);
+            criticalDist = Math.min(criticalDist, defender.isDragoon() ? 3.6 : 3.4);
         }
         else {
             criticalDist += beastBonus(attacker);
@@ -73,25 +74,28 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             criticalDist = 2.3;
         }
 
+//        System.err.println("@" + A.fr + " safetyMargin = " + criticalDist);
+
         return criticalDist;
     }
 
     protected double enemyFacingThisUnitBonus(AUnit attacker) {
         if (defender.isWounded() || !defender.hasMedicInRange()) {
             if (attacker.isTarget(defender)) {
-                defender.paintCircleFilled(12, Color.Red);
-                return -0.7;
+//                defender.paintCircleFilled(12, Color.Red);
+//                System.out.println(A.fr + " DefenderTargetted ");
+                return 2.6;
             }
 
             if (defender.isOtherUnitFacingThisUnit(attacker)) {
-                defender.paintCircleFilled(12, Color.Red);
-                return -0.6;
+//                defender.paintCircleFilled(12, Color.Orange);
+                return 0.9;
             }
         }
 
         if (defender.isOtherUnitShowingBackToUs(attacker)) {
-            defender.paintCircleFilled(12, Color.Green);
-            return +1.9;
+//            defender.paintCircleFilled(12, Color.Green);
+            return -1.9;
         }
 
         return 0;
@@ -135,11 +139,12 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         return 0;
     }
 
-    private double baseForMelee(AUnit attacker) {
+    private double baseAgainstMelee(AUnit attacker) {
         double base = 0.7;
 
         if (attacker.isZealot()) {
-            if (We.zerg()) base = 1.5;
+            if (We.protoss()) base = 0.5;
+            else if (We.zerg()) base = 1.0;
             else if (We.terran()) base = 0.5;
         }
 
@@ -180,7 +185,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         if (defender.isHealthy()) return 0;
 
         if (defender.isDragoon()) {
-            return 0.5 + defender.woundPercent() / 33.0;
+            return defender.woundPercent() / 33.0;
         }
 
         if (defender.isZealot()) {

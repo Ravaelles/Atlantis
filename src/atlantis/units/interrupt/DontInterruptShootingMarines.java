@@ -34,7 +34,7 @@ public class DontInterruptShootingMarines extends Manager {
     @Override
     public Manager handle() {
         AvoidEnemies avoidEnemies = new AvoidEnemies(unit);
-        if (avoidEnemies.avoidEnemiesIfNeeded() != null) {
+        if (avoidEnemies.avoidEnemies() != null) {
             return usedManager(avoidEnemies, "Avoid");
         }
 

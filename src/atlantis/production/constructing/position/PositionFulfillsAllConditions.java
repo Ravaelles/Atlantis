@@ -1,6 +1,5 @@
 package atlantis.production.constructing.position;
 
-import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.conditions.*;
@@ -12,11 +11,9 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
-import bwapi.Color;
 
 public class PositionFulfillsAllConditions {
     public static int currentSearchRadius = -1;
-    private static final String POSITION_OUT_OF_BOUNDS = "Position out of bounds";
 
     /**
      * Returns true if given position (treated as building position for our <b>UnitType building</b>) has all
@@ -27,11 +24,18 @@ public class PositionFulfillsAllConditions {
     ) {
 //        System.out.println(position + " / " + AbstractPositionFinder._CONDITION_THAT_FAILED);
 
-        APainter.paintCircle(position, 6, Color.Red);
+//        APainter.paintCircle(position, 6, Color.Red);
 
 //        if (position.tx() % 2 == 0 && !building.isBase() && !building.isGasBuilding()) return false;
 
-        if (!verifyInvalidPositionOrBuilder(builder, position)) return false;
+        if (invalidPosition(position)) return false;
+
+        // This fails:
+        // - at least when pylon is not fully finished
+//        if (!position.isBuildable()) {
+//            AbstractPositionFinder._CONDITION_THAT_FAILED = "Not buildable";
+//            return false;
+//        }
 
         if (We.protoss()) {
             if (ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return false;
@@ -69,23 +73,18 @@ public class PositionFulfillsAllConditions {
         return true;
     }
 
-    private static boolean verifyInvalidPositionOrBuilder(AUnit builder, APosition position) {
+    private static boolean invalidPosition(APosition position) {
         if (position == null) {
             ErrorLog.printMaxOncePerMinute("PositionFulfillsAllConditions: position is null");
             AbstractPositionFinder._CONDITION_THAT_FAILED = "POSITION ARGUMENT IS NULL";
-            return false;
+            return true;
         }
 
         if (position.isOutOfBounds()) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = POSITION_OUT_OF_BOUNDS;
-            return false;
+            AbstractPositionFinder._CONDITION_THAT_FAILED = "Position out of bounds";
+            return true;
         }
 
-        if (builder == null) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
-            return false;
-        }
-
-        return true;
+        return false;
     }
 }

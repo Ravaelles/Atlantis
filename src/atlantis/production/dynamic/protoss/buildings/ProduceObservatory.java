@@ -20,7 +20,7 @@ public class ProduceObservatory {
         }
 
         if (Have.notEvenPlanned(type())) {
-            if (DynamicCommanderHelpers.buildNow(type(), true)) return true;
+            if (DynamicCommanderHelpers.buildToHaveOne(type())) return true;
         }
 
         return false;

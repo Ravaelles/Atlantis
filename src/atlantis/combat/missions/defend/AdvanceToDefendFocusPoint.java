@@ -5,8 +5,6 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
 import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
-import atlantis.combat.squad.positioning.protoss.ProtossAsLeaderTooFarFromOthers;
-import atlantis.combat.squad.positioning.protoss.ProtossTooFarFromLeader;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;

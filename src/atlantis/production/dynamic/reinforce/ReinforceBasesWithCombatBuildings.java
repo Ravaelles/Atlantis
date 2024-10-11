@@ -4,8 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.information.generic.AllOfOurBasePositions;
-import atlantis.production.dynamic.reinforce.terran.TerranReinforceBasesWithCombatBuildings;
-import atlantis.util.We;
 
 /**
  * @Deprecated
@@ -16,7 +14,7 @@ public abstract class ReinforceBasesWithCombatBuildings extends Commander {
 
     public static ReinforceBasesWithCombatBuildings get() {
         return null;
-//        if (We.protoss()) return new ProtossReinforceBasesWithCombatBuildings();
+//        if (We.protoss()) return new ProtossReinforceBaseWithCannons();
 //        if (We.terran()) return new TerranReinforceBasesWithCombatBuildings();
 //
 //        return new ReinforceBasesWithCombatBuildings() {

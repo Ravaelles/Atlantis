@@ -58,7 +58,7 @@ public abstract class ABuildOrder {
         for (ProductionOrder productionOrder : productionOrders()) {
             System.out.println("   - " + productionOrder.toString());
         }
-        System.out.println("--- END OF production order list ---");
+        System.out.println("--- END OF production order list ---\n");
     }
 
     // === Getters =============================================

@@ -1,5 +1,6 @@
 package atlantis.information.enemy;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
@@ -9,43 +10,34 @@ import atlantis.util.cache.Cache;
 
 public class EnemyNearBases {
     private static Cache<Object> cache = new Cache<>();
-    private static Selection enemies;
-    private static Selection ourBuildings;
     private static int maxDist;
 
     public static AUnit enemyNearAnyOurBase(int maxDistToBase) {
         if (maxDistToBase < 0) {
-            maxDistToBase = 13;
+            maxDistToBase = 7;
         }
         maxDist = maxDistToBase;
+
+        AUnit main = Select.main();
+        if (main == null) return null;
+
+        AUnit enemyNearMain = main.enemiesNear().combatUnits().havingWeapon().nearestTo(main);
+        if (enemyNearMain != null) return enemyNearMain;
 
         return (AUnit) cache.getIfValid(
             "enemyNearAnyOurBuilding:" + maxDist,
             17,
             () -> {
-                AUnit main = Select.main();
-                if (main == null) return null;
+//                AUnit main = Select.main();
 
                 AUnit nearCritical = Select.enemy().ofType(
                     AUnitType.Protoss_Dark_Templar, AUnitType.Protoss_Reaver, AUnitType.Protoss_Archon,
                     AUnitType.Zerg_Lurker
-                ).inRadius(8, Select.ourBuildings()).nearestTo(Select.mainOrAnyBuilding());
+                ).inRadius(8, Select.ourBuildings()).nearestTo(main);
 
                 if (nearCritical != null) return nearCritical;
 
-                enemies = Select.enemyCombatUnits().havingWeapon().excludeTypes(
-                    AUnitType.Terran_Science_Vessel,
-                    AUnitType.Terran_Valkyrie,
-                    AUnitType.Protoss_Corsair,
-                    AUnitType.Zerg_Scourge
-                );
-                ourBuildings = Select.ourBuildings();
-
-                AUnit enemy = isNearBase(main);
-                if (enemy != null) {
-                    return enemy;
-                }
-
+                AUnit enemy;
                 for (AUnit base : Select.ourBases().list()) {
                     if ((enemy = isNearBase(base)) != null) {
                         return enemy;
@@ -60,34 +52,22 @@ public class EnemyNearBases {
     private static AUnit isNearBase(AUnit base) {
         if (base == null) return null;
 
-        AUnit nearestEnemy;
+        AUnit nearestEnemy = potentialRegularEnemies().nearestTo(base);
 
-        // === Crucial ============================================
+        return nearestEnemy != null
+            && nearestEnemy.distToLessThan(base, maxDist)
+            ? nearestEnemy : null;
+    }
 
-        nearestEnemy = enemies.crucialUnits().nearestTo(base);
+    private static Selection potentialRegularEnemies() {
+        Selection enemies = Select.enemyRealUnits().havingAntiGroundWeapon();
 
-        if (nearestEnemy != null) {
-            if (nearestEnemy.distToLessThan(base, maxDist) && base.regionsMatch(nearestEnemy)) {
-                if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 10) {
-                    return nearestEnemy;
-                }
-            }
+        if (A.supplyUsed() >= 140) {
+            enemies = enemies.excludeTypes(
+                AUnitType.Protoss_Scout
+            );
         }
 
-        // === Regular enemies =====================================
-
-        nearestEnemy = enemies.combatUnits().nearestTo(base);
-
-        if (nearestEnemy != null) {
-            if (nearestEnemy.distToLessThan(base, maxDist) && base.regionsMatch(nearestEnemy)) {
-                if (ourBuildings.nearestTo(nearestEnemy).distTo(nearestEnemy) < 7.5) {
-                    return nearestEnemy;
-                }
-            }
-        }
-
-        // =========================================================
-
-        return null;
+        return enemies;
     }
 }

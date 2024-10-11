@@ -1,5 +1,6 @@
 package atlantis.production.constructing.position.protoss;
 
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -11,6 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
+import bwapi.Color;
 
 public class PylonPosition {
     public static HasPosition nextPosition() {
@@ -46,33 +48,18 @@ public class PylonPosition {
 
         APosition centerOfResources = geyser.translateTilesTowards(mineralsCenter, 50);
 
-//        AAdvancedPainter.paintPosition(position, "geyser");
-//        AAdvancedPainter.paintPosition(mineralsCenter, "mineralsCenter");
-
         if (position == null) {
             System.err.println("Unable to position first Pylon... " + Select.minerals().inRadius(10, base).size());
             return fallback();
         }
 
-//        if (mineralsCenter != null) {
-//            position = position.translateTilesTowards(mineralsCenter, -4);
-////            AAdvancedPainter.paintPosition(position, "AwayFromMinerals");
-//        }
-//        if (geyser != null) {
-//            position = position.translateTilesTowards(geyser, -1);
-////            AAdvancedPainter.paintPosition(position, "AwayFromGeyserAndMinerals");
-//        }
-//        if (position != null) position = position.translatePercentTowards(base, 90);
-//        if (position != null) position = position.translateTilesTowards(base, -1);
+        position = base.translateTilesTowards(-1, centerOfResources);
+        position = position.makeBuildableFarFromBounds(32 * 9);
 
-//        System.err.println("base = " + base);
-//        System.err.println("position = " + position.translateTilesTowards(-2, mineralsCenter));
-//        System.err.println("position = " + position.translateTilesTowards(-2, mineralsCenter).distTo(base));
-
-        return base.translateTilesTowards(-1, centerOfResources);
+        return position;
     }
 
-    public static APosition nearToPositionForSecondPylon(APosition initialNearTo) {
+    public static APosition nearToPositionForSecondPylon() {
 //        return initialNearTo;
 
         AUnit base = Select.main();
